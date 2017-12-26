@@ -1,0 +1,1 @@
+{% include 'admin/weixin_template_messages/form.volt' %}

@@ -1,0 +1,1 @@
+{{ simple_table(wap_visit_histories,['ip':'ip', '访问人数' : 'visit_num', '下载次数' :  'down_num']) }}

@@ -1,0 +1,1 @@
+php cli.php async start >> log/async.log

@@ -1,0 +1,17 @@
+{
+  "config": {
+    "secure-http": false
+  },
+  "repositories": [
+    {"type": "composer", "url": "https://packagist.phpcomposer.com"},
+    {
+      "type": "git", "url": "git@git.365yf.com:sh_server/xphalcon.git"
+    },
+    {"packagist": false}
+  ],
+  "require": {
+    "sh_server/xphalcon": "@dev"
+
+  }
+}
+

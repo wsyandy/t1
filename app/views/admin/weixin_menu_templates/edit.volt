@@ -1,0 +1,1 @@
+{% include 'admin/weixin_menu_templates/form.volt' %}

@@ -1,0 +1,37 @@
+CREATE TABLE soft_versions (
+    id serial PRIMARY KEY NOT NULL,
+    product_channel_id INTEGER,
+    version_code numeric(8,2),
+    version_name VARCHAR(255),
+    platform VARCHAR(255),
+    platform_version numeric(8,4),
+    status INTEGER,
+    stable INTEGER,
+    file VARCHAR(255),
+    feature VARCHAR(255),
+    updated_num INTEGER DEFAULT 0,
+    install_num INTEGER DEFAULT 0,
+    download_num INTEGER DEFAULT 0,
+    md5 VARCHAR(255),
+    created_at INTEGER DEFAULT 0,
+    updated_at INTEGER DEFAULT 0,
+    force_update INTEGER,
+    ios_down_url VARCHAR(255),
+    weixin_url VARCHAR(255),
+    permit_ip VARCHAR(255),
+    fr VARCHAR(255),
+    remark VARCHAR(255),
+    channel_package INTEGER DEFAULT 0,
+    operator_id INTEGER,
+    built_in_fr VARCHAR(127),
+    toutiao_convert_no VARCHAR(127),
+    company_name VARCHAR(255),
+    company_icp VARCHAR(127),
+    company_service_phone VARCHAR(255),
+    marketing_config_id INTEGER,
+    foot_notice text,
+    is_show_name INTEGER DEFAULT 0
+);
+
+create index  product_channel_id_soft_versions on soft_versions(product_channel_id);
+create index  operator_id_soft_versions on soft_versions(operator_id);
