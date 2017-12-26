@@ -277,8 +277,18 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (array('ip', 'platform', 'version_name', 'version_code') as $key) {
-            $this->$key = $context[$key];
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code'] as $key) {
+
+            $val = fetch($context, $key);
+
+            if ($val) {
+
+                if ('password' == $key) {
+                    $val = md5($val);
+                }
+
+                $this->$key = $val;
+            }
         }
 
         // 设备不一致，发送强行下线推送
@@ -864,5 +874,27 @@ class Users extends BaseModel
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';
+    }
+
+    function updateProfile($params = [])
+    {
+        foreach ($params as $k => $v) {
+
+            if (!isPresent($v)) {
+                continue;
+            }
+            if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
+                continue;
+            }
+
+            if ($k == 'city_id') {
+                $city = \Cities::findFirstById($k);
+                $this->province_id = $city->province_id;
+            }
+
+            $this->$k = $v;
+        }
+
+        $this->save();
     }
 }
