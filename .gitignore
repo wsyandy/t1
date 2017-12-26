@@ -4,3 +4,7 @@ app/cache
 log
 db/ssdb
 db/redis
+public/_book
+doc/api/_book
+temp
+update.log
