@@ -81,6 +81,8 @@ class Devices extends BaseModel
             'order' => 'id desc'
         ]);
 
+        debug($product_channel->id, $attributes);
+
         if ($device) {
             info('false repeat_device', $device->id, $product_channel->code, 'imei', $device->imei, 'idfa', $device->idfa, $attributes);
             return $device;
