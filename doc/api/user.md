@@ -27,7 +27,7 @@
 
 ### 3 注册接口
 
-> http-post ```/api/users```
+> http-post ```/api/users/register```
 
 ##### 3.1 请求参数说明
 |参数|名称|值类型|是否可空|备注

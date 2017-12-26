@@ -4,7 +4,7 @@ namespace api;
 
 class UsersController extends BaseController
 {
-    function createAction()
+    function registerAction()
     {
         $mobile = $this->params('mobile');
         $auth_code = $this->params('auth_code');
