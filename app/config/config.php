@@ -10,5 +10,7 @@ return new \Phalcon\Config([
         'domain' => env('alioss_domain', 'yiyuan-development.img-cn-hangzhou.aliyuncs.com')
     ],
 
-    'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379')
+    'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
+    'job_queue' => array('endpoint' => env('job_queue_endpoint', 'redis://127.0.0.1:6379/job_queue_' . APP_NAME),
+        'tubes' => array('default' => 24)),
 ]);
