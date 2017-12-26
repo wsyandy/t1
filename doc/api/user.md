@@ -1,0 +1,192 @@
+# 用户接口
+
+### 1 用户注册协议
+
+> http-get ```/m/product_channels/reg_agreement```
+
+##### 1.1 请求参数说明
+无
+
+### 2 获取短信验证码接口
+
+> http-post ```/api/users/send_auth```
+
+##### 2.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+| mobile |手机|string|否|||
+
+##### 2.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    sms_token 验证token
+}
+```
+
+### 3 注册接口
+
+> http-post ```/api/users```
+
+##### 3.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|sms_token|短信验证|string|否| (伴随auth_code提供)|
+|auth_code|验证码|string|否||
+|password|密码|string|否||
+|mobile|手机号码|string|否|||
+
+##### 3.2 回应参数说明
+```
+{
+			error_code
+			error_reason
+			sid 身份信息 必须先更新本地SID
+			error_url 跳转地址
+}
+
+```
+
+### 4 登录接口
+
+> http-post ```/api/users/login```
+
+##### 4.1 手机号码登录
+###### 4.1.1 参数
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|mobile|手机号码|string|否|||
+|password|密码|string|否||||
+
+###### 4.1.2 回应参数说明
+```
+{
+			error_code
+			error_reason
+			sid 身份信息 必须先更新本地SID
+			error_url 跳转地址
+}
+
+```
+
+##### 4.2 忘记密码登录
+###### 4.2.1 参数
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|sms_token|短信验证|string|否| (伴随auth_code提供)|
+|auth_code|验证码|string|否||
+|password|密码|string|否||
+|mobile|手机号码|string|否|||
+
+##### 4.2.2 回应参数说明
+```
+{
+			error_code
+			error_reason
+			sid 身份信息 必须先更新本地SID
+			error_url 跳转地址
+}
+```
+
+### 5 退出登陆
+
+> http-get ```/api/users/logout```
+
+##### 5.1 请求参数说明
+无
+
+##### 5.2 回应参数说明
+```
+{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			sid : 设备的SID   123d......
+}
+```
+
+### 6 用户详细信息
+
+> http-get ``` /api/users/detail```
+
+##### 6.1 请求参数说明
+无
+
+##### 6.2 回应参数说明
+```
+{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			id 用户id
+			sex	性别 0:女 1:男
+			province_id 现居省份
+			province_name 省名
+			city_id 现居城市
+			city_name 城市
+			address 常驻地址
+			avatar_url 用户头像
+			avatar_small_url 用户小头像
+			nickname 昵称
+			mobile 手机号
+			sid
+}
+```
+
+### 7 用户信息更新,完善资料
+
+> http-post ```/api/users/update ```
+
+##### 7.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|nickname|昵称|string|||
+|sex|性别|int||0:女 1:男|
+
+##### 7.2 回应参数说明
+```
+{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+}
+```
+
+### 8 上传头像
+
+> http-post ```/api/users/update_avatar ```
+
+##### 8.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|avatar_file|头像文件|file|否|||
+
+##### 8.2 回应参数说明
+```
+{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+}
+```
+
+### 9 更新push_token
+
+> http-post ```/api/users/push_token```
+
+##### 9.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|push_token|||||
+|push_from||||默认(getui),可以为getui,xinge|
+
+##### 9.2 回应参数说明
+```
+{
+		    error_code: 0成功，非0失败
+		    error_reason: ""
+}
+```
+
+
+
+
+
+

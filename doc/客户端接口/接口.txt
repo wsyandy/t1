@@ -1,0 +1,370 @@
+1.设备
+    1.1 激活接口
+		POST /api/devices/active
+		参数
+		  ua
+          imei:手机imei --string
+          imsi:手机imsi --string
+
+		 返回
+		 {
+		    error_code
+		    error_reason
+            sid : 设备的SID
+		 }
+2.用户
+	2.1 获取短信验证码接口
+		POST /api/users/send_auth
+		参数
+		 mobile 手机
+
+		 返回
+		 {
+		    error_code
+		    error_reason
+		    sms_token 验证token
+		 }
+	2.2 登陆接口
+		POST /api/users/login
+		参数：
+		sms_token 短信验证码 (伴随auth_code提供)
+		auth_code 验证码 (与password二选一)
+		password 密码（与auth_code二选一）
+		mobile 手机号码
+
+		返回
+		{
+			error_code
+			error_reason
+			sid 身份信息 必须先更新本地SID
+			error_url 跳转地址
+		}
+
+	2.4 退出登陆
+		请求方式: http-get
+		/api/users/logout
+		参数
+
+		返回
+		{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			sid : 设备的SID   123d......
+		}
+
+	2.5 用户详细信息
+		请求方式: http-get
+		/api/users/detail
+
+		{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			id 用户id
+			sex	性别
+			province_id 现居省份
+			province_name 省名
+			city_id 现居城市
+			city_name 城市
+			address 常驻地址
+			avatar_url 用户头像
+			avatar_small_url 用户小头像
+			login_name 登录名
+			ip_text ip的text
+			mobile 手机号
+			sid
+		}
+
+	2.6 用户信息更新
+		/api/users/update
+
+        nickname 昵称
+        sex 0:女 1:男
+        province_id 省id
+        city_id 市id
+        address 详细地址
+		参数:
+
+		{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+		}
+
+	2.7 更新push_token
+
+		请求方式：http-post
+		/api/users/push_token
+
+		上行参数：
+		  push_token
+		  push_from 默认为（getui），可以为getui, xinge
+
+		返回结果：
+		  {
+		    error_code: 0成功，非0失败
+		    error_reason: ""
+		  }
+
+    2.8 第三方登陆
+
+    请求方式: http-post
+    /api/users/third_login
+    参数
+    third_name : weixin
+    access_token
+    openid
+
+    返回
+    {
+    	error_code  0 成功，非0失败
+    	error_reason 失败原因
+    	sid
+    }
+
+3.用户收货地址
+
+3.1收货地址
+        请求方式: http-get
+        /api/user_addresses
+
+        返回
+        error_code: 0 成功，非0，失败
+        error_reason 失败原因
+        user_addresses:[
+            {
+                id :id
+                receiver_name :  收货人
+                mobile : 手机号
+                province_id ： 省ID
+                city_id ： 市ID
+                province_name:省名称
+                city_name:市名称
+                address ： 详细地址
+                default_status ： 是否默认地址 1是 0否
+            }
+        ]
+
+3.2添加/更新收货地址
+        请求方式: http-get
+        /api/user_addresses/add
+        id 地址ID (添加传空 更新必传)
+        receiver_name 收货人
+        mobile 手机号
+        province_id 省ID
+        city_id 市ID
+        district_id 区ID
+        street_address 详细地址
+        default_status 是否默认
+
+        返回
+        error_code: 0 成功，非0，失败
+        error_reason 失败原因
+
+3.3删除收货地址
+        请求方式: http-get
+        /api/user_addresses/delete
+        参数
+        id : 地址id
+
+        返回
+        error_code: 0 成功，非0，失败
+        error_reason 失败原因
+
+3.省份：
+	4.1 获取省份
+		GET /api/provinces
+		返回
+		{
+			error_code
+			error_reason
+			provinces :[
+		      {
+		        id:
+		        name:
+		      }
+			],
+			province_id: 当前省ID
+			province_name: 当前省份名字
+
+		}
+
+4.城市：
+	5.1 获取城市
+		GET /api/cities
+		参数
+		province_id
+		返回
+		{
+			error_code
+			error_reason
+			cities:[
+			{
+			id:
+			name:
+			}
+			],
+			city_id: 当前城市ID
+			city_name: 当前城市名字
+
+		}
+
+
+4.客户端主题
+	7.1 获取ClientTheme接口
+		GET /api/client_themes
+		参数：
+
+		{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			client_theme
+			{
+				id
+				version_name
+				version_code
+				file_url
+			}
+		}
+
+9.产品
+    9.1 推荐列表
+	GET /api/products/recommend
+		参数
+		page 页码 默认为1
+		per_page 每页个数 默认8
+
+		返回
+		{
+			error_code
+			error_reason
+			products: [
+			   {
+		           id: ID
+		           name 名称
+		           icon_url 图片icon
+		           short_introduce 简单介绍
+		           catch_num 正在抓取的人数
+		           coin_min 最小道具币数
+		           coin_max 最大道具币数
+			   },
+               ...
+			]
+
+		}
+
+	9.2 产品详情
+		GET /api/products/detail
+		参数
+		id 产品ID
+
+		返回
+		{
+			error_code
+			error_reason
+			name 名称
+			icon_url 图片ICON
+		    coin_min 最小道具币数
+		    coin_max 最大道具币数
+		    register_num 申请人数
+		    catch_num 正在抓取的人数
+		    tips 优惠便利（数组）
+		    goods[
+                   {
+                       id: id
+                       icon_url 图片地址
+                       name 名称
+                       catch_status 1:忙碌  2:空闲
+                       catch_text '空闲中...'
+                   },
+                   {
+
+                   }
+                 ]
+		}
+
+	9.3 商品接口(火热进行中)
+
+        GET /api/products/goods
+        参数
+
+        返回
+        {
+            error_code
+            error_reason
+            goods[
+                   {
+                       id: id
+                       icon_url 图片地址
+                       name 名称
+                       catch_status 1:忙碌  2:空闲
+                       catch_text '空闲中...'
+                   },
+                   {
+
+                   }
+                 ]
+        }
+
+
+10，Banners
+	10.1 获取Banners接口
+		GET /api/banners
+		参数：
+		返回:
+		{
+			error_code  0 成功，非0失败
+			error_reason 失败原因
+			banners
+			[
+			   {
+		           id: banner记录id
+		           image_url
+		           name
+		           status 0:无效 1：有效
+		           rank 排序
+		           url 跳转地址
+		           created_at
+
+			   },
+			   {
+
+			   }
+			]
+		}
+
+	10.2 点击banner上报接口
+		POST /api/banners/click
+		参数：id
+        返回
+        {
+        	error_code  0 成功，非0失败
+        	error_reason 失败原因
+        }
+
+3，订单：
+	3.1 下单接口(安装试玩)
+		POST /api/orders/create
+		参数
+		product_id 产品ID
+
+		返回
+		{
+			error_code -1001 提示弹框
+			error_reason
+			error_url 跳转地址
+			tip_content 弹框提示内容
+		}
+
+4,意见反馈
+    4.1 提交
+    POST
+    		POST /api/problem_feedback/create
+    		参数
+    		content 内容
+
+    		返回
+    		{
+    			error_code
+    			error_reason
+    		}
+
+
