@@ -1,7 +1,10 @@
 <?php
 
+
 class Users extends BaseModel
 {
+    use UserEnumerations;
+
     // 用户状态
     static $USER_STATUS = [USER_STATUS_OFF => '注销', USER_STATUS_ON => '正常', USER_STATUS_BLOCKED_ACCOUNT => '封账号',
         USER_STATUS_BLOCKED_DEVICE => '封设备', USER_STATUS_LOGOUT => '已退出'];
