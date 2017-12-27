@@ -37,4 +37,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $sign = md5(md5($sign_str) . $ckey);
         echoLine($sign);
     }
+
+    function redisAction()
+    {
+        $redis = Users::getHotWriteCache();
+        $redis->set("test_1", 222);
+    }
 }

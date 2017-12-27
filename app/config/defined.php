@@ -107,3 +107,5 @@ define('MOBILE_OPERATOR_ALL', 0);
 define('MOBILE_OPERATOR_CMCC', 1);
 define('MOBILE_OPERATOR_UNICOM', 2);
 define('MOBILE_OPERATOR_TELECOM', 3);
+
+debug('ERROR_CODE_BOX', -1001); //需要弹框
