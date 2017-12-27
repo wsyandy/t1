@@ -31,6 +31,8 @@ class Stats extends BaseModel
     static function record($field, $action, $attrs)
     {
 
+        return;
+
         if (is_string($attrs)) {
             $attrs = json_decode($attrs, true);
             if (!is_array($attrs)) {
