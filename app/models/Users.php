@@ -4,6 +4,7 @@
 class Users extends BaseModel
 {
     use UserEnumerations;
+    use UserAttrs;
 
     // 用户状态
     static $USER_STATUS = [USER_STATUS_OFF => '注销', USER_STATUS_ON => '正常', USER_STATUS_BLOCKED_ACCOUNT => '封账号',
@@ -158,6 +159,11 @@ class Users extends BaseModel
             $this->bindMobile();
         }
 
+    }
+
+    function getUid()
+    {
+        return $this->sid;
     }
 
     function getMaskedMobile()

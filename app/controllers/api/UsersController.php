@@ -231,4 +231,17 @@ class UsersController extends BaseController
 
         $this->renderJSON(ERROR_CODE_FAIL, '设备不存在');
     }
+
+    function detailAction()
+    {
+        $detail_json = [];
+
+        if ($this->otherUser()) {
+            $detail_json = $this->otherUser()->toDetailJson();
+        } elseif ($this->currentUser()) {
+            $detail_json = $this->currentUser()->toDetailJson();
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
+    }
 }

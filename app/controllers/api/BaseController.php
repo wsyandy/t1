@@ -13,6 +13,7 @@ use ApplicationController;
 
 class BaseController extends ApplicationController
 {
+    private $_other_user;
     private $_current_user;
     private $_current_device;
     private $_current_product_channel;
@@ -48,20 +49,6 @@ class BaseController extends ApplicationController
         return $user_id;
     }
 
-    function currentDeviceId()
-    {
-
-        $sid = $this->context('sid');
-        if (isBlank($sid) || !preg_match('/^\d+d/', $sid)) {
-            return null;
-        }
-
-        $device_id = intval(explode('d', $sid, 2)[0]);
-        debug('device_id', $device_id);
-
-        return $device_id;
-    }
-
     /**
      * @return \Users
      */
@@ -76,6 +63,50 @@ class BaseController extends ApplicationController
         }
 
         return $this->_current_user;
+    }
+
+    function otherUserId()
+    {
+        $uid = $this->context('uid');
+
+        if (isBlank($uid) || !preg_match('/^\d+s/', $uid)) {
+            return null;
+        }
+
+        $user_id = intval(explode('s', $uid, 2)[0]);
+        debug('user_id', $user_id);
+
+        return $user_id;
+    }
+
+    /**
+     * @return \Users
+     */
+    function otherUser()
+    {
+        $other_user_id = $this->otherUserId();
+        if (!isset($this->_other_user) && $other_user_id) {
+            $other_user = \Users::findFirstById($other_user_id);
+            if ($other_user && $this->params('uid') == $other_user->uid) {
+                $this->_other_user = $other_user;
+            }
+        }
+
+        return $this->_other_user;
+    }
+
+    function currentDeviceId()
+    {
+
+        $sid = $this->context('sid');
+        if (isBlank($sid) || !preg_match('/^\d+d/', $sid)) {
+            return null;
+        }
+
+        $device_id = intval(explode('d', $sid, 2)[0]);
+        debug('device_id', $device_id);
+
+        return $device_id;
     }
 
     /**
