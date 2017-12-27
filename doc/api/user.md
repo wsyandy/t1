@@ -143,7 +143,7 @@
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
 |city_name|城市名称|string|||
-|avatar_file|头像文件|file|||
+|avatar_file|头像文件|file||||
 
 ##### 7.2 回应参数说明
 ```
