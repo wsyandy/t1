@@ -109,7 +109,7 @@ class UsersController extends BaseController
                 }
             }
 
-            list($error_code, $error_reason) = $user->clientLogin($this->context(), $device);
+            list($error_code, $error_reason) = $user->clientLogin($this->params(), $device);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
