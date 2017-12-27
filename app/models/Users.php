@@ -160,6 +160,15 @@ class Users extends BaseModel
 
     }
 
+    function getMaskedMobile()
+    {
+        $length = mb_strlen($this->mobile);
+        if ($length == 11) {
+            return mb_substr($this->mobile, 0, 3) . '*****' . mb_substr($this->mobile, $length - 2, 2);
+        }
+        return '';
+    }
+
     function getPushContext()
     {
         return $this->product_channel->getPushContext($this->platform);
