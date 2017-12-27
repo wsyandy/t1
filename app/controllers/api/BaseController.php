@@ -311,7 +311,7 @@ class BaseController extends ApplicationController
         }
 
         if (isDevelopmentEnv()) {
-            return array(false, "Sign error! md5(md5($sign_str) + $ckey)");
+            return array(false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign");
         }
 
         return array(false, t('base_valid_sign_signature_error'));

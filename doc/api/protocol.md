@@ -16,6 +16,3 @@
 
 ## m协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
-
-## 全局协议
-1. 跳转主页面：tabbar://index=0
