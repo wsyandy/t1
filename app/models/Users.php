@@ -190,7 +190,7 @@ class Users extends BaseModel
         if (isBlank($mobile)) {
             return [ERROR_CODE_FAIL, '手机号错误', null];
         }
-        if (!$device || !$device->can_register) {
+        if (!$device || !$device->can_register && isProduction()) {
             info('false_device', $product_channel->code, $mobile, $context, $params);
             return [ERROR_CODE_FAIL, '设备错误!!', null];
         }
