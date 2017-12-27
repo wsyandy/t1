@@ -151,7 +151,15 @@ class UsersController extends BaseController
     function updateAction()
     {
         $user = $this->currentUser();
+
+        $avatar_file = $this->file('avatar_file');
+
+        if ($avatar_file) {
+            $user->updateAvatar($avatar_file);
+        }
+
         $user->updateProfile($this->params());
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
