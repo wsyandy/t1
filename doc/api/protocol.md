@@ -22,6 +22,6 @@
 状态码|原因|说明
 ---|---|---
  0| 成功|根据具体业务处理
- -1| 失败|error_url不为空时需跳转error_url,为空时弹框提示错误原因对应字段是error_reason
+ -1| 失败|error_url不为空时需跳转error_url,为空时弹框提示错误原因error_reason
  -100| 需要登录|客户端跳转登录页面
  -1001| 需要弹框|根据具体业务处理,tip_content:弹框提示内容,tip_url:弹框跳转url
