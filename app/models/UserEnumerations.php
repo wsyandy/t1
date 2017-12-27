@@ -14,6 +14,8 @@ trait UserEnumerations
         'ip' => 'ip',
         'sex' => '性别',
         'province_id' => '省份',
-        'city_id' => '城市'
+        'city_id' => '城市',
+        'province_name' => '省份',
+        'city_name' => '城市',
     ];
 }

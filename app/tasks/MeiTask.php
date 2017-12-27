@@ -43,4 +43,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $redis = Users::getHotWriteCache();
         $redis->set("test_1", 222);
     }
+
+    function test1Action()
+    {
+        if ("000000") {
+            echoLine(":sss");
+        }
+    }
 }

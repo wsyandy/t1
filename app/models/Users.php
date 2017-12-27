@@ -895,7 +895,29 @@ class Users extends BaseModel
             if (!isPresent($v)) {
                 continue;
             }
+
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
+                continue;
+            }
+
+            if ($k == 'province_name') {
+                $province = Provinces::findFirstByName($k);
+
+                if ($province) {
+                    $this->province_id = $province->id;
+                }
+
+                continue;
+            }
+
+            if ($k == 'city_name') {
+                $city = Cities::findFirstByName($k);
+
+                if ($city) {
+                    $this->province_id = $city->province_id;
+                    $this->city_id = $city->city_id;
+                }
+
                 continue;
             }
 
