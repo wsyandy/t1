@@ -993,4 +993,23 @@ class Users extends BaseModel
     {
 
     }
+
+    //是否为好友
+    function isFriend($other_user, $opts = [])
+    {
+
+    }
+
+    //好友列表
+    function friendList($type = null)
+    {
+
+    }
+
+    //同意添加好友
+    function agreeAddFriend()
+    {
+
+    }
+
 }

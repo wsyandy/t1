@@ -33,4 +33,10 @@ class FriendsController extends BaseController
     {
 
     }
+
+    //清空新的朋友信息
+    function clearAction()
+    {
+
+    }
 }
