@@ -10,7 +10,7 @@ namespace api;
 
 class FriendsController extends BaseController
 {
-    //我的好友列表
+    //我的好友列表 type=1 好友列表 type=2 新的好友列表
     function indexAction()
     {
 
@@ -24,6 +24,12 @@ class FriendsController extends BaseController
 
     //删除好友
     function destroyAction()
+    {
+
+    }
+
+    //同意
+    function agreeAction()
     {
 
     }

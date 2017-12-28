@@ -904,8 +904,8 @@ class Users extends BaseModel
 
             info("black success", $black_key, $blacked_key);
 
-            $user_db->add($black_key, time(), $other_user->id);
-            $user_db->add($blacked_key, time(), $this->id);
+            $user_db->zadd($black_key, time(), $other_user->id);
+            $user_db->zadd($blacked_key, time(), $this->id);
         }
     }
 
