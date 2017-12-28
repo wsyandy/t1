@@ -34,7 +34,8 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'login_name' => $this->login_name,
             'nickname' => $this->nickname,
-            'created_at_text' => $this->created_at_text
+            'created_at_text' => $this->created_at_text,
+            'room_id' => ''
         ];
     }
 
