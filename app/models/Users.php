@@ -985,19 +985,35 @@ class Users extends BaseModel
     //添加好友
     function addFriend($other_user, $opts = [])
     {
+        $add_key = 'add_friend_list_user_id_' . $this->id;
+        $added_key = 'added_friend_list_user_id_' . $other_user->id;
+        $add_total_key = 'add_friend_total_list_user_id_' . $this->id;
+        $other_total_key = 'add_friend_total_list_user_id_' . $other_user->id;
 
+        $user_db = Users::getUserDb();
+        $user_db->zadd($add_key, time(), $other_user->id);
+        $user_db->zadd($added_key, time(), $this->id);
+        $user_db->zadd($add_total_key, time(), $other_user->id);
+        $user_db->zadd($other_total_key, time(), $this->id);
     }
 
     //删除好友
     function deleteFriend($other_user, $opts = [])
     {
+        $user_db = Users::getUserDb();
+        $friend_list_key = 'friend_list_user_id_' . $this->id;
+        $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
 
+        $user_db->zrem($friend_list_key, $other_user->id);
+        $user_db->zrem($other_friend_list_key, $this->id);
     }
 
     //是否为好友
     function isFriend($other_user, $opts = [])
     {
-
+        $user_db = Users::getUserDb();
+        $friend_list_key = 'friend_list_user_id_' . $this->id;
+        return $user_db->zscore($friend_list_key, $other_user->id);
     }
 
     //好友列表
@@ -1007,8 +1023,19 @@ class Users extends BaseModel
     }
 
     //同意添加好友
-    function agreeAddFriend()
+    function agreeAddFriend($other_user, $opts = [])
     {
+        $friend_list_key = 'friend_list_user_id_' . $this->id;
+        $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
+        $add_key = 'add_friend_list_user_id_' . $this->id;
+        $added_key = 'added_friend_list_user_id_' . $other_user->id;
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($friend_list_key, time(), $other_user->id);
+        $user_db->zadd($other_friend_list_key, time(), $this->id);
+
+        $user_db->zrem($add_key, $other_user->id);
+        $user_db->zrem($added_key, $this->id);
 
     }
 
