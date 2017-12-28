@@ -109,7 +109,7 @@ class UsersController extends BaseController
                 }
             }
 
-            list($error_code, $error_reason) = $user->clientLogin($this->context(), $device);
+            list($error_code, $error_reason) = $user->clientLogin($this->params(), $device);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
@@ -151,7 +151,15 @@ class UsersController extends BaseController
     function updateAction()
     {
         $user = $this->currentUser();
+
+        $avatar_file = $this->file('avatar_file');
+
+        if ($avatar_file) {
+            $user->updateAvatar($avatar_file);
+        }
+
         $user->updateProfile($this->params());
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
@@ -222,5 +230,18 @@ class UsersController extends BaseController
         }
 
         $this->renderJSON(ERROR_CODE_FAIL, '设备不存在');
+    }
+
+    function detailAction()
+    {
+        $detail_json = [];
+
+        if ($this->otherUser()) {
+            $detail_json = $this->otherUser()->toDetailJson();
+        } elseif ($this->currentUser()) {
+            $detail_json = $this->currentUser()->toDetailJson();
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 }
