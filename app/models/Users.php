@@ -161,6 +161,36 @@ class Users extends BaseModel
 
     }
 
+    function isSilent()
+    {
+        return USER_TYPE_SILENT == $this->user_type;
+    }
+
+    function isActive()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
+    }
+
+    function isBlocked()
+    {
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
+    }
+
+    function isNormal()
+    {
+        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
+            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
+        }
+
+        return USER_STATUS_ON === $this->user_status;
+    }
+
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
+
     function getUid()
     {
         return $this->sid;
@@ -831,15 +861,6 @@ class Users extends BaseModel
         return $push_type;
     }
 
-    function isNormal()
-    {
-        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
-            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
-        }
-
-        return USER_STATUS_ON === $this->user_status;
-    }
-
     public function isWebPlatform()
     {
         if (preg_match('/^(web)$/i', $this->platform)) {
@@ -936,5 +957,84 @@ class Users extends BaseModel
         }
 
         $this->save();
+    }
+
+    //拉黑
+    function black($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $black_key = "black_list_user_id" . $this->id;
+        $blacked_key = "blacked_list_user_id" . $other_user->id;
+
+        if (!$user_db->zscore($black_key, $other_user->id)) {
+
+            info("black success", $black_key, $blacked_key);
+
+            $user_db->add($black_key, time(), $other_user->id);
+            $user_db->add($blacked_key, time(), $this->id);
+        }
+    }
+
+    //取消拉黑
+    function unBlack($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $black_key = "black_list_user_id" . $this->id;
+        $blacked_key = "blacked_list_user_id" . $other_user->id;
+
+        if ($user_db->zscore($black_key, $other_user->id)) {
+
+            info("unblack success", $black_key, $blacked_key);
+
+            $user_db->zrem($black_key, $other_user->id);
+            $user_db->add($blacked_key, $this->id);
+        }
+    }
+
+    //黑名单列表
+    function blackList($page, $per_page)
+    {
+        $user_db = Users::getUserDb();
+        $black_key = "black_list_user_id" . $this->id;
+
+        $offset = $per_page * ($page - 1);
+        $user_ids = $user_db->zrevrange($black_key, $offset, $offset + $per_page - 1, 'withscores');
+    }
+
+    //关注
+    function follow($other_user, $opts = [])
+    {
+
+    }
+
+    //取消关注
+    function unFollow($other_user, $opts = [])
+    {
+
+    }
+
+    //我关注的列表
+    function followList()
+    {
+
+    }
+
+    //关注我的列表
+    function followedList()
+    {
+
+    }
+
+
+    //添加好友
+    function addFriend($other_user, $opts = [])
+    {
+
+    }
+
+    //删除好友
+    function deleteFriend($other_user, $opts = [])
+    {
+
     }
 }
