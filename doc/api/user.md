@@ -56,8 +56,10 @@
 ###### 4.1.1 参数
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|mobile|手机号码|string|否|||
-|password|密码|string|否||||
+|sms_token|短信验证|string|是| (忘记密码登录时提供)|
+|auth_code|验证码|string|是|(忘记密码登录时提供)|
+|mobile|手机号码|string|否||
+|password|密码|string|否|||
 
 ###### 4.1.2 回应参数说明
 ```
@@ -69,26 +71,6 @@
 }
 
 ```
-
-##### 4.2 忘记密码登录
-###### 4.2.1 参数
-|参数|名称|值类型|是否可空|备注
-|---|---|---|---|---|
-|sms_token|短信验证|string|否| (伴随auth_code提供)|
-|auth_code|验证码|string|否||
-|password|密码|string|否||
-|mobile|手机号码|string|否|||
-
-##### 4.2.2 回应参数说明
-```
-{
-			error_code
-			error_reason
-			sid 身份信息 必须先更新本地SID
-			error_url 跳转地址
-}
-```
-
 ### 5 退出登陆
 
 > http-get ```/api/users/logout```
