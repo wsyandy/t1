@@ -153,6 +153,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
 
         $avatar_file = $this->file('avatar_file');
+        debug('update_info', $avatar_file, $this->params());
 
         if ($avatar_file) {
             $user->updateAvatar($avatar_file);
