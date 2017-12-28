@@ -24,4 +24,72 @@ trait UserAttrs
             'mobile' => $this->mobile
         );
     }
+
+    public function isWebPlatform()
+    {
+        if (preg_match('/^(web)$/i', $this->platform)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isTouchPlatform()
+    {
+        if (preg_match('/^(touch_unknow|touch_ios|touch_android)$/i', $this->platform)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isWxPlatform()
+    {
+        if (preg_match('/^(weixin_unknow|weixin_ios|weixin_android)$/i', $this->platform)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isClientPlatform()
+    {
+        if (preg_match('/^(ios|android)$/i', $this->platform)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function getAvatarUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return '/images/avatar.png';
+        }
+
+        return StoreFile::getUrl($this->avatar);
+    }
+
+    function getAvatarSmallUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return '/images/avatar.png';
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!small';
+    }
+
+    function getUid()
+    {
+        return $this->sid;
+    }
+
+    function getMaskedMobile()
+    {
+        $length = mb_strlen($this->mobile);
+        if ($length == 11) {
+            return mb_substr($this->mobile, 0, 3) . '*****' . mb_substr($this->mobile, $length - 2, 2);
+        }
+        return '';
+    }
 }
