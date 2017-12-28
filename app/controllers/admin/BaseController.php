@@ -48,7 +48,6 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
-
         $this->view->is_development = isDevelopmentEnv();
 
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
