@@ -20,7 +20,6 @@ class ShiTask extends \Phalcon\Cli\Task
         $citys = [];
         $cityid = [];
         $citys_nos = [];
-        $citie_name = [];
         foreach ($cities as $citie) {
             $city = \Cities::findFirstByName($citie);
             if ($city) {
@@ -36,13 +35,9 @@ class ShiTask extends \Phalcon\Cli\Task
         foreach ($cityss_no as $city_no) {
             $province = \Provinces::findFirstById($city_no->province_id);
             $citys_nos[$province->name][] = $city_no->name;
-            $citie_name[] = $city_no->name;
         }
-//        debug($citys);
-//        debug($citys_nos);
-//        debug(count($citie_name));
-//        debug(count($citys));
-        debug($citie_name);
+        debug($citys);
+        debug($citys_nos);
     }
 
     function test2Action()
@@ -68,6 +63,7 @@ class ShiTask extends \Phalcon\Cli\Task
         }
         debug($provinces_names);
         debug($provinces_no);
+        debug(count($provincesidnos));
     }
 
     function test3Action()
