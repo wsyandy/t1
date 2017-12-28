@@ -919,7 +919,7 @@ class Users extends BaseModel
             info("unblack success", $black_key, $blacked_key);
 
             $user_db->zrem($black_key, $other_user->id);
-            $user_db->add($blacked_key, $this->id);
+            $user_db->zrem($blacked_key, $this->id);
         }
     }
 
@@ -930,7 +930,15 @@ class Users extends BaseModel
         $black_key = "black_list_user_id" . $this->id;
 
         $offset = $per_page * ($page - 1);
-        $user_ids = $user_db->zrevrange($black_key, $offset, $offset + $per_page - 1, 'withscores');
+        $res = $user_db->zrevrange($black_key, $offset, $offset + $per_page - 1, 'withscores');
+        $user_ids = [];
+
+        foreach ($res as $user_id => $created_at) {
+            $user_ids[] = $user_id;
+            $user_ids[$user_id] = $created_at;
+        }
+
+        $users = Users::findByIds($user_ids);
     }
 
     //关注
