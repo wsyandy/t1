@@ -252,6 +252,8 @@ class Users extends BaseModel
             $user->device_id = $device->id;
             $device->reg_num += 1;
             $device->update();
+        } else {
+            return [ERROR_CODE_FAIL, '已注册', null];
         }
 
         $user->mobile = $mobile;
