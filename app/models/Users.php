@@ -921,18 +921,40 @@ class Users extends BaseModel
             info("unblack success", $black_key, $blacked_key);
 
             $user_db->zrem($black_key, $other_user->id);
-            $user_db->add($blacked_key, $this->id);
+            $user_db->zrem($blacked_key, $this->id);
         }
+    }
+
+    //获取拉黑，关注，好友的列表
+    static function findByRelations($relations_key, $page, $per_page)
+    {
+        $user_db = Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
+        $user_ids = [];
+        $times = [];
+
+        foreach ($res as $user_id => $time) {
+            $user_ids[] = $user_id;
+            $times[$user_id] = $time;
+        }
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->created_at = fetch($times, $user_id);
+        }
+
+        return $users;
     }
 
     //黑名单列表
     function blackList($page, $per_page)
     {
-        $user_db = Users::getUserDb();
         $black_key = "black_list_user_id" . $this->id;
-
-        $offset = $per_page * ($page - 1);
-        $user_ids = $user_db->zrevrange($black_key, $offset, $offset + $per_page - 1, 'withscores');
+        $users = self::findByRelations($black_key, $page, $per_page);
+        return $users;
     }
 
     //关注

@@ -10,7 +10,7 @@ trait UserAttrs
 {
     function toDetailJson()
     {
-        return array(
+        return [
             'uid' => $this->uid,
             'sex' => $this->sex,
             'province_id' => $this->province_id,
@@ -22,7 +22,21 @@ trait UserAttrs
             'login_name' => $this->login_name,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile
-        );
+        ];
+    }
+
+    function toRelationJson()
+    {
+        return [
+            'uid' => $this->uid,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'login_name' => $this->login_name,
+            'nickname' => $this->nickname,
+            'created_at_text' => $this->created_at_text,
+            'room_id' => ''
+        ];
     }
 
     public function isWebPlatform()
