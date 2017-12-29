@@ -24,48 +24,28 @@ class FriendsController extends BaseController
     //添加好友
     function createAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->addFriend($this->otherUser());
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
     }
 
     //删除好友
     function destroyAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->deleteFriend($this->otherUser());
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
 
     //同意
     function agreeAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->agreeAddFriend($this->otherUser());
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
     }
 
     //清空新的朋友信息
     function clearAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->clearAddFriendInfo();
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }

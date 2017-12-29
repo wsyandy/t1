@@ -28,10 +28,6 @@ class BlacksController extends BaseController
     //拉黑
     function createAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->black($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
@@ -40,12 +36,7 @@ class BlacksController extends BaseController
     //取消拉黑
     function destroyAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
         $this->currentUser()->unBlack($this->otherUser());
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }

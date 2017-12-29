@@ -30,6 +30,12 @@ class BaseController extends ApplicationController
         'users' => ['create', 'login', 'client_status'],
     ];
 
+    static $CHECK_OTHER_USER_ACTIONS = [
+        'blacks' => ['create', 'destroy'],
+        'followers' => ['create', 'destroy'],
+        'friends' => ['create', 'destroy', 'agree', 'clear'],
+    ];
+
     function isDebug()
     {
         return '1' == $this->params('debug') && isDevelopmentEnv();
@@ -180,8 +186,7 @@ class BaseController extends ApplicationController
                     $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android')
             ) {
                 info("Exce 客户端异常", $this->context());
-                $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
-                return false;
+                return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
             }
         }
 
@@ -195,16 +200,14 @@ class BaseController extends ApplicationController
 
         $code = $this->params('code');
         if (!$code || !$this->currentProductChannel()) {
-            $this->renderJSON(ERROR_CODE_FAIL, '产品渠道不能为空');
-            return false;
+            return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道不能为空');
         }
 
         // 表单数据安全性验证
         list($result, $error_reason) = $this->validSign();
         if (false === $result) {
             info("Exce 表单数据安全性验证", $error_reason, $this->context(), $this->params());
-            $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
-            return false;
+            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
 
 
@@ -215,11 +218,10 @@ class BaseController extends ApplicationController
 
             $device = $this->currentDevice();
             if ($device) {
-                $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
             } else {
-                $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
             }
-            return false;
         }
 
         $this->remote_ip = $this->remoteIp();
@@ -229,6 +231,12 @@ class BaseController extends ApplicationController
             $this->checkLoginStatus();
         }
 
+        //对方用户不存在
+        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
+            || $this->otherUserId() && !$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
+        }
+
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
@@ -236,15 +244,13 @@ class BaseController extends ApplicationController
 
         if (!$this->authorize()) {
             $device = $this->currentDevice();
-            $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
-            return false;
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
         }
 
         if ($this->currentUser()->isBlocked()) {
-            $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
-            return false;
-        }
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
 
+        }
     }
 
     function skipAuth($controller_name, $action_name)
@@ -267,6 +273,23 @@ class BaseController extends ApplicationController
     {
         if (isset(self::$CHECK_LOGIN_STATUS_ACTIONS[$controller_name])) {
             $actions = self::$CHECK_LOGIN_STATUS_ACTIONS[$controller_name];
+
+            if ("*" == $actions) {
+                return false;
+            }
+
+            if (is_array($actions) && in_array($action_name, $actions)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function skipCheckOtherUser($controller_name, $action_name)
+    {
+        if (isset(self::$CHECK_OTHER_USER_ACTIONS[$controller_name])) {
+            $actions = self::$CHECK_OTHER_USER_ACTIONS[$controller_name];
 
             if ("*" == $actions) {
                 return false;
