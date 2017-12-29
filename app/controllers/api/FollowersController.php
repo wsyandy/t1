@@ -47,7 +47,7 @@ class FollowersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
         $this->currentUser()->follow($this->otherUser());
-        $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
     }
 
     //取消关注
@@ -57,6 +57,6 @@ class FollowersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
         $this->currentUser()->unFollow($this->otherUser());
-        $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '取消关注成功');
     }
 }
