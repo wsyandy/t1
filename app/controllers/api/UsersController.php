@@ -119,7 +119,7 @@ class UsersController extends BaseController
 
             $error_url = '';
 
-            if ($this->currentUser()->needUpdateInfo()) {
+            if ($user->needUpdateInfo()) {
                 $error_url = 'app://users/update_info';
             }
 
