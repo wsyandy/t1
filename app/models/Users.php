@@ -6,30 +6,6 @@ class Users extends BaseModel
     use UserEnumerations;
     use UserAttrs;
 
-    // 用户状态
-    static $USER_STATUS = [USER_STATUS_OFF => '注销', USER_STATUS_ON => '正常', USER_STATUS_BLOCKED_ACCOUNT => '封账号',
-        USER_STATUS_BLOCKED_DEVICE => '封设备', USER_STATUS_LOGOUT => '已退出'];
-    // 用户类型
-    static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默', USER_TYPE_TEST => '测试'];
-
-    static $SEX = [USER_SEX_MALE => '男', USER_SEX_FEMALE => '女'];
-
-    static $PLATFORM = [USER_PLATFORM_IOS => '苹果客户端', USER_PLATFORM_ANDROID => '安卓客户端',
-        USER_PLATFORM_WEIXIN_IOS => '微信苹果端', USER_PLATFORM_WEIXIN_ANDROID => '微信安卓端'];
-
-    static $LOGIN_TYPE = [USER_LOGIN_TYPE_MOBILE => '手机', USER_LOGIN_TYPE_WEIXIN => '微信', USER_LOGIN_TYPE_QQ => 'QQ',
-        USER_LOGIN_TYPE_OTHER => '其他'];
-
-    static $PROVINCE = array(1 => "北京", 2 => "上海", 3 => "天津", 4 => "重庆",
-        5 => "河北", 6 => "山西", 7 => "河南", 8 => "辽宁",
-        9 => "吉林", 10 => "黑龙江", 11 => "内蒙古", 12 => "江苏",
-        13 => "山东", 14 => "安徽", 15 => "浙江", 16 => "福建",
-        17 => "湖北", 18 => "湖南", 19 => "广东", 20 => "广西",
-        21 => "江西", 22 => "四川", 23 => "海南", 24 => "贵州",
-        25 => "云南", 26 => "西藏", 27 => "陕西", 28 => "甘肃",
-        29 => "青海", 30 => "宁夏", 31 => "新疆", 32 => "台湾",
-        33 => "香港", 34 => "澳门");
-
     /**
      * @type ProductChannels
      */
@@ -59,6 +35,11 @@ class Users extends BaseModel
      */
     private $_geo_city;
 
+    //好友状态 1已添加,2等待验证，3等待接受
+    public $friend_status;
+
+    //是否已关注
+    public $followed;
 
     function beforeCreate()
     {
@@ -1004,10 +985,25 @@ class Users extends BaseModel
     {
         $add_key = 'add_friend_list_user_id_' . $this->id;
         $added_key = 'added_friend_list_user_id_' . $other_user->id;
-        $add_total_key = 'add_friend_total_list_user_id_' . $this->id;
-        $other_total_key = 'add_friend_total_list_user_id_' . $other_user->id;
+        $add_total_key = 'friend_total_list_user_id_' . $this->id;
+        $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
 
         $user_db = Users::getUserDb();
+
+        //在添加我的队列里面清掉对方的id
+        if ($user_db->zscore('added_friend_list_user_id_' . $this->id, $other_user->id)) {
+            $user_db->zrem('added_friend_list_user_id_' . $this->id, $other_user->id);
+        }
+
+        //在对方添加的队列中清掉我的id
+        if ($user_db->zscore('add_friend_list_user_id_' . $other_user->id, $this->id)) {
+            $user_db->zrem('add_friend_list_user_id_' . $other_user->id, $this->id);
+        }
+
+        //没有在对方总队列里面添加 此时要做通知
+        if (!$user_db->zscore($other_total_key, $this->id)) {
+        }
+
         $user_db->zadd($add_key, time(), $other_user->id);
         $user_db->zadd($added_key, time(), $this->id);
         $user_db->zadd($add_total_key, time(), $other_user->id);
@@ -1021,8 +1017,13 @@ class Users extends BaseModel
         $friend_list_key = 'friend_list_user_id_' . $this->id;
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
 
-        $user_db->zrem($friend_list_key, $other_user->id);
-        $user_db->zrem($other_friend_list_key, $this->id);
+        if ($user_db->zscore($friend_list_key, $other_user->id)) {
+            $user_db->zrem($friend_list_key, $other_user->id);
+        }
+
+        if ($user_db->zscore($other_friend_list_key, $this->id)) {
+            $user_db->zrem($other_friend_list_key, $this->id);
+        }
     }
 
     //是否为好友
@@ -1033,10 +1034,48 @@ class Users extends BaseModel
         return $user_db->zscore($friend_list_key, $other_user->id);
     }
 
-    //好友列表
-    function friendList($type = null)
+    //是否为我添加的好友
+    function isAddFriend($other_user, $opts = [])
     {
+        $user_db = Users::getUserDb();
+        $key = 'add_friend_list_user_id_' . $this->id;
+        return $user_db->zscore($key, $other_user->id);
+    }
 
+    //是否为添加我的好友
+    function isAddedFriend($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $key = 'added_friend_list_user_id_' . $this->id;
+        return $user_db->zscore($key, $other_user->id);
+    }
+
+    //好友列表
+    function friendList($page, $per_page, $type = null)
+    {
+        if (1 == $type) {
+            $key = 'friend_list_user_id_' . $this->id;
+        } else {
+            $key = 'friend_total_list_user_id_' . $this->id;
+        }
+
+        $users = self::findByRelations($key, $page, $per_page);
+
+        foreach ($users as $user) {
+
+            //3接受状态 2等待状态 1已添加
+            $friend_status = 3;
+
+            if ($this->isFriend($user)) {
+                $friend_status = 1;
+            } elseif ($this->isAddFriend($user)) {
+                $friend_status = 2;
+            }
+
+            $user->friend_status = $friend_status;
+        }
+
+        return $users;
     }
 
     //同意添加好友
@@ -1048,12 +1087,23 @@ class Users extends BaseModel
         $added_key = 'added_friend_list_user_id_' . $other_user->id;
 
         $user_db = Users::getUserDb();
-        $user_db->zadd($friend_list_key, time(), $other_user->id);
-        $user_db->zadd($other_friend_list_key, time(), $this->id);
 
-        $user_db->zrem($add_key, $other_user->id);
-        $user_db->zrem($added_key, $this->id);
+        if ($user_db->zscore($add_key, $other_user->id)) {
+            $user_db->zrem($add_key, $other_user->id);
+            $user_db->zadd($friend_list_key, time(), $other_user->id);
+        }
 
+        if ($user_db->zscore($added_key, $this->id)) {
+            $user_db->zrem($added_key, $this->id);
+            $user_db->zadd($other_friend_list_key, time(), $this->id);
+        }
     }
 
+    //清空添加好友信息
+    function clearAddFriendInfo()
+    {
+        $user_db = Users::getUserDb();
+        $key = 'friend_total_list_user_id_' . $this->id;
+        $user_db->zclear($key);
+    }
 }
