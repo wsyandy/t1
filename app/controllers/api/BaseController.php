@@ -69,11 +69,11 @@ class BaseController extends ApplicationController
     {
         $uid = $this->context('uid');
 
-        if (isBlank($uid) || !preg_match('/^\d+s/', $uid)) {
+        if (isBlank($uid)) {
             return null;
         }
 
-        $user_id = intval(explode('s', $uid, 2)[0]);
+        $user_id = intval($uid);
         debug('user_id', $user_id);
 
         return $user_id;
@@ -85,9 +85,11 @@ class BaseController extends ApplicationController
     function otherUser()
     {
         $other_user_id = $this->otherUserId();
+
         if (!isset($this->_other_user) && $other_user_id) {
             $other_user = \Users::findFirstById($other_user_id);
-            if ($other_user && $this->params('uid') == $other_user->uid) {
+
+            if ($other_user) {
                 $this->_other_user = $other_user;
             }
         }

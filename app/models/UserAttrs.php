@@ -126,7 +126,7 @@ trait UserAttrs
 
     function getUid()
     {
-        return $this->sid;
+        return $this->id;
     }
 
     function getMaskedMobile()
