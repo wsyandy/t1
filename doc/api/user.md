@@ -19,9 +19,9 @@
 ##### 2.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-		    sms_token 验证token
+    error_code
+    error_reason
+    sms_token 验证token
 }
 ```
 
@@ -40,10 +40,10 @@
 ##### 3.2 回应参数说明
 ```
 {
-			error_code
-			error_reason
-			sid 身份信息 必须先更新本地SID
-			error_url 跳转地址
+    error_code
+    error_reason
+    sid 身份信息 必须先更新本地SID
+    error_url 跳转地址
 }
 
 ```
@@ -64,10 +64,10 @@
 ###### 4.1.2 回应参数说明
 ```
 {
-			error_code
-			error_reason
-			sid 身份信息 必须先更新本地SID
-			error_url 跳转地址
+    error_code
+    error_reason
+    sid 身份信息 必须先更新本地SID
+    error_url 跳转地址
 }
 
 ```
@@ -81,9 +81,9 @@
 ##### 5.2 回应参数说明
 ```
 {
-			error_code  0 成功，非0失败
-			error_reason 失败原因
-			sid : 设备的SID   123d......
+    error_code  0 成功，非0失败
+    error_reason 失败原因
+    sid : 设备的SID   123d......
 }
 ```
 
@@ -99,19 +99,19 @@
 ##### 6.2 回应参数说明
 ```
 {
-			error_code  0 成功，非0失败
-			error_reason 失败原因
-			uid uid
-			sex	性别 0:女 1:男
-			province_id 现居省份
-			province_name 省名
-			city_id 现居城市
-			city_name 城市
-			address 常驻地址
-			avatar_url 用户头像
-			avatar_small_url 用户小头像
-			nickname 昵称
-			mobile 手机号
+    error_code  0 成功，非0失败
+    error_reason 失败原因
+    uid uid
+    sex	性别 0:女 1:男
+    province_id 现居省份
+    province_name 省名
+    city_id 现居城市
+    city_name 城市
+    address 常驻地址
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    mobile 手机号
 }
 ```
 
@@ -131,8 +131,8 @@
 ##### 7.2 回应参数说明
 ```
 {
-			error_code  0 成功，非0失败
-			error_reason 失败原因
+    error_code  0 成功，非0失败
+    error_reason 失败原因
 }
 ```
 
@@ -148,8 +148,8 @@
 ##### 8.2 回应参数说明
 ```
 {
-			error_code  0 成功，非0失败
-			error_reason 失败原因
+    error_code  0 成功，非0失败
+    error_reason 失败原因
 }
 ```
 
@@ -166,8 +166,8 @@
 ##### 9.2 回应参数说明
 ```
 {
-		    error_code: 0成功，非0失败
-		    error_reason: ""
+    error_code: 0成功，非0失败
+    error_reason: ""
 }
 ```
 

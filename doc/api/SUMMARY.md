@@ -6,5 +6,8 @@
 * [协议详情](protocol.md)
 * [设备](device.md)
 * [用户](user.md)
+* [关注](followers.md)
+* [拉黑](blacks.md)
+* [好友](friends.md)
 
 ## Published with GitBook

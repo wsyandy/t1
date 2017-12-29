@@ -51,7 +51,7 @@
 ]) }}
 
 <script type="text/template" id="user_tpl">
-    <tr id="user_${user.id}">
+    <tr id="user_${user.id ">
         <td>${user.id}</td>
         <td><img src="${ user.avatar_small_url }" height="50"/></td>
         <td>

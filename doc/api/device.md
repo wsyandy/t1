@@ -20,8 +20,8 @@
 ##### 1.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-            sid : 设备的SID
+    error_code
+    error_reason
+    sid : 设备的SID    
 }
 ```

@@ -1118,10 +1118,12 @@ class Users extends BaseModel
     //需要更新资料
     function needUpdateInfo()
     {
-        if (!$this->nickname || !$this->sex || !$this->province_id || !$this->city_id) {
-            return true;
+        $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
+        foreach ($update_info as $val) {
+            if (!$this->$val) {
+                return true;
+            }
         }
-
         return false;
     }
 }
