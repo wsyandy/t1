@@ -247,6 +247,10 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
         }
 
+        if ($this->currentUser()->needUpdateInfo()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
+        }
+
         if ($this->currentUser()->isBlocked()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
 

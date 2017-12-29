@@ -966,8 +966,8 @@ class Users extends BaseModel
         $follow_key = 'follow_list_user_id' . $this->id;
         $followed_key = 'followed_list_user_id' . $other_user->id;
         if ($user_db->zscore($follow_key, $other_user->id)) {
-            $user_db->zrem($follow_key,time(), $other_user->id);
-            $user_db->zrem($followed_key,time(), $this->id);
+            $user_db->zrem($follow_key, time(), $other_user->id);
+            $user_db->zrem($followed_key, time(), $this->id);
         }
     }
 
@@ -1113,5 +1113,15 @@ class Users extends BaseModel
         $user_db = Users::getUserDb();
         $key = 'friend_total_list_user_id_' . $this->id;
         $user_db->zclear($key);
+    }
+
+    //需要更新资料
+    function needUpdateInfo()
+    {
+        if (!$this->nickname || !$this->sex || !$this->province_id || !$this->city_id) {
+            return true;
+        }
+
+        return false;
     }
 }
