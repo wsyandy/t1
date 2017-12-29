@@ -38,7 +38,7 @@ class Users extends BaseModel
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
-    //是否已关注
+    //是否已关注 true:已关注,false:未关注
     public $followed;
 
     function beforeCreate()
@@ -936,6 +936,14 @@ class Users extends BaseModel
         $black_key = "black_list_user_id" . $this->id;
         $users = self::findByRelations($black_key, $page, $per_page);
         return $users;
+    }
+
+    //是否已关注
+    function isFollow($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $follow_key = 'follow_list_user_id' . $this->id;
+        return $user_db->zscore($follow_key, $other_user->id);
     }
 
     //关注
