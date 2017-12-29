@@ -117,7 +117,13 @@ class UsersController extends BaseController
 
             $user->updatePushToken($device);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', ['sid' => $user->sid]);
+            $error_url = '';
+
+            if ($this->currentUser()->needUpdateInfo()) {
+                $error_url = 'app://users/update_info';
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', ['sid' => $user->sid, 'error_url' => $error_url]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
         }
