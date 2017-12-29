@@ -36,6 +36,10 @@ class BaseController extends ApplicationController
         'friends' => ['create', 'destroy', 'agree', 'clear'],
     ];
 
+    static $SKIP_USER_INFO_ACTIONS = [
+        'users' => ['update']
+    ];
+
     function isDebug()
     {
         return '1' == $this->params('debug') && isDevelopmentEnv();
@@ -247,7 +251,7 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
         }
 
-        if ($this->currentUser()->needUpdateInfo()) {
+        if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
         }
 
@@ -261,6 +265,22 @@ class BaseController extends ApplicationController
     {
         if (isset(self::$SKIP_ACTIONS[$controller_name])) {
             $values = self::$SKIP_ACTIONS[$controller_name];
+            if ($values == '*') {
+                return true;
+            }
+
+            if (is_array($values) && in_array($action_name, $values)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    function skipCheckUserInfo($controller_name, $action_name)
+    {
+        if (isset(self::$SKIP_USER_INFO_ACTIONS[$controller_name])) {
+            $values = self::$SKIP_USER_INFO_ACTIONS[$controller_name];
             if ($values == '*') {
                 return true;
             }
