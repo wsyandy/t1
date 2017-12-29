@@ -960,25 +960,42 @@ class Users extends BaseModel
     //关注
     function follow($other_user, $opts = [])
     {
+        $user_db = Users::getUserDb();
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $followed_key = 'followed_list_user_id' . $other_user->id;
+        if (!$user_db->zscore($follow_key, $other_user->id)) {
+            $user_db->zadd($follow_key, time(), $other_user->id);
+            $user_db->zadd($followed_key, time(), $this->id);
+        }
 
     }
 
     //取消关注
     function unFollow($other_user, $opts = [])
     {
-
+        $user_db = Users::getUserDb();
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $followed_key = 'followed_list_user_id' . $other_user->id;
+        if ($user_db->zscore($follow_key, $other_user->id)) {
+            $user_db->zrem($follow_key,time(), $other_user->id);
+            $user_db->zrem($followed_key,time(), $this->id);
+        }
     }
 
     //我关注的列表
-    function followList()
+    function followList($page, $per_page)
     {
-
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $follow_list = self::findByRelations($follow_key, $page, $per_page);
+        return $follow_list;
     }
 
     //关注我的列表
-    function followedList()
+    function followedList($page, $per_page)
     {
-
+        $followed_key = 'followed_list_user_id' . $this->id;
+        $followed_list = self::findByRelations($followed_key, $page, $per_page);
+        return $followed_list;
     }
 
 
