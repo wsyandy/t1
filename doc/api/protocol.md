@@ -13,6 +13,7 @@
 2. 个人信息页面(我的)： app://users/profile
 3. 用户注册、登录: app://users/new
 4. 用户退出：app://users/logout
+4. 完善资料：app://users/update_info
 
 ## m协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
