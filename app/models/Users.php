@@ -1122,8 +1122,8 @@ class Users extends BaseModel
     function needUpdateInfo()
     {
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
-        foreach ($update_info as $val) {
-            if (!$this->$val) {
+        foreach ($update_info as $k) {
+            if (!$this->$k && $k != 'sex' || $k == 'sex' && is_null($this->sex)) {
                 return true;
             }
         }
