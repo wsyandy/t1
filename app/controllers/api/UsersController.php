@@ -4,6 +4,7 @@ namespace api;
 
 class UsersController extends BaseController
 {
+
     function registerAction()
     {
         $mobile = $this->params('mobile');
@@ -217,7 +218,7 @@ class UsersController extends BaseController
             $user->updatePushToken($device);
         }
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function clientStatusAction()
@@ -236,18 +237,24 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
-        $this->renderJSON(ERROR_CODE_FAIL, '设备不存在');
+        return $this->renderJSON(ERROR_CODE_FAIL, '设备不存在');
     }
 
     function detailAction()
     {
-        $detail_json = [];
+        $detail_json = $this->currentUser()->toDetailJson();
 
-        if ($this->otherUser()) {
-            $detail_json = $this->otherUser()->toDetailJson();
-        } elseif ($this->currentUser()) {
-            $detail_json = $this->currentUser()->toDetailJson();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
+    }
+
+    function otherDetailAction()
+    {
+
+        if (!$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+        
+        $detail_json = $this->otherUser()->toDetailJson();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }

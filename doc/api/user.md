@@ -92,22 +92,45 @@
 > http-get ``` /api/users/detail```
 
 ##### 6.1 请求参数说明
-|参数|名称|值类型|是否可空|备注
-|---|---|---|---|---|
-|uid|对方用户uid|string|是|查看他人资料传此参数|
 
 ##### 6.2 回应参数说明
 ```
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    uid uid
+    id 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
     city_id 现居城市
     city_name 城市
-    address 常驻地址
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    mobile 手机号
+}
+```
+
+### 6.3 他人用户详细信息
+
+> http-get ``` /api/users/other_detail```
+
+##### 6.3.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|uid|用户id|int|是|查看他人资料传此参数|
+
+##### 6.3.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    id 用户id
+    sex	性别 0:女 1:男
+    province_id 现居省份
+    province_name 省名
+    city_id 现居城市
+    city_name 城市
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
@@ -126,7 +149,6 @@
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
 |city_name|城市名称|string|||
-|avatar_file|头像文件|file||||
 
 ##### 7.2 回应参数说明
 ```
