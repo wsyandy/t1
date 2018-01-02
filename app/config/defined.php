@@ -109,3 +109,7 @@ define('MOBILE_OPERATOR_UNICOM', 2);
 define('MOBILE_OPERATOR_TELECOM', 3);
 
 define('ERROR_CODE_BOX', -1001); //需要弹框
+
+// 房间状态
+define("ROOM_STATUS_OFF", 0);              // 正常房间
+define("ROOM_STATUS_ON", 1);               // 被封房间
