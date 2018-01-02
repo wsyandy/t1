@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2017/12/26
  * Time: 下午3:21
  */
-
 trait UserAttrs
 {
 
@@ -26,7 +26,11 @@ trait UserAttrs
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'friend_num' => $this->friend_num,
-            'room_id' => $this->room_id
+            'room_id' => $this->room_id,
+            'height' => $this->height,
+            'interests' => $this->interests,
+            'albums' => $this->albums,
+            'gifts' => $this->gifts,
         ];
     }
 
@@ -112,4 +116,16 @@ trait UserAttrs
         }
         return '';
     }
+
+    function albums()
+    {
+
+        return [];
+    }
+
+    function gifts()
+    {
+        return [];
+    }
+
 }
