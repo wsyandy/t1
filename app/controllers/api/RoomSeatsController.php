@@ -63,5 +63,5 @@ class RoomSeatsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    
+
 }
