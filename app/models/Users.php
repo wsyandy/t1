@@ -834,11 +834,13 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
-            if (!isPresent($v)) {
+
+
+            if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
             }
 
-            if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
+            if (!isPresent($v) && $k != 'sex') {
                 continue;
             }
 

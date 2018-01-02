@@ -10,8 +10,15 @@ class ShiTask extends \Phalcon\Cli\Task
 {
     function testAction()
     {
-        $count = \Cities::find();
-        debug(count($count));
+        $params = '{"_url":"\/api\/users\/update","an":"1.0","city_name":"河东","code":"yuewan","dno":"74f5cb80c52e9867f3eeb9227a61ce40d5","fr":"market_appstore_01","h":"996bdb6864a2fc5f886c7b187ed9170d","lat":"121.389954","lon":"31.108239","man":"apple","mod":"iPhone 5s","net":"wifi","nickname":"完善资料测试","pf":"ios","pf_ver":"10.0.1","province_name":"天津","sex":"0","sid":"25s1925141cf2c66a847bd5d3b3926b0bc36a","ts":"1514874745","ver":"1.0","verc":"1"}';
+        $params = json_decode($params,true);
+        foreach ($params as $k => $v) {
+
+            if (!isPresent($v)) {
+                debug($k,$v);
+                continue;
+            }
+        }
     }
 
     function test1Action()
