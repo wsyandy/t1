@@ -9,6 +9,7 @@ class DevicesController extends BaseController
         if ($this->request->isPost()) {
 
             $attributes = $this->context();
+            debug('context',$attributes);
 
             if (!checkSum($attributes['device_no']) && !isDevelopmentEnv()) {
                 $this->renderJSON(ERROR_CODE_FAIL);
