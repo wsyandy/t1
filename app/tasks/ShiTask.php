@@ -97,4 +97,10 @@ class ShiTask extends \Phalcon\Cli\Task
         debug($cities);
         debug($provinces);
     }
+
+    function test4Action()
+    {
+        $resp = httpPost('http://www.chance.com/rooms/create',array('name'=>'交友房间'));
+        $response_body = json_decode($resp->body, true);
+    }
 }

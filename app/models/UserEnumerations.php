@@ -17,7 +17,9 @@ trait UserEnumerations
         'city_id' => '城市',
         'province_name' => '省份',
         'city_name' => '城市',
-        'monologue' => '个人签名'
+        'monologue' => '个人签名',
+        'interests' => '兴趣爱好',
+        'height' => '身高'
     ];
 
     // 用户状态

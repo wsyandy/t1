@@ -10,20 +10,6 @@ namespace api;
 
 class RoomsController extends BaseController
 {
-    //黑名单列表
-    function indexAction()
-    {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page', 10);
-
-        $users = $this->currentUser()->blackList($page, $per_page);
-
-        if ($users) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
-        }
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-    }
 
     //创建房间
     function createAction()
@@ -39,6 +25,15 @@ class RoomsController extends BaseController
         } else {
             $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
         }
+    }
+
+    //更新房间信息
+    function updateAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+        $room->updateRoom($this->params());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
 }

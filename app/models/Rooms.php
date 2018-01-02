@@ -13,6 +13,20 @@ class Rooms extends BaseModel
         $room->last_at = time();
         $room->save();
         return $room;
+    }
 
+    function updateRoom($param = [])
+    {
+        $name = fetch($param,'name');
+        $topic = fetch($param,'topic');
+        if(!isBlank($name))
+        {
+            $this->name = $name;
+        }
+        if(!isBlank($topic))
+        {
+            $this->topic = $topic;
+        }
+        $this->update();
     }
 }
