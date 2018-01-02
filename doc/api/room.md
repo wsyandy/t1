@@ -17,6 +17,7 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
+                chat 公屏聊天状态, false/true
             } 
 }
 ```
