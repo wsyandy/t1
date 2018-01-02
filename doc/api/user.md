@@ -114,8 +114,29 @@
     friend_num 好友人数
     interests 兴趣爱好
     height 身高
-    albums:[],
-    gifts:[]
+    albums:[
+        {
+            id,
+            image_url 原图
+            image_small_url 小图
+            image_big_url 小图
+        }
+        ...
+    ],
+    gifts:[
+        {
+        id,
+        name,
+        gold 金币, 大于0使用金币购买
+        diamond 钻石, 大于0使用钻石购买
+        image_url 原图
+        image_small_url 小图
+        image_big_url 小图
+        num 礼物个数
+        }
+        ...
+    ]
+   
 }
 ```
 
@@ -151,8 +172,28 @@
     is_friend true/false,好友
     interests 兴趣爱好
     height 身高
-    albums:[],
-    gifts:[]
+    albums:[
+        {
+            id,
+            image_url 原图
+            image_small_url 小图
+            image_big_url 小图
+        }
+        ...
+    ],
+    gifts:[
+        {
+        id,
+        name,
+        gold 金币
+        diamond 钻石
+        image_url 原图
+        image_small_url 小图
+        image_big_url 小图
+        num 礼物个数
+        }
+        ...
+    ]
    
 }
 ```
