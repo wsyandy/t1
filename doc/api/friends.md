@@ -15,6 +15,9 @@
 ```
 {
     error_code  0 成功，非0失败
+    current_page  当前页数
+    total_page   总页数
+    total_entries   总记录数
     users  用户信息数组
 }
 ```

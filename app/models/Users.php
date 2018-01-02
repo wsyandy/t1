@@ -834,11 +834,13 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
-            if (!isPresent($v)) {
+
+
+            if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
             }
 
-            if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
+            if (!isPresent($v) && $k != 'sex') {
                 continue;
             }
 
@@ -869,6 +871,7 @@ class Users extends BaseModel
             }
 
             $this->$k = $v;
+            debug($this->$k,$v);
         }
 
         $this->save();
@@ -1119,8 +1122,8 @@ class Users extends BaseModel
     function needUpdateInfo()
     {
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
-        foreach ($update_info as $val) {
-            if (!$this->$val) {
+        foreach ($update_info as $k) {
+            if (!$this->$k && $k != 'sex' || $k == 'sex' && is_null($this->sex)) {
                 return true;
             }
         }
