@@ -14,6 +14,7 @@
 ```
 {
     error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
     current_page  当前页数
     total_page   总页数
     total_entries   总记录数
@@ -35,6 +36,7 @@
 ```
 {
     error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
     current_page  当前页数
     total_page   总页数
     total_entries   总记录数
@@ -55,6 +57,7 @@
 ```
 {
 	error_code  0 成功，非0失败
+	error_reason  失败原因，默认为空
 }
 ```
 
@@ -71,5 +74,6 @@
 ```
 {
 	error_code  0 成功，非0失败
+	error_reason  失败原因，默认为空
 }
 ```

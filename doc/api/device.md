@@ -20,7 +20,7 @@
 ```
 {
     error_code
-    error_reason
+    error_reason  失败原因，默认为空
     sid : 设备的SID    
 }
 ```
