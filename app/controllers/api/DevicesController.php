@@ -9,7 +9,7 @@ class DevicesController extends BaseController
         if ($this->request->isPost()) {
 
             $attributes = $this->context();
-            debug('context',$attributes);
+            debug($this->params(), $this->headers(), 'context',$attributes);
 
             if (!checkSum($attributes['device_no']) && !isDevelopmentEnv()) {
                 $this->renderJSON(ERROR_CODE_FAIL);
@@ -27,9 +27,7 @@ class DevicesController extends BaseController
                 info('imei_convert', $attributes['imei'], $this->params());
             }
 
-            info($this->params(), $this->headers(), $attributes);
             $device = \Devices::active($this->currentProductChannel(), $attributes);
-
             if ($device) {
                 $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', array('sid' => $device->sid));
             } else {
