@@ -1076,16 +1076,15 @@ class Users extends BaseModel
     }
 
     //好友列表
-    function friendList($page, $per_page, $type = null)
+    function friendList($page, $per_page, $new)
     {
-        if (1 == $type) {
-            $key = 'friend_list_user_id_' . $this->id;
-        } else {
+        if (1 == $new) {
             $key = 'friend_total_list_user_id_' . $this->id;
+        } else {
+            $key = 'friend_list_user_id_' . $this->id;
         }
 
         $users = self::findByRelations($key, $page, $per_page);
-
         foreach ($users as $user) {
 
             //3接受状态 2等待状态 1已添加
