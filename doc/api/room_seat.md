@@ -71,33 +71,16 @@
 }
 ```
 
-### 5 禁麦
+### 5 禁麦或解除禁麦
 
-> http-post ```/api/room_seats/close_microphone```
+> http-post ```/api/room_seats/set_microphone```
 
 ##### 5.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|麦位id|int|否|
+|microphone|麦克风|boole|否|true是打开
 
 ##### 5.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-### 6 解除禁麦
-
-> http-post ```/api/room_seats/open_microphone```
-
-##### 6.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|id|麦位id|int|否|
-
-##### 6.2 回应参数说明
 ```
 {
 		    error_code
