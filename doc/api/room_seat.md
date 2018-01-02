@@ -37,7 +37,6 @@
 }
 ```
 
-
 ### 3 封麦
 
 > http-post ```/api/room_seats/close```
@@ -54,7 +53,6 @@
 		    error_reason
 }
 ```
-
 
 ### 4 解封麦位
 
@@ -89,7 +87,6 @@
 		    error_reason
 }
 ```
-
 
 ### 6 解除禁麦
 
