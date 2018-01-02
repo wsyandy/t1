@@ -141,3 +141,28 @@
 		    error_reason
 }
 ```
+
+### 9 在线用户列表
+
+> http-post ```/api/rooms/online_users```
+
+##### 8.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|
+|page|页码|int|否|
+|per_page|每页个数|int|否|默认8个
+
+##### 8.2 回应参数说明
+```
+{
+		    error_code,
+		    error_reason,
+		    users:[
+		        {
+		           
+		        },
+		        ...
+		    ]
+}
+```
