@@ -869,6 +869,7 @@ class Users extends BaseModel
             }
 
             $this->$k = $v;
+            debug($this->$k,$v);
         }
 
         $this->save();
