@@ -57,8 +57,8 @@
 		    name 房间名称，
 		    topic 话题
 		    user_num 在线人数
-		    close_speaker 关闭扬声器 false/true
-		    close_microphone 关闭麦克风 false/true
+		    speaker 扬声器 false/true
+		    microphone 麦克风 false/true
 }
 ```
 
@@ -180,7 +180,7 @@
 ##### 10.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|close_speaker|关闭扬声器|boole|否|
+|speaker|扬声器|boole|否|
 
 ##### 10.2 回应参数说明
 ```
@@ -198,7 +198,7 @@
 ##### 11.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|close_microphone|关闭麦克风|boole|否|
+|microphone|麦克风|boole|否|
 
 ##### 11.2 回应参数说明
 ```
