@@ -17,5 +17,6 @@ trait UserEnumerations
         'city_id' => '城市',
         'province_name' => '省份',
         'city_name' => '城市',
+        'monologue' => '个人签名'
     ];
 }

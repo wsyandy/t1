@@ -98,7 +98,6 @@ class BaseController extends ApplicationController
 
         if (!isset($this->_other_user) && $other_user_id) {
             $other_user = \Users::findFirstById($other_user_id);
-
             if ($other_user) {
                 $this->_other_user = $other_user;
             }
