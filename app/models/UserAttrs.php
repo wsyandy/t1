@@ -119,8 +119,13 @@ trait UserAttrs
 
     function albums()
     {
+        $albums = Albums::findByUserId($this->id);
+        $data = [];
+        foreach ($albums as $album) {
+            $data[] = $album->toSimpleJson();
+        }
 
-        return [];
+        return $data;
     }
 
     function gifts()

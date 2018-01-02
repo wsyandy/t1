@@ -75,7 +75,7 @@ define('PARTNER_STATUS_BLOCK', 2);
 
 // 审核
 define('VERIFY_WAIT', 0); // 等待校验
-//define('VERIFY_SUCCESS', 1); // 校验成功
+define('VERIFY_SUCCESS', 1); // 校验成功
 define('VERIFY_FAIL', -1); // 校验失败
 
 // 短信状态
