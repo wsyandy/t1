@@ -98,7 +98,6 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    id 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
@@ -131,7 +130,7 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    id 用户id
+    uid 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
