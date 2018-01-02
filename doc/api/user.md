@@ -20,7 +20,7 @@
 ```
 {
     error_code
-    error_reason
+    error_reason  失败原因，默认为空
     sms_token 验证token
 }
 ```
@@ -41,7 +41,7 @@
 ```
 {
     error_code
-    error_reason
+    error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
     error_url 跳转地址
 }
@@ -65,7 +65,7 @@
 ```
 {
     error_code
-    error_reason
+    error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
     error_url 跳转地址
 }
@@ -82,7 +82,7 @@
 ```
 {
     error_code  0 成功，非0失败
-    error_reason 失败原因
+    error_reason  失败原因，默认为空
     sid : 设备的SID   123d......
 }
 ```
@@ -100,7 +100,7 @@
 ```
 {
     error_code  0 成功，非0失败
-    error_reason 失败原因
+    error_reason  失败原因，默认为空
     uid uid
     sex	性别 0:女 1:男
     province_id 现居省份
@@ -132,7 +132,7 @@
 ```
 {
     error_code  0 成功，非0失败
-    error_reason 失败原因
+    error_reason  失败原因，默认为空
 }
 ```
 
@@ -149,7 +149,7 @@
 ```
 {
     error_code  0 成功，非0失败
-    error_reason 失败原因
+    error_reason  失败原因，默认为空
 }
 ```
 
@@ -167,7 +167,7 @@
 ```
 {
     error_code: 0成功，非0失败
-    error_reason: ""
+    error_reason  失败原因，默认为空
 }
 ```
 
