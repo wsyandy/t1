@@ -52,8 +52,13 @@
 ##### 3.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+		    error_code,
+		    error_reason,
+		    name 房间名称，
+		    topic 话题
+		    user_num 在线人数
+		    close_speaker 关闭扬声器 false/true
+		    close_microphone 关闭麦克风 false/true
 }
 ```
 
@@ -142,18 +147,18 @@
 }
 ```
 
-### 9 在线用户列表
+### 9 房间用户列表
 
-> http-post ```/api/rooms/online_users```
+> http-get ```/api/rooms/users```
 
-##### 8.1 请求参数说明
+##### 9.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否|
 |page|页码|int|否|
 |per_page|每页个数|int|否|默认8个
 
-##### 8.2 回应参数说明
+##### 9.2 回应参数说明
 ```
 {
 		    error_code,
@@ -164,5 +169,41 @@
 		        },
 		        ...
 		    ]
+}
+```
+
+
+### 10 设置扬声器
+
+> http-post ```/api/users/set_speaker```
+
+##### 10.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|close_speaker|关闭扬声器|boole|否|
+
+##### 10.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+}
+```
+
+
+### 11 设置麦克风
+
+> http-post ```/api/users/set_microphone```
+
+##### 11.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|close_microphone|关闭麦克风|boole|否|
+
+##### 11.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
 }
 ```
