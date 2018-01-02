@@ -25,10 +25,8 @@
            'avatar_small_url' string 小尺寸图像
            'login_name' string 用户名
            'nickname' string 昵称
-           'created_at_text' int 创建时间
+           'created_at_text' int 拉黑时间
            'room_id'  int 用户所在房间的ID
-           'friend_status' int 好友状态 1已添加,2等待验证，3等待接受
-           'friend_status_text' string 好友状态名称
           } 
 }
 ```

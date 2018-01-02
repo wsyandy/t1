@@ -1090,7 +1090,6 @@ class Users extends BaseModel
 
             //3接受状态 2等待状态 1已添加
             $friend_status = 3;
-
             if ($this->isFriend($user)) {
                 $friend_status = 1;
             } elseif ($this->isAddFriend($user)) {
