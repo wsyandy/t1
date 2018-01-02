@@ -18,7 +18,18 @@
     current_page  当前页数
     total_page   总页数
     total_entries   总记录数
-    users  用户信息数组
+    users:{
+           'uid' int 对方用户的ID
+           'sex' int 性别  0:女 1:男
+           'avatar_url' string 正常图像
+           'avatar_small_url' string 小尺寸图像
+           'login_name' string 用户名
+           'nickname' string 昵称
+           'created_at_text' int 创建时间
+           'room_id'  int 用户所在房间的ID
+           'friend_status' int 好友状态 1已添加,2等待验证，3等待接受
+           'friend_status_text' string 好友状态名称
+          } 
 }
 ```
 
