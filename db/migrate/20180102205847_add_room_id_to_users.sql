@@ -1,0 +1,1 @@
+alter table users add column room_id INTEGER ;
