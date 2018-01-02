@@ -108,6 +108,12 @@
     avatar_small_url 用户小头像
     nickname 昵称
     mobile 手机号
+    room_id 房间id
+    monologue 个人签名
+    followed_num 粉丝人数
+    follow_num 关注人数,
+    friend_num 好友人数
+    
 }
 ```
 
@@ -135,6 +141,13 @@
     avatar_small_url 用户小头像
     nickname 昵称
     mobile 手机号
+    room_id 房间id
+    monologue 个人签名
+    followed_num 粉丝人数
+    follow_num 关注人数,
+    friend_num 好友人数
+    is_friend true/false
+   
 }
 ```
 

@@ -22,7 +22,11 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
-            'monologue' => $this->monologue
+            'monologue' => $this->monologue,
+            'followed_num' => $this->followed_num,
+            'follow_num' => $this->follow_num,
+            'friend_num' => $this->friend_num,
+            'room_id' => $this->room_id
         ];
     }
 
@@ -35,7 +39,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
-            'room_id' => 0,
+            'room_id' => $this->room_id,
             'friend_status' => $this->friend_status,
             'friend_status_text' => $this->friend_status_text
         ];
