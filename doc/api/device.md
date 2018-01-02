@@ -14,7 +14,6 @@
 |if|string|否|苹果idfa，base64加密，若使用idfa，可为空
 |idfa|string|否|苹果idfa明文，若使用if，可为空
 |imsi|string|是|手机imsi
-|lc|string|是|手机本机mac, local_mac
 |gc|string|是|手机网关mac, gateway_mac
 
 ##### 1.2 回应参数说明
