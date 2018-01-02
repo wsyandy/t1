@@ -83,6 +83,11 @@ class Devices extends BaseModel
 
         debug($product_channel->id, $attributes);
 
+        foreach ($attributes as $k => $v){
+            debug($k, $v);
+        }
+
+        
         if ($device) {
             info('false repeat_device', $device->id, $product_channel->code, 'imei', $device->imei, 'idfa', $device->idfa, $attributes);
             return $device;
