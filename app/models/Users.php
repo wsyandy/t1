@@ -835,7 +835,6 @@ class Users extends BaseModel
         foreach ($params as $k => $v) {
 
 
-
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
             }
@@ -871,7 +870,7 @@ class Users extends BaseModel
             }
 
             $this->$k = $v;
-            debug($this->$k,$v);
+            debug($this->$k, $v);
         }
 
         $this->save();
@@ -946,7 +945,7 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $follow_key = 'follow_list_user_id' . $this->id;
-        return $user_db->zscore($follow_key, $other_user->id);
+        return $user_db->zscore($follow_key, $other_user->id) > 0;
     }
 
     //关注
@@ -960,6 +959,14 @@ class Users extends BaseModel
             $user_db->zadd($followed_key, time(), $this->id);
         }
 
+    }
+
+    //我关注的人数
+    function followNum()
+    {
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zcard($follow_key);
     }
 
     //取消关注
@@ -990,6 +997,13 @@ class Users extends BaseModel
         return $followed_list;
     }
 
+    //关注我的人数
+    function followedNum()
+    {
+        $followed_key = 'followed_list_user_id' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zcard($followed_key);
+    }
 
     //添加好友
     function addFriend($other_user, $opts = [])
@@ -1038,27 +1052,27 @@ class Users extends BaseModel
     }
 
     //是否为好友
-    function isFriend($other_user, $opts = [])
+    function isFriend($other_user)
     {
         $user_db = Users::getUserDb();
         $friend_list_key = 'friend_list_user_id_' . $this->id;
-        return $user_db->zscore($friend_list_key, $other_user->id);
+        return $user_db->zscore($friend_list_key, $other_user->id) > 0;
     }
 
     //是否为我添加的好友
-    function isAddFriend($other_user, $opts = [])
+    function isAddFriend($other_user)
     {
         $user_db = Users::getUserDb();
         $key = 'add_friend_list_user_id_' . $this->id;
-        return $user_db->zscore($key, $other_user->id);
+        return $user_db->zscore($key, $other_user->id) > 0;
     }
 
     //是否为添加我的好友
-    function isAddedFriend($other_user, $opts = [])
+    function isAddedFriend($other_user)
     {
         $user_db = Users::getUserDb();
         $key = 'added_friend_list_user_id_' . $this->id;
-        return $user_db->zscore($key, $other_user->id);
+        return $user_db->zscore($key, $other_user->id) > 0;
     }
 
     //好友列表
@@ -1090,7 +1104,7 @@ class Users extends BaseModel
     }
 
     //同意添加好友
-    function agreeAddFriend($other_user, $opts = [])
+    function agreeAddFriend($other_user)
     {
         $friend_list_key = 'friend_list_user_id_' . $this->id;
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
@@ -1117,6 +1131,14 @@ class Users extends BaseModel
         $key = 'friend_total_list_user_id_' . $this->id;
         $user_db->zclear($key);
     }
+
+    function friendNum()
+    {
+        $key = 'friend_list_user_id_' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zcard($key);
+    }
+
 
     //需要更新资料
     function needUpdateInfo()

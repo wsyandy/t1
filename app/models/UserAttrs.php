@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2017/12/26
  * Time: 下午3:21
  */
-
 trait UserAttrs
 {
 
@@ -22,7 +22,15 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
-            'monologue' => $this->monologue
+            'monologue' => $this->monologue,
+            'followed_num' => $this->followed_num,
+            'follow_num' => $this->follow_num,
+            'friend_num' => $this->friend_num,
+            'room_id' => $this->room_id,
+            'height' => $this->height,
+            'interests' => $this->interests,
+            'albums' => $this->albums,
+            'gifts' => $this->gifts,
         ];
     }
 
@@ -35,7 +43,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
-            'room_id' => 0,
+            'room_id' => $this->room_id,
             'friend_status' => $this->friend_status,
             'friend_status_text' => $this->friend_status_text
         ];
@@ -108,4 +116,16 @@ trait UserAttrs
         }
         return '';
     }
+
+    function albums()
+    {
+
+        return [];
+    }
+
+    function gifts()
+    {
+        return [];
+    }
+
 }

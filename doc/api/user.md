@@ -98,7 +98,6 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    id 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
@@ -107,7 +106,16 @@
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
-    mobile 手机号
+    mobile  string 手机号
+    room_id 房间id
+    monologue 个人签名
+    followed_num 粉丝人数
+    follow_num 关注人数,
+    friend_num 好友人数
+    interests 兴趣爱好
+    height 身高
+    albums:[],
+    gifts:[]
 }
 ```
 
@@ -125,7 +133,7 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    id 用户id
+    uid 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
@@ -134,7 +142,18 @@
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
-    mobile 手机号
+    mobile  string 手机号
+    room_id 房间id
+    monologue 个人签名
+    followed_num 粉丝人数
+    follow_num 关注人数,
+    friend_num 好友人数
+    is_friend true/false,好友
+    interests 兴趣爱好
+    height 身高
+    albums:[],
+    gifts:[]
+   
 }
 ```
 
