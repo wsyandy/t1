@@ -10,7 +10,7 @@
 * [关注](followers.md)
 * [拉黑](blacks.md)
 * [好友](friends.md)
-* [房间](rooms.md)
-* [麦位](room_seats.md)
+* [房间](room.md)
+* [麦位](room_seat.md)
 
 ## Published with GitBook
