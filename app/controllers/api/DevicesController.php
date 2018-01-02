@@ -26,6 +26,7 @@ class DevicesController extends BaseController
                 info('imei_convert', $attributes['imei'], $this->params());
             }
 
+            info($this->params(), $this->headers(), $attributes);
             $device = \Devices::active($this->currentProductChannel(), $attributes);
 
             if ($device) {
