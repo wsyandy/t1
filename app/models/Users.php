@@ -1088,13 +1088,17 @@ class Users extends BaseModel
         foreach ($users as $user) {
 
             //3接受状态 2等待状态 1已添加
-            $friend_status = 3;
-            if ($this->isFriend($user)) {
+            if ($new == 1) {
+                $friend_status = 3;
+                if ($this->isFriend($user)) {
+                    $friend_status = 1;
+                } elseif ($this->isAddFriend($user)) {
+                    $friend_status = 2;
+                }
+            } else {
                 $friend_status = 1;
-            } elseif ($this->isAddFriend($user)) {
-                $friend_status = 2;
             }
-
+            
             $user->friend_status = $friend_status;
         }
 
