@@ -49,12 +49,13 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否|
+|password|房间密码|string|是|房间密码
 
 ##### 3.2 回应参数说明
 ```
 {
 		    error_code,
-		    error_reason,
+		    error_reason：,
 		    name 房间名称，
 		    topic 话题
 		    chat 公屏聊天状态, false/true
@@ -67,6 +68,7 @@
 ### 4 退出房间
 
 > http-post ```/api/rooms/exit```
+如果是主播需要处理下麦
 
 ##### 4.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
