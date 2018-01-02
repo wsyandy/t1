@@ -17,6 +17,7 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
+                chat 公屏聊天状态, false/true
             } 
 }
 ```
@@ -52,8 +53,14 @@
 ##### 3.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+		    error_code,
+		    error_reason,
+		    name 房间名称，
+		    topic 话题
+		    chat 公屏聊天状态, false/true
+		    user_num 在线人数
+		    speaker 扬声器 false/true
+		    microphone 麦克风 false/true
 }
 ```
 
@@ -108,14 +115,15 @@
 }
 ```
 
-### 7 打开公屏
+### 7 设置公屏聊天
 
-> http-post ```/api/rooms/open_chat```
+> http-post ```/api/rooms/set_chat```
 
 ##### 7.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否|
+|chat|公屏聊天状态|boole|否|false、true
 
 ##### 7.2 回应参数说明
 ```
@@ -125,26 +133,9 @@
 }
 ```
 
-### 8 关闭公屏
+### 8 房间用户列表
 
-> http-post ```/api/rooms/close_chat```
-
-##### 8.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|id|房间id|int|否|
-
-##### 8.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-### 9 在线用户列表
-
-> http-post ```/api/rooms/online_users```
+> http-get ```/api/rooms/users```
 
 ##### 8.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
@@ -164,5 +155,41 @@
 		        },
 		        ...
 		    ]
+}
+```
+
+
+### 9 设置扬声器
+
+> http-post ```/api/users/set_speaker```
+
+##### 9.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|speaker|扬声器|boole|否|
+
+##### 9.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+}
+```
+
+
+### 10 设置麦克风
+
+> http-post ```/api/users/set_microphone```
+
+##### 10.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|microphone|麦克风|boole|否|
+
+##### 10.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
 }
 ```
