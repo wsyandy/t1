@@ -27,6 +27,7 @@ class Rooms extends BaseModel
         {
             $this->topic = $topic;
         }
+        $this->last_at = time();
         $this->update();
     }
 }

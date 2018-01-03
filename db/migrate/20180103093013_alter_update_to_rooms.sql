@@ -1,0 +1,1 @@
+alter table rooms rename update_at to updated_at;

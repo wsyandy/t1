@@ -17,7 +17,7 @@ class RoomsController extends BaseController
         $name = $this->params('name');
         if(isBlank($name))
         {
-            $this->renderJSON(ERROR_CODE_FAIL, '名称错误');
+            $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
         $room = \Rooms::createRoom($this->currentUser(), $name);
         if ($room) {
@@ -30,8 +30,11 @@ class RoomsController extends BaseController
     //更新房间信息
     function updateAction()
     {
-        $room_id = $this->params('id');
+        $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
         $room->updateRoom($this->params());
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }

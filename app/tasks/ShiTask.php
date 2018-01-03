@@ -100,7 +100,13 @@ class ShiTask extends \Phalcon\Cli\Task
 
     function test4Action()
     {
-        $resp = httpPost('http://www.chance.com/rooms/create',array('name'=>'交友房间'));
-        $response_body = json_decode($resp->body, true);
+        $update = ['id'=>1,'name'=>'是多','topic'=>'说法撒旦的法师vfsd'];
+        $room_id = $update['id'];
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            debug('参数非法');
+        }
+        $room->updateRoom($update);
+        debug('更新成功');
     }
 }
