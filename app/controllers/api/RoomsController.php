@@ -42,9 +42,13 @@ class RoomsController extends BaseController
         if (isBlank($name)) {
             $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+
         $room = \Rooms::createRoom($this->currentUser(), $name);
         if ($room) {
-            $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', array('id' => $room->id, 'name' => $room->name, 'chat' => $room->chat));
+            $room->channel_name = $room->generateChannelName();
+            $room->save();
+
+            $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toJson()]);
         } else {
             $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
         }
@@ -58,21 +62,82 @@ class RoomsController extends BaseController
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+
         $room->updateRoom($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', ['room' => $room->toJson()]);
     }
 
-//    //进入房间
-//    function enterAction()
-//    {
-//        $room_id = $this->params('id', 0);
-//        $password = $this->params('password', null);
-//        $room = \Rooms::findFirstById($room_id);
-//        if (!$room) {
-//            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-//        }
-//        $room->updateRoom($this->params());
-//        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
-//    }
+    //进入房间
+    function enterAction()
+    {
+        $room_id = $this->params('id', 0);
+        $password = $this->params('password', '');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if ($room->lock && $room->password != $password) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
+        }
+
+        $room->last_at = time();
+        $room->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toJson()]);
+    }
+
+    function exitAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function lockAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->status = STATUS_OFF;
+        $room->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function unlockAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->status = STATUS_ON;
+        $room->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function setChatAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->chat = $this->params('chat', true);
+        $room->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
 
 }

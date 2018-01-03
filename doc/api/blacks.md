@@ -23,7 +23,6 @@
            'sex' int 性别  0:女 1:男
            'avatar_url' string 正常图像
            'avatar_small_url' string 小尺寸图像
-           'login_name' string 用户名
            'nickname' string 昵称
            'created_at_text' int 拉黑时间
            'room_id'  int 用户所在房间的ID
