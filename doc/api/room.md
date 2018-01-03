@@ -64,17 +64,55 @@
 }
 ```
 
-### 3 进入房间
+
+### 3 Signaling Key用于登录(信令系统)
+
+> http-get ```/api/rooms/signaling_key```
+
+##### 3.1 请求参数说明
+无
+
+##### 3.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    app_id string 应用id
+		    signaling_key string token
+}
+```
+
+
+### 4 Channel Key 用于加入频道(直播系统)
+
+> http-get ```/api/rooms/channel_key```
+
+##### 4.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 4.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    app_id string 应用id
+            channel_key string token
+}
+```
+
+### 5 进入房间
 
 > http-post ```/api/rooms/enter```
 
-##### 3.1 请求参数说明
+##### 5.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
 |password|房间密码|string|是|房间密码
 
-##### 3.2 回应参数说明
+##### 5.2 回应参数说明
 ```
 {
 		    error_code,
@@ -97,45 +135,10 @@
 }
 ```
 
-### 4 退出房间
+### 6 退出房间
 
 > http-post ```/api/rooms/exit```
 如果是主播需要处理下麦
-
-##### 4.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|id|房间id|int|否|||
-
-##### 4.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-### 5 房间加锁
-
-> http-post ```/api/rooms/lock```
-
-##### 5.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|id|房间id|int|否|||
-|password|密码|string|否|||
-
-##### 5.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-### 6 房间解锁
-
-> http-post ```/api/rooms/unlock```
 
 ##### 6.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
@@ -150,14 +153,15 @@
 }
 ```
 
-### 7 打开公屏聊天
+### 7 房间加锁
 
-> http-post ```/api/rooms/open_chat```
+> http-post ```/api/rooms/lock```
 
 ##### 7.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否||
+|id|房间id|int|否|||
+|password|密码|string|否|||
 
 ##### 7.2 回应参数说明
 ```
@@ -167,16 +171,50 @@
 }
 ```
 
-### 7.3 关闭公屏聊天
+### 8 房间解锁
 
-> http-post ```/api/rooms/close_chat```
+> http-post ```/api/rooms/unlock```
 
-##### 7.3.1 请求参数说明
+##### 8.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 8.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+}
+```
+
+### 9 打开公屏聊天
+
+> http-post ```/api/rooms/open_chat```
+
+##### 9.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
 
-##### 7.3.2 回应参数说明
+##### 9.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+}
+```
+
+### 10 关闭公屏聊天
+
+> http-post ```/api/rooms/close_chat```
+
+##### 10.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+
+##### 10.2 回应参数说明
 ```
 {
 		    error_code
@@ -185,18 +223,18 @@
 ```
 
 
-### 8 房间用户列表
+### 11 房间用户列表
 
 > http-get ```/api/rooms/users```
 
-##### 8.1 请求参数说明
+##### 11.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
 |page|页码|int|否||
 |per_page|每页个数|int|否|默认8个
 
-##### 8.2 回应参数说明
+##### 11.2 回应参数说明
 ```
 {
 		    error_code,
@@ -211,76 +249,38 @@
 ```
 
 
-### 9 设置扬声器
+### 12 设置扬声器
 
 > http-post ```/api/users/set_speaker```
-
-##### 9.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|speaker|扬声器|boole|否|||
-
-##### 9.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-
-### 10 设置麦克风
-
-> http-post ```/api/users/set_microphone```
-
-##### 10.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|microphone|麦克风|boole|否|||
-
-##### 10.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-}
-```
-
-
-### 11 Signaling Key用于登录(信令系统)
-
-> http-get ```/api/rooms/signaling_key```
-
-##### 11.1 请求参数说明
-无
-
-##### 11.2 回应参数说明
-```
-{
-		    error_code
-		    error_reason
-		    app_id string 应用id
-		    signaling_key string token
-}
-```
-
-
-### 12 Channel Key 用于加入频道(直播系统)
-
-> http-get ```/api/rooms/channel_key```
 
 ##### 12.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否|||
+|speaker|扬声器|boole|否|||
 
 ##### 12.2 回应参数说明
 ```
 {
 		    error_code
 		    error_reason
-		    app_id string 应用id
-            channel_key string token
+}
+```
+
+
+### 13 设置麦克风
+
+> http-post ```/api/users/set_microphone```
+
+##### 13.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|microphone|麦克风|boole|否|||
+
+##### 13.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
 }
 ```
 
