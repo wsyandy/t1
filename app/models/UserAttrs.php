@@ -34,6 +34,20 @@ trait UserAttrs
         ];
     }
 
+    function toBasicJson()
+    {
+        return [
+            'uid' => $this->uid,
+            'sex' => $this->sex,
+            'mobile' => $this->mobile,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+        ];
+    }
+
     function toRelationJson()
     {
         $data = [

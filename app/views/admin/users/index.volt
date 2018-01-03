@@ -21,7 +21,8 @@
     姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
     手机号码:{{ user.mobile }}<br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
-    IP定位: {{ user.province_name }}, {{ user.city_name }}
+    IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
+    自述城市信息: {{ user.province_name }}, {{ user.city_name }}
 {% endmacro %}
 
 {% macro user_status_info(user) %}
@@ -67,7 +68,8 @@
             身份证号:${ user.id_no }<br/>
             手机号码:${ user.mobile }<br/>
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
-            IP定位: ${ user.province_name }, ${ user.city_name }
+            IP定位: ${ user.ip_province_name }, ${ user.ip_city_name }<br/>
+            自述城市信息: ${ user.province_name }, ${ user.city_name }
         </td>
         <td>
             ${ user.user_type_text } | ${ user.user_status_text }<br>

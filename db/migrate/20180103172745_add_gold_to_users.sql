@@ -1,0 +1,2 @@
+ALTER TABLE users add COLUMN gold INTEGER ;
+ALTER TABLE users add COLUMN diamond INTEGER ;

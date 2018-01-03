@@ -12,6 +12,9 @@ class Gifts extends BaseModel
     //礼物支付类型
     static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
 
+    //礼物类型 暂定
+    static $TYPE = [1 => '普通礼物', 2 => '幸运礼物', 3 => '座驾'];
+
     function toSimpleJson()
     {
         return [

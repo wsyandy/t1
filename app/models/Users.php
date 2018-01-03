@@ -34,6 +34,16 @@ class Users extends BaseModel
      * @type Cities
      */
     private $_geo_city;
+    /**
+     * @type Provinces
+     */
+    private $_ip_province;
+    /**
+     * @type Cities
+     */
+    private $_ip_city;
+
+
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -212,7 +222,16 @@ class Users extends BaseModel
                 $user->sex = $sex;
             }
 
-            $user->city_id = fetch($params, 'city_id');
+            $province_name = fetch($params, 'province_name');
+            $city_name = fetch($params, 'city_name');
+            $province = Provinces::findFirstByName($province_name);
+            $city = Cities::findFirstByName($city_name);
+
+            if ($province && $city) {
+                $user->province_id = $province->id;
+                $user->city_id = $city->id;
+            }
+
             $user->platform = fetch($context, 'platform');
             $user->ip = fetch($context, 'ip');
 
@@ -784,11 +803,19 @@ class Users extends BaseModel
         if ($user && $user->ip) {
             $province = \Provinces::findByIp($user->ip);
             if ($province) {
-                $user->province_id = $province->id;
+
+                if (!$user->province_id) {
+                    $user->province_id = $province->id;
+                }
+
                 $user->ip_province_id = $province->id;
                 $city = \Cities::findByIp($user->ip);
                 if ($city) {
-                    $user->city_id = $city->id;
+
+                    if (!$user->city_id) {
+                        $user->city_id = $city->id;
+                    }
+
                     $user->ip_city_id = $city->id;
                 }
 
@@ -834,6 +861,7 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
+            debug($this->$k, $k, $v);
 
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
@@ -844,8 +872,7 @@ class Users extends BaseModel
             }
 
             if ($k == 'province_name') {
-                $province = Provinces::findFirstByName($k);
-
+                $province = Provinces::findFirstByName($v);
                 if ($province) {
                     $this->province_id = $province->id;
                 }
@@ -854,11 +881,10 @@ class Users extends BaseModel
             }
 
             if ($k == 'city_name') {
-                $city = Cities::findFirstByName($k);
-
+                $city = Cities::findFirstByName($v);
                 if ($city) {
                     $this->province_id = $city->province_id;
-                    $this->city_id = $city->city_id;
+                    $this->city_id = $city->id;
                 }
 
                 continue;
@@ -870,7 +896,6 @@ class Users extends BaseModel
             }
 
             $this->$k = $v;
-            debug($this->$k, $v);
         }
 
         $this->save();
@@ -1098,7 +1123,7 @@ class Users extends BaseModel
             } else {
                 $friend_status = 1;
             }
-            
+
             $user->friend_status = $friend_status;
         }
 
