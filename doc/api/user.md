@@ -123,9 +123,9 @@
         }
         ...
     ],
-    gifts:[
+    user_gifts:[
         {
-        id,
+        gift_id,
         name,
         gold int 金币, 大于0使用金币购买
         diamond int 钻石, 大于0使用钻石购买
@@ -181,9 +181,9 @@
         }
         ...
     ],
-    gifts:[
+    user_gifts:[
         {
-        id,
+        gift_id,
         name,
         gold int 金币
         diamond int 钻石

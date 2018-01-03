@@ -30,7 +30,7 @@ trait UserAttrs
             'height' => $this->height,
             'interests' => $this->interests,
             'albums' => $this->albums,
-            'gifts' => $this->gifts,
+            'user_gifts' => $this->user_gifts,
         ];
     }
 
@@ -133,7 +133,7 @@ trait UserAttrs
         return $data;
     }
 
-    function gifts()
+    function userGifts()
     {
         return [];
     }
