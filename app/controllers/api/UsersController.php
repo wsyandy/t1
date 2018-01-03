@@ -255,4 +255,20 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
+    function setSpeakerAction()
+    {
+        $this->currentUser()->speaker = $this->params('speaker', true);
+        $this->currentUser()->update();
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function setMicrophoneAction()
+    {
+        $this->currentUser()->microphone = $this->params('microphone', true);
+        $this->currentUser()->update();
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
 }
