@@ -57,7 +57,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test2Action()
     {
-        $province = Provinces::findFirstByName('浙江');
+        $k = '浙江';
+        $province = Provinces::findFirstByName($k);
         echoLine($province);
         $user = Users::findFirstById(46);
         $user->updateProfile(['province_name' => '浙江', 'city_name' => '丽水']);
