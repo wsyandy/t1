@@ -105,8 +105,13 @@ class RoomsController extends BaseController
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+        $password = $this->params('password');
+        if(!$password){
+            return $this->renderJSON(ERROR_CODE_FAIL, '密码不能为空');
+        }
 
-        $room->status = STATUS_OFF;
+        $room->password = $password;
+        $room->lock = true;
         $room->save();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
@@ -120,13 +125,15 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room->status = STATUS_ON;
+        $room->password = '';
+        $room->lock = false;
         $room->save();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-    function setChatAction()
+    // 公屏设置
+    function openChatAction()
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
@@ -134,7 +141,21 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room->chat = $this->params('chat', true);
+        $room->chat = true;
+        $room->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function closeChatAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->chat = false;
         $room->save();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');

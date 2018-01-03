@@ -18,7 +18,6 @@
                 id: int 房间id,
                 name: string 房间名称
                 topic: string 房间话题
-                status: int 麦位状态，0 麦为被封，1 麦位正常
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
@@ -53,7 +52,6 @@
                 id: int 房间id,
                 name: string 房间名称
                 topic: string 房间话题
-                status: int 麦位状态，0 麦为被封，1 麦位正常
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
@@ -87,7 +85,6 @@
                 id: int 房间id,
                 name: string 房间名称
                 topic: string 房间话题
-                status: int 麦位状态，0 麦为被封，1 麦位正常
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
@@ -129,6 +126,7 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否|||
+|password|密码|string|否|||
 
 ##### 5.2 回应参数说明
 ```
@@ -155,15 +153,14 @@
 }
 ```
 
-### 7 设置公屏聊天
+### 7 打开公屏聊天
 
-> http-post ```/api/rooms/set_chat```
+> http-post ```/api/rooms/open_chat```
 
 ##### 7.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
-|chat|公屏聊天状态|boole|否|false、true
 
 ##### 7.2 回应参数说明
 ```
@@ -172,6 +169,24 @@
 		    error_reason
 }
 ```
+
+### 7.3 关闭公屏聊天
+
+> http-post ```/api/rooms/close_chat```
+
+##### 7.3.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+
+##### 7.3.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+}
+```
+
 
 ### 8 房间用户列表
 
