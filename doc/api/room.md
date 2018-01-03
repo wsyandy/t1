@@ -58,7 +58,7 @@
 		    error_code,
 		    error_reason：,
 		    name 房间名称，
-		    channel_name: string 房间唯一标识
+		    channel_name: string 房间唯一标识，频道名
 		    topic 话题
 		    chat 公屏聊天状态, false/true
 		    user_num 在线人数
