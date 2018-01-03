@@ -20,8 +20,8 @@
 {% macro user_info(user) %}
     姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
     手机号码:{{ user.mobile }}<br/>
-    经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_n}ame }}<br/>
-    IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }<br/>
+    经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
+    IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
     自述城市信息: {{ user.province_name }}, {{ user.city_name }}
 {% endmacro %}
 
