@@ -37,12 +37,21 @@ class Rooms extends BaseModel
         $room->last_at = time();
         $room->save();
 
+        $room->channel_name = $room->generateChannelName();
+        $room->save();
+
         for ($i = 0; $i < 9; $i++) {
             $room_seat = new RoomSeats();
             $room_seat->room_id = $room->id;
             $room_seat->status = STATUS_ON;
             $room_seat->rank = $i;
             $room_seat->save();
+
+            // 房主
+            if ($i == 0) {
+                $room->room_seat_id = $room_seat->id;
+                $room->save();
+            }
         }
 
         return $room;
@@ -50,18 +59,17 @@ class Rooms extends BaseModel
 
     function generateChannelName()
     {
-        return $this->id . 'channel_name' . $this->user_id;
+        return $this->id . 'channel_name' . $this->user_id . '_' . mt_rand(10000, 99999);
     }
 
-    function updateRoom($param = [])
+    function updateRoom($params)
     {
-        $name = fetch($param, 'name');
-        $topic = fetch($param, 'topic');
-
+        $name = fetch($params, 'name');
         if (!isBlank($name)) {
             $this->name = $name;
         }
 
+        $topic = fetch($params, 'topic');
         if (!isBlank($topic)) {
             $this->topic = $topic;
         }
@@ -72,6 +80,35 @@ class Rooms extends BaseModel
     function userNum()
     {
         return 0;
+    }
+
+    function enterRoom($user)
+    {
+        $this->last_at = time();
+        $this->save();
+
+        $user->room_id = $this->id;
+        $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+        if ($this->user_id == $user->id) {
+            $user->room_seat_id = $this->room_seat_id;
+            $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
+        }
+
+        $user->save();
+
+    }
+
+    function exitRoom($user)
+    {
+
+        $user->room_id = $this->id;
+        $user->user_role = USER_ROLE_NO;
+        $user->save();
+
+        $room_seat = RoomSeats::findFirstById($user->room_seat_id);
+        $room_seat->user_id = 0;
+        $room_seat->save();
+        
     }
 
 }

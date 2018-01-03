@@ -45,9 +45,6 @@ class RoomsController extends BaseController
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
         if ($room) {
-            $room->channel_name = $room->generateChannelName();
-            $room->save();
-
             $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toJson()]);
         } else {
             $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
@@ -81,8 +78,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
         }
 
-        $room->last_at = time();
-        $room->save();
+        $room->enterRoom($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toJson()]);
     }
@@ -94,6 +90,8 @@ class RoomsController extends BaseController
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+
+        $room->exitRoom($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
