@@ -8,5 +8,13 @@
 
 class Orders extends BaseModel
 {
+    /**
+     * @type Users
+     */
+    private $_user;
 
+    /**
+     * @type Products
+     */
+    private $_product;
 }

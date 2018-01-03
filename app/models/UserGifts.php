@@ -8,5 +8,13 @@
 
 class UserGifts extends BaseModel
 {
+    /**
+     * @type Users
+     */
+    private $_user;
 
+    /**
+     * @type Gifts
+     */
+    private $_gift;
 }
