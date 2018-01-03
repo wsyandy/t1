@@ -83,11 +83,11 @@ class Devices extends BaseModel
 
         debug($product_channel->id, $attributes);
 
-        foreach ($attributes as $k => $v){
+        foreach ($attributes as $k => $v) {
             debug($k, $v);
         }
 
-        
+
         if ($device) {
             info('false repeat_device', $device->id, $product_channel->code, 'imei', $device->imei, 'idfa', $device->idfa, $attributes);
             return $device;
@@ -313,11 +313,19 @@ class Devices extends BaseModel
         if ($device && $device->ip) {
             $province = \Provinces::findByIp($device->ip);
             if ($province) {
-                $device->province_id = $province->id;
+
+                if (!$device->province_id) {
+                    $device->province_id = $province->id;
+                }
+
                 $device->ip_province_id = $province->id;
                 $city = \Cities::findByIp($device->ip);
                 if ($city) {
-                    $device->city_id = $city->id;
+
+                    if (!$device->city_id) {
+                        $device->city_id = $city->id;
+                    }
+
                     $device->ip_city_id = $city->id;
                 }
 

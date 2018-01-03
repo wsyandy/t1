@@ -19,7 +19,7 @@
     total_page   总页数
     total_entries   总记录数
     users:{
-          'uid' int 对方用户的ID
+          'id' int 对方用户的ID
           'sex' int 性别  0:女 1:男
           'avatar_url' string 正常图像
           'avatar_small_url' string 小尺寸图像
@@ -50,7 +50,7 @@
     total_page   总页数
     total_entries   总记录数
     users:{
-          'uid' int 对方用户的ID
+          'id' int 对方用户的ID
           'sex' int 性别  0:女 1:男
           'avatar_url' string 正常图像
           'avatar_small_url' string 小尺寸图像
@@ -69,7 +69,7 @@
 ##### 3.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-| uid |用户id|int|否|||
+| user_id |用户id|int|否|||
 
 ##### 3.2 回应参数说明
 ```
@@ -86,7 +86,7 @@
 ##### 4.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-| uid |用户id|int|否|||
+| user_id |用户id|int|否|||
 
 ##### 4.2 回应参数说明
 ```

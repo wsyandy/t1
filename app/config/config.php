@@ -13,7 +13,7 @@ return new \Phalcon\Config([
     'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
     'cache_endpoint' => env('cache_endpoint', 'redis://127.0.0.1:6379/' . APP_NAME),
     'job_queue' => array('endpoint' => env('job_queue_endpoint', 'redis://127.0.0.1:6379/job_queue_' . APP_NAME),
-        'tubes' => array('default' => 24)),
+        'tubes' => array('default' => isProduction() ? 16 : 3)),
     'user_db_endpoints' => env('user_db_endpoints', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'stat_db' => env('stat_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
 

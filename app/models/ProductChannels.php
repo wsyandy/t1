@@ -2,8 +2,8 @@
 
 class ProductChannels extends BaseModel
 {
+
     static $STATUS = [STATUS_OFF => '关闭', STATUS_ON => '正常'];
-    static $SUPPORT_API_MODEL = [STATUS_OFF => '不支持', STATUS_ON => '支持'];
 
     static $files = array('avatar' => APP_NAME . '/product_channels/avatar/%s',
         'weixin_qrcode' => APP_NAME . '/product_channels/weixin_qrcode/%s');
@@ -42,6 +42,8 @@ class ProductChannels extends BaseModel
 
     function copyTo($dest_product_channel_id)
     {
+        // 待开发
+        return;
 
         $products = Products::find(['conditions' => 'product_channel_id=:product_channel_id:',
             'bind' => ['product_channel_id' => $this->id]]);
@@ -86,7 +88,7 @@ class ProductChannels extends BaseModel
     static function getWeixinThemes()
     {
 
-        $weixin_themes = ['dolls' => '全民抓娃娃'];
+        $weixin_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/wx/*') as $filename) {
             $basename = basename($filename);
@@ -97,7 +99,7 @@ class ProductChannels extends BaseModel
 
     static function getTouchThemes()
     {
-        $touch_themes = ['dolls' => '全民抓娃娃'];
+        $touch_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/touch/*') as $filename) {
             $basename = basename($filename);
@@ -109,7 +111,7 @@ class ProductChannels extends BaseModel
     static function getWebThemes()
     {
 
-        $web_themes = ['dolls' => '全民抓娃娃'];
+        $web_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/web/*') as $filename) {
             $basename = basename($filename);
@@ -299,7 +301,6 @@ class ProductChannels extends BaseModel
             'cooperation_email' => $this->cooperation_email,
             'cooperation_phone_number' => $this->cooperation_phone_number,
             'official_website' => $this->official_website,
-            'avatar' => $this->avatar_url,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'weixin_limit_qrcode' => $this->weixin_qrcode_url,
@@ -307,11 +308,94 @@ class ProductChannels extends BaseModel
         ];
     }
 
-    function getRegisterJumpUrl($platform)
-    {
-        debug($platform);
-        $url = $platform . "_register_jump_url";
-        return $this->$url;
+    function getImAppId(){
+        return '4b00a7416f75498093bfd7ad09cb31e9';
     }
+
+    // Signaling Key 用于登录信令系统; 有效期1小时
+    function getSignalingKey($uid, $valid_timeIn_seconds = 3600)
+    {
+        $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
+        $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+
+        $sdk_version = "1";
+        $expired_time = time() + $valid_timeIn_seconds;
+        $token_items = array();
+        array_push($token_items, $sdk_version);
+        array_push($token_items, $app_id);
+        array_push($token_items, $expired_time);
+        array_push($token_items, md5($uid . $app_id . $app_certificate . $expired_time));
+
+        return join(":", $token_items);
+    }
+
+    //Channel Key 用于加入频道; 有效期3小时
+    function getChannelKey($channel_name, $uid)
+    {
+        $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
+        $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+
+        return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
+    }
+
+    private function generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, $serviceType, $extra = [])
+    {
+        $ts = time();
+        $random_int = mt_rand(10000, 1000000);
+        $expired_ts = time() + 3 * 3600; // 3小时服务时间
+        //$expired_ts = 0; // 不限制服务时间
+        $version = '005';
+
+        $signature = $this->generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $random_int, $expired_ts, $extra);
+        $content = $this->packContent($serviceType, $signature, hex2bin($app_id), $ts, $random_int, $expired_ts, $extra);
+
+        return $version . base64_encode($content);
+    }
+
+    private function generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $salt, $expired_ts, $extra)
+    {
+        $raw_app_id = hex2bin($app_id);
+        $raw_app_certificate = hex2bin($app_certificate);
+
+        $buffer = pack("S", $serviceType);
+        $buffer .= pack("S", strlen($raw_app_id)) . $raw_app_id;
+        $buffer .= pack("I", $ts);
+        $buffer .= pack("I", $salt);
+        $buffer .= pack("S", strlen($channel_name)) . $channel_name;
+        $buffer .= pack("I", $uid);
+        $buffer .= pack("I", $expired_ts);
+
+        $buffer .= pack("S", count($extra));
+        foreach ($extra as $key => $value) {
+            $buffer .= pack("S", $key);
+            $buffer .= pack("S", strlen($value)) . $value;
+        }
+
+        return strtoupper(hash_hmac('sha1', $buffer, $raw_app_certificate));
+    }
+
+    private function packContent($serviceType, $signature, $app_id, $ts, $salt, $expired_ts, $extra)
+    {
+        $buffer = pack("S", $serviceType);
+        $buffer .= $this->packString($signature);
+        $buffer .= $this->packString($app_id);
+        $buffer .= pack("I", $ts);
+        $buffer .= pack("I", $salt);
+        $buffer .= pack("I", $expired_ts);
+
+        $buffer .= pack("S", count($extra));
+        foreach ($extra as $key => $value) {
+            $buffer .= pack("S", $key);
+            $buffer .= $this->packString($value);
+        }
+
+        return $buffer;
+    }
+
+    private function packString($value)
+    {
+        return pack("S", strlen($value)) . $value;
+    }
+
 
 }

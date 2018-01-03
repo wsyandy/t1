@@ -30,4 +30,9 @@ class Rooms extends BaseModel
         $this->last_at = time();
         $this->update();
     }
+
+//    function checkEnter($room,$password = null)
+//    {
+//
+//    }
 }

@@ -12,7 +12,7 @@ trait UserAttrs
     function toDetailJson()
     {
         return [
-            'uid' => $this->uid,
+            'id' => $this->id,
             'sex' => $this->sex,
             'province_id' => $this->province_id,
             'province_name' => $this->province_name,
@@ -34,10 +34,23 @@ trait UserAttrs
         ];
     }
 
+    function toBasicJson()
+    {
+        return [
+            'id' => $this->id,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+        ];
+    }
+
     function toRelationJson()
     {
         $data = [
-            'uid' => $this->uid,
+            'id' => $this->id,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
@@ -106,11 +119,6 @@ trait UserAttrs
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';
-    }
-
-    function getUid()
-    {
-        return $this->id;
     }
 
     function getMaskedMobile()

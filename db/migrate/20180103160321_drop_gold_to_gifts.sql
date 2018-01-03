@@ -1,0 +1,6 @@
+ALTER TABLE gifts DROP COLUMN gold;
+ALTER TABLE gifts DROP COLUMN diamond;
+
+ALTER TABLE gifts add COLUMN amount INTEGER ;
+ALTER TABLE gifts add COLUMN pay_type VARCHAR (20);
+ALTER TABLE gifts add COLUMN type INTEGER ;

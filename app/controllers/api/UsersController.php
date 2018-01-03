@@ -243,21 +243,40 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
-
+        //声网登录密码
+        $basic_json['im_password'] = md5($this->currentUser()->id);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
     function otherDetailAction()
     {
-
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
-    
+
+    function setSpeakerAction()
+    {
+        $this->currentUser()->speaker = $this->params('speaker', true);
+        $this->currentUser()->update();
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function setMicrophoneAction()
+    {
+        $this->currentUser()->microphone = $this->params('microphone', true);
+        $this->currentUser()->update();
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function basicInfoAction()
+    {
+        $basic_json = $this->currentUser()->toBasicJson();
+        //声网登录密码
+        $basic_json['im_password'] = md5($this->currentUser()->id);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
+    }
 }

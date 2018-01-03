@@ -98,6 +98,7 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
+    id 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
@@ -114,6 +115,7 @@
     friend_num 好友人数
     interests 兴趣爱好
     height 身高
+    im_password 声网登录密码
     albums:[
         {
             id,
@@ -127,11 +129,12 @@
         {
         gift_id,
         name,
-        gold int 金币, 大于0使用金币购买
-        diamond int 钻石, 大于0使用钻石购买
+        amount int 礼物金额
+        pay_type string 支付类型 gold:金币 diamond:钻石
         image_url 原图
         image_small_url 小图
         image_big_url 小图
+        dynamic_image_url string 动态图
         num 礼物个数
         }
         ...
@@ -147,14 +150,14 @@
 ##### 6.3.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|uid|用户id|int|是|查看他人资料传此参数|
+|id|用户id|int|是|查看他人资料传此参数|
 
 ##### 6.3.2 回应参数说明
 ```
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    uid 用户id
+    id 用户id
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
@@ -185,12 +188,13 @@
         {
         gift_id,
         name,
-        gold int 金币
-        diamond int 钻石
-        image_url 原图
-        image_small_url 小图
-        image_big_url 小图
-        num 礼物个数
+        amount int 礼物金额
+        pay_type string 支付类型 gold:金币 diamond:钻石
+        image_url string 原图
+        image_small_url string 小图
+        image_big_url string 小图
+        dynamic_image_url string 动态图
+        num int 礼物个数
         }
         ...
     ]
@@ -208,7 +212,7 @@
 |nickname|昵称|string|||
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
-|city_name|城市名称|string|||
+|city_name|城市名称|string||||
 
 ##### 7.2 回应参数说明
 ```
@@ -252,7 +256,27 @@
     error_reason  失败原因，默认为空
 }
 ```
+### 10 用户基本信息
 
+> http-get ``` /api/users/basic_info```
+
+##### 10.1 请求参数说明
+
+##### 10.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    id 用户id
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    im_password 声网登录密码
+}
+```
 
 
 

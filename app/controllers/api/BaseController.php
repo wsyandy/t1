@@ -34,6 +34,7 @@ class BaseController extends ApplicationController
         'blacks' => ['create', 'destroy'],
         'followers' => ['create', 'destroy'],
         'friends' => ['create', 'destroy', 'agree', 'clear'],
+        'users' => ['other_detail'],
     ];
 
     static $SKIP_USER_INFO_ACTIONS = [
@@ -77,13 +78,13 @@ class BaseController extends ApplicationController
 
     function otherUserId()
     {
-        $uid = $this->context('uid');
+        $user_id = $this->context('user_id');
 
-        if (isBlank($uid)) {
+        if (isBlank($user_id)) {
             return null;
         }
 
-        $user_id = intval($uid);
+        $user_id = intval($user_id);
         debug('user_id', $user_id);
 
         return $user_id;
