@@ -39,4 +39,17 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
+//    //进入房间
+//    function enterAction()
+//    {
+//        $room_id = $this->params('id', 0);
+//        $password = $this->params('password', null);
+//        $room = \Rooms::findFirstById($room_id);
+//        if (!$room) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+//        }
+//        $room->updateRoom($this->params());
+//        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+//    }
+
 }
