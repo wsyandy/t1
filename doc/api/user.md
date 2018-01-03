@@ -132,6 +132,7 @@
         image_url 原图
         image_small_url 小图
         image_big_url 小图
+        dynamic_image_url string 动态图
         num 礼物个数
         }
         ...
@@ -187,10 +188,11 @@
         name,
         amount int 礼物金额
         pay_type string 支付类型 gold:金币 diamond:钻石
-        image_url 原图
-        image_small_url 小图
-        image_big_url 小图
-        num 礼物个数
+        image_url string 原图
+        image_small_url string 小图
+        image_big_url string 小图
+        dynamic_image_url string 动态图
+        num int 礼物个数
         }
         ...
     ]

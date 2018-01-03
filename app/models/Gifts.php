@@ -9,6 +9,9 @@
 class Gifts extends BaseModel
 {
 
+    //礼物支付类型
+    static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
+
     function toSimpleJson()
     {
         return [
@@ -17,9 +20,19 @@ class Gifts extends BaseModel
             'image_small_url' => $this->image_small_url,
             'image_big_url' => $this->image_big_url,
             'name' => $this->name,
-            'gold' => $this->gold,
-            'diamond' => $this->diamond
+            'amount' => $this->amount,
+            'pay_type' => $this->pay_type,
+            'dynamic_image_url' => $this->dynamic_image_url
         ];
+    }
+
+    function getDynamicImageUrl()
+    {
+        if (isBlank($this->dynamic_image)) {
+            return '';
+        }
+
+        return StoreFile::getUrl($this->dynamic_image);
     }
 
     function getImageUrl()
