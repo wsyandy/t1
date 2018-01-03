@@ -426,6 +426,16 @@ class Emchat extends BaseModel
     }
 
     /**
+     * @param $username
+     * @param $black
+     * @return bool
+     */
+    function addBlack($username, $black)
+    {
+        return $this->addBlacks($username, array($black));
+    }
+
+    /**
      * 往黑名单中加人
      * @param string $username
      * @param array $blacks
