@@ -2,8 +2,8 @@
 
 class ProductChannels extends BaseModel
 {
+
     static $STATUS = [STATUS_OFF => '关闭', STATUS_ON => '正常'];
-    static $SUPPORT_API_MODEL = [STATUS_OFF => '不支持', STATUS_ON => '支持'];
 
     static $files = array('avatar' => APP_NAME . '/product_channels/avatar/%s',
         'weixin_qrcode' => APP_NAME . '/product_channels/weixin_qrcode/%s');
@@ -42,6 +42,8 @@ class ProductChannels extends BaseModel
 
     function copyTo($dest_product_channel_id)
     {
+        // 待开发
+        return;
 
         $products = Products::find(['conditions' => 'product_channel_id=:product_channel_id:',
             'bind' => ['product_channel_id' => $this->id]]);
@@ -86,7 +88,7 @@ class ProductChannels extends BaseModel
     static function getWeixinThemes()
     {
 
-        $weixin_themes = ['dolls' => '全民抓娃娃'];
+        $weixin_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/wx/*') as $filename) {
             $basename = basename($filename);
@@ -97,7 +99,7 @@ class ProductChannels extends BaseModel
 
     static function getTouchThemes()
     {
-        $touch_themes = ['dolls' => '全民抓娃娃'];
+        $touch_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/touch/*') as $filename) {
             $basename = basename($filename);
@@ -109,7 +111,7 @@ class ProductChannels extends BaseModel
     static function getWebThemes()
     {
 
-        $web_themes = ['dolls' => '全民抓娃娃'];
+        $web_themes = [];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/web/*') as $filename) {
             $basename = basename($filename);
@@ -299,7 +301,6 @@ class ProductChannels extends BaseModel
             'cooperation_email' => $this->cooperation_email,
             'cooperation_phone_number' => $this->cooperation_phone_number,
             'official_website' => $this->official_website,
-            'avatar' => $this->avatar_url,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'weixin_limit_qrcode' => $this->weixin_qrcode_url,
@@ -307,11 +308,9 @@ class ProductChannels extends BaseModel
         ];
     }
 
-    function getRegisterJumpUrl($platform)
-    {
-        debug($platform);
-        $url = $platform . "_register_jump_url";
-        return $this->$url;
+    function agoraChannelKey(){
+
+
     }
 
 }
