@@ -166,7 +166,14 @@ class UsersController extends BaseController
             $user->updateAvatar($avatar_file);
         }
 
-        $user->updateProfile($this->params());
+        $params = $this->params();
+        $monologue = fetch($params, 'monologue');
+
+        if ($monologue && mb_strlen($monologue) > 200) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
+        }
+
+        $user->updateProfile();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }

@@ -19,7 +19,9 @@ trait UserEnumerations
         'city_name' => '城市',
         'monologue' => '个人签名',
         'interests' => '兴趣爱好',
-        'height' => '身高'
+        'height' => '身高',
+        'age' => '年龄',
+        'birthday' => '生日'
     ];
 
     // 用户状态

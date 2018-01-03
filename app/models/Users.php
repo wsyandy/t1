@@ -845,11 +845,11 @@ class Users extends BaseModel
                 continue;
             }
 
-            if (!isPresent($v) && $k != 'sex') {
+            if (!isPresent($v) && 'sex' != $k) {
                 continue;
             }
 
-            if ($k == 'province_name') {
+            if ('province_name' == $k) {
                 $province = Provinces::findFirstByName($v);
                 if ($province) {
                     $this->province_id = $province->id;
@@ -858,7 +858,7 @@ class Users extends BaseModel
                 continue;
             }
 
-            if ($k == 'city_name') {
+            if ('city_name' == $k) {
                 $city = Cities::findFirstByName($v);
                 if ($city) {
                     $this->province_id = $city->province_id;
@@ -868,9 +868,14 @@ class Users extends BaseModel
                 continue;
             }
 
-            if ($k == 'city_id') {
-                $city = \Cities::findFirstById($k);
-                $this->province_id = $city->province_id;
+            if ('age' == $k) {
+                $birthday = date("Y") - intval($v);
+                $birthday = strtotime($birthday . '-01-01');
+                if ($birthday > time()) {
+                    continue;
+                }
+                $this->birthday = $birthday;
+                continue;
             }
 
             $this->$k = $v;

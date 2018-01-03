@@ -212,7 +212,10 @@
 |nickname|昵称|string|||
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
-|city_name|城市名称|string||||
+|city_name|城市名称|string|||
+|monologue|个性签名|string||客户端需限制字数长度|
+|age|年龄|int|||
+|height|身高|int||||
 
 ##### 7.2 回应参数说明
 ```
