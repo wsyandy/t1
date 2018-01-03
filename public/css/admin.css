@@ -69,3 +69,5 @@ label {
 }
 
 /*  20150912 end */
+
+.icon-arrow-left:before{content:"\e091"}.icon-arrow-right:before{content:"\e092"}

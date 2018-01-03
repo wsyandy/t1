@@ -16,4 +16,12 @@ return new \Phalcon\Config([
         'tubes' => array('default' => 24)),
     'user_db_endpoints' => env('user_db_endpoints', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'stat_db' => env('stat_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
+
+    'emchat' => array(
+        'client_id' => env('emchat_client_id', 'YXA6C0SGYOVkEeeUtcs5KpDlVg'),
+        'client_secret' => env('emchat_client_secret', 'YXA6BJNHrVhQ7bJ8Fyz1dGUB7aA80cI'),
+        'app_name' => env('emchat_app_name', 'app1yuewan'),
+        'org_name' => env('em_chat_org_name', '1109171220115678'),
+        'host' => env('em_chat_host', 'https://a1.easemob.com'),
+    ),
 ]);
