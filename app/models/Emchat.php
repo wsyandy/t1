@@ -710,7 +710,7 @@ class Emchat extends BaseModel
         $header['restrict-access'] = 'true';
         $header['Content-Type'] = 'multipart/form-data';
 
-        $result = httpPost($url, null, $header, $files, null, 'json');
+        $result = httpPost($url, [], $header, $files, 'json');
 
         debug($result->code);
         return $this->parseResult($result);
