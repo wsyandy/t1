@@ -875,6 +875,8 @@ class Users extends BaseModel
                 $province = Provinces::findFirstByName($k);
 
                 if ($province) {
+
+                    debug($k, $v, $province->name);
                     $this->province_id = $province->id;
                 }
 
@@ -885,6 +887,9 @@ class Users extends BaseModel
                 $city = Cities::findFirstByName($k);
 
                 if ($city) {
+
+                    debug($k, $v, $city->name);
+
                     $this->province_id = $city->province_id;
                     $this->city_id = $city->city_id;
                 }
