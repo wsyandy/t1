@@ -881,12 +881,10 @@ class Users extends BaseModel
             }
 
             if ($k == 'city_name') {
-                debug($this->$k, $k, $v);
                 $city = Cities::findFirstByName($v);
                 if ($city) {
-                    debug($this->$k, $k, $v);
                     $this->province_id = $city->province_id;
-                    $this->city_id = $city->city_id;
+                    $this->city_id = $city->id;
                 }
 
                 continue;
