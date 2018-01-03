@@ -127,8 +127,8 @@
         {
         gift_id,
         name,
-        gold int 金币, 大于0使用金币购买
-        diamond int 钻石, 大于0使用钻石购买
+        amount int 礼物金额
+        pay_type string 支付类型 gold:金币 diamond:钻石
         image_url 原图
         image_small_url 小图
         image_big_url 小图
@@ -185,8 +185,8 @@
         {
         gift_id,
         name,
-        gold int 金币
-        diamond int 钻石
+        amount int 礼物金额
+        pay_type string 支付类型 gold:金币 diamond:钻石
         image_url 原图
         image_small_url 小图
         image_big_url 小图
