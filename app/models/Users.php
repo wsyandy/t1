@@ -861,8 +861,6 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
-            debug($this->$k, $k, $v);
-
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
             }
@@ -870,6 +868,8 @@ class Users extends BaseModel
             if (!isPresent($v) && $k != 'sex') {
                 continue;
             }
+
+            debug($this->$k, $k, $v);
 
             if ($k == 'province_name') {
                 $province = Provinces::findFirstByName($k);
