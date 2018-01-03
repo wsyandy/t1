@@ -211,8 +211,8 @@
 {
 		    error_code
 		    error_reason
-		    app_id
-		    signaling_key
+		    app_id string 应用id
+		    signaling_key string token
 }
 ```
 
@@ -231,7 +231,8 @@
 {
 		    error_code
 		    error_reason
-		    app_id
-            channel_key
+		    app_id string 应用id
+            channel_key string token
 }
 ```
+
