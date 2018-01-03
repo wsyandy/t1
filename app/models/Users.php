@@ -861,6 +861,7 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
+            debug($this->$k, $k, $v);
 
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
@@ -897,7 +898,6 @@ class Users extends BaseModel
             }
 
             $this->$k = $v;
-            debug($this->$k, $v);
         }
 
         $this->save();
