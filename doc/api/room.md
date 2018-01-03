@@ -195,3 +195,41 @@
 		    error_reason
 }
 ```
+
+
+### 11 Signaling Key用于登录信令系统
+
+> http-get ```/api/rooms/signaling_key```
+
+##### 11.1 请求参数说明
+无
+
+##### 11.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    app_id
+		    signaling_key
+}
+```
+
+
+### 12 Channel Key 用于加入频道
+
+> http-get ```/api/rooms/channel_key```
+
+##### 12.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 12.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    app_id
+            channel_key
+}
+```
