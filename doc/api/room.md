@@ -22,7 +22,6 @@
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
-                password string 房间密码
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
@@ -56,7 +55,6 @@
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
-                password string 房间密码
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
@@ -89,7 +87,6 @@
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
-                password string 房间密码
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
