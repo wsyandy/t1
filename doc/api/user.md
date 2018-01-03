@@ -278,6 +278,8 @@
     avatar_small_url 用户小头像
     nickname 昵称
     im_password 声网登录密码
+    room_id 房间id 
+    mobile 手机号
 }
 ```
 
