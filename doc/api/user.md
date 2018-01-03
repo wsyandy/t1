@@ -208,7 +208,7 @@
 |nickname|昵称|string|||
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
-|city_name|城市名称|string|||
+|city_name|城市名称|string||||
 
 ##### 7.2 回应参数说明
 ```

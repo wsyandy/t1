@@ -249,15 +249,10 @@ class UsersController extends BaseController
 
     function otherDetailAction()
     {
-
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
-    
+
 }
