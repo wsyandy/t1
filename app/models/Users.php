@@ -44,7 +44,6 @@ class Users extends BaseModel
     private $_ip_city;
 
 
-
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
@@ -203,39 +202,17 @@ class Users extends BaseModel
         }
 
         $user = \Users::findFirstByMobile($product_channel, $mobile);
-        $id_name = fetch($params, 'id_name');
+
         if (!$user) {
 
             debug("client no user");
             $user = new \Users();
 
-            $user->id_name = $id_name;
-            $id_no = fetch($params, 'id_no');
-            if ($id_no) {
-                $user->id_no = $id_no;
-                $sex = substr($id_no, -2, -1);
-                if ($sex % 2 == 1) {
-                    $sex = USER_SEX_MALE;
-                } else {
-                    $sex = USER_SEX_FEMALE;
-                }
-                $user->sex = $sex;
-            }
-
-            $province_name = fetch($params, 'province_name');
-            $city_name = fetch($params, 'city_name');
-            $province = Provinces::findFirstByName($province_name);
-            $city = Cities::findFirstByName($city_name);
-
-            if ($province && $city) {
-                $user->province_id = $province->id;
-                $user->city_id = $city->id;
-            }
-
             $user->platform = fetch($context, 'platform');
             $user->ip = fetch($context, 'ip');
 
             $fr = $device->fr;
+
             if (!$fr) {
                 $fr = fetch($context, 'fr');
             }
@@ -267,6 +244,7 @@ class Users extends BaseModel
         if (isBlank($user->login_name)) {
             $user->login_name = md5(uuid()) . '@app.com';
         }
+
         if (isBlank($user->nickname)) {
             $user->nickname = $user->getMaskedMobile() ?? '昵称';
         }
