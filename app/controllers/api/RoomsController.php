@@ -30,7 +30,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $key = $this->currentProductChannel()->getChannelKey($room->name, $this->currentUser()->id);
+        $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
         $app_id = $this->currentProductChannel()->getImAppId();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['app_id' => $app_id, 'channel_key' => $key]);
     }
