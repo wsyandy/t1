@@ -1,0 +1,1 @@
+ALTER table users add COLUMN room_seat_id INTEGER;

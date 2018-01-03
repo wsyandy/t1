@@ -27,6 +27,17 @@
                 user_num 在线人数
                 speaker 扬声器状态 false/true 默认为true
                 microphone 麦克风状态 false/true 默认为true
+                room_seats:[
+                    {
+                      id: int 房间id,
+                      user_id 麦位主播id，无主播为0
+                      room_id 房间id
+                      status: int 麦位状态，0 麦为被封，1 麦位正常
+                      microphone 麦克风状态 false/true 默认为true,
+                      rank 麦位排序, 0-8, 0是房主麦位
+                    }
+                    ...
+                ]
             } 
 }
 ```
@@ -60,6 +71,17 @@
                 user_num 在线人数
                 speaker 扬声器状态 false/true 默认为true
                 microphone 麦克风状态 false/true 默认为true
+                room_seats:[
+                    {
+                      id: int 房间id,
+                      user_id 麦位主播id，无主播为0
+                      room_id 房间id
+                      status: int 麦位状态，0 麦为被封，1 麦位正常
+                      microphone 麦克风状态 false/true 默认为true,
+                      rank 麦位排序, 0-8, 0是房主麦位
+                    }
+                    ...
+                ]
             } 
 }
 ```
@@ -129,7 +151,18 @@
                 last_at int 最后活跃时间
                 user_num 在线人数
                 speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true
+                microphone 麦克风状态 false/true 默认为true,
+                room_seats:[
+                    {
+                      id: int 房间id,
+                      user_id 麦位主播id，无主播为0
+                      room_id 房间id
+                      status: int 麦位状态，0 麦为被封，1 麦位正常
+                      microphone 麦克风状态 false/true 默认为true,
+                      rank 麦位排序, 0-8, 0是房主麦位
+                    }
+                    ...
+                ]
             }
 		   
 }
@@ -241,7 +274,14 @@
 		    error_reason,
 		    users:[
 		        {
-		           
+		           id int 用户的ID
+                   sex int 性别  0:女 1:男
+                   avatar_url string 正常图像
+                   avatar_small_url string 小尺寸图像
+                   nickname string 昵称
+                   room_id  int 用户所在房间的ID
+                   room_seat_id 麦位id 
+                   user_role 用户角色 0无角色, 1房主，2主播，3旁听  
 		        },
 		        ...
 		    ]

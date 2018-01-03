@@ -12,11 +12,18 @@ class Rooms extends BaseModel
     private $_user;
 
 
-    static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '解封'];
+    static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '正常'];
 
     function mergeJson()
     {
-        return ['user_num' => $this->userNum(), 'speaker' => $this->user->speaker, 'microphone' => $this->user->microphone];
+        $room_seats = RoomSeats::find(['conditions' => 'room_id=:room_id:', 'bind' => ['room_id' => $this->id], 'order' => 'rank asc']);
+        $room_seat_datas = [];
+        foreach ($room_seats as $room_seat) {
+            $room_seat_datas[] = $room_seat->to_json;
+        }
+
+        return ['user_num' => $this->userNum(), 'speaker' => $this->user->speaker,
+            'microphone' => $this->user->microphone, 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)
@@ -29,6 +36,15 @@ class Rooms extends BaseModel
         $room->status = STATUS_ON;
         $room->last_at = time();
         $room->save();
+
+        for ($i = 0; $i < 9; $i++) {
+            $room_seat = new RoomSeats();
+            $room_seat->room_id = $room->id;
+            $room_seat->status = STATUS_ON;
+            $room_seat->rank = $i;
+            $room_seat->save();
+        }
+
         return $room;
     }
 

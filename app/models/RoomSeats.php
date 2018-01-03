@@ -9,4 +9,15 @@
 class RoomSeats extends BaseModel
 {
 
+    /**
+     * @type Rooms
+     */
+    private $_room;
+    /**
+     * @type Users
+     */
+    private $_user;
+
+    static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '解封'];
+
 }

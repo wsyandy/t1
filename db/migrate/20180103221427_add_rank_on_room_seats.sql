@@ -1,0 +1,1 @@
+ALTER table room_seats add COLUMN rank INTEGER;
