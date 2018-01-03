@@ -17,8 +17,18 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
-                channel_name: string 房间唯一标识
-                chat 公屏聊天状态, false/true
+                topic: string 房间话题
+                status: int 麦位状态，0 麦为被封，1 麦位正常
+                chat: 公屏聊天状态, false/true
+                user_id 房主用户id
+                channel_name: string 房间唯一标识, 频道名称
+                lock boole加锁状态, true是加锁
+                password string 房间密码
+                created_at int 创建时间戳
+                last_at int 最后活跃时间
+                user_num 在线人数
+                speaker 扬声器状态 false/true 默认为true
+                microphone 麦克风状态 false/true 默认为true
             } 
 }
 ```
@@ -39,6 +49,22 @@
 {
 		    error_code
 		    error_reason
+		    room:{
+                id: int 房间id,
+                name: string 房间名称
+                topic: string 房间话题
+                status: int 麦位状态，0 麦为被封，1 麦位正常
+                chat: 公屏聊天状态, false/true
+                user_id 房主用户id
+                channel_name: string 房间唯一标识, 频道名称
+                lock boole加锁状态, true是加锁
+                password string 房间密码
+                created_at int 创建时间戳
+                last_at int 最后活跃时间
+                user_num 在线人数
+                speaker 扬声器状态 false/true 默认为true
+                microphone 麦克风状态 false/true 默认为true
+            } 
 }
 ```
 
@@ -57,13 +83,23 @@
 {
 		    error_code,
 		    error_reason：,
-		    name 房间名称，
-		    channel_name: string 房间唯一标识，频道名
-		    topic 话题
-		    chat 公屏聊天状态, false/true
-		    user_num 在线人数
-		    speaker 扬声器 false/true
-		    microphone 麦克风 false/true
+            room:{
+                id: int 房间id,
+                name: string 房间名称
+                topic: string 房间话题
+                status: int 麦位状态，0 麦为被封，1 麦位正常
+                chat: 公屏聊天状态, false/true
+                user_id 房主用户id
+                channel_name: string 房间唯一标识, 频道名称
+                lock boole加锁状态, true是加锁
+                password string 房间密码
+                created_at int 创建时间戳
+                last_at int 最后活跃时间
+                user_num 在线人数
+                speaker 扬声器状态 false/true 默认为true
+                microphone 麦克风状态 false/true 默认为true
+            }
+		   
 }
 ```
 
