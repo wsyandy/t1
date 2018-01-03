@@ -30,23 +30,28 @@ trait UserAttrs
             'height' => $this->height,
             'interests' => $this->interests,
             'albums' => $this->albums,
-            'gifts' => $this->gifts,
+            'user_gifts' => $this->user_gifts,
         ];
     }
 
     function toRelationJson()
     {
-        return [
+        $data = [
             'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
-            'room_id' => $this->room_id,
-            'friend_status' => $this->friend_status,
-            'friend_status_text' => $this->friend_status_text
+            'room_id' => $this->room_id
         ];
+
+        if (isset($this->friend_status)) {
+            $data['friend_status'] = $this->friend_status;
+            $data['friend_status_text'] = $this->friend_status_text;
+        }
+
+        return $data;
     }
 
     public function isWebPlatform()
@@ -119,11 +124,16 @@ trait UserAttrs
 
     function albums()
     {
+        $albums = Albums::findByUserId($this->id);
+        $data = [];
+        foreach ($albums as $album) {
+            $data[] = $album->toSimpleJson();
+        }
 
-        return [];
+        return $data;
     }
 
-    function gifts()
+    function userGifts()
     {
         return [];
     }

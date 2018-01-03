@@ -10,13 +10,13 @@ namespace api;
 
 class FriendsController extends BaseController
 {
-    //我的好友列表 type=1 好友列表 type=2 新的好友列表
+    //我的好友列表 new=1 新的好友列表
     function indexAction()
     {
-        $type = $this->params('type', 1);
+        $new = $this->params('new', 0);
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
-        $users = $this->currentUser()->friendList($page, $per_page, $type);
+        $users = $this->currentUser()->friendList($page, $per_page, $new);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
     }

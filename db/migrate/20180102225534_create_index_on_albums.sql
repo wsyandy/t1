@@ -1,0 +1,1 @@
+create index user_id_on_albums on albums(user_id);
