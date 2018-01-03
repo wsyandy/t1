@@ -212,7 +212,16 @@ class Users extends BaseModel
                 $user->sex = $sex;
             }
 
-            $user->city_id = fetch($params, 'city_id');
+            $province_name = fetch($params, 'province_name');
+            $city_name = fetch($params, 'city_name');
+            $province = Provinces::findFirstByName($province_name);
+            $city = Cities::findFirstByName($city_name);
+
+            if ($province && $city) {
+                $user->province_id = $province->id;
+                $user->city_id = $city->id;
+            }
+
             $user->platform = fetch($context, 'platform');
             $user->ip = fetch($context, 'ip');
 
@@ -1098,7 +1107,7 @@ class Users extends BaseModel
             } else {
                 $friend_status = 1;
             }
-            
+
             $user->friend_status = $friend_status;
         }
 
