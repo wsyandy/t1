@@ -235,7 +235,7 @@
 ```
 
 
-### 11 Signaling Key用于登录信令系统
+### 11 Signaling Key用于登录(信令系统)
 
 > http-get ```/api/rooms/signaling_key```
 
@@ -253,7 +253,7 @@
 ```
 
 
-### 12 Channel Key 用于加入频道
+### 12 Channel Key 用于加入频道(直播系统)
 
 > http-get ```/api/rooms/channel_key```
 
