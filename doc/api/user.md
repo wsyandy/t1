@@ -115,6 +115,7 @@
     friend_num 好友人数
     interests 兴趣爱好
     height 身高
+    im_password 声网登录密码
     albums:[
         {
             id,
@@ -255,7 +256,27 @@
     error_reason  失败原因，默认为空
 }
 ```
+### 10 用户基本信息
 
+> http-get ``` /api/users/basic_info```
+
+##### 10.1 请求参数说明
+
+##### 10.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    uid 用户id
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    im_password 声网登录密码
+}
+```
 
 
 
