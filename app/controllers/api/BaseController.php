@@ -78,13 +78,13 @@ class BaseController extends ApplicationController
 
     function otherUserId()
     {
-        $uid = $this->context('uid');
+        $user_id = $this->context('user_id');
 
-        if (isBlank($uid)) {
+        if (isBlank($user_id)) {
             return null;
         }
 
-        $user_id = intval($uid);
+        $user_id = intval($user_id);
         debug('user_id', $user_id);
 
         return $user_id;
