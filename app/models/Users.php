@@ -34,6 +34,16 @@ class Users extends BaseModel
      * @type Cities
      */
     private $_geo_city;
+    /**
+     * @type Provinces
+     */
+    private $_ip_province;
+    /**
+     * @type Cities
+     */
+    private $_ip_city;
+
+
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -793,11 +803,19 @@ class Users extends BaseModel
         if ($user && $user->ip) {
             $province = \Provinces::findByIp($user->ip);
             if ($province) {
-                $user->province_id = $province->id;
+
+                if (!$user->province_id) {
+                    $user->province_id = $province->id;
+                }
+
                 $user->ip_province_id = $province->id;
                 $city = \Cities::findByIp($user->ip);
                 if ($city) {
-                    $user->city_id = $city->id;
+
+                    if (!$user->city_id) {
+                        $user->city_id = $city->id;
+                    }
+
                     $user->ip_city_id = $city->id;
                 }
 
