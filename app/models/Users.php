@@ -873,7 +873,7 @@ class Users extends BaseModel
 
             if ($k == 'province_name') {
                 $province = Provinces::findFirstByName($k);
-
+                debug($k, $v);
                 if ($province) {
 
                     debug($k, $v, $province->name);
@@ -885,7 +885,7 @@ class Users extends BaseModel
 
             if ($k == 'city_name') {
                 $city = Cities::findFirstByName($k);
-
+                debug($k, $v);
                 if ($city) {
 
                     debug($k, $v, $city->name);
