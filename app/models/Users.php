@@ -861,6 +861,8 @@ class Users extends BaseModel
     {
         foreach ($params as $k => $v) {
 
+            debug($this->$k, $k, $v);
+
             if (!array_key_exists($k, self::$UPDATE_FIELDS)) {
                 continue;
             }
@@ -869,14 +871,9 @@ class Users extends BaseModel
                 continue;
             }
 
-            debug($this->$k, $k, $v);
-
             if ($k == 'province_name') {
-                $province = Provinces::findFirstByName($k);
-                debug($k, $v, $province);
+                $province = Provinces::findFirstByName($v);
                 if ($province) {
-
-                    debug($k, $v, $province->name);
                     $this->province_id = $province->id;
                 }
 
@@ -884,12 +881,8 @@ class Users extends BaseModel
             }
 
             if ($k == 'city_name') {
-                $city = Cities::findFirstByName($k);
-                debug($k, $v, $province);
+                $city = Cities::findFirstByName($v);
                 if ($city) {
-
-                    debug($k, $v, $city->name);
-
                     $this->province_id = $city->province_id;
                     $this->city_id = $city->city_id;
                 }

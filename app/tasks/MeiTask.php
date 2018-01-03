@@ -58,6 +58,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function test2Action()
     {
         $k = '浙江';
+
+        if('')
         $province = Provinces::findFirstByName($k);
         echoLine($province);
         $user = Users::findFirstById(46);
