@@ -350,6 +350,8 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
@@ -386,6 +388,8 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
