@@ -62,15 +62,12 @@ class RoomsController extends BaseController
     {
         $name = $this->params('name');
         if (isBlank($name)) {
-            $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
-        if ($room) {
-            $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toJson()]);
-        } else {
-            $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
-        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toJson()]);
     }
 
     //更新房间信息
