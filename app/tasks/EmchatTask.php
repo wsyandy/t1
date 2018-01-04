@@ -221,4 +221,14 @@ class EmChatTask extends \Phalcon\Cli\Task
         var_dump($emchat->sendFile($file_path, $sender_name, $receiver_name, $filename, $length));
     }
 
+    function testCreateUserApiAction()
+    {
+        $url = 'http://www.chance_php.com/api/users/emchat';
+        $body = array( 'debug' => 1, 'sid' => '');
+
+        $res = httpPost($url, $body);
+        var_dump($res);
+
+    }
+
 }

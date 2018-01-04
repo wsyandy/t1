@@ -283,7 +283,21 @@ class UsersController extends BaseController
     {
         $basic_json = $this->currentUser()->toBasicJson();
         //声网登录密码
-        $basic_json['im_password'] = md5($this->currentUser()->id);
+        $basic_json['im_password'] = $this->currentUser()->im_password;
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
+    }
+
+    function emchatAction()
+    {
+        if (\Emchat::createEmUser($this->currentUser())) {
+            return $this->renderJSON(
+                ERROR_CODE_SUCCESS, '创建成功',
+                array(
+                    'id' => $this->currentUser()->id,
+                    'im_password' => $this->currentUser()->im_password
+                )
+            );
+        }
+        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败,请稍后再试');
     }
 }

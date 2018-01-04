@@ -154,4 +154,9 @@ trait UserAttrs
         return [];
     }
 
+    function getImPassword()
+    {
+        return md5($this->id);
+    }
+
 }

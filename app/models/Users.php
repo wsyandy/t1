@@ -78,6 +78,7 @@ class Users extends BaseModel
             $this->bindMobile();
         }
 
+        \Emchat::delay()->createEmUser($this->id);
     }
 
     function beforeUpdate()
