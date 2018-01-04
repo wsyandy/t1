@@ -36,7 +36,8 @@ trait UserAttrs
             'age' => $this->age,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
-            'user_role' => $this->user_role
+            'user_role' => $this->user_role,
+            'constellation' => $this->constellation_text
         ];
     }
 
@@ -207,18 +208,10 @@ trait UserAttrs
     }
 
     //按照生日计算星座
-    function constellationText($is_self = false)
+    function constellationText()
     {
-        if (empty($this->birthday)) {
-            if (!$is_self) {
-                $index = ($this->id % 12) + 1;
-                return Users::$CONSTELLATION[$index];
-            }
-            return '';
-        }
-
         $c = '';
-        $num = date('md', strtotime($this->birthday));
+        $num = date('md', $this->birthday);
 
         switch ($num) {
             case 321 <= $num && $num <= 420:
@@ -231,38 +224,35 @@ trait UserAttrs
                 $c = 3;
                 break;
             case 622 <= $num && $num <= 722:
+                $c = 4;
                 break;
             case 723 <= $num && $num <= 823:
+                $c = 5;
                 break;
-
-        }
-
-        if (321 <= $num && $num <= 420) {
-            $c = 1;
-        } elseif (421 <= $num && $num <= 520) {
-            $c = 2;
-        } elseif (521 <= $num && $num <= 621) {
-            $c = 3;
-        } elseif (622 <= $num && $num <= 722) {
-            $c = 4;
-        } elseif (723 <= $num && $num <= 823) {
-            $c = 5;
-        } elseif (824 <= $num && $num <= 923) {
-            $c = 6;
-        } elseif (924 <= $num && $num <= 1023) {
-            $c = 7;
-        } elseif (1024 <= $num && $num <= 1122) {
-            $c = 8;
-        } elseif (1123 <= $num && $num <= 1221) {
-            $c = 9;
-        } elseif (1222 <= $num && $num <= 1231) {
-            $c = 10;
-        } elseif (121 <= $num && $num <= 219) {
-            $c = 11;
-        } elseif (220 <= $num && $num <= 320) {
-            $c = 12;
-        } elseif (11 <= $num && $num <= 120) {
-            $c = 10;
+            case 824 <= $num && $num <= 923:
+                $c = 6;
+                break;
+            case 924 <= $num && $num <= 1023:
+                $c = 7;
+                break;
+            case 1024 <= $num && $num <= 1122:
+                $c = 8;
+                break;
+            case 1123 <= $num && $num <= 1221:
+                $c = 9;
+                break;
+            case 1222 <= $num && $num <= 1231:
+                $c = 10;
+                break;
+            case 121 <= $num && $num <= 219:
+                $c = 11;
+                break;
+            case 220 <= $num && $num <= 320:
+                $c = 12;
+                break;
+            case 11 <= $num && $num <= 120:
+                $c = 10;
+                break;
         }
 
         return Users::$CONSTELLATION[$c];

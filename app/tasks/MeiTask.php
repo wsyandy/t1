@@ -82,4 +82,12 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($users->toJson('users', 'toBasicJson'));
         }
     }
+
+    function test3Action()
+    {
+        $user = new Users();
+        $user->birthday = strtotime("1991-09-27");
+
+        debug($user->constellationText());
+    }
 }

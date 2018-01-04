@@ -147,6 +147,7 @@
     im_password 即时通信登录密码
     age 年龄
     birthday 生日
+    constellation 星座
     albums:[
         {
             id,
@@ -209,6 +210,7 @@
     height 身高
     age 年龄
     birthday 生日
+    constellation 星座
     albums:[
         {
             id,
