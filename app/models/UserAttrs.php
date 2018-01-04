@@ -16,7 +16,6 @@ trait UserAttrs
             'sex' => $this->sex,
             'province_id' => $this->province_id,
             'province_name' => $this->province_name,
-            'city_id' => $this->city_id,
             'city_name' => $this->city_name,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
@@ -34,7 +33,10 @@ trait UserAttrs
             'albums' => $this->albums,
             'user_gifts' => $this->user_gifts,
             'birthday' => $this->birthday_text,
-            'age' => $this->age
+            'age' => $this->age,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
+            'user_role' => $this->user_role
         ];
     }
 
@@ -48,11 +50,11 @@ trait UserAttrs
             'nickname' => $this->nickname,
             'province_id' => $this->province_id,
             'province_name' => $this->province_name,
-            'city_id' => $this->city_id,
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
-            'room_seat_id' => $this->room_seat_id,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
@@ -69,7 +71,8 @@ trait UserAttrs
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
             'room_id' => $this->room_id,
-            'room_seat_id' => $this->room_seat_id,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role
         ];
 
