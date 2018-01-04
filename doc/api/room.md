@@ -25,9 +25,7 @@
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
-                user_num 在线人数
-                speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true,
+                user_num 在线人数,
                 room_seats:[
                     {
                       id: int 麦位id,
@@ -131,8 +129,6 @@
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
-                speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true,
                 room_seats:[
                     {
                       id: int 麦位id,
@@ -335,9 +331,7 @@
                     lock boole加锁状态, true是加锁
                     created_at int 创建时间戳
                     last_at int 最后活跃时间
-                    user_num 在线人数
-                    speaker 扬声器状态 false/true 默认为true
-                    microphone 麦克风状态 false/true 默认为true
+                    user_num 在线人数,
                     room_seats:[
                         {
                           id: int 麦位id,

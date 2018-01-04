@@ -31,8 +31,7 @@ class Rooms extends BaseModel
             $room_seat_datas[] = $room_seat->to_json;
         }
 
-        return ['user_num' => $this->userNum(), 'speaker' => $this->user->speaker,
-            'microphone' => $this->user->microphone, 'room_seats' => $room_seat_datas];
+        return ['user_num' => $this->userNum(), 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)
