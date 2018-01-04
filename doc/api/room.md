@@ -277,8 +277,9 @@
                    avatar_url string 正常图像
                    avatar_small_url string 小尺寸图像
                    nickname string 昵称
-                   room_id  int 用户所在房间的ID
-                   room_seat_id 麦位id 
+                   room_id  int 用户创建的房间的id，无房间为0
+                   current_room_id 用户当前所在房间id ,不在房间为0
+                   current_room_seat_id 用户当前所在麦位id 
                    user_role 用户角色 0无角色, 1房主，2主播，3旁听  
 		        },
 		        ...
