@@ -20,4 +20,15 @@ class RoomSeats extends BaseModel
 
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '解封'];
 
+    function mergeJson()
+    {
+        $data = [];
+        if ($this->user) {
+            $data = ['sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+                'nickname' => $this->user->nickname];
+        }
+
+        return $data;
+    }
+
 }

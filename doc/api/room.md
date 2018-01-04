@@ -1,6 +1,18 @@
 # 房间频道
 
-### 1 创建房间
+注：
+
+1. 扬声器控制：使用用户基本信息里speaker字段；
+
+2. 话筒控制：由用户角色，用户microphone和麦位microphone字段控制；
+2.1. 用户是旁听角色，话筒关闭；
+2.2. 用户是房主角色，判断用户microphone字段；
+2.3. 用户是主播角色，先判断麦位microphone字段，再判断用户microphone字段；
+
+3. 角色：0不在房间，1房主，2主播，3旁听；
+
+
+### 1 创建房间(创建后默认进入房间)
 
 > http-post ```/api/rooms/create```
 
@@ -20,17 +32,22 @@
                 topic: string 房间话题
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
+                sex	性别 0:女 1:男
+                avatar_small_url 用户小头像
+                nickname 昵称
+                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
-                user_num 在线人数
-                speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true
+                user_num 在线人数,
                 room_seats:[
                     {
                       id: int 麦位id,
                       user_id 麦位主播id，无主播为0
+                      sex	性别 0:女 1:男
+                      avatar_small_url 用户小头像
+                      nickname 昵称
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
                       microphone 麦克风状态 false/true 默认为true,
@@ -38,7 +55,7 @@
                     }
                     ...
                 ]
-            } 
+            }
 }
 ```
 
@@ -58,31 +75,7 @@
 {
 		    error_code
 		    error_reason
-		    room:{
-                id: int 房间id,
-                name: string 房间名称
-                topic: string 房间话题
-                chat: 公屏聊天状态, false/true
-                user_id 房主用户id
-                channel_name: string 房间唯一标识, 频道名称
-                lock boole加锁状态, true是加锁
-                created_at int 创建时间戳
-                last_at int 最后活跃时间
-                user_num 在线人数
-                speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true
-                room_seats:[
-                    {
-                      id: int 麦位id,
-                      user_id 麦位主播id，无主播为0
-                      room_id 房间id
-                      status: int 麦位状态，0 麦为被封，1 麦位正常
-                      microphone 麦克风状态 false/true 默认为true,
-                      rank 麦位排序, 0-8, 0是房主麦位
-                    }
-                    ...
-                ]
-            } 
+		    
 }
 ```
 
@@ -145,17 +138,22 @@
                 topic: string 房间话题
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
+                sex	性别 0:女 1:男
+                avatar_small_url 用户小头像
+                nickname 昵称
+                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
-                speaker 扬声器状态 false/true 默认为true
-                microphone 麦克风状态 false/true 默认为true,
                 room_seats:[
                     {
                       id: int 麦位id,
                       user_id 麦位主播id，无主播为0
+                      sex	性别 0:女 1:男
+                      avatar_small_url 用户小头像
+                      nickname 昵称
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
                       microphone 麦克风状态 false/true 默认为true,
@@ -324,3 +322,75 @@
 }
 ```
 
+### 14 房间列表
+
+> http-get ```/api/rooms```
+
+##### 14.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---|
+|page|页码|int|否|||
+|per_page|每页|int|否|||
+
+##### 14.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+            rooms:[
+                {
+                    id: int 房间id,
+                    name: string 房间名称
+                    topic: string 房间话题
+                    chat: 公屏聊天状态, false/true
+                    user_id 房主用户id
+                    sex	性别 0:女 1:男
+                    avatar_small_url 房主小头像
+                    nickname 房主昵称
+                    online_status 0离线，1在线
+                    channel_name: string 房间唯一标识, 频道名称
+                    lock boole加锁状态, true是加锁
+                    created_at int 创建时间戳
+                    last_at int 最后活跃时间
+                }
+                 ....
+            ]
+}
+```
+
+### 15 附近房间列表
+
+> http-get ```/api/rooms/nearby```
+
+##### 14.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---|
+|page|页码|int|否|||
+|per_page|每页|int|否|||
+
+##### 14.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+            rooms:[
+                {
+                    id: int 房间id,
+                    name: string 房间名称
+                    topic: string 房间话题
+                    chat: 公屏聊天状态, false/true
+                    user_id 房主用户id
+                    sex	性别 0:女 1:男
+                    avatar_small_url 房主小头像
+                    nickname 房主昵称
+                    online_status 0离线，1在线
+                    channel_name: string 房间唯一标识, 频道名称
+                    lock boole加锁状态, true是加锁
+                    created_at int 创建时间戳
+                    last_at int 最后活跃时间,
+                    distance string 距离,例如 0.5km
+                }
+                 ....
+            ]
+}
+```

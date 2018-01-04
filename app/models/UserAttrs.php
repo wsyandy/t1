@@ -29,6 +29,8 @@ trait UserAttrs
             'room_id' => $this->room_id,
             'height' => $this->height,
             'interests' => $this->interests,
+            'speaker' => $this->speaker,
+            'microphone' => $this->microphone,
             'albums' => $this->albums,
             'user_gifts' => $this->user_gifts,
         ];
@@ -49,7 +51,9 @@ trait UserAttrs
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
             'room_seat_id' => $this->room_seat_id,
-            'user_role' => $this->user_role
+            'user_role' => $this->user_role,
+            'speaker' => $this->speaker,
+            'microphone' => $this->microphone,
         ];
     }
 

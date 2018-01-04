@@ -87,13 +87,39 @@
 }
 ```
 
-### 6 用户详细信息
+### 6.1 用户基本信息
+
+> http-get ``` /api/users/basic_info```
+
+##### 6.1.1 请求参数说明
+
+##### 6.1.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    id 用户id
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    im_password 即时通信登录密码
+    room_id 房间id 
+    mobile 手机号
+    speaker 扬声器状态 false/true 默认为true
+    microphone 麦克风状态 false/true 默认为true
+}
+```
+
+### 6.2 用户详细信息
 
 > http-get ``` /api/users/detail```
 
-##### 6.1 请求参数说明
+##### 6.2.1 请求参数说明
 
-##### 6.2 回应参数说明
+##### 6.2.2 回应参数说明
 ```
 {
     error_code  0 成功，非0失败
@@ -115,7 +141,7 @@
     friend_num 好友人数
     interests 兴趣爱好
     height 身高
-    im_password 声网登录密码
+    im_password 即时通信登录密码
     albums:[
         {
             id,
@@ -259,30 +285,6 @@
     error_reason  失败原因，默认为空
 }
 ```
-### 10 用户基本信息
-
-> http-get ``` /api/users/basic_info```
-
-##### 10.1 请求参数说明
-
-##### 10.2 回应参数说明
-```
-{
-    error_code  0 成功，非0失败
-    error_reason  失败原因，默认为空
-    id 用户id
-    sex	性别 0:女 1:男
-    province_name 省名
-    city_name 城市
-    avatar_url 用户头像
-    avatar_small_url 用户小头像
-    nickname 昵称
-    im_password 声网登录密码
-    room_id 房间id 
-    mobile 手机号
-}
-```
-
 
 
 
