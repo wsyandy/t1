@@ -1,6 +1,6 @@
 # 房间频道
 
-### 1 创建房间
+### 1 创建房间(创建后默认进入房间)
 
 > http-post ```/api/rooms/create```
 
@@ -17,11 +17,31 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
+                topic: string 房间话题
+                chat: 公屏聊天状态, false/true
                 user_id 房主用户id
                 channel_name: string 房间唯一标识, 频道名称
+                lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
-            } 
+                user_num 在线人数
+                speaker 扬声器状态 false/true 默认为true
+                microphone 麦克风状态 false/true 默认为true,
+                room_seats:[
+                    {
+                      id: int 麦位id,
+                      user_id 麦位主播id，无主播为0
+                      sex	性别 0:女 1:男
+                      avatar_small_url 用户小头像
+                      nickname 昵称
+                      room_id 房间id
+                      status: int 麦位状态，0 麦为被封，1 麦位正常
+                      microphone 麦克风状态 false/true 默认为true,
+                      rank 麦位排序, 0-8, 0是房主麦位
+                    }
+                    ...
+                ]
+            }
 }
 ```
 
