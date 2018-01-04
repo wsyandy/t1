@@ -16,19 +16,23 @@ class Rooms extends BaseModel
 
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
 
-    function beforeCreate(){
+    function beforeCreate()
+    {
 
     }
 
-    function afterCreate(){
+    function afterCreate()
+    {
 
     }
 
-    function beforeUpdate(){
+    function beforeUpdate()
+    {
 
     }
 
-    function afterUpdate(){
+    function afterUpdate()
+    {
 
     }
 
@@ -39,7 +43,7 @@ class Rooms extends BaseModel
             'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue,
             'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
             'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
-            'distance' => strval(mt_rand(1,10)/10).'km'
+            'distance' => strval(mt_rand(1, 10) / 10) . 'km'
         ];
     }
 
@@ -51,7 +55,7 @@ class Rooms extends BaseModel
             $room_seat_datas[] = $room_seat->to_json;
         }
 
-        return ['user_num' => $this->userNum(), 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+        return ['user_num' => $this->user_num, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
             'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue, 'room_seats' => $room_seat_datas];
     }
 
@@ -63,13 +67,16 @@ class Rooms extends BaseModel
         $room->user = $user;
         $room->product_channel_id = $user->product_channel_id;
         $room->status = STATUS_ON;
-        $room->online_status = STATUS_ON;
         $room->last_at = time();
         $room->save();
 
         $room->channel_name = $room->generateChannelName();
         $room->save();
 
+        $user->room_id = $room->id;
+        $user->save();
+
+        // 麦位
         for ($i = 1; $i <= 8; $i++) {
             $room_seat = new RoomSeats();
             $room_seat->room_id = $room->id;
@@ -101,42 +108,91 @@ class Rooms extends BaseModel
         $this->update();
     }
 
-    function userNum()
-    {
-        return 0;
-    }
-
     function enterRoom($user)
     {
-        $this->last_at = time();
-        $this->online_status = STATUS_ON;
-        $this->save();
 
-        $user->room_id = $this->id;
+        $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+
+        // 房主
         if ($this->user_id == $user->id) {
-            $user->room_seat_id = $this->room_seat_id;
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
+
+            $this->last_at = time();
+            $this->online_status = STATUS_ON;
+            $this->save();
         }
 
         $user->save();
 
+        $this->addUser($user);
     }
 
     function exitRoom($user)
     {
 
-        $user->room_id = $this->id;
-        $user->user_role = USER_ROLE_NO;
-        $this->online_status = STATUS_OFF;
-        $user->save();
-
-        $room_seat = RoomSeats::findFirstById($user->room_seat_id);
+        // 麦位
+        $room_seat = RoomSeats::findFirstById($user->current_room_seat_id);
         if ($room_seat) {
             $room_seat->user_id = 0;
             $room_seat->save();
         }
 
+        $user->current_room_id = 0;
+        $user->current_room_seat_id = 0;
+        $user->user_role = USER_ROLE_NO;
+        $user->save();
+
+        // 房主
+        if ($this->user_id == $user->id) {
+            $this->online_status = STATUS_OFF;
+            $this->save();
+        }
+
+        $this->remUser($user);
+    }
+
+    function getUserNum()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        return $hot_cache->zcard($key);
+    }
+
+    function addUser($user)
+    {
+
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        if ($this->user_id == $user->id) {
+            $hot_cache->zadd($key, time() + 86400, $user->id);
+        } else {
+            $hot_cache->zadd($key, time(), $user->id);
+        }
+    }
+
+    function remUser($user)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        $hot_cache->zrem($key, $user->id);
+    }
+
+    function findUsers($page, $per_page)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        $total_entries = $hot_cache->zcard($key);
+
+        $offset = $per_page * ($page - 1);
+
+        $user_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
+        $users = Users::findByIds($user_ids);
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
 }

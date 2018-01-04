@@ -65,6 +65,11 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        $room = \Rooms::findFirstByUserId($this->currentUser()->id);
+        if($room){
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => $room->toSimpleJson()]);
+        }
+
         $room = \Rooms::createRoom($this->currentUser(), $name);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toSimpleJson()]);
@@ -97,12 +102,10 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
         }
 
-        $room->enterRoom($this->currentUser());
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-    // 房间信息
+    // 进入房间获取信息
     function detailAction()
     {
         $room_id = $this->params('id', 0);
@@ -110,6 +113,8 @@ class RoomsController extends BaseController
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+
+        $room->enterRoom($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toJson()]);
     }
@@ -188,6 +193,22 @@ class RoomsController extends BaseController
         $room->save();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function usersAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 8);
+
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $users = $room->findUsers($page, $per_page);
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toRelationJson'));
     }
 
 }
