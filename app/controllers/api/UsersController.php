@@ -314,10 +314,10 @@ class UsersController extends BaseController
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
 
-        if ($users) {
+        if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toBasicJson'));
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '用户不存在');
+        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 }
