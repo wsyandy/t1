@@ -947,7 +947,7 @@ class Users extends BaseModel
         }
 
         $total_entries = $user_db->zcard($relations_key);
-        $pagination = new PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 
         return $pagination;

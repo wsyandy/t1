@@ -58,6 +58,7 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
+            'monologue' => $this->monologue
         ];
     }
 
