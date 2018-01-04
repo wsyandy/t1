@@ -106,9 +106,9 @@
     avatar_small_url 用户小头像
     nickname 昵称
     im_password 即时通信登录密码
-    room_id 用户创建房间id 
-    current_room_id 用户当前所在房间id 
-    current_room_seat_id 用户当前所在麦位id 
+    room_id 用户创建房间id，无房间为0 
+    current_room_id 用户当前所在房间id,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
@@ -135,9 +135,9 @@
     avatar_small_url 用户小头像
     nickname 昵称
     mobile  string 手机号
-    room_id 用户创建房间id 
-    current_room_id 用户当前所在房间id 
-    current_room_seat_id 用户当前所在麦位id 
+    room_id 用户创建房间id ，无房间为0
+    current_room_id 用户当前所在房间id ,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -197,9 +197,9 @@
     avatar_small_url 用户小头像
     nickname 昵称
     mobile  string 手机号
-    room_id 用户创建房间id 
-    current_room_id 用户当前所在房间id 
-    current_room_seat_id 用户当前所在麦位id 
+    room_id 用户创建房间id ，无房间为0
+    current_room_id 用户当前所在房间id ,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
