@@ -35,6 +35,15 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['app_id' => $app_id, 'channel_key' => $key]);
     }
 
+    function indexAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 8);
+
+        $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
+        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms'));
+    }
+
     //创建房间
     function createAction()
     {
@@ -45,7 +54,7 @@ class RoomsController extends BaseController
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
         if ($room) {
-            $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toJson()]);
+            $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toSimpleJson()]);
         } else {
             $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
         }
@@ -104,7 +113,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
         $password = $this->params('password');
-        if(!$password){
+        if (!$password) {
             return $this->renderJSON(ERROR_CODE_FAIL, '密码不能为空');
         }
 

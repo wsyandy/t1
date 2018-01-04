@@ -14,6 +14,13 @@ class Rooms extends BaseModel
 
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '正常'];
 
+    function toSimpleJson()
+    {
+        return ['id' => $this->id, 'name' => $this->name, 'channel_name' => $this->channel_name,
+            'user_id' => $this->user_id, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+        ];
+    }
+
     function mergeJson()
     {
         $room_seats = RoomSeats::find(['conditions' => 'room_id=:room_id:', 'bind' => ['room_id' => $this->id], 'order' => 'rank asc']);
@@ -108,7 +115,7 @@ class Rooms extends BaseModel
         $room_seat = RoomSeats::findFirstById($user->room_seat_id);
         $room_seat->user_id = 0;
         $room_seat->save();
-        
+
     }
 
 }
