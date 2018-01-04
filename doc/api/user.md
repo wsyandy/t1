@@ -130,7 +130,6 @@
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
-    city_id 现居城市
     city_name 城市
     avatar_url 用户头像
     avatar_small_url 用户小头像
@@ -193,7 +192,6 @@
     sex	性别 0:女 1:男
     province_id 现居省份
     province_name 省名
-    city_id 现居城市
     city_name 城市
     avatar_url 用户头像
     avatar_small_url 用户小头像

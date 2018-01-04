@@ -173,7 +173,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
         }
 
-        $user->updateProfile();
+        $user->updateProfile($params);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
