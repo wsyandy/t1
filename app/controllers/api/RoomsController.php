@@ -45,6 +45,18 @@ class RoomsController extends BaseController
         $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
+    function nearbyAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 8);
+
+        // distance 计算与房主的距离
+        
+        $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms', 'toSimpleJson'));
+    }
+
     //创建房间
     function createAction()
     {

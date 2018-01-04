@@ -357,3 +357,40 @@
             ]
 }
 ```
+
+### 15 附近房间列表
+
+> http-get ```/api/rooms/nearby```
+
+##### 14.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---|
+|page|页码|int|否|||
+|per_page|每页|int|否|||
+
+##### 14.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+            rooms:[
+                {
+                    id: int 房间id,
+                    name: string 房间名称
+                    topic: string 房间话题
+                    chat: 公屏聊天状态, false/true
+                    user_id 房主用户id
+                    sex	性别 0:女 1:男
+                    avatar_small_url 房主小头像
+                    nickname 房主昵称
+                    online_status 0离线，1在线
+                    channel_name: string 房间唯一标识, 频道名称
+                    lock boole加锁状态, true是加锁
+                    created_at int 创建时间戳
+                    last_at int 最后活跃时间,
+                    distance string 距离,例如 0.5km
+                }
+                 ....
+            ]
+}
+```

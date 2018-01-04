@@ -21,7 +21,8 @@ class Rooms extends BaseModel
         return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
             'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
             'nickname' => $this->user->nickname, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
+            'distance' => strval(mt_rand(1,10)/10).'km'
         ];
     }
 
