@@ -232,6 +232,8 @@ trait UserAttrs
                 break;
             case 622 <= $num && $num <= 722:
                 break;
+            case 723 <= $num && $num <= 823:
+                break;
 
         }
 
