@@ -16,6 +16,22 @@ class Rooms extends BaseModel
 
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
 
+    function beforeCreate(){
+
+    }
+
+    function afterCreate(){
+
+    }
+
+    function beforeUpdate(){
+
+    }
+
+    function afterUpdate(){
+
+    }
+
     function toSimpleJson()
     {
         return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
@@ -53,18 +69,12 @@ class Rooms extends BaseModel
         $room->channel_name = $room->generateChannelName();
         $room->save();
 
-        for ($i = 0; $i < 9; $i++) {
+        for ($i = 1; $i <= 8; $i++) {
             $room_seat = new RoomSeats();
             $room_seat->room_id = $room->id;
             $room_seat->status = STATUS_ON;
             $room_seat->rank = $i;
             $room_seat->save();
-
-            // 房主
-            if ($i == 0) {
-                $room->room_seat_id = $room_seat->id;
-                $room->save();
-            }
         }
 
         return $room;
