@@ -57,7 +57,7 @@ trait UserAttrs
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone,
+            'microphone' => $this->microphone
         ];
     }
 
@@ -73,7 +73,8 @@ trait UserAttrs
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
-            'user_role' => $this->user_role
+            'user_role' => $this->user_role,
+            'monologue' => $this->monologue
         ];
 
         if (isset($this->friend_status)) {
@@ -82,6 +83,25 @@ trait UserAttrs
         }
 
         return $data;
+    }
+
+    function toSearchJson()
+    {
+        return [
+            'id' => $this->id,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'province_id' => $this->province_id,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'mobile' => $this->mobile,
+            'room_id' => $this->room_id,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
+            'monologue' => $this->monologue
+        ];
     }
 
     public function isWebPlatform()

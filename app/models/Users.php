@@ -947,7 +947,7 @@ class Users extends BaseModel
         }
 
         $total_entries = $user_db->zcard($relations_key);
-        $pagination = new PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 
         return $pagination;
@@ -1173,5 +1173,20 @@ class Users extends BaseModel
             }
         }
         return false;
+    }
+
+    static function search($user, $page, $per_page, $opts = [])
+    {
+        $user_id = fetch($opts, 'user_id');
+
+        $cond = [];
+
+        if ($user_id) {
+            $cond = ['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user_id]];
+        }
+
+        $users = Users::findPagination($cond, $page, $per_page);
+
+        return $users;
     }
 }
