@@ -140,6 +140,8 @@
     interests 兴趣爱好
     height 身高
     im_password 即时通信登录密码
+    age 年龄
+    birthday 生日
     albums:[
         {
             id,
@@ -239,7 +241,8 @@
 |city_name|城市名称|string|||
 |monologue|个性签名|string||客户端需限制字数长度|
 |age|年龄|int|||
-|height|身高|int||||
+|height|身高|int|||
+|birthday|生日|string||||
 
 ##### 7.2 回应参数说明
 ```

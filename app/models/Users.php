@@ -878,6 +878,14 @@ class Users extends BaseModel
                 continue;
             }
 
+            if ('birthday' == $k) {
+                $time = strtotime($v);
+                if ($time < time()) {
+                    $this->birthday = $time;
+                }
+                continue;
+            }
+
             $this->$k = $v;
         }
 

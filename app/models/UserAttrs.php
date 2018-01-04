@@ -31,6 +31,8 @@ trait UserAttrs
             'interests' => $this->interests,
             'albums' => $this->albums,
             'user_gifts' => $this->user_gifts,
+            'birthday' => $this->birthday_date,
+            'age' => $this->age
         ];
     }
 
@@ -154,4 +156,21 @@ trait UserAttrs
         return [];
     }
 
+    function getAge()
+    {
+        $birthday = $this->birthday;
+
+        if (!$birthday) {
+            return '';
+        }
+
+        $age = date("Y") - date("Y", $birthday);
+
+        return $age;
+    }
+
+    function getBirthdayDate()
+    {
+        return date('Y-m-d', $this->birthday);
+    }
 }
