@@ -41,7 +41,8 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
 
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms'));
+        
+        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
     //创建房间

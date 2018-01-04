@@ -18,8 +18,10 @@ class Rooms extends BaseModel
 
     function toSimpleJson()
     {
-        return ['id' => $this->id, 'name' => $this->name, 'channel_name' => $this->channel_name,
-            'user_id' => $this->user_id, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+        return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
+            'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+            'nickname' => $this->user->nickname, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
+            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
     }
 
@@ -31,7 +33,8 @@ class Rooms extends BaseModel
             $room_seat_datas[] = $room_seat->to_json;
         }
 
-        return ['user_num' => $this->userNum(), 'room_seats' => $room_seat_datas];
+        return ['user_num' => $this->userNum(), 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+            'nickname' => $this->user->nickname, 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)
@@ -117,7 +120,7 @@ class Rooms extends BaseModel
         $user->save();
 
         $room_seat = RoomSeats::findFirstById($user->room_seat_id);
-        if($room_seat){
+        if ($room_seat) {
             $room_seat->user_id = 0;
             $room_seat->save();
         }
