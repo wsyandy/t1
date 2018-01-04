@@ -40,21 +40,6 @@
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
-                user_num 在线人数,
-                room_seats:[
-                    {
-                      id: int 麦位id,
-                      user_id 麦位主播id，无主播为0
-                      sex	性别 0:女 1:男
-                      avatar_small_url 用户小头像
-                      nickname 昵称
-                      room_id 房间id
-                      status: int 麦位状态，0 麦为被封，1 麦位正常
-                      microphone 麦克风状态 false/true 默认为true,
-                      rank 麦位排序, 1-8, 8个麦位
-                    }
-                    ...
-                ]
             }
 }
 ```
@@ -135,7 +120,7 @@
 }
 ```
 
-### 5.2 房间详情
+### 5.2 房间详情(进入房间里拉取详情)
 
 > http-get ```/api/rooms/detail```
 
