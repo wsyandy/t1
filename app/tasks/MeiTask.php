@@ -90,4 +90,14 @@ class MeiTask extends \Phalcon\Cli\Task
 
         debug($user->constellationText());
     }
+
+    function test4Action()
+    {
+        $user_db = Users::getUserDb();
+        $key = "add_friend_introduce_user_id1";
+        $user_db->hset($key, 1, "你好");
+        $user_db->hset($key, 2, "哈哈");
+
+        debug($user_db->hgetall($key), $user_db->hget($key, 1), $user_db->hget($key, 2));
+    }
 }

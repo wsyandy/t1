@@ -1033,6 +1033,9 @@ class Users extends BaseModel
         $added_key = 'added_friend_list_user_id_' . $other_user->id;
         $add_total_key = 'friend_total_list_user_id_' . $this->id;
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
+        $self_introduce = fetch($opts, 'self_introduce');
 
         $user_db = Users::getUserDb();
 
@@ -1044,6 +1047,12 @@ class Users extends BaseModel
         //在对方添加的队列中清掉我的id
         if ($user_db->zscore('add_friend_list_user_id_' . $other_user->id, $this->id)) {
             $user_db->zrem('add_friend_list_user_id_' . $other_user->id, $this->id);
+        }
+
+        if ($self_introduce) {
+            //存储添加好友的自我介绍
+            $user_db->hset($user_introduce_key, $other_user->id, $self_introduce);
+            $user_db->hset($other_user_introduce_key, $this->id, $self_introduce);
         }
 
         //没有在对方总队列里面添加 此时要做通知
@@ -1152,7 +1161,9 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $key = 'friend_total_list_user_id_' . $this->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
         $user_db->zclear($key);
+        $user_db->del($user_introduce_key);
     }
 
     function friendNum()

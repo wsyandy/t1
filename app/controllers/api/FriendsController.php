@@ -28,7 +28,12 @@ class FriendsController extends BaseController
     //添加好友
     function createAction()
     {
-        $this->currentUser()->addFriend($this->otherUser());
+        $self_introduce = $this->params('self_introduce');
+        $opts = [];
+
+        $opts['self_introduce'] = $self_introduce;
+
+        $this->currentUser()->addFriend($this->otherUser(), $opts);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
     }
 
