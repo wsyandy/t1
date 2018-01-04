@@ -75,7 +75,8 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
-            'monologue' => $this->monologue
+            'monologue' => $this->monologue,
+            'age' => $this->age
         ];
 
         if (isset($this->friend_status)) {
