@@ -52,7 +52,7 @@ class Rooms extends BaseModel
         }
 
         return ['user_num' => $this->userNum(), 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-            'nickname' => $this->user->nickname, 'room_seats' => $room_seat_datas];
+            'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue, 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)
