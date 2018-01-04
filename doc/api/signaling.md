@@ -17,7 +17,6 @@ model|string|Y|模块名称
 action|string|Y|动作
 notify_type|string|Y|通知类型，点对点ptp, 广播通信bc
 timestamp|int|Y|通知发送时间
-receiver_id|int|Y|接收者用户id, 广播通信时为0
 data|json|Y|请求的业务数据，具体参数说明见详细接口
 
 ### 1.2. 响应参数
@@ -38,7 +37,6 @@ error_reason|string|Y|返回失败原因,默认为空串
     "action":"add",
     "notify_type":"ptp",
     "timestamp": 1513510273,
-    receiver_id: 100,
     "data":{  
        user_id int 发起请求用户ID
        sex int 性别  0:女 1:男
