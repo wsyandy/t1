@@ -205,4 +205,64 @@ trait UserAttrs
     {
         return md5($this->id);
     }
+
+    //按照生日计算星座
+    function constellationText($is_self = false)
+    {
+        if (empty($this->birthday)) {
+            if (!$is_self) {
+                $index = ($this->id % 12) + 1;
+                return Users::$CONSTELLATION[$index];
+            }
+            return '';
+        }
+
+        $c = '';
+        $num = date('md', strtotime($this->birthday));
+
+        switch ($num) {
+            case 321 <= $num && $num <= 420:
+                $c = 1;
+                break;
+            case  421 <= $num && $num <= 520:
+                $c = 2;
+                break;
+            case 521 <= $num && $num <= 621:
+                $c = 3;
+                break;
+            case 622 <= $num && $num <= 722:
+                break;
+
+        }
+
+        if (321 <= $num && $num <= 420) {
+            $c = 1;
+        } elseif (421 <= $num && $num <= 520) {
+            $c = 2;
+        } elseif (521 <= $num && $num <= 621) {
+            $c = 3;
+        } elseif (622 <= $num && $num <= 722) {
+            $c = 4;
+        } elseif (723 <= $num && $num <= 823) {
+            $c = 5;
+        } elseif (824 <= $num && $num <= 923) {
+            $c = 6;
+        } elseif (924 <= $num && $num <= 1023) {
+            $c = 7;
+        } elseif (1024 <= $num && $num <= 1122) {
+            $c = 8;
+        } elseif (1123 <= $num && $num <= 1221) {
+            $c = 9;
+        } elseif (1222 <= $num && $num <= 1231) {
+            $c = 10;
+        } elseif (121 <= $num && $num <= 219) {
+            $c = 11;
+        } elseif (220 <= $num && $num <= 320) {
+            $c = 12;
+        } elseif (11 <= $num && $num <= 120) {
+            $c = 10;
+        }
+
+        return Users::$CONSTELLATION[$c];
+    }
 }

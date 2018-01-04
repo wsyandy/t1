@@ -36,7 +36,8 @@ class Rooms extends BaseModel
     {
         return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
             'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-            'nickname' => $this->user->nickname, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
+            'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue,
+            'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
             'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
             'distance' => strval(mt_rand(1,10)/10).'km'
         ];
@@ -51,7 +52,7 @@ class Rooms extends BaseModel
         }
 
         return ['user_num' => $this->userNum(), 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-            'nickname' => $this->user->nickname, 'room_seats' => $room_seat_datas];
+            'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue, 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)

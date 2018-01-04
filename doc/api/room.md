@@ -40,21 +40,6 @@
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
-                user_num 在线人数,
-                room_seats:[
-                    {
-                      id: int 麦位id,
-                      user_id 麦位主播id，无主播为0
-                      sex	性别 0:女 1:男
-                      avatar_small_url 用户小头像
-                      nickname 昵称
-                      room_id 房间id
-                      status: int 麦位状态，0 麦为被封，1 麦位正常
-                      microphone 麦克风状态 false/true 默认为true,
-                      rank 麦位排序, 1-8, 8个麦位
-                    }
-                    ...
-                ]
             }
 }
 ```
@@ -117,17 +102,34 @@
 }
 ```
 
-### 5 进入房间
+### 5.1 进入房间
 
 > http-post ```/api/rooms/enter```
 
-##### 5.1 请求参数说明
+##### 5.1.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
 |password|房间密码|string|是|房间密码
 
-##### 5.2 回应参数说明
+##### 5.1.2 回应参数说明
+```
+{
+		    error_code,
+		    error_reason 
+}
+```
+
+### 5.2 房间详情(进入房间里拉取详情)
+
+> http-get ```/api/rooms/detail```
+
+##### 5.2.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+
+##### 5.2.2 回应参数说明
 ```
 {
 		    error_code,
@@ -348,6 +350,8 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
@@ -384,6 +388,8 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
