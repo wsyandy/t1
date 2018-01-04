@@ -20,6 +20,7 @@
                 topic: string 房间话题
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
+                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
@@ -124,6 +125,7 @@
                 topic: string 房间话题
                 chat: 公屏聊天状态, false/true
                 user_id 房主用户id
+                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
                 lock boole加锁状态, true是加锁
                 created_at int 创建时间戳
@@ -328,6 +330,7 @@
                     topic: string 房间话题
                     chat: 公屏聊天状态, false/true
                     user_id 房主用户id
+                    online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
                     created_at int 创建时间戳

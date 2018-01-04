@@ -14,6 +14,8 @@ class Rooms extends BaseModel
 
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '正常'];
 
+    static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
+
     function toSimpleJson()
     {
         return ['id' => $this->id, 'name' => $this->name, 'channel_name' => $this->channel_name,
@@ -41,6 +43,7 @@ class Rooms extends BaseModel
         $room->user = $user;
         $room->product_channel_id = $user->product_channel_id;
         $room->status = STATUS_ON;
+        $room->online_status = STATUS_ON;
         $room->last_at = time();
         $room->save();
 
@@ -92,6 +95,7 @@ class Rooms extends BaseModel
     function enterRoom($user)
     {
         $this->last_at = time();
+        $this->online_status = STATUS_ON;
         $this->save();
 
         $user->room_id = $this->id;
@@ -110,11 +114,14 @@ class Rooms extends BaseModel
 
         $user->room_id = $this->id;
         $user->user_role = USER_ROLE_NO;
+        $this->online_status = STATUS_OFF;
         $user->save();
 
         $room_seat = RoomSeats::findFirstById($user->room_seat_id);
-        $room_seat->user_id = 0;
-        $room_seat->save();
+        if($room_seat){
+            $room_seat->user_id = 0;
+            $room_seat->save();
+        }
 
     }
 
