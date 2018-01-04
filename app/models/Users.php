@@ -946,7 +946,11 @@ class Users extends BaseModel
             $user->created_at = fetch($times, $user_id);
         }
 
-        return $users;
+        $total_entries = $user_db->zcard($relations_key);
+        $pagination = new PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
     //黑名单列表
