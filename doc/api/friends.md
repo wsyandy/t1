@@ -19,7 +19,8 @@
     current_page  当前页数
     total_page   总页数
     total_entries   总记录数
-    users:{
+    users:[
+        {
            id int 对方用户的ID
            sex int 性别  0:女 1:男
            avatar_url string 正常图像
@@ -32,7 +33,8 @@
            current_room_seat_id 用户当前所在麦位id
            friend_status int 好友状态 1已添加,2等待验证，3等待接受
            friend_status_text string 好友状态名称
-          } 
+        }
+    ] 
 }
 ```
 

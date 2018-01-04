@@ -67,7 +67,7 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($user->city_id);
         $user->updateProfile(['province_name' => '浙江', 'city_name' => '丽水']);
 
-        $opts = ['user_id' => '138000'];
+        $opts = ['user_id' => '6'];
         $user_id = fetch($opts, 'user_id');
 
         $cond = [];
@@ -78,6 +78,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $users = Users::findPagination($cond, 1, 10);
 
-        echoLine($users->toJson('users', 'toBasicJson'));
+        if (count($users) > 0) {
+            echoLine($users->toJson('users', 'toBasicJson'));
+        }
     }
 }
