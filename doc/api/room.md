@@ -29,7 +29,7 @@
                 microphone 麦克风状态 false/true 默认为true
                 room_seats:[
                     {
-                      id: int 房间id,
+                      id: int 麦位id,
                       user_id 麦位主播id，无主播为0
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
@@ -73,7 +73,7 @@
                 microphone 麦克风状态 false/true 默认为true
                 room_seats:[
                     {
-                      id: int 房间id,
+                      id: int 麦位id,
                       user_id 麦位主播id，无主播为0
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
@@ -154,7 +154,7 @@
                 microphone 麦克风状态 false/true 默认为true,
                 room_seats:[
                     {
-                      id: int 房间id,
+                      id: int 麦位id,
                       user_id 麦位主播id，无主播为0
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
