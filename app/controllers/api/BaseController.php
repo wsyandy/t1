@@ -38,7 +38,7 @@ class BaseController extends ApplicationController
     ];
 
     static $SKIP_USER_INFO_ACTIONS = [
-        'users' => ['update']
+        'users' => ['update', 'emchat']
     ];
 
     function isDebug()

@@ -14,6 +14,18 @@ class Rooms extends BaseModel
 
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '正常'];
 
+    static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
+
+    function toSimpleJson()
+    {
+        return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
+            'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+            'nickname' => $this->user->nickname, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
+            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
+            'distance' => strval(mt_rand(1,10)/10).'km'
+        ];
+    }
+
     function mergeJson()
     {
         $room_seats = RoomSeats::find(['conditions' => 'room_id=:room_id:', 'bind' => ['room_id' => $this->id], 'order' => 'rank asc']);
@@ -22,8 +34,8 @@ class Rooms extends BaseModel
             $room_seat_datas[] = $room_seat->to_json;
         }
 
-        return ['user_num' => $this->userNum(), 'speaker' => $this->user->speaker,
-            'microphone' => $this->user->microphone, 'room_seats' => $room_seat_datas];
+        return ['user_num' => $this->userNum(), 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
+            'nickname' => $this->user->nickname, 'room_seats' => $room_seat_datas];
     }
 
     static function createRoom($user, $name)
@@ -34,6 +46,7 @@ class Rooms extends BaseModel
         $room->user = $user;
         $room->product_channel_id = $user->product_channel_id;
         $room->status = STATUS_ON;
+        $room->online_status = STATUS_ON;
         $room->last_at = time();
         $room->save();
 
@@ -85,6 +98,7 @@ class Rooms extends BaseModel
     function enterRoom($user)
     {
         $this->last_at = time();
+        $this->online_status = STATUS_ON;
         $this->save();
 
         $user->room_id = $this->id;
@@ -103,12 +117,15 @@ class Rooms extends BaseModel
 
         $user->room_id = $this->id;
         $user->user_role = USER_ROLE_NO;
+        $this->online_status = STATUS_OFF;
         $user->save();
 
         $room_seat = RoomSeats::findFirstById($user->room_seat_id);
-        $room_seat->user_id = 0;
-        $room_seat->save();
-        
+        if ($room_seat) {
+            $room_seat->user_id = 0;
+            $room_seat->save();
+        }
+
     }
 
 }

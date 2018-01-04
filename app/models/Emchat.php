@@ -23,6 +23,22 @@ class Emchat extends BaseModel
         return explode(',', $endpoints)[0];
     }
 
+    static function createEmUser($user)
+    {
+        $emchat = new \Emchat();
+        if (!is_a($user, 'Users')) {
+            $user = \Users::findByIds(intval($user));
+        }
+        $create_result = $emchat->createUser($user->id, $user->im_password);
+        if (!$create_result) {
+            $user_info = $emchat->getUser($user->id);
+            if (isPresent($user_info)) {
+                return true;
+            }
+        }
+        return $create_result;
+    }
+
     /**
      * 初始化参数
      */
