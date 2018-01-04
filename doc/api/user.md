@@ -105,7 +105,7 @@
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
-    im_password 声网登录密码
+    im_password 即时通信登录密码
     room_id 房间id 
     mobile 手机号
 }
@@ -139,7 +139,7 @@
     friend_num 好友人数
     interests 兴趣爱好
     height 身高
-    im_password 声网登录密码
+    im_password 即时通信登录密码
     albums:[
         {
             id,
