@@ -305,7 +305,9 @@ class UsersController extends BaseController
     {
         $user_id = $this->params('user_id');
 
-        $cond = ['user_id' => $user_id];
+        $cond = ['user_id' => intval($user_id)];
+
+        debug($cond);
 
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);

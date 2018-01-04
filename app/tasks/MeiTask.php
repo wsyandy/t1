@@ -66,5 +66,18 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(46);
         echoLine($user->city_id);
         $user->updateProfile(['province_name' => '浙江', 'city_name' => '丽水']);
+
+        $opts = ['user_id' => '138000'];
+        $user_id = fetch($opts, 'user_id');
+
+        $cond = [];
+
+        if ($user_id) {
+            $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
+        }
+
+        $users = Users::findPagination($cond, 1, 10);
+
+        echoLine($users->toJson('users', 'toBasicJson'));
     }
 }
