@@ -33,7 +33,7 @@ trait UserAttrs
             'microphone' => $this->microphone,
             'albums' => $this->albums,
             'user_gifts' => $this->user_gifts,
-            'birthday' => $this->birthday_date,
+            'birthday' => $this->birthday_text,
             'age' => $this->age
         ];
     }
@@ -173,7 +173,7 @@ trait UserAttrs
         return $age;
     }
 
-    function getBirthdayDate()
+    function getBirthdayText()
     {
         return date('Y-m-d', $this->birthday);
     }

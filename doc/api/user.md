@@ -203,6 +203,8 @@
     is_friend true/false,好友
     interests 兴趣爱好
     height 身高
+    age 年龄
+    birthday 生日
     albums:[
         {
             id,
