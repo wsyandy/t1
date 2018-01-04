@@ -29,29 +29,27 @@ error_reason|string|Y|返回失败原因,默认为空串
 
 ## 2. 添加好友
 
-### 2.1. 请求参数
-参数名称|类型|是否必传|说明
----|---|---|---
-room_id|int|Y|房间id
-sid|string|Y|用户唯一标识码
-
-### 2.2 请求数据示例
+### 2.1 请求数据示例
 
 ```
 {
     "model":"friends",
-    "action":"add_friends",
+    "action":"add",
     "notify_type":"ptp",
     "timestamp": 1513510273,
     "data":{  
-        "room_id":10000,
-        "sid":"ssssssssssssssssssssss",
+       user_id int 发起请求用户ID
+       sex int 性别  0:女 1:男
+       avatar_small_url string 小尺寸图像
+       nickname string 昵称
+       introduce string 自我介绍
+       created_at_text int 创建时间
     }
 }
 
 ```
 
-### 2.3 回应数据示例
+### 2.2 回应数据示例
 
 ```
 {
