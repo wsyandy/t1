@@ -1182,7 +1182,7 @@ class Users extends BaseModel
         $cond = [];
 
         if ($user_id) {
-            $cond = ['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user_id]];
+            $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         }
 
         $users = Users::findPagination($cond, $page, $per_page);
