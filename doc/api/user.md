@@ -296,6 +296,38 @@
 }
 ```
 
+### 10 用户搜索接口
+
+> http-post ```/api/users/search```
+
+##### 10.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|user_id|用户id|int|是|||
+
+##### 10.2 回应参数说明
+```
+{
+    error_code: 0成功，非0失败
+    error_reason  失败原因，默认为空
+    users:[
+        {
+             id 用户id
+             sex	性别 0:女 1:男
+             province_name 省名
+             city_name 城市
+             avatar_url 用户头像
+             avatar_small_url 用户小头像
+             nickname 昵称
+             room_id 用户创建房间id，无房间为0 
+             current_room_id 用户当前所在房间id,不在房间为0
+             current_room_seat_id 用户当前所在麦位id
+             mobile 手机号
+             monologue 个性签名
+        }
+    ]
+}
+```
 
 
 

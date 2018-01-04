@@ -300,4 +300,22 @@ class UsersController extends BaseController
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '创建失败,请稍后再试');
     }
+
+    function searchAction()
+    {
+        $user_id = $this->params('user_id');
+
+        $cond = ['user_id' => $user_id];
+
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 10);
+
+        $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
+
+        if ($users) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toBasicJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '用户不存在');
+    }
 }
