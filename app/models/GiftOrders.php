@@ -18,6 +18,25 @@ class GiftOrders extends BaseModel
      */
     private $_gift;
 
+    /**
+     * @type Users
+     */
+    private $_sender;
+
+    static $status = array(
+        GIFT_ORDER_STATUS_WAIT => '等待支付',
+        GIFT_ORDER_STATUS_SUCCESS => '支付成功',
+        GIFT_ORDER_STATUS_FAIL => '支付失败'
+    );
+
+    /**
+     * @param $sender_id
+     * @param $receiver_id
+     * @param $gift
+     * @param $gift_num
+     * @return bool
+     */
+
     static function giveTo($sender_id, $receiver_id, $gift, $gift_num)
     {
         $sender = \Users::findById($sender_id);
@@ -53,6 +72,23 @@ class GiftOrders extends BaseModel
             return $result;
         }
         return false;
+    }
+
+    static function findOrderListByUser($user_id, $page, $per_page)
+    {
+        $conditions = array(
+            'conditions' => 'user_id = :user_id:',
+            'bind' => array(
+                'user_id' => $user_id
+            ),
+            'order' => 'id desc'
+        );
+        return \GiftOrders::findPagination($conditions, $page, $per_page);
+    }
+
+    function getStatusText()
+    {
+        return fetch(\GiftOrders::$status, $this->status);
     }
 
 }

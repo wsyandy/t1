@@ -12,7 +12,7 @@
 {%- endmacro %}
 
 {%- macro gift_order_link(object) %}
-    <a href="/admin/gift_orders/{{ object.gift_order_id }}">礼物订单</a>
+    <a href="/admin/gift_orders/show/{{ object.gift_order_id }}">礼物订单</a>
 {%- endmacro %}
 
 {{ simple_table(account_histories, [
