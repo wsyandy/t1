@@ -68,4 +68,6 @@ class UsersTask extends \Phalcon\Cli\Task
         $res = httpPost($url, $body);
         var_dump($res);
     }
+
+
 }

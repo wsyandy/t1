@@ -115,3 +115,7 @@ define('USER_ROLE_NO', 0); // 无角色 不在房间
 define('USER_ROLE_HOST_BROADCASTER', 1); // 房主 在自己房间
 define('USER_ROLE_BROADCASTER', 2); // 主播 在他人房间上麦
 define('USER_ROLE_AUDIENCE', 3); // 旁听 在他人房间旁听
+
+//礼物
+define('GIFT_STATUS_ON', 1); //有效
+define('GIFT_STATUS_OFF', 0); //无效

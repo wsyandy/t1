@@ -13,5 +13,7 @@
 * [房间](room.md)
 * [麦位](room_seat.md)
 * [信令结构](signaling.md)
+* [环信接口](emchat.md)
+* [礼物](gifts.md)
 
 ## Published with GitBook

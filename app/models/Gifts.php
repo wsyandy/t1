@@ -15,6 +15,19 @@ class Gifts extends BaseModel
     //礼物类型 暂定
     static $TYPE = [1 => '普通礼物', 2 => '幸运礼物', 3 => '座驾'];
 
+    //礼物状态
+    static $STATUS = [GIFT_STATUS_ON => '有效', GIFT_STATUS_OFF => '无效'];
+
+    //图片文件
+    static $files = ['image' => 'gifts/image/%s', 'dynamic_image' => 'gifts/dynamic_image/%s'];
+
+    static function getCacheEndPoint()
+    {
+        $config = self::di('config');
+        $endpoints = $config->cache_endpoint;
+        return explode(',', $endpoints)[0];
+    }
+
     function toSimpleJson()
     {
         return [
@@ -27,6 +40,20 @@ class Gifts extends BaseModel
             'pay_type' => $this->pay_type,
             'dynamic_image_url' => $this->dynamic_image_url
         ];
+    }
+
+    function toJson()
+    {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'amount' => $this->amount,
+            'rank' => $this->rank,
+            'status_text' => $this->status_text,
+            'image_small_url' => $this->image_small_url,
+            'image_big_url' => $this->image_big_url,
+            'dynamic_image_url' => $this->dynamic_image_url
+        );
     }
 
     function getDynamicImageUrl()
@@ -63,5 +90,30 @@ class Gifts extends BaseModel
         }
 
         return StoreFile::getUrl($this->image) . '@!big';
+    }
+
+    function beforeCreate()
+    {
+        if (isBlank($this->pay_type)) {
+            $this->pay_type = 'diamond';
+        }
+    }
+
+    /**
+     * 获取所有的有效礼物，这里先做一个限制，最多100个
+     * @return PaginationModel
+     */
+    static function findValidList()
+    {
+        $conditions = array(
+            'conditions' => "status = :status:",
+            'bind' => array(
+                'status' => GIFT_STATUS_ON
+            ),
+            'order' => 'amount desc');
+        $page = 1;
+        $per_page = 100;
+
+        return \Gifts::findPagination($conditions, $page, $per_page);
     }
 }
