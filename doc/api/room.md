@@ -29,17 +29,7 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
-                topic: string 房间话题
-                chat: 公屏聊天状态, false/true
-                user_id 房主用户id
-                sex	性别 0:女 1:男
-                avatar_small_url 用户小头像
-                nickname 昵称
-                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
-                lock boole加锁状态, true是加锁
-                created_at int 创建时间戳
-                last_at int 最后活跃时间
             }
 }
 ```
