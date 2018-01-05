@@ -17,4 +17,16 @@ class UserGifts extends BaseModel
      * @type Gifts
      */
     private $_gift;
+
+    static function freshGiftNum($user_id, $gift_id, $gift_num)
+    {
+        $user_gift = \UserGifts::findFirstOrNew(array('user_id' => $user_id));
+        $gift = \Gifts::findById($gift_id);
+        $user_gift->gift_id = $gift->id;
+        $user_gift->name = $gift->name;
+        $user_gift->gift_num = intval($user_gift->gift_num) + $gift_num;
+        $user_gift->amount = $gift->amount;
+        $user_gift->total_amount = $user_gift->amount * $user_gift->gift_num;
+        $user_gift->save();
+    }
 }

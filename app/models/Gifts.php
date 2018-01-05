@@ -99,6 +99,11 @@ class Gifts extends BaseModel
         }
     }
 
+    function invalid()
+    {
+        return $this->status == GIFT_STATUS_OFF;
+    }
+
     /**
      * 获取所有的有效礼物，这里先做一个限制，最多100个
      * @return PaginationModel
@@ -115,5 +120,24 @@ class Gifts extends BaseModel
         $per_page = 100;
 
         return \Gifts::findPagination($conditions, $page, $per_page);
+    }
+
+    static function generateNotifyData($opts)
+    {
+        $gift = fetch($opts, 'gift');
+        $gift_num = fetch($opts, 'gift_num');
+        $user = \Users::findById($opts['user_id']);
+        $sender = fetch($opts, 'sender');
+        $data = array();
+        if ($gift) {
+            $data = array_merge($data, $gift->toSimpleJson());
+            $data['gift_num'] = $gift_num;
+            $data['user_id'] = $user->id;
+            $data['user_nickname'] = $user->nickname;
+            $data['sender_id'] = $sender->id;
+            $data['sender_nickname'] = $sender->nickname;
+        }
+        return $data;
+
     }
 }

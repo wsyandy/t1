@@ -33,3 +33,42 @@
     ]
 }
 ```
+
+## 2 赠送礼物
+
+> http-post ```/api/gifts```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|gift_id|礼物ID|integer|否
+|gift_num|礼物数量|integer|可空|空表示数量是1
+|user_id|接收方ID|integer|否
+|src|来源|string|可|默认是room
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1/-2
+    error_reason: '赠送成功/失败/余额不足'
+    notify_data: {
+        model: 'gifts'
+        action: 'give'
+        notify_type: 'bc/ptp'
+        timestamp: 1515142608
+        data: {
+           id: 1
+           num: 10
+           name: '礼物名称' 
+           image_small_url: 'http://small_url'
+           image_big_url: 'http://big_url',
+           dynamic_url: 'http://dynamic_url',
+           user_id: 1
+           user_nickname: '接收方昵称'
+           sender_id: 2
+           sender_nickname: '发送方昵称'
+        }
+    }
+} 
+````
+

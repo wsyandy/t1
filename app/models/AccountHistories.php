@@ -40,7 +40,7 @@ class AccountHistories extends BaseModel
             $account_history->$column = fetch($opts, $column);
         }
         if ($account_history->create()) {
-            return $account_history->balance;
+            return true;
         }
         return false;
     }

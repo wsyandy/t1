@@ -47,7 +47,7 @@ class UsersTask extends \Phalcon\Cli\Task
     function testRegisterAction()
     {
         $url = 'http://www.chance_php.com/api/users/register';
-        $mobile = '13912345678';
+        $mobile = '13800000000';
         $auth_code = '1234';
         $password = 'test12';
         $sms_token = '';
