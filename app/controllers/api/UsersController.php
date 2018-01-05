@@ -260,6 +260,7 @@ class UsersController extends BaseController
     {
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
+        $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
