@@ -7,20 +7,13 @@
 ##### 1.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|image_file|图片文件|file|否|上传的图片
+|image_file0~8|图片文件|file|否|上传的图片 支持多张上传,多张图片传参格式:image_file0,image_file1--image_file8最多传9张
 
 ##### 1.2 回应参数说明
 ```
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    album{
-        id,
-        user_id,
-        image_url 原图
-        image_small_url 小图
-        image_big_url 小图
-    }
 }
 ```
 
@@ -38,5 +31,32 @@
 {
 	error_code  0 成功，非0失败
 	error_reason  失败原因，默认为空
+}
+```
+
+### 3 上传相册
+
+> http-get ```/api/albums```
+
+##### 3.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|page|当前页|int|否||
+|per_page|每页个数|int|是|默认为9
+
+##### 3.2 回应参数说明
+```
+{
+    error_code  0 成功，非0失败
+    error_reason  失败原因，默认为空
+    albums:[
+        {
+            id 图片id
+            user_id 用户id
+            image_url 图片地址
+            image_small_url 小图地址
+            image_big_url 大图地址
+        }
+    ]
 }
 ```
