@@ -58,26 +58,6 @@ class ProductChannels extends BaseModel
             $new_product->product_channel_id = $dest_product_channel_id;
             $new_product->save();
         }
-
-        $product_channel_banners = ProductChannelBanners::find(['conditions' => 'product_channel_id=:product_channel_id:',
-            'bind' => ['product_channel_id' => $this->id]]);
-        if ($product_channel_banners) {
-            foreach ($product_channel_banners as $product_channel_banner) {
-
-                $cond = ['conditions' => 'product_channel_id=:product_channel_id: and banner_id=:banner_id:',
-                    'bind' => ['product_channel_id' => $dest_product_channel_id, 'banner_id' => $product_channel_banner->banner_id],
-                    'order' => 'id desc'];
-                if (ProductChannelBanners::findFirst($cond)) {
-                    debug($product_channel_banner->id);
-                    continue;
-                }
-
-                $new_product_channel_banner = new ProductChannelBanners();
-                $new_product_channel_banner->product_channel_id = $dest_product_channel_id;
-                $new_product_channel_banner->banner_id = $product_channel_banner->banner_id;
-                $new_product_channel_banner->save();
-            }
-        }
     }
 
     function mergeJson()
@@ -308,7 +288,8 @@ class ProductChannels extends BaseModel
         ];
     }
 
-    function getImAppId(){
+    function getImAppId()
+    {
         return '4b00a7416f75498093bfd7ad09cb31e9';
     }
 
@@ -396,6 +377,4 @@ class ProductChannels extends BaseModel
     {
         return pack("S", strlen($value)) . $value;
     }
-
-
 }

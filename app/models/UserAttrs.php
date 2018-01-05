@@ -36,7 +36,8 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
-            'constellation' => $this->constellation_text
+            'constellation' => $this->constellation_text,
+            'im_password' => $this->im_password
         ];
     }
 
@@ -56,7 +57,8 @@ trait UserAttrs
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone
+            'microphone' => $this->microphone,
+            'im_password' => $this->im_password
         ];
     }
 

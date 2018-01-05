@@ -23,9 +23,9 @@ class RoomsController extends BaseController
     //Channel Key 用于加入频道;
     function channelKeyAction()
     {
-
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -41,7 +41,7 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
 
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-        
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -95,6 +95,7 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
         $password = $this->params('password', '');
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
