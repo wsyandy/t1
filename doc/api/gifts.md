@@ -24,8 +24,8 @@
         {
             id: 1 
             name: '礼物名称'
-            small_image_url: 'https://gifts/small'
-            big_image_url: 'https://gifts/big'
+            image_small_url: 'https://gifts/small'
+            image_big_url: 'https://gifts/big'
             dynamic_image_url: 'https://gifts/dynamic'
             amount: 100
             pay_type: 'diamond/gold'
