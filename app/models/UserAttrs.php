@@ -54,10 +54,8 @@ trait UserAttrs
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
-            'channel_name' => $this->channel_name,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
-            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
@@ -106,6 +104,7 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'current_channel_name' => $this->current_channel_name,
+            'user_role' => $this->user_role,
             'monologue' => $this->monologue,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
             'age' => $this->age

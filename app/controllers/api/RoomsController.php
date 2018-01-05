@@ -84,10 +84,19 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 通过用户进入房间
-        $room = \Rooms::findFirstById($room_id);
 
-        if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        if ($user_id) {
+            $user = \Users::findFirstById($user_id);
+            if (!$user || $user->current_room_id < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+
+            $room = $user->current_room;
+        } else {
+            $room = \Rooms::findFirstById($room_id);
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
         }
 
         if ($room->lock && $room->password != $password) {
@@ -201,7 +210,7 @@ class RoomsController extends BaseController
 
         $users = $room->findUsers($page, $per_page);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toRelationJson'));
+        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
     }
 
 }
