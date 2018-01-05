@@ -56,7 +56,7 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
         if ($room) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => ['id' => $room->id,
-                'name' => $this->name, 'channel_name' => $this->channel_name]]);
+                'name' => $room->name, 'channel_name' => $room->channel_name]]);
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
