@@ -283,8 +283,6 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
-        //声网登录密码
-        $basic_json['im_password'] = $this->currentUser()->im_password;
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 

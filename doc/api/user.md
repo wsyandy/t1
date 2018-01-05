@@ -43,8 +43,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
-    im_password 即时通信密码
-    id 用户id
+    id 用户id，即时通信账户(声网，环信) 
+    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
 }
 
@@ -69,8 +69,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
-    im_password 即时通信密码
-    id 用户id
+    id 用户id，即时通信账户(声网，环信) 
+    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
 }
 
@@ -113,6 +113,7 @@
     room_id 用户创建房间id，无房间为0 
     current_room_id 用户当前所在房间id,不在房间为0
     current_room_seat_id 用户当前所在麦位id
+    user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
@@ -141,7 +142,8 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
-    current_channel_name 当前所在房间频道名称 
+    current_channel_name 当前所在房间频道名称
+    user_role 当前用户角色，无角色，房主，主播，旁听
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -205,6 +207,7 @@
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
     current_channel_name 当前所在房间频道名称 
+    user_role 当前用户角色，无角色，房主，主播，旁听
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -364,7 +367,8 @@
                          room_id 用户创建房间id，无房间为0 
                          current_room_id 用户当前所在房间id,不在房间为0
                          current_room_seat_id 用户当前所在麦位id
-                         current_channel_name 当前所在房间频道名称 
+                         current_channel_name 当前所在房间频道名称
+                         user_role 当前用户角色，无角色，房主，主播，旁听
                          mobile 手机号
                          monologue 个性签名
                          distance string 距离,例如 0.5km
