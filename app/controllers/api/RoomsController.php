@@ -42,7 +42,7 @@ class RoomsController extends BaseController
 
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
         
-        $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
     function nearbyAction()
@@ -51,10 +51,10 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
 
         // distance 计算与房主的距离
-        
+
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
     //创建房间
@@ -66,8 +66,9 @@ class RoomsController extends BaseController
         }
 
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
-        if($room){
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => $room->toSimpleJson()]);
+        if ($room) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => ['id' => $room->id,
+                'name' => $this->name, 'channel_name' => $this->channel_name]]);
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
