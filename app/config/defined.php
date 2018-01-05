@@ -119,3 +119,14 @@ define('USER_ROLE_AUDIENCE', 3); // 旁听 在他人房间旁听
 //礼物
 define('GIFT_STATUS_ON', 1); //有效
 define('GIFT_STATUS_OFF', 0); //无效
+
+//钻石消费
+define('ACCOUNT_TYPE_BUY_DIAMOND', 1); //购买钻石
+define('ACCOUNT_TYPE_BUY_GIFT', 2); //购买礼物
+define('ACCOUNT_TYPE_GIVE', 3); //系统赠送
+
+define('ERROR_CODE_NEED_PAY', -2);//需要付费
+
+define('GIFT_ORDER_STATUS_WAIT', 0); //等待支付
+define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
+define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败

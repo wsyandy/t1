@@ -5,6 +5,8 @@
     <li role="presentation" class="active"><a href="/admin/users/basic?id={{ user.id }}">基本</a></li>
     <li role="presentation"><a href="/admin/orders/detail?id={{ user.id }}">订单信息</a></li>
     <li role="presentation"><a href="/admin/payments/detail?id={{ user.id }}">支付信息</a></li>
+    <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
+    <li role="presentation"><a href="/admin/user_gifts?user_id={{ user.id }}">收到的礼物</a></li>
 </ul>
 
 

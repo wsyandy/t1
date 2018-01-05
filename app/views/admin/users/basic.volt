@@ -20,6 +20,7 @@
     </tr>
     <tr>
         <td>状态: {{ user.user_status_text }}</td>
+        <td>钻石: <a href="/admin/account_histories?user_id={{ user.id }}">{{ user.diamond }}</a></td>
     </tr>
 </table>
 
