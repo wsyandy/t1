@@ -223,7 +223,7 @@ trait UserAttrs
             return $this->current_room->lock;
         }
 
-        return '';
+        return false;
     }
 
     function getCurrentChannelName()
@@ -232,7 +232,7 @@ trait UserAttrs
             return $this->current_room->channel_name;
         }
 
-        return false;
+        return '';
     }
 
     function getChannelName()
