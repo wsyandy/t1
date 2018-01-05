@@ -62,7 +62,7 @@ class RoomsController extends BaseController
         $room = \Rooms::createRoom($this->currentUser(), $name);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => ['id' => $room->id,
-            'name' => $this->name, 'channel_name' => $this->channel_name]]);
+            'name' => $room->name, 'channel_name' => $room->channel_name]]);
     }
 
     //更新房间信息
@@ -95,7 +95,7 @@ class RoomsController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => ['id' => $room->id,
-            'name' => $this->name, 'channel_name' => $this->channel_name]]);
+            'name' => $room->name, 'channel_name' => $room->channel_name]]);
     }
 
     // 进入房间获取信息
