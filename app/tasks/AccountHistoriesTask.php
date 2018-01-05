@@ -16,4 +16,14 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
         $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
         var_dump($result);
     }
+
+    function testBuyGiftAction()
+    {
+        $user = \Users::findLast();
+        $gift = \Gifts::findLast();
+        $gift_num = 1000;
+        $amount = $gift->amount * $gift_num;
+        $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_BUY_GIFT, $amount);
+        var_dump($result);
+    }
 }
