@@ -14,7 +14,7 @@
 {
     error_code:   0/-1  
     error_reason: '返回码说明'  
-    user_diamond: 100
+    diamond: 100
     pay_url: 'http://order/m/xxx'
     total_page: 10
     current_page: 1
