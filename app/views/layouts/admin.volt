@@ -168,7 +168,9 @@
                     {% if isAllowed('export_histories','index') %}
                         <li><a href="/admin/export_histories">导出记录</a></li>
                     {% endif %}
-
+                    {%  if isAllowed('gifts', 'index') %}
+                        <li><a href="/admin/gifts">礼物配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
