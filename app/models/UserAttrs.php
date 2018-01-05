@@ -86,7 +86,7 @@ trait UserAttrs
         return $data;
     }
 
-    function toSearchJson()
+    function toSimpleJson()
     {
         return [
             'id' => $this->id,

@@ -42,7 +42,7 @@ class RoomsController extends BaseController
 
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
         
-        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms', 'toSimpleJson'));
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
     function nearbyAction()
@@ -54,7 +54,7 @@ class RoomsController extends BaseController
         
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $rooms->toJson('rooms', 'toSimpleJson'));
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
     //创建房间
