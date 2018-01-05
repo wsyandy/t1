@@ -35,14 +35,15 @@ class GiftsTask extends \Phalcon\Cli\Task
         $sender = \Users::findFirst();
 
         $gift = \Gifts::findLast();
-        $gift_num = 1;
+        $gift_num = 3;
         $body = array_merge($body, array(
             'sid' => $sender->sid, 'user_id' => $user->id,
             'gift_id' => $gift->id, 'gift_num' => $gift_num)
         );
         $res = httpPost($url, $body);
         //echo json_encode($res, JSON_UNESCAPED_UNICODE);
-        var_dump($res);
+        echo $res;
+        //var_dump($res);
     }
 
     function testCanGiveGiftAction()

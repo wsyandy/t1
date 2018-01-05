@@ -40,7 +40,7 @@ class GiftOrders extends BaseModel
                 $gift_order->amount,
                 array(
                     'gift_order_id' => $gift_order->id,
-                    'remark' => '购买礼物' . $gift->name . $gift_num . '个, 花费钻石' . $gift_order->amount
+                    'remark' => '购买礼物(' . $gift->name .')' . $gift_num . '个, 花费钻石' . $gift_order->amount
                 )
             );
             if ($result) {
