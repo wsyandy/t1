@@ -106,7 +106,7 @@
 ##### 5.1.2 回应参数说明
 ```
 {
-		    error_code,
+		    error_code,0成功,-1参数错误,-400密码错误
 		    error_reason
             room:{
                  id: int 房间id,
