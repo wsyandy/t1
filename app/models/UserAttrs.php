@@ -54,6 +54,7 @@ trait UserAttrs
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
+            'channel_name' => $this->channel_name,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'current_channel_name' => $this->current_channel_name,
@@ -220,6 +221,16 @@ trait UserAttrs
 
         return '';
     }
+
+    function getChannelName()
+    {
+        if ($this->room) {
+            return $this->room->channel_name;
+        }
+
+        return '';
+    }
+
 
     //按照生日计算星座
     function constellationText()

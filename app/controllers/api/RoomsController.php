@@ -83,6 +83,7 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $password = $this->params('password', '');
+        $user_id = $this->params('user_id', 0); // 通过用户进入房间
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
