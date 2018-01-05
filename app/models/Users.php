@@ -42,6 +42,10 @@ class Users extends BaseModel
      * @type Cities
      */
     private $_ip_city;
+    /**
+     * @type Rooms
+     */
+    private $_current_room_id;
 
 
     //好友状态 1已添加,2等待验证，3等待接受

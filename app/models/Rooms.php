@@ -41,7 +41,7 @@ class Rooms extends BaseModel
         return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
             'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
             'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue,
-            'channel_name' => $this->channel_name, 'online_status' => $this->online_status,'user_num' => $this->user_num,
+            'channel_name' => $this->channel_name, 'online_status' => $this->online_status, 'user_num' => $this->user_num,
             'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km'
         ];
@@ -70,9 +70,6 @@ class Rooms extends BaseModel
         $room->last_at = time();
         $room->save();
 
-        $room->channel_name = $room->generateChannelName();
-        $room->save();
-
         $user->room_id = $room->id;
         $user->save();
 
@@ -88,9 +85,9 @@ class Rooms extends BaseModel
         return $room;
     }
 
-    function generateChannelName()
+    function getChannelName()
     {
-        return $this->id . 'channel_name' . $this->user_id . '_' . mt_rand(10000, 99999);
+        return $this->id . 'c' . md5($this->id . 'u' . $this->user_id);
     }
 
     function updateRoom($params)

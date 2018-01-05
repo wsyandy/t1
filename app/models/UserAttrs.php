@@ -37,7 +37,8 @@ trait UserAttrs
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
-            'im_password' => $this->im_password
+            'im_password' => $this->im_password,
+            'channel_name' => $this->channel_name
         ];
     }
 
@@ -206,6 +207,15 @@ trait UserAttrs
     function getImPassword()
     {
         return md5($this->id);
+    }
+
+    function getChannelName()
+    {
+        if ($this->current_room) {
+            return $this->current_room->channel_name;
+        }
+
+        return '';
     }
 
     //按照生日计算星座
