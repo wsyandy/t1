@@ -106,7 +106,8 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
-            'distance' => strval(mt_rand(1, 10) / 10) . 'km' //距离 待开发
+            'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
+            'age' => $this->age
         ];
     }
 

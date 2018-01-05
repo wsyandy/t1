@@ -372,6 +372,7 @@
                          mobile 手机号
                          monologue 个性签名
                          distance string 距离,例如 0.5km
+                         age 年龄
                     }
                 ]
                 
