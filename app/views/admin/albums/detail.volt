@@ -20,7 +20,7 @@
             <dd class=" unit object_unit" style="height: 180px; width: 130px;">
                 <label for="user_{{ album.id }}">
                     <a href="/admin/users/show/{{ album.user_id }}">
-                        <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}" src="{{ album.small_url }}"
+                        <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}" src="{{ album.image_small_url }}"
                              width="120"/>
                     </a>
                 </label>
