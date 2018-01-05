@@ -33,4 +33,17 @@ class UsersController extends BaseController
         $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', array('user' => $user->toJson()));
     }
 
+    function detailAction()
+    {
+        $user = \Users::findFirstById($this->params('id'));
+        $this->view->user = $user;
+    }
+
+    function basicAction()
+    {
+        $user = \Users::findFirstById($this->params('id'));
+        $devices = \Devices::findBy(['user_id' => $user->id]);
+        $this->view->devices = $devices;
+        $this->view->user = $user;
+    }
 }

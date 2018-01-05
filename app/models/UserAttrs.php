@@ -14,7 +14,6 @@ trait UserAttrs
         return [
             'id' => $this->id,
             'sex' => $this->sex,
-            'province_id' => $this->province_id,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
             'avatar_url' => $this->avatar_url,
@@ -49,7 +48,6 @@ trait UserAttrs
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
-            'province_id' => $this->province_id,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
@@ -96,7 +94,6 @@ trait UserAttrs
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
-            'province_id' => $this->province_id,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
