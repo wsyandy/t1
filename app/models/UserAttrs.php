@@ -82,6 +82,7 @@ trait UserAttrs
         if (isset($this->friend_status)) {
             $data['friend_status'] = $this->friend_status;
             $data['friend_status_text'] = $this->friend_status_text;
+            $data['self_introduce'] = $this->self_introduce;
         }
 
         return $data;

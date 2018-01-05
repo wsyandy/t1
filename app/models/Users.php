@@ -1105,6 +1105,14 @@ class Users extends BaseModel
         return $user_db->zscore($key, $other_user->id) > 0;
     }
 
+    function getSelfIntroduceText($other_user)
+    {
+        $user_db = Users::getUserDb();
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $self_introduce = $user_db->hget($user_introduce_key, $other_user->id);
+        return $self_introduce;
+    }
+
     //好友列表
     function friendList($page, $per_page, $new)
     {
@@ -1129,6 +1137,7 @@ class Users extends BaseModel
                 $friend_status = 1;
             }
 
+            $user->self_introduce = $this->getSelfIntroduceText($user);
             $user->friend_status = $friend_status;
         }
 
