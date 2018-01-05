@@ -33,6 +33,16 @@ class UserGifts extends BaseModel
         $user_gift->total_amount = $user_gift->amount * $user_gift->gift_num + intval($user_gift->total_amount);
         $user_gift->num = $gift_order->gift_num + intval($user_gift->num);
         $user_gift->pay_type = 'diamond';
-        $user_gift->save();
+        return $user_gift->save();
+    }
+
+    static function findListByUserId($user_id, $page, $per_page)
+    {
+        $conditions = array(
+            'conditions' => 'user_id = :user_id:',
+            'bind' => array('user_id' => $user_id),
+            'order' => 'id desc'
+        );
+        return \UserGifts::findPagination($conditions, $page, $per_page);
     }
 }

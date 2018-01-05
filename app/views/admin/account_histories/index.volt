@@ -4,7 +4,7 @@
 
 
 {%- macro user_link(object)  %}
-    <a href="/admin/users/{{ object.user_id }}"><img src="{{ object.user.avatar_url }}" width="30"></a>
+    <a href="/admin/users/detail?id={{ object.user_id }}"><img src="{{ object.user.avatar_url }}" width="30"></a>
 {%- endmacro %}
 
 {%- macro order_link(object) %}
