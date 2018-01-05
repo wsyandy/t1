@@ -55,27 +55,14 @@ class RoomsController extends BaseController
 
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
         if ($room) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => ['id' => $room->id,
-                'name' => $room->name, 'channel_name' => $room->channel_name]]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['id' => $room->id,
+                'name' => $room->name, 'channel_name' => $room->channel_name]);
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => ['id' => $room->id,
-            'name' => $room->name, 'channel_name' => $room->channel_name]]);
-    }
-
-    //更新房间信息
-    function updateAction()
-    {
-        $room_id = $this->params('id', 0);
-        $room = \Rooms::findFirstById($room_id);
-        if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
-        $room->updateRoom($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', ['room' => $room->toJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
     }
 
     //进入房间
@@ -103,8 +90,21 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => ['id' => $room->id,
-            'name' => $room->name, 'channel_name' => $room->channel_name]]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
+    }
+
+    //更新房间信息
+    function updateAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->updateRoom($this->params());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
     // 进入房间获取信息
@@ -118,7 +118,7 @@ class RoomsController extends BaseController
 
         $room->enterRoom($this->currentUser());
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $room->toJson());
     }
 
     function exitAction()
