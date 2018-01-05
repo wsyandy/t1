@@ -12,7 +12,7 @@
 ---|---
 测试环境|http://ctest.yueyuewo.cn
 
-### 2.2. 接口公共参数
+### 2.2. 接口请求公共参数
 
 参数名称|	类型|是否可空|说明
 ---|---|---|---
@@ -34,10 +34,13 @@ ckey|	string|	是|	客户端指纹，可为空
 lat|	double|	是|	纬度latitude
 lon|	double|	是|	经度longitude
 
-### 2.3 响应参数
+### 2.3 响应公共参数
 
 参数|名称|值类型|是否可空|备注
 ---|---|---|---|---
 error_code|操作返回码|int|否| 0表示成功，非0为异常情况
 error_reason|操作信息|string|	是|	返回失败原因
 error_url|返回业务数据|string|是| 跳转地址
+current_page|当前页|int|是| 分页查询时返回此参数
+total_page|总页数|int|是| 分页查询时返回此参数
+total_entries|总个数|int|是| 分页查询时返回此参数
