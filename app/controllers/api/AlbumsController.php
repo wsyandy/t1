@@ -15,9 +15,9 @@ class AlbumsController extends BaseController
     function createAction()
     {
         $user = $this->currentUser();
-        // 更新头像
         $image_file = $this->file('image_file');
         $album = \Albums::uploadImage($user, $image_file);
+        
         if ($album) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['album' => $album->toSimpleJson()]);
         }
