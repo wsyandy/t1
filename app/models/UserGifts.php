@@ -26,7 +26,9 @@ class UserGifts extends BaseModel
         $user_gift->name = $gift->name;
         $user_gift->gift_num = intval($user_gift->gift_num) + $gift_num;
         $user_gift->amount = $gift->amount;
-        $user_gift->total_amount = $user_gift->amount * $user_gift->gift_num;
+        $user_gift->total_amount = $user_gift->amount * $user_gift->gift_num + intval($user_gift->total_amount);
+        $user_gift->num = $gift_num + intval($user_gift->num);
+        $user_gift->pay_type = 'diamond';
         $user_gift->save();
     }
 }
