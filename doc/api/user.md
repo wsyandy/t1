@@ -141,7 +141,7 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
-    channel_name 房间频道名称 
+    current_channel_name 房间频道名称 
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,

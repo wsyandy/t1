@@ -45,18 +45,6 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
-    function nearbyAction()
-    {
-        $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 8);
-
-        // distance 计算与房主的距离
-
-        $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
-    }
-
     //创建房间
     function createAction()
     {
@@ -73,7 +61,8 @@ class RoomsController extends BaseController
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toSimpleJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => ['id' => $room->id,
+            'name' => $this->name, 'channel_name' => $this->channel_name]]);
     }
 
     //更新房间信息
@@ -104,7 +93,8 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => ['id' => $room->id,
+            'name' => $this->name, 'channel_name' => $this->channel_name]]);
     }
 
     // 进入房间获取信息

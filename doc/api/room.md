@@ -106,7 +106,12 @@
 ```
 {
 		    error_code,
-		    error_reason 
+		    error_reason
+            room:{
+                 id: int 房间id,
+                 name: string 房间名称
+                 channel_name: string 房间唯一标识, 频道名称
+            }
 }
 ```
 

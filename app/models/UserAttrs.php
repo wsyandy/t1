@@ -35,10 +35,10 @@ trait UserAttrs
             'age' => $this->age,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
-            'im_password' => $this->im_password,
-            'channel_name' => $this->channel_name
+            'im_password' => $this->im_password
         ];
     }
 
@@ -56,6 +56,7 @@ trait UserAttrs
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
@@ -103,6 +104,7 @@ trait UserAttrs
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'monologue' => $this->monologue
         ];
     }
@@ -209,7 +211,7 @@ trait UserAttrs
         return md5($this->id);
     }
 
-    function getChannelName()
+    function getCurrentChannelName()
     {
         if ($this->current_room) {
             return $this->current_room->channel_name;
