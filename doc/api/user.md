@@ -369,6 +369,7 @@
                          current_room_id 用户当前所在房间id,不在房间为0
                          current_room_seat_id 用户当前所在麦位id
                          current_channel_name 当前所在房间频道名称
+                         current_room_lock 当前房间是否加锁 true/false
                          user_role 当前用户角色，无角色，房主，主播，旁听
                          mobile 手机号
                          monologue 个性签名
