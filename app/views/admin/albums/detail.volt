@@ -7,7 +7,6 @@
            data-action="1">选中通过</a>
         <a href="#" class="selected_action btn btn-sm" data-target="image_auth" data-formid="batch_form"
            data-action="2">选中不通过</a>
-        <a href="/admin/albums/yellow" class="btn btn-sm">黄图列表</a>
     </div>
 </div>
 
