@@ -118,7 +118,14 @@ class RoomsController extends BaseController
 
         $room->enterRoom($this->currentUser());
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $room->toJson());
+        $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+
+        $res = $room->toJson();
+        $res['channel_key'] = $key;
+        $res['app_id'] = $app_id;
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 
     function exitAction()
