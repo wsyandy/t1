@@ -43,6 +43,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
+    im_password 即时通信密码
+    id 用户id
     error_url 跳转地址
 }
 
@@ -67,6 +69,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
+    im_password 即时通信密码
+    id 用户id
     error_url 跳转地址
 }
 

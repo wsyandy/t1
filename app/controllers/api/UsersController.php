@@ -40,8 +40,8 @@ class UsersController extends BaseController
         }
 
         $user->updatePushToken($device);
-
-        return $this->renderJSON($error_code, $error_reason, ['sid' => $user->sid]);
+        $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id];
+        return $this->renderJSON($error_code, $error_reason, $opts);
     }
 
 
@@ -124,7 +124,8 @@ class UsersController extends BaseController
                 $error_url = 'app://users/update_info';
             }
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', ['sid' => $user->sid, 'error_url' => $error_url]);
+            $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'error_url' => $error_url];
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
         }
