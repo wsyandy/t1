@@ -5,7 +5,6 @@
         <td>注册时间: {{ user.created_at_text }}</td>
         <td>最后活跃时间: {{ user.last_at_text }}</td>
         <td>IP地址:{{ user.ip_text }}</td>
-        <td>状态: {{ user.user_status_text }}</td>
     </tr>
     <tr>
         <td>昵称:{{ user.nickname }}</td>
@@ -18,6 +17,9 @@
         <td>粉丝人数: {{ user.followed_num }} 关注数: {{ user.follow_num }} 好友人数: {{ user.friend_num }}</td>
         <td>fr: {{ user.fr }}, 渠道:{{ user.partner_name }}</td>
         <td>省份: {{ user.province_name }} 城市: {{ user.city_name }}</td>
+    </tr>
+    <tr>
+        <td>状态: {{ user.user_status_text }}</td>
     </tr>
 </table>
 
