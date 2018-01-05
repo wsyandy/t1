@@ -8,10 +8,14 @@
         <td>状态: {{ user.user_status_text }}</td>
     </tr>
     <tr>
-        <td>姓名:{{ user.id_name }}</td>
-        <td>手机号码:{{ user.mobile_text }}</td>
+        <td>昵称:{{ user.nickname }}</td>
+        <td>手机号码:{{ user.mobile }}</td>
         <td>生日: {{ user.birthday_text }}, {{ user.age }}岁</td>
+        <td>个性签名: {{ user.monolog }}</td>
+        <td>星座: {{ user.constellation_text }} 身高: {{ user.height }}</td>
+        <td>粉丝人数: {{ user.followed_num }} 关注数: {{ user.follow_num }} 好友人数: {{ user.friend_num }}</td>
         <td>fr: {{ user.fr }}, 渠道:{{ user.partner_name }}</td>
+        <td>省份: {{ user.province_name }} 城市: {{ user.city_name }}</td>
     </tr>
 </table>
 
