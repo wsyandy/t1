@@ -1,0 +1,1 @@
+alter table gift_orders add gift_num integer;

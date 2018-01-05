@@ -191,6 +191,9 @@ class SmsHistories extends BaseModel
         if ($mobile == '13912345678' && $auth_code == '1234') {
             return [ERROR_CODE_SUCCESS, '验证成功'];
         }
+        if (isDevelopmentEnv() && preg_match('/13800/', $mobile)) {
+            return [ERROR_CODE_SUCCESS, '验证成功'];
+        }
 
         $hot_cache = self::getHotWriteCache();
 

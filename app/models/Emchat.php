@@ -27,7 +27,7 @@ class Emchat extends BaseModel
     {
         $emchat = new \Emchat();
         if (!is_a($user, 'Users')) {
-            $user = \Users::findByIds(intval($user));
+            $user = \Users::findById(intval($user));
         }
         $create_result = $emchat->createUser($user->id, $user->im_password);
         if (!$create_result) {

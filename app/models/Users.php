@@ -5,6 +5,7 @@ class Users extends BaseModel
 {
     use UserEnumerations;
     use UserAttrs;
+    use UserAbilities;
 
     /**
      * @type ProductChannels
