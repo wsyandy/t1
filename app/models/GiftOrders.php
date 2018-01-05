@@ -52,6 +52,7 @@ class GiftOrders extends BaseModel
         $gift_order->name = $gift->name;
         $gift_order->pay_type = 'diamond';
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+        $gift_order->gift_num = $gift_num;
         if ($gift_order->create()) {
             $result = \AccountHistories::changeBalance(
                 $gift_order->sender_id,
@@ -64,7 +65,7 @@ class GiftOrders extends BaseModel
             );
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
-                \UserGifts::delay()->freshGiftNum($gift_order->user_id, $gift->id, $gift_num);
+                \UserGifts::delay()->freshGiftNum($gift_order->id);
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
             }
@@ -89,6 +90,11 @@ class GiftOrders extends BaseModel
     function getStatusText()
     {
         return fetch(\GiftOrders::$status, $this->status);
+    }
+
+    function isSuccess()
+    {
+        return GIFT_ORDER_STATUS_SUCCESS == $this->status;
     }
 
 }
