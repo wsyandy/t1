@@ -1,4 +1,5 @@
 <a href="/admin/product_groups/new?product_channel_id={{ product_channel_id }}" class="modal_action">新增</a>
+<a href="/admin/product_channels">返回</a>
 
 {%- macro icon_link(object) %}
     <img src="{{ object.icon_url }}" width="40">
@@ -13,7 +14,7 @@
 {%- endmacro  %}
 
 {%- macro products_link(object) %}
-    <a href="/admin/products?product_group_id={{ object.id }}">产品配置</a>
+    <a href="/admin/products?product_group_id={{ object.id }}&product_channel_id={{ object.product_channel_id }}">产品配置</a>
 {%- endmacro %}
 
 {{ simple_table(product_groups, [
@@ -28,7 +29,7 @@
     <td>${product_group.product_channel_name}</td>
     <td>${product_group.name}</td>
     <td>${product_group.fee_type_text}</td>
-    <td><a href="/admin/products?product_group_id=${product_group.id}">产品配置</a></td>
+    <td><a href="/admin/products?product_group_id=${product_group.id}&product_channel_id=${product_group.product_channel_id}">产品配置</a></td>
     <td><img src="${product_group.icon_url}" width="40"></td>
     <td>${product_group.remark}</td>
     <td>${product_group.status_text}</td>
