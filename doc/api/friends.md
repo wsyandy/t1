@@ -33,6 +33,7 @@
            current_room_seat_id 用户当前所在麦位id
            friend_status int 好友状态 1已添加,2等待验证，3等待接受
            friend_status_text string 好友状态名称
+           self_introduce 自我介绍
         }
     ] 
 }
