@@ -1,0 +1,27 @@
+@charset "utf-8";
+.unit {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+body {
+    /**background-color: #b7b7b7; */
+}
+.development_bg{
+
+    background-color: #fd80bc;
+}
+.fix_table {
+    position: relative;
+}
+.thumb_list {
+    float: left;
+    list-style: none;
+    width: 100%;
+}
+.thumb_list li{
+    float: left;
+}
+.thumb_list dd{
+    float: left;
+}

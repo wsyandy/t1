@@ -40,8 +40,8 @@ class UsersController extends BaseController
         }
 
         $user->updatePushToken($device);
-
-        return $this->renderJSON($error_code, $error_reason, ['sid' => $user->sid]);
+        $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id];
+        return $this->renderJSON($error_code, $error_reason, $opts);
     }
 
 
@@ -124,7 +124,8 @@ class UsersController extends BaseController
                 $error_url = 'app://users/update_info';
             }
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', ['sid' => $user->sid, 'error_url' => $error_url]);
+            $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'error_url' => $error_url];
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
         }
@@ -259,6 +260,7 @@ class UsersController extends BaseController
     {
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
+        $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
@@ -282,8 +284,6 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
-        //声网登录密码
-        $basic_json['im_password'] = $this->currentUser()->im_password;
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 
@@ -320,4 +320,25 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
+
+    // 附近的人
+    function nearbyAction()
+    {
+        $user_id = $this->params('user_id');
+
+        $cond = ['user_id' => intval($user_id)];
+
+        debug($cond);
+
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 10);
+
+        $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
+        if (count($users)) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+    }
+
 }

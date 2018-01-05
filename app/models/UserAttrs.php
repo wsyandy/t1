@@ -35,8 +35,10 @@ trait UserAttrs
             'age' => $this->age,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
-            'constellation' => $this->constellation_text
+            'constellation' => $this->constellation_text,
+            'im_password' => $this->im_password
         ];
     }
 
@@ -56,7 +58,8 @@ trait UserAttrs
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone
+            'microphone' => $this->microphone,
+            'im_password' => $this->im_password
         ];
     }
 
@@ -88,7 +91,7 @@ trait UserAttrs
 
     function toSimpleJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
@@ -100,9 +103,17 @@ trait UserAttrs
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
-            'monologue' => $this->monologue
+            'current_channel_name' => $this->current_channel_name,
+            'current_room_lock' => $this->current_room_lock,
+            'user_role' => $this->user_role,
+            'monologue' => $this->monologue,
+            'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
+            'age' => $this->age,
         ];
+
+        return $data;
     }
+
 
     public function isWebPlatform()
     {
@@ -205,6 +216,34 @@ trait UserAttrs
     {
         return md5($this->id);
     }
+
+    function getCurrentRoomLock()
+    {
+        if ($this->current_room) {
+            return $this->current_room->lock;
+        }
+
+        return false;
+    }
+
+    function getCurrentChannelName()
+    {
+        if ($this->current_room) {
+            return $this->current_room->channel_name;
+        }
+
+        return '';
+    }
+
+    function getChannelName()
+    {
+        if ($this->room) {
+            return $this->room->channel_name;
+        }
+
+        return '';
+    }
+
 
     //按照生日计算星座
     function constellationText()

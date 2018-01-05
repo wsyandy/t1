@@ -23,9 +23,9 @@ class RoomsController extends BaseController
     //Channel Key 用于加入频道;
     function channelKeyAction()
     {
-
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -39,18 +39,6 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
-
-        $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-        
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
-    }
-
-    function nearbyAction()
-    {
-        $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 8);
-
-        // distance 计算与房主的距离
 
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
 
@@ -67,13 +55,43 @@ class RoomsController extends BaseController
 
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
         if ($room) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['room' => ['id' => $room->id,
-                'name' => $this->name, 'channel_name' => $this->channel_name]]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['id' => $room->id,
+                'name' => $room->name, 'channel_name' => $room->channel_name]);
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $name);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['room' => $room->toSimpleJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
+    }
+
+    //进入房间
+    function enterAction()
+    {
+        $room_id = $this->params('id', 0);
+        $password = $this->params('password', '');
+        $user_id = $this->params('user_id', 0); // 通过用户进入房间
+
+        if ($user_id) {
+            $user = \Users::findFirstById($user_id);
+            if (!$user || $user->current_room_id < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
+            }
+
+            $room = $user->current_room;
+        } else {
+            $room = \Rooms::findFirstById($room_id);
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+        }
+
+        if ($room->lock && $room->password != $password) {
+            return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
     }
 
     //更新房间信息
@@ -86,24 +104,7 @@ class RoomsController extends BaseController
         }
 
         $room->updateRoom($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', ['room' => $room->toJson()]);
-    }
-
-    //进入房间
-    function enterAction()
-    {
-        $room_id = $this->params('id', 0);
-        $password = $this->params('password', '');
-        $room = \Rooms::findFirstById($room_id);
-        if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
-        if ($room->lock && $room->password != $password) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
-        }
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
     // 进入房间获取信息
@@ -117,7 +118,7 @@ class RoomsController extends BaseController
 
         $room->enterRoom($this->currentUser());
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toJson()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $room->toJson());
     }
 
     function exitAction()
@@ -209,7 +210,7 @@ class RoomsController extends BaseController
 
         $users = $room->findUsers($page, $per_page);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toRelationJson'));
+        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
     }
 
 }

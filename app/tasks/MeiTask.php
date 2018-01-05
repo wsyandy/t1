@@ -99,5 +99,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_db->hset($key, 2, "哈哈");
 
         debug($user_db->hgetall($key), $user_db->hget($key, 1), $user_db->hget($key, 2));
+
+        $albums = Albums::findForeach();
+
+        foreach ($albums as $album) {
+            echoLine($album->user_id);
+        }
     }
 }

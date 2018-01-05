@@ -43,6 +43,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
+    id 用户id，即时通信账户(声网，环信) 
+    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
 }
 
@@ -67,6 +69,8 @@
     error_code
     error_reason  失败原因，默认为空
     sid 身份信息 必须先更新本地SID
+    id 用户id，即时通信账户(声网，环信) 
+    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
 }
 
@@ -109,6 +113,7 @@
     room_id 用户创建房间id，无房间为0 
     current_room_id 用户当前所在房间id,不在房间为0
     current_room_seat_id 用户当前所在麦位id
+    user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
@@ -137,6 +142,8 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
+    current_channel_name 当前所在房间频道名称
+    user_role 当前用户角色，无角色，房主，主播，旁听
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -199,11 +206,14 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
+    current_channel_name 当前所在房间频道名称 
+    user_role 当前用户角色，无角色，房主，主播，旁听
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
     friend_num 好友人数
-    is_friend true/false,好友
+    is_friend true/false,是否是好友
+    is_follow true/false,是否已关注
     interests 兴趣爱好
     height 身高
     age 年龄
@@ -324,12 +334,50 @@
              room_id 用户创建房间id，无房间为0 
              current_room_id 用户当前所在房间id,不在房间为0
              current_room_seat_id 用户当前所在麦位id
+             current_channel_name 当前所在房间频道名称 
              mobile 手机号
              monologue 个性签名
         }
     ]
 }
 ```
+### 11 附近的人
 
+> http-get ```/api/users/nearby```
 
+##### 11.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|page|页码|int|否||
+|per_page|每页|int|否|||
+
+##### 11.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    users:[
+                    {
+                         id 用户id
+                         sex	性别 0:女 1:男
+                         province_name 省名
+                         city_name 城市
+                         avatar_url 用户头像
+                         avatar_small_url 用户小头像
+                         nickname 昵称
+                         room_id 用户创建房间id，无房间为0 
+                         current_room_id 用户当前所在房间id,不在房间为0
+                         current_room_seat_id 用户当前所在麦位id
+                         current_channel_name 当前所在房间频道名称
+                         current_room_lock 当前房间是否加锁 true/false
+                         user_role 当前用户角色，无角色，房主，主播，旁听
+                         mobile 手机号
+                         monologue 个性签名
+                         distance string 距离,例如 0.5km
+                         age 年龄
+                    }
+                ]
+                
+}
+```
 

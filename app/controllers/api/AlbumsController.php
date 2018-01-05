@@ -12,14 +12,35 @@ namespace api;
 class AlbumsController extends BaseController
 {
 
+    function indexAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 9);
+        $user = $this->currentUser();
+
+        $albums = \Albums::findPagination(['conditions' => "user_id" . $user->id, 'order' => 'id desc'], $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $albums->toJson('albums', 'toSimpleJson'));
+    }
+
     function createAction()
     {
         $user = $this->currentUser();
-        $image_file = $this->file('image_file');
-        $album = \Albums::uploadImage($user, $image_file);
-        
-        if ($album) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['album' => $album->toSimpleJson()]);
+
+        $image_files = [];
+
+        for ($i = 0; $i < 9; $i++) {
+            $image_file = $this->file('image_file' . $i);
+
+            if ($image_file) {
+                $image_files[] = $image_file;
+            }
+        }
+
+        $res = \Albums::uploadImage($user, $image_files);
+
+        if ($res) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '上传失败');

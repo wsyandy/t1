@@ -16,25 +16,33 @@ class Albums extends BaseModel
 
     static $AUTH_STATUS = [VERIFY_WAIT => '等待审核', VERIFY_SUCCESS => '审核成功', VERIFY_FAIL => '审核失败'];
 
-    static function uploadImage($user, $filename)
+    static function uploadImage($user, $filenames = [])
     {
 
-        if (!file_exists($filename)) {
-            return null;
+        if (count($filenames) < 1) {
+            info("文件为空");
+            return false;
         }
 
-        $dest_filename = APP_NAME . '/albums/' . $user->id . '_' . date('YmdH') . uniqid() . '.jpg';
-        $res = \StoreFile::upload($filename, $dest_filename);
-        if ($res) {
-            $album = new Albums();
-            $album->user_id = $user->id;
-            $album->image = $dest_filename;
-            $album->save();
+        foreach ($filenames as $filename) {
 
-            return $album;
+            if (!file_exists($filename)) {
+                continue;
+            }
+
+            $dest_filename = APP_NAME . '/albums/' . $user->id . '_' . date('YmdH') . uniqid() . '.jpg';
+            $res = \StoreFile::upload($filename, $dest_filename);
+
+            if ($res) {
+                $album = new Albums();
+                $album->user_id = $user->id;
+                $album->image = $dest_filename;
+                $album->save();
+            }
         }
 
-        return null;
+
+        return true;
     }
 
     function toSimpleJson()
