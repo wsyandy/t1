@@ -105,7 +105,8 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'current_channel_name' => $this->current_channel_name,
-            'monologue' => $this->monologue
+            'monologue' => $this->monologue,
+            'distance' => strval(mt_rand(1, 10) / 10) . 'km' //距离 待开发
         ];
     }
 

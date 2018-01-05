@@ -141,7 +141,7 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
-    current_channel_name 房间频道名称 
+    current_channel_name 当前所在房间频道名称 
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -204,6 +204,7 @@
     room_id 用户创建房间id ，无房间为0
     current_room_id 用户当前所在房间id ,不在房间为0
     current_room_seat_id 用户当前所在麦位id
+    current_channel_name 当前所在房间频道名称 
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -329,12 +330,47 @@
              room_id 用户创建房间id，无房间为0 
              current_room_id 用户当前所在房间id,不在房间为0
              current_room_seat_id 用户当前所在麦位id
+             current_channel_name 当前所在房间频道名称 
              mobile 手机号
              monologue 个性签名
         }
     ]
 }
 ```
+### 11 附近的人
 
+> http-get ```/api/users/nearby```
 
+##### 11.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|page|页码|int|否||
+|per_page|每页|int|否|||
+
+##### 11.2 回应参数说明
+```
+{
+		    error_code
+		    error_reason
+		    users:[
+                    {
+                         id 用户id
+                         sex	性别 0:女 1:男
+                         province_name 省名
+                         city_name 城市
+                         avatar_url 用户头像
+                         avatar_small_url 用户小头像
+                         nickname 昵称
+                         room_id 用户创建房间id，无房间为0 
+                         current_room_id 用户当前所在房间id,不在房间为0
+                         current_room_seat_id 用户当前所在麦位id
+                         current_channel_name 当前所在房间频道名称 
+                         mobile 手机号
+                         monologue 个性签名
+                         distance string 距离,例如 0.5km
+                    }
+                ]
+                
+}
+```
 

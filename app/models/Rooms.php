@@ -42,8 +42,7 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
             'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue,
             'channel_name' => $this->channel_name, 'online_status' => $this->online_status, 'user_num' => $this->user_num,
-            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
-            'distance' => strval(mt_rand(1, 10) / 10) . 'km'
+            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
     }
 
