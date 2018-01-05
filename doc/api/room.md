@@ -29,32 +29,7 @@
             room:{
                 id: int 房间id,
                 name: string 房间名称
-                topic: string 房间话题
-                chat: 公屏聊天状态, false/true
-                user_id 房主用户id
-                sex	性别 0:女 1:男
-                avatar_small_url 用户小头像
-                nickname 昵称
-                online_status 0离线，1在线
                 channel_name: string 房间唯一标识, 频道名称
-                lock boole加锁状态, true是加锁
-                created_at int 创建时间戳
-                last_at int 最后活跃时间
-                user_num 在线人数,
-                room_seats:[
-                    {
-                      id: int 麦位id,
-                      user_id 麦位主播id，无主播为0
-                      sex	性别 0:女 1:男
-                      avatar_small_url 用户小头像
-                      nickname 昵称
-                      room_id 房间id
-                      status: int 麦位状态，0 麦为被封，1 麦位正常
-                      microphone 麦克风状态 false/true 默认为true,
-                      rank 麦位排序, 0-8, 0是房主麦位
-                    }
-                    ...
-                ]
             }
 }
 ```
@@ -117,17 +92,34 @@
 }
 ```
 
-### 5 进入房间
+### 5.1 进入房间
 
 > http-post ```/api/rooms/enter```
 
-##### 5.1 请求参数说明
+##### 5.1.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
 |password|房间密码|string|是|房间密码
 
-##### 5.2 回应参数说明
+##### 5.1.2 回应参数说明
+```
+{
+		    error_code,
+		    error_reason 
+}
+```
+
+### 5.2 房间详情(进入房间里拉取详情)
+
+> http-get ```/api/rooms/detail```
+
+##### 5.2.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+
+##### 5.2.2 回应参数说明
 ```
 {
 		    error_code,
@@ -157,7 +149,7 @@
                       room_id 房间id
                       status: int 麦位状态，0 麦为被封，1 麦位正常
                       microphone 麦克风状态 false/true 默认为true,
-                      rank 麦位排序, 0-8, 0是房主麦位
+                      rank 麦位排序, 1-8, 8个麦位
                     }
                     ...
                 ]
@@ -191,8 +183,8 @@
 ##### 7.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否|||
-|password|密码|string|否|||
+|id|房间id|int|否||
+|password|密码|string|否||
 
 ##### 7.2 回应参数说明
 ```
@@ -209,7 +201,7 @@
 ##### 8.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否|||
+|id|房间id|int|否||
 
 ##### 8.2 回应参数说明
 ```
@@ -261,8 +253,8 @@
 ##### 11.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否||
-|page|页码|int|否||
+|id|房间id|int|否|无
+|page|页码|int|否||无
 |per_page|每页个数|int|否|默认8个
 
 ##### 11.2 回应参数说明
@@ -277,9 +269,12 @@
                    avatar_url string 正常图像
                    avatar_small_url string 小尺寸图像
                    nickname string 昵称
-                   room_id  int 用户所在房间的ID
-                   room_seat_id 麦位id 
-                   user_role 用户角色 0无角色, 1房主，2主播，3旁听  
+                   room_id  int 用户创建的房间的id，无房间为0
+                   current_room_id 用户当前所在房间id ,不在房间为0
+                   current_room_seat_id 用户当前所在麦位id 
+                   user_role 用户角色 0无角色, 1房主，2主播，3旁听
+                   monologue 个性签名
+                   age 年龄  
 		        },
 		        ...
 		    ]
@@ -294,7 +289,7 @@
 ##### 12.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|speaker|扬声器|boole|否|||
+|speaker|扬声器|boole|否||
 
 ##### 12.2 回应参数说明
 ```
@@ -312,7 +307,7 @@
 ##### 13.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|microphone|麦克风|boole|否|||
+|microphone|麦克风|boole|否||
 
 ##### 13.2 回应参数说明
 ```
@@ -328,9 +323,9 @@
 
 ##### 14.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---|
-|page|页码|int|否|||
-|per_page|每页|int|否|||
+|---|---|---|---|---
+|page|页码|int|否||
+|per_page|每页|int|否||
 
 ##### 14.2 回应参数说明
 ```
@@ -347,11 +342,14 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
                     created_at int 创建时间戳
                     last_at int 最后活跃时间
+                    user_num 在线人数
                 }
                  ....
             ]
@@ -364,9 +362,9 @@
 
 ##### 14.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---|
-|page|页码|int|否|||
-|per_page|每页|int|否|||
+|---|---|---|---|---
+|page|页码|int|否||
+|per_page|每页|int|否||
 
 ##### 14.2 回应参数说明
 ```
@@ -383,12 +381,15 @@
                     sex	性别 0:女 1:男
                     avatar_small_url 房主小头像
                     nickname 房主昵称
+                    age int 年龄
+                    monologue 个性签名
                     online_status 0离线，1在线
                     channel_name: string 房间唯一标识, 频道名称
                     lock boole加锁状态, true是加锁
                     created_at int 创建时间戳
                     last_at int 最后活跃时间,
                     distance string 距离,例如 0.5km
+                    user_num 在线人数
                 }
                  ....
             ]

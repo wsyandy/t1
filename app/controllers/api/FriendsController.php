@@ -18,13 +18,22 @@ class FriendsController extends BaseController
         $per_page = $this->params('per_page', 10);
         $users = $this->currentUser()->friendList($page, $per_page, $new);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
+        if ($users) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     //添加好友
     function createAction()
     {
-        $this->currentUser()->addFriend($this->otherUser());
+        $self_introduce = $this->params('self_introduce');
+        $opts = [];
+
+        $opts['self_introduce'] = $self_introduce;
+
+        $this->currentUser()->addFriend($this->otherUser(), $opts);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
     }
 

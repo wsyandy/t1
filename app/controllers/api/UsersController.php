@@ -173,7 +173,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
         }
 
-        $user->updateProfile();
+        $user->updateProfile($params);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
@@ -299,5 +299,25 @@ class UsersController extends BaseController
             );
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '创建失败,请稍后再试');
+    }
+
+    function searchAction()
+    {
+        $user_id = $this->params('user_id');
+
+        $cond = ['user_id' => intval($user_id)];
+
+        debug($cond);
+
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 10);
+
+        $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
+
+        if (count($users)) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 }

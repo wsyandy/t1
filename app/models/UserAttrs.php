@@ -14,9 +14,7 @@ trait UserAttrs
         return [
             'id' => $this->id,
             'sex' => $this->sex,
-            'province_id' => $this->province_id,
             'province_name' => $this->province_name,
-            'city_id' => $this->city_id,
             'city_name' => $this->city_name,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
@@ -33,6 +31,12 @@ trait UserAttrs
             'microphone' => $this->microphone,
             'albums' => $this->albums,
             'user_gifts' => $this->user_gifts,
+            'birthday' => $this->birthday_text,
+            'age' => $this->age,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
+            'user_role' => $this->user_role,
+            'constellation' => $this->constellation_text
         ];
     }
 
@@ -44,16 +48,15 @@ trait UserAttrs
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
-            'province_id' => $this->province_id,
             'province_name' => $this->province_name,
-            'city_id' => $this->city_id,
             'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
-            'room_seat_id' => $this->room_seat_id,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone,
+            'microphone' => $this->microphone
         ];
     }
 
@@ -67,16 +70,38 @@ trait UserAttrs
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
             'room_id' => $this->room_id,
-            'room_seat_id' => $this->room_seat_id,
-            'user_role' => $this->user_role
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
+            'user_role' => $this->user_role,
+            'monologue' => $this->monologue,
+            'age' => $this->age
         ];
 
         if (isset($this->friend_status)) {
             $data['friend_status'] = $this->friend_status;
             $data['friend_status_text'] = $this->friend_status_text;
+            $data['self_introduce'] = $this->self_introduce;
         }
 
         return $data;
+    }
+
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'mobile' => $this->mobile,
+            'room_id' => $this->room_id,
+            'current_room_id' => $this->current_room_id,
+            'current_room_seat_id' => $this->current_room_seat_id,
+            'monologue' => $this->monologue
+        ];
     }
 
     public function isWebPlatform()
@@ -158,9 +183,77 @@ trait UserAttrs
         return [];
     }
 
+    function getAge()
+    {
+        $birthday = $this->birthday;
+
+        if (!$birthday) {
+            return '';
+        }
+
+        $age = date("Y") - date("Y", $birthday);
+
+        return $age;
+    }
+
+    function getBirthdayText()
+    {
+        return date('Y-m-d', $this->birthday);
+    }
+
     function getImPassword()
     {
         return md5($this->id);
     }
 
+    //按照生日计算星座
+    function constellationText()
+    {
+        $c = '';
+        $num = date('md', $this->birthday);
+
+        switch ($num) {
+            case 321 <= $num && $num <= 420:
+                $c = 1;
+                break;
+            case  421 <= $num && $num <= 520:
+                $c = 2;
+                break;
+            case 521 <= $num && $num <= 621:
+                $c = 3;
+                break;
+            case 622 <= $num && $num <= 722:
+                $c = 4;
+                break;
+            case 723 <= $num && $num <= 823:
+                $c = 5;
+                break;
+            case 824 <= $num && $num <= 923:
+                $c = 6;
+                break;
+            case 924 <= $num && $num <= 1023:
+                $c = 7;
+                break;
+            case 1024 <= $num && $num <= 1122:
+                $c = 8;
+                break;
+            case 1123 <= $num && $num <= 1221:
+                $c = 9;
+                break;
+            case 1222 <= $num && $num <= 1231:
+                $c = 10;
+                break;
+            case 121 <= $num && $num <= 219:
+                $c = 11;
+                break;
+            case 220 <= $num && $num <= 320:
+                $c = 12;
+                break;
+            case 11 <= $num && $num <= 120:
+                $c = 10;
+                break;
+        }
+
+        return Users::$CONSTELLATION[$c];
+    }
 }

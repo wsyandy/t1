@@ -12,5 +12,6 @@
 * [好友](friends.md)
 * [房间](room.md)
 * [麦位](room_seat.md)
+* [信令结构](signaling.md)
 
 ## Published with GitBook

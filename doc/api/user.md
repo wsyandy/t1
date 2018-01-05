@@ -106,7 +106,9 @@
     avatar_small_url 用户小头像
     nickname 昵称
     im_password 即时通信登录密码
-    room_id 房间id 
+    room_id 用户创建房间id，无房间为0 
+    current_room_id 用户当前所在房间id,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
@@ -126,15 +128,15 @@
     error_reason  失败原因，默认为空
     id 用户id
     sex	性别 0:女 1:男
-    province_id 现居省份
     province_name 省名
-    city_id 现居城市
     city_name 城市
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
     mobile  string 手机号
-    room_id 房间id
+    room_id 用户创建房间id ，无房间为0
+    current_room_id 用户当前所在房间id ,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -142,6 +144,9 @@
     interests 兴趣爱好
     height 身高
     im_password 即时通信登录密码
+    age 年龄
+    birthday 生日
+    constellation 星座
     albums:[
         {
             id,
@@ -185,15 +190,15 @@
     error_reason  失败原因，默认为空
     id 用户id
     sex	性别 0:女 1:男
-    province_id 现居省份
     province_name 省名
-    city_id 现居城市
     city_name 城市
     avatar_url 用户头像
     avatar_small_url 用户小头像
     nickname 昵称
     mobile  string 手机号
-    room_id 房间id
+    room_id 用户创建房间id ，无房间为0
+    current_room_id 用户当前所在房间id ,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
@@ -201,6 +206,9 @@
     is_friend true/false,好友
     interests 兴趣爱好
     height 身高
+    age 年龄
+    birthday 生日
+    constellation 星座
     albums:[
         {
             id,
@@ -235,13 +243,15 @@
 ##### 7.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
+|avatar_file|头像|file|||
 |nickname|昵称|string|||
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||
 |city_name|城市名称|string|||
 |monologue|个性签名|string||客户端需限制字数长度|
 |age|年龄|int|||
-|height|身高|int||||
+|height|身高|int|||
+|birthday|生日|string||||
 
 ##### 7.2 回应参数说明
 ```
@@ -286,6 +296,40 @@
 }
 ```
 
+### 10 用户搜索接口
+
+> http-post ```/api/users/search```
+
+##### 10.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|user_id|用户id|int|是||
+|page|当前页|int|是||
+|per_page|每页个数|int|是|||
+
+##### 10.2 回应参数说明
+```
+{
+    error_code: 0成功，非0失败
+    error_reason  失败原因，默认为空
+    users:[
+        {
+             id 用户id
+             sex	性别 0:女 1:男
+             province_name 省名
+             city_name 城市
+             avatar_url 用户头像
+             avatar_small_url 用户小头像
+             nickname 昵称
+             room_id 用户创建房间id，无房间为0 
+             current_room_id 用户当前所在房间id,不在房间为0
+             current_room_seat_id 用户当前所在麦位id
+             mobile 手机号
+             monologue 个性签名
+        }
+    ]
+}
+```
 
 
 

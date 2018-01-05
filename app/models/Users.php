@@ -879,6 +879,14 @@ class Users extends BaseModel
                 continue;
             }
 
+            if ('birthday' == $k) {
+                $time = strtotime($v);
+                if ($time < time()) {
+                    $this->birthday = $time;
+                }
+                continue;
+            }
+
             $this->$k = $v;
         }
 
@@ -938,7 +946,11 @@ class Users extends BaseModel
             $user->created_at = fetch($times, $user_id);
         }
 
-        return $users;
+        $total_entries = $user_db->zcard($relations_key);
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
     //黑名单列表
@@ -1021,6 +1033,9 @@ class Users extends BaseModel
         $added_key = 'added_friend_list_user_id_' . $other_user->id;
         $add_total_key = 'friend_total_list_user_id_' . $this->id;
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
+        $self_introduce = fetch($opts, 'self_introduce');
 
         $user_db = Users::getUserDb();
 
@@ -1032,6 +1047,12 @@ class Users extends BaseModel
         //在对方添加的队列中清掉我的id
         if ($user_db->zscore('add_friend_list_user_id_' . $other_user->id, $this->id)) {
             $user_db->zrem('add_friend_list_user_id_' . $other_user->id, $this->id);
+        }
+
+        if ($self_introduce) {
+            //存储添加好友的自我介绍
+            $user_db->hset($user_introduce_key, $other_user->id, $self_introduce);
+            $user_db->hset($other_user_introduce_key, $this->id, $self_introduce);
         }
 
         //没有在对方总队列里面添加 此时要做通知
@@ -1084,6 +1105,14 @@ class Users extends BaseModel
         return $user_db->zscore($key, $other_user->id) > 0;
     }
 
+    function getSelfIntroduceText($other_user)
+    {
+        $user_db = Users::getUserDb();
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $self_introduce = $user_db->hget($user_introduce_key, $other_user->id);
+        return $self_introduce;
+    }
+
     //好友列表
     function friendList($page, $per_page, $new)
     {
@@ -1108,6 +1137,7 @@ class Users extends BaseModel
                 $friend_status = 1;
             }
 
+            $user->self_introduce = $this->getSelfIntroduceText($user);
             $user->friend_status = $friend_status;
         }
 
@@ -1140,7 +1170,9 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $key = 'friend_total_list_user_id_' . $this->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
         $user_db->zclear($key);
+        $user_db->del($user_introduce_key);
     }
 
     function friendNum()
@@ -1161,5 +1193,20 @@ class Users extends BaseModel
             }
         }
         return false;
+    }
+
+    static function search($user, $page, $per_page, $opts = [])
+    {
+        $user_id = fetch($opts, 'user_id');
+
+        $cond = [];
+
+        if ($user_id) {
+            $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
+        }
+
+        $users = Users::findPagination($cond, $page, $per_page);
+
+        return $users;
     }
 }

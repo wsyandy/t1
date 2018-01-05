@@ -41,14 +41,20 @@
 {% endmacro %}
 
 {% macro profile_link(user) %}
+    {% if isAllowed('users','detail') %}
+        <a href="/admin/users/detail?id={{ user.id }}">详情</a><br/>
+    {% endif %}
     {% if isAllowed('users','edit') %}
         <a class="modal_action" href="/admin/users/edit?id={{ user.id }}">编辑</a>
-
     {% endif %}
 {% endmacro %}
 
+{% macro detail_link(user) %}
+    <a href="/admin/users/detail?id={{ user.id }}">征信信息</a>
+{% endmacro %}
+
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-'状态':'user_status_info', '操作':'profile_link'
+    '状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -77,6 +83,7 @@
             api协议版本: ${ user.api_version }
         </td>
         <td>
+            <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
             <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a>
         </td>
 

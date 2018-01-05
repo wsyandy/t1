@@ -66,5 +66,38 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(46);
         echoLine($user->city_id);
         $user->updateProfile(['province_name' => '浙江', 'city_name' => '丽水']);
+
+        $opts = ['user_id' => '6'];
+        $user_id = fetch($opts, 'user_id');
+
+        $cond = [];
+
+        if ($user_id) {
+            $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
+        }
+
+        $users = Users::findPagination($cond, 1, 10);
+
+        if (count($users) > 0) {
+            echoLine($users->toJson('users', 'toBasicJson'));
+        }
+    }
+
+    function test3Action()
+    {
+        $user = new Users();
+        $user->birthday = strtotime("1991-09-27");
+
+        debug($user->constellationText());
+    }
+
+    function test4Action()
+    {
+        $user_db = Users::getUserDb();
+        $key = "add_friend_introduce_user_id1";
+        $user_db->hset($key, 1, "你好");
+        $user_db->hset($key, 2, "哈哈");
+
+        debug($user_db->hgetall($key), $user_db->hget($key, 1), $user_db->hget($key, 2));
     }
 }
