@@ -153,7 +153,7 @@ class UsersController extends BaseController
         $user->user_status = USER_STATUS_LOGOUT;
         $user->update();
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $device->sid]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $device->sid]);
     }
 
     function updateAction()
@@ -270,7 +270,7 @@ class UsersController extends BaseController
         $this->currentUser()->speaker = $this->params('speaker', true);
         $this->currentUser()->update();
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function setMicrophoneAction()
@@ -278,7 +278,7 @@ class UsersController extends BaseController
         $this->currentUser()->microphone = $this->params('microphone', true);
         $this->currentUser()->update();
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function basicInfoAction()
