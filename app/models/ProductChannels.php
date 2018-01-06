@@ -377,4 +377,16 @@ class ProductChannels extends BaseModel
     {
         return pack("S", strlen($value)) . $value;
     }
+
+    static function validList()
+    {
+        return \ProductChannels::find(
+            array(
+                "conditions" => "status = :status:",
+                "bind" => array(
+                    "status" => STATUS_ON
+                )
+            )
+        );
+    }
 }

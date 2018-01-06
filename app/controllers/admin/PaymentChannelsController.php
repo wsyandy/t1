@@ -50,4 +50,12 @@ class PaymentChannelsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
     }
+
+    function productChannelsAction()
+    {
+        $payment_channel_id = $this->params('payment_channel_id');
+        $product_channels = \ProductChannels::validList();
+        $this->view->payment_channel_id = $payment_channel_id;
+        $this->view->product_channels = $product_channels;
+    }
 }
