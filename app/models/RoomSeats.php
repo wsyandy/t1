@@ -78,4 +78,53 @@ class RoomSeats extends BaseModel
 
         return $json;
     }
+
+    // 上麦
+    function up($user, $other_user = null)
+    {
+
+        // 抱用户上麦
+        if ($other_user) {
+
+            $this->user_id = $other_user->id;
+
+            $other_user->current_room_id = $this->room_id;
+            $other_user->current_room_seat_id = $this->id;
+            $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            $other_user->update();
+        } else {
+
+            // 自己上麦
+            $this->user_id = $user->id;
+
+            $user->current_room_id = $this->room_id;
+            $user->current_room_seat_id = $this->id;
+            $user->user_role = USER_ROLE_BROADCASTER;
+            $user->update();
+        }
+
+        $this->update();
+    }
+
+    // 下麦
+    function down($user, $other_user = null)
+    {
+
+        $this->user_id = 0;
+
+        // 设为旁听
+        if ($other_user) {
+            $other_user->current_room_seat_id = 0;
+            $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $other_user->update();
+        } else {
+            // 自己下麦
+            $user->current_room_seat_id = 0;
+            $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->update();
+        }
+
+        $this->update();
+    }
+
 }
