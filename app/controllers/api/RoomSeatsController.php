@@ -19,10 +19,18 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $user_id = $this->params('user_id');
+        if ($this->otherUser()) {
+            $room_seat->user_id = $this->otherUser()->id;
+            $this->otherUser()->current_room_seat_id = $room_seat->id;
+            $this->otherUser()->update();
+        } else {
+            $this->currentUser()->current_room_seat_id = $room_seat->id;
+            $room_seat->user_id = $this->currentUser()->id;
+            $this->currentUser()->update();
+        }
 
-        $this->currentUser()->current_room_seat_id = $room_seat->id;
-        $this->currentUser()->update();
+        $room_seat->update();
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
@@ -33,10 +41,17 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $user_id = $this->params('user_id');
+        $room_seat->user_id = 0;
 
-        $this->currentUser()->current_room_seat_id = 0;
-        $this->currentUser()->update();
+        if ($this->otherUser()) {
+            $this->otherUser()->current_room_seat_id = 0;
+            $this->otherUser()->update();
+        } else {
+            $this->currentUser()->current_room_seat_id = $room_seat->id;
+            $this->currentUser()->update();
+        }
+
+        $room_seat->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
