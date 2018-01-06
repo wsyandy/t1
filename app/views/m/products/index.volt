@@ -29,9 +29,9 @@
     <ul>
         {% for payment_channel in payment_channels %}
             {% if (payment_channel.id == selected_payment_channel.id) %}
-            <li class="selected_pay" data-payment_channel_id="{{ payment_channel.id }}">
+            <li class="selected_pay" data-payment_channel_id="{{ payment_channel.id }}" data-payment_type="{{ payment_channel.payment_type }}">
             {% else %}
-                <li data-payment_channel_id="{{ payment_channel.id }}">
+                <li data-payment_channel_id="{{ payment_channel.id }}" data-payment_type="{{ payment_channel.payment_type }}">
             {% endif %}
             {{ payment_channel.name }}</li>
         {% endfor %}
@@ -39,17 +39,19 @@
 </div>
 
 <div class="get_out_btn">
-    <a href="/m/orders?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}" id="pay_submit_btn" class="account_btn">确定</a>
+    <a href="/m/orders/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}" id="pay_submit_btn" class="account_btn">确定</a>
 </div>
 
 <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 <script type="text/javascript">
     function generatePayUrl() {
         var product_id = $(".selected").data('product_id');
-        var payment_channel_id = $(".selected_pay").data('payment_channel_id');
+        var selected_pay = $(".selected_pay");
+        var payment_channel_id = selected_pay.data('payment_channel_id');
         var pay_submit = $("#pay_submit_btn");
-        var original_pay_url = "/m/orders?sid=" + '{{ user.sid }}';
-        var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id;
+        var original_pay_url = "/m/orders/create?sid=" + '{{ user.sid }}';
+        var payment_type = selected_pay.data('payment_type');
+        var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type;
         pay_submit.attr('href', pay_url);
     }
 

@@ -34,6 +34,14 @@ class PaymentChannels extends BaseModel
         );
     }
 
+    function getGateway()
+    {
+        $clazz = '\paygateway\\' . $this->clazz;
+        $gateway = new $clazz($this);
+
+        return $gateway;
+    }
+
     function getStatusText()
     {
         return fetch(\PaymentChannels::$status, $this->status);
