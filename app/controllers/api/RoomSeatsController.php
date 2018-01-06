@@ -53,7 +53,7 @@ class RoomSeatsController extends BaseController
         $room_seat->user_id = 0; // 设为旁听
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
     // 解封
@@ -67,7 +67,7 @@ class RoomSeatsController extends BaseController
         $room_seat->status = STATUS_ON;
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
     function closeMicrophoneAction()
@@ -80,7 +80,7 @@ class RoomSeatsController extends BaseController
         $room_seat->microphone = false;
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
     function openMicrophoneAction()
@@ -93,7 +93,7 @@ class RoomSeatsController extends BaseController
         $room_seat->microphone = true;
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
 }

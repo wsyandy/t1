@@ -63,16 +63,15 @@ class RoomSeats extends BaseModel
                 'sex' => $user->sex,
                 'avatar_url' => $user->avatar_url,
                 'avatar_small_url' => $user->avatar_small_url,
-                'province_name' => $user->province_name,
-                'room_id' => $user->room_id,
-                'current_room_id' => $user->current_room_id,
-                'current_room_seat_id' => $user->current_room_seat_id,
-                'user_role' => $user->user_role,
-                'speaker' => $user->speaker,
-                'microphone' => $user->microphone,
-                'im_password' => $user->im_password
+                'nickname' => $user->nickname,
             ];
         }
+
+        $json['id'] = $this->id;
+        $json['status'] = $this->status;
+        $json['microphone'] = $this->microphone;
+        $json['rank'] = $this->rank;
+        $json['room_id'] = $this->room_id;
 
         return $json;
     }
