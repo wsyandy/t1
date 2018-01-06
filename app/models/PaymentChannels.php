@@ -10,13 +10,13 @@ class PaymentChannels extends BaseModel
 {
 
     static $payment_type = array(
-        'weixin_sdk' => 'weixin_sdk', 'weixin_h5' => 'weixin_h5',
+        'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
         'apple' => 'apple',
     );
 
     static $clazz = array(
-        'WeixinSdk' => 'WeixinSdk', 'WeixinH5' => 'WeixinH5',
+        'Weixin' => 'Weixin', 'WeixinH5' => 'WeixinH5',
         'alipaySdk' => 'alipaySdk', 'alipayH5' => 'alipayH5',
         'apple' => 'Apple',
     );
@@ -34,7 +34,7 @@ class PaymentChannels extends BaseModel
         );
     }
 
-    function getGateway()
+    function gateway()
     {
         $clazz = '\paygateway\\' . $this->clazz;
         $gateway = new $clazz($this);

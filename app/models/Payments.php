@@ -26,7 +26,7 @@ class Payments extends BaseModel
     static $pay_status = array(
         PAYMENT_PAY_STATUS_WAIT => '等待支付',
         PAYMENT_PAY_STATUS_SUCCESS => '支付成功',
-        PAYMENT_PAY_STATUS_FAILED => '支付失败'
+        PAYMENT_PAY_STATUS_FAIL => '支付失败'
     );
 
     function toJson()
@@ -52,7 +52,10 @@ class Payments extends BaseModel
         $payment->amount = $order->amount;
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
-        return $payment->create();
+        if ($payment->create()) {
+            return $payment;
+        }
+        return false;
     }
 
     function generatePaymentNo()

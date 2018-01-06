@@ -136,3 +136,7 @@ define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
 define('ORDER_STATUS_WAIT', 0);
 define('ORDER_STATUS_SUCCESS', 1);
 define('ORDER_STATUS_FAIL', 2);
+
+define('PAYMENT_PAY_STATUS_SUCCESS', 1);
+define('PAYMENT_PAY_STATUS_WAIT', 0);
+define('PAYMENT_PAY_STATUS_FAIL', 2);

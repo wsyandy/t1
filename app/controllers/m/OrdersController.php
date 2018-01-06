@@ -27,7 +27,12 @@ class OrdersController extends BaseController
         if (!$payment) {
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
-        $opts = array();
+        $opts = array(
+            'ip' => $this->remoteIp(),
+            'product_name' => $product->name,
+            'request_root' => $this->getRoot(),
+            'mobile' => $this->currentUser()->mobile
+        );
         $result = $payment_channel->gateway()->buildForm($payment, $opts);
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);

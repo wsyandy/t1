@@ -31,7 +31,10 @@ class Orders extends BaseModel
         $order->product_id = $product->id;
         $order->status = ORDER_STATUS_WAIT;
         $order->amount = $product->amount;
-        return $order->create();
+        if ($order->create()) {
+            return $order;
+        }
+        return false;
     }
 
     function getStatusText()
