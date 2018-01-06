@@ -381,7 +381,7 @@ class ProductChannels extends BaseModel
 
     function generateDynamicKey4($appID, $appCertificate, $channelName, $uid ,$serviceType)
     {
-
+        $uid = 0;
         $ts = time();
         $randomInt = mt_rand();
         //$expired_ts = time() + 3 * 3600; // 3小时服务时间
