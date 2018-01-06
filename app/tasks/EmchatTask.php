@@ -57,8 +57,8 @@ class EmChatTask extends \Phalcon\Cli\Task
     function testGetUserAction()
     {
         $emchat = new \Emchat();
-        var_dump($emchat->getUser(68));
-        echo md5('68');
+        var_dump($emchat->getUser(78));
+        echo md5('78');
     }
 
     function testGetUsersAction()

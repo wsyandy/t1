@@ -66,4 +66,27 @@ class Products extends BaseModel
     {
         return $this->product_group->name;
     }
+
+    static function findDiamondListByUser($user)
+    {
+        $fee_type = 'diamond';
+        $product_groups = \ProductGroups::find(
+            array(
+                'product_channel_id' => $user->product_channel_id,
+                'fee_type' => $fee_type,
+                'status' => STATUS_ON
+            )
+        );
+        if (isBlank($product_groups)) {
+            return false;
+        }
+        $product_group = $product_groups[0];
+        $products = \Products::find(
+            array(
+                'product_group_id' => $product_group->id,
+                'status' => STATUS_ON
+            )
+        );
+        return $products;
+    }
 }

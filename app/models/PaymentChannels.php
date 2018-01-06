@@ -54,4 +54,27 @@ class PaymentChannels extends BaseModel
         debug("ids: " . json_encode($ids, JSON_UNESCAPED_UNICODE));
         return $ids;
     }
+
+    function match($user)
+    {
+        return true;
+    }
+
+    function isValid()
+    {
+        return STATUS_ON == $this->status;
+    }
+
+    static function selectByUser($user)
+    {
+        $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
+        $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
+        $selected = array();
+        foreach ($payment_channels as $payment_channel) {
+            if ($payment_channel->isValid() && $payment_channel->match($user)) {
+                $selected[] = $payment_channel;
+            }
+        }
+        return $selected;
+    }
 }
