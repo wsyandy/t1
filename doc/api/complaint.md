@@ -1,6 +1,6 @@
 # 举报
 
-### 1 获取举报原因
+### 1 获取举报类型
 
 > http-get ```/api/complaints/get_complaint_types```
 
