@@ -47,6 +47,9 @@
                     {% if isAllowed('sms_histories','index') %}
                         <li><a href="/admin/sms_histories">短信验证列表</a></li>
                     {% endif %}
+                    {% if isAllowed('complaints','index') %}
+                        <li><a href="/admin/complaints">举报列表</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
