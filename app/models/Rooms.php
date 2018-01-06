@@ -115,7 +115,7 @@ class Rooms extends BaseModel
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
 
             $this->last_at = time();
-            $this->online_status = STATUS_ON;
+            $this->online_status = STATUS_ON; // 主播是否在线
             $this->save();
         }
 

@@ -140,7 +140,7 @@
     last_at int 最后活跃时间
     user_num 在线人数
     app_id string 应用id
-    channel_key string token
+    channel_key string token 用于加入频道(互动直播)
     room_seats:[
         {
             id: int 麦位id,
