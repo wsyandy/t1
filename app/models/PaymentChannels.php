@@ -38,4 +38,20 @@ class PaymentChannels extends BaseModel
     {
         return fetch(\PaymentChannels::$status, $this->status);
     }
+
+    function supportProductChannel($product_channel)
+    {
+        return in_array($product_channel->id, $this->product_channel_ids);
+    }
+
+    function getProductChannelIds()
+    {
+        $pcpcs = \PaymentChannelProductChannels::findByConditions(array('payment_channel_id' => $this->id));
+        $ids = array();
+        foreach ($pcpcs as $pcpc) {
+            $ids[] = $pcpc->product_channel_id;
+        }
+        debug("ids: " . json_encode($ids, JSON_UNESCAPED_UNICODE));
+        return $ids;
+    }
 }

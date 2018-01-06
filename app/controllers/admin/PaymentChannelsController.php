@@ -54,8 +54,21 @@ class PaymentChannelsController extends BaseController
     function productChannelsAction()
     {
         $payment_channel_id = $this->params('payment_channel_id');
+        if (isBlank($payment_channel_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+        if ($this->request->isPost()) {
+            \PaymentChannelProductChannels::fresh($payment_channel_id, $this->params('product_channel_ids'));
+            return $this->response->redirect('/admin/payment_channels');
+        }
         $product_channels = \ProductChannels::validList();
+        $payment_channel = \PaymentChannels::findById($payment_channel_id);
+        $checked = array();
+        foreach ($product_channels as $product_channel) {
+            $checked[$product_channel->id] = $payment_channel->supportProductChannel($product_channel);
+        }
         $this->view->payment_channel_id = $payment_channel_id;
         $this->view->product_channels = $product_channels;
+        $this->view->checked = $checked;
     }
 }
