@@ -57,16 +57,16 @@
         notify_type: 'bc/ptp'
         timestamp: 1515142608
         data: {
-           id: 1
-           num: 10
-           name: '礼物名称' 
-           image_small_url: 'http://small_url'
-           image_big_url: 'http://big_url',
-           dynamic_url: 'http://dynamic_url',
-           user_id: 1
-           user_nickname: '接收方昵称'
-           sender_id: 2
-           sender_nickname: '发送方昵称'
+            id: 1
+            num: 10
+            name: '礼物名称' 
+            image_small_url: 'http://small_url'
+            image_big_url: 'http://big_url',
+            dynamic_url: 'http://dynamic_url',
+            user_id: 1
+            user_nickname: '接收方昵称'
+            sender_id: 2
+            sender_nickname: '发送方昵称'
         }
     }
 } 

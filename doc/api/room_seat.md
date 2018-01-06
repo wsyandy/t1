@@ -73,8 +73,8 @@
 ##### 3.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -90,8 +90,8 @@
 ##### 4.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -107,8 +107,8 @@
 ##### 5.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -124,7 +124,7 @@
 ##### 6.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```

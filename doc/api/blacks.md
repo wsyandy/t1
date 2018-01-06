@@ -19,7 +19,7 @@
     total_page   总页数
     total_entries   总记录数
     users:[
-    {
+        {
            id int 对方用户的ID
            sex int 性别  0:女 1:男
            avatar_url string 正常图像
@@ -29,7 +29,7 @@
            room_id 用户创建房间id ，无房间为0
            current_room_id 用户当前所在房间id,不在房间为0 
            current_room_seat_id 用户当前所在麦位id 
-    } 
+        } 
     ]
 }
 ```

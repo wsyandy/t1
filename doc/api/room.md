@@ -24,12 +24,11 @@
 ##### 1.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason  
-            id: int 房间id,
-            name: string 房间名称
-            channel_name: string 房间唯一标识, 频道名称
-      
+    error_code
+    error_reason  
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称      
 }
 ```
 
@@ -47,9 +46,8 @@
 ##### 2.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-		    
+    error_code
+    error_reason	    
 }
 ```
 
@@ -64,10 +62,10 @@
 ##### 3.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-		    app_id string 应用id
-		    signaling_key string token
+    error_code
+    error_reason
+    app_id string 应用id
+    signaling_key string token
 }
 ```
 
@@ -84,10 +82,10 @@
 ##### 4.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-		    app_id string 应用id
-            channel_key string token
+    error_code
+    error_reason
+    app_id string 应用id
+    channel_key string token
 }
 ```
 
@@ -105,12 +103,11 @@
 ##### 5.1.2 回应参数说明
 ```
 {
-		    error_code,0成功,-1参数错误,-400密码错误
-		    error_reason
-            id: int 房间id,
-            name: string 房间名称
-            channel_name: string 房间唯一标识, 频道名称
-        
+    error_code,0成功,-1参数错误,-400密码错误
+    error_reason
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称
 }
 ```
 
@@ -126,39 +123,38 @@
 ##### 5.2.2 回应参数说明
 ```
 {
-		    error_code,
-		    error_reason：,
-            id: int 房间id,
-            name: string 房间名称
-            topic: string 房间话题
-            chat: 公屏聊天状态, false/true
-            user_id 房主用户id
+    error_code,
+    error_reason：,
+    id: int 房间id,
+    name: string 房间名称
+    topic: string 房间话题
+    chat: 公屏聊天状态, false/true
+    user_id 房主用户id
+    sex	性别 0:女 1:男
+    avatar_small_url 用户小头像
+    nickname 昵称
+    online_status 0离线，1在线
+    channel_name: string 房间唯一标识, 频道名称
+    lock boole加锁状态, true是加锁
+    created_at int 创建时间戳
+    last_at int 最后活跃时间
+    user_num 在线人数
+    app_id string 应用id
+    channel_key string token
+    room_seats:[
+        {
+            id: int 麦位id,
+            user_id 麦位主播id，无主播为0
             sex	性别 0:女 1:男
             avatar_small_url 用户小头像
             nickname 昵称
-            online_status 0离线，1在线
-            channel_name: string 房间唯一标识, 频道名称
-            lock boole加锁状态, true是加锁
-            created_at int 创建时间戳
-            last_at int 最后活跃时间
-            user_num 在线人数
-            app_id string 应用id
-            channel_key string token
-            room_seats:[
-                {
-                  id: int 麦位id,
-                  user_id 麦位主播id，无主播为0
-                  sex	性别 0:女 1:男
-                  avatar_small_url 用户小头像
-                  nickname 昵称
-                  room_id 房间id
-                  status: int 麦位状态，0 麦为被封，1 麦位正常
-                  microphone 麦克风状态 false/true 默认为true,
-                  rank 麦位排序, 1-8, 8个麦位
-                }
-                ...
-            ]
-		   
+            room_id 房间id
+            status: int 麦位状态，0 麦为被封，1 麦位正常
+            microphone 麦克风状态 false/true 默认为true,
+            rank 麦位排序, 1-8, 8个麦位
+        }
+        ...
+    ]		   
 }
 ```
 
@@ -175,8 +171,8 @@
 ##### 6.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -193,8 +189,8 @@
 ##### 7.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -210,8 +206,8 @@
 ##### 8.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -227,8 +223,8 @@
 ##### 9.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -244,8 +240,8 @@
 ##### 10.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -264,24 +260,24 @@
 ##### 11.2 回应参数说明
 ```
 {
-		    error_code,
-		    error_reason,
-		    users:[
-		        {
-		           id int 用户的ID
-                   sex int 性别  0:女 1:男
-                   avatar_url string 正常图像
-                   avatar_small_url string 小尺寸图像
-                   nickname string 昵称
-                   room_id  int 用户创建的房间的id，无房间为0
-                   current_room_id 用户当前所在房间id ,不在房间为0
-                   current_room_seat_id 用户当前所在麦位id 
-                   user_role 用户角色 0无角色, 1房主，2主播，3旁听
-                   monologue 个性签名
-                   age 年龄  
-		        },
-		        ...
-		    ]
+    error_code,
+    error_reason,
+    users:[
+        {
+            id int 用户的ID
+            sex int 性别  0:女 1:男
+            avatar_url string 正常图像
+            avatar_small_url string 小尺寸图像
+            nickname string 昵称
+            room_id  int 用户创建的房间的id，无房间为0
+            current_room_id 用户当前所在房间id ,不在房间为0
+            current_room_seat_id 用户当前所在麦位id 
+            user_role 用户角色 0无角色, 1房主，2主播，3旁听
+            monologue 个性签名
+            age 年龄  
+        },
+        ...
+    ]
 }
 ```
 
@@ -298,8 +294,8 @@
 ##### 12.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -316,8 +312,8 @@
 ##### 13.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
 }
 ```
 
@@ -334,28 +330,28 @@
 ##### 14.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-            rooms:[
-                {
-                    id: int 房间id,
-                    name: string 房间名称
-                    topic: string 房间话题
-                    chat: 公屏聊天状态, false/true
-                    user_id 房主用户id
-                    sex	性别 0:女 1:男
-                    avatar_small_url 房主小头像
-                    nickname 房主昵称
-                    age int 年龄
-                    monologue 个性签名
-                    online_status 0离线，1在线
-                    channel_name: string 房间唯一标识, 频道名称
-                    lock boole加锁状态, true是加锁
-                    created_at int 创建时间戳
-                    last_at int 最后活跃时间
-                    user_num 在线人数
-                }
-                 ....
-            ]
+    error_code
+    error_reason
+    rooms:[
+        {
+            id: int 房间id,
+            name: string 房间名称
+            topic: string 房间话题
+            chat: 公屏聊天状态, false/true
+            user_id 房主用户id
+            sex	性别 0:女 1:男
+            avatar_small_url 房主小头像
+            nickname 房主昵称
+            age int 年龄
+            monologue 个性签名
+            online_status 0离线，1在线
+            channel_name: string 房间唯一标识, 频道名称
+            lock boole加锁状态, true是加锁
+            created_at int 创建时间戳
+            last_at int 最后活跃时间
+            user_num 在线人数
+        }
+         ....
+    ]
 }
 ```
