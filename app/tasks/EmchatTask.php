@@ -51,13 +51,14 @@ class EmChatTask extends \Phalcon\Cli\Task
     function testResetPasswordAction()
     {
         $emchat = new \Emchat();
-        var_dump($emchat->resetPassword('localtest', '12345', 'local12356'));
+        var_dump($emchat->resetPassword('68', 'a3f390d88e4c41f2747bfa2f1b5f87db', 'a3f390d88e4c41f2747bfa2f1b5f87db'));
     }
 
     function testGetUserAction()
     {
         $emchat = new \Emchat();
-        var_dump($emchat->getUser('localtest'));
+        var_dump($emchat->getUser(68));
+        echo md5('68');
     }
 
     function testGetUsersAction()

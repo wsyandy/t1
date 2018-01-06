@@ -171,6 +171,9 @@
                     {%  if isAllowed('gifts', 'index') %}
                         <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}
+                    {%  if isAllowed('payment_channels', 'index') %}
+                        <li><a href="/admin/payment_channels">支付配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
