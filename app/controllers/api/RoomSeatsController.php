@@ -21,7 +21,8 @@ class RoomSeatsController extends BaseController
 
         $user_id = $this->params('user_id');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['user' => $this->currentUser()->toBasicJson()]);
     }
 
     function downAction()
@@ -33,7 +34,7 @@ class RoomSeatsController extends BaseController
 
         $user_id = $this->params('user_id');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['user' => $this->currentUser()->toBasicJson()]);
     }
 
     // 封麦

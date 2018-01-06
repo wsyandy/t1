@@ -13,8 +13,25 @@
 ##### 1.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
+    user:{
+        id 用户id
+        sex	性别 0:女 1:男
+        province_name 省名
+        city_name 城市
+        avatar_url 用户头像
+        avatar_small_url 用户小头像
+        nickname 昵称
+        im_password 即时通信登录密码
+        room_id 用户创建房间id，无房间为0 
+        current_room_id 用户当前所在房间id,不在房间为0
+        current_room_seat_id 用户当前所在麦位id
+        user_role 当前用户角色，无角色，房主，主播，旁听
+        mobile 手机号
+        speaker 扬声器状态 false/true 默认为true
+        microphone 麦克风状态 false/true 默认为true
+    }
 }
 ```
 
@@ -32,8 +49,25 @@
 ##### 2.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
+    error_code
+    error_reason
+    user:{
+        id 用户id
+        sex	性别 0:女 1:男
+        province_name 省名
+        city_name 城市
+        avatar_url 用户头像
+        avatar_small_url 用户小头像
+        nickname 昵称
+        im_password 即时通信登录密码
+        room_id 用户创建房间id，无房间为0 
+        current_room_id 用户当前所在房间id,不在房间为0
+        current_room_seat_id 用户当前所在麦位id
+        user_role 当前用户角色，无角色，房主，主播，旁听
+        mobile 手机号
+        speaker 扬声器状态 false/true 默认为true
+        microphone 麦克风状态 false/true 默认为true
+    }
 }
 ```
 
