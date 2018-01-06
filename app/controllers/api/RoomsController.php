@@ -221,4 +221,23 @@ class RoomsController extends BaseController
     }
 
 
+    // 踢出房间
+    function kickingAction()
+    {
+
+        if (!$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstById($this->params('id', 0));
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->exitRoom($this->otherUser());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
+    }
+
 }

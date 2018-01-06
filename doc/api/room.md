@@ -355,3 +355,24 @@
     ]
 }
 ```
+
+### 15 踢出房间
+
+> http-post ```/api/rooms/kicking```
+
+##### 15.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+|user_id|用户id|int|否|被踢用户|
+
+##### 15.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称
+}
+```

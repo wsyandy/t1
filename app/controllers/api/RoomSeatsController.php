@@ -91,22 +91,5 @@ class RoomSeatsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
-    // 踢出房间
-    function kickingAction(){
-
-        if(!$this->otherUser()){
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
-        if (!$room_seat) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
-        $room_seat->kicking($this->otherUser());
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
-    }
-
 
 }

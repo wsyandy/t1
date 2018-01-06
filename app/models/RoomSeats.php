@@ -149,11 +149,5 @@ class RoomSeats extends BaseModel
         $this->save();
     }
 
-    // 踢出房间
-    function kicking($other_user)
-    {
-        $this->room->exitRoom($other_user);
-    }
-
 
 }
