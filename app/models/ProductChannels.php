@@ -322,9 +322,9 @@ class ProductChannels extends BaseModel
     private function generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, $serviceType, $extra = [])
     {
         $ts = time();
-        $random_int = mt_rand(10000, 1000000);
-        $expired_ts = time() + 3 * 3600; // 3小时服务时间
-        //$expired_ts = 0; // 不限制服务时间
+        $random_int = mt_rand();
+        //$expired_ts = time() + 3 * 3600; // 3小时服务时间
+        $expired_ts = 0; // 不限制服务时间
         $version = '005';
 
         $signature = $this->generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $random_int, $expired_ts, $extra);
