@@ -49,6 +49,7 @@ class AlbumsController extends BaseController
     function destroyAction()
     {
 
+        debug($this->params(), $this->headers());
         $album = \Albums::findFirstById($this->params('id', 0));
         if ($album) {
             $album->delete();
