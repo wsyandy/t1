@@ -38,7 +38,10 @@ class RoomSeats extends BaseModel
 
     function afterUpdate()
     {
-
+        if ($this->hasChanged('status') && STATUS_OFF == $this->status && $this->user) {
+            $this->user->current_room_seat_id = 0;
+            $this->user->update();
+        }
     }
 
     function mergeJson()
