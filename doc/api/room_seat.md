@@ -27,7 +27,6 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
-    }
 }
 ```
 
