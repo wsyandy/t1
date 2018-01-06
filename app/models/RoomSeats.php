@@ -38,10 +38,7 @@ class RoomSeats extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('status') && STATUS_OFF == $this->status && $this->user) {
-            $this->user->current_room_seat_id = 0;
-            $this->user->update();
-        }
+
     }
 
     function mergeJson()
@@ -55,7 +52,7 @@ class RoomSeats extends BaseModel
         return $data;
     }
 
-    function toUserJson()
+    function toSimpleJson()
     {
         $user = $this->user;
         $json = [];
@@ -85,6 +82,10 @@ class RoomSeats extends BaseModel
 
         // 抱用户上麦
         if ($other_user) {
+
+            if ($this->status == STATUS_OFF) {
+                $this->open();
+            }
 
             $this->user_id = $other_user->id;
 
@@ -126,5 +127,33 @@ class RoomSeats extends BaseModel
 
         $this->update();
     }
+
+    // 封麦
+    function close()
+    {
+
+        if ($this->user) {
+            // 下麦
+            $this->down($this->room->user, $this->user);
+        }
+
+        $this->status = STATUS_OFF;
+        $this->microphone = true; // 清空设置
+        $this->save();
+    }
+
+    // 解封
+    function open()
+    {
+        $this->status = STATUS_ON;
+        $this->save();
+    }
+
+    // 踢出房间
+    function kicking($other_user)
+    {
+        $this->room->exitRoom($other_user);
+    }
+
 
 }
