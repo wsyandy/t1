@@ -52,6 +52,7 @@ class Payments extends BaseModel
         $payment->amount = $order->amount;
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
+        $payment->pay_status = PAYMENT_PAY_STATUS_WAIT;
         if ($payment->create()) {
             return $payment;
         }
