@@ -1006,8 +1006,8 @@ class Users extends BaseModel
         $follow_key = 'follow_list_user_id' . $this->id;
         $followed_key = 'followed_list_user_id' . $other_user->id;
         if ($user_db->zscore($follow_key, $other_user->id)) {
-            $user_db->zrem($follow_key, time(), $other_user->id);
-            $user_db->zrem($followed_key, time(), $this->id);
+            $user_db->zrem($follow_key, $other_user->id);
+            $user_db->zrem($followed_key, $this->id);
         }
     }
 

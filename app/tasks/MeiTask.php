@@ -106,4 +106,12 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($album->user_id);
         }
     }
+
+    function test5Action()
+    {
+        $user_db = Users::getUserDb();
+        $follow_key = 'follow_list_user_id' . 44;
+//        $followed_key = 'followed_list_user_id' . $other_user->id;
+        echoLine($user_db->zrange($follow_key, 0, -1));
+    }
 }
