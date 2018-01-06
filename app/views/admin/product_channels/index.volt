@@ -49,7 +49,11 @@
     ios海外主题版本号: {{ product_channel.ios_client_theme_foreign_version_code }}
 {%- endmacro %}
 
-{{ simple_table(product_channels, ['ID': 'id', '产品渠道名称': 'name', 'Code':'code', 'Icon':'avatar_link',
+{%- macro product_group_link(object)  %}
+    <a href="/admin/product_groups?product_channel_id={{ object.id }}">计费配置</a>
+{%- endmacro %}
+
+{{ simple_table(product_channels, ['ID': 'id', '产品渠道名称': 'name', 'Code':'code', '计费配置': 'product_group_link', 'Icon':'avatar_link',
 '公司信息':'company_info', '版本信息': 'client_info', 'ios测试主题':'test_client_info',
 '状态': 'status_text', '微信':'weixin_link',
 '操作':'oper_link' ]) }}

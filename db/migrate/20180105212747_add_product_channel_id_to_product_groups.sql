@@ -1,0 +1,2 @@
+alter table product_groups add product_channel_id integer;
+create index product_channel_id_on_product_groups on product_groups(product_channel_id);

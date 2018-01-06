@@ -1,0 +1,1 @@
+alter table product_groups add name varchar(255);

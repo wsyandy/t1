@@ -130,3 +130,5 @@ define('ERROR_CODE_NEED_PAY', -2);//需要付费
 define('GIFT_ORDER_STATUS_WAIT', 0); //等待支付
 define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
 define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败
+
+define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
