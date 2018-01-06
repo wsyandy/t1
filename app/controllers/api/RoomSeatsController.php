@@ -21,7 +21,8 @@ class RoomSeatsController extends BaseController
 
         $user_id = $this->params('user_id');
 
-
+        $this->currentUser()->current_room_seat_id = $room_seat->id;
+        $this->currentUser()->update();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['user' => $this->currentUser()->toBasicJson()]);
     }
 
@@ -33,6 +34,9 @@ class RoomSeatsController extends BaseController
         }
 
         $user_id = $this->params('user_id');
+
+        $this->currentUser()->current_room_seat_id = 0;
+        $this->currentUser()->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['user' => $this->currentUser()->toBasicJson()]);
     }
