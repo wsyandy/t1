@@ -19,17 +19,8 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if ($this->otherUser()) {
-            $room_seat->user_id = $this->otherUser()->id;
-            $this->otherUser()->current_room_seat_id = $room_seat->id;
-            $this->otherUser()->update();
-        } else {
-            $this->currentUser()->current_room_seat_id = $room_seat->id;
-            $room_seat->user_id = $this->currentUser()->id;
-            $this->currentUser()->update();
-        }
-
-        $room_seat->update();
+        // 抱用户上麦
+        $room_seat->up($this->currentUser(), $this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
@@ -41,18 +32,8 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room_seat->user_id = 0;
-
-        if ($this->otherUser()) {
-            $this->otherUser()->current_room_seat_id = 0;
-            $this->otherUser()->update();
-        } else {
-            $this->currentUser()->current_room_seat_id = $room_seat->id;
-            $this->currentUser()->update();
-        }
-
-        $room_seat->update();
-
+        $room_seat->down($this->currentUser(), $this->otherUser());
+        
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
     }
 
