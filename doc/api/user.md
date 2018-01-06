@@ -354,30 +354,29 @@
 ##### 11.2 回应参数说明
 ```
 {
-		    error_code
-		    error_reason
-		    users:[
-                    {
-                         id 用户id
-                         sex	性别 0:女 1:男
-                         province_name 省名
-                         city_name 城市
-                         avatar_url 用户头像
-                         avatar_small_url 用户小头像
-                         nickname 昵称
-                         room_id 用户创建房间id，无房间为0 
-                         current_room_id 用户当前所在房间id,不在房间为0
-                         current_room_seat_id 用户当前所在麦位id
-                         current_channel_name 当前所在房间频道名称
-                         current_room_lock 当前房间是否加锁 true/false
-                         user_role 当前用户角色，无角色，房主，主播，旁听
-                         mobile 手机号
-                         monologue 个性签名
-                         distance string 距离,例如 0.5km
-                         age 年龄
-                    }
-                ]
-                
+    error_code
+    error_reason
+    users:[
+        {
+             id 用户id
+             sex	性别 0:女 1:男
+             province_name 省名
+             city_name 城市
+             avatar_url 用户头像
+             avatar_small_url 用户小头像
+             nickname 昵称
+             room_id 用户创建房间id，无房间为0 
+             current_room_id 用户当前所在房间id,不在房间为0
+             current_room_seat_id 用户当前所在麦位id
+             current_channel_name 当前所在房间频道名称
+             current_room_lock 当前房间是否加锁 true/false
+             user_role 当前用户角色，无角色，房主，主播，旁听
+             mobile 手机号
+             monologue 个性签名
+             distance string 距离,例如 0.5km
+             age 年龄
+        }
+    ]               
 }
 ```
 

@@ -21,19 +21,23 @@ class RoomSeats extends BaseModel
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '解封'];
 
 
-    function beforeCreate(){
+    function beforeCreate()
+    {
 
     }
 
-    function afterCreate(){
+    function afterCreate()
+    {
 
     }
 
-    function beforeUpdate(){
+    function beforeUpdate()
+    {
 
     }
 
-    function afterUpdate(){
+    function afterUpdate()
+    {
 
     }
 
@@ -48,4 +52,28 @@ class RoomSeats extends BaseModel
         return $data;
     }
 
+    function toUserJson()
+    {
+        $user = $this->user;
+        $json = [];
+
+        if ($user) {
+            $json = [
+                'user_id' => $user->id,
+                'sex' => $user->sex,
+                'avatar_url' => $user->avatar_url,
+                'avatar_small_url' => $user->avatar_small_url,
+                'province_name' => $user->province_name,
+                'room_id' => $user->room_id,
+                'current_room_id' => $user->current_room_id,
+                'current_room_seat_id' => $user->current_room_seat_id,
+                'user_role' => $user->user_role,
+                'speaker' => $user->speaker,
+                'microphone' => $user->microphone,
+                'im_password' => $user->im_password
+            ];
+        }
+
+        return $json;
+    }
 }

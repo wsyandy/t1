@@ -38,12 +38,12 @@ error_reason|string|Y|返回失败原因,默认为空串
     "notify_type":"ptp",
     "timestamp": 1513510273,
     "data":{  
-       user_id int 发起请求用户ID
-       sex int 性别  0:女 1:男
-       avatar_small_url string 小尺寸图像
-       nickname string 昵称
-       introduce string 自我介绍
-       created_at_text int 创建时间
+        user_id int 发起请求用户ID
+        sex int 性别  0:女 1:男
+        avatar_small_url string 小尺寸图像
+        nickname string 昵称
+        introduce string 自我介绍
+        created_at_text int 创建时间
     }
 }
 
