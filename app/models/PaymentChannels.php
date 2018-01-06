@@ -10,13 +10,13 @@ class PaymentChannels extends BaseModel
 {
 
     static $payment_type = array(
-        'weixin_sdk' => 'weixin_sdk', 'weixin_h5' => 'weixin_h5',
+        'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
         'apple' => 'apple',
     );
 
     static $clazz = array(
-        'WeixinSdk' => 'WeixinSdk', 'WeixinH5' => 'WeixinH5',
+        'Weixin' => 'Weixin', 'WeixinH5' => 'WeixinH5',
         'alipaySdk' => 'alipaySdk', 'alipayH5' => 'alipayH5',
         'apple' => 'Apple',
     );
@@ -32,6 +32,14 @@ class PaymentChannels extends BaseModel
             'mer_name' => $this->mer_name,
             'status_text' => $this->status_text
         );
+    }
+
+    function gateway()
+    {
+        $clazz = '\paygateway\\' . $this->clazz;
+        $gateway = new $clazz($this);
+
+        return $gateway;
     }
 
     function getStatusText()
@@ -53,5 +61,28 @@ class PaymentChannels extends BaseModel
         }
         debug("ids: " . json_encode($ids, JSON_UNESCAPED_UNICODE));
         return $ids;
+    }
+
+    function match($user)
+    {
+        return true;
+    }
+
+    function isValid()
+    {
+        return STATUS_ON == $this->status;
+    }
+
+    static function selectByUser($user)
+    {
+        $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
+        $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
+        $selected = array();
+        foreach ($payment_channels as $payment_channel) {
+            if ($payment_channel->isValid() && $payment_channel->match($user)) {
+                $selected[] = $payment_channel;
+            }
+        }
+        return $selected;
     }
 }

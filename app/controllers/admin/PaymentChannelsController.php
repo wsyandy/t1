@@ -43,7 +43,7 @@ class PaymentChannelsController extends BaseController
     {
        $payment_channel = \PaymentChannels::findById($this->params('id'));
        $this->assign($payment_channel, 'payment_channel');
-        if ($payment_channel->create()) {
+        if ($payment_channel->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
                 array('payment_channel' => $payment_channel->toJson()));
         } else {

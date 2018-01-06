@@ -107,4 +107,19 @@ class BaseController extends \ApplicationController
         return 0;
     }
 
+    function beforeAction($dispatcher)
+    {
+        if (!$this->authorize()) {
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
+        }
+        if ($this->currentUser()->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
+        }
+    }
+
+    private function authorize()
+    {
+        return $this->currentUser() && $this->params('sid') == $this->currentUser()->sid &&
+            $this->currentUser()->mobile;
+    }
 }

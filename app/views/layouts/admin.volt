@@ -51,6 +51,10 @@
             </li>
         {% endif %}
 
+        {% if isAllowed('orders', 'index') %}
+            <li><a href="/admin/orders">订单列表</a></li>
+        {% endif %}
+
         <!--微信管理-->
         {% if isAllowed('weixin_menu_templates','index') or isAllowed('push_messages','index') or isAllowed('weixin_template_messages','index') %}
             <li class="dropdown">
