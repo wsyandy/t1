@@ -17,7 +17,6 @@
     id 软件id
     file_url 安卓下载地址
     ios_down_url ios下载地址
-    weixin_url 应用宝下载地址
     version_name 版本号
     version_code 版本code
     platform 平台
