@@ -379,9 +379,9 @@ class ProductChannels extends BaseModel
         return pack("S", strlen($value)) . $value;
     }
 
-    function generateDynamicKey4($appID, $appCertificate, $channelName, $uid ,$serviceType)
+    function generateDynamicKey4($appID, $appCertificate, $channelName, $uid, $serviceType)
     {
-        $uid = 0;
+        //$uid = 0;
         $ts = time();
         $randomInt = mt_rand();
         //$expired_ts = time() + 3 * 3600; // 3小时服务时间
@@ -389,20 +389,20 @@ class ProductChannels extends BaseModel
 
         $version = "004";
         $randomStr = "00000000" . dechex($randomInt);
-        $randomStr = substr($randomStr,-8);
+        $randomStr = substr($randomStr, -8);
 
         $uidStr = "0000000000" . $uid;
-        $uidStr = substr($uidStr,-10);
+        $uidStr = substr($uidStr, -10);
 
         $expiredStr = "0000000000" . $expiredTs;
-        $expiredStr = substr($expiredStr,-10);
+        $expiredStr = substr($expiredStr, -10);
 
-        $signature = $this->generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr ,$serviceType);
+        $signature = $this->generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType);
 
         return $version . $signature . $appID . $ts . $randomStr . $expiredStr;
     }
 
-    function generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr ,$serviceType)
+    function generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType)
     {
         $concat = $serviceType . $appID . $ts . $randomStr . $channelName . $uidStr . $expiredStr;
         return hash_hmac('sha1', $concat, $appCertificate);
