@@ -184,6 +184,7 @@ class BaseController extends ApplicationController
 
     function beforeAction($dispatcher)
     {
+        debug($this->params(), $this->headers());
 
         if (isProduction()) {
             if (!$this->currentProductChannel() || ($this->currentProductChannel()->ckey &&
