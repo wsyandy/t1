@@ -68,9 +68,9 @@ class RoomsController extends BaseController
     //进入房间
     function enterAction()
     {
-        $room_id = $this->params('id', 0);
+        $room_id = $this->params('id', 0); // 进入指定房间
         $password = $this->params('password', '');
-        $user_id = $this->params('user_id', 0); // 通过用户进入房间
+        $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
         if ($user_id) {
             $user = \Users::findFirstById($user_id);
@@ -217,7 +217,27 @@ class RoomsController extends BaseController
 
         $users = $room->findUsers($page, $per_page);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
+    }
+
+
+    // 踢出房间
+    function kickingAction()
+    {
+
+        if (!$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstById($this->params('id', 0));
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room->exitRoom($this->otherUser());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
+            'name' => $room->name, 'channel_name' => $room->channel_name]);
     }
 
 }

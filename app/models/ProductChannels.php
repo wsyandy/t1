@@ -316,15 +316,16 @@ class ProductChannels extends BaseModel
         $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
 
-        return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
+        //return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
+        return $this->generateDynamicKey4($app_id, $app_certificate, $channel_name, $uid, 'ACS');
     }
 
     private function generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, $serviceType, $extra = [])
     {
         $ts = time();
-        $random_int = mt_rand(10000, 1000000);
-        $expired_ts = time() + 3 * 3600; // 3小时服务时间
-        //$expired_ts = 0; // 不限制服务时间
+        $random_int = mt_rand();
+        //$expired_ts = time() + 3 * 3600; // 3小时服务时间
+        $expired_ts = 0; // 不限制服务时间
         $version = '005';
 
         $signature = $this->generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $random_int, $expired_ts, $extra);
@@ -377,6 +378,36 @@ class ProductChannels extends BaseModel
     {
         return pack("S", strlen($value)) . $value;
     }
+
+    function generateDynamicKey4($appID, $appCertificate, $channelName, $uid, $serviceType)
+    {
+        //$uid = 0;
+        $ts = time();
+        $randomInt = mt_rand();
+        //$expired_ts = time() + 3 * 3600; // 3小时服务时间
+        $expiredTs = 0; // 不限制服务时间
+
+        $version = "004";
+        $randomStr = "00000000" . dechex($randomInt);
+        $randomStr = substr($randomStr, -8);
+
+        $uidStr = "0000000000" . $uid;
+        $uidStr = substr($uidStr, -10);
+
+        $expiredStr = "0000000000" . $expiredTs;
+        $expiredStr = substr($expiredStr, -10);
+
+        $signature = $this->generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType);
+
+        return $version . $signature . $appID . $ts . $randomStr . $expiredStr;
+    }
+
+    function generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType)
+    {
+        $concat = $serviceType . $appID . $ts . $randomStr . $channelName . $uidStr . $expiredStr;
+        return hash_hmac('sha1', $concat, $appCertificate);
+    }
+
 
     static function validList()
     {

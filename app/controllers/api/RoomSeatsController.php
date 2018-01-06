@@ -19,11 +19,10 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $user_id = $this->params('user_id');
+        // 抱用户上麦
+        $room_seat->up($this->currentUser(), $this->otherUser());
 
-        $this->currentUser()->current_room_seat_id = $room_seat->id;
-        $this->currentUser()->update();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
     function downAction()
@@ -33,12 +32,9 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $user_id = $this->params('user_id');
-
-        $this->currentUser()->current_room_seat_id = 0;
-        $this->currentUser()->update();
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toUserJson());
+        $room_seat->down($this->currentUser(), $this->otherUser());
+        
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
     // 封麦
@@ -49,11 +45,9 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room_seat->status = STATUS_OFF;
-        $room_seat->user_id = 0; // 设为旁听
-        $room_seat->save();
+        $room_seat->close();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
     // 解封
@@ -64,12 +58,12 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room_seat->status = STATUS_ON;
-        $room_seat->save();
+        $room_seat->open();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
+    // 禁麦
     function closeMicrophoneAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
@@ -80,9 +74,10 @@ class RoomSeatsController extends BaseController
         $room_seat->microphone = false;
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
+    // 取消禁麦
     function openMicrophoneAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
@@ -93,7 +88,8 @@ class RoomSeatsController extends BaseController
         $room_seat->microphone = true;
         $room_seat->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
+
 
 }

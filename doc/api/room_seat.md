@@ -15,18 +15,16 @@
 {
     error_code
     error_reason
-    user_id 用户id
-    sex	性别 0:女 1:男
-    avatar_url 用户头像
-    avatar_small_url 用户小头像
-    nickname 昵称
-    im_password 即时通信登录密码
-    room_id 用户创建房间id，无房间为0 
-    current_room_id 用户当前所在房间id,不在房间为0
-    current_room_seat_id 用户当前所在麦位id
-    user_role 当前用户角色，无角色，房主，主播，旁听
-    speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
+    id 麦位id
+    user_id 麦位主播id 无主播无此字段
+    sex	性别 0:女 1:男 无主播无此字段
+    avatar_url 用户头像 无主播无此字段
+    avatar_small_url 用户小头像 无主播无此字段
+    nickname 昵称 无主播无此字段
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
 
@@ -46,18 +44,11 @@
 {
     error_code
     error_reason
-    user_id 用户id
-    sex	性别 0:女 1:男
-    avatar_url 用户头像
-    avatar_small_url 用户小头像
-    nickname 昵称
-    im_password 即时通信登录密码
-    room_id 用户创建房间id，无房间为0 
-    current_room_id 用户当前所在房间id,不在房间为0
-    current_room_seat_id 用户当前所在麦位id
-    user_role 当前用户角色，无角色，房主，主播，旁听
-    speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
 
@@ -75,6 +66,11 @@
 {
     error_code
     error_reason
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
 
@@ -92,6 +88,11 @@
 {
     error_code
     error_reason
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
 
@@ -109,6 +110,16 @@
 {
     error_code
     error_reason
+    id 麦位id
+    user_id 麦位主播id 无主播无此字段
+    sex	性别 0:女 1:男 无主播无此字段
+    avatar_url 用户头像 无主播无此字段
+    avatar_small_url 用户小头像 无主播无此字段
+    nickname 昵称 无主播无此字段
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
 
@@ -126,5 +137,15 @@
 {
     error_code
     error_reason
+    id 麦位id
+    user_id 麦位主播id 无主播无此字段
+    sex	性别 0:女 1:男 无主播无此字段
+    avatar_url 用户头像 无主播无此字段
+    avatar_small_url 用户小头像 无主播无此字段
+    nickname 昵称 无主播无此字段
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```

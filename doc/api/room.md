@@ -140,7 +140,7 @@
     last_at int 最后活跃时间
     user_num 在线人数
     app_id string 应用id
-    channel_key string token
+    channel_key string token 用于加入频道(互动直播)
     room_seats:[
         {
             id: int 麦位id,
@@ -353,5 +353,26 @@
         }
          ....
     ]
+}
+```
+
+### 15 踢出房间
+
+> http-post ```/api/rooms/kicking```
+
+##### 15.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+|user_id|用户id|int|否|被踢用户|
+
+##### 15.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称
 }
 ```
