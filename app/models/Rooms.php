@@ -12,7 +12,7 @@ class Rooms extends BaseModel
     private $_user;
 
 
-    static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '正常'];
+    static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
 
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
 
@@ -157,13 +157,17 @@ class Rooms extends BaseModel
 
     function addUser($user)
     {
-
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
         if ($this->user_id == $user->id) {
             $hot_cache->zadd($key, time() + 86400, $user->id);
         } else {
             $hot_cache->zadd($key, time(), $user->id);
+        }
+
+        if ($this->user_num == 1) {
+            $this->status = STATUS_ON;
+            $this->update();
         }
     }
 
@@ -172,6 +176,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
         $hot_cache->zrem($key, $user->id);
+
+        if ($this->user_num < 1) {
+            $this->status = STATUS_OFF;
+            $this->update();
+        }
     }
 
     function findUsers($page, $per_page)

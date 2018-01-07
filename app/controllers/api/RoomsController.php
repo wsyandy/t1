@@ -40,8 +40,9 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
 
+        //限制搜索条件
+        //$rooms = \Rooms::findPagination(['conditions' => 'status = ' . STATUS_ON, 'order' => 'last_at desc'], $page, $per_page);
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 

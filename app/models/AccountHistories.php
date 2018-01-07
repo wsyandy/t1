@@ -13,7 +13,7 @@ class AccountHistories extends BaseModel
      */
     private $_user;
 
-    static $fee_types = array(
+    static $FEE_TYPE = array(
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送'
@@ -80,11 +80,6 @@ class AccountHistories extends BaseModel
             $user->diamond = $this->balance;
             $user->update();
         }
-    }
-
-    function getFeeTypeText()
-    {
-        return fetch(\AccountHistories::$fee_types, $this->fee_type);
     }
 
     static function findUserLast($user_id)
