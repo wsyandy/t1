@@ -23,11 +23,11 @@ class GiftOrders extends BaseModel
      */
     private $_sender;
 
-    static $status = array(
+    static $STATUS = [
         GIFT_ORDER_STATUS_WAIT => '等待支付',
         GIFT_ORDER_STATUS_SUCCESS => '支付成功',
         GIFT_ORDER_STATUS_FAIL => '支付失败'
-    );
+    ];
 
     /**
      * @param $sender_id
@@ -58,10 +58,10 @@ class GiftOrders extends BaseModel
                 $gift_order->sender_id,
                 ACCOUNT_TYPE_BUY_GIFT,
                 $gift_order->amount,
-                array(
+                [
                     'gift_order_id' => $gift_order->id,
-                    'remark' => '购买礼物(' . $gift->name .')' . $gift_num . '个, 花费钻石' . $gift_order->amount
-                )
+                    'remark' => '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount
+                ]
             );
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
@@ -77,19 +77,14 @@ class GiftOrders extends BaseModel
 
     static function findOrderListByUser($user_id, $page, $per_page)
     {
-        $conditions = array(
+        $conditions = [
             'conditions' => 'user_id = :user_id:',
-            'bind' => array(
+            'bind' => [
                 'user_id' => $user_id
-            ),
+            ],
             'order' => 'id desc'
-        );
+        ];
         return \GiftOrders::findPagination($conditions, $page, $per_page);
-    }
-
-    function getStatusText()
-    {
-        return fetch(\GiftOrders::$status, $this->status);
     }
 
     function isSuccess()

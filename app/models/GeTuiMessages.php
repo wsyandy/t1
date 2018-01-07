@@ -15,7 +15,7 @@ class GeTuiMessages extends BaseModel
      */
     private $_operator;
 
-    static $STATUS = array(STATUS_ON => '有效', STATUS_OFF => '无效');
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
     static $SEND_STATUS = [SEND_STATUS_WAIT => '等待发送', SEND_STATUS_SUBMIT => '提交发送', SEND_STATUS_PROGRESS => '发送中', SEND_STATUS_SUCCESS => '发送成功', SEND_STATUS_STOP => '终止发送'];
 
     function mergeJson()
@@ -69,7 +69,7 @@ class GeTuiMessages extends BaseModel
 
         debug($offline_start_day, $offline_end_day, date('Ymd', $begin_of_day), date('Ymd', $end_of_day));
 
-        $device_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, array('limit' => array(0, 1000000)));
+        $device_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, ['limit' => [0, 1000000]]);
         $total_num = count($device_ids);
 
         // 发送记录

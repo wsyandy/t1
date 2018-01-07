@@ -13,11 +13,11 @@ class AccountHistories extends BaseModel
      */
     private $_user;
 
-    static $FEE_TYPE = array(
+    static $FEE_TYPE = [
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送'
-    );
+    ];
 
     /**
      * @return mixed
@@ -29,7 +29,7 @@ class AccountHistories extends BaseModel
         return $endpoints[0];
     }
 
-    static function changeBalance($user_id, $fee_type, $amount, $opts = array())
+    static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $account_history = new \AccountHistories();
         $account_history->user_id = $user_id;
@@ -90,11 +90,11 @@ class AccountHistories extends BaseModel
 
     static function findAccountList($user_id, $page, $per_page)
     {
-        $conditions = array(
+        $conditions = [
             'conditions' => 'user_id = :user_id:',
-            'bind' => array('user_id' => $user_id),
+            'bind' => ['user_id' => $user_id],
             'order' => 'id desc'
-        );
+        ];
         return \AccountHistories::findPagination($conditions, $page, $per_page);
     }
 }

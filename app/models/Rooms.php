@@ -200,4 +200,17 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function lock($password)
+    {
+        $this->password = $password;
+        $this->lock = true;
+        $this->update();
+    }
+
+    function unlock()
+    {
+        $this->password = '';
+        $this->lock = false;
+        $this->update();
+    }
 }

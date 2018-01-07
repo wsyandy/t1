@@ -119,7 +119,7 @@ class Users extends BaseModel
         if ($this->hasChanged('status')) {
             if (!$this->isNormal() && $this->isClientPlatform() && $this->device) {
 
-                $payload = array('model' => 'user', 'user' => ['action' => 'logout', 'sid' => $this->device->sid]);
+                $payload = ['model' => 'user', 'user' => ['action' => 'logout', 'sid' => $this->device->sid]];
                 $client_url = 'app://users/logout';
                 $receiver_context = $this->getPushReceiverContext();
                 $push_data = ['title' => '', 'body' => '请重新登录!', 'payload' => $payload,
@@ -320,7 +320,7 @@ class Users extends BaseModel
             $old_device = \Devices::findFirstById($this->device_id);
             if ($old_device) {
 
-                $payload = array('model' => 'user', 'user' => array('action' => 'logout', 'sid' => $old_device->sid));
+                $payload = ['model' => 'user', 'user' => ['action' => 'logout', 'sid' => $old_device->sid]];
                 $client_url = 'app://users/logout';
                 $receiver_context = $this->getPushReceiverContext();
                 $push_data = ['title' => $this->product_channel->name, 'body' => '您已在其他设备登陆,本次登陆已注销!', 'payload' => $payload,
@@ -420,7 +420,7 @@ class Users extends BaseModel
             //在同一台手机上，先后登录A,B用户，防止B用户接收到A用户的消息推送，（pushToList没有指定用户ID，所以不能客户端无法判断是发给哪个用户的）
             $other_users = \Users::find([
                     'conditions' => 'id != :id: and device_id = :device_id: and product_channel_id = :product_channel_id:',
-                    'bind' => array('id' => $this->id, 'device_id' => $this->device_id, 'product_channel_id' => $this->product_channel_id)]
+                    'bind' => ['id' => $this->id, 'device_id' => $this->device_id, 'product_channel_id' => $this->product_channel_id]]
             );
 
             foreach ($other_users as $other_user) {

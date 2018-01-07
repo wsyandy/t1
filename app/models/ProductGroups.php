@@ -30,17 +30,16 @@ class ProductGroups extends BaseModel
     {
         debug("product_channel_id: " . $product_channel_id);
         return \ProductGroups::find(
-            array(
+            [
                 'conditions' => 'product_channel_id = :product_channel_id:',
-                'bind' => array('product_channel_id' => $product_channel_id)
-            )
-
+                'bind' => ['product_channel_id' => $product_channel_id]
+            ]
         );
     }
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'icon_url' => $this->icon_url,
@@ -48,7 +47,7 @@ class ProductGroups extends BaseModel
             'status_text' => $this->status_text,
             'fee_type_text' => $this->fee_type_text,
             'product_channel_name' => $this->product_channel->name
-        );
+        ];
     }
 
     function getIconUrl()

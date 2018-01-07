@@ -5,8 +5,8 @@ class ProductChannels extends BaseModel
 
     static $STATUS = [STATUS_OFF => '关闭', STATUS_ON => '正常'];
 
-    static $files = array('avatar' => APP_NAME . '/product_channels/avatar/%s',
-        'weixin_qrcode' => APP_NAME . '/product_channels/weixin_qrcode/%s');
+    static $files = ['avatar' => APP_NAME . '/product_channels/avatar/%s',
+        'weixin_qrcode' => APP_NAME . '/product_channels/weixin_qrcode/%s'];
 
     static function getCacheEndpoint($id)
     {
@@ -202,10 +202,10 @@ class ProductChannels extends BaseModel
 
     function getPushContext($platform)
     {
-        $keys = array('app_id', 'app_key', 'app_secret', 'app_master_secret');
+        $keys = ['app_id', 'app_key', 'app_secret', 'app_master_secret'];
         $prefix = $platform . '_';
 
-        $context = array();
+        $context = [];
         foreach ($keys as $key) {
             $field = $prefix . $key;
             $context[$key] = $this->$field;
@@ -301,7 +301,7 @@ class ProductChannels extends BaseModel
 
         $sdk_version = "1";
         $expired_time = time() + $valid_timeIn_seconds;
-        $token_items = array();
+        $token_items = [];
         array_push($token_items, $sdk_version);
         array_push($token_items, $app_id);
         array_push($token_items, $expired_time);
@@ -412,12 +412,12 @@ class ProductChannels extends BaseModel
     static function validList()
     {
         return \ProductChannels::find(
-            array(
+            [
                 "conditions" => "status = :status:",
-                "bind" => array(
+                "bind" => [
                     "status" => STATUS_ON
-                )
-            )
+                ]
+            ]
         );
     }
 }

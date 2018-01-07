@@ -5,6 +5,7 @@
  * Date: 06/01/2018
  * Time: 16:09
  */
+
 namespace m;
 
 class OrdersController extends BaseController
@@ -27,17 +28,17 @@ class OrdersController extends BaseController
         if (!$payment) {
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
-        $opts = array(
+        $opts = [
             'ip' => $this->remoteIp(),
             'product_name' => $product->name,
             'request_root' => $this->getRoot(),
             'mobile' => $this->currentUser()->mobile
-        );
+        ];
         $result = $payment_channel->gateway()->buildForm($payment, $opts);
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge(array('payment_id' => $payment->id, $result)));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge(['payment_id' => $payment->id], $result));
     }
 }

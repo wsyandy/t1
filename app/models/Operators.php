@@ -64,13 +64,13 @@ class Operators extends BaseModel
 
     function toSimpleJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'username' => $this->username,
             'status_text' => $this->status_text,
             'role_text' => $this->role_text,
             'role' => $this->role
-        );
+        ];
     }
 
     function isBlocked()

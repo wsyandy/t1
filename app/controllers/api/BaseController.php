@@ -171,7 +171,7 @@ class BaseController extends ApplicationController
     function getPushContext()
     {
         if ($this->context('platform') == '') {
-            return array();
+            return [];
         }
         return $this->currentProductChannel()->getPushContext($this->context('platform'));
     }
@@ -364,17 +364,17 @@ class BaseController extends ApplicationController
     {
         // 如果debug 并且在开发模式下，不验证签名
         if ($this->isDebug()) {
-            return array(true, "");
+            return [true, ""];
         }
 
         $dno = $this->params('dno');
         if (isBlank($dno) || !checkSum($dno)) {
             debug('dno error');
-            return array(false, t('base_valid_sign_param_error'));
+            return [false, t('base_valid_sign_param_error')];
         }
 
         if ($_REQUEST) {
-            $data = array();
+            $data = [];
             foreach ($_REQUEST as $key => $val) {
                 if ($key == 'h' || $key == '_url' || $key == 'file') {
                     continue;
@@ -387,19 +387,19 @@ class BaseController extends ApplicationController
             $ckey = $this->params('ckey');
             $sign = md5(md5($sign_str) . $ckey);
             if ($this->params('h') == $sign) {
-                return array(true, t('base_valid_sign_signature_success'));
+                return [true, t('base_valid_sign_signature_success')];
             }
         }
 
         if (isDevelopmentEnv()) {
-            return array(false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign");
+            return [false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign"];
         }
 
-        return array(false, t('base_valid_sign_signature_error'));
+        return [false, t('base_valid_sign_signature_error')];
     }
 
     // 签名验证字段， 生成规则： md5(md5(提交表单数据，键值对字典排序 &链接) 小写) + ckey)
-    function signDate($data = array())
+    function signDate($data = [])
     {
         /*
         # 客户端指纹

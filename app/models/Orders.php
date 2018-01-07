@@ -18,11 +18,11 @@ class Orders extends BaseModel
      */
     private $_product;
 
-    static $status = array(
+    static $status = [
         ORDER_STATUS_WAIT => '等待支付',
         ORDER_STATUS_SUCCESS => '支付成功',
         ORDER_STATUS_FAIL => '支付失败'
-    );
+    ];
 
     static function createOrder($user, $product)
     {
@@ -44,7 +44,7 @@ class Orders extends BaseModel
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'product_id' => $this->product_id,
@@ -52,6 +52,6 @@ class Orders extends BaseModel
             'amount' => $this->amount,
             'user_avatar_url' => $this->user->avatar_small_url,
             'product_name' => $this->product->name
-        );
+        ];
     }
 }
