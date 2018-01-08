@@ -295,4 +295,9 @@ trait UserAttrs
 
         return Users::$CONSTELLATION[$c];
     }
+
+    function isIos()
+    {
+        return preg_match('/ios/i', $this->platform);
+    }
 }
