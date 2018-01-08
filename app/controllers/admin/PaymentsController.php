@@ -36,6 +36,24 @@ class PaymentsController extends BaseController
         $this->view->payments = $payments;
     }
 
+    function payStatusAction()
+    {
+        $payment = \Payments::findById($this->params('id'));
+        $this->view->payment = $payment;
+    }
+
+    function updateAction()
+    {
+        $payment = \Payments::findById($this->params('id'));
+        if ($payment) {
+            $this->assign($payment, 'payment');
+            if ($payment->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('payment' => $payment->toJson()));
+            }
+        }
+        return $this->response->redirect('/admin/payemnts');
+    }
+
     function detailAction()
     {
 
