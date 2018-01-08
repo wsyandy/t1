@@ -21,13 +21,15 @@ class RoomSeatsController extends BaseController
         }
 
         //当前用户不在房间
-        if ($this->otherUser() && !$this->otherUser()->isInRoom($room_seat->room)) {
+        if ($this->otherUser()) {
 
             if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
             }
 
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
+            if (!$this->otherUser()->isInRoom($room_seat->room)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
+            }
         }
 
         if ($this->otherUser() && $this->otherUser()->current_room_seat_id) {
