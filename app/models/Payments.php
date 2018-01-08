@@ -120,7 +120,7 @@ class Payments extends BaseModel
             $product = $order->product;
             if ($product->product_group->isDiamond()) {
                 \AccountHistories::changeBalance(
-                    $this->user_id, 'diamond', $order->amount,
+                    $this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $order->amount,
                     array('order_id' => $order->id, 'remark' => '购买钻石')
                 );
             }
