@@ -127,6 +127,7 @@ class RoomsController extends BaseController
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['system_tips'] = ["官方严厉打击低俗色情内容", "官方严厉打击广告行为"];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
@@ -156,7 +157,7 @@ class RoomsController extends BaseController
         if (!$this->currentUser()->isRoomHost($room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
-        
+
         $password = $this->params('password');
 
         if (!$password) {
