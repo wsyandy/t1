@@ -39,7 +39,9 @@ class Payments extends BaseModel
             'payment_type' => $this->payment_type,
             'amount' => $this->amount,
             'pay_status_text' => $this->pay_status_text,
-            'paid_at' => $this->paid_at_text
+            'paid_at' => $this->paid_at_text,
+            'payment_channel_name' => $this->payment_channel_name,
+            'created_at_text' => $this->created_at_text
         );
     }
 
