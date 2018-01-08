@@ -52,12 +52,14 @@ class Users extends BaseModel
      */
     private $_room;
 
-
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
     //是否已关注 true:已关注,false:未关注
     public $followed;
+
+    //是否可以发公屏消息 true可以,false不可以
+    public $user_chat;
 
     function beforeCreate()
     {
@@ -1237,5 +1239,30 @@ class Users extends BaseModel
         }
 
         return false;
+    }
+
+    //1可以聊天 2不可以聊天
+    function setChat($room, $chat)
+    {
+        $db = Users::getUserDb();
+
+        if ($chat) {
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
+        } else {
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
+        }
+    }
+
+    function canChat($room)
+    {
+        $db = Users::getUserDb();
+        $key = "chat_status_room{$room->id}user{$this->id}";
+        $chat = $db->get($key);
+
+        if (2 == $chat) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -25,7 +25,7 @@
             avatar_url string 正常图像
             avatar_small_url string 小尺寸图像
             nickname' string 昵称
-            created_at_text int 关注时间
+            created_at_text string 关注时间
             room_id 用户创建房间id ，无房间为0
             current_room_id 用户当前所在房间id ,不在房间为0
             current_room_seat_id 用户当前所在麦位id 
@@ -60,7 +60,7 @@
             avatar_url string 正常图像
             avatar_small_url string 小尺寸图像
             nickname string 昵称
-            created_at_text int 关注时间
+            created_at_text string 关注时间
             room_id 用户创建房间id ，无房间为0
             current_room_id 用户当前所在房间id ,不在房间为0
             current_room_seat_id 用户当前所在麦位id
