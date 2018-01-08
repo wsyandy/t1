@@ -71,7 +71,7 @@ class Products extends BaseModel
     static function findDiamondListByUser($user)
     {
         $fee_type = 'diamond';
-        $product_groups = \ProductGroups::find(
+        $product_groups = \ProductGroups::findByConditions(
             [
                 'product_channel_id' => $user->product_channel_id,
                 'fee_type' => $fee_type,
