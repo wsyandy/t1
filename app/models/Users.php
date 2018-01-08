@@ -1224,21 +1224,13 @@ class Users extends BaseModel
     //判断用户是否在指定的房间
     function isInRoom($room)
     {
-        if ($this->current_room_id == $room->id) {
-            return true;
-        }
-
-        return false;
+        return $this->current_room_id == $room->id;
     }
 
     //判断用户是否在指定的麦位
     function isInRoomSeat($room_seat)
     {
-        if ($this->current_room_seat_id == $room_seat->id) {
-            return true;
-        }
-
-        return false;
+        return $this->current_room_seat_id == $room_seat->id;
     }
 
     //1可以聊天 2不可以聊天
@@ -1264,5 +1256,17 @@ class Users extends BaseModel
         }
 
         return true;
+    }
+
+    //是否为房间房主
+    function isRoomHost($room)
+    {
+        return $this->id == $room->user_id;
+    }
+
+    //是否为麦位房主
+    function isRoomSeatHost($room_seat)
+    {
+        return $this->id == $room_seat->user_id;
     }
 }

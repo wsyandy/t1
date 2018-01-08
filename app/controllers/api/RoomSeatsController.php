@@ -15,8 +15,13 @@ class RoomSeatsController extends BaseController
     function upAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         //当前用户不在房间
@@ -37,8 +42,13 @@ class RoomSeatsController extends BaseController
     function downAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room_seat->down($this->currentUser(), $this->otherUser());
@@ -50,8 +60,13 @@ class RoomSeatsController extends BaseController
     function closeAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room_seat->close();
@@ -63,8 +78,13 @@ class RoomSeatsController extends BaseController
     function openAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room_seat->open();
@@ -76,8 +96,13 @@ class RoomSeatsController extends BaseController
     function closeMicrophoneAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room_seat->microphone = false;
@@ -90,8 +115,13 @@ class RoomSeatsController extends BaseController
     function openMicrophoneAction()
     {
         $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room_seat->microphone = true;

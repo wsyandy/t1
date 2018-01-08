@@ -214,17 +214,21 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($users->toJson('users', 'toRelationJson'));
     }
 
+    function getRoomUsersAction()
+    {
+        $room = Rooms::findFirstById(5);
+        echoLine($room);
+        $key = 'room_user_list_' . 5;
+        $user_db = Users::getUserDb();
+        $user_ids = $user_db->zrange($key, 0, -1);
+        echoLine($user_ids);
+    }
+
     function test8Action()
     {
         $user_db = Users::getUserDb();
         $key = "set_type";
         $user_db->set($key, true);
         var_dump($user_db->get("sssss"));
-    }
-
-    function test9Action()
-    {
-        $room = Rooms::findFirstById(5);
-
     }
 }
