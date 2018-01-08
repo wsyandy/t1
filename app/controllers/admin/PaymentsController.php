@@ -15,18 +15,43 @@ class PaymentsController extends BaseController
         $conds = array('order' => 'id desc');
         $page = 1;
         $per_page = 30;
-        if (isPresent($this->params('user_id'))) {
+        $cond_vars = array();
+        $cond_values = array();
+        foreach (['order_id', 'id'] as $item) {
+            if (isPresent($this->params($item))) {
+                $cond_vars[] = $item . ' = ' . ':' . $item . ':';
+                $cond_values[$item] = $this->params($item);
+            }
+        }
+        if (isPresent($cond_vars)) {
+            $conditions = implode('and', $cond_vars);
             $conds = array(
-                "conditions" => "user_id = :user_id:",
-                "bind" => array(
-                    "user_id" => $this->params('user_id')
-                ),
-                "order" => "id desc"
+                'conditions' => $conditions,
+                'bind' => $cond_values,
+                'order' => 'id desc'
             );
         }
 
         $payments = \Payments::findPagination($conds, $page, $per_page);
         $this->view->payments = $payments;
+    }
+
+    function payStatusAction()
+    {
+        $payment = \Payments::findById($this->params('id'));
+        $this->view->payment = $payment;
+    }
+
+    function updateAction()
+    {
+        $payment = \Payments::findById($this->params('id'));
+        if ($payment) {
+            $this->assign($payment, 'payment');
+            if ($payment->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('payment' => $payment->toJson()));
+            }
+        }
+        return $this->response->redirect('/admin/payemnts');
     }
 
     function detailAction()
