@@ -1228,4 +1228,14 @@ class Users extends BaseModel
 
         return false;
     }
+
+    //判断用户是否在指定的麦位
+    function isInRoomSeat($room_seat)
+    {
+        if ($this->current_room_seat_id == $room_seat->id) {
+            return true;
+        }
+
+        return false;
+    }
 }
