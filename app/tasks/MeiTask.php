@@ -213,4 +213,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $users = $current_user->followList(1, 100, 1);
         echoLine($users->toJson('users', 'toRelationJson'));
     }
+
+    function test8Action()
+    {
+        $user_db = Users::getUserDb();
+        $key = "set_type";
+        $user_db->set($key, true);
+        var_dump($user_db->get("sssss"));
+    }
 }

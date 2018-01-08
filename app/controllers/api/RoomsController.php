@@ -126,6 +126,7 @@ class RoomsController extends BaseController
         $res = $room->toJson();
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
+        $res['user_chat'] = $this->currentUser()->canChat($room);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }

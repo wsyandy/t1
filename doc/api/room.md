@@ -128,7 +128,7 @@
     id: int 房间id,
     name: string 房间名称
     topic: string 房间话题
-    chat: 公屏聊天状态, false/true
+    chat: 房间公屏聊天状态, false/true
     user_id 房主用户id
     sex	性别 0:女 1:男
     avatar_small_url 用户小头像
@@ -141,6 +141,7 @@
     user_num 在线人数
     app_id string 应用id
     channel_key string token 用于加入频道(互动直播)
+    user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
     room_seats:[
         {
             id: int 麦位id,
@@ -281,53 +282,17 @@
 }
 ```
 
-
-### 12 设置扬声器
-
-> http-post ```/api/users/set_speaker```
-
-##### 12.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|speaker|扬声器|boole|否|false是静音
-
-##### 12.2 回应参数说明
-```
-{
-    error_code
-    error_reason
-}
-```
-
-
-### 13 设置麦克风
-
-> http-post ```/api/users/set_microphone```
-
-##### 13.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|microphone|麦克风|boole|否|false是静音
-
-##### 13.2 回应参数说明
-```
-{
-    error_code
-    error_reason
-}
-```
-
-### 14 房间列表
+### 12 房间列表
 
 > http-get ```/api/rooms```
 
-##### 14.1 请求参数说明
+##### 12.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |page|页码|int|否||
 |per_page|每页|int|否|||
 
-##### 14.2 回应参数说明
+##### 12.2 回应参数说明
 ```
 {
     error_code
@@ -356,17 +321,17 @@
 }
 ```
 
-### 15 踢出房间
+### 13 踢出房间
 
 > http-post ```/api/rooms/kicking```
 
-##### 15.1 请求参数说明
+##### 13.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否|||
 |user_id|用户id|int|否|被踢用户|
 
-##### 15.2 回应参数说明
+##### 13.2 回应参数说明
 ```
 {
     error_code
