@@ -634,49 +634,14 @@ class Users extends BaseModel
 
     public function onlineFresh($opts = [])
     {
-        debug("fresh params", $this->id);
 
         $fresh_attrs = [];
-        $platform = fetch($opts, 'platform');
-        if ($platform && $this->platform !== $platform) {
-            $fresh_attrs['platform'] = $platform;
-        }
-
-        $version_name = fetch($opts, 'version_name');
-        if ($version_name && $this->version_name !== $version_name) {
-            $fresh_attrs['version_name'] = $version_name;
-        }
-
-        $version_code = fetch($opts, 'version_code');
-        if ($version_code && $this->version_code !== $version_code) {
-            $fresh_attrs['version_code'] = $version_code;
-        }
-
-        $api_version = fetch($opts, 'api_version');
-        if ($api_version && $this->api_version !== $api_version) {
-            $fresh_attrs['api_version'] = $api_version;
-        }
-
-        $province_id = fetch($opts, 'province_id');
-        if ($province_id && $this->province_id != $province_id) {
-            $fresh_attrs['province_id'] = $province_id;
-        }
-
-        $city_id = fetch($opts, 'city_id');
-        if ($city_id && $this->city_id != $city_id) {
-            $fresh_attrs['city_id'] = $city_id;
-        }
-
-        $ip = fetch($opts, 'ip');
-        if ($ip && $this->ip != $ip) {
-            $fresh_attrs['ip'] = $ip;
-        }
-
-        $latitude = fetch($opts, 'latitude');
-        $longitude = fetch($opts, 'longitude');
-        if ($latitude && $longitude && ($this->latitude != $latitude || $this->longitude != $longitude)) {
-            $fresh_attrs['latitude'] = $latitude;
-            $fresh_attrs['longitude'] = $longitude;
+        foreach ($opts as $k => $v) {
+            if ($this->hasProperty($k)) {
+                if ($v && $this->$k !== $v) {
+                    $fresh_attrs[$k] = $v;
+                }
+            }
         }
 
         // 强制刷新
@@ -692,11 +657,12 @@ class Users extends BaseModel
             $this->addActiveList();
         }
 
+        debug($this->id, $fresh_attrs);
+
         if ($fresh_attrs) {
             foreach ($fresh_attrs as $k => $v) {
                 $this->$k = $v;
             }
-
             $this->update();
         }
     }
@@ -746,13 +712,12 @@ class Users extends BaseModel
         return false;
     }
 
-    static function asyncUpdateGeoLocation($user_id, $latitude = null, $longitude = null)
+    static function asyncUpdateGeoLocation($user_id)
     {
+
         $user = self::findFirstById($user_id);
-        if (!$latitude) {
-            $latitude = $user->latitude;
-            $longitude = $user->longitude;
-        }
+        $latitude = $user->latitude;
+        $longitude = $user->longitude;
 
         if (!$latitude && !$longitude) {
             debug('false update geo_location', $user->id);
@@ -782,8 +747,16 @@ class Users extends BaseModel
             }
 
             debug($user->id, 'geo', $user->geo_province_id, $user->geo_city_id);
-            $user->update();
         }
+
+        // 计算geo hash值
+        $geo_hash = new GeoHash();
+        $hash = $geo_hash->encode($latitude, $longitude);
+        if ($hash) {
+            $user->geo_hash = $hash;
+        }
+
+        $user->update();
     }
 
     static function asyncUpdateIpLocation($user_id)
