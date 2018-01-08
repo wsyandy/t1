@@ -87,7 +87,8 @@ class RoomsController extends BaseController
             }
         }
 
-        if ($room->lock && $room->password != $password) {
+        //房间加锁并且不是房主检验密码
+        if ($room->lock && $room->password != $password && $room->user_id != $this->currentUser()->id) {
             return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
         }
 
