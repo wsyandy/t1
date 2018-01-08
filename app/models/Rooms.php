@@ -200,6 +200,7 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+
     function lock($password)
     {
         $this->password = $password;
@@ -212,5 +213,25 @@ class Rooms extends BaseModel
         $this->password = '';
         $this->lock = false;
         $this->update();
+    }
+
+    function getLockText()
+    {
+        if ($this->lock == true) {
+            $this->lock_text = "有锁";
+        } else {
+            $this->lock_text = "无锁";
+        }
+        return $this->lock_text;
+    }
+
+    function getChatText()
+    {
+        if ($this->chat == true) {
+            $this->chat_text = "可以聊天";
+        }else{
+            $this->chat_text = "禁止聊天";
+        }
+        return $this->chat_text;
     }
 }

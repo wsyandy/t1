@@ -149,5 +149,13 @@ class RoomSeats extends BaseModel
         $this->save();
     }
 
-
+    function getMicrophoneText()
+    {
+        if ($this->microphone == true) {
+            $this->microphone_text = "允许";
+        }else{
+            $this->microphone_text = "禁止";
+        }
+        return $this->microphone_text;
+    }
 }
