@@ -1263,10 +1263,4 @@ class Users extends BaseModel
     {
         return $this->id == $room->user_id;
     }
-
-    //是否为麦位房主
-    function isRoomSeatHost($room_seat)
-    {
-        return $this->id == $room_seat->user_id;
-    }
 }
