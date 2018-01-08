@@ -51,13 +51,15 @@
         var payment_channel_id = selected_pay.data('payment_channel_id');
         var payment_type = selected_pay.data('payment_type');
         var pay_submit = $("#pay_submit_btn");
-        if (selected_pay == "" || selected_pay == undefined) {
+        if (payment_channel_id == "" || payment_channel_id == undefined) {
             payment_channel_id = pay_submit.data('payment_channel_id');
             payment_type = pay_submit.data('payment_type');
         }
         var original_pay_url = "/m/orders/create?sid=" + '{{ user.sid }}';
         var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type;
         pay_submit.attr('href', pay_url);
+        pay_submit.data('payment_channel_id', payment_channel_id);
+        pay_submit.data('data-payment_type', payment_type);
     }
 
     $(function () {
