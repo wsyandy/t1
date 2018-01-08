@@ -15,13 +15,20 @@ class PaymentsController extends BaseController
         $conds = array('order' => 'id desc');
         $page = 1;
         $per_page = 30;
-        if (isPresent($this->params('user_id'))) {
+        $cond_vars = array();
+        $cond_values = array();
+        foreach (['order_id', 'id'] as $item) {
+            if (isPresent($this->params($item))) {
+                $cond_vars[] = $item . ' = ' . ':' . $item . ':';
+                $cond_values[$item] = $this->params($item);
+            }
+        }
+        if (isPresent($cond_vars)) {
+            $conditions = implode('and', $cond_vars);
             $conds = array(
-                "conditions" => "user_id = :user_id:",
-                "bind" => array(
-                    "user_id" => $this->params('user_id')
-                ),
-                "order" => "id desc"
+                'conditions' => $conditions,
+                'bind' => $cond_values,
+                'order' => 'id desc'
             );
         }
 
