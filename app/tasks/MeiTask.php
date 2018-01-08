@@ -114,4 +114,29 @@ class MeiTask extends \Phalcon\Cli\Task
 //        $followed_key = 'followed_list_user_id' . $other_user->id;
         echoLine($user_db->zrange($follow_key, 0, -1));
     }
+
+    function test6Action()
+    {
+        $user = new Users();
+        $user->save();
+        $users = Users::findPagination([], 1, 20);
+    }
+
+    function addFriendsAction($params)
+    {
+        $user_id = 75;
+
+        $current_user = Users::findFirstById($user_id);
+
+        if (!$current_user) {
+            return;
+        }
+
+        $users = Users::find(['conditions' => 'id != ' . $user_id, 'limit' => 100]);
+
+        foreach ($users as $user) {
+            $current_user->follow($user);
+            $current_user->addFriend($user, ['你好']);
+        }
+    }
 }
