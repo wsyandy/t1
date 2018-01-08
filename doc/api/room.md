@@ -341,3 +341,39 @@
     channel_name: string 房间唯一标识, 频道名称
 }
 ```
+
+### 14 禁言用户
+
+> http-post ```/api/rooms/close_user_chat```
+
+##### 14.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|room_id|房间id|int|否|||
+|user_id|用户id|int|否|||
+
+##### 14.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```
+
+### 14 解言用户
+
+> http-post ```/api/rooms/open_user_chat```
+
+##### 14.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|room_id|房间id|int|否|||
+|user_id|用户id|int|否|||
+
+##### 14.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```

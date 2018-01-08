@@ -281,26 +281,6 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    function setChatAction()
-    {
-        $chat = $this->params('chat', true);
-        $room_id = $this->params('room_id');
-
-        if (!$room_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-
-        $room = \Rooms::findFirstById($room_id);
-
-        if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
-        }
-
-        $this->currentUser()->setChat($room, $chat);
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-    }
-
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();

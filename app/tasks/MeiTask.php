@@ -221,4 +221,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_db->set($key, true);
         var_dump($user_db->get("sssss"));
     }
+
+    function test9Action()
+    {
+        $room = Rooms::findFirstById(5);
+
+    }
 }
