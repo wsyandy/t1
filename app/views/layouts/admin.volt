@@ -50,6 +50,9 @@
                     {% if isAllowed('complaints','index') %}
                         <li><a href="/admin/complaints">举报列表</a></li>
                     {% endif %}
+                    {% if isAllowed('rooms','index') %}
+                        <li><a href="/admin/rooms">房间列表</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
