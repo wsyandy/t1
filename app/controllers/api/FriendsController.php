@@ -57,4 +57,10 @@ class FriendsController extends BaseController
         $this->currentUser()->clearAddFriendInfo();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
+
+    //为客户端同步好友数据使用 不分页
+    function syncDataAction()
+    {
+
+    }
 }

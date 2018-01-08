@@ -241,8 +241,20 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($room_seat);
         $rooms = Rooms::count();
         echoLine($rooms);
-
-
     }
 
+    function test10Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "test_rank";
+
+//        for ($i = 1; $i < 20; $i++) {
+//            $hot_cache->zadd($key, $i, $i);
+//        }
+
+        $page = 2;
+        $per_page = 5;
+        $offset = ($page - 1) * $per_page;
+        echoLine($hot_cache->zrevrange($key, $offset, $offset + $per_page - 1));
+    }
 }

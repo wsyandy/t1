@@ -59,7 +59,6 @@ class RoomSeats extends BaseModel
 
         if ($user) {
             $json = [
-                'user_id' => $user->id,
                 'sex' => $user->sex,
                 'avatar_url' => $user->avatar_url,
                 'avatar_small_url' => $user->avatar_small_url,
@@ -72,6 +71,7 @@ class RoomSeats extends BaseModel
         $json['microphone'] = $this->microphone;
         $json['rank'] = $this->rank;
         $json['room_id'] = $this->room_id;
+        $json['user_id'] = $this->user_id;
 
         return $json;
     }
