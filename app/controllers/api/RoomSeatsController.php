@@ -50,9 +50,10 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
+        if ($this->otherUser() && !$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
+
 
         $room_seat->down($this->currentUser(), $this->otherUser());
 
