@@ -245,4 +245,34 @@ class RoomsController extends BaseController
             'name' => $room->name, 'channel_name' => $room->channel_name]);
     }
 
+    // 公屏设置
+    function openUserChatAction()
+    {
+        $room_id = $this->params('id', 0);
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $this->otherUser()->setChat($room, true);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    function closeUserChatAction()
+    {
+        $room_id = $this->params('id', 0);
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $this->otherUser()->setChat($room, false);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
 }
