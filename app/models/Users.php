@@ -52,12 +52,14 @@ class Users extends BaseModel
      */
     private $_room;
 
-
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
     //是否已关注 true:已关注,false:未关注
     public $followed;
+
+    //是否可以发公屏消息 true可以,false不可以
+    public $user_chat;
 
     function beforeCreate()
     {
@@ -1217,5 +1219,54 @@ class Users extends BaseModel
         $users = Users::findPagination($cond, $page, $per_page);
 
         return $users;
+    }
+
+    //判断用户是否在指定的房间
+    function isInRoom($room)
+    {
+        return $this->current_room_id == $room->id;
+    }
+
+    //判断用户是否在指定的麦位
+    function isInRoomSeat($room_seat)
+    {
+        return $this->current_room_seat_id == $room_seat->id;
+    }
+
+    //1可以聊天 2不可以聊天
+    function setChat($room, $chat)
+    {
+        $db = Users::getHotWriteCache();
+
+        if ($chat) {
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
+        } else {
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
+        }
+    }
+
+    function canChat($room)
+    {
+        $db = Users::getHotReadCache();
+        $key = "chat_status_room{$room->id}user{$this->id}";
+        $chat = $db->get($key);
+
+        if (2 == $chat) {
+            return false;
+        }
+
+        return true;
+    }
+
+    //是否为房间房主
+    function isRoomHost($room)
+    {
+        return $this->id == $room->user_id;
+    }
+
+    //是否为麦位房主
+    function isRoomSeatHost($room_seat)
+    {
+        return $this->id == $room_seat->user_id;
     }
 }

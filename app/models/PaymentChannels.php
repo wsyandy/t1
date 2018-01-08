@@ -17,8 +17,8 @@ class PaymentChannels extends BaseModel
 
     static $clazz = [
         'Weixin' => 'Weixin', 'WeixinH5' => 'WeixinH5',
-        'alipaySdk' => 'alipaySdk', 'alipayH5' => 'alipayH5',
-        'apple' => 'Apple',
+        'AlipaySdk' => 'AlipaySdk', 'AlipayH5' => 'AlipayH5',
+        'Apple' => 'Apple',
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -60,7 +60,16 @@ class PaymentChannels extends BaseModel
 
     function match($user)
     {
+        debug("user: " . $user->platform);
+        if ($user->isIos() && !$this->isApple()) {
+            return false;
+        }
         return true;
+    }
+
+    function isApple()
+    {
+        return 'apple' == $this->payment_type;
     }
 
     function isValid()

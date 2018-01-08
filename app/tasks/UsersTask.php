@@ -69,5 +69,10 @@ class UsersTask extends \Phalcon\Cli\Task
         var_dump($res);
     }
 
-
+    function freshAttrsAction()
+    {
+        $user = \Users::findById(1);
+        $user->platform = 'ios';
+        $user->save();
+    }
 }

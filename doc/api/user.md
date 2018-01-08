@@ -380,3 +380,36 @@
 }
 ```
 
+### 12 设置扬声器
+
+> http-post ```/api/users/set_speaker```
+
+##### 12.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|speaker|扬声器|boole|否|false是静音
+
+##### 12.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```
+
+### 13 设置麦克风
+
+> http-post ```/api/users/set_microphone```
+
+##### 13.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|microphone|麦克风|boole|否|false是静音
+
+##### 13.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```

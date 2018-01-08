@@ -39,7 +39,9 @@ class Payments extends BaseModel
             'payment_type' => $this->payment_type,
             'amount' => $this->amount,
             'pay_status_text' => $this->pay_status_text,
-            'paid_at' => $this->paid_at_text
+            'paid_at' => $this->paid_at_text,
+            'payment_channel_name' => $this->payment_channel_name,
+            'created_at_text' => $this->created_at_text
         ];
     }
 
@@ -67,5 +69,62 @@ class Payments extends BaseModel
     function getPayStatusText()
     {
         return fetch(\Payments::$pay_status, $this->pay_status);
+    }
+
+    function isPaid()
+    {
+        return PAYMENT_PAY_STATUS_SUCCESS == $this->pay_status;
+    }
+
+    function validResult($opts, $body)
+    {
+        $gateway = $this->payment_channel->gateway();
+        $result = 'error';
+        # 订单已经支付完成
+        if (!$this->isPaid()) {
+            if ('apple' == $this->payment_type) {
+                $user = \Users::findById($this->user_id);
+                if ($user) {
+                    $opts['apple_share_secret'] = $user->product_channel->apple_share_secret;
+                }
+            }
+            if ($gateway->validSign($opts, $body)) {
+                $order = \Orders::findById($this->order_id);
+                if ($order) {
+                    $opts['order_amount'] = $order->amount;
+                }
+                $result = $gateway->validResult($this, $opts, $body);
+            } else {
+                debug("[NOTIFY] 支付验证通知失败");
+            }
+        }
+        return $result;
+    }
+
+    function beforeUpdate()
+    {
+        if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            return $this->paySuccess();
+        }
+        return false;
+    }
+
+    function paySuccess()
+    {
+        if (!$this->isPaid()) {
+            return true;
+        }
+        $order = $this->order;
+        $order->status = ORDER_STATUS_SUCCESS;
+        if ($order->save()) {
+            $product = $order->product;
+            if ($product->product_group->isDiamond()) {
+                \AccountHistories::changeBalance(
+                    $this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $order->amount,
+                    array('order_id' => $order->id, 'remark' => '购买钻石')
+                );
+            }
+        }
+        return false;
     }
 }

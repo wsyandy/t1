@@ -10,6 +10,6 @@
   {{ f.select('payment_type', ['label': '支付类型', 'collection': PaymentChannels.payment_type]) }}
   {{ f.input('gateway_url', ['label': '支付地址']) }}
   {{ f.input('rank', ['label': '排序']) }}
-  {{ f.select('status', ['label': '有效', 'collection': PaymentChannels.status]) }}
+  {{ f.select('status', ['label': '有效', 'collection': PaymentChannels.STATUS]) }}
   {{ f.submit("保存", ['class': 'btn btn-default btn-primary']) }}
 {{ f.end }}
