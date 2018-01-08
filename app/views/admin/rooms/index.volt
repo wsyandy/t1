@@ -25,15 +25,18 @@
 {% macro room_status_info(room) %}
     {{ room.status_text }}|{{ room.online_status_text }}<br/>
     最后活跃时间: {{ room.last_at_text }}<br/>
-    公频聊天状态: {{ room.chat }}<br/>
-    是否加锁: {{ room.lock }}
+    公频聊天状态: {{ room.chat_text }}<br/>
+    是否加锁: {{ room.lock_text }}<br/>
 {% endmacro %}
 
 
-{% macro online_users(room) %}
+{% macro detail_link(room) %}
     {% if isAllowed('room','online_users') %}
-        <a href="/admin/rooms/online_users?id={{ room.id }}">在线用户</a>
+        <a href="/admin/rooms/online_users?id={{ room.id }}">在线用户</a></br>
+    {% endif %}
+    {% if isAllowed('room','room_seats') %}
+        <a href="/admin/rooms/room_seats?id={{ room.id }}">麦 位</a></br>
     {% endif %}
 {% endmacro %}
 
-{{ simple_table(rooms,['id': 'id','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"在线用户":"online_users"]) }}
+{{ simple_table(rooms,['id': 'id','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"详细":"detail_link"]) }}
