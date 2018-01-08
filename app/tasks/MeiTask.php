@@ -231,4 +231,18 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_db->set($key, true);
         var_dump($user_db->get("sssss"));
     }
+
+    function test9Action()
+    {
+        $room = Rooms::findFirstById(7);
+        echoLine($room);
+
+        $room_seat = RoomSeats::findFirstById(57);
+        echoLine($room_seat);
+        $rooms = Rooms::count();
+        echoLine($rooms);
+
+
+    }
+
 }

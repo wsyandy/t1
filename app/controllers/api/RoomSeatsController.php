@@ -23,7 +23,7 @@ class RoomSeatsController extends BaseController
         //当前用户不在房间
         if ($this->otherUser()) {
 
-            if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+            if (!$this->currentUser()->isRoomHost($room_seat->room)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
             }
 
@@ -50,7 +50,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if ($this->otherUser() && !$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
@@ -68,7 +68,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
@@ -86,7 +86,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
@@ -104,7 +104,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
@@ -123,7 +123,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
