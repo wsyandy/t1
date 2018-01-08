@@ -71,7 +71,7 @@ class Products extends BaseModel
     static function findDiamondListByUser($user)
     {
         $fee_type = 'diamond';
-        $product_groups = \ProductGroups::find(
+        $product_groups = \ProductGroups::findByConditions(
             [
                 'product_channel_id' => $user->product_channel_id,
                 'fee_type' => $fee_type,
@@ -82,19 +82,24 @@ class Products extends BaseModel
             return false;
         }
         $product_group = $product_groups[0];
+        debug("product_group: " . strval($product_group->id));
 
         $products = \Products::findByConditions(array('product_group_id' => $product_group->id, 'status' => STATUS_ON));
         $selected_products = array();
         foreach ($products as $product) {
+            debug("product: " . strval($product->id));
             if ($product->match($user)) {
+                debug("match_product: " . strval($product->id));
                 $selected_products[] = $product;
             }
         }
+        debug("selected_products: " . count($selected_products));
         return $selected_products;
     }
 
     function match($user)
     {
+        debug("apple_product_no: " . $this->apple_product_no);
         if (isPresent($this->apple_product_no)) {
             return $user->isIos();
         }
