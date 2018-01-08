@@ -1,0 +1,1 @@
+alter table products add apple_product_no varchar(255);
