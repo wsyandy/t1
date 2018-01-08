@@ -98,4 +98,31 @@ class Payments extends BaseModel
         }
         return $result;
     }
+
+    function beforeUpdate()
+    {
+        if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            return $this->paySuccess();
+        }
+        return false;
+    }
+
+    function paySuccess()
+    {
+        if (!$this->isPaid()) {
+            return true;
+        }
+        $order = $this->order;
+        $order->status = ORDER_STATUS_SUCCESS;
+        if ($order->save()) {
+            $product = $order->product;
+            if ($product->product_group->isDiamond()) {
+                \AccountHistories::changeBalance(
+                    $this->user_id, 'diamond', $order->amount,
+                    array('order_id' => $order->id, 'remark' => '购买钻石')
+                );
+            }
+        }
+        return false;
+    }
 }
