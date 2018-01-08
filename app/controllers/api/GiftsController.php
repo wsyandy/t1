@@ -14,7 +14,10 @@ class GiftsController extends BaseController
     function indexAction()
     {
         $gifts = \Gifts::findValidList();
-        $user_diamond_info = array('diamond' => intval($this->currentUser()->diamond));
+        $user_diamond_info = array(
+            'diamond' => intval($this->currentUser()->diamond),
+            'pay_url' => '/m/products?sid=' . $this->currentUser()->sid
+        );
         return $this->renderJSON(
             ERROR_CODE_SUCCESS, '',
             array_merge($user_diamond_info, $gifts->toJson('gifts', 'toSimpleJson'))
