@@ -122,10 +122,26 @@ class MeiTask extends \Phalcon\Cli\Task
         $users = Users::findPagination([], 1, 20);
     }
 
-    function addFriendsAction($params)
+    function test7Action()
+    {
+        $current_user_id = 75;
+        $key = 'friend_total_list_user_id_' . $current_user_id;
+
+        $user_db = Users::getUserDb();
+        $user_ids = $user_db->zrange($key, 0, -1);
+        $user_introduce_key = "add_friend_introduce_user_id" . $current_user_id;
+
+
+        foreach ($user_ids as $user_id) {
+            $other_user_introduce_key = "add_friend_introduce_user_id" . $user_id;
+            $user_db->hset($user_introduce_key, $user_id, "你好");
+            $user_db->hset($other_user_introduce_key, $current_user_id, "你好");
+        }
+    }
+
+    function followAction()
     {
         $user_id = 75;
-
         $current_user = Users::findFirstById($user_id);
 
         if (!$current_user) {
@@ -136,7 +152,65 @@ class MeiTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             $current_user->follow($user);
-            $current_user->addFriend($user, ['你好']);
         }
+    }
+
+    function addFriendsAction($params)
+    {
+        $user_id = 75;
+        $current_user = Users::findFirstById($user_id);
+
+        if (!$current_user) {
+            return;
+        }
+
+        $users = Users::find(['conditions' => 'id != ' . $user_id, 'limit' => 100]);
+
+        foreach ($users as $user) {
+            $current_user->addFriend($user, ['self_introduce' => '你好']);
+        }
+
+    }
+
+    function agreeAction()
+    {
+        $current_user_id = 75;
+
+        $current_user = Users::findFirstById($current_user_id);
+
+        if (!$current_user) {
+            return;
+        }
+
+        $key = 'friend_total_list_user_id_' . $current_user_id;
+
+        $user_db = Users::getUserDb();
+        $user_ids = $user_db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $user = Users::findFirstById($user_id);
+
+            $num = mt_rand(1, 100);
+
+            if ($num <= 10) {
+                $current_user->agreeAddFriend($user);
+            }
+        }
+    }
+
+    function getFriendListAction()
+    {
+        $user_id = 75;
+        $current_user = Users::findFirstById($user_id);
+        $users = $current_user->friendList(1, 100, 0);
+        echoLine($users->toJson('users', 'toRelationJson'));
+    }
+
+    function getFollowListAction()
+    {
+        $user_id = 75;
+        $current_user = Users::findFirstById($user_id);
+        $users = $current_user->followList(1, 100, 1);
+        echoLine($users->toJson('users', 'toRelationJson'));
     }
 }
