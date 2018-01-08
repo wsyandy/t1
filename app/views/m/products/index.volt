@@ -39,7 +39,8 @@
 </div>
 
 <div class="get_out_btn">
-    <a href="/m/orders/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}" id="pay_submit_btn" class="account_btn">确定</a>
+    <a href="/m/orders/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
+       id="pay_submit_btn" class="account_btn" data-payment_channel_id="{{ selected_payment_channel.id }}" data-payment_type="{{ selected_payment_channel.payment_type }}">确定</a>
 </div>
 
 <script src="/js/jquery/1.11.2/jquery.min.js"></script>
@@ -48,9 +49,13 @@
         var product_id = $(".selected").data('product_id');
         var selected_pay = $(".selected_pay");
         var payment_channel_id = selected_pay.data('payment_channel_id');
-        var pay_submit = $("#pay_submit_btn");
-        var original_pay_url = "/m/orders/create?sid=" + '{{ user.sid }}';
         var payment_type = selected_pay.data('payment_type');
+        var pay_submit = $("#pay_submit_btn");
+        if (selected_pay == "" || selected_pay == undefined) {
+            payment_channel_id = pay_submit.data('payment_channel_id');
+            payment_type = pay_submit.data('payment_type');
+        }
+        var original_pay_url = "/m/orders/create?sid=" + '{{ user.sid }}';
         var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type;
         pay_submit.attr('href', pay_url);
     }

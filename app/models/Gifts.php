@@ -99,7 +99,7 @@ class Gifts extends BaseModel
         }
     }
 
-    function invalid()
+    function isInvalid()
     {
         return $this->status == GIFT_STATUS_OFF;
     }
