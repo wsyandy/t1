@@ -20,12 +20,13 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
-        }
-
         //当前用户不在房间
         if ($this->otherUser() && !$this->otherUser()->isInRoom($room_seat->room)) {
+
+            if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            }
+
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
         }
 
@@ -47,7 +48,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if (!$this->currentUser()->isRoomSeatHost($room_seat)) {
+        if ($this->otherUser() && !$this->currentUser()->isRoomSeatHost($room_seat)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
