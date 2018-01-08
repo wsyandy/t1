@@ -1,5 +1,5 @@
 {%- macro user_link(object) %}
-    <a href="/admin/users/detail?user_id={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>
+    <a href="/admin/users/detail?id={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>
 {%- endmacro %}
 
 {%- macro order_link(object) %}
@@ -20,7 +20,7 @@
 <tr id="payment_${payment.id}">
     <td>${payment.id}</td>
     <td>${payment.payment_no}</td>
-    <td><a href="/admin/users/detail?user_id=${payment.user_id}"><img src="${payment.user_avatar_url}" width="30"></a></td>
+    <td><a href="/admin/users/detail?id=${payment.user_id}"><img src="${payment.user_avatar_url}" width="30"></a></td>
     <td><a href="/admin/orders?id=${payment.order_id}">订单</a></td>
     <td>${payment.payment_channel_name}</td>
     <td>${payment.payment_type}</td>

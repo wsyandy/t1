@@ -33,6 +33,6 @@
     <td><img src="${product_group.icon_url}" width="40"></td>
     <td>${product_group.remark}</td>
     <td>${product_group.status_text}</td>
-    <td><a href="/admin/product_groups/edit/{{ product_group.id }}" class="modal_action">编辑</a></td>
+    <td><a href="/admin/product_groups/edit/${ product_group.id }" class="modal_action">编辑</a></td>
 </tr>
 </script>
