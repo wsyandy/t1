@@ -24,8 +24,8 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
         }
 
-        if ($this->otherUser() && $this->otherUser()->isInRoom($room_seat->room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户已在房间');
+        if ($this->otherUser() && $this->otherUser()->current_room_seat_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
         }
 
         // 抱用户上麦
