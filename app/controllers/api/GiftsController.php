@@ -16,7 +16,7 @@ class GiftsController extends BaseController
         $gifts = \Gifts::findValidList();
         $user_diamond_info = array(
             'diamond' => intval($this->currentUser()->diamond),
-            'pay_url' => '/m/products?sid=' . $this->currentUser()->sid
+            'pay_url' => 'url://m/products'
         );
         return $this->renderJSON(
             ERROR_CODE_SUCCESS, '',
