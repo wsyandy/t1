@@ -58,7 +58,8 @@ class Products extends BaseModel
             'status_text' => $this->status_text,
             'amount' => $this->amount,
             'diamond' => $this->diamond,
-            'product_group_name' => $this->product_group_name
+            'product_group_name' => $this->product_group_name,
+            'apple_product_no' => $this->apple_product_no
         );
     }
 
@@ -81,12 +82,21 @@ class Products extends BaseModel
             return false;
         }
         $product_group = $product_groups[0];
-        $products = \Products::find(
-            array(
-                'product_group_id' => $product_group->id,
-                'status' => STATUS_ON
-            )
-        );
-        return $products;
+        $products = \Products::findByConditions(array('product_group_id' => $product_group->id, 'status' => STATUS_ON));
+        $selected_products = array();
+        foreach ($products as $product) {
+            if ($product->match($user)) {
+                $selected_products[] = $product;
+            }
+        }
+        return $selected_products;
+    }
+
+    function match($user)
+    {
+        if (isPresent($this->apple_product_no)) {
+            return $user->isIos();
+        }
+        return !$user->isIos();
     }
 }
