@@ -1218,4 +1218,14 @@ class Users extends BaseModel
 
         return $users;
     }
+
+    //判断用户是否在指定的房间
+    function isInRoom($room)
+    {
+        if ($this->current_room_id == $room->id) {
+            return true;
+        }
+
+        return false;
+    }
 }
