@@ -33,7 +33,7 @@ class GiftsController extends BaseController
         $gift_num = $this->params('gift_num', 1);
         $src = $this->params('src', 'room');
         $gift = \Gifts::findById($this->params('gift_id'));
-        if (isBlank($gift) || $gift->invalid()) {
+        if (isBlank($gift) || $gift->isInvalid()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
         }
         $notify_type = $src == 'room' ? 'bc' : 'ptp';
