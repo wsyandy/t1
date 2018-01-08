@@ -14,7 +14,7 @@ class AlbumsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page', 30);
-        $user_id = $this->params('id');
+        $user_id = $this->params('user_id');
         $albums = \Albums::findPagination(['conditions' => 'user_id =' . $user_id, 'order' => 'id desc'], $page, $per_page);
 
         $this->view->albums = $albums;
