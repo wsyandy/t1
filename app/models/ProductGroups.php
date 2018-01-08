@@ -68,4 +68,9 @@ class ProductGroups extends BaseModel
         }
         return \StoreFile::getUrl($this->icon);
     }
+
+    function isDiamond()
+    {
+        return 'diamond' == $this->fee_type;
+    }
 }
