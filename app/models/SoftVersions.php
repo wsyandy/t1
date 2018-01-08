@@ -4,14 +4,14 @@
 class SoftVersions extends BaseModel
 {
 
-    static $STATUS = array(SOFT_VERSION_STATUS_ON => '可用', SOFT_VERSION_STATUS_OFF => '不可用');
+    static $STATUS = [SOFT_VERSION_STATUS_ON => '可用', SOFT_VERSION_STATUS_OFF => '不可用'];
 
-    static $PLATFORM = array('android' => '安卓', 'ios' => "苹果");
-    static $FORCE_UPDATE = array(SOFT_VERSION_FORCE_UPDATE_ON => '强制升级', SOFT_VERSION_FORCE_UPDATE_OFF => '不强制升级');
+    static $PLATFORM = ['android' => '安卓', 'ios' => "苹果"];
+    static $FORCE_UPDATE = [SOFT_VERSION_FORCE_UPDATE_ON => '强制升级', SOFT_VERSION_FORCE_UPDATE_OFF => '不强制升级'];
 
-    static $STABLE = array(SOFT_VERSION_STABLE_ON => '稳定', SOFT_VERSION_STABLE_OFF => '不稳定');
+    static $STABLE = [SOFT_VERSION_STABLE_ON => '稳定', SOFT_VERSION_STABLE_OFF => '不稳定'];
 
-    static $files = array('file' => APP_NAME . '/soft_version/%s');
+    static $files = ['file' => APP_NAME . '/soft_version/%s'];
 
     static $CHANNEL_PACKAGE = [0 => '非渠道包', 1 => '渠道安装包'];
     static $IS_SHOW_NAME = [0 => '否', 1 => '是'];

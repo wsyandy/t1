@@ -5,9 +5,9 @@ class ClientThemes extends BaseModel
 
     static $STATUS = [STATUS_ON => '可用', STATUS_OFF => '不可用'];
 
-    static $files = array('file' => APP_NAME . '/client_theme/%s');
+    static $files = ['file' => APP_NAME . '/client_theme/%s'];
 
-    static $PLATFORM = array('android' => '安卓', 'ios' => "苹果");
+    static $PLATFORM = ['android' => '安卓', 'ios' => "苹果"];
 
     /**
      * @type ProductChannels

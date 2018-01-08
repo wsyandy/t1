@@ -9,10 +9,10 @@ class WeixinMenus extends BaseModel
     {
 
         if (is_array($data[1])) {
-            $body = array('name' => $data[0]);
+            $body = ['name' => $data[0]];
             $body['sub_button'] = self::menuBody($data[1], true);
         } else {
-            $body = array("name" => $data[0], "type" => "view", "url" => $data[1]);
+            $body = ["name" => $data[0], "type" => "view", "url" => $data[1]];
         }
 
         return $body;
@@ -20,13 +20,13 @@ class WeixinMenus extends BaseModel
 
     static function menuBody($menu_data, $is_recursive = false)
     {
-        $body = array();
+        $body = [];
         foreach ($menu_data as $data) {
             $body[] = self::menuButton($data);
         }
 
         if (!$is_recursive) {
-            $body = array('button' => $body);
+            $body = ['button' => $body];
             $body = json_encode($body, JSON_UNESCAPED_UNICODE);
         }
 

@@ -9,7 +9,7 @@ class DevicesController extends BaseController
         if ($this->request->isPost()) {
 
             $attributes = $this->context();
-            debug($this->params(), $this->headers(), 'context',$attributes);
+            debug($this->params(), $this->headers(), 'context', $attributes);
 
             if (!checkSum($attributes['device_no']) && !isDevelopmentEnv()) {
                 $this->renderJSON(ERROR_CODE_FAIL);
@@ -29,12 +29,12 @@ class DevicesController extends BaseController
 
             $device = \Devices::active($this->currentProductChannel(), $attributes);
             if ($device) {
-                $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', array('sid' => $device->sid));
+                $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', ['sid' => $device->sid]);
             } else {
-                $this->renderJSON(ERROR_CODE_FAIL, '激活失败', array('sid' => ""));
+                $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
             }
         } else {
-            $this->renderJSON(ERROR_CODE_FAIL, '非法调用', array('sid' => ""));
+            $this->renderJSON(ERROR_CODE_FAIL, '非法调用', ['sid' => ""]);
         }
     }
 }

@@ -40,17 +40,17 @@ class Products extends BaseModel
     static function findByProductGroupId($product_group_id)
     {
         return \Products::find(
-            array(
+            [
                 'conditions' => 'product_group_id = :product_group_id:',
-                'bind' => array('product_group_id' => $product_group_id),
+                'bind' => ['product_group_id' => $product_group_id],
                 'order' => 'rank desc'
-            )
+            ]
         );
     }
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'icon_url' => $this->icon_url,
@@ -59,7 +59,7 @@ class Products extends BaseModel
             'amount' => $this->amount,
             'diamond' => $this->diamond,
             'product_group_name' => $this->product_group_name
-        );
+        ];
     }
 
     function getProductGroupName()
@@ -71,21 +71,21 @@ class Products extends BaseModel
     {
         $fee_type = 'diamond';
         $product_groups = \ProductGroups::find(
-            array(
+            [
                 'product_channel_id' => $user->product_channel_id,
                 'fee_type' => $fee_type,
                 'status' => STATUS_ON
-            )
+            ]
         );
         if (isBlank($product_groups)) {
             return false;
         }
         $product_group = $product_groups[0];
         $products = \Products::find(
-            array(
+            [
                 'product_group_id' => $product_group->id,
                 'status' => STATUS_ON
-            )
+            ]
         );
         return $products;
     }

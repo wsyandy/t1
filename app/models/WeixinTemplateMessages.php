@@ -17,7 +17,7 @@ class WeixinTemplateMessages extends BaseModel
      */
     private $_operator;
 
-    static $STATUS = array(STATUS_ON => '有效', STATUS_OFF => '无效');
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
     static $SEND_STATUS = [SEND_STATUS_WAIT => '等待发送', SEND_STATUS_SUBMIT => '提交发送', SEND_STATUS_PROGRESS => '发送中', SEND_STATUS_SUCCESS => '发送成功', SEND_STATUS_STOP => '终止发送'];
     static $PLATFORMS = ['weixin_ios' => '微信ios', 'weixin_android' => '微信安卓'];
     static $NEED_FILTER_CONDITIONS = [STATUS_OFF => '否', STATUS_ON => '是'];

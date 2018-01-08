@@ -29,6 +29,7 @@
             room_id 用户创建房间id ，无房间为0
             current_room_id 用户当前所在房间id ,不在房间为0
             current_room_seat_id 用户当前所在麦位id 
+            monologue 个性签名
         } 
     ]
 }
@@ -63,6 +64,7 @@
             room_id 用户创建房间id ，无房间为0
             current_room_id 用户当前所在房间id ,不在房间为0
             current_room_seat_id 用户当前所在麦位id
+            monologue 个性签名
         } 
     ]
 }

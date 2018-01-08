@@ -65,7 +65,7 @@ class WapController extends \ApplicationController
             if ($k && $v && preg_match('/^(q|keyword|word|search|kw|wd|w|p|query)$/i', $k)) {
                 $value = urldecode($v);
                 //info('word:', $value);
-                $encode = mb_detect_encoding($value, array("ASCII", "UTF-8", "GB2312", "GBK", "BIG5"));
+                $encode = mb_detect_encoding($value, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
                 if ('UTF-8' != $encode) {
                     $iconv_value = iconv($encode, "UTF-8", $value);
                     info('iconv utf-8', $encode, $k, $value, $iconv_value);
@@ -136,7 +136,7 @@ class WapController extends \ApplicationController
             }
         }
 
-        $encode = mb_detect_encoding($sem, array("ASCII", "UTF-8", "GB2312", "GBK", "BIG5"));
+        $encode = mb_detect_encoding($sem, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
         //info("from_sem", $sem, $encode);
         if ('EUC-CN' == $encode || !$sem) {
             info('false no_sem', $sem, $this->params());
@@ -151,7 +151,7 @@ class WapController extends \ApplicationController
         $visit_at = strtotime(date('Y-m-d'));
         $wap_visit = \WapVisits::findFirst([
             'conditions' => 'visit_at=:visit_at: and uri=:uri: and sem=:sem:',
-            'bind' => array('visit_at' => $visit_at, 'uri' => $uri, 'sem' => $sem)
+            'bind' => ['visit_at' => $visit_at, 'uri' => $uri, 'sem' => $sem]
         ]);
 
         if (!$wap_visit) {

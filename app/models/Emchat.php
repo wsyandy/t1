@@ -77,14 +77,14 @@ class Emchat extends BaseModel
             return $token;
         }
 
-        $options = array(
+        $options = [
             "grant_type" => "client_credentials",
             "client_id" => $this->client_id,
             "client_secret" => $this->client_secret
-        );
+        ];
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $url = $this->url . 'token';
-        $result = httpPost($url, $body, array());
+        $result = httpPost($url, $body, []);
         if ($this->reqSuccess($result->code)) {
             $token_result = $this->parseResult($result);
 
@@ -102,7 +102,7 @@ class Emchat extends BaseModel
      */
     function getHeaders()
     {
-        return array("Content-Type" => "application/json", "Authorization" => "Bearer " . strval($this->token));
+        return ["Content-Type" => "application/json", "Authorization" => "Bearer " . strval($this->token)];
     }
 
     /**
@@ -134,10 +134,10 @@ class Emchat extends BaseModel
     function createUser($username, $password)
     {
         $url = $this->url . 'users';
-        $options = array(
+        $options = [
             "username" => $username,
             "password" => $password
-        );
+        ];
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
@@ -172,10 +172,10 @@ class Emchat extends BaseModel
     function resetPassword($username, $old_password, $new_password)
     {
         $url = $this->url . 'users/' . $username . '/password';
-        $options = array(
+        $options = [
             "oldpassword" => $old_password,
             "newpassword" => $new_password
-        );
+        ];
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
@@ -198,7 +198,7 @@ class Emchat extends BaseModel
             $result_data = $this->parseResult($result);
             return $result_data['entities'];
         }
-        return array();
+        return [];
     }
 
     /*
@@ -219,7 +219,7 @@ class Emchat extends BaseModel
             $result_data = $this->parseResult($result);
             return $result_data['entities'];
         }
-        return array();
+        return [];
     }
 
     /*
@@ -249,7 +249,7 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpDelete($url, null, $header);
-        $users = array();
+        $users = [];
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             foreach ($result_data['entites'] as $entity) {
@@ -448,7 +448,7 @@ class Emchat extends BaseModel
      */
     function addBlack($username, $black)
     {
-        return $this->addBlacks($username, array($black));
+        return $this->addBlacks($username, [$black]);
     }
 
     /**
@@ -460,7 +460,7 @@ class Emchat extends BaseModel
     function addBlacks($username, $blacks)
     {
         $url = $this->url . 'users/' . $username . '/blocks/users';
-        $body = json_encode(array("usernames" => $blacks), JSON_UNESCAPED_UNICODE);
+        $body = json_encode(["usernames" => $blacks], JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
 
         $result = httpPost($url, $body, $header);
@@ -490,14 +490,14 @@ class Emchat extends BaseModel
     function generateSendContext($from, $target, $content_type, $content,
                                  $target_type = 'users', $ext = null)
     {
-        $body = array();
+        $body = [];
         $body['target_type'] = $target_type;
         if (is_array($target)) {
             $body['target'] = $target;
         } else {
-            $body['target'] = array($target);
+            $body['target'] = [$target];
         }
-        $options = array();
+        $options = [];
         $options['type'] = $content_type;
         if ($content_type == 'txt') {
             $options['msg'] = $content;
@@ -524,7 +524,7 @@ class Emchat extends BaseModel
      */
     function sendResult($result, $target)
     {
-        $send_results = array();
+        $send_results = [];
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             $datas = $result_data['data'];
@@ -549,7 +549,7 @@ class Emchat extends BaseModel
         $uri = $result['uri'];
         $uuid = $result['entities'][0]['uuid'];
         $shareSecret = $result['entities'][0]['share-secret'];
-        $content = array();
+        $content = [];
         $content['url'] = $uri . '/' . $uuid;
         $content['filename'] = $filename;
         if (isPresent($length)) {
@@ -608,10 +608,10 @@ class Emchat extends BaseModel
         $url = $this->url . 'messages';
         $content_type = 'img';
         $content = $this->generateFileContent($result, $filename);
-        $content['size'] = array(
+        $content['size'] = [
             "width" => 480,
             "height" => 720
-        );
+        ];
         $body = $this->generateSendContext($from, $target, $content_type, $content, $target_type, $ext);
 
         $header = $this->headers;
@@ -703,7 +703,7 @@ class Emchat extends BaseModel
 
     function uploadThumbImage($thumb_image_path)
     {
-        $content = array();
+        $content = [];
         $result = $this->uploadFile($thumb_image_path);
         $uri = $result['uri'];
         $uuid = $result['entities'][0]['uuid'];
@@ -721,7 +721,7 @@ class Emchat extends BaseModel
     function uploadFile($file_path)
     {
         $url = $this->url . 'chatfiles';
-        $files = array('file' => $file_path);
+        $files = ['file' => $file_path];
         $header = $this->headers;
         $header['restrict-access'] = 'true';
         $header['Content-Type'] = 'multipart/form-data';

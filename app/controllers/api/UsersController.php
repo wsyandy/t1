@@ -292,10 +292,10 @@ class UsersController extends BaseController
         if (\Emchat::createEmUser($this->currentUser())) {
             return $this->renderJSON(
                 ERROR_CODE_SUCCESS, '创建成功',
-                array(
+                [
                     'id' => $this->currentUser()->id,
                     'im_password' => $this->currentUser()->im_password
-                )
+                ]
             );
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '创建失败,请稍后再试');

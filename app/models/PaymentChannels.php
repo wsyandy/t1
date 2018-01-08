@@ -9,29 +9,29 @@
 class PaymentChannels extends BaseModel
 {
 
-    static $payment_type = array(
+    static $payment_type = [
         'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
-        'apple' => 'apple',
-    );
+        'apple' => 'apple'
+    ];
 
-    static $clazz = array(
+    static $clazz = [
         'Weixin' => 'Weixin', 'WeixinH5' => 'WeixinH5',
         'alipaySdk' => 'alipaySdk', 'alipayH5' => 'alipayH5',
         'apple' => 'Apple',
-    );
+    ];
 
-    static $status = array(STATUS_ON => '有效', STATUS_OFF => '无效');
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'mer_no' => $this->mer_no,
             'mer_name' => $this->mer_name,
             'status_text' => $this->status_text
-        );
+        ];
     }
 
     function gateway()
@@ -42,11 +42,6 @@ class PaymentChannels extends BaseModel
         return $gateway;
     }
 
-    function getStatusText()
-    {
-        return fetch(\PaymentChannels::$status, $this->status);
-    }
-
     function supportProductChannel($product_channel)
     {
         return in_array($product_channel->id, $this->product_channel_ids);
@@ -54,8 +49,8 @@ class PaymentChannels extends BaseModel
 
     function getProductChannelIds()
     {
-        $pcpcs = \PaymentChannelProductChannels::findByConditions(array('payment_channel_id' => $this->id));
-        $ids = array();
+        $pcpcs = \PaymentChannelProductChannels::findByConditions(['payment_channel_id' => $this->id]);
+        $ids = [];
         foreach ($pcpcs as $pcpc) {
             $ids[] = $pcpc->product_channel_id;
         }
@@ -86,7 +81,7 @@ class PaymentChannels extends BaseModel
     {
         $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
-        $selected = array();
+        $selected = [];
         foreach ($payment_channels as $payment_channel) {
             if ($payment_channel->isValid() && $payment_channel->match($user)) {
                 $selected[] = $payment_channel;

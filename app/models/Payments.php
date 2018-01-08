@@ -23,15 +23,15 @@ class Payments extends BaseModel
      */
     private $_payment_channel;
 
-    static $pay_status = array(
+    static $pay_status = [
         PAYMENT_PAY_STATUS_WAIT => '等待支付',
         PAYMENT_PAY_STATUS_SUCCESS => '支付成功',
         PAYMENT_PAY_STATUS_FAIL => '支付失败'
-    );
+    ];
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'order_id' => $this->order_id,
             'user_id' => $this->user_id,
@@ -40,7 +40,7 @@ class Payments extends BaseModel
             'amount' => $this->amount,
             'pay_status_text' => $this->pay_status_text,
             'paid_at' => $this->paid_at_text
-        );
+        ];
     }
 
     static function createPayment($user, $order, $payment_channel)

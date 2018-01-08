@@ -31,7 +31,7 @@ class Devices extends BaseModel
      */
     private $_user;
 
-    static $STATUS = array(DEVICE_STATUS_NORMAL => '正常', DEVICE_STATUS_BLOCK => '封设备', DEVICE_STATUS_WHITE => '白名单');
+    static $STATUS = [DEVICE_STATUS_NORMAL => '正常', DEVICE_STATUS_BLOCK => '封设备', DEVICE_STATUS_WHITE => '白名单'];
 
     static $CLIENT_STATUS = [STATUS_ON => '前台', STATUS_OFF => '后台'];
 
@@ -94,9 +94,9 @@ class Devices extends BaseModel
         }
 
         $device = new Devices();
-        foreach (array('platform', 'platform_version', 'device_no', 'fr', 'ua', 'imei', 'imsi',
+        foreach (['platform', 'platform_version', 'device_no', 'fr', 'ua', 'imei', 'imsi',
                      'manufacturer', 'model', 'version_code', 'version_name', 'ip', 'idfa', 'phone_number',
-                     'net', 'local_mac', 'gateway_mac') as $k) {
+                     'net', 'local_mac', 'gateway_mac'] as $k) {
 
             if (isset($attributes[$k])) {
                 $device->$k = $attributes[$k];
@@ -472,7 +472,7 @@ class Devices extends BaseModel
             return false;
         }
 
-        $payload = array('model' => 'user', 'created_at' => time());
+        $payload = ['model' => 'user', 'created_at' => time()];
         $receiver_context = $this->getPushReceiverContext();
         $push_data = ['title' => $push_message->title, 'body' => $push_message->description,
             'payload' => $payload, 'badge' => 1, 'offline' => true, 'client_url' => $push_url,

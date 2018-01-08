@@ -108,7 +108,7 @@ class WeixinKefuMessages extends BaseModel
         $begin_of_day = time() - 60 * 60 * 48;
         $end_of_day = time();
 
-        $user_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, array('limit' => array(0, 1000000)));
+        $user_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, ['limit' => [0, 1000000]]);
         $total_num = count($user_ids);
         info($weixin_kefu_message_id, $group_key, 'total_user_count', $total_num);
         $per_page = 200;

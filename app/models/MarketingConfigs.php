@@ -52,13 +52,13 @@ class MarketingConfigs extends BaseModel
         }
 
         $url = "https://developers.e.qq.com/oauth/token?";
-        $body = array('client_id' => $this->client_id,
+        $body = ['client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
             'grant_type' => "refresh_token",
             'timestamp' => time(),
             'nonce' => randStr(20),
             'refresh_token' => $this->refresh_token
-        );
+        ];
 
         $response = httpGet($url, $body);
 

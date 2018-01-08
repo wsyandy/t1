@@ -11,10 +11,10 @@ class Stats extends BaseModel
     static $MONTH = ['1' => '1月', '2' => '2月', '3' => '3月', '4' => '4月', '5' => '5月', '6' => '6月', '7' => '7月',
         '8' => '8月', '9' => '9月', '10' => '10月', '11' => '11月', '12' => '12月'];
 
-    static $ACTION_FIELDS = array('device_active', 'subscribe', 'touch_active', 'register', 'unsubscribe', 'active_user',
+    static $ACTION_FIELDS = ['device_active', 'subscribe', 'touch_active', 'register', 'unsubscribe', 'active_user',
         'create_order', 'sem_sms_active', 'sem_sms_active_mobile', 'register_mobile', 'active_mobile',
         'active_register_user', 'view_product', 'first_register_create_order'
-    );
+    ];
 
     static $TIME_TYPE = [STAT_HOUR => '小时', STAT_DAY => '天', STAT_MONTH => '月'];
 
@@ -169,7 +169,7 @@ class Stats extends BaseModel
         $this->sex = fetch($conds, 'sex', -1);
 
         $cache_key .= "_{$field}";
-        foreach (array('platform', 'version_code', 'product_channel_id', 'partner_id', 'province_id', 'sex') as $key) {
+        foreach (['platform', 'version_code', 'product_channel_id', 'partner_id', 'province_id', 'sex'] as $key) {
             $val = $this->$key;
             $cache_key .= "_{$key}{$val}";
         }

@@ -17,7 +17,7 @@ class Location
             return null;
         }
 
-        $param = array('ak' => self::$AK, 'output' => 'json', 'pois' => $has_pois, 'location' => "{$lat},{$lng}");
+        $param = ['ak' => self::$AK, 'output' => 'json', 'pois' => $has_pois, 'location' => "{$lat},{$lng}"];
         $to_param = '';
         foreach ($param as $key => $value) {
             $to_param .= "{$key}={$value}&";
@@ -71,14 +71,14 @@ class Location
                 }
 
                 // 标志性建筑
-                $pois = array();
+                $pois = [];
 
                 if ($has_pois && isset($body['result']['pois'])) {
                     $pois = $body['result']['pois'];
                 }
 
                 if ($city_name) {
-                    $encode = mb_detect_encoding($city_name, array("ASCII", "UTF-8", "GB2312", "GBK", "BIG5"));
+                    $encode = mb_detect_encoding($city_name, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
 
                     if ('UTF-8' != $encode) {
                         $iconv_value = iconv($encode, "UTF-8", $city_name);
@@ -86,7 +86,7 @@ class Location
                     }
                 }
 
-                return array($province_name, $city_name, 'pois' => $pois);
+                return [$province_name, $city_name, 'pois' => $pois];
             }
         }
 

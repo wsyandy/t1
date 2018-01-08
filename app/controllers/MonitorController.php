@@ -25,7 +25,7 @@ class MonitorController extends BaseController
         $name = $this->params('name');
         $cache = $this->getCache();
 
-        $task_result = array();
+        $task_result = [];
 
         info($domain, $name, $this->config->job_queue->endpoint, $this->config->job_queue->tubes);
 
@@ -44,12 +44,11 @@ class MonitorController extends BaseController
             //延时任务
             $delay_task = $cache->zcount($key, time() + 1, '+inf');
 
-            $task_result[] = array('name' => $name, 'total_task' => $total_task, 'delay_task' => $delay_task,
-                'ready_task' => $ready_task, 'overtime_task' => $overtime_task, 'tube_name' => $tube_name);
+            $task_result[] = ['name' => $name, 'total_task' => $total_task, 'delay_task' => $delay_task,
+                'ready_task' => $ready_task, 'overtime_task' => $overtime_task, 'tube_name' => $tube_name];
         }
 
-        renderJSON(ERROR_CODE_SUCCESS, '', array('result' => $task_result));
-        return;
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['result' => $task_result]);
     }
 
     public function getTaskStateAction()

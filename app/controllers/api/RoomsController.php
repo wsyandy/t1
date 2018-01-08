@@ -40,8 +40,9 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
 
+        //限制搜索条件
+        //$rooms = \Rooms::findPagination(['conditions' => 'status = ' . STATUS_ON, 'order' => 'last_at desc'], $page, $per_page);
         $rooms = \Rooms::findPagination(['order' => 'last_at desc'], $page, $per_page);
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -145,17 +146,18 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
+
         $password = $this->params('password');
+
         if (!$password) {
             return $this->renderJSON(ERROR_CODE_FAIL, '密码不能为空');
         }
 
-        $room->password = $password;
-        $room->lock = true;
-        $room->save();
+        $room->lock($password);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
@@ -164,13 +166,12 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room->password = '';
-        $room->lock = false;
-        $room->save();
+        $room->unlock();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
@@ -211,6 +212,7 @@ class RoomsController extends BaseController
 
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -230,6 +232,7 @@ class RoomsController extends BaseController
         }
 
         $room = \Rooms::findFirstById($this->params('id', 0));
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }

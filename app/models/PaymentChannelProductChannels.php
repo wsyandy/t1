@@ -20,9 +20,9 @@ class PaymentChannelProductChannels extends BaseModel
 
     static function fresh($payment_channel_id, $product_channel_ids)
     {
-        $conditions = array('payment_channel_id' => $payment_channel_id);
+        $conditions = ['payment_channel_id' => $payment_channel_id];
         $payment_channel_product_channels = \PaymentChannelProductChannels::findByConditions($conditions);
-        $exist_product_channel_ids = array();
+        $exist_product_channel_ids = [];
         foreach ($payment_channel_product_channels as $payment_channel_product_channel) {
             if (in_array($payment_channel_product_channel->product_channel_id, $product_channel_ids)) {
                 $exist_product_channel_ids[] = $payment_channel_product_channel->product_channel_id;
@@ -42,8 +42,8 @@ class PaymentChannelProductChannels extends BaseModel
 
     static function findPaymentChannelIdsByProductChannelId($product_channel_id)
     {
-        $conditions = array('product_channel_id' => $product_channel_id);
-        $payment_channel_ids = array();
+        $conditions = ['product_channel_id' => $product_channel_id];
+        $payment_channel_ids = [];
         $payment_channel_product_channels = \PaymentChannelProductChannels::findByConditions($conditions);
         foreach ($payment_channel_product_channels as $payment_channel_product_channel) {
             $payment_channel_ids[] = $payment_channel_product_channel->payment_channel_id;

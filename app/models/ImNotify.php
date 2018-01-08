@@ -19,14 +19,14 @@ class ImNotify extends BaseModel
      */
     static function generateNotifyData($model, $action, $notify_type, $opts)
     {
-         $clazz = '\\' . \Phalcon\Text::camelize($model);
-         $data = $clazz::generateNotifyData($opts);
-         return array(
-             'model' => $model,
-             'action' => $action,
-             'notify_type' => $notify_type,
-             'timestamp' => time(),
-             'data' => $data
-         );
+        $clazz = '\\' . \Phalcon\Text::camelize($model);
+        $data = $clazz::generateNotifyData($opts);
+        return [
+            'model' => $model,
+            'action' => $action,
+            'notify_type' => $notify_type,
+            'timestamp' => time(),
+            'data' => $data
+        ];
     }
 }

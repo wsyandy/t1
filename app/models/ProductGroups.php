@@ -13,11 +13,11 @@ class ProductGroups extends BaseModel
      */
     private $_product_channel;
 
-    static $fee_types = array(PRODUCT_GROUP_FEE_TYPE_DIAMOND => '钻石');
+    static $FEE_TYPE = [PRODUCT_GROUP_FEE_TYPE_DIAMOND => '钻石'];
 
-    static $status = array(STATUS_ON => '有效', STATUS_OFF => '无效');
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $files = array('icon' => 'product_groups/icon/%s');
+    static $files = ['icon' => 'product_groups/icon/%s'];
 
     static function getCacheEndPoint()
     {
@@ -30,17 +30,16 @@ class ProductGroups extends BaseModel
     {
         debug("product_channel_id: " . $product_channel_id);
         return \ProductGroups::find(
-            array(
+            [
                 'conditions' => 'product_channel_id = :product_channel_id:',
-                'bind' => array('product_channel_id' => $product_channel_id)
-            )
-
+                'bind' => ['product_channel_id' => $product_channel_id]
+            ]
         );
     }
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'icon_url' => $this->icon_url,
@@ -48,17 +47,7 @@ class ProductGroups extends BaseModel
             'status_text' => $this->status_text,
             'fee_type_text' => $this->fee_type_text,
             'product_channel_name' => $this->product_channel->name
-        );
-    }
-
-    function getFeeTypeText()
-    {
-        return fetch(\ProductGroups::$fee_types, $this->fee_type);
-    }
-
-    function getStatusText()
-    {
-        return fetch(\ProductGroups::$status, $this->status);
+        ];
     }
 
     function getIconUrl()

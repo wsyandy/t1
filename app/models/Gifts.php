@@ -44,7 +44,7 @@ class Gifts extends BaseModel
 
     function toJson()
     {
-        return array(
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'amount' => $this->amount,
@@ -53,7 +53,7 @@ class Gifts extends BaseModel
             'image_small_url' => $this->image_small_url,
             'image_big_url' => $this->image_big_url,
             'dynamic_image_url' => $this->dynamic_image_url
-        );
+        ];
     }
 
     function getDynamicImageUrl()
@@ -110,12 +110,12 @@ class Gifts extends BaseModel
      */
     static function findValidList()
     {
-        $conditions = array(
+        $conditions = [
             'conditions' => "status = :status:",
-            'bind' => array(
+            'bind' => [
                 'status' => GIFT_STATUS_ON
-            ),
-            'order' => 'amount desc');
+            ],
+            'order' => 'amount desc'];
         $page = 1;
         $per_page = 100;
 
@@ -128,7 +128,7 @@ class Gifts extends BaseModel
         $gift_num = fetch($opts, 'gift_num');
         $user = \Users::findById($opts['user_id']);
         $sender = fetch($opts, 'sender');
-        $data = array();
+        $data = [];
         if ($gift) {
             $data = array_merge($data, $gift->toSimpleJson());
             $data['gift_num'] = $gift_num;
