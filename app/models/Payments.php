@@ -68,4 +68,34 @@ class Payments extends BaseModel
     {
         return fetch(\Payments::$pay_status, $this->pay_status);
     }
+
+    function isPaid()
+    {
+        return PAYMENT_PAY_STATUS_SUCCESS == $this->pay_status;
+    }
+
+    function validResult($opts, $body)
+    {
+        $gateway = $this->payment_channel->gateway();
+        $result = 'error';
+        # 订单已经支付完成
+        if (!$this->isPaid()) {
+            if ('apple' == $this->payment_type) {
+                $user = \Users::findById($this->user_id);
+                if ($user) {
+                    $opts['apple_share_secret'] = $user->product_channel->apple_share_secret;
+                }
+            }
+            if ($gateway->validSign($opts, $body)) {
+                $order = \Orders::findById($this->order_id);
+                if ($order) {
+                    $opts['order_amount'] = $order->amount;
+                }
+                $result = $gateway->validResult($this, $opts, $body);
+            } else {
+                debug("[NOTIFY] 支付验证通知失败");
+            }
+        }
+        return $result;
+    }
 }
