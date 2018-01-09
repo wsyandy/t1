@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 04/01/2018
  * Time: 16:40
  */
-
 class UsersTask extends \Phalcon\Cli\Task
 {
     function commonBody()
@@ -74,5 +74,23 @@ class UsersTask extends \Phalcon\Cli\Task
         $user = \Users::findById(1);
         $user->platform = 'ios';
         $user->save();
+    }
+
+    function geoAction()
+    {
+
+        $users = Users::findForeach();
+        foreach ($users as $user) {
+            if ($user->latitude < $user->longitude) {
+                $geo_hash = new \GeoHash();
+                $hash = $geo_hash->encode($user->latitude / 10000, $user->longitude / 10000);
+                info($user->id, $user->latitude, $user->longitude, $hash);
+                if ($hash) {
+                    $user->geo_hash = $hash;
+                }
+                $user->update();
+            }
+        }
+
     }
 }
