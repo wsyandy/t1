@@ -22,7 +22,7 @@ class GiftsTask extends \Phalcon\Cli\Task
         }
         $body = array_merge($body, array('sid' => $user->sid));
 
-        $res = httpPost($url, $body);
+        $res = httpGet($url, $body);
         var_dump($res);
     }
 
