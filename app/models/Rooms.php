@@ -109,6 +109,11 @@ class Rooms extends BaseModel
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
 
+        //如果有麦位id 为主播
+        if ($user->current_room_seat_id) {
+            $user->user_role = USER_ROLE_BROADCASTER; // 主播
+        }
+
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主

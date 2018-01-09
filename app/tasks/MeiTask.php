@@ -325,10 +325,13 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test13Action()
     {
-        $user = Users::findFirstById(73);
+        $user = Users::findFirstById(8);
         echoLine($user->current_room_id, $user->current_room_seat_id, $user->room_id);
 
         $room_seat = RoomSeats::findFirstById(89);
         $room_seat->down($user);
+
+        $room_user = Rooms::findFirstById(12);
+        echoLine($room_user->user_id);
     }
 }
