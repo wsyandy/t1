@@ -106,11 +106,6 @@ class Rooms extends BaseModel
 
     function enterRoom($user)
     {
-        //如果进入其他房间时 用户身上有房间 先退出房间
-        if ($user->current_room) {
-            $user->current_room->exitRoom($user);
-        }
-
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
 
