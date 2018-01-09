@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 04/01/2018
  * Time: 16:40
  */
-
 class UsersTask extends \Phalcon\Cli\Task
 {
     function commonBody()
@@ -75,6 +75,7 @@ class UsersTask extends \Phalcon\Cli\Task
         $user->platform = 'ios';
         $user->save();
     }
+
     function testProfileAction()
     {
         $url = "http://www.chance_php.com/api/users/detail";
@@ -109,4 +110,44 @@ class UsersTask extends \Phalcon\Cli\Task
         $res = httpPost($url, $body);
         var_dump($res);
     }
+
+
+    function geoAction()
+    {
+
+        $users = Users::findForeach();
+        foreach ($users as $user) {
+            if ($user->latitude < $user->longitude) {
+                $geo_hash = new \geo\GeoHash();
+                $hash = $geo_hash->encode($user->latitude / 10000, $user->longitude / 10000);
+                info($user->id, $user->latitude, $user->longitude, $hash);
+                if ($hash) {
+                    $user->geo_hash = $hash;
+                }
+                $user->update();
+            }
+        }
+
+        $user = Users::findFirstById(8);
+        $users = $user->nearby(1, 10);
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+    }
+
+    function disAction()
+    {
+        $user = Users::findFirstById(8);
+        $users = $user->nearby(1, 10);
+        $user->calDistance($users);
+
+        echoLine($users);
+
+        foreach ($users as $user) {
+            echoLine($user->id, $user->geo_hash, $user->distance);
+        }
+
+        echoLine('cc', $users->count());
+    }
 }
+

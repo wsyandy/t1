@@ -322,4 +322,27 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test13Action()
+    {
+        $user = Users::findFirstById(8);
+        echoLine($user->current_room_id, $user->current_room_seat_id, $user->room_id);
+
+        $room_seat = RoomSeats::findFirstById(89);
+        $room_seat->down($user);
+
+        $room_user = Rooms::findFirstById(12);
+        echoLine($room_user->user_id);
+    }
+
+    function test14Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+
+        $key = "test_incrby1";
+
+        $hot_cache->zincrby($key, -10, 3);
+
+        echoLine($hot_cache->zscore($key, 3));
+    }
 }

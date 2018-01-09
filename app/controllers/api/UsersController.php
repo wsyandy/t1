@@ -328,7 +328,7 @@ class UsersController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
 
-        $users = \Users::search($this->currentUser(), $page, $per_page);
+        $users = $this->currentUser()->nearby($page, $per_page);
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
