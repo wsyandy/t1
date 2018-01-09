@@ -164,7 +164,7 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
         if ($this->user_id == $user->id) {
-            $hot_cache->zadd($key, time() + 86400, $user->id);
+            $hot_cache->zadd($key, time() + 86400 * 7, $user->id);
         } else {
             $hot_cache->zadd($key, time(), $user->id);
         }
@@ -185,6 +185,13 @@ class Rooms extends BaseModel
             $this->status = STATUS_OFF;
             $this->update();
         }
+    }
+
+    function updateUserRank($user, $score)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        $hot_cache->zincrby($key, $score, $user->id);
     }
 
     function findUsers($page, $per_page)
