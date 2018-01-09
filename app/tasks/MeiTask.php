@@ -157,7 +157,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function addFriendsAction($params)
     {
-        $user_id = 83;
+        $user_id = 99;
         $current_user = Users::findFirstById($user_id);
 
         if (!$current_user) {
@@ -174,7 +174,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function agreeAction()
     {
-        $current_user_id = 83;
+        $current_user_id = 99;
 
         $current_user = Users::findFirstById($current_user_id);
 
