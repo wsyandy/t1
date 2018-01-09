@@ -20,7 +20,7 @@ class GeoHash
     private $coding = "0123456789bcdefghjkmnpqrstuvwxyz";
     private $codingMap = array();
 
-    public function GeoHash()
+    public function __construct()
     {
 
         $this->neighbors['right']['even'] = 'bc01fg45238967deuvhjyznpkmstqrwx';
