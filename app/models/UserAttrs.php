@@ -312,13 +312,15 @@ trait UserAttrs
             return $users;
         }
 
-        $geohash = new GeoHash();
+        $geohash = new \geo\GeoHash();
         $hash = $geohash->encode($latitude, $longitude);
         //取前缀，前缀约长范围越小
         $prefix = substr($hash, 0, 6);
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
+
+        debug($neighbors);
 
         $conditions[] = "(platforms like ";
         foreach ($neighbors as $key => $neighbor) {

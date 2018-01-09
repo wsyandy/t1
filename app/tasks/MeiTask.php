@@ -157,7 +157,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function addFriendsAction($params)
     {
-        $user_id = 83;
+        $user_id = 99;
         $current_user = Users::findFirstById($user_id);
 
         if (!$current_user) {
@@ -174,7 +174,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function agreeAction()
     {
-        $current_user_id = 83;
+        $current_user_id = 99;
 
         $current_user = Users::findFirstById($current_user_id);
 
@@ -272,7 +272,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $users = Users::findByIds($user_ids);
 
                 foreach ($users as $user) {
-                    if ($user->user_role == 1 && ($user->room_id != $room->id || !$user->room_id)) {
+                    if ($user->current_room_id != $room->id) {
                         $room->exitRoom($user);
                     }
                 }
@@ -289,5 +289,37 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(37);
         echoLine($user->user_role, $user->room_id);
+    }
+
+    function test11Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+            echoLine($user->geo_hash, $user->platform, $user->id, $user->latitude / 10000, $user->longitude / 10000);
+
+            if ($user->latitude && $user->longitude) {
+                $geo_hash = new \geo\GeoHash();
+                $hash = $geo_hash->encode($user->latitude / 10000, $user->latitude / 10000);
+                if ($hash) {
+                    $user->geo_hash = $hash;
+                }
+
+                $user->update();
+            }
+        }
+    }
+
+    function test12Action()
+    {
+        $room_seats = RoomSeats::findForeach();
+
+        foreach ($room_seats as $room_seat) {
+            if ($room_seat->user) {
+                if ($room_seat->room_id != $room_seat->user->current_room_id) {
+                    $room_seat->down($room_seat->user);
+                }
+            }
+        }
     }
 }
