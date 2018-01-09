@@ -123,6 +123,11 @@ class RoomsController extends BaseController
         //如果进入其他房间时 用户身上有房间 先退出房间
         if ($this->currentUser()->current_room && $this->currentUser()->current_room->id != $room_id) {
             $this->currentUser()->current_room->exitRoom($this->currentUser());
+
+            //如果进入其他房间时 用户身上有麦位 先下麦位
+            if ($this->currentUser()->current_room_seat) {
+                $this->currentUser()->current_room_seat->down($this->currentUser());
+            }
         }
 
         $room->enterRoom($this->currentUser());
