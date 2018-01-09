@@ -257,4 +257,9 @@ class MeiTask extends \Phalcon\Cli\Task
         $offset = ($page - 1) * $per_page;
         echoLine($hot_cache->zrevrange($key, $offset, $offset + $per_page - 1));
     }
+
+    function test11Action()
+    {
+
+    }
 }
