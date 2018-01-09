@@ -272,11 +272,22 @@ class MeiTask extends \Phalcon\Cli\Task
                 $users = Users::findByIds($user_ids);
 
                 foreach ($users as $user) {
-                    if ($user->user_role == 1 && $user->room_id != $room->id) {
+                    if ($user->user_role == 1 && ($user->room_id != $room->id || !$user->room_id)) {
                         $room->exitRoom($user);
                     }
                 }
             }
         }
+    }
+
+    function exitRoomAction()
+    {
+        $room = Rooms::findFirstById(5);
+        $user = Users::findFirstById(37);
+
+        $room->exitRoom($user);
+
+        $user = Users::findFirstById(37);
+        echoLine($user->user_role, $user->room_id);
     }
 }
