@@ -1201,7 +1201,8 @@ class Users extends BaseModel
                 'bind' => ['province_id' => $province_id, 'geo_province_id' => $province_id, 'ip_province_id' => $province_id]];
         }
 
-
+        $cond['order'] = 'id desc';
+        
         info($user->id, $cond);
 
         $users = Users::findPagination($cond, $page, $per_page);
