@@ -343,5 +343,4 @@ trait UserAttrs
 
         return $users;
     }
-
 }

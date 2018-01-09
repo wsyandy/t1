@@ -75,4 +75,38 @@ class UsersTask extends \Phalcon\Cli\Task
         $user->platform = 'ios';
         $user->save();
     }
+    function testProfileAction()
+    {
+        $url = "http://www.chance_php.com/api/users/detail";
+        $body = array_merge($this->commonBody(), array('sid' => '2s36fc9464a3b37466a88951d0318c90a3b6'));
+
+        $res = httpPost($url, $body);
+        var_dump($res);
+    }
+
+    function testUserGiftsAction()
+    {
+        $user = \Users::findById(2);
+        if ($user) {
+            echo count($user->user_gifts) . PHP_EOL;
+        }
+
+        $cond = array();
+        $results = \UserGifts::find();
+
+        echo count($results) . PHP_EOL;
+        //echo json_encode($results, JSON_UNESCAPED_UNICODE);
+
+        $user_gift = \UserGifts::findLast();
+        echo json_encode($user_gift->toJson(), JSON_UNESCAPED_UNICODE);
+    }
+
+    function testUserGiftsIndexAction()
+    {
+        $url = "http://www.chance_php.com/api/user_gifts";
+        $body = array_merge($this->commonBody(), array('sid' => '2s36fc9464a3b37466a88951d0318c90a3b6', 'page' => 2));
+
+        $res = httpPost($url, $body);
+        var_dump($res);
+    }
 }
