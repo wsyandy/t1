@@ -1256,7 +1256,7 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
         if ($users->count() < 1) {
             $opts['city_id'] = $this->getSearchCityId();
-            if($opts['city_id'] < 1){
+            if ($opts['city_id'] < 1) {
                 $opts['province_id'] = $this->getSearchProvinceId();
             }
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1265,26 +1265,47 @@ class Users extends BaseModel
         return $users;
     }
 
-    function getSearchCityId(){
+    public function calDistance(&$users)
+    {
+        if (!$users || count($users) < 1) {
+            return;
+        }
 
-        if($this->geo_city_id){
+        foreach ($users as $key => $user) {
+
+            if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
+                $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
+                    $user->latitude / 10000, $user->latitude / 10000);
+                $user->distance = ($geo_distance / 1000) . 'km';
+            } else {
+                $geo_distance = abs($this->id - $user->id) / 100;
+                $user->distance = $geo_distance . 'km';
+            }
+        }
+    }
+
+    function getSearchCityId()
+    {
+
+        if ($this->geo_city_id) {
             return $this->geo_city_id;
         }
 
-        if($this->ip_city_id){
+        if ($this->ip_city_id) {
             return $this->ip_city_id;
         }
 
         return $this->city_id;
     }
 
-    function getSearchProvinceId(){
+    function getSearchProvinceId()
+    {
 
-        if($this->geo_province_id){
+        if ($this->geo_province_id) {
             return $this->geo_province_id;
         }
 
-        if($this->ip_province_id){
+        if ($this->ip_province_id) {
             return $this->ip_province_id;
         }
 
