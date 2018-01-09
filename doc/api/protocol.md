@@ -10,7 +10,7 @@
 
 ## api协议
 1. 首页：app://home
-2. 个人信息页面(我的)： app://users/profile
+2. 我的详情页面： app://users/detail?id=xxxx
 3. 用户注册、登录: app://users/new
 4. 用户退出：app://users/logout
 4. 完善资料：app://users/update_info
