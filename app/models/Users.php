@@ -1271,18 +1271,25 @@ class Users extends BaseModel
             return;
         }
 
+        // 10km---0.01km
         foreach ($users as $key => $user) {
 
             if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
                     $user->latitude / 10000, $user->latitude / 10000);
                 $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
-                $user->distance =  $geo_distance. 'km';
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
+                $user->distance = $geo_distance . 'km';
 
                 debug($this->id, $user->id, $geo_distance, $user->distance);
             } else {
                 $geo_distance = abs($this->id - $user->id) % 1000;
                 $geo_distance = $geo_distance / 100;
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
                 $user->distance = $geo_distance . 'km';
             }
         }
