@@ -98,4 +98,18 @@ class UsersTask extends \Phalcon\Cli\Task
             echoLine($user->id);
         }
     }
+
+    function disAction(){
+        $user = Users::findFirstById(8);
+        $users = $user->nearby(1, 10);
+        $user->calDistance($users);
+
+        echoLine($users);
+
+        foreach ($users as $user){
+            echoLine($user->id, $user->geo_hash, $user->distance);
+        }
+
+        echoLine('cc', $users->count());
+    }
 }

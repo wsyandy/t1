@@ -1265,6 +1265,25 @@ class Users extends BaseModel
         return $users;
     }
 
+    public function calDistance(&$users)
+    {
+        if (!$users || count($users) < 1) {
+            return;
+        }
+
+        foreach ($users as $key => $user) {
+
+            if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
+                $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
+                    $user->latitude / 10000, $user->latitude / 10000);
+                $user->distance = ($geo_distance / 1000) . 'km';
+            } else {
+                $geo_distance = abs($this->id - $user->id) / 100;
+                $user->distance = $geo_distance . 'km';
+            }
+        }
+    }
+
     function getSearchCityId()
     {
 
@@ -1311,9 +1330,9 @@ class Users extends BaseModel
         $db = Users::getHotWriteCache();
 
         if ($chat) {
-            $db->del("chat_status_room{$room->id}user{$this->id}");
-        } else {
             $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
+        } else {
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
         }
     }
 
@@ -1323,7 +1342,7 @@ class Users extends BaseModel
         $key = "chat_status_room{$room->id}user{$this->id}";
         $chat = $db->get($key);
 
-        if (1 == $chat) {
+        if (2 == $chat) {
             return false;
         }
 
