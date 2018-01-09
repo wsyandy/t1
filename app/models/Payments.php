@@ -63,7 +63,7 @@ class Payments extends BaseModel
 
     function generatePaymentNo()
     {
-        return substr($this->payment_type, 0, 2) . date('YmdHis') . mt_rand(10000, 99999);
+        return strtoupper(substr($this->payment_type, 0, 2)) . date('YmdHis') . mt_rand(10000, 99999);
     }
 
     function getPayStatusText()
