@@ -34,7 +34,19 @@ class ComplaintsController extends BaseController
             $opts = ['room_id' => $room_id, 'respondent_id' => $user_id, 'complaint_type' => $complaint_type];
             \Complaints::createComplaint($this->currentUser(), $opts);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '举报成功');
+            $url = '';
+
+            if($user_id)
+            {
+                $url = "app://users/other_datail?user_id=" . $user_id;
+            }
+
+            if($room_id)
+            {
+                $url = "app://rooms/datail?id=" . $room_id;
+            }
+            
+            $this->renderJSON(ERROR_CODE_SUCCESS,'举报成功',['error_url'=>$url]);
         }
     }
 }
