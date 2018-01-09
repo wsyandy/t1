@@ -16,7 +16,7 @@
     <ul>
         <div class="banben">
             <span>当前版本</span>
-            <b>V1.0</b>
+            <b>{{ version }}</b>
         </div>
         <li>
             <a href="/m/product_channels/user_agreement?sid={{ sid }}&code={{ product_channel.code }}">用户协议</a>

@@ -752,6 +752,7 @@ class Users extends BaseModel
         // 计算geo hash值
         $geo_hash = new GeoHash();
         $hash = $geo_hash->encode($latitude, $longitude);
+        info($user->id, $latitude, $longitude, $hash);
         if ($hash) {
             $user->geo_hash = $hash;
         }

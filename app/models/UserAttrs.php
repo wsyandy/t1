@@ -307,7 +307,7 @@ trait UserAttrs
         $latitude = $this->latitude / 10000;
         $longitude = $this->longitude / 10000;
 
-        if (!$latitude || $longitude) {
+        if (!$latitude || !$longitude) {
             $users = \Users::search($this, $page, $per_page);
             return $users;
         }
@@ -335,6 +335,10 @@ trait UserAttrs
         $conds['conditions'] = implode(' and ', $conditions);
 
         $users = Users::findPagination($conds, $page, $per_page);
+        if ($users->count() < 3) {
+            $users = \Users::search($this, $page, $per_page);
+        }
+
         return $users;
     }
 
