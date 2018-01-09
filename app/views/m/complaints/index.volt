@@ -44,15 +44,15 @@
 
     function create() {
         var data = {
-            sid:"{{ sid }}",
-            code:"{{ code }}",
+            sid: "{{ sid }}",
+            code: "{{ code }}",
             room_id:{{ room_id }},
-            user_id:"{{ user_id }}",
+            user_id: "{{ user_id }}",
             complaint_type: complaint_type
         };
         $.authPost("create", data, function (resp) {
             alert(resp.error_reason);
-            if (resp.error_code = 0) {
+            if (resp.error_code == 0 && resp.error_url) {
                 location.href = resp.error_url;
             }
         })

@@ -19,7 +19,7 @@ class ComplaintsController extends BaseController
 
     function createAction()
     {
-        if($this->request->isAjax()) {
+        if ($this->request->isAjax()) {
             $room_id = $this->params('room_id', 0);
             $user_id = $this->params('user_id', null);
             $complaint_type = $this->params('complaint_type');
@@ -36,17 +36,15 @@ class ComplaintsController extends BaseController
 
             $url = '';
 
-            if($user_id)
-            {
-                $url = "app://users/other_datail?user_id=" . $user_id;
+            if ($user_id) {
+                $url = "app://users/other_detail?user_id=" . $user_id;
             }
 
-            if($room_id)
-            {
-                $url = "app://rooms/datail?id=" . $room_id;
+            if ($room_id) {
+                $url = "app://rooms/detail?id=" . $room_id;
             }
-            
-            $this->renderJSON(ERROR_CODE_SUCCESS,'举报成功',['error_url'=>$url]);
+
+            $this->renderJSON(ERROR_CODE_SUCCESS, '举报成功', ['error_url' => $url]);
         }
     }
 }
