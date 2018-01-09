@@ -301,48 +301,4 @@ trait UserAttrs
         return preg_match('/ios/i', $this->platform);
     }
 
-    function nearby($page, $per_page, $opts = [])
-    {
-
-        $latitude = $this->latitude / 10000;
-        $longitude = $this->longitude / 10000;
-
-        if (!$latitude || !$longitude) {
-            $users = \Users::search($this, $page, $per_page);
-            return $users;
-        }
-
-        $geohash = new \geo\GeoHash();
-        $hash = $geohash->encode($latitude, $longitude);
-        //取前缀，前缀约长范围越小
-        $prefix = substr($hash, 0, 6);
-        //取出相邻八个区域
-        $neighbors = $geohash->neighbors($prefix);
-        array_push($neighbors, $prefix);
-
-        debug($neighbors);
-
-        $conditions[] = "(";
-        foreach ($neighbors as $key => $neighbor) {
-            $val = $neighbor . '%';
-            if ($key) {
-                $conditions[] = 'platforms like '. $val . ' or ';
-            } else {
-                $conditions[] = 'platforms like '. $val;
-            }
-        }
-
-        $conditions[] = ")";
-
-        $conds['conditions'] = implode(' ', $conditions);
-        info($this->id, $hash, $conditions);
-        
-        $users = Users::findPagination($conds, $page, $per_page);
-        if ($users->count() < 3) {
-            $users = \Users::search($this, $page, $per_page);
-        }
-
-        return $users;
-    }
-
 }

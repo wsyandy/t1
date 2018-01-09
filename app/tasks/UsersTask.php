@@ -97,6 +97,5 @@ class UsersTask extends \Phalcon\Cli\Task
         foreach ($users as $user){
             echoLine($user->id);
         }
-
     }
 }
