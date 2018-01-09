@@ -334,7 +334,7 @@ trait UserAttrs
 
         $conditions[] = ")";
 
-        $conds['conditions'] = implode(' and ', $conditions);
+        $conds['conditions'] = implode(' ', $conditions);
 
         $users = Users::findPagination($conds, $page, $per_page);
         if ($users->count() < 3) {

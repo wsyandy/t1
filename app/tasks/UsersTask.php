@@ -92,5 +92,11 @@ class UsersTask extends \Phalcon\Cli\Task
             }
         }
 
+        $user = Users::findFirstById(8);
+        $users = $user->nearby(1, 10);
+        foreach ($users as $user){
+            echoLine($user->id);
+        }
+
     }
 }
