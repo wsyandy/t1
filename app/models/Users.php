@@ -1256,7 +1256,7 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
         if ($users->count() < 1) {
             $opts['city_id'] = $this->getSearchCityId();
-            if($opts['city_id'] < 1){
+            if ($opts['city_id'] < 1) {
                 $opts['province_id'] = $this->getSearchProvinceId();
             }
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1265,26 +1265,28 @@ class Users extends BaseModel
         return $users;
     }
 
-    function getSearchCityId(){
+    function getSearchCityId()
+    {
 
-        if($this->geo_city_id){
+        if ($this->geo_city_id) {
             return $this->geo_city_id;
         }
 
-        if($this->ip_city_id){
+        if ($this->ip_city_id) {
             return $this->ip_city_id;
         }
 
         return $this->city_id;
     }
 
-    function getSearchProvinceId(){
+    function getSearchProvinceId()
+    {
 
-        if($this->geo_province_id){
+        if ($this->geo_province_id) {
             return $this->geo_province_id;
         }
 
-        if($this->ip_province_id){
+        if ($this->ip_province_id) {
             return $this->ip_province_id;
         }
 
@@ -1309,9 +1311,9 @@ class Users extends BaseModel
         $db = Users::getHotWriteCache();
 
         if ($chat) {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
+            $db->del("chat_status_room{$room->id}user{$this->id}");
         } else {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
+            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
         }
     }
 
@@ -1321,7 +1323,7 @@ class Users extends BaseModel
         $key = "chat_status_room{$room->id}user{$this->id}";
         $chat = $db->get($key);
 
-        if (2 == $chat) {
+        if (1 == $chat) {
             return false;
         }
 
