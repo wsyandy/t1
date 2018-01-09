@@ -192,54 +192,13 @@ class Devices extends BaseModel
     public function onlineFresh($opts = [])
     {
 
-        debug("fresh params", $this->id);
-
         $fresh_attrs = [];
-        $platform = fetch($opts, 'platform');
-        if ($platform && $this->platform !== $platform) {
-            $fresh_attrs['platform'] = $platform;
-        }
-
-        $version_name = fetch($opts, 'version_name');
-        if ($version_name && $this->version_name !== $version_name) {
-            $fresh_attrs['version_name'] = $version_name;
-        }
-
-        $version_code = fetch($opts, 'version_code');
-        if ($version_code && $this->version_code !== $version_code) {
-            $fresh_attrs['version_code'] = $version_code;
-        }
-
-        $api_version = fetch($opts, 'api_version');
-        if ($api_version && $this->api_version !== $api_version) {
-            $fresh_attrs['api_version'] = $api_version;
-        }
-
-        $province_id = fetch($opts, 'province_id');
-        if ($province_id && $this->province_id != $province_id) {
-            $fresh_attrs['province_id'] = $province_id;
-        }
-
-        $city_id = fetch($opts, 'city_id');
-        if ($city_id && $this->city_id != $city_id) {
-            $fresh_attrs['city_id'] = $city_id;
-        }
-
-        $ip = fetch($opts, 'ip');
-        if ($ip && $this->ip != $ip) {
-            $fresh_attrs['ip'] = $ip;
-        }
-
-        $latitude = fetch($opts, 'latitude');
-        $longitude = fetch($opts, 'longitude');
-        if ($latitude && $longitude && ($this->latitude != $latitude || $this->longitude != $longitude)) {
-            $fresh_attrs['latitude'] = $latitude;
-            $fresh_attrs['longitude'] = $longitude;
-        }
-
-        $gateway_mac = fetch($opts, 'gateway_mac');
-        if ($gateway_mac && $gateway_mac != $this->gateway_mac) {
-            $fresh_attrs['gateway_mac'] = $gateway_mac;
+        foreach ($opts as $k => $v) {
+            if ($this->hasProperty($k)) {
+                if ($v && $this->$k !== $v) {
+                    $fresh_attrs[$k] = $v;
+                }
+            }
         }
 
         // 强制刷新
@@ -256,26 +215,22 @@ class Devices extends BaseModel
             $this->addActiveList();
         }
 
-        debug($this->last_at, $fresh_attrs);
+        debug($this->id, $fresh_attrs);
 
         if ($fresh_attrs) {
             foreach ($fresh_attrs as $k => $v) {
                 $this->$k = $v;
             }
 
-            debug('update', $opts);
-
             $this->update();
         }
     }
 
-    static function asyncUpdateGeoLocation($device_id, $latitude = null, $longitude = null)
+    static function asyncUpdateGeoLocation($device_id)
     {
         $device = self::findFirstById($device_id);
-        if (!$latitude) {
-            $latitude = $device->latitude;
-            $longitude = $device->longitude;
-        }
+        $latitude = $device->latitude;
+        $longitude = $device->longitude;
 
         if (!$latitude && !$longitude) {
             info('false update geo_location', $device->id);
