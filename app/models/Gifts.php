@@ -131,7 +131,7 @@ class Gifts extends BaseModel
         $data = [];
         if ($gift) {
             $data = array_merge($data, $gift->toSimpleJson());
-            $data['gift_num'] = $gift_num;
+            $data['num'] = $gift_num;
             $data['user_id'] = $user->id;
             $data['user_nickname'] = $user->nickname;
             $data['sender_id'] = $sender->id;

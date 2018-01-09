@@ -322,20 +322,21 @@ trait UserAttrs
 
         debug($neighbors);
 
-        $conditions[] = "(platforms like ";
+        $conditions[] = "(";
         foreach ($neighbors as $key => $neighbor) {
             $val = $neighbor . '%';
             if ($key) {
-                $conditions[] = $val . ' or ';
+                $conditions[] = 'platforms like '. $val . ' or ';
             } else {
-                $conditions[] = $val;
+                $conditions[] = 'platforms like '. $val;
             }
         }
 
         $conditions[] = ")";
 
-        $conds['conditions'] = implode(' and ', $conditions);
-
+        $conds['conditions'] = implode(' ', $conditions);
+        info($this->id, $hash, $conditions);
+        
         $users = Users::findPagination($conds, $page, $per_page);
         if ($users->count() < 3) {
             $users = \Users::search($this, $page, $per_page);
