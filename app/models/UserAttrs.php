@@ -312,7 +312,7 @@ trait UserAttrs
             return $users;
         }
 
-        $geohash = new GeoHash();
+        $geohash = new \geo\GeoHash();
         $hash = $geohash->encode($latitude, $longitude);
         //取前缀，前缀约长范围越小
         $prefix = substr($hash, 0, 6);
