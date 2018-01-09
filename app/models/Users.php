@@ -1254,13 +1254,17 @@ class Users extends BaseModel
         info($this->id, $hash, $conds);
 
         $users = Users::findPagination($conds, $page, $per_page);
-        if ($users->count() < 1) {
+        if ($users->count() < 3) {
             $opts['city_id'] = $this->getSearchCityId();
-            if ($opts['city_id'] < 1) {
+            if (!$opts['city_id']) {
                 $opts['province_id'] = $this->getSearchProvinceId();
             }
+
             $users = \Users::search($this, $page, $per_page, $opts);
         }
+
+        // 计算距离
+        $this->calDistance($users);
 
         return $users;
     }
