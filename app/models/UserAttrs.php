@@ -300,4 +300,11 @@ trait UserAttrs
     {
         return preg_match('/ios/i', $this->platform);
     }
+
+    function getUserGifts()
+    {
+        $cond = array('order' => 'amount desc');
+        $user_gifts = \UserGifts::findPagination($cond, 1, 20);
+        return $user_gifts->toJson('user_gifts', 'toJson');
+    }
 }
