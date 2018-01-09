@@ -1249,6 +1249,7 @@ class Users extends BaseModel
 
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
+        $conds['order'] = 'id desc';
 
         info($this->id, $hash, $conds);
 

@@ -82,7 +82,7 @@ class UsersTask extends \Phalcon\Cli\Task
         $users = Users::findForeach();
         foreach ($users as $user) {
             if ($user->latitude < $user->longitude) {
-                $geo_hash = new \GeoHash();
+                $geo_hash = new \geo\GeoHash();
                 $hash = $geo_hash->encode($user->latitude / 10000, $user->longitude / 10000);
                 info($user->id, $user->latitude, $user->longitude, $hash);
                 if ($hash) {
