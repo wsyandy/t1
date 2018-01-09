@@ -52,7 +52,7 @@ class GiftsController extends BaseController
                         'user_id' => $user_id
                     ]
                 );
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '赠送成功', ['notify_data' => $notify_data]);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '赠送成功', $notify_data);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '赠送失败');
             }
