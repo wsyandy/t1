@@ -1253,11 +1253,41 @@ class Users extends BaseModel
         info($this->id, $hash, $conds);
 
         $users = Users::findPagination($conds, $page, $per_page);
-        if ($users->count() < 3) {
-            $users = \Users::search($this, $page, $per_page);
+        if ($users->count() < 1) {
+            $opts['city_id'] = $this->getSearchCityId();
+            if($opts['city_id'] < 1){
+                $opts['province_id'] = $this->getSearchProvinceId();
+            }
+            $users = \Users::search($this, $page, $per_page, $opts);
         }
 
         return $users;
+    }
+
+    function getSearchCityId(){
+
+        if($this->geo_city_id){
+            return $this->geo_city_id;
+        }
+
+        if($this->ip_city_id){
+            return $this->ip_city_id;
+        }
+
+        return $this->city_id;
+    }
+
+    function getSearchProvinceId(){
+
+        if($this->geo_province_id){
+            return $this->geo_province_id;
+        }
+
+        if($this->ip_province_id){
+            return $this->ip_province_id;
+        }
+
+        return $this->province_id;
     }
 
     //判断用户是否在指定的房间
