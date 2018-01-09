@@ -214,6 +214,16 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($users->toJson('users', 'toRelationJson'));
     }
 
+    function getRoomUsersAction()
+    {
+        $room = Rooms::findFirstById(5);
+        echoLine($room);
+        $key = 'room_user_list_' . 5;
+        $user_db = Users::getUserDb();
+        $user_ids = $user_db->zrange($key, 0, -1);
+        echoLine($user_ids);
+    }
+
     function test8Action()
     {
         $user_db = Users::getUserDb();
@@ -224,7 +234,80 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test9Action()
     {
-        $room = Rooms::findFirstById(5);
+        $room = Rooms::findFirstById(7);
+        echoLine($room);
 
+        $room_seat = RoomSeats::findFirstById(57);
+        echoLine($room_seat);
+        $rooms = Rooms::count();
+        echoLine($rooms);
+    }
+
+    function test10Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "test_rank";
+
+//        for ($i = 1; $i < 20; $i++) {
+//            $hot_cache->zadd($key, $i, $i);
+//        }
+
+        $page = 2;
+        $per_page = 5;
+        $offset = ($page - 1) * $per_page;
+        echoLine($hot_cache->zrevrange($key, $offset, $offset + $per_page - 1));
+    }
+
+    function roomUsersAction()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $key = 'room_user_list_' . $room->id;
+            $user_ids = $hot_cache->zrange($key, 0, -1);
+
+            if (count($user_ids) > 0) {
+
+                $users = Users::findByIds($user_ids);
+
+                foreach ($users as $user) {
+                    if ($user->user_role == 1 && ($user->room_id != $room->id || !$user->room_id)) {
+                        $room->exitRoom($user);
+                    }
+                }
+            }
+        }
+    }
+
+    function exitRoomAction()
+    {
+        $room = Rooms::findFirstById(5);
+        $user = Users::findFirstById(37);
+
+        $room->exitRoom($user);
+
+        $user = Users::findFirstById(37);
+        echoLine($user->user_role, $user->room_id);
+    }
+
+    function test11Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+//            echoLine($user->geo_hash);
+
+            if ($user->latitude && $user->longitude) {
+                $geo_hash = new \geo\GeoHash();
+                $hash = $geo_hash->encode(36.71, 114.98);
+                echoLine($hash);
+                if ($hash) {
+                    $user->geo_hash = $hash;
+                }
+
+//                $user->update();
+            }
+        }
     }
 }

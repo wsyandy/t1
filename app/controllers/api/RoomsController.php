@@ -114,8 +114,15 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+
+        //如果进入其他房间时 用户身上有房间 先退出房间
+        if ($this->currentUser()->current_room && $this->currentUser()->current_room_id != $room_id) {
+            $room->exitRoom($this->currentUser());
         }
 
         $room->enterRoom($this->currentUser());
@@ -127,6 +134,7 @@ class RoomsController extends BaseController
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['system_tips'] = ["官方严厉打击低俗色情内容", "官方严厉打击广告行为"];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
@@ -153,6 +161,10 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
         $password = $this->params('password');
 
         if (!$password) {
@@ -173,6 +185,10 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
         $room->unlock();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
@@ -183,8 +199,13 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room->chat = true;
@@ -197,8 +218,13 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $room->chat = false;
@@ -239,13 +265,16 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
         $room->exitRoom($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
             'name' => $room->name, 'channel_name' => $room->channel_name]);
     }
 
-    // 公屏设置
     function openUserChatAction()
     {
         $room_id = $this->params('id', 0);
@@ -254,6 +283,10 @@ class RoomsController extends BaseController
 
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $this->otherUser()->setChat($room, true);
@@ -269,6 +302,10 @@ class RoomsController extends BaseController
 
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
         $this->otherUser()->setChat($room, false);

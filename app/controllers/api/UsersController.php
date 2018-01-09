@@ -324,16 +324,11 @@ class UsersController extends BaseController
     // 附近的人
     function nearbyAction()
     {
-        $user_id = $this->params('user_id');
-
-        $cond = ['user_id' => intval($user_id)];
-
-        debug($cond);
 
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
 
-        $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
+        $users = \Users::search($this->currentUser(), $page, $per_page);
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }

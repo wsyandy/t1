@@ -142,6 +142,11 @@
     app_id string 应用id
     channel_key string token 用于加入频道(互动直播)
     user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
+    system_tips:[
+        '内容1',
+        '内容2',
+        '内容3',
+    ]  公屏系统消息
     room_seats:[
         {
             id: int 麦位id,
