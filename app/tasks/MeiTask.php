@@ -290,4 +290,24 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(37);
         echoLine($user->user_role, $user->room_id);
     }
+
+    function test11Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+//            echoLine($user->geo_hash);
+
+            if ($user->latitude && $user->longitude) {
+                $geo_hash = new \geo\GeoHash();
+                $hash = $geo_hash->encode(36.71, 114.98);
+                echoLine($hash);
+                if ($hash) {
+                    $user->geo_hash = $hash;
+                }
+
+//                $user->update();
+            }
+        }
+    }
 }
