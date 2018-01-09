@@ -320,6 +320,8 @@ trait UserAttrs
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
 
+        debug($neighbors);
+
         $conditions[] = "(platforms like ";
         foreach ($neighbors as $key => $neighbor) {
             $val = $neighbor . '%';

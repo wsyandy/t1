@@ -296,17 +296,16 @@ class MeiTask extends \Phalcon\Cli\Task
         $users = Users::findForeach();
 
         foreach ($users as $user) {
-//            echoLine($user->geo_hash);
+            echoLine($user->geo_hash, $user->platform, $user->id, $user->latitude / 10000, $user->longitude / 10000);
 
             if ($user->latitude && $user->longitude) {
                 $geo_hash = new \geo\GeoHash();
-                $hash = $geo_hash->encode(36.71, 114.98);
-                echoLine($hash);
+                $hash = $geo_hash->encode($user->latitude / 10000, $user->latitude / 10000);
                 if ($hash) {
                     $user->geo_hash = $hash;
                 }
 
-//                $user->update();
+                $user->update();
             }
         }
     }
