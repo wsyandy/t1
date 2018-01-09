@@ -71,3 +71,39 @@
 } 
 ````
 
+## 3 收到的礼物
+
+> http-get ```/api/user_gifts```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|---|---|---|---|---|
+|page|页码|integer|否||
+|page_num|每页个数|integer|可空|空表示数量20
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1
+    error_reason: ''
+    error_url: "",
+    now_at: 1515508744,
+    current_page: 1
+    total_page: 100,
+    total_entries: 1000
+    user_gifts: [
+        {
+            gift_id: 1
+            name: ''
+            amount: 10
+            pay_type 'gold/diamond'
+            image_url: ''
+            image_small_url: ''
+            image_big_url: ''
+            dynamic_image_url: ''
+            num: 10
+        }
+        ...
+    ]
+}
+````

@@ -1201,7 +1201,8 @@ class Users extends BaseModel
                 'bind' => ['province_id' => $province_id, 'geo_province_id' => $province_id, 'ip_province_id' => $province_id]];
         }
 
-
+        $cond['order'] = 'id desc';
+        
         info($user->id, $cond);
 
         $users = Users::findPagination($cond, $page, $per_page);
@@ -1254,13 +1255,17 @@ class Users extends BaseModel
         info($this->id, $hash, $conds);
 
         $users = Users::findPagination($conds, $page, $per_page);
-        if ($users->count() < 1) {
+        if ($users->count() < 3) {
             $opts['city_id'] = $this->getSearchCityId();
-            if ($opts['city_id'] < 1) {
+            if (!$opts['city_id']) {
                 $opts['province_id'] = $this->getSearchProvinceId();
             }
+
             $users = \Users::search($this, $page, $per_page, $opts);
         }
+
+        // 计算距离
+        $this->calDistance($users);
 
         return $users;
     }
@@ -1271,18 +1276,25 @@ class Users extends BaseModel
             return;
         }
 
+        // 10km---0.01km
         foreach ($users as $key => $user) {
 
             if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
                     $user->latitude / 10000, $user->latitude / 10000);
                 $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
-                $user->distance =  $geo_distance. 'km';
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
+                $user->distance = $geo_distance . 'km';
 
                 debug($this->id, $user->id, $geo_distance, $user->distance);
             } else {
                 $geo_distance = abs($this->id - $user->id) % 1000;
                 $geo_distance = $geo_distance / 100;
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
                 $user->distance = $geo_distance . 'km';
             }
         }
