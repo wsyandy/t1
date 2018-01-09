@@ -151,11 +151,12 @@ class RoomSeats extends BaseModel
 
     function getMicrophoneText()
     {
+        $microphone_text = "禁止";
+
         if ($this->microphone == true) {
-            $this->microphone_text = "允许";
-        }else{
-            $this->microphone_text = "禁止";
+            $microphone_text = "允许";
         }
-        return $this->microphone_text;
+
+        return $microphone_text;
     }
 }
