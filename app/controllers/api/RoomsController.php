@@ -74,7 +74,9 @@ class RoomsController extends BaseController
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
         if ($user_id) {
+
             $user = \Users::findFirstById($user_id);
+
             if (!$user || $user->current_room_id < 1) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
             }
@@ -82,8 +84,14 @@ class RoomsController extends BaseController
             $room = $user->current_room;
         } else {
             $room = \Rooms::findFirstById($room_id);
+
             if (!$room) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+
+            //如果不是房主 并且房间内没有人
+            if (!$this->currentUser()->isRoomHost($room) && $room->user_num < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
             }
         }
 

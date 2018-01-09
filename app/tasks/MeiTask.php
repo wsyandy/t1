@@ -322,4 +322,13 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test13Action()
+    {
+        $user = Users::findFirstById(73);
+        echoLine($user->current_room_id, $user->current_room_seat_id, $user->room_id);
+
+        $room_seat = RoomSeats::findFirstById(89);
+        $room_seat->down($user);
+    }
 }
