@@ -257,4 +257,37 @@ class MeiTask extends \Phalcon\Cli\Task
         $offset = ($page - 1) * $per_page;
         echoLine($hot_cache->zrevrange($key, $offset, $offset + $per_page - 1));
     }
+
+    function roomUsersAction()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $key = 'room_user_list_' . $room->id;
+            $user_ids = $hot_cache->zrange($key, 0, -1);
+
+            if (count($user_ids) > 0) {
+
+                $users = Users::findByIds($user_ids);
+
+                foreach ($users as $user) {
+                    if ($user->user_role == 1 && ($user->room_id != $room->id || !$user->room_id)) {
+                        $room->exitRoom($user);
+                    }
+                }
+            }
+        }
+    }
+
+    function exitRoomAction()
+    {
+        $room = Rooms::findFirstById(5);
+        $user = Users::findFirstById(37);
+
+        $room->exitRoom($user);
+
+        $user = Users::findFirstById(37);
+        echoLine($user->user_role, $user->room_id);
+    }
 }

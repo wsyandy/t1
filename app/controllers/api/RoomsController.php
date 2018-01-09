@@ -114,8 +114,15 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+
+        //如果进入其他房间时 用户身上有房间 先退出房间
+        if ($this->currentUser()->current_room && $this->currentUser()->current_room_id != $room_id) {
+            $room->exitRoom($this->currentUser());
         }
 
         $room->enterRoom($this->currentUser());

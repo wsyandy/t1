@@ -106,7 +106,6 @@ class Rooms extends BaseModel
 
     function enterRoom($user)
     {
-
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
 
@@ -217,21 +216,23 @@ class Rooms extends BaseModel
 
     function getLockText()
     {
-        if ($this->lock == true) {
-            $this->lock_text = "有锁";
-        } else {
-            $this->lock_text = "无锁";
+        $lock_text = "无锁";
+
+        if ($this->lock) {
+            $lock_text = "有锁";
         }
-        return $this->lock_text;
+
+        return $lock_text;
     }
 
     function getChatText()
     {
+        $chat_text = "禁止聊天";
+
         if ($this->chat == true) {
-            $this->chat_text = "可以聊天";
-        }else{
-            $this->chat_text = "禁止聊天";
+            $chat_text = "可以聊天";
         }
-        return $this->chat_text;
+
+        return $chat_text;
     }
 }

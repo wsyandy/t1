@@ -7,7 +7,8 @@
     手机号码:{{ user.mobile }}<br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
     IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
-    自述城市信息: {{ user.province_name }}, {{ user.city_name }}
+    自述城市信息: {{ user.province_name }}, {{ user.city_name }}<br/>
+    角色: {{ user.user_role_text }}
 {% endmacro %}
 
 {% macro user_status_info(user) %}
@@ -32,5 +33,5 @@
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-'状态':'user_status_info'
+    '状态':'user_status_info'
 ]) }}
