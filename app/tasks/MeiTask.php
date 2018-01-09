@@ -272,7 +272,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $users = Users::findByIds($user_ids);
 
                 foreach ($users as $user) {
-                    if ($user->user_role == 1 && ($user->room_id != $room->id || !$user->room_id)) {
+                    if ($user->current_room_id != $room->id) {
                         $room->exitRoom($user);
                     }
                 }
@@ -306,6 +306,19 @@ class MeiTask extends \Phalcon\Cli\Task
                 }
 
                 $user->update();
+            }
+        }
+    }
+
+    function test12Action()
+    {
+        $room_seats = RoomSeats::findForeach();
+
+        foreach ($room_seats as $room_seat) {
+            if ($room_seat->user) {
+                if ($room_seat->room_id != $room_seat->user->current_room_id) {
+                    $room_seat->down($room_seat->user);
+                }
             }
         }
     }
