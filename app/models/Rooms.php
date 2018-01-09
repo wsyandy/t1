@@ -165,6 +165,8 @@ class Rooms extends BaseModel
         $key = 'room_user_list_' . $this->id;
         if ($this->user_id == $user->id) {
             $hot_cache->zadd($key, time() + 86400 * 7, $user->id);
+        } elseif (USER_ROLE_BROADCASTER == $user->user_role) {
+            $hot_cache->zadd($key, time() + 86400 * 3, $user->id);
         } else {
             $hot_cache->zadd($key, time(), $user->id);
         }
