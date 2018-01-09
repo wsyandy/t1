@@ -345,4 +345,21 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine($hot_cache->zscore($key, 3));
     }
+
+    function test15Action()
+    {
+        $rooms = Rooms::findForeach();
+        $hot_cache = Rooms::getHotWriteCache();
+        $key = 'room_user_list_12';
+
+
+        foreach ($rooms as $room) {
+
+            if ($room->user->current_room_id == $room->id) {
+                $key = 'room_user_list_' . $room->id;
+                $hot_cache->zincrby($key, 86400 * 6, $room->user->id);
+            }
+
+        }
+    }
 }
