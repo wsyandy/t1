@@ -20,14 +20,14 @@ namespace geo;
 class GeoHash
 {
 
-    private $bitss = array(16, 8, 4, 2, 1);
-    private $neighbors = array();
-    private $borders = array();
+    private $bitss = [16, 8, 4, 2, 1];
+    private $neighbors = [];
+    private $borders = [];
 
     private $coding = "0123456789bcdefghjkmnpqrstuvwxyz";
-    private $codingMap = array();
+    private $codingMap = [];
 
-    public function GeoHash()
+    public function __construct()
     {
 
         $this->neighbors['right']['even'] = 'bc01fg45238967deuvhjyznpkmstqrwx';
