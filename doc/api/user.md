@@ -46,7 +46,7 @@
     id 用户id，即时通信账户(声网，环信) 
     im_password 即时通信密码(声网，环信)
     error_url 跳转地址
-    signaling_app_id string 信令应用id
+    app_id string 信令应用id
     signaling_key string 信令token
 }
 
@@ -74,7 +74,7 @@
     id 用户id，即时通信账户(声网，环信) 
     im_password 即时通信密码(声网，环信)
     error_url 跳转地址
-    signaling_app_id string 信令应用id
+    app_id string 信令应用id
     signaling_key string 信令token
 }
 
