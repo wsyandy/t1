@@ -33,7 +33,7 @@ class BaseController extends ApplicationController
     static $CHECK_OTHER_USER_ACTIONS = [
         'blacks' => ['create', 'destroy'],
         'followers' => ['create', 'destroy'],
-        'friends' => ['create', 'destroy', 'agree', 'clear'],
+        'friends' => ['create', 'destroy', 'agree'],
         'users' => ['other_detail'],
         'rooms' => ['open_user_chat', 'close_user_chat'],
     ];
