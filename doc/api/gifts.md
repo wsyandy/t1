@@ -24,6 +24,7 @@
         {
             id: 1 
             name: '礼物名称'
+            image_url: 'https://gifts/image'
             image_small_url: 'https://gifts/small'
             image_big_url: 'https://gifts/big'
             dynamic_image_url: 'https://gifts/dynamic'
