@@ -76,8 +76,13 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
+        $old_room_seat = $this->currentUser()->current_room;
 
         $room_seat->down($this->currentUser(), $this->otherUser());
+
+        if (!$this->otherUser() && $old_room_seat && $this->currentUser()->id == $old_room_seat->user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '下麦失败');
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
