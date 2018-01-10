@@ -95,6 +95,10 @@ class RoomsController extends BaseController
             //}
         }
 
+        if ($room->isForbidEnter($this->currentUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
+        }
+
         //房间加锁并且不是房主检验密码
         if ($room->lock && $room->password != $password && $room->user_id != $this->currentUser()->id) {
             return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
@@ -284,6 +288,7 @@ class RoomsController extends BaseController
         }
 
         $room->exitRoom($this->otherUser());
+        $room->forbidEnter($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
             'name' => $room->name, 'channel_name' => $room->channel_name]);

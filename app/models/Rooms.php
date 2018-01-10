@@ -269,4 +269,27 @@ class Rooms extends BaseModel
 
         return $chat_text;
     }
+
+    //禁止 踢出房间 禁止用户在10分钟内禁入
+    function forbidEnter($user)
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $time = 600;
+
+        if (isDevelopmentEnv()) {
+            $time = 60;
+        }
+
+        $key = "room_forbid_user_room{$this->id}_user{$user->id}";
+
+        $hot_cache->setex($key, $time, 1);
+    }
+
+    function isForbidEnter($user)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        $key = "room_forbid_user_room{$this->id}_user{$user->id}";
+
+        return $hot_cache->get($key) > 0;
+    }
 }
