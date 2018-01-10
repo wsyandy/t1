@@ -46,7 +46,7 @@ class RoomSeatsController extends BaseController
             $hot_cache = \Users::getHotWriteCache();
             $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
 
-            if (!$hot_cache->set($key, 1, ['NX', 'PX' => 200])) {
+            if (!$hot_cache->set($key, 1, ['NX', 'PX' => 300])) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
             }
 
@@ -86,7 +86,7 @@ class RoomSeatsController extends BaseController
         $hot_cache = \Users::getHotWriteCache();
         $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
 
-        if (!$this->otherUser() && !$hot_cache->set($key, 1, ['NX', 'PX' => 200])) {
+        if (!$this->otherUser() && !$hot_cache->set($key, 1, ['NX', 'PX' => 300])) {
             return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
         }
 
