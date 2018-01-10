@@ -193,8 +193,8 @@ class Rooms extends BaseModel
     {
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
-        debug($hot_cache->zscore($key, $user->id));
         $hot_cache->zincrby($key, $score, $user->id);
+        debug($hot_cache->zscore($key, $user->id));
     }
 
     function findUsers($page, $per_page)
