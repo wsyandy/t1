@@ -200,7 +200,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getFriendListAction()
     {
-        $user_id = 75;
+        $user_id = 88;
         $current_user = Users::findFirstById($user_id);
         $users = $current_user->friendList(1, 100, 0);
         echoLine($users->toJson('users', 'toRelationJson'));
