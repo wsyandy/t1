@@ -109,6 +109,11 @@ class Rooms extends BaseModel
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
 
+        //如果有麦位id 为主播
+        if ($user->current_room_seat_id) {
+            $user->user_role = USER_ROLE_BROADCASTER; // 主播
+        }
+
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
@@ -159,7 +164,9 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
         if ($this->user_id == $user->id) {
-            $hot_cache->zadd($key, time() + 86400, $user->id);
+            $hot_cache->zadd($key, time() + 86400 * 7, $user->id);
+        } elseif (USER_ROLE_BROADCASTER == $user->user_role) {
+            $hot_cache->zadd($key, time() + 86400 * 3, $user->id);
         } else {
             $hot_cache->zadd($key, time(), $user->id);
         }
@@ -180,6 +187,14 @@ class Rooms extends BaseModel
             $this->status = STATUS_OFF;
             $this->update();
         }
+    }
+
+    function updateUserRank($user, $score)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $this->id;
+        $hot_cache->zincrby($key, $score, $user->id);
+        debug($hot_cache->zscore($key, $user->id));
     }
 
     function findUsers($page, $per_page)

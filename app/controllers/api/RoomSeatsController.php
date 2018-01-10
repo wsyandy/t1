@@ -37,6 +37,10 @@ class RoomSeatsController extends BaseController
             }
         } else {
 
+            if ($room_seat->user_id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '麦位已存在用户');
+            }
+
             //当前用户已在麦位
             if ($this->currentUser()->current_room_seat_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');

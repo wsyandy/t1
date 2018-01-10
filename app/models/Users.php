@@ -1182,17 +1182,150 @@ class Users extends BaseModel
 
     static function search($user, $page, $per_page, $opts = [])
     {
-        $user_id = fetch($opts, 'user_id');
-
         $cond = [];
 
+        $user_id = fetch($opts, 'user_id');
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         }
 
+        $city_id = fetch($opts, 'city_id');
+        if ($city_id) {
+            $cond = ['conditions' => '(city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)',
+                'bind' => ['city_id' => $city_id, 'geo_city_id' => $city_id, 'ip_city_id' => $city_id]];
+        }
+
+        $province_id = fetch($opts, 'province_id');
+        if ($province_id) {
+            $cond = ['conditions' => '(province_id=:province_id: or geo_province_id=:geo_province_id: or ip_province_id=:ip_province_id:)',
+                'bind' => ['province_id' => $province_id, 'geo_province_id' => $province_id, 'ip_province_id' => $province_id]];
+        }
+
+        $cond['order'] = 'id desc';
+        
+        info($user->id, $cond);
+
         $users = Users::findPagination($cond, $page, $per_page);
 
         return $users;
+    }
+
+    // 附近人
+    function nearby($page, $per_page, $opts = [])
+    {
+
+        $latitude = $this->latitude / 10000;
+        $longitude = $this->longitude / 10000;
+
+        if (!$latitude || !$longitude) {
+            $users = \Users::search($this, $page, $per_page);
+            return $users;
+        }
+
+        $geohash = new \geo\GeoHash();
+        $hash = $geohash->encode($latitude, $longitude);
+        //取前缀，前缀约长范围越小
+        $prefix = substr($hash, 0, 6);
+        //取出相邻八个区域
+        $neighbors = $geohash->neighbors($prefix);
+        array_push($neighbors, $prefix);
+
+        debug($this->id, $neighbors);
+
+        $condition = "(";
+        $bind = [];
+        foreach ($neighbors as $key => $neighbor) {
+            $val = $neighbor . '%';
+            if ($key) {
+                $condition .= 'geo_hash like :val_' . $key . ': or ';
+                $bind['val_' . $key] = $val;
+            } else {
+                $condition .= 'geo_hash like :val_' . $key . ':)';
+                $bind['val_' . $key] = $val;
+            }
+        }
+
+        $condition .= ' and id!=:user_id:';
+        $bind['user_id'] = $this->id;
+
+        $conds['conditions'] = $condition;
+        $conds['bind'] = $bind;
+        $conds['order'] = 'id desc';
+
+        info($this->id, $hash, $conds);
+
+        $users = Users::findPagination($conds, $page, $per_page);
+        if ($users->count() < 3) {
+            $opts['city_id'] = $this->getSearchCityId();
+            if (!$opts['city_id']) {
+                $opts['province_id'] = $this->getSearchProvinceId();
+            }
+
+            $users = \Users::search($this, $page, $per_page, $opts);
+        }
+
+        // 计算距离
+        $this->calDistance($users);
+
+        return $users;
+    }
+
+    public function calDistance(&$users)
+    {
+        if (!$users || count($users) < 1) {
+            return;
+        }
+
+        // 10km---0.01km
+        foreach ($users as $key => $user) {
+
+            if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
+                $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
+                    $user->latitude / 10000, $user->latitude / 10000);
+                $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
+                $user->distance = $geo_distance . 'km';
+
+                debug($this->id, $user->id, $geo_distance, $user->distance);
+            } else {
+                $geo_distance = abs($this->id - $user->id) % 1000;
+                $geo_distance = $geo_distance / 100;
+                if ($geo_distance < 0.01) {
+                    $geo_distance = 0.01;
+                }
+                $user->distance = $geo_distance . 'km';
+            }
+        }
+    }
+
+    function getSearchCityId()
+    {
+
+        if ($this->geo_city_id) {
+            return $this->geo_city_id;
+        }
+
+        if ($this->ip_city_id) {
+            return $this->ip_city_id;
+        }
+
+        return $this->city_id;
+    }
+
+    function getSearchProvinceId()
+    {
+
+        if ($this->geo_province_id) {
+            return $this->geo_province_id;
+        }
+
+        if ($this->ip_province_id) {
+            return $this->ip_province_id;
+        }
+
+        return $this->province_id;
     }
 
     //判断用户是否在指定的房间

@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/1/3
  * Time: 上午10:48
  */
-
 class UserGifts extends BaseModel
 {
     /**
@@ -44,5 +44,20 @@ class UserGifts extends BaseModel
             'order' => 'id desc'
         ];
         return \UserGifts::findPagination($conditions, $page, $per_page);
+    }
+
+    function toJson()
+    {
+        return array(
+            'gift_id' => $this->gift_id,
+            'name' => $this->gift_name,
+            'amount' => $this->amount,
+            'pay_type' => $this->pay_type,
+            'image_url' => $this->gift_image_url,
+            'image_small_url' => $this->gift_image_small_url,
+            'image_big_url' => $this->gift_image_big_url,
+            'dynamic_image_url' => $this->gift_dynamic_image_url,
+            'num' => $this->num
+        );
     }
 }
