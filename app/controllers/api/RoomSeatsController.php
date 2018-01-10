@@ -43,6 +43,13 @@ class RoomSeatsController extends BaseController
 
         } else {
 
+            $hot_cache = \Users::getHotWriteCache();
+            $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
+
+            if (!$hot_cache->set($key, 1, ['NX', 'EX' => 1])) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
+            }
+
             //房主不能上自己的麦位
             if ($room_seat->room->user_id === $this->currentUser()->id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
@@ -76,13 +83,14 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
-        $old_room_seat = $this->currentUser()->current_room;
+        $hot_cache = \Users::getHotWriteCache();
+        $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
+
+        if (!$this->otherUser() && !$hot_cache->set($key, 1, ['NX', 'EX' => 1])) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
+        }
 
         $room_seat->down($this->currentUser(), $this->otherUser());
-
-        if (!$this->otherUser() && $old_room_seat && $this->currentUser()->id == $old_room_seat->user_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '下麦失败');
-        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }

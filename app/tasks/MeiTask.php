@@ -373,7 +373,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_db = Users::getUserDb();
 
         echoLine($user_db->zscore($add_key, 88), $user_db->zrange($add_key, 0, -1));
-        echoLine($user_db->zscore($added_key, 111),$user_db->zrange($added_key, 0, -1));
+        echoLine($user_db->zscore($added_key, 111), $user_db->zrange($added_key, 0, -1));
         echoLine($user_db->zrange($friend_list_key, 0, -1));
         echoLine($user_db->zrange($other_friend_list_key, 0, -1));
         if ($user_db->zscore($add_key, 111)) {
@@ -384,6 +384,16 @@ class MeiTask extends \Phalcon\Cli\Task
         if ($user_db->zscore($added_key, 88)) {
 //            $user_db->zrem($added_key, 88);
 //            $user_db->zadd($other_friend_list_key, time(), 88);
+        }
+    }
+
+    function test17Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "test_room_seat_down";
+
+        if (!$hot_cache->set($key, 1, ['NX', 'EX' => 1])) {
+            echoLine("操作频繁");
         }
     }
 }
