@@ -45,6 +45,7 @@ class UsersController extends BaseController
         $app_id = $this->currentProductChannel()->getImAppId();
 
         $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'app_id' => $app_id, 'signaling_key' => $key];
+
         return $this->renderJSON($error_code, $error_reason, $opts);
     }
 
@@ -131,7 +132,9 @@ class UsersController extends BaseController
             $key = $this->currentProductChannel()->getSignalingKey($user->id);
             $app_id = $this->currentProductChannel()->getImAppId();
 
-            $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'error_url' => $error_url, 'app_id' => $app_id, 'signaling_key' => $key];
+            $opts = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
+            $opts = array_merge($opts, $user->toBasicJson());
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
@@ -183,7 +186,7 @@ class UsersController extends BaseController
 
         $user->updateProfile($params);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', $user->toDetailJson());
     }
 
     function updateAvatarAction()
