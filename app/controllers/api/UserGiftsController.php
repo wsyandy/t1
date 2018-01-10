@@ -12,7 +12,8 @@ class UserGiftsController extends BaseController
 {
     function indexAction()
     {
-        $conds = array('user_id' => $this->currentUserId(), 'order' => 'amount desc');
+        $user_id = $this->params('user_id', $this->currentUserId());
+        $conds = array('user_id' => $user_id, 'order' => 'amount desc');
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 20);
 
