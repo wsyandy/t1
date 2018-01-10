@@ -392,7 +392,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache = Users::getHotWriteCache();
         $key = "test_room_seat_down";
 
-        if (!$hot_cache->set($key, 1, ['NX', 'EX' => 1])) {
+        if (!$hot_cache->set($key, 1, ['NX', 'PX' => 1000])) {
             echoLine("操作频繁");
         }
     }
