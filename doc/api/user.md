@@ -42,10 +42,23 @@
 {
     error_code
     error_reason  失败原因，默认为空
-    sid 身份信息 必须先更新本地SID
-    id 用户id，即时通信账户(声网，环信) 
-    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
+    sid 身份信息 必须先更新本地SID
+    id 用户id，即时通信账户(声网，环信)
+    im_password 即时通信密码(声网，环信)
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    room_id 用户创建房间id，无房间为0 
+    current_room_id 用户当前所在房间id,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
+    user_role 当前用户角色，无角色，房主，主播，旁听
+    mobile 手机号
+    speaker 扬声器状态 false/true 默认为true
+    microphone 麦克风状态 false/true 默认为true
     app_id string 信令应用id
     signaling_key string 信令token
 }
@@ -70,10 +83,23 @@
 {
     error_code
     error_reason  失败原因，默认为空
-    sid 身份信息 必须先更新本地SID
-    id 用户id，即时通信账户(声网，环信) 
-    im_password 即时通信密码(声网，环信)
     error_url 跳转地址
+    sid 身份信息 必须先更新本地SID
+    id 用户id，即时通信账户(声网，环信)
+    im_password 即时通信密码(声网，环信)
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    room_id 用户创建房间id，无房间为0 
+    current_room_id 用户当前所在房间id,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
+    user_role 当前用户角色，无角色，房主，主播，旁听
+    mobile 手机号
+    speaker 扬声器状态 false/true 默认为true
+    microphone 麦克风状态 false/true 默认为true
     app_id string 信令应用id
     signaling_key string 信令token
 }
