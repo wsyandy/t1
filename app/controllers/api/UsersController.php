@@ -40,7 +40,11 @@ class UsersController extends BaseController
         }
 
         $user->updatePushToken($device);
-        $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id];
+
+        $key = $this->currentProductChannel()->getSignalingKey($user->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+
+        $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'signaling_app_id' => $app_id, 'signaling_key' => $key];
         return $this->renderJSON($error_code, $error_reason, $opts);
     }
 
@@ -124,7 +128,10 @@ class UsersController extends BaseController
                 $error_url = 'app://users/update_info';
             }
 
-            $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'error_url' => $error_url];
+            $key = $this->currentProductChannel()->getSignalingKey($user->id);
+            $app_id = $this->currentProductChannel()->getImAppId();
+
+            $opts = ['sid' => $user->sid, 'im_password' => $user->im_password, 'id' => $user->id, 'error_url' => $error_url, 'signaling_app_id' => $app_id, 'signaling_key' => $key];
             return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
