@@ -189,11 +189,19 @@ class Rooms extends BaseModel
         }
     }
 
-    function updateUserRank($user, $score)
+    function updateUserRank($user, $asc = true)
     {
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $this->id;
-        $hot_cache->zincrby($key, $score, $user->id);
+
+        $time = time();
+
+        if ($asc) {
+            $time += 3 * 86400;
+        }
+
+        $hot_cache->zadd($key, $time, $user->id);
+
         debug($hot_cache->zscore($key, $user->id));
     }
 
