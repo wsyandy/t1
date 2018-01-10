@@ -6,7 +6,8 @@
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
-
+    <label for="name_eq">房间名</label>
+    <input name="room[name_eq]" type="text" id="name_eq"/>
     <button type="submit" class="ui button">搜索</button>
 </form>
 
@@ -39,4 +40,8 @@
     {% endif %}
 {% endmacro %}
 
-{{ simple_table(rooms,['id': 'id','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"详细":"detail_link"]) }}
+{% macro avatar_image(room) %}
+    <img src="{{ room.user_avatar_url }}" height="50" width="50"/>
+{% endmacro %}
+
+{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"详细":"detail_link"]) }}
