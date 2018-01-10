@@ -294,7 +294,7 @@ class ProductChannels extends BaseModel
     }
 
     // Signaling Key 用于登录信令系统; 有效期1小时
-    function getSignalingKey($uid, $valid_timeIn_seconds = 43200)
+    function getSignalingKey($uid, $valid_timeIn_seconds = 86400)
     {
         $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
