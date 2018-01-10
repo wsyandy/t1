@@ -362,4 +362,28 @@ class MeiTask extends \Phalcon\Cli\Task
 
         }
     }
+
+    function test16Action()
+    {
+        $friend_list_key = 'friend_list_user_id_' . 88;
+        $other_friend_list_key = 'friend_list_user_id_' . 111;
+        $add_key = 'add_friend_list_user_id_' . 111;
+        $added_key = 'added_friend_list_user_id_' . 88;
+
+        $user_db = Users::getUserDb();
+
+        echoLine($user_db->zscore($add_key, 88), $user_db->zrange($add_key, 0, -1));
+        echoLine($user_db->zscore($added_key, 111),$user_db->zrange($added_key, 0, -1));
+        echoLine($user_db->zrange($friend_list_key, 0, -1));
+        echoLine($user_db->zrange($other_friend_list_key, 0, -1));
+        if ($user_db->zscore($add_key, 111)) {
+//            $user_db->zrem($add_key, 111);
+//            $user_db->zadd($friend_list_key, time(), 111);
+        }
+
+        if ($user_db->zscore($added_key, 88)) {
+//            $user_db->zrem($added_key, 88);
+//            $user_db->zadd($other_friend_list_key, time(), 88);
+        }
+    }
 }

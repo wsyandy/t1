@@ -1134,19 +1134,19 @@ class Users extends BaseModel
     {
         $friend_list_key = 'friend_list_user_id_' . $this->id;
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
-        $add_key = 'add_friend_list_user_id_' . $this->id;
-        $added_key = 'added_friend_list_user_id_' . $other_user->id;
+        $add_key = 'add_friend_list_user_id_' . $other_user->id;
+        $added_key = 'added_friend_list_user_id_' . $this->id;
 
         $user_db = Users::getUserDb();
 
-        if ($user_db->zscore($add_key, $other_user->id)) {
-            $user_db->zrem($add_key, $other_user->id);
-            $user_db->zadd($friend_list_key, time(), $other_user->id);
+        if ($user_db->zscore($add_key, $this->id)) {
+            $user_db->zrem($add_key, $this->id);
+            $user_db->zadd($other_friend_list_key, time(), $this->id);
         }
 
-        if ($user_db->zscore($added_key, $this->id)) {
-            $user_db->zrem($added_key, $this->id);
-            $user_db->zadd($other_friend_list_key, time(), $this->id);
+        if ($user_db->zscore($added_key, $other_user->id)) {
+            $user_db->zrem($added_key, $other_user->id);
+            $user_db->zadd($friend_list_key, time(), $other_user->id);
         }
     }
 
