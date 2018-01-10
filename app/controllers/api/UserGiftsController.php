@@ -19,7 +19,7 @@ class UserGiftsController extends BaseController
 
         $user_gifts = \UserGifts::findPagination($conds, $page, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCCESS, '', $user_gifts->toJson('user_gifts', 'toJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user_gifts->toJson('user_gifts', 'toJson'));
 
     }
 }
