@@ -46,19 +46,6 @@
     sid 身份信息 必须先更新本地SID
     id 用户id，即时通信账户(声网，环信)
     im_password 即时通信密码(声网，环信)
-    sex	性别 0:女 1:男
-    province_name 省名
-    city_name 城市
-    avatar_url 用户头像
-    avatar_small_url 用户小头像
-    nickname 昵称
-    room_id 用户创建房间id，无房间为0 
-    current_room_id 用户当前所在房间id,不在房间为0
-    current_room_seat_id 用户当前所在麦位id
-    user_role 当前用户角色，无角色，房主，主播，旁听
-    mobile 手机号
-    speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
     app_id string 信令应用id
     signaling_key string 信令token
 }
@@ -192,22 +179,7 @@
             image_big_url 小图
         }
         ...
-    ],
-    user_gifts:[
-        {
-        gift_id,
-        name,
-        amount int 礼物金额
-        pay_type string 支付类型 gold:金币 diamond:钻石
-        image_url 原图
-        image_small_url 小图
-        image_big_url 小图
-        dynamic_image_url string 动态图
-        num 礼物个数
-        }
-        ...
     ]
-   
 }
 ```
 
@@ -257,22 +229,7 @@
             image_big_url 小图
         }
         ...
-    ],
-    user_gifts:[
-        {
-        gift_id,
-        name,
-        amount int 礼物金额
-        pay_type string 支付类型 gold:金币 diamond:钻石
-        image_url string 原图
-        image_small_url string 小图
-        image_big_url string 小图
-        dynamic_image_url string 动态图
-        num int 礼物个数
-        }
-        ...
     ]
-   
 }
 ```
 
@@ -298,6 +255,38 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
+    id 用户id
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    mobile  string 手机号
+    room_id 用户创建房间id ，无房间为0
+    current_room_id 用户当前所在房间id ,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
+    current_channel_name 当前所在房间频道名称
+    user_role 当前用户角色，无角色，房主，主播，旁听
+    monologue 个人签名
+    followed_num 粉丝人数
+    follow_num 关注人数,
+    friend_num 好友人数
+    interests 兴趣爱好
+    height 身高
+    im_password 即时通信登录密码
+    age 年龄
+    birthday 生日
+    constellation 星座
+    albums:[
+        {
+            id,
+            image_url 原图
+            image_small_url 小图
+            image_big_url 小图
+        }
+        ...
+    ]
 }
 ```
 
