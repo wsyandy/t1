@@ -105,10 +105,13 @@ class RoomSeats extends BaseModel
             $user->user_role = USER_ROLE_BROADCASTER;
             $user->update();
 
+            debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user);
         }
 
         $this->update();
+
+        debug($user->device->device_no, $this->user_id);
     }
 
     // 下麦
@@ -130,10 +133,12 @@ class RoomSeats extends BaseModel
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $user->update();
 
+            debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user, false);
         }
 
         $this->update();
+        debug($user->device->device_no, $this->user_id);
     }
 
     // 封麦
