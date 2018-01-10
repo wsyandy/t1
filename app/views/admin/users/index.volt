@@ -45,7 +45,13 @@
         <a href="/admin/users/detail?id={{ user.id }}">详情</a><br/>
     {% endif %}
     {% if isAllowed('users','edit') %}
-        <a class="modal_action" href="/admin/users/edit?id={{ user.id }}">编辑</a>
+        <a class="modal_action" href="/admin/users/edit?id={{ user.id }}">编辑</a><br/>
+    {% endif %}
+    {% if isAllowed('users','add_friends') %}
+        <a href="/admin/users/add_friends?id={{ user.id }}" id="add_friends">随机加好友</a><br/>
+    {% endif %}
+    {% if isAllowed('users','agree') %}
+        <a href="/admin/users/follow?id={{ user.id }}" id="follow">随机关注</a>
     {% endif %}
 {% endmacro %}
 
@@ -54,7 +60,7 @@
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-    '状态':'user_status_info', '操作':'profile_link'
+'状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -84,8 +90,33 @@
         </td>
         <td>
             <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
-            <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a>
+            <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
+            <a href="/admin/users/add_friends?id=${ user.id }" id="add_friends">随机添加好友</a><br/>
+            <a href="/admin/users/follow?id=${ user.id }" id="follow">随机关注</a>
         </td>
 
     </tr>
+</script>
+
+
+<script type="text/javascript">
+    $('body').on('click', '#add_friends', function (e) {
+        e.preventDefault();
+        if (confirm('确认添加？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+            });
+        }
+    });
+
+    $('body').on('click', '#follow', function (e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        if (confirm('确认关注')) {
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+            })
+        }
+    })
 </script>

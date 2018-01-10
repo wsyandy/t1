@@ -30,7 +30,6 @@ trait UserAttrs
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
             'albums' => $this->albums,
-            'user_gifts' => $this->user_gifts,
             'birthday' => $this->birthday_text,
             'age' => $this->age,
             'current_room_id' => $this->current_room_id,

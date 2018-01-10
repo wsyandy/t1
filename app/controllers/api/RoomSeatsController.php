@@ -26,6 +26,11 @@ class RoomSeatsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
             }
 
+            //不能抱自己上麦
+            if ($this->otherUser()->id === $this->currentUser()->id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '不能抱自己上麦');
+            }
+
             //当前用户不在房间
             if (!$this->otherUser()->isInRoom($room_seat->room)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
@@ -35,7 +40,13 @@ class RoomSeatsController extends BaseController
             if ($this->otherUser()->current_room_seat_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
             }
+
         } else {
+
+            //房主不能上自己的麦位
+            if ($room_seat->room->user_id === $this->currentUser()->id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
+            }
 
             if ($room_seat->user_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '麦位已存在用户');
