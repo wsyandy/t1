@@ -20,6 +20,13 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        $hot_cache = \Users::getHotWriteCache();
+
+        //防止多个用户并发抢占麦位
+        if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间已有用户');
+        }
+
         if ($this->otherUser()) {
 
             if (!$this->currentUser()->isRoomHost($room_seat->room)) {
@@ -43,7 +50,6 @@ class RoomSeatsController extends BaseController
 
         } else {
 
-            $hot_cache = \Users::getHotWriteCache();
             $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
 
             if (!$hot_cache->set($key, 1, ['NX', 'PX' => 500])) {
