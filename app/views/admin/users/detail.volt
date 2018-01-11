@@ -10,6 +10,7 @@
     <li role="presentation"><a href="/admin/user_gifts?user_id={{ user.id }}">收到的礼物</a></li>
     <li role="presentation"><a href="/admin/users/friend_list?id={{ user.id }}">我的好友</a></li>
     <li role="presentation"><a href="/admin/users/followers?id={{ user.id }}">我关注的人</a></li>
+    <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
 </ul>
 
 

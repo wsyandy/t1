@@ -1,0 +1,1 @@
+alter table voice_calls alter column call_status type varchar(255);
