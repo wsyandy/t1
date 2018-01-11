@@ -5,6 +5,6 @@
 {%- endmacro %}
 
 {{ simple_table(voice_calls, [
-    'ID': 'id', '通话用户': 'user_link', '昵称': 'user_nickname',
-    '通话状态': 'call_status_text', '通话时长': 'duration', '时间': 'created_at_text'
+    'ID': 'id', '通话用户': 'user_link', '昵称': 'user_nickname', '通话状态': 'call_status',
+    '状态描述': 'call_status_text', '通话时长': 'duration', '时间': 'created_at_text'
 ]) }}
