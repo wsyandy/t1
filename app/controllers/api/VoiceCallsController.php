@@ -15,10 +15,7 @@ class VoiceCallsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
         $voice_calls = \VoiceCalls::findListByUser($this->currentUser(), $page, $per_page);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '',
-            array(
-                'voice_calls' => $voice_calls->toJson('voice_calls', 'toSimpleJson')
-            ));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $voice_calls->toJson('voice_calls', 'toSimpleJson'));
     }
 
     function createAction()
