@@ -38,8 +38,7 @@ class VoiceCallsController extends BaseController
                     'channel_name' => $voice_call->call_no,
                     'channel_key' =>
                         $this->currentUser()->generateVoiceChannelKey(
-                            $voice_call->call_no,
-                            $this->currentUserId()
+                            $voice_call->call_no
                         )
                 )
             );
