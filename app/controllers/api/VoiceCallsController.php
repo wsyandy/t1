@@ -35,7 +35,17 @@ class VoiceCallsController extends BaseController
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);
         if ($voice_call) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听', array('call_no' => $voice_call->call_no));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听',
+                array(
+                    'call_no' => $voice_call->call_no,
+                    'channel_name' => $voice_call->call_no,
+                    'channel_key' =>
+                        $this->currentUser()->generateVoiceChannelKey(
+                            $voice_call->call_no,
+                            $this->currentUserId()
+                        )
+                )
+            );
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '拨打失败');
         }

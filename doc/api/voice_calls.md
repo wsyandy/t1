@@ -14,7 +14,9 @@
      error_code: 0/-1
      error_reason: ''
      error_url: ''
-     call_no: ''               
+     call_no: ''  
+     channel_name: ''
+     channel_key: ''                  
 }
 ```
 
