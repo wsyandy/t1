@@ -8,6 +8,7 @@
     <li role="presentation"><a href="/admin/payments?user_id={{ user.id }}">支付信息</a></li>
     <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
     <li role="presentation"><a href="/admin/user_gifts?user_id={{ user.id }}">收到的礼物</a></li>
+    <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
 </ul>
 
 

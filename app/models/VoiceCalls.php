@@ -186,7 +186,6 @@ class VoiceCalls extends BaseModel
         if ($this->isHangUp()) {
             return $this->hang_up_text;
         }
-        var_dump($this->is_send);
         if ($this->is_send) {
             $call_status_hash = \VoiceCalls::$sender_call_status;
         } else {
