@@ -54,7 +54,7 @@ class Users extends BaseModel
     /**
      * @type RoomSeats
      */
-    private $current_room_seat;
+    private $_current_room_seat;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
