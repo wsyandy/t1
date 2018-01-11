@@ -54,7 +54,7 @@ class VoiceCallsController extends BaseController
         if (isBlank($this->params('call_no')) || isBlank($this->params('call_status'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '系统错误,请重新拨打');
         }
-        $call_status = $this->params('call_status');
+        $call_status = intval($this->params('call_status'));
         if (!array_key_exists($call_status, \VoiceCalls::$call_status)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '通话状态异常');
         }
