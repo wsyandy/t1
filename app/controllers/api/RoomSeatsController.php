@@ -20,6 +20,14 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        $hot_cache = \Users::getHotWriteCache();
+
+        //防止多个用户并发抢占麦位
+        if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
+            info("room_seat_lock", $room_seat->id);
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已有用户!');
+        }
+
         if ($this->otherUser()) {
 
             if (!$this->currentUser()->isRoomHost($room_seat->room)) {
@@ -43,6 +51,12 @@ class RoomSeatsController extends BaseController
 
         } else {
 
+            $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
+
+            if (!$hot_cache->set($key, 1, ['NX', 'PX' => 500])) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
+            }
+
             //房主不能上自己的麦位
             if ($room_seat->room->user_id === $this->currentUser()->id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
@@ -53,8 +67,11 @@ class RoomSeatsController extends BaseController
             }
 
             //当前用户已在麦位
-            if ($this->currentUser()->current_room_seat_id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
+            $current_room_seat = $this->currentUser()->current_room_seat;
+
+            if ($current_room_seat) {
+                $current_room_seat->down($this->currentUser());
+                debug("change_room_seat", $current_room_seat->id, $room_seat->id, $this->currentUser()->id);
             }
         }
 
@@ -76,6 +93,12 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
+        $hot_cache = \Users::getHotWriteCache();
+        $key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
+
+        if (!$this->otherUser() && !$hot_cache->set($key, 1, ['NX', 'PX' => 500])) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
+        }
 
         $room_seat->down($this->currentUser(), $this->otherUser());
 
