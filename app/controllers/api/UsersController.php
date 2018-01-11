@@ -268,9 +268,18 @@ class UsersController extends BaseController
 
     function otherDetailAction()
     {
+        //房间是否加锁
+        $other_current_room = $this->otherUser()->current_room;
+        $lock = false;
+
+        if ($other_current_room) {
+            $lock = $other_current_room->lock;
+        }
+
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
         $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
+        $detail_json['lock'] = $lock;
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
