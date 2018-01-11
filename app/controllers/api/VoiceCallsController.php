@@ -31,11 +31,11 @@ class VoiceCallsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '不能打给自己');
         }
         if (!$this->currentUser()->isFriend($receiver)) {
-            //return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
+            return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);
         if ($voice_call) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('call_no' => $voice_call->call_no));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听', array('call_no' => $voice_call->call_no));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '拨打失败');
         }
@@ -47,7 +47,7 @@ class VoiceCallsController extends BaseController
         if (isBlank($this->params('call_no')) || isBlank($this->params('call_status'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '系统错误,请重新拨打');
         }
-        $call_status = intval($this->params('call_status'));
+        $call_status = $this->params('call_status');
         if (!array_key_exists($call_status, \VoiceCalls::$call_status)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '通话状态异常');
         }
@@ -56,6 +56,6 @@ class VoiceCallsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在, 请重新拨打');
         }
         $voice_call->changeStatus($call_status);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 }

@@ -142,9 +142,9 @@ define('PAYMENT_PAY_STATUS_WAIT', 0);
 define('PAYMENT_PAY_STATUS_FAIL', 2);
 
 //通话状态
-define('CALL_STATUS_WAIT', 0);//等待接听
-define('CALL_STATUS_NO_ANSWER', 1);//无应答
-define('CALL_STATUS_BUSY', 2);//对方正忙
-define('CALL_STATUS_REFUSE', 3);//拒绝
-define('CALL_STATUS_CANCEL', 4);//取消
-define('CALL_STATUS_HANG_UP', 5);//挂断
+define('CALL_STATUS_WAIT', 'wait');//等待接听
+define('CALL_STATUS_NO_ANSWER', 'no_answer');//无应答
+define('CALL_STATUS_BUSY', 'busy');//对方正忙
+define('CALL_STATUS_REFUSE', 'refuse');//拒绝
+define('CALL_STATUS_CANCEL', 'cancel');//取消
+define('CALL_STATUS_HANG_UP', 'hang_up');//挂断
