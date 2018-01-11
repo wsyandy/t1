@@ -25,7 +25,7 @@ class RoomSeatsController extends BaseController
         //防止多个用户并发抢占麦位
         if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
             info("room_seat_lock", $room_seat->id);
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间已有用户');
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已有用户!');
         }
 
         if ($this->otherUser()) {
