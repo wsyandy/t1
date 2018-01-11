@@ -18,5 +18,6 @@
 * [礼物](gifts.md)
 * [举报](complaints.md)
 * [设置](set.md)
+* [语音通话](voice_calls.md)
 
 ## Published with GitBook
