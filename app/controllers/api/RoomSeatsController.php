@@ -24,6 +24,7 @@ class RoomSeatsController extends BaseController
 
         //防止多个用户并发抢占麦位
         if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
+            info("room_seat_lock", $room_seat->id);
             return $this->renderJSON(ERROR_CODE_FAIL, '房间已有用户');
         }
 
@@ -66,8 +67,11 @@ class RoomSeatsController extends BaseController
             }
 
             //当前用户已在麦位
-            if ($this->currentUser()->current_room_seat_id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
+            $current_room_seat = $this->currentUser()->current_room_seat;
+
+            if ($current_room_seat) {
+                $current_room_seat->down($this->currentUser());
+                debug("change_room_seat", $current_room_seat->id, $room_seat->id, $this->currentUser()->id);
             }
         }
 
