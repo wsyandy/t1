@@ -251,6 +251,9 @@ trait UserAttrs
     function constellationText()
     {
         $c = '';
+        if(!$this->birthday){
+            return $c;
+        }
         $num = date('md', $this->birthday);
 
         switch ($num) {
