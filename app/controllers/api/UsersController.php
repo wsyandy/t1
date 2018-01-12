@@ -286,17 +286,15 @@ class UsersController extends BaseController
 
     function setSpeakerAction()
     {
-        $this->currentUser()->speaker = $this->params('speaker', true);
-        $this->currentUser()->update();
-
+        $speaker = $this->params('speaker', true);
+        $this->currentUser()->setSpeaker($speaker);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function setMicrophoneAction()
     {
-        $this->currentUser()->microphone = $this->params('microphone', true);
-        $this->currentUser()->update();
-
+        $microphone = $this->params('microphone', true);
+        $this->currentUser()->setSpeaker($microphone);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 

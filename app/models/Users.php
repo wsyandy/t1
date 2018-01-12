@@ -1384,4 +1384,16 @@ class Users extends BaseModel
     {
         return $this->id == $room->user_id;
     }
+
+    function setSpeaker($speaker)
+    {
+        $this->speaker = $speaker;
+        $this->update();
+    }
+
+    function setMicrophone($microphone)
+    {
+        $this->microphone = $microphone;
+        $this->update();
+    }
 }
