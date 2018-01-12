@@ -433,3 +433,23 @@
     error_reason
 }
 ```
+
+### 14.用户使用条款
+
+> http-get ```/m/product_channels/user_agreement```
+
+##### 14.1 请求参数说明
+```
+公共参数
+```
+
+### 15. 隐私政策
+
+> http-get ```/m/product_channels/privacy_agreement```
+
+##### 15.1 请求参数说明
+```
+公共参数
+```
+
+

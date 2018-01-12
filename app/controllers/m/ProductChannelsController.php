@@ -46,7 +46,7 @@ class ProductChannelsController extends BaseController
     }
 
     //隐私条款
-    function priAgreementAction()
+    function privacyAgreementAction()
     {
         $this->view->product_channel = $this->currentProductChannel();
     }
