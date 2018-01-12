@@ -342,4 +342,9 @@ trait UserAttrs
 
         return $users;
     }
+
+    function generateVoiceChannelKey($channel_name)
+    {
+        return $this->product_channel->getChannelKey($channel_name, $this->id);
+    }
 }

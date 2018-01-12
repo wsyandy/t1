@@ -124,7 +124,7 @@ class VoiceCalls extends BaseModel
 
     function generateCallNo()
     {
-        return 'CN' . strval($this->sender_id) . strval($this->receiver_id) . time();
+        return 'CN' . strval($this->sender_id) . strval($this->receiver_id) . time() . mt_rand(100, 1000);
     }
 
     function changeStatus($call_status)

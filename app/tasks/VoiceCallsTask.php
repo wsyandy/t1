@@ -12,14 +12,28 @@ class VoiceCallsTask extends \Phalcon\Cli\Task
 {
     use CommonParam;
 
-    function testCreateAction()
+    function testCreateAction($params = array())
     {
-        $url = 'http://www.chance_php.com/api/voice_calls';
-        $user = \Users::findLast();
-        $receiver = \Users::findFirst();
+        $url = 'http://ctest.yueyuewo.cn/api/voice_calls';
+        $user_id = fetch($params, 'user_id', 75);
+        $receiver_id = fetch($params, 'receiver_id', 79);
+        $user = \Users::findById($user_id);
+        $receiver = \Users::findById($receiver_id);
         $body = array_merge($this->commonBody(), array('sid' => $user->sid, 'user_id' => $receiver->id));
         $res = httpPost($url, $body);
         var_dump($res);
+        $res = json_decode($res, true);
+        $call_no = $res['call_no'];
+        $call_status = fetch($params, 'call_status', CALL_STATUS_BUSY);
+        $this->updateStatus($call_no, $call_status);
+    }
+
+    function updateStatus($call_no, $call_status)
+    {
+        $voice_call = \VoiceCalls::findFirstByCallNo($call_no);
+        if ($voice_call) {
+            $voice_call->changeStatus($call_status);
+        }
     }
 
     function testUpdateAction()

@@ -15,10 +15,7 @@ class VoiceCallsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
         $voice_calls = \VoiceCalls::findListByUser($this->currentUser(), $page, $per_page);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '',
-            array(
-                'voice_calls' => $voice_calls->toJson('voice_calls', 'toSimpleJson')
-            ));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $voice_calls->toJson('voice_calls', 'toSimpleJson'));
     }
 
     function createAction()
@@ -35,7 +32,16 @@ class VoiceCallsController extends BaseController
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);
         if ($voice_call) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听', array('call_no' => $voice_call->call_no));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听',
+                array(
+                    'call_no' => $voice_call->call_no,
+                    'channel_name' => $voice_call->call_no,
+                    'channel_key' =>
+                        $this->currentUser()->generateVoiceChannelKey(
+                            $voice_call->call_no
+                        )
+                )
+            );
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '拨打失败');
         }
@@ -47,7 +53,7 @@ class VoiceCallsController extends BaseController
         if (isBlank($this->params('call_no')) || isBlank($this->params('call_status'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '系统错误,请重新拨打');
         }
-        $call_status = $this->params('call_status');
+        $call_status = intval($this->params('call_status'));
         if (!array_key_exists($call_status, \VoiceCalls::$call_status)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '通话状态异常');
         }
