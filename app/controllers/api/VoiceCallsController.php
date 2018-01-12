@@ -31,16 +31,16 @@ class VoiceCallsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);
+        $call_no = $voice_call->call_no;
+
         if ($voice_call) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听',
-                array(
-                    'call_no' => $voice_call->call_no,
-                    'channel_name' => $voice_call->call_no,
-                    'channel_key' =>
-                        $this->currentUser()->generateVoiceChannelKey(
-                            $voice_call->call_no
-                        )
-                )
+                [
+                    'call_no' => $call_no,
+                    'channel_name' => $call_no,
+                    'channel_key' => $this->currentUser()->generateVoiceChannelKey($call_no),
+                    'receiver_channel_key' => $receiver->generateVoiceChannelKey($call_no)
+                ]
             );
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '拨打失败');

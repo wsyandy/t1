@@ -16,7 +16,8 @@
      error_url: ''
      call_no: ''  
      channel_name: ''
-     channel_key: ''                  
+     channel_key: '' 发起者channel_key                  
+     receiver_channel_key: '' 接受者channel_key                  
 }
 ```
 
