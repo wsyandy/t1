@@ -117,10 +117,10 @@ class RoomSeatsController extends BaseController
         $hot_cache = \Users::getHotWriteCache();
 
         //防止多个用户并发抢占麦位
-//        if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
-//            info("room_seat_lock", $room_seat->id);
-//            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已有用户!');
-//        }
+        if (!$hot_cache->set("room_seat_lock{$room_seat->id}", 1, ['NX', 'EX' => 1])) {
+            info("room_seat_lock", $room_seat->id);
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已有用户!');
+        }
 
         if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
