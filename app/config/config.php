@@ -16,6 +16,7 @@ return new \Phalcon\Config([
         'tubes' => ['default' => isProduction() ? 16 : 3]],
     'user_db_endpoints' => env('user_db_endpoints', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'stat_db' => env('stat_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
+    'redlock_endpoints' => env('redlock_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
 
     'emchat' => [
         'client_id' => env('emchat_client_id', 'YXA64sSGMOVkEeewwC0l6qU03Q'),

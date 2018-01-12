@@ -383,3 +383,21 @@
     error_reason
 }
 ```
+
+### 16 异常离线用户上报
+
+> http-post ```/api/rooms/offline```
+
+##### 16.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|user_id|用户id|int|否|||
+
+##### 16.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```

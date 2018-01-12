@@ -274,7 +274,6 @@ class RoomsController extends BaseController
     // 踢出房间
     function kickingAction()
     {
-
         if (!$this->otherUser()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -332,5 +331,24 @@ class RoomsController extends BaseController
         $this->otherUser()->setChat($room, false);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
+
+    //异常离线上报
+    function offlineAction()
+    {
+        if (!$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstById($this->params('id', 0));
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        info("room_offline", $this->otherUser()->id, $room->id);
+        $room->exitRoom($this->otherUser());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }
