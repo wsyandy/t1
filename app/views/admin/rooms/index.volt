@@ -6,8 +6,8 @@
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
-    <label for="name_eq">房间名</label>
-    <input name="room[name_eq]" type="text" id="name_eq"/>
+    <label for="name">房间名</label>
+    <input name="name" type="text" id="name"/>
     <button type="submit" class="ui button">搜索</button>
 </form>
 
@@ -32,11 +32,8 @@
 
 
 {% macro detail_link(room) %}
-    {% if isAllowed('room','online_users') %}
-        <a href="/admin/rooms/online_users?id={{ room.id }}">在线用户</a></br>
-    {% endif %}
-    {% if isAllowed('room','room_seats') %}
-        <a href="/admin/rooms/room_seats?id={{ room.id }}">麦 位</a></br>
+    {% if isAllowed('room','deatil') %}
+        <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
     {% endif %}
 {% endmacro %}
 

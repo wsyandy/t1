@@ -13,6 +13,14 @@ class RoomsController extends BaseController
     function indexAction()
     {
         $cond = $this->getConditions('room');
+        $name = $this->params('name');
+        if ($name) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and name like '%$name%' ";
+            } else {
+                $cond['conditions'] = " name like '%$name%' ";
+            }
+        }
         $page = $this->params('page');
         $per_page = $this->params('per_page');
         $cond['order'] = "id desc";
@@ -24,8 +32,8 @@ class RoomsController extends BaseController
     //在线用户
     function onlineUsersAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page');
+        $page = $this->params('page',1);
+        $per_page = $this->params('per_page',8);
 
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
@@ -45,5 +53,11 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
         $room_seats = \RoomSeats::findByRoomId($room_id);
         $this->view->room_seats = $room_seats;
+    }
+
+    function detailAction()
+    {
+        $room = \Rooms::findFirstById($this->params('id'));
+        $this->view->room = $room;
     }
 }
