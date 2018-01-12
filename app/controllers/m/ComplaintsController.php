@@ -5,7 +5,9 @@
  * Date: 2018/1/9
  * Time: 上午10:15
  */
+
 namespace m;
+
 class ComplaintsController extends BaseController
 {
     function indexAction()
@@ -34,17 +36,7 @@ class ComplaintsController extends BaseController
             $opts = ['room_id' => $room_id, 'respondent_id' => $user_id, 'complaint_type' => $complaint_type];
             \Complaints::createComplaint($this->currentUser(), $opts);
 
-            $url = '';
-
-            if ($user_id) {
-                $url = "app://users/other_detail?user_id=" . $user_id;
-            }
-
-            if ($room_id) {
-                $url = "app://rooms/detail?id=" . $room_id;
-            }
-
-            $this->renderJSON(ERROR_CODE_SUCCESS, '举报成功', ['error_url' => $url]);
+            $this->renderJSON(ERROR_CODE_SUCCESS, '举报成功', ['error_url' => "app://back"]);
         }
     }
 }
