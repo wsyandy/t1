@@ -19,10 +19,15 @@ class ProductChannelsController extends BaseController
         $user = $this->currentUser();
         $version = '';
         if ($user) {
-            $version = $user->version_code;
+            $device_id = $user->device_id;
+            $device = \Devices::findFirstById($device_id);
+            if ($device) {
+                $version = $device->version_name;
+            }
         }
-        if (!$version && $this->currentDevice()) {
-            $version = $this->currentDevice()->version_code;
+
+        if (!$version) {
+            $version = $this->params("ver");
         }
 
         $sid = $this->params('sid');

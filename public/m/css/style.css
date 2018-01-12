@@ -95,11 +95,20 @@ h1,h2,h3,h4{
 	background: #fff;
 }
 .about_us_list ul li{
+	/*padding:20px 3.2%;*/
+	/*border-bottom: 1px solid #F4F4F4;*/
+	/*position: relative;*/
+}
+
+.about_us_list ul li a{
 	padding:20px 3.2%;
 	border-bottom: 1px solid #F4F4F4;
 	position: relative;
+	display: block;
 }
-.about_us_list ul li:before{
+
+.arrow_right{
+	top:25px;
 	position: absolute;
 	content: '';
 	right: 3.2%;

@@ -19,10 +19,10 @@
             <b>{{ version }}</b>
         </div>
         <li>
-            <a href="/m/product_channels/user_agreement?sid={{ sid }}&code={{ product_channel.code }}">用户协议</a>
+            <a href="/m/product_channels/user_agreement?sid={{ sid }}&code={{ product_channel.code }}">用户协议<span class="arrow_right"></span></a>
         </li>
         <li>
-            <a href="/m/product_channels/privacy_agreement?sid={{ sid }}&code={{ product_channel.code }}">隐私条款</a>
+            <a href="/m/product_channels/privacy_agreement?sid={{ sid }}&code={{ product_channel.code }}">隐私条款<span class="arrow_right"></span></a>
         </li>
     </ul>
 </div>
