@@ -22,7 +22,7 @@
             <a href="/m/product_channels/user_agreement?sid={{ sid }}&code={{ product_channel.code }}">用户协议</a>
         </li>
         <li>
-            <a href="/m/product_channels/pri_agreement?sid={{ sid }}&code={{ product_channel.code }}">隐私条款</a>
+            <a href="/m/product_channels/privacy_agreement?sid={{ sid }}&code={{ product_channel.code }}">隐私条款</a>
         </li>
     </ul>
 </div>
