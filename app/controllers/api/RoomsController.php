@@ -90,9 +90,9 @@ class RoomsController extends BaseController
             }
 
             //如果不是房主 并且房间内没有人
-            //if (!$this->currentUser()->isRoomHost($room) && $room->user_num < 1) {
-            //    return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
-            //}
+            if (!$this->currentUser()->isRoomHost($room) && $room->user_num < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
+            }
         }
 
         if ($room->isForbidEnter($this->currentUser())) {
