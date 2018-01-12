@@ -15,6 +15,9 @@ class BaseController extends \ApplicationController
     private $_current_product_channel;
     public $remote_ip;
 
+    static $SKIP_ACTIONS = [
+        'product_channels' =>['user_agreement','privacy_agreement']
+    ];
 
     function currentUserId()
     {
@@ -109,12 +112,38 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
+        $controller_name = $dispatcher->getControllerName();
+        $action_name = $dispatcher->getActionName();
+        $controller_name = \Phalcon\Text::uncamelize($controller_name);
+        $action_name = \Phalcon\Text::uncamelize($action_name);
+        $controller_name = strtolower($controller_name);
+        $action_name = strtolower($action_name);
+        // 不验证用户登录
+        if ($this->skipAuth($controller_name, $action_name)) {
+            return;
+        }
         if (!$this->authorize()) {
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
         }
         if ($this->currentUser()->isBlocked()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
         }
+    }
+
+
+    function skipAuth($controller_name, $action_name)
+    {
+        if (isset(self::$SKIP_ACTIONS[$controller_name])) {
+            $values = self::$SKIP_ACTIONS[$controller_name];
+            if ($values == '*') {
+                return true;
+            }
+
+            if (is_array($values) && in_array($action_name, $values)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function authorize()
