@@ -21,6 +21,7 @@
     <tr>
         <td>状态: {{ user.user_status_text }}</td>
         <td>钻石: <a href="/admin/account_histories?user_id={{ user.id }}">{{ user.diamond }}</a></td>
+        <td><a href="/admin/users/reset_password?id={{ user.id }}" class="modal_action">重置密码</a></td>
     </tr>
 </table>
 

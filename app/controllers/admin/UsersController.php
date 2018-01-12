@@ -33,6 +33,25 @@ class UsersController extends BaseController
         $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', array('user' => $user->toJson()));
     }
 
+    function resetPasswordAction()
+    {
+        if ($this->request->isPost()) {
+            $user = \Users::findFirstById($this->params('id'));
+            $password = $this->params('password');
+            if (!isBlank($password)) {
+                if (mb_strlen($password) < 6 || mb_strlen($password) > 16) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '请设置6~16位的密码');
+                }
+                $user->password = md5($password);
+            }
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
+            $user->update();
+            $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功');
+        } else {
+            $this->view->id = $this->params('id');
+        }
+    }
+
     function detailAction()
     {
         $user = \Users::findFirstById($this->params('id'));
