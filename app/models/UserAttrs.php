@@ -208,6 +208,9 @@ trait UserAttrs
 
     function getBirthdayText()
     {
+        if(!$this->birthday){
+            return null;
+        }
         return date('Y-m-d', $this->birthday);
     }
 

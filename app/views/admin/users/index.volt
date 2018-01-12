@@ -51,7 +51,10 @@
         <a href="/admin/users/add_friends?id={{ user.id }}" id="add_friends">随机加好友</a><br/>
     {% endif %}
     {% if isAllowed('users','agree') %}
-        <a href="/admin/users/follow?id={{ user.id }}" id="follow">随机关注</a>
+        <a href="/admin/users/follow?id={{ user.id }}" id="follow">随机关注</a><br/>
+    {% endif %}
+    {% if isAllowed('rooms','index') %}
+        <a href="/admin/rooms?room[id_eq]={{ user.current_room_id }}">房间</a>
     {% endif %}
 {% endmacro %}
 
@@ -92,7 +95,8 @@
             <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
             <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
             <a href="/admin/users/add_friends?id=${ user.id }" id="add_friends">随机添加好友</a><br/>
-            <a href="/admin/users/follow?id=${ user.id }" id="follow">随机关注</a>
+            <a href="/admin/users/follow?id=${ user.id }" id="follow">随机关注</a><br/>
+            <a href="/admin/rooms?room[id_eq]=${ user.current_room_id }">房间</a>
         </td>
 
     </tr>
