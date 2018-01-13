@@ -167,6 +167,10 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if (!$this->currentUser()->isInRoom($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
+        }
+
         $room->exitRoom($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
