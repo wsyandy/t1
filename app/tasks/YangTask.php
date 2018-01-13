@@ -10,7 +10,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function testAction()
     {
-        $id = 156;
+        $id = 182;
         $user = \Users::findFirstById($id);
         if (!$user) {
             return false;
@@ -25,7 +25,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function testTwoAction()
     {
-        $id = 156;
+        $id = 182;
         $user = \Users::findFirstById($id);
         if (!$user) {
             return false;
