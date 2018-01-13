@@ -246,9 +246,9 @@ class RoomSeats extends BaseModel
             }
 
             //当前用户已在麦位
-            if ($user->current_room_seat_id) {
-                return [ERROR_CODE_FAIL, '用户已在麦位'];
-            }
+//            if ($user->current_room_seat_id) {
+//                return [ERROR_CODE_FAIL, '用户已在麦位'];
+//            }
         }
 
         return [ERROR_CODE_SUCCESS, ''];
