@@ -231,6 +231,11 @@ class RoomSeats extends BaseModel
 
         } else {
 
+            //当前用户不在房间
+            if (!$user->isInRoom($this->room)) {
+                return [ERROR_CODE_FAIL, '用户不在房间'];
+            }
+
             if ($this->isClose()) {
                 return [ERROR_CODE_FAIL, '麦位已被封'];
             }
