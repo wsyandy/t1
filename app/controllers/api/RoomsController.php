@@ -274,22 +274,33 @@ class RoomsController extends BaseController
     // 踢出房间
     function kickingAction()
     {
-        if (!$this->otherUser()) {
+        $room_id = $this->params('id', 0);
+
+        if (!$room_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room = \Rooms::findFirstById($this->params('id', 0));
+        $other_user_id = $this->otherUserId();
+
+        $room_seat_user_lock_key = "room_seat_lock{$other_user_id}";
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+
+        $other_user = $this->otherUser(true);
+        $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
-        $room->exitRoom($this->otherUser());
-        $room->forbidEnter($this->otherUser());
+
+        $room->exitRoom($other_user);
+        $room->forbidEnter($other_user);
+
+        unlock($room_seat_user_lock);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
             'name' => $room->name, 'channel_name' => $room->channel_name]);

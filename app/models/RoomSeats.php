@@ -105,6 +105,14 @@ class RoomSeats extends BaseModel
 
         } else {
 
+            //当前用户已在麦位
+            $current_room_seat = $user->current_room_seat;
+
+            if ($current_room_seat) {
+                $current_room_seat->down($user);
+                debug("change_room_seat", $current_room_seat->id, $this->id, $user->id);
+            }
+
             // 自己上麦
             $this->user_id = $user->id;
 
@@ -197,7 +205,7 @@ class RoomSeats extends BaseModel
     function canUp($user, $other_user = null)
     {
         if ($this->user_id) {
-            return [ERROR_CODE_SUCCESS, '麦位已存在用户'];
+            return [ERROR_CODE_FAIL, '麦位已存在用户'];
         }
 
         if ($other_user) {
@@ -230,14 +238,6 @@ class RoomSeats extends BaseModel
             //房主不能上自己的麦位
             if ($this->room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
-            }
-
-            //当前用户已在麦位
-            $current_room_seat = $user->current_room_seat;
-
-            if ($current_room_seat) {
-                $current_room_seat->down($user);
-                debug("change_room_seat", $current_room_seat->id, $this->id, $user->id);
             }
         }
 
