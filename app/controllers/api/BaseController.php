@@ -64,9 +64,20 @@ class BaseController extends ApplicationController
     /**
      * @return \Users
      */
-    function currentUser()
+    function currentUser($force = false)
     {
         $user_id = $this->currentUserId();
+
+        if (isBlank($user_id)) {
+            return null;
+        }
+
+        //强制重新查用户
+        if ($force) {
+            $user = \Users::findFirstById($user_id);
+            return $user;
+        }
+
         if (!isset($this->_current_user) && $user_id) {
             $user = \Users::findFirstById($user_id);
             if ($user && $this->params('sid') == $user->sid) {
@@ -94,9 +105,19 @@ class BaseController extends ApplicationController
     /**
      * @return \Users
      */
-    function otherUser()
+    function otherUser($force = false)
     {
         $other_user_id = $this->otherUserId();
+
+        if (isBlank($other_user_id)) {
+            return null;
+        }
+
+        //强制重新查用户
+        if ($force) {
+            $user = \Users::findFirstById($other_user_id);
+            return $user;
+        }
 
         if (!isset($this->_other_user) && $other_user_id) {
             $other_user = \Users::findFirstById($other_user_id);
