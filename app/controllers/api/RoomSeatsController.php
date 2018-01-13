@@ -30,10 +30,6 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
-        if ($room_seat->isClose()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
-        }
-
         if ($this->otherUser()) {
 
             if (!$this->currentUser()->isRoomHost($room_seat->room)) {
@@ -56,6 +52,10 @@ class RoomSeatsController extends BaseController
             }
 
         } else {
+
+            if ($room_seat->isClose()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
+            }
 
             //房主不能上自己的麦位
             if ($room_seat->room->user_id === $this->currentUser()->id) {
