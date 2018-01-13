@@ -146,8 +146,7 @@ class UsersController extends BaseController
     {
 
         if (!$this->currentUser()) {
-            $this->renderJSON(ERROR_CODE_FAIL, '用户未登陆!');
-            return;
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户未登陆!');
         }
 
         $user = $this->currentUser();
