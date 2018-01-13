@@ -17,12 +17,17 @@ class FriendsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
         $users = $this->currentUser()->friendList($page, $per_page, $new);
-
+        $friend_num = $this->currentUser()->friend_num;
+        $new_friend_num = $this->currentUser()->new_friend_num;
+        $num = [];
+        $num['friend_num'] = $friend_num;
+        $num['new_friend_num'] = $new_friend_num;
         if ($users) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
+            $res = $users->toJson('users', 'toRelationJson');
+            $opts = array_merge($res, $num);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
         }
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $num);
     }
 
     //添加好友

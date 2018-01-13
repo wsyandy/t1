@@ -165,7 +165,6 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     friend_num 好友人数
-    new_friend_num 新好友人数
     interests 兴趣爱好
     height 身高
     im_password 即时通信登录密码
@@ -220,7 +219,6 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     friend_num 好友人数
-    new_friend_num 新好友人数
     is_friend true/false,是否是好友
     is_follow true/false,是否已关注
     interests 兴趣爱好
@@ -283,7 +281,6 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     friend_num 好友人数
-    new_friend_num 新好友人数
     interests 兴趣爱好
     height 身高
     im_password 即时通信登录密码
