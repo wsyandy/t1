@@ -171,6 +171,10 @@
     age 年龄
     birthday 生日
     constellation 星座
+    user_role 当前用户角色，无角色，房主，主播，旁听
+    mobile 手机号
+    speaker 扬声器状态 false/true 默认为true
+    microphone 麦克风状态 false/true 默认为true
     albums:[
         {
             id,
