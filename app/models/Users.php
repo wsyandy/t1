@@ -1181,6 +1181,13 @@ class Users extends BaseModel
         return $user_db->zcard($key);
     }
 
+    function totalFriendNum()
+    {
+        $key = 'friend_total_list_user_id_' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zcard($key);
+    }
+
 
     //需要更新资料
     function needUpdateInfo()

@@ -165,6 +165,7 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     friend_num 好友人数
+    total_friend_num 总好友个数，包括已添加、等待验证、等待接受好友
     interests 兴趣爱好
     height 身高
     im_password 即时通信登录密码
