@@ -27,60 +27,61 @@ class RoomSeatsController extends BaseController
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
         if (!$room_seat) {
+            unlock($room_seat_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
-        if ($room_seat->user_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已存在用户');
-        }
-
-        if ($this->otherUser()) {
-
-            if (!$this->currentUser()->isRoomHost($room_seat->room)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
-            }
-
-            //不能抱自己上麦
-            if ($this->otherUser()->id === $this->currentUser()->id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '不能抱自己上麦');
-            }
-
-            //当前用户不在房间
-            if (!$this->otherUser()->isInRoom($room_seat->room)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
-            }
-
-            //当前用户已在麦位
-            if ($this->otherUser()->current_room_seat_id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
-            }
-
-        } else {
-
-            if ($room_seat->isClose()) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
-            }
-
-            //房主不能上自己的麦位
-            if ($room_seat->room->user_id === $this->currentUser()->id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
-            }
-
-            //当前用户已在麦位
-            $current_room_seat = $this->currentUser()->current_room_seat;
-
-            if ($current_room_seat) {
-                $current_room_seat->down($this->currentUser());
-                debug("change_room_seat", $current_room_seat->id, $room_seat->id, $this->currentUser()->id);
-            }
-        }
+//        if ($room_seat->user_id) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已存在用户');
+//        }
+//
+//        if ($this->otherUser()) {
+//
+//            if (!$this->currentUser()->isRoomHost($room_seat->room)) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+//            }
+//
+//            //不能抱自己上麦
+//            if ($this->otherUser()->id === $this->currentUser()->id) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '不能抱自己上麦');
+//            }
+//
+//            //当前用户不在房间
+//            if (!$this->otherUser()->isInRoom($room_seat->room)) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
+//            }
+//
+//            //当前用户已在麦位
+//            if ($this->otherUser()->current_room_seat_id) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
+//            }
+//
+//        } else {
+//
+//            if ($room_seat->isClose()) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
+//            }
+//
+//            //房主不能上自己的麦位
+//            if ($room_seat->room->user_id === $this->currentUser()->id) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
+//            }
+//
+//            //当前用户已在麦位
+//            $current_room_seat = $this->currentUser()->current_room_seat;
+//
+//            if ($current_room_seat) {
+//                $current_room_seat->down($this->currentUser());
+//                debug("change_room_seat", $current_room_seat->id, $room_seat->id, $this->currentUser()->id);
+//            }
+//        }
 
         // 抱用户上麦
-        $room_seat->up($this->currentUser(), $this->otherUser());
+        list($error_code, $error_reason) = $room_seat->up($this->currentUser(), $this->otherUser());
 
         unlock($room_seat_lock);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
+        return $this->renderJSON($error_code, $error_reason, $room_seat->toSimpleJson());
     }
 
     function downAction()
