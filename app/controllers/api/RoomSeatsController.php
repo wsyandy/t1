@@ -27,7 +27,7 @@ class RoomSeatsController extends BaseController
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
         if (!$room_seat) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
         if ($room_seat->isClose()) {
@@ -103,7 +103,7 @@ class RoomSeatsController extends BaseController
     // 封麦
     function closeAction()
     {
-        $room_seat_id = $this->params('room_seat_id', 0);
+        $room_seat_id = $this->params('id', 0);
 
         if (!$room_seat_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -112,6 +112,10 @@ class RoomSeatsController extends BaseController
         $lock = tryLock("room_seat_lock{$room_seat_id}", 1000);
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
+
+        if (!$room_seat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+        }
 
         if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
