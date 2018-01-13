@@ -212,7 +212,7 @@ class RoomSeats extends BaseModel
             }
 
             //当前用户不在房间
-            if ($other_user->isInRoom($this->room)) {
+            if (!$other_user->isInRoom($this->room)) {
                 return [ERROR_CODE_FAIL, '用户不在房间'];
             }
 
