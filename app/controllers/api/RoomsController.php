@@ -274,10 +274,6 @@ class RoomsController extends BaseController
     // 踢出房间
     function kickingAction()
     {
-        if (!$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
-
         $room = \Rooms::findFirstById($this->params('id', 0));
 
         if (!$room) {
@@ -288,9 +284,14 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
+        $room_seat_user_lock_key = "room_seat_lock{$this->otherUser()->id}";
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+
         $room->exitRoom($this->otherUser());
         $room->forbidEnter($this->otherUser());
 
+        unlock($room_seat_user_lock);
+        
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
             'name' => $room->name, 'channel_name' => $room->channel_name]);
     }

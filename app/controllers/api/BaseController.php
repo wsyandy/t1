@@ -35,7 +35,7 @@ class BaseController extends ApplicationController
         'followers' => ['create', 'destroy'],
         'friends' => ['create', 'destroy', 'agree'],
         'users' => ['other_detail'],
-        'rooms' => ['open_user_chat', 'close_user_chat'],
+        'rooms' => ['open_user_chat', 'close_user_chat', 'kicking'],
     ];
 
     static $SKIP_USER_INFO_ACTIONS = [
