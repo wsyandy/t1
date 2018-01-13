@@ -30,6 +30,8 @@ class RoomSeatsController extends BaseController
             $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         }
 
+        info("user_lock", $room_seat_user_lock_key);
+
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
 
