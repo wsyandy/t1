@@ -30,7 +30,7 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        if ($room_seat_id->isClose()) {
+        if ($room_seat->isClose()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
         }
 
