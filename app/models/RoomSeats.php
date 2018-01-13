@@ -79,6 +79,13 @@ class RoomSeats extends BaseModel
     // 上麦
     function up($user, $other_user = null)
     {
+        $res = $this->canUp($user, $other_user);
+
+        list($error_code, $error_reason) = $res;
+
+        if (ERROR_CODE_FAIL == $error_code) {
+            return $res;
+        }
 
         // 抱用户上麦
         if ($other_user) {
@@ -95,6 +102,7 @@ class RoomSeats extends BaseModel
             $other_user->update();
 
             $this->room->updateUserRank($other_user);
+
         } else {
 
             // 自己上麦
@@ -112,6 +120,8 @@ class RoomSeats extends BaseModel
         $this->update();
 
         debug($user->device->device_no, $this->user_id);
+
+        return $res;
     }
 
     // 下麦
@@ -181,5 +191,56 @@ class RoomSeats extends BaseModel
     function isOpen()
     {
         return STATUS_ON == $this->status;
+    }
+
+    //能否上麦
+    function canUp($user, $other_user = null)
+    {
+        if ($this->user_id) {
+            return [ERROR_CODE_SUCCESS, '麦位已存在用户'];
+        }
+
+        if ($other_user) {
+
+            if (!$user->isRoomHost($this->room)) {
+                return [ERROR_CODE_FAIL, '您无此权限'];
+            }
+
+            //不能抱自己上麦
+            if ($other_user->id === $user->id) {
+                return [ERROR_CODE_FAIL, '不能抱自己上麦'];
+            }
+
+            //当前用户不在房间
+            if (!$other_user->isInRoom($this->room)) {
+                return [ERROR_CODE_FAIL, '用户不在房间'];
+            }
+
+            //当前用户已在麦位
+            if ($other_user->current_room_seat_id) {
+                return [ERROR_CODE_FAIL, '用户已在麦位'];
+            }
+
+        } else {
+
+            if ($this->isClose()) {
+                return [ERROR_CODE_FAIL, '麦位已被封'];
+            }
+
+            //房主不能上自己的麦位
+            if ($this->room->user_id === $user->id) {
+                return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
+            }
+
+            //当前用户已在麦位
+            $current_room_seat = $user->current_room_seat;
+
+            if ($current_room_seat) {
+                $current_room_seat->down($user);
+                debug("change_room_seat", $current_room_seat->id, $this->id, $user->id);
+            }
+        }
+
+        return [ERROR_CODE_SUCCESS, ''];
     }
 }
