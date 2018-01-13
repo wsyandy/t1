@@ -96,6 +96,13 @@ class SmsHistories extends BaseModel
             return [ERROR_CODE_SUCCESS, '发送成功', 'test'];
         }
 
+        // 防双击，网络异常
+        $lock_key = "mobile_send_auth_code_lock{$mobile}";
+        $hot_cache = self::getHotWriteCache();
+        if ($mobile && !$hot_cache->set($lock_key, 1, ['NX', 'EX' => 2])) {
+            return [ERROR_CODE_FAIL, '网络异常，请稍后', ''];
+        }
+
         $user_id = fetch($opts, 'user_id');
         $device_id = fetch($opts, 'device_id');
         $cache_key = '';
@@ -196,6 +203,11 @@ class SmsHistories extends BaseModel
         }
 
         $hot_cache = self::getHotWriteCache();
+        // 防双击，网络异常
+        $lock_key = "mobile_check_auth_code_lock{$mobile}";
+        if ($mobile && !$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
+            return [ERROR_CODE_FAIL, '网络异常，请稍后'];
+        }
 
         $auth_type = fetch($opts, 'auth_type');
         if (!$auth_code || !$sms_token) {

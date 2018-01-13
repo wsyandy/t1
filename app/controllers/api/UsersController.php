@@ -26,13 +26,6 @@ class UsersController extends BaseController
 
         $opts = $this->context();
 
-        // 防双击，网络异常
-        $lock_key = "mobile_login_lock{$mobile}";
-        $hot_cache = \SmsHistories::getHotWriteCache();
-        if ($mobile && !$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '网络异常，请稍后');
-        }
-
         list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $opts);
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
@@ -60,13 +53,6 @@ class UsersController extends BaseController
     function sendAuthAction()
     {
         $mobile = $this->params('mobile');
-
-        // 防双击，网络异常
-        $lock_key = "mobile_send_auth_lock{$mobile}";
-        $hot_cache = \SmsHistories::getHotWriteCache();
-        if ($mobile && !$hot_cache->set($lock_key, 1, ['NX', 'EX' => 2])) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '网络异常，请稍后');
-        }
 
         $context = $this->context();
         $context['device_id'] = $this->currentDeviceId();
@@ -106,7 +92,6 @@ class UsersController extends BaseController
             }
 
             $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
-
             if (!$user) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
             }
@@ -115,13 +100,6 @@ class UsersController extends BaseController
 
                 //开发环境单独验证
                 if (!(isDevelopmentEnv() && '1234' == $auth_code)) {
-
-                    // 防双击，网络异常
-                    $lock_key = "mobile_login_lock{$mobile}";
-                    $hot_cache = \SmsHistories::getHotWriteCache();
-                    if ($mobile && !$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
-                        return $this->renderJSON(ERROR_CODE_FAIL, '网络异常，请稍后');
-                    }
 
                     $context = $this->context();
                     list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
