@@ -395,5 +395,8 @@ class MeiTask extends \Phalcon\Cli\Task
         if (!$hot_cache->set($key, 1, ['NX', 'PX' => 1000])) {
             echoLine("操作频繁");
         }
+
+        $user = Users::findFirstById(137);
+        echoLine($user);
     }
 }

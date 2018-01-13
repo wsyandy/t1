@@ -133,6 +133,11 @@ class Rooms extends BaseModel
 
         // 麦位
         $room_seat = RoomSeats::findFirstById($user->current_room_seat_id);
+
+        if (!$room_seat) {
+            $room_seat = RoomSeats::findFirstByUserId($user->id);
+        }
+
         if ($room_seat) {
             $room_seat->user_id = 0;
             $room_seat->save();
@@ -283,7 +288,7 @@ class Rooms extends BaseModel
         $key = "room_forbid_user_room{$this->id}_user{$user->id}";
 
         info($key);
-        
+
         $hot_cache->setex($key, $time, 1);
     }
 
