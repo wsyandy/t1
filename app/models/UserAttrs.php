@@ -24,7 +24,7 @@ trait UserAttrs
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'friend_num' => $this->friend_num,
-            'total_friend_num' => $this->total_friend_num,
+            'new_friend_num' => $this->total_friend_num,
             'room_id' => $this->room_id,
             'height' => $this->height,
             'interests' => $this->interests,
@@ -79,7 +79,7 @@ trait UserAttrs
             'monologue' => $this->monologue,
             'age' => $this->age,
             'friend_num' => $this->friend_num,
-            'total_friend_num' => $this->total_friend_num
+            'new_friend_num' => $this->total_friend_num
         ];
 
         if (isset($this->friend_status)) {

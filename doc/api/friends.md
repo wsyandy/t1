@@ -35,7 +35,7 @@
             friend_status_text string 好友状态名称
             self_introduce 自我介绍
             friend_num 好友人数
-            total_friend_num 总好友个数，包括已添加、等待验证、等待接受好友
+            new_friend_num 新好友人数
         }
     ] 
 }
