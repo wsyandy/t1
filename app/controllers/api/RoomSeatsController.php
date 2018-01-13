@@ -57,10 +57,6 @@ class RoomSeatsController extends BaseController
 
         } else {
 
-            $room_seat_operation_key = "room_seat_operation{$room_seat->id}_user{$this->currentUser()->id}";
-
-            $room_seat_operation_lock = tryLock($room_seat_operation_key, 500);
-
             //房主不能上自己的麦位
             if ($room_seat->room->user_id === $this->currentUser()->id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不能上自己的麦位');
@@ -77,8 +73,6 @@ class RoomSeatsController extends BaseController
                 $current_room_seat->down($this->currentUser());
                 debug("change_room_seat", $current_room_seat->id, $room_seat->id, $this->currentUser()->id);
             }
-
-            unlock($room_seat_operation_lock);
         }
 
         // 抱用户上麦
@@ -109,15 +103,13 @@ class RoomSeatsController extends BaseController
     // 封麦
     function closeAction()
     {
-        $room_seat_id = $this->params('id', 0);
+        $room_seat_id = $this->params('room_seat_id', 0);
 
-        $room_seat = \RoomSeats::findFirstById($room_seat_id);
-
-        if (!$room_seat) {
+        if (!$room_seat_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $lock = tryLock("room_seat_lock{$room_seat->id}", 1000);
+        $lock = tryLock("room_seat_lock{$room_seat_id}", 1000);
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
