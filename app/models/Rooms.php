@@ -282,6 +282,8 @@ class Rooms extends BaseModel
 
         $key = "room_forbid_user_room{$this->id}_user{$user->id}";
 
+        info($key);
+        
         $hot_cache->setex($key, $time, 1);
     }
 
