@@ -286,7 +286,7 @@ class RoomsController extends BaseController
 
         $other_user_id = $this->otherUserId();
 
-        $room_seat_user_lock_key = "room_seat_lock{$other_user_id}";
+        $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
 
         $other_user = $this->otherUser(true);

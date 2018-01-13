@@ -24,10 +24,10 @@ class RoomSeatsController extends BaseController
         $other_user_id = $this->otherUserId();
 
         $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
-        $room_seat_user_lock_key = "room_seat_lock{$current_user_id}";
+        $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
 
         if ($other_user_id) {
-            $room_seat_user_lock_key = "room_seat_lock{$other_user_id}";
+            $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         }
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
@@ -65,10 +65,10 @@ class RoomSeatsController extends BaseController
         $other_user_id = $this->otherUserId();
 
         $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
-        $room_seat_user_lock_key = "room_seat_lock{$current_user_id}";
+        $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
 
         if ($other_user_id) {
-            $room_seat_user_lock_key = "room_seat_lock{$other_user_id}";
+            $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         }
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
@@ -110,10 +110,10 @@ class RoomSeatsController extends BaseController
         $current_user_id = $this->currentUserId();
         $other_user_id = $this->otherUserId();
 
-        $room_seat_user_lock_key = "room_seat_lock{$current_user_id}";
+        $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
 
         if ($other_user_id) {
-            $room_seat_user_lock_key = "room_seat_lock{$other_user_id}";
+            $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         }
 
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
