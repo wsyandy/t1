@@ -244,6 +244,11 @@ class RoomSeats extends BaseModel
             if ($this->room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
             }
+
+            //当前用户已在麦位
+            if ($user->current_room_seat_id) {
+                return [ERROR_CODE_FAIL, '用户已在麦位'];
+            }
         }
 
         return [ERROR_CODE_SUCCESS, ''];
