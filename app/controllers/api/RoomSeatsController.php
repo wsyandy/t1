@@ -14,15 +14,25 @@ class RoomSeatsController extends BaseController
 
     function upAction()
     {
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+        $room_seat_id = $this->params('id', 0);
+
+        if (!$room_seat_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
+
+        $room_seat_lock = tryLock($room_seat_lock_key, 1000);
+
+        $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $room_seat_lock_key = "room_seat_lock{$room_seat->id}";
-
-        $room_seat_lock = tryLock($room_seat_lock_key, 1000);
+        if ($room_seat_id->isClose()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位已被封');
+        }
 
         if ($this->otherUser()) {
 
@@ -99,13 +109,17 @@ class RoomSeatsController extends BaseController
     // 封麦
     function closeAction()
     {
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+        $room_seat_id = $this->params('id', 0);
+
+        $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
         $lock = tryLock("room_seat_lock{$room_seat->id}", 1000);
+
+        $room_seat = \RoomSeats::findFirstById($room_seat_id);
 
         if (!$this->currentUser()->isRoomHost($room_seat->room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');

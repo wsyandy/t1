@@ -172,4 +172,14 @@ class RoomSeats extends BaseModel
 
         return $microphone_text;
     }
+
+    function isClose()
+    {
+        return STATUS_OFF == $this->status;
+    }
+
+    function isOpen()
+    {
+        return STATUS_ON == $this->status;
+    }
 }
