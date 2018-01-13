@@ -115,7 +115,6 @@ class UsersController extends BaseController
 
                 //开发环境单独验证
                 if (!(isDevelopmentEnv() && '1234' == $auth_code)) {
-                    $context = $this->context();
 
                     // 防双击，网络异常
                     $lock_key = "mobile_login_lock{$mobile}";
@@ -124,6 +123,7 @@ class UsersController extends BaseController
                         return $this->renderJSON(ERROR_CODE_FAIL, '网络异常，请稍后');
                     }
 
+                    $context = $this->context();
                     list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
                         $mobile, $auth_code, $sms_token, $context);
 
