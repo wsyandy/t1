@@ -30,10 +30,16 @@ class RoomSeatsController extends BaseController
             $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         }
 
-        info("user_lock", $room_seat_user_lock_key);
-
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
-        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+
+        $hot_cache = \RoomSeats::getHotWriteCache();
+
+        //上麦强制丢弃
+        if (!$hot_cache->set($room_seat_user_lock_key, 1, ['NX', 'PX' => 1000])) {
+            $hot_cache->del($room_seat_user_lock_key);
+            info("user_lock", $room_seat_user_lock_key);
+            return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
+        }
 
         $current_user = $this->currentUser(true);
         $other_user = $this->otherUser(true);
@@ -42,7 +48,6 @@ class RoomSeatsController extends BaseController
 
         if (!$room_seat) {
             unlock($room_seat_lock);
-            unlock($room_seat_user_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
@@ -50,7 +55,6 @@ class RoomSeatsController extends BaseController
         list($error_code, $error_reason) = $room_seat->up($current_user, $other_user);
 
         unlock($room_seat_lock);
-        unlock($room_seat_user_lock);
 
         return $this->renderJSON($error_code, $error_reason, $room_seat->toSimpleJson());
     }
