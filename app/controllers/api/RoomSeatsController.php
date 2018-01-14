@@ -48,12 +48,14 @@ class RoomSeatsController extends BaseController
 
         if (!$room_seat) {
             unlock($room_seat_lock);
+            $hot_cache->del($room_seat_user_lock_key);
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
         // 抱用户上麦
         list($error_code, $error_reason) = $room_seat->up($current_user, $other_user);
-
+        
+        $hot_cache->del($room_seat_user_lock_key);
         unlock($room_seat_lock);
 
         return $this->renderJSON($error_code, $error_reason, $room_seat->toSimpleJson());
