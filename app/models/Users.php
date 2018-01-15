@@ -1364,9 +1364,13 @@ class Users extends BaseModel
     }
 
     //判断用户是否在指定的房间
-    function isInRoom($room)
+    function isInRoom($room = null)
     {
-        return $this->current_room_id == $room->id;
+        if ($room) {
+            return $this->current_room_id == $room->id;
+        }
+        
+        return intval($this->current_room_id) > 0;
     }
 
     //判断用户是否在指定的麦位
