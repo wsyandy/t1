@@ -34,7 +34,8 @@ class VoiceCalls extends BaseModel
         CALL_STATUS_BUSY => '对方忙',
         CALL_STATUS_REFUSE => '对方已拒绝',
         CALL_STATUS_CANCEL => '已取消',
-        CALL_STATUS_HANG_UP => '挂断'
+        CALL_STATUS_HANG_UP => '挂断',
+        CALL_STATUS_ANSWERED => '接听',
     );
 
     static $receiver_call_status = array(
@@ -43,7 +44,8 @@ class VoiceCalls extends BaseModel
         CALL_STATUS_BUSY => '未接来电',
         CALL_STATUS_REFUSE => '已拒绝来电',
         CALL_STATUS_CANCEL => '未接来电',
-        CALL_STATUS_HANG_UP => '挂断'
+        CALL_STATUS_HANG_UP => '挂断',
+        CALL_STATUS_ANSWERED => '接听',
     );
 
     static $call_status = array(
@@ -52,8 +54,16 @@ class VoiceCalls extends BaseModel
         CALL_STATUS_BUSY => '对方忙',
         CALL_STATUS_REFUSE => '对方拒绝',
         CALL_STATUS_CANCEL => '取消',
-        CALL_STATUS_HANG_UP => '挂断'
+        CALL_STATUS_HANG_UP => '挂断',
+        CALL_STATUS_ANSWERED => '接听',
     );
+
+    static function getCacheEndpoint($id)
+    {
+        $config = self::di('config');
+        $cache_dbs = explode(',', $config->cache_endpoint);
+        return $cache_dbs[0];
+    }
 
     function toSimpleJson()
     {
@@ -76,10 +86,28 @@ class VoiceCalls extends BaseModel
         $voice_call->receiver_id = $receiver->id;
         $voice_call->call_status = CALL_STATUS_WAIT;
         $voice_call->call_no = $voice_call->generateCallNo();
+        if ($voice_call->isReceiverBusy()) {
+            $voice_call->call_status = CALL_STATUS_BUSY;
+        }
         if ($voice_call->create()) {
+            debug("call_status: " . $voice_call->call_status);
+            if (!$voice_call->isBusy()) {
+                $voice_call->changeUserBusy();
+                \VoiceCalls::delay(80)->asyncCheckCallStatus($voice_call->id);
+            }
             return $voice_call;
         }
         return false;
+    }
+
+    static function asyncCheckCallStatus($voice_call_id)
+    {
+        $voice_call = \VoiceCalls::findById($voice_call_id);
+        if ($voice_call) {
+            if ($voice_call->isCallStatusWait() && (time() - $voice_call->created_at > 60)) {
+                $voice_call->changeStatus(CALL_STATUS_NO_ANSWER);
+            }
+        }
     }
 
     static function findListByUser($reader, $page, $per_page)
@@ -130,7 +158,9 @@ class VoiceCalls extends BaseModel
     function changeStatus($call_status)
     {
         $this->call_status = $call_status;
-        $this->update();
+        if ($this->update() && !$this->isCallStatusAnswered()) {
+            $this->changeUserFree();
+        }
     }
 
     function beforeUpdate()
@@ -197,6 +227,62 @@ class VoiceCalls extends BaseModel
     function assignIsSend($reader)
     {
         $this->is_send = $this->sender_id == $reader->id;
+    }
+
+    function isCallStatusWait()
+    {
+        return CALL_STATUS_WAIT == $this->call_status;
+    }
+
+    function isCallStatusAnswered()
+    {
+        return CALL_STATUS_ANSWERED == $this->call_status;
+    }
+
+    function isBusy()
+    {
+        return CALL_STATUS_BUSY == $this->call_status;
+    }
+
+    function isReceiverBusy()
+    {
+        $redis = \VoiceCalls::getXRedis($this->receiver_id);
+        $key = \VoiceCalls::userCacheKey($this->receiver_id);
+        $result = $redis->get($key);
+
+        return intval($result) > 0;
+    }
+
+    static function userCacheKey($user_id)
+    {
+        return "voice_calling_" . $user_id;
+    }
+
+    static function userBusy($user_id)
+    {
+        $redis = \VoiceCalls::getXRedis($user_id);
+        $key = \VoiceCalls::userCacheKey($user_id);
+        $redis->setex($key, 60*60*2, 1);
+    }
+
+    static function freeUser($user_id)
+    {
+        $key = self::userCacheKey($user_id);
+        $redis = \VoiceCalls::getXRedis($user_id);
+
+        $redis->del($key);
+    }
+
+    function changeUserBusy()
+    {
+       \VoiceCalls::userBusy($this->sender_id);
+       \VoiceCalls::userBusy($this->receiver_id);
+    }
+
+    function changeUserFree()
+    {
+        \VoiceCalls::freeUser($this->sender_id);
+        \VoiceCalls::freeUser($this->receiver_id);
     }
 
 }

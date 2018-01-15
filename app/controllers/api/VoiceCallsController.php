@@ -28,13 +28,16 @@ class VoiceCallsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '不能打给自己');
         }
         if (!$this->currentUser()->isFriend($receiver)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
+            //return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);
         $call_no = $voice_call->call_no;
 
         if ($voice_call) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '等待接听',
+            if ($voice_call->isBusy()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '对方正忙');
+            }
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '拨打成功',
                 [
                     'call_no' => $call_no,
                     'channel_name' => $call_no,
