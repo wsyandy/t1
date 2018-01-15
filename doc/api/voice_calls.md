@@ -62,8 +62,8 @@
             call_no: ''
             created_at: 111
             duration: 10
-            call_status: 'wait/no_answer/busy/refuse/cancel/hang_up'
-            call_status_text: '等待接听/无应答/对方正忙/拒绝/取消/挂断'
+            call_status: '0/1/2/3/4/5/6'
+            call_status_text: '等待接听/无应答/对方正忙/拒绝/取消/挂断/接听'
         }
     ]
 }
