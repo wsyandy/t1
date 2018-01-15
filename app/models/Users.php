@@ -1027,6 +1027,11 @@ class Users extends BaseModel
         $self_introduce = fetch($opts, 'self_introduce');
 
         $user_db = Users::getUserDb();
+        $added_num_key = 'added_friend_num_user_id_' . $other_user->id;
+
+        if (!$user_db->zscore($added_key, $this->id)) {
+            $user_db->incr($added_num_key);
+        }
 
         //在添加我的队列里面清掉对方的id
         if ($user_db->zscore('added_friend_list_user_id_' . $this->id, $other_user->id)) {
@@ -1183,9 +1188,16 @@ class Users extends BaseModel
 
     function newFriendNum()
     {
-        $key = 'friend_total_list_user_id_' . $this->id;
+        $key = 'added_friend_num_user_id_' . $this->id;
         $user_db = Users::getUserDb();
-        return $user_db->zcard($key);
+        return intval($user_db->get($key));
+    }
+
+    function clearNewFriendNum()
+    {
+        $key = 'added_friend_num_user_id_' . $this->id;
+        $user_db = Users::getUserDb();
+        $user_db->del($key);
     }
 
 

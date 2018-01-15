@@ -404,5 +404,14 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $user = Users::findFirstById(194);
         echoLine($user);
+
+        $province = Provinces::findFirstByName("天津");
+        echoLine($province);
+
+        $cities = Cities::findFirstByProvinceId(3);
+
+        foreach ($cities as $city) {
+            echoLine($city);
+        }
     }
 }
