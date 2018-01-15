@@ -16,9 +16,10 @@ class FriendsController extends BaseController
         $new = $this->params('new', 0);
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
-        $users = $this->currentUser()->friendList($page, $per_page, $new);
         $friend_num = $this->currentUser()->friend_num;
         $new_friend_num = $this->currentUser()->new_friend_num;
+        $users = $this->currentUser()->friendList($page, $per_page, $new);
+
         $num = [];
         $num['friend_num'] = $friend_num;
         $num['new_friend_num'] = $new_friend_num;
@@ -37,6 +38,10 @@ class FriendsController extends BaseController
         $opts = [];
 
         $opts['self_introduce'] = $self_introduce;
+
+        if ($this->currentUser()->isFriend($this->otherUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已添加好友');
+        }
 
         $this->currentUser()->addFriend($this->otherUser(), $opts);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');

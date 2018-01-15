@@ -1027,6 +1027,11 @@ class Users extends BaseModel
         $self_introduce = fetch($opts, 'self_introduce');
 
         $user_db = Users::getUserDb();
+        $added_num_key = 'added_friend_num_user_id_' . $other_user->id;
+
+        if (!$user_db->zscore($added_key, $this->id)) {
+            $user_db->incr($added_num_key);
+        }
 
         //在添加我的队列里面清掉对方的id
         if ($user_db->zscore('added_friend_list_user_id_' . $this->id, $other_user->id)) {
@@ -1116,6 +1121,8 @@ class Users extends BaseModel
     function friendList($page, $per_page, $new)
     {
         if (1 == $new) {
+            //进入列表清空消息
+            $this->clearNewFriendNum();
             $key = 'friend_total_list_user_id_' . $this->id;
         } else {
             $key = 'friend_list_user_id_' . $this->id;
@@ -1183,9 +1190,16 @@ class Users extends BaseModel
 
     function newFriendNum()
     {
-        $key = 'friend_total_list_user_id_' . $this->id;
+        $key = 'added_friend_num_user_id_' . $this->id;
         $user_db = Users::getUserDb();
-        return $user_db->zcard($key);
+        return intval($user_db->get($key));
+    }
+
+    function clearNewFriendNum()
+    {
+        $key = 'added_friend_num_user_id_' . $this->id;
+        $user_db = Users::getUserDb();
+        $user_db->del($key);
     }
 
 
@@ -1352,9 +1366,13 @@ class Users extends BaseModel
     }
 
     //判断用户是否在指定的房间
-    function isInRoom($room)
+    function isInRoom($room = null)
     {
-        return $this->current_room_id == $room->id;
+        if ($room) {
+            return $this->current_room_id == $room->id;
+        }
+
+        return intval($this->current_room_id) > 0;
     }
 
     //判断用户是否在指定的麦位
