@@ -14,9 +14,9 @@ class VoiceCallsTask extends \Phalcon\Cli\Task
 
     function testCreateAction($params = array())
     {
-        $url = 'http://ctest.yueyuewo.cn/api/voice_calls';
-        $user_id = fetch($params, 'user_id', 75);
-        $receiver_id = fetch($params, 'receiver_id', 79);
+        $url = 'http://www.chance_php.com/api/voice_calls';
+        $user_id = fetch($params, 'user_id', 1);
+        $receiver_id = fetch($params, 'receiver_id', 2);
         $user = \Users::findById($user_id);
         $receiver = \Users::findById($receiver_id);
         $body = array_merge($this->commonBody(), array('sid' => $user->sid, 'user_id' => $receiver->id));
@@ -25,7 +25,7 @@ class VoiceCallsTask extends \Phalcon\Cli\Task
         $res = json_decode($res, true);
         $call_no = $res['call_no'];
         $call_status = fetch($params, 'call_status', CALL_STATUS_BUSY);
-        $this->updateStatus($call_no, $call_status);
+        //$this->updateStatus($call_no, $call_status);
     }
 
     function updateStatus($call_no, $call_status)

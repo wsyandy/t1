@@ -55,6 +55,13 @@ class VoiceCalls extends BaseModel
         CALL_STATUS_HANG_UP => '挂断'
     );
 
+    static function getCacheEndpoint($id)
+    {
+        $config = self::di('config');
+        $cache_dbs = explode(',', $config->cache_endpoint);
+        return $cache_dbs[0];
+    }
+
     function toSimpleJson()
     {
         return array(
@@ -76,7 +83,14 @@ class VoiceCalls extends BaseModel
         $voice_call->receiver_id = $receiver->id;
         $voice_call->call_status = CALL_STATUS_WAIT;
         $voice_call->call_no = $voice_call->generateCallNo();
+        if ($voice_call->isReceiverBusy()) {
+            $voice_call->call_status = CALL_STATUS_BUSY;
+        }
         if ($voice_call->create()) {
+            debug("call_status: " . $voice_call->call_status);
+            if (!$voice_call->isBusy()) {
+                $voice_call->changeUserBusy();
+            }
             return $voice_call;
         }
         return false;
@@ -130,7 +144,9 @@ class VoiceCalls extends BaseModel
     function changeStatus($call_status)
     {
         $this->call_status = $call_status;
-        $this->update();
+        if ($this->update()) {
+            $this->changeUserFree();
+        }
     }
 
     function beforeUpdate()
@@ -197,6 +213,57 @@ class VoiceCalls extends BaseModel
     function assignIsSend($reader)
     {
         $this->is_send = $this->sender_id == $reader->id;
+    }
+
+    function isCallStatusWait()
+    {
+        return CALL_STATUS_WAIT == $this->call_status;
+    }
+
+    function isBusy()
+    {
+        return CALL_STATUS_BUSY == $this->call_status;
+    }
+
+    function isReceiverBusy()
+    {
+        $redis = \VoiceCalls::getXRedis($this->receiver_id);
+        $key = \VoiceCalls::userCacheKey($this->receiver_id);
+        $result = $redis->get($key);
+
+        return intval($result) > 0;
+    }
+
+    static function userCacheKey($user_id)
+    {
+        return "voice_calling_" . $user_id;
+    }
+
+    static function userBusy($user_id)
+    {
+        $redis = \VoiceCalls::getXRedis($user_id);
+        $key = \VoiceCalls::userCacheKey($user_id);
+        $redis->setex($key, 60*60*2, 1);
+    }
+
+    static function freeUser($user_id)
+    {
+        $key = self::userCacheKey($user_id);
+        $redis = \VoiceCalls::getXRedis($user_id);
+
+        $redis->del($key);
+    }
+
+    function changeUserBusy()
+    {
+       \VoiceCalls::userBusy($this->sender_id);
+       \VoiceCalls::userBusy($this->receiver_id);
+    }
+
+    function changeUserFree()
+    {
+        \VoiceCalls::freeUser($this->sender_id);
+        \VoiceCalls::freeUser($this->receiver_id);
     }
 
 }
