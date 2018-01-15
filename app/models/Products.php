@@ -75,7 +75,8 @@ class Products extends BaseModel
             [
                 'product_channel_id' => $user->product_channel_id,
                 'fee_type' => $fee_type,
-                'status' => STATUS_ON
+                'status' => STATUS_ON,
+                'order' => 'amount asc'
             ]
         );
         if (isBlank($product_groups)) {
