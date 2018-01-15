@@ -1121,6 +1121,8 @@ class Users extends BaseModel
     function friendList($page, $per_page, $new)
     {
         if (1 == $new) {
+            //进入列表清空消息
+            $this->clearNewFriendNum();
             $key = 'friend_total_list_user_id_' . $this->id;
         } else {
             $key = 'friend_list_user_id_' . $this->id;
@@ -1369,7 +1371,7 @@ class Users extends BaseModel
         if ($room) {
             return $this->current_room_id == $room->id;
         }
-        
+
         return intval($this->current_room_id) > 0;
     }
 
