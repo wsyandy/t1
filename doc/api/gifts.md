@@ -16,7 +16,7 @@
     error_code:   0/-1  
     error_reason: '返回码说明'  
     diamond: 100
-    pay_url: 'http://order/m/xxx'
+    pay_url: 'url://m/products'
     total_page: 10
     current_page: 1
     total_entries: 100   
