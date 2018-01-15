@@ -44,3 +44,5 @@ error_url|返回业务数据|string|是| 跳转地址
 current_page|当前页|int|是| 分页查询时返回此参数
 total_page|总页数|int|是| 分页查询时返回此参数
 total_entries|总个数|int|是| 分页查询时返回此参数
+apple_stable_version|ios稳定版本号|int|是|版本号
+android_stable_version|android稳定版本号|int|是|版本号
