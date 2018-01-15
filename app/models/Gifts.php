@@ -115,7 +115,7 @@ class Gifts extends BaseModel
             'bind' => [
                 'status' => GIFT_STATUS_ON
             ],
-            'order' => 'amount desc'];
+            'order' => 'amount asc'];
         $page = 1;
         $per_page = 100;
 
