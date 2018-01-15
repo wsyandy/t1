@@ -399,4 +399,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(137);
         echoLine($user);
     }
+
+    function test18Action()
+    {
+        $user = Users::findFirstById(194);
+        echoLine($user);
+    }
 }

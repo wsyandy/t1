@@ -149,7 +149,7 @@
     status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
-### 7 上麦或抱用户上麦
+### 7 确认上麦
 
 > http-post ```/api/room_seats/confirm_up```
 
@@ -167,7 +167,7 @@
 ```
 
 
-### 8 下麦或设为旁听 
+### 8 取消上麦 
 
 > http-post ```/api/room_seats/cancel_up```
 
