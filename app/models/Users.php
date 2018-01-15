@@ -1266,7 +1266,7 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id!=:user_id:';
+        $condition .= ' and id <> :user_id:';
         $bind['user_id'] = $this->id;
 
         $conds['conditions'] = $condition;
@@ -1276,7 +1276,9 @@ class Users extends BaseModel
         info($this->id, $hash, $conds);
 
         $users = Users::findPagination($conds, $page, $per_page);
+
         if ($users->count() < 3) {
+
             $opts['city_id'] = $this->getSearchCityId();
             if (!$opts['city_id']) {
                 $opts['province_id'] = $this->getSearchProvinceId();
