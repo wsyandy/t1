@@ -149,3 +149,42 @@
     status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
+### 7 上麦或抱用户上麦
+
+> http-post ```/api/room_seats/confirm_up```
+
+##### 7.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|麦位id|int|否||
+
+##### 7.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```
+
+
+### 8 下麦或设为旁听 
+
+> http-post ```/api/room_seats/cancel_up```
+
+##### 8.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|麦位id|int|否||
+
+##### 8.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
+}
+```
