@@ -54,7 +54,7 @@ class RoomSeatsController extends BaseController
 
         // 抱用户上麦
         list($error_code, $error_reason) = $room_seat->up($current_user, $other_user);
-        
+
         $hot_cache->del($room_seat_user_lock_key);
         unlock($room_seat_lock);
 
@@ -205,5 +205,61 @@ class RoomSeatsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
+    //确认上麦
+    function confirmUpAction()
+    {
+        $room_seat_id = $this->params('id', 0);
 
+        if (!$room_seat_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    //取消上麦
+    function cancelUpAction()
+    {
+        $room_seat_id = $this->params('id', 0);
+
+        if (!$room_seat_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $current_user_id = $this->currentUserId();
+        $other_user_id = $this->otherUserId();
+
+        $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
+        $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
+
+        if ($other_user_id) {
+            $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
+        }
+
+        $room_seat_lock = tryLock($room_seat_lock_key, 1000);
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+
+        $current_user = $this->currentUser(true);
+        $other_user = $this->otherUser(true);
+        $room_seat = \RoomSeats::findFirstById($room_seat_id);
+
+        if (!$room_seat) {
+            unlock($room_seat_lock);
+            unlock($room_seat_user_lock);
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+        }
+
+        if ($other_user && !$this->currentUser()->isRoomHost($room_seat->room)) {
+            unlock($room_seat_lock);
+            unlock($room_seat_user_lock);
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room_seat->down($current_user, $other_user);
+
+        unlock($room_seat_lock);
+        unlock($room_seat_user_lock);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
+    }
 }
