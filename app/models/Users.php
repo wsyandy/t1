@@ -1203,11 +1203,11 @@ class Users extends BaseModel
 
     static function search($user, $page, $per_page, $opts = [])
     {
-        $cond = [];
-
         $user_id = fetch($opts, 'user_id');
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
+        } else {
+            $cond = ['conditions' => 'id <> ' . $user->id];
         }
 
         $city_id = fetch($opts, 'city_id');
