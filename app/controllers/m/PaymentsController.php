@@ -40,7 +40,7 @@ class PaymentsController extends BaseController
             return $this->response->redirect($result['url']);
         }
 
-        if ($payment_channel->clazz == "alipay_sdk") {
+        if ($payment_channel->payment_type == "alipay_sdk") {
             $result['rsa2'] = true;
         }
 
