@@ -61,12 +61,11 @@ class PaymentChannels extends BaseModel
     function match($user)
     {
         debug("user: " . $user->platform);
-        if (isDevelopmentEnv()) {
-            return true;
-        }
+
         if ($this->isApple()) {
             return $user->isIos();
         }
+        
         return $user->isAndroid();
     }
 

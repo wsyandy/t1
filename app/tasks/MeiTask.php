@@ -476,4 +476,29 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function userGiftsAction()
+    {
+        $user_gifts = UserGifts::findBy(['user_id' => 192]);
+
+        foreach ($user_gifts as $user_gift) {
+            echoLine($user_gift);
+        }
+
+        $gift_orders = GiftOrders::findBy(['user_id' => 192]);
+
+        foreach ($gift_orders as $gift_order) {
+            echoLine($gift_order);
+        }
+    }
+
+    function paymentChannelAction()
+    {
+        $user = Users::findFirstById(196);
+        $payment_channels = PaymentChannels::selectByUser($user);
+
+        foreach ($payment_channels as $payment_channel) {
+            echoLine("====", $payment_channel);
+        }
+    }
 }
