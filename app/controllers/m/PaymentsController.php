@@ -12,6 +12,8 @@ class PaymentsController extends BaseController
 {
     function createAction()
     {
+        $user = $this->currentUser();
+
         if (isBlank($this->params('product_id'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
@@ -36,6 +38,8 @@ class PaymentsController extends BaseController
         ];
         $result = $payment_channel->gateway()->buildForm($payment, $opts);
 
+        $result_url = '/m/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
+
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);
         }
@@ -48,7 +52,44 @@ class PaymentsController extends BaseController
             'name' => $order->name,
             'amount' => $order->amount,
             'payment_id' => $payment->id,
-            'payment_no' => $payment->payment_no
+            'payment_no' => $payment->payment_no,
+            'result_url' => $result_url
         ], $result));
     }
+
+    function resultAction()
+    {
+
+        $order_no = $this->params('order_no');
+        $order = \Orders::findFirstByOrderNo($order_no);
+
+        if (!$order || $order->user_id != $this->currentUser()->id) {
+            if ($this->request->isAjax()) {
+                $this->renderJSON(ERROR_CODE_FAIL, '订单不存在!');
+            }
+            return;
+        }
+
+        $this->view->order = $order;
+        $this->view->user = $this->currentUser();
+        $this->view->product_channel = $this->currentUser()->product_channel;
+
+        $payment = \Payments::findFirstByOrderId($order->id);
+
+        if (!$payment) {
+            if ($this->request->isAjax()) {
+                $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
+            }
+            return;
+        }
+
+        if ($this->request->isAjax()) {
+            $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pay_status' => $payment->pay_status]);
+            return;
+        }
+
+        $this->view->title = '支付结果';
+        $this->view->payment = $payment;
+    }
+
 }
