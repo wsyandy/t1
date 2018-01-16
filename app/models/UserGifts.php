@@ -24,7 +24,7 @@ class UserGifts extends BaseModel
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
         }
-        $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id]);
+        $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findById($gift_order->gift_id);
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
