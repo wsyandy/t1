@@ -39,6 +39,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($users as $user) {
             $current_room = $user->current_room;
             if ($current_room) {
+                info($current_room->id, $user->id);
                 $current_room->exitRoom($user);
             }
         }
