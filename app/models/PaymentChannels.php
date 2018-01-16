@@ -28,7 +28,7 @@ class PaymentChannels extends BaseModel
         ];
     }
 
-    function getGatewayClasses()
+    static function getGatewayClasses()
     {
         return \paygateway\Base::getGatewayNames();
     }
