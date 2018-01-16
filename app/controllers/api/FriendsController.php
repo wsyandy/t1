@@ -23,7 +23,7 @@ class FriendsController extends BaseController
         $num = [];
         $num['friend_num'] = $friend_num;
         $num['new_friend_num'] = $new_friend_num;
-        if ($users) {
+        if (count($users)) {
             $res = $users->toJson('users', 'toRelationJson');
             $opts = array_merge($res, $num);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
