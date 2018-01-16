@@ -15,12 +15,6 @@ class PaymentChannels extends BaseModel
         'apple' => 'apple'
     ];
 
-    static $clazz = [
-        'Weixin' => 'Weixin', 'WeixinH5' => 'WeixinH5',
-        'AlipaySdk' => 'AlipaySdk', 'AlipayH5' => 'AlipayH5',
-        'Apple' => 'Apple',
-    ];
-
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
     function toJson()
@@ -32,6 +26,11 @@ class PaymentChannels extends BaseModel
             'mer_name' => $this->mer_name,
             'status_text' => $this->status_text
         ];
+    }
+
+    static function getGatewayClasses()
+    {
+        return \paygateway\Base::getGatewayNames();
     }
 
     function gateway()

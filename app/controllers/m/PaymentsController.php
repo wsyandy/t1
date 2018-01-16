@@ -35,8 +35,13 @@ class PaymentsController extends BaseController
             'mobile' => $this->currentUser()->mobile
         ];
         $result = $payment_channel->gateway()->buildForm($payment, $opts);
+
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);
+        }
+
+        if ($payment_channel->clazz == "alipay_sdk") {
+            $result['rsa2'] = true;
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge([
