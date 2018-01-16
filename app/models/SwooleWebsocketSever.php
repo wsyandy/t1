@@ -124,13 +124,13 @@ class SwooleWebsocketSever extends BaseModel
                 return;
             }
 
-            $user_id = self::params($request, 'user_id');
+//            $user_id = self::params($request, 'user_id');
 
-            debug($request->fd, "connect", $user_id);
+            debug($request->fd, "connect");
 
-            if ($user_id) {
-                self::bindFd($user_id, $request->fd);
-            }
+//            if ($user_id) {
+//                self::bindFd($user_id, $request->fd);
+//            }
             $swoole_server->push($request->fd, "hello " . $request->fd);
         });
 
