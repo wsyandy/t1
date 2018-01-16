@@ -428,6 +428,14 @@ class MeiTask extends \Phalcon\Cli\Task
                 echoLine($user->last_at);
             }
         }
+
+        $user = Users::findFirstById(90);
+        echoLine($user);
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_user_list_19';
+        $user_ids = $hot_cache->zrange($key, 0, -1, 'withscores');
+
+        echoLine($user_ids);
     }
 
     function test20Action()

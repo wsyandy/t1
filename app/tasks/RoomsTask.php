@@ -22,7 +22,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             foreach ($users as $user) {
 
-                if ($user->current_room_id != $room->id || !$user->isNormal()) {
+                if ($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) {
                     info($user->id, $room->id, $user->current_room_id);
                     $room->exitRoom($user);
                 }
