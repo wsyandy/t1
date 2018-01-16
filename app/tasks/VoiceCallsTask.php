@@ -24,6 +24,7 @@ class VoiceCallsTask extends \Phalcon\Cli\Task
         var_dump($res);
         $res = json_decode($res, true);
         $call_no = $res['call_no'];
+        echo $call_no . PHP_EOL;
         $call_status = fetch($params, 'call_status', CALL_STATUS_BUSY);
         //$this->updateStatus($call_no, $call_status);
     }
@@ -39,12 +40,12 @@ class VoiceCallsTask extends \Phalcon\Cli\Task
     function testUpdateAction()
     {
         $url = 'http://www.chance_php.com/api/voice_calls/update';
-        $user = \Users::findLast();
+        $user = \Users::findById(1);
 
         $body = array_merge($this->commonBody(), array(
             'sid' => $user->sid,
-            'call_no' => 'CN211515657626',
-            'call_status' => CALL_STATUS_BUSY
+            'call_no' => 'CN121516088185159',
+            'call_status' => CALL_STATUS_HANG_UP
         ));
 
         $res = httpPost($url, $body);
