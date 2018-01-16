@@ -127,4 +127,10 @@ class Payments extends BaseModel
         }
         return false;
     }
+
+    function getCnyAmount()
+    {
+        return $this->amount;
+    }
+
 }

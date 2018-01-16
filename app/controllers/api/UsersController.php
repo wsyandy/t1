@@ -293,7 +293,7 @@ class UsersController extends BaseController
     function setMicrophoneAction()
     {
         $microphone = $this->params('microphone', true);
-        $this->currentUser()->setSpeaker($microphone);
+        $this->currentUser()->setMicrophone($microphone);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
