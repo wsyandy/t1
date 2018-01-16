@@ -17,15 +17,12 @@ class ProductChannelsController extends BaseController
     function aboutAction()
     {
         $user = $this->currentUser();
-        $version = '';
         if ($user) {
-            $device_id = $user->device_id;
-            $device = \Devices::findFirstById($device_id);
-            if ($device) {
-                $version = $device->version_name;
-            }
+            $device = $user->device;
+        } else {
+            $device = $this->currentDevice();
         }
-
+        $version = $device->version_name;
         if (!$version) {
             $version = $this->params("ver");
         }
@@ -36,7 +33,6 @@ class ProductChannelsController extends BaseController
         $this->view->product_channel = $product_channel;
         $this->view->sid = $sid;
         $this->view->version = $version;
-//        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $product_channel->toAboutJson());
     }
 
     function serviceAction()
