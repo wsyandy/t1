@@ -39,7 +39,7 @@
 </div>
 
 <div class="get_out_btn">
-    <a href="/m/orders/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
+    <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
        id="pay_submit_btn" class="account_btn" data-payment_channel_id="{{ selected_payment_channel.id }}" data-payment_type="{{ selected_payment_channel.payment_type }}">确定</a>
 </div>
 
@@ -55,7 +55,7 @@
             payment_channel_id = pay_submit.data('payment_channel_id');
             payment_type = pay_submit.data('payment_type');
         }
-        var original_pay_url = "/m/orders/create?sid=" + '{{ user.sid }}';
+        var original_pay_url = "/m/payments/create?sid=" + '{{ user.sid }}';
         var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type;
         pay_submit.attr('href', pay_url);
         pay_submit.data('payment_channel_id', payment_channel_id);

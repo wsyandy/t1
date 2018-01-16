@@ -8,7 +8,7 @@
 
 namespace m;
 
-class OrdersController extends BaseController
+class PaymentsController extends BaseController
 {
     function createAction()
     {
