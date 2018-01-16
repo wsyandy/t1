@@ -19,11 +19,20 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
 
     function testBuyGiftAction()
     {
-        $user = \Users::findLast();
-        $gift = \Gifts::findLast();
-        $gift_num = 1000;
-        $amount = $gift->amount * $gift_num;
-        $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_BUY_GIFT, $amount);
+        $user = \Users::findById(2);
+        //$gift = \Gifts::findLast();
+        //$gift_num = 1000;
+        //$amount = $gift->amount * $gift_num;
+        $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_BUY_GIFT, 1);
         var_dump($result);
+    }
+
+    function testDiamondAction()
+    {
+        $user = \Users::findById(2);
+        echo $user->diamond . PHP_EOL;
+
+        $user->diamond = 0;
+        $user->update();
     }
 }
