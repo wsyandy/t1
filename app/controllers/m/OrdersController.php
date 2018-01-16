@@ -42,7 +42,8 @@ class OrdersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge([
             'name' => $order->name,
             'amount' => $order->amount,
-            'payment_id' => $payment->id
+            'payment_id' => $payment->id,
+            'payment_no' => $payment->payment_no
         ], $result));
     }
 }
