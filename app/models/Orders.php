@@ -54,4 +54,23 @@ class Orders extends BaseModel
             'product_name' => $this->product->name
         ];
     }
+
+    function getOrderNo()
+    {
+        return $this->id . 'd' . substr(md5($this->id . '$' . $this->user_id), 0, 5);
+    }
+
+    static function findFirstByOrderNo($order_no)
+    {
+        $order = self::findFirstById(intval($order_no));
+        if ($order && $order_no == $order->order_no) {
+            return $order;
+        }
+        return null;
+    }
+
+    function isPaid()
+    {
+        return ORDER_STATUS_SUCCESS == $this->status;
+    }
 }

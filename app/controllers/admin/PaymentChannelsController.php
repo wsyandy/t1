@@ -19,6 +19,7 @@ class PaymentChannelsController extends BaseController
     {
         $payment_channel = new \PaymentChannels();
         $this->view->payment_channel = $payment_channel;
+        $this->view->clazz_names = \PaymentChannels::getGatewayClasses();
     }
 
     function createAction()
@@ -37,6 +38,7 @@ class PaymentChannelsController extends BaseController
     {
         $payment_channel = \PaymentChannels::findById($this->params('id'));
         $this->view->payment_channel = $payment_channel;
+        $this->view->clazz_names = \PaymentChannels::getGatewayClasses();
     }
 
     function updateAction()

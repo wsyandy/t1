@@ -6,7 +6,7 @@
   {{ f.input('app_id', ['label': 'app_id']) }}
   {{ f.input('app_key', ['label': 'app_key']) }}
   {{ f.input('app_password', ['label': 'app_password']) }}
-  {{ f.select('clazz', ['label': '网关', 'collection': PaymentChannels.clazz]) }}
+  {{ f.select('clazz', ['label': '网关', 'collection': clazz_names]) }}
   {{ f.select('payment_type', ['label': '支付类型', 'collection': PaymentChannels.payment_type]) }}
   {{ f.input('gateway_url', ['label': '支付地址']) }}
   {{ f.input('rank', ['label': '排序']) }}
