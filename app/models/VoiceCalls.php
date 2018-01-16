@@ -159,7 +159,7 @@ class VoiceCalls extends BaseModel
     {
         $this->call_status = $call_status;
         if ($this->hasChanged('call_status') && $this->isHangUp()) {
-            $this->duration = time() - $this->updated_at();
+            $this->duration = time() - $this->updated_at;
         }
         if ($this->update() && !$this->isCallStatusAnswered()) {
             $this->changeUserFree();
@@ -187,12 +187,12 @@ class VoiceCalls extends BaseModel
     function getDurationText()
     {
         $duration = intval($this->duration);
-        $min = $duration / 60;
+        $min = floor($duration / 60);
         $sec = $duration % 60;
         if ($sec < 10) {
             $sec = '0' . $sec;
         }
-        $hour = $min / 60;
+        $hour = floor($min / 60);
         if ($hour > 0) {
             $min = $min % 60;
         }

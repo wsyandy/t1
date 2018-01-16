@@ -27,10 +27,10 @@ class VoiceCallsController extends BaseController
         if ($this->currentUserId() == $receiver->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不能打给自己');
         }
-        if (!$this->currentUser()->isFriend($receiver)) {
+        if (!$this->isDebug() && !$this->currentUser()->isFriend($receiver)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友拨打');
         }
-        if ($receiver->isInRoom()) {
+        if ($receiver->isInAnyRoom()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '对方正在直播间内，请稍后再拨');
         }
         $voice_call = \VoiceCalls::createVoiceCall($this->currentUser(), $receiver);

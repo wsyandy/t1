@@ -1357,6 +1357,11 @@ class Users extends BaseModel
         return $this->current_room_id == $room->id;
     }
 
+    function isInAnyRoom()
+    {
+        return $this->current_room_id > 0;
+    }
+
     //判断用户是否在指定的麦位
     function isInRoomSeat($room_seat)
     {
