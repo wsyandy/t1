@@ -134,6 +134,8 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     microphone 麦克风状态 false/true 默认为true
+    followed_num 粉丝人数
+    follow_num 关注人数,
 }
 ```
 

@@ -12,9 +12,11 @@ class GiftOrdersController extends BaseController
 {
     function indexAction()
     {
+        $conds = $this->getConditions('gift_order');
+        $conds['order'] = 'id desc';
         $page = $this->params('page');
         $per_page = $this->params('per_page');
-        $gift_orders = \GiftOrders::findOrderListByUser($this->params('user_id'), $page, $per_page);
+        $gift_orders = \GiftOrders::findPagination($conds, $page, $per_page);
         $this->view->gift_orders = $gift_orders;
     }
 

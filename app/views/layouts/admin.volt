@@ -57,8 +57,18 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('orders', 'index') %}
-            <li><a href="/admin/orders">订单列表</a></li>
+        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') %}
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">订单<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                {% if isAllowed('orders', 'index') %}
+                    <li><a href="/admin/orders">订单列表</a></li>
+                {% endif %}
+                {% if isAllowed('gift_orders','index') %}
+                    <li><a href="/admin/gift_orders">礼物订单列表</a></li>
+                {% endif %}
+            </ul>
+        </li>
         {% endif %}
 
         <!--微信管理-->
@@ -178,10 +188,10 @@
                     {% if isAllowed('export_histories','index') %}
                         <li><a href="/admin/export_histories">导出记录</a></li>
                     {% endif %}
-                    {%  if isAllowed('gifts', 'index') %}
+                    {% if isAllowed('gifts', 'index') %}
                         <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}
-                    {%  if isAllowed('payment_channels', 'index') %}
+                    {% if isAllowed('payment_channels', 'index') %}
                         <li><a href="/admin/payment_channels">支付配置</a></li>
                     {% endif %}
                 </ul>

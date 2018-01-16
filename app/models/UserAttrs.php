@@ -58,7 +58,9 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'microphone' => $this->microphone,
-            'im_password' => $this->im_password
+            'im_password' => $this->im_password,
+            'followed_num' => $this->followed_num,
+            'follow_num' => $this->follow_num,
         ];
     }
 
