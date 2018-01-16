@@ -27,11 +27,7 @@ class ProductChannelsController extends BaseController
             $version = $this->params("ver");
         }
 
-        $sid = $this->params('sid');
-        $product_channel = $this->currentProductChannel();
-
-        $this->view->product_channel = $product_channel;
-        $this->view->sid = $sid;
+        $this->view->product_channel = $this->currentProductChannel();
         $this->view->version = $version;
     }
 
