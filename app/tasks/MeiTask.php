@@ -414,4 +414,58 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($city);
         }
     }
+
+    function test19Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+
+            echoLine($user->last_at_text, $user->id);
+            $room_seats = RoomSeats::findBy(['user_id' => $user->id]);
+
+            if (count($room_seats) > 1) {
+                echoLine($user->last_at);
+            }
+        }
+    }
+
+    function test20Action()
+    {
+        $room_seats = RoomSeats::find(['conditions' => 'user_id > 0']);
+
+        echoLine(count($room_seats));
+
+        foreach ($room_seats as $room_seat) {
+            $user = $room_seat->user;
+
+            //一个小时不活跃踢出房间
+            if ($user->last_at < time() - 3600) {
+                echoLine($user->id, $room_seat->room->id);
+                $room_seat->down($user);
+                $room_seat->room->exitRoom($user);
+            }
+        }
+    }
+
+    function test21Action()
+    {
+        $rooms = Rooms::findForeach();
+        $hot_cache = Users::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+            $key = 'room_user_list_' . $room->id;
+            $user_ids = $hot_cache->zrange($key, 0, -1);
+
+            $users = Users::findByIds($user_ids);
+
+            foreach ($users as $user) {
+
+                if ($user->current_room_id != $room->id) {
+                    echoLine($user->id, $room->id, $user->current_room_id);
+                    $room->exitRoom($user);
+                }
+            }
+        }
+    }
 }
