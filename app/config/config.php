@@ -25,4 +25,7 @@ return new \Phalcon\Config([
         'org_name' => env('em_chat_org_name', '1109171220115678'),
         'host' => env('em_chat_host', 'https://a1.easemob.com'),
     ],
+
+    'websocket_server' => ['host' => '0.0.0.0', 'port' => 9601],
+    'websocket_end_point' => "ws://0.0.0.0:9601",
 ]);
