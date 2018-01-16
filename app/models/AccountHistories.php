@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 05/01/2018
  * Time: 14:47
  */
-
 class AccountHistories extends BaseModel
 {
     /**
@@ -55,6 +55,7 @@ class AccountHistories extends BaseModel
         $change_amount = abs($this->amount);
         if ($this->isCostDiamond()) {
             $change_amount = -$change_amount;
+            $this->amount = $change_amount;
         }
         $old_account_history = \AccountHistories::findUserLast($this->user_id);
         $old_balance = intval($this->balance);
@@ -75,11 +76,10 @@ class AccountHistories extends BaseModel
 
     function afterCreate()
     {
-        if ($this->hasChanged('balance')) {
-            $user = \Users::findById($this->user_id);
-            $user->diamond = $this->balance;
-            $user->update();
-        }
+        $user = \Users::findById($this->user_id);
+        $user->diamond = $this->balance;
+        $user->update();
+
     }
 
     static function findUserLast($user_id)
