@@ -44,7 +44,8 @@ class ChatsTask extends \Phalcon\Cli\Task
     {
         $user_id = fetch($params, 0, 2);
         $user = \Users::findById($user_id);
-        $url = 'http://www.chance_php.com/api/chats';
+        $host = fetch($params, 1, 'www.chance_php.com');
+        $url = 'http://' . $host . '/api/chats';
 
         $param = array('sid' => $user->sid, 'user_id' => SYSTEM_ID);
         //var_dump($param);
