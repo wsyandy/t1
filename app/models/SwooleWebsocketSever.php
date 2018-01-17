@@ -113,7 +113,9 @@ class SwooleWebsocketSever extends BaseModel
                 'daemonize' => true,
                 'log_file' => APP_ROOT . 'log/swoole_websocket_server.log',
                 'pid_file' => APP_ROOT . 'log/swoole_websocket_server_pid.pid',
-                'reload_async' => true
+                'reload_async' => true,
+                'heartbeat_check_interval' => 10, //10秒检测一次
+                'heartbeat_idle_time' => 20 //20秒未向服务器发送任何数据包,此链接强制关闭
             ]
         );
 
