@@ -42,7 +42,7 @@ class ChatsTask extends \Phalcon\Cli\Task
     function testIndexAction($params = array())
     {
         $user_id = fetch($params, 2);
-        $user = \Users::findById(2);
+        $user = \Users::findById($user_id);
         $url = 'http://www.chance_php.com/api/chats';
 
         $param = array('sid' => $user->sid, 'user_id' => SYSTEM_ID);
