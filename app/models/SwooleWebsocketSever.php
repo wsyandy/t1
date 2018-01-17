@@ -104,7 +104,7 @@ class SwooleWebsocketSever extends BaseModel
         $host = self::getHost();
         $port = self::getPort();
 
-        $swoole_server = new swoole_websocket_server($host, $port);
+        $swoole_server = new swoole_server($host, $port);
         $swoole_server->set(
             [
                 'worker_num' => 2,
@@ -131,37 +131,37 @@ class SwooleWebsocketSever extends BaseModel
             info($fd, $from_id, $data, "Exce not exist");
         });
 
-        $swoole_server->on('open', function ($swoole_server, $request) {
-
-            if (!$swoole_server->exist($request->fd)) {
-                info($request->fd, "Exce not exist");
-                return;
-            }
-
-//            $user_id = self::params($request, 'user_id');
-
-            debug($request->fd, "connect");
-
-//            if ($user_id) {
-//                self::bindFd($user_id, $request->fd);
+//        $swoole_server->on('open', function ($swoole_server, $request) {
+//
+//            if (!$swoole_server->exist($request->fd)) {
+//                info($request->fd, "Exce not exist");
+//                return;
 //            }
-            $swoole_server->push($request->fd, "hello " . $request->fd);
-        });
+//
+////            $user_id = self::params($request, 'user_id');
+//
+//            debug($request->fd, "connect");
+//
+////            if ($user_id) {
+////                self::bindFd($user_id, $request->fd);
+////            }
+//            $swoole_server->push($request->fd, "hello " . $request->fd);
+//        });
 
-        $swoole_server->on('message', function ($swoole_server, $request) {
-            debug($request->fd, "send message", $request->data);
-
-            if (!$swoole_server->exist($request->fd)) {
-                info($request->fd, "Exce not exist");
-                return;
-            }
-
-            //解析数据
-            $message = json_decode($request->data, true);
-            $other_user_fd = self::getFd($message['other_user_id']);
-            $data = $message['content'];
-            $swoole_server->push($other_user_fd, $data);
-        });
+//        $swoole_server->on('message', function ($swoole_server, $request) {
+//            debug($request->fd, "send message", $request->data);
+//
+//            if (!$swoole_server->exist($request->fd)) {
+//                info($request->fd, "Exce not exist");
+//                return;
+//            }
+//
+//            //解析数据
+//            $message = json_decode($request->data, true);
+//            $other_user_fd = self::getFd($message['other_user_id']);
+//            $data = $message['content'];
+//            $swoole_server->push($other_user_fd, $data);
+//        });
 
         $swoole_server->on('close', function ($swoole_server, $fd) {
             debug($fd, "connect close");
@@ -169,25 +169,25 @@ class SwooleWebsocketSever extends BaseModel
             //$swoole_server->push($fd, "you already closed");
         });
 
-        $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
-            $act = $request->get['act'];
-            debug($act);
-            switch ($act) {
-                case 'reload':
-                    $swoole_server->reload();
-                    break;
-                case 'shutdown':
-                    $swoole_server->shutdown();
-                    break;
-                case 'exit':
-                    exit;
-                    break;
-            }
-
-            $response->header("X-Server", "Swoole");
-            $msg = 'hello swoole !';
-            $response->end($msg);
-        });
+//        $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
+//            $act = $request->get['act'];
+//            debug($act);
+//            switch ($act) {
+//                case 'reload':
+//                    $swoole_server->reload();
+//                    break;
+//                case 'shutdown':
+//                    $swoole_server->shutdown();
+//                    break;
+//                case 'exit':
+//                    exit;
+//                    break;
+//            }
+//
+//            $response->header("X-Server", "Swoole");
+//            $msg = 'hello swoole !';
+//            $response->end($msg);
+//        });
 
         echo "[------------- start -------------]\n";
         $swoole_server->start();
