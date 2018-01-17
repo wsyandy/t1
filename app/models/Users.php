@@ -94,6 +94,7 @@ class Users extends BaseModel
         }
 
         \Emchat::delay()->createEmUser($this->id);
+        \Chats::delay(5)->sendWelcomeMessage($this->id);
     }
 
     function beforeUpdate()

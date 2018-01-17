@@ -149,3 +149,5 @@ define('CALL_STATUS_REFUSE', 3);//拒绝
 define('CALL_STATUS_CANCEL', 4);//取消
 define('CALL_STATUS_HANG_UP', 5);//挂断
 define('CALL_STATUS_ANSWERED', 6);//接听
+
+define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
