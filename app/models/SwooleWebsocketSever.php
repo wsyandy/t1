@@ -107,8 +107,8 @@ class SwooleWebsocketSever extends BaseModel
         $swoole_server = new swoole_server($host, $port);
         $swoole_server->set(
             [
-                'worker_num' => 2,
-                'max_request' => 20,
+                'worker_num' => 2, //设置多少合适
+                'max_request' => 20, //设置多少合适
                 'dispatch_model' => 3,
                 'daemonize' => true,
                 'log_file' => APP_ROOT . 'log/swoole_websocket_server.log',
@@ -131,6 +131,7 @@ class SwooleWebsocketSever extends BaseModel
             info($fd, $from_id, $data, "Exce not exist");
         });
 
+        //web_socket使用
 //        $swoole_server->on('open', function ($swoole_server, $request) {
 //
 //            if (!$swoole_server->exist($request->fd)) {
