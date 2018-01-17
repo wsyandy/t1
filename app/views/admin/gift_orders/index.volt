@@ -13,16 +13,14 @@
 
 {%- macro sender_link(object) %}
     ID:<a href="/admin/users?user[id_eq]={{ object.sender_id }}">{{ object.sender_id }}</a><br/>
-    姓名:{{ object.user.nickname }}<br/>
-    手机号码:{{ object.user.mobile }}<br/>
-    {#<a href="/admin/users?user[id_eq]={{ object.sender_id }}"><img src="{{ object.sender.avatar_small_url }}" width="30"></a>#}
+    姓名:{{ object.sender_nickname }}<br/>
+    手机号码:{{ object.sender_mobile }}<br/>
 {%- endmacro %}
 
 {%- macro user_link(object) %}
     ID:<a href="/admin/users?user[id_eq]={{ object.user_id }}">{{ object.user_id }}</a><br/>
     姓名:{{ object.user.nickname }}<br/>
     手机号码:{{ object.user.mobile }}<br/>
-    {#<a href="/admin/users?user[id_eq]={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>#}
 {%- endmacro %}
 
 {{ simple_table(gift_orders, [
