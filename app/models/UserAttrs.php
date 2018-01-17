@@ -85,13 +85,13 @@ trait UserAttrs
             $data['self_introduce'] = $this->self_introduce;
         }
 
-        $lock = false;
+        $current_room_lock = false;
 
         if ($this->current_room_id) {
-            $lock = $this->current_room->lock;
+            $current_room_lock = $this->current_room->lock;
         }
 
-        $data['lock'] = $lock;
+        $data['current_room_lock'] = $current_room_lock;
 
         return $data;
     }
