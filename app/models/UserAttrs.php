@@ -113,6 +113,15 @@ trait UserAttrs
         return $data;
     }
 
+    function toChatJson()
+    {
+        return array(
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'avatar_url' => $this->avatar_small_url
+        );
+    }
+
 
     public function isWebPlatform()
     {
