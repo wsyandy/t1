@@ -86,7 +86,6 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
     app_id string 信令应用id
     signaling_key string 信令token
 }
@@ -133,7 +132,6 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
     followed_num 粉丝人数
     follow_num 关注人数,
 }
@@ -176,7 +174,6 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
     albums:[
         {
             id,
@@ -231,7 +228,6 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
-    microphone 麦克风状态 false/true 默认为true
     albums:[
         {
             id,

@@ -28,7 +28,6 @@ trait UserAttrs
             'height' => $this->height,
             'interests' => $this->interests,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone,
             'albums' => $this->albums,
             'birthday' => $this->birthday_text,
             'age' => $this->age,
@@ -57,7 +56,6 @@ trait UserAttrs
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
-            'microphone' => $this->microphone,
             'im_password' => $this->im_password,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num
