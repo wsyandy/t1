@@ -28,9 +28,10 @@ class ChatsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function testAdminChatsAction()
+    function testAdminChatsAction($params = array())
     {
-        $user = \Users::findById(2);
+        $user_id = fetch($params, 2);
+        $user = \Users::findById($user_id);
         $page = 1;
         $per_page = 10;
 
@@ -38,8 +39,9 @@ class ChatsTask extends \Phalcon\Cli\Task
         var_dump($chats);
     }
 
-    function testIndexAction()
+    function testIndexAction($params = array())
     {
+        $user_id = fetch($params, 2);
         $user = \Users::findById(2);
         $url = 'http://www.chance_php.com/api/chats';
 
@@ -54,8 +56,14 @@ class ChatsTask extends \Phalcon\Cli\Task
         var_dump($res);
     }
 
-    function testSendWelcomeAction()
+    function testSendWelcomeAction($params = array())
     {
-        \Chats::sendWelcomeMessage(2);
+        $user_id = fetch($params, 2);
+        $res = \Chats::sendWelcomeMessage($user_id);
+        if ($res) {
+            var_dump($res);
+        } else {
+            echo "send welcome message fail";
+        }
     }
 }

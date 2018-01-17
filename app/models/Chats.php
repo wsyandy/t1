@@ -84,7 +84,7 @@ class Chats extends BaseModel
     {
         $content = \Chats::welcomeMessage();
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        \Chats::sendSystemMessage($user_id, $content_type, $content);
+        return \Chats::sendSystemMessage($user_id, $content_type, $content);
     }
 
     static function sendSystemMessage($user_id, $content_type, $content)
@@ -95,7 +95,7 @@ class Chats extends BaseModel
             'content' => $content,
             'content_type' => $content_type
         );
-        \Chats::createChat($attrs);
+        return \Chats::createChat($attrs);
     }
 
     static function createChat($attrs)
