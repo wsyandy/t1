@@ -11,8 +11,8 @@
 <script>
 
     var msg = document.getElementById('msg');
-    // var ws_server = 'ws://127.0.0.1:9509?user_id=1';
-    var ws_server = 'ws://116.62.103.161:9509?user_id=1';
+    var ws_server = 'ws://127.0.0.1:9509?user_id=1';
+    // var ws_server = 'ws://116.62.103.161:9509?user_id=1';
     var web_socket = new WebSocket(ws_server);
     web_socket.onopen = function (evt) {
         alert("connect successful!");
@@ -24,11 +24,12 @@
     //     document.getElementById('text').value = '';
     //     web_socket.send(text);
     // }
+    //
+    // web_socket.onmessage = function (evt) {
+    //     // console.log(evt);
+    // }
 
-    web_socket.onmessage = function (evt) {
-        console.log(evt.data);
-        msg.innerHTML += evt.data + '<br>';
-    }
+
 
     web_socket.onerror = function (evt,e) {
         alert('Error occured: ' + evt.data);
