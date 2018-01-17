@@ -54,8 +54,9 @@
         <a href="/admin/users/follow?id={{ user.id }}" id="follow">随机关注</a><br/>
     {% endif %}
     {% if isAllowed('rooms','index') %}
-        <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a>
+        <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a><br/>
     {% endif %}
+    <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a>
 {% endmacro %}
 
 {% macro detail_link(user) %}

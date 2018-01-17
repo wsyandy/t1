@@ -156,4 +156,26 @@ class UsersController extends BaseController
         $users = $user->followList($page, $per_page);
         $this->view->users = $users;
     }
+
+    /**
+     * 发送系统消息
+     */
+    function sendMessageAction()
+    {
+         $user = \Users::findById($this->params('id'));
+         if ($this->request->isPost()) {
+             $content = $this->params('content');
+             $content_type = CHAT_CONTENT_TYPE_TEXT;
+             $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
+             if ($chat) {
+                 return $this->renderJSON(
+                     ERROR_CODE_SUCCESS, '发送成功',
+                     array('chat' => $chat->toJson())
+                 );
+             } else {
+                 return $this->renderJSON(ERROR_CODE_FAIL, '发送失败');
+             }
+         }
+         $this->view->user = $user;
+    }
 }
