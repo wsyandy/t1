@@ -512,4 +512,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->sid = '';
         $user->save();
     }
+
+    function test23Action()
+    {
+        $swoole_server = SwooleWebsocketSever::getServer();
+        $swoole_server->send(1, "sss");
+    }
 }

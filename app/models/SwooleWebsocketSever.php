@@ -119,6 +119,10 @@ class SwooleWebsocketSever extends BaseModel
             ]
         );
 
+        $swoole_server->on('start', function ($swoole_server) {
+            info("start");
+        });
+
         $swoole_server->on('connect', function ($swoole_server, $fd) {
 
             info($fd, "Exce not exist");
@@ -129,6 +133,11 @@ class SwooleWebsocketSever extends BaseModel
         $swoole_server->on('receive', function ($swoole_server, $fd, $from_id, $data) {
 //            $swoole_server->send($fd, 'Swoole: ' . $data, $from_id);
             info($fd, $from_id, $data, "Exce not exist");
+        });
+
+        $swoole_server->on('WorkerStart', function ($swoole_server, $worker_id) {
+//            $swoole_server->send($fd, 'Swoole: ' . $data, $from_id);
+            info($worker_id, "Exce not exist");
         });
 
         //web_socket使用
