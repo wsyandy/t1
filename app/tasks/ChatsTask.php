@@ -12,11 +12,12 @@ class ChatsTask extends \Phalcon\Cli\Task
 {
     use CommonParam;
 
-    function testCreateAction()
+    function testCreateAction($params = array())
     {
+        $user_id = fetch($params, 0, 2);
         $attrs = array(
             'sender_id' => SYSTEM_ID,
-            'receiver_id' => 2,
+            'receiver_id' => $user_id,
             'content' => '测试',
             'content_type' => CHAT_CONTENT_TYPE_TEXT
         );
@@ -30,7 +31,7 @@ class ChatsTask extends \Phalcon\Cli\Task
 
     function testAdminChatsAction($params = array())
     {
-        $user_id = fetch($params, 2);
+        $user_id = fetch($params, 0, 2);
         $user = \Users::findById($user_id);
         $page = 1;
         $per_page = 10;
@@ -41,9 +42,10 @@ class ChatsTask extends \Phalcon\Cli\Task
 
     function testIndexAction($params = array())
     {
-        $user_id = fetch($params, 2);
+        $user_id = fetch($params, 0, 2);
         $user = \Users::findById($user_id);
-        $url = 'http://www.chance_php.com/api/chats';
+        $host = fetch($params, 1, 'www.chance_php.com');
+        $url = 'http://' . $host . '/api/chats';
 
         $param = array('sid' => $user->sid, 'user_id' => SYSTEM_ID);
         //var_dump($param);
@@ -58,7 +60,7 @@ class ChatsTask extends \Phalcon\Cli\Task
 
     function testSendWelcomeAction($params = array())
     {
-        $user_id = fetch($params, 2);
+        $user_id = fetch($params, 0, 2);
         $res = \Chats::sendWelcomeMessage($user_id);
         if ($res) {
             var_dump($res);
