@@ -269,16 +269,16 @@ class UsersController extends BaseController
     {
         //房间是否加锁
         $other_current_room = $this->otherUser()->current_room;
-        $lock = false;
+        $current_room_lock = false;
 
         if ($other_current_room) {
-            $lock = $other_current_room->lock;
+            $current_room_lock = $other_current_room->lock;
         }
 
         $detail_json = $this->otherUser()->toDetailJson();
         $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
         $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
-        $detail_json['lock'] = $lock;
+        $detail_json['current_room_lock'] = $current_room_lock;
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }

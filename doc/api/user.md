@@ -213,7 +213,7 @@
     current_room_seat_id 用户当前所在麦位id
     current_channel_name 当前所在房间频道名称 
     user_role 当前用户角色，无角色，房主，主播，旁听
-    lock 房间是否加锁 true/false
+    current_room_lock 房间是否加锁 true/false
     monologue 个人签名
     followed_num 粉丝人数
     follow_num 关注人数,
