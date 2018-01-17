@@ -87,6 +87,10 @@ trait UserAttrs
             $data['self_introduce'] = $this->self_introduce;
         }
 
+        if (isset($this->current_room_id)) {
+            $data['lock'] = $this->current_room->lock;
+        }
+
         return $data;
     }
 
@@ -210,7 +214,7 @@ trait UserAttrs
 
     function getBirthdayText()
     {
-        if(!$this->birthday){
+        if (!$this->birthday) {
             return null;
         }
         return date('Y-m-d', $this->birthday);
@@ -253,7 +257,7 @@ trait UserAttrs
     function constellationText()
     {
         $c = '';
-        if(!$this->birthday){
+        if (!$this->birthday) {
             return $c;
         }
         $num = date('md', $this->birthday);
