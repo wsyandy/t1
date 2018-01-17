@@ -149,5 +149,14 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine('cc', $users->count());
     }
+
+    //初始化头像
+    function initAvatarAction()
+    {
+        $res = StoreFile::upload(APP_ROOT . "public/images/avatar.png",  APP_NAME . '/users/avatar/default_avatar.png');
+        echoLine($res);
+
+        echoLine(StoreFile::getUrl('chance/users/avatar/default_avatar.png '));
+    }
 }
 

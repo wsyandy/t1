@@ -501,4 +501,15 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine("====", $payment_channel);
         }
     }
+
+    function test22Action()
+    {
+        $user = Users::findFirstById(1);
+        $user->mobile = '13800000000';
+        $user->nickname = '系统小助手';
+        $user->device_id = '';
+        $user->device_no = '';
+        $user->sid = '';
+        $user->save();
+    }
 }
