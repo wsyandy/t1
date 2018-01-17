@@ -165,6 +165,9 @@ class Users extends BaseModel
             $this->bindMobile();
         }
 
+        if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
+            $this->current_room->exitRoom($this);
+        }
     }
 
     function isSilent()

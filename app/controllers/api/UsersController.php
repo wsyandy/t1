@@ -162,10 +162,6 @@ class UsersController extends BaseController
         $user->user_status = USER_STATUS_LOGOUT;
         $user->update();
 
-        if ($user->current_room_id) {
-            $user->current_room->exitRoom($user);
-        }
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $device->sid]);
     }
 
