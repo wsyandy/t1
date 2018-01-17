@@ -166,14 +166,18 @@ class EmChatTask extends \Phalcon\Cli\Task
         var_dump($emchat->sendText($sender_name, array($receiver_name), $content));
     }
 
-    function testSendCmdAction()
+    function testSendCmdAction($params = array())
     {
         $emchat = new \Emchat();
-        $sender_name = $this->getUsername();
-        $recever_name = $this->getFriendName();
-
-        $action = 'action0';
-        var_dump($emchat->sendCmd($sender_name, $recever_name, $action));
+        //$sender = $this->getUsername();
+        $sender = 'admin';
+        if (isset($params[0])) {
+            $receiver = $params[0];
+        } else {
+            $receiver = $this->getFriendName();
+        }
+        $action = 'admin_message';
+        var_dump($emchat->sendCmd($sender, $receiver, $action));
     }
 
     function testSendImageAction()
