@@ -8,7 +8,7 @@
 
 namespace test;
 
-class SwooleWebsocketController extends \ApplicationController
+class WebsocketController extends \ApplicationController
 {
     function indexAction()
     {

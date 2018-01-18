@@ -7,7 +7,7 @@
  */
 
 
-class WebSocketTask extends Phalcon\CLI\Task
+class WebsocketTask extends Phalcon\CLI\Task
 {
 
     function startAction()

@@ -1,12 +1,12 @@
 <html>
 <head>
     <title>测试swoole</title>
+    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <body>
 
-<div id="msg" style="width:400px;height:200px;background-color:  tomato;overflow-x: scroll;overflow-y: scroll;box-shadow: 0px 0px 3px gray;"></div>
 <input type="text" id="text">
-<input type="submit" value="发送数据">
+<input type="submit" value="发送数据" id="send">
 
 <script>
 
@@ -19,22 +19,25 @@
         // msg.innerHTML = web_socket.readyState;
     }
 
-    // function song() {
-    //     var text = document.getElementById('text').value;
-    //     document.getElementById('text').value = '';
-    //     web_socket.send(text);
-    // }
-    //
-    // web_socket.onmessage = function (evt) {
-    //     // console.log(evt);
-    // }
+    function send() {
+        var text = document.getElementById('text').value;
+        document.getElementById('text').value = '';
 
+        var data = '{a: 1, b: 2}';
+        web_socket.send(data);
+    }
 
+    web_socket.onmessage = function (evt) {
+        console.log(evt.data);
+    }
 
-    web_socket.onerror = function (evt,e) {
+    web_socket.onerror = function (evt, e) {
         alert('Error occured: ' + evt.data);
     }
 
+    $("#send").click(function () {
+        send();
+    });
 </script>
 </body>
 </html>

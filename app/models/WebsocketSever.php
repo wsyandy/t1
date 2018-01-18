@@ -122,45 +122,11 @@ class WebsocketSever extends BaseModel
             ]
         );
 
-        $swoole_server->on('start', function ($swoole_server) {
-            info("start");
-        });
-
-        //web_socket使用
-        $swoole_server->on('open', function ($swoole_server, $request) {
-
-            if (!$swoole_server->exist($request->fd)) {
-                info($request->fd, "Exce not exist");
-                return;
-            }
-
-            $sid = self::params($request, 'sid');
-
-            debug($request->fd, "connect", $sid);
-
-//            if ($user_id) {
-//                self::bindFd($user_id, $request->fd);
-//            }
-            $swoole_server->push($request->fd, "hello " . $request->fd);
-        });
-
-        $swoole_server->on('message', function ($swoole_server, $request) {
-            debug($request->fd, "send message", $request->data);
-
-            if (!$swoole_server->exist($request->fd)) {
-                info($request->fd, "Exce not exist");
-                return;
-            }
-
-            //解析数据
-            $swoole_server->push($request->fd, $request->data);
-        });
-
-        $swoole_server->on('close', function ($swoole_server, $fd) {
-            debug($fd, "connect close");
-            //已关闭不能继续操作
-            //$swoole_server->push($fd, "you already closed");
-        });
+        $websocket = new WebsocketSever();
+        $swoole_server->on('start', [$websocket, 'onStart']);
+        $swoole_server->on('open', [$websocket, 'onOpen']);
+        $swoole_server->on('message', [$websocket, 'onMessage']);
+        $swoole_server->on('close', [$websocket, 'onClose']);
 
         $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
             $act = $request->get['act'];
@@ -204,5 +170,44 @@ class WebsocketSever extends BaseModel
         $url = "{$host}:{$port}?act=shutdown";
         $resp = httpGet($url);
         debug($resp->body);
+    }
+
+    function onStart($server)
+    {
+        info("start");
+    }
+
+    function onOpen($server, $request)
+    {
+        if (!$server->exist($request->fd)) {
+            info($request->fd, "Exce not exist");
+            return;
+        }
+        $sid = self::params($request, 'sid');
+        debug($request->fd, "connect", $sid);
+        $server->push($request->fd, "hello " . $request->fd);
+    }
+
+    function onMessage($server, $frame)
+    {
+        debug($frame->fd, "send message", $frame);
+
+        if (!$server->exist($frame->fd)) {
+            info($frame->fd, "Exce not exist");
+            return;
+        }
+
+        //解析数据
+        $server->push($frame->fd, $frame->data);
+    }
+
+    function onClose($server, $fd, $from_id)
+    {
+        debug($fd, $from_id, "connect close");
+    }
+
+    function onRequest($request, $response)
+    {
+
     }
 }
