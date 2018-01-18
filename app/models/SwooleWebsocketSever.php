@@ -44,6 +44,7 @@ class SwooleWebsocketSever extends BaseModel
 
         if ($get) {
 
+            debug($get);
             $val = fetch($get, $field);
 
             if ($val) {
@@ -57,6 +58,8 @@ class SwooleWebsocketSever extends BaseModel
 
         if ($post) {
 
+            debug($post);
+            
             $val = fetch($post, $val);
 
             if ($val) {
