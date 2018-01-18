@@ -15,12 +15,12 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 | mobile |手机|string|否|||
-
+| sms_type |短信类型|string|否||| 登录login 注册register
 ##### 2.2 回应参数说明
 ```
 {
-    error_code
-    error_reason  失败原因，默认为空
+    error_code     0成功 -1失败
+    error_reason  失败原因，默认为空  没账号登录返回"此手机号未注册" 有账号注册返回"此手机号已注册"
     sms_token 验证token
 }
 ```
