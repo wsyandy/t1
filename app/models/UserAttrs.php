@@ -339,7 +339,7 @@ trait UserAttrs
         return $this->product_channel->getChannelKey($channel_name, $this->id);
     }
 
-    function cityNmae()
+    function getCityName()
     {
         if ($this->city) {
             return $this->city->name;
@@ -348,7 +348,7 @@ trait UserAttrs
         return '';
     }
 
-    function provinceName()
+    function getProvinceName()
     {
         if ($this->province) {
             return $this->province->name;
