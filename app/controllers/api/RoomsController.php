@@ -96,13 +96,15 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
             }
 
-            //如果不是房主 并且房间内没有人
+            //如果不是房主
             if (!$this->currentUser()->isRoomHost($room)) {
-                
-                if (!$room->user->isInRoom($room)) {
+
+                //房主不在房间且当前用户不在房间
+                if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '房主不在房间');
                 }
 
+                //房间内没有人
                 if ($room->user_num < 1) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
                 }
