@@ -148,9 +148,9 @@ class SwooleWebsocketSever extends BaseModel
                 return;
             }
 
-//            $user_id = self::params($request, 'user_id');
+            $user_id = self::params($request, 'user_id');
 
-            debug($request->fd, "connect");
+            debug($request->fd, "connect", $user_id);
 
 //            if ($user_id) {
 //                self::bindFd($user_id, $request->fd);
@@ -168,9 +168,8 @@ class SwooleWebsocketSever extends BaseModel
 
             //解析数据
             $message = json_decode($request->data, true);
-            $other_user_fd = self::getFd($message['other_user_id']);
             $data = $message['content'];
-            $swoole_server->push($other_user_fd, $data);
+            $swoole_server->push($request->fd, $data);
         });
 
         $swoole_server->on('close', function ($swoole_server, $fd) {
