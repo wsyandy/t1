@@ -148,9 +148,9 @@ class SwooleWebsocketSever extends BaseModel
                 return;
             }
 
-            $user_id = self::params($request, 'id');
+            $sid = self::params($request, 'sid');
 
-            debug($request->fd, "connect", $user_id);
+            debug($request->fd, "connect", $sid);
 
 //            if ($user_id) {
 //                self::bindFd($user_id, $request->fd);
