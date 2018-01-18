@@ -123,12 +123,12 @@ class SwooleWebsocketSever extends BaseModel
             info("start");
         });
 
-        $swoole_server->on('connect', function ($swoole_server, $fd) {
-
-            info($fd, "Exce not exist");
-
-//            $swoole_server->push($fd, "hello " . $fd);
-        });
+//        $swoole_server->on('connect', function ($swoole_server, $fd) {
+//
+//            info($fd, "Exce not exist");
+//
+////            $swoole_server->push($fd, "hello " . $fd);
+//        });
 
 //        $swoole_server->on('receive', function ($swoole_server, $fd, $from_id, $data) {
 ////            $swoole_server->send($fd, 'Swoole: ' . $data, $from_id);
