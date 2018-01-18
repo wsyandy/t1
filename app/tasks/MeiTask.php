@@ -515,7 +515,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test23Action()
     {
-        $swoole_server = SwooleWebsocketSever::getServer();
+        $swoole_server = WebsocketSever::getServer();
         $swoole_server->send(1, "sss");
     }
 }

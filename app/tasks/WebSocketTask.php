@@ -7,22 +7,22 @@
  */
 
 
-class SwooleTask extends Phalcon\CLI\Task
+class WebSocketTask extends Phalcon\CLI\Task
 {
 
     function startAction()
     {
-        SwooleWebsocketSever::start();
+        WebsocketSever::start();
     }
 
     function reloadAction()
     {
-        SwooleWebsocketSever::reload();
+        WebsocketSever::reload();
     }
 
     function shutdownAction()
     {
-        SwooleWebsocketSever::shutdown();
+        WebsocketSever::shutdown();
     }
 
 }

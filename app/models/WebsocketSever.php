@@ -6,7 +6,7 @@
  * Time: 下午2:39
  */
 
-class SwooleWebsocketSever extends BaseModel
+class WebsocketSever extends BaseModel
 {
     static $_only_cache = true;
 
@@ -59,7 +59,7 @@ class SwooleWebsocketSever extends BaseModel
         if ($post) {
 
             debug($post);
-            
+
             $val = fetch($post, $val);
 
             if ($val) {
