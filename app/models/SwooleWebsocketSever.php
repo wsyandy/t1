@@ -176,25 +176,25 @@ class SwooleWebsocketSever extends BaseModel
             //$swoole_server->push($fd, "you already closed");
         });
 
-//        $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
-//            $act = $request->get['act'];
-//            debug($act);
-//            switch ($act) {
-//                case 'reload':
-//                    $swoole_server->reload();
-//                    break;
-//                case 'shutdown':
-//                    $swoole_server->shutdown();
-//                    break;
-//                case 'exit':
-//                    exit;
-//                    break;
-//            }
-//
-//            $response->header("X-Server", "Swoole");
-//            $msg = 'hello swoole !';
-//            $response->end($msg);
-//        });
+        $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
+            $act = $request->get['act'];
+            debug($act);
+            switch ($act) {
+                case 'reload':
+                    $swoole_server->reload();
+                    break;
+                case 'shutdown':
+                    $swoole_server->shutdown();
+                    break;
+                case 'exit':
+                    exit;
+                    break;
+            }
+
+            $response->header("X-Server", "Swoole");
+            $msg = 'hello swoole !';
+            $response->end($msg);
+        });
 
         echo "[------------- start -------------]\n";
         $swoole_server->start();
