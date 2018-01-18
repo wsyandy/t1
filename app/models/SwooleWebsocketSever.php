@@ -49,6 +49,8 @@ class SwooleWebsocketSever extends BaseModel
             if ($val) {
                 return $val;
             }
+
+            return $default;
         }
 
         $post = $request->post;
@@ -60,9 +62,7 @@ class SwooleWebsocketSever extends BaseModel
             if ($val) {
                 return $val;
             }
-        }
 
-        if ($default) {
             return $default;
         }
 
@@ -148,7 +148,7 @@ class SwooleWebsocketSever extends BaseModel
                 return;
             }
 
-            $user_id = self::params($request, 'user_id');
+            $user_id = self::params($request, 'id');
 
             debug($request->fd, "connect", $user_id);
 
@@ -167,9 +167,7 @@ class SwooleWebsocketSever extends BaseModel
             }
 
             //解析数据
-            $message = json_decode($request->data, true);
-            $data = $message['content'];
-            $swoole_server->push($request->fd, $data);
+            $swoole_server->push($request->fd, $request->data);
         });
 
         $swoole_server->on('close', function ($swoole_server, $fd) {
