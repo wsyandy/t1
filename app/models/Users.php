@@ -890,8 +890,6 @@ class Users extends BaseModel
         }
 
         $this->save();
-
-        return $this;
     }
 
     //拉黑

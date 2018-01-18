@@ -170,7 +170,7 @@ trait UserAttrs
     function getAvatarUrl()
     {
         if (isBlank($this->avatar)) {
-            return $this->getDefaultAvatar();
+            return $thi;
         }
 
         return StoreFile::getUrl($this->avatar);
@@ -179,7 +179,7 @@ trait UserAttrs
     function getAvatarSmallUrl()
     {
         if (isBlank($this->avatar)) {
-            return $this->getDefaultAvatar();
+            return '/images/avatar.png';
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';
@@ -337,5 +337,23 @@ trait UserAttrs
     function generateVoiceChannelKey($channel_name)
     {
         return $this->product_channel->getChannelKey($channel_name, $this->id);
+    }
+
+    function cityNmae()
+    {
+        if ($this->city) {
+            return $this->city->name;
+        }
+
+        return '';
+    }
+
+    function provinceName()
+    {
+        if ($this->province) {
+            return $this->province->name;
+        }
+
+        return '';
     }
 }
