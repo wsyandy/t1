@@ -521,5 +521,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $city = Cities::findFirstByName('盐城市');
         echoLine($city);
+
+
+        $user = Users::findFirstById(251);
+        echoLine($user->city_name, $user->province_name);
+        $user->updateProfile(['province_name' => '上海', 'city_name' => '上海']);
+        echoLine($user->city_name, $user->city_name);
     }
 }
