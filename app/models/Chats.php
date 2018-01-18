@@ -182,6 +182,20 @@ class Chats extends BaseModel
         $offset = ($page - 1) * $per_page;
         $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page -1);
         $chats = \Chats::findByIds($chat_ids);
-        return new \PaginationModel($chats, $total, $page, $per_page);
+        $results = \Chats::sortByCreatedAt($chats);
+        return new \PaginationModel($results, $total, $page, $per_page);
+    }
+
+    static function sortByCreatedAt($chats)
+    {
+        $chat_hash = array();
+        foreach ($chats as $chat) {
+            $chat_hash[$chat->created_at] = $chat;
+        }
+        $results = $chats;
+        if (asort($chat_hash)) {
+            $results = array_values($chat_hash);
+        }
+        return $results;
     }
 }
