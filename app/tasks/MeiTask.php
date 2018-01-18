@@ -517,5 +517,9 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $swoole_server = WebsocketSever::getServer();
         $swoole_server->send(1, "sss");
+
+
+        $city = Cities::findFirstByName('盐城市');
+        echoLine($city);
     }
 }
