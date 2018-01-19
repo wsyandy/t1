@@ -564,6 +564,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache = Users::getHotReadCache();
         $hot_cache->del($key);
 
+        $voice_call_id = VoiceCalls::getVoiceCallIdByUserId(52);
         echoLine($voice_call_id);
     }
 }
