@@ -58,6 +58,10 @@ class UsersController extends BaseController
         $context['device_id'] = $this->currentDeviceId();
         $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
 
+        if (!$sms_type) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
         if ('login' == $sms_type && !$user) {
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
