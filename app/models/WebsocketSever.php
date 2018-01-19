@@ -270,6 +270,8 @@ class WebsocketSever extends BaseModel
 
                     //重新连接 用户的key不一样
                     $hot_cache->del($user_online_key);
+                } else {
+                    info("no users", $key, $user_id);
                 }
             }
         }
