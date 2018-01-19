@@ -572,5 +572,8 @@ class MeiTask extends \Phalcon\Cli\Task
         if ($user->isCalling()) {
             echoLine("sssss");
         }
+
+        $voice_call = VoiceCalls::getVoiceCallIdByUserId(117);
+        echoLine($voice_call);
     }
 }

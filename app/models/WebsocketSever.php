@@ -283,16 +283,19 @@ class WebsocketSever extends BaseModel
             //如果有电话进行中
             if ($user->isCalling()) {
                 debug($user_id, $data);
-                $voice_call = VoiceCalls::getVoiceCallIdByUserId($user_id);
-                $call_sender_id = $voice_call->sender_id;
-                $call_receiver_id = $voice_call->receiver_id;
-                $voice_call->changeStatus(CALL_STATUS_HANG_UP);
-                $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
-                $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-                $data = ['action' => 'hang_up', 'user_id' => $user_id, 'channel_name' => $voice_call->call_no];
-                debug($user_id, $receiver_id, $receiver_fd, $data);
+                $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
 
-                $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                if ($voice_call) {
+                    $call_sender_id = $voice_call->sender_id;
+                    $call_receiver_id = $voice_call->receiver_id;
+                    $voice_call->changeStatus(CALL_STATUS_HANG_UP);
+                    $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
+                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+                    $data = ['action' => 'hang_up', 'user_id' => $user_id, 'channel_name' => $voice_call->call_no];
+                    debug($user_id, $receiver_id, $receiver_fd, $data);
+
+                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                }
             }
         }
     }
