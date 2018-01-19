@@ -159,7 +159,6 @@ class WebsocketSever extends BaseModel
         $online_token = $fd . 'f' . md5(uniqid() . $fd);
 
         $sid = self::params($request, 'sid');
-        debug($request->fd, "connect", $sid);
 
         $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
@@ -171,6 +170,8 @@ class WebsocketSever extends BaseModel
         $hot_cache->set($fd_key, $fd);
         $hot_cache->set($user_online_key, $online_token);
         $hot_cache->set($fd_user_id_key, intval($sid));
+
+        debug($request->fd, "connect", $sid, $online_token);
 
         $data = ['online_token' => $online_token, 'action' => 'create_token'];
         $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));

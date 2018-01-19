@@ -541,5 +541,8 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($user->province_id, $user->city_id, $user->province->name, $user->city->name);
         $user->updateProfile(['province_name' => '河北', 'city_name' => '石家庄']);
         echoLine($user->province_id, $user->city_id, $user->province_name, $user->city_name);
+
+        $user = Users::findFirstById(52);
+        echoLine($user->online_token);
     }
 }
