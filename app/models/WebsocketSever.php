@@ -159,6 +159,15 @@ class WebsocketSever extends BaseModel
         $online_token = $fd . 'f' . md5(uniqid() . $fd);
 
         $sid = self::params($request, 'sid');
+        $user_id = intval($sid);
+
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
+            $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+            return;
+        }
 
         $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
@@ -169,7 +178,11 @@ class WebsocketSever extends BaseModel
         $hot_cache->set($online_key, $online_token);
         $hot_cache->set($fd_key, $fd);
         $hot_cache->set($user_online_key, $online_token);
-        $hot_cache->set($fd_user_id_key, intval($sid));
+        $hot_cache->set($fd_user_id_key, $user_id);
+
+        if ($user->current_room) {
+            $user->current_room->bindOnlineToken($user);
+        }
 
         debug($request->fd, "connect", $sid, $online_token);
 
