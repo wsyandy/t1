@@ -157,11 +157,19 @@ class VoiceCalls extends BaseModel
 
     function changeStatus($call_status)
     {
+        debug($call_status);
+
         $this->call_status = $call_status;
         if ($this->hasChanged('call_status') && $this->isHangUp()) {
             $this->duration = time() - $this->updated_at;
+
+            debug($this->id, $this->call_status);
         }
+
         if ($this->update() && !$this->isCallStatusAnswered()) {
+
+            debug($this->id, $this->call_status);
+
             $this->changeUserFree();
         }
     }

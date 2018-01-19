@@ -557,5 +557,13 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $receiver_id = 1 == 2 ? 1 : 2;
         debug($receiver_id);
+
+        $voice_call_id = VoiceCalls::getVoiceCallIdByUserId(52);
+
+        $key = "voice_calling_52";
+        $hot_cache = Users::getHotReadCache();
+        $hot_cache->del($key);
+
+        echoLine($voice_call_id);
     }
 }
