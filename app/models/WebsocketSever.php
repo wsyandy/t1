@@ -72,36 +72,6 @@ class WebsocketSever extends BaseModel
         return $val;
     }
 
-    static function bindFd($user_id, $fd)
-    {
-        $user = Users::findFirstById($user_id);
-
-        if (!$user) {
-            info("user not exists", $user_id);
-            return null;
-        }
-
-        $user_db = Users::getHotWriteCache();
-        $key = "swoole_websocket_fd_user_id_" . $user->id;
-        $user_db->set($key, $fd);
-    }
-
-    static function getFd($user_id)
-    {
-        $user = Users::findFirstById($user_id);
-
-        if (!$user) {
-            info("user not exists", $user_id);
-            return null;
-        }
-
-        $user_db = Users::getHotWriteCache();
-        $key = "swoole_websocket_fd_user_id_" . $user->id;
-        $fd = $user_db->get($key);
-
-        return $fd;
-    }
-
     static function start()
     {
         $host = self::getHost();
@@ -208,7 +178,7 @@ class WebsocketSever extends BaseModel
 
     function onMessage($server, $frame)
     {
-        debug($frame->fd, "send message", $frame);
+        debug($frame->fd, "send message");
 
         if (!$server->exist($frame->fd)) {
             info($frame->fd, "Exce not exist");
