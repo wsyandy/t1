@@ -29,3 +29,20 @@
  -1| 失败|error_url不为空时需跳转error_url,为空时弹框提示错误原因error_reason
  -100| 需要登录|客户端跳转登录页面
  -1001| 需要弹框|根据具体业务处理,tip_content:弹框提示内容,tip_url:弹框跳转url
+ 
+# 3. 个推payload结构
+ ```
+ payload结构：  
+ id          推送消息id    
+ created_at  推送时间    
+ user_id     接受用户id  
+ sid         接受用户sid 
+ title       推送消息标题  
+ body        推送消息主体内容  
+ body_json   推送消息主体内容  
+ push_type   推送消息类型       1 通知:notification  2 透传:transmission     
+ model       对应的模块        例如 user, room 客户端遇到不能处理的model，就直接忽略    
+ action      对应的动作类型     view进入查看,logout退出  
+ client_url  跳转地址    
+ icon_url    图标地址    
+ ```
