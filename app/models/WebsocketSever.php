@@ -204,7 +204,6 @@ class WebsocketSever extends BaseModel
 
         $hot_cache->del($online_key);
         $hot_cache->del($fd_key);
-        $hot_cache->del($user_online_key);
         $hot_cache->del($fd_user_id_key);
 
         $user = Users::findFirstById($user_id);
@@ -248,6 +247,9 @@ class WebsocketSever extends BaseModel
                     if ($receiver_fd) {
                         $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
                     }
+
+                    //重新连接 用户的key不一样
+                    $hot_cache->del($user_online_key);
                 }
             }
         }
