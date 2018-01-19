@@ -220,7 +220,7 @@ class WebsocketSever extends BaseModel
         $hot_cache->del($fd_user_id_key);
 
         $user = Users::findFirstById($user_id);
-        $room_seat = '';
+        $room_seat = null;
 
         if ($user) {
 
@@ -252,7 +252,7 @@ class WebsocketSever extends BaseModel
                     $receiver_id = $user_ids[0];
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
-                    $data = ['action' => 'logout', 'user_id' => $user_id, 'channel_name' => $channel_name];
+                    $data = ['action' => 'logout', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
                     debug($user_id, $receiver_id, $receiver_fd, $data);
 
