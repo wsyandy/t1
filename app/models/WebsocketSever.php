@@ -255,8 +255,9 @@ class WebsocketSever extends BaseModel
 
                     $data = ['action' => 'logout', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
-                    debug($user_id, $receiver_id, $data);
+                    debug($user_id, $receiver_id, $receiver_fd, $data);
 
+                    //判断fd是否存在
                     if ($receiver_fd) {
                         $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
                     }
