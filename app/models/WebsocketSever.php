@@ -242,6 +242,7 @@ class WebsocketSever extends BaseModel
                 $current_room->exitRoom($user);
 
                 if ($current_room_seat) {
+                    debug($current_room_seat->id);
                     $room_seat = $current_room_seat->toOnlineJson();
                 }
 

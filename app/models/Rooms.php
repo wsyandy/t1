@@ -185,6 +185,7 @@ class Rooms extends BaseModel
             $room_seat->save();
         }
 
+        debug($user->current_room_seat_id);
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
         $user->user_role = USER_ROLE_NO;
