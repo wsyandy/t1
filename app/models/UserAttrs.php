@@ -58,7 +58,8 @@ trait UserAttrs
             'speaker' => $this->speaker,
             'im_password' => $this->im_password,
             'followed_num' => $this->followed_num,
-            'follow_num' => $this->follow_num
+            'follow_num' => $this->follow_num,
+            'current_channel_name' => $this->current_channel_name
         ];
     }
 
