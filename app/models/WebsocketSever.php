@@ -279,7 +279,7 @@ class WebsocketSever extends BaseModel
                 }
 
                 //如果有电话进行中
-                if ($user->userIsCalling()) {
+                if ($user->isCalling()) {
                     $voice_call = VoiceCalls::getVoiceCallIdByUserId($user_id);
                     $call_sender_id = $voice_call->sender_id;
                     $call_receiver_id = $voice_call->receiver_id;
