@@ -251,6 +251,9 @@ class WebsocketSever extends BaseModel
 
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
+
+                    debug($user_ids);
+
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
                     $data = ['action' => 'logout', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
