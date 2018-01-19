@@ -179,13 +179,31 @@ class WebsocketSever extends BaseModel
 
     function onOpen($server, $request)
     {
-        if (!$server->exist($request->fd)) {
+        $fd = $request->fd;
+
+        if (!$server->exist($fd)) {
             info($request->fd, "Exce not exist");
             return;
         }
+
+        $online_token = $fd . 'f' . md5(uniqid() . $fd);
+
         $sid = self::params($request, 'sid');
         debug($request->fd, "connect", $sid);
-        $server->push($request->fd, "hello " . $request->fd);
+
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $user_online_key = "socket_user_online_user_id" . intval($sid);
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+
+        $hot_cache->set($online_key, $online_token);
+        $hot_cache->set($fd_key, $fd);
+        $hot_cache->set($user_online_key, $online_token);
+        $hot_cache->set($fd_user_id_key, intval($sid));
+
+        $data = ['online_token' => $online_token, 'action' => 'create_token'];
+        $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
     }
 
     function onMessage($server, $frame)
@@ -204,6 +222,52 @@ class WebsocketSever extends BaseModel
     function onClose($server, $fd, $from_id)
     {
         debug($fd, $from_id, "connect close");
+
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $online_token = $hot_cache->get($online_key);
+        $fd_key = "socket_push_fd_" . $online_token;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+        $user_id = $hot_cache->get($fd_user_id_key);
+        $user_online_key = "socket_user_online_user_id" . $user_id;
+
+        $hot_cache->del($online_key);
+        $hot_cache->del($fd_key);
+        $hot_cache->del($user_online_key);
+        $hot_cache->del($fd_user_id_key);
+
+        $user = Users::findFirstById($user_id);
+        $room_seat = [];
+
+        if ($user && $user->current_room_id) {
+            $current_room = $user->current_room;
+            $current_room_seat_id = $user->current_room_seat_id;
+
+            $channel_name = $current_room->channel_name;
+            $current_room->exitRoom($user);
+
+            $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
+
+            if ($current_room_seat) {
+                $room_seat = $current_room_seat->toJson();
+            }
+
+            $key = 'room_user_list_' . $current_room->id;
+            $user_ids = $hot_cache->zrange($key, 0, -1);
+
+            if (count($user_ids) > 0) {
+                $receiver_id = $user_ids[0];
+                $receiver_fd = $hot_cache->get("socket_user_online_user_id" . $receiver_id);
+
+                $data = ['action' => 'logout', 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+
+                debug($user_id, $data);
+
+                if ($receiver_fd) {
+                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                }
+            }
+        }
     }
 
     function onRequest($request, $response)
