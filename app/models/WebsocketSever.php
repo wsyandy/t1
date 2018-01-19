@@ -259,6 +259,12 @@ class WebsocketSever extends BaseModel
 
                     //判断fd是否存在
                     if ($receiver_fd) {
+
+                        if (!$server->exist($fd)) {
+                            debug("fd 不存在", $fd);
+                            return;
+                        }
+
                         $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
                     }
 
