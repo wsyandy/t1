@@ -1326,9 +1326,9 @@ class Users extends BaseModel
         // 10km---0.01km
         foreach ($users as $key => $user) {
 
-            if ($this->latitude && $this->latitude && $user->latitude && $user->latitude) {
-                $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->latitude / 10000,
-                    $user->latitude / 10000, $user->latitude / 10000);
+            if ($this->latitude && $this->longitude && $user->latitude && $user->longitude) {
+                $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
+                    $user->latitude / 10000, $user->longitude / 10000);
                 $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
                 if ($geo_distance < 0.01) {
                     $geo_distance = 0.01;

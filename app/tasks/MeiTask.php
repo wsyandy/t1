@@ -523,8 +523,8 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($city);
 
 
-        $user = Users::findFirstById(254);
-//        $user->delete();
+        $user = Users::findFirstById(258);
+        $user->delete();
         echoLine($user->province_id, $user->city_id);
 
         $user->updateProfile(['province_name' => '河北', 'city_name' => '石家庄', 'product_channel_id' => 1]);
