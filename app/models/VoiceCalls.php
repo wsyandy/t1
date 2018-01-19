@@ -249,11 +249,8 @@ class VoiceCalls extends BaseModel
 
     function isReceiverBusy()
     {
-        $redis = \VoiceCalls::getXRedis($this->receiver_id);
-        $key = \VoiceCalls::userCacheKey($this->receiver_id);
-        $result = $redis->get($key);
-
-        return intval($result) > 0;
+        $voice_call_id = self::getVoiceCallIdByUserId($this->receiver_id);
+        return intval($voice_call_id) > 0;
     }
 
     static function userCacheKey($user_id)
@@ -261,25 +258,51 @@ class VoiceCalls extends BaseModel
         return "voice_calling_" . $user_id;
     }
 
-    static function userBusy($user_id)
+    static function userIsCalling($user_id)
     {
-        $redis = \VoiceCalls::getXRedis($user_id);
+        $voice_call_id = self::getVoiceCallIdByUserId($user_id);
+        return intval($voice_call_id) > 0;
+    }
+
+    static function getVoiceCallIdByUserId($user_id)
+    {
+        $redis = \VoiceCalls::getHotReadCache();
+        $key = self::userCacheKey($user_id);
+
+        return $redis->get($key);
+    }
+
+    static function getVoiceCallByUserId($user_id)
+    {
+        $voice_call_id = self::getVoiceCallIdByUserId($user_id);
+
+        if (!$voice_call_id) {
+            return null;
+        }
+
+        $voice_call = VoiceCalls::findFirstById($voice_call_id);
+
+        return $voice_call;
+    }
+
+    static function userBusy($user_id, $voice_id)
+    {
+        $redis = \VoiceCalls::getHotWriteCache();
         $key = \VoiceCalls::userCacheKey($user_id);
-        $redis->setex($key, 60*60*2, 1);
+        $redis->setex($key, 60 * 60 * 2, $voice_id);
     }
 
     static function freeUser($user_id)
     {
         $key = self::userCacheKey($user_id);
-        $redis = \VoiceCalls::getXRedis($user_id);
-
+        $redis = \VoiceCalls::getHotWriteCache();
         $redis->del($key);
     }
 
     function changeUserBusy()
     {
-       \VoiceCalls::userBusy($this->sender_id);
-       \VoiceCalls::userBusy($this->receiver_id);
+        \VoiceCalls::userBusy($this->sender_id, $this->id);
+        \VoiceCalls::userBusy($this->receiver_id, $this->id);
     }
 
     function changeUserFree()

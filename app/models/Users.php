@@ -1438,4 +1438,9 @@ class Users extends BaseModel
         $this->microphone = $microphone;
         $this->update();
     }
+
+    function isCalling()
+    {
+        return VoiceCalls::userIsCalling($this->id);
+    }
 }

@@ -277,6 +277,18 @@ class WebsocketSever extends BaseModel
                 } else {
                     info("no users", $key, $user_id);
                 }
+
+                //如果有电话进行中
+                if ($user->userIsCalling()) {
+                    $voice_call = VoiceCalls::getVoiceCallIdByUserId($user_id);
+                    $call_sender_id = $voice_call->sender_id;
+                    $call_receiver_id = $voice_call->receiver_id;
+                    $voice_call->changeStatus(CALL_STATUS_HANG_UP);
+                    $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
+                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+                    $data = ['action' => 'hang_up', 'user_id' => $user_id, 'channel_name' => $voice_call->call_no];
+                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                }
             }
         }
     }

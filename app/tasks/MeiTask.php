@@ -544,5 +544,18 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(52);
         echoLine($user->online_token);
+
+        $key = 'room_user_list_8';
+        $hot_cache = Rooms::getHotWriteCache();
+        echoLine($hot_cache->zrange($key, 0, -1));
+
+        $user = Users::findFirstById(117);
+        echoLine($user->online_token);
+    }
+
+    function test25Action()
+    {
+        $receiver_id = 1 == 2 ? 1 : 2;
+        debug($receiver_id);
     }
 }
