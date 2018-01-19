@@ -171,7 +171,7 @@ trait UserAttrs
     function getAvatarUrl()
     {
         if (isBlank($this->avatar)) {
-            return $thi;
+            return $this->getDefaultAvatar();
         }
 
         return StoreFile::getUrl($this->avatar);
@@ -180,7 +180,7 @@ trait UserAttrs
     function getAvatarSmallUrl()
     {
         if (isBlank($this->avatar)) {
-            return '/images/avatar.png';
+            return $this->getDefaultAvatar();
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';
