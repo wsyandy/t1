@@ -241,10 +241,9 @@ class WebsocketSever extends BaseModel
                 $channel_name = $current_room->channel_name;
                 $current_room->exitRoom($user);
 
-//                if ($current_room_seat) {
-//                    $current_room_seat->down($user);
-//                    $room_seat = $current_room_seat->toJson();
-//                }
+                if ($current_room_seat) {
+                    $room_seat = $current_room_seat->toSimpleJson();
+                }
 
                 $key = 'room_user_list_' . $current_room->id;
                 $user_ids = $hot_cache->zrange($key, 0, -1);
