@@ -356,4 +356,12 @@ trait UserAttrs
 
         return '';
     }
+
+    function getOnlineToken()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $user_online_key = "socket_user_online_user_id" . $this->id;
+
+        return $hot_cache->get($user_online_key);
+    }
 }

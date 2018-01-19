@@ -209,35 +209,41 @@ class WebsocketSever extends BaseModel
         $user = Users::findFirstById($user_id);
         $room_seat = [];
 
-        if ($user && $user->current_room_id) {
-            $current_room = $user->current_room;
-            $current_room_seat_id = $user->current_room_seat_id;
+        if ($user) {
 
-            $channel_name = $current_room->channel_name;
-            $current_room->exitRoom($user);
+            $current_room = Rooms::findRoomByOnlineToken($online_token);
 
-            $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
+            if ($current_room) {
 
-            if ($current_room_seat) {
-                $room_seat = $current_room_seat->toJson();
-            }
+                $channel_name = $current_room->channel_name;
+                $current_room->exitRoom($user);
 
-            $key = 'room_user_list_' . $current_room->id;
-            $user_ids = $hot_cache->zrange($key, 0, -1);
+                $current_room_seat = RoomSeats::findRoomSeatByOnlineToken($online_token);
 
-            if (count($user_ids) > 0) {
-                $receiver_id = $user_ids[0];
-                $receiver_fd = $hot_cache->get("socket_user_online_user_id" . $receiver_id);
+                if ($current_room_seat) {
+                    $room_seat = $current_room_seat->toJson();
+                }
 
-                $data = ['action' => 'logout', 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+                $key = 'room_user_list_' . $current_room->id;
+                $user_ids = $hot_cache->zrange($key, 0, -1);
 
-                debug($user_id, $data);
+                if (count($user_ids) > 0) {
+                    $receiver_id = $user_ids[0];
+                    $receiver_fd = $hot_cache->get("socket_user_online_user_id" . $receiver_id);
 
-                if ($receiver_fd) {
-                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                    $data = ['action' => 'logout', 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+
+                    debug($user_id, $data);
+
+                    if ($receiver_fd) {
+                        $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                    }
                 }
             }
         }
+
+        $hot_cache->del("room_seat_token_" . $online_token);
+        $hot_cache->del("room_token_" . $online_token);
     }
 
     function onRequest($request, $response)

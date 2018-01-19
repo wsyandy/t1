@@ -76,6 +76,48 @@ class RoomSeats extends BaseModel
         return $json;
     }
 
+    function bindOnlineToken($user)
+    {
+        //绑定用户的onlinetoken 长连接使用
+        $online_token = $user->online_token;
+
+        debug($online_token, $user->id, $this->id);
+
+        if ($online_token) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->set("room_seat_token_" . $online_token, $this->id);
+        }
+    }
+
+    function unbindOnlineToken($user)
+    {
+        //解绑用户的onlinetoken 长连接使用
+        $online_token = $user->online_token;
+
+        debug($online_token, $user->id, $this->id);
+
+        if ($online_token) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->del("room_seat_token_" . $online_token);
+        }
+    }
+
+    //根据onlinetoken查找房间 异常退出时使用
+    static function findRoomSeatByOnlineToken($token)
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_seat_id = $hot_cache->get("room_seat_token_" . $token);
+
+        if (!$room_seat_id) {
+            return null;
+        }
+
+        $room_seat = RoomSeats::findFirstById($room_seat_id);
+
+        return $room_seat;
+    }
+
+
     // 上麦
     function up($user, $other_user = null)
     {
@@ -102,7 +144,7 @@ class RoomSeats extends BaseModel
             $other_user->update();
 
             $this->room->updateUserRank($other_user);
-
+            $object = $other_user;
         } else {
 
             //当前用户已在麦位
@@ -123,10 +165,12 @@ class RoomSeats extends BaseModel
 
             debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user);
+            $object = $user;
         }
 
         $this->update();
 
+        $this->bindOnlineToken($object);
         debug($user->device->device_no, $this->user_id);
 
         return $res;
@@ -143,19 +187,20 @@ class RoomSeats extends BaseModel
             $other_user->current_room_seat_id = 0;
             $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $other_user->update();
-
             $this->room->updateUserRank($other_user, false);
+            $object = $other_user;
         } else {
             // 自己下麦
             $user->current_room_seat_id = 0;
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $user->update();
-
             debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user, false);
+            $object = $user;
         }
 
         $this->update();
+        $this->unbindOnlineToken($object);
         debug($user->device->device_no, $this->user_id);
     }
 

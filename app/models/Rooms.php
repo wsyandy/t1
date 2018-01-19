@@ -104,6 +104,47 @@ class Rooms extends BaseModel
         $this->update();
     }
 
+    function bindOnlineToken($user)
+    {
+        //绑定用户的onlinetoken 长连接使用
+        $online_token = $user->online_token;
+
+        debug($online_token, $user->id, $this->id);
+
+        if ($online_token) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->set("room_token_" . $online_token, $this->id);
+        }
+    }
+
+    function unbindOnlineToken($user)
+    {
+        //解绑用户的onlinetoken 长连接使用
+        $online_token = $user->online_token;
+
+        debug($online_token, $user->id, $this->id);
+
+        if ($online_token) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->del("room_token_" . $online_token);
+        }
+    }
+
+    //根据onlinetoken查找房间 异常退出时使用
+    static function findRoomByOnlineToken($token)
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_id = $hot_cache->get("room_token_" . $token);
+
+        if (!$room_id) {
+            return null;
+        }
+
+        $room = Rooms::findFirstById($room_id);
+
+        return $room;
+    }
+
     function enterRoom($user)
     {
         $user->current_room_id = $this->id;
@@ -125,6 +166,7 @@ class Rooms extends BaseModel
 
         $user->save();
 
+        $this->bindOnlineToken($user);
         $this->addUser($user);
     }
 
@@ -154,6 +196,7 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $this->unbindOnlineToken($user);
         $this->remUser($user);
     }
 
