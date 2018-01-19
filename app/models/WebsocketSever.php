@@ -213,6 +213,15 @@ class WebsocketSever extends BaseModel
 
             $current_room = Rooms::findRoomByOnlineToken($online_token);
 
+            $hot_cache->del("room_seat_token_" . $online_token);
+            $hot_cache->del("room_token_" . $online_token);
+
+            //用户有新的连接 老的连接不推送
+            if ($user->online_token != $online_token) {
+                info($online_token, $user->online_token, $user->id);
+                return;
+            }
+
             if ($current_room) {
 
                 $channel_name = $current_room->channel_name;
@@ -241,9 +250,6 @@ class WebsocketSever extends BaseModel
                 }
             }
         }
-
-        $hot_cache->del("room_seat_token_" . $online_token);
-        $hot_cache->del("room_token_" . $online_token);
     }
 
     function onRequest($request, $response)
