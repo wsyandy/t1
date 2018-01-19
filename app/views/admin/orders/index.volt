@@ -1,5 +1,5 @@
 {%- macro user_link(object)  %}
-    <a href="/admin/users/detail?user_id={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>
+    <a href="/admin/users/detail?id={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>
 {%- endmacro %}
 
 {%- macro payments_link(object) %}

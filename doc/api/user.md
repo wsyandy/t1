@@ -14,8 +14,8 @@
 ##### 2.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-| mobile |手机|string|否|||
-| sms_type |短信类型|string|否||| 登录login 注册register
+| mobile |手机|string|否||
+| sms_type |短信类型|string|否|登录login 注册register|
 ##### 2.2 回应参数说明
 ```
 {
