@@ -566,5 +566,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $voice_call_id = VoiceCalls::getVoiceCallIdByUserId(52);
         echoLine($voice_call_id);
+
+        $user = Users::findFirstById(117);
+
+        if ($user->isCalling()) {
+            echoLine("sssss");
+        }
     }
 }
