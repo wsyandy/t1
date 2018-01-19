@@ -220,11 +220,12 @@ class WebsocketSever extends BaseModel
         $hot_cache->del($fd_user_id_key);
 
         $user = Users::findFirstById($user_id);
-        $room_seat = [];
+        $room_seat = '';
 
         if ($user) {
 
             $current_room = Rooms::findRoomByOnlineToken($online_token);
+            $current_room_seat = RoomSeats::findRoomSeatByOnlineToken($online_token);
 
             $hot_cache->del("room_seat_token_" . $online_token);
             $hot_cache->del("room_token_" . $online_token);
@@ -240,8 +241,6 @@ class WebsocketSever extends BaseModel
                 $channel_name = $current_room->channel_name;
                 $current_room->exitRoom($user);
 
-                $current_room_seat = RoomSeats::findRoomSeatByOnlineToken($online_token);
-
                 if ($current_room_seat) {
                     $room_seat = $current_room_seat->toJson();
                 }
@@ -251,7 +250,7 @@ class WebsocketSever extends BaseModel
 
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
-                    $receiver_fd = $hot_cache->get("socket_user_online_user_id" . $receiver_id);
+                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
                     $data = ['action' => 'logout', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
