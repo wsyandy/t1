@@ -76,6 +76,16 @@ class RoomSeats extends BaseModel
         return $json;
     }
 
+    function toOnlineJson()
+    {
+        $json['id'] = $this->id;
+        $json['status'] = $this->status;
+        $json['microphone'] = $this->microphone;
+        $json['room_id'] = $this->room_id;
+        $json['user_id'] = $this->user_id;
+        return $json;
+    }
+
     function bindOnlineToken($user)
     {
         //绑定用户的onlinetoken 长连接使用
