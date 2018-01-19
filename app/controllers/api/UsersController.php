@@ -53,9 +53,18 @@ class UsersController extends BaseController
     function sendAuthAction()
     {
         $mobile = $this->params('mobile');
-
+        $sms_type = $this->params('sms_type');
         $context = $this->context();
         $context['device_id'] = $this->currentDeviceId();
+        $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
+
+        if ('login' == $sms_type && !$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        if ('register' == $sms_type && $user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户已注册');
+        }
 
         list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
             $mobile, 'login', $context);
