@@ -46,3 +46,40 @@
  client_url  跳转地址    
  icon_url    图标地址    
  ```
+ 
+ # 4. websocket通信结构
+ 
+ ## 4.1 客户端请求服务端的心跳包结构
+ ```
+ {
+    action:ping
+    online_token:xxxxx websocket链接时由服务端生成返回给客户端
+    timestamp:xxxxxx  时间戳
+    sign:xxxxxx  签名
+ }
+ ```
+ 
+ ## 4.2 服务端通知客户端的消息结构
+ ### 退出房间
+  ```
+  {
+     action:exit_room exit_room退出房间 (由于网络异常或进程退出导致的退出房间)   
+     user_id:1233 退出房间的用户id
+     channel_name 房间频道
+     room_seat:{
+        id 麦位id
+        status 麦位状态
+        microphone 麦位麦克风状态
+     } //退出房间用户所在的麦位
+  }
+  ```
+ ### 挂断电话
+  ```
+  {
+     action:hang_up 挂断电话(由于网络异常或进程退出导致的电话中断)
+     user_id 挂断电话的用户id
+     receiver_id 对方用户id
+     channel_name 房间频道
+  }
+  ``` 
+ 
