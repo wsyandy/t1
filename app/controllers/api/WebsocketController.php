@@ -13,6 +13,6 @@ class WebsocketController extends BaseController
     function endPointAction()
     {
         $websocket_end_point = '116.62.103.161:9509';
-        $this->renderJSON(ERROR_CODE_SUCCESS, '', ['end_point' => $websocket_end_point]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['end_point' => $websocket_end_point]);
     }
 }
