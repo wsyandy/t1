@@ -81,8 +81,6 @@ class RoomSeats extends BaseModel
         $json['id'] = $this->id;
         $json['status'] = $this->status;
         $json['microphone'] = $this->microphone;
-        $json['room_id'] = $this->room_id;
-        $json['user_id'] = $this->user_id;
         return $json;
     }
 

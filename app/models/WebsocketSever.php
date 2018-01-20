@@ -199,6 +199,26 @@ class WebsocketSever extends BaseModel
             return;
         }
 
+        $data = $frame->data;
+
+
+        if (!$data) {
+            debug("数据为空");
+        }
+
+        $data = json_decode($data, true);
+        $sign = fetch($data, 'sign');
+
+        if (!$sign) {
+            info("sign_error", $data);
+        }
+
+        unset($data['sign']);
+
+        if ($sign != md5($data)) {
+            info("sign_error", $data, md5($data), $sign);
+        }
+
         //解析数据
         $server->push($frame->fd, $frame->data);
     }
@@ -257,7 +277,7 @@ class WebsocketSever extends BaseModel
 
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
-                    $data = ['action' => 'logout', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+                    $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
                     debug($user_id, $receiver_id, $receiver_fd, $data);
 
@@ -291,7 +311,7 @@ class WebsocketSever extends BaseModel
                     $voice_call->changeStatus(CALL_STATUS_HANG_UP);
                     $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-                    $data = ['action' => 'hang_up', 'user_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
+                    $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
                     debug($user_id, $receiver_id, $receiver_fd, $data);
 
                     $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
