@@ -215,8 +215,8 @@ class WebsocketSever extends BaseModel
 
         unset($data['sign']);
 
-        if ($sign != md5($data)) {
-            info("sign_error", $data, md5($data), $sign);
+        if ($sign != md5(json_encode($data, JSON_UNESCAPED_UNICODE))) {
+            info("sign_error", $data, md5(json_encode($data, JSON_UNESCAPED_UNICODE)), $sign);
         }
 
         //解析数据
