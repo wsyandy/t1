@@ -20,5 +20,6 @@
 * [设置](set.md)
 * [语音通话](voice_calls.md)
 * [系统消息](chats.md)
+* [Websocket](websocket.md)
 
 ## Published with GitBook
