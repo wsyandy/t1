@@ -327,6 +327,18 @@ class Users extends BaseModel
 
         // 设备不一致，发送强行下线推送
         if ($device->id != $this->device_id && !isBlank($this->push_token)) {
+
+            //切换账号登录时如果用户在房间就退出房间
+            if ($this->isInAnyRoom()) {
+                $current_room = $this->current_room;
+
+                info("change_device_exit_room", $this->current_room->id, $this->id);
+
+                if ($current_room) {
+                    $current_room->exitRoom($this);
+                }
+            }
+
             $old_device = \Devices::findFirstById($this->device_id);
             if ($old_device) {
 
