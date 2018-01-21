@@ -373,7 +373,7 @@ class Users extends BaseModel
             $old_device = \Devices::findFirstById($this->device_id);
             if ($old_device) {
 
-                $payload = ['model' => 'user', 'user' => ['action' => 'logout', 'sid' => $old_device->sid]];
+                $payload = ['model' => 'user', 'user' => ['action' => 'logout', 'sid' => $this->generateSid('d.')]];
                 $client_url = 'app://users/logout';
                 $receiver_context = $this->getPushReceiverContext();
                 $push_data = ['title' => $this->product_channel->name, 'body' => '您已在其他设备登陆,本次登陆已注销!', 'payload' => $payload,
@@ -391,8 +391,13 @@ class Users extends BaseModel
         $this->sid = $this->generateSid('s');
         $this->device_id = $device->id;
         $this->user_status = USER_STATUS_ON;
-
+        $this->device_no = $device->device_no;
+        $this->push_token = $device->push_token;
         $this->update();
+
+        $device->user_id = $this->id;
+        $device->save();
+
         return [ERROR_CODE_SUCCESS, '登陆成功'];
     }
 
