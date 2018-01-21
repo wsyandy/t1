@@ -106,37 +106,12 @@ class Users extends BaseModel
 
     function afterUpdate()
     {
-
         if ($this->hasChanged('device_id') && $this->device) {
-            //更新设备注册数量
-            $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->device_id]]);
-            $this->device->reg_num = $reg_num;
-            $this->device->user_id = $this->id;
-            $this->device->update();
-
-            $old_device_id = $this->was('device_id');
-            $old_device = Devices::findFirstById($old_device_id);
-            if ($old_device) {
-                $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $old_device->id]]);
-                $old_device->reg_num = $reg_num;
-                $old_device->update();
-            }
+            $this->calDeviceRegisterNum();
         }
 
         if ($this->hasChanged('last_at')) {
-            $last_at = $this->was('last_at');
-            if (date('YmdH', $last_at) != date('YmdH', $this->last_at)) {
-                $attrs = $this->getStatAttrs();
-                // 统计活跃
-                \Stats::delay()->record('user', 'active_user', $attrs);
-
-                if ($this->mobile) {
-                    \Stats::delay()->record('user', 'active_register_user', $attrs);
-
-                    $attrs['id'] = $this->mobile;
-                    \Stats::delay()->record('user', 'active_mobile', $attrs);
-                }
-            }
+            $this->updateLastAt();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -153,6 +128,40 @@ class Users extends BaseModel
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
+        }
+    }
+
+    function calDeviceRegisterNum()
+    {
+        //更新设备注册数量
+        $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->device_id]]);
+        $this->device->reg_num = $reg_num;
+        $this->device->user_id = $this->id;
+        $this->device->update();
+
+        $old_device_id = $this->was('device_id');
+        $old_device = Devices::findFirstById($old_device_id);
+        if ($old_device) {
+            $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $old_device->id]]);
+            $old_device->reg_num = $reg_num;
+            $old_device->update();
+        }
+    }
+
+    function updateLastAt()
+    {
+        $last_at = $this->was('last_at');
+        if (date('YmdH', $last_at) != date('YmdH', $this->last_at)) {
+            $attrs = $this->getStatAttrs();
+            // 统计活跃
+            \Stats::delay()->record('user', 'active_user', $attrs);
+
+            if ($this->mobile) {
+                \Stats::delay()->record('user', 'active_register_user', $attrs);
+
+                $attrs['id'] = $this->mobile;
+                \Stats::delay()->record('user', 'active_mobile', $attrs);
+            }
         }
     }
 
