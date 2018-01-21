@@ -40,7 +40,7 @@ class DevicesController extends BaseController
                     $device->update();
                 }
 
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', array('sid' => $user->sid));
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', ['sid' => $user->sid]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
             }

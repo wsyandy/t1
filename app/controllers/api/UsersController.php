@@ -27,13 +27,19 @@ class UsersController extends BaseController
         $opts = $this->context();
 
         list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $opts);
+
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
 
         $device = $this->currentDevice();
-        list($error_code, $error_reason, $user) = \Users::registerByClientMobile($this->currentProductChannel(),
-            $device, $mobile, $this->context(), $this->params());
+        $product_channel = $this->currentProductChannel();
+
+        if (!$device) {
+            $device = $this->currentUser()->device;
+        }
+
+        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $this->context());
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);

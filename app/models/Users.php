@@ -206,86 +206,77 @@ class Users extends BaseModel
         return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
     }
 
-    static function registerByClientMobile($product_channel, $device, $mobile, $context = [], $params = [])
+    static function registerForClientByMobile($current_user, $device, $mobile, $product_channel, $context = [])
     {
+
         if (isBlank($mobile)) {
             return [ERROR_CODE_FAIL, '手机号错误', null];
         }
-        if (!$device || !$device->can_register && isProduction()) {
-            info('false_device', $product_channel->code, $mobile, $context, $params);
+
+        info('false_device', $device->id, 'can_register', $device->can_register);
+        if (!$device || !$device->can_register) {
+            info('false_device', $current_user->product_channel->code, $mobile, $context);
             return [ERROR_CODE_FAIL, '设备错误!!', null];
         }
 
-        $user = \Users::findFirstByMobile($product_channel, $mobile);
+        $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
 
-        if (!$user) {
-
-            debug("client no user");
-            $user = new \Users();
-
-            $user->platform = fetch($context, 'platform');
-            $user->ip = fetch($context, 'ip');
-
-            $fr = $device->fr;
-
-            if (!$fr) {
-                $fr = fetch($context, 'fr');
-            }
-
-            $user->fr = $fr;
-            $partner = \Partners::findFirstByFrHotCache($fr);
-            if ($partner) {
-                $user->partner_id = $partner->id;
-                // 特殊情况
-                $device->fr = $fr;
-                $device->partner_id = $partner->id;
-            }
-
-            $user->device_id = $device->id;
-            $device->reg_num += 1;
-            $device->update();
-        } else {
-            return [ERROR_CODE_FAIL, '已注册', null];
+        if ($exist_user) {
+            return [ERROR_CODE_FAIL, '用户已注册', null];
         }
 
-        $user->mobile = $mobile;
-        $password = fetch($params, 'password');
+        $user = $current_user;
+        //换个手机号注册，重新生成用户
+        if ($current_user->mobile && $current_user->mobile != $mobile) {
+            $user = Users::registerForClientByDevice($device, true);
+            info('换个手机号注册', $user->id, $context);
+        }
 
+        //$user->checkRegisterFr($device, $mobile);
+
+        $fr = $device->fr;
+        if (!$fr) {
+            $fr = fetch($context, 'fr');
+            $user->fr = $fr;
+            $device->fr = $fr;
+        }
+
+        $partner = \Partners::findFirstByFrHotCache($fr);
+        if ($partner) {
+            $user->partner_id = $partner->id;
+            $device->partner_id = $partner->id;
+        }
+
+        $device->user_id = $user->id;
+        $device->save();
+
+        $user->manufacturer = $device->manufacturer;
+        $user->platform = $device->platform;
+        $user->device_id = $device->id;
+        $user->device = $device;
+        $user->device_no = $device->device_no;
+        $user->mobile = $mobile;
+
+        $password = fetch($context, 'password');
         if ($password) {
             $user->password = md5($password);
-
         }
-
         if (isBlank($user->login_name)) {
             $user->login_name = md5(uuid()) . '@app.com';
         }
-
         if (isBlank($user->nickname)) {
-            $user->nickname = $user->getMaskedMobile() ?? '昵称';
+            $user->nickname = $user->getMaskedMobile();
         }
-
-        $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
         $user->login_type = USER_LOGIN_TYPE_MOBILE;
-
-        if ($device) {
-            $user->device_id = $device->id;
-        }
-
         $user->save();
 
-        $user->sid = $user->generateSid('s');
-        $user->update();
-
-        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
-
-        $other_user = Users::findFirst(['conditions' => 'mobile=:mobile: and id!=:id:',
-            'bind' => ['mobile' => $user->mobile, 'id' => $user->id], 'order' => 'id asc'
-        ]);
-        if (!$other_user) {
-            debug('register_mobile', $user->mobile);
-            \Stats::delay()->record('user', 'register_mobile', $user->getStatAttrs());
+        if ($mobile) {
+            $user->sid = $user->generateSid('s');
+            $user->update();
         }
+
+        info($user->id, $user->mobile, $user->fr, $user->partner_id, date('Ymd H:i:s', $user->created_at), date('Ymd H:i:s', $user->register_at));
 
         return [ERROR_CODE_SUCCESS, '', $user];
     }
@@ -852,6 +843,7 @@ class Users extends BaseModel
     function bindMobile()
     {
         self::delay(2)->checkRegisterMobile($this->mobile);
+        self::delay(2)->registerStat($this->id);
     }
 
     static function checkRegisterMobile($mobile)
@@ -868,6 +860,22 @@ class Users extends BaseModel
             $user->mobile_register_num = $num;
             $user->mobile_operator = $mobile_operator;
             $user->save();
+        }
+    }
+
+    static function registerStat($user_id)
+    {
+        $user = Users::findFirstById($user_id);
+        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
+
+        $other_user = Users::findFirst(['conditions' => 'mobile=:mobile: and id!=:id:',
+            'bind' => ['mobile' => $user->mobile, 'id' => $user->id], 'order' => 'id asc'
+        ]);
+
+        // 手机第一次注册
+        if (!$other_user && time() - $user->register_at < 60) {
+            debug('first_register_mobile', $user->mobile);
+            \Stats::delay()->record('user', 'first_register_mobile', $user->getStatAttrs());
         }
     }
 
