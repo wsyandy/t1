@@ -123,21 +123,6 @@ class Users extends BaseModel
             }
         }
 
-        if ($this->hasChanged('status')) {
-            if (!$this->isNormal() && $this->isClientPlatform() && $this->device) {
-
-                $payload = ['model' => 'user', 'user' => ['action' => 'logout', 'sid' => $this->device->sid]];
-                $client_url = 'app://users/logout';
-                $receiver_context = $this->getPushReceiverContext();
-                $push_data = ['title' => '', 'body' => '请重新登录!', 'payload' => $payload,
-                    'badge' => null, 'offline' => true, 'client_url' => $client_url, 'icon_url' => $this->product_channel->avatar_url];
-
-                info('用户状态异常 push_logout', $this->id, $push_data);
-
-                \Pushers::delay()->push($this->getPushContext(), $receiver_context, $push_data);
-            }
-        }
-
         if ($this->hasChanged('last_at')) {
             $last_at = $this->was('last_at');
             if (date('YmdH', $last_at) != date('YmdH', $this->last_at)) {
