@@ -20,3 +20,14 @@ function mobileOperator($mobile)
     }
     return $mobile_operator;
 }
+
+// 请求协议
+/**
+ * @return string
+ */
+function getRequestProtocol()
+{
+    $di = \Phalcon\Di::getDefault()->get('config');
+    $key = $di->request_protocol;
+    return $key;
+}

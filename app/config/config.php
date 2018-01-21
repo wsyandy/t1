@@ -28,4 +28,5 @@ return new \Phalcon\Config([
 
     'websocket_server' => ['host' => '0.0.0.0', 'port' => 9509],
     'websocket_end_point' => "ws://0.0.0.0:9509",
+    'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http')
 ]);

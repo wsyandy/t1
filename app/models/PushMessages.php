@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Created by PhpStorm.
+ * User: apple
+ * Date: 17/4/24
+ * Time: 下午8:58
+ */
 class PushMessages extends BaseModel
 {
     /**
@@ -175,26 +181,26 @@ class PushMessages extends BaseModel
             return $push_url;
         }
 
-        $product = Products::findFirstById($this->product_id);
-        if (!$product) {
-            info('productl not exists', $this->product_id);
-            return null;
-        }
+//        $product = Products::findFirstById($this->product_id);
+//        if (!$product) {
+//            info('productl not exists', $this->product_id);
+//            return null;
+//        }
+//
+//        if ($product->filterConditions($receiver)) {
+//            info('continue filter_conditions', $product->id);
+//            return null;
+//        }
 
-        if ($product->filterConditions($receiver)) {
-            info('continue filter_conditions', $product->id);
-            return null;
-        }
-
-        if ($receiver->isClientPlatform()) {
-            $push_url = "app://products/detail?id=" . $product->id;
-        } elseif ($receiver->isWxPlatform()) {
-            $domain = $receiver->product_channel->weixin_domain;
-            $push_url = self::getProtocol() . $domain . '/wx/products/detail?id=' . $product->id;
-        } elseif ($receiver->isTouchPlatform()) {
-            $domain = $receiver->product_channel->touch_domain;
-            $push_url = self::getProtocol() . $domain . '/touch/products/detail?id=' . $product->id;
-        }
+//        if ($receiver->isClientPlatform()) {
+//            $push_url = "app://products/detail?id=" . $product->id;
+//        } elseif ($receiver->isWxPlatform()) {
+//            $domain = $receiver->product_channel->weixin_domain;
+//            $push_url = getRequestProtocol() . $domain . '/wx/products/detail?id=' . $product->id;
+//        } elseif ($receiver->isTouchPlatform()) {
+//            $domain = $receiver->product_channel->touch_domain;
+//            $push_url = getRequestProtocol() . $domain . '/touch/products/detail?id=' . $product->id;
+//        }
 
         if (!$push_url) {
             return '';
@@ -211,30 +217,20 @@ class PushMessages extends BaseModel
         return $push_url;
     }
 
-    static function getProtocol()
-    {
-        $protocol = "http://";
-//        if (isProduction()) {
-//            $protocol = "https://";
-//        }
-
-        return $protocol;
-    }
-
     private function stat($user, $type)
     {
         return;
         $clazz = get_class($user);
         $clazz = strtolower($clazz);
         $day = date("Ymd");
-        $device_db = \Devices::getDeviceDb();
+        $stat_db = Stats::getStatDb();
         $cache_keys[] = 'stat_' . $day . '_' . $type . '_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id-1_platform-1';
         $cache_keys[] = 'stat_' . $day . '_' . $type . '_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id' . $user->product_channel_id . '_platform-1';
         $cache_keys[] = 'stat_' . $day . '_' . $type . '_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id-1_platform' . $user->platform;
         $cache_keys[] = 'stat_' . $day . '_' . $type . '_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id' . $user->product_channel_id . '_platform' . $user->platform;
 
         foreach ($cache_keys as $cache_key) {
-            $device_db->zadd($cache_key, time(), $user->id);
+            $stat_db->zadd($cache_key, time(), $user->id);
         }
     }
 
@@ -313,7 +309,7 @@ class PushMessages extends BaseModel
         $product_channel_id = fetch($conds, 'product_channel_id', -1);
         $platform = fetch($conds, 'platform', -1);
 
-        $device_db = \Devices::getDeviceDb();
+        $stat_db = Stats::getStatDb();
         $results = [];
         $month_max_day = date('t', strtotime($year, '-' . $month . '-01'));
         for ($i = 1; $i <= $month_max_day; $i++) {
@@ -326,8 +322,8 @@ class PushMessages extends BaseModel
             $day = date("Ymd", strtotime($day));
             $cache_send_key = 'stat_' . $day . '_send_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id' . $product_channel_id . '_platform' . $platform;
             $cache_receive_key = 'stat_' . $day . '_receive_' . $clazz . '_push_message_id' . $this->id . '_product_channel_id' . $product_channel_id . '_platform' . $platform;
-            $pv = $device_db->zcard($cache_send_key);
-            $uv = $device_db->zcard($cache_receive_key);
+            $pv = $stat_db->zcard($cache_send_key);
+            $uv = $stat_db->zcard($cache_receive_key);
             debug($cache_send_key, $pv, $cache_receive_key, $uv);
             $results[date("d", strtotime($day))] = [intval($pv), intval($uv)];
         }
@@ -345,20 +341,10 @@ class PushMessages extends BaseModel
             return null;
         }
 
-        $product = $this->getProductChannelMaterial($product_channel);
-        $amount = $product->amount_max;
+
         $push_url = $this->getPushUrl($receiver);
-        $protocol = self::getProtocol();
-        $weixin_domain = $product_channel->weixin_domain;
-        $url = $protocol . $weixin_domain . '/wx/products/recommend?tn=' . $this->tracker_no;
-        $product_channel_name = <<<EOF
-<a href="$url">$product_channel->weixin_name</a>
-EOF;
+        $protocol = getRequestProtocol();
 
-
-        $text_content = str_replace(['%amount%', '%product_url%', '%product_channel_name%'], [$amount, $push_url, $product_channel_name], $text_content);
-
-        debug($text_content);
         return $text_content;
     }
 

@@ -12,8 +12,7 @@ class DevicesController extends BaseController
             debug($this->params(), $this->headers(), 'context', $attributes);
 
             if (!checkSum($attributes['device_no']) && !isDevelopmentEnv()) {
-                $this->renderJSON(ERROR_CODE_FAIL);
-                return;
+                return $this->renderJSON(ERROR_CODE_FAIL);
             }
 
             $attributes['ua'] = $this->params('ua');
@@ -29,12 +28,24 @@ class DevicesController extends BaseController
 
             $device = \Devices::active($this->currentProductChannel(), $attributes);
             if ($device) {
-                $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', ['sid' => $device->sid]);
+
+                $user = \Users::registerForClientByDevice($device);
+                // 防止写入失败
+                if (!$user->sid || !$user->device_id) {
+                    $user->sid = $user->generateSid('d.');
+                    $user->device_id = $device->id;
+                    $user->save();
+
+                    $device->user_id = $user->id;
+                    $device->update();
+                }
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', array('sid' => $user->sid));
             } else {
-                $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
+                return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
             }
         } else {
-            $this->renderJSON(ERROR_CODE_FAIL, '非法调用', ['sid' => ""]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '非法调用', ['sid' => ""]);
         }
     }
 }

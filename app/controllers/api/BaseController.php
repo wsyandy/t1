@@ -56,15 +56,23 @@ class BaseController extends ApplicationController
     function currentUserId()
     {
         $sid = $this->context('sid');
-
-        if (isBlank($sid) || !preg_match('/^\d+s/', $sid)) {
+        if (isBlank($sid)) {
             return null;
         }
 
-        $user_id = intval(explode('s', $sid, 2)[0]);
-        debug('user_id', $user_id);
+        // 登录
+        if (preg_match('/^\d+s/', $sid)) {
+            $user_id = intval(explode('s', $sid, 2)[0]);
+            return $user_id;
+        }
 
-        return $user_id;
+        // 未登录
+        if (preg_match('/^\d+d\./', $sid)) {
+            $user_id = intval(explode('d.', $sid, 2)[0]);
+            return $user_id;
+        }
+
+        return null;
     }
 
     /**
@@ -137,16 +145,19 @@ class BaseController extends ApplicationController
 
     function currentDeviceId()
     {
-
-        $sid = $this->context('sid');
-        if (isBlank($sid) || !preg_match('/^\d+d/', $sid)) {
-            return null;
+        $user = $this->currentUser();
+        if ($user && $user->device_id) {
+            return $user->device_id;
         }
 
-        $device_id = intval(explode('d', $sid, 2)[0]);
-        debug('device_id', $device_id);
+        // 兼容以前
+        $sid = $this->context('sid');
+        if ($sid && !preg_match('/^\d+d\./', $sid) && preg_match('/^\d+d/', $sid)) {
+            $device_id = intval(explode('d', $sid, 2)[0]);
+            return $device_id;
+        }
 
-        return $device_id;
+        return null;
     }
 
     /**
@@ -367,25 +378,15 @@ class BaseController extends ApplicationController
             'latitude' => $this->context('latitude'),
             'longitude' => $this->context('longitude'),
             'api_version' => $this->context('an'),
-            'gateway_mac' => $this->context('gateway_mac')
+            'gateway_mac' => $this->context('gateway_mac'),
+            'manufacturer' => $this->context('manufacturer'),
+            'platform_version' => $this->context('platform_version')
         ];
 
         if ($this->currentUser()) {
             $this->currentUser()->onlineFresh($fresh_attrs);
-            if ($this->currentUser()->device) {
-                $this->currentUser()->device->onlineFresh($fresh_attrs);
-                // 启动任务
-//                $this->currentUser()->device->startOfflineTask();
-            }
-
-        } elseif ($this->currentDevice()) {
-
-            $this->currentDevice()->onlineFresh($fresh_attrs);
-            // 启动任务
-//            $this->currentDevice()->startOfflineTask();
+            //$this->currentUser()->startOfflineTask();
         }
-
-
     }
 
     function validSign()

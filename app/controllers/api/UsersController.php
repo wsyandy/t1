@@ -163,15 +163,7 @@ class UsersController extends BaseController
         }
 
         $user = $this->currentUser();
-        $device = $user->device;
-
-        if (!$device) {
-            $device = \Devices::findFirst([
-                'conditions' => 'device_no=:device_no: and product_channel_id=:product_channel_id:',
-                'bind' => ['device_no' => $this->context('device_no'), 'product_channel_id' => $this->currentProductChannelId()],
-                'order' => 'id desc']);
-        }
-
+        $user->sid = $user->generateSid('d.');
         $user->user_status = USER_STATUS_LOGOUT;
         $user->update();
 

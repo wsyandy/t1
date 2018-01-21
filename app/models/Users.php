@@ -6,6 +6,7 @@ class Users extends BaseModel
     use UserEnumerations;
     use UserAttrs;
     use UserAbilities;
+    use UserWakeup;
 
     /**
      * @type ProductChannels
@@ -273,7 +274,7 @@ class Users extends BaseModel
 
         $user->save();
 
-        $user->sid = $user->generateSid();
+        $user->sid = $user->generateSid('s');
         $user->update();
 
         \Stats::delay()->record('user', 'register', $user->getStatAttrs());
@@ -287,6 +288,51 @@ class Users extends BaseModel
         }
 
         return [ERROR_CODE_SUCCESS, '', $user];
+    }
+
+    //根据设备注册
+    static function registerForClientByDevice($device, $is_force = false)
+    {
+        // 重复激活
+        // dno重复，存在bug
+        $user = $device->user;
+        if (!$user || $is_force) {
+
+            $fields = ['product_channel_id', 'platform', 'platform_version', 'version_code', 'version_name',
+                'api_version', 'device_no', 'fr', 'partner_id', 'manufacturer', 'ip', 'latitude', 'longitude',
+                'push_token'];
+
+            $user = new \Users();
+            $user->login_name = md5(uuid()) . '@app.com';
+            $user->device = $device;
+            $user->device_id = $device->id;
+            $user->device_no = $device->device_no;
+
+            foreach ($fields as $field) {
+                $user->$field = $device->$field;
+            }
+
+            $user->save();
+        } else {
+            if ($user->mobile) {
+                info('用户已注册,有手机号', $device->id, $user->id, $user->mobile);
+            } else {
+                info('用户已激活', $device->id, $user->id);
+            }
+        }
+
+        $user->manufacturer = $device->manufacturer;
+        $user->platform = $device->platform;
+        $user->device = $device;
+        $user->device_id = $device->id;
+        $user->device_no = $device->device_no;
+        $user->sid = $user->generateSid('d.');
+        $user->save();
+
+        $device->user_id = $user->id;
+        $device->update();
+
+        return $user;
     }
 
     // 多设备登录
@@ -351,7 +397,7 @@ class Users extends BaseModel
         }
 
 
-        $this->sid = $this->generateSid();
+        $this->sid = $this->generateSid('s');
         $this->device_id = $device->id;
         $this->user_status = USER_STATUS_ON;
 
@@ -377,11 +423,11 @@ class Users extends BaseModel
      * 产生 SID
      * @return string
      */
-    function generateSid()
+    function generateSid($seg)
     {
         $src = $this->id . uniqid(mt_rand()) . microtime();
 
-        $src = $this->id . "s" . md5($src);
+        $src = $this->id . $seg . md5($src);
         $src .= calculateSum($src);
 
         return $src;
@@ -500,7 +546,7 @@ class Users extends BaseModel
 
         $user->save();
 
-        $user->sid = $user->generateSid();
+        $user->sid = $user->generateSid('');
         $user->update();
 
         info('touch_register:新注册用户=', $user->id, $opts);
@@ -539,7 +585,7 @@ class Users extends BaseModel
 
         $user->save();
 
-        $user->sid = $user->generateSid();
+        $user->sid = $user->generateSid('d.');
         $user->update();
 
         //info('touch_register:新注册用户=', $user->id, $opts);
@@ -620,7 +666,7 @@ class Users extends BaseModel
 
         $user->save();
 
-        $user->sid = $user->generateSid();
+        $user->sid = $user->generateSid('d.');
         $user->update();
 
         //头像
