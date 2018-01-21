@@ -215,14 +215,23 @@ class BaseController extends ApplicationController
         return $this->currentProductChannel()->getPushContext($this->context('platform'));
     }
 
+    function isLogin()
+    {
+        return $this->currentUser() && $this->params('sid') === $this->currentUser()->sid && $this->currentUser()->isLogin();
+    }
+
     function authorize()
     {
-        return $this->currentUser() && $this->params('sid') == $this->currentUser()->sid && $this->currentUser()->mobile;
+        return $this->currentUser() && $this->isLogin();
     }
 
 
     function beforeAction($dispatcher)
     {
+        if (!$this->isHttps()) {
+            info('no_https', $this->getFullUrl());
+        }
+
         debug($this->params(), $this->headers(), $this->request->getRawBody());
 
         if (isProduction()) {
@@ -254,18 +263,17 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
 
+        //对方用户不存在
+        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
+            || $this->otherUserId() && !$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
+        }
 
-        // sid已经变更
-        if ($this->currentUserId() && isBlank($this->currentUser())) {
-
-            info('Exce sid已经变更', $this->params());
-
-            $device = $this->currentDevice();
-            if ($device) {
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
-            } else {
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
-            }
+        // 修复老用户
+        $fix_user = $this->fixOldUser();
+        if ($fix_user) {
+            info('fix_user', $fix_user->id, $this->params());
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $fix_user->generateSid('d.')]);
         }
 
         $this->remote_ip = $this->remoteIp();
@@ -275,20 +283,14 @@ class BaseController extends ApplicationController
             $this->checkLoginStatus();
         }
 
-        //对方用户不存在
-        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
-            || $this->otherUserId() && !$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
-        }
-
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
         }
 
         if (!$this->authorize()) {
-            $device = $this->currentDevice();
-            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $device->sid]);
+            info('请登录 authorize', $this->params());
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
         }
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
@@ -299,6 +301,21 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
 
         }
+    }
+
+    function fixOldUser()
+    {
+        $sid = $this->context('sid');
+        if (isBlank($sid) || preg_match('/^\d+s/', $sid) || preg_match('/^\d+d\./', $sid)) {
+            return null;
+        }
+
+        $device = $this->currentDevice();
+        if ($device) {
+            return \Users::registerForClientByDevice($device);
+        }
+
+        return null;
     }
 
     function skipAuth($controller_name, $action_name)

@@ -429,6 +429,16 @@ class Users extends BaseModel
         return $src;
     }
 
+    // 是否登录
+    function isLogin()
+    {
+        if ($this->isClientPlatform()) {
+            return $this->mobile && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+        }
+
+        return !!$this->mobile;
+    }
+
     /**
      * 上传头像
      * @param $filename
