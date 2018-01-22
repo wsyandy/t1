@@ -4,6 +4,10 @@
     <img src="{{ gift.image_small_url }}" width="30" />
 {%- endmacro %}
 
+{%- macro big_image_link(gift) %}
+    <img src="{{ gift.image_big_url }}" width="30" />
+{%- endmacro %}
+
 {%- macro dynamic_image_link(gift) %}
     <img src="{{ gift.dynamic_image_url }}" width="30" />
 {%- endmacro %}
@@ -15,7 +19,7 @@
 共{{ gifts.total_entries }}个
 
 {{ simple_table(gifts, [
-    "ID": 'id', "名称": 'name', "价格": 'amount', "图片": 'image_link',
+    "ID": 'id', "名称": 'name', "价格": 'amount', "图片": 'image_link', '大图': 'big_image_link',
     "动态图": 'dynamic_image_link',
     "有效": 'status_text', "排序": 'rank', '编辑': 'edit_link'
 ]) }}
@@ -26,6 +30,7 @@
         <td>${gift.name}</td>
         <td>${gift.amount}</td>
         <td><img src="${gift.image_small_url}" width="30"></td>
+        <td><img src="${gift.image_big_url}" width="30"></td>
         <td><img src="${gift.dynamic_image_url}" width="30"></td>
         <td>${gift.status_text}</td>
         <td>${gift.rank}</td>
