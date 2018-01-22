@@ -29,7 +29,7 @@
     {{ user.user_type_text }} | {{ user.user_status_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
     api协议版本: {{ user.api_version }}
-    客户端版本: {{ user.version }}
+    客户端版本: {{ user.version_code }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
@@ -93,7 +93,7 @@
             ${ user.user_type_text } | ${ user.user_status_text }<br>
             最后活跃时间: ${ user.last_at_text }<br/>
             api协议版本: ${ user.api_version }
-            客户端版本: ${user.version}
+            客户端版本: ${user.version_code}
         </td>
         <td>
             <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
