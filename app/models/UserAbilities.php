@@ -33,6 +33,6 @@ trait UserAbilities
     function isAuthVersion()
     {
         return $this->isIos() &&
-            version_compare($this->version, $this->product_channel->apple_stable_version) >= 0;
+            version_compare($this->version, $this->product_channel->apple_stable_version) <= 0;
     }
 }

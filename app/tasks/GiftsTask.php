@@ -20,6 +20,8 @@ class GiftsTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
+        $user->version = 1.3;
+        $user->update();
         $body = array_merge($body, array('sid' => $user->sid));
 
         $res = httpGet($url, $body);
