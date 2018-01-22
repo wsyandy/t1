@@ -1302,6 +1302,8 @@ class Users extends BaseModel
     static function search($user, $page, $per_page, $opts = [])
     {
         $user_id = fetch($opts, 'user_id');
+        $province_id = fetch($opts, 'province_id');
+        $city_id = fetch($opts, 'city_id');
 
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
@@ -1309,8 +1311,21 @@ class Users extends BaseModel
             $cond = ['conditions' => 'id <> ' . $user->id];
         }
 
-        $cond['conditions'] .= " and id != " . SYSTEM_ID;
+        if ($city_id) {
+            $cond['conditions'] .= ' and (city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)';
+            $cond['bind']['city_id'] = $city_id;
+            $cond['bind']['geo_city_id'] = $city_id;
+            $cond['bind']['ip_city_id'] = $city_id;
+        }
 
+        if ($province_id) {
+            $cond['conditions'] .= ' and (province_id=:province_id: or geo_province_id=:geo_province_id: or ip_province_id=:ip_province_id:)';
+            $cond['bind']['province_id'] = $province_id;
+            $cond['bind']['geo_province_id'] = $province_id;
+            $cond['bind']['ip_province_id'] = $province_id;
+        }
+
+        $cond['conditions'] .= " and id != " . SYSTEM_ID;
         $cond['order'] = 'id desc';
 
         info($user->id, $cond);
