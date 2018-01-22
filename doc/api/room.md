@@ -401,3 +401,25 @@
     error_reason
 }
 ```
+
+### 17 房间基本信息
+
+> http-get ```/api/rooms/basic_info```
+
+##### 5.1.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|是|房间id
+
+##### 5.1.2 回应参数说明
+```
+{
+    error_code,0成功,-1参数错误,-400密码错误
+    error_reason
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称
+    lock boole加锁状态, true是加锁
+       
+}
+```
