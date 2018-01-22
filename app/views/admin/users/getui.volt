@@ -1,4 +1,5 @@
-<form action="/admin/users/getui?receiver_id={{ receiver_id }}" method="post">
+<form action="/admin/users/getui?receiver_id={{ receiver.id }}" method="post">
+    <label class="control-label">push_token: </label>{{ receiver.push_token }}
     <div class="form-group">
         <label class="control-label">标题</label>
             <input type="text" name="title" class="form-control">
