@@ -1302,23 +1302,14 @@ class Users extends BaseModel
     static function search($user, $page, $per_page, $opts = [])
     {
         $user_id = fetch($opts, 'user_id');
+
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         } else {
             $cond = ['conditions' => 'id <> ' . $user->id];
         }
 
-        $city_id = fetch($opts, 'city_id');
-        if ($city_id) {
-            $cond = ['conditions' => '(city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)',
-                'bind' => ['city_id' => $city_id, 'geo_city_id' => $city_id, 'ip_city_id' => $city_id]];
-        }
-
-        $province_id = fetch($opts, 'province_id');
-        if ($province_id) {
-            $cond = ['conditions' => '(province_id=:province_id: or geo_province_id=:geo_province_id: or ip_province_id=:ip_province_id:)',
-                'bind' => ['province_id' => $province_id, 'geo_province_id' => $province_id, 'ip_province_id' => $province_id]];
-        }
+        $cond['conditions'] .= " and id != " . SYSTEM_ID;
 
         $cond['order'] = 'id desc';
 
