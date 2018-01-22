@@ -31,7 +31,17 @@
             amount: 100
             pay_type: 'diamond/gold'
         }
-    ]
+    ],
+    products: [
+        {
+            id: 1
+            name: ''
+            amount: 10
+            diamond: 100
+            apple_product_no: ''
+        }
+        ...
+    ] 如果是iOS用户,并且products不为空，客户端直接支付，否则打开pay_url支付
 }
 ```
 

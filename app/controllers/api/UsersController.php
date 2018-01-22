@@ -352,4 +352,18 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 
+    /**
+     * 用户账户
+     * IOS审核版本使用这个接口,不用h5页面
+     */
+    function accountAction()
+    {
+        $products = \Products::findDiamondListByUser($this->currentUser(), 'toApiJson');
+
+        $resp = array('diamond' => $this->currentUser()->diamond);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge($resp,array(
+            'products' => $products
+        )));
+    }
+
 }

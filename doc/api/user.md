@@ -458,7 +458,7 @@
 公共参数
 ```
 
-### 16. 我的账户
+### 16. 我的账户(h5)
 
 > http-get ```/m/users/account```
 
@@ -470,6 +470,35 @@
 ##### 16.2 返回说明
 ```
 返回h5页面
+```
+
+### 17. 我的账户(只对iOS有效)
+
+> http-get ```/api/users/account```
+
+##### 17.1 请求参数说明
+```
+公共参数
+```
+
+##### 17.2 返回参数说明
+```
+{
+    error: 0/-1
+    error_reason: ''
+    diamond: 100,
+    account_url: url://m/users/account
+    products: [
+        {
+            id: 1
+            name: ''
+            amount: 10
+            diamond: 100
+            apple_product_no: ''
+        }
+        ...
+    ]
+}
 ```
 
 
