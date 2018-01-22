@@ -21,7 +21,7 @@ trait CommonParam
             'fr' => 'local',
             'pf' => 'ios',
             'pf_ver' => '10.0.1',
-            'verc' => '15',
+            'verc' => '1',
             'ver' => '1.0',
             'ts' => time(),
             'net' => 'wifi',
