@@ -63,12 +63,23 @@ class Products extends BaseModel
         ];
     }
 
+    function toApiJson()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'amount' => $this->amount,
+            'diamond' => $this->diamond,
+            'apple_product_no' => $this->apple_product_no
+        ];
+    }
+
     function getProductGroupName()
     {
         return $this->product_group->name;
     }
 
-    static function findDiamondListByUser($user)
+    static function findDiamondListByUser($user, $format = null)
     {
         $fee_type = 'diamond';
         $product_groups = \ProductGroups::findByConditions(
@@ -97,10 +108,13 @@ class Products extends BaseModel
             debug("product: " . strval($product->id));
             if ($product->match($user)) {
                 debug("match_product: " . strval($product->id));
-                $selected_products[] = $product;
+                if (isPresent($format) && $product->isResponseTo($format)) {
+                    $selected_products[] = $product->$format();
+                } else {
+                    $selected_products[] = $product;
+                }
             }
         }
-        debug("selected_products: " . count($selected_products));
         return $selected_products;
     }
 
