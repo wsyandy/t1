@@ -487,7 +487,6 @@
     error: 0/-1
     error_reason: ''
     diamond: 100,
-    account_url: url://m/users/account
     products: [
         {
             id: 1
