@@ -92,11 +92,13 @@ class BaseController extends ApplicationController
             return $user;
         }
 
+
         if (!isset($this->_current_user) && $user_id) {
             $user = \Users::findFirstById($user_id);
-            if ($user && $this->params('sid') == $user->sid) {
-                $this->_current_user = $user;
-            }
+            $this->_current_user = $user;
+//            if ($user && $this->params('sid') == $user->sid) {
+//                $this->_current_user = $user;
+//            }
         }
 
         return $this->_current_user;
@@ -165,9 +167,6 @@ class BaseController extends ApplicationController
      */
     function currentDevice()
     {
-        if (!isset($this->_current_device) && $this->currentDeviceId()) {
-            $this->_current_device = \Devices::findFirstById($this->currentDeviceId());
-        }
 
         if (!isset($this->_current_device)) {
 
@@ -176,10 +175,8 @@ class BaseController extends ApplicationController
                 'conditions' => 'device_no=:device_no: and product_channel_id=:product_channel_id:',
                 'bind' => ['device_no' => $device_no, 'product_channel_id' => $this->currentProductChannelId()],
                 'order' => 'id desc']);
-        }
 
-        if ($this->_current_device) {
-            debug('device_id', $this->_current_device->id, $this->_current_device->device_no);
+            info('device_no', $device_no, $this->currentProductChannelId(), 'context', $this->context());
         }
 
         return $this->_current_device;
@@ -294,7 +291,7 @@ class BaseController extends ApplicationController
             if ($this->currentUser()) {
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误!!');
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录!');
             }
         }
 
