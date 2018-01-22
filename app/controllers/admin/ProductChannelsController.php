@@ -281,4 +281,23 @@ class ProductChannelsController extends BaseController
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道不存在');
     }
+
+    function getuiGlobalPushAction()
+    {
+         $product_channel = \ProductChannels::findById($this->params('id'));
+         if ($this->request->isPost()) {
+             $result = \GeTuiMessages::testGlobalPush(
+                 $product_channel,
+                 $this->params('platform'),
+                 $this->params('title'),
+                 $this->params('body')
+             );
+             if ($result) {
+                 return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
+             } else {
+                 return $this->renderJSON(ERROR_CODE_FAIL, '发送失败');
+             }
+         }
+         $this->view->product_channel = $product_channel;
+    }
 }
