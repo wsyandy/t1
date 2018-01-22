@@ -214,6 +214,7 @@ class UsersController extends BaseController
 
     function pushTokenAction()
     {
+
         $push_token = $this->params('push_token');
         $push_from = $this->params('push_from', 'getui');
 
@@ -222,18 +223,14 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '数据错误');
         }
 
-        $device = null;
-
-        if ($this->currentUser()) {
+        $device = $this->currentDevice();
+        if (!$device) {
             $device = $this->currentUser()->device;
         }
 
         if (!$device) {
-            $device = $this->currentDevice();
-            if (!$device) {
-                info('Exce false_device', $this->context(), $this->params());
-                return $this->renderJSON(ERROR_CODE_FAIL, '设备错误!');
-            }
+            info('Exce false_device', $this->context(), $this->params());
+            return $this->renderJSON(ERROR_CODE_FAIL, '设备错误!');
         }
 
         $device->platform_version = $this->context('platform_version');
@@ -241,12 +238,11 @@ class UsersController extends BaseController
         $device->update();
 
         $user = $this->currentUser();
-
         if ($user) {
             $user->updatePushToken($device);
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function clientStatusAction()
