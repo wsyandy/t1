@@ -17,7 +17,7 @@
 6. 完善资料：app://users/update_info
 7. 房间页面：app://rooms/detail?id=xxx
 8. 其他用户详情页面：app://users/other_detail?user_id=xxx
-9. 新的好友列表：app://friends/new_friend_list?new=1
+9. 新的好友列表：app://friends/new?new=1
 10. 好友列表：app://friends
 
 ## m协议
