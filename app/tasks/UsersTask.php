@@ -158,5 +158,35 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine(StoreFile::getUrl('chance/users/avatar/default_avatar.png '));
     }
+
+    /**
+     * 测试我的账户api
+     */
+    function accountAction()
+    {
+        $url = 'http://www.chance_php.com/api/users/account';
+        $body = $this->commonBody();
+
+        $user = \Users::findById(2);
+        $body = array_merge($body, array('sid' => $user->sid));
+
+        $res = httpGet($url, $body);
+        var_dump($res);
+    }
+
+    /**
+     * 测试产品api
+     */
+    function productsAction()
+    {
+        $url = 'http://www.chance_php.com/api/products';
+        $body = $this->commonBody();
+
+        $user = \Users::findById(2);
+        $body = array_merge($body, array('sid' => $user->sid));
+
+        $res = httpGet($url, $body);
+        var_dump($res);
+    }
 }
 

@@ -28,6 +28,14 @@ class PaymentChannels extends BaseModel
         ];
     }
 
+    function toApiJson()
+    {
+        return [
+            'id' => $this->id,
+            'payment_type' => $this->payment_type
+        ];
+    }
+
     static function getGatewayClasses()
     {
         return \paygateway\Base::getGatewayNames();
@@ -78,14 +86,18 @@ class PaymentChannels extends BaseModel
         return STATUS_ON == $this->status;
     }
 
-    static function selectByUser($user)
+    static function selectByUser($user, $format = null)
     {
         $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
         $selected = [];
         foreach ($payment_channels as $payment_channel) {
             if ($payment_channel->isValid() && $payment_channel->match($user)) {
-                $selected[] = $payment_channel;
+                if (isPresent($format) && $payment_channel->isResponseTo($format)) {
+                    $selected[] = $payment_channel->$format();
+                } else {
+                    $selected[] = $payment_channel;
+                }
             }
         }
         return $selected;
