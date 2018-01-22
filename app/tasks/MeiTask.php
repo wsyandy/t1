@@ -579,6 +579,16 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test26Action()
     {
+        $str = ["online_token" => "1414f68b05f7e14fee2f8216d2a492b242851", "action" => "ping", "timestamp" => "1516612042", "sign" => "sss"];
+        print_r($str);
+
+        unset($str['sign']);
+        print_r($str);
+
+//        $str = json_encode($str);
+//        echoLine($str);
+//
+//        echoLine(md5($str));
 
     }
 }
