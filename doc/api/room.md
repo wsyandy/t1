@@ -414,7 +414,7 @@
 ##### 5.1.2 回应参数说明
 ```
 {
-    error_code,0成功,-1参数错误,-400密码错误
+    error_code
     error_reason
     id: int 房间id,
     name: string 房间名称
