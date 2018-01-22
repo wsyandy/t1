@@ -206,6 +206,8 @@ class WebsocketSever extends BaseModel
             debug("数据为空");
         }
 
+        debug($data);
+
         $data = json_decode($data, true);
         $sign = fetch($data, 'sign');
 
