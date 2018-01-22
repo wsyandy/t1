@@ -178,4 +178,22 @@ class UsersController extends BaseController
          }
          $this->view->user = $user;
     }
+
+    /**
+     * 个推测试
+     */
+    function getuiAction()
+    {
+        $receiver = \Users::findById($this->params('receiver_id'));
+        if ($this->request->isPost()) {
+            $result = \GeTuiMessages::testPush($receiver, $this->params('title'), $this->params('body'));
+            if ($result) {
+                $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
+            } else {
+                $this->renderJSON(ERROR_CODE_FAIL, '发送失败');
+            }
+
+        }
+        $this->view->receiver_id = $receiver->id;
+    }
 }
