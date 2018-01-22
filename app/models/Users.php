@@ -552,7 +552,7 @@ class Users extends BaseModel
 
         $user->save();
 
-        $user->sid = $user->generateSid('');
+        $user->sid = $user->generateSid('d.');
         $user->update();
 
         info('touch_register:新注册用户=', $user->id, $opts);

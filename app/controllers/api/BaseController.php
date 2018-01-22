@@ -290,7 +290,12 @@ class BaseController extends ApplicationController
 
         if (!$this->authorize()) {
             info('请登录 authorize', $this->params());
-            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
+
+            if ($this->currentUser()) {
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误!!');
+            }
         }
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
