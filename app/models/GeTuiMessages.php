@@ -248,7 +248,9 @@ class GeTuiMessages extends BaseModel
         $context = $receiver->getPushContext();
         $result =  \Pushers::push($context, $receiver->getPushReceiverContext(),
             array(
-                'body' => '', 'payload' => $payload
+                'title' => $title,
+                'body' => $body,
+                'payload' => $payload
             )
         );
         debug("result: " . $result);
