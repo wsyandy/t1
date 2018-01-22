@@ -88,9 +88,6 @@
                     {% if isAllowed('weixin_template_messages','index') %}
                         <li><a href="/admin/weixin_template_messages">发送模板消息</a></li>
                     {% endif %}
-                    {% if isAllowed('ge_tui_messages','index') %}
-                        <li><a href="/admin/ge_tui_messages">发送个推消息</a></li>
-                    {% endif %}
                 </ul>
             </li>
         {% endif %}

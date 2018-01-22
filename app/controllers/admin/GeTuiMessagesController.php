@@ -199,4 +199,9 @@ class GeTuiMessagesController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功');
     }
 
+    function globalPushAction()
+    {
+
+    }
+
 }

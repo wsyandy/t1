@@ -209,4 +209,63 @@ class GeTuiMessages extends BaseModel
         return false;
     }
 
+    /*
+     * id          推送消息id
+     * created_at  推送时间
+     * user_id     接受用户id
+     * sid         接受用户sid
+     * title       推送消息标题
+     * body        推送消息主体内容
+     * body_json   推送消息主体内容
+     * push_type   推送消息类型       1 通知:notification  2 透传:transmission
+     * model       对应的模块        例如 user, room 客户端遇到不能处理的model，就直接忽略
+     * action      对应的动作类型     view进入查看,logout退出
+     * client_url  跳转地址
+     * icon_url    图标地址
+     */
+    static function generatePushPayload($receiver, $opts = array())
+    {
+        $payload = array();
+        $payload['user_id'] = $receiver->id;
+        $payload['sid'] = $receiver->sid;
+        $payload['title'] = fetch($opts, 'test');
+        $payload['body'] = fetch($opts, 'body');
+        $payload['push_type'] = fetch($opts, 'transmission');
+        $payload['model'] = 'chat';
+        $payload['chat'] = array(
+            'action' => 'view',
+            'id' => '1_' . $receiver->id . '_' . time(),
+            'content_type' => CHAT_CONTENT_TYPE_TEXT,
+            'content' => fetch($opts, 'body'),
+            'created_at' => time()
+        );
+        return $payload;
+    }
+
+    static function testPush($receiver, $title, $body)
+    {
+        $payload = self::generatePushPayload($receiver, array('title' => $title, 'body' => $body));
+        $context = $receiver->getPushContext();
+        $result =  \Pushers::push($context, $receiver->getPushReceiverContext(),
+            array(
+                'body' => '', 'payload' => $payload
+            )
+        );
+        debug("result: " . $result);
+        return $result;
+    }
+
+    static function testGlobalPush($product_channel, $platform, $title, $body)
+    {
+        if (isProduction()) {
+            return '线上不支持测试';
+        }
+        $payload = array('title' => $title, 'body' => $body);
+
+        $context = $product_channel->getPushContext($platform);
+        $result = \Pushers::pushAll($context, $title, $body, $payload);
+        debug("result: " . $result);
+        return $result;
+    }
+
 }
