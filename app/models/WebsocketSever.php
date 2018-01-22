@@ -218,8 +218,18 @@ class WebsocketSever extends BaseModel
 
         unset($data['sign']);
 
-        if ($sign != md5(json_encode($data, JSON_UNESCAPED_UNICODE))) {
-            info("sign_error", $data, md5(json_encode($data, JSON_UNESCAPED_UNICODE)), $sign);
+        ksort($data);
+
+        $temp = [];
+
+        foreach ($data as $k => $v) {
+            $temp[] = $k . "=" . $v;
+        }
+
+        $str = implode("&", $temp);
+
+        if ($sign != md5($str)) {
+            info("sign_error", $data, $str, md5($str), $sign);
         }
 
         //解析数据

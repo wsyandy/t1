@@ -591,4 +591,24 @@ class MeiTask extends \Phalcon\Cli\Task
 //        echoLine(md5($str));
 
     }
+
+    function test27Action()
+    {
+        $params = ['action' => 'ping', 'online_token' => '17f2a022bb11ce07f77c52cded943be4c54',
+            'sid' => '52s14a3974e9cadc7854b13dcb8cd653720a6', 'timestamp' => '1516633511'];
+
+        ksort($params);
+
+        print_r($params);
+        $temp = [];
+
+        foreach ($params as $k => $v) {
+            $temp[] = $k . "=" . $v;
+        }
+
+        $str = implode("&", $temp);
+
+        echoLine($str);
+        echoLine(md5($str));
+    }
 }
