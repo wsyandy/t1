@@ -194,6 +194,6 @@ class UsersController extends BaseController
             }
 
         }
-        $this->view->receiver_id = $receiver->id;
+        $this->view->receiver = $receiver;
     }
 }
