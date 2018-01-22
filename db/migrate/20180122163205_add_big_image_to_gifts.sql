@@ -1,0 +1,1 @@
+alter table gifts add column big_image VARCHAR(255);

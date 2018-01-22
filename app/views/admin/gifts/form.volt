@@ -6,6 +6,7 @@
 {{ f.select('status', ['label': '状态', 'collection': Gifts.STATUS]) }}
 {{ f.input('rank', ['label': '排序']) }}
 {{ f.file('image', ['label': '图片']) }}
+{{ f.file('big_image', ['label': '大图']) }}
 {{ f.file('dynamic_image', ['label': '动态图']) }}
 
 {{ f.submit('保存') }}

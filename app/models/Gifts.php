@@ -19,7 +19,7 @@ class Gifts extends BaseModel
     static $STATUS = [GIFT_STATUS_ON => '有效', GIFT_STATUS_OFF => '无效'];
 
     //图片文件
-    static $files = ['image' => 'gifts/image/%s', 'dynamic_image' => 'gifts/dynamic_image/%s'];
+    static $files = ['image' => 'gifts/image/%s', 'big_image' => 'gifts/big_image/%s', 'dynamic_image' => 'gifts/dynamic_image/%s'];
 
     static function getCacheEndPoint()
     {
@@ -85,10 +85,12 @@ class Gifts extends BaseModel
 
     function getImageBigUrl()
     {
-        if (isBlank($this->image)) {
+        if (isBlank($this->image) && isBlank($this->big_image)) {
             return '';
         }
-
+        if (isPresent($this->big_image)) {
+            return \StoreFile::getUrl($this->big_image);
+        }
         return StoreFile::getUrl($this->image) . '@!big';
     }
 
