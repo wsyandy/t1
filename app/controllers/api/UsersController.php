@@ -173,7 +173,7 @@ class UsersController extends BaseController
         $user->user_status = USER_STATUS_LOGOUT;
         $user->update();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $device->sid]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $user->sid]);
     }
 
     function updateAction()
