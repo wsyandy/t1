@@ -480,6 +480,7 @@ class Users extends BaseModel
                 $this->device_id = $device->id;
             }
             $this->push_token = $device->push_token;
+            $this->update();
 
             // 更新最后登录的用户
             $device->user_id = $this->id;
@@ -496,8 +497,6 @@ class Users extends BaseModel
                 $other_user->push_token = '';
                 $other_user->update();
             }
-
-            $this->update();
         }
     }
 
