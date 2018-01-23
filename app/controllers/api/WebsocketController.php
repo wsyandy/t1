@@ -17,7 +17,7 @@ class WebsocketController extends BaseController
 
         if (isDevelopmentEnv()) {
             $ping_interval = 3;
-            $websocket_end_point = 'wstest.yueyuewo.cn';
+            $websocket_end_point = 'ws://wstest.yueyuewo.cn';
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['end_point' => $websocket_end_point, 'ping_interval' => $ping_interval]);
