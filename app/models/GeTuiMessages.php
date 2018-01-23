@@ -242,7 +242,7 @@ class GeTuiMessages extends BaseModel
         return $payload;
     }
 
-    static function testPush($receiver, $title, $body)
+    static function testPush($receiver, $title, $body, $client_url = null)
     {
         $payload = self::generatePushPayload($receiver, array('title' => $title, 'body' => $body));
         $context = $receiver->getPushContext();
@@ -250,6 +250,7 @@ class GeTuiMessages extends BaseModel
             array(
                 'title' => $title,
                 'body' => $body,
+                'client_url' => $client_url,
                 'payload' => $payload
             )
         );

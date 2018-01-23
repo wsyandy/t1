@@ -9,6 +9,10 @@
             <input type="text" name="body" class="form-control">
     </div>
     <div class="form-group">
+        <label class="control-label">client_url</label>
+        <input type="text" name="client_url" class="form-control">
+    </div>
+    <div class="form-group">
             <input type="submit" value="发送" class="btn btn-default btn-primary">
     </div>
 </form>
