@@ -218,9 +218,11 @@ class PushSever extends BaseModel
                 info("sign_error", $data, $str, md5($str), $sign);
             }
 
-            //解析数据
-            $server->push($frame->fd, $frame->data);
+            debug($data);
         }
+
+        //解析数据
+        $server->push($frame->fd, $frame->data);
     }
 
     function onClose($server, $fd, $from_id)
