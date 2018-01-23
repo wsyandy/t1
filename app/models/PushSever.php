@@ -6,30 +6,22 @@
  * Time: 下午2:39
  */
 
-class WebsocketSever extends BaseModel
+class PushSever extends BaseModel
 {
     static $_only_cache = true;
+    private $websocket_client_ip;
+    private $websocket_client_port;
+    private $websocket_server_ip;
+    private $websocket_server_port;
 
-    static function getWebsocketConfig()
+    function __construct()
     {
-        $websocket_config = self::di('config')->websocket_server;
-        return $websocket_config;
-    }
+        parent::__construct();
 
-    static function getHost()
-    {
-        $websocket_config = self::getWebsocketConfig();
-        $host = $websocket_config->host;
-
-        return $host;
-    }
-
-    static function getPort()
-    {
-        $websocket_config = self::getWebsocketConfig();
-        $port = $websocket_config->port;
-
-        return $port;
+        $this->websocket_client_ip = env('websocket_client_ip', '0.0.0.0'); //监听客户端
+        $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
+        $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
+        $this->websocket_server_port = env('websocket_server_ip', 9508); //监听服务端
     }
 
     static function params($request, $field, $default = null)
@@ -72,74 +64,58 @@ class WebsocketSever extends BaseModel
         return $val;
     }
 
-    static function start()
+    function start()
     {
-        $host = self::getHost();
-        $port = self::getPort();
-
-        $swoole_server = new swoole_websocket_server($host, $port);
+        $swoole_server = new swoole_websocket_server($this->websocket_client_ip, $this->websocket_client_port);
+        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_TCP);
         $swoole_server->set(
             [
                 'worker_num' => 2, //设置多少合适
                 'max_request' => 20, //设置多少合适
                 'dispatch_model' => 3,
                 'daemonize' => true,
-                'log_file' => APP_ROOT . 'log/swoole_websocket_server.log',
-                'pid_file' => APP_ROOT . 'log/swoole_websocket_server_pid.pid',
+                'log_file' => APP_ROOT . 'log/websocket_server.log',
+                'pid_file' => APP_ROOT . 'log/websocket_server_pid.pid',
                 'reload_async' => true,
                 'heartbeat_check_interval' => 10, //10秒检测一次
                 'heartbeat_idle_time' => 20 //20秒未向服务器发送任何数据包,此链接强制关闭
             ]
         );
 
-        $websocket = new WebsocketSever();
-        $swoole_server->on('start', [$websocket, 'onStart']);
-        $swoole_server->on('open', [$websocket, 'onOpen']);
-        $swoole_server->on('message', [$websocket, 'onMessage']);
-        $swoole_server->on('close', [$websocket, 'onClose']);
-
-        $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
-            $act = $request->get['act'];
-            debug($act);
-            switch ($act) {
-                case 'reload':
-                    $swoole_server->reload();
-                    break;
-                case 'shutdown':
-                    $swoole_server->shutdown();
-                    break;
-                case 'exit':
-                    exit;
-                    break;
-            }
-
-            $response->header("X-Server", "Swoole");
-            $msg = 'hello swoole !';
-            $response->end($msg);
-        });
-
+        $swoole_server->on('start', [$this, 'onStart']);
+        $swoole_server->on('open', [$this, 'onOpen']);
+        $swoole_server->on('message', [$this, 'onMessage']);
+        $swoole_server->on('close', [$this, 'onClose']);
         echo "[------------- start -------------]\n";
         $swoole_server->start();
     }
 
-    static function reload()
+    function reload()
     {
-        $host = self::getHost();
-        $port = self::getPort();
-
-        $url = "{$host}:{$port}?act=reload";
+        $url = "{$this->websocket_client_ip}:{$this->websocket_client_port}?act=reload";
         $resp = httpGet($url);
         debug($resp->body);
     }
 
-    static function shutdown()
+    function shutdown()
     {
-        $host = self::getHost();
-        $port = self::getPort();
-
-        $url = "{$host}:{$port}?act=shutdown";
+        $url = "{$this->websocket_client_ip}:{$this->websocket_client_port}?act=shutdown";
         $resp = httpGet($url);
         debug($resp->body);
+    }
+
+    function getInsideIp()
+    {
+        $ips = swoole_get_local_ip();
+
+        if (count($ips) < 1) {
+            info("inside ip is null");
+            return '';
+        }
+
+        $eth0 = fetch($ips, 'enth0', '');
+
+        return $eth0;
     }
 
     function onStart($server)
@@ -181,6 +157,14 @@ class WebsocketSever extends BaseModel
         $hot_cache->set($user_online_key, $online_token);
         $hot_cache->set($fd_user_id_key, $user_id);
 
+        $ip = $this->getInsideIp();
+
+        if ($ip) {
+            $fd_inside_ip_key = "socket_fd_inside_ip_" . $online_token;
+            $hot_cache->set($fd_inside_ip_key, $user_id);
+            info($fd_inside_ip_key, $ip);
+        }
+
         if ($user->current_room) {
             $user->current_room->bindOnlineToken($user);
         }
@@ -218,22 +202,25 @@ class WebsocketSever extends BaseModel
 
         unset($data['sign']);
 
-        ksort($data);
+        if ($data) {
 
-        $temp = [];
+            ksort($data);
 
-        foreach ($data as $k => $v) {
-            $temp[] = $k . "=" . $v;
+            $temp = [];
+
+            foreach ($data as $k => $v) {
+                $temp[] = $k . "=" . $v;
+            }
+
+            $str = implode("&", $temp);
+
+            if ($sign != md5($str)) {
+                info("sign_error", $data, $str, md5($str), $sign);
+            }
+
+            //解析数据
+            $server->push($frame->fd, $frame->data);
         }
-
-        $str = implode("&", $temp);
-
-        if ($sign != md5($str)) {
-            info("sign_error", $data, $str, md5($str), $sign);
-        }
-
-        //解析数据
-        $server->push($frame->fd, $frame->data);
     }
 
     function onClose($server, $fd, $from_id)
@@ -247,10 +234,12 @@ class WebsocketSever extends BaseModel
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $user_id = $hot_cache->get($fd_user_id_key);
         $user_online_key = "socket_user_online_user_id" . $user_id;
+        $fd_inside_ip_key = "socket_fd_inside_ip_" . $online_token;
 
         $hot_cache->del($online_key);
         $hot_cache->del($fd_key);
         $hot_cache->del($fd_user_id_key);
+        $hot_cache->del($fd_inside_ip_key);
 
         $user = Users::findFirstById($user_id);
         $room_seat = null;
