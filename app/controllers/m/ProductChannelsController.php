@@ -16,17 +16,10 @@ class ProductChannelsController extends BaseController
 
     function aboutAction()
     {
-//        $user = $this->currentUser();
-//        if ($user) {
-//            $device = $user->device;
-//        } else {
-//            $device = $this->currentDevice();
-//        }
-//        $version = $device->version_name;
-//        if (!$version) {
-//            $version = $this->params("ver");
-//        }
-        $version = $this->params("verc");
+        $version = $this->params("ver");
+        if(!$version){
+            $version = $this->currentUser()->version_name;
+        }
         $this->view->product_channel = $this->currentProductChannel();
         $this->view->version = $version;
     }
