@@ -191,7 +191,7 @@ class PushSever extends BaseModel
             debug("数据为空");
         }
 
-        $data = json_decode($frame->data, true);
+        $data = json_decode($data, true);
         $sign = fetch($data, 'sign');
         $sid = fetch($data, 'sid');
 
@@ -205,16 +205,10 @@ class PushSever extends BaseModel
 
             ksort($data);
 
-            $temp = [];
+            $sign_data = json_encode($data, JSON_UNESCAPED_UNICODE);
 
-            foreach ($data as $k => $v) {
-                $temp[] = $k . "=" . $v;
-            }
-
-            $str = implode("&", $temp);
-
-            if ($sign != md5($str)) {
-                info("sign_error", $data, $str, md5($str), $sign, $sid);
+            if ($sign != md5($sign_data)) {
+                info("sign_error", $data, $sign_data, md5($sign_data), $sign, $sid);
             }
         }
 
