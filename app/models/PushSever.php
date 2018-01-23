@@ -13,6 +13,7 @@ class PushSever extends BaseModel
     private $websocket_client_port;
     private $websocket_server_ip;
     private $websocket_server_port;
+    private static $intranet_ip = "intranet_ip";
 
     function __construct()
     {
@@ -22,6 +23,48 @@ class PushSever extends BaseModel
         $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
         $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
         $this->websocket_server_port = env('websocket_server_ip', 9508); //监听服务端
+    }
+
+    static function getJobQueueCache()
+    {
+        $job_queue = self::config('job_queue');
+        $endpoint = $job_queue->endpoint;
+        $cache = XRedis::getInstance($endpoint);
+        return $cache;
+    }
+
+    static function getIntranetIp()
+    {
+        $cache = self::getJobQueueCache();
+        $ip = $cache->get(self::$intranet_ip);
+
+        if ($ip) {
+            debug($ip);
+            return $ip;
+        }
+
+        $ips = swoole_get_local_ip();
+
+        debug($ips);
+
+        if (count($ips) < 1) {
+            info("intranet ip is null");
+            return '';
+        }
+
+        $ip = fetch($ips, 'enth0', '');
+
+        if ($ip) {
+            self::saveIntranetIp($ip);
+        }
+
+        return $ip;
+    }
+
+    static function saveIntranetIp($ip)
+    {
+        $cache = self::getJobQueueCache();
+        $cache->set(self::$intranet_ip, $ip);
     }
 
     static function params($request, $field, $default = null)
@@ -104,20 +147,6 @@ class PushSever extends BaseModel
         debug($resp->body);
     }
 
-    function getInsideIp()
-    {
-        $ips = swoole_get_local_ip();
-
-        if (count($ips) < 1) {
-            info("inside ip is null");
-            return '';
-        }
-
-        $eth0 = fetch($ips, 'enth0', '');
-
-        return $eth0;
-    }
-
     function onStart($server)
     {
         info("start");
@@ -157,12 +186,12 @@ class PushSever extends BaseModel
         $hot_cache->set($user_online_key, $online_token);
         $hot_cache->set($fd_user_id_key, $user_id);
 
-        $ip = $this->getInsideIp();
+        $ip = self::getIntranetIp();
 
         if ($ip) {
-            $fd_inside_ip_key = "socket_fd_inside_ip_" . $online_token;
-            $hot_cache->set($fd_inside_ip_key, $user_id);
-            info($fd_inside_ip_key, $ip);
+            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+            $hot_cache->set($fd_intranet_ip_key, $user_id);
+            info($fd_intranet_ip_key, $ip);
         }
 
         if ($user->current_room) {
@@ -227,12 +256,12 @@ class PushSever extends BaseModel
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $user_id = $hot_cache->get($fd_user_id_key);
         $user_online_key = "socket_user_online_user_id" . $user_id;
-        $fd_inside_ip_key = "socket_fd_inside_ip_" . $online_token;
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
 
         $hot_cache->del($online_key);
         $hot_cache->del($fd_key);
         $hot_cache->del($fd_user_id_key);
-        $hot_cache->del($fd_inside_ip_key);
+        $hot_cache->del($fd_intranet_ip_key);
 
         $user = Users::findFirstById($user_id);
         $room_seat = null;
