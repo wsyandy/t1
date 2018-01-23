@@ -193,7 +193,7 @@ class PushSever extends BaseModel
 
         debug($data);
 
-        $data = json_decode($data, true);
+        $data = json_decode($frame->data, true);
         $sign = fetch($data, 'sign');
         $sid = fetch($data, 'sid');
 
