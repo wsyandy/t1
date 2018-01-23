@@ -197,7 +197,7 @@ class PushSever extends BaseModel
         $sign = fetch($data, 'sign');
         $sid = fetch($data, 'sid');
 
-        debug($sign, $sid);
+        debug($sign, $sid, $frame->data);
         if (!$sign) {
             info("sign_error", $data);
         }
