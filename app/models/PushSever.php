@@ -191,20 +191,15 @@ class PushSever extends BaseModel
             debug("数据为空");
         }
 
-        debug($data);
-
         $data = json_decode($frame->data, true);
         $sign = fetch($data, 'sign');
         $sid = fetch($data, 'sid');
 
-        debug($sign, $sid, $frame->data);
         if (!$sign) {
             info("sign_error", $data);
         }
 
         unset($data['sign']);
-
-        debug($data, $sid);
 
         if ($data) {
 
@@ -221,11 +216,8 @@ class PushSever extends BaseModel
             if ($sign != md5($str)) {
                 info("sign_error", $data, $str, md5($str), $sign, $sid);
             }
-
-            debug($data, $sid);
         }
 
-        debug($frame->fd, $sid);
         //解析数据
         $server->push($frame->fd, $frame->data);
     }
