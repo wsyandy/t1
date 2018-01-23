@@ -274,7 +274,7 @@ class PushSever extends BaseModel
 
                     $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
-                    debug($user_id, $receiver_id, $receiver_fd, $data);
+                    debug($user->sid, $user_id, $receiver_id, $receiver_fd, $data);
 
                     //判断fd是否存在
                     if ($receiver_fd) {
@@ -297,7 +297,7 @@ class PushSever extends BaseModel
 
             //如果有电话进行中
             if ($user->isCalling()) {
-                debug($user_id, $data);
+                debug($user->sid, $user_id, $data);
                 $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
 
                 if ($voice_call) {
