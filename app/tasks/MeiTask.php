@@ -654,4 +654,10 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test41Action()
+    {
+        $user = Users::findFirstById(117);
+        echoLine($user->current_room_id);
+    }
 }
