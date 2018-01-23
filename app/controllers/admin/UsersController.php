@@ -186,7 +186,8 @@ class UsersController extends BaseController
     {
         $receiver = \Users::findById($this->params('receiver_id'));
         if ($this->request->isPost()) {
-            $result = \GeTuiMessages::testPush($receiver, $this->params('title'), $this->params('body'));
+            $result = \GeTuiMessages::testPush($receiver, $this->params('title'), $this->params('body'),
+                $this->params('client_url'));
             if ($result) {
                 $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
             } else {
