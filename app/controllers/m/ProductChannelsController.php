@@ -26,7 +26,7 @@ class ProductChannelsController extends BaseController
 //        if (!$version) {
 //            $version = $this->params("ver");
 //        }
-        $version = $this->params("verc")
+        $version = $this->params("verc");
         $this->view->product_channel = $this->currentProductChannel();
         $this->view->version = $version;
     }
