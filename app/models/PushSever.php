@@ -52,7 +52,7 @@ class PushSever extends BaseModel
             return '';
         }
 
-        $ip = fetch($ips, 'enth0', '');
+        $ip = fetch($ips, 'eth0', '');
 
         if ($ip) {
             self::saveIntranetIp($ip);
