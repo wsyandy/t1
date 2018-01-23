@@ -12,11 +12,12 @@ class WebsocketController extends BaseController
 {
     function endPointAction()
     {
-        $websocket_end_point = 'ws://ctest.yueyuewo.cn:9509';
+        $websocket_end_point = '';
         $ping_interval = 15;
 
         if (isDevelopmentEnv()) {
             $ping_interval = 3;
+            $websocket_end_point = 'wstest.yueyuewo.cn';
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['end_point' => $websocket_end_point, 'ping_interval' => $ping_interval]);

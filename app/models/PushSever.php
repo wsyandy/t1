@@ -132,10 +132,10 @@ class PushSever extends BaseModel
             return;
         }
 
-        debug("fd_info", $server->connection_info($fd));
         $online_token = $fd . 'f' . md5(uniqid() . $fd);
 
         $sid = self::params($request, 'sid');
+        debug("fd_info", $fd, $server->connection_info($fd), $sid);
         $user_id = intval($sid);
 
         $user = Users::findFirstById($user_id);
