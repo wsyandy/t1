@@ -177,8 +177,6 @@ class PushSever extends BaseModel
 
     function onMessage($server, $frame)
     {
-        debug($frame->fd, "send message");
-
         if (!$server->exist($frame->fd)) {
             info($frame->fd, "Exce not exist");
             return;
@@ -194,6 +192,8 @@ class PushSever extends BaseModel
         $data = json_decode($data, true);
         $sign = fetch($data, 'sign');
         $sid = fetch($data, 'sid');
+
+        debug($sid, $frame->fd, "send message");
 
         if (!$sign) {
             info("sign_error", $data);
