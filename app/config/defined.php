@@ -140,6 +140,7 @@ define('ORDER_STATUS_FAIL', 2);
 define('PAYMENT_PAY_STATUS_SUCCESS', 1);
 define('PAYMENT_PAY_STATUS_WAIT', 0);
 define('PAYMENT_PAY_STATUS_FAIL', 2);
+define('PAYMENT_PAY_STATUS_FAILED', 2);
 
 //通话状态
 define('CALL_STATUS_WAIT', 0);//等待接听
