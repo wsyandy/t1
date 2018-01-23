@@ -591,4 +591,54 @@ class MeiTask extends \Phalcon\Cli\Task
 //        echoLine(md5($str));
 
     }
+
+    function test27Action()
+    {
+        $params = ['action' => 'ping', 'online_token' => '17f2a022bb11ce07f77c52cded943be4c54',
+            'sid' => '52s14a3974e9cadc7854b13dcb8cd653720a6', 'timestamp' => '1516633511'];
+
+        ksort($params);
+
+        print_r($params);
+        $temp = [];
+
+        foreach ($params as $k => $v) {
+            $temp[] = $k . "=" . $v;
+        }
+
+        $str = implode("&", $temp);
+
+        echoLine($str);
+        echoLine(md5($str));
+    }
+
+    function test28Action()
+    {
+        echoLine(swoole_get_local_ip());
+    }
+
+    function test29Action()
+    {
+        $client = new \WebSocket\Client('ws://192.168.111.118:9508?user_id=1');
+
+        $payload = array('room_id' => 1012,
+            'token' => mt_rand(1, 100),
+            'action' => 'ws/rooms/enter',
+        );
+
+        $data = json_encode($payload);
+
+        $client->send($data);
+        $client->close();
+    }
+
+    function test30Action()
+    {
+        $redis = new swoole_redis();
+
+        $soft_versions = SoftVersions::findForeach();
+        foreach ($soft_versions as $soft_version) {
+            echoLine($soft_version->version_name);
+        }
+    }
 }
