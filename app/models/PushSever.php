@@ -203,7 +203,7 @@ class PushSever extends BaseModel
 
         unset($data['sign']);
 
-        debug($data);
+        debug($data, $sid);
 
         if ($data) {
 
@@ -218,10 +218,10 @@ class PushSever extends BaseModel
             $str = implode("&", $temp);
 
             if ($sign != md5($str)) {
-                info("sign_error", $data, $str, md5($str), $sign);
+                info("sign_error", $data, $str, md5($str), $sign, $sid);
             }
 
-            debug($data);
+            debug($data, $sid);
         }
 
         debug($frame->fd, $sid);
