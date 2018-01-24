@@ -32,6 +32,7 @@ class Orders extends BaseModel
         $order->status = ORDER_STATUS_WAIT;
         $order->amount = $product->amount;
         if ($order->create()) {
+            \Stats::delay()->record('user', 'create_order', $user->getStatAttrs());
             return $order;
         }
         return false;
