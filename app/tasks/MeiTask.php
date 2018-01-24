@@ -660,4 +660,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(117);
         echoLine($user->current_room_id);
     }
+
+    function test42Action()
+    {
+        $key = "test_ip";
+        $hot_cache = Users::getHotReadCache();
+        $hot_cache->set($key, '127.0.0.1');
+        debug($hot_cache->get($key));
+    }
 }

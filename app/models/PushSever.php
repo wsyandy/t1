@@ -138,6 +138,7 @@ class PushSever extends BaseModel
     {
         debug($action, $opts);
         $ip = fetch($opts, 'ip', self::getIntranetIp());
+        $ip = self::getIntranetIp();
         $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
         $payload = ['action' => $action, 'message' => $opts];
         $data = json_encode($payload);
