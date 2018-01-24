@@ -36,6 +36,7 @@ class PushSever extends BaseModel
 
     static function getIntranetIp()
     {
+        return "116.62.103.161";
         $cache = self::getJobQueueCache();
         $ip = $cache->get(self::$intranet_ip_key);
 
