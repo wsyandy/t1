@@ -515,7 +515,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test23Action()
     {
-        $swoole_server = WebsocketSever::getServer();
+        $swoole_server = PushSever::getServer();
         $swoole_server->send(1, "sss");
 
 
@@ -640,5 +640,24 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($soft_versions as $soft_version) {
             echoLine($soft_version->version_name);
         }
+    }
+
+    function test40Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0 && STATUS_OFF == $room->status) {
+                $room->status = STATUS_ON;
+                $room->save();
+                echoLine($room);
+            }
+        }
+    }
+
+    function test41Action()
+    {
+        $user = Users::findFirstById(117);
+        echoLine($user->current_room_id);
     }
 }

@@ -12,7 +12,6 @@ class TestController extends \ApplicationController
 {
     function indexAction()
     {
-        $user = \Users::findFirstById(1000);
-        debug($user->id);
+
     }
 }

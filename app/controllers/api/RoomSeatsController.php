@@ -57,7 +57,7 @@ class RoomSeatsController extends BaseController
         // 抱用户上麦
         list($error_code, $error_reason) = $room_seat->up($current_user, $other_user);
 
-        if (ERROR_CODE_SUCCESS == $error_code) {
+        if (ERROR_CODE_SUCCESS == $error_code && $other_user_id) {
             //标记用户被抱上麦
             $hot_cache->setex($room_seat_up_user_lock_key, 3, $room_seat_id);
         }

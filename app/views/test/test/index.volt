@@ -11,9 +11,9 @@
 <script>
 
     var msg = document.getElementById('msg');
-    var ws_server = 'ws://ws.test.com';
+    var ws_server = 'ws://local.chance.com/websocket/';
     // var ws_server = 'ws://116.62.103.161:9509?user_id=1';
-    var web_socket = new WebSocket(ws_server);
+    var web_socket = new WebSocket("ws://ws.test.com");
     web_socket.onopen = function (evt) {
         alert("connect successful!");
         // msg.innerHTML = web_socket.readyState;

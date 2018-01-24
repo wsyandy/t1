@@ -15,6 +15,7 @@
     error_code
     error_reason
     end_point:ws://ctest.yueyuewo.cn:9999
+    ping_interval:心跳包时间间隔
 }
 ```
 
