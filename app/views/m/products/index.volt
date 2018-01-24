@@ -5,22 +5,29 @@
     <title>我的账户</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/css/products.css">
+    <link rel="stylesheet" href="/css/product1.css">
+
+    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/js/fastclick.js"></script>
 </head>
 <body>
 <div class="account_top">
     <p>钻石余额：<span>{{ user.diamond }}</span></p>
+    <div class="top_text">(钻石是用来送礼物的)</div>
 </div>
 <div class="account_money">
     <ol>
         {% for product in products %}
-            {% if (product.id == selected_product.id) %}
-            <li class="selected" data-product_id="{{ product.id }}">
-            {% else %}
-                <li data-product_id="{{ product.id }}">
-            {% endif %}
-            <span>钻石{{ product.diamond }}</span>
-            <span>¥{{ product.amount }}</span>
+            <li data-product_id="{{ product.id }}">
+                {% if (product.id == selected_product.id) %}
+                    <span class="select_color selected_color">钻石{{ product.diamond }}</span>
+                    <span>¥{{ product.amount }}</span>
+                    <b class="select selected"></b>
+                {% else %}
+                    <span class="select_color">钻石{{ product.diamond }}</span>
+                    <span>¥{{ product.amount }}</span>
+                    <b class="select"></b>
+                {% endif %}
             </li>
         {% endfor %}
     </ol>
@@ -29,57 +36,71 @@
     <ul>
         {% for payment_channel in payment_channels %}
             {% if (payment_channel.id == selected_payment_channel.id) %}
-            <li class="selected_pay" data-payment_channel_id="{{ payment_channel.id }}"
-                data-payment_type="{{ payment_channel.payment_type }}">
+                <li data-payment_channel_id="{{ payment_channel.id }}"
+                    data-payment_type="{{ payment_channel.payment_type }}" id="payment_type_{{ payment_channel.payment_type }}">
+                    <span>{{ payment_channel.name }}</span>
+                <i class="selected_pay select_pay"></i>
+                </li>
             {% else %}
-                <li data-payment_channel_id="{{ payment_channel.id }}" data-payment_type="{{ payment_channel.payment_type }}">
+                <li data-payment_channel_id="{{ payment_channel.id }}"
+                    data-payment_type="{{ payment_channel.payment_type }}">
+                    <span>{{ payment_channel.name }}</span>
+                <i class="select_pay"></i>
+                </li>
             {% endif %}
-            {{ payment_channel.name }}</li>
         {% endfor %}
     </ul>
 </div>
 
 <div class="get_out_btn">
     <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
-       id="pay_submit_btn" class="account_btn" data-payment_channel_id="{{ selected_payment_channel.id }}"
-       data-payment_type="{{ selected_payment_channel.payment_type }}">确定</a>
+       id="pay_submit_btn" class="account_btn">确定</a>
 </div>
-
-<script src="/js/jquery/1.11.2/jquery.min.js"></script>
 <script type="text/javascript">
-    function generatePayUrl() {
-        var product_id = $(".selected").data('product_id');
-        var selected_pay = $(".selected_pay");
-        var payment_channel_id = selected_pay.data('payment_channel_id');
-        var payment_type = selected_pay.data('payment_type');
-        var pay_submit = $("#pay_submit_btn");
-        if (payment_channel_id == "" || payment_channel_id == undefined) {
-            payment_channel_id = pay_submit.data('payment_channel_id');
-            payment_type = pay_submit.data('payment_type');
+    function generatePayUrl()
+    {
+        var product_id = $(".selected").parent().data('product_id');
+        var payment_channel = $(".selected_pay").parent();
+        var payment_channel_id = payment_channel.data('payment_channel_id');
+        var payment_type = payment_channel.data('payment_type');
+        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id
+        if (payment_channel_id == undefined) {
+            url = $("#pay_submit_btn").attr("href");
         }
-        var original_pay_url = "/m/payments/create?sid=" + '{{ user.sid }}';
-        var pay_url = original_pay_url + "&product_id=" + product_id + "&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type;
-        pay_submit.attr('href', pay_url);
-        pay_submit.data('payment_channel_id', payment_channel_id);
-        pay_submit.data('data-payment_type', payment_type);
+        return url;
     }
 
     $(function () {
+        FastClick.attach(document.body);
+        //只有苹果支付的时候,隐藏苹果支付选项
+        if ($(".account_pay li").length <= 1) {
+            $("#payment_type_apple").hide();
+        }
         // 钻石选择
         $('.account_money ol li').each(function () {
             $(this).click(function () {
-                $(this).addClass('selected').siblings().removeClass('selected');
-                generatePayUrl();
+                $(this).find('.select').addClass('selected');
+                $(this).siblings().find('.select').removeClass('selected');
+
+                $(this).find('.select_color').addClass('selected_color');
+                $(this).siblings().find('.select_color').removeClass('selected_color');
             })
         });
         // 支付方式选择
         $('.account_pay ul li').each(function () {
             $(this).click(function () {
-                $(this).addClass('selected_pay').siblings().removeClass('selected_pay');
-                generatePayUrl();
+                $(this).find('.select_pay').addClass('selected_pay');
+                $(this).siblings().find('.select_pay').removeClass('selected_pay');
             })
-        })
+        });
+        $(document).on('click', '.get_out_btn', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            location.href = generatePayUrl();
+        });
     })
+
 </script>
 </body>
 </html>
