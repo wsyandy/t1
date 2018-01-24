@@ -22,7 +22,7 @@ class PushSever extends BaseModel
         $this->websocket_client_ip = env('websocket_client_ip', '0.0.0.0'); //监听客户端
         $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
         $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
-        $this->websocket_server_port = env('websocket_server_ip', 9508); //监听服务端
+        $this->websocket_server_port = env('websocket_server_port', 9508); //监听服务端
     }
 
     static function getJobQueueCache()
