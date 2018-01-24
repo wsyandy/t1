@@ -663,13 +663,9 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test42Action()
     {
-        $key = "test_ip";
-        $hot_cache = Users::getHotReadCache();
-        $hot_cache->set($key, '127.0.0.1');
-        debug($hot_cache->get($key));
-        $ip = "10.29.115.59";
+        $ip = PushSever::getIntranetIp();
         $client = new \WebSocket\Client("ws://{$ip}:9508");
-        $payload = ['action' => 'send', 'message' => []];
+        $payload = ['action' => 'push', 'message' => ['fd' => 1]];
         $data = json_encode($payload);
         $client->send($data);
     }

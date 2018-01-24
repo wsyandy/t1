@@ -173,6 +173,14 @@ class PushSever extends BaseModel
     {
         $fd = $request->fd;
 
+        $connect_info = $server->connection_info($fd);
+        $server_port = fetch($connect_info, 'server_port');
+
+        if ($this->websocket_server_port == $server_port) {
+            info($fd, "server_to_server onOpen");
+            return;
+        }
+
         if (!$server->exist($fd)) {
             info($request->fd, "Exce not exist");
             return;
@@ -279,14 +287,22 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-                //$this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $this->send('push', $payload);
+//                $server->push($frame->fd, $frame->data);
             }
         }
     }
 
     function onClose($server, $fd, $from_id)
     {
+        $connect_info = $server->connection_info($fd);
+        $server_port = fetch($connect_info, 'server_port');
+
+        if ($this->websocket_server_port == $server_port) {
+            info($fd, "server_to_server onClose");
+            return;
+        }
+
         $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
         $online_token = $hot_cache->get($online_key);
