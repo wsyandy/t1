@@ -23,12 +23,12 @@
         var text = document.getElementById('text').value;
         document.getElementById('text').value = '';
 
-        var data = '{a: 1, b: 2}';
-        web_socket.send(data);
+        // var data = "{'name':'hello'}";
+        // web_socket.send(data.parseJSON());
     }
 
     web_socket.onmessage = function (evt) {
-        console.log(evt.data);
+        console.log(evt);
     }
 
     web_socket.onerror = function (evt, e) {

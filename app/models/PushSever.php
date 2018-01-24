@@ -44,6 +44,7 @@ class PushSever extends BaseModel
         }
 
         $ips = swoole_get_local_ip();
+        $ips = array_values($ips);
 
         debug($ips);
 
@@ -52,12 +53,8 @@ class PushSever extends BaseModel
             return '';
         }
 
-        $ip = fetch($ips, 'eth0', '');
-
-        if ($ip) {
-            self::saveIntranetIp($ip);
-        }
-
+        $ip = $ips[0];
+        self::saveIntranetIp($ip);
         return $ip;
     }
 
@@ -141,7 +138,7 @@ class PushSever extends BaseModel
         $ip = self::getIntranetIp();
         $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
         $payload = ['action' => $action, 'message' => $opts];
-        $data = json_encode($payload);
+        $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
         $client->close();
     }
@@ -164,6 +161,7 @@ class PushSever extends BaseModel
     //服务器客户端通信
     function push($server, $opts = [])
     {
+        debug($opts);
         $fd = fetch($opts, 'fd');
         $body = fetch($opts, 'body');
         $server->push($fd, json_encode($body, JSON_UNESCAPED_UNICODE));
@@ -224,6 +222,7 @@ class PushSever extends BaseModel
     {
         $fd = $frame->fd;
 
+        debug($frame->data);
         if (!$server->exist($fd)) {
             info($frame->fd, "Exce not exist");
             return;
@@ -236,13 +235,14 @@ class PushSever extends BaseModel
         }
 
         $data = json_decode($data, true);
+        debug($data);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
         if ($this->websocket_server_port == $server_port) {
-            info("server_to_server", $data);
             $action = fetch($data, 'action');
             $message = fetch($data, 'message', []);
+            info("server_to_server", $data, $action, $message);
             $this->$action($server, $message);
         } else {
             $sign = fetch($data, 'sign');
@@ -276,8 +276,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-                //$this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $this->send('push', $payload);
+//                $server->push($frame->fd, $frame->data);
             }
         }
     }
