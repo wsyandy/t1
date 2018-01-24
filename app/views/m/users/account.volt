@@ -1,1 +1,1 @@
-{%  include "m/products/index.volt" %}
+{% include "m/template/product.volt" %}
