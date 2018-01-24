@@ -244,12 +244,7 @@ class PushSever extends BaseModel
             $action = fetch($data, 'action');
             $message = fetch($data, 'message', []);
             info("server_to_server", $data, $action, $message);
-//            $this->$action($server, $message);
-
-            $fd = fetch($message, 'fd');
-            $body = fetch($message, 'body');
-            $server->push($fd, "ssssss");
-
+            $this->$action($server, $message);
         } else {
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
@@ -282,8 +277,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-                $this->send('push', $payload);
-//                $server->push($frame->fd, $frame->data);
+                //$this->send('push', $payload);
+                $server->push($frame->fd, $frame->data);
             }
         }
     }
