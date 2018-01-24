@@ -217,7 +217,7 @@ class PushSever extends BaseModel
         debug($request->fd, "connect", $sid, $online_token);
 
         $data = ['online_token' => $online_token, 'action' => 'create_token'];
-        //$server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
     }
 
     function onMessage($server, $frame)
