@@ -12,7 +12,8 @@ class WebsocketController extends BaseController
 {
     function endPointAction()
     {
-        $websocket_end_point = '';
+        $port = env('websocket_client_port', 9509);
+        $websocket_end_point = 'ws://lalive.momoyuedu.cn:' . $port;
         $ping_interval = 15;
 
         if (isDevelopmentEnv()) {
