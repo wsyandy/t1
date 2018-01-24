@@ -68,7 +68,6 @@ class PaymentChannels extends BaseModel
     function match($user)
     {
         debug("user: " . $user->platform);
-
         if ($this->isApple()) {
             return $user->isIos();
         }
