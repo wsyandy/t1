@@ -19,13 +19,13 @@ class WebsocketTask extends Phalcon\CLI\Task
     function reloadAction()
     {
         $server = new PushSever();
-        $server->reload();
+        $server->send('reload');
     }
 
     function shutdownAction()
     {
         $server = new PushSever();
-        $server->shutdown();
+        $server->send('shutdown');
     }
 
 }
