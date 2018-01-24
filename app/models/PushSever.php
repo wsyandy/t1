@@ -13,7 +13,8 @@ class PushSever extends BaseModel
     private $websocket_client_port;
     private $websocket_server_ip;
     private $websocket_server_port;
-    private static $intranet_ip = "intranet_ip";
+    private static $intranet_ip_key = "intranet_ip";
+    private $connection_list = 'websocket_connection_list';
 
     function __construct()
     {
@@ -36,7 +37,7 @@ class PushSever extends BaseModel
     static function getIntranetIp()
     {
         $cache = self::getJobQueueCache();
-        $ip = $cache->get(self::$intranet_ip);
+        $ip = $cache->get(self::$intranet_ip_key);
 
         if ($ip) {
             debug($ip);
@@ -61,7 +62,7 @@ class PushSever extends BaseModel
     static function saveIntranetIp($ip)
     {
         $cache = self::getJobQueueCache();
-        $cache->set(self::$intranet_ip, $ip);
+        $cache->set(self::$intranet_ip_key, $ip);
     }
 
     static function params($request, $field, $default = null)
@@ -207,6 +208,7 @@ class PushSever extends BaseModel
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
             $hot_cache->set($fd_intranet_ip_key, $ip);
             info($fd_intranet_ip_key, $ip);
+            $hot_cache->zincrby($this->connection_list, 1, $ip);
         }
 
         if ($user->current_room) {
@@ -302,6 +304,11 @@ class PushSever extends BaseModel
         $user = Users::findFirstById($user_id);
         $room_seat = null;
 
+        $local_ip = self::getIntranetIp();
+        if ($local_ip) {
+            $hot_cache->zincrby($this->connection_list, -1, $local_ip);
+        }
+
         if ($user) {
 
             debug($fd, $user->sid, "connect close");
@@ -391,5 +398,12 @@ class PushSever extends BaseModel
     {
         $ip = self::getIntranetIp();
         return $intranet_ip == $ip;
+    }
+
+    function getConnectionNum()
+    {
+        $hot_cache = self::getHotReadCache();
+        $local_ip = self::getIntranetIp();
+        return $hot_cache->zscore($this->connection_list, $local_ip);
     }
 }
