@@ -136,6 +136,7 @@ class PushSever extends BaseModel
     //服务器内部通信
     function send($action, $opts = [])
     {
+        debug($action, $opts);
         $ip = fetch($opts, 'ip', '127.0.0.1');
         $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
         $payload = ['action' => $action, 'message' => $opts];
