@@ -174,6 +174,18 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 
+    //房间基本信息
+    function basicInfoAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room->toBasicJson());
+    }
+
     function exitAction()
     {
         $room_id = $this->params('id', 0);

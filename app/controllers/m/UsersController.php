@@ -25,10 +25,6 @@ class UsersController extends BaseController
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
         $this->view->user = $this->currentUser();
-        if ($selected_payment_channel->isApple()) {
-            $this->view->payment_channels = array();
-        } else {
-            $this->view->payment_channels = $payment_channels;
-        }
+        $this->view->payment_channels = $payment_channels;
     }
 }

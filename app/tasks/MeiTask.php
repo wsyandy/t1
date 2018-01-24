@@ -515,7 +515,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test23Action()
     {
-        $swoole_server = WebsocketSever::getServer();
+        $swoole_server = PushSever::getServer();
         $swoole_server->send(1, "sss");
 
 
@@ -579,6 +579,98 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test26Action()
     {
+        $str = ["online_token" => "1414f68b05f7e14fee2f8216d2a492b242851", "action" => "ping", "timestamp" => "1516612042", "sign" => "sss"];
+        print_r($str);
 
+        unset($str['sign']);
+        print_r($str);
+
+//        $str = json_encode($str);
+//        echoLine($str);
+//
+//        echoLine(md5($str));
+
+    }
+
+    function test27Action()
+    {
+        $params = ['action' => 'ping', 'online_token' => '17f2a022bb11ce07f77c52cded943be4c54',
+            'sid' => '52s14a3974e9cadc7854b13dcb8cd653720a6', 'timestamp' => '1516633511'];
+
+        ksort($params);
+
+        print_r($params);
+        $temp = [];
+
+        foreach ($params as $k => $v) {
+            $temp[] = $k . "=" . $v;
+        }
+
+        $str = implode("&", $temp);
+
+        echoLine($str);
+        echoLine(md5($str));
+    }
+
+    function test28Action()
+    {
+        echoLine(swoole_get_local_ip());
+    }
+
+    function test29Action()
+    {
+        $client = new \WebSocket\Client('ws://192.168.111.118:9508?user_id=1');
+
+        $payload = array('room_id' => 1012,
+            'token' => mt_rand(1, 100),
+            'action' => 'ws/rooms/enter',
+        );
+
+        $data = json_encode($payload);
+
+        $client->send($data);
+        $client->close();
+    }
+
+    function test30Action()
+    {
+        $redis = new swoole_redis();
+
+        $soft_versions = SoftVersions::findForeach();
+        foreach ($soft_versions as $soft_version) {
+            echoLine($soft_version->version_name);
+        }
+    }
+
+    function test40Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0 && STATUS_OFF == $room->status) {
+                $room->status = STATUS_ON;
+                $room->save();
+                echoLine($room);
+            }
+        }
+    }
+
+    function test41Action()
+    {
+        $user = Users::findFirstById(117);
+        echoLine($user->current_room_id);
+    }
+
+    function test42Action()
+    {
+        $key = "test_ip";
+        $hot_cache = Users::getHotReadCache();
+        $hot_cache->set($key, '127.0.0.1');
+        debug($hot_cache->get($key));
+        $ip = "10.29.115.59";
+        $client = new \WebSocket\Client("ws://{$ip}:9508");
+        $payload = ['action' => 'send', 'message' => []];
+        $data = json_encode($payload);
+        $client->send($data);
     }
 }

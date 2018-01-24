@@ -58,6 +58,11 @@ class Rooms extends BaseModel
             'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue, 'room_seats' => $room_seat_datas];
     }
 
+    function toBasicJson()
+    {
+        return ['id' => $this->id, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
+    }
+
     static function createRoom($user, $name)
     {
         $room = new Rooms();

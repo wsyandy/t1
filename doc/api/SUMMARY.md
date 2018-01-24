@@ -21,5 +21,6 @@
 * [语音通话](voice_calls.md)
 * [系统消息](chats.md)
 * [Websocket](websocket.md)
+* [支付上报](payment.md)
 
 ## Published with GitBook

@@ -23,23 +23,18 @@ class RoomSeatsController extends BaseController
         $current_user_id = $this->currentUserId();
         $other_user_id = $this->otherUserId();
 
+        $hot_cache = \RoomSeats::getHotWriteCache();
         $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
         $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
+        $room_seat_up_user_lock_key = "room_seat_up_user_lock{$current_user_id}";
 
         if ($other_user_id) {
             $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
+            $room_seat_up_user_lock_key = "room_seat_up_user_lock{$other_user_id}";
         }
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
-
-        $hot_cache = \RoomSeats::getHotWriteCache();
-
-        //上麦强制丢弃
-        if (!$hot_cache->set($room_seat_user_lock_key, 1, ['NX', 'PX' => 1000])) {
-            $hot_cache->del($room_seat_user_lock_key);
-            info("user_lock", $room_seat_user_lock_key);
-            return $this->renderJSON(ERROR_CODE_FAIL, '操作频繁');
-        }
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
 
         $current_user = $this->currentUser(true);
         $other_user = $this->otherUser(true);
@@ -48,15 +43,27 @@ class RoomSeatsController extends BaseController
 
         if (!$room_seat) {
             unlock($room_seat_lock);
-            $hot_cache->del($room_seat_user_lock_key);
+            unlock($room_seat_user_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+        }
+
+        if ($hot_cache->get($room_seat_up_user_lock_key)) {
+            info($room_seat_up_user_lock_key, "用户已被抱上麦");
+            unlock($room_seat_lock);
+            unlock($room_seat_user_lock);
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户已被抱上麦');
         }
 
         // 抱用户上麦
         list($error_code, $error_reason) = $room_seat->up($current_user, $other_user);
 
-        $hot_cache->del($room_seat_user_lock_key);
+        if (ERROR_CODE_SUCCESS == $error_code && $other_user_id) {
+            //标记用户被抱上麦
+            $hot_cache->setex($room_seat_up_user_lock_key, 3, $room_seat_id);
+        }
+
         unlock($room_seat_lock);
+        unlock($room_seat_user_lock);
 
         return $this->renderJSON($error_code, $error_reason, $room_seat->toSimpleJson());
     }
@@ -214,6 +221,10 @@ class RoomSeatsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        $hot_cache = \RoomSeats::getHotWriteCache();
+        $room_seat_up_user_lock_key = "room_seat_up_user_lock{$this->currentUserId()}";
+        $hot_cache->del($room_seat_up_user_lock_key);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
@@ -227,14 +238,13 @@ class RoomSeatsController extends BaseController
         }
 
         $current_user_id = $this->currentUserId();
-        $other_user_id = $this->otherUserId();
+
+        $hot_cache = \RoomSeats::getHotWriteCache();
+        $room_seat_up_user_lock_key = "room_seat_up_user_lock{$current_user_id}";
+        $hot_cache->del($room_seat_up_user_lock_key);
 
         $room_seat_lock_key = "room_seat_lock{$room_seat_id}";
         $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
-
-        if ($other_user_id) {
-            $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
-        }
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000);
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);

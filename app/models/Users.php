@@ -214,7 +214,7 @@ class Users extends BaseModel
         }
 
         info('false_device', $device->id, 'can_register', $device->can_register);
-        if (!$device || !$device->can_register) {
+        if (!$device || (!$device->can_register && isProduction())) {
             info('false_device', $current_user->product_channel->code, $mobile, $context);
             return [ERROR_CODE_FAIL, '设备错误!!', null];
         }
@@ -480,6 +480,7 @@ class Users extends BaseModel
                 $this->device_id = $device->id;
             }
             $this->push_token = $device->push_token;
+            $this->update();
 
             // 更新最后登录的用户
             $device->user_id = $this->id;
@@ -496,8 +497,6 @@ class Users extends BaseModel
                 $other_user->push_token = '';
                 $other_user->update();
             }
-
-            $this->update();
         }
     }
 
@@ -1303,24 +1302,30 @@ class Users extends BaseModel
     static function search($user, $page, $per_page, $opts = [])
     {
         $user_id = fetch($opts, 'user_id');
+        $province_id = fetch($opts, 'province_id');
+        $city_id = fetch($opts, 'city_id');
+
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         } else {
             $cond = ['conditions' => 'id <> ' . $user->id];
         }
 
-        $city_id = fetch($opts, 'city_id');
         if ($city_id) {
-            $cond = ['conditions' => '(city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)',
-                'bind' => ['city_id' => $city_id, 'geo_city_id' => $city_id, 'ip_city_id' => $city_id]];
+            $cond['conditions'] .= ' and (city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)';
+            $cond['bind']['city_id'] = $city_id;
+            $cond['bind']['geo_city_id'] = $city_id;
+            $cond['bind']['ip_city_id'] = $city_id;
         }
 
-        $province_id = fetch($opts, 'province_id');
         if ($province_id) {
-            $cond = ['conditions' => '(province_id=:province_id: or geo_province_id=:geo_province_id: or ip_province_id=:ip_province_id:)',
-                'bind' => ['province_id' => $province_id, 'geo_province_id' => $province_id, 'ip_province_id' => $province_id]];
+            $cond['conditions'] .= ' and (province_id=:province_id: or geo_province_id=:geo_province_id: or ip_province_id=:ip_province_id:)';
+            $cond['bind']['province_id'] = $province_id;
+            $cond['bind']['geo_province_id'] = $province_id;
+            $cond['bind']['ip_province_id'] = $province_id;
         }
 
+        $cond['conditions'] .= " and id != " . SYSTEM_ID;
         $cond['order'] = 'id desc';
 
         info($user->id, $cond);

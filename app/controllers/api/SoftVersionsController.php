@@ -14,7 +14,7 @@ class SoftVersionsController extends BaseController
 
     function upgradeAction()
     {
-        $version_name = $this->context('version_name');
+        $version_code = $this->context('version_code');
         $platform = $this->context('platform');
         $cond = ['conditions' => 'product_channel_id = :product_channel_id: and platform = :platform: and status = :status: and stable = :stable:'];
         $cond['bind'] = ['product_channel_id' => $this->currentProductChannel()->id, 'platform' => $platform,
@@ -44,7 +44,7 @@ class SoftVersionsController extends BaseController
             break;
         }
 
-        if (!$select_soft_version || version_compare($select_soft_version->version_name, $version_name, '<=')) {
+        if (!$select_soft_version || version_compare($select_soft_version->version_code, $version_code, '<=')) {
             debug('没有升级');
             return $this->renderJSON(ERROR_CODE_SUCCESS, '没有升级', $result);
         }
