@@ -672,6 +672,5 @@ class MeiTask extends \Phalcon\Cli\Task
         $payload = ['action' => 'send', 'message' => []];
         $data = json_encode($payload);
         $client->send($data);
-        $client->send()
     }
 }
