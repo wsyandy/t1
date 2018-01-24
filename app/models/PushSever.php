@@ -185,13 +185,16 @@ class PushSever extends BaseModel
         $user_id = intval($sid);
         $user = Users::findFirstById($user_id);
 
+        $hot_cache = self::getHotWriteCache();
+        $ip = self::getIntranetIp();
+        $hot_cache->zincrby($this->connection_list, 1, $ip);
+
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
             $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
             return;
         }
 
-        $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
         $fd_key = "socket_push_fd_" . $online_token;
         $user_online_key = "socket_user_online_user_id" . intval($sid);
@@ -202,13 +205,10 @@ class PushSever extends BaseModel
         $hot_cache->set($user_online_key, $online_token);
         $hot_cache->set($fd_user_id_key, $user_id);
 
-        $ip = self::getIntranetIp();
-
         if ($ip) {
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
             $hot_cache->set($fd_intranet_ip_key, $ip);
             info($fd_intranet_ip_key, $ip);
-            $hot_cache->zincrby($this->connection_list, 1, $ip);
         }
 
         if ($user->current_room) {

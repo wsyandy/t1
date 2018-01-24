@@ -673,4 +673,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $data = json_encode($payload);
         $client->send($data);
     }
+
+    function test43Action()
+    {
+        $server = new PushSever();
+        echoLine($server->getConnectionNum());
+    }
 }
