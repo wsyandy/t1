@@ -36,7 +36,6 @@ class PushSever extends BaseModel
 
     static function getIntranetIp()
     {
-        return "116.62.103.161";
         $cache = self::getJobQueueCache();
         $ip = $cache->get(self::$intranet_ip_key);
 
@@ -288,8 +287,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-                $this->send('push', $payload);
-//                $server->push($frame->fd, $frame->data);
+//                $this->send('push', $payload);
+                $server->push($frame->fd, $frame->data);
             }
         }
     }
