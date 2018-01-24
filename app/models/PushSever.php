@@ -244,7 +244,12 @@ class PushSever extends BaseModel
             $action = fetch($data, 'action');
             $message = fetch($data, 'message', []);
             info("server_to_server", $data, $action, $message);
-            $this->$action($server, $message);
+//            $this->$action($server, $message);
+
+            $fd = fetch($message, 'fd');
+            $body = fetch($message, 'body');
+            $server->push($fd, "ssssss");
+
         } else {
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
