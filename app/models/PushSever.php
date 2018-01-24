@@ -276,8 +276,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-//                $this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $this->send('push', $payload);
+                //$server->push($frame->fd, $frame->data);
             }
         }
     }
@@ -354,8 +354,8 @@ class PushSever extends BaseModel
                         }
 
                         $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-//                        $this->send('push', $payload);
-                        $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                        $this->send('push', $payload);
+                        //$server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
                     }
 
                     //重新连接 用户的key不一样
@@ -379,8 +379,8 @@ class PushSever extends BaseModel
                     $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
                     info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data);
                     $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-//                    $this->send('push', $payload);
-                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                    $this->send('push', $payload);
+                    //$server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
                 }
             }
         }
