@@ -660,4 +660,39 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(117);
         echoLine($user->current_room_id);
     }
+
+    function test42Action()
+    {
+        $ip = PushSever::getIntranetIp();
+        $client = new \WebSocket\Client("ws://{$ip}:9508");
+        $payload = ['action' => 'push', 'message' => ['fd' => 1]];
+        $data = json_encode($payload);
+        $client->send($data);
+    }
+
+    function test43Action()
+    {
+        $server = new PushSever();
+        echoLine($server->getConnectionNum());
+
+        $image = APP_ROOT . "public/images/avatar.png";
+        StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
+    }
+
+    function test44Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+            if ($user->avatar) {
+                $user->avatar_status = AUTH_SUCCESS;
+                $user->update();
+            }
+        }
+        $order = Orders::findFirstByOrderNo('5d6b1d8');
+        echoLine($order);
+        $payment = \Payments::findFirstByOrderId($order->id);
+        echoLine($payment);
+
+    }
 }

@@ -26,9 +26,11 @@
 
 {% macro oper_link(product_channel) %}
     <a href="/admin/product_channels/edit/{{ product_channel.id }}" class="modal_action">编辑</a><br/>
-    <a href="/admin/client_themes?client_theme[product_channel_id_eq]={{ product_channel.id }}">客户端主题</a><br/>
+    {#<a href="/admin/client_themes?client_theme[product_channel_id_eq]={{ product_channel.id }}">客户端主题</a><br/>#}
     <a href="/admin/product_channels/push/{{ product_channel.id }}" class="modal_action">个推配置</a><br/>
-    <a href="/admin/product_channels/copy?id={{ product_channel.id }}" class="modal_action">复制产品渠道到</a><br/>
+    {#<a href="/admin/product_channels/agora/{{ product_channel.id }}" class="modal_action">声网配置</a><br/>#}
+    {#<a href="/admin/product_channels/emchat/{{ product_channel.id }}" class="modal_action">环信配置</a><br/>#}
+    {#<a href="/admin/product_channels/copy?id={{ product_channel.id }}" class="modal_action">复制产品渠道到</a><br/>#}
     <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a>
 {% endmacro %}
 
@@ -64,6 +66,7 @@
         <td>${product_channel.id}</td>
         <td>${product_channel.name}</td>
         <td>${product_channel.code}</td>
+        <td><a href="/admin/product_groups?product_channel_id=${product_channel.id}">计费配置</a></td>
         <td><img src="${product_channel.avatar_small_url}" height="50" width="50"/></td>
         <td>
             公司名称: ${product_channel.company_name}<br/>
@@ -91,9 +94,12 @@
         </td>
         <td>
             <a href="/admin/product_channels/edit/${product_channel.id}" class="modal_action">编辑</a><br/>
-            <a href="/admin/client_themes?client_theme[product_channel_id_eq]=${ product_channel.id }">客户端主题</a><br/>
+            {#<a href="/admin/client_themes?client_theme[product_channel_id_eq]=${ product_channel.id }">客户端主题</a><br/>#}
             <a href="/admin/product_channels/push/${ product_channel.id }" class="modal_action">个推配置</a><br/>
-            <a href="/admin/product_channels/copy?id=${ product_channel.id }" class="modal_action">复制产品渠道到</a>
+            {#<a href="/admin/product_channels/agora/${ product_channel.id }" class="modal_action">声网配置</a><br/>#}
+            {#<a href="/admin/product_channels/emchat/${ product_channel.id }" class="modal_action">环信配置</a><br/>#}
+            {#<a href="/admin/product_channels/copy?id=${ product_channel.id }" class="modal_action">复制产品渠道到</a><br/>#}
+            <a href="/admin/product_channels/getui_global_push?id=${ product_channel.id }" class="modal_action">个推全局推送</a>
         </td>
     </tr>
 </script>

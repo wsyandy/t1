@@ -114,7 +114,7 @@ class Rooms extends BaseModel
         //绑定用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
 
-        debug($online_token, $user->id, $this->id);
+        info($online_token, $user->sid, $this->id);
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
@@ -127,7 +127,7 @@ class Rooms extends BaseModel
         //解绑用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
 
-        debug($online_token, $user->id, $this->id);
+        info($online_token, $user->sid, $this->id);
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
@@ -170,14 +170,15 @@ class Rooms extends BaseModel
         }
 
         $user->save();
-
         $this->bindOnlineToken($user);
         $this->addUser($user);
+        info($this->id, $user->sid, $user->current_room_seat_id);
     }
 
     function exitRoom($user)
     {
 
+        info($this->id, $user->sid, $user->current_room_seat_id);
         // 麦位
         $room_seat = RoomSeats::findFirstById($user->current_room_seat_id);
 
@@ -190,7 +191,6 @@ class Rooms extends BaseModel
             $room_seat->save();
         }
 
-        debug($user->current_room_seat_id);
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
         $user->user_role = USER_ROLE_NO;
@@ -204,6 +204,13 @@ class Rooms extends BaseModel
 
         $this->unbindOnlineToken($user);
         $this->remUser($user);
+    }
+
+    function kickingRoom($user)
+    {
+        info($this->user->sid, $user->sid);
+        $this->exitRoom($user);
+        $this->forbidEnter($user);
     }
 
     function getUserNum()
@@ -255,8 +262,6 @@ class Rooms extends BaseModel
         }
 
         $hot_cache->zadd($key, $time, $user->id);
-
-        debug($hot_cache->zscore($key, $user->id));
     }
 
     function findUsers($page, $per_page)
@@ -268,19 +273,7 @@ class Rooms extends BaseModel
         $offset = $per_page * ($page - 1);
 
         $user_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
-        $objects = Users::findByIds($user_ids);
-
-        $users = [];
-
-        foreach ($objects as $object) {
-            if ($object->current_room_id != $this->id) {
-//                $hot_cache->zrem($key, $object->id);
-                continue;
-            }
-
-            $users[] = $object;
-        }
-
+        $users = Users::findByIds($user_ids);
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 

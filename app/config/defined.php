@@ -74,9 +74,11 @@ define('PARTNER_STATUS_NORMAL', 1);
 define('PARTNER_STATUS_BLOCK', 2);
 
 // 审核
-define('VERIFY_WAIT', 0); // 等待校验
-define('VERIFY_SUCCESS', 1); // 校验成功
-define('VERIFY_FAIL', -1); // 校验失败
+define('AUTH_NONE', 0);
+define('AUTH_SUCCESS', 1); // 校验成功
+define('AUTH_FAIL', 2); // 校验失败
+define('AUTH_WAIT', 3); // 等待校验
+define('AUTH_EXPIRE', 4);
 
 // 短信状态
 define('SMS_HISTORY_SEND_STATUS_WAIT', 0);

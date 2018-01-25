@@ -155,14 +155,13 @@ class Users extends BaseModel
         if (date('YmdH', $last_at) != date('YmdH', $this->last_at)) {
             $attrs = $this->getStatAttrs();
             // 统计活跃
+            // 做手机号剔重计算活跃手机号数
+            $attrs['mobile'] = $this->mobile;
             \Stats::delay()->record('user', 'active_user', $attrs);
-
-            if ($this->mobile) {
-                \Stats::delay()->record('user', 'active_register_user', $attrs);
-
-                $attrs['id'] = $this->mobile;
-                \Stats::delay()->record('user', 'active_mobile', $attrs);
-            }
+        }
+        // 重置任务
+        if (date('Ymd', $last_at) != date('Ymd', $this->last_at)) {
+            $this->deleteExecutedOfflineTaskIds();
         }
     }
 
@@ -452,10 +451,12 @@ class Users extends BaseModel
 
         if ($res) {
             $this->avatar = $dest_filename;
-            $this->update();
-            //  删除老头像
-            if ($old_avatar) {
-                \StoreFile::delete($old_avatar);
+            $this->avatar_status = AUTH_SUCCESS;
+            if ($this->update()) {
+                //  删除老头像
+                if ($old_avatar) {
+                    \StoreFile::delete($old_avatar);
+                }
             }
         }
     }
@@ -1016,7 +1017,7 @@ class Users extends BaseModel
         $users = Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            $user->created_at = fetch($times, $user_id);
+            $user->created_at = fetch($times, $user->id);
         }
 
         $total_entries = $user_db->zcard($relations_key);
@@ -1325,7 +1326,7 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
-        $cond['conditions'] .= " and id != " . SYSTEM_ID;
+        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS;
         $cond['order'] = 'id desc';
 
         info($user->id, $cond);
@@ -1370,7 +1371,7 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id <> :user_id:';
+        $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $bind['user_id'] = $this->id;
 
         $conds['conditions'] = $condition;
@@ -1479,13 +1480,20 @@ class Users extends BaseModel
     //1可以聊天 2不可以聊天
     function setChat($room, $chat)
     {
-        $db = Users::getHotWriteCache();
+        $cache = Users::getHotWriteCache();
 
         if ($chat) {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
-        } else {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
+            $cache->del("chat_status_room{$room->id}user{$this->id}");
+            return;
         }
+
+        $expire = 3600 * 24;
+
+        if (isDevelopmentEnv()) {
+            $expire = 60;
+        }
+
+        $cache->setex("chat_status_room{$room->id}user{$this->id}", $expire, 1);
     }
 
     function canChat($room)
@@ -1494,7 +1502,7 @@ class Users extends BaseModel
         $key = "chat_status_room{$room->id}user{$this->id}";
         $chat = $db->get($key);
 
-        if (2 == $chat) {
+        if ($chat) {
             return false;
         }
 

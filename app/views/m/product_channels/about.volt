@@ -10,7 +10,7 @@
 <body>
 <div class="about_us_top">
     <img src="{{ product_channel.avatar_small_url }}">
-    <h3>约玩</h3>
+    <h3>{{ product_channel.name }}</h3>
 </div>
 <div class="about_us_list">
     <ul>

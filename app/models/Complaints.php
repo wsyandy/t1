@@ -21,7 +21,7 @@ class  Complaints extends BaseModel
      */
     private $_room;
 
-    static $STATUS = [VERIFY_WAIT => '等待处理', VERIFY_SUCCESS => '举报成功', VERIFY_FAIL => '举报失败'];
+    static $STATUS = [AUTH_WAIT => '等待处理', AUTH_SUCCESS => '举报成功', AUTH_FAIL => '举报失败'];
 
     static $COMPLAINT_TYPE = [1 => '色情', 2 => '骚扰', 3 => '不良信息', 4 => '广告'];
 
@@ -43,7 +43,7 @@ class  Complaints extends BaseModel
         }
 
         $complaint->complaint_type = $complaint_type;
-        $complaint->status = VERIFY_WAIT;
+        $complaint->status = AUTH_WAIT;
 
         $complaint->save();
     }

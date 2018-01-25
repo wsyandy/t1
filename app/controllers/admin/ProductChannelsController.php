@@ -300,4 +300,16 @@ class ProductChannelsController extends BaseController
          }
          $this->view->product_channel = $product_channel;
     }
+
+//    function agoraAction()
+//    {
+//        $product_channel = \ProductChannels::findFirstById($this->params('id'));
+//        $this->view->product_channel = $product_channel;
+//    }
+//
+//    function emchatAction()
+//    {
+//        $product_channel = \ProductChannels::findFirstById($this->params('id'));
+//        $this->view->product_channel = $product_channel;
+//    }
 }

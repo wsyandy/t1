@@ -71,10 +71,10 @@
         </li>
         {% endif %}
 
-        <!--微信管理-->
+        <!--消息管理-->
         {% if isAllowed('weixin_menu_templates','index') or isAllowed('push_messages','index') or isAllowed('weixin_template_messages','index') %}
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">微信管理<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">消息管理<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('weixin_menu_templates','index') %}
                         <li><a href="/admin/weixin_menu_templates">微信菜单模板</a></li>

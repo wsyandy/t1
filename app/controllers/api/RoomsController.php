@@ -47,8 +47,6 @@ class RoomsController extends BaseController
             'order' => 'last_at desc'
         ];
 
-        info($cond, $this->params());
-
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
@@ -313,10 +311,8 @@ class RoomsController extends BaseController
         }
 
         $other_user_id = $this->otherUserId();
-
         $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
-
         $other_user = $this->otherUser(true);
         $room = \Rooms::findFirstById($room_id);
 
@@ -328,10 +324,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
-
-        $room->exitRoom($other_user);
-        $room->forbidEnter($other_user);
-
+        $room->kickingRoom($other_user);
         unlock($room_seat_user_lock);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id,
@@ -376,7 +369,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-    //异常离线上报
+    //异常离线上报 暂时用不到
     function offlineAction()
     {
         if (!$this->otherUser()) {
@@ -389,7 +382,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        info("room_offline", $this->otherUser()->id, $room->id);
+        info("room_offline", $this->otherUser()->sid, $room->id);
         $room->exitRoom($this->otherUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');

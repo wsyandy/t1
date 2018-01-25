@@ -48,7 +48,6 @@ class RoomSeatsController extends BaseController
         }
 
         if ($hot_cache->get($room_seat_up_user_lock_key)) {
-            info($room_seat_up_user_lock_key, "用户已被抱上麦");
             unlock($room_seat_lock);
             unlock($room_seat_user_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '用户已被抱上麦');
