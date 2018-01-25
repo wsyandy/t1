@@ -351,8 +351,6 @@ class PushSever extends BaseModel
 
                     $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
-                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-
                     //判断fd是否存在
                     if ($receiver_fd) {
 
@@ -367,6 +365,7 @@ class PushSever extends BaseModel
                         $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
                         if ($res) {
+                            info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                             break;
                         }
                     }
