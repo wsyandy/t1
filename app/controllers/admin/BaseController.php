@@ -53,14 +53,14 @@ class BaseController extends \ApplicationController
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
         $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
 
-//        if (isProduction() && $this->request->isGet() && !$this->request->isAjax() && !$this->isHttps() && $controller_name != 'monitor') {
-//
-//            $url = $this->getFullUrl();
-//            $url = preg_replace('/^http:/', 'https:', $url);
-//
-//            $this->response->redirect($url);
-//            return false;
-//        }
+        if (isProduction() && $this->request->isGet() && !$this->request->isAjax() && !$this->isHttps() && $controller_name != 'monitor') {
+
+            $url = $this->getFullUrl();
+            $url = preg_replace('/^http:/', 'https:', $url);
+
+            $this->response->redirect($url);
+            return false;
+        }
 
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
