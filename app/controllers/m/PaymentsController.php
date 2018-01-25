@@ -64,6 +64,7 @@ class PaymentsController extends BaseController
         $order = \Orders::findFirstByOrderNo($order_no);
 
         if (!$order || $order->user_id != $this->currentUser()->id) {
+            info($this->currentUser()->sid, $order_no);
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '订单不存在!');
             }
@@ -77,6 +78,7 @@ class PaymentsController extends BaseController
         $payment = \Payments::findFirstByOrderId($order->id);
 
         if (!$payment) {
+            info($this->currentUser()->sid, $order_no, $order->id);
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
             }

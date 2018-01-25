@@ -689,5 +689,10 @@ class MeiTask extends \Phalcon\Cli\Task
                 $user->update();
             }
         }
+        $order = Orders::findFirstByOrderNo('5d6b1d8');
+        echoLine($order);
+        $payment = \Payments::findFirstByOrderId($order->id);
+        echoLine($payment);
+
     }
 }
