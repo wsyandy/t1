@@ -14,7 +14,7 @@ class Albums extends BaseModel
      */
     private $_user;
 
-    static $AUTH_STATUS = [VERIFY_WAIT => '等待审核', VERIFY_SUCCESS => '审核成功', VERIFY_FAIL => '审核失败'];
+    static $AUTH_STATUS = [AUTH_WAIT => '等待审核', AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败'];
 
     static function uploadImage($user, $filenames = [])
     {

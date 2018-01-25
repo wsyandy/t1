@@ -451,10 +451,12 @@ class Users extends BaseModel
 
         if ($res) {
             $this->avatar = $dest_filename;
-            $this->update();
-            //  删除老头像
-            if ($old_avatar) {
-                \StoreFile::delete($old_avatar);
+            $this->avatar_status = AUTH_SUCCESS;
+            if ($this->update()) {
+                //  删除老头像
+                if ($old_avatar) {
+                    \StoreFile::delete($old_avatar);
+                }
             }
         }
     }
