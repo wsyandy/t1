@@ -108,7 +108,7 @@ class PushSever extends BaseModel
     function start()
     {
         $swoole_server = new swoole_websocket_server($this->websocket_client_ip, $this->websocket_client_port);
-        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_TCP);
+        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
                 'worker_num' => 2, //设置多少合适
