@@ -1478,13 +1478,20 @@ class Users extends BaseModel
     //1可以聊天 2不可以聊天
     function setChat($room, $chat)
     {
-        $db = Users::getHotWriteCache();
+        $cache = Users::getHotWriteCache();
 
         if ($chat) {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 1);
-        } else {
-            $db->setex("chat_status_room{$room->id}user{$this->id}", 3600 * 24, 2);
+            $cache->del("chat_status_room{$room->id}user{$this->id}");
+            return;
         }
+
+        $expire = 3600 * 24;
+
+        if (isDevelopmentEnv()) {
+            $expire = 60;
+        }
+
+        $cache->setex("chat_status_room{$room->id}user{$this->id}", $expire, 1);
     }
 
     function canChat($room)
@@ -1493,7 +1500,7 @@ class Users extends BaseModel
         $key = "chat_status_room{$room->id}user{$this->id}";
         $chat = $db->get($key);
 
-        if (2 == $chat) {
+        if ($chat) {
             return false;
         }
 
