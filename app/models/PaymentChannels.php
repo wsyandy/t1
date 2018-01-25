@@ -91,7 +91,7 @@ class PaymentChannels extends BaseModel
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
         $selected = [];
         foreach ($payment_channels as $payment_channel) {
-            if ($payment_channel->isValid() && $payment_channel->match($user)) {
+            if ($payment_channel->isValid() && $payment_channel->match($user) || isDevelopmentEnv()) {
                 if (isPresent($format) && $payment_channel->isResponseTo($format)) {
                     $selected[] = $payment_channel->$format();
                 } else {
