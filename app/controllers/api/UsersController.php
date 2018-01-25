@@ -326,9 +326,11 @@ class UsersController extends BaseController
 
     function searchAction()
     {
-        $user_id = $this->params('user_id');
+        $user_id = intval($this->params('user_id'));
 
-        $cond = ['user_id' => intval($user_id)];
+        if ($user_id) {
+            $cond = ['user_id' => intval($user_id)];
+        }
 
         debug($cond);
 
@@ -368,7 +370,7 @@ class UsersController extends BaseController
         $products = \Products::findDiamondListByUser($this->currentUser(), 'toApiJson');
 
         $resp = array('diamond' => $this->currentUser()->diamond);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge($resp,array(
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge($resp, array(
             'products' => $products
         )));
     }
