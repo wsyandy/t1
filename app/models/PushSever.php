@@ -343,10 +343,9 @@ class PushSever extends BaseModel
                 $current_room->exitRoom($user);
 
                 $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrange($key, 0, -1);
+                $user_ids = $hot_cache->zrange($key, 0, 10);
 
-                if (count($user_ids) > 0) {
-                    $receiver_id = $user_ids[0];
+                foreach ($user_ids as $receiver_id) {
 
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
@@ -367,14 +366,14 @@ class PushSever extends BaseModel
                         //$this->send('push', $payload);
                         $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
-                        debug($res, $user->sid);
+                        if ($res) {
+                            break;
+                        }
                     }
-
-                    //重新连接 用户的key不一样
-                    $hot_cache->del($user_online_key);
-                } else {
-                    info("no users", $key, $user_id);
                 }
+
+                //重新连接 用户的key不一样
+                $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
             }
 
