@@ -40,6 +40,8 @@ class PaymentsController extends BaseController
 
         $result_url = '/m/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
 
+        info($result);
+
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);
         }
