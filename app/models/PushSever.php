@@ -132,7 +132,7 @@ class PushSever extends BaseModel
     }
 
     //服务器内部通信
-    function send1($action, $opts = [])
+    function send($action, $opts = [])
     {
         debug($action, $opts);
         $ip = fetch($opts, 'ip', self::getIntranetIp());
@@ -145,19 +145,6 @@ class PushSever extends BaseModel
         $client->close();
     }
 
-    function send($action, $opts = [])
-    {
-        debug($action, $opts);
-        $ip = fetch($opts, 'ip', self::getIntranetIp());
-        $ip = self::getIntranetIp();
-        debug($this->websocket_server_port, $ip);
-        $client = new PushClient($ip, $this->websocket_server_port);
-        $client->connect();
-        $payload = ['action' => $action, 'message' => $opts];
-        $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
-        $client->send($data);
-        $client->close();
-    }
 
     function reload($server, $opt = [])
     {
