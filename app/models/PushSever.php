@@ -328,6 +328,7 @@ class PushSever extends BaseModel
 
             if ($current_room) {
 
+                //并发退出房间
                 $exit_room_key = "exit_room_list_{$current_room->id}";
                 $hot_cache->zadd($exit_room_key, time(), $user_id);
                 $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
@@ -343,22 +344,24 @@ class PushSever extends BaseModel
                 $current_room->exitRoom($user);
 
                 $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrevrange($key, 0, -1);
+                $room_user_ids = $hot_cache->zrevrange($key, 0, -1);
+                $exit_room_user_ids = $hot_cache->zrange($exit_room_key, 0, -1);
+                $user_ids = array_diff($room_user_ids, $exit_room_user_ids);
 
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
 
-                    debug($hot_cache->zrange($exit_room_key, 0, -1), $user->sid);
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
                     $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
-                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+                    info("exit_room_exce", $user->sid, $room_user_ids, $exit_room_user_ids, $user_ids, $receiver_id, $receiver_fd, $data);
 
                     //判断fd是否存在
                     if ($receiver_fd) {
 
                         if (!$server->exist($fd)) {
+                            $hot_cache->zrem($exit_room_key, $user_id);
                             unlock($exce_exit_room_lock);
                             info("fd 不存在", $fd);
                             return;
