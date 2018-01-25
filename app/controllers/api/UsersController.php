@@ -39,7 +39,7 @@ class UsersController extends BaseController
             $device = $this->currentUser()->device;
         }
 
-        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $this->context());
+        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $this->params());
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
