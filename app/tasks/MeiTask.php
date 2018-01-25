@@ -678,4 +678,16 @@ class MeiTask extends \Phalcon\Cli\Task
         $image = APP_ROOT . "public/images/avatar.png";
         StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
     }
+
+    function test44Action()
+    {
+        $users = Users::findForeach();
+
+        foreach ($users as $user) {
+            if ($user->avatar) {
+                $user->avatar_status = AUTH_SUCCESS;
+                $user->update();
+            }
+        }
+    }
 }
