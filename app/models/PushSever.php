@@ -341,7 +341,7 @@ class PushSever extends BaseModel
                 $current_room->exitRoom($user);
 
                 $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrange($key, 0, -1);
+                $user_ids = $hot_cache->zrevrange($key, 0, -1);
 
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
