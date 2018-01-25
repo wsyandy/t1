@@ -155,14 +155,13 @@ class Users extends BaseModel
         if (date('YmdH', $last_at) != date('YmdH', $this->last_at)) {
             $attrs = $this->getStatAttrs();
             // 统计活跃
+            // 做手机号剔重计算活跃手机号数
+            $attrs['mobile'] = $this->mobile;
             \Stats::delay()->record('user', 'active_user', $attrs);
-
-            if ($this->mobile) {
-                \Stats::delay()->record('user', 'active_register_user', $attrs);
-
-                $attrs['id'] = $this->mobile;
-                \Stats::delay()->record('user', 'active_mobile', $attrs);
-            }
+        }
+        // 重置任务
+        if (date('Ymd', $last_at) != date('Ymd', $this->last_at)) {
+            $this->deleteExecutedOfflineTaskIds();
         }
     }
 

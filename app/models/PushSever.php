@@ -13,7 +13,8 @@ class PushSever extends BaseModel
     private $websocket_client_port;
     private $websocket_server_ip;
     private $websocket_server_port;
-    private static $intranet_ip = "intranet_ip";
+    private static $intranet_ip_key = "intranet_ip";
+    private $connection_list = 'websocket_connection_list';
 
     function __construct()
     {
@@ -22,7 +23,7 @@ class PushSever extends BaseModel
         $this->websocket_client_ip = env('websocket_client_ip', '0.0.0.0'); //监听客户端
         $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
         $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
-        $this->websocket_server_port = env('websocket_server_ip', 9508); //监听服务端
+        $this->websocket_server_port = env('websocket_server_port', 9508); //监听服务端
     }
 
     static function getJobQueueCache()
@@ -36,7 +37,7 @@ class PushSever extends BaseModel
     static function getIntranetIp()
     {
         $cache = self::getJobQueueCache();
-        $ip = $cache->get(self::$intranet_ip);
+        $ip = $cache->get(self::$intranet_ip_key);
 
         if ($ip) {
             debug($ip);
@@ -61,7 +62,7 @@ class PushSever extends BaseModel
     static function saveIntranetIp($ip)
     {
         $cache = self::getJobQueueCache();
-        $cache->set(self::$intranet_ip, $ip);
+        $cache->set(self::$intranet_ip_key, $ip);
     }
 
     static function params($request, $field, $default = null)
@@ -107,7 +108,7 @@ class PushSever extends BaseModel
     function start()
     {
         $swoole_server = new swoole_websocket_server($this->websocket_client_ip, $this->websocket_client_port);
-        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_TCP);
+        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
                 'worker_num' => 2, //设置多少合适
@@ -144,6 +145,7 @@ class PushSever extends BaseModel
         $client->close();
     }
 
+
     function reload($server, $opt = [])
     {
         $server->reload();
@@ -172,6 +174,14 @@ class PushSever extends BaseModel
     {
         $fd = $request->fd;
 
+        $connect_info = $server->connection_info($fd);
+        $server_port = fetch($connect_info, 'server_port');
+
+        if ($this->websocket_server_port == $server_port) {
+            info($fd, "server_to_server onOpen");
+            return;
+        }
+
         if (!$server->exist($fd)) {
             info($request->fd, "Exce not exist");
             return;
@@ -184,13 +194,16 @@ class PushSever extends BaseModel
         $user_id = intval($sid);
         $user = Users::findFirstById($user_id);
 
+        $hot_cache = self::getHotWriteCache();
+        $ip = self::getIntranetIp();
+        $hot_cache->zincrby($this->connection_list, 1, $ip);
+
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
             $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
             return;
         }
 
-        $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
         $fd_key = "socket_push_fd_" . $online_token;
         $user_online_key = "socket_user_online_user_id" . intval($sid);
@@ -200,8 +213,6 @@ class PushSever extends BaseModel
         $hot_cache->set($fd_key, $fd);
         $hot_cache->set($user_online_key, $online_token);
         $hot_cache->set($fd_user_id_key, $user_id);
-
-        $ip = self::getIntranetIp();
 
         if ($ip) {
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
@@ -285,6 +296,14 @@ class PushSever extends BaseModel
 
     function onClose($server, $fd, $from_id)
     {
+        $connect_info = $server->connection_info($fd);
+        $server_port = fetch($connect_info, 'server_port');
+
+        if ($this->websocket_server_port == $server_port) {
+            info($fd, "server_to_server onClose");
+            return;
+        }
+
         $hot_cache = self::getHotWriteCache();
         $online_key = "socket_push_online_token_" . $fd;
         $online_token = $hot_cache->get($online_key);
@@ -301,6 +320,11 @@ class PushSever extends BaseModel
 
         $user = Users::findFirstById($user_id);
         $room_seat = null;
+
+        $local_ip = self::getIntranetIp();
+        if ($local_ip) {
+            $hot_cache->zincrby($this->connection_list, -1, $local_ip);
+        }
 
         if ($user) {
 
@@ -391,5 +415,12 @@ class PushSever extends BaseModel
     {
         $ip = self::getIntranetIp();
         return $intranet_ip == $ip;
+    }
+
+    function getConnectionNum()
+    {
+        $hot_cache = self::getHotReadCache();
+        $local_ip = self::getIntranetIp();
+        return $hot_cache->zscore($this->connection_list, $local_ip);
     }
 }

@@ -55,9 +55,14 @@ class Payments extends BaseModel
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
         $payment->pay_status = PAYMENT_PAY_STATUS_WAIT;
+
         if ($payment->create()) {
+
+            \Stats::delay()->record('user', 'create_payment', $user->getStatAttrs());
+
             return $payment;
         }
+
         return false;
     }
 
@@ -104,6 +109,9 @@ class Payments extends BaseModel
     function beforeUpdate()
     {
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            $attrs = $this->user->getStatAttrs();
+            $attrs['add_value'] = $this->paid_amount;
+            \Stats::delay()->record("user", "payment_success", $this->user->getStatAttrs());
             return $this->paySuccess();
         }
         return false;
