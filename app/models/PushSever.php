@@ -328,6 +328,8 @@ class PushSever extends BaseModel
 
             if ($current_room) {
 
+                $exit_room_key = "exit_room_list_{$current_room->id}";
+                $hot_cache->zadd($exit_room_key, time(), $user_id);
                 $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
                 $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
 
@@ -346,6 +348,7 @@ class PushSever extends BaseModel
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
 
+                    debug($hot_cache->zrange($exit_room_key, 0, -1), $user->sid);
                     $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
                     $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
@@ -371,7 +374,7 @@ class PushSever extends BaseModel
                 } else {
                     info("no users", $key, $user_id);
                 }
-
+                $hot_cache->zrem($exit_room_key, $user_id);
                 unlock($exce_exit_room_lock);
             }
 
