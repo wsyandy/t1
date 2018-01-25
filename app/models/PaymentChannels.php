@@ -9,7 +9,7 @@
 class PaymentChannels extends BaseModel
 {
 
-    static $payment_type = [
+    static $PAYMENT_TYPE = [
         'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
         'apple' => 'apple'
