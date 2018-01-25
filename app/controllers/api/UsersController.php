@@ -24,9 +24,9 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '请设置6~16位的密码');
         }
 
-        $opts = $this->context();
+        $context = $this->context();
 
-        list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $opts);
+        list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $context);
 
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
@@ -39,13 +39,13 @@ class UsersController extends BaseController
             $device = $this->currentUser()->device;
         }
 
-        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $this->params());
+        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $context);
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
 
-        list($error_code, $error_reason) = $user->clientLogin($this->params(), $device);
+        list($error_code, $error_reason) = $user->clientLogin($context, $device);
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
@@ -120,12 +120,13 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
             }
 
+            $context = $this->context();
+
             if ($auth_code) {
 
                 //开发环境单独验证
                 if (!(isDevelopmentEnv() && '1234' == $auth_code)) {
 
-                    $context = $this->context();
                     list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
                         $mobile, $auth_code, $sms_token, $context);
 
@@ -139,7 +140,7 @@ class UsersController extends BaseController
                 }
             }
 
-            list($error_code, $error_reason) = $user->clientLogin($this->params(), $device);
+            list($error_code, $error_reason) = $user->clientLogin($context, $device);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
