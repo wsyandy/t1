@@ -61,4 +61,5 @@ trait UserEnumerations
     ];
 
     static $USER_ROLE = [0 => '无角色', 1 => '房主', 2 => '主播', 3 => '旁听'];
+    static $AVATAR_STATUS = [AUTH_NONE => '等待上传', AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
 }
