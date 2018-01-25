@@ -23,7 +23,7 @@
         var text = document.getElementById('text').value;
         document.getElementById('text').value = '';
 
-        var data = "{'name':'hello'}";
+        var data = '{"name":"hello"}';
         web_socket.send(data);
     }
 

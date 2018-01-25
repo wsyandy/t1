@@ -149,28 +149,9 @@ class PushSever extends BaseModel
     }
 
 
-    function reload($server, $opt = [])
-    {
-        $server->reload();
-    }
-
-    function shutdown($server, $opt = [])
-    {
-        $server->shutdown();
-    }
-
     function onStart($server)
     {
         info("start");
-    }
-
-    //服务器客户端通信
-    function push($server, $opts = [])
-    {
-        debug($opts);
-        $fd = fetch($opts, 'fd');
-        $body = fetch($opts, 'body');
-        $server->push($fd, json_encode($body, JSON_UNESCAPED_UNICODE));
     }
 
     function onOpen($server, $request)
@@ -237,7 +218,6 @@ class PushSever extends BaseModel
     {
         $fd = $frame->fd;
 
-        debug($frame->data);
         if (!$server->exist($fd)) {
             info($frame->fd, "Exce not exist");
             return;
@@ -249,18 +229,16 @@ class PushSever extends BaseModel
             info("data is null", $fd);
         }
 
-        $data = json_decode($data, true);
-        debug($data);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
         if ($this->websocket_server_port == $server_port) {
-            $action = fetch($data, 'action');
-            $message = fetch($data, 'message', []);
-            info("server_to_server", $data, $action, $message);
-            $server->task(json_encode($data, JSON_UNESCAPED_UNICODE));
-//            $this->$action($server, $message);
+            info("server_to_server", $data);
+            $server->task($data);
         } else {
+            debug($data);
+            $data = json_decode($data, true);
+            debug($data);
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
 
@@ -291,9 +269,8 @@ class PushSever extends BaseModel
                 $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                debug($payload);
                 $this->send('push', $payload);
-//                $server->push($frame->fd, $frame->data);
+                //$server->push($frame->fd, $frame->data);
             }
         }
     }
@@ -417,28 +394,23 @@ class PushSever extends BaseModel
 
     public function onTask($server, $task_id, $from_id, $data)
     {
-        $json = json_decode($data);
-        $action = $json->action;
-        $message = $json->message;
-
-        debug("任务ID: {$task_id} WorkID: {$from_id}", $action, $message);
-
-//        $fd = json_decode( $data , true )['fd'];
-//    	$serv->send( $fd , "Data in Task {$task_id}");
+        debug("任务ID: {$task_id} WorkID: {$from_id}", $data);
 
         $total = 0;
         $start_at = microtime(true);
-        $fd = $message->fd;
-        $body = ['a' => 'sss'];
+        $json = json_decode($data, true);
+        $action = fetch($json, 'action');
+        $message = fetch($json, 'message');
+        $fd = fetch($message, 'fd');
+        $body = fetch($message, 'body');
         $server->push($fd, json_encode($body, JSON_UNESCAPED_UNICODE));
         $use_time = sprintf('%0.03f秒', microtime(true) - $start_at, $fd);
         return "这是任务ID{$task_id}处理结果:" . $total . ' 用时:' . $use_time;
     }
 
-    public function onFinish($serv, $task_id, $data)
+    public function onFinish($server, $task_id, $data)
     {
-//        echo "任务ID: {$task_id} 结束\n";
-        debug("处理结果: {$data}");
+        debug("{$task_id}处理结果: {$data}");
     }
 
     function isLocalIp($intranet_ip)
