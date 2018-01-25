@@ -22,8 +22,8 @@ return new \Phalcon\Config([
         'client_id' => env('emchat_client_id', 'YXA64sSGMOVkEeewwC0l6qU03Q'),
         'client_secret' => env('emchat_client_secret', 'YXA6b77RBjGYm2TzJKIpNsQdzM4WRK8'),
         'app_name' => env('emchat_app_name', 'niwoyuewan'),
-        'org_name' => env('em_chat_org_name', '1109171220115678'),
-        'host' => env('em_chat_host', 'https://a1.easemob.com'),
+        'org_name' => env('emchat_org_name', '1109171220115678'),
+        'host' => env('emchat_host', 'https://a1.easemob.com'),
     ],
 
     'websocket_server' => ['host' => '0.0.0.0', 'port' => 9509],
