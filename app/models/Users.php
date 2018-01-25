@@ -1326,7 +1326,7 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
-        $cond['conditions'] .= " and id != " . SYSTEM_ID;
+        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS;
         $cond['order'] = 'id desc';
 
         info($user->id, $cond);
@@ -1371,7 +1371,7 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id <> :user_id:';
+        $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $bind['user_id'] = $this->id;
 
         $conds['conditions'] = $condition;
