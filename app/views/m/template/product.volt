@@ -86,6 +86,8 @@
 
                 $(this).find('.select_color').addClass('selected_color');
                 $(this).siblings().find('.select_color').removeClass('selected_color');
+                var url = generatePayUrl();
+                $("#pay_submit_btn").attr('href', url);
             })
         });
         // 支付方式选择
@@ -93,13 +95,9 @@
             $(this).click(function () {
                 $(this).find('.select_pay').addClass('selected_pay');
                 $(this).siblings().find('.select_pay').removeClass('selected_pay');
+                var url = generatePayUrl();
+                $("#pay_submit_btn").attr('href', url);
             })
-        });
-        $(document).on('click', '.get_out_btn', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            location.href = generatePayUrl();
         });
     })
 </script>
