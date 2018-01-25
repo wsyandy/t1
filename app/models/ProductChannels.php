@@ -290,14 +290,18 @@ class ProductChannels extends BaseModel
 
     function getImAppId()
     {
-        return '4b00a7416f75498093bfd7ad09cb31e9';
+        //return '4b00a7416f75498093bfd7ad09cb31e9';
+        return $this->agora_app_id;
     }
 
     // Signaling Key 用于登录信令系统; 有效期1小时
     function getSignalingKey($uid, $valid_timeIn_seconds = 86400)
     {
-        $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
-        $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+        //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
+        //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+
+        $app_id = $this->agora_app_id;
+        $app_certificate = $this->agora_app_certificate;
 
         $sdk_version = "1";
         $expired_time = time() + $valid_timeIn_seconds;
