@@ -181,7 +181,6 @@ class UsersController extends BaseController
         $user = $this->currentUser();
 
         $avatar_file = $this->file('avatar_file');
-        debug('update_info', $avatar_file, $this->params());
 
         if ($avatar_file) {
             $user->updateAvatar($avatar_file);
@@ -331,8 +330,6 @@ class UsersController extends BaseController
         if ($user_id) {
             $cond = ['user_id' => intval($user_id)];
         }
-
-        debug($cond);
 
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);

@@ -89,7 +89,7 @@ class RoomSeats extends BaseModel
         //绑定用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
 
-        debug($online_token, $user->id, $this->id);
+        info($online_token, $user->sid, $this->id);
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
@@ -102,7 +102,7 @@ class RoomSeats extends BaseModel
         //解绑用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
 
-        debug($online_token, $user->id, $this->id);
+        info($online_token, $user->sid, $this->id);
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
@@ -134,33 +134,34 @@ class RoomSeats extends BaseModel
         list($error_code, $error_reason) = $res;
 
         if (ERROR_CODE_FAIL == $error_code) {
+            info($user->sid, $error_reason);
             return $res;
         }
 
         // 抱用户上麦
         if ($other_user) {
 
+            info($user->sid, $other_user->sid, $this->id, $this->room_id);
+
             if ($this->status == STATUS_OFF) {
                 $this->open();
             }
 
             $this->user_id = $other_user->id;
-
             $other_user->current_room_id = $this->room_id;
             $other_user->current_room_seat_id = $this->id;
             $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
             $other_user->update();
-
             $this->room->updateUserRank($other_user);
             $object = $other_user;
         } else {
-
+            info($user->sid, $this->id, $this->room_id);
             //当前用户已在麦位
             $current_room_seat = $user->current_room_seat;
 
             if ($current_room_seat) {
                 $current_room_seat->down($user);
-                debug("change_room_seat", $current_room_seat->id, $this->id, $user->id);
+                info("change_room_seat", $user->sid, $current_room_seat->id);
             }
 
             // 自己上麦
@@ -170,55 +171,53 @@ class RoomSeats extends BaseModel
             $user->current_room_seat_id = $this->id;
             $user->user_role = USER_ROLE_BROADCASTER;
             $user->update();
-
-            debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user);
             $object = $user;
         }
 
         $this->update();
-
         $this->bindOnlineToken($object);
-        debug($user->device->device_no, $this->user_id);
-
         return $res;
     }
 
     // 下麦
     function down($user, $other_user = null)
     {
-
         $this->user_id = 0;
 
         // 设为旁听
         if ($other_user) {
+            info($user->sid, $other_user->sid, $this->id, $this->room_id);
             $other_user->current_room_seat_id = 0;
             $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $other_user->update();
             $this->room->updateUserRank($other_user, false);
             $object = $other_user;
         } else {
+            info($user->sid, $this->id, $this->room_id);
             // 自己下麦
             $user->current_room_seat_id = 0;
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $user->update();
-            debug($user->device->device_no, $user->current_room_seat_id);
             $this->room->updateUserRank($user, false);
             $object = $user;
         }
 
         $this->update();
         $this->unbindOnlineToken($object);
-        debug($user->device->device_no, $this->user_id);
     }
 
     // 封麦
     function close()
     {
+        $room_user = $this->room->user;
+        $user = $this->user;
+        info($room_user->sid, $this->id);
 
-        if ($this->user) {
+        if ($user) {
+            info($user->sid, $this->id);
             // 下麦
-            $this->down($this->room->user, $this->user);
+            $this->down($room_user, $this->user);
         }
 
         $this->status = STATUS_OFF;
@@ -229,6 +228,9 @@ class RoomSeats extends BaseModel
     // 解封
     function open()
     {
+        $room_user = $this->room->user;
+        info($room_user->sid, $this->id);
+
         $this->status = STATUS_ON;
         $this->save();
     }
@@ -297,11 +299,6 @@ class RoomSeats extends BaseModel
             if ($this->room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
             }
-
-            //当前用户已在麦位
-//            if ($user->current_room_seat_id) {
-//                return [ERROR_CODE_FAIL, '用户已在麦位'];
-//            }
         }
 
         return [ERROR_CODE_SUCCESS, ''];
