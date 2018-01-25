@@ -4,6 +4,12 @@
         {{ options(product_channels,'','id','name') }}
     </select>
 
+    <label for="status_eq">状态</label>
+    <select name="room[status_eq]" id="status_eq">
+        {{ options(Rooms.STATUS) }}
+    </select>
+
+
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
     <label for="name">房间名</label>
