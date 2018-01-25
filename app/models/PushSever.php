@@ -236,9 +236,7 @@ class PushSever extends BaseModel
             info("server_to_server", $data);
             $server->task($data);
         } else {
-            debug($data);
             $data = json_decode($data, true);
-            debug($data);
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
 
