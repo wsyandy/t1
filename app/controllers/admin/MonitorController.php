@@ -56,7 +56,7 @@ class MonitorController extends BaseController
     {
 
         if (isProduction()) {
-            $names = ['php0' => '172.16.178.70'];
+            $names = ['php0' => '192.168.64.96'];
         } else {
             $names = ['php0' => 'localhost'];
         }
