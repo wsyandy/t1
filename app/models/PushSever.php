@@ -374,6 +374,8 @@ class PushSever extends BaseModel
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
+            } else {
+                info("room not exists", $user->sid, $online_token);
             }
 
             //如果有电话进行中
