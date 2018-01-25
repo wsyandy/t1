@@ -291,7 +291,9 @@ class ProductChannels extends BaseModel
     function getImAppId()
     {
         //return '4b00a7416f75498093bfd7ad09cb31e9';
-        return $this->agora_app_id;
+        $config = self::di('config');
+        $agora_app_id = $config->agora_app_id;
+        return $agora_app_id;
     }
 
     // Signaling Key 用于登录信令系统; 有效期1小时
@@ -300,8 +302,9 @@ class ProductChannels extends BaseModel
         //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
 
-        $app_id = $this->agora_app_id;
-        $app_certificate = $this->agora_app_certificate;
+        $config = self::di('config');
+        $app_id = $config->agora_app_id;
+        $app_certificate = $config->agora_app_certificate;
 
         $sdk_version = "1";
         $expired_time = time() + $valid_timeIn_seconds;
@@ -320,8 +323,9 @@ class ProductChannels extends BaseModel
         //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
 
-        $app_id = $this->agora_app_id;
-        $app_certificate = $this->agora_app_certificate;
+        $config = self::di('config');
+        $app_id = $config->agora_app_id;
+        $app_certificate = $config->agora_app_certificate;
 
         //return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
         return $this->generateDynamicKey4($app_id, $app_certificate, $channel_name, $uid, 'ACS');

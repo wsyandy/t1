@@ -25,6 +25,8 @@ return new \Phalcon\Config([
         'org_name' => env('emchat_org_name', '1109171220115678'),
         'host' => env('emchat_host', 'https://a1.easemob.com'),
     ],
+    'agora_app_id' => env('agora_app_id', 'ed397936850c4dc9afd8be6d66109e9e'),
+    'agora_app_certificate' => env('agora_app_certificate', '773c59982b3e4a5a968efbe0c9b15c5c'),
 
     'websocket_server' => ['host' => '0.0.0.0', 'port' => 9509],
     'websocket_end_point' => "ws://0.0.0.0:9509",
