@@ -132,13 +132,27 @@ class PushSever extends BaseModel
     }
 
     //服务器内部通信
-    function send($action, $opts = [])
+    function send1($action, $opts = [])
     {
         debug($action, $opts);
         $ip = fetch($opts, 'ip', self::getIntranetIp());
         $ip = self::getIntranetIp();
         debug($this->websocket_server_port, $ip);
         $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
+        $payload = ['action' => $action, 'message' => $opts];
+        $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $client->send($data);
+        $client->close();
+    }
+
+    function send($action, $opts = [])
+    {
+        debug($action, $opts);
+        $ip = fetch($opts, 'ip', self::getIntranetIp());
+        $ip = self::getIntranetIp();
+        debug($this->websocket_server_port, $ip);
+        $client = new PushClient($ip, $this->websocket_server_port);
+        $client->connect();
         $payload = ['action' => $action, 'message' => $opts];
         $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
@@ -287,8 +301,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-//                $this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $this->send('push', $payload);
+//                $server->push($frame->fd, $frame->data);
             }
         }
     }
