@@ -269,8 +269,8 @@ class PushSever extends BaseModel
                 $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                $this->send('push', $payload);
-                //$server->push($frame->fd, $frame->data);
+                //$this->send('push', $payload);
+                $server->push($frame->fd, $frame->data);
             }
         }
     }
