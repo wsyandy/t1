@@ -19,10 +19,10 @@ return new \Phalcon\Config([
     'redlock_endpoints' => env('redlock_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
 
     'emchat' => [
-        'client_id' => env('emchat_client_id', 'YXA64sSGMOVkEeewwC0l6qU03Q'),
-        'client_secret' => env('emchat_client_secret', 'YXA6b77RBjGYm2TzJKIpNsQdzM4WRK8'),
-        'app_name' => env('emchat_app_name', 'niwoyuewan'),
-        'org_name' => env('emchat_org_name', '1109171220115678'),
+        'client_id' => env('emchat_client_id', 'YXA60kgNMPEEEeenxnECtCKVLw'),
+        'client_secret' => env('emchat_client_secret', 'YXA6tyk2jtQevpgBdPhzJnhD2Ifu0Q0'),
+        'app_name' => env('emchat_app_name', 'yuewantest'),
+        'org_name' => env('emchat_org_name', '1134180104115441'),
         'host' => env('emchat_host', 'https://a1.easemob.com'),
     ],
     'agora_app_id' => env('agora_app_id', 'ed397936850c4dc9afd8be6d66109e9e'),

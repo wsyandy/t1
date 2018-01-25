@@ -45,6 +45,11 @@ class UsersController extends BaseController
             return $this->renderJSON($error_code, $error_reason);
         }
 
+        list($error_code, $error_reason) = $user->clientLogin($this->params(), $device);
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
         $user->updatePushToken($device);
 
         $key = $this->currentProductChannel()->getSignalingKey($user->id);
