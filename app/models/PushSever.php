@@ -328,6 +328,9 @@ class PushSever extends BaseModel
 
             if ($current_room) {
 
+                $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
+                $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
+
                 if ($current_room_seat) {
                     debug($current_room_seat->id);
                     $current_room_seat->down($user);
@@ -353,6 +356,7 @@ class PushSever extends BaseModel
                     if ($receiver_fd) {
 
                         if (!$server->exist($fd)) {
+                            unlock($exce_exit_room_lock);
                             info("fd 不存在", $fd);
                             return;
                         }
@@ -368,6 +372,7 @@ class PushSever extends BaseModel
                     info("no users", $key, $user_id);
                 }
 
+                unlock($exce_exit_room_lock);
             }
 
             //如果有电话进行中

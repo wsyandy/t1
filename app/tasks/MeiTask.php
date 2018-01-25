@@ -674,5 +674,8 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $server = new PushSever();
         echoLine($server->getConnectionNum());
+
+        $image = APP_ROOT . "public/images/avatar.png";
+        StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
     }
 }
