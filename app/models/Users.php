@@ -1015,7 +1015,7 @@ class Users extends BaseModel
         $users = Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            $user->created_at = fetch($times, $user_id);
+            $user->created_at = fetch($times, $user->id);
         }
 
         $total_entries = $user_db->zcard($relations_key);
