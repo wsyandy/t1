@@ -317,8 +317,11 @@ class ProductChannels extends BaseModel
     //Channel Key 用于加入频道; 有效期3小时
     function getChannelKey($channel_name, $uid)
     {
-        $app_id = '4b00a7416f75498093bfd7ad09cb31e9';
-        $app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+        //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
+        //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
+
+        $app_id = $this->agora_app_id;
+        $app_certificate = $this->agora_app_certificate;
 
         //return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
         return $this->generateDynamicKey4($app_id, $app_certificate, $channel_name, $uid, 'ACS');
