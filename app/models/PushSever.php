@@ -268,7 +268,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 //$this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $res = $server->push($frame->fd, $frame->data);
+                debug($res);
             }
         }
     }
@@ -342,7 +343,7 @@ class PushSever extends BaseModel
                 $current_room->exitRoom($user);
 
                 $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrevrange($key, 0, -1);
+                $user_ids = $hot_cache->zrange($key, 0, -1);
 
                 if (count($user_ids) > 0) {
                     $receiver_id = $user_ids[0];
@@ -364,7 +365,9 @@ class PushSever extends BaseModel
 
                         $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                         //$this->send('push', $payload);
-                        $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+                        $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+                        debug($res, $user->sid);
                     }
 
                     //重新连接 用户的key不一样
