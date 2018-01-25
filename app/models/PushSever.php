@@ -111,7 +111,7 @@ class PushSever extends BaseModel
         $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
-                'worker_num' => 2, //设置多少合适
+                'worker_num' => 8, //设置多少合适
                 'max_request' => 20, //设置多少合适
                 'dispatch_model' => 3,
                 'daemonize' => true,
@@ -119,7 +119,8 @@ class PushSever extends BaseModel
                 'pid_file' => APP_ROOT . 'log/websocket_server_pid.pid',
                 'reload_async' => true,
                 'heartbeat_check_interval' => 10, //10秒检测一次
-                'heartbeat_idle_time' => 20 //20秒未向服务器发送任何数据包,此链接强制关闭
+                'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
+                'task_worker_num' => 8
             ]
         );
 
@@ -127,6 +128,8 @@ class PushSever extends BaseModel
         $swoole_server->on('open', [$this, 'onOpen']);
         $swoole_server->on('message', [$this, 'onMessage']);
         $swoole_server->on('close', [$this, 'onClose']);
+        $swoole_server->on('Task', array($this, 'onTask'));
+        $swoole_server->on('Finish', array($this, 'onFinish'));
         echo "[------------- start -------------]\n";
         $swoole_server->start();
     }
@@ -255,7 +258,8 @@ class PushSever extends BaseModel
             $action = fetch($data, 'action');
             $message = fetch($data, 'message', []);
             info("server_to_server", $data, $action, $message);
-            $this->$action($server, $message);
+            $server->task(json_encode($data, JSON_UNESCAPED_UNICODE));
+//            $this->$action($server, $message);
         } else {
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
@@ -288,8 +292,8 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
                 debug($payload);
-                //$this->send('push', $payload);
-                $server->push($frame->fd, $frame->data);
+                $this->send('push', $payload);
+//                $server->push($frame->fd, $frame->data);
             }
         }
     }
@@ -409,6 +413,32 @@ class PushSever extends BaseModel
                 }
             }
         }
+    }
+
+    public function onTask($server, $task_id, $from_id, $data)
+    {
+        $json = json_decode($data);
+        $action = $json->action;
+        $message = $json->message;
+
+        debug("任务ID: {$task_id} WorkID: {$from_id}", $action, $message);
+
+//        $fd = json_decode( $data , true )['fd'];
+//    	$serv->send( $fd , "Data in Task {$task_id}");
+
+        $total = 0;
+        $start_at = microtime(true);
+        $fd = $message->fd;
+        $body = ['a' => 'sss'];
+        $server->push($fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+        $use_time = sprintf('%0.03f秒', microtime(true) - $start_at, $fd);
+        return "这是任务ID{$task_id}处理结果:" . $total . ' 用时:' . $use_time;
+    }
+
+    public function onFinish($serv, $task_id, $data)
+    {
+//        echo "任务ID: {$task_id} 结束\n";
+        debug("处理结果: {$data}");
     }
 
     function isLocalIp($intranet_ip)
