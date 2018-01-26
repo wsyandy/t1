@@ -111,9 +111,9 @@ class PushSever extends BaseModel
         $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
-                'worker_num' => 8, //设置多少合适
-                'max_request' => 20, //设置多少合适
-                'dispatch_model' => 3,
+                'worker_num' => 32, //cpu的1~4倍
+                'max_request' => 10000, //设置多少合适
+                'dispatch_model' => 2,
                 'daemonize' => true,
                 'log_file' => APP_ROOT . 'log/websocket_server.log',
                 'pid_file' => APP_ROOT . 'log/websocket_server_pid.pid',
