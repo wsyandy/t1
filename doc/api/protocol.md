@@ -67,6 +67,7 @@
    ```
    {
       action:exit_room_report 退出房间上报成功
+      user_id:1233 退出房间的用户id
       online_token:xxxxx websocket链接时由服务端生成返回给客户端
       sid
       timestamp:xxxxxx  时间戳
