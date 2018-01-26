@@ -83,7 +83,6 @@
         </td>
         <td>
             姓名:${ user.id_name } 性别:${ user.sex_text }<br/>
-            身份证号:${ user.id_no }<br/>
             手机号码:${ user.mobile }<br/>
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
             IP定位: ${ user.ip_province_name }, ${ user.ip_city_name }<br/>
@@ -100,7 +99,9 @@
             <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
             <a href="/admin/users/add_friends?id=${ user.id }" id="add_friends">随机添加好友</a><br/>
             <a href="/admin/users/follow?id=${ user.id }" id="follow">随机关注</a><br/>
-            <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a>
+            <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a><br/>
+            <a href="/admin/users/send_message?id=${ user.id }" class="modal_action">发送系统消息</a><br/>
+            <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a>
         </td>
 
     </tr>

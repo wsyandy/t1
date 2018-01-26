@@ -78,7 +78,7 @@
 <body>
 <div class="agreement_box">
     <h2>{{ product_channel.agreement_company_name }}隐私政策</h2>
-    <p>{{ product_channel.agreement_company_name }}（以下简称“我们”）非常重视用户的隐私和个人信息保护。您在使用我们的产品或服务时，我们可能会收集和使用您的相关信息。我们希望通过《{{ product_channel.agreement_company_name }}隐私政策》（“本隐私政策”）向您说明我们在您使用我们的产品或服务时如何收集、使用、保护这些信息。<strong>本隐私政策适用于约玩软件和由{{ product_channel.agreement_company_name }}及其关联公司经营的所有互联网业务平台。本隐私政策不适用于其他独立第三方向您提供的服务，例如我们平台上的第三方依托我们平台向您提供服务时，您向第三方提供的个人信息不适用于本隐私政策，我们对任何第三方使用由您提供的信息不承担任何责任。</strong></p>
+    <p>{{ product_channel.agreement_company_name }}（以下简称“我们”）非常重视用户的隐私和个人信息保护。您在使用我们的产品或服务时，我们可能会收集和使用您的相关信息。我们希望通过《{{ product_channel.agreement_company_name }}隐私政策》（“本隐私政策”）向您说明我们在您使用我们的产品或服务时如何收集、使用、保护这些信息。<strong>本隐私政策适用于{{ product_channel.name }}和由{{ product_channel.agreement_company_name }}及其关联公司经营的所有互联网业务平台。本隐私政策不适用于其他独立第三方向您提供的服务，例如我们平台上的第三方依托我们平台向您提供服务时，您向第三方提供的个人信息不适用于本隐私政策，我们对任何第三方使用由您提供的信息不承担任何责任。</strong></p>
     <p class="bold text-decoration">在使用我们的产品或服务前，请您务必仔细阅读并透彻理解本隐私政策，在确认充分理解并同意后使用相关产品或服务。如果您不同意本隐私政策任何内容，您应立即停止使用我们平台服务。一旦您开始使用我们的各项产品或服务，即表示您已充分理解并同意本隐私政策。</p>
     <h4>第一部分 定义</h4>
     <p>您：本协议的“您”特指使用{{ product_channel.agreement_company_name }}及其关联公司的产品或服务的用户。</p>

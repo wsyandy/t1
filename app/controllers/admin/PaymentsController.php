@@ -17,7 +17,7 @@ class PaymentsController extends BaseController
         $per_page = 30;
         $cond_vars = array();
         $cond_values = array();
-        foreach (['order_id', 'id'] as $item) {
+        foreach (['order_id', 'id','user_id'] as $item) {
             if (isPresent($this->params($item))) {
                 $cond_vars[] = $item . ' = ' . ':' . $item . ':';
                 $cond_values[$item] = $this->params($item);
