@@ -332,38 +332,8 @@ class PushSever extends BaseModel
                     $room_seat = $current_room_seat->toOnlineJson();
                 }
 
-                $channel_name = $current_room->channel_name;
                 $current_room->exitRoom($user);
-
-                $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrevrange($key, 0, 10);
-
-                foreach ($user_ids as $receiver_id) {
-
-                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-
-                    $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
-
-                    //判断fd是否存在
-                    if ($receiver_fd) {
-
-                        if (!$server->exist($fd)) {
-                            unlock($exce_exit_room_lock);
-                            info("fd 不存在", $user->sid, $fd);
-                            return;
-                        }
-
-                        //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                        //$this->send('push', $payload);
-                        $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-
-                        if ($res) {
-                            info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-                            break;
-                        }
-                    }
-                }
-
+                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat);
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
@@ -373,20 +343,7 @@ class PushSever extends BaseModel
 
             //如果有电话进行中
             if ($user->isCalling()) {
-                $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
-
-                if ($voice_call) {
-                    $call_sender_id = $voice_call->sender_id;
-                    $call_receiver_id = $voice_call->receiver_id;
-                    $voice_call->changeStatus(CALL_STATUS_HANG_UP);
-                    $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
-                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-                    $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
-                    info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data, $intranet_ip);
-                    //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                    //$this->send('push', $payload);
-                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-                }
+                $this->pushHangupInfo($server, $user, $intranet_ip);
             }
         }
     }
@@ -411,6 +368,59 @@ class PushSever extends BaseModel
 //    {
 //        debug("{$task_id}处理结果: {$data}");
 //    }
+
+    function pushExitRoomInfo($server, $user, $current_room, $room_seat)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $current_room->id;
+        $user_ids = $hot_cache->zrevrange($key, 0, 10);
+        $channel_name = $current_room->channel_name;
+
+        foreach ($user_ids as $receiver_id) {
+
+            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+
+            $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+
+            //判断fd是否存在
+            if ($receiver_fd) {
+
+                if (!$server->exist($receiver_fd)) {
+                    info("fd 不存在", $user->sid, $receiver_fd);
+                    return;
+                }
+
+                //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
+                //$this->send('push', $payload);
+                $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+                if ($res) {
+                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+                    break;
+                }
+            }
+        }
+    }
+
+    function pushHangupInfo($server, $user, $intranet_ip)
+    {
+        $hot_cache = self::getHotReadCache();
+        $user_id = $user->id;
+        $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
+
+        if ($voice_call) {
+            $call_sender_id = $voice_call->sender_id;
+            $call_receiver_id = $voice_call->receiver_id;
+            $voice_call->changeStatus(CALL_STATUS_HANG_UP);
+            $receiver_id = $user->id == $call_sender_id ? $call_receiver_id : $call_sender_id;
+            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+            $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
+            info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data, $intranet_ip);
+            //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
+            //$this->send('push', $payload);
+            $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+    }
 
     function isLocalIp($intranet_ip)
     {
