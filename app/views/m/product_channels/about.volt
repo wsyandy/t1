@@ -5,7 +5,7 @@
     <title>关于我们</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/style.css">
+    <link rel="stylesheet" href="/m/css/product.css">
 </head>
 <body>
 <div class="about_us_top">

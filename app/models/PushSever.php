@@ -9,10 +9,10 @@
 class PushSever extends BaseModel
 {
     static $_only_cache = true;
-    private $websocket_client_ip;
-    private $websocket_client_port;
-    private $websocket_server_ip;
-    private $websocket_server_port;
+    private $websocket_listen_client_ip;
+    private $websocket_listen_client_port;
+    private $websocket_listen_server_ip;
+    private $websocket_listen_server_port;
     private static $intranet_ip_key = "intranet_ip";
     private $connection_list = 'websocket_connection_list';
 
@@ -20,10 +20,10 @@ class PushSever extends BaseModel
     {
         parent::__construct();
 
-        $this->websocket_client_ip = env('websocket_client_ip', '0.0.0.0'); //监听客户端
-        $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
-        $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
-        $this->websocket_server_port = env('websocket_server_port', 9508); //监听服务端
+        $this->websocket_listen_client_ip = self::config('websocket_listen_client_ip'); //监听客户端
+        $this->websocket_listen_client_port = self::config('websocket_listen_client_port'); //监听客户端
+        $this->websocket_listen_server_ip = self::config('websocket_listen_server_ip'); //监听服务端
+        $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
     }
 
     static function getJobQueueCache()
@@ -107,8 +107,8 @@ class PushSever extends BaseModel
 
     function start()
     {
-        $swoole_server = new swoole_websocket_server($this->websocket_client_ip, $this->websocket_client_port);
-        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
+        $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
+        $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
                 'worker_num' => 32, //cpu的1~4倍
@@ -138,8 +138,8 @@ class PushSever extends BaseModel
         debug($action, $opts);
         $ip = fetch($opts, 'ip', self::getIntranetIp());
         $ip = self::getIntranetIp();
-        debug($this->websocket_server_port, $ip);
-        $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
+        debug($this->websocket_listen_server_port, $ip);
+        $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_listen_server_port");
         $payload = ['action' => $action, 'message' => $opts];
         $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
@@ -159,7 +159,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
             return;
         }
@@ -227,7 +227,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info("server_to_server", $data);
             $server->task($data);
         } else {
@@ -273,7 +273,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onClose");
             return;
         }
@@ -332,38 +332,8 @@ class PushSever extends BaseModel
                     $room_seat = $current_room_seat->toOnlineJson();
                 }
 
-                $channel_name = $current_room->channel_name;
                 $current_room->exitRoom($user);
-
-                $key = 'room_user_list_' . $current_room->id;
-                $user_ids = $hot_cache->zrevrange($key, 0, 10);
-
-                foreach ($user_ids as $receiver_id) {
-
-                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-
-                    $data = ['action' => 'exit_room', 'user_id' => $user_id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
-
-                    //判断fd是否存在
-                    if ($receiver_fd) {
-
-                        if (!$server->exist($fd)) {
-                            unlock($exce_exit_room_lock);
-                            info("fd 不存在", $user->sid, $fd);
-                            return;
-                        }
-
-                        //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                        //$this->send('push', $payload);
-                        $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-
-                        if ($res) {
-                            info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-                            break;
-                        }
-                    }
-                }
-
+                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat);
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
@@ -373,20 +343,7 @@ class PushSever extends BaseModel
 
             //如果有电话进行中
             if ($user->isCalling()) {
-                $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
-
-                if ($voice_call) {
-                    $call_sender_id = $voice_call->sender_id;
-                    $call_receiver_id = $voice_call->receiver_id;
-                    $voice_call->changeStatus(CALL_STATUS_HANG_UP);
-                    $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
-                    $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-                    $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
-                    info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data, $intranet_ip);
-                    //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                    //$this->send('push', $payload);
-                    $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-                }
+                $this->pushHangupInfo($server, $user, $intranet_ip);
             }
         }
     }
@@ -412,6 +369,59 @@ class PushSever extends BaseModel
 //        debug("{$task_id}处理结果: {$data}");
 //    }
 
+    function pushExitRoomInfo($server, $user, $current_room, $room_seat)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = 'room_user_list_' . $current_room->id;
+        $user_ids = $hot_cache->zrevrange($key, 0, 10);
+        $channel_name = $current_room->channel_name;
+
+        foreach ($user_ids as $receiver_id) {
+
+            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+
+            $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+
+            //判断fd是否存在
+            if ($receiver_fd) {
+
+                if (!$server->exist($receiver_fd)) {
+                    info("fd 不存在", $user->sid, $receiver_fd);
+                    return;
+                }
+
+                //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
+                //$this->send('push', $payload);
+                $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+                if ($res) {
+                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+                    break;
+                }
+            }
+        }
+    }
+
+    function pushHangupInfo($server, $user, $intranet_ip)
+    {
+        $hot_cache = self::getHotReadCache();
+        $user_id = $user->id;
+        $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
+
+        if ($voice_call) {
+            $call_sender_id = $voice_call->sender_id;
+            $call_receiver_id = $voice_call->receiver_id;
+            $voice_call->changeStatus(CALL_STATUS_HANG_UP);
+            $receiver_id = $user->id == $call_sender_id ? $call_receiver_id : $call_sender_id;
+            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+            $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
+            info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data, $intranet_ip);
+            //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
+            //$this->send('push', $payload);
+            $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+    }
+
     function isLocalIp($intranet_ip)
     {
         $ip = self::getIntranetIp();
@@ -423,5 +433,10 @@ class PushSever extends BaseModel
         $hot_cache = self::getHotReadCache();
         $local_ip = self::getIntranetIp();
         return $hot_cache->zscore($this->connection_list, $local_ip);
+    }
+
+    static function getWebsocketEndPoint()
+    {
+        return self::config('websocket_client_endpoint');
     }
 }

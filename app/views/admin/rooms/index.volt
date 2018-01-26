@@ -18,8 +18,10 @@
 </form>
 
 {% macro user_info(room) %}
-    姓名:{{ room.user_nickname }}  <br/>
-    {#性别:{{ room.user_sex_text }}<br/>#}
+    {% if isAllowed('users','index') %}
+        姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
+    {% endif %}
+    性别:{{ room.user.sex_text }}<br/>
     手机号码:{{ room.user_mobile }}<br/>
 {% endmacro %}
 

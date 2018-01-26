@@ -51,15 +51,30 @@
  
  # 4. websocket通信结构
  
- ## 4.1 客户端请求服务端的心跳包结构
+ ## 4.1 客户端请求服务端消息结构
+ ### 心跳包结构
  ```
  {
     action:ping
     online_token:xxxxx websocket链接时由服务端生成返回给客户端
     timestamp:xxxxxx  时间戳
+    sid
     sign:xxxxxx  签名
  }
  ```
+ 
+ ### 退出房间上报
+   ```
+   {
+      action:exit_room_report 退出房间上报成功
+      user_id:1233 退出房间的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```
+ 
  
  ## 4.2 服务端通知客户端的消息结构
  ### 退出房间

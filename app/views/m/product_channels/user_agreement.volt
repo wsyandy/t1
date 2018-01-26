@@ -79,21 +79,21 @@
 <div class="agreement_box">
     <h2>{{ product_channel.name }}许可及服务协议</h2>
     <h4>1. 前言</h4>
-    <p>1.1 {{ product_channel.name }}是由{{ product_channel.agreement_company_name }}开发、运营的语音通讯服务为主的富集型即时通讯软件。《约玩软件许可及服务协议》是您（又称“用户”）与{{ product_channel.agreement_company_name }}之间的关于您下载、安装、登录、使用本软件及服务所订立的协议。<span class="text-decoration">本协议在用户与{{ product_channel.agreement_company_name }}之间具有法律约束力。</span>
+    <p>1.1 {{ product_channel.name }}是由{{ product_channel.agreement_company_name }}开发、运营的语音通讯服务为主的富集型即时通讯软件。《{{ product_channel.name }}许可及服务协议》是您（又称“用户”）与{{ product_channel.agreement_company_name }}之间的关于您下载、安装、登录、使用本软件及服务所订立的协议。<span class="text-decoration">本协议在用户与{{ product_channel.agreement_company_name }}之间具有法律约束力。</span>
     </p>
     <p>1.2 您欲使用{{ product_channel.agreement_company_name }}提供的互联网产品及相应服务，请务必认真阅读、充分理解本协议各条款，尤其是免除或者限制{{ product_channel.agreement_company_name }}责任的条款及对您的权利限制的条款。如您未满18周岁，请在法定监护人的陪同下阅读本协议，使用产品和服务必须得到监护人的同意。对于未成年用户使用本服务过程中的行为，以及因其使用本服务而产生的一切后果由未成年人及其监护人承担，{{ product_channel.agreement_company_name }}不承担任何责任。<span class="text-decoration">{{ product_channel.agreement_company_name }}亦有权随时中止或终止您的用户资格</span></p>
     <p>
-        1.3 除非您已阅读并接受本协议的全部条款，否则您无权下载、安装、登录、使用约玩软件及相关服务。如您不同意本协议条款，您应主动取消、卸载、删除约玩软件及不使用相关服务。您的下载、安装、注册、登录、使用等行为即视为您阅读并理解本协议条款，完全接受本协议条款并同意受本协议的约束。
+        1.3 除非您已阅读并接受本协议的全部条款，否则您无权下载、安装、登录、使用{{ product_channel.name }}及相关服务。如您不同意本协议条款，您应主动取消、卸载、删除{{ product_channel.name }}及不使用相关服务。您的下载、安装、注册、登录、使用等行为即视为您阅读并理解本协议条款，完全接受本协议条款并同意受本协议的约束。
     </p>
     <p>
-        1.4 您在使用约玩软件过程中，可能会涉及其它业务和服务，如果某一特定业务或服务有单独的服务协议、规则、指引，您在遵守本协议的同时，也应遵守该单独的服务协议、规则和指引。
+        1.4 您在使用{{ product_channel.name }}过程中，可能会涉及其它业务和服务，如果某一特定业务或服务有单独的服务协议、规则、指引，您在遵守本协议的同时，也应遵守该单独的服务协议、规则和指引。
     </p>
     <p>
         1.5 在您接受本协议之后，本协议文本可能因国家政策、法律、产品、技术、服务及本协议履约环境发生变化等原因而进行修订，<strong>修改后的协议会随着本软件版本的更新而更新，有效代替原来的服务条款，{{ product_channel.agreement_company_name }}
-            也可能会采用适当的方式提醒您。若您对修改后的协议有异议的，请立即停止登录、使用约玩软件和服务，您的继续登录或使用的行为，视为对修订后的协议予以认可和接受。</strong>
+            也可能会采用适当的方式提醒您。若您对修改后的协议有异议的，请立即停止登录、使用{{ product_channel.name }}和服务，您的继续登录或使用的行为，视为对修订后的协议予以认可和接受。</strong>
     </p>
     <h4>2. 服务范围</h4>
-    <p>2.1 {{ product_channel.agreement_company_name }}通过约玩软件向用户提供丰富的互联网服务，包括但不限于语音通讯服务、视频通讯服务、网络社区服务以及基于本软件提供的其它服务。</p>
+    <p>2.1 {{ product_channel.agreement_company_name }}通过{{ product_channel.name }}向用户提供丰富的互联网服务，包括但不限于语音通讯服务、视频通讯服务、网络社区服务以及基于本软件提供的其它服务。</p>
     <p>2.2 {{ product_channel.agreement_company_name }}给予您一项个人的、不可转让、非排他性的许可，许可您可以为非商业目的下载、安装、登录、使用本软件。</p>
     <p>2.3 本协议未明示授权的其它一切权利由{{ product_channel.agreement_company_name }}保留。</p>
 
@@ -164,7 +164,7 @@
     <p class="bold">
         6.12 用户违反法律法规、国家政策、欢聚时代规则或本协议而引起的一切责任，由用户负全部责任。如造成第三方损害，用户应当独立承担责任；如造成{{ product_channel.agreement_company_name }}
         损害，用户应当承担赔偿责任。{{ product_channel.agreement_company_name }}
-        有权根据相关协议或规则进行违规判定，并采取相应限制或处罚措施，包括但不限于：限制或冻结用户的约玩帐号；限制/停止某项单独服务或全部服务等。对因此可能造成的任何损失，由用户自行承担，且{{ product_channel.agreement_company_name }}
+        有权根据相关协议或规则进行违规判定，并采取相应限制或处罚措施，包括但不限于：限制或冻结用户的{{ product_channel.name }}帐号；限制/停止某项单独服务或全部服务等。对因此可能造成的任何损失，由用户自行承担，且{{ product_channel.agreement_company_name }}
         保留进一步追究用户法律责任的权利。</p>
     <h4>7. 收费服务</h4>
     <p class="bold">
@@ -177,7 +177,7 @@
     <h4>8. {{ product_channel.agreement_company_name }}责任声明</h4>
     <p class="bold">
         8.1 {{ product_channel.agreement_company_name }}
-        对用户利用约玩软件传播的明确的或隐含的信息之真实性、适当性、适用性、所有权和非侵权性等不作担保，用户使用本软件及服务可能接收到来自任何其他人的包括威胁性的、诽谤性的、令人反感的、非法的信息，由此导致的直接、间接、偶然、特殊及后续的损害风险由用户自行承担，{{ product_channel.agreement_company_name }}
+        对用户利用{{ product_channel.name }}传播的明确的或隐含的信息之真实性、适当性、适用性、所有权和非侵权性等不作担保，用户使用本软件及服务可能接收到来自任何其他人的包括威胁性的、诽谤性的、令人反感的、非法的信息，由此导致的直接、间接、偶然、特殊及后续的损害风险由用户自行承担，{{ product_channel.agreement_company_name }}
         不承担任何责任。</p>
     <p class="bold">
         8.2 本软件及服务同大多数因特网产品一样，易受到各种安全问题的困扰，包括但不限于：透露详细个人资料、被不法分子利用，造成现实生活中的骚扰；被哄骗、破译用户密码；用户下载安装的其它软件中含有“特洛伊木马”等病毒，威胁到个人终端设备上的信息和数据安全，继而威胁对本软件及服务的使用。对于发生上述情况的，用户应当自行承担责任。</p>

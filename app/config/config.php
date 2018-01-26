@@ -27,8 +27,11 @@ return new \Phalcon\Config([
     ],
     'agora_app_id' => env('agora_app_id', 'ed397936850c4dc9afd8be6d66109e9e'),
     'agora_app_certificate' => env('agora_app_certificate', '773c59982b3e4a5a968efbe0c9b15c5c'),
+    'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http'),
 
-    'websocket_server' => ['host' => '0.0.0.0', 'port' => 9509],
-    'websocket_end_point' => "ws://0.0.0.0:9509",
-    'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http')
+    'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.yueyuewo.cn"),
+    'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"),
+    'websocket_listen_client_port' => env('websocket_listen_client_port', 9509),
+    'websocket_listen_server_ip' => env('websocket_listen_server_ip', "0.0.0.0"),
+    'websocket_listen_server_port' => env('websocket_listen_server_port', 9508),
 ]);
