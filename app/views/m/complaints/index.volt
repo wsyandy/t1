@@ -54,7 +54,7 @@
             user_id: "{{ user_id }}",
             complaint_type: complaint_type
         };
-        $.authPost("complaints/create", data, function (resp) {
+        $.authPost("/m/complaints/create", data, function (resp) {
             alert(resp.error_reason);
             if (resp.error_code == 0 && resp.error_url) {
                 location.href = resp.error_url;
