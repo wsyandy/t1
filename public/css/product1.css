@@ -251,7 +251,6 @@ h1,h2,h3,h4{
 	position: absolute;
 	top: 15px;
 	right: 0;
-
 }
 .account_pay .selected_pay{
 	background: url(/images/products/selected.png) no-repeat center center !important;
@@ -260,6 +259,12 @@ h1,h2,h3,h4{
 .account_btn{
 	background: #F45189 !important;
 	color: #fff !important;
+}
+.account_money ol li:last-child{
+	border:0;
+}
+.account_pay ul li:last-child{
+	border:0;
 }
 
 
