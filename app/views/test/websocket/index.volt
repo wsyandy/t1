@@ -11,7 +11,7 @@
 <script>
 
     var msg = document.getElementById('msg');
-    var ws_server = 'ws://127.0.0.1:9509';
+    var ws_server = 'wss://lalive.momoyuedu.cn';
     // var ws_server = 'ws://116.62.103.161:9509?user_id=1';
     var web_socket = new WebSocket(ws_server);
     web_socket.onopen = function (evt) {

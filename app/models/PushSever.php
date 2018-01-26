@@ -9,10 +9,10 @@
 class PushSever extends BaseModel
 {
     static $_only_cache = true;
-    private $websocket_client_ip;
-    private $websocket_client_port;
-    private $websocket_server_ip;
-    private $websocket_server_port;
+    private $websocket_listen_client_ip;
+    private $websocket_listen_client_port;
+    private $websocket_listen_server_ip;
+    private $websocket_listen_server_port;
     private static $intranet_ip_key = "intranet_ip";
     private $connection_list = 'websocket_connection_list';
 
@@ -20,10 +20,10 @@ class PushSever extends BaseModel
     {
         parent::__construct();
 
-        $this->websocket_client_ip = env('websocket_client_ip', '0.0.0.0'); //监听客户端
-        $this->websocket_client_port = env('websocket_client_port', 9509); //监听客户端
-        $this->websocket_server_ip = env('websocket_server_ip', '0.0.0.0'); //监听服务端
-        $this->websocket_server_port = env('websocket_server_port', 9508); //监听服务端
+        $this->websocket_listen_client_ip = self::config('websocket_listen_client_ip'); //监听客户端
+        $this->websocket_listen_client_port = self::config('websocket_listen_client_port'); //监听客户端
+        $this->websocket_listen_server_ip = self::config('websocket_listen_server_ip'); //监听服务端
+        $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
     }
 
     static function getJobQueueCache()
@@ -107,8 +107,8 @@ class PushSever extends BaseModel
 
     function start()
     {
-        $swoole_server = new swoole_websocket_server($this->websocket_client_ip, $this->websocket_client_port);
-        $swoole_server->addListener($this->websocket_server_ip, $this->websocket_server_port, SWOOLE_SOCK_TCP);
+        $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
+        $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
                 'worker_num' => 32, //cpu的1~4倍
@@ -138,8 +138,8 @@ class PushSever extends BaseModel
         debug($action, $opts);
         $ip = fetch($opts, 'ip', self::getIntranetIp());
         $ip = self::getIntranetIp();
-        debug($this->websocket_server_port, $ip);
-        $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_server_port");
+        debug($this->websocket_listen_server_port, $ip);
+        $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_listen_server_port");
         $payload = ['action' => $action, 'message' => $opts];
         $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
@@ -159,7 +159,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
             return;
         }
@@ -227,7 +227,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info("server_to_server", $data);
             $server->task($data);
         } else {
@@ -273,7 +273,7 @@ class PushSever extends BaseModel
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        if ($this->websocket_server_port == $server_port) {
+        if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onClose");
             return;
         }
@@ -423,5 +423,10 @@ class PushSever extends BaseModel
         $hot_cache = self::getHotReadCache();
         $local_ip = self::getIntranetIp();
         return $hot_cache->zscore($this->connection_list, $local_ip);
+    }
+
+    static function getWebsocketEndPoint()
+    {
+        return self::config('websocket_client_endpoint');
     }
 }
