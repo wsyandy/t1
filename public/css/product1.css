@@ -212,7 +212,7 @@ h1,h2,h3,h4{
 	background-size: 100% !important;
 }
 .account_money .selected_color{
-	color: red;
+	color: #F45189;
 }
 .account_money ol li span{
 	font-size: 15px;
