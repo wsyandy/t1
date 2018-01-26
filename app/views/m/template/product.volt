@@ -65,7 +65,7 @@
         var payment_channel = $(".selected_pay").parent();
         var payment_channel_id = payment_channel.data('payment_channel_id');
         var payment_type = payment_channel.data('payment_type');
-        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id
+        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id;
         if (payment_channel_id == undefined) {
             url = $("#pay_submit_btn").attr("href");
         }
