@@ -14,7 +14,7 @@
 <div class="jubao_list">
     <ul>
         {% for key,value in complaint_types %}
-            <li id="{{ key }}">{{ value }}</li>
+            <li id="{{ key }}"><span>{{ value }}</span><i class="jb_select"></i></li>
         {% endfor %}
     </ul>
 </div>
@@ -27,15 +27,19 @@
         $('.jubao_list ul li').each(function () {
             $(this).click(function () {
                 //改变class
-                $(this).addClass('jb_selected').siblings().removeClass('jb_selected');
+                //$(this).addClass('jb_selected').siblings().removeClass('jb_selected');
+                $(this).find('.jb_select').addClass('jb_selected');
+                $(this).siblings().find('.jb_select').removeClass('jb_selected');
                 //获取 complaint_type
                 complaint_type = $(this).attr("id");
             })
         });
 
         //设置默认选项
-        $("ul li:eq(0)").addClass('jb_selected').siblings().removeClass('jb_selected');
-        complaint_type = $("ul li:eq(0)").attr("id");
+        var first_li = $("ul li:eq(0)");
+        first_li.find(".jb_select").addClass('jb_selected');
+        first_li.siblings().find(".jb_select").removeClass('jb_selected');
+        complaint_type = first_li.attr("id");
     });
 
     $("#create").click(function () {
@@ -50,7 +54,7 @@
             user_id: "{{ user_id }}",
             complaint_type: complaint_type
         };
-        $.authPost("create", data, function (resp) {
+        $.authPost("/m/complaints/create", data, function (resp) {
             alert(resp.error_reason);
             if (resp.error_code == 0 && resp.error_url) {
                 location.href = resp.error_url;
