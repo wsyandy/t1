@@ -46,192 +46,50 @@ i,em
 h1,h2,h3,h4{
 	font-weight: normal;
 }
-/*客服中心css*/
-.service{
+.get_out_btn {
+    margin-top: 20px;
+    padding: 0 3.2%;
+}
+.get_out_btn a {
+    display: block;
+    background: #FFFFFF;
+    border-radius: 25px;
+    height: 49px;
+    line-height: 49px;
+    font-size: 18px;
+    color: #F45189;
+    text-align: center;
+}
+.account_btn {
+    background: #F45189 !important;
+    color: #fff !important;
+}
+/*举报*/
+.jubao_top{
+	font-size: 14px;
+	color: #767676;
+	padding:12px 3.2%;
+}
+.jubao_list{
 	background: #fff;
-	padding: 20px 3.2%;
-	margin-top: 10px;
+	padding-left: 3.2%;
 }
-.service h3{
+.jubao_list ul li{
+	padding:16px 0;
 	font-size: 15px;
-	color: #4D4D4D;
-	font-weight: bold;
-}
-.service p{
-	font-size: 15px;
-	color: #4D4D4D;
-	text-indent: 2em;
-	margin:10px 0;
-	line-height: 20px;
-}
-.service h2{
-	font-size: 15px;
-	color: #3C3C3C;
-	font-weight: bold;
-}
-.service h2:last-child{
-	margin-top: 10px;
-}
-.service h2 a{
-	color: #4D4D4D;
-}
-
-/*关于我们*/
-.about_us_top{
-	margin: 40px 0 30px 0;
-	text-align: center;
-}
-.about_us_top img{
-	display: block;
-	width: 80px;
-	margin:0 auto;
-}
-.about_us_top h3{
-	font-size: 17px;
-	color: #4D4D4D;
-	margin-top: 10px;
-}
-.about_us_list{
-	background: #fff;
-}
-.about_us_list ul li{
-	/*padding:20px 3.2%;*/
-	/*border-bottom: 1px solid #F4F4F4;*/
-	/*position: relative;*/
-}
-
-.about_us_list ul li a{
-	padding:20px 3.2%;
-	border-bottom: 1px solid #F4F4F4;
-	position: relative;
-	display: block;
-}
-
-.arrow_right{
-	top:25px;
-	position: absolute;
-	content: '';
-	right: 3.2%;
-	width: 12px;
-	height: 22px;
-	background:url(../images/jiantou.png) no-repeat;
-	background-size: 100%;
-}
-.about_us_list ul li a{
-	font-size: 15px;
-	color: #3C3C3C;
-}
-.banben{
-	padding:20px 3.2%;
-	border-bottom: 1px solid #F4F4F4;
-	overflow: hidden;
-}
-.banben span , b{
-	font-size: 15px;
-}
-.banben span{
-	float: left;
-	color: #3C3C3C;
-}
-.banben b{
-	float: right;
-	font-weight: normal;
-	color: #888888;
-}
-.get_out_btn{
-	margin-top: 40px;
-	padding:0 3.2%;
-}
-.get_out_btn a{
-	display: block;
-	background: #FFFFFF;
-	border-radius: 25px;
-	height: 49px;
-	line-height: 49px;
-	font-size: 18px;
-	color: #F45189;
-	text-align: center;
-}
-
-/*我的账户*/
-
-.account_top{
-	margin-top: 10px;
-	background: #fff;
-	padding:20px 3.2%;
-}
-.account_top p{
-	font-size: 15px;
-	color: #3C3C3C;
-	position: relative;
-	padding-left: 32px;
-}
-.account_top p:before{
-	position: absolute;
-	left: 0;
-	content: '';
-	width: 22px;
-	height: 22px;
-	background:url(../images/icon.png) no-repeat;
-	background-size: 100%;
-}
-.account_top p span{
-	font-size: 22px;
-	color: #F45189;
-	vertical-align: middle;
-}
-.account_menoy{
-	margin-top: 10px;
-	background: #fff;
-}
-.account_menoy ol li{
-	padding:15px 3.2%;
-	background: url(../images/select.png) no-repeat 96.8% center;
+	color: #464646;
 	border-bottom: 1px solid #F3F3F3;
-	overflow: hidden;
+	background: url(../images/jb_select.png) no-repeat 96.8% center;
 }
-.account_menoy .selected{
-	background: url(../images/selected.png) no-repeat 96.8% center !important;
+.jubao_list ul li:last-child{
+    border:0;
 }
-.account_menoy .selected span{
-	color: #F45189;
+.jb_selected{
+	background: url(../images/jb_selected.png) no-repeat 96.8% center !important;
 }
-.account_menoy ol li span{
-	font-size: 15px;
-	color: #3C3C3C;
+.jubao_btn{
+	margin-top: 60px;
 }
-.account_menoy ol li span:first-child{
-	float: left;
-}
-.account_menoy ol li span:last-child{
-	float: right;
-	padding-right: 7%;
-}
-.account_pay{
-	margin-top: 10px;
-	background: #fff;
-}
-.account_pay ul li{
-	padding:15px 3.2%;
-	background: url(../images/select.png) no-repeat 96.8% center;
-	border-bottom: 1px solid #F3F3F3;
-	font-size: 15px;
-	color: #3C3C3C;
-}
-.account_pay .selected_pay{
-	background: url(../images/selected.png) no-repeat 96.8% center !important;
-}
-.account_btn{
-	background: #F45189 !important;
-	color: #fff !important;
-}
-
-
-
-
-
-
-
 
 
 
