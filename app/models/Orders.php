@@ -45,6 +45,7 @@ class Orders extends BaseModel
         $order->partner_id = $user->partner_id;
         $order->platform = $user->platform;
         $order->province_id = $user->getSearchCityId();
+        $order->mobile = $user->mobile;
         if ($order->create()) {
             \Stats::delay()->record('user', 'create_order', $user->getStatAttrs());
             return $order;

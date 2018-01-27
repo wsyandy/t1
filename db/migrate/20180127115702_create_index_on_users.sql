@@ -1,0 +1,1 @@
+CREATE index mobile_on_users on users(mobile);
