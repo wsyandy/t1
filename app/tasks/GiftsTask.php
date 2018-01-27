@@ -53,4 +53,10 @@ class GiftsTask extends \Phalcon\Cli\Task
         $gift = \Gifts::findLast();
         var_dump($sender->canGiveGift($gift, 10));
     }
+
+    function testLockAction()
+    {
+        $gift_order = \GiftOrders::findLast();
+        \UserGifts::updateGiftNum($gift_order->id);
+    }
 }
