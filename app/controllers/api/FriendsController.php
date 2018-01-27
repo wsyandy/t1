@@ -34,14 +34,14 @@ class FriendsController extends BaseController
     //添加好友
     function createAction()
     {
+        if ($this->currentUser()->isFriend($this->otherUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已添加好友');
+        }
+
         $self_introduce = $this->params('self_introduce');
         $opts = [];
 
         $opts['self_introduce'] = $self_introduce;
-
-        if ($this->currentUser()->isFriend($this->otherUser())) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已添加好友');
-        }
 
         $this->currentUser()->addFriend($this->otherUser(), $opts);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');

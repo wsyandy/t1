@@ -261,9 +261,7 @@ class GeTuiMessages extends BaseModel
     static function testGlobalPush($product_channel, $platform, $title, $body)
     {
         debug("global_push: platform: " . $platform . ',title: ' . $title . ',body:' . $body);
-        if (isProduction()) {
-            return '线上不支持测试';
-        }
+        
         $payload = array('title' => $title, 'body' => $body);
 
         $context = $product_channel->getPushContext($platform);

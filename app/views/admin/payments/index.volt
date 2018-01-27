@@ -3,7 +3,7 @@
 {%- endmacro %}
 
 {%- macro order_link(object) %}
-    <a href="/admin/orders?id={{ object.order_id }}">订单</a>
+    <a href="/admin/orders?order[id_eq]={{ object.order_id }}">订单</a>
 {%- endmacro %}
 
 {%- macro pay_status_link(object) %}
@@ -21,7 +21,7 @@
     <td>${payment.id}</td>
     <td>${payment.payment_no}</td>
     <td><a href="/admin/users/detail?id=${payment.user_id}"><img src="${payment.user_avatar_url}" width="30"></a></td>
-    <td><a href="/admin/orders?id=${payment.order_id}">订单</a></td>
+    <td><a href="/admin/orders?order[id_eq]=${payment.order_id}">订单</a></td>
     <td>${payment.payment_channel_name}</td>
     <td>${payment.payment_type}</td>
     <td>${payment.amount}</td>

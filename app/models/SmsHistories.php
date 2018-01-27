@@ -181,8 +181,7 @@ class SmsHistories extends BaseModel
 
         $sms_history->save();
 
-        $auth_type = fetch($opts, 'auth_type');
-        info('new_log', $mobile, $auth_code, $sms_history->sms_token, $product_channel->name, $auth_type, $opts);
+        info('new_log', $mobile, $auth_code, $sms_history->sms_token, $product_channel->name, $opts);
 
         return [ERROR_CODE_SUCCESS, '发送成功', $sms_history->sms_token];
 
@@ -198,7 +197,10 @@ class SmsHistories extends BaseModel
         if ($mobile == '13912345678' && $auth_code == '1234') {
             return [ERROR_CODE_SUCCESS, '验证成功'];
         }
-        if (isDevelopmentEnv() && preg_match('/13800/', $mobile)) {
+
+        $is_white_mobile = fetch($opts, 'is_white_mobile', false);
+        // 下线或者白名单手机号
+        if ($auth_code == '1234' && (isDevelopmentEnv() || $is_white_mobile)) {
             return [ERROR_CODE_SUCCESS, '验证成功'];
         }
 
@@ -209,9 +211,8 @@ class SmsHistories extends BaseModel
             return [ERROR_CODE_FAIL, '网络异常，请稍后'];
         }
 
-        $auth_type = fetch($opts, 'auth_type');
         if (!$auth_code || !$sms_token) {
-            info('new_log no_sms_token', $mobile, $auth_code, $sms_token, $product_channel->name, $auth_type, $opts);
+            info('new_log no_sms_token', $mobile, $auth_code, $sms_token, $product_channel->name, $opts);
             return [ERROR_CODE_FAIL, '已超时,请重新获取验证码'];
         }
 
@@ -222,19 +223,19 @@ class SmsHistories extends BaseModel
         ]);
 
         if (!$sms_history || $sms_history->sms_token !== $sms_token) {
-            info('new_log sms_token', $mobile, $auth_code, $sms_token, $product_channel->name, $auth_type, $opts);
+            info('new_log sms_token', $mobile, $auth_code, $sms_token, $product_channel->name, $opts);
             return [ERROR_CODE_FAIL, '已超时,请重新获取验证码'];
         }
 
         if ($sms_history->expired_at < time()) {
-            info('new_log expired_at', $mobile, $auth_code, $sms_token, $product_channel->name, $auth_type, $opts);
+            info('new_log expired_at', $mobile, $auth_code, $sms_token, $product_channel->name, $opts);
             return [ERROR_CODE_FAIL, '已超时,请重新获取验证码'];
         }
 
         $cache_key = 'sms_history_try_num_' . $sms_history->id;
         $num = $hot_cache->incr($cache_key);
         if ($num > 3 && isProduction()) {
-            info('new_log Block_try_num', $cache_key, $mobile, $product_channel->name, $auth_type, $opts);
+            info('new_log Block_try_num', $cache_key, $mobile, $product_channel->name, $opts);
             return [ERROR_CODE_FAIL, '已超时,请重新获取验证码'];
         }
         $hot_cache->expire($cache_key, 15 * 60);
@@ -248,11 +249,11 @@ class SmsHistories extends BaseModel
             }
 
             if ($result) {
-                info('new_log 双击', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $auth_type, $opts);
+                info('new_log 双击', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $opts);
                 return [ERROR_CODE_SUCCESS, '验证成功'];
             }
 
-            info('new_log auth_status', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $auth_type, $opts);
+            info('new_log auth_status', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $opts);
 
             return [ERROR_CODE_FAIL, '已超时,请重新获取验证码!'];
         }
@@ -269,7 +270,7 @@ class SmsHistories extends BaseModel
             return [ERROR_CODE_SUCCESS, '验证成功'];
         }
 
-        info('new_log auth_status_false', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $auth_type, $opts);
+        info('new_log auth_status_false', $mobile, $auth_code, $sms_token, $sms_history->id, $product_channel->name, $opts);
 
         return [ERROR_CODE_FAIL, '验证码错误'];
     }

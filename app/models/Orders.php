@@ -18,6 +18,16 @@ class Orders extends BaseModel
      */
     private $_product;
 
+    /**
+     * @type ProductChannels
+     */
+    private $_product_channel;
+
+    /**
+     * @type Partners
+     */
+    private $_partner;
+
     static $status = [
         ORDER_STATUS_WAIT => '等待支付',
         ORDER_STATUS_SUCCESS => '支付成功',
@@ -31,6 +41,11 @@ class Orders extends BaseModel
         $order->product_id = $product->id;
         $order->status = ORDER_STATUS_WAIT;
         $order->amount = $product->amount;
+        $order->product_channel_id = $user->product_channel_id;
+        $order->partner_id = $user->partner_id;
+        $order->platform = $user->platform;
+        $order->province_id = $user->getSearchCityId();
+        $order->mobile = $user->mobile;
         if ($order->create()) {
             \Stats::delay()->record('user', 'create_order', $user->getStatAttrs());
             return $order;

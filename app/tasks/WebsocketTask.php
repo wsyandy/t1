@@ -12,7 +12,40 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function startAction()
     {
+        if (!$this->stopAction()) {
+            info('can not kill websocket process!');
+            return false;
+        }
+
         $server = new PushSever();
         $server->start();
+    }
+
+    function stopAction()
+    {
+        $log_dir = $this->config->application->log;
+        checkDirExists("{$log_dir}/pids/websocket/");
+        if (file_exists("{$log_dir}/pids/websocket/server.pid")) {
+            $pid = file_get_contents("{$log_dir}/pids/websocket/server.pid");
+            $pid = intval(trim($pid));
+            if (!$pid || @pcntl_getpriority($pid) === false) {
+                info('websocket process exited!');
+                file_put_contents("{$log_dir}/pids/websocket/server.pid", '');
+                return true;
+            }
+
+            $result = posix_kill($pid, SIGKILL);
+            if ($result) {
+                file_put_contents("{$log_dir}/pids/websocket/server.pid", '');
+                info('websocket process exited!');
+                info("###stop websocket###");
+
+                return true;
+            } else {
+                info('can not kill websocket process!');
+                return false;
+            }
+        }
+        return true;
     }
 }

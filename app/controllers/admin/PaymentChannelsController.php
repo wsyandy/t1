@@ -27,6 +27,7 @@ class PaymentChannelsController extends BaseController
         $payment_channel = new \PaymentChannels();
         $this->assign($payment_channel, 'payment_channel');
         if ($payment_channel->create()) {
+            \OperatingRecords::logAfterCreate($this->currentOperator(),$payment_channel);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
                 array('payment_channel' => $payment_channel->toJson()));
         } else {
@@ -45,6 +46,7 @@ class PaymentChannelsController extends BaseController
     {
        $payment_channel = \PaymentChannels::findById($this->params('id'));
        $this->assign($payment_channel, 'payment_channel');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(),$payment_channel);
         if ($payment_channel->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
                 array('payment_channel' => $payment_channel->toJson()));

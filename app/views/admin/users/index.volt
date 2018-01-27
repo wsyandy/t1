@@ -20,6 +20,7 @@
 {% macro user_info(user) %}
     姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
     手机号码:{{ user.mobile }}<br/>
+    设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
     IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
     自述城市信息: {{ user.province_name }}, {{ user.city_name }}
@@ -27,18 +28,18 @@
 
 {% macro user_status_info(user) %}
     {{ user.user_type_text }} | {{ user.user_status_text }}<br/>
+    激活时间: {{ user.created_at_text }}<br/>
+    注册时间: {{ user.register_at_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
-    api协议版本: {{ user.api_version }}
-    客户端版本: {{ user.version_code }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
     产品渠道:{{ user.product_channel_name }}<br/>
     FR:{{ user.fr }}<br/>
     FR名称:{{ user.partner_name }}<br/>
-    注册时间: {{ user.created_at_text }}<br/>
     平台:{{ user.platform }}<br/>
-    设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
+    api协议版本: {{ user.api_version }}<br/>
+    客户端版本: {{ user.version_code }}<br/>
 {% endmacro %}
 
 {% macro profile_link(user) %}
@@ -77,22 +78,23 @@
             产品渠道:${ user.product_channel_name }<br/>
             FR:${ user.fr }<br/>
             FR名称:${ user.partner_name }<br/>
-            注册时间: ${ user.created_at_text }<br/>
             平台:${ user.platform }<br/>
-            设备ID:<a href="/admin/devices?device[id_eq]=${user.device_id}">${user.device_id}</a><br/>
+            api协议版本: ${ user.api_version }<br/>
+            客户端版本: ${user.version_code}<br/>
         </td>
         <td>
             姓名:${ user.id_name } 性别:${ user.sex_text }<br/>
             手机号码:${ user.mobile }<br/>
+            设备ID:<a href="/admin/devices?device[id_eq]=${user.device_id}">${user.device_id}</a><br/>
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
             IP定位: ${ user.ip_province_name }, ${ user.ip_city_name }<br/>
             自述城市信息: ${ user.province_name }, ${ user.city_name }
         </td>
         <td>
             ${ user.user_type_text } | ${ user.user_status_text }<br>
+            激活时间: ${ user.created_at_text }<br/>
+            注册时间: ${ user.register_at_text }<br/>
             最后活跃时间: ${ user.last_at_text }<br/>
-            api协议版本: ${ user.api_version }
-            客户端版本: ${user.version_code}
         </td>
         <td>
             <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>

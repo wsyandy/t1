@@ -24,14 +24,23 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '请设置6~16位的密码');
         }
 
+        // 测试白名单
+        $is_white_mobile = false;
+        if ($mobile && in_array($mobile, ['13912345678'])
+        ) {
+            $is_white_mobile = true;
+        }
+
         $context = $this->context();
 
+        $context['is_white_mobile'] = $is_white_mobile;
         list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $context);
 
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
 
+        // 存在更换设备登录
         $device = $this->currentDevice();
         $product_channel = $this->currentProductChannel();
 
@@ -39,7 +48,9 @@ class UsersController extends BaseController
             $device = $this->currentUser()->device;
         }
 
-        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($this->currentUser(), $device, $mobile, $product_channel, $context);
+        $current_user = $this->currentUser();
+        $current_user->product_channel = $product_channel;
+        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
@@ -66,7 +77,7 @@ class UsersController extends BaseController
         $mobile = $this->params('mobile');
         $sms_type = $this->params('sms_type');
         $context = $this->context();
-        $context['device_id'] = $this->currentDeviceId();
+        $context['user_id'] = $this->currentUser()->id;
         $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
 
         if (!$sms_type) {
@@ -106,7 +117,6 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
             }
 
-
             if (mb_strlen($password) < 6 || mb_strlen($password) > 16) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入6~16位的密码');
             }
@@ -120,20 +130,25 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
             }
 
+            // 测试白名单
+            $is_white_mobile = false;
+            if ($mobile && in_array($mobile, ['13912345678'])
+            ) {
+                $is_white_mobile = true;
+            }
+
             $context = $this->context();
 
             if ($auth_code) {
 
-                //开发环境单独验证
-                if (!(isDevelopmentEnv() && '1234' == $auth_code)) {
+                $context['is_white_mobile'] = $is_white_mobile;
+                list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
+                    $mobile, $auth_code, $sms_token, $context);
 
-                    list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
-                        $mobile, $auth_code, $sms_token, $context);
-
-                    if ($error_code != ERROR_CODE_SUCCESS) {
-                        return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
-                    }
+                if ($error_code != ERROR_CODE_SUCCESS) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
                 }
+
             } else {
                 if (!$user || $user->password != md5($password)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '手机号码或密码不正确');
@@ -253,13 +268,12 @@ class UsersController extends BaseController
     function clientStatusAction()
     {
         $status = $this->params('client_status');
-
         if ($this->currentUser()) {
-            $device = $this->currentUser()->device;
-        } else {
-            $device = $this->currentDevice();
+            $this->currentUser()->client_status = $status;
+            $this->currentUser()->update();
         }
 
+        $device = $this->currentDevice();
         if ($device) {
             $device->client_status = $status;
             $device->update();

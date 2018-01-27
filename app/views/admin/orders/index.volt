@@ -1,3 +1,21 @@
+<form action="/admin/orders" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="product_channel_id_eq">产品渠道</label>
+    <select name="order[product_channel_id_eq]" id="product_channel_id_eq">
+        {{ options(product_channels,'','id','name') }}
+    </select>
+
+    <label for="id_eq">ID</label>
+    <input name="order[id_eq]" type="text" id="id_eq"/>
+
+    <label for="user_id_eq">用户ID</label>
+    <input name="order[user_id_eq]" type="text" id="user_id_eq"/>
+
+    <label for="mobile">手机号</label>
+    <input name="order[mobile_eq]" type="text" id="mobile"/>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
 {%- macro user_link(object)  %}
     <a href="/admin/users/detail?id={{ object.user_id }}"><img src="{{ object.user.avatar_small_url }}" width="30"></a>
 {%- endmacro %}

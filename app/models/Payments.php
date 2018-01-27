@@ -111,7 +111,7 @@ class Payments extends BaseModel
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = $this->paid_amount;
-            \Stats::delay()->record("user", "payment_success", $this->user->getStatAttrs());
+            \Stats::delay()->record("user", "payment_success", $attrs);
             return $this->paySuccess();
         }
         return false;

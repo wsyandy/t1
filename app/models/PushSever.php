@@ -116,7 +116,7 @@ class PushSever extends BaseModel
                 'dispatch_model' => 2,
                 'daemonize' => true,
                 'log_file' => APP_ROOT . 'log/websocket_server.log',
-                'pid_file' => APP_ROOT . 'log/websocket_server_pid.pid',
+                'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
                 'reload_async' => true,
                 'heartbeat_check_interval' => 10, //10秒检测一次
                 'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭

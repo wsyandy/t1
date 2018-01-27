@@ -33,7 +33,7 @@ class Stats extends BaseModel
 
     static $STAT_FIELDS = [
         'device_active_num' => '设备激活数',
-        'subscribe_num' => '微信关注数',
+//        'subscribe_num' => '微信关注数',
         'touch_active_num' => 'H5激活数',
         //'web_active_num' => 'web站点激活数',
         //'sem_sms_active_num' => '落地页激活手机次数',
@@ -44,7 +44,7 @@ class Stats extends BaseModel
         'first_register_mobile_num' => '注册新手机号数',
         'register_repeat_rate' => '注册重复率%',
         'register_ip_num' => "注册IP数",
-        'unsubscribe_num' => '微信取消关注数',
+//        'unsubscribe_num' => '微信取消关注数',
         'active_user_num' => '活跃用户数',
         'active_register_user_num' => '活跃注册用户数',
         'active_register_mobile_num' => '活跃注册手机号数',

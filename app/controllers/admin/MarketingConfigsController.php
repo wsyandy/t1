@@ -110,6 +110,7 @@ class MarketingConfigsController extends BaseController
             } else {
                 $marketing_config->android_user_action_set_id = $user_action_set_id;
             }
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(),$marketing_config);
             $marketing_config->save();
 
             $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
