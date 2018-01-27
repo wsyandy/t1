@@ -296,7 +296,9 @@ class BaseController extends ApplicationController
     {
         $sid = $this->context('sid');
         if (isBlank($sid) || preg_match('/^\d+s/', $sid) || preg_match('/^\d+d\./', $sid)) {
-            return null;
+            if(!$this->currentUserId() || $this->currentUserId() && $this->currentUser()){
+                return null;
+            }
         }
 
         $device = $this->currentDevice();
