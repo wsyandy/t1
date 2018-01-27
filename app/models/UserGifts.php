@@ -45,19 +45,24 @@ class UserGifts extends BaseModel
     static function lock($gift_order)
     {
         $hot_db = self::getHotWriteCache();
-
-        return $hot_db->setnx(self::lockKey($gift_order), 'lock');
+        $expire_secs = 60 * 2;
+        return $hot_db->set(self::lockKey($gift_order), $gift_order->id, array('nx', 'ex' => $expire_secs));
     }
 
     static function lockKey($gift_order)
     {
-        return "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
+        $lock_key = "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
+        debug("lock_key: " . $lock_key);
+        return $lock_key;
     }
 
     static function unlock($gift_order)
     {
         $hot_db = self::getHotWriteCache();
-        $hot_db->del(self::lockKey($gift_order));
+        $lock_key = self::lockKey($gift_order);
+        if ($hot_db->get($lock_key) == $gift_order->id) {
+            $hot_db->del($lock_key);
+        }
     }
 
     static function findListByUserId($user_id, $page, $per_page)
