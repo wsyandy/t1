@@ -278,8 +278,13 @@ class BaseController extends ApplicationController
 
         if (!$this->authorize()) {
             info('请登录 authorize', $this->params());
-            $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
-            return false;
+
+            if (!$this->currentUser()) {
+                info('非法请求 authorize', $this->params());
+                return $this->renderJSON(ERROR_CODE_FAIL, '非法请求');
+            }
+
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
         }
 
         if ($this->currentUser()->isBlocked()) {
@@ -289,7 +294,6 @@ class BaseController extends ApplicationController
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
         }
-
     }
 
     function fixOldUser()
