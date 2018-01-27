@@ -20,6 +20,7 @@
 {% macro user_info(user) %}
     姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
     手机号码:{{ user.mobile }}<br/>
+    设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
     IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
     自述城市信息: {{ user.province_name }}, {{ user.city_name }}
@@ -39,7 +40,6 @@
     平台:{{ user.platform }}<br/>
     api协议版本: {{ user.api_version }}<br/>
     客户端版本: {{ user.version_code }}<br/>
-    设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
 {% endmacro %}
 
 {% macro profile_link(user) %}
@@ -81,11 +81,11 @@
             平台:${ user.platform }<br/>
             api协议版本: ${ user.api_version }<br/>
             客户端版本: ${user.version_code}<br/>
-            设备ID:<a href="/admin/devices?device[id_eq]=${user.device_id}">${user.device_id}</a><br/>
         </td>
         <td>
             姓名:${ user.id_name } 性别:${ user.sex_text }<br/>
             手机号码:${ user.mobile }<br/>
+            设备ID:<a href="/admin/devices?device[id_eq]=${user.device_id}">${user.device_id}</a><br/>
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
             IP定位: ${ user.ip_province_name }, ${ user.ip_city_name }<br/>
             自述城市信息: ${ user.province_name }, ${ user.city_name }
