@@ -268,13 +268,12 @@ class UsersController extends BaseController
     function clientStatusAction()
     {
         $status = $this->params('client_status');
-
         if ($this->currentUser()) {
-            $device = $this->currentUser()->device;
-        } else {
-            $device = $this->currentDevice();
+            $this->currentUser()->client_status = $status;
+            $this->currentUser()->update();
         }
 
+        $device = $this->currentDevice();
         if ($device) {
             $device->client_status = $status;
             $device->update();
