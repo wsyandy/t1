@@ -18,6 +18,16 @@ class Orders extends BaseModel
      */
     private $_product;
 
+    /**
+     * @type ProductChannels
+     */
+    private $_product_channel;
+
+    /**
+     * @type Partners
+     */
+    private $_partner;
+
     static $status = [
         ORDER_STATUS_WAIT => '等待支付',
         ORDER_STATUS_SUCCESS => '支付成功',
