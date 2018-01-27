@@ -713,4 +713,13 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(117);
         echoLine($user->partner_id);
     }
+
+    function test47Action()
+    {
+        $orders = Orders::findForeach();
+
+        foreach ($orders as $order) {
+            echoLine($order->product_channel_id);
+        }
+    }
 }
