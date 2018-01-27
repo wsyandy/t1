@@ -205,7 +205,7 @@ class Users extends BaseModel
         return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
     }
 
-    static function registerForClientByMobile($current_user, $device, $mobile, $product_channel, $context = [])
+    static function registerForClientByMobile($current_user, $device, $mobile, $context = [])
     {
 
         if (isBlank($mobile)) {
@@ -218,8 +218,8 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!', null];
         }
 
+        $product_channel = $current_user->product_channel;
         $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
-
         if ($exist_user) {
             return [ERROR_CODE_FAIL, '用户已注册', null];
         }
