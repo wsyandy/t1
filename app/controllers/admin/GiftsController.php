@@ -29,6 +29,7 @@ class GiftsController extends BaseController
         $gift = new \Gifts();
         $this->assign($gift, 'gift');
         if ($gift->save()) {
+            \OperatingRecords::logAfterCreate($this->currentOperator(),$gift);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '', '创建失败');
@@ -46,6 +47,7 @@ class GiftsController extends BaseController
         $gift = \Gifts::findById($this->params('id'));
         $this->assign($gift, 'gift');
         if ($gift->update()) {
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(),$gift);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');

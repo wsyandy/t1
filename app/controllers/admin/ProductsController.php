@@ -34,6 +34,7 @@ class ProductsController extends BaseController
         $product = new \Products();
         $this->assign($product, 'product');
         if ($product->create()) {
+            \OperatingRecords::logAfterCreate($this->currentOperator(), $product);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('product' => $product->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '');
@@ -51,6 +52,7 @@ class ProductsController extends BaseController
     {
         $product = \Products::findById($this->params("id"));
         $this->assign($product, 'product');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $product);
         if ($product->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('product' => $product->toJson()));
         } else {
