@@ -28,12 +28,7 @@ class BaseController extends ApplicationController
 
     static $CHECK_LOGIN_STATUS_ACTIONS = [
         'users' => ['create', 'login', 'client_status'],
-        'rooms' => '*',
-        'room_seats' => '*',
-        'gifts' => '*',
-        'followers' => '*',
-        'friends' => '*',
-        'voice_calls' => '*',
+        'rooms' => '*'
     ];
 
     static $CHECK_OTHER_USER_ACTIONS = [
@@ -231,26 +226,17 @@ class BaseController extends ApplicationController
 
         debug($this->params(), $this->headers(), $this->request->getRawBody());
 
-        if (isProduction()) {
-            if (!$this->currentProductChannel() || ($this->currentProductChannel()->ckey &&
-                    $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android')
-            ) {
-                info("Exce 客户端异常", $this->context());
-                return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
-            }
-        }
-
-
-        $controller_name = $dispatcher->getControllerName();
-        $action_name = $dispatcher->getActionName();
-        $controller_name = \Phalcon\Text::uncamelize($controller_name);
-        $action_name = \Phalcon\Text::uncamelize($action_name);
-        $controller_name = strtolower($controller_name);
-        $action_name = strtolower($action_name);
-
         $code = $this->params('code');
         if (!$code || !$this->currentProductChannel()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道不能为空');
+        }
+
+        if (isProduction()) {
+            if ($this->currentProductChannel()->ckey &&
+                $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android') {
+                info("Exce 客户端异常", $this->context());
+                return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
+            }
         }
 
         // 表单数据安全性验证
@@ -260,12 +246,6 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
 
-        //对方用户不存在
-        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
-            || $this->otherUserId() && !$this->otherUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
-        }
-
         // 修复老用户
         $fix_user = $this->fixOldUser();
         if ($fix_user) {
@@ -273,10 +253,21 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $fix_user->generateSid('d.')]);
         }
 
+
         $this->remote_ip = $this->remoteIp();
+        $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
+        $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
+        $controller_name = strtolower($controller_name);
+        $action_name = strtolower($action_name);
+
+        //对方用户不存在
+        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
+            || $this->otherUserId() && !$this->otherUser()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
+        }
 
         // 更新设备或用户状态
-        if (!$this->skipCheckLoginStatus($controller_name, $action_name) && ($this->currentDevice() || $this->currentUser())) {
+        if (!$this->skipCheckLoginStatus($controller_name, $action_name)) {
             $this->checkLoginStatus();
         }
 
@@ -287,22 +278,18 @@ class BaseController extends ApplicationController
 
         if (!$this->authorize()) {
             info('请登录 authorize', $this->params());
+            $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
+            return false;
+        }
 
-            if ($this->currentUser()) {
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
-            } else {
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录!');
-            }
+        if ($this->currentUser()->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
         }
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
         }
 
-        if ($this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
-
-        }
     }
 
     function fixOldUser()
@@ -390,6 +377,7 @@ class BaseController extends ApplicationController
     {
 
         $fresh_attrs = [
+            'platform_version' => $this->context('platform_version'),
             'platform' => $this->context('platform'),
             'version_name' => $this->context('version_name'),
             'version_code' => $this->context('version_code'),
@@ -397,14 +385,12 @@ class BaseController extends ApplicationController
             'latitude' => $this->context('latitude'),
             'longitude' => $this->context('longitude'),
             'api_version' => $this->context('an'),
-            'gateway_mac' => $this->context('gateway_mac'),
             'manufacturer' => $this->context('manufacturer'),
-            'platform_version' => $this->context('platform_version')
         ];
 
         if ($this->currentUser()) {
             $this->currentUser()->onlineFresh($fresh_attrs);
-            //$this->currentUser()->startOfflineTask();
+            $this->currentUser()->startOfflineTask();
         }
     }
 

@@ -77,7 +77,7 @@ class UsersController extends BaseController
         $mobile = $this->params('mobile');
         $sms_type = $this->params('sms_type');
         $context = $this->context();
-        $context['device_id'] = $this->currentDeviceId();
+        $context['user_id'] = $this->currentUser()->id;
         $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
 
         if (!$sms_type) {
