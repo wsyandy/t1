@@ -695,4 +695,13 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($payment);
 
     }
+
+    function test45Action()
+    {
+        $payments = Payments::findForeach();
+
+        foreach ($payments as $payment) {
+            echoLine($payment->paid_amount, $payment->user->platform, $payment->user->id);
+        }
+    }
 }
