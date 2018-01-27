@@ -38,4 +38,5 @@ class PaymentsController extends ApplicationController
             return;
         }
     }
+    
 }

@@ -65,7 +65,7 @@ class GiftOrders extends BaseModel
             );
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
-                \UserGifts::delay()->freshGiftNum($gift_order->id);
+                \UserGifts::delay()->updateGiftNum($gift_order->id);
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
             }

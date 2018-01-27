@@ -53,4 +53,18 @@ class GiftsTask extends \Phalcon\Cli\Task
         $gift = \Gifts::findLast();
         var_dump($sender->canGiveGift($gift, 10));
     }
+
+    function testLockAction()
+    {
+        $redis = \Users::getHotWriteCache();
+        $key = 'test_lock';
+        $random = mt_rand(1, 1000);
+        $ttl = 10;
+
+        //$ok = $redis->set($key, $random, array('nx', 'ex' => $ttl));
+
+        $key = 'user_gift_lock_2_4';
+        echo $redis->get($key) . PHP_EOL;
+        echo $redis->ttl($key) . PHP_EOL;
+    }
 }
