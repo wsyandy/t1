@@ -30,6 +30,7 @@ class ProductGroupsController extends BaseController
         $product_group = new \ProductGroups();
         $this->assign($product_group, 'product_group');
         if ($product_group->create()) {
+            \OperatingRecords::logAfterCreate($this->currentOperator(), $product_group);
             return $this->renderJSON(
                 ERROR_CODE_SUCCESS, '',
                 array('product_group' => $product_group->toJson())
@@ -50,6 +51,7 @@ class ProductGroupsController extends BaseController
     {
         $product_group = \ProductGroups::findById($this->params('id'));
         $this->assign($product_group, 'product_group');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $product_group);
         if ($product_group->update()) {
             return $this->renderJSON(
                 ERROR_CODE_SUCCESS, '',
