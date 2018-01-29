@@ -86,7 +86,7 @@ class DevicesController extends BaseController
         $dno = $this->params('dno');
         $hot_cache = \Devices::getHotWriteCache();
         $key = "white_device_no_list";
-        if ($dno && $hot_cache->zrank($key, $dno) !== false) {
+        if ($dno && $hot_cache->zscore($key, $dno) > 0) {
             $dno_list = [$dno];
         } else {
             $dno_list = $hot_cache->zrange($key, 0, -1);
