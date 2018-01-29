@@ -233,7 +233,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($key, time(), $user->id);
         }
 
-        if ($this->user_num == 1) {
+        if ($this->user_num > 0 && $this->status == STATUS_OFF) {
             $this->status = STATUS_ON;
             $this->update();
         }

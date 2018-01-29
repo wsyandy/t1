@@ -748,5 +748,8 @@ class MeiTask extends \Phalcon\Cli\Task
                 echoLine($device->imei);
             }
         }
+
+        $user = Users::findFirstById(19);
+        echoLine($user);
     }
 }
