@@ -12,10 +12,10 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function startAction()
     {
-//        if (!$this->stopAction()) {
-//            info('can not kill websocket process!');
-//            return false;
-//        }
+        if (!$this->stopAction()) {
+            info('can not kill websocket process!');
+            return false;
+        }
 
         $server = new PushSever();
         $server->start();
