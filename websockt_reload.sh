@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo 'websocket shutdown'
-php cli.php websocket shutdown
+echo 'websocket stop'
+php cli.php websocket stop
 
 
 echo 'websocket start'

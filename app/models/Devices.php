@@ -89,6 +89,16 @@ class Devices extends BaseModel
 
 
         if ($device) {
+
+            //临时修复
+            foreach (['imei', 'imsi', 'idfa'] as $k) {
+
+                if (isset($attributes[$k])) {
+                    $device->$k = $attributes[$k];
+                }
+            }
+
+            $device->update();
             info('false repeat_device', $device->id, $product_channel->code, 'imei', $device->imei, 'idfa', $device->idfa, $attributes);
             return $device;
         }
