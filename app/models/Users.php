@@ -1371,7 +1371,7 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
+        $condition .= ' and id <> :user_id: and id != ' . SYSTEM_ID . 'and avatar_status = ' . AUTH_SUCCESS;
         $bind['user_id'] = $this->id;
 
         $conds['conditions'] = $condition;
