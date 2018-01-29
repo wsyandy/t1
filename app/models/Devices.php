@@ -98,6 +98,14 @@ class Devices extends BaseModel
                 }
             }
 
+            if ($device->inWhiteList()) {
+                info($device->device_no, $attributes);
+                $fr = fetch($attributes, 'fr');
+                if ($fr) {
+                    $device->fr = $fr;
+                }
+            }
+
             $device->update();
             info('false repeat_device', $device->id, $product_channel->code, 'imei', $device->imei, 'idfa', $device->idfa, $attributes);
             return $device;
@@ -462,5 +470,13 @@ class Devices extends BaseModel
         }
 
         return true;
+    }
+
+    function inWhiteList()
+    {
+        $hot_cache = \Devices::getHotWriteCache();
+        $key = "white_device_no_list";
+
+        return $hot_cache->zscore($key, $this->device_no) > 0;
     }
 }
