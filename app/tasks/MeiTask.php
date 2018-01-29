@@ -722,4 +722,20 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($order->product_channel_id);
         }
     }
+
+    function test48Action()
+    {
+        $rooms = Rooms::findForeach();
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0 && $room->status == STATUS_OFF) {
+                echoLine($room);
+            }
+        }
+    }
+
+    function test49Action()
+    {
+        $user = Users::findFirstById(64);
+        echoLine($user);
+    }
 }
