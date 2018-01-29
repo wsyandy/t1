@@ -91,9 +91,7 @@ class DevicesController extends BaseController
 
     function addWhiteListAction()
     {
-        debug("111");
         if ($this->request->isPost()) {
-            debug("2222");
             $dno = $this->params('dno');
             if (!$dno) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
