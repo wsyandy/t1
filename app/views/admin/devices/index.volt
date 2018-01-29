@@ -56,7 +56,6 @@
     IMEI:{{ device.imei }}<br/>
     IMSI:{{ device.imsi }}<br/>
     IDFA:{{ device.idfa }}<br/>
-    经纬度定位: {{ device.geo_province_name }}, {{ device.geo_city_name }}<br/>
     IP定位: {{ device.province_name }}, {{ device.city_name }}<br/>
 {%- endmacro %}
 
@@ -87,7 +86,6 @@
             IMEI:${ device.imei}<br/>
             IMSI:${ device.imsi }<br/>
             IDFA:${ device.idfa }<br/>
-            经纬度定位: ${ device.geo_province_name }, ${ device.geo_city_name }<br/>
             IP定位: ${ device.province_name }, ${ device.city_name }<br/>
         </td>
         <td>

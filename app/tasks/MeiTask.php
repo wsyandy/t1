@@ -740,5 +740,13 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $device = Devices::findFirstById(11);
         echoLine($device);
+
+        $devices = Devices::findForeach();
+
+        foreach ($devices as $device) {
+            if ($device->imei) {
+                echoLine($device->imei);
+            }
+        }
     }
 }
