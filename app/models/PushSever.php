@@ -179,7 +179,7 @@ class PushSever extends BaseModel
 
         $hot_cache = self::getHotWriteCache();
         $hot_cache->zincrby($this->connection_list, 1, $ip);
-
+        info("connection_num", $this->connection_list, $ip, $hot_cache->zscore($this->connection_list, $ip));
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
             $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -298,6 +298,7 @@ class PushSever extends BaseModel
         $local_ip = self::getIntranetIp();
         if ($local_ip) {
             $hot_cache->zincrby($this->connection_list, -1, $local_ip);
+            info("connection_num", $this->connection_list, $local_ip, $hot_cache->zscore($this->connection_list, $local_ip));
         }
 
         if ($user) {
