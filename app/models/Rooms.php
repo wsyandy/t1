@@ -175,7 +175,7 @@ class Rooms extends BaseModel
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
-    function exitRoom($user)
+    function exitRoom($user, $unbind = true)
     {
         $current_room_seat_id = $user->current_room_seat_id;
         // 麦位
@@ -201,7 +201,11 @@ class Rooms extends BaseModel
             $this->save();
         }
 
-        $this->unbindOnlineToken($user);
+        //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
+        if ($unbind) {
+            $this->unbindOnlineToken($user);
+        }
+
         $this->remUser($user);
 
         info($this->id, $this->user_num, $user->sid, $current_room_seat_id);
