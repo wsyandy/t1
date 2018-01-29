@@ -39,6 +39,11 @@
                             <a href="/admin/devices">激活列表</a>
                         </li>
                     {% endif %}
+                    {% if isAllowed('devices','white_list') %}
+                        <li>
+                            <a href="/admin/devices/white_list">设备号白名单</a>
+                        </li>
+                    {% endif %}
                     {% if isAllowed('users','index') %}
                         <li>
                             <a href="/admin/users">用户列表</a>

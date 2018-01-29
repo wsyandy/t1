@@ -81,4 +81,37 @@ class DevicesController extends BaseController
         echo file_get_contents($data_file);
     }
 
+    function whiteListAction()
+    {
+        $hot_cache = \Devices::getHotWriteCache();
+        $key = "white_device_no__list";
+        $dno_list = $hot_cache->zrange($key, 0, -1);
+        $this->view->dno_list = $dno_list;
+    }
+
+    function addWhiteListAction()
+    {
+        debug("111");
+        if ($this->request->isPost()) {
+            debug("2222");
+            $dno = $this->params('dno');
+            if (!$dno) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+            $hot_cache = \Devices::getHotWriteCache();
+            $key = "white_device_no__list";
+            $hot_cache->zadd($key, time(), $dno);
+            $this->response->redirect('/admin/devices/white_list');
+            return;
+        }
+    }
+
+    function deleteWhiteListAction()
+    {
+        $dno = $this->params('dno');
+        $hot_cache = \Devices::getHotWriteCache();
+        $key = "white_device_no__list";
+        $hot_cache->zrem($key, $dno);
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/devices/white_list']);
+    }
 }
