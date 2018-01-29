@@ -451,9 +451,4 @@ class PushSever extends BaseModel
     {
         return self::config('websocket_client_endpoint');
     }
-
-    static function checkOnlineToken($fd)
-    {
-        $hot_cache = self::getHotWriteCache();
-    }
 }
