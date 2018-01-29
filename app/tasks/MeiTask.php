@@ -737,5 +737,8 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $user = Users::findFirstById(64);
         echoLine($user);
+
+        $device = Devices::findFirstById(11);
+        echoLine($device);
     }
 }
