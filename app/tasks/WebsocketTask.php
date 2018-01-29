@@ -12,15 +12,20 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function startAction()
     {
-        if (!$this->stopAction()) {
-            info('can not kill websocket process!');
-            return false;
+        $log_dir = $this->config->application->log;
+        checkDirExists("{$log_dir}/pids/websocket/");
+        if (file_exists("{$log_dir}/pids/websocket/server.pid")) {
+            $pid = file_get_contents("{$log_dir}/pids/websocket/server.pid");
+            $pid = intval(trim($pid));
+
+            if ($pid > 0) {
+                echoLine("process already start pid:", $pid);
+                return;
+            }
         }
 
         $server = new PushSever();
         $server->start();
-
-        return true;
     }
 
     function stopAction()
