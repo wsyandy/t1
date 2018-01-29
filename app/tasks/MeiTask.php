@@ -672,8 +672,15 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test43Action()
     {
+        $connection_list = "websocket_connection_list";
+        $hot_cache = PushSever::getHotReadCache();
+        $local_ip = PushSever::getIntranetIp();
         $server = new PushSever();
         echoLine($server->getConnectionNum());
+        $hot_cache = PushSever::getHotReadCache();
+        $local_ip = PushSever::getIntranetIp();
+        echoLine($local_ip, $connection_list);
+        $hot_cache->zadd($connection_list, 1, $local_ip);
 
         $image = APP_ROOT . "public/images/avatar.png";
         StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
@@ -751,5 +758,15 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(19);
         echoLine($user);
+    }
+
+    function test50Action()
+    {
+        $ip = "192.168.64.96";
+        $connection_list = "websocket_connection_list";
+        $hot_cache = PushSever::getHotReadCache();
+
+        $hot_cache->zincrby($connection_list, 1, $ip);
+        echoLine($hot_cache->zscore($connection_list, $ip));
     }
 }
