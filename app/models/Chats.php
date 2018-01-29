@@ -77,7 +77,7 @@ class Chats extends BaseModel
 
     static function welcomeMessage()
     {
-        return "欢迎加入约玩";
+        return "Hi~终于等到你，还好我没放弃!";
     }
 
     static function sendWelcomeMessage($user_id)
