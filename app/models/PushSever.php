@@ -15,6 +15,7 @@ class PushSever extends BaseModel
     private $websocket_listen_server_port;
     private static $intranet_ip_key = "intranet_ip";
     private $connection_list = 'websocket_connection_list';
+    private $server;
 
     function __construct()
     {
@@ -26,6 +27,7 @@ class PushSever extends BaseModel
         $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
         $this->websocket_worker_num = self::config('websocket_worker_num'); //监听服务端
         $this->websocket_max_request = self::config('websocket_max_request'); //监听服务端
+//        $this->server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
     }
 
     static function getJobQueueCache()
@@ -132,16 +134,21 @@ class PushSever extends BaseModel
         $swoole_server->on('close', [$this, 'onClose']);
         echo "[------------- start -------------]\n";
         $swoole_server->start();
+        return true;
     }
 
     //服务器内部通信
     function send($action, $opts = [])
     {
-        debug($action, $opts);
-        $ip = fetch($opts, 'ip', self::getIntranetIp());
         $ip = self::getIntranetIp();
-        debug($this->websocket_listen_server_port, $ip);
-        $client = new \WebSocket\Client("ws://{$ip}:$this->websocket_listen_server_port");
+        info($this->websocket_listen_server_port, $ip, $action, $opts);
+        $pro = "ws";
+
+        if (isProduction()) {
+            $pro = "wss";
+        }
+
+        $client = new \WebSocket\Client("$pro://{$ip}:$this->websocket_listen_server_port");
         $payload = ['action' => $action, 'message' => $opts];
         $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
@@ -226,12 +233,16 @@ class PushSever extends BaseModel
 
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
+        $data = json_decode($data, true);
 
         if ($this->websocket_listen_server_port == $server_port) {
             info("server_to_server", $data);
-            $server->task($data);
+            $action = fetch($data, 'action');
+
+            if ('shutdown' == $action) {
+                $server->shutdown();
+            }
         } else {
-            $data = json_decode($data, true);
             $sign = fetch($data, 'sign');
             $sid = fetch($data, 'sid');
 

@@ -12,13 +12,15 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function startAction()
     {
-        if (!$this->stopAction()) {
-            info('can not kill websocket process!');
-            return false;
-        }
+//        if (!$this->stopAction()) {
+//            info('can not kill websocket process!');
+//            return false;
+//        }
 
         $server = new PushSever();
         $server->start();
+
+        return true;
     }
 
     function stopAction()
@@ -51,5 +53,11 @@ class WebsocketTask extends Phalcon\CLI\Task
             }
         }
         return true;
+    }
+
+    function shutdownAction()
+    {
+        $push_server = new PushSever();
+        $push_server->send('shutdown');
     }
 }
