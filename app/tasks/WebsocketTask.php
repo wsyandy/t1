@@ -23,6 +23,10 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function stopAction()
     {
+        //停止服务 清空链接数
+        $push_server = new PushSever();
+        $push_server->clearConnectionNum();
+
         $log_dir = $this->config->application->log;
         checkDirExists("{$log_dir}/pids/websocket/");
         if (file_exists("{$log_dir}/pids/websocket/server.pid")) {

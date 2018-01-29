@@ -435,6 +435,12 @@ class PushSever extends BaseModel
         return $hot_cache->zscore($this->connection_list, $local_ip);
     }
 
+    function clearConnectionNum()
+    {
+        $hot_cache = self::getHotReadCache();
+        return $hot_cache->del($this->connection_list);
+    }
+
     static function getWebsocketEndPoint()
     {
         return self::config('websocket_client_endpoint');
