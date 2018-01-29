@@ -24,7 +24,15 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 if ($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) {
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
-                    $room->exitRoom($user);
+
+                    $unbind = true;
+
+                    //用户在新的房间 不解绑
+                    if ($user->current_room_id != $room->id && $user->current_room_id > 0) {
+                        $unbind = false;
+                    }
+
+                    $room->exitRoom($user, $unbind);
                 }
             }
         }
