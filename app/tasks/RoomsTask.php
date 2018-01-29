@@ -23,24 +23,9 @@ class RoomsTask extends \Phalcon\Cli\Task
             foreach ($users as $user) {
 
                 if ($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) {
-                    info($user->id, $room->id, $user->current_room_id);
+                    info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
                     $room->exitRoom($user);
                 }
-            }
-        }
-    }
-
-    //检查用户活跃的状态
-    function checkUserStatusAction()
-    {
-        //在房间内用户一小时未活跃
-        $users = Users::findForeach(['conditions' => 'current_room_id > 0 and last_at < ' . time() - 3600]);
-
-        foreach ($users as $user) {
-            $current_room = $user->current_room;
-            if ($current_room) {
-                info($current_room->id, $user->id);
-                $current_room->exitRoom($user);
             }
         }
     }
