@@ -40,7 +40,7 @@ class WebsocketTask extends Phalcon\CLI\Task
                 return true;
             }
 
-            $result = posix_kill($pid, SIGKILL);
+            $result = posix_kill($pid, SIGTERM);
             if ($result) {
                 file_put_contents("{$log_dir}/pids/websocket/server.pid", '');
                 info('websocket process exited!');
