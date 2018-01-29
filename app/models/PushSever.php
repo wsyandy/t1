@@ -155,7 +155,6 @@ class PushSever extends BaseModel
     function onOpen($server, $request)
     {
         $fd = $request->fd;
-        info("connection_num", $fd);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
@@ -270,17 +269,23 @@ class PushSever extends BaseModel
 
     function onClose($server, $fd, $from_id)
     {
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $online_token = $hot_cache->get($online_key);
+
+        if (!$online_token) {
+            info("fd非法", $fd, $from_id);
+            return;
+        }
+
         $connect_info = $server->connection_info($fd);
+
         $server_port = fetch($connect_info, 'server_port');
-        info("connection_num", $fd);
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onClose");
             return;
         }
 
-        $hot_cache = self::getHotWriteCache();
-        $online_key = "socket_push_online_token_" . $fd;
-        $online_token = $hot_cache->get($online_key);
         $fd_key = "socket_push_fd_" . $online_token;
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $user_id = $hot_cache->get($fd_user_id_key);
@@ -445,5 +450,10 @@ class PushSever extends BaseModel
     static function getWebsocketEndPoint()
     {
         return self::config('websocket_client_endpoint');
+    }
+
+    static function checkOnlineToken($fd)
+    {
+        $hot_cache = self::getHotWriteCache();
     }
 }
