@@ -83,9 +83,14 @@ class DevicesController extends BaseController
 
     function whiteListAction()
     {
+        $dno = $this->params('dno');
         $hot_cache = \Devices::getHotWriteCache();
         $key = "white_device_no_list";
-        $dno_list = $hot_cache->zrange($key, 0, -1);
+        if ($dno && $hot_cache->zrank($key, $dno)) {
+            $dno_list = [$dno];
+        } else {
+            $dno_list = $hot_cache->zrange($key, 0, -1);
+        }
         $this->view->dno_list = $dno_list;
     }
 

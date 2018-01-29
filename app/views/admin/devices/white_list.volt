@@ -1,4 +1,10 @@
-<a href="/admin/devices/add_white_list" class="modal_action">新建</a>
+<form action="/admin/devices/white_list" method="post" enctype="multipart/form-data">
+    <a href="/admin/devices/add_white_list" class="modal_action">新建</a>
+
+    <label for="dno">设备号</label>
+    <input type="text" name="dno" id="dno"/>
+    <input type="submit" name="submit" value="搜索"/>
+</form>
 
 <table class="table table-striped table-condensed">
     <thead>
