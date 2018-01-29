@@ -24,6 +24,8 @@ class PushSever extends BaseModel
         $this->websocket_listen_client_port = self::config('websocket_listen_client_port'); //监听客户端
         $this->websocket_listen_server_ip = self::config('websocket_listen_server_ip'); //监听服务端
         $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
+        $this->websocket_worker_num = self::config('websocket_worker_num'); //监听服务端
+        $this->websocket_max_request = self::config('websocket_max_request'); //监听服务端
     }
 
     static function getJobQueueCache()
@@ -111,8 +113,8 @@ class PushSever extends BaseModel
         $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
         $swoole_server->set(
             [
-                'worker_num' => 32, //cpu的1~4倍
-                'max_request' => 10000, //设置多少合适
+                'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
+                'max_request' => $this->websocket_max_request, //设置多少合适
                 'dispatch_model' => 2,
                 'daemonize' => true,
                 'log_file' => APP_ROOT . 'log/websocket_server.log',
