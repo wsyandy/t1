@@ -177,10 +177,9 @@ class Rooms extends BaseModel
 
     function exitRoom($user)
     {
-
-        info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
+        $current_room_seat_id = $user->current_room_seat_id;
         // 麦位
-        $room_seat = RoomSeats::findFirstById($user->current_room_seat_id);
+        $room_seat = RoomSeats::findFirstById($current_room_seat_id);
 
         if (!$room_seat) {
             $room_seat = RoomSeats::findFirstByUserId($user->id);
@@ -204,6 +203,8 @@ class Rooms extends BaseModel
 
         $this->unbindOnlineToken($user);
         $this->remUser($user);
+
+        info($this->id, $this->user_num, $user->sid, $current_room_seat_id);
     }
 
     function kickingRoom($user)
