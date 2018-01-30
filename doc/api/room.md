@@ -142,6 +142,7 @@
     app_id string 应用id
     channel_key string token 用于加入频道(互动直播)
     user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
+    user_role 用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
     system_tips:[
         '内容1',
         '内容2',
