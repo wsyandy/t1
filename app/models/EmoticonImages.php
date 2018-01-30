@@ -39,7 +39,18 @@ class EmoticonImages extends BaseModel
         }
         return StoreFile::getUrl($this->image) . '@!small';
     }
-
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'code' => $this->code,
+            'duration' => $this->duration,
+            'image_url' => $this->image_url,
+            'image_small_url' => $this->image_small_url,
+            'dynamic_image_url' => $this->dynamic_image_url
+        ];
+    }
     function toJson()
     {
         return [
@@ -55,6 +66,7 @@ class EmoticonImages extends BaseModel
         ];
     }
 
+    //是否存在 code 或 rank 相同的表情
     function isRepeating()
     {
         $cond = [];
@@ -65,5 +77,21 @@ class EmoticonImages extends BaseModel
             'code' => $this->code
         ];
         return $emoticon_image = \EmoticonImages::findFirst($cond);
+    }
+
+    /**
+     * 获取有效的表情，最多30个
+     * @return PaginationModel
+     */
+    static function findValidList($page,$per_page = 10)
+    {
+        $cond = [
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => STATUS_ON
+            ],
+            'order' => 'rank desc'
+        ];
+        return EmoticonImages::findPagination($cond,$page,$per_page);
     }
 }
