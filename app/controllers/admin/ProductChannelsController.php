@@ -312,4 +312,9 @@ class ProductChannelsController extends BaseController
 //        $product_channel = \ProductChannels::findFirstById($this->params('id'));
 //        $this->view->product_channel = $product_channel;
 //    }
+    function systemTipsAction()
+    {
+        $product_channel = \ProductChannels::findFirstById($this->params('id'));
+        $this->view->product_channel = $product_channel;
+    }
 }
