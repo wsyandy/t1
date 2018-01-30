@@ -12,7 +12,7 @@ class EmoticonImages extends BaseModel
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
     //图片文件
-    static $files = ['image' => 'emoticon_images/image/%s', 'dynamic_image' => 'emoticon_images/dynamic_image/%s'];
+    static $files = ['image' => APP_NAME . '/emoticon_images/image/%s', 'dynamic_image' => APP_NAME . '/emoticon_images/dynamic_image/%s'];
 
     function getDynamicImageUrl()
     {
