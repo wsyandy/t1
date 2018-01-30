@@ -1,7 +1,7 @@
 <a href="/admin/emoticon_images/new" class="modal_action">新增</a>
 
 {%- macro image_link(emoticon_image) %}
-    <img src="{{ emoticon_image.image_small_url }}" width="30"/>
+    <img src="{{ emoticon_image.image_url }}" width="30"/>
 {%- endmacro %}
 
 {%- macro dynamic_image_link(emoticon_image) %}
@@ -26,10 +26,10 @@
         <td>${emoticon_image.name}</td>
         <td>${emoticon_image.code}</td>
         <td>${emoticon_image.duration}</td>
-        <td><img src="${emoticon_image.image_small_url}" width="30"></td>
+        <td><img src="${emoticon_image.image_url}" width="30"></td>
         <td><img src="${emoticon_image.dynamic_image_url}" width="30"></td>
         <td>${emoticon_image.status_text}</td>
         <td>${emoticon_image.rank}</td>
-        <td><a href="/admin/emoticon_images/edit/${emoticon_image.id}">编辑</a></td>
+        <td><a href="/admin/emoticon_images/edit/${emoticon_image.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>

@@ -39,6 +39,7 @@ class EmoticonImages extends BaseModel
         }
         return StoreFile::getUrl($this->image) . '@!small';
     }
+
     function toSimpleJson()
     {
         return [
@@ -51,6 +52,7 @@ class EmoticonImages extends BaseModel
             'dynamic_image_url' => $this->dynamic_image_url
         ];
     }
+
     function toJson()
     {
         return [
@@ -76,14 +78,14 @@ class EmoticonImages extends BaseModel
             'rank' => $this->rank,
             'code' => $this->code
         ];
-        return $emoticon_image = \EmoticonImages::findFirst($cond);
+        return self::findFirst($cond);
     }
 
     /**
-     * 获取有效的表情，最多30个
+     * 获取有效的表情
      * @return PaginationModel
      */
-    static function findValidList($page,$per_page = 10)
+    static function findValidList($page, $per_page = 10)
     {
         $cond = [
             'conditions' => 'status = :status:',
@@ -92,6 +94,6 @@ class EmoticonImages extends BaseModel
             ],
             'order' => 'rank desc'
         ];
-        return EmoticonImages::findPagination($cond,$page,$per_page);
+        return self::findPagination($cond, $page, $per_page);
     }
 }
