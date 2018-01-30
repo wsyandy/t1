@@ -6,18 +6,19 @@
 
 ##### 1.1 请求参数说明
 
-```
-   公共参数
-```
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|page|页码|int|否||
+|per_page|每页|int|否|||
 
 ##### 1.2 返回参数说明
 ```
 {
     error_code:   0/-1  
     error_reason: '返回码说明'  
-    total_page: 3
-    current_page: 1
-    total_entries: 30   
+    total_page: 
+    current_page: 
+    total_entries:   
     emoticon_images: [
         {
             id:  1
