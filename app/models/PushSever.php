@@ -123,7 +123,7 @@ class PushSever extends BaseModel
                 'reload_async' => true,
                 'heartbeat_check_interval' => 10, //10秒检测一次
                 'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
-//                'task_worker_num' => 8
+                //'task_worker_num' => 8
             ]
         );
 
@@ -137,18 +137,17 @@ class PushSever extends BaseModel
     }
 
     //服务器内部通信
-    function send($action, $opts = [])
+    function send($action, $ip, $payload = [])
     {
-        $ip = self::getIntranetIp();
-        info($this->websocket_listen_server_port, $ip, $action, $opts);
-        $pro = "ws";
+        info($this->websocket_listen_server_port, $ip, $action, $payload);
+        $protocol = "ws";
 
         if (isProduction()) {
-            $pro = "wss";
+            $protocol = "wss";
         }
 
-        $client = new \WebSocket\Client("$pro://{$ip}:$this->websocket_listen_server_port");
-        $payload = ['action' => $action, 'message' => $opts];
+        $client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
+        $payload = ['action' => $action, 'payload' => $payload];
         $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $client->send($data);
         $client->close();
@@ -241,9 +240,21 @@ class PushSever extends BaseModel
         if ($this->websocket_listen_server_port == $server_port) {
             info("server_to_server", $data);
             $action = fetch($data, 'action');
+            $payload = fetch($data, 'payload');
 
             if ('shutdown' == $action) {
                 $server->shutdown();
+            } elseif ('push' == $action) {
+                $receiver_fd = fetch($payload, 'fd');
+                $body = fetch($payload, 'body');
+                info($receiver_fd, $body);
+                if ($receiver_fd) {
+                    if (!$server->exist($receiver_fd)) {
+                        info($receiver_fd, "Exce not exist");
+                        return;
+                    }
+                    $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+                }
             }
         } else {
             $sign = fetch($data, 'sign');
@@ -275,9 +286,10 @@ class PushSever extends BaseModel
                 $online_token = $hot_cache->get($online_key);
                 $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-                $payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                //$this->send('push', $payload);
-                $res = $server->push($frame->fd, $frame->data);
+                debug($intranet_ip, $online_token);
+                $payload = ['body' => $data, 'fd' => $fd];
+                $this->send('push', $intranet_ip, $payload);
+                //$res = $server->push($frame->fd, $frame->data);
             }
         }
     }
