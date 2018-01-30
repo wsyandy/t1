@@ -8,7 +8,7 @@
 |参数|名称|值类型|是否可空|备注|
 |---|---|---|---|---|
 |data|支付结果|string|否||
-|product_id|产品ID|integer|否
+|product_id|产品ID|integer|否|||
 
 ##### 1.2 返回参数说明
 ```

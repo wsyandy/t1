@@ -8,8 +8,8 @@
 
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|page|页码|int|否||
-|per_page|每页|int|否|||
+|page|页码|int|是||
+|per_page|每页|int|是|||
 
 ##### 1.2 返回参数说明
 ```
@@ -22,13 +22,12 @@
     emoticon_images: [
         {
             id:  1
-            name: '表情名称'
-            code: '表情'
+            name: 表情名称
+            code: 存放在客户端图片的标识
             duration: '持续时间'
             image_url: 'https://emoticon_images/image'
             image_small_url: 'https://emoticon_images/small'
-            dynamic_image_url: '动态图'
-            
+            dynamic_image_url: '动态图'   
         }
         ...
     ]
