@@ -110,30 +110,33 @@ class PushSever extends BaseModel
 
     function start()
     {
-        $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
-        $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
-        $swoole_server->set(
-            [
-                'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
-                'max_request' => $this->websocket_max_request, //设置多少合适
-                'dispatch_model' => 2,
-                'daemonize' => true,
-                'log_file' => APP_ROOT . 'log/websocket_server.log',
-                'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
-                'reload_async' => true,
-                'heartbeat_check_interval' => 10, //10秒检测一次
-                'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
-                //'task_worker_num' => 8
-            ]
-        );
+        try {
+            $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
+            $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
+            $swoole_server->set(
+                [
+                    'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
+                    'max_request' => $this->websocket_max_request, //设置多少合适
+                    'dispatch_model' => 2,
+                    'daemonize' => true,
+                    'log_file' => APP_ROOT . 'log/websocket_server.log',
+                    'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
+                    'reload_async' => true,
+                    'heartbeat_check_interval' => 10, //10秒检测一次
+                    'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
+                    //'task_worker_num' => 8
+                ]
+            );
 
-        $swoole_server->on('start', [$this, 'onStart']);
-        $swoole_server->on('open', [$this, 'onOpen']);
-        $swoole_server->on('message', [$this, 'onMessage']);
-        $swoole_server->on('close', [$this, 'onClose']);
-        echo "[------------- start -------------]\n";
-        $swoole_server->start();
-        return true;
+            $swoole_server->on('start', [$this, 'onStart']);
+            $swoole_server->on('open', [$this, 'onOpen']);
+            $swoole_server->on('message', [$this, 'onMessage']);
+            $swoole_server->on('close', [$this, 'onClose']);
+            $swoole_server->start();
+            echo "[------------- start -------------]\n";
+        } catch (\Exception $e) {
+            info("Exce", $e->getMessage());
+        }
     }
 
     //服务器内部通信
@@ -146,11 +149,15 @@ class PushSever extends BaseModel
             $protocol = "wss";
         }
 
-        $client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
-        $payload = ['action' => $action, 'payload' => $payload];
-        $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
-        $client->send($data);
-        $client->close();
+        try {
+            $client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
+            $payload = ['action' => $action, 'payload' => $payload];
+            $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
+            $client->send($data);
+            $client->close();
+        } catch (\Exception $e) {
+            info("Exce", $e->getMessage());
+        }
     }
 
 
@@ -312,7 +319,7 @@ class PushSever extends BaseModel
             info("fd非法", $fd, $from_id);
             return;
         }
-        
+
         $fd_key = "socket_push_fd_" . $online_token;
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $user_id = $hot_cache->get($fd_user_id_key);
