@@ -155,9 +155,12 @@ class PushSever extends BaseModel
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
             $client->close();
+            return true;
         } catch (\Exception $e) {
             info("Exce", $e->getMessage());
         }
+
+        return false;
     }
 
 
@@ -372,7 +375,7 @@ class PushSever extends BaseModel
                 }
 
                 $current_room->exitRoom($user);
-                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat);
+                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip);
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
@@ -408,7 +411,7 @@ class PushSever extends BaseModel
 //        debug("{$task_id}处理结果: {$data}");
 //    }
 
-    function pushExitRoomInfo($server, $user, $current_room, $room_seat)
+    function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
     {
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $current_room->id;
@@ -429,8 +432,8 @@ class PushSever extends BaseModel
                     return;
                 }
 
-                //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                //$this->send('push', $payload);
+                $payload = ['body' => $data, 'fd' => $receiver_fd];
+                //$res = $this->send('push', $intranet_ip, $payload);
                 $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
                 if ($res) {
