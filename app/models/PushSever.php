@@ -27,7 +27,6 @@ class PushSever extends BaseModel
         $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
         $this->websocket_worker_num = self::config('websocket_worker_num'); //监听服务端
         $this->websocket_max_request = self::config('websocket_max_request'); //监听服务端
-//        $this->server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
     }
 
     static function getJobQueueCache()
