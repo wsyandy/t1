@@ -769,4 +769,28 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache->zincrby($connection_list, 1, $ip);
         echoLine($hot_cache->zscore($connection_list, $ip));
     }
+
+    function test51Action()
+    {
+        $db = Users::getUserDb();
+        $key = "test_zadd_incr";
+        $db->zadd($key, 1000, 1);
+
+        $num = $db->zcount($key, 1000, '+inf');
+        echoLine($num);
+    }
+
+    function test52Action()
+    {
+        $key = "room_id1_user_id1";
+        preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+        print_r($matches);
+    }
+
+    function test53Action()
+    {
+        $db = Users::getUserDb();
+        $key = "test_zadd_incr";
+        echoLine($db->zrangebyscore($key, '-inf', 100000));
+    }
 }
