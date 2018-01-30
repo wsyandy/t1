@@ -44,9 +44,9 @@ class RoomSeats extends BaseModel
     function mergeJson()
     {
         $data = [];
-        if ($this->user) {
-            $data = ['sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-                'nickname' => $this->user->nickname];
+        $user = $this->user;
+        if ($user) {
+            $data = ['sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname];
         }
 
         return $data;

@@ -131,6 +131,20 @@ trait UserAttrs
         );
     }
 
+    function toRoomManagerJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'is_permanent' => $this->is_permanent, //是否为永久管理员
+            'deadline' => $this->deadline //管理员有效期截止时间
+        ];
+
+        return $data;
+    }
 
     public function isWebPlatform()
     {

@@ -1531,4 +1531,21 @@ class Users extends BaseModel
     {
         return VoiceCalls::userIsCalling($this->id);
     }
+
+    //是否为房间的管理员
+    function isManager($room)
+    {
+        $room->freshManagerNum();
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $room->generateManagerListKey();
+        return $db->zscore($manager_list_key, $this->id) > 0;
+    }
+
+    //是否为房间永久的管理员
+    function isPermanentManager($room)
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $room->generateManagerListKey();
+        return $db->zscore($manager_list_key, $this->id) - time() > 86400 * 300;
+    }
 }

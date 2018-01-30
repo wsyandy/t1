@@ -142,7 +142,7 @@
     app_id string 应用id
     channel_key string token 用于加入频道(互动直播)
     user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
-    user_role 用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
+    user_role 当前用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
     system_tips:[
         '内容1',
         '内容2',
@@ -159,6 +159,7 @@
             status: int 麦位状态，0 麦为被封，1 麦位正常
             microphone 麦克风状态 false/true 默认为true,
             rank 麦位排序, 1-8, 8个麦位
+            user_role 用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
         }
         ...
     ]		   
@@ -404,5 +405,90 @@
     channel_name: string 房间唯一标识, 频道名称
     lock boole加锁状态, true是加锁
        
+}
+```
+
+### 17 设置管理员
+
+> http-post ```/api/rooms/add_manager```
+
+##### 17.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|房间id
+|duration|管理时长|int|否|-1:永久,1:1小时,3:3小时,24:24小时
+|user_id|设为管理员的用户id|int|否|
+
+##### 17.2 回应参数说明
+```
+{
+    error_code
+    error_reason     
+}
+```
+
+### 18 删除管理员
+
+> http-post ```/api/rooms/delete_manager```
+
+##### 18.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|房间id
+|user_id|被删除管理员的用户id|int|否|
+
+##### 18.2 回应参数说明
+```
+{
+    error_code
+    error_reason     
+}
+```
+
+### 19 更新管理员信息
+
+> http-post ```/api/rooms/update_manager```
+
+##### 19.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|房间id
+|duration|添加时长|int|否|1:1小时,3:3小时,24:24小时
+|user_id|设为管理员的用户id|int|否|
+
+##### 19.2 回应参数说明
+```
+{
+    error_code
+    error_reason     
+}
+```
+
+### 20 管理员用户列表
+
+> http-get ```/api/rooms/managers```
+
+##### 20.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|房间id
+
+##### 20.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    users:[
+        {
+            id int 用户的ID
+            sex int 性别  0:女 1:男
+            avatar_url string 正常图像
+            avatar_small_url string 小尺寸图像
+            nickname string 昵称
+            is_permanent boolean 是否为永久管理员 true/false
+            deadline int 管理员管理时长的截止时间戳 1517319489
+        },
+        ...
+    ]     
 }
 ```
