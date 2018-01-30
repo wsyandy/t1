@@ -300,11 +300,6 @@ class PushSever extends BaseModel
         $online_key = "socket_push_online_token_" . $fd;
         $online_token = $hot_cache->get($online_key);
 
-        if (!$online_token) {
-            info("fd非法", $fd, $from_id);
-            return;
-        }
-
         $connect_info = $server->connection_info($fd);
 
         $server_port = fetch($connect_info, 'server_port');
@@ -313,6 +308,11 @@ class PushSever extends BaseModel
             return;
         }
 
+        if (!$online_token) {
+            info("fd非法", $fd, $from_id);
+            return;
+        }
+        
         $fd_key = "socket_push_fd_" . $online_token;
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $user_id = $hot_cache->get($fd_user_id_key);
