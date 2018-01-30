@@ -211,6 +211,10 @@ class PushSever extends BaseModel
             $user->current_room->bindOnlineToken($user);
         }
 
+        if ($user->current_room_seat) {
+            $user->current_room_seat->bindOnlineToken($user);
+        }
+
         $data = ['online_token' => $online_token, 'action' => 'create_token'];
         $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
     }
