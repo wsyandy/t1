@@ -1,0 +1,1 @@
+{% include 'admin/emoticon_images/form.volt' %}
