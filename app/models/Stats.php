@@ -822,7 +822,7 @@ class Stats extends BaseModel
         $create_payment_user = $this->data_hash['create_payment_user'];
 
         $rate = 0;
-        if ($create_payment_user) {
+        if ($order_user) {
             $rate = sprintf("%0.2f", $create_payment_user * 100 / $order_user);
         }
         $this->data_hash['order_payment_rate'] = $rate;
@@ -837,10 +837,12 @@ class Stats extends BaseModel
         $create_payment_user = $this->data_hash['new_create_payment_user'];
 
         $rate = 0;
-        if ($create_payment_user) {
+        if ($order_user) {
             $rate = sprintf("%0.2f", $create_payment_user * 100 / $order_user);
+
         }
         $this->data_hash['new_order_payment_rate'] = $rate;
+
     }
 
     /**
@@ -852,7 +854,7 @@ class Stats extends BaseModel
         $payment_success_user = $this->data_hash['payment_success_user'];
 
         $rate = 0;
-        if ($payment_success_user) {
+        if ($create_payment_user) {
             $rate = sprintf("%0.2f", $payment_success_user * 100 / $create_payment_user);
         }
         $this->data_hash['payment_success_rate'] = $rate;
@@ -867,13 +869,12 @@ class Stats extends BaseModel
         $new_payment_success_user = $this->data_hash['new_payment_success_user'];
 
         $rate = 0;
-        if ($new_payment_success_user) {
+        if ($new_create_payment_user) {
             $rate = sprintf("%0.2f", $new_payment_success_user * 100 / $new_create_payment_user);
         }
         $this->data_hash['new_payment_success_rate'] = $rate;
     }
-
-
+    
     /**
      * 微信用户统计
      * @param $product_channel_id
