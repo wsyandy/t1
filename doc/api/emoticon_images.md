@@ -22,7 +22,7 @@
     emoticon_images: [
         {
             id: int 
-            name: staring 表情名称
+            name: string 表情名称
             code:  string 存放在客户端图片的标识，
                 猜拳:mora  骰子:dice  老虎机:slot_machine  抽麦序:pumping_number 存放在客户端
             duration: int 持续时间

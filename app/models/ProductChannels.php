@@ -431,4 +431,12 @@ class ProductChannels extends BaseModel
             ]
         );
     }
+
+    function getSystemNews()
+    {
+        if (!$this->system_tips) {
+             return [];
+        }
+        return [$this->system_tips];
+    }
 }
