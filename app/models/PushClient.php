@@ -89,8 +89,7 @@ class PushClient
         }
 
         info("connect success");
-        $this->socket->send($this->createHeader());
-        return;
+        return $this->socket->send($this->createHeader());
     }
 
     public function getSocket()
