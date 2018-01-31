@@ -71,16 +71,25 @@ class EmoticonImages extends BaseModel
     //是否存在 code 或 rank 相同的表情
     function isRepeating()
     {
-        if (!$this->rank || !$this->code) {
+        if (!$this->code && !$this->rank) {
             return;
         }
         $cond = [];
-        $cond['conditions'] = "(code = :code: or rank = :rank:)  and id != :id:";
-        $cond['bind'] = [
-            'id' => $this->id,
-            'rank' => $this->rank,
-            'code' => $this->code
-        ];
+        $bind = [];
+        $or = '';
+        if ($this->code) {
+            $cond['conditions'] = "code = :code: ";
+            $bind['code'] = $this->code;
+            $or = 'or';
+        } else if ($this->rank) {
+            $cond['conditions'] .= $or . "code = :code: ";
+            $bind['rank'] = $this->rank;
+        }
+
+        $cond['conditions'] = '(' . $cond['conditions'] . ')' . " and id != :id: ";
+        $bind['id'] = $this->id;
+        $cond['bind'] = $bind;
+
         return self::findFirst($cond);
     }
 
