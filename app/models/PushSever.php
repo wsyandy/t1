@@ -151,7 +151,7 @@ class PushSever extends BaseModel
 
         try {
             //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
-            $client = new PushClient($ip, $this->websocket_listen_server_port, 0.5);
+            $client = new PushClient($ip, $this->websocket_listen_server_port, 2);
             if (!$client->connect()) {
                 info("connect fail");
             }
