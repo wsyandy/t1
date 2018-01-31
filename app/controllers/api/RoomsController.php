@@ -412,6 +412,14 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '权限不足');
         }
 
+        if ($this->otherUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不能设置自己为管理员');
+        }
+
+        if ($this->otherUser()->isManager($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户已经是管理员');
+        }
+
         if ($room->manager_num >= 2) {
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
