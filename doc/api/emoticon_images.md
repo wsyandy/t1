@@ -23,7 +23,8 @@
         {
             id:  1
             name: 表情名称
-            code: 存放在客户端图片的标识
+            code: 存放在客户端图片的标识，
+                猜拳:mora 骰子:dice 老虎机:slot_machine 抽麦序:pumping_number 存放在客户端
             duration: '持续时间'
             image_url: 'https://emoticon_images/image'
             image_small_url: 'https://emoticon_images/small'

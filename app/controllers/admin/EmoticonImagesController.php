@@ -51,8 +51,8 @@ class EmoticonImagesController extends BaseController
         if ($emoticon_image->isRepeating()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '存在重复的rank或code');
         }
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $emoticon_image);
         if ($emoticon_image->update()) {
-            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $emoticon_image);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('emoticon_image' => $emoticon_image->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');
