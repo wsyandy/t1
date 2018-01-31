@@ -88,8 +88,14 @@ class PushClient
             return false;
         }
 
-        info("connect success");
-        return $this->socket->send($this->createHeader());
+
+        if ($this->socket->send($this->createHeader())) {
+            info("connect success");
+        } else {
+            info("connect false");
+        }
+
+        return;
     }
 
     public function getSocket()
