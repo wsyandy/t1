@@ -421,7 +421,10 @@ class Rooms extends BaseModel
         $total_manager_key = self::generateTotalManagerKey();
         $time = $duration * 3600;
         $db->zincrby($manager_list_key, $time, $user_id);
-        $db->zincrby($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
+        $room_manager_key = $this->generateRoomManagerKey($user_id);
+        if ($db->zscore($total_manager_key, $room_manager_key)) {
+            $db->zincrby($total_manager_key, $time, $room_manager_key);
+        }
     }
 
     function freshManagerNum()

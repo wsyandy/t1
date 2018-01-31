@@ -171,7 +171,8 @@ class RoomsController extends BaseController
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
-        $res['system_tips'] = ["官方严厉打击低俗色情内容"];
+        $system_tips = $this->currentProductChannel()->system_tips;
+        $res['system_tips'] = [$system_tips];
         $res['user_role'] = $this->currentUser()->user_role;
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
