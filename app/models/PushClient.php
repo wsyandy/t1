@@ -84,18 +84,10 @@ class PushClient
     {
         $this->socket = new \swoole_client(SWOOLE_SOCK_TCP);
         if (!$this->socket->connect($this->host, $this->port)) {
-            info("connect false");
             return false;
         }
-
-
-        if ($this->socket->send($this->createHeader())) {
-            info("connect success");
-        } else {
-            info("connect false");
-        }
-
-        return;
+        $this->socket->send($this->createHeader());
+        return $this->recv();
     }
 
     public function getSocket()
@@ -122,7 +114,7 @@ class PushClient
     {
         $data = $this->socket->recv();
         if ($data === false) {
-            info("Error: {$this->socket->errMsg}");
+            echo "Error: {$this->socket->errMsg}";
             return false;
         }
         $this->buffer .= $data;
