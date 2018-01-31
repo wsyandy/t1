@@ -145,12 +145,12 @@
 
         var payment_success_total = parseFloat($("#payment_success_total .total").eq(1).html());
         if (payment_success_user > 0) {
-            $("#arpu .total").html(Math.ceil(payment_success_total * 100 / payment_success_user));
+            $("#arpu .total").html(Math.ceil(payment_success_total * 100 / payment_success_user) / 100);
         }
 
         var new_payment_success_total = parseFloat($("#new_payment_success_total .total").eq(1).html());
         if (new_payment_success_user > 0) {
-            $("#new_arpu .total").html(Math.ceil(new_payment_success_total * 100 / new_payment_success_user));
+            $("#new_arpu .total").html(Math.ceil(new_payment_success_total * 100 / new_payment_success_user) / 100);
         }
 
     });
