@@ -499,6 +499,6 @@ class RoomsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 20);
         $users = $room->findManagers($page, $per_page);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRoomManagerJson'));
     }
 }
