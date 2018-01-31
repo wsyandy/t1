@@ -373,6 +373,10 @@ class Rooms extends BaseModel
         return "room_id{$this->id}_user_id{$user_id}";
     }
 
+    static function generateUserManagerListKey($user_id)
+    {
+        return "user_manager_room_list_id" . $user_id;
+    }
 
     function getManagerNum()
     {
@@ -388,6 +392,7 @@ class Rooms extends BaseModel
         $db = Rooms::getRoomDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = time() + $duration * 3600;
 
         //-1 为永久
@@ -398,6 +403,7 @@ class Rooms extends BaseModel
         }
 
         $db->zadd($manager_list_key, $time, $user_id);
+        $db->zadd($user_manager_list_key, $time, $this->id);
     }
 
     function deleteManager($user_id)
@@ -406,11 +412,15 @@ class Rooms extends BaseModel
         $db = Rooms::getRoomDb();;
         $key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $db->zrem($key, $user_id);
+        $db->zrem($user_manager_list_key, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zrem($total_manager_key, $room_manager_key);
         }
+
+
     }
 
     function updateManager($user_id, $duration)
@@ -419,8 +429,10 @@ class Rooms extends BaseModel
         $db = Rooms::getRoomDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = $duration * 3600;
         $db->zincrby($manager_list_key, $time, $user_id);
+        $db->zincrby($user_manager_list_key, $time, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zincrby($total_manager_key, $time, $room_manager_key);
