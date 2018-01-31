@@ -799,12 +799,21 @@ class MeiTask extends \Phalcon\Cli\Task
         while (true) {
             $user = new Users();
             $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
             $user->save();
 
-            debug($user->id);
+            echoLine($user->id);
             if ($user->id >= 10000) {
                 break;
             }
+        }
+
+        $users = Users::findForeach(['conditions' => 'user_type = ' . USER_TYPE_SILENT]);
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+            $user->user_status = USER_STATUS_OFF;
+            $user->update();
         }
     }
 }
