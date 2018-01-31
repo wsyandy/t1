@@ -156,7 +156,7 @@ class PushSever extends BaseModel
             $payload = ['action' => $action, 'payload' => $payload];
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
-            $client->disconnect();
+            $client->close();
             return true;
         } catch (\Exception $e) {
             info("Exce", $action, $ip, $payload, $e->getMessage());
