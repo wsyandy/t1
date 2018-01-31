@@ -157,7 +157,7 @@ class PushSever extends BaseModel
             $client->close();
             return true;
         } catch (\Exception $e) {
-            info("Exce", $e->getMessage(), $action, $payload);
+            info("Exce", $action, $ip, $payload, $e->getMessage());
         }
 
         return false;
@@ -269,7 +269,7 @@ class PushSever extends BaseModel
                     }
                 }
             } catch (\Exception $e) {
-                info("Exce", $e->getMessage(), $action, $payload);
+                info("Exce", $action, $payload, $e->getMessage());
             }
         } else {
             $sign = fetch($data, 'sign');
