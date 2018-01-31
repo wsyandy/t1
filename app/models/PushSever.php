@@ -146,7 +146,7 @@ class PushSever extends BaseModel
 
         try {
             //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
-            $client = new PushClient($ip, $this->websocket_listen_server_port, -1);
+            $client = new PushClient($ip, $this->websocket_listen_server_port, 20);
             if (!$client->connect()) {
                 info("Exce connect fail");
                 return false;
@@ -177,6 +177,7 @@ class PushSever extends BaseModel
 
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
+            $server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
             return;
         }
 
