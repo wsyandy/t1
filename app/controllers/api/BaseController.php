@@ -36,7 +36,7 @@ class BaseController extends ApplicationController
         'followers' => ['create', 'destroy'],
         'friends' => ['create', 'destroy', 'agree'],
         'users' => ['other_detail'],
-        'rooms' => ['open_user_chat', 'close_user_chat', 'kicking'],
+        'rooms' => ['open_user_chat', 'close_user_chat', 'kicking', 'add_manager', 'delete_manager', 'update_manager'],
     ];
 
     static $SKIP_USER_INFO_ACTIONS = [
@@ -300,7 +300,7 @@ class BaseController extends ApplicationController
     {
         $sid = $this->context('sid');
         if (isBlank($sid) || preg_match('/^\d+s/', $sid) || preg_match('/^\d+d\./', $sid)) {
-            if(!$this->currentUserId() || $this->currentUserId() && $this->currentUser()){
+            if (!$this->currentUserId() || $this->currentUserId() && $this->currentUser()) {
                 return null;
             }
         }
