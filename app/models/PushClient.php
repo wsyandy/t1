@@ -90,7 +90,7 @@ class PushClient
      */
     public function connect()
     {
-        $this->socket = new \swoole_client(SWOOLE_SOCK_TCP);
+        $this->socket = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
         if (!$this->socket->connect($this->host, $this->port, $this->timeout)) {
             return false;
         }
