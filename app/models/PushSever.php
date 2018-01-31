@@ -152,6 +152,7 @@ class PushSever extends BaseModel
         try {
             //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
             $client = new PushClient($ip, $this->websocket_listen_server_port);
+            $client->connect();
             $payload = ['action' => $action, 'payload' => $payload];
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
