@@ -477,7 +477,7 @@
 {
     error_code
     error_reason
-    users:[
+    managers:[
         {
             id int 用户的ID
             sex int 性别  0:女 1:男
