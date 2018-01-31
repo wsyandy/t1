@@ -496,9 +496,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '房间信息错误');
         }
 
-        $page = $this->params('page');
-        $per_page = $this->params('per_page', 20);
-        $users = $room->findManagers($page, $per_page);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRoomManagerJson'));
+        $managers = $room->findManagers();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['managers' => $managers]);
     }
 }

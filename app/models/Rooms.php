@@ -55,8 +55,9 @@ class Rooms extends BaseModel
         }
 
         $user = $this->user;
-        return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
-            'nickname' => $user->nickname, 'age' => $user->age, 'monologue' => $user->monologue, 'room_seats' => $room_seat_datas];
+        return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
+            'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
+            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers()];
     }
 
     function toBasicJson()
@@ -455,19 +456,21 @@ class Rooms extends BaseModel
         }
     }
 
-    function findManagers($page, $per_page)
+    function findManagers()
     {
         $this->freshManagerNum();
         $db = Rooms::getRoomDb();
         $manager_list_key = $this->generateManagerListKey();
-        $total_entries = $db->zcard($manager_list_key);
-        $offset = $per_page * ($page - 1);
-        $user_ids = $db->zrevrange($manager_list_key, $offset, $offset + $per_page - 1);
+        $user_ids = $db->zrevrange($manager_list_key, 0, -1);
         $users = Users::findByIds($user_ids);
         $users = $this->initRoomManagerInfo($users);
-        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
-        $pagination->clazz = 'Users';
-        return $pagination;
+        $managers = [];
+
+        foreach ($users as $user) {
+            $managers[] = $user->toRoomManagerJson();
+        }
+
+        return $managers;
     }
 
     function initRoomManagerInfo($users)
