@@ -157,7 +157,7 @@ class PushSever extends BaseModel
             $client->close();
             return true;
         } catch (\Exception $e) {
-            info("Exce", $e->getMessage());
+            info("Exce", $e->getMessage(), $action, $payload);
         }
 
         return false;
@@ -248,23 +248,28 @@ class PushSever extends BaseModel
         $data = json_decode($data, true);
 
         if ($this->websocket_listen_server_port == $server_port) {
+
             info("server_to_server", $data);
             $action = fetch($data, 'action');
             $payload = fetch($data, 'payload');
 
-            if ('shutdown' == $action) {
-                $server->shutdown();
-            } elseif ('push' == $action) {
-                $receiver_fd = fetch($payload, 'fd');
-                $body = fetch($payload, 'body');
-                info($receiver_fd, $body);
-                if ($receiver_fd) {
-                    if (!$server->exist($receiver_fd)) {
-                        info($receiver_fd, "Exce not exist");
-                        return;
+            try {
+                if ('shutdown' == $action) {
+                    $server->shutdown();
+                } elseif ('push' == $action) {
+                    $receiver_fd = fetch($payload, 'fd');
+                    $body = fetch($payload, 'body');
+                    info($receiver_fd, $body);
+                    if ($receiver_fd) {
+                        if (!$server->exist($receiver_fd)) {
+                            info($receiver_fd, "Exce not exist");
+                            return;
+                        }
+                        $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
                     }
-                    $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
                 }
+            } catch (\Exception $e) {
+                info("Exce", $e->getMessage(), $action, $payload);
             }
         } else {
             $sign = fetch($data, 'sign');
