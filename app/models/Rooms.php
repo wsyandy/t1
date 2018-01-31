@@ -287,7 +287,7 @@ class Rooms extends BaseModel
         $users = Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            if ($user->isisManager($this) && USER_ROLE_MANAGER != $user->user_role) {
+            if ($user->isManager($this) && USER_ROLE_MANAGER != $user->user_role) {
                 $user->user_role = USER_ROLE_MANAGER;
                 $user->update();
             }
