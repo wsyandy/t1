@@ -71,6 +71,9 @@ class EmoticonImages extends BaseModel
     //是否存在 code 或 rank 相同的表情
     function isRepeating()
     {
+        if (!$this->rank || !$this->code) {
+            return;
+        }
         $cond = [];
         $cond['conditions'] = "(code = :code: or rank = :rank:)  and id != :id:";
         $cond['bind'] = [
