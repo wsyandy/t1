@@ -92,26 +92,65 @@
 
 
         var register_num = parseFloat($("#register_num .total").eq(1).html());
-        var device_active_num = parseFloat($("#device_active_num .total").eq(1).html());
-        var subscribe_num = parseFloat($("#subscribe_num .total").eq(1).html());
-        if (subscribe_num + device_active_num > 0) {
-            $("#register_rate .total").html(Math.ceil(register_num * 100 / (subscribe_num + device_active_num)));
+        var total_active_num = parseFloat($("#total_active_num .total").eq(1).html());
+        if (total_active_num > 0) {
+            $("#register_rate .total").html(Math.ceil(register_num * 100 / total_active_num));
         }
 
         var create_order_user = parseFloat($("#create_order_user .total").eq(1).html());
         var create_order_num = parseFloat($("#create_order_num .total").eq(1).html());
-        $("#create_order_average .total").html(Math.ceil(create_order_num * 100 / create_order_user) / 100);
-
-        var create_order_product_user = parseFloat($("#create_order_product_user .total").eq(1).html());
-        $("#create_order_product_average .total").html(Math.ceil(create_order_product_user * 100 / create_order_user) / 100);
-
-        if (register_num > 0) {
-            $("#new_create_order_rate .total").html(Math.ceil(new_create_order_user * 100 / register_num));
+        if(create_order_user > 0){
+            $("#create_order_average .total").html(Math.ceil(create_order_num * 100 / create_order_user) / 100);
+        }
+        var new_create_order_user = parseFloat($("#new_create_order_user .total").eq(1).html());
+        var new_create_order_num = parseFloat($("#new_create_order_num .total").eq(1).html());
+        if(new_create_order_user > 0){
+            $("#new_create_order_average .total").html(Math.ceil(new_create_order_num * 100 / new_create_order_user) / 100);
         }
 
-        var active_user_num = parseFloat($("#active_user_num .total").eq(1).html());
-        if (active_user_num) {
-            $("#create_order_rate .total").html(Math.ceil(create_order_user * 100 / active_user_num));
+        var create_payment_user = parseFloat($("#create_payment_user .total").eq(1).html());
+        var create_payment_num = parseFloat($("#create_payment_num .total").eq(1).html());
+        if(create_payment_user > 0){
+            $("#create_payment_average .total").html(Math.ceil(create_payment_num * 100 / create_payment_user) / 100);
+        }
+        var new_create_payment_user = parseFloat($("#new_create_payment_user .total").eq(1).html());
+        var new_create_payment_num = parseFloat($("#new_create_payment_num .total").eq(1).html());
+        if(new_create_payment_user > 0){
+            $("#new_create_payment_average .total").html(Math.ceil(new_create_payment_num * 100 / new_create_payment_user) / 100);
+        }
+
+        var payment_success_user = parseFloat($("#payment_success_user .total").eq(1).html());
+        var payment_success_num = parseFloat($("#payment_success_num .total").eq(1).html());
+        if(payment_success_user > 0){
+            $("#payment_success_average .total").html(Math.ceil(payment_success_num * 100 / payment_success_user) / 100);
+        }
+        var new_payment_success_user = parseFloat($("#new_payment_success_user .total").eq(1).html());
+        var new_payment_success_num = parseFloat($("#new_payment_success_num .total").eq(1).html());
+        if(new_payment_success_user > 0){
+            $("#new_payment_success_average .total").html(Math.ceil(new_payment_success_num * 100 / new_payment_success_user) / 100);
+        }
+
+        if (create_order_user > 0) {
+            $("#order_payment_rate .total").html(Math.ceil(create_payment_user * 100 / create_order_user));
+        }
+        if (new_create_order_user > 0) {
+            $("#new_order_payment_rate .total").html(Math.ceil(new_create_payment_user * 100 / new_create_order_user));
+        }
+        if (create_payment_user > 0) {
+            $("#payment_success_rate .total").html(Math.ceil(payment_success_user * 100 / create_payment_user));
+        }
+        if (new_create_payment_user > 0) {
+            $("#new_payment_success_rate .total").html(Math.ceil(new_payment_success_user * 100 / new_create_payment_user));
+        }
+
+        var payment_success_total = parseFloat($("#payment_success_total .total").eq(1).html());
+        if (payment_success_user > 0) {
+            $("#arpu .total").html(Math.ceil(payment_success_total * 100 / payment_success_user));
+        }
+
+        var new_payment_success_total = parseFloat($("#new_payment_success_total .total").eq(1).html());
+        if (new_payment_success_user > 0) {
+            $("#new_arpu .total").html(Math.ceil(new_payment_success_total * 100 / new_payment_success_user));
         }
 
     });
