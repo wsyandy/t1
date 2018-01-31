@@ -87,7 +87,7 @@ class PushClient
             return false;
         }
         $this->socket->send($this->createHeader());
-        return $this->recv();
+        return;
     }
 
     public function getSocket()
