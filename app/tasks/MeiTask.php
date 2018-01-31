@@ -793,4 +793,18 @@ class MeiTask extends \Phalcon\Cli\Task
         $key = "test_zadd_incr";
         echoLine($db->zrangebyscore($key, '-inf', 100000));
     }
+
+    function test54Action()
+    {
+        while (true) {
+            $user = new Users();
+            $user->user_type = USER_TYPE_SILENT;
+            $user->save();
+
+            debug($user->id);
+            if ($user->id >= 10000) {
+                break;
+            }
+        }
+    }
 }
