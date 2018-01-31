@@ -28,7 +28,7 @@ class EmoticonImagesController extends BaseController
         $emoticon_image = new \EmoticonImages();
         $this->assign($emoticon_image, 'emoticon_image');
         if ($emoticon_image->isRepeating()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '存在重复的rank或code');
+            return $this->renderJSON(ERROR_CODE_FAIL, '排序或code错误');
         }
         if ($emoticon_image->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $emoticon_image);
@@ -49,7 +49,7 @@ class EmoticonImagesController extends BaseController
         $emoticon_image = \EmoticonImages::findById($this->params('id'));
         $this->assign($emoticon_image, 'emoticon_image');
         if ($emoticon_image->isRepeating()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '存在重复的rank或code');
+            return $this->renderJSON(ERROR_CODE_FAIL, '排序或code错误');
         }
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $emoticon_image);
         if ($emoticon_image->update()) {
