@@ -21,11 +21,11 @@
     total_entries:   
     emoticon_images: [
         {
-            id:  1
-            name: 表情名称
-            code: 存放在客户端图片的标识，
-                猜拳:mora 骰子:dice 老虎机:slot_machine 抽麦序:pumping_number 存放在客户端
-            duration: '持续时间'
+            id: int 
+            name: staring 表情名称
+            code:  string 存放在客户端图片的标识，
+                猜拳:mora  骰子:dice  老虎机:slot_machine  抽麦序:pumping_number 存放在客户端
+            duration: int 持续时间
             image_url: 'https://emoticon_images/image'
             image_small_url: 'https://emoticon_images/small'
             dynamic_image_url: '动态图'   
