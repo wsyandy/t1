@@ -161,6 +161,10 @@ class Rooms extends BaseModel
             $user->user_role = USER_ROLE_BROADCASTER; // 主播
         }
 
+        if ($user->isManager($this)) {
+            $user->user_role = USER_ROLE_MANAGER; //管理员
+        }
+
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
@@ -458,7 +462,7 @@ class Rooms extends BaseModel
 
         foreach ($users as $user) {
 
-            $is_permanent= true;
+            $is_permanent = true;
             $deadline = 0;
 
             if (!$user->isPermanentManager($this)) {

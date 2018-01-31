@@ -1548,4 +1548,18 @@ class Users extends BaseModel
         $manager_list_key = $room->generateManagerListKey();
         return $db->zscore($manager_list_key, $this->id) - time() > 86400 * 300;
     }
+
+    function canManagerRoom($room)
+    {
+        return $this->isRoomHost($room) || $this->isManager($room);
+    }
+
+    function canKickingUser($room, $other_user)
+    {
+        if (!$this->canManagerRoom($room)) {
+            return false;
+        }
+
+        return $this->user_role < $other_user->user_role;
+    }
 }

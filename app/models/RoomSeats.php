@@ -263,9 +263,11 @@ class RoomSeats extends BaseModel
             return [ERROR_CODE_FAIL, '麦位已存在用户'];
         }
 
+        $room = $this->room;
+
         if ($other_user) {
 
-            if (!$user->isRoomHost($this->room)) {
+            if (!$user->canManagerRoom($room)) {
                 return [ERROR_CODE_FAIL, '您无此权限'];
             }
 
@@ -275,7 +277,7 @@ class RoomSeats extends BaseModel
             }
 
             //当前用户不在房间
-            if (!$other_user->isInRoom($this->room)) {
+            if (!$other_user->isInRoom($room)) {
                 return [ERROR_CODE_FAIL, '用户不在房间'];
             }
 
@@ -287,7 +289,7 @@ class RoomSeats extends BaseModel
         } else {
 
             //当前用户不在房间
-            if (!$user->isInRoom($this->room)) {
+            if (!$user->isInRoom($room)) {
                 return [ERROR_CODE_FAIL, '用户不在房间'];
             }
 
@@ -296,7 +298,7 @@ class RoomSeats extends BaseModel
             }
 
             //房主不能上自己的麦位
-            if ($this->room->user_id === $user->id) {
+            if ($room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
             }
         }

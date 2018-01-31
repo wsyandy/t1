@@ -133,6 +133,10 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
         $room->updateRoom($this->params());
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
@@ -311,20 +315,20 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
-        $other_user_id = $this->otherUserId();
-        $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
-        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
-        $other_user = $this->otherUser(true);
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
         }
 
-        if (!$this->currentUser()->isRoomHost($room)) {
+        if (!$this->currentUser()->canKickingUser($room, $this->otherUser())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
         }
 
+        $other_user_id = $this->otherUserId();
+        $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+        $other_user = $this->otherUser(true);
         $room->kickingRoom($other_user);
         unlock($room_seat_user_lock);
 
