@@ -12,6 +12,17 @@ class UsersController extends BaseController
         $total_page = 1;
         $total_entries = $per_page * $total_page;
 
+        $user_id = $this->params("user[id_eq]");
+        $mobile = $this->params("user[mobile_eq]");
+
+        if (!$user_id && !$mobile) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
+            } else {
+                $cond['conditions'] = "user_type = " . USER_TYPE_ACTIVE;
+            }
+        }
+
         $cond['order'] = 'id desc';
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
@@ -162,21 +173,21 @@ class UsersController extends BaseController
      */
     function sendMessageAction()
     {
-         $user = \Users::findById($this->params('id'));
-         if ($this->request->isPost()) {
-             $content = $this->params('content');
-             $content_type = CHAT_CONTENT_TYPE_TEXT;
-             $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
-             if ($chat) {
-                 return $this->renderJSON(
-                     ERROR_CODE_SUCCESS, '发送成功',
-                     array('chat' => $chat->toJson())
-                 );
-             } else {
-                 return $this->renderJSON(ERROR_CODE_FAIL, '发送失败');
-             }
-         }
-         $this->view->user = $user;
+        $user = \Users::findById($this->params('id'));
+        if ($this->request->isPost()) {
+            $content = $this->params('content');
+            $content_type = CHAT_CONTENT_TYPE_TEXT;
+            $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
+            if ($chat) {
+                return $this->renderJSON(
+                    ERROR_CODE_SUCCESS, '发送成功',
+                    array('chat' => $chat->toJson())
+                );
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '发送失败');
+            }
+        }
+        $this->view->user = $user;
     }
 
     /**
