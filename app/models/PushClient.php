@@ -84,8 +84,11 @@ class PushClient
     {
         $this->socket = new \swoole_client(SWOOLE_SOCK_TCP);
         if (!$this->socket->connect($this->host, $this->port)) {
+            info("connect false");
             return false;
         }
+
+        info("connect success");
         $this->socket->send($this->createHeader());
         return;
     }
