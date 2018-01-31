@@ -125,6 +125,7 @@ class PushClient
             echo "Error: {$this->socket->errMsg}";
             return false;
         }
+        info($data);
         $this->buffer .= $data;
         $recv_data = $this->parseData($this->buffer);
         if ($recv_data) {
