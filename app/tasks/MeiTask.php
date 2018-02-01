@@ -815,5 +815,9 @@ class MeiTask extends \Phalcon\Cli\Task
             $user->user_status = USER_STATUS_OFF;
             $user->update();
         }
+
+        $key = 'room_manager_list_id5';
+        $db = Users::getUserDb();
+        echoLine($db->zrange($key, 0, -1));
     }
 }

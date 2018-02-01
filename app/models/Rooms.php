@@ -414,7 +414,7 @@ class Rooms extends BaseModel
         }
 
         if (isDevelopmentEnv()) {
-            $time = 2 * 60;
+            $time = time() + 2 * 60;
         }
 
         $db->zadd($manager_list_key, $time, $user_id);
