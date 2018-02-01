@@ -150,7 +150,9 @@ class RoomSeats extends BaseModel
             $this->user_id = $other_user->id;
             $other_user->current_room_id = $this->room_id;
             $other_user->current_room_seat_id = $this->id;
-            $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            if ($other_user->user_role > USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            }
             $other_user->update();
             $this->room->updateUserRank($other_user);
             $object = $other_user;
@@ -169,7 +171,9 @@ class RoomSeats extends BaseModel
 
             $user->current_room_id = $this->room_id;
             $user->current_room_seat_id = $this->id;
-            $user->user_role = USER_ROLE_BROADCASTER;
+            if ($other_user->user_role > USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            }
             $user->update();
             $this->room->updateUserRank($user);
             $object = $user;
@@ -189,7 +193,9 @@ class RoomSeats extends BaseModel
         if ($other_user) {
             info($user->sid, $other_user->sid, $this->id, $this->room_id);
             $other_user->current_room_seat_id = 0;
-            $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            if ($other_user->user_role == USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            }
             $other_user->update();
             $this->room->updateUserRank($other_user, false);
             $object = $other_user;
@@ -197,7 +203,9 @@ class RoomSeats extends BaseModel
             info($user->sid, $this->id, $this->room_id);
             // 自己下麦
             $user->current_room_seat_id = 0;
-            $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            if ($other_user->user_role == USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            }
             $user->update();
             $this->room->updateUserRank($user, false);
             $object = $user;
