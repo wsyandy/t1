@@ -481,8 +481,11 @@ class RoomsController extends BaseController
         }
 
         $room->updateManager($this->otherUserId(), $duration);
+        $res = $this->otherUser()->toRoomManagerJson();
+        $res['user_id'] = $this->otherUserId();
+        unset($res['id']);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, $res);
     }
 
     function managersAction()

@@ -34,6 +34,6 @@ return new \Phalcon\Config([
     'websocket_listen_client_port' => env('websocket_listen_client_port', 9509),
     'websocket_listen_server_ip' => env('websocket_listen_server_ip', "0.0.0.0"),
     'websocket_listen_server_port' => env('websocket_listen_server_port', 9508),
-    'websocket_worker_num' => env('websocket_worker_num', 64),
-    'websocket_max_request' => env('websocket_max_request', 10000),
+    'websocket_worker_num' => env('websocket_worker_num', 4),
+    'websocket_max_request' => env('websocket_max_request', 100),
 ]);
