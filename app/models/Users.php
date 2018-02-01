@@ -1212,10 +1212,11 @@ class Users extends BaseModel
         if (!$user_db->zscore($other_total_key, $this->id)) {
         }
 
-        $user_db->zadd($add_key, time(), $other_user->id);
-        $user_db->zadd($added_key, time(), $this->id);
-        $user_db->zadd($add_total_key, time(), $other_user->id);
-        $user_db->zadd($other_total_key, time(), $this->id);
+        $time = time();
+        $user_db->zadd($add_key, $time, $other_user->id);
+        $user_db->zadd($added_key, $time, $this->id);
+        $user_db->zadd($add_total_key, $time, $other_user->id);
+        $user_db->zadd($other_total_key, $time, $this->id);
     }
 
     //删除好友
@@ -1316,17 +1317,18 @@ class Users extends BaseModel
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
         $add_key = 'add_friend_list_user_id_' . $other_user->id;
         $added_key = 'added_friend_list_user_id_' . $this->id;
-
         $user_db = Users::getUserDb();
+
+        $time = time();
 
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
-            $user_db->zadd($other_friend_list_key, time(), $this->id);
+            $user_db->zadd($other_friend_list_key, $time, $this->id);
         }
 
         if ($user_db->zscore($added_key, $other_user->id)) {
             $user_db->zrem($added_key, $other_user->id);
-            $user_db->zadd($friend_list_key, time(), $other_user->id);
+            $user_db->zadd($friend_list_key, $time, $other_user->id);
         }
     }
 
@@ -1337,7 +1339,7 @@ class Users extends BaseModel
         $key = 'friend_total_list_user_id_' . $this->id;
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
         $user_db->zclear($key);
-        $user_db->del($user_introduce_key);
+        $user_db->hclear($user_introduce_key);
     }
 
     function friendNum()

@@ -818,6 +818,44 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $key = 'room_manager_list_id5';
         $db = Users::getUserDb();
-        echoLine($db->zrange($key, 0, -1));
+        echoLine($db->zrange($key, 0, -1, true));
+    }
+
+    function test55Action()
+    {
+        $orders = GiftOrders::findBy(['user_id' => 10028]);
+        echoLine(count($orders));
+
+        foreach ($orders as $order) {
+            $order->user_id = 66;
+            $order->save();
+        }
+
+        $orders = UserGifts::findBy(['user_id' => 10028]);
+        echoLine(count($orders));
+
+        foreach ($orders as $order) {
+            $order->user_id = 66;
+            $order->save();
+        }
+
+        $user = Users::findFirstById(10028);
+        $user->mobile = '1';
+        $user->save();
+    }
+
+    function test56Action()
+    {
+        $key = 'room_manager_hset';
+        $db = Users::getUserDb();
+        $db->hset($key, 1, "你好");
+        $db->hset($key, 2, "你好");
+        $db->hset($key, 3, "你好");
+        $db->hclear($key);
+        debug($db->hgetall($key));
+
+        $user = Users::findById(137);
+        $user->user_status = USER_STATUS_OFF;
+        $user->save();
     }
 }
