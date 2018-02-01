@@ -289,7 +289,7 @@ class PushClient
 
     function errMsg(){
         info($this->host, $this->socket->errCode);
-        return socket_strerror($this->socket->errCode);
+        return $this->socket->errCode;
     }
 
 }
