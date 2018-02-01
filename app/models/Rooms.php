@@ -413,6 +413,10 @@ class Rooms extends BaseModel
             $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
         }
 
+        if (isDevelopmentEnv()) {
+            $time = 2 * 60;
+        }
+
         $db->zadd($manager_list_key, $time, $user_id);
         $db->zadd($user_manager_list_key, $time, $this->id);
     }
