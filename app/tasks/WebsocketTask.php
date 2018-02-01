@@ -40,7 +40,7 @@ class WebsocketTask extends Phalcon\CLI\Task
             $pid = file_get_contents("{$log_dir}/pids/websocket/server.pid");
             $pid = intval(trim($pid));
             if (!$pid || @pcntl_getpriority($pid) === false) {
-                info('websocket process exited!');
+                info('websocket process not exited!');
                 file_put_contents("{$log_dir}/pids/websocket/server.pid", '');
                 return true;
             }

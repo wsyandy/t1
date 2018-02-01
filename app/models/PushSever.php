@@ -143,17 +143,13 @@ class PushSever extends BaseModel
     function send($action, $ip, $payload = [])
     {
         info($this->websocket_listen_server_port, $ip, $action, $payload);
-        $protocol = "ws";
-
-        if (isProduction()) {
-            $protocol = "wss";
-        }
 
         try {
             //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
             $client = new PushClient($ip, $this->websocket_listen_server_port, 1);
             if (!$client->connect()) {
-                info("connect fail");
+                info("Exce connect fail");
+                return false;
             }
             $payload = ['action' => $action, 'payload' => $payload];
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
@@ -181,6 +177,7 @@ class PushSever extends BaseModel
 
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
+            $server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
             return;
         }
 
