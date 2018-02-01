@@ -371,7 +371,8 @@ trait UserAttrs
     {
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('audience', $date);
-        return $db->zscore($key, $this->id);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
     }
 
     //主播时间
@@ -379,7 +380,8 @@ trait UserAttrs
     {
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('broadcaster', $date);
-        return $db->zscore($key, $this->id);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
     }
 
     //房主时间
@@ -387,6 +389,7 @@ trait UserAttrs
     {
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('host_broadcaster', $date);
-        return $db->zscore($key, $this->id);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
     }
 }
