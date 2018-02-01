@@ -132,6 +132,24 @@ class PushSever extends BaseModel
             $swoole_server->on('open', [$this, 'onOpen']);
             $swoole_server->on('message', [$this, 'onMessage']);
             $swoole_server->on('close', [$this, 'onClose']);
+            $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
+                $post = $request->post;
+                $action = fetch($post, 'action');
+
+                if ('push' == $action) {
+                    $payload = fetch($post, 'payload');
+                    $receiver_fd = fetch($payload, 'fd');
+                    $body = fetch($payload, 'body');
+                    info($receiver_fd, $body);
+                    if ($receiver_fd) {
+                        if (!$swoole_server->exist($receiver_fd)) {
+                            info($receiver_fd, "Exce not exist");
+                            return;
+                        }
+                        $swoole_server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+                    }
+                }
+            });
             $swoole_server->start();
             echo "[------------- start -------------]\n";
         } catch (\Exception $e) {
@@ -140,7 +158,7 @@ class PushSever extends BaseModel
     }
 
     //服务器内部通信
-    function send($action, $ip, $payload = [])
+    function send1($action, $ip, $payload = [])
     {
         info($this->websocket_listen_server_port, $ip, $action, $payload);
 
@@ -155,6 +173,21 @@ class PushSever extends BaseModel
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
             $client->close();
+            return true;
+        } catch (\Exception $e) {
+            info("Exce", $action, $ip, $payload, $e->getMessage());
+        }
+
+        return false;
+    }
+
+    function send($action, $ip, $payload = [])
+    {
+        info($this->websocket_listen_server_port, $ip, $action, $payload);
+
+        try {
+            $payload = ['action' => $action, 'payload' => $payload];
+            httpPost($ip . ":" . $this->websocket_listen_server_port, $payload);
             return true;
         } catch (\Exception $e) {
             info("Exce", $action, $ip, $payload, $e->getMessage());

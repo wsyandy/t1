@@ -858,4 +858,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->user_status = USER_STATUS_OFF;
         $user->save();
     }
+
+
+    function test57Action()
+    {
+        $push_server = new PushSever();
+        $push_server->send("push", '192.168.0.104', ['fd' => 12]);
+    }
 }
