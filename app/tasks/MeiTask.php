@@ -769,4 +769,93 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache->zincrby($connection_list, 1, $ip);
         echoLine($hot_cache->zscore($connection_list, $ip));
     }
+
+    function test51Action()
+    {
+        $db = Users::getUserDb();
+        $key = "test_zadd_incr";
+        $db->zadd($key, 1000, 1);
+
+        $num = $db->zcount($key, 1000, '+inf');
+        echoLine($num);
+    }
+
+    function test52Action()
+    {
+        $key = "room_id1_user_id1";
+        preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+        print_r($matches);
+    }
+
+    function test53Action()
+    {
+        $db = Users::getUserDb();
+        $key = "test_zadd_incr";
+        echoLine($db->zrangebyscore($key, '-inf', 100000));
+    }
+
+    function test54Action()
+    {
+        while (true) {
+            $user = new Users();
+            $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
+            $user->save();
+
+            echoLine($user->id);
+            if ($user->id >= 10000) {
+                break;
+            }
+        }
+
+        $users = Users::findForeach(['conditions' => 'user_type = ' . USER_TYPE_SILENT]);
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+            $user->user_status = USER_STATUS_OFF;
+            $user->update();
+        }
+
+        $key = 'room_manager_list_id5';
+        $db = Users::getUserDb();
+        echoLine($db->zrange($key, 0, -1, true));
+    }
+
+    function test55Action()
+    {
+        $orders = GiftOrders::findBy(['user_id' => 10028]);
+        echoLine(count($orders));
+
+        foreach ($orders as $order) {
+            $order->user_id = 66;
+            $order->save();
+        }
+
+        $orders = UserGifts::findBy(['user_id' => 10028]);
+        echoLine(count($orders));
+
+        foreach ($orders as $order) {
+            $order->user_id = 66;
+            $order->save();
+        }
+
+        $user = Users::findFirstById(10028);
+        $user->mobile = '1';
+        $user->save();
+    }
+
+    function test56Action()
+    {
+        $key = 'room_manager_hset';
+        $db = Users::getUserDb();
+        $db->hset($key, 1, "你好");
+        $db->hset($key, 2, "你好");
+        $db->hset($key, 3, "你好");
+        $db->hclear($key);
+        debug($db->hgetall($key));
+
+        $user = Users::findById(137);
+        $user->user_status = USER_STATUS_OFF;
+        $user->save();
+    }
 }

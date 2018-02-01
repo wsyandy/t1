@@ -54,8 +54,10 @@ class Rooms extends BaseModel
             $room_seat_datas[] = $room_seat->to_json;
         }
 
-        return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-            'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue, 'room_seats' => $room_seat_datas];
+        $user = $this->user;
+        return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
+            'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
+            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers()];
     }
 
     function toBasicJson()
@@ -160,6 +162,10 @@ class Rooms extends BaseModel
             $user->user_role = USER_ROLE_BROADCASTER; // 主播
         }
 
+        if ($user->isManager($this)) {
+            $user->user_role = USER_ROLE_MANAGER; //管理员
+        }
+
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
@@ -169,6 +175,7 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $user->user_role_at = time();
         $user->save();
         $this->bindOnlineToken($user);
         $this->addUser($user);
@@ -193,6 +200,7 @@ class Rooms extends BaseModel
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
         $user->user_role = USER_ROLE_NO;
+        $user->user_role_at = time();
         $user->save();
 
         // 房主
@@ -279,6 +287,14 @@ class Rooms extends BaseModel
 
         $user_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
         $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            if ($user->isManager($this) && USER_ROLE_MANAGER != $user->user_role) {
+                $user->user_role = USER_ROLE_MANAGER;
+                $user->update();
+            }
+        }
+
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 
@@ -346,4 +362,151 @@ class Rooms extends BaseModel
 
         return $hot_cache->get($key) > 0;
     }
+
+    static function getRoomDb()
+    {
+        $user_db = Users::getUserDb();
+        return $user_db;
+    }
+
+    function generateManagerListKey()
+    {
+        return "room_manager_list_id" . $this->id;
+    }
+
+    static function generateTotalManagerKey()
+    {
+        return "total_room_manager_list";
+    }
+
+    function generateRoomManagerKey($user_id)
+    {
+        return "room_id{$this->id}_user_id{$user_id}";
+    }
+
+    static function generateUserManagerListKey($user_id)
+    {
+        return "user_manager_room_list_id" . $user_id;
+    }
+
+    function getManagerNum()
+    {
+        $this->freshManagerNum();
+        $db = Rooms::getRoomDb();
+        $key = $this->generateManagerListKey();
+        return $db->zcard($key);
+    }
+
+    function addManager($user_id, $duration)
+    {
+        info($this->user->sid, $user_id, $this->id);
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
+        $time = time() + $duration * 3600;
+
+        //-1 为永久
+        if (-1 == $duration) {
+            $time = time() + 86400 * 10000;
+        } else {
+            $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
+        }
+
+        if (isDevelopmentEnv()) {
+            $time = time() + 2 * 60;
+        }
+
+        $db->zadd($manager_list_key, $time, $user_id);
+        $db->zadd($user_manager_list_key, $time, $this->id);
+    }
+
+    function deleteManager($user_id)
+    {
+        info($this->user->sid, $user_id, $this->id);
+        $db = Rooms::getRoomDb();;
+        $key = $this->generateManagerListKey();
+        $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
+        $db->zrem($key, $user_id);
+        $db->zrem($user_manager_list_key, $this->id);
+        $room_manager_key = $this->generateRoomManagerKey($user_id);
+        if ($db->zscore($total_manager_key, $room_manager_key)) {
+            $db->zrem($total_manager_key, $room_manager_key);
+        }
+
+
+    }
+
+    function updateManager($user_id, $duration)
+    {
+        info($this->user->sid, $user_id, $this->id);
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $total_manager_key = self::generateTotalManagerKey();
+        $user_manager_list_key = self::generateUserManagerListKey($user_id);
+        $time = $duration * 3600;
+        $db->zincrby($manager_list_key, $time, $user_id);
+        $db->zincrby($user_manager_list_key, $time, $this->id);
+        $room_manager_key = $this->generateRoomManagerKey($user_id);
+        if ($db->zscore($total_manager_key, $room_manager_key)) {
+            $db->zincrby($total_manager_key, $time, $room_manager_key);
+        }
+    }
+
+    function freshManagerNum()
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $manager_ids = $db->zrangebyscore($manager_list_key, '-inf', time());
+
+        if (count($manager_ids) < 1) {
+            return;
+        }
+
+        info($this->user->sid, $manager_ids, $this->id);
+        foreach ($manager_ids as $manager_id) {
+            $this->deleteManager($manager_id);
+        }
+    }
+
+    function findManagers()
+    {
+        $this->freshManagerNum();
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $user_ids = $db->zrevrange($manager_list_key, 0, -1);
+        $users = Users::findByIds($user_ids);
+        $users = $this->initRoomManagerInfo($users);
+        $managers = [];
+
+        foreach ($users as $user) {
+            $managers[] = $user->toRoomManagerJson();
+        }
+
+        return $managers;
+    }
+
+    function initRoomManagerInfo($users)
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+
+        foreach ($users as $user) {
+
+            $is_permanent = true;
+            $deadline = 0;
+
+            if (!$user->isPermanentManager($this)) {
+                $deadline = $db->zscore($manager_list_key, $user->id);
+                $is_permanent = false;
+            }
+
+            $user->deadline = $deadline;
+            $user->is_permanent = $is_permanent;
+        }
+
+        return $users;
+    }
+
 }

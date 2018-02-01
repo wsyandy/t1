@@ -131,6 +131,20 @@ trait UserAttrs
         );
     }
 
+    function toRoomManagerJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'nickname' => $this->nickname,
+            'is_permanent' => $this->is_permanent, //是否为永久管理员
+            'deadline' => $this->deadline //管理员有效期截止时间
+        ];
+
+        return $data;
+    }
 
     public function isWebPlatform()
     {
@@ -364,5 +378,32 @@ trait UserAttrs
         $user_online_key = "socket_user_online_user_id" . $this->id;
 
         return $hot_cache->get($user_online_key);
+    }
+
+    //旁听时间
+    function getAudienceTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('audience', $date);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
+    }
+
+    //主播时间
+    function getBroadcasterTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('broadcaster', $date);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
+    }
+
+    //房主时间
+    function getHostBroadcasterTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('host_broadcaster', $date);
+        $time = $db->zscore($key, $this->id);
+        return intval($time / 60);
     }
 }

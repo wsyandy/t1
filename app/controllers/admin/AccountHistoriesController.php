@@ -26,7 +26,9 @@ class AccountHistoriesController extends BaseController
         $user_id = $this->params('user_id');
         if ($this->request->isPost()) {
             $amount = intval($this->params('diamond'));
-            $opts = array('remark' => '系统赠送' . $amount . '钻石');
+            $operator = $this->currentOperator();
+            $remark = $operator->role_text .'：'. $operator->username . '赠送' . $amount . '钻石';
+            $opts = array('remark' => $remark);
             if ($amount > 0) {
                 \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, $amount, $opts);
             }

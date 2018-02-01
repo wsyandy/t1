@@ -44,9 +44,9 @@ class RoomSeats extends BaseModel
     function mergeJson()
     {
         $data = [];
-        if ($this->user) {
-            $data = ['sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-                'nickname' => $this->user->nickname];
+        $user = $this->user;
+        if ($user) {
+            $data = ['sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname];
         }
 
         return $data;
@@ -150,7 +150,10 @@ class RoomSeats extends BaseModel
             $this->user_id = $other_user->id;
             $other_user->current_room_id = $this->room_id;
             $other_user->current_room_seat_id = $this->id;
-            $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            if ($other_user->user_role > USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            }
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user);
             $object = $other_user;
@@ -169,7 +172,12 @@ class RoomSeats extends BaseModel
 
             $user->current_room_id = $this->room_id;
             $user->current_room_seat_id = $this->id;
-            $user->user_role = USER_ROLE_BROADCASTER;
+
+            if ($user->user_role > USER_ROLE_BROADCASTER) {
+                $user->user_role = USER_ROLE_BROADCASTER; // 主播
+            }
+
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user);
             $object = $user;
@@ -189,7 +197,11 @@ class RoomSeats extends BaseModel
         if ($other_user) {
             info($user->sid, $other_user->sid, $this->id, $this->room_id);
             $other_user->current_room_seat_id = 0;
+            if ($other_user->user_role == USER_ROLE_BROADCASTER) {
+                $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            }
             $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user, false);
             $object = $other_user;
@@ -197,7 +209,11 @@ class RoomSeats extends BaseModel
             info($user->sid, $this->id, $this->room_id);
             // 自己下麦
             $user->current_room_seat_id = 0;
+            if ($user->user_role == USER_ROLE_BROADCASTER) {
+                $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            }
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user, false);
             $object = $user;
@@ -263,9 +279,11 @@ class RoomSeats extends BaseModel
             return [ERROR_CODE_FAIL, '麦位已存在用户'];
         }
 
+        $room = $this->room;
+
         if ($other_user) {
 
-            if (!$user->isRoomHost($this->room)) {
+            if (!$user->canManagerRoom($room)) {
                 return [ERROR_CODE_FAIL, '您无此权限'];
             }
 
@@ -275,7 +293,7 @@ class RoomSeats extends BaseModel
             }
 
             //当前用户不在房间
-            if (!$other_user->isInRoom($this->room)) {
+            if (!$other_user->isInRoom($room)) {
                 return [ERROR_CODE_FAIL, '用户不在房间'];
             }
 
@@ -287,7 +305,7 @@ class RoomSeats extends BaseModel
         } else {
 
             //当前用户不在房间
-            if (!$user->isInRoom($this->room)) {
+            if (!$user->isInRoom($room)) {
                 return [ERROR_CODE_FAIL, '用户不在房间'];
             }
 
@@ -296,7 +314,7 @@ class RoomSeats extends BaseModel
             }
 
             //房主不能上自己的麦位
-            if ($this->room->user_id === $user->id) {
+            if ($room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
             }
         }

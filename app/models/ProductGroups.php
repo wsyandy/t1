@@ -17,7 +17,7 @@ class ProductGroups extends BaseModel
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $files = ['icon' => 'product_groups/icon/%s'];
+    static $files = ['icon' => APP_NAME . '/product_groups/icon/%s'];
 
     static function getCacheEndPoint()
     {

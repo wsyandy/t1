@@ -46,8 +46,8 @@ class GiftsController extends BaseController
     {
         $gift = \Gifts::findById($this->params('id'));
         $this->assign($gift, 'gift');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(),$gift);
         if ($gift->update()) {
-            \OperatingRecords::logBeforeUpdate($this->currentOperator(),$gift);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');

@@ -17,7 +17,7 @@ class PaymentsController extends BaseController
         $per_page = 30;
         $cond_vars = array();
         $cond_values = array();
-        foreach (['order_id', 'id','user_id'] as $item) {
+        foreach (['order_id', 'id', 'user_id'] as $item) {
             if (isPresent($this->params($item))) {
                 $cond_vars[] = $item . ' = ' . ':' . $item . ':';
                 $cond_values[$item] = $this->params($item);
@@ -44,10 +44,14 @@ class PaymentsController extends BaseController
 
     function updateAction()
     {
+        if (isProduction()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '线上不支持修改');
+        }
+
         $payment = \Payments::findById($this->params('id'));
         if ($payment) {
             $this->assign($payment, 'payment');
-            \OperatingRecords::logBeforeUpdate($this->currentOperator(),$payment);
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $payment);
             if ($payment->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('payment' => $payment->toJson()));
             }

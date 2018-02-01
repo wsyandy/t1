@@ -50,4 +50,17 @@ class YangTask extends \Phalcon\Cli\Task
         echoLine($res);
     }
 
+    function test4Action()
+    {
+        $url = "http://chance.com/api/emoticon_images";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body,['sid' => $user->sid]);
+        $res = httpGet($url,$body);
+        echoLine($res);
+    }
 }

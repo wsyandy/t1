@@ -130,6 +130,80 @@ class Users extends BaseModel
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
         }
+
+        if ($this->hasChanged('user_role_at')) {
+            $this->statRoomTime();
+        }
+    }
+
+    //统计用户在房间时间
+    function statRoomTime()
+    {
+        $old_user_role_at = $this->was('user_role_at');
+        $user_role_at = $this->user_role_at;
+        $duration = $user_role_at - $old_user_role_at;
+        $old_current_room_seat_id = $this->was('current_room_seat_id');
+        $db = Users::getUserDb();
+        $action = null;
+        $old_user_role = $this->was('user_role');
+        $user_role = $this->user_role;
+
+
+        if ($this->hasChanged('user_role')) {
+            switch ($old_user_role) {
+                case USER_ROLE_NO:
+                    break;
+                case USER_ROLE_AUDIENCE:
+                    $action = "audience";
+                    break;
+                case USER_ROLE_BROADCASTER:
+                    $action = "broadcaster";
+                    break;
+                case USER_ROLE_HOST_BROADCASTER:
+                    $action = "host_broadcaster";
+                    break;
+                case USER_ROLE_MANAGER:
+                    //退出房间 管理员角色变化
+                    if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
+                        $action = "broadcaster";
+                    } else {
+                        $action = "audience";
+                    }
+                    break;
+            }
+
+            if ($action) {
+                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+            }
+            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
+            return;
+        }
+
+        //上麦下面为角色发生变化
+        if (USER_ROLE_MANAGER == $user_role) {
+
+            if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
+                $action = "broadcaster";
+            } else {
+                $action = "audience";
+            }
+
+            if ($action) {
+                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+            }
+            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
+        }
+    }
+
+    static function generateStatRoomTimeKey($action, $date = null)
+    {
+        if (is_null($date)) {
+            $date = beginOfDay();
+        }
+
+        return "user_room_" . $action . "_time_" . $date;
     }
 
     function calDeviceRegisterNum()
@@ -1138,10 +1212,11 @@ class Users extends BaseModel
         if (!$user_db->zscore($other_total_key, $this->id)) {
         }
 
-        $user_db->zadd($add_key, time(), $other_user->id);
-        $user_db->zadd($added_key, time(), $this->id);
-        $user_db->zadd($add_total_key, time(), $other_user->id);
-        $user_db->zadd($other_total_key, time(), $this->id);
+        $time = time();
+        $user_db->zadd($add_key, $time, $other_user->id);
+        $user_db->zadd($added_key, $time, $this->id);
+        $user_db->zadd($add_total_key, $time, $other_user->id);
+        $user_db->zadd($other_total_key, $time, $this->id);
     }
 
     //删除好友
@@ -1242,17 +1317,18 @@ class Users extends BaseModel
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
         $add_key = 'add_friend_list_user_id_' . $other_user->id;
         $added_key = 'added_friend_list_user_id_' . $this->id;
-
         $user_db = Users::getUserDb();
+
+        $time = time();
 
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
-            $user_db->zadd($other_friend_list_key, time(), $this->id);
+            $user_db->zadd($other_friend_list_key, $time, $this->id);
         }
 
         if ($user_db->zscore($added_key, $other_user->id)) {
             $user_db->zrem($added_key, $other_user->id);
-            $user_db->zadd($friend_list_key, time(), $other_user->id);
+            $user_db->zadd($friend_list_key, $time, $other_user->id);
         }
     }
 
@@ -1263,7 +1339,7 @@ class Users extends BaseModel
         $key = 'friend_total_list_user_id_' . $this->id;
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
         $user_db->zclear($key);
-        $user_db->del($user_introduce_key);
+        $user_db->hclear($user_introduce_key);
     }
 
     function friendNum()
@@ -1532,5 +1608,36 @@ class Users extends BaseModel
     function isCalling()
     {
         return VoiceCalls::userIsCalling($this->id);
+    }
+
+    //是否为房间的管理员
+    function isManager($room)
+    {
+        $room->freshManagerNum();
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $room->generateManagerListKey();
+        return $db->zscore($manager_list_key, $this->id) > 0;
+    }
+
+    //是否为房间永久的管理员
+    function isPermanentManager($room)
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $room->generateManagerListKey();
+        return $db->zscore($manager_list_key, $this->id) - time() > 86400 * 300;
+    }
+
+    function canManagerRoom($room)
+    {
+        return $this->isRoomHost($room) || $this->isManager($room);
+    }
+
+    function canKickingUser($room, $other_user)
+    {
+        if (!$this->canManagerRoom($room)) {
+            return false;
+        }
+
+        return $this->user_role < $other_user->user_role;
     }
 }

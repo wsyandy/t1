@@ -143,21 +143,24 @@ class PushSever extends BaseModel
     function send($action, $ip, $payload = [])
     {
         info($this->websocket_listen_server_port, $ip, $action, $payload);
-        $protocol = "ws";
-
-        if (isProduction()) {
-            $protocol = "wss";
-        }
 
         try {
-            $client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
+            //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
+            $client = new PushClient($ip, $this->websocket_listen_server_port, 1);
+            if (!$client->connect()) {
+                info("Exce connect fail");
+                return false;
+            }
             $payload = ['action' => $action, 'payload' => $payload];
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
             $client->close();
+            return true;
         } catch (\Exception $e) {
-            info("Exce", $e->getMessage());
+            info("Exce", $action, $ip, $payload, $e->getMessage());
         }
+
+        return false;
     }
 
 
@@ -174,6 +177,7 @@ class PushSever extends BaseModel
 
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
+            $server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
             return;
         }
 
@@ -245,23 +249,28 @@ class PushSever extends BaseModel
         $data = json_decode($data, true);
 
         if ($this->websocket_listen_server_port == $server_port) {
+
             info("server_to_server", $data);
             $action = fetch($data, 'action');
             $payload = fetch($data, 'payload');
 
-            if ('shutdown' == $action) {
-                $server->shutdown();
-            } elseif ('push' == $action) {
-                $receiver_fd = fetch($payload, 'fd');
-                $body = fetch($payload, 'body');
-                info($receiver_fd, $body);
-                if ($receiver_fd) {
-                    if (!$server->exist($receiver_fd)) {
-                        info($receiver_fd, "Exce not exist");
-                        return;
+            try {
+                if ('shutdown' == $action) {
+                    $server->shutdown();
+                } elseif ('push' == $action) {
+                    $receiver_fd = fetch($payload, 'fd');
+                    $body = fetch($payload, 'body');
+                    info($receiver_fd, $body);
+                    if ($receiver_fd) {
+                        if (!$server->exist($receiver_fd)) {
+                            info($receiver_fd, "Exce not exist");
+                            return;
+                        }
+                        $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
                     }
-                    $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
                 }
+            } catch (\Exception $e) {
+                info("Exce", $action, $payload, $e->getMessage());
             }
         } else {
             $sign = fetch($data, 'sign');
@@ -372,7 +381,7 @@ class PushSever extends BaseModel
                 }
 
                 $current_room->exitRoom($user);
-                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat);
+                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip);
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
@@ -408,7 +417,7 @@ class PushSever extends BaseModel
 //        debug("{$task_id}处理结果: {$data}");
 //    }
 
-    function pushExitRoomInfo($server, $user, $current_room, $room_seat)
+    function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
     {
         $hot_cache = self::getHotWriteCache();
         $key = 'room_user_list_' . $current_room->id;
@@ -429,8 +438,8 @@ class PushSever extends BaseModel
                     return;
                 }
 
-                //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-                //$this->send('push', $payload);
+                $payload = ['body' => $data, 'fd' => $receiver_fd];
+                //$res = $this->send('push', $intranet_ip, $payload);
                 $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
                 if ($res) {
