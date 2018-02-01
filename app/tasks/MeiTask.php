@@ -862,6 +862,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test57Action()
     {
+        httpPost("127.0.0.1", ['a' => 1]);
         $push_server = new PushSever();
         $push_server->send("push", '192.168.0.104', ['fd' => 12]);
     }
