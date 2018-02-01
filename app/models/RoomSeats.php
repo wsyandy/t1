@@ -173,8 +173,8 @@ class RoomSeats extends BaseModel
             $user->current_room_id = $this->room_id;
             $user->current_room_seat_id = $this->id;
 
-            if ($other_user->user_role > USER_ROLE_BROADCASTER) {
-                $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            if ($user->user_role > USER_ROLE_BROADCASTER) {
+                $user->user_role = USER_ROLE_BROADCASTER; // 主播
             }
 
             $user->user_role_at = time();
@@ -209,8 +209,8 @@ class RoomSeats extends BaseModel
             info($user->sid, $this->id, $this->room_id);
             // 自己下麦
             $user->current_room_seat_id = 0;
-            if ($other_user->user_role == USER_ROLE_BROADCASTER) {
-                $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            if ($user->user_role == USER_ROLE_BROADCASTER) {
+                $user->user_role = USER_ROLE_AUDIENCE; // 旁听
             }
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
             $user->user_role_at = time();
