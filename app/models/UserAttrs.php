@@ -379,4 +379,28 @@ trait UserAttrs
 
         return $hot_cache->get($user_online_key);
     }
+
+    //旁听时间
+    function getAudienceTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('audience', $date);
+        return $db->zscore($key, $this->id);
+    }
+
+    //主播时间
+    function getBroadcasterTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('broadcaster', $date);
+        return $db->zscore($key, $this->id);
+    }
+
+    //房主时间
+    function getHostBroadcasterTimeByDate($date)
+    {
+        $db = Users::getUserDb();
+        $key = Users::generateStatRoomTimeKey('host_broadcaster', $date);
+        return $db->zscore($key, $this->id);
+    }
 }
