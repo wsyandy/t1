@@ -212,7 +212,7 @@ class UsersController extends BaseController
     function statRoomTimeAction()
     {
         $per_page = $this->params('per_page', 30);
-        $user_id = $this->params('id');
+        $user_id = $this->params('user_id');
         $page = $this->params('page');
         $stat_at = $this->params('stat_at', date('Y-m-d'));
         $stat_at = strtotime($stat_at);
@@ -240,5 +240,6 @@ class UsersController extends BaseController
         $pagination->clazz = 'Users';
         $this->view->stat_at = date('Y-m-d', $stat_at);
         $this->view->users = $pagination;
+        $this->view->user_id = $user_id;
     }
 }

@@ -2,6 +2,9 @@
     <label for="stat_at">时间</label>
     <input type="text" name="stat_at" class="form_datetime" id="stat_at" value="{{ stat_at }}" size="16">
 
+    <label for="user_id">用户ID</label>
+    <input type="text" name="user_id" id="user_id" value="{{ user_id }}">
+
     <button class="ui button" type="submit">搜索</button>
 </form>
 
