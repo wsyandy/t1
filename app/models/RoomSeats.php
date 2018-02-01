@@ -153,6 +153,7 @@ class RoomSeats extends BaseModel
             if ($other_user->user_role > USER_ROLE_BROADCASTER) {
                 $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
             }
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user);
             $object = $other_user;
@@ -171,9 +172,12 @@ class RoomSeats extends BaseModel
 
             $user->current_room_id = $this->room_id;
             $user->current_room_seat_id = $this->id;
+
             if ($other_user->user_role > USER_ROLE_BROADCASTER) {
                 $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
             }
+
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user);
             $object = $user;
@@ -196,6 +200,8 @@ class RoomSeats extends BaseModel
             if ($other_user->user_role == USER_ROLE_BROADCASTER) {
                 $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
             }
+            $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user, false);
             $object = $other_user;
@@ -206,6 +212,8 @@ class RoomSeats extends BaseModel
             if ($other_user->user_role == USER_ROLE_BROADCASTER) {
                 $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
             }
+            $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user, false);
             $object = $user;

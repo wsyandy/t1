@@ -175,6 +175,7 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $user->user_role_at = time();
         $user->save();
         $this->bindOnlineToken($user);
         $this->addUser($user);
@@ -199,6 +200,7 @@ class Rooms extends BaseModel
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
         $user->user_role = USER_ROLE_NO;
+        $user->user_role_at = time();
         $user->save();
 
         // 房主
