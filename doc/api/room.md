@@ -434,7 +434,14 @@
 ```
 {
     error_code
-    error_reason     
+    error_reason
+    user_id int 用户的ID
+    sex int 性别  0:女 1:男
+    avatar_url string 正常图像
+    avatar_small_url string 小尺寸图像
+    nickname string 昵称
+    is_permanent boolean 是否为永久管理员 true/false
+    deadline int 管理员管理时长的截止时间戳 1517319489     
 }
 ```
 
@@ -472,6 +479,13 @@
 {
     error_code
     error_reason     
+    user_id int 用户的ID
+    sex int 性别  0:女 1:男
+    avatar_url string 正常图像
+    avatar_small_url string 小尺寸图像
+    nickname string 昵称
+    is_permanent boolean 是否为永久管理员 true/false
+    deadline int 管理员管理时长的截止时间戳 1517319489     
 }
 ```
 

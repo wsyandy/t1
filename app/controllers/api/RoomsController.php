@@ -426,7 +426,10 @@ class RoomsController extends BaseController
 
         $room->addManager($this->otherUserId(), $duration);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        $res = $this->otherUser()->toRoomManagerJson();
+        $res['user_id'] = $this->otherUserId();
+        unset($res['id']);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
     //删除管理员
@@ -478,8 +481,11 @@ class RoomsController extends BaseController
         }
 
         $room->updateManager($this->otherUserId(), $duration);
+        $res = $this->otherUser()->toRoomManagerJson();
+        $res['user_id'] = $this->otherUserId();
+        unset($res['id']);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, $res);
     }
 
     function managersAction()
