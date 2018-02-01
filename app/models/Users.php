@@ -142,7 +142,7 @@ class Users extends BaseModel
         if ($this->hasChanged('user_role')) {
             $old_user_role_at = $this->was('user_role_at');
             $user_role_at = $this->user_role_at;
-            $lod_user_role = $this->old_user_role;
+            $lod_user_role = $this->was('user_role');
             $user_role = $this->user_role;
             $duration = $user_role_at - $old_user_role_at;
             info($lod_user_role, $user_role, $duration);
