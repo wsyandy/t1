@@ -485,7 +485,7 @@ class RoomsController extends BaseController
         $res['user_id'] = $this->otherUserId();
         unset($res['id']);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, $res);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
     function managersAction()
