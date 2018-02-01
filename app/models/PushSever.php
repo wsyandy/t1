@@ -117,7 +117,7 @@ class PushSever extends BaseModel
                 [
                     'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
                     'max_request' => $this->websocket_max_request, //设置多少合适
-                    'dispatch_model' => 2,
+                    'dispatch_model' => 3,
                     'daemonize' => true,
                     'log_file' => APP_ROOT . 'log/websocket_server.log',
                     'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
