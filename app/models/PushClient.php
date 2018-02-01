@@ -286,4 +286,9 @@ class PushClient
         } while (strlen($token) < $length);
         return $token;
     }
+
+    function errMsg(){
+        return socket_strerror($this->errCode);
+    }
+
 }
