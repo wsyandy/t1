@@ -41,6 +41,13 @@ class PushClient
     private $host;
     private $port;
     private $path;
+
+    /**
+     * @var float
+     * 自己定义
+     */
+    private $timeout;
+
     /**
      * @var swoole_client
      */
@@ -58,13 +65,14 @@ class PushClient
      * @param int $port
      * @param string $path
      */
-    function __construct($host = '127.0.0.1', $port = 8080, $path = '/', $origin = null)
+    function __construct($host = '127.0.0.1', $port = 8080, $timeout = 0.1, $path = '/', $origin = null)
     {
         $this->host = $host;
         $this->port = $port;
         $this->path = $path;
         $this->origin = $origin;
         $this->key = $this->generateToken(self::TOKEN_LENGHT);
+        $this->timeout = $timeout;
     }
 
     /**
@@ -83,11 +91,11 @@ class PushClient
     public function connect()
     {
         $this->socket = new \swoole_client(SWOOLE_SOCK_TCP);
-        if (!$this->socket->connect($this->host, $this->port)) {
+        if (!$this->socket->connect($this->host, $this->port, $this->timeout)) {
             return false;
         }
         $this->socket->send($this->createHeader());
-        return;
+        return $this->recv();
     }
 
     public function getSocket()
@@ -114,9 +122,10 @@ class PushClient
     {
         $data = $this->socket->recv();
         if ($data === false) {
-            info("Error: {$this->socket->errMsg}");
+            echo "Error: {$this->socket->errMsg}";
             return false;
         }
+        info($data);
         $this->buffer .= $data;
         $recv_data = $this->parseData($this->buffer);
         if ($recv_data) {
