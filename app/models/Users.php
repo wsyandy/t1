@@ -130,6 +130,23 @@ class Users extends BaseModel
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
         }
+
+        if ($this->hasChanged('user_role_at')) {
+            $this->statRoomTime();
+        }
+    }
+
+    //统计用户在房间时间
+    function statRoomTime()
+    {
+        if ($this->hasChanged('user_role')) {
+            $old_user_role_at = $this->was('user_role_at');
+            $user_role_at = $this->user_role_at;
+            $lod_user_role = $this->old_user_role;
+            $user_role = $this->user_role;
+            $duration = $user_role_at - $old_user_role_at;
+            info($lod_user_role, $user_role, $duration);
+        }
     }
 
     function calDeviceRegisterNum()

@@ -151,6 +151,7 @@ class RoomSeats extends BaseModel
             $other_user->current_room_id = $this->room_id;
             $other_user->current_room_seat_id = $this->id;
             $other_user->user_role = USER_ROLE_BROADCASTER; // 主播
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user);
             $object = $other_user;
@@ -170,6 +171,7 @@ class RoomSeats extends BaseModel
             $user->current_room_id = $this->room_id;
             $user->current_room_seat_id = $this->id;
             $user->user_role = USER_ROLE_BROADCASTER;
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user);
             $object = $user;
@@ -190,6 +192,7 @@ class RoomSeats extends BaseModel
             info($user->sid, $other_user->sid, $this->id, $this->room_id);
             $other_user->current_room_seat_id = 0;
             $other_user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $other_user->update();
             $this->room->updateUserRank($other_user, false);
             $object = $other_user;
@@ -198,6 +201,7 @@ class RoomSeats extends BaseModel
             // 自己下麦
             $user->current_room_seat_id = 0;
             $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+            $user->user_role_at = time();
             $user->update();
             $this->room->updateUserRank($user, false);
             $object = $user;
