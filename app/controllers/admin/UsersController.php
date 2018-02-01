@@ -208,4 +208,30 @@ class UsersController extends BaseController
         }
         $this->view->receiver = $receiver;
     }
+
+    function statRoomTimeAction()
+    {
+        $per_page = $this->params('per_page', 30);
+        $page = $this->params('page');
+        $stat_at = $this->params('stat_at', date('Y-m-d'));
+        $stat_at = strtotime($stat_at);
+        beginOfDay($stat_at);
+        $total_key = \Users::generateStatRoomTimeKey('total', $stat_at);
+        $db = \Users::getUserDb();
+        $total_entries = $db->zcard($total_key);
+        $offset = $per_page * ($page - 1);
+        $user_ids = $db->zrevrange($total_key, $offset, $offset + $per_page - 1);
+        $users = \Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->audience_time = $user->getAudienceTimeByDate($stat_at);
+            $user->broadcaster_time = $user->getBroadcasterTimeByDate($stat_at);
+            $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($stat_at);
+        }
+
+        $pagination = new \PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+        $this->view->stat_at = date('Y-m-d', $stat_at);
+        $this->view->users = $pagination;
+    }
 }

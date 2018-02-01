@@ -139,14 +139,71 @@ class Users extends BaseModel
     //统计用户在房间时间
     function statRoomTime()
     {
+        $old_user_role_at = $this->was('user_role_at');
+        $user_role_at = $this->user_role_at;
+        $duration = $user_role_at - $old_user_role_at;
+        $old_current_room_seat_id = $this->was('current_room_seat_id');
+        $db = Users::getUserDb();
+        $action = null;
+        $old_user_role = $this->was('user_role');
+        $user_role = $this->user_role;
+
+
         if ($this->hasChanged('user_role')) {
-            $old_user_role_at = $this->was('user_role_at');
-            $user_role_at = $this->user_role_at;
-            $lod_user_role = $this->was('user_role');
-            $user_role = $this->user_role;
-            $duration = $user_role_at - $old_user_role_at;
-            info($lod_user_role, $user_role, $duration);
+            switch ($old_user_role) {
+                case USER_ROLE_NO:
+                    break;
+                case USER_ROLE_AUDIENCE:
+                    $action = "audience";
+                    break;
+                case USER_ROLE_BROADCASTER:
+                    $action = "broadcaster";
+                    break;
+                case USER_ROLE_HOST_BROADCASTER:
+                    $action = "host_broadcaster";
+                    break;
+                case USER_ROLE_MANAGER:
+                    //退出房间 管理员角色变化
+                    if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
+                        $action = "broadcaster";
+                    } else {
+                        $action = "audience";
+                    }
+                    break;
+            }
+
+            if ($action) {
+                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+            }
+            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
+            return;
         }
+
+        //上麦下面为角色发生变化
+        if (USER_ROLE_MANAGER == $user_role) {
+
+            if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
+                $action = "broadcaster";
+            } else {
+                $action = "audience";
+            }
+
+            if ($action) {
+                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+            }
+            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
+        }
+    }
+
+    static function generateStatRoomTimeKey($action, $date = null)
+    {
+        if (is_null($date)) {
+            $date = beginOfDay();
+        }
+
+        return "user_room_" . $action . "_time_" . $date;
     }
 
     function calDeviceRegisterNum()
