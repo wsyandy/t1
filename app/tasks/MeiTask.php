@@ -903,4 +903,29 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $server = PushSever::send('push', $intranet_ip, 9508, $payload);
     }
+
+
+    function test60Action()
+    {
+        $user = Users::findById(52);
+        $hot_cache = Users::getHotReadCache();
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $room = Rooms::findFirstById(54);
+        $gift = Gifts::findFirstById(5);
+        $data = $gift->toSimpleJson();
+        $data['num'] = 10;
+        $body = ['action' => 'send_gift', 'sender_room_seat_id' => 0, 'receiver_room_seat_id' => $user->current_room_seat_id,
+            'sender_nickname' => "", 'receiver_nickname' => $user->nickname, 'notify_type' => 'bc',
+            'sender_id' => 6, 'receiver_id' => 52, 'channel_name' => $room->channel_name,
+            'gift' => $data
+        ];
+
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
+
+        echoLine($intranet_ip, $receiver_fd, $payload);
+
+        $server = PushSever::send('push', $intranet_ip, 9508, $payload);
+    }
 }
