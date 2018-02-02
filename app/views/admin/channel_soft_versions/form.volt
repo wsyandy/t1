@@ -13,13 +13,13 @@
 {{ f.input('ios_down_url',[ 'label':'IOS下载地址', 'width':'50%']) }}
 {{ f.input('weixin_url',[ 'label':'应用宝下载地址', 'width':'50%']) }}
 
-{{ f.input('toutiao_convert_no', ['label': '推广头条h5转化标识(convert_id)', 'width':'50%']) }}
-{{ f.input('marketing_config_id', ['label': '推广腾讯marketing配置id', 'width':'50%']) }}
-{{ f.input('company_name', ['label': '(推广页)公司名称', 'width':'33%']) }}
-{{ f.input('company_icp', ['label': '(推广页)ICP备案', 'width':'33%']) }}
-{{ f.input('company_service_phone', ['label': '(推广页)公司电话', 'width':'33%']) }}
-{{ f.input('foot_notice',['label': '(推广页)底部提示语']) }}
-{{ f.select('is_show_name', ['label': '(推广页)顶部产品名称', 'collection': SoftVersions.IS_SHOW_NAME]) }}
+{#{{ f.input('toutiao_convert_no', ['label': '推广头条h5转化标识(convert_id)', 'width':'50%']) }}#}
+{#{{ f.input('marketing_config_id', ['label': '推广腾讯marketing配置id', 'width':'50%']) }}#}
+{#{{ f.input('company_name', ['label': '(推广页)公司名称', 'width':'33%']) }}#}
+{#{{ f.input('company_icp', ['label': '(推广页)ICP备案', 'width':'33%']) }}#}
+{#{{ f.input('company_service_phone', ['label': '(推广页)公司电话', 'width':'33%']) }}#}
+{#{{ f.input('foot_notice',['label': '(推广页)底部提示语']) }}#}
+{#{{ f.select('is_show_name', ['label': '(推广页)顶部产品名称', 'collection': SoftVersions.IS_SHOW_NAME]) }}#}
 
 {{ f.input('remark',['label': '备注']) }}
 {{ f.textarea('feature',[ 'label':'更新简介' ]) }}
