@@ -141,7 +141,7 @@ class Emchat extends BaseModel
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        debug($result->code);
+        info($username, $password, $result->code, $result->body);
         return $this->reqSuccess($result->code);
     }
 
@@ -194,6 +194,7 @@ class Emchat extends BaseModel
         $header = $this->headers;
         var_dump($header);
         $result = httpGet($url, null, $header);
+        info($result->body, $result->code, $username);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return $result_data['entities'];
