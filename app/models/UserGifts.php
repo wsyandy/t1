@@ -27,7 +27,7 @@ class UserGifts extends BaseModel
         }
 
         $lock_key = "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
-        tryLock($lock_key);
+        $lock = tryLock($lock_key);
 
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findById($gift_order->gift_id);
@@ -40,7 +40,7 @@ class UserGifts extends BaseModel
         $user_gift->pay_type = 'diamond';
         $user_gift->save();
 
-        unlock($lock_key);
+        unlock($lock);
         return $user_gift;
     }
 
