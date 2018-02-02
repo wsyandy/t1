@@ -279,7 +279,7 @@ class PushSever extends BaseModel
 
         $connect_info = $server->connection_info($fd);
 
-        debug($connect_info);
+        debug($connect_info, $data);
         $server_port = fetch($connect_info, 'server_port');
         $data = json_decode($data, true);
 
@@ -295,7 +295,7 @@ class PushSever extends BaseModel
                 } elseif ('push' == $action) {
                     $receiver_fd = fetch($payload, 'fd');
                     $body = fetch($payload, 'body');
-                    info($receiver_fd, $body);
+                    info($receiver_fd, $payload, $body);
                     if ($receiver_fd) {
                         if (!$server->exist($receiver_fd)) {
                             info($receiver_fd, "Exce not exist");
