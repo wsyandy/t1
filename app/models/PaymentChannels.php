@@ -65,9 +65,17 @@ class PaymentChannels extends BaseModel
         return $ids;
     }
 
+    /**
+     * 线下测试支持所有通道
+     * @param $user
+     * @return bool
+     */
     function match($user)
     {
         debug("user: " . $user->platform);
+        if (isDevelopmentEnv()) {
+            return true;
+        }
         if ($this->isApple()) {
             return $user->isIos();
         }
