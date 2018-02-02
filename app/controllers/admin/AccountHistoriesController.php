@@ -26,9 +26,15 @@ class AccountHistoriesController extends BaseController
         $user_id = $this->params('user_id');
         if ($this->request->isPost()) {
             $amount = intval($this->params('diamond'));
+
             $operator = $this->currentOperator();
-            $remark = $operator->role_text .'：'. $operator->username . '赠送' . $amount . '钻石';
-            $opts = array('remark' => $remark);
+            $remark = $operator->role_text . '：' . $operator->username . '赠送' . $amount . '钻石';
+            $opts = ['remark' => $remark];
+
+            if ($amount > 100) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '赠送数量超过限制');
+            }
+
             if ($amount > 0) {
                 \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, $amount, $opts);
             }
