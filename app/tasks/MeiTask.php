@@ -893,9 +893,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
         $room = Rooms::findFirstById(54);
 
-        $payload = ['action' => 'enter_room', 'user_id' => 6, 'nickname' => $user->nickname, 'sex' => $user->sex,
+        $body = ['action' => 'enter_room', 'user_id' => 6, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $room->channel_name
         ];
+
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
 
         echoLine($intranet_ip, $receiver_fd, $payload);
 
