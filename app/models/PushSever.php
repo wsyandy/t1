@@ -158,13 +158,13 @@ class PushSever extends BaseModel
     }
 
     //服务器内部通信
-    function send1($action, $ip, $payload = [])
+    static function send($action, $ip, $port, $payload = [])
     {
-        info($this->websocket_listen_server_port, $ip, $action, $payload);
+        info($port, $ip, $action, $payload);
 
         try {
             //$client = new \WebSocket\Client("$protocol://{$ip}:$this->websocket_listen_server_port");
-            $client = new PushClient($ip, $this->websocket_listen_server_port, 1);
+            $client = new PushClient($ip, $port, 1);
             if (!$client->connect()) {
                 info("Exce connect fail");
                 return false;
@@ -181,7 +181,7 @@ class PushSever extends BaseModel
         return false;
     }
 
-    function send($action, $ip, $payload = [])
+    function send1($action, $ip, $payload = [])
     {
         info($this->websocket_listen_server_port, $ip, $action, $payload);
 
@@ -337,7 +337,7 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 debug($intranet_ip, $online_token);
                 $payload = ['body' => $data, 'fd' => $fd];
-                $this->send1('push', $intranet_ip, $payload);
+                self::delay()->send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
                 //$res = $server->push($frame->fd, $frame->data);
             }
         }
