@@ -1,6 +1,6 @@
 <form action="/admin/account_histories/give_diamond?user_id={{ user_id }}" method="post">
     <div class="form-group">
-        <label for="diamond">赠送数量</label>
+        <label for="diamond">赠送数量(一次最多赠送100个)</label>
         <input type="text" name="diamond" class="form-control">
     </div>
     <div class="form-group">
