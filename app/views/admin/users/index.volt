@@ -54,7 +54,9 @@
     {% endif %}
     <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
     <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
-    <a href="/admin/users/enter_room?user_id={{ user.id }}" class="modal_action">进入房间</a>
+    <a href="/admin/users/enter_room?user_id={{ user.id }}" class="modal_action">进入房间</a><br/>
+    <a href="/admin/users/give_gift?user_id={{ user.id }}" class="modal_action">送礼物</a><br/>
+    <a href="/admin/users/send_topic_msg?user_id={{ user.id }}" class="modal_action">发公屏消息</a><br/>
 {% endmacro %}
 
 {% macro detail_link(user) %}
@@ -97,7 +99,9 @@
             <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a><br/>
             <a href="/admin/users/send_message?id=${ user.id }" class="modal_action">发送系统消息</a><br/>
             <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
-            <a href="/admin/users/enter_room?user_id=${ user.id }" class="modal_action">通知：进入房间</a><br/>
+            <a href="/admin/users/enter_room?user_id=${ user.id }" class="modal_action">进入房间</a><br/>
+            <a href="/admin/users/give_gift?user_id=${ user.id }" class="modal_action">送礼物</a><br/>
+            <a href="/admin/users/send_topic_msg?user_id=${ user.id }" class="modal_action">发公屏消息</a><br/>
         </td>
 
     </tr>
