@@ -337,7 +337,7 @@ class PushSever extends BaseModel
                 $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
                 debug($intranet_ip, $online_token);
                 $payload = ['body' => $data, 'fd' => $fd];
-                self::delay()->send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
+                self::send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
                 //$res = $server->push($frame->fd, $frame->data);
             }
         }
