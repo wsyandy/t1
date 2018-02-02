@@ -55,9 +55,9 @@
 </head>
 <body>
 <div class="expand_box">
-    <img class="expand_bg" src="images/expand_bg2.png" alt="">
+    <img class="expand_bg" src="/wap/images/expand_bg2.png" alt="">
     <a href="{{ file_url }}">
-        <img class="btn_bg" src="images/btn_bg.png" alt="">
+        <img class="btn_bg" src="/wap/images/btn_bg.png" alt="">
     </a>
 </div>
 </body>
