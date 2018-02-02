@@ -44,3 +44,55 @@
 用户A断线后服务端会把用户A直接踢出房间,并通知此房间的另一位用户B,由用户B通过信令通知房间的其他用户
 用户A已退出房间;用户B完成通知后需上报服务器已通知(防止用户B也出现异常)
 ```
+
+## 3. websocket通信结构
+ 
+ ### 3.1 客户端请求服务端消息结构
+ #### 心跳包结构
+ ```
+ {
+    action:ping
+    online_token:xxxxx websocket链接时由服务端生成返回给客户端
+    timestamp:xxxxxx  时间戳
+    sid
+    sign:xxxxxx  签名
+ }
+ ```
+ 
+ ### 退出房间上报
+   ```
+   {
+      action:exit_room_report 退出房间上报成功
+      user_id:1233 退出房间的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```
+ 
+ 
+ ### 3.2 服务端通知客户端的消息结构
+ #### 退出房间
+  ```
+  {
+     action:exit_room exit_room退出房间 (由于网络异常或进程退出导致的退出房间)   
+     user_id:1233 退出房间的用户id
+     channel_name 房间频道
+     room_seat:{
+        id 麦位id
+        status 麦位状态
+        microphone 麦位麦克风状态
+     } //退出房间用户所在的麦位
+  }
+  ```
+ #### 挂断电话
+  ```
+  {
+     action:hang_up 挂断电话(由于网络异常或进程退出导致的电话中断)
+     user_id 挂断电话的用户id
+     receiver_id 对方用户id
+     channel_name 房间频道
+  }
+  ``` 
+ 

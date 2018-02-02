@@ -410,11 +410,12 @@ class Rooms extends BaseModel
         if (-1 == $duration) {
             $time = time() + 86400 * 10000;
         } else {
-            $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
-        }
 
-        if (isDevelopmentEnv()) {
-            $time = time() + 2 * 60;
+            if (isDevelopmentEnv()) {
+                $time = time() + 2 * 60;
+            }
+
+            $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
         }
 
         $db->zadd($manager_list_key, $time, $user_id);
