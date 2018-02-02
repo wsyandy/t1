@@ -451,6 +451,9 @@ class Rooms extends BaseModel
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = $duration * 3600;
+        if (isDevelopmentEnv()) {
+            $time = $duration * 60;
+        }
         $db->zincrby($manager_list_key, $time, $user_id);
         $db->zincrby($user_manager_list_key, $time, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
