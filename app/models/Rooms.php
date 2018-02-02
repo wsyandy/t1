@@ -509,4 +509,11 @@ class Rooms extends BaseModel
         return $users;
     }
 
+    function calculateUserDeadline($user_id)
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $deadline = $db->zscore($manager_list_key, $user_id);
+        return $deadline;
+    }
 }
