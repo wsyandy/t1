@@ -278,6 +278,8 @@ class PushSever extends BaseModel
         }
 
         $connect_info = $server->connection_info($fd);
+
+        debug($connect_info);
         $server_port = fetch($connect_info, 'server_port');
         $data = json_decode($data, true);
 

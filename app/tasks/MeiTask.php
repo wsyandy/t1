@@ -865,5 +865,40 @@ class MeiTask extends \Phalcon\Cli\Task
         httpPost("127.0.0.1", ['a' => 1]);
         $push_server = new PushSever();
         $push_server->send("push", '192.168.0.104', ['fd' => 12]);
+
+        $user = Users::findById(6);
+        echoLine($user);
+    }
+
+    function test58Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $user = $room->user;
+            if (!$user->room_id) {
+                $user->room_id = $room->id;
+                echoLine($user->id);
+                $user->save();
+            }
+        }
+    }
+
+    function test59Action()
+    {
+        $user = Users::findById(52);
+        $hot_cache = Users::getHotReadCache();
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $room = Rooms::findFirstById(54);
+
+        $payload = ['action' => 'enter_room', 'user_id' => 6, 'nickname' => $user->nickname, 'sex' => $user->sex,
+            'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $room->channel_name
+        ];
+
+        echoLine($intranet_ip, $receiver_fd, $payload);
+
+        $server = PushSever::send('push', $intranet_ip, 9508, $payload);
     }
 }
