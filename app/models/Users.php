@@ -1404,7 +1404,7 @@ class Users extends BaseModel
 
         $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and user_status = ' . USER_STATUS_ON;
         $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
-        $cond['order'] = 'id desc';
+        $cond['order'] = 'last_at desc,id desc';
 
         info($user->id, $cond);
 
@@ -1454,7 +1454,7 @@ class Users extends BaseModel
 
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
-        $conds['order'] = 'id desc';
+        $conds['order'] = 'last_at desc,id desc';
 
         info($this->id, $hash, $conds);
 
