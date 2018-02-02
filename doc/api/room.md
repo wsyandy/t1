@@ -497,7 +497,7 @@
     error_reason
     managers:[
         {
-            id int 用户的ID
+            user_id int 用户的ID
             sex int 性别  0:女 1:男
             avatar_url string 正常图像
             avatar_small_url string 小尺寸图像

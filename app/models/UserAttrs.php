@@ -134,7 +134,7 @@ trait UserAttrs
     function toRoomManagerJson()
     {
         $data = [
-            'id' => $this->id,
+            'user_id' => $this->id,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
