@@ -87,12 +87,62 @@
   }
   ```
  #### 挂断电话
+    ```
+    {
+        action:hang_up 挂断电话(由于网络异常或进程退出导致的电话中断)
+        user_id 挂断电话的用户id
+        receiver_id 对方用户id
+        channel_name 房间频道
+    }
+    ``` 
+  
+  #### 进入房间
+    ```
+    {
+        action:enter_room 进入房间
+        user_id 进入房间的用户id
+        nickname 进入房间的用户昵称
+        sex 进入房间的用户性别
+        avatar_url 进入房间的用户的头像
+        avatar_small_url 进入房间的用户头像小图
+        channel_name 房间频道
+    }
+    ```  
+  
+  #### 发公屏消息 
+    ```
+    {
+        action:send_topic_msg 发送公屏消息
+        user_id 发送消息的用户id
+        nickname 发送消息的用户昵称
+        sex 发送消息的用户性别
+        avatar_url 发送消息间的用户的头像
+        avatar_small_url 发送消息的用户头像小图
+        content 消息内容
+        channel_name 房间频道
+    }
+    ```  
+    
+  #### 送礼物
   ```
-  {
-     action:hang_up 挂断电话(由于网络异常或进程退出导致的电话中断)
-     user_id 挂断电话的用户id
-     receiver_id 对方用户id
-     channel_name 房间频道
-  }
-  ``` 
- 
+    {
+        action: send_gift 送礼物
+        sender_room_seat_id 发送者的麦位id
+        receiver_room_seat_id 接收者的麦位id
+        sender_id 发送者id
+        receiver_id 接收者id
+        sender_nickname 发送者昵称
+        receiver_nickname 接收者昵称
+        notify_type bc 通知类型bc广播 ptp点对点
+        channel_name 房间频道
+        gift: {
+            id 礼物id
+            name 礼物名称
+            dynamic_image_url 动图
+            image_url 静态图
+            image_big_url 静态大图
+            image_small_url 静态小图
+            num 礼物个数
+        }
+    }
+  ```   
