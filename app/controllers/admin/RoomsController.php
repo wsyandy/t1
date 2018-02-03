@@ -214,7 +214,7 @@ class RoomsController extends BaseController
             }
 
             if ($action == 'give_gift') {
-                if (!$sender->current_room_id != $room->id) {
+                if ($sender->current_room_id != $room->id) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '发送者必须在此房间');
                 }
 
