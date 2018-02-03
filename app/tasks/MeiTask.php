@@ -887,14 +887,15 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test59Action()
     {
-        $user = Users::findById(52);
+        $receiver_user = Users::findById(52);
         $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver_user->online_token;
         $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
-        $room = Rooms::findFirstById(54);
+        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_user->id));
+        $room = $receiver_user->current_room;
 
-        $body = ['action' => 'enter_room', 'user_id' => 6, 'nickname' => $user->nickname, 'sex' => $user->sex,
+        $user = Users::findFirstById(6);
+        $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $room->channel_name
         ];
 
@@ -902,18 +903,18 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine($intranet_ip, $receiver_fd, $payload);
 
-        $server = PushSever::send('push', $intranet_ip, 9508, $payload);
+        PushSever::send('push', $intranet_ip, 9508, $payload);
     }
 
 
     function test60Action()
     {
-        $user = Users::findById(52);
+        $user = Users::findById(256);
         $hot_cache = Users::getHotReadCache();
         $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
         $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
         $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
-        $room = Rooms::findFirstById(54);
+        $room = $user->current_room;
         $gift = Gifts::findFirstById(5);
         $data = $gift->toSimpleJson();
         $data['num'] = 10;
