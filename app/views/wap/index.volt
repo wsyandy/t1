@@ -14,15 +14,10 @@
 
         html, body {
             height: 100%;
-            width: 100%;
-            font-size: calc(100vw / 7.5);
+            width: 100%; /*font-size:calc(100vw / 7.5);*/
         }
 
-        html {
-            font-size: calc(100vw / 7.5);
-            background: #fcac46;
-        }
-
+        /*html {font-size:calc(100vw / 7.5);background:#fcac46;}*/
         /*****推广页******/
         .expand_box {
             -webkit-box-sizing: border-box;
@@ -45,11 +40,9 @@
 
         .btn_bg {
             position: absolute;
-            bottom: 0.26rem;
-            left: 50%;
-            margin-left: -2.01rem;
-            width: 4.02rem;
-            height: 1.45rem;
+            bottom: 1%;
+            left: 25%;
+            width: 50%;
         }
     </style>
 </head>
