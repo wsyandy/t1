@@ -23,7 +23,7 @@ class AccountHistoriesController extends BaseController
 
     function giveDiamondAction()
     {
-        $user_id = $this->params('id');
+        $user_id = $this->params('user_id');
         if ($this->request->isPost()) {
             $amount = intval($this->params('diamond'));
             $opts = ['remark' => '系统赠送' . $amount . '钻石'];
