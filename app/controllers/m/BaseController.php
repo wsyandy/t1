@@ -156,6 +156,8 @@ class BaseController extends \ApplicationController
     {
         $code = $this->context('code');
 
+        debug($code);
+
         if (!isset($this->_current_product_channel) && $code) {
             $this->_current_product_channel = \ProductChannels::findFirstByCodeHotCache($code);
         }
@@ -179,6 +181,7 @@ class BaseController extends \ApplicationController
         $action_name = \Phalcon\Text::uncamelize($action_name);
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
+
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;

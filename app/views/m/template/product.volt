@@ -55,7 +55,7 @@
 </div>
 
 <div class="get_out_btn">
-    <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
+    <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}"
        id="pay_submit_btn" class="account_btn">确定</a>
 </div>
 <script type="text/javascript">
@@ -65,7 +65,7 @@
         var payment_channel = $(".selected_pay").parent();
         var payment_channel_id = payment_channel.data('payment_channel_id');
         var payment_type = payment_channel.data('payment_type');
-        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id;
+        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id + "&code=" + {{ product_channel.code }};
         if (payment_channel_id == undefined) {
             url = $("#pay_submit_btn").attr("href");
         }
