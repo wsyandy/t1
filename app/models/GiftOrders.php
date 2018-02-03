@@ -54,15 +54,9 @@ class GiftOrders extends BaseModel
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
         $gift_order->gift_num = $gift_num;
         if ($gift_order->create()) {
-            $result = \AccountHistories::changeBalance(
-                $gift_order->sender_id,
-                ACCOUNT_TYPE_BUY_GIFT,
-                $gift_order->amount,
-                [
-                    'gift_order_id' => $gift_order->id,
-                    'remark' => '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount
-                ]
-            );
+            $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
+            $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
+            $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
