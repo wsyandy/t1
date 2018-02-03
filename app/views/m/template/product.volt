@@ -55,7 +55,7 @@
 </div>
 
 <div class="get_out_btn">
-    <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}"
+    <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}"
        id="pay_submit_btn" class="account_btn">确定</a>
 </div>
 <script type="text/javascript">

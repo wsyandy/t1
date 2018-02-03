@@ -179,6 +179,7 @@ class BaseController extends \ApplicationController
         $action_name = \Phalcon\Text::uncamelize($action_name);
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
+        debug($this->context());
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
