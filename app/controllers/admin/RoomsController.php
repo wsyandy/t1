@@ -73,16 +73,21 @@ class RoomsController extends BaseController
         if ($this->request->isPost()) {
             $user_id = $this->params('user_id');
             $user = \Users::findById($user_id);
-            $room_host = $room->user;
-            if (!$user || $room_host) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            if (!$user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '虚拟用户不存在');
             }
+
+            $room_host = $room->user;
+            if (!$room_host) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '房主不存在');
+            }
+
             $hot_cache = \Users::getHotReadCache();
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $room_host->online_token;
             $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
             $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $room_host->id));
 
-            debug($user_id,$room->channel_name);
+            debug($user_id, $room->channel_name);
             $body = ['action' => 'enter_room', 'user_id' => $user_id, 'nickname' => $user->nickname, 'sex' => $user->sex,
                 'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $room->channel_name
             ];
@@ -108,9 +113,13 @@ class RoomsController extends BaseController
         $senders = $room->findUsers(1, 100);
         if ($this->request->isPost()) {
             $gift = \Gifts::findFirstById($this->params('gift_id'));
+            if (!$gift) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '此礼物不存在');
+            }
+
             $sender = \Users::findById($this->params('sender'));
-            if (!$gift || !$sender) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            if (!$sender) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '发送者不存在');
             }
 
             $hot_cache = \Users::getHotReadCache();
@@ -142,7 +151,7 @@ class RoomsController extends BaseController
         $user = \Users::findById($user_id);
         $room = $user->current_room;
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '接收者不在房间');
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
         }
         if ($this->request->isPost()) {
             $content = $this->params("content", '房主666');
