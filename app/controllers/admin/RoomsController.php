@@ -136,7 +136,7 @@ class RoomsController extends BaseController
             ];
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
-            $server = PushSever::send('push', $intranet_ip, 9508, $payload);
+            $server = \PushSever::send('push', $intranet_ip, 9508, $payload);
             return $this->renderJSON(ERROR_CODE_FAIL, '发送成功');
         }
         $this->view->user = $user;
