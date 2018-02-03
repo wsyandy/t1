@@ -5,6 +5,7 @@
  * Date: 06/01/2018
  * Time: 15:02
  */
+
 namespace m;
 
 class ProductsController extends BaseController
@@ -21,5 +22,6 @@ class ProductsController extends BaseController
         $this->view->products = $products;
         $this->view->user = $this->currentUser();
         $this->view->payment_channels = $payment_channels;
+        $this->view->product_channcel = $this->currentProductChannel();
     }
 }
