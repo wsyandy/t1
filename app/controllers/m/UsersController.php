@@ -27,6 +27,6 @@ class UsersController extends BaseController
         $this->view->products = $products;
         $this->view->user = $this->currentUser();
         $this->view->payment_channels = $payment_channels;
-        $this->view->product_channcel = $this->currentProductChannel();
+        $this->view->product_channel = $this->currentProductChannel();
     }
 }

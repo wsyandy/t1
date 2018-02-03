@@ -768,6 +768,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $hot_cache->zincrby($connection_list, 1, $ip);
         echoLine($hot_cache->zscore($connection_list, $ip));
+
     }
 
     function test51Action()
