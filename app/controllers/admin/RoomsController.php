@@ -117,7 +117,7 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '此礼物不存在');
             }
 
-            $sender = \Users::findById($this->params('sender'));
+            $sender = \Users::findById($this->params('sender_id'));
             if (!$sender) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '发送者不存在');
             }
