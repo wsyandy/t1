@@ -146,3 +146,27 @@
         }
     }
   ```   
+  
+   #### 上麦
+    ```
+    {
+        action: up 上麦
+        user_id 上麦的用户id
+        currenr_room_seat_id 麦位id
+        sex 性别
+        avatar_url 用户头像
+        avatar_small_url 用户小图 
+        nickname 用户昵称
+        channel_name 房间频道
+    }
+    ```   
+    
+   #### 下麦
+    ```
+    {
+        action: down 下麦
+        user_id 下麦麦的用户id
+        currenr_room_seat_id 麦位id
+        channel_name 房间频道
+    }
+    ```   
