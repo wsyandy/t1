@@ -186,9 +186,8 @@ class RoomsController extends BaseController
             $action = $this->params('action');
             $sender_id = $this->params('sender_id');
             $gift_id = $this->params('gift_id');
-            $receiver_id = $this->params('receiver_id');
             $content = $this->params('content');
-            debug($action, $sender_id, $gift_id, $receiver_id, $content);
+            debug($action, $sender_id, $gift_id, $content);
 
             $sender = \Users::findById($sender_id);
             if (!$sender) {
