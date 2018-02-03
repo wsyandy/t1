@@ -157,6 +157,10 @@
         avatar_url 用户头像
         avatar_small_url 用户小图 
         nickname 用户昵称
+        status
+        microphone
+        rank
+        room_id
         channel_name 房间频道
     }
     ```   
@@ -167,6 +171,10 @@
         action: down 下麦
         user_id 下麦麦的用户id
         currenr_room_seat_id 麦位id
+        status
+        microphone
+        room_id
+        rank
         channel_name 房间频道
     }
     ```   
