@@ -929,4 +929,36 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $server = PushSever::send('push', $intranet_ip, 9508, $payload);
     }
+
+    //上麦
+    function test61Action()
+    {
+        $user = Users::findById(52);
+        $hot_cache = Users::getHotReadCache();
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $current_room = $user->current_room;
+        $current_room_seat = $user->current_room_seat;
+        $body = ['action' => 'up', 'channel_name' => $current_room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
+        echoLine($intranet_ip, $receiver_fd, $payload);
+        PushSever::send('push', $intranet_ip, 9508, $payload);
+    }
+
+    //下麦
+    function test62Action()
+    {
+        $user = Users::findById(52);
+        $hot_cache = Users::getHotReadCache();
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $current_room = $user->current_room;
+        $current_room_seat = $user->current_room_seat;
+        $body = ['action' => 'down', 'channel_name' => $current_room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
+        echoLine($intranet_ip, $receiver_fd, $payload);
+        PushSever::send('push', $intranet_ip, 9508, $payload);
+    }
 }
