@@ -1,9 +1,9 @@
-<form action="/admin/rooms/enter_room?user_id={{ user.id }}" method="post" >
+<form action="/admin/rooms/give_gift?user_id={{ user.id }}" method="post" >
     <div class="form-group">
         <label for="sender_id">发送者</label>
         <select type="text" name="sender_id" id="sender_id" class="form-control">
             {% for sender in senders %}
-                <option value="{{ sender.id }}"> {{ sender.name }}</option>
+                <option value="{{ sender.id }}"> {{ sender.nickname }}</option>
             {% endfor %}
         </select>
         <label for="gift_id">礼物ID</label>

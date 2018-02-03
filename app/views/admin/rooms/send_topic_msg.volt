@@ -1,4 +1,4 @@
-<form action="/admin/rooms/enter_room?user_id={{ user.id }}" method="post" >
+<form action="/admin/rooms/send_topic_msg?user_id={{ user.id }}" method="post" >
     <div class="form-group">
         <div class="form-group">
             <label>消息内容</label>
