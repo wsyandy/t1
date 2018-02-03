@@ -182,9 +182,6 @@ class RoomsController extends BaseController
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '接收者不在房间');
         }
-        $gifts = \Gifts::findValidList();
-        $senders = \Users::findForeach();
-        $receivers = $room->findUsers(1, 100);
         if ($this->request->isPost()) {
             $action = $this->params('action');
             $sender_id = $this->params('sender_id');
@@ -221,11 +218,6 @@ class RoomsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '发送者必须在此房间');
                 }
 
-                $receiver = \Users::findById($sender_id);
-                if (!$receiver || (!$receiver->current_room_seat_id && $receiver->id != $room->id)) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '接收者必须是上麦者或房主');
-                }
-
                 $gift = \Gifts::findFirstById($gift_id);
                 if (!$gift) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '此礼物不存在');
@@ -236,9 +228,9 @@ class RoomsController extends BaseController
                 $data['sender_id'] = $sender->id;
                 $data['sender_nickname'] = $sender->nickname;
                 $data['sender_room_seat_id'] = $sender->current_room_seat_id;
-                $data['receiver_id'] = $receiver->id;
-                $data['receiver_nickname'] = $receiver->nickname;
-                $data['receiver_room_seat_id'] = $receiver->current_room_seat_id;
+                $data['receiver_id'] = $user->id;
+                $data['receiver_nickname'] = $user->nickname;
+                $data['receiver_room_seat_id'] = $user->current_room_seat_id;
 
                 $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
             }
@@ -247,14 +239,11 @@ class RoomsController extends BaseController
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             $server = \PushSever::send('push', $intranet_ip, 9508, $payload);
-            return $this->renderJSON(ERROR_CODE_FAIL, '发送成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
 
         }
         $this->view->user_id = $user_id;
-        $this->view->ACTIONS = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'give_gift'];
-        $this->view->senders = $senders;
-        $this->view->gifts = $gifts;
-        $this->view->receivers = $receivers;
+        $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'give_gift'=>'送礼物'];
         $this->view->room = $room;
     }
 }

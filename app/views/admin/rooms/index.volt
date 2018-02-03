@@ -43,9 +43,6 @@
     {% if isAllowed('room','deatil') %}
         <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
     {% endif %}
-    {% if isAllowed('room','enter_room')  and room.status == STATUS_ON%}
-        <a href="/admin/rooms/enter_room?room_id={{ room.id }}" class="modal_action">进入房间</a><br/>
-    {% endif %}
 {% endmacro %}
 
 {% macro avatar_image(room) %}
