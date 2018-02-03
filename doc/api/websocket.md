@@ -126,17 +126,17 @@
   #### 送礼物
   ```
     {
-        action: send_gift 送礼物
-        sender_room_seat_id 发送者的麦位id
-        receiver_room_seat_id 接收者的麦位id
-        sender_id 发送者id
-        receiver_id 接收者id
-        sender_nickname 发送者昵称
-        receiver_nickname 接收者昵称
+        action: send_gift 送礼物      
         notify_type bc 通知类型bc广播 ptp点对点
         channel_name 房间频道
         gift: {
             id 礼物id
+            sender_room_seat_id 发送者的麦位id
+            receiver_room_seat_id 接收者的麦位id
+            sender_id 发送者id
+            receiver_id 接收者id
+            sender_nickname 发送者昵称
+            receiver_nickname 接收者昵称
             name 礼物名称
             dynamic_image_url 动图
             image_url 静态图

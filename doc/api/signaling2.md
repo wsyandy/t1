@@ -109,7 +109,7 @@ error_reason|string|Y|返回失败原因,默认为空串
         name: '礼物名称' 
         image_small_url: 'http://small_url'
         image_big_url: 'http://big_url',
-        dynamic_url: 'http://dynamic_url',
+        dynamic_image_url: 'http://dynamic_image_url',
         user_id: 1
         user_nickname: '接收方昵称'
         sender_id: 2
