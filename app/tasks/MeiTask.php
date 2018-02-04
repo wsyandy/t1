@@ -962,4 +962,16 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($intranet_ip, $receiver_fd, $payload);
         PushSever::send('push', $intranet_ip, 9508, $payload);
     }
+
+    function test63Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+            }
+        }
+    }
 }
