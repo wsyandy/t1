@@ -175,7 +175,7 @@ class RoomsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
                 }
 
-                $room_seat = \RoomSeats::find(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
+                $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
                 $room_seat->up($sender);
                 $body = ['action' => 'enter_room', 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
             }
