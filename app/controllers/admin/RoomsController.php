@@ -5,6 +5,7 @@
  * Date: 2018/1/8
  * Time: 下午5:59
  */
+
 namespace admin;
 
 
@@ -86,22 +87,34 @@ class RoomsController extends BaseController
             $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
             $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $user_id));
 
+            if ($action == 'enter_room') {
+
+                if ($sender->isInAnyRoom()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户已在房间');
+                }
+
+                $room->enterRoom($sender);
+                $body = ['action' => 'enter_room', 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
+                    'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'channel_name' => $room->channel_name
+                ];
+            }
+
             if ($action == 'send_topic_msg') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
                 $body = ['action' => 'send_topic_msg', 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'content' => $content,
                     'channel_name' => $room->channel_name
                 ];
             }
 
-            if ($action == 'enter_room') {
-                $body = ['action' => 'enter_room', 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
-                    'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'channel_name' => $room->channel_name
-                ];
-            }
-
             if ($action == 'give_gift') {
-                if ($sender->current_room_id != $room->id) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '发送者必须在此房间');
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
 
                 $gift = \Gifts::findFirstById($gift_id);
@@ -121,6 +134,67 @@ class RoomsController extends BaseController
                 $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
             }
 
+            if ($action == 'exit_room') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                $current_room_seat_id = $sender->current_room_seat_id;
+                $body = ['action' => 'enter_room', 'user_id' => $sender->id, 'channel_name' => $room->channel_name];
+
+                $room->exitRoom($sender, false);
+
+                $current_room_seat = \RoomSeats::findFirstById($current_room_seat_id);
+                if ($current_room_seat) {
+                    $body['room_seat'] = $current_room_seat->toSimpleJson();
+                }
+            }
+
+            if ($action == 'down') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                if (!$sender->current_room_seat_id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在麦位');
+                }
+                $current_room_seat = $sender->current_room_seat;
+                $body = ['action' => 'enter_room', 'channel_name' => $room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+                $current_room_seat->down($sender);
+            }
+
+            if ($action == 'up') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                if ($sender->current_room_seat_id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户已在麦位');
+                }
+
+                $room_seat = \RoomSeats::find(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
+                $room_seat->up($sender);
+                $body = ['action' => 'enter_room', 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
+            }
+
+            if ($action == 'hang_up') {
+
+                if (!$sender->isCalling()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户没有进行中的通话');
+                }
+
+                $voice_call = \VoiceCalls::getVoiceCallByUserId($sender_id);
+
+                if ($voice_call->sender_id != $user_id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户id错误');
+                }
+
+                $voice_call->changeStatus(CALL_STATUS_HANG_UP);
+                $body = ['action' => 'hang_up', 'user_id' => $sender_id, 'receiver_id' => $user_id, 'channel_name' => $voice_call->call_no];
+            }
 
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
@@ -129,7 +203,9 @@ class RoomsController extends BaseController
 
         }
         $this->view->user_id = $user_id;
-        $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'give_gift'=>'送礼物'];
+        $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'give_gift' => '送礼物', 'up' => '上麦',
+            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话'
+        ];
         $this->view->room = $room;
     }
 }
