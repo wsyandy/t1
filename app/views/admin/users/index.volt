@@ -53,7 +53,7 @@
         <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a><br/>
     {% endif %}
     <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
-    <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a>
+    <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
 {% endmacro %}
 
 {% macro detail_link(user) %}
@@ -95,7 +95,7 @@
             <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
             <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a><br/>
             <a href="/admin/users/send_message?id=${ user.id }" class="modal_action">发送系统消息</a><br/>
-            <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a>
+            <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
         </td>
 
     </tr>

@@ -397,6 +397,7 @@ class RoomsController extends BaseController
     {
         $id = $this->params('id');
         $duration = intval($this->params('duration')); //时长 -1, 1, 3,24
+        $user_id = $this->otherUserId();
 
         if (!$id || !$duration) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -424,11 +425,11 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
 
-        $room->addManager($this->otherUserId(), $duration);
+        $room->addManager($user_id, $duration);
 
-        $res = $this->otherUser()->toRoomManagerJson();
-        $res['user_id'] = $this->otherUserId();
-        unset($res['id']);
+        $res['user_id'] = $user_id;
+        $res['deadline'] = $room->calculateUserDeadline($user_id);
+        $res['is_permanent'] = $this->otherUser()->isPermanentManager($room);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
@@ -461,6 +462,7 @@ class RoomsController extends BaseController
     {
         $id = $this->params('id');
         $duration = intval($this->params('duration')); //时长 -1, 1, 3,24
+        $user_id = $this->otherUserId();
 
         if (!$id || !$duration) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -481,10 +483,10 @@ class RoomsController extends BaseController
         }
 
         $room->updateManager($this->otherUserId(), $duration);
-        $res = $this->otherUser()->toRoomManagerJson();
-        $res['user_id'] = $this->otherUserId();
-        unset($res['id']);
 
+        $res['user_id'] = $user_id;
+        $res['deadline'] = $room->calculateUserDeadline($user_id);
+        $res['is_permanent'] = $this->otherUser()->isPermanentManager($room);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 

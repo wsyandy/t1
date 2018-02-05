@@ -163,3 +163,7 @@ define('ALBUM_AUTH_STATUS_SUCCESS', 1);
 define('ALBUM_AUTH_STATUS_FAIL', 2);
 
 define('USER_STATUS_NORMAL', 0);
+// 房间类型
+define('ROOM_TYPE_ACTIVE', 1);//正常用户
+define('ROOM_TYPE_SILENT', 2);//沉默
+

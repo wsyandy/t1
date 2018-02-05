@@ -13,6 +13,11 @@ class AccountHistories extends BaseModel
      */
     private $_user;
 
+    /**
+     * @type Operators
+     */
+    private $_operator;
+
     static $FEE_TYPE = [
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
@@ -36,9 +41,10 @@ class AccountHistories extends BaseModel
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
 
-        foreach (['order_id', 'gift_order_id', 'remark'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $account_history->$column = fetch($opts, $column);
         }
+
         if ($account_history->create()) {
             return true;
         }

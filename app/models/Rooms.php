@@ -13,7 +13,7 @@ class Rooms extends BaseModel
 
 
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
-
+    static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
 
     function beforeCreate()
@@ -71,8 +71,9 @@ class Rooms extends BaseModel
         $room->name = $name;
         $room->user_id = $user->id;
         $room->user = $user;
-        $room->product_channel_id = $user->product_channel_id;
         $room->status = STATUS_ON;
+        $room->product_channel_id = $user->product_channel_id;
+        $room->user_type = $user->user_type;
         $room->last_at = time();
         $room->save();
 
@@ -410,11 +411,16 @@ class Rooms extends BaseModel
         if (-1 == $duration) {
             $time = time() + 86400 * 10000;
         } else {
-            $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
-        }
 
-        if (isDevelopmentEnv()) {
-            $time = time() + 2 * 60;
+            if (isDevelopmentEnv()) {
+                if (1 == $duration || 3 == $duration) {
+                    $time = time() + $duration * 60;
+                } elseif (24 == $duration) {
+                    $time = time() + 5 * 60;
+                }
+            }
+
+            $db->zadd($total_manager_key, $time, $this->generateRoomManagerKey($user_id));
         }
 
         $db->zadd($manager_list_key, $time, $user_id);
@@ -446,6 +452,9 @@ class Rooms extends BaseModel
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = $duration * 3600;
+        if (isDevelopmentEnv()) {
+            $time = $duration * 60;
+        }
         $db->zincrby($manager_list_key, $time, $user_id);
         $db->zincrby($user_manager_list_key, $time, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
@@ -509,4 +518,11 @@ class Rooms extends BaseModel
         return $users;
     }
 
+    function calculateUserDeadline($user_id)
+    {
+        $db = Rooms::getRoomDb();
+        $manager_list_key = $this->generateManagerListKey();
+        $deadline = $db->zscore($manager_list_key, $user_id);
+        return $deadline;
+    }
 }

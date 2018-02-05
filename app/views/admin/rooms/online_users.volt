@@ -27,11 +27,14 @@
 {% endmacro %}
 
 
+{% macro send_topic_msg(user) %}
+    <a href="/admin/rooms/send_topic_msg?user_id={{ user.id }}" class="modal_action">发公屏消息</a><br/>
+{% endmacro %}
 
-{% macro detail_link(user) %}
-    <a href="/admin/users/detail?id={{ user.id }}">征信信息</a>
+{% macro msg_link(user) %}
+    <a href="/admin/rooms/send_msg?user_id={{ user.id }}" class="modal_action">模拟消息</a><br/>
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-    '状态':'user_status_info'
+'状态':'user_status_info','模拟消息':'msg_link'
 ]) }}
