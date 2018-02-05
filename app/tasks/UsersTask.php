@@ -195,6 +195,9 @@ class UsersTask extends \Phalcon\Cli\Task
     function importUserAction()
     {
         $filename = APP_ROOT . 'log/user_detail.log';
+        if (isDevelopmentEnv()) {
+            $filename = APP_ROOT . 'log/dev_user_detail.log';
+        }
         $yuanfen = new \Yuanfen($filename);
         $yuanfen->parseFile();
     }
