@@ -71,7 +71,7 @@ class Rooms extends BaseModel
         $room->name = $name;
         $room->user_id = $user->id;
         $room->user = $user;
-        $room->product_channel_id = $user->product_channel_id;
+        $room->status = STATUS_ON;
         $room->product_channel_id = $user->product_channel_id;
         $room->type = $user->user_type;
         $room->last_at = time();
