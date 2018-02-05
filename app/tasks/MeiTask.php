@@ -990,4 +990,29 @@ class MeiTask extends \Phalcon\Cli\Task
             $room->save();
         }
     }
+
+    function test66Action()
+    {
+        $count = 0;
+
+        for ($i = 1; $i <= 100; $i++) {
+            $rand_num = mt_rand(1, 100);
+
+            if ($rand_num < 50) {
+                $count++;
+            }
+        }
+
+        debug($count);
+        $users = Users::count();
+        echoLine($users);
+    }
+
+    function test67Action()
+    {
+        $db = Users::getHotWriteCache();
+        $key = "test_zadd_incr";
+        $db->zadd($key, 133, 1);
+        echoLine($db->zrangebyscore($key, '-inf', 100000));
+    }
 }
