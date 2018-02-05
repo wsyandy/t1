@@ -111,7 +111,7 @@ class RoomsController extends BaseController
                 ];
             }
 
-            if ($action == 'give_gift') {
+            if ($action == 'send_gift') {
 
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
@@ -204,7 +204,7 @@ class RoomsController extends BaseController
 
         }
         $this->view->user_id = $user_id;
-        $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'give_gift' => '送礼物', 'up' => '上麦',
+        $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
             'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话'
         ];
         $this->view->room = $room;
