@@ -76,7 +76,7 @@
  #### 退出房间
   ```
   {
-     action:exit_room exit_room退出房间 (由于网络异常或进程退出导致的退出房间)   
+     action:exit_room 退出房间 (由于网络异常或进程退出导致的退出房间)   
      user_id:1233 退出房间的用户id
      channel_name 房间频道
      room_seat:{
