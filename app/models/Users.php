@@ -80,22 +80,20 @@ class Users extends BaseModel
 
     function afterCreate()
     {
-        $this->addActiveList();
-
-        if ($this->ip) {
-            self::delay(1)->asyncUpdateIpLocation($this->id);
+        if ($this->isActive()) {
+            $this->addActiveList();
+            if ($this->ip) {
+                self::delay(1)->asyncUpdateIpLocation($this->id);
+            }
+            if ($this->latitude && $this->longitude) {
+                self::delay(1)->asyncUpdateGeoLocation($this->id);
+            }
+            if ($this->mobile) {
+                $this->bindMobile();
+            }
+            \Emchat::delay()->createEmUser($this->id);
+            \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
-
-        if ($this->latitude && $this->longitude) {
-            self::delay(1)->asyncUpdateGeoLocation($this->id);
-        }
-
-        if ($this->mobile) {
-            $this->bindMobile();
-        }
-
-        \Emchat::delay()->createEmUser($this->id);
-        \Chats::delay(5)->sendWelcomeMessage($this->id);
     }
 
     function beforeUpdate()
