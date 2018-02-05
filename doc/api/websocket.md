@@ -126,7 +126,7 @@
   #### 送礼物
   ```
     {
-        action: send_gift 送礼物      
+        action: give_gift 送礼物      
         notify_type bc 通知类型bc广播 ptp点对点
         channel_name 房间频道
         gift: {
