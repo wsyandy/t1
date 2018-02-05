@@ -438,5 +438,32 @@ class UsersTask extends \Phalcon\Cli\Task
             $complaint->save();
         }
     }
+    /**
+     * 导入用户
+     */
+    function importUserAction()
+    {
+        $filename = APP_ROOT . 'log/user_detail.log';
+        if (isDevelopmentEnv()) {
+            $filename = APP_ROOT . 'log/dev_user_detail.log';
+        }
+        $yuanfen = new \Yuanfen($filename);
+        $yuanfen->parseFile();
+    }
+
+    function silentUserAction()
+    {
+        $user_id = 2;
+        while (true) {
+            $user = \Users::findById($user_id);
+            if (isBlank($user)) {
+                break;
+            }
+            if ($user && $user->isNpc() && isBlank($user->avatar)) {
+                \Yuanfen::addSilentUser($user);
+            }
+            $user_id += 1;
+        }
+    }
 }
 

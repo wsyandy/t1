@@ -161,7 +161,9 @@ class BaseController extends \ApplicationController
         if (!isset($this->_current_product_channel) && $code) {
             $this->_current_product_channel = \ProductChannels::findFirstByCodeHotCache($code);
         }
-
+        if (!isset($this->_current_product_channel) && isPresent($this->currentUser())) {
+            $this->_current_product_channel = $this->currentUser()->product_channel;
+        }
         return $this->_current_product_channel;
     }
 
