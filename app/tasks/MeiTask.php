@@ -980,4 +980,14 @@ class MeiTask extends \Phalcon\Cli\Task
         $content = readExcel(APP_ROOT . "public/temp/room_topic.xls");
         print_r($content);
     }
+
+    function test65Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $room->type = $room->user->user_type;
+            $room->save();
+        }
+    }
 }

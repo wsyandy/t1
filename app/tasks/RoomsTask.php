@@ -38,6 +38,16 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    function initRoomTypeAction()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $room->type = $room->user->user_type;
+            $room->save();
+        }
+    }
+
     //刷新房间列表
     function freshRoomListAction()
     {
