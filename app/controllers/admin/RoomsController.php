@@ -94,7 +94,7 @@ class RoomsController extends BaseController
                 }
 
                 $room->enterRoom($sender);
-                $body = ['action' => 'enter_room', 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
+                $body = ['action' => $action, 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'channel_name' => $room->channel_name
                 ];
             }
@@ -105,7 +105,7 @@ class RoomsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
 
-                $body = ['action' => 'send_topic_msg', 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
+                $body = ['action' => $action, 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'content' => $content,
                     'channel_name' => $room->channel_name
                 ];
@@ -131,7 +131,7 @@ class RoomsController extends BaseController
                 $data['receiver_nickname'] = $user->nickname;
                 $data['receiver_room_seat_id'] = $user->current_room_seat_id;
 
-                $body = ['action' => 'give_gift', 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
+                $body = ['action' => $action, 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
             }
 
             if ($action == 'exit_room') {
@@ -141,7 +141,7 @@ class RoomsController extends BaseController
                 }
 
                 $current_room_seat_id = $sender->current_room_seat_id;
-                $body = ['action' => 'exit_room', 'user_id' => $sender->id, 'channel_name' => $room->channel_name];
+                $body = ['action' => $action, 'user_id' => $sender->id, 'channel_name' => $room->channel_name];
 
                 $room->exitRoom($sender, false);
 
@@ -161,8 +161,8 @@ class RoomsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在麦位');
                 }
                 $current_room_seat = $sender->current_room_seat;
-                $body = ['action' => 'down', 'channel_name' => $room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
                 $current_room_seat->down($sender);
+                $body = ['action' => $action, 'channel_name' => $room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
             }
 
             if ($action == 'up') {
@@ -177,7 +177,7 @@ class RoomsController extends BaseController
 
                 $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
                 $room_seat->up($sender);
-                $body = ['action' => 'up', 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
+                $body = ['action' => $action, 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
             }
 
             if ($action == 'hang_up') {
@@ -193,7 +193,7 @@ class RoomsController extends BaseController
                 }
 
                 $voice_call->changeStatus(CALL_STATUS_HANG_UP);
-                $body = ['action' => 'hang_up', 'user_id' => $sender_id, 'receiver_id' => $user_id, 'channel_name' => $voice_call->call_no];
+                $body = ['action' => $action, 'user_id' => $sender_id, 'receiver_id' => $user_id, 'channel_name' => $voice_call->call_no];
             }
 
             $payload = ['body' => $body, 'fd' => $receiver_fd];
