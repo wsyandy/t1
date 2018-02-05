@@ -209,4 +209,29 @@ class RoomsController extends BaseController
         ];
         $this->view->room = $room;
     }
+
+    function audioAction()
+    {
+        $id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+        $audios = \Audios::find($cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON],
+            'order' => 'rank desc'
+        ]);
+
+        if ($this->request->isPost()) {
+            $audio_id = $this->params('audio_id');
+            $room->audio_id = $audio_id;
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
+            if ($room->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '',['redirect_url' => '/admin/rooms']);
+            }
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+        $this->view->id = $id;
+        $this->view->audios = $audios;
+        //        $this->view->room = $room;
+    }
 }

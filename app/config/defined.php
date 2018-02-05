@@ -158,7 +158,10 @@ define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 
 // 房间类型
-define('ROOM_TYPE_ACTIVE', 1);//正常用户
-define('ROOM_TYPE_SILENT', 2);//沉默
+define('ROOM_THEME_TYPE_NORMAL',0); //正常
+define('ROOM_THEME_TYPE_BROADCAST', 1);//电台
 
+
+define('AUDIO_TYPE_STORY',1); //故事
+define('AUDIO_TYPE_MUSIC',2); //音乐
 

@@ -202,6 +202,9 @@
                     {% if isAllowed('emoticon_images','index') %}
                         <li><a href="/admin/emoticon_images">表情配置</a></li>
                     {% endif %}
+                    {% if isAllowed('audios','index') %}
+                        <li><a href="/admin/audios">音频配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
