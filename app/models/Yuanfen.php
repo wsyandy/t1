@@ -74,7 +74,7 @@ class Yuanfen
         $user->platform = isPresent($platform) ? $platform : $platforms[mt_rand(0, 1)];
         $user->sex = $sex;
         $user->nickname = $nickname;
-        $user->sid = $user->generateSid();
+        $user->sid = $user->generateSid('d.');
         $user->fr = 'yuanfen';
         $province = \Provinces::findFirstByName($province_name);
         if ($province) {
