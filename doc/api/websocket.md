@@ -59,20 +59,91 @@
  }
  ```
  
- ### 退出房间上报
+ #### 退出房间上报
    ```
    {
       action:exit_room_report 退出房间上报成功
       user_id:1233 退出房间的用户id
       online_token:xxxxx websocket链接时由服务端生成返回给客户端
-      sid
+      sid 上报的用户sid
       timestamp:xxxxxx  时间戳
       sign:xxxxxx  签名
    }
    ```
  
+ #### 挂断电话上报
+ ```
+ {
+    action: hang_up_report 挂断电话上报成功
+    user_id:  挂断电话用户id
+    online_token: websocket 链接时由服务端生成返回给客户端
+    sid 上报的用户sid
+    timestamp: 时间戳
+    sign： 签名
+ }
+ ```
+   
+ #### 进入房间上报
+   ```
+   {
+      action:enter_room_report 进入房间上报成功
+      user_id:1233 进入房间的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid  上报的用户sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```  
+   
+   #### 发公屏消息上报
+   ```
+   {
+      action:send_topic_msg_report 发公屏消息上报成功
+      user_id:1233 发公屏消息的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid   上报的用户sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```  
+     
+   #### 送礼物上报
+   ```
+   {
+      action:send_gift_report 送礼物上报成功
+      user_id:1233 送礼物的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid   上报的用户sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```
+   
+  #### 上麦上报
+   ```
+   {
+      action:up_deport 上麦上报成功
+      user_id:1233 上麦的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid   上报的用户sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```  
+     
+ #### 下麦上报
+   ```
+   {
+      action:down_report 下麦上报成功
+      user_id:1233 下麦的用户id
+      online_token:xxxxx websocket链接时由服务端生成返回给客户端
+      sid   上报的用户sid
+      timestamp:xxxxxx  时间戳
+      sign:xxxxxx  签名
+   }
+   ```   
  
- ### 3.2 服务端通知客户端的消息结构
+### 3.2 服务端通知客户端的消息结构
  #### 退出房间
   ```
   {
