@@ -14,7 +14,7 @@ class UsersController extends BaseController
 
         $user_id = $this->params("user[id_eq]");
         $mobile = $this->params("user[mobile_eq]");
-        $user_type = $this->params("user[user_type]");
+        $user_type = $this->params("user[user_type_eq]");
 
         if (!$user_id && !$mobile && !$user_type) {
             if (isset($cond['conditions'])) {
