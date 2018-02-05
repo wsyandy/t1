@@ -32,7 +32,7 @@
 {% endmacro %}
 
 {% macro room_status_info(room) %}
-    {{ room.status_text }}|{{ room.online_status_text }}|{{ room.type_text }}<br/>
+    {{ room.status_text }}|{{ room.online_status_text }}|{{ room.user_type_text }}<br/>
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>

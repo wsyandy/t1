@@ -13,7 +13,7 @@ class Rooms extends BaseModel
 
 
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
-    static $TYPE = [ROOM_TYPE_ACTIVE => '活跃', ROOM_TYPE_SILENT => '沉默'];
+    static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
 
     function beforeCreate()
@@ -73,7 +73,7 @@ class Rooms extends BaseModel
         $room->user = $user;
         $room->status = STATUS_ON;
         $room->product_channel_id = $user->product_channel_id;
-        $room->type = $user->user_type;
+        $room->user_type = $user->user_type;
         $room->last_at = time();
         $room->save();
 
