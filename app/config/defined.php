@@ -161,5 +161,4 @@ define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 define('ROOM_TYPE_ACTIVE', 1);//正常用户
 define('ROOM_TYPE_SILENT', 2);//沉默
 
-define('USER_TYPE_ACTIVE', 1);//正常用户
-define('USER_TYPE_SILENT', 2);//沉默
+
