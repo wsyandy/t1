@@ -131,7 +131,7 @@ class RoomsController extends BaseController
                 $data['receiver_nickname'] = $user->nickname;
                 $data['receiver_room_seat_id'] = $user->current_room_seat_id;
 
-                $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
+                $body = ['action' => 'give_gift', 'notify_type' => 'bc', 'channel_name' => $room->channel_name, 'gift' => $data];
             }
 
             if ($action == 'exit_room') {
@@ -141,7 +141,7 @@ class RoomsController extends BaseController
                 }
 
                 $current_room_seat_id = $sender->current_room_seat_id;
-                $body = ['action' => 'enter_room', 'user_id' => $sender->id, 'channel_name' => $room->channel_name];
+                $body = ['action' => 'exit_room', 'user_id' => $sender->id, 'channel_name' => $room->channel_name];
 
                 $room->exitRoom($sender, false);
 
@@ -161,7 +161,7 @@ class RoomsController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在麦位');
                 }
                 $current_room_seat = $sender->current_room_seat;
-                $body = ['action' => 'enter_room', 'channel_name' => $room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+                $body = ['action' => 'down', 'channel_name' => $room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
                 $current_room_seat->down($sender);
             }
 
@@ -177,7 +177,7 @@ class RoomsController extends BaseController
 
                 $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
                 $room_seat->up($sender);
-                $body = ['action' => 'enter_room', 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
+                $body = ['action' => 'up', 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
             }
 
             if ($action == 'hang_up') {
