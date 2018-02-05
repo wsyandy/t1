@@ -37,4 +37,10 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    //刷新房间列表
+    function freshRoomListAction()
+    {
+
+    }
 }

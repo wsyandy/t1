@@ -156,3 +156,7 @@ define('CALL_STATUS_ANSWERED', 6);//接听
 
 define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
+
+// 房间类型
+define('ROOM_TYPE_ACTIVE', 1);//正常用户
+define('ROOM_TYPE_SILENT', 2);//沉默
