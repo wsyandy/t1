@@ -974,4 +974,10 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test64Action()
+    {
+        $content = readExcel(APP_ROOT . "public/temp/room_topic.xls");
+        print_r($content);
+    }
 }
