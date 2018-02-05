@@ -10,6 +10,11 @@
     <label for="mobile">手机号</label>
     <input name="user[mobile_eq]" type="text" id="mobile"/>
 
+    <label for="user_type">类型</label>
+    <select name="user[user_type_eq]" id="user_type_eq">
+        {{ options(user_types, '') }}
+    </select>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 

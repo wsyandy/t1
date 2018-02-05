@@ -14,8 +14,9 @@ class UsersController extends BaseController
 
         $user_id = $this->params("user[id_eq]");
         $mobile = $this->params("user[mobile_eq]");
+        $user_type = $this->params("user[user_type]");
 
-        if (!$user_id && !$mobile) {
+        if (!$user_id && !$mobile && !$user_type) {
             if (isset($cond['conditions'])) {
                 $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
             } else {
@@ -27,6 +28,7 @@ class UsersController extends BaseController
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->user_types = \UserEnumerations::$USER_TYPE;
     }
 
     function editAction()
