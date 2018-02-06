@@ -1703,6 +1703,11 @@ class Users extends BaseModel
                 info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
             }
         } elseif (80 < $rand_num && $rand_num <= 90) {
+
+            if ($user->current_room_seat_id > 0) {
+                return;
+            }
+
             $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
 
             if ($room_seat) {
