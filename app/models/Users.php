@@ -1786,4 +1786,38 @@ class Users extends BaseModel
             $room_seat->room->pushDownMessage($user, $room_seat);
         }
     }
+
+    static function waitAuthKey()
+    {
+        return "wait_auth_users";
+    }
+
+    static function authedKey()
+    {
+        return "authed_users";
+    }
+
+    static function findWaitAuthUsers($page, $per_page = 30)
+    {
+        $search_db = \Users::getHotReadCache();
+        $offset = ($page - 1) * $per_page;
+
+        $user_ids = $search_db->zrange(self::waitAuthKey(), $offset, $offset + 99);
+        $total = $search_db->zcard(self::waitAuthKey());
+
+        $users = \Users::findByIds($user_ids);
+        return new \PaginationModel($users, $total, $page, $per_page);
+    }
+
+    static function findAuthedUsers($page, $per_page = 30)
+    {
+        $search_db = \Users::getHotReadCache();
+        $offset = ($page - 1) * $per_page;
+
+        $user_ids = $search_db->zrange(self::authedKey(), $offset, $offset + 99);
+        $total = $search_db->zcard(self::authedKey());
+
+        $users = \Users::findByIds($user_ids);
+        return new \PaginationModel($users, $total, $page, $per_page);
+    }
 }
