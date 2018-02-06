@@ -1640,4 +1640,58 @@ class Users extends BaseModel
 
         return $this->user_role < $other_user->user_role;
     }
+
+    //启动房间互动
+    static function startRoomInteractionTask($user_id, $room_id)
+    {
+        $user = Users::findFirstById($user_id);
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$user || !$room) {
+            info("Exce", $user_id, $room_id);
+            return;
+        }
+
+        if (!$user->isInAnyRoom()) {
+            info("user_not_in_room", $user_id, $room_id);
+            return;
+        }
+
+        $rand_num = mt_rand(1, 100);
+
+        if ($rand_num <= 50) {
+            $room->pushTopTopicMessage($user);
+        } elseif (50 < $rand_num && $rand_num <= 90) {
+            $gift_num = mt_rand(1, 15);
+            $gifts = Gifts::findForeach();
+            $gift_ids = [];
+
+            foreach ($gifts as $gift) {
+                $gift_ids[] = $gift->id;
+            }
+
+            $index = array_rand($gift_ids);
+            $gift_id = $gift_ids[$index];
+            $gift = Gifts::findFirstById($gift_id);
+
+            if ($user->canGiveGift($gift, $gift_num)) {
+
+                $receiver = $room->findRealUser();
+
+                $give_result = GiftOrders::giveTo($user_id, $receiver->id, $gift, $gift_num);
+
+                if ($give_result) {
+                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                }
+
+            } else {
+                info("can not send gift", $user->id, $room->id, $gift_id);
+            }
+        } else {
+            $room->exitSilentRoom($user);
+            return;
+        }
+
+        self::delay(60)->startRoomInteractionTask($user_id, $room_id);
+    }
 }

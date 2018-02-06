@@ -1015,4 +1015,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $db->zadd($key, 133, 1);
         echoLine($db->zrangebyscore($key, '-inf', 100000));
     }
+
+    function test68Action()
+    {
+        $user = Users::findFirstById(10138);
+        $room = $user->room;
+        $room->enterRoom($user);
+    }
 }

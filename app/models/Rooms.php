@@ -658,6 +658,8 @@ class Rooms extends BaseModel
         $room->enterRoom($user);
         $room->addOnlineSilentRoom();
         $room->pushEnterRoomMessage($user);
+
+        Users::delay(60)->startRoomInteractionTask($user_id, $room_id);
     }
 
     function exitSilentRoom($user)
@@ -687,15 +689,7 @@ class Rooms extends BaseModel
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name
         ];
 
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver->id));
-        $payload = ['body' => $body, 'fd' => $receiver_fd];
-
-        info($intranet_ip, $receiver_fd, $payload);
-
-        PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+        $this->push($receiver, $body);
     }
 
     function pushExitRoomMessage($user)
@@ -716,6 +710,57 @@ class Rooms extends BaseModel
             $body['room_seat'] = $current_room_seat->toSimpleJson();
         }
 
+        $this->push($receiver, $body);
+    }
+
+
+    function pushTopTopicMessage($user, $content = "")
+    {
+        $receiver = $this->findRealUser();
+
+        if (!$receiver) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+
+        if (isDevelopmentEnv()) {
+            $content = "test_user_id" . $user->id . "room_id" . $this->id;
+        }
+
+        $body = ['action' => 'send_topic_msg', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
+            'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'content' => $content,
+            'channel_name' => $this->channel_name
+        ];
+
+        $this->push($receiver, $body);
+    }
+
+    function pushGiftMessage($user, $receiver, $gift, $gift_num)
+    {
+        $real_user = $this->findRealUser();
+
+        if (!$real_user) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+        $data = $gift->toSimpleJson();
+        $data['num'] = $gift_num;
+        $data['sender_id'] = $user->id;
+        $data['sender_nickname'] = $user->nickname;
+        $data['sender_room_seat_id'] = $user->current_room_seat_id;
+        $data['receiver_id'] = $receiver->id;
+        $data['receiver_nickname'] = $receiver->nickname;
+        $data['receiver_room_seat_id'] = $receiver->current_room_seat_id;
+
+        $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];
+
+        $this->push($real_user, $body);
+    }
+
+    function push($receiver, $body)
+    {
         $hot_cache = Users::getHotReadCache();
         $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver->online_token;
         $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
@@ -742,5 +787,10 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         return $user;
+    }
+
+    function isSilent()
+    {
+        return USER_TYPE_SILENT == $this->user_type;
     }
 }
