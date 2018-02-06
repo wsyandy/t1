@@ -781,6 +781,10 @@ class Rooms extends BaseModel
 
         info($intranet_ip, $receiver_fd, $payload);
 
+        if (!$intranet_ip) {
+            info("Exce", $receiver->id, $this->id, $payload);
+            return;
+        }
         PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
     }
 

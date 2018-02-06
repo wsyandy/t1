@@ -160,6 +160,11 @@ class PushSever extends BaseModel
     //服务器内部通信
     static function send($action, $ip, $port, $payload = [])
     {
+        if (!$ip || !$port) {
+            info("Exce", $action, $ip, $port, $payload);
+            return false;
+        }
+
         info($port, $ip, $action, $payload);
 
         try {

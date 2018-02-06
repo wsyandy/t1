@@ -1044,4 +1044,14 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test69Action()
+    {
+        $rooms = Rooms::findBy(['online_status' => STATUS_ON]);
+
+        foreach ($rooms as $room) {
+            echoLine(date("Ymd H:i:s", $room->getExpireTime()));
+        }
+
+    }
 }
