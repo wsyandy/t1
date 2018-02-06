@@ -1406,7 +1406,7 @@ class Users extends BaseModel
         }
 
         $user_type = fetch($opts, 'user_type');
-        if($user_type){
+        if ($user_type) {
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
 
@@ -1700,7 +1700,7 @@ class Users extends BaseModel
                 }
 
             } else {
-                info("can not send gift", $user->id, $room->id, $gift_id);
+                info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
             }
         } else {
             $room->exitSilentRoom($user);
