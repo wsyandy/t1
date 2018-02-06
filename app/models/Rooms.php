@@ -2,6 +2,8 @@
 
 class Rooms extends BaseModel
 {
+    use RoomEnumerations;
+
     /**
      * @type ProductChannels
      */
@@ -735,9 +737,9 @@ class Rooms extends BaseModel
             return;
         }
 
-
-        if (isDevelopmentEnv()) {
-            $content = "test_user_id" . $user->id . "room_id" . $this->id;
+        if ($content) {
+            $messages = Rooms::$TOP_TOPIC_MESSAGES;
+            $content = $messages[array_rand($messages)];
         }
 
         $body = ['action' => 'send_topic_msg', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
@@ -757,13 +759,22 @@ class Rooms extends BaseModel
             return;
         }
 
+        $sender_nickname = $user->nickname;
+        $receiver_nickname = $receiver->nickname;
+
+        if (isDevelopmentEnv()) {
+            $sender_nickname .= $user->id;
+            $receiver_nickname .= $receiver->id;
+
+        }
+
         $data = $gift->toSimpleJson();
         $data['num'] = $gift_num;
         $data['sender_id'] = $user->id;
-        $data['sender_nickname'] = $user->nickname;
+        $data['sender_nickname'] = $sender_nickname;
         $data['sender_room_seat_id'] = $user->current_room_seat_id;
         $data['receiver_id'] = $receiver->id;
-        $data['receiver_nickname'] = $receiver->nickname;
+        $data['receiver_nickname'] = $receiver_nickname;
         $data['receiver_room_seat_id'] = $receiver->current_room_seat_id;
 
         $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];

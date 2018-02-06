@@ -1068,4 +1068,19 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($room);
         }
     }
+
+    function test70Action()
+    {
+        $contents = file_get_contents(APP_ROOT . "doc/top_messages.txt");
+        $contents = explode(PHP_EOL, $contents);
+
+        $array = "[";
+        foreach ($contents as $content) {
+            $array .= "'" . $content . "',";
+        }
+
+        $array .= "]";
+
+        debug($array);
+    }
 }
