@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
     <link rel="stylesheet" href="/m/css/money_style.css">
-    <link rel="stylesheet" type="text/css" href="/m/css/pop.css">
+    <link rel="stylesheet" href="/m/css/pop.css">
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <body>
