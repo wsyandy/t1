@@ -39,7 +39,7 @@ a{text-decoration: none;color: #000;}
     position: absolute;
     width: 13px;
     height: 13px;
-    background: url(../images/icon.png) no-repeat;
+    background: url(../images/money_icon.png) no-repeat;
     background-size: 100%;
     left: 0;
     top: 50%;
@@ -54,7 +54,7 @@ a{text-decoration: none;color: #000;}
     position: absolute;
     width: 13px;
     height: 13px;
-    background: url(../images/icon.png) no-repeat;
+    background: url(../images/money_icon.png) no-repeat;
     background-size: 100%;
     right: 0;
     top: 50%;
@@ -87,7 +87,7 @@ a{text-decoration: none;color: #000;}
 }
 .fudong .close_btn{
     width: 179px;
-    height: 45px;
+    height: 40px;
     line-height: 45px;
     margin:0 auto;
     border: 2px solid #F45189;
