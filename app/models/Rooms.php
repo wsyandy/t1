@@ -899,4 +899,65 @@ class Rooms extends BaseModel
 
         return true;
     }
+
+    static function activeRoom($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return;
+        }
+
+        if ($room->getRealUserNum() > 0) {
+
+            $silent_users = $room->findSilentUsers();
+
+            foreach ($silent_users as $silent_user) {
+                $silent_user->activeRoom($room);
+            }
+        }
+
+        $room->addSilentUsers();
+    }
+
+    function addSilentUsers()
+    {
+        if ($this->lock) {
+            info("room_is_lock", $this->id);
+            return;
+        }
+
+        if ($this->isSilent() && $this->getExpireTime() <= time() + 10) {
+            info("silent_room_already_expire", $this->id, date("Ymd h:i:s", $this->getExpireTime()));
+            return;
+        }
+
+        $last_user = Users::findLast(['columns' => 'id']);
+        $last_user_id = $last_user->id;
+
+        $per_page = mt_rand(1, 8);
+        $total_page = ceil($last_user_id / $per_page);
+        $page = mt_rand(1, $total_page);
+        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
+            " and id <>" . $this->user_id;
+        $users = Users::findPagination($cond, $page, $per_page);
+
+        foreach ($users as $user) {
+
+            if (!$this->canEnter($user)) {
+                info("user_can_not_enter_room", $this->id, $user->id);
+                continue;
+            }
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $this->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 60);
+            Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
+        }
+
+        info($this->id, $page, $per_page, $total_page);
+    }
 }
