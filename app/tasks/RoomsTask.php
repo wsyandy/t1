@@ -79,7 +79,34 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function initSilentRoomsAction()
     {
+        $name_file = APP_ROOT . "doc/room_topic.xls";
+        $names = readExcel($name_file);
 
+        foreach ($names as $name) {
+            $title = $name[0];
+            $topic = $name[1];
+
+            $room = Rooms::findFirstByName($title);
+
+            if ($room) {
+                continue;
+            }
+
+            $last_user = Users::findLast(['columns' => 'id']);
+
+            if (!$last_user) {
+                info("Exce no user");
+                return;
+            }
+
+            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT ;
+            $user = Users::findFirstBy($cond);
+
+            $room = Rooms::createRoom($user, $name);
+            $room->topic = $topic;
+            $room->satus = STATUS_OFF;
+            $room->save();
+        }
     }
 
     //唤醒离线沉默房间
