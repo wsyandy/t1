@@ -407,8 +407,4 @@ trait UserAttrs
         return intval($time / 60);
     }
 
-    function isHuman()
-    {
-        return USER_TYPE_HUMAN == $this->user_type;
-    }
 }

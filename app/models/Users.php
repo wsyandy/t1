@@ -247,6 +247,11 @@ class Users extends BaseModel
         return USER_TYPE_ACTIVE == $this->user_type;
     }
 
+    function isHuman()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
+    }
+
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
@@ -1400,8 +1405,12 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
+        $user_type = fetch($opts, 'user_type');
+        if ($user_type) {
+            $cond['conditions'] .= " and user_type = " . $user_type;
+        }
+
         $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and user_status = ' . USER_STATUS_ON;
-        $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
         $cond['order'] = 'last_at desc,id desc';
 
         info($user->id, $cond);
@@ -1459,12 +1468,10 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
 
         if ($users->count() < 3) {
-
-            $opts['city_id'] = $this->getSearchCityId();
-            if (!$opts['city_id']) {
-                $opts['province_id'] = $this->getSearchProvinceId();
-            }
-
+//            $opts['city_id'] = $this->getSearchCityId();
+//            if (!$opts['city_id']) {
+//                $opts['province_id'] = $this->getSearchProvinceId();
+//            }
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
@@ -1667,39 +1674,72 @@ class Users extends BaseModel
 
         if ($rand_num <= 50) {
             $room->pushTopTopicMessage($user);
-        } elseif (50 < $rand_num && $rand_num <= 90) {
-            $gift_num = mt_rand(1, 15);
-            $gifts = Gifts::findForeach();
-            $gift_ids = [];
+        } elseif (50 < $rand_num && $rand_num <= 80) {
 
-            foreach ($gifts as $gift) {
-                $gift_ids[] = $gift->id;
-            }
+            if ($room->getRealUserNum() > 0) {
+                $gift_num = mt_rand(1, 15);
+                $gifts = Gifts::findForeach();
+                $gift_ids = [];
 
-            $index = array_rand($gift_ids);
-            $gift_id = $gift_ids[$index];
-            $gift = Gifts::findFirstById($gift_id);
-
-            if ($user->canGiveGift($gift, $gift_num)) {
-
-                $receiver = $room->findRealUser();
-
-                if ($receiver) {
-                    $give_result = GiftOrders::giveTo($user_id, $receiver->id, $gift, $gift_num);
-
-                    if ($give_result) {
-                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
-                    }
+                foreach ($gifts as $gift) {
+                    $gift_ids[] = $gift->id;
                 }
 
-            } else {
-                info("can not send gift", $user->id, $room->id, $gift_id);
+                $index = array_rand($gift_ids);
+                $gift_id = $gift_ids[$index];
+                $gift = Gifts::findFirstById($gift_id);
+
+                if ($user->canGiveGift($gift, $gift_num)) {
+
+                    $receiver = $room->findRealUser();
+
+                    if ($receiver) {
+                        $give_result = GiftOrders::giveTo($user_id, $receiver->id, $gift, $gift_num);
+
+                        if ($give_result) {
+                            $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                        }
+                    }
+
+                } else {
+                    info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
+                }
             }
+
+        } elseif (80 < $rand_num && $rand_num <= 90) {
+
+            if ($user->current_room_seat_id < 1 && $room->getRealUserNum() > 0) {
+
+                $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
+
+                if ($room_seat) {
+                    $room_seat->up($user);
+                    $room->pushUpMessage($user, $room_seat);
+                }
+            }
+
         } else {
             $room->exitSilentRoom($user);
             return;
         }
 
         self::delay(60)->startRoomInteractionTask($user_id, $room_id);
+    }
+
+    //沉默用户下麦
+    static function asyncDownRoomSeat($user_id, $room_seat_id)
+    {
+        $user = Users::findFirstById($user_id);
+        $room_seat = RoomSeats::findFirstById($room_seat_id);
+
+        if (!$user || !$room_seat) {
+            info("Exec", $user_id, $room_seat_id);
+            return;
+        }
+
+        if ($user->current_room_seat_id == $room_seat_id) {
+            $room_seat->down($user);
+            $room_seat->room->pushDownMessage($user, $room_seat);
+        }
     }
 }
