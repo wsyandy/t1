@@ -443,12 +443,14 @@ class UsersTask extends \Phalcon\Cli\Task
      */
     function importUserAction($opts = array())
     {
-        $filename = fetch($opts, 'filename', 'user_detail.log');
+        $filename = fetch($opts, 0, 'user_detail.log');
         $path = APP_ROOT . 'log/' . $filename;
+        var_dump($filename);
         $from_dev = false;
         if (preg_match('/^dev_/', $filename)) {
             $from_dev = true;
         }
+        var_dump($from_dev);
         $yuanfen = new \Yuanfen($path, $from_dev);
         $yuanfen->parseFile();
     }

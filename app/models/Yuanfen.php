@@ -89,10 +89,8 @@ class Yuanfen
                 $album_urls[] = $this->generateCdnUrl($album);
             }
         }
-        $user = \Yuanfen::selectUserForReplace();
-        if (isBlank($user)) {
-            $user = new \Users();
-        }
+
+        $user = new \Users();
         $user->login_name = $login_name;
         $user->user_type = USER_TYPE_SILENT;
         $user->user_status = USER_STATUS_NORMAL;
@@ -116,6 +114,9 @@ class Yuanfen
         $user->longitude = $longitude;
         $user->height = $height;
         $user->birthday = $birthday;
+        $user->created_at = time();
+        $user->register_at = time();
+        $user->last_at = time();
         if ($avatar_path) {
             $avatar_url = $this->generateCdnUrl($avatar_path);
             echo $avatar_url;
@@ -156,6 +157,7 @@ class Yuanfen
         }
         return false;
     }
+
     function isFinished()
     {
         return $this->silent_num > \Yuanfen::$SILENT_NUM_LIMIT;
