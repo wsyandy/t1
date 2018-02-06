@@ -1756,6 +1756,11 @@ class Users extends BaseModel
             return;
         }
 
+        if ($this->isRoomHost($room)) {
+            info("user_is_room_host", $this->id, $room->id);
+            return;
+        }
+
         $rand_num = mt_rand(1, 100);
 
         info($rand_num, $this->id, $room->id);
