@@ -1050,8 +1050,22 @@ class MeiTask extends \Phalcon\Cli\Task
         $rooms = Rooms::findBy(['online_status' => STATUS_ON]);
 
         foreach ($rooms as $room) {
-            echoLine(date("Ymd H:i:s", $room->getExpireTime()));
+            //echoLine(date("Ymd H:i:s", $room->getExpireTime()));
+            if ($room->user->current_room_id != $room->id) {
+                echoLine($room->user->current_room_id, $room->id);
+                $room->online_status = STATUS_OFF;
+                $room->save();
+            }
         }
 
+        $room = Rooms::findFirstById(182);
+        echoLine($room);
+        echoLine($room->user->current_room_id);
+
+        $rooms = Rooms::findBy(['user_id' => 11158]);
+
+        foreach ($rooms as $room) {
+            echoLine($room);
+        }
     }
 }
