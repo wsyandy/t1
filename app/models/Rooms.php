@@ -767,6 +767,33 @@ class Rooms extends BaseModel
         $this->push($receiver, $body);
     }
 
+    function pushUpMessage($user, $current_room_seat)
+    {
+        $receiver = $this->findRealUser();
+
+        if (!$receiver) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+        $body = ['action' => 'up', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+        $this->push($receiver, $body);
+    }
+
+    function pushDownMessage($user, $current_room_seat)
+    {
+        $receiver = $this->findRealUser();
+
+        if (!$receiver) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+        $body = ['action' => 'down', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+
+        $this->push($receiver, $body);
+    }
+
     function pushGiftMessage($user, $receiver, $gift, $gift_num)
     {
         $real_user = $this->findRealUser();

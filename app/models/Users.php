@@ -1674,7 +1674,7 @@ class Users extends BaseModel
 
         if ($rand_num <= 50) {
             $room->pushTopTopicMessage($user);
-        } elseif (50 < $rand_num && $rand_num <= 90) {
+        } elseif (50 < $rand_num && $rand_num <= 80) {
             $gift_num = mt_rand(1, 15);
             $gifts = Gifts::findForeach();
             $gift_ids = [];
@@ -1702,11 +1702,36 @@ class Users extends BaseModel
             } else {
                 info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
             }
+        } elseif (80 < $rand_num && $rand_num <= 90) {
+            $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null)"]);
+
+            if ($room_seat) {
+                $room_seat->up($user);
+                $room->pushUpMessage($user, $room_seat);
+            }
+
         } else {
             $room->exitSilentRoom($user);
             return;
         }
 
         self::delay(60)->startRoomInteractionTask($user_id, $room_id);
+    }
+
+    //沉默用户下麦
+    static function asyncDownRoomSeat($user_id, $room_seat_id)
+    {
+        $user = Users::findFirstById($user_id);
+        $room_seat = RoomSeats::findFirstById($room_seat_id);
+
+        if (!$user || !$room_seat) {
+            info("Exec", $user_id, $room_seat_id);
+            return;
+        }
+
+        if ($user->current_room_seat_id == $room_seat_id) {
+            $room_seat->down($user);
+            $room_seat->room->pushDownMessage($user, $room_seat);
+        }
     }
 }

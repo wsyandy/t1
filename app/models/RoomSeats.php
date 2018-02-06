@@ -185,6 +185,11 @@ class RoomSeats extends BaseModel
 
         $this->update();
         $this->bindOnlineToken($object);
+
+        if ($object->isSilent()) {
+            Users::delay(mt_rand(1, 20))->asyncDownRoomSeat($user->id, $this->id);
+        }
+
         return $res;
     }
 

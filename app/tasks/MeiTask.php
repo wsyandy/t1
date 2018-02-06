@@ -1093,7 +1093,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(6569);
         echoLine($user);
 
-        $room = Rooms::findFirstById(421);
+        $room = Rooms::findFirstById(137);
         $key = $room->getUserListKey();
         $hot_cache = Rooms::getHotReadCache();
         $user_ids = $hot_cache->zrange($key, 0, -1);
@@ -1102,9 +1102,20 @@ class MeiTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             if ($user->diamond > 0) {
-                echoLine($user->diamond);
+                echoLine($user->diamond, $user->id);
             }
         }
 
+        $users = Users::findForeach(['conditions' => 'user_type = ' . USER_TYPE_SILENT]);
+
+        foreach ($users as $user) {
+            if ($user->diamond < 1) {
+                $amount = mt_rand(5000, 10000);
+                $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => 1];
+                if ($amount > 0) {
+                    \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+                }
+            }
+        }
     }
 }
