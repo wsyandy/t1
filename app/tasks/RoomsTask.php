@@ -125,13 +125,19 @@ class RoomsTask extends \Phalcon\Cli\Task
     //唤醒离线沉默房间
     function wakeUpOfflineSilentRoomsAction()
     {
+        $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
+
+        if ($online_silent_room_num >= 60) {
+            info("online_silent_room_num", $online_silent_room_num);
+            return;
+        }
+
         $per_page = mt_rand(1, 5);
         $last_room = Rooms::findLast();
         $last_room_id = $last_room->id;
         $total_page = ceil($last_room_id / $per_page);
         $page = mt_rand(1, $total_page);
         $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
-        $offline_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         foreach ($rooms as $room) {
             $user = $room->user;
@@ -146,7 +152,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             info($room->id, $delay_time);
         }
 
-        info($page, $per_page, $offline_silent_room_num, count($rooms));
+        info($page, $per_page, $online_silent_room_num, count($rooms));
     }
 
     //释放离线沉默房间
@@ -189,67 +195,13 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function enterSilentRoomAction()
-    {
-
-    }
-
-    //沉默用户进入房间
+    //沉默用户活跃房间
     function activeSilentRoomAction()
     {
         $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 60]);
-        $last_user = Users::findLast(['columns' => 'id']);
-
-        if (!$last_user) {
-            info("Exce no user");
-            return;
-        }
-
-        $last_user_id = $last_user->id;
 
         foreach ($rooms as $room) {
-
-            if ($room->lock) {
-                info("room_is_lock", $room->id);
-                continue;
-            }
-
-            if ($room->isSilent() && $room->getExpireTime() <= time() + 10) {
-                info("silent_room_already_expire", $room->id, date("Ymd h:i:s", $room->getExpireTime()));
-                continue;
-            }
-
-            $silent_users = $room->findSilentUsers();
-
-            foreach ($silent_users as $silent_user) {
-                $silent_user->activeRoom($room);
-            }
-
-            $per_page = mt_rand(1, 8);
-            $total_page = ceil($last_user_id / $per_page);
-            $page = mt_rand(1, $total_page);
-            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
-                " and id <>" . $room->user_id;
-            $users = Users::findPagination($cond, $page, $per_page);
-
-
-            foreach ($users as $user) {
-
-                if (!$room->canEnter($user)) {
-                    info("user_can_not_enter_room", $room->id, $user->id);
-                    continue;
-                }
-
-                if ($user->isInAnyRoom()) {
-                    info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
-                    continue;
-                }
-
-                $delay_time = mt_rand(1, 60);
-                Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
-            }
-
-            info($room->id, $page, $per_page, $total_page);
+            Rooms::delay()->activeRoom($room->id);
         }
     }
 }
