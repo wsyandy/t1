@@ -1758,6 +1758,8 @@ class Users extends BaseModel
 
         $rand_num = mt_rand(1, 100);
 
+        info($rand_num, $this->id, $room->id);
+
         if ($rand_num <= 50) {
             Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
         } elseif (50 < $rand_num && $rand_num <= 80) {
