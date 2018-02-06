@@ -1021,5 +1021,27 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(10138);
         $room = $user->room;
         $room->enterRoom($user);
+
+        $per_page = mt_rand(1, 5);
+        $page = 3;
+        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+
+        $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
+        $cond['order'] = 'id asc';
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+
+        foreach ($rooms as $room) {
+            echoLine($room);
+        }
+
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_SILENT]);
+
+        foreach ($rooms as $room) {
+            if ($room->user_num < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+            }
+        }
     }
 }

@@ -97,7 +97,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $room = Rooms::createRoom($user, $title);
             $room->topic = $topic;
-            $room->satus = STATUS_OFF;
+            $room->status = STATUS_OFF;
             $room->save();
         }
     }
