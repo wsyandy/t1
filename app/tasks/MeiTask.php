@@ -1118,4 +1118,29 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test72Action()
+    {
+        $room = Rooms::findFirstById(8);
+        $key = $room->getUserListKey();
+        $cache = Rooms::getHotWriteCache();
+        echoLine(date("Ymd H:i:s", $cache->zscore($key, 13685)), $cache->zscore($key, 13685));
+
+        echoLine(Users::findFirstById(13685));
+    }
+
+    function tetst73Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $users = $room->findTotalUsers();
+
+            foreach ($users as $user) {
+                if ($user->current_room_id != $room->id) {
+                    echoLine($user->id, $room->id, $user->current_room_id);
+                }
+            }
+        }
+    }
 }

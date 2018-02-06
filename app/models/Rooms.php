@@ -337,6 +337,16 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function findTotalUsers()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        return $users;
+    }
+
 
     function lock($password)
     {
