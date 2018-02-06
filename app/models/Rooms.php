@@ -259,6 +259,12 @@ class Rooms extends BaseModel
         return $hot_cache->zcard($key);
     }
 
+    function getSilentUserNum()
+    {
+        $num = $this->getUserNum() - $this->getRealUserNum();
+        return $num;
+    }
+
     function addUser($user)
     {
         $hot_cache = self::getHotWriteCache();
@@ -347,6 +353,17 @@ class Rooms extends BaseModel
         return $users;
     }
 
+    function findSilentUsers()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $real_user_key = $this->getRealUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $real_user_ids = $hot_cache->zrange($real_user_key, 0, -1);
+        $silent_user_ids = array_diff($user_ids, $real_user_ids);
+        $users = Users::findByIds($silent_user_ids);
+        return $users;
+    }
 
     function lock($password)
     {
@@ -690,12 +707,10 @@ class Rooms extends BaseModel
         info($room_id, $user->sid);
         $room->enterRoom($user);
 
-        if ($room->isSilent()) {
-            if ($user->isRoomHost($room)) {
-                $room->addOnlineSilentRoom();
-            } else {
-                Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
-            }
+        if ($user->isRoomHost($room)) {
+            $room->addOnlineSilentRoom();
+        } else {
+            //Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 
         $room->pushEnterRoomMessage($user);
@@ -712,7 +727,7 @@ class Rooms extends BaseModel
         info($this->id, $user->sid);
         $this->exitRoom($user);
 
-        if ($this->isSilent() && $user->isRoomHost($this)) {
+        if ($user->isRoomHost($this)) {
             $this->rmOnlineSilentRoom();
         }
 
@@ -755,7 +770,6 @@ class Rooms extends BaseModel
 
         $this->push($receiver, $body);
     }
-
 
     function pushTopTopicMessage($user, $content = "")
     {
