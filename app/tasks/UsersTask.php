@@ -467,5 +467,19 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_id += 1;
         }
     }
+
+    function giveDiamondAction()
+    {
+        $users = Users::findBy(['user_type' => USER_TYPE_SILENT]);
+        $amount = 10000;
+
+        foreach ($users as $user) {
+            $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => 1];
+
+            if ($amount > 0) {
+                \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+            }
+        }
+    }
 }
 

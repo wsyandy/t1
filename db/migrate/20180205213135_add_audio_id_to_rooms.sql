@@ -1,0 +1,1 @@
+alter table rooms ADD COLUMN audio_id INTEGER ;

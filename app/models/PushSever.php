@@ -160,6 +160,11 @@ class PushSever extends BaseModel
     //服务器内部通信
     static function send($action, $ip, $port, $payload = [])
     {
+        if (!$ip || !$port) {
+            info("Exce", $action, $ip, $port, $payload);
+            return false;
+        }
+
         info($port, $ip, $action, $payload);
 
         try {
@@ -455,7 +460,7 @@ class PushSever extends BaseModel
     function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
     {
         $hot_cache = self::getHotWriteCache();
-        $key = 'room_user_list_' . $current_room->id;
+        $key = $current_room->getRealUserListKey();
         $user_ids = $hot_cache->zrevrange($key, 0, 10);
         $channel_name = $current_room->channel_name;
 

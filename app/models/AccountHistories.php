@@ -91,7 +91,12 @@ class AccountHistories extends BaseModel
     static function findUserLast($user_id)
     {
         $account_histories = \AccountHistories::findAccountList($user_id, 1, 1);
-        return $account_histories[0];
+
+        if (count($account_histories) > 0) {
+            return $account_histories[0];
+        }
+
+        return null;
     }
 
     static function findAccountList($user_id, $page, $per_page)

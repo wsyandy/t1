@@ -59,8 +59,24 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $body = array_merge($body,['sid' => $user->sid]);
-        $res = httpGet($url,$body);
+        $body = array_merge($body, ['sid' => $user->sid]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function audioChaptersAction($params)
+    {
+        $room_id = $params[0];
+        $rank = $params[1];
+        $url = "http://chance.com/api/audio_chapters";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid, 'room_id' => $room_id, 'rank' => $rank]);
+        $res = httpGet($url, $body);
         echoLine($res);
     }
 }
