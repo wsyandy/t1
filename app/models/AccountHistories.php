@@ -92,7 +92,7 @@ class AccountHistories extends BaseModel
     {
         $account_histories = \AccountHistories::findAccountList($user_id, 1, 1);
 
-        if (count($account_histories > 0)) {
+        if (count($account_histories) > 0) {
             return $account_histories[0];
         }
 
