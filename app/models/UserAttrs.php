@@ -425,7 +425,7 @@ trait UserAttrs
     function removeFromWaitAuthList()
     {
         $hot_db = \Users::getHotWriteCache();
-        $hot_db->zrem(\Users::waitAuthKey(), time(), $this->id);
+        $hot_db->zrem(\Users::waitAuthKey(), $this->id);
     }
 
     function addAuthedList()
