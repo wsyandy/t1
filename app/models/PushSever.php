@@ -455,7 +455,7 @@ class PushSever extends BaseModel
     function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
     {
         $hot_cache = self::getHotWriteCache();
-        $key = 'room_user_list_' . $current_room->id;
+        $key = $current_room->getUserListKey();
         $user_ids = $hot_cache->zrevrange($key, 0, 10);
         $channel_name = $current_room->channel_name;
 
