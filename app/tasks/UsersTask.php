@@ -524,5 +524,15 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->save;
         }
     }
+    
+    function exportAuthedUsersAction()
+    {
+        \Users::exportAuthedUser();
+    }
+
+    function importAuthedUsersAction()
+    {
+        \Users::importAuthedUser();
+    }
 }
 

@@ -122,6 +122,26 @@ trait UserAttrs
         return $data;
     }
 
+    function toExportJson()
+    {
+        return [
+            'id' => $this->id,
+            'login_name' => $this->login_name,
+            'user_type' => $this->user_type,
+            'sex' => $this->sex,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'avatar_url' => $this->avatar_url,
+            'nickname' => $this->nickname,
+            'mobile' => $this->mobile,
+            'height' => $this->height,
+            'albums' => $this->albums,
+            'birthday' => $this->birthday_text,
+            'platform' => $this->platform,
+            'platform_version' => $this->platform_version
+        ];
+    }
+
     function toChatJson()
     {
         return array(
