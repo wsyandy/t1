@@ -89,10 +89,8 @@ class Yuanfen
                 $album_urls[] = $this->generateCdnUrl($album);
             }
         }
-        $user = \Yuanfen::selectUserForReplace();
-        if (isBlank($user)) {
-            $user = new \Users();
-        }
+
+        $user = new \Users();
         $user->login_name = $login_name;
         $user->user_type = USER_TYPE_SILENT;
         $user->user_status = USER_STATUS_NORMAL;
@@ -156,6 +154,7 @@ class Yuanfen
         }
         return false;
     }
+
     function isFinished()
     {
         return $this->silent_num > \Yuanfen::$SILENT_NUM_LIMIT;
