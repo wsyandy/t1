@@ -1664,7 +1664,7 @@ class Users extends BaseModel
         $room = Rooms::findFirstById($room_id);
         $user = Users::findFirstById($user_id);
 
-        if (!$room || $user) {
+        if (!$room || !$user) {
             return;
         }
 
@@ -1680,7 +1680,7 @@ class Users extends BaseModel
         $room = Rooms::findFirstById($room_id);
         $user = Users::findFirstById($user_id);
 
-        if (!$room || $user) {
+        if (!$room || !$user) {
             return;
         }
 
@@ -1724,7 +1724,7 @@ class Users extends BaseModel
         $room = Rooms::findFirstById($room_id);
         $user = Users::findFirstById($user_id);
 
-        if (!$room || $user) {
+        if (!$room || !$user) {
             return;
         }
 
