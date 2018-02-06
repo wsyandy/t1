@@ -233,10 +233,6 @@ class Rooms extends BaseModel
         info($this->user->sid, $user->sid);
         $this->exitRoom($user);
         $this->forbidEnter($user);
-
-        if ($user->isSilent()) {
-            $this->pushExitRoomMessage($user);
-        }
     }
 
     function getUserListKey()
