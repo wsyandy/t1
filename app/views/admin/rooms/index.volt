@@ -31,7 +31,7 @@
     在线人数: {{ room.user_num }}<br/>
     主题类型: {{ room.theme_type_text }}<br/>
     {% if room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
-        音频ID:{{ room.audio_id }}</br>
+        音频ID:<a href="/admin/audio_chapters?audio_id={{ room.audio_id }}" >{{ room.audio_id }}</a><br/>
     {% endif %}
 {% endmacro %}
 

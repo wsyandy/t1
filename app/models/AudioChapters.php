@@ -11,7 +11,7 @@ class AudioChapters extends BaseModel
     /**
      * @type Audios
      */
-    static $_audio;
+    private $_audio;
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
@@ -28,6 +28,7 @@ class AudioChapters extends BaseModel
             'rank' => $this->rank,
         ];
     }
+
     function toSimpleJson()
     {
         return [
@@ -41,13 +42,33 @@ class AudioChapters extends BaseModel
 
     static function findByAudioId($audio_id)
     {
-        debug($audio_id);
         return self::find(
             [
                 'conditions' => 'audio_id = :audio_id:',
-                'bind' => ['audio_id' => $audio_id]
+                'bind' => ['audio_id' => $audio_id],
+                'order' => 'rank desc'
             ]
         );
+    }
+
+    static function search($audio_id, $rank = 0)
+    {
+        $audio_chapter = self::findFirst(
+            [
+                'conditions' => 'audio_id = :audio_id: and rank > :rank: and status = :status: and file is not null',
+                'bind' => ['audio_id' => $audio_id, 'rank' => $rank, 'status' => STATUS_ON]
+            ]
+        );
+        if (!$audio_chapter) {
+            $audio_chapter = self::findFirst(
+                [
+                    'conditions' => 'audio_id = :audio_id: and status = :status: and file is not null',
+                    'bind' => ['audio_id' => $audio_id, 'status' => STATUS_ON],
+                    'order' => 'rank asc'
+                ]
+            );
+        }
+        return $audio_chapter;
     }
 
     function getFileUrl()
@@ -67,12 +88,9 @@ class AudioChapters extends BaseModel
             'rank' => $this->rank,
             'audio_id' => $this->audio_id
         ];
-        if(self::findFirst($cond))
-        {
+        if (self::findFirst($cond)) {
             return false;
         }
-        return  true;
+        return true;
     }
-
-
 }
