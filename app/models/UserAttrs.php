@@ -414,12 +414,15 @@ trait UserAttrs
 
     function changeAvatarAuth($avatar_auth)
     {
-        if (!array_key_exists($avatar_auth, \UserEnumerations::$AVATAR_STATUS)) {
+        if (isBlank($avatar_auth) ||
+            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)) {
             return;
         }
         $this->avatar_auth = $avatar_auth;
         $this->update();
-        $this->addAuthedList();
+        if (AUTH_SUCCESS == intval($avatar_auth)) {
+            $this->addAuthedList();
+        }
     }
 
     function removeFromWaitAuthList()
