@@ -932,6 +932,11 @@ class Rooms extends BaseModel
             return;
         }
 
+        if (!$this->isOnline() && $this->getRealUserNum() < 1) {
+            info("room_is_offline", $this->id);
+            return;
+        }
+
         $last_user = Users::findLast(['columns' => 'id']);
         $last_user_id = $last_user->id;
 
@@ -959,5 +964,10 @@ class Rooms extends BaseModel
         }
 
         info($this->id, $page, $per_page, $total_page);
+    }
+
+    function isOnline()
+    {
+        return $this->online_status == STATUS_ON;
     }
 }
