@@ -683,7 +683,7 @@ class Rooms extends BaseModel
 
         $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
         info($room_ids);
-        $rooms = Rooms::find($room_ids);
+        $rooms = Rooms::findByIds($room_ids);
         return $rooms;
     }
 

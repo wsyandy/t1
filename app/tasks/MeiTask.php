@@ -1342,5 +1342,11 @@ class MeiTask extends \Phalcon\Cli\Task
             " and avatar_status = " . AUTH_SUCCESS;
         $num = Users::count($cond);
         echoLine($num);
+
+        $rooms = Rooms::getOnlineSilentRooms();
+
+        foreach ($rooms as $room) {
+            echoLine($room->id);
+        }
     }
 }
