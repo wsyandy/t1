@@ -29,4 +29,17 @@ class UsersController extends BaseController
         $this->view->payment_channels = $payment_channels;
         $this->view->product_channel = $this->currentProductChannel();
     }
+
+    function earningsAction()
+    {
+        $user = $this->currentUser();
+        $hi_coins = $user->hi_coins;
+        $this->view->hi_coins = $hi_coins;
+        $this->view->amount = $hi_coins / 10;
+    }
+
+    function withdrawAction()
+    {
+
+    }
 }

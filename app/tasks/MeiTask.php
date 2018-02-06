@@ -980,4 +980,114 @@ class MeiTask extends \Phalcon\Cli\Task
         $content = readExcel(APP_ROOT . "public/temp/room_topic.xls");
         print_r($content);
     }
+
+    function test65Action()
+    {
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $room->type = $room->user->user_type;
+            $room->save();
+        }
+    }
+
+    function test66Action()
+    {
+        $count = 0;
+
+        for ($i = 1; $i <= 100; $i++) {
+            $rand_num = mt_rand(1, 100);
+
+            if ($rand_num < 50) {
+                $count++;
+            }
+        }
+
+        debug($count);
+        $users = Users::count();
+        echoLine($users);
+    }
+
+    function test67Action()
+    {
+        $db = Users::getHotWriteCache();
+        $key = "test_zadd_incr";
+        $db->zadd($key, 133, 1);
+        echoLine($db->zrangebyscore($key, '-inf', 100000));
+    }
+
+    function test68Action()
+    {
+        $user = Users::findFirstById(10138);
+        $room = $user->room;
+        $room->enterRoom($user);
+
+        $per_page = mt_rand(1, 5);
+        $page = 3;
+        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+
+        $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
+        $cond['order'] = 'id asc';
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+
+        foreach ($rooms as $room) {
+            echoLine($room);
+        }
+
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_SILENT]);
+
+        foreach ($rooms as $room) {
+            if ($room->user_num < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+            }
+        }
+    }
+
+    function test69Action()
+    {
+        $rooms = Rooms::findBy(['online_status' => STATUS_ON]);
+
+        foreach ($rooms as $room) {
+            //echoLine(date("Ymd H:i:s", $room->getExpireTime()));
+            if ($room->user->current_room_id != $room->id) {
+                echoLine($room->user->current_room_id, $room->id);
+                $room->online_status = STATUS_OFF;
+                $room->save();
+            }
+        }
+
+        $room = Rooms::findFirstById(182);
+        echoLine($room);
+        echoLine($room->user->current_room_id);
+
+        $rooms = Rooms::findBy(['user_id' => 11158]);
+
+        foreach ($rooms as $room) {
+            echoLine($room);
+        }
+    }
+
+    function test70Action()
+    {
+        $contents = file_get_contents(APP_ROOT . "doc/top_messages.txt");
+        $contents = explode(PHP_EOL, $contents);
+
+        $array = "[";
+        foreach ($contents as $content) {
+            $array .= "'" . $content . "',";
+        }
+
+        $array .= "]";
+
+        debug($array);
+    }
+
+    function test71Action()
+    {
+        $messages = Rooms::$TOP_TOPIC_MESSAGES;
+        $content = $messages[array_rand($messages)];
+        echoLine($content);
+    }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN hi_coins NUMERIC (10,2);

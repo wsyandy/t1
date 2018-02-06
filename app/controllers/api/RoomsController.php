@@ -44,7 +44,7 @@ class RoomsController extends BaseController
         //限制搜索条件
         $cond = [
             'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . ' and user_id <> ' . $user_id,
-            'order' => 'last_at desc'
+            'order' => 'user_type asc, last_at desc'
         ];
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
