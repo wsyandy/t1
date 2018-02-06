@@ -247,6 +247,11 @@ class Users extends BaseModel
         return USER_TYPE_ACTIVE == $this->user_type;
     }
 
+    function isHuman()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
+    }
+
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
@@ -1400,8 +1405,12 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
+        $user_type = fetch($opts, 'user_type');
+        if($user_type){
+            $cond['conditions'] .= " and user_type = " . $user_type;
+        }
+
         $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and user_status = ' . USER_STATUS_ON;
-        $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
         $cond['order'] = 'last_at desc,id desc';
 
         info($user->id, $cond);
@@ -1459,12 +1468,10 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
 
         if ($users->count() < 3) {
-
-            $opts['city_id'] = $this->getSearchCityId();
-            if (!$opts['city_id']) {
-                $opts['province_id'] = $this->getSearchProvinceId();
-            }
-
+//            $opts['city_id'] = $this->getSearchCityId();
+//            if (!$opts['city_id']) {
+//                $opts['province_id'] = $this->getSearchProvinceId();
+//            }
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
