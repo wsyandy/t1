@@ -165,6 +165,7 @@ class Rooms extends BaseModel
     {
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+        $this->last_at = time();
 
         //如果有麦位id 为主播
         if ($user->current_room_seat_id) {
@@ -178,11 +179,10 @@ class Rooms extends BaseModel
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
-
-            $this->last_at = time();
             $this->online_status = STATUS_ON; // 主播是否在线
-            $this->save();
         }
+
+        $this->save();
 
         $user->user_role_at = time();
         $user->save();
