@@ -11,6 +11,9 @@ class WithdrawHistories extends BaseController
 {
     function indexAction()
     {
-
+        $user = $this->currentUser();
+        $hi_coins = $user->hi_coins;
+        $this->view->hi_coins = $hi_coins;
+        $this->view->amount = $hi_coins / 10;
     }
 }
