@@ -1876,7 +1876,7 @@ class Users extends BaseModel
             }
 
             $old_user = \Users::findFirstByLoginName($user->login_name);
-            if (isPresent($old_user)) {
+            if (isPresent($old_user) && isProduction()) {
                 info('old user', $user->login_name);
                 continue;
             }
