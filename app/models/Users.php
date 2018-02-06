@@ -1627,13 +1627,21 @@ class Users extends BaseModel
 
     function canManagerRoom($room)
     {
-        return $this->isRoomHost($room) || $this->isManager($room);
+        if ($this->isRoomHost($room) || $this->isManager($room)) {
+            return true;
+        }
+
+        return false;
     }
 
     function canKickingUser($room, $other_user)
     {
         if (!$this->canManagerRoom($room)) {
             return false;
+        }
+
+        if (USER_ROLE_NO == $other_user->user_role) {
+            return true;
         }
 
         return $this->user_role < $other_user->user_role;

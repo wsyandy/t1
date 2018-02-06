@@ -1089,5 +1089,8 @@ class MeiTask extends \Phalcon\Cli\Task
         $messages = Rooms::$TOP_TOPIC_MESSAGES;
         $content = $messages[array_rand($messages)];
         echoLine($content);
+
+        $user = Users::findFirstById(6569);
+        echoLine($user);
     }
 }
