@@ -1662,7 +1662,7 @@ class Users extends BaseModel
     static function pushTopTopicMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
-        $user = Rooms::findFirstById($user_id);
+        $user = Users::findFirstById($user_id);
 
         if (!$room || $user) {
             return;
@@ -1722,7 +1722,7 @@ class Users extends BaseModel
     static function pushUpMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
-        $user = Rooms::findFirstById($user_id);
+        $user = Users::findFirstById($user_id);
 
         if (!$room || $user) {
             return;
