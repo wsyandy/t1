@@ -26,7 +26,7 @@
                 <p>
                     <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}" autocomplete="off">
                     {{ user.sex ? '男' : '女' }}({{ user.age }})
-                    <a href="/admin/users/auth?id{{ user.id }}&avatar_auth=1" class='auth_click' data-user_id="{{user.id}}">过</a>
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click' data-user_id="{{user.id}}">过</a>
                     <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click' data-user_id="{{user.id}}">不过</a>
                 </p>
             </dd>
