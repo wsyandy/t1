@@ -1129,7 +1129,7 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(Users::findFirstById(13685));
     }
 
-    function tetst73Action()
+    function test73Action()
     {
         $rooms = Rooms::findForeach();
         $hot_cache = Rooms::getHotWriteCache();
@@ -1144,5 +1144,11 @@ class MeiTask extends \Phalcon\Cli\Task
                 }
             }
         }
+    }
+
+    function test74Action()
+    {
+        $num = Rooms::getOnlineSilentRoomNum();
+        echoLine($num);
     }
 }

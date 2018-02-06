@@ -690,10 +690,12 @@ class Rooms extends BaseModel
         info($room_id, $user->sid);
         $room->enterRoom($user);
 
-        if ($user->isRoomHost($room)) {
-            $room->addOnlineSilentRoom();
-        } else {
-            Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
+        if ($room->isSilent()) {
+            if ($user->isRoomHost($room)) {
+                $room->addOnlineSilentRoom();
+            } else {
+                Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
+            }
         }
 
         $room->pushEnterRoomMessage($user);
@@ -710,7 +712,7 @@ class Rooms extends BaseModel
         info($this->id, $user->sid);
         $this->exitRoom($user);
 
-        if ($user->isRoomHost($this)) {
+        if ($this->isSilent() && $user->isRoomHost($this)) {
             $this->rmOnlineSilentRoom();
         }
 
