@@ -40,6 +40,11 @@ class UserGifts extends BaseModel
         $user_gift->pay_type = 'diamond';
         $user_gift->save();
 
+        $user = $user_gift->user;
+        $hi_coins = ($gift->amount * $gift_order->gift_num) / 10;
+        $user->hi_coins = intval($user->hi_coins) + $hi_coins;
+        $user->save();
+
         unlock($lock);
         return $user_gift;
     }
