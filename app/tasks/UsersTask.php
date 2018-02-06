@@ -511,6 +511,16 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    function exportAuthedUsersAction()
+    {
+        \Users::exportAuthedUser();
+    }
+
+    function importAuthedUsersAction()
+    {
+        \Users::importAuthedUser();
+    }
+
     function addAuthUserAction()
     {
         $hot_db = \Users::getHotWriteCache();

@@ -1822,4 +1822,84 @@ class Users extends BaseModel
         $users = \Users::findByIds($user_ids);
         return new \PaginationModel($users, $total, $page, $per_page);
     }
+
+    static function exportAuthedUser()
+    {
+        $search_db = \Users::getHotReadCache();
+        $offset = 0;
+        $f = fopen(APP_ROOT . 'log/authed_users.log', 'w');
+        while (true) {
+            $user_ids = $search_db->zrange(\Users::authedKey(), $offset, $offset + 99);
+            if (count($user_ids) <= 0) {
+                break;
+            }
+            $users = \Users::findByIds($user_ids);
+            foreach ($users as $user) {
+                $data = json_encode($user->toExportJson(), JSON_UNESCAPED_UNICODE);
+                fwrite($f, $data . "\r\n");
+            }
+            $offset += 100;
+        }
+        fclose($f);
+    }
+
+    static function importAuthedUser()
+    {
+        $f = fopen(APP_ROOT . 'log/authed_users.log', 'r');
+        $hot_db = \Users::getHotWriteCache();
+        while ($line = fgets($f)) {
+            echo $line . PHP_EOL;
+            $data = json_decode($line, true);
+            $user = new \Users();
+            foreach (['sex', 'birthday', 'platform', 'platform_version', 'user_type',
+                         'login_name', 'nickname', 'mobile', 'height'] as $column) {
+                $user->$column = $data[$column];
+            }
+            if ($user->height > 175 || $user->height < 150) {
+                $user->height = 150 + mt_rand(0, 30);
+            }
+            if (isPresent($data['province_name'])) {
+                $province = \Provinces::findFirstByName($data['province_name']);
+                if ($province) {
+                    $user->province_id = $province->id;
+                }
+            }
+            if (isPresent($data['city_name'])) {
+                $city = \Cities::findFirstByName($data['city_name']);
+                if ($city) {
+                    $user->city_id = $city->id;
+                }
+            }
+            var_dump($user->login_name);
+            $old_user = \Users::findFirstByLoginName($user->login_name);
+            if (isPresent($old_user)) {
+                continue;
+            }
+            $res = httpGet($data['avatar_url']);
+            if ($res === false || $res->code != 200) {
+                continue;
+            }
+            $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
+            $dest_filename = 'avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
+
+            $fs = fopen($source_filename, 'w');
+            fwrite($fs, $res);
+            fclose($fs);
+
+            $avatar_res = \StoreFile::upload($source_filename, $dest_filename);
+            if ($avatar_res == false) {
+                continue;
+            }
+
+            $user->avatar = $avatar_res;
+            if ($user->create()) {
+                $hot_db->zadd("authed_user_ids", time(), $user->id);
+                foreach ($data['albums'] as $album) {
+                    $album_url = $album['image_url'];
+                    \Albums::createAlbum($album_url, $user->id, ALBUM_AUTH_STATUS_WAIT);
+                }
+            }
+        }
+    }
+
 }
