@@ -1322,4 +1322,25 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test80Action()
+    {
+        $rooms = Rooms::findForeach();
+        foreach ($rooms as $room) {
+            $total_users = $room->findTotalUsers();
+            foreach ($total_users as $user) {
+                if ($user->avatar_status != AUTH_SUCCESS) {
+                    $room->exitRoom($user);
+                }
+            }
+        }
+
+        $user = Users::findFirstById(9043);
+        echoLine($user);
+
+        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
+            " and avatar_status = " . AUTH_SUCCESS;
+        $num = Users::count($cond);
+        echoLine($num);
+    }
 }
