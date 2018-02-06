@@ -1659,6 +1659,90 @@ class Users extends BaseModel
 
     }
 
+    static function pushTopTopicMessage($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Rooms::findFirstById($user_id);
+
+        if (!$room || $user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        $room->pushTopTopicMessage($user);
+    }
+
+    static function pushGiftMessage($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Rooms::findFirstById($user_id);
+
+        if (!$room || $user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($room->getRealUserNum() > 0) {
+            $gift_num = mt_rand(1, 15);
+            $gifts = Gifts::findForeach();
+            $gift_ids = [];
+
+            foreach ($gifts as $gift) {
+                $gift_ids[] = $gift->id;
+            }
+
+            $index = array_rand($gift_ids);
+            $gift_id = $gift_ids[$index];
+            $gift = Gifts::findFirstById($gift_id);
+
+            if ($user->canGiveGift($gift, $gift_num)) {
+
+                $receiver = $room->findRealUser();
+
+                if ($receiver) {
+                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+
+                    if ($give_result) {
+                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                    }
+                }
+
+            } else {
+                info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
+            }
+        }
+    }
+
+    static function pushUpMessage($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Rooms::findFirstById($user_id);
+
+        if (!$room || $user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($user->current_room_seat_id < 1 && $room->getRealUserNum() > 0) {
+
+            $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
+
+            if ($room_seat) {
+                $room_seat->up($user);
+                $room->pushUpMessage($user, $room_seat);
+            }
+        }
+    }
+
     //启动房间互动
     function activeRoom($room)
     {
@@ -1675,51 +1759,11 @@ class Users extends BaseModel
         $rand_num = mt_rand(1, 100);
 
         if ($rand_num <= 50) {
-            $room->pushTopTopicMessage($this);
+            Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
         } elseif (50 < $rand_num && $rand_num <= 80) {
-
-            if ($room->getRealUserNum() > 0) {
-                $gift_num = mt_rand(1, 15);
-                $gifts = Gifts::findForeach();
-                $gift_ids = [];
-
-                foreach ($gifts as $gift) {
-                    $gift_ids[] = $gift->id;
-                }
-
-                $index = array_rand($gift_ids);
-                $gift_id = $gift_ids[$index];
-                $gift = Gifts::findFirstById($gift_id);
-
-                if ($this->canGiveGift($gift, $gift_num)) {
-
-                    $receiver = $room->findRealUser();
-
-                    if ($receiver) {
-                        $give_result = GiftOrders::giveTo($this->id, $receiver->id, $gift, $gift_num);
-
-                        if ($give_result) {
-                            $room->pushGiftMessage($this, $receiver, $gift, $gift_num);
-                        }
-                    }
-
-                } else {
-                    info("can not send gift", $this->id, $room->id, $gift_id, $gift_num, $this->diamond);
-                }
-            }
-
+            Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
         } elseif (80 < $rand_num && $rand_num <= 90) {
-
-            if ($this->current_room_seat_id < 1 && $room->getRealUserNum() > 0) {
-
-                $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
-
-                if ($room_seat) {
-                    $room_seat->up($this);
-                    $room->pushUpMessage($this, $room_seat);
-                }
-            }
-
+            Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
         } else {
             $room->exitSilentRoom($this);
             return;
