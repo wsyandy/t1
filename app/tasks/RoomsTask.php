@@ -189,8 +189,13 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    //沉默用户进入房间
     function enterSilentRoomAction()
+    {
+
+    }
+
+    //沉默用户进入房间
+    function activeSilentRoomAction()
     {
         $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 60]);
         $last_user = Users::findLast(['columns' => 'id']);
@@ -212,6 +217,12 @@ class RoomsTask extends \Phalcon\Cli\Task
             if ($room->isSilent() && $room->getExpireTime() <= time() + 10) {
                 info("silent_room_already_expire", $room->id, date("Ymd h:i:s", $room->getExpireTime()));
                 continue;
+            }
+
+            $silent_users = $room->findSilentUsers();
+
+            foreach ($silent_users as $silent_user) {
+                $silent_user->activeRoom($room);
             }
 
             $per_page = mt_rand(1, 8);
