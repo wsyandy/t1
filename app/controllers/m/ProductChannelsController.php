@@ -40,4 +40,9 @@ class ProductChannelsController extends BaseController
     {
         $this->view->product_channel = $this->currentProductChannel();
     }
+
+    function strategiesAction()
+    {
+
+    }
 }

@@ -38,10 +38,10 @@
     </ul>
 </div>
 <div class="get_btn">
-    <a href="/m/withdraw_histories/get_money?sid={{ sid }}&cod={{ code }}">我要提现</a>
+    <a href="/m/withdraw_histories/get_money?sid={{ sid }}&code={{ code }}">我要提现</a>
 </div>
 <div class="money_btn">
-    <a href="/m/withdraw_histories/records?sid={{ sid }}&cod={{ code }}">领取记录</a>
+    <a href="/m/withdraw_histories/records?sid={{ sid }}&code={{ code }}">领取记录</a>
 </div>
 
 <script>
