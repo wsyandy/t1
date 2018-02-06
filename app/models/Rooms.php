@@ -468,6 +468,12 @@ class Rooms extends BaseModel
 
     function deleteManager($user_id)
     {
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            return;
+        }
+
         info($this->user->sid, $user_id, $this->id);
         $db = Rooms::getRoomDb();;
         $key = $this->generateManagerListKey();
@@ -480,7 +486,16 @@ class Rooms extends BaseModel
             $db->zrem($total_manager_key, $room_manager_key);
         }
 
+        if ($user->isInRoom($this)) {
+            $user_role = USER_ROLE_AUDIENCE;
 
+            if ($user->current_room_seat_id) {
+                $user_role = USER_ROLE_BROADCASTER;
+            }
+
+            $user->user_role = $user_role;
+            $user->update();
+        }
     }
 
     function updateManager($user_id, $duration)
