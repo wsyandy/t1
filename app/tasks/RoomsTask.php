@@ -218,18 +218,22 @@ class RoomsTask extends \Phalcon\Cli\Task
             $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
                 " and id <>" . $room->user_id;
             $users = Users::findPagination($cond, $page, $per_page);
-            $delay_time = mt_rand(1, 60);
 
 
             foreach ($users as $user) {
+
+                if (!$room->canEnter($user)) {
+                    info("user_can_not_enter_room", $room->id, $user->id);
+                    continue;
+                }
 
                 if ($user->isInAnyRoom()) {
                     info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
                     continue;
                 }
 
+                $delay_time = mt_rand(1, 60);
                 Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
-                Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
             }
 
             info($room->id, $page, $per_page, $total_page);
