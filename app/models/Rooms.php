@@ -944,7 +944,7 @@ class Rooms extends BaseModel
         $total_page = ceil($last_user_id / $per_page);
         $page = mt_rand(1, $total_page);
         $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
-            " and id <>" . $this->user_id;
+            " and id <>" . $this->user_id . " and avatar_status = " . AUTH_SUCCESS;
         $users = Users::findPagination($cond, $page, $per_page);
 
         foreach ($users as $user) {
