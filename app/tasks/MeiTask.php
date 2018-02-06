@@ -1346,7 +1346,19 @@ class MeiTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOnlineSilentRooms();
 
         foreach ($rooms as $room) {
-            echoLine($room->id);
+            $user = $room->user;
+            if ($user->isInRoom($room)) {
+                echoLine("ss", $user->id, $room->id);
+            }
+        }
+    }
+
+    function test81Action()
+    {
+        $rooms = Rooms::findForeach();
+        foreach ($rooms as $room) {
+            $room->user_type = $room->user->user_type;
+            $room->update();
         }
     }
 }
