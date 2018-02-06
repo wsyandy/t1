@@ -36,7 +36,7 @@ class WithdrawHistories extends BaseModel
 
 
         if ($withdraw_history) {
-            return [ERROR_CODE_FAIL, '有提现记录在受理中，不能再提现'];
+            return [ERROR_CODE_FAIL, '有受理中的提现记录，不能再提现'];
         }
 
 

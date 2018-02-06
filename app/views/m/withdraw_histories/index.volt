@@ -44,7 +44,7 @@
     <a href="/m/withdraw_histories/records?sid={{ sid }}&code={{ code }}">领取记录</a>
 </div>
 
-<script>
+<script type="text/javascript">
     $(function () {
 
         function colse_fd() {
