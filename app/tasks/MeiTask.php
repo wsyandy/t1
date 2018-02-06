@@ -1283,4 +1283,35 @@ class MeiTask extends \Phalcon\Cli\Task
             $room->update();
         }
     }
+
+    function test82Action()
+    {
+        $monologues = file_get_contents(APP_ROOT . "doc/user_data/monolog_woman.txt");
+        $monologues = explode(PHP_EOL, $monologues);
+
+        $limit = count($monologues);
+
+        //and monologue is not null
+        $cond = [
+            'conditions' => 'user_type = :user_type: and avatar_status = :avatar_status: and sex = :sex:',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS, 'sex' => 1],
+            //'limit' => $limit
+        ];
+
+
+        $users = Users::find($cond);
+        echoLine(count($users));
+
+        $i = 0;
+        foreach ($users as $user) {
+            echoLine($user->monologue, $user->id);
+            $user->monologue = $monologues[$i];
+//            $user->update();
+            $i++;
+        }
+
+        $users = Users::findBy(['monologue' => '世界好宽，让孤单好满。']);
+        echoLine(count($users));
+
+    }
 }
