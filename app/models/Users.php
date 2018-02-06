@@ -1788,7 +1788,7 @@ class Users extends BaseModel
             $room_seat->room->pushDownMessage($user, $room_seat);
         }
     }
-    
+
     static function waitAuthKey()
     {
         return "wait_auth_users";
