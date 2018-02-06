@@ -1851,10 +1851,14 @@ class Users extends BaseModel
             echo $line . PHP_EOL;
             $data = json_decode($line, true);
             $user = new \Users();
-            foreach (['sex', 'birthday', 'platform', 'platform_version', 'user_type',
+            foreach (['sex', 'birthday', 'platform', 'platform_version',
                          'login_name', 'nickname', 'mobile', 'height'] as $column) {
                 $user->$column = $data[$column];
             }
+
+            $user->user_status = USER_STATUS_ON;
+            $user->user_type = USER_TYPE_SILENT;
+
             if ($user->height > 175 || $user->height < 150) {
                 $user->height = 150 + mt_rand(0, 30);
             }
@@ -1870,33 +1874,27 @@ class Users extends BaseModel
                     $user->city_id = $city->id;
                 }
             }
-            var_dump($user->login_name);
+
             $old_user = \Users::findFirstByLoginName($user->login_name);
             if (isPresent($old_user)) {
+                info('old user', $user->login_name);
                 continue;
             }
-            $res = httpGet($data['avatar_url']);
-            if ($res === false || $res->code != 200) {
-                continue;
-            }
+
+            $user->save();
+
+
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
-            $dest_filename = 'avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
-
-            $fs = fopen($source_filename, 'w');
-            fwrite($fs, $res);
-            fclose($fs);
-
-            $avatar_res = \StoreFile::upload($source_filename, $dest_filename);
-            if ($avatar_res == false) {
+            if(!httpSave($data['avatar_url'], $source_filename)){
+                info('get avatar error', $data['avatar_url']);
                 continue;
             }
 
-            $user->avatar = $avatar_res;
-            if ($user->create()) {
+            if ($user->updateAvatar($source_filename)) {
                 $hot_db->zadd("authed_user_ids", time(), $user->id);
                 foreach ($data['albums'] as $album) {
                     $album_url = $album['image_url'];
-                    \Albums::createAlbum($album_url, $user->id, ALBUM_AUTH_STATUS_WAIT);
+                    \Albums::createAlbum($album_url, $user->id, AUTH_SUCCESS);
                 }
             }
         }
