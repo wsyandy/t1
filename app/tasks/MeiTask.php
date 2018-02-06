@@ -1346,7 +1346,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOnlineSilentRooms();
 
         foreach ($rooms as $room) {
-            echoLine(date("Ymd H:i:s", $room->getExpireTime()));
+            echoLine(date("Ymd H:i:s", $room->getExpireTime()), $room->id);
         }
     }
 

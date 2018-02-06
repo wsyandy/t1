@@ -171,6 +171,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
+                if ($online_silent_room->isOnline()) {
+                    $online_silent_room->online_status = STATUS_OFF;
+                    $online_silent_room->save();
+                }
                 continue;
             }
 
