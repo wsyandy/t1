@@ -1243,4 +1243,14 @@ class MeiTask extends \Phalcon\Cli\Task
             $room->save();
         }
     }
+
+    function test76Action()
+    {
+        $withdraw_histories = WithdrawHistories::findByUserId(11161);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            echoLine($withdraw_history);
+        }
+
+    }
 }
