@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Created by PhpStorm.
+ * User: apple
+ * Date: 16/12/7
+ * Time: 上午11:41
+ */
 class StatTask extends \Phalcon\Cli\Task
 {
 
@@ -240,45 +246,15 @@ class StatTask extends \Phalcon\Cli\Task
             $this->clearKeys($keys);
         }
 
-        $day_start_key = 'stats_' . date("Ymd", $stat_at) . '_user_a';
-        $day_end_key = 'stats_' . date("Ymd", $end_at) . '_user_z';
-
         while (true) {
-            $keys = $sys_db->zlist($day_start_key, $day_end_key, 50000);
-            echoLine(date("c"), $day_start_key, $day_end_key, 'day count keys:', count($keys));
-            if (count($keys) < 2) {
-                echoLine($day_start_key, $day_end_key, 'day break');
-                break;
-            }
-
-            $this->clearKeys($keys);
-        }
-
-    }
-
-    function delKeys2Action($params)
-    {
-
-        $stat_at = beginOfDay(strtotime($params[0]));
-        $end_at = endOfDay(strtotime($params[0]));
-
-        $sys_db = Stats::getStatDb();
-
-        $all_stat_key = 'stats_keys_' . date('Ymd', $stat_at);
-        $sys_db->zclear($all_stat_key);
-
-        $hour_start_key = 'stats_' . date("YmdH", $stat_at) . '_user_a';
-        $hour_end_key = 'stats_' . date("YmdH", $end_at) . '_user_z';
-
-        while (true) {
-            $keys = $sys_db->zlist($hour_start_key, $hour_end_key, 50000);
+            $keys = $sys_db->keys($hour_start_key, $hour_end_key, 50000);
             echoLine(date("c"), $hour_start_key, $hour_end_key, 'hour count keys:', count($keys));
             if (count($keys) < 2) {
                 echoLine($hour_start_key, $hour_end_key, 'hour break');
                 break;
             }
 
-            $this->clearKeys($keys);
+            $this->clearKeys($keys, 'set');
         }
 
         $day_start_key = 'stats_' . date("Ymd", $stat_at) . '_user_a';
@@ -295,18 +271,36 @@ class StatTask extends \Phalcon\Cli\Task
             $this->clearKeys($keys);
         }
 
+        while (true) {
+            $keys = $sys_db->keys($day_start_key, $day_end_key, 50000);
+            echoLine(date("c"), $day_start_key, $day_end_key, 'day count keys:', count($keys));
+            if (count($keys) < 2) {
+                echoLine($day_start_key, $day_end_key, 'day break');
+                break;
+            }
+
+            $this->clearKeys($keys, 'set');
+        }
+
     }
 
-    function clearKeys($keys)
+    function clearKeys($keys, $type = 'set')
     {
 
         $sys_db = Stats::getStatDb();
         foreach ($keys as $i => $key) {
-            $sys_db->zclear($key);
-            if (!preg_match('/(_ip|_new_total|_num_new_total|_new_total_target|_target)$/', $key)) {
-                $sys_db->del($key . '_num');
-                $sys_db->del($key . '_num_new_total');
+            if($type == 'set'){
+                $sys_db->del($key);
+            }else{
+                $sys_db->zclear($key);
             }
+
+//            if (!preg_match('/(_ip|_register_user|_register_mobile|_new|_target)$/', $key)) {
+//                $sys_db->del($key . '_num');
+//                $sys_db->del($key . '_total');
+//                $sys_db->del($key . '_new_num');
+//                $sys_db->del($key . '_new_total');
+//            }
 
             if ($i > 0 && $i % 3000 == 0) {
                 sleep(1);
@@ -318,63 +312,6 @@ class StatTask extends \Phalcon\Cli\Task
     {
         $endpoints = Stats::config('stat_db');
         echoLine($endpoints);
-    }
-
-    // 每小时的57分统计, 订单个数占比
-    function activeUserNumAction()
-    {
-
-        $product_channels = \ProductChannels::find(['columns' => 'id']);
-        $product_channel_ids = [-1];
-        foreach ($product_channels as $product_channel) {
-            $product_channel_ids[] = $product_channel->id;
-        }
-
-        $platforms = \Stats::$PLATFORM;
-
-        $stat_at = time() - 1000;
-
-        $week = date('N', $stat_at);
-        $day = date('Ymd', $stat_at);
-        $month = date('Ym', $stat_at);
-        $start_week_day = date('Ymd', strtotime($day . ' -' . ($week - 1) . ' day'));
-        $end_week_day = date('Ymd', strtotime($start_week_day . ' +6 day'));
-
-        $time_periods = [
-            $day => [beginOfDay($stat_at), endOfDay($stat_at)],
-            $start_week_day . '_' . $end_week_day => [beginOfDay(strtotime($start_week_day)), endOfDay(strtotime($end_week_day))],
-            $month => [beginOfMonth($stat_at), endOfMonth($stat_at)]
-        ];
-
-        $stat_db = Stats::getStatDb();
-        foreach ($product_channel_ids as $product_channel_id) {
-            foreach ($platforms as $platform => $text) {
-                foreach ($time_periods as $time_key => $time_period) {
-
-                    $cache_key = "active_users_num_product_channel_id{$product_channel_id}_platform{$platform}_{$time_key}";
-
-                    $find_cond['conditions'] = 'last_at>=:start_at: and last_at<=:end_at:';
-                    $find_cond['bind'] = ['start_at' => $time_period[0], 'end_at' => $time_period[1]];
-                    if ($product_channel_id != -1) {
-                        $find_cond['conditions'] .= ' and product_channel_id=:product_channel_id:';
-                        $find_cond['bind']['product_channel_id'] = $product_channel_id;
-                    }
-                    if ($platform != -1) {
-                        $find_cond['conditions'] .= ' and platform=:platform:';
-                        $find_cond['bind']['platform'] = $platform;
-                    }
-
-                    $total = Users::count($find_cond);
-                    if ($total < 1) {
-                        continue;
-                    }
-
-                    $stat_db->set($cache_key, strval($total));
-
-                    echoLine($cache_key, $total);
-                }
-            }
-        }
     }
 
 }

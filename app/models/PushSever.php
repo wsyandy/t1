@@ -336,16 +336,20 @@ class PushSever extends BaseModel
             info($sid, $fd, $data);
 
             if (isDevelopmentEnv()) {
-                //解析数据
-                $hot_cache = self::getHotReadCache();
-                $online_key = "socket_push_online_token_" . $fd;
-                $online_token = $hot_cache->get($online_key);
-                $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-                $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-                debug($intranet_ip, $online_token);
-                $payload = ['body' => $data, 'fd' => $fd];
-                self::delay()->send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
-                //$res = $server->push($frame->fd, $frame->data);
+                $action = fetch($data, 'action');
+
+                if ('ping' == $action) {
+                    //解析数据
+                    $hot_cache = self::getHotReadCache();
+                    $online_key = "socket_push_online_token_" . $fd;
+                    $online_token = $hot_cache->get($online_key);
+                    $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+                    $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+                    debug($intranet_ip, $online_token);
+                    $payload = ['body' => $data, 'fd' => $fd];
+                    self::delay()->send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
+                    //$res = $server->push($frame->fd, $frame->data);
+                }
             }
         }
     }
@@ -460,7 +464,7 @@ class PushSever extends BaseModel
     function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
     {
         $hot_cache = self::getHotWriteCache();
-        $key = $current_room->getUserListKey();
+        $key = $current_room->getRealUserListKey();
         $user_ids = $hot_cache->zrevrange($key, 0, 10);
         $channel_name = $current_room->channel_name;
 

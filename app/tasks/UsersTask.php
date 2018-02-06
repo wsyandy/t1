@@ -441,13 +441,17 @@ class UsersTask extends \Phalcon\Cli\Task
     /**
      * 导入用户
      */
-    function importUserAction()
+    function importUserAction($opts = array())
     {
-        $filename = APP_ROOT . 'log/user_detail.log';
-        if (isDevelopmentEnv()) {
-            $filename = APP_ROOT . 'log/dev_user_detail.log';
+        $filename = fetch($opts, 0, 'user_detail.log');
+        $path = APP_ROOT . 'log/' . $filename;
+        var_dump($filename);
+        $from_dev = false;
+        if (preg_match('/^dev_/', $filename)) {
+            $from_dev = true;
         }
-        $yuanfen = new \Yuanfen($filename);
+        var_dump($from_dev);
+        $yuanfen = new \Yuanfen($path, $from_dev);
         $yuanfen->parseFile();
     }
 

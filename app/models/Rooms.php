@@ -737,7 +737,7 @@ class Rooms extends BaseModel
             return;
         }
 
-        if ($content) {
+        if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
             $content = $messages[array_rand($messages)];
         }

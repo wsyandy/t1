@@ -11,13 +11,33 @@ class Yuanfen
 {
     private $filename;
     private $from_dev = false;
+    private $silent_num = 0;
 
-    function __construct($filename)
+    static $SILENT_NUM_LIMIT = 10000;
+
+    function __construct($filename, $from_dev = false)
     {
         $this->filename = $filename;
-        if (preg_match('/^dev_/', $this->filename)) {
-            $this->from_dev = true;
-        }
+        $this->from_dev = $from_dev;
+        $this->silent_num = $this->silentUserNum();
+    }
+
+    function silentUserNum()
+    {
+        $search_db = \Users::getUserDb();
+        return intval($search_db->get($this->silentKey()));
+    }
+
+    function silentKey()
+    {
+        return "silent_users_num";
+    }
+
+    function updateSilentUserNum()
+    {
+        $search_db = \Users::getUserDb();
+        $total = $search_db->incr($this->silentKey());
+        $this->silent_num = $total;
     }
 
     function parseFile()
@@ -26,8 +46,14 @@ class Yuanfen
         while (true) {
             $line = fgets($f);
             echo "line: " . $line;
-            $this->createUser($line);
+            if ($this->createUser($line)) {
+                $this->updateSilentUserNum();
+                if ($this->isFinished()) {
+                    break;
+                }
+            }
         }
+        fclose($f);
     }
 
     function createUser($line)
@@ -63,10 +89,8 @@ class Yuanfen
                 $album_urls[] = $this->generateCdnUrl($album);
             }
         }
-        $user = \Yuanfen::selectUserForReplace();
-        if (isBlank($user)) {
-            $user = new \Users();
-        }
+
+        $user = new \Users();
         $user->login_name = $login_name;
         $user->user_type = USER_TYPE_SILENT;
         $user->user_status = USER_STATUS_NORMAL;
@@ -90,6 +114,9 @@ class Yuanfen
         $user->longitude = $longitude;
         $user->height = $height;
         $user->birthday = $birthday;
+        $user->created_at = time();
+        $user->register_at = time();
+        $user->last_at = time();
         if ($avatar_path) {
             $avatar_url = $this->generateCdnUrl($avatar_path);
             echo $avatar_url;
@@ -129,6 +156,11 @@ class Yuanfen
             return $user;
         }
         return false;
+    }
+
+    function isFinished()
+    {
+        return $this->silent_num > \Yuanfen::$SILENT_NUM_LIMIT;
     }
 
     function hasCreate($yuanfen_id, $login_name)
@@ -191,7 +223,8 @@ class Yuanfen
             }
             $user = \Users::findById($user_id);
             if (isBlank($user) || $user->isHuman() || isPresent($user->avatar) || $user->fr == 'yuanfen'
-                || preg_match('/@365yf.com$/', $user->login_name)) {
+                || preg_match('/@365yf.com$/', $user->login_name)
+            ) {
                 $hot_db->zrem($key, $user_id);
                 continue;
             }

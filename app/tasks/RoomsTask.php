@@ -202,6 +202,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
+            if ($room->lock) {
+                info("room_is_lock", $room->id);
+                continue;
+            }
+
             if ($room->isSilent() && $room->getExpireTime() <= time() + 10) {
                 info("silent_room_already_expire", $room->id, date("Ymd h:i:s", $room->getExpireTime()));
                 continue;
