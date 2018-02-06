@@ -306,6 +306,11 @@ class UsersController extends BaseController
         $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
         $detail_json['current_room_lock'] = $current_room_lock;
 
+        if (!$this->otherUser()->isActive()) {
+            $detail_json['province_name'] = $this->currentUser()->province_name;
+            $detail_json['city_name'] = $this->currentUser()->city_name;
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
@@ -345,8 +350,9 @@ class UsersController extends BaseController
 
     function searchAction()
     {
-        $user_id = intval($this->params('user_id'));
 
+        $cond = [];
+        $user_id = intval($this->params('user_id'));
         if ($user_id) {
             $cond = ['user_id' => intval($user_id)];
         }
@@ -355,7 +361,6 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
-
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }

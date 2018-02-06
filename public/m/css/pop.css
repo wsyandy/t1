@@ -1,0 +1,102 @@
+@charset "utf-8";
+body,p,input,h1,h2,h3,h4,ul,li,dl,dt,dd,form { margin: 0;padding: 0;list-style: none;vertical-align: middle;
+}
+body{ font-family: 'Arial Normal', 'Arial';font-size: 14px;min-width: 320px;}
+html,body { height: 100%;width: 100%;margin:0 auto;}
+img{border: 0;}
+a{text-decoration: none;color: #000;}
+.fudong{
+    width: 275px;
+    height: 275px;
+    position: fixed;
+    z-index: 999999;
+    border-radius: 10px;
+    background: #fff;
+}
+.fudong_bg{
+    width: 100%;
+    background: rgba(0,0,0,0.50);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+.fudong .title{
+    padding:33px 0 10px 0;
+}
+.fudong h2{
+    font-size: 17px;
+    color: #424242;
+    text-align: center;
+    position: relative;
+    width: 110px;
+    margin:0 auto;
+}
+.fudong h2::before{
+    content: '';
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: url(../images/icon.png) no-repeat;
+    background-size: 100%;
+    left: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.fudong h2::after{
+    content: '';
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    background: url(../images/icon.png) no-repeat;
+    background-size: 100%;
+    right: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.fd_text{
+    padding:20px 40px;
+}
+.fd_text p{
+    font-size: 14px;
+    color: #424242;
+}
+.fd_text .p_mr{
+    margin-top: 18px;
+}
+.fd_text span{
+    display: block;
+    font-size: 12px;
+    color: #9E9E9E;
+    margin-top: 5px;
+    margin-left: 16px;
+}
+.fd_text span b{
+    font-size: 12px;
+    color: #F45189;
+}
+.fudong .close_btn{
+    width: 179px;
+    height: 45px;
+    line-height: 45px;
+    margin:0 auto;
+    border: 2px solid #F45189;
+    border-radius: 50px;
+    text-align: center;
+    color:  #F45189;
+    margin-top: 20px;
+    font-size: 15px;
+}
+
+
+

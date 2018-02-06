@@ -170,3 +170,6 @@ define('ROOM_THEME_TYPE_BROADCAST', 1);//电台
 define('AUDIO_TYPE_STORY',1); //故事
 define('AUDIO_TYPE_MUSIC',2); //音乐
 
+define('WITHDRAW_STATUS_WAIT',0); //等待提现
+define('WITHDRAW_STATUS_SUCCESS',1); //提现成功
+define('WITHDRAW_STATUS_FAIL',2); //提现失败

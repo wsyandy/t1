@@ -259,6 +259,12 @@ class Rooms extends BaseModel
         return $hot_cache->zcard($key);
     }
 
+    function getSilentUserNum()
+    {
+        $num = $this->getUserNum() - $this->getRealUserNum();
+        return $num;
+    }
+
     function addUser($user)
     {
         $hot_cache = self::getHotWriteCache();
@@ -337,6 +343,27 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function findTotalUsers()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        return $users;
+    }
+
+    function findSilentUsers()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $real_user_key = $this->getRealUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $real_user_ids = $hot_cache->zrange($real_user_key, 0, -1);
+        $silent_user_ids = array_diff($user_ids, $real_user_ids);
+        $users = Users::findByIds($silent_user_ids);
+        return $users;
+    }
 
     function lock($password)
     {
@@ -464,6 +491,12 @@ class Rooms extends BaseModel
 
     function deleteManager($user_id)
     {
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            return;
+        }
+
         info($this->user->sid, $user_id, $this->id);
         $db = Rooms::getRoomDb();;
         $key = $this->generateManagerListKey();
@@ -476,7 +509,16 @@ class Rooms extends BaseModel
             $db->zrem($total_manager_key, $room_manager_key);
         }
 
+        if ($user->isInRoom($this)) {
+            $user_role = USER_ROLE_AUDIENCE;
 
+            if ($user->current_room_seat_id) {
+                $user_role = USER_ROLE_BROADCASTER;
+            }
+
+            $user->user_role = $user_role;
+            $user->update();
+        }
     }
 
     function updateManager($user_id, $duration)
@@ -667,6 +709,8 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
+        } else {
+            //Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 
         $room->pushEnterRoomMessage($user);
@@ -727,7 +771,6 @@ class Rooms extends BaseModel
         $this->push($receiver, $body);
     }
 
-
     function pushTopTopicMessage($user, $content = "")
     {
         $receiver = $this->findRealUser();
@@ -746,6 +789,33 @@ class Rooms extends BaseModel
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'content' => $content,
             'channel_name' => $this->channel_name
         ];
+
+        $this->push($receiver, $body);
+    }
+
+    function pushUpMessage($user, $current_room_seat)
+    {
+        $receiver = $this->findRealUser();
+
+        if (!$receiver) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+        $body = ['action' => 'up', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
+        $this->push($receiver, $body);
+    }
+
+    function pushDownMessage($user, $current_room_seat)
+    {
+        $receiver = $this->findRealUser();
+
+        if (!$receiver) {
+            info("no real user", $this->id, $user->id);
+            return;
+        }
+
+        $body = ['action' => 'down', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
 
         $this->push($receiver, $body);
     }
@@ -819,5 +889,14 @@ class Rooms extends BaseModel
     function isSilent()
     {
         return USER_TYPE_SILENT == $this->user_type;
+    }
+
+    function canEnter($user)
+    {
+        if ($this->isForbidEnter($user)) {
+            return false;
+        }
+
+        return true;
     }
 }

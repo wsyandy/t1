@@ -1089,5 +1089,66 @@ class MeiTask extends \Phalcon\Cli\Task
         $messages = Rooms::$TOP_TOPIC_MESSAGES;
         $content = $messages[array_rand($messages)];
         echoLine($content);
+
+        $user = Users::findFirstById(6569);
+        echoLine($user);
+
+        $room = Rooms::findFirstById(137);
+        $key = $room->getUserListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            if ($user->diamond > 0) {
+                echoLine($user->diamond, $user->id);
+            }
+        }
+
+        $users = Users::findForeach(['conditions' => 'user_type = ' . USER_TYPE_SILENT]);
+
+        foreach ($users as $user) {
+            if ($user->diamond < 1) {
+                $amount = mt_rand(5000, 10000);
+                $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => 1];
+                if ($amount > 0) {
+                    \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+                }
+            }
+        }
+    }
+
+    function test72Action()
+    {
+        $room = Rooms::findFirstById(8);
+        $key = $room->getUserListKey();
+        $cache = Rooms::getHotWriteCache();
+        echoLine(date("Ymd H:i:s", $cache->zscore($key, 13685)), $cache->zscore($key, 13685));
+
+        echoLine(Users::findFirstById(13685));
+    }
+
+    function test73Action()
+    {
+        $rooms = Rooms::findForeach();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+            $users = $room->findTotalUsers();
+            $key = $room->getUserListKey();
+            foreach ($users as $user) {
+                if ($user->current_room_id != $room->id) {
+                    //$hot_cache->zrem($key, $user->id);
+                    echoLine($user->id, $room->id, $user->current_room_id);
+                }
+            }
+        }
+    }
+
+    function test74Action()
+    {
+        $num = Rooms::getOnlineSilentRoomNum();
+        echoLine($num);
     }
 }

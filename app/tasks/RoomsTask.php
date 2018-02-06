@@ -126,9 +126,11 @@ class RoomsTask extends \Phalcon\Cli\Task
     function wakeUpOfflineSilentRoomsAction()
     {
         $per_page = mt_rand(1, 5);
-        $page = 1;
+        $last_room = Rooms::findLast();
+        $last_room_id = $last_room->id;
+        $total_page = ceil($last_room_id / $per_page);
+        $page = mt_rand(1, $total_page);
         $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
-
         $offline_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         foreach ($rooms as $room) {
@@ -187,8 +189,13 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    //沉默用户进入房间
     function enterSilentRoomAction()
+    {
+
+    }
+
+    //沉默用户进入房间
+    function activeSilentRoomAction()
     {
         $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 60]);
         $last_user = Users::findLast(['columns' => 'id']);
@@ -212,24 +219,34 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            $silent_users = $room->findSilentUsers();
+
+            foreach ($silent_users as $silent_user) {
+                $silent_user->activeRoom($room);
+            }
+
             $per_page = mt_rand(1, 8);
             $total_page = ceil($last_user_id / $per_page);
             $page = mt_rand(1, $total_page);
             $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
                 " and id <>" . $room->user_id;
             $users = Users::findPagination($cond, $page, $per_page);
-            $delay_time = mt_rand(1, 60);
 
 
             foreach ($users as $user) {
+
+                if (!$room->canEnter($user)) {
+                    info("user_can_not_enter_room", $room->id, $user->id);
+                    continue;
+                }
 
                 if ($user->isInAnyRoom()) {
                     info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
                     continue;
                 }
 
+                $delay_time = mt_rand(1, 60);
                 Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
-                Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
             }
 
             info($room->id, $page, $per_page, $total_page);
