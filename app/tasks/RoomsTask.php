@@ -175,6 +175,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                     $online_silent_room->online_status = STATUS_OFF;
                     $online_silent_room->save();
                 }
+
+                $online_silent_room->rmOnlineSilentRoom();
                 continue;
             }
 
