@@ -1676,10 +1676,12 @@ class Users extends BaseModel
 
                 $receiver = $room->findRealUser();
 
-                $give_result = GiftOrders::giveTo($user_id, $receiver->id, $gift, $gift_num);
+                if ($receiver) {
+                    $give_result = GiftOrders::giveTo($user_id, $receiver->id, $gift, $gift_num);
 
-                if ($give_result) {
-                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                    if ($give_result) {
+                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                    }
                 }
 
             } else {
