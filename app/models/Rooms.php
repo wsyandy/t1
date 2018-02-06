@@ -233,6 +233,10 @@ class Rooms extends BaseModel
         info($this->user->sid, $user->sid);
         $this->exitRoom($user);
         $this->forbidEnter($user);
+
+        if ($user->isSilent()) {
+            $this->pushExitRoomMessage($user);
+        }
     }
 
     function getUserListKey()
@@ -667,7 +671,7 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
-        } else{
+        } else {
             Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 

@@ -1092,5 +1092,19 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(6569);
         echoLine($user);
+
+        $room = Rooms::findFirstById(421);
+        $key = $room->getUserListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            if ($user->diamond > 0) {
+                echoLine($user->diamond);
+            }
+        }
+
     }
 }
