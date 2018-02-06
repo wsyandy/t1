@@ -148,7 +148,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     }
 
     //释放离线沉默房间
-    function freeOfflineSilentRoomsAction()
+    function clearOfflineSilentRoomsAction()
     {
         $online_silent_rooms = Rooms::getOnlineSilentRooms();
 
