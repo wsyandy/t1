@@ -1083,4 +1083,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         debug($array);
     }
+
+    function test71Action()
+    {
+        $messages = Rooms::$TOP_TOPIC_MESSAGES;
+        $content = $messages[array_rand($messages)];
+        echoLine($content);
+    }
 }
