@@ -92,20 +92,33 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $last_user = Users::findLast(['columns' => 'id']);
+            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT;
+            $user = Users::findFirst($cond);
 
-            if (!$last_user) {
-                info("Exce no user");
-                return;
-            }
-
-            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT ;
-            $user = Users::findFirstBy($cond);
-
-            $room = Rooms::createRoom($user, $name);
+            $room = Rooms::createRoom($user, $title);
             $room->topic = $topic;
             $room->satus = STATUS_OFF;
             $room->save();
+        }
+    }
+
+    function fixRoomsAction()
+    {
+        $name_file = APP_ROOT . "doc/room_topic.xls";
+        $names = readExcel($name_file);
+
+        foreach ($names as $name) {
+            $title = $name[0];
+            $topic = $name[1];
+
+            $room = Rooms::findFirstByTopic($topic);
+
+            if ($room) {
+                echoLine("ssss");
+                $room->name = $title;
+                $room->save();
+                continue;
+            }
         }
     }
 
@@ -175,7 +188,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     }
 
     //沉默用户进入房间
-    function enterRoomAction()
+    function enterSilentRoomAction()
     {
         $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 60]);
         $last_user = Users::findLast(['columns' => 'id']);
