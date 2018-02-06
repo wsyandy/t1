@@ -672,16 +672,31 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    static function getExpireOnlineSilentRooms()
+    {
+        $key = self::getOnlineSilentRoomKey();
+        $hot_cache = self::getHotWriteCache();
+
+        if (self::getOnlineSilentRoomNum() < 1) {
+            return [];
+        }
+
+        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        info($room_ids);
+        $rooms = Rooms::findByIds($room_ids);
+        return $rooms;
+    }
+
     static function getOnlineSilentRooms()
     {
         $key = self::getOnlineSilentRoomKey();
         $hot_cache = self::getHotWriteCache();
 
         if (self::getOnlineSilentRoomNum() < 1) {
-            return null;
+            return [];
         }
 
-        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        $room_ids = $hot_cache->zrange($key, 0, -1);
         info($room_ids);
         $rooms = Rooms::findByIds($room_ids);
         return $rooms;
