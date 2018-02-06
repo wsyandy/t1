@@ -224,6 +224,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 }
 
                 Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
+                Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
             }
 
             info($room->id, $page, $per_page, $total_page);

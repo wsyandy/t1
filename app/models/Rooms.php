@@ -664,8 +664,6 @@ class Rooms extends BaseModel
         $room->enterRoom($user);
         $room->addOnlineSilentRoom();
         $room->pushEnterRoomMessage($user);
-
-        Users::delay(60)->startRoomInteractionTask($user_id, $room_id);
     }
 
     function exitSilentRoom($user)
