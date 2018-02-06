@@ -55,7 +55,7 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '审核成功');
     }
 
-    function batchUpdateAvatar()
+    function batchUpdateAvatarAction()
     {
         $users = \Users::findByIds($this->params('ids'));
         foreach ($users as $user) {
