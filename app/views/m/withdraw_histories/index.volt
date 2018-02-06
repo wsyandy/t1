@@ -24,6 +24,9 @@
 </div>
 <div class="fudong_bg"></div>
 <!-- 弹出层结束 -->
+<div >
+    <img src="/m/images/question.png" style="float: right;" id="question">
+</div>
 
 <div class="money_box">
     <ul>
@@ -51,14 +54,20 @@
             $(".fudong").hide();
             $(".fudong_bg").hide();
         };
+
+        function show_fd() {
+            $(".fudong").show();
+            $(".fudong_bg").show();
+        };
+
         var doc_height = $(document).height();
         var w_height = $(window).height();
         var w_width = $(window).width();
 
-        $(".fudong").show();
-        $(".fudong_bg").show();
+        $(".fudong").hide();
+        $(".fudong_bg").hide();
 
-        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
+//        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
         var div_width = $(".fudong").width();
         var div_height = $(".fudong").height();
 
@@ -72,6 +81,10 @@
 
         $(".close_btn").click(function () {
             colse_fd();
+        });
+
+        $("#question").click(function () {
+            show_fd();
         });
 
     });
