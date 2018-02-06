@@ -594,7 +594,7 @@ class Rooms extends BaseModel
         $key = self::getOnlineSilentRoomKey();
         $time = $this->calculateExpireTime();
         debug($time, $this->id);
-        $hot_cache->zadd($key, $this->calculateExpireTime(), $this->id);
+        $hot_cache->zadd($key, $time, $this->id);
     }
 
     function rmOnlineSilentRoom()
@@ -662,7 +662,11 @@ class Rooms extends BaseModel
 
         info($room_id, $user->sid);
         $room->enterRoom($user);
-        $room->addOnlineSilentRoom();
+
+        if ($user->isRoomHost($room)) {
+            $room->addOnlineSilentRoom();
+        }
+
         $room->pushEnterRoomMessage($user);
     }
 
@@ -676,7 +680,11 @@ class Rooms extends BaseModel
 
         info($this->id, $user->sid);
         $this->exitRoom($user);
-        $this->rmOnlineSilentRoom();
+
+        if ($user->isRoomHost($this)) {
+            $this->rmOnlineSilentRoom();
+        }
+
         $this->pushExitRoomMessage($user);
     }
 
