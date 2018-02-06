@@ -126,9 +126,11 @@ class RoomsTask extends \Phalcon\Cli\Task
     function wakeUpOfflineSilentRoomsAction()
     {
         $per_page = mt_rand(1, 5);
-        $page = 1;
+        $last_room = Rooms::findLast();
+        $last_room_id = $last_room->id;
+        $total_page = ceil($last_room_id / $per_page);
+        $page = mt_rand(1, $total_page);
         $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
-
         $offline_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         foreach ($rooms as $room) {

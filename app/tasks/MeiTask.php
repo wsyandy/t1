@@ -1132,12 +1132,14 @@ class MeiTask extends \Phalcon\Cli\Task
     function tetst73Action()
     {
         $rooms = Rooms::findForeach();
+        $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
             $users = $room->findTotalUsers();
-
+            $key = $room->getUserListKey();
             foreach ($users as $user) {
                 if ($user->current_room_id != $room->id) {
+                    //$hot_cache->zrem($key, $user->id);
                     echoLine($user->id, $room->id, $user->current_room_id);
                 }
             }
