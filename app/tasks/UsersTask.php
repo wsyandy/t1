@@ -469,5 +469,21 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_id += 1;
         }
     }
+
+    function addAuthUserAction()
+    {
+        $hot_db = \Users::getHotWriteCache();
+        $offset = 0;
+        while (true) {
+            $user_ids = $hot_db->zrange('yuanfen_ids', $offset, $offset + 99);
+            if (count($user_ids) <= 0) {
+                break;
+            }
+            foreach ($user_ids as $user_id) {
+                $hot_db->zadd("wait_auth_users", time(), $user_id);
+            }
+            $offset += 100;
+        }
+    }
 }
 

@@ -34,6 +34,12 @@
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    <li>
+                        <a href="/admin/users/avatar">头像审核</a>
+                    </li>
+                    <li>
+                        <a href="/admin/users/avatar?avatar_auth=1">已审核列表</a>
+                    </li>
                     {% if isAllowed('devices','index') %}
                         <li>
                             <a href="/admin/devices">激活列表</a>

@@ -411,4 +411,26 @@ trait UserAttrs
     {
         return USER_TYPE_HUMAN == $this->user_type;
     }
+
+    function changeAvatarAuth($avatar_auth)
+    {
+        if (!array_key_exists($avatar_auth, \UserEnumerations::$AVATAR_STATUS)) {
+            return;
+        }
+        $this->avatar_auth = $avatar_auth;
+        $this->update();
+        $this->addAuthedList();
+    }
+
+    function removeFromWaitAuthList()
+    {
+        $hot_db = \Users::getHotWriteCache();
+        $hot_db->zrem(\Users::waitAuthKey(), time(), $this->id);
+    }
+
+    function addAuthedList()
+    {
+        $hot_db = \Users::getHotWriteCache();
+        $hot_db->zadd(\Users::authedKey(), time(), $this->id);
+    }
 }
