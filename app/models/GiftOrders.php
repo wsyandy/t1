@@ -45,7 +45,11 @@ class GiftOrders extends BaseModel
             return false;
         }
 
-        $receiver =  Users::findFirstById($receiver_id);
+        $receiver = Users::findFirstById($receiver_id);
+
+        if (!$receiver) {
+            return false;
+        }
 
         $gift_order = new \GiftOrders();
         $gift_order->sender_id = $sender_id;

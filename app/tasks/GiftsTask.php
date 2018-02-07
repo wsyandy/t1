@@ -75,9 +75,17 @@ class GiftsTask extends \Phalcon\Cli\Task
         foreach ($gift_orders as $gift_order) {
             $user = $gift_order->user;
             $sender = $gift_order->sender;
-            $gift_order->receiver_user_type = $user->user_type;
-            $gift_order->sender_user_type = $sender->user_type;
-            $gift_order->save();
+            if (!$user) {
+                echoLine("user", $gift_order->id, $gift_order->user_id);
+            }
+
+            if (!$sender) {
+                echoLine("sender", $gift_order->id, $gift_order->sender_id);
+            }
+
+//            $gift_order->receiver_user_type = $user->user_type;
+//            $gift_order->sender_user_type = $sender->user_type;
+//            $gift_order->save();
         }
     }
 }
