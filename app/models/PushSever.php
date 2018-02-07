@@ -468,6 +468,8 @@ class PushSever extends BaseModel
         $user_ids = $hot_cache->zrevrange($key, 0, 10);
         $channel_name = $current_room->channel_name;
 
+        info($user->sid, $user_ids);
+
         foreach ($user_ids as $receiver_id) {
 
             $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
@@ -487,8 +489,10 @@ class PushSever extends BaseModel
                 $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
                 if ($res) {
-                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+                    info("exit_room_success", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                     break;
+                } else {
+                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                 }
             }
         }
