@@ -95,6 +95,7 @@ class Albums extends BaseModel
 
         $dest_file = APP_NAME . '/albums/' . $user_id . '_' . date('YmdH') . uniqid() . '.jpg';
         $filename = \StoreFile::upload($source_file, $dest_file);
+        unlink($source_file);
         if (isBlank($filename)) {
             return false;
         }

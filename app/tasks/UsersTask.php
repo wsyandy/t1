@@ -21,12 +21,13 @@ class UsersTask extends \Phalcon\Cli\Task
     {
         $filename = fetch($opts, 0, 'user_detail.log');
         $path = APP_ROOT . 'log/' . $filename;
-        var_dump($filename);
         $from_dev = false;
         if (preg_match('/^dev_/', $filename)) {
             $from_dev = true;
         }
-        var_dump($from_dev);
+
+        echoLine($path, $from_dev);
+
         $yuanfen = new \Yuanfen($path, $from_dev);
         $yuanfen->parseFile();
     }
@@ -45,7 +46,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_id += 1;
         }
     }
-    
+
     function addAuthUserAction()
     {
         $hot_db = \Users::getHotWriteCache();
