@@ -440,38 +440,6 @@ class KangTask extends \Phalcon\Cli\Task
         }
     }
 
-    /**
-     * 导入用户
-     */
-    function importUserAction($opts = array())
-    {
-        $filename = fetch($opts, 0, 'user_detail.log');
-        $path = APP_ROOT . 'log/' . $filename;
-        var_dump($filename);
-        $from_dev = false;
-        if (preg_match('/^dev_/', $filename)) {
-            $from_dev = true;
-        }
-        var_dump($from_dev);
-        $yuanfen = new \Yuanfen($path, $from_dev);
-        $yuanfen->parseFile();
-    }
-
-    function silentUserAction()
-    {
-        $user_id = 2;
-        while (true) {
-            $user = \Users::findById($user_id);
-            if (isBlank($user)) {
-                break;
-            }
-            if ($user && $user->isNpc() && isBlank($user->avatar)) {
-                \Yuanfen::addSilentUser($user);
-            }
-            $user_id += 1;
-        }
-    }
-
     function giveDiamondAction()
     {
         $users = Users::findBy(['user_type' => USER_TYPE_SILENT]);

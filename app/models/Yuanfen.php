@@ -10,7 +10,7 @@
 class Yuanfen
 {
     private $filename;
-    private $from_dev = false;
+    private $from_dev = false; // 从交友测试机导用户
     private $silent_num = 0;
 
     static $SILENT_NUM_LIMIT = 10000;
@@ -93,7 +93,7 @@ class Yuanfen
         $user = new \Users();
         $user->login_name = $login_name;
         $user->user_type = USER_TYPE_SILENT;
-        $user->user_status = USER_STATUS_NORMAL;
+        $user->user_status = USER_STATUS_ON;
         $user->product_channel_id = 1;
         $user->platform = isPresent($platform) ? $platform : $platforms[mt_rand(0, 1)];
         $user->sex = $sex;
@@ -140,6 +140,7 @@ class Yuanfen
             $f = fopen($source_filename, 'w');
             fwrite($f, $res);
             $avatar_res = \StoreFile::upload($source_filename, $dest_filename);
+            unlink($source_filename);
             if ($avatar_res == false) {
                 return false;
             }
@@ -222,7 +223,7 @@ class Yuanfen
                 break;
             }
             $user = \Users::findById($user_id);
-            if (isBlank($user) || $user->isHuman() || isPresent($user->avatar) || $user->fr == 'yuanfen'
+            if (isBlank($user) || $user->isActive() || isPresent($user->avatar) || $user->fr == 'yuanfen'
                 || preg_match('/@365yf.com$/', $user->login_name)
             ) {
                 $hot_db->zrem($key, $user_id);
