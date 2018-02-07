@@ -158,11 +158,6 @@ define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
 
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 
-define('ALBUM_AUTH_STATUS_WAIT', 0);
-define('ALBUM_AUTH_STATUS_SUCCESS', 1);
-define('ALBUM_AUTH_STATUS_FAIL', 2);
-
-define('USER_STATUS_NORMAL', 0);
 // 房间类型
 define('ROOM_THEME_TYPE_NORMAL',0); //正常
 define('ROOM_THEME_TYPE_BROADCAST', 1);//电台

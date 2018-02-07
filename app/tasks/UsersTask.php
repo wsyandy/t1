@@ -14,19 +14,36 @@ class UsersTask extends \Phalcon\Cli\Task
         echoLine(Users::findFirstById($params[0]));
     }
 
-    function addAuthUserAction()
+    /**
+     * 导入用户
+     */
+    function importUserAction($opts = array())
     {
-        $hot_db = \Users::getHotWriteCache();
-        $offset = 0;
+        $filename = fetch($opts, 0, 'user_detail.log');
+        $path = APP_ROOT . 'log/' . $filename;
+        $from_dev = false;
+        if (preg_match('/^dev_/', $filename)) {
+            $from_dev = true;
+        }
+
+        echoLine($path, $from_dev);
+
+        $yuanfen = new \Yuanfen($path, $from_dev);
+        $yuanfen->parseFile();
+    }
+
+    function silentUserAction()
+    {
+        $user_id = 2;
         while (true) {
-            $user_ids = $hot_db->zrange('yuanfen_ids', $offset, $offset + 99);
-            if (count($user_ids) <= 0) {
+            $user = \Users::findById($user_id);
+            if (isBlank($user)) {
                 break;
             }
-            foreach ($user_ids as $user_id) {
-                $hot_db->zadd("wait_auth_users", time(), $user_id);
+            if ($user && $user->isSilent() && isBlank($user->avatar)) {
+                \Yuanfen::addSilentUser($user);
             }
-            $offset += 100;
+            $user_id += 1;
         }
     }
 

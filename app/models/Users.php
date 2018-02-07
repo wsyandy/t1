@@ -247,11 +247,6 @@ class Users extends BaseModel
         return USER_TYPE_ACTIVE == $this->user_type;
     }
 
-    function isHuman()
-    {
-        return USER_TYPE_ACTIVE == $this->user_type;
-    }
-
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
@@ -1880,7 +1875,7 @@ class Users extends BaseModel
             }
 
             $old_user = \Users::findFirstByLoginName($user->login_name);
-            if (isPresent($old_user) && isProduction()) {
+            if (isPresent($old_user)) {
                 info('old user', $user->login_name);
                 continue;
             }
@@ -1912,6 +1907,7 @@ class Users extends BaseModel
         }
         $this->avatar_auth = $avatar_auth;
         $this->update();
+        
         if (AUTH_SUCCESS == intval($avatar_auth)) {
             $this->addAuthedList();
         }
@@ -1919,14 +1915,14 @@ class Users extends BaseModel
 
     function removeFromWaitAuthList()
     {
-        $hot_db = \Users::getHotWriteCache();
-        $hot_db->zrem(\Users::waitAuthKey(), $this->id);
+        $hot_db = Users::getHotWriteCache();
+        $hot_db->zrem(Users::waitAuthKey(), $this->id);
     }
 
     function addAuthedList()
     {
-        $hot_db = \Users::getHotWriteCache();
-        $hot_db->zadd(\Users::authedKey(), time(), $this->id);
+        $hot_db = Users::getHotWriteCache();
+        $hot_db->zadd(Users::authedKey(), time(), $this->id);
     }
 
 }
