@@ -1329,11 +1329,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             echoLine(date("Ymd", $user->birthday), $user->age);
-
-
         }
 
-        $birthday = $user->birthday;
+
+        $age = mt_rand(16, 25);
+        $birthday = 2018 - $age;
         $month = mt_rand(1, 12);
         $day = mt_rand(1, 28);
 

@@ -234,4 +234,41 @@ class RoomsTask extends \Phalcon\Cli\Task
             Rooms::delay()->activeRoom($room->id);
         }
     }
+
+    //刷新管理员
+    function freshManagersAction()
+    {
+        $db = Rooms::getRoomDb();
+        $total_room_key = Rooms::generateTotalManagerKey();
+        $keys = $db->zrange($total_room_key, 0, -1);
+
+        info("total_room_key_num", count($keys));
+
+        $room_ids = [];
+
+        foreach ($keys as $key) {
+            preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+
+            if (count($matches) < 3) {
+                info("room_id not exit", $key);
+                continue;
+            }
+
+            $room_id = $matches[1];
+
+            if ($room_id) {
+                $room_ids[] = $room_id;
+            }
+        }
+
+        info($room_ids);
+
+        if (count($room_ids) > 0) {
+            $rooms = Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+                $room->freshManagerNum();
+            }
+        }
+    }
 }
