@@ -344,7 +344,7 @@ class Rooms extends BaseModel
     }
 
     //随机一个用户
-    function findRandomUser()
+    function findRandomUser($filter_user_ids = [])
     {
         if ($this->getUserNum() < 1) {
             return null;
@@ -353,6 +353,7 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_ids = array_diff($user_ids, $filter_user_ids);
         $user_id = $user_ids[array_rand($user_ids)];
         $user = Users::findFirstById($user_id);
 
