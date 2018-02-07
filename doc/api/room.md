@@ -143,6 +143,8 @@
     channel_key string token 用于加入频道(互动直播)
     user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
     user_role 当前用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
+    theme_type 房间主题类型 0普通房间 1电台房间 如果是电台类型 需要请求接口拉取音频资源
+    audio_id 房间音频id 拉取音频资源时使用
     system_tips:[
         '内容1',
         '内容2',

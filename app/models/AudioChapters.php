@@ -36,7 +36,6 @@ class AudioChapters extends BaseModel
             'name' => $this->name,
             'audio_id' => $this->audio_id,
             'file_url' => $this->file_url,
-            'rank' => $this->rank,
         ];
     }
 
@@ -51,24 +50,16 @@ class AudioChapters extends BaseModel
         );
     }
 
-    static function search($audio_id, $rank = 0)
+    static function search($audio_id, $page, $per_page)
     {
-        $audio_chapter = self::findFirst(
-            [
-                'conditions' => 'audio_id = :audio_id: and rank > :rank: and status = :status: and file is not null',
-                'bind' => ['audio_id' => $audio_id, 'rank' => $rank, 'status' => STATUS_ON]
-            ]
-        );
-        if (!$audio_chapter) {
-            $audio_chapter = self::findFirst(
-                [
-                    'conditions' => 'audio_id = :audio_id: and status = :status: and file is not null',
-                    'bind' => ['audio_id' => $audio_id, 'status' => STATUS_ON],
-                    'order' => 'rank asc'
-                ]
-            );
-        }
-        return $audio_chapter;
+        $cond = [
+            'conditions' => 'audio_id = :audio_id: and status = :status:',
+            'bind' => ['audio_id' => $audio_id, 'status' => STATUS_ON]
+        ];
+
+        $res = AudioChapters::findPagination($cond, $page, $per_page);
+
+        return $res;
     }
 
     function getFileUrl()
