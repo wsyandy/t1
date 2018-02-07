@@ -1,14 +1,14 @@
 <form action="/admin/withdraw_histories" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="product_channel_id_eq">产品渠道</label>
-    <select name="withdraw_historie[product_channel_id_eq]" id="product_channel_id_eq">
+    <select name="withdraw_history[product_channel_id_eq]" id="product_channel_id_eq">
         {{ options(product_channels,'','id','name') }}
     </select>
 
     <label for="id_eq">ID</label>
-    <input name="withdraw_historie[id_eq]" type="text" id="id_eq"/>
+    <input name="withdraw_history[id_eq]" type="text" id="id_eq"/>
 
     <label for="user_name_eq">用户昵称</label>
-    <input name="withdraw_historie[user_name_eq]" type="text" id="user_name_eq"/>
+    <input name="withdraw_history[user_name_eq]" type="text" id="user_name_eq"/>
 
     <button type="submit" class="ui button">搜索</button>
 </form>
