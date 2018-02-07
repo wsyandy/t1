@@ -247,7 +247,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $room_ids = [];
 
         foreach ($keys as $key) {
-            preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+            preg_match('/room_id(\d+)_user_id(\d+)/', $key, $matches);
 
             if (count($matches) < 3) {
                 info("room_id not exit", $key);

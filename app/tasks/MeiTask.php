@@ -783,8 +783,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test52Action()
     {
-        $key = "room_id1_user_id1";
-        preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+        $key = "room_id1_user_id2";
+        preg_match('/room_id(\d+)_user_id(\d+)/', $key, $matches);
         print_r($matches);
     }
 
