@@ -132,9 +132,10 @@ class Yuanfen
                 $res = httpGet($avatar_url);
             }
             if ($res === false || $res->code != 200) {
-                $hot_db->zadd("yuanfen_ids", time(), $user->id);
+                //$hot_db->zadd("yuanfen_ids", time(), $user->id);
                 return false;
             }
+
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
             $dest_filename = 'avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
             $f = fopen($source_filename, 'w');
@@ -150,7 +151,7 @@ class Yuanfen
             $hot_db->zadd("yuanfen_ids", time(), $user->id);
             if (count($album_urls) > 0) {
                 foreach ($album_urls as $album_url) {
-                    \Albums::createAlbum($album_url, $user->id, ALBUM_AUTH_STATUS_WAIT);
+                    \Albums::createAlbum($album_url, $user->id, AUTH_WAIT);
                 }
             }
             echo "create npc " . $user->id;
