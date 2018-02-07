@@ -26,7 +26,7 @@
 <div class="fudong_bg"></div>
 <!-- 弹出层结束 -->
 <div >
-    <img src="/m/images/question.png" style="float: right;" id="question">
+    <img src="/m/images/question.png" class="money_image"  id="question">
 </div>
 
 <div class="money_box">

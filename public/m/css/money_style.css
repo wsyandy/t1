@@ -228,7 +228,11 @@ table { border-collapse:collapse; }
   color: #F45189;
 }
 
-
+.money_image{
+  float: right;
+  width:30px;
+  height:30px;
+}
 
 
 
