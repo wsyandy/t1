@@ -1689,32 +1689,31 @@ class Users extends BaseModel
         }
 
         if ($room->getRealUserNum() > 0) {
-            $gift_num = mt_rand(1, 15);
-            $gifts = Gifts::findForeach();
-            $gift_ids = [];
 
-            foreach ($gifts as $gift) {
-                $gift_ids[] = $gift->id;
-            }
+            $receiver = $room->findRandomUser([$user_id]);
 
-            $index = array_rand($gift_ids);
-            $gift_id = $gift_ids[$index];
-            $gift = Gifts::findFirstById($gift_id);
+            if ($receiver) {
 
-            if ($user->canGiveGift($gift, $gift_num)) {
+                $gift_num = mt_rand(1, 15);
+                $gifts = Gifts::findBy(['status' => STATUS_ON]);
+                $gift_ids = [];
 
-                $receiver = $room->findRealUser();
+                foreach ($gifts as $gift) {
+                    $gift_ids[] = $gift->id;
+                }
 
-                if ($receiver) {
+                $index = array_rand($gift_ids);
+                $gift_id = $gift_ids[$index];
+                $gift = Gifts::findFirstById($gift_id);
+
+                if ($receiver->isActive()) {
                     $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
-
                     if ($give_result) {
                         $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                     }
+                } else {
+                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                 }
-
-            } else {
-                info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
             }
         }
     }
