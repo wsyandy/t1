@@ -1,6 +1,8 @@
 <!-- saved from url=(0047)http://watchdev.365yf.com/orders/c0116060455805 -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>下单完成</title>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>玩转Hi</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -261,13 +263,13 @@
             var allAnswer = $('.answer');
             var allDot = $('.dot');
 
-            if($answer.is(':visible')){
+            if ($answer.is(':visible')) {
                 $answer.hide();
                 $dot.removeClass('up_dot');
                 $('html,body').animate({
                     scrollTop: 0
                 }, 400);
-            }else{
+            } else {
                 allAnswer.hide();
                 $answer.show();
                 allDot.removeClass('up_dot');
@@ -294,4 +296,5 @@
         });
     })
 </script>
-</body></html>
+</body>
+</html>

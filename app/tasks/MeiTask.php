@@ -1151,4 +1151,167 @@ class MeiTask extends \Phalcon\Cli\Task
         $num = Rooms::getOnlineSilentRoomNum();
         echoLine($num);
     }
+
+    function test75Action()
+    {
+        $room_names = [];
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_SILENT]);
+
+        foreach ($rooms as $room) {
+            $topic = fetch($room_names, $room->name);
+
+            if ($topic) {
+                echoLine($topic);
+                $room->topic = $topic;
+                $room->save();
+            }
+        }
+
+    }
+
+    function test76Action()
+    {
+        $withdraw_histories = WithdrawHistories::findByUserId(11161);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            echoLine($withdraw_history);
+        }
+
+    }
+
+
+    function test77Action()
+    {
+        $datas = [];
+        $emotion_images = EmoticonImages::findForeach();
+        foreach ($emotion_images as $emotion_image) {
+            debug($emotion_image->toJson());
+            $datas[] = $emotion_image->toJson();
+        }
+
+        file_put_contents(APP_ROOT . "public/emotion_images.json", json_encode($datas, JSON_UNESCAPED_UNICODE));
+    }
+
+    function test78Action()
+    {
+        $datas = file_get_contents(APP_ROOT . "public/emotion_images.json");
+
+        $datas = json_decode($datas, true);
+
+        foreach ($datas as $data) {
+            $image_url = fetch($data, 'image_url');
+            $dynamic_image_url = fetch($data, 'dynamic_image_url');
+            $name = fetch($data, 'name');
+            $rank = fetch($data, 'rank');
+            $status = fetch($data, 'status');
+            $code = fetch($data, 'code');
+            $duration = fetch($data, 'duration');
+            try {
+                $source_image = APP_ROOT . "public/temp/" . uniqid() . ".png";
+                httpSave($image_url, $source_image);
+                $image = APP_NAME . "/emoticon_images/image/" . uniqid() . ".png";
+                StoreFile::upload($source_image, $image);
+
+                $source_image = APP_ROOT . "public/temp/" . uniqid() . ".gif";
+                httpSave($dynamic_image_url, $source_image);
+                $dynamic_image = APP_NAME . "/emoticon_images/dynamic_image/" . uniqid() . ".gif";
+                StoreFile::upload($source_image, $dynamic_image);
+            } catch (Exception $e) {
+                debug($image_url, $dynamic_image_url, $e->getMessage());
+            }
+
+            $emotion_image = new EmoticonImages();
+            $emotion_image->name = $name;
+            $emotion_image->rank = $rank;
+            $emotion_image->status = $status;
+            $emotion_image->code = $code;
+            $emotion_image->duration = $duration;
+            $emotion_image->save();
+        }
+    }
+
+    function test79Action()
+    {
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_SILENT]);
+
+        foreach ($rooms as $room) {
+            $cond['conditions'] = '(room_id = 0 or room_id is null) and user_type = ' . USER_TYPE_SILENT
+                . " and avatar_status = " . AUTH_SUCCESS;
+            $user = Users::findFirst($cond);
+            if ($user) {
+                $user->room_id = $room->id;
+                $user->save();
+                $room->user_id = $user->id;
+                $room->save();
+                echoLine($user->id);
+            }
+        }
+    }
+
+    function test80Action()
+    {
+        $rooms = Rooms::findForeach();
+        foreach ($rooms as $room) {
+            $total_users = $room->findTotalUsers();
+            foreach ($total_users as $user) {
+                if ($user->avatar_status != AUTH_SUCCESS) {
+                    $room->exitRoom($user);
+                }
+            }
+        }
+
+        $user = Users::findFirstById(9043);
+        echoLine($user);
+
+        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
+            " and avatar_status = " . AUTH_SUCCESS;
+        $num = Users::count($cond);
+        echoLine($num);
+
+        $rooms = Rooms::getOnlineSilentRooms();
+
+        foreach ($rooms as $room) {
+            echoLine(date("Ymd H:i:s", $room->getExpireTime()), $room->id);
+        }
+    }
+
+    function test81Action()
+    {
+        $rooms = Rooms::findForeach();
+        foreach ($rooms as $room) {
+            $room->user_type = $room->user->user_type;
+            $room->update();
+        }
+    }
+
+    function test82Action()
+    {
+        $monologues = file_get_contents(APP_ROOT . "doc/user_data/monolog_woman.txt");
+        $monologues = explode(PHP_EOL, $monologues);
+
+        $limit = count($monologues);
+
+        //and monologue is not null
+        $cond = [
+            'conditions' => 'user_type = :user_type: and avatar_status = :avatar_status: and sex = :sex:',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS, 'sex' => 1],
+            //'limit' => $limit
+        ];
+
+
+        $users = Users::find($cond);
+        echoLine(count($users));
+
+        $i = 0;
+        foreach ($users as $user) {
+            echoLine($user->monologue, $user->id);
+            $user->monologue = $monologues[$i];
+//            $user->update();
+            $i++;
+        }
+
+        $users = Users::findBy(['monologue' => '世界好宽，让孤单好满。']);
+        echoLine(count($users));
+
+    }
 }

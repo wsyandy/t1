@@ -10,7 +10,7 @@
         <td>昵称:{{ user.nickname }}</td>
         <td>手机号码:{{ user.mobile }}</td>
         <td>生日: {{ user.birthday_text }}, {{ user.age }}岁</td>
-        <td>个性签名: {{ user.monolog }}</td>
+        <td>个性签名: {{ user.monologue }}</td>
     </tr>
     <tr>
         <td>星座: {{ user.constellation_text }} 身高: {{ user.height }}</td>

@@ -438,6 +438,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $complaint->save();
         }
     }
+
     /**
      * 导入用户
      */
@@ -484,26 +485,11 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
-    function addAuthUserAction()
-    {
-        $hot_db = \Users::getHotWriteCache();
-        $offset = 0;
-        while (true) {
-            $user_ids = $hot_db->zrange('yuanfen_ids', $offset, $offset + 99);
-            if (count($user_ids) <= 0) {
-                break;
-            }
-            foreach ($user_ids as $user_id) {
-                $hot_db->zadd("wait_auth_users", time(), $user_id);
-            }
-            $offset += 100;
-        }
-    }
     function fixHiCoinsAction()
     {
         $users = Users::find([
-            'conditions' => 'user_type = :user_type: and user_status = :user_status: and mobile is not null',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'user_status' => USER_STATUS_ON],
+            'conditions' => 'user_type = :user_type: and mobile is not null',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
             'order' => 'id desc'
         ]);
 
@@ -520,8 +506,36 @@ class UsersTask extends \Phalcon\Cli\Task
             foreach ($user_gifts as $user_gift) {
                 $total_amount = $total_amount + $user_gift->total_amount;
             }
-            $user->hi_coins = $total_amount / 10;
-            $user->save;
+            $hi_coins = $total_amount / 10;
+            echoLine($hi_coins);
+            $user->hi_coins = $hi_coins;
+            $user->save();
+        }
+    }
+
+    function exportAuthedUsersAction()
+    {
+        \Users::exportAuthedUser();
+    }
+
+    function importAuthedUsersAction()
+    {
+        \Users::importAuthedUser();
+    }
+
+    function addAuthUserAction()
+    {
+        $hot_db = \Users::getHotWriteCache();
+        $offset = 0;
+        while (true) {
+            $user_ids = $hot_db->zrange('yuanfen_ids', $offset, $offset + 99);
+            if (count($user_ids) <= 0) {
+                break;
+            }
+            foreach ($user_ids as $user_id) {
+                $hot_db->zadd("wait_auth_users", time(), $user_id);
+            }
+            $offset += 100;
         }
     }
 }

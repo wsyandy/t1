@@ -59,6 +59,10 @@ class RoomSeatsController extends BaseController
             $hot_cache->setex($room_seat_up_user_lock_key, 3, $room_seat_id);
         }
 
+        $room = $room_seat->room;
+        $room->last_at = time();
+        $room->update();
+
         unlock($room_seat_lock);
         unlock($room_seat_user_lock);
 
@@ -100,6 +104,10 @@ class RoomSeatsController extends BaseController
         $current_user = $this->currentUser(true);
         $other_user = $this->otherUser(true);
         $room_seat->down($current_user, $other_user);
+
+        $room = $room_seat->room;
+        $room->last_at = time();
+        $room->update();
 
         unlock($room_seat_lock);
         unlock($room_seat_user_lock);

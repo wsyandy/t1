@@ -1689,32 +1689,31 @@ class Users extends BaseModel
         }
 
         if ($room->getRealUserNum() > 0) {
-            $gift_num = mt_rand(1, 15);
-            $gifts = Gifts::findForeach();
-            $gift_ids = [];
 
-            foreach ($gifts as $gift) {
-                $gift_ids[] = $gift->id;
-            }
+            $receiver = $room->findRandomUser();
 
-            $index = array_rand($gift_ids);
-            $gift_id = $gift_ids[$index];
-            $gift = Gifts::findFirstById($gift_id);
+            if ($receiver) {
 
-            if ($user->canGiveGift($gift, $gift_num)) {
+                $gift_num = mt_rand(1, 15);
+                $gifts = Gifts::findBy(['status' => STATUS_ON]);
+                $gift_ids = [];
 
-                $receiver = $room->findRealUser();
+                foreach ($gifts as $gift) {
+                    $gift_ids[] = $gift->id;
+                }
 
-                if ($receiver) {
+                $index = array_rand($gift_ids);
+                $gift_id = $gift_ids[$index];
+                $gift = Gifts::findFirstById($gift_id);
+
+                if ($receiver->isActive()) {
                     $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
-
                     if ($give_result) {
                         $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                     }
+                } else {
+                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                 }
-
-            } else {
-                info("can not send gift", $user->id, $room->id, $gift_id, $gift_num, $user->diamond);
             }
         }
     }
@@ -1756,15 +1755,20 @@ class Users extends BaseModel
             return;
         }
 
+        if ($this->isRoomHost($room)) {
+            info("user_is_room_host", $this->id, $room->id);
+            return;
+        }
+
         $rand_num = mt_rand(1, 100);
 
         info($rand_num, $this->id, $room->id);
 
         if ($rand_num <= 50) {
             Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
-        } elseif (50 < $rand_num && $rand_num <= 80) {
+        } elseif (50 < $rand_num && $rand_num <= 60) {
             Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
-        } elseif (80 < $rand_num && $rand_num <= 90) {
+        } elseif (60 < $rand_num && $rand_num <= 90) {
             Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
         } else {
             $room->exitSilentRoom($this);
@@ -1788,7 +1792,7 @@ class Users extends BaseModel
             $room_seat->room->pushDownMessage($user, $room_seat);
         }
     }
-    
+
     static function waitAuthKey()
     {
         return "wait_auth_users";
@@ -1822,4 +1826,82 @@ class Users extends BaseModel
         $users = \Users::findByIds($user_ids);
         return new \PaginationModel($users, $total, $page, $per_page);
     }
+
+    static function exportAuthedUser()
+    {
+        $search_db = \Users::getHotReadCache();
+        $offset = 0;
+        $f = fopen(APP_ROOT . 'log/authed_users.log', 'w');
+        while (true) {
+            $user_ids = $search_db->zrange(\Users::authedKey(), $offset, $offset + 99);
+            if (count($user_ids) <= 0) {
+                break;
+            }
+            $users = \Users::findByIds($user_ids);
+            foreach ($users as $user) {
+                $data = json_encode($user->toExportJson(), JSON_UNESCAPED_UNICODE);
+                fwrite($f, $data . "\r\n");
+            }
+            $offset += 100;
+        }
+        fclose($f);
+    }
+
+    static function importAuthedUser()
+    {
+        $f = fopen(APP_ROOT . 'log/authed_users.log', 'r');
+        $hot_db = \Users::getHotWriteCache();
+        while ($line = fgets($f)) {
+            echo $line . PHP_EOL;
+            $data = json_decode($line, true);
+            $user = new \Users();
+            foreach (['sex', 'birthday', 'platform', 'platform_version',
+                         'login_name', 'nickname', 'mobile', 'height'] as $column) {
+                $user->$column = $data[$column];
+            }
+
+            $user->user_status = USER_STATUS_ON;
+            $user->user_type = USER_TYPE_SILENT;
+
+            if ($user->height > 175 || $user->height < 150) {
+                $user->height = 150 + mt_rand(0, 30);
+            }
+            if (isPresent($data['province_name'])) {
+                $province = \Provinces::findFirstByName($data['province_name']);
+                if ($province) {
+                    $user->province_id = $province->id;
+                }
+            }
+            if (isPresent($data['city_name'])) {
+                $city = \Cities::findFirstByName($data['city_name']);
+                if ($city) {
+                    $user->city_id = $city->id;
+                }
+            }
+
+            $old_user = \Users::findFirstByLoginName($user->login_name);
+            if (isPresent($old_user) && isProduction()) {
+                info('old user', $user->login_name);
+                continue;
+            }
+
+            $user->save();
+
+
+            $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
+            if (!httpSave($data['avatar_url'], $source_filename)) {
+                info('get avatar error', $data['avatar_url']);
+                continue;
+            }
+
+            if ($user->updateAvatar($source_filename)) {
+                $hot_db->zadd("authed_user_ids", time(), $user->id);
+                foreach ($data['albums'] as $album) {
+                    $album_url = $album['image_url'];
+                    \Albums::createAlbum($album_url, $user->id, AUTH_SUCCESS);
+                }
+            }
+        }
+    }
+
 }

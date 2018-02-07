@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
     <link rel="stylesheet" href="/m/css/money_style.css">
-    <link rel="stylesheet" type="text/css" href="/m/css/pop.css">
+    <link rel="stylesheet" href="/m/css/pop.css">
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <body>
@@ -24,6 +25,9 @@
 </div>
 <div class="fudong_bg"></div>
 <!-- 弹出层结束 -->
+<div >
+    <img src="/m/images/question.png" class="money_image"  id="question">
+</div>
 
 <div class="money_box">
     <ul>
@@ -51,14 +55,20 @@
             $(".fudong").hide();
             $(".fudong_bg").hide();
         };
+
+        function show_fd() {
+            $(".fudong").show();
+            $(".fudong_bg").show();
+        };
+
         var doc_height = $(document).height();
         var w_height = $(window).height();
         var w_width = $(window).width();
 
-        $(".fudong").show();
-        $(".fudong_bg").show();
+        $(".fudong").hide();
+        $(".fudong_bg").hide();
 
-        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
+//        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
         var div_width = $(".fudong").width();
         var div_height = $(".fudong").height();
 
@@ -72,6 +82,10 @@
 
         $(".close_btn").click(function () {
             colse_fd();
+        });
+
+        $("#question").click(function () {
+            show_fd();
         });
 
     });

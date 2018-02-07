@@ -83,17 +83,17 @@ class Albums extends BaseModel
         return StoreFile::getUrl($this->image) . '@!big';
     }
 
-    static function createAlbum($album_url, $user_id, $auth_status = ALBUM_AUTH_STATUS_WAIT)
+    static function createAlbum($album_url, $user_id, $auth_status = AUTH_WAIT)
     {
         $album = new \Albums();
         $album->user_id = $user_id;
         $album->auth_status = $auth_status;
         $res = httpGet($album_url);
         $source_file = APP_ROOT . 'temp/album_' . md5(uniqid(mt_rand())) . '.jpg';
-        $dest_file = 'album/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
         $f = fopen($source_file, 'w');
         fwrite($f, $res);
 
+        $dest_file = APP_NAME . '/albums/' . $user_id . '_' . date('YmdH') . uniqid() . '.jpg';
         $filename = \StoreFile::upload($source_file, $dest_file);
         if (isBlank($filename)) {
             return false;

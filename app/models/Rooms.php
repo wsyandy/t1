@@ -165,6 +165,7 @@ class Rooms extends BaseModel
     {
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
+        $this->last_at = time();
 
         //如果有麦位id 为主播
         if ($user->current_room_seat_id) {
@@ -178,11 +179,10 @@ class Rooms extends BaseModel
         // 房主
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
-
-            $this->last_at = time();
             $this->online_status = STATUS_ON; // 主播是否在线
-            $this->save();
         }
+
+        $this->save();
 
         $user->user_role_at = time();
         $user->save();
@@ -341,6 +341,22 @@ class Rooms extends BaseModel
         $pagination->clazz = 'Users';
 
         return $pagination;
+    }
+
+    //随机一个用户
+    function findRandomUser()
+    {
+        if ($this->getUserNum() < 1) {
+            return null;
+        }
+
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_id = $user_ids[array_rand($user_ids)];
+        $user = Users::findFirstById($user_id);
+
+        return $user;
     }
 
     function findTotalUsers()
@@ -672,18 +688,33 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    static function getExpireOnlineSilentRooms()
+    {
+        $key = self::getOnlineSilentRoomKey();
+        $hot_cache = self::getHotWriteCache();
+
+        if (self::getOnlineSilentRoomNum() < 1) {
+            return [];
+        }
+
+        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        info($room_ids);
+        $rooms = Rooms::findByIds($room_ids);
+        return $rooms;
+    }
+
     static function getOnlineSilentRooms()
     {
         $key = self::getOnlineSilentRoomKey();
         $hot_cache = self::getHotWriteCache();
 
         if (self::getOnlineSilentRoomNum() < 1) {
-            return null;
+            return [];
         }
 
-        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        $room_ids = $hot_cache->zrange($key, 0, -1);
         info($room_ids);
-        $rooms = Rooms::find($room_ids);
+        $rooms = Rooms::findByIds($room_ids);
         return $rooms;
     }
 
@@ -709,8 +740,6 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
-        } else {
-            //Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 
         $room->pushEnterRoomMessage($user);
@@ -898,5 +927,76 @@ class Rooms extends BaseModel
         }
 
         return true;
+    }
+
+    static function activeRoom($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return;
+        }
+
+        if ($room->getRealUserNum() > 0) {
+
+            $silent_users = $room->findSilentUsers();
+
+            foreach ($silent_users as $silent_user) {
+                $silent_user->activeRoom($room);
+            }
+        }
+
+        $room->addSilentUsers();
+    }
+
+    function addSilentUsers()
+    {
+        if ($this->lock) {
+            info("room_is_lock", $this->id);
+            return;
+        }
+
+        if ($this->isSilent() && $this->getExpireTime() <= time() + 10) {
+            info("silent_room_already_expire", $this->id, date("Ymd h:i:s", $this->getExpireTime()));
+            return;
+        }
+
+        if (!$this->isOnline() && $this->getRealUserNum() < 1) {
+            info("room_is_offline", $this->id);
+            return;
+        }
+
+        $last_user = Users::findLast(['columns' => 'id']);
+        $last_user_id = $last_user->id;
+
+        $per_page = mt_rand(1, 8);
+        $total_page = ceil($last_user_id / $per_page);
+        $page = mt_rand(1, $total_page);
+        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
+            " and id <>" . $this->user_id . " and avatar_status = " . AUTH_SUCCESS;
+        $users = Users::findPagination($cond, $page, $per_page);
+
+        foreach ($users as $user) {
+
+            if (!$this->canEnter($user)) {
+                info("user_can_not_enter_room", $this->id, $user->id);
+                continue;
+            }
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $this->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 60);
+            Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
+        }
+
+        info($this->id, $page, $per_page, $total_page);
+    }
+
+    function isOnline()
+    {
+        return $this->online_status == STATUS_ON;
     }
 }
