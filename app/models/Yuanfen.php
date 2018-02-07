@@ -45,7 +45,6 @@ class Yuanfen
         $f = fopen($this->filename, 'r');
         while (true) {
             $line = fgets($f);
-            echo "line: " . $line;
             if ($this->createUser($line)) {
                 $this->updateSilentUserNum();
                 if ($this->isFinished()) {
@@ -121,9 +120,8 @@ class Yuanfen
         $user->last_at = time();
         if ($avatar_path) {
             $avatar_url = $this->generateCdnUrl($avatar_path);
-            echo $avatar_url;
+            echoLine('avatar_url', $avatar_url);
             $res = httpGet($avatar_url);
-
             if ($res === false || $res->code != 200) {
                 $avatar_data = explode('/', $avatar_path);
                 $new_datas[] = $avatar_data[0];
@@ -138,7 +136,7 @@ class Yuanfen
             }
 
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
-            $dest_filename = 'avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
+            $dest_filename = APP_NAME . '/avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
             $f = fopen($source_filename, 'w');
             fwrite($f, $res);
             $avatar_res = \StoreFile::upload($source_filename, $dest_filename);
@@ -148,6 +146,7 @@ class Yuanfen
             }
             $user->avatar = $avatar_res;
         }
+
         if ($user->save()) {
             $hot_db->zadd("wait_auth_users", time(), $user->id);
             if (count($album_urls) > 0) {
@@ -155,7 +154,7 @@ class Yuanfen
                     \Albums::createAlbum($album_url, $user->id, AUTH_WAIT);
                 }
             }
-            echo "create npc " . $user->id;
+            echoLine("create npc " . $user->id);
             return $user;
         }
         return false;
