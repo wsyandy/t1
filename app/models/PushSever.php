@@ -465,7 +465,7 @@ class PushSever extends BaseModel
     {
         $hot_cache = self::getHotWriteCache();
         $key = $current_room->getRealUserListKey();
-        $user_ids = $hot_cache->zrevrange($key, 0, 10);
+        $user_ids = $hot_cache->zrevrange($key, 0, -1);
         $channel_name = $current_room->channel_name;
 
         info($user->sid, $user_ids);
