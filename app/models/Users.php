@@ -1690,7 +1690,7 @@ class Users extends BaseModel
 
         if ($room->getRealUserNum() > 0) {
 
-            $receiver = $room->findRandomUser();
+            $receiver = $room->findRandomUser([$user_id]);
 
             if ($receiver) {
 

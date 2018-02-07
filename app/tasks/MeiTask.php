@@ -1314,4 +1314,12 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(count($users));
 
     }
+
+    function test83Action()
+    {
+        $array = [1, 2, 3, 4, 5];
+        $array1 = [1, 2];
+        $array2 = array_diff($array, $array1);
+        print_r($array2[array_rand($array2)]);
+    }
 }
