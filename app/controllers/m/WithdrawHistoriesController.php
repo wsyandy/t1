@@ -24,11 +24,11 @@ class WithdrawHistoriesController extends BaseController
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         if ($this->request->isAjax()) {
-            $money = floatval($this->params('money'));
+            $money = $this->params('money');
             $name = $this->params('name', null);
             $account = $this->params('account', null);
             debug($money);
-            if (!$money || $money < 0) {
+            if (is_int($money) || $money < 10) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 

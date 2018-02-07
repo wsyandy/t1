@@ -17,9 +17,8 @@
     </div>
     <div class="fd_text">
         <p>1. 别人送你礼物可以得到Hi币</p>
-        <span>转化比例：<b>1</b> 钻石 = <b>0.1</b> Hi币</span>
         <p class="p_mr">2. Hi币可以进行提现</p>
-        <span>兑换比例：<b>1</b> Hi币 = <b>0.1</b> 元</span>
+        <span>兑换比例：<b>10</b> Hi币 = <b>1</b> 元</span>
     </div>
     <div class="close_btn">知道了</div>
 </div>

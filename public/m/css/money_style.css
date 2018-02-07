@@ -115,7 +115,7 @@ table { border-collapse:collapse; }
 }
 .get_money_wrap .money_num input{
   flex: 1;
-  font-size: 31px;
+  font-size: 24px;
   color: #333333;
   min-width: 144px;
   margin-right: 15px;
@@ -230,8 +230,8 @@ table { border-collapse:collapse; }
 
 .money_image{
   float: right;
-  width:30px;
-  height:30px;
+  width:25px;
+  height:25px;
 }
 
 

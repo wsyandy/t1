@@ -17,7 +17,7 @@
     <h2>提现金额</h2>
     <div class="money_num">
         <span>￥</span>
-        <input type="text" name="" id="money">
+        <input type="text" name="" placeholder="满10元可提现，且需为整数" id="money">
     </div>
 </div>
 <div class="get_money_input">
