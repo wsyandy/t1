@@ -343,6 +343,23 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    //随机一个用户
+    function findRandomUser($filter_user_ids = [])
+    {
+        if ($this->getUserNum() < 1) {
+            return null;
+        }
+
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_ids = array_diff($user_ids, $filter_user_ids);
+        $user_id = $user_ids[array_rand($user_ids)];
+        $user = Users::findFirstById($user_id);
+
+        return $user;
+    }
+
     function findTotalUsers()
     {
         $hot_cache = self::getHotWriteCache();
@@ -672,16 +689,31 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    static function getExpireOnlineSilentRooms()
+    {
+        $key = self::getOnlineSilentRoomKey();
+        $hot_cache = self::getHotWriteCache();
+
+        if (self::getOnlineSilentRoomNum() < 1) {
+            return [];
+        }
+
+        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        info($room_ids);
+        $rooms = Rooms::findByIds($room_ids);
+        return $rooms;
+    }
+
     static function getOnlineSilentRooms()
     {
         $key = self::getOnlineSilentRoomKey();
         $hot_cache = self::getHotWriteCache();
 
         if (self::getOnlineSilentRoomNum() < 1) {
-            return null;
+            return [];
         }
 
-        $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
+        $room_ids = $hot_cache->zrange($key, 0, -1);
         info($room_ids);
         $rooms = Rooms::findByIds($room_ids);
         return $rooms;
@@ -709,8 +741,6 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
-        } else {
-            //Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 
         $room->pushEnterRoomMessage($user);

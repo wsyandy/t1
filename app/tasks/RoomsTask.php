@@ -102,23 +102,47 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function fixRoomsAction()
+    //释放所有离线沉默房间
+    function clearAllOfflineSilentRoomsAction()
     {
-        $name_file = APP_ROOT . "doc/room_topic.xls";
-        $names = readExcel($name_file);
+        $online_silent_rooms = Rooms::getOnlineSilentRooms();
 
-        foreach ($names as $name) {
-            $title = $name[0];
-            $topic = $name[1];
+        if (!$online_silent_rooms) {
+            info("no rooms");
+            return;
+        }
 
-            $room = Rooms::findFirstByTopic($topic);
+        foreach ($online_silent_rooms as $online_silent_room) {
 
-            if ($room) {
-                echoLine("ssss");
-                $room->name = $title;
-                $room->save();
+            $users = $online_silent_room->findSilentUsers();
+
+            foreach ($users as $user) {
+                $online_silent_room->exitSilentRoom($user);
+            }
+        }
+    }
+
+    //
+    function generateStableRoomAction()
+    {
+        $per_page = 2;
+        $last_room = Rooms::findLast();
+        $last_room_id = $last_room->id;
+        $total_page = ceil($last_room_id / $per_page);
+        $page = mt_rand(1, $total_page);
+        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+
+        echoLine(count($rooms));
+        foreach ($rooms as $room) {
+            $user = $room->user;
+
+            if ($user->isInAnyRoom()) {
+                info($user->id, $user->current_room_id, $room->id);
                 continue;
             }
+
+            Rooms::enterSilentRoom($room->id, $user->id);
+            info($room->id);
         }
     }
 
@@ -158,7 +182,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     //释放离线沉默房间
     function clearOfflineSilentRoomsAction()
     {
-        $online_silent_rooms = Rooms::getOnlineSilentRooms();
+        $online_silent_rooms = Rooms::getExpireOnlineSilentRooms();
 
         if (!$online_silent_rooms) {
             info("no rooms");
@@ -171,6 +195,12 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
+                if ($online_silent_room->isOnline()) {
+                    $online_silent_room->online_status = STATUS_OFF;
+                    $online_silent_room->save();
+                }
+
+                $online_silent_room->rmOnlineSilentRoom();
                 continue;
             }
 
