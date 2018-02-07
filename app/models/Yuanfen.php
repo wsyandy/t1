@@ -81,6 +81,8 @@ class Yuanfen
             return false;
         }
 
+        $hot_db->zadd("yuanfen_ids", time(), $yuanfen_id);
+
         $album_urls = array();
         if (isPresent($album_paths)) {
             $albums = json_decode($album_paths, true);
@@ -148,7 +150,6 @@ class Yuanfen
         }
         if ($user->save()) {
             $hot_db->zadd("wait_auth_users", time(), $user->id);
-            $hot_db->zadd("yuanfen_ids", time(), $user->id);
             if (count($album_urls) > 0) {
                 foreach ($album_urls as $album_url) {
                     \Albums::createAlbum($album_url, $user->id, AUTH_WAIT);
