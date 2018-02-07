@@ -13,7 +13,7 @@ class Yuanfen
     private $from_dev = false; // 从交友测试机导用户
     private $silent_num = 0;
 
-    static $SILENT_NUM_LIMIT = 10000;
+    static $SILENT_NUM_LIMIT = 50000;
 
     function __construct($filename, $from_dev = false)
     {
