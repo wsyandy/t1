@@ -9,6 +9,11 @@
         {{ options(Rooms.STATUS) }}
     </select>
 
+    <label for="theme_type_eq">房间主题</label>
+    <select name="room[theme_type_eq]" id="theme_type_eq">
+        {{ options(Rooms.THEME_TYPE) }}
+    </select>
+
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
