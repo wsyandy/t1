@@ -284,7 +284,7 @@ class StatTask extends \Phalcon\Cli\Task
 
     }
 
-    function clearKeys($keys, $type = 'set')
+    function clearKeys($keys, $type = '')
     {
 
         $sys_db = Stats::getStatDb();
