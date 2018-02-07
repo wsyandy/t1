@@ -37,8 +37,8 @@ class GiftsTask extends \Phalcon\Cli\Task
         $gift = \Gifts::findLast();
         $gift_num = 3;
         $body = array_merge($body, array(
-            'sid' => $sender->sid, 'user_id' => $user->id,
-            'gift_id' => $gift->id, 'gift_num' => $gift_num)
+                'sid' => $sender->sid, 'user_id' => $user->id,
+                'gift_id' => $gift->id, 'gift_num' => $gift_num)
         );
         $res = httpPost($url, $body);
         //echo json_encode($res, JSON_UNESCAPED_UNICODE);
@@ -66,5 +66,26 @@ class GiftsTask extends \Phalcon\Cli\Task
         $key = 'user_gift_lock_2_4';
         echo $redis->get($key) . PHP_EOL;
         echo $redis->ttl($key) . PHP_EOL;
+    }
+
+    function fixGiftOrderUserTypeAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $sender = $gift_order->sender;
+            if (!$user) {
+                echoLine("user", $gift_order->id, $gift_order->user_id);
+            }
+
+            if (!$sender) {
+                echoLine("sender", $gift_order->id, $gift_order->sender_id);
+            }
+
+//            $gift_order->receiver_user_type = $user->user_type;
+//            $gift_order->sender_user_type = $sender->user_type;
+//            $gift_order->save();
+        }
     }
 }

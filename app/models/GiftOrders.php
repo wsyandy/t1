@@ -45,6 +45,12 @@ class GiftOrders extends BaseModel
             return false;
         }
 
+        $receiver = Users::findFirstById($receiver_id);
+
+        if (!$receiver) {
+            return false;
+        }
+
         $gift_order = new \GiftOrders();
         $gift_order->sender_id = $sender_id;
         $gift_order->user_id = $receiver_id;
@@ -54,6 +60,8 @@ class GiftOrders extends BaseModel
         $gift_order->pay_type = 'diamond';
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
         $gift_order->gift_num = $gift_num;
+        $gift_order->receiver_user_type = $receiver->user_type;
+        $gift_order->sender_user_type = $sender->user_type;
         if ($gift_order->create()) {
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
@@ -87,4 +95,13 @@ class GiftOrders extends BaseModel
         return GIFT_ORDER_STATUS_SUCCESS == $this->status;
     }
 
+    function getReceiverUserTypeText()
+    {
+        return fetch(Users::$USER_TYPE, $this->receiver_user_type);
+    }
+
+    function getSenderUserTypeText()
+    {
+        return fetch(Users::$USER_TYPE, $this->sender_user_type);
+    }
 }
