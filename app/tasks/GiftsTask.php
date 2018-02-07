@@ -77,15 +77,16 @@ class GiftsTask extends \Phalcon\Cli\Task
             $sender = $gift_order->sender;
             if (!$user) {
                 echoLine("user", $gift_order->id, $gift_order->user_id);
+                $gift_order->delete();
             }
 
             if (!$sender) {
                 echoLine("sender", $gift_order->id, $gift_order->sender_id);
             }
 
-//            $gift_order->receiver_user_type = $user->user_type;
-//            $gift_order->sender_user_type = $sender->user_type;
-//            $gift_order->save();
+            $gift_order->receiver_user_type = $user->user_type;
+            $gift_order->sender_user_type = $sender->user_type;
+            $gift_order->save();
         }
     }
 }
