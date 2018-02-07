@@ -9,14 +9,9 @@
 class UsersTask extends \Phalcon\Cli\Task
 {
 
-    function exportAuthedUsersAction()
+    function findByIdAction($params)
     {
-        \Users::exportAuthedUser();
-    }
-
-    function importAuthedUsersAction()
-    {
-        \Users::importAuthedUser();
+        echoLine(Users::findFirstById($params[0]));
     }
 
     function addAuthUserAction()
@@ -34,5 +29,16 @@ class UsersTask extends \Phalcon\Cli\Task
             $offset += 100;
         }
     }
+
+    function exportAuthedUsersAction()
+    {
+        \Users::exportAuthedUser();
+    }
+
+    function importAuthedUsersAction()
+    {
+        \Users::importAuthedUser();
+    }
+
 }
 
