@@ -40,7 +40,7 @@ class UsersTask extends \Phalcon\Cli\Task
             if (isBlank($user)) {
                 break;
             }
-            if ($user && $user->isNpc() && isBlank($user->avatar)) {
+            if ($user && $user->isSilent() && isBlank($user->avatar)) {
                 \Yuanfen::addSilentUser($user);
             }
             $user_id += 1;
