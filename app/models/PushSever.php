@@ -494,6 +494,8 @@ class PushSever extends BaseModel
                 } else {
                     info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                 }
+            } else {
+                info("receiver_fd_not_exists", $user->sid, $receiver_fd);
             }
         }
     }
