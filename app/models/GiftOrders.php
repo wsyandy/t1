@@ -40,7 +40,8 @@ class GiftOrders extends BaseModel
     static function giveTo($sender_id, $receiver_id, $gift, $gift_num)
     {
         $sender = \Users::findById($sender_id);
-        if (!$sender->canGiveGift($gift, $gift_num)) {
+
+        if (!$sender->isSilent() && !$sender->canGiveGift($gift, $gift_num)) {
             return false;
         }
 
