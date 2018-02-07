@@ -65,34 +65,27 @@ class WithdrawHistoriesController extends BaseController
 
         $user = $this->currentUser();
 
-        $withdraw_histories = \WithdrawHistories::find(
+        $total_money = \WithdrawHistories::sum(
             [
-                'conditions' => ' id != :id: and product_channel_id = :product_channel_id:',
-                'bind' => ['product_channel_id' => $user->product_channel_id, 'id' => $user->id],
-                'order' => 'id desc'
+                'conditions' => ' user_id = :user_id: and product_channel_id = :product_channel_id: and status = :status:',
+                'bind' => ['product_channel_id' => $user->product_channel_id, 'user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS],
+                'order' => 'id desc',
+                'column' => 'amount'
             ]
         );
 
-        $total_money = 0;
-        foreach ($withdraw_histories as $history) {
-            if ($history->status == WITHDRAW_STATUS_SUCCESS) {
-                $total_money = $total_money + $history->amount;
-            }
-        }
-
-        $flag = false;
-
-        if (count($withdraw_histories)) {
-            $flag = true;
-        }
-        $this->view->flag = $flag;
         $this->view->total_money = $total_money;
-        $this->view->withdraw_histories = $withdraw_histories;
     }
 
-//    function listAction()
-//    {
-//        $this->view->code = $this->params('code');
-//        $this->view->sid = $this->params('sid');
-//    }
+    function listAction()
+    {
+        if ($this->request->isAjax()) {
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 10);
+
+            $withdraw_histories = \WithdrawHistories::search($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '',
+                $withdraw_histories->toJson('withdraw_histories', 'toSimpleJson'));
+        }
+    }
 }

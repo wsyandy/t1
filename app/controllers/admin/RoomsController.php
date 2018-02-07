@@ -223,15 +223,19 @@ class RoomsController extends BaseController
 
         if ($this->request->isPost()) {
             $audio_id = $this->params('audio_id');
+            $theme_type = $this->params('theme_type');
+            if ($theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '只有设置电台才能选择音频');
+            }
             $room->audio_id = $audio_id;
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
             if ($room->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '',['redirect_url' => '/admin/rooms']);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['redirect_url' => '/admin/audios?audio[id_eq]=' . $room->audio_id]);
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '');
             }
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
         $this->view->id = $id;
         $this->view->audios = $audios;
-        //        $this->view->room = $room;
     }
 }

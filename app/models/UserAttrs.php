@@ -427,28 +427,4 @@ trait UserAttrs
         return intval($time / 60);
     }
 
-    function changeAvatarAuth($avatar_auth)
-    {
-        if (isBlank($avatar_auth) ||
-            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)) {
-            return;
-        }
-        $this->avatar_auth = $avatar_auth;
-        $this->update();
-        if (AUTH_SUCCESS == intval($avatar_auth)) {
-            $this->addAuthedList();
-        }
-    }
-
-    function removeFromWaitAuthList()
-    {
-        $hot_db = \Users::getHotWriteCache();
-        $hot_db->zrem(\Users::waitAuthKey(), $this->id);
-    }
-
-    function addAuthedList()
-    {
-        $hot_db = \Users::getHotWriteCache();
-        $hot_db->zadd(\Users::authedKey(), time(), $this->id);
-    }
 }

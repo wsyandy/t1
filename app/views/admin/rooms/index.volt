@@ -9,6 +9,11 @@
         {{ options(Rooms.STATUS) }}
     </select>
 
+    <label for="theme_type_eq">房间主题</label>
+    <select name="room[theme_type_eq]" id="theme_type_eq">
+        {{ options(Rooms.THEME_TYPE) }}
+    </select>
+
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
@@ -31,7 +36,7 @@
     在线人数: {{ room.user_num }}<br/>
     主题类型: {{ room.theme_type_text }}<br/>
     {% if room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
-        音频ID:<a href="/admin/audio_chapters?audio_id={{ room.audio_id }}" >{{ room.audio_id }}</a><br/>
+        音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}" >{{ room.audio_id }}</a><br/>
     {% endif %}
 {% endmacro %}
 
@@ -47,7 +52,7 @@
     {% if isAllowed('room','deatil') %}
         <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
     {% endif %}
-    {% if isAllowed('room','audio') and room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
+    {% if isAllowed('room','audio')  %}
         <a href="/admin/rooms/audio?id={{ room.id }}" class="modal_action">音频配置</a></br>
     {% endif %}
 {% endmacro %}

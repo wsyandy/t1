@@ -13,7 +13,9 @@ class AudiosController extends BaseController
     {
         $page = 1;
         $per_page = 100;
-        $audios = \Audios::findPagination(['order' => 'id desc'], $page, $per_page);
+        $cond = $this->getConditions('audio');
+        $cond['order'] = 'id desc';
+        $audios = \Audios::findPagination($cond, $page, $per_page);
         $this->view->audios = $audios;
     }
 

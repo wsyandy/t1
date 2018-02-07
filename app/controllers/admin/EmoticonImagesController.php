@@ -11,8 +11,8 @@ class EmoticonImagesController extends BaseController
 {
     function indexAction()
     {
-        $page = 1;
-        $per_page = 100;
+        $page = $this->params('page');
+        $per_page = 30;
         $emoticon_images = \EmoticonImages::findPagination(['order' => 'id desc'], $page, $per_page);
         $this->view->emoticon_images = $emoticon_images;
     }
