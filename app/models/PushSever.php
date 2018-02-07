@@ -465,8 +465,10 @@ class PushSever extends BaseModel
     {
         $hot_cache = self::getHotWriteCache();
         $key = $current_room->getRealUserListKey();
-        $user_ids = $hot_cache->zrevrange($key, 0, 10);
+        $user_ids = $hot_cache->zrevrange($key, 0, -1);
         $channel_name = $current_room->channel_name;
+
+        info($user->sid, $user_ids);
 
         foreach ($user_ids as $receiver_id) {
 
@@ -487,9 +489,13 @@ class PushSever extends BaseModel
                 $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
 
                 if ($res) {
-                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+                    info("exit_room_success", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                     break;
+                } else {
+                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
                 }
+            } else {
+                info("receiver_fd_not_exists", $user->sid, $receiver_fd);
             }
         }
     }

@@ -783,8 +783,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test52Action()
     {
-        $key = "room_id1_user_id1";
-        preg_match('/room_id(\d)_user_id(\d)/', $key, $matches);
+        $key = "room_id1_user_id2";
+        preg_match('/room_id(\d+)_user_id(\d+)/', $key, $matches);
         print_r($matches);
     }
 
@@ -1321,5 +1321,33 @@ class MeiTask extends \Phalcon\Cli\Task
         $array1 = [1, 2];
         $array2 = array_diff($array, $array1);
         print_r($array2[array_rand($array2)]);
+
+        $user = Users::findFirstById(10123);
+        echoLine($user);
+
+        $users = Users::findBy(['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS]);
+
+        foreach ($users as $user) {
+            echoLine(date("Ymd", $user->birthday), $user->age);
+        }
+
+
+        $age = mt_rand(16, 25);
+        $birthday = 2018 - $age;
+        $month = mt_rand(1, 12);
+        $day = mt_rand(1, 28);
+
+        if ($day < 10) {
+            $day = "0" . $day;
+        }
+
+        if ($month < 10) {
+            $month = "0" . $month;
+        }
+
+        $new_birthday = $birthday . $month . $day;
+
+        $user->birthday = strtotime($new_birthday);
+        $user->update();
     }
 }

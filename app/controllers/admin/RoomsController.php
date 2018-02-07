@@ -228,14 +228,16 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '只有设置电台才能选择音频');
             }
             $room->audio_id = $audio_id;
+            $room->theme_type = $theme_type;
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
             if ($room->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['redirect_url' => '/admin/audios?audio[id_eq]=' . $room->audio_id]);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '');
             }
         }
         $this->view->id = $id;
         $this->view->audios = $audios;
+        $this->view->room = $room;
     }
 }

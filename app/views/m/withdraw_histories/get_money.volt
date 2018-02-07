@@ -48,7 +48,6 @@
 
     function create() {
         var money = $("#money").val();
-        console.log(money);
         var name = $("#name").val();
         var account = $("#account").val();
         var data = {
@@ -61,6 +60,7 @@
 
         $.authPost("/m/withdraw_histories/create", data, function (resp) {
             alert(resp.error_reason);
+            $('.get_btn a').removeClass('changecolor')
         })
     }
 </script>
