@@ -343,6 +343,22 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    //随机一个用户
+    function findRandomUser()
+    {
+        if ($this->getUserNum() < 1) {
+            return null;
+        }
+
+        $hot_cache = self::getHotWriteCache();
+        $key = $this->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_id = $user_ids[array_rand($user_ids)];
+        $user = Users::findFirstById($user_id);
+
+        return $user;
+    }
+
     function findTotalUsers()
     {
         $hot_cache = self::getHotWriteCache();
@@ -724,8 +740,6 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
-        } else {
-            //Users::delay(60)->startRoomInteractionTask($user->id, $room->id);
         }
 
         $room->pushEnterRoomMessage($user);
