@@ -488,8 +488,8 @@ class UsersTask extends \Phalcon\Cli\Task
     function fixHiCoinsAction()
     {
         $users = Users::find([
-            'conditions' => 'user_type = :user_type: and user_status = :user_status: and mobile is not null',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'user_status' => USER_STATUS_ON],
+            'conditions' => 'user_type = :user_type: and mobile is not null',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
             'order' => 'id desc'
         ]);
 
@@ -506,8 +506,10 @@ class UsersTask extends \Phalcon\Cli\Task
             foreach ($user_gifts as $user_gift) {
                 $total_amount = $total_amount + $user_gift->total_amount;
             }
-            $user->hi_coins = $total_amount / 10;
-            $user->save;
+            $hi_coins = $total_amount / 10;
+            echoLine($hi_coins);
+            $user->hi_coins = $hi_coins;
+            $user->save();
         }
     }
 
