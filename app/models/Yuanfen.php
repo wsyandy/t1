@@ -132,7 +132,6 @@ class Yuanfen
                 $res = httpGet($avatar_url);
             }
             if ($res === false || $res->code != 200) {
-                //$hot_db->zadd("yuanfen_ids", time(), $user->id);
                 return false;
             }
 
@@ -148,7 +147,7 @@ class Yuanfen
             $user->avatar = $avatar_res;
         }
         if ($user->save()) {
-            $hot_db->zadd("yuanfen_ids", time(), $user->id);
+            $hot_db->zadd("wait_auth_users", time(), $user->id);
             if (count($album_urls) > 0) {
                 foreach ($album_urls as $album_url) {
                     \Albums::createAlbum($album_url, $user->id, AUTH_WAIT);
@@ -168,7 +167,7 @@ class Yuanfen
     function hasCreate($yuanfen_id, $login_name)
     {
         $hot_db = \Users::getHotWriteCache();
-        if (intval($hot_db->zscore("yuanfen_ids", $yuanfen_id)) > 0) {
+        if (intval($hot_db->zscore("wait_auth_users", $yuanfen_id)) > 0) {
             return true;
         }
         $user = \Users::findFirstByLoginName($login_name);
