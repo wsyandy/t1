@@ -136,7 +136,7 @@ trait UserAttrs
             'mobile' => $this->mobile,
             'height' => $this->height,
             'albums' => $this->albums,
-            'birthday' => $this->birthday_text,
+            'birthday' => $this->birthday,
             'platform' => $this->platform,
             'platform_version' => $this->platform_version
         ];
