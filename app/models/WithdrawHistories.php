@@ -28,8 +28,8 @@ class WithdrawHistories extends BaseModel
 
         $withdraw_history = WithdrawHistories::findFirst(
             [
-                'conditions' => 'status = :status: and id != :id:',
-                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'id' => $user->id],
+                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id],
                 'order' => 'id desc'
             ]
         );
@@ -58,8 +58,8 @@ class WithdrawHistories extends BaseModel
     static function search($user, $page, $per_page = 10)
     {
         $cond = [
-            'conditions' => ' id != :id: and product_channel_id = :product_channel_id:',
-            'bind' => ['product_channel_id' => $user->product_channel_id, 'id' => $user->id],
+            'conditions' => ' user_id = :user_id: and product_channel_id = :product_channel_id:',
+            'bind' => ['product_channel_id' => $user->product_channel_id, 'user_id' => $user->id],
             'order' => 'id desc'
         ];
         $withdraw_histories = self::findPagination($cond, $page, $per_page);
@@ -69,6 +69,7 @@ class WithdrawHistories extends BaseModel
     function toSimpleJson()
     {
         return [
+            'id' => $this->id,
             'amount' => $this->amount,
             'status_text' => $this->status_text,
             'created_at_date' => $this->created_at_date

@@ -65,27 +65,15 @@ class WithdrawHistoriesController extends BaseController
 
         $user = $this->currentUser();
 
-        $withdraw_histories = \WithdrawHistories::find(
+        $total_money = \WithdrawHistories::sum(
             [
-                'conditions' => ' id != :id: and product_channel_id = :product_channel_id: and status = :status:',
-                'bind' => ['product_channel_id' => $user->product_channel_id, 'id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS],
+                'conditions' => ' user_id = :user_id: and product_channel_id = :product_channel_id: and status = :status:',
+                'bind' => ['product_channel_id' => $user->product_channel_id, 'user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS],
                 'order' => 'id desc',
                 'column' => 'amount'
             ]
         );
 
-        $total_money = 0;
-        foreach ($withdraw_histories as $history) {
-            $total_money = $total_money + $history->amount;
-        }
-
-        $flag = 0;
-
-        if (count($withdraw_histories)) {
-            $flag = 1;
-        }
-
-        $this->view->flag = $flag;
         $this->view->total_money = $total_money;
     }
 

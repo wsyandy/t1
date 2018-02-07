@@ -15,7 +15,7 @@
 
     <div class="get_top">累计领取：{{ total_money }}元</div>
     <div class="main_content">
-        <div v-if="show">
+        <div v-show="withdraw_histories.length">
                 <ul class="get_details_ul" v-for="history in withdraw_histories">
                     <li>
                         <div class="top">
@@ -29,7 +29,7 @@
                     </li>
                 </ul>
         </div>
-        <div v-if="!show">
+        <div v-if="!withdraw_histories.length">
             <div class="get_none">
                 <img src="/m/images/get_none.png">
                 <p>天哪，您还没有领取记录！</p>
@@ -43,7 +43,6 @@
             withdraw_histories: [],
             current_page: 1,
             total_page: 1,
-            show: {{ flag }},
             sid: '{{ sid }}',
             code: '{{ code }}'
 
@@ -52,7 +51,7 @@
     };
 
     var vm = XVue(opts);
-    console.log(vm.show);
+
     function getList() {
         if (vm.current_page > vm.total_page) {
             return;

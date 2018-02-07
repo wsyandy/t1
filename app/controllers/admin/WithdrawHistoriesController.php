@@ -18,11 +18,11 @@ class WithdrawHistoriesController extends BaseController
         $total_page = 1;
         $total_entries = $per_page * $total_page;
 
-        $cond = $this->getConditions('withdraw_historie');
-        $cond['withdraw_historie'] = 'id desc';
+        $cond = $this->getConditions('withdraw_history');
+        $cond['order'] = 'id desc';
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
-        $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 
     function editAction()
@@ -37,6 +37,9 @@ class WithdrawHistoriesController extends BaseController
     {
         $withdraw_historie_id = $this->params('id');
         $withdraw_historie = \WithdrawHistories::findFirstById($withdraw_historie_id);
+        if (WITHDRAW_STATUS_WAIT != $withdraw_historie->status) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '只允许修改提现中状态的订单');
+        }
         $this->assign($withdraw_historie, 'withdraw_history');
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $withdraw_historie);
         if ($withdraw_historie->save()) {
