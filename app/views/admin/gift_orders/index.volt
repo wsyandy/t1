@@ -22,7 +22,7 @@
     ID:<a href="/admin/users?user[id_eq]={{ object.user_id }}">{{ object.user_id }}</a><br/>
     姓名:{{ object.user.nickname }}<br/>
     手机号码:{{ object.user.mobile }}<br/>
-    用户类型:{{ object.recevier_user_type_text }}
+    用户类型:{{ object.receiver_user_type_text }}
 {%- endmacro %}
 
 {{ simple_table(gift_orders, [
