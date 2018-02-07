@@ -238,5 +238,6 @@ class RoomsController extends BaseController
         }
         $this->view->id = $id;
         $this->view->audios = $audios;
+        $this->view->room = $room;
     }
 }
