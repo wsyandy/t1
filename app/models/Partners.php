@@ -130,11 +130,11 @@ class Partners extends BaseModel
 
         // gdt
         $source = fetch($data, 'source');
-        if (preg_match('/gdt/', $source) && preg_match('/(market_vivo_01|market_oppo_01)/', $fr)) {
-            info('gdt_market', $fr, $data);
-            Partners::notifyGdt($data);
-            return;
-        }
+//        if (preg_match('/gdt/', $source) && preg_match('/(market_vivo_01|market_oppo_01)/', $fr)) {
+//            info('gdt_market', $fr, $data);
+//            Partners::notifyGdt($data);
+//            return;
+//        }
 
         $partner = Partners::findFirstByFrHotCache($fr);
         if (!$partner || !$partner->notify_callback) {
