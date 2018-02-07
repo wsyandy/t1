@@ -17,7 +17,7 @@
                 <li>
                     <div class="top">
                         <p>金额</p>
-                        <span>2017-12-08</span>
+                        <span>{{ history.created_at_date }}</span>
                     </div>
                     <div class="bottom">
                         <span>{{ history.amount }}</span>
