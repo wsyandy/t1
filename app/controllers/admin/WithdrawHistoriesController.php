@@ -17,7 +17,6 @@ class WithdrawHistoriesController extends BaseController
         $per_page = 30;
         $total_page = 1;
         $total_entries = $per_page * $total_page;
-
         $cond = $this->getConditions('withdraw_history');
         $cond['withdraw_history'] = 'id desc';
 
