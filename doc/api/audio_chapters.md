@@ -1,6 +1,6 @@
 # 音频
 
-## 1 表情
+## 1 获取音频资源
 
 > http-get ```/api/audio_chapters```
 
