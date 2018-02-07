@@ -54,4 +54,24 @@ class WithdrawHistories extends BaseModel
         return [ERROR_CODE_SUCCESS, '受理中'];
     }
 
+
+    static function search($user, $page, $per_page = 10)
+    {
+        $cond = [
+            'conditions' => ' id != :id: and product_channel_id = :product_channel_id:',
+            'bind' => ['product_channel_id' => $user->product_channel_id, 'id' => $user->id],
+            'order' => 'id desc'
+        ];
+        $withdraw_histories = self::findPagination($cond, $page, $per_page);
+        return $withdraw_histories;
+    }
+
+    function toSimpleJson()
+    {
+        return [
+            'amount' => $this->amount,
+            'status_text' => $this->status_text,
+            'created_at_date' => $this->created_at_date
+        ];
+    }
 }
