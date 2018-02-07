@@ -6,16 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>管理后台</title>
     {{ js('/js/jquery/1.11.2/jquery.min.js','/js/vue/2.0.5/vue.min.js','/js/jquery.form/3.51.0/jquery.form.js',
-        '/framework/bootstrap.select/1.11.2/js/bootstrap-select.min.js',
-        '/framework/bootstrap/3.3.4/js/bootstrap.min.js',
-        '/framework/bootstrap.datepicker/1.5.0/js/bootstrap-datepicker.min.js',
-        '/framework/bootstrap.datepicker/1.4.0/js/bootstrap-datetimepicker.min.js',
-        '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
-        '/js/juicer/0.6.9/juicer-min.js','/js/echarts/2.2.7/echarts.js','/js/admin.js',
-        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
+    '/framework/bootstrap.select/1.11.2/js/bootstrap-select.min.js',
+    '/framework/bootstrap/3.3.4/js/bootstrap.min.js',
+    '/framework/bootstrap.datepicker/1.5.0/js/bootstrap-datepicker.min.js',
+    '/framework/bootstrap.datepicker/1.4.0/js/bootstrap-datetimepicker.min.js',
+    '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
+    '/js/juicer/0.6.9/juicer-min.js','/js/echarts/2.2.7/echarts.js','/js/admin.js',
+    '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
 
     {{ css('/framework/bootstrap/3.3.4/css/bootstrap.min.css','/framework/bootstrap.datepicker/1.4.0/css/bootstrap-datetimepicker.min.css',
-        '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
+    '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
 
 </head>
 <body>
@@ -30,7 +30,7 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('users','index') or isAllowed('devices','index') %}
+        {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -150,9 +150,10 @@
 
         <!-- 系统 -->
         {% if isAllowed('operators','index') or isAllowed('partners','index') or isAllowed('sms_channels','index')
-            or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
-            or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
-            or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') %}
+        or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
+        or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
+        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('gifts','index') %}
+
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

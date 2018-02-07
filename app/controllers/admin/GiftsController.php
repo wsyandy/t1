@@ -12,8 +12,8 @@ class GiftsController extends BaseController
 {
     function indexAction()
     {
-        $page = 1;
-        $per_page = 100;
+        $page = $this->params('page');
+        $per_page = 30;
         $gifts = \Gifts::findPagination(['order' => 'rank asc'], $page, $per_page);
         $this->view->gifts = $gifts;
     }

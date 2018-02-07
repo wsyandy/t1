@@ -1,11 +1,11 @@
 <a href="/admin/emoticon_images/new" class="modal_action">新增</a>
 
 {%- macro image_link(emoticon_image) %}
-    <img src="{{ emoticon_image.image_url }}" width="30"/>
+    <img src="{{ emoticon_image.image_url }}" width="50"/>
 {%- endmacro %}
 
 {%- macro dynamic_image_link(emoticon_image) %}
-    <img src="{{ emoticon_image.dynamic_image_url }}" width="30"/>
+    <img src="{{ emoticon_image.dynamic_image_url }}" width="50"/>
 {%- endmacro %}
 
 {%- macro edit_link(emoticon_image) %}
