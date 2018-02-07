@@ -78,6 +78,9 @@
                     {% if isAllowed('gift_orders','index') %}
                         <li><a href="/admin/gift_orders">礼物订单列表</a></li>
                     {% endif %}
+                    {% if isAllowed('withdraw_histories','index') %}
+                        <li><a href="/admin/withdraw_histories">提现列表</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
