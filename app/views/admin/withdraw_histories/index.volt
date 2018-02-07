@@ -1,4 +1,3 @@
-<a href="/admin/withdraw_histories/new" class="modal_action">新增</a>
 <form action="/admin/withdraw_histories" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="product_channel_id_eq">产品渠道</label>
     <select name="withdraw_historie[product_channel_id_eq]" id="product_channel_id_eq">
