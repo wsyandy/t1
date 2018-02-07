@@ -10,6 +10,11 @@
     <label for="user_name_eq">用户昵称</label>
     <input name="withdraw_history[user_name_eq]" type="text" id="user_name_eq"/>
 
+    <label for="start_at_eq">开始时间</label>
+    <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
+    <label for="end_at_eq">结束时间</label>
+    <input name="end_at" type="text" id="end_at_eq" class="form_datetime" value="{{ end_at }}"/>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 {%- macro oper_link(withdraw_histories) %}
@@ -18,7 +23,7 @@
     {% endif %}
 {%- endmacro %}
 {{ simple_table(withdraw_histories, [
-'日期': 'created_at_text',"ID": 'id', '用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
+'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
 ]) }}
 
 <script type="text/template" id="withdraw_history_tpl">
@@ -30,4 +35,18 @@
         <td>${withdraw_history.status_text}</td>
         <td><a href="/admin/withdraw_histories/edit/${withdraw_history.id}">编辑</a></td>
     </tr>
+</script>
+
+
+<script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month"
+    });
+    $('.selectpicker').selectpicker();
 </script>
