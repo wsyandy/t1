@@ -17,12 +17,35 @@ class WithdrawHistoriesController extends BaseController
         $per_page = 30;
         $total_page = 1;
         $total_entries = $per_page * $total_page;
-
         $cond = $this->getConditions('withdraw_historie');
         $cond['withdraw_historie'] = 'id desc';
+
+        $start_at = $this->params('start_at', date('Y-m-d'));
+        $end_at = $this->params('end_at', date('Y-m-d'));
+        if ($start_at) {
+            $start_at = beginOfDay(strtotime($start_at));
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= ' and created_at >=:start_at:';
+            } else {
+                $cond['conditions'] = ' created_at >=:start_at:';
+            }
+            $cond['bind']['start_at'] = $start_at;
+        }
+        if ($end_at) {
+            $end_at = endOfDay(strtotime($end_at));
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= ' and created_at <=:end_at:';
+            } else {
+                $cond['conditions'] = ' created_at <=:end_at:';
+            }
+            $cond['bind']['end_at'] = $end_at;
+        }
+
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
         $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
+        $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');
+        $this->view->end_at = $this->params('end_at', null) ?? date('Y-m-d');
     }
 
     function editAction()
