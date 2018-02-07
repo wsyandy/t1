@@ -21,8 +21,6 @@ class WithdrawHistoriesController extends BaseController
 
     function createAction()
     {
-        $this->view->code = $this->params('code');
-        $this->view->sid = $this->params('sid');
         if ($this->request->isAjax()) {
             $money = $this->params('money');
             $name = $this->params('name', null);

@@ -41,6 +41,8 @@ class WithdrawHistoriesController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
+        $cond['order'] = 'id desc';
+
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
         $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
