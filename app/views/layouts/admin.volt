@@ -66,6 +66,9 @@
                     {% if isAllowed('rooms','index') %}
                         <li><a href="/admin/rooms">房间列表</a></li>
                     {% endif %}
+                    {% if isAllowed('broadcasts','index') %}
+                        <li><a href="/admin/broadcasts">电台列表</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
