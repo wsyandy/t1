@@ -23,7 +23,7 @@ class Payments extends BaseModel
      */
     private $_payment_channel;
 
-    static $pay_status = [
+    static $PAY_STATUS = [
         PAYMENT_PAY_STATUS_WAIT => '等待支付',
         PAYMENT_PAY_STATUS_SUCCESS => '支付成功',
         PAYMENT_PAY_STATUS_FAIL => '支付失败'
@@ -69,11 +69,6 @@ class Payments extends BaseModel
     function generatePaymentNo()
     {
         return strtoupper(substr($this->payment_type, 0, 2)) . date('YmdHis') . mt_rand(10000, 99999);
-    }
-
-    function getPayStatusText()
-    {
-        return fetch(\Payments::$pay_status, $this->pay_status);
     }
 
     function isPaid()
