@@ -153,9 +153,11 @@ class Rooms extends BaseModel
         $room_id = $hot_cache->get("room_token_" . $token);
 
         if (!$room_id) {
+            info($token);
             return null;
         }
 
+        info($room_id);
         $room = Rooms::findFirstById($room_id);
 
         return $room;
@@ -272,6 +274,7 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
+            info($user->id);
             $hot_cache->zadd($real_user_key, time(), $user->id);
         }
 
@@ -296,6 +299,7 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
+            info($user->id);
             $hot_cache->zrem($real_user_key, $user->id);
         }
 

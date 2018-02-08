@@ -117,9 +117,11 @@ class RoomSeats extends BaseModel
         $room_seat_id = $hot_cache->get("room_seat_token_" . $token);
 
         if (!$room_seat_id) {
+            info($token);
             return null;
         }
 
+        info($room_seat_id);
         $room_seat = RoomSeats::findFirstById($room_seat_id);
 
         return $room_seat;

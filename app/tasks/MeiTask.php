@@ -1382,9 +1382,32 @@ class MeiTask extends \Phalcon\Cli\Task
             debug("dddd");
         }
 
-        $user = Users::findFirstById(100113);
+        $user = Users::findFirstById(100140);
         if (!$user->isSilent()) {
             echoLine($user);
+        }
+    }
+
+    function test87Action()
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $token = '79ff4423baa4c9bfc04f7de917c65c9b1f6';
+        if ($token) {
+            debug("sss");
+        }
+        $hot_cache->set($token, 175);
+        debug($hot_cache->get($token));
+    }
+
+    function test88Action()
+    {
+        $user = Users::findFirstById(100140);
+        echoLine($user->online_token);
+
+        $token = '79ff4423baa4c9bfc04f7de917c65c9b1f6';
+        $room = Rooms::findRoomByOnlineToken($token);
+        if ($room) {
+            echoLine($room);
         }
     }
 }
