@@ -30,6 +30,7 @@
     <tr id="withdraw_history_${ withdraw_history.id }">
         <td>${withdraw_history.created_at_text}</td>
         <td>${withdraw_history.id}</td>
+        <td>${withdraw_history.user_id}</td>
         <td>${withdraw_history.user_name}</td>
         <td>${withdraw_history.amount}</td>
         <td>${withdraw_history.status_text}</td>

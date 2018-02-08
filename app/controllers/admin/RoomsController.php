@@ -22,10 +22,12 @@ class RoomsController extends BaseController
                 $cond['conditions'] = " name like '%$name%' ";
             }
         }
-        $page = $this->params('page');
-        $per_page = $this->params('per_page');
+        $page = 1;
+        $total_page = 1;
+        $per_page = 30;
+        $total_entries = $total_page * $per_page;
         $cond['order'] = "id desc";
-        $rooms = \Rooms::findPagination($cond, $page, $per_page);
+        $rooms = \Rooms::findPagination($cond, $page, $per_page,$total_entries);
         $this->view->rooms = $rooms;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
