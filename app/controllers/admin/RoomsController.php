@@ -214,19 +214,20 @@ class RoomsController extends BaseController
     {
         $id = $this->params('id', 0);
         $room = \Rooms::findFirstById($id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
-        $audios = \Audios::find($cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON],
-            'order' => 'rank desc'
-        ]);
 
         if ($this->request->isPost()) {
-            $audio_id = $this->params('audio_id');
-            $theme_type = $this->params('theme_type');
-            if ($theme_type != ROOM_THEME_TYPE_BROADCAST) {
+
+            $audio_id = $this->params('room[audio_id]');
+            $theme_type = $this->params('room[theme_type]');
+
+            if ($theme_type != ROOM_THEME_TYPE_BROADCAST && $audio_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '只有设置电台才能选择音频');
             }
+
             $room->audio_id = $audio_id;
             $room->theme_type = $theme_type;
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
@@ -236,8 +237,19 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '');
             }
         }
+
+        $audios = \Audios::find($cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON],
+            'order' => 'rank desc'
+        ]);
+
+        $audios_collection = ['' => '请选择'];
+
+        foreach ($audios as $audio) {
+            $audios_collection[$audio->id] = $audio->name;
+        }
+
         $this->view->id = $id;
-        $this->view->audios = $audios;
+        $this->view->audios = $audios_collection;
         $this->view->room = $room;
     }
 }
