@@ -474,6 +474,8 @@ class PushSever extends BaseModel
 
             $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
 
+            info($user->sid, $receiver_id, $receiver_fd);
+
             $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
 
             //判断fd是否存在

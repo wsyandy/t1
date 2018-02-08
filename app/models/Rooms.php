@@ -270,6 +270,11 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
+
+        if (!$user->isSilent()) {
+            $hot_cache->zadd($real_user_key, time(), $user->id);
+        }
+
         if ($this->user_id == $user->id) {
             $hot_cache->zadd($key, time() + 86400 * 7, $user->id);
         } elseif (USER_ROLE_BROADCASTER == $user->user_role) {
@@ -282,10 +287,6 @@ class Rooms extends BaseModel
             $this->status = STATUS_ON;
             $this->update();
         }
-
-        if (!$user->isSilent()) {
-            $hot_cache->zadd($real_user_key, time(), $user->id);
-        }
     }
 
     function remUser($user)
@@ -293,11 +294,12 @@ class Rooms extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $key = $this->getUserListKey();
         $real_user_key = $this->getRealUserListKey();
-        $hot_cache->zrem($key, $user->id);
 
         if (!$user->isSilent()) {
             $hot_cache->zrem($real_user_key, $user->id);
         }
+
+        $hot_cache->zrem($key, $user->id);
 
         if ($this->user_num < 1) {
             $this->status = STATUS_OFF;
