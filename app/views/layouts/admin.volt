@@ -152,9 +152,7 @@
         {% if isAllowed('operators','index') or isAllowed('partners','index') or isAllowed('sms_channels','index')
         or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
         or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
-        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('gifts','index') %}
-
-
+        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') %}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     系统<b class="caret"></b>
@@ -203,11 +201,19 @@
                     {% if isAllowed('export_histories','index') %}
                         <li><a href="/admin/export_histories">导出记录</a></li>
                     {% endif %}
-                    {% if isAllowed('gifts', 'index') %}
-                        <li><a href="/admin/gifts">礼物配置</a></li>
-                    {% endif %}
                     {% if isAllowed('payment_channels', 'index') %}
                         <li><a href="/admin/payment_channels">支付配置</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+        {% if isAllowed('gifts','index') or isAllowed('emoticon_images','index') or  isAllowed('audios','index') %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('gifts', 'index') %}
+                        <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}
                     {% if isAllowed('emoticon_images','index') %}
                         <li><a href="/admin/emoticon_images">表情配置</a></li>

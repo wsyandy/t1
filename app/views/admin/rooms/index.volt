@@ -9,6 +9,11 @@
         {{ options(Rooms.STATUS) }}
     </select>
 
+    <label for="user_type_eq">房主类型</label>
+    <select name="room[user_type_eq]" id="user_type_eq">
+        {{ options(Rooms.USER_TYPE) }}
+    </select>
+
     <label for="theme_type_eq">房间主题</label>
     <select name="room[theme_type_eq]" id="theme_type_eq">
         {{ options(Rooms.THEME_TYPE) }}
@@ -52,9 +57,9 @@
     {% if isAllowed('room','deatil') %}
         <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
     {% endif %}
-    {% if isAllowed('room','audio')  %}
-        <a href="/admin/rooms/audio?id={{ room.id }}" class="modal_action">音频配置</a></br>
-    {% endif %}
+    {#{% if isAllowed('room','audio')  %}#}
+        {#<a href="/admin/rooms/audio?id={{ room.id }}" class="modal_action">音频配置</a></br>#}
+    {#{% endif %}#}
 {% endmacro %}
 
 {% macro avatar_image(room) %}
