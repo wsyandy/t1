@@ -15,7 +15,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
-            $key = $room->getUserListKey();
+            $key = $room->getRealUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
 
             $users = Users::findByIds($user_ids);
