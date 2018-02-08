@@ -49,10 +49,10 @@
 
 
 {% macro operate_link(room) %}
-    {% if isAllowed('room','deatil') %}
+    {% if isAllowed('rooms','detail') %}
         <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
     {% endif %}
-    {% if isAllowed('room','audio')  %}
+    {% if isAllowed('rooms','audio')  %}
         <a href="/admin/rooms/audio?id={{ room.id }}" class="modal_action">音频配置</a></br>
     {% endif %}
 {% endmacro %}
