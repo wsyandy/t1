@@ -23,7 +23,7 @@
     {% endif %}
 {%- endmacro %}
 {{ simple_table(withdraw_histories, [
-'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
+'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "支付宝账号": 'alipay_account','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
 ]) }}
 
 <script type="text/template" id="withdraw_history_tpl">
@@ -31,6 +31,7 @@
         <td>${withdraw_history.created_at_text}</td>
         <td>${withdraw_history.id}</td>
         <td>${withdraw_history.user_id}</td>
+        <td>${withdraw_history.alipay_account}</td>
         <td>${withdraw_history.user_name}</td>
         <td>${withdraw_history.amount}</td>
         <td>${withdraw_history.status_text}</td>
