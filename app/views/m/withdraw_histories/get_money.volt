@@ -5,7 +5,7 @@
     <title>我要提现</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/style.css">
+    <link rel="stylesheet" href="/m/css/money_style.css">
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/utils.js"></script>
 </head>
@@ -36,7 +36,7 @@
     <p>每月1-5号提现，3～10个工作日到账</p>
 </div>
 <div class="get_btn">
-    <a href="#" class="changecolor">提交</a>
+    <a href="#">提交</a>
 </div>
 <script type="text/javascript">
     $(function () {
@@ -46,10 +46,18 @@
         })
     });
 
+    var amount = {{ amount }};
+
     function create() {
+
         var money = $("#money").val();
         var name = $("#name").val();
         var account = $("#account").val();
+
+        if (money > amount) {
+            return alert("请输入正确的提现金额");
+        }
+
         var data = {
             sid: "{{ sid }}",
             code: "{{ code }}",
