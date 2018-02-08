@@ -1000,4 +1000,13 @@ class Rooms extends BaseModel
     {
         return $this->online_status == STATUS_ON;
     }
+
+    function canSetAudio()
+    {
+        if ($this->theme_type == ROOM_THEME_TYPE_BROADCAST || $this->audio_id || $this->user_type != USER_TYPE_SILENT) {
+            debug($this->id);
+            return false;
+        }
+        return true;
+    }
 }
