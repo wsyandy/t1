@@ -1350,4 +1350,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->birthday = strtotime($new_birthday);
         $user->update();
     }
+
+    function test84Action()
+    {
+        $user = Users::findFirstById(80);
+        echoLine($user);
+    }
 }

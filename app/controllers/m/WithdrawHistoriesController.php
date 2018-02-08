@@ -5,6 +5,7 @@
  * Date: 2018/2/6
  * Time: 上午11:56
  */
+
 namespace m;
 
 class WithdrawHistoriesController extends BaseController
@@ -25,8 +26,8 @@ class WithdrawHistoriesController extends BaseController
             $money = $this->params('money');
             $name = $this->params('name', null);
             $account = $this->params('account', null);
-            debug($money);
-            if (is_int($money) || $money < 10) {
+
+            if (!is_int($money) || $money < 10) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
