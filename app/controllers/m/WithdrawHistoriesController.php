@@ -28,15 +28,11 @@ class WithdrawHistoriesController extends BaseController
             $name = $this->params('name', null);
             $account = $this->params('account', null);
 
-            if (!preg_match('/^\d+\d$/',$money)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '必须是整数');
+            if (isBlank($money) || !preg_match('/^\d+\d$/',$money) || $money < 10 ) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
             $money = intval($money);
-
-            if (isBlank($money) || $money < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
-            }
 
             if (!$name) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '姓名不能为空');
