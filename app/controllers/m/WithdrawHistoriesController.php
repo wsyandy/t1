@@ -23,11 +23,12 @@ class WithdrawHistoriesController extends BaseController
     function createAction()
     {
         if ($this->request->isAjax()) {
+
             $money = $this->params('money');
             $name = $this->params('name', null);
             $account = $this->params('account', null);
 
-            if (!is_int($money) || $money < 10) {
+            if (isBlank($money) || !is_int($money) || $money < 10) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 

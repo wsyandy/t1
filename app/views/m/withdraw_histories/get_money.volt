@@ -17,18 +17,18 @@
     <h2>提现金额</h2>
     <div class="money_num">
         <span>￥</span>
-        <input type="text" name="" placeholder="满10元可提现，且需为整数" id="money">
+        <input type="number" placeholder="满10元可提现，且需为整数" id="money">
     </div>
 </div>
 <div class="get_money_input">
     <ul>
         <li>
             <span>姓名</span>
-            <input type="text" name="" placeholder="请输入您的姓名" id="name">
+            <input type="text" placeholder="请输入您的姓名" id="name">
         </li>
         <li>
             <span>支付宝账号</span>
-            <input type="text" name="" placeholder="请输入您的支付宝账户" id="account">
+            <input type="text" placeholder="请输入您的支付宝账户" id="account">
         </li>
     </ul>
 </div>
