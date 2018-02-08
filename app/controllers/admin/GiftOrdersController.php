@@ -17,7 +17,7 @@ class GiftOrdersController extends BaseController
         $page = 1;
         $per_page = 50;
         $total_entries = $page * $per_page;
-        $gift_orders = \GiftOrders::findPagination($conds, $page, $total_entries);
+        $gift_orders = \GiftOrders::findPagination($conds, $page,$per_page, $total_entries);
         $this->view->gift_orders = $gift_orders;
     }
 
