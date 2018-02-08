@@ -184,12 +184,14 @@ class Rooms extends BaseModel
             $this->online_status = STATUS_ON; // 主播是否在线
         }
 
+        $this->bindOnlineToken($user);
+        $this->addUser($user);
+
         $this->save();
 
         $user->user_role_at = time();
         $user->save();
-        $this->bindOnlineToken($user);
-        $this->addUser($user);
+
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
