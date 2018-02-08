@@ -1,12 +1,14 @@
 {{ css('list') }}
 <div class="row">
     <div class="col-md-12">
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="all">全选</a>
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="reverse">反选</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="image_auth" data-formid="batch_form"
-           data-action="1">选中通过</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="image_auth" data-formid="batch_form"
-           data-action="2">选中不通过</a>
+        {% if isAllowed('albums','update') %}
+            <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="all">全选</a>
+            <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="reverse">反选</a>
+            <a href="#" class="selected_action btn btn-sm" data-target="image_auth" data-formid="batch_form"
+               data-action="1">选中通过</a>
+            <a href="#" class="selected_action btn btn-sm" data-target="image_auth" data-formid="batch_form"
+               data-action="2">选中不通过</a>
+        {% endif %}
     </div>
 </div>
 
@@ -20,20 +22,24 @@
             <dd class=" unit object_unit" style="height: 180px; width: 130px;">
                 <label for="user_{{ album.id }}">
                     <a href="/admin/users/show/{{ album.user_id }}">
-                        <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}" src="{{ album.image_small_url }}"
+                        <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}"
+                             src="{{ album.image_small_url }}"
                              width="120"/>
                     </a>
                 </label>
                 <p>
-                    <input id="user_{{ album.id }}" name="ids[]" type="checkbox" value="{{ album.id }}" autocomplete="off">
-                    <a href="/admin/albums/update/{{ album.id }}?image_auth=1" class='album_once_click'>过</a>
-                    <a href="/admin/albums/update/{{ album.id }}?image_auth=2" class='album_once_click'>不过</a>
+                    <input id="user_{{ album.id }}" name="ids[]" type="checkbox" value="{{ album.id }}"
+                           autocomplete="off">
+                    {% if isAllowed('albums','update') %}
+                        <a href="/admin/albums/update/{{ album.id }}?image_auth=1" class='album_once_click'>过</a>
+                        <a href="/admin/albums/update/{{ album.id }}?image_auth=2" class='album_once_click'>不过</a>
+                    {% endif %}
                 </p>
             </dd>
         {% endfor %}
     </dl>
 </div>
-{{end_form()}}
+{{ end_form() }}
 {{ pagination(albums) }}
 
 <script>

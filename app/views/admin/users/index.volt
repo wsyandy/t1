@@ -57,16 +57,16 @@
     {% if isAllowed('rooms','index') %}
         <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a><br/>
     {% endif %}
-    <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
-    <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
-{% endmacro %}
-
-{% macro detail_link(user) %}
-    <a href="/admin/users/detail?id={{ user.id }}">征信信息</a>
+    {% if isAllowed('users','send_message') %}
+        <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
+    {% endif %}
+    {% if isAllowed('users','getui') %}
+        <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-'状态':'user_status_info', '操作':'profile_link'
+    '状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">

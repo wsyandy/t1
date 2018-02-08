@@ -30,16 +30,18 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') %}
+        {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li>
-                        <a href="/admin/users/avatar">头像审核</a>
-                    </li>
-                    <li>
-                        <a href="/admin/users/avatar?avatar_auth=1">已审核列表</a>
-                    </li>
+                    {% if isAllowed('users','avatar') %}
+                        <li>
+                            <a href="/admin/users/avatar">头像审核</a>
+                        </li>
+                        <li>
+                            <a href="/admin/users/avatar?avatar_auth=1">已审核列表</a>
+                        </li>
+                    {% endif %}
                     {% if isAllowed('devices','index') %}
                         <li>
                             <a href="/admin/devices">激活列表</a>
@@ -141,8 +143,8 @@
                     {% if isAllowed('word_visits', 'index') %}
                         <li><a href="/admin/word_visits">SEM关键词统计</a></li>
                     {% endif %}
-                    {% if isAllowed('users', 'stat_room_time') %}
-                        <li><a href="/admin/users/stat_room_time">用户主播时长统计</a></li>
+                    {% if isAllowed('stats', 'stat_room_time') %}
+                        <li><a href="/admin/stats/stat_room_time">用户主播时长统计</a></li>
                     {% endif %}
                 </ul>
             </li>
@@ -152,7 +154,7 @@
         {% if isAllowed('operators','index') or isAllowed('partners','index') or isAllowed('sms_channels','index')
         or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
         or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
-        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') %}
+        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('payment_channels','index') %}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     系统<b class="caret"></b>

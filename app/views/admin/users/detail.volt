@@ -2,15 +2,33 @@
 
 
 <ul class="nav nav-tabs" id="user_menus">
-    <li role="presentation" class="active"><a href="/admin/users/basic?id={{ user.id }}">基本</a></li>
-    <li role="presentation"><a href="/admin/albums/detail?user_id={{ user.id }}">相册</a></li>
-    <li role="presentation"><a href="/admin/orders?order[user_id_eq]={{ user.id }}">订单信息</a></li>
-    <li role="presentation"><a href="/admin/payments?user_id={{ user.id }}">支付信息</a></li>
-    <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
-    <li role="presentation"><a href="/admin/user_gifts?user_id={{ user.id }}">收到的礼物</a></li>
-    <li role="presentation"><a href="/admin/users/friend_list?id={{ user.id }}">我的好友</a></li>
-    <li role="presentation"><a href="/admin/users/followers?id={{ user.id }}">我关注的人</a></li>
-    <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% if isAllowed('users','basic') %}
+        <li role="presentation" class="active"><a href="/admin/users/basic?id={{ user.id }}">基本</a></li>
+    {% endif %}
+    {% if isAllowed('albums','index') %}
+        <li role="presentation"><a href="/admin/albums/detail?user_id={{ user.id }}">相册</a></li>
+    {% endif %}
+    {% if isAllowed('orders','index') %}
+        <li role="presentation"><a href="/admin/orders?order[user_id_eq]={{ user.id }}">订单信息</a></li>
+    {% endif %}
+    {% if isAllowed('payments','index') %}
+        <li role="presentation"><a href="/admin/payments?user_id={{ user.id }}">支付信息</a></li>
+    {% endif %}
+    {% if isAllowed('account_histories','index') %}
+        <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
+    {% endif %}
+    {% if isAllowed('user_gifts','index') %}
+        <li role="presentation"><a href="/admin/user_gifts?user_id={{ user.id }}">收到的礼物</a></li>
+    {% endif %}
+    {% if isAllowed('users','friend_list') %}
+        <li role="presentation"><a href="/admin/users/friend_list?id={{ user.id }}">我的好友</a></li>
+    {% endif %}
+    {% if isAllowed('users','followers') %}
+        <li role="presentation"><a href="/admin/users/followers?id={{ user.id }}">我关注的人</a></li>
+    {% endif %}
+    {% if isAllowed('voice_calls','index') %}
+        <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% endif %}
 </ul>
 
 
