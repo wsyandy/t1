@@ -2,18 +2,19 @@
 return [
     'admin' => '*',
 
-    'editor' => ['dashboard' => '*', 'devices' => ['white_list', 'add_white_list', 'delete_white_list'], 'emoticon_images' => '*',
-        'gifts' => '*', 'audios' => '*', 'audio_chapters' => '*'],
+    'editor' => ['dashboard' => '*', 'weixin_menu_templates' => '*', 'push_messages' => '*', 'weixin_template_messages' => '*'],
 
-    'customer' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*'],
+    'customer' => ['dashboard' => '*', 'users' => ['index','detail', 'basic', 'friend_list', 'followers','avatar'],
+        'devices' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'albums' => '*'],
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
-        'product_channels' => '*', 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'push_messages' => '*', 'products' => '*'],
+        'product_channels' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
+        'rooms' => ['index', 'detail']],
 
-    'operator' => ['dashboard' => '*', 'devices' => ['index'], 'stats' => ['hours', 'days', 'partners'], 'export_histories' => ['download'],
+    'operator' => ['dashboard' => '*', 'devices' => ['index'], 'stats' => ['hours', 'days'], 'export_histories' => ['download'],
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
 
-    'operator_manager' => ['dashboard' => '*', 'devices' => '*', 'stats' => '*', 'partners' => '*',
+    'operat_manager' => ['dashboard' => '*', 'devices' => ['index', 'edit', 'update'], 'stats' => '*', 'partners' => '*',
         'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*', 'export_histories' => ['download'],
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
 
