@@ -195,6 +195,8 @@ class Rooms extends BaseModel
 
     function exitRoom($user, $unbind = true)
     {
+        $this->remUser($user);
+
         $current_room_seat_id = $user->current_room_seat_id;
         // 麦位
         $room_seat = RoomSeats::findFirstById($current_room_seat_id);
@@ -224,8 +226,6 @@ class Rooms extends BaseModel
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
-
-        $this->remUser($user);
 
         info($this->id, $this->user_num, $user->sid, $current_room_seat_id);
     }
