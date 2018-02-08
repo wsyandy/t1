@@ -60,9 +60,12 @@ class AudiosController extends BaseController
     function roomConfigAction()
     {
         $audio_id = $this->params('audio_id');
-        debug($audio_id);
 //        $audio = \Audios::findFirstById($audio_id);
         if ($this->request->isPost()) {
+            $old_room = \Rooms::findFirstByAudioId($audio_id);
+            if ($old_room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '已有电台使用此音频');
+            }
             $room_id = $this->params('room_id', 0);
             if ($room_id == 0) {
                 $rooms = \Rooms::find(
