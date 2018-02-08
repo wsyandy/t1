@@ -90,9 +90,7 @@ class AudiosController extends BaseController
             $room->audio_id = $audio_id;
             $room_seats = \RoomSeats::findByRoomId($room->id);
             foreach ($room_seats as $room_seat) {
-                $room_seat->microphone = false;
-                \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room_seat);
-                $room_seat->save();
+                $room_seat->close();
             }
 
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
