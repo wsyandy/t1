@@ -22,11 +22,11 @@
         {% for product in products %}
             <li data-product_id="{{ product.id }}">
                 {% if (product.id == selected_product.id) %}
-                    <span class="select_color selected_color">钻石{{ product.diamond }}</span>
+                    <span class="select_color selected_color">钻石{{ product.getShowDiamond(user) }}</span>
                     <span>¥{{ product.amount }}</span>
                     <b class="select selected"></b>
                 {% else %}
-                    <span class="select_color">钻石{{ product.diamond }}</span>
+                    <span class="select_color">钻石{{ product.getShowDiamond(user) }}</span>
                     <span>¥{{ product.amount }}</span>
                     <b class="select"></b>
                 {% endif %}

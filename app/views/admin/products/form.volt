@@ -1,6 +1,7 @@
 {% set f = simple_form(['admin', product], ['class': 'ajax_model_form', 'model': 'product']) %}
   {{ f.hidden('product_group_id', ['value': product.product_group_id]) }}
   {{ f.input('name', ['label': '产品名称']) }}
+  {{ f.input('full_name', ['label': '全称']) }}
   {{ f.input('amount', ['label': '金额']) }}
   {{ f.input('diamond', ['label': '钻石']) }}
   {{ f.input('apple_product_no', ['label': '苹果支付代码']) }}

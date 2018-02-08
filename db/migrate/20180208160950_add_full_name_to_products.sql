@@ -1,0 +1,1 @@
+alter table products add column full_name varchar(255);
