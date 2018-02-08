@@ -126,4 +126,12 @@ class Products extends BaseModel
         }
         return !$user->isIos();
     }
+
+    function getShowDiamond($user)
+    {
+        if (isPresent($this->full_name) && $user->canShowProductFullName()) {
+            return $this->full_name;
+        }
+        return $this->diamond;
+    }
 }

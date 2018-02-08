@@ -1350,4 +1350,36 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->birthday = strtotime($new_birthday);
         $user->update();
     }
+
+    function test84Action()
+    {
+        $user = Users::findFirstById(80);
+        echoLine($user);
+    }
+
+    function test85Action()
+    {
+
+        while (true) {
+            $user = new Users();
+            $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
+            $user->sex = mt_rand(0, 1);
+            $user->product_channel_id = 1;
+            $user->save();
+
+            if ($user->id >= 100000) {
+                break;
+            }
+        }
+    }
+
+    function test86Action()
+    {
+        $str = "1";
+
+        if (!preg_match('/^\d+\d$/', $str)) {
+            debug("dddd");
+        }
+    }
 }
