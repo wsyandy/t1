@@ -61,6 +61,42 @@ $(function () {
 
     });
 
+    $(document).on('focus', '.form_datetime', function (event) {
+        $(this).datetimepicker({
+            language: "zh-CN",
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose: 1,
+            todayBtn: 0,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 0
+        });
+    });
+
+    $(document).on('focus', '.date_start', function (event) {
+        $(this).datetimepicker({
+            language: "zh-CN",
+            format: 'yyyy-mm-dd 00:00:00',
+            autoclose: 1,
+            todayBtn: 0,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2
+        });
+    });
+
+    $(document).on('focus', '.date_end', function (event) {
+        $(this).datetimepicker({
+            language: "zh-CN",
+            format: 'yyyy-mm-dd 23:59:59',
+            autoclose: 1,
+            todayBtn: 0,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2
+        });
+    });
+    
     $(document).on('click', '.modal_action', function (event) {
         event.preventDefault();
         var self = $(this);
@@ -76,7 +112,7 @@ $(function () {
                 return;
             }
             var title = self.html();
-            var html = '<div class="modal" id="normal_modal">' +
+            var html = '<div class="modal" id="normal_modal" data-backdrop="static">' +
                 '<div class="modal-dialog">' +
                 '<div class="modal-content">' +
                 '<div class="modal-header">' +
