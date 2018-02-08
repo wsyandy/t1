@@ -302,6 +302,7 @@ $(function () {
         });
         return false;
     });
+
     $("body").on('submit','.page_form', function(event) {
 
         event.preventDefault();
