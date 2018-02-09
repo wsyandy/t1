@@ -70,7 +70,7 @@ class AudiosController extends BaseController
             if ($room_id == 0) {
                 $rooms = \Rooms::find(
                     [
-                        'conditions' => 'theme_type != :theme_type: and user_type = :user_type: and audio_id is not null',
+                        'conditions' => 'theme_type != :theme_type: and user_type = :user_type: and audio_id is null',
                         'bind' => ['theme_type' => ROOM_THEME_TYPE_BROADCAST, 'user_type' => USER_TYPE_SILENT]
                     ]
                 );
