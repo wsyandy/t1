@@ -30,9 +30,7 @@
     房间话题: {{ room.topic }}<br/>
     在线人数: {{ room.user_num }}<br/>
     主题类型: {{ room.theme_type_text }}<br/>
-    {% if room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
-        音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
-    {% endif %}
+    <a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">音频:{{ room.audio_name }}</a><br/>
 {% endmacro %}
 
 {% macro room_status_info(room) %}
@@ -54,10 +52,10 @@
         <a href="/admin/broadcasts/offline?room_id={{ room.id }}" id="offline">下线</a></br>
     {% endif %}
     {% if isAllowed('broadcasts','compile') %}
-        <a href="/admin/broadcasts/compile_room?room_id={{ room.id }}" class="modal_action" >编辑房间</a></br>
+        <a href="/admin/broadcasts/compile_room?room_id={{ room.id }}" class="modal_action">编辑房间</a></br>
     {% endif %}
     {% if isAllowed('broadcasts','compile_user') %}
-        <a href="/admin/broadcasts/compile_user?user_id={{ room.user_id }}" class="modal_action" >编辑房主</a></br>
+        <a href="/admin/broadcasts/compile_user?user_id={{ room.user_id }}" class="modal_action">编辑房主</a></br>
     {% endif %}
 {% endmacro %}
 
