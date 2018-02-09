@@ -276,7 +276,7 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
-            info($user->id);
+            info("not silent", $user->sid, $this->id);
             $hot_cache->zadd($real_user_key, time(), $user->id);
         }
 
@@ -288,6 +288,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($key, time(), $user->id);
         }
 
+        info($user->sid, $this->id, $key, $real_user_key);
         if ($this->user_num > 0 && $this->status == STATUS_OFF) {
             $this->status = STATUS_ON;
             $this->update();
@@ -301,11 +302,13 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
-            info($user->id);
+            info("not silent", $user->sid, $this->id);
             $hot_cache->zrem($real_user_key, $user->id);
         }
 
         $hot_cache->zrem($key, $user->id);
+
+        info($user->sid, $this->id, $key, $real_user_key);
 
         if ($this->user_num < 1) {
             $this->status = STATUS_OFF;
