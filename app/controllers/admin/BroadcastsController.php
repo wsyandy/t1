@@ -141,8 +141,8 @@ class BroadcastsController extends BaseController
         if ($this->request->isPost()) {
             $room_id = $room_seat->room_id;
             $room = \Rooms::findFirstById($room_id);
-            if (!$room || $room != ROOM_THEME_TYPE_BROADCAST) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在或此房间不是电台');
+            if (!$room || $room->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '不允许修改非电台房间麦位');
             }
 
             $status = $this->params('room_seat[status]');
