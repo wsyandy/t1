@@ -1353,7 +1353,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test84Action()
     {
-        $user = Users::findFirstById(80);
+        $user = Users::findFirstById(100137);
         echoLine($user);
     }
 
@@ -1380,6 +1380,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         if (!preg_match('/^\d+\d$/', $str)) {
             debug("dddd");
+        }
+
+        $user = Users::findFirstById(100113);
+        if (!$user->isSilent()) {
+            echoLine($user);
         }
     }
 }
