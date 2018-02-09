@@ -56,7 +56,7 @@ class BroadcastsController extends BaseController
                 }
             }
             $room->enterRoom($user);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '上线成功',['redirect_url' => '/admin/broadcasts']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '上线成功', ['redirect_url' => '/admin/broadcasts']);
         }
         $this->view->room_id = $room_id;
     }
@@ -77,12 +77,57 @@ class BroadcastsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不存在');
             }
             if (!$user->isInRoom($room)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功',['error_url' => '/admin/broadcasts']);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功', ['error_url' => '/admin/broadcasts']);
             }
 
             $room->exitRoom($user);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功',['error_url' => '/admin/broadcasts']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功', ['error_url' => '/admin/broadcasts']);
         }
         $this->view->room_id = $room_id;
+    }
+
+    function compileRoomAction()
+    {
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        if ($this->request->isPost()) {
+            $this->assign($room, 'room');
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
+            if ($room->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
+            }
+        }
+        $this->view->room = $room;
+        $this->view->room_id = $room_id;
+    }
+
+    function compileUserAction()
+    {
+        $user_id = $this->params('user_id');
+        $user = \Users::findFirstById($user_id);
+        if ($this->request->isPost()) {
+            $sex = $this->params('user[sex]');
+            $nickname = $this->params('user[nickname]');
+            $avatar = $this->file('user[avatar]');
+            debug($avatar);
+
+            $user->sex = $sex;
+            $user->nickname = $nickname;
+            if ($avatar) {
+                $user->updateAvatar($avatar);
+            }
+//            $this->assign($user, 'user');
+
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
+            if ($user->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
+            }
+        }
+        $this->view->user_id = $user_id;
+        $this->view->user = $user;
     }
 }
