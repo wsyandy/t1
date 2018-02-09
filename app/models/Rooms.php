@@ -153,9 +153,11 @@ class Rooms extends BaseModel
         $room_id = $hot_cache->get("room_token_" . $token);
 
         if (!$room_id) {
+            info($token);
             return null;
         }
 
+        info($room_id);
         $room = Rooms::findFirstById($room_id);
 
         return $room;
@@ -182,17 +184,21 @@ class Rooms extends BaseModel
             $this->online_status = STATUS_ON; // 主播是否在线
         }
 
+        $this->bindOnlineToken($user);
+        $this->addUser($user);
+
         $this->save();
 
         $user->user_role_at = time();
         $user->save();
-        $this->bindOnlineToken($user);
-        $this->addUser($user);
+
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
     function exitRoom($user, $unbind = true)
     {
+        $this->remUser($user);
+
         $current_room_seat_id = $user->current_room_seat_id;
         // 麦位
         $room_seat = RoomSeats::findFirstById($current_room_seat_id);
@@ -222,8 +228,6 @@ class Rooms extends BaseModel
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
-
-        $this->remUser($user);
 
         info($this->id, $this->user_num, $user->sid, $current_room_seat_id);
     }
@@ -272,6 +276,7 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
+            info("not silent", $user->sid, $this->id);
             $hot_cache->zadd($real_user_key, time(), $user->id);
         }
 
@@ -283,6 +288,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($key, time(), $user->id);
         }
 
+        info($user->sid, $this->id, $key, $real_user_key);
         if ($this->user_num > 0 && $this->status == STATUS_OFF) {
             $this->status = STATUS_ON;
             $this->update();
@@ -296,10 +302,13 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
+            info("not silent", $user->sid, $this->id);
             $hot_cache->zrem($real_user_key, $user->id);
         }
 
         $hot_cache->zrem($key, $user->id);
+
+        info($user->sid, $this->id, $key, $real_user_key);
 
         if ($this->user_num < 1) {
             $this->status = STATUS_OFF;
@@ -316,6 +325,11 @@ class Rooms extends BaseModel
 
         if ($asc) {
             $time += 3 * 86400;
+        }
+
+        if (!$hot_cache->zscore($key, $user->id)) {
+            info("user_not_in_list", $user->id, $this->id, $key);
+            return;
         }
 
         $hot_cache->zadd($key, $time, $user->id);
