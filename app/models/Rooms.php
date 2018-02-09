@@ -327,6 +327,11 @@ class Rooms extends BaseModel
             $time += 3 * 86400;
         }
 
+        if (!$hot_cache->zscore($key, $user->id)) {
+            info("user_not_in_list", $user->id, $this->id, $key);
+            return;
+        }
+
         $hot_cache->zadd($key, $time, $user->id);
     }
 

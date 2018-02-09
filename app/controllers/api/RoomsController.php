@@ -158,16 +158,8 @@ class RoomsController extends BaseController
         info($this->currentUser()->sid, $this->currentUser()->current_room_id, $room_id);
 
         if ($current_room && $current_room->id != $room_id) {
-
             info($this->currentUser()->sid, $current_room->id, $room_id);
             $current_room->exitRoom($this->currentUser());
-
-            //如果进入其他房间时 用户身上有麦位 先下麦位
-            $current_room_seat = $this->currentUser()->current_room_seat;
-
-            if ($current_room_seat) {
-                $current_room_seat->down($this->currentUser());
-            }
         }
 
         $room->enterRoom($this->currentUser());
