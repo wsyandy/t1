@@ -92,6 +92,9 @@ class BroadcastsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
         if ($this->request->isPost()) {
             $this->assign($room, 'room');
+            if (!$room->lock) {
+                $room->password = '';
+            }
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
             if ($room->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
@@ -101,6 +104,7 @@ class BroadcastsController extends BaseController
         }
         $this->view->room = $room;
         $this->view->room_id = $room_id;
+        $this->view->lock = [true => '有锁', false => '无锁'];
     }
 
     function compileUserAction()
@@ -111,7 +115,6 @@ class BroadcastsController extends BaseController
             $sex = $this->params('user[sex]');
             $nickname = $this->params('user[nickname]');
             $avatar = $this->file('user[avatar]');
-            debug($avatar);
 
             $user->sex = $sex;
             $user->nickname = $nickname;
@@ -129,5 +132,37 @@ class BroadcastsController extends BaseController
         }
         $this->view->user_id = $user_id;
         $this->view->user = $user;
+    }
+
+    function compileRoomSeatAction()
+    {
+        $seat_id = $this->params('seat_id');
+        $room_seat = \RoomSeats::findFirstById($seat_id);
+        if ($this->request->isPost()) {
+            $room_id = $room_seat->room_id;
+            $room = \Rooms::findFirstById($room_id);
+            if (!$room || $room != ROOM_THEME_TYPE_BROADCAST) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在或此房间不是电台');
+            }
+
+            $status = $this->params('room_seat[status]');
+            $microphone = $this->params('room_seat[microphone]');
+
+            if ($status == STATUS_ON && $microphone) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '电台房间，麦位解封状态下，麦克风必须禁止');
+            }
+
+            $room_seat->status = $status;
+            $room_seat->microphone = $microphone;
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room_seat);
+            if ($room_seat->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
+            }
+        }
+        $this->view->seat_id = $seat_id;
+        $this->view->room_seat = $room_seat;
+        $this->view->microphone = [true => '允许', false => '禁止'];
     }
 }

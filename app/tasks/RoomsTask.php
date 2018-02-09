@@ -278,8 +278,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             'conditions' => 'user_type != :user_type: and theme_type = :theme_type:',
             'bind' => ['user_type' => USER_TYPE_SILENT, 'theme_type' => ROOM_THEME_TYPE_BROADCAST]
         ]);
-        foreach ($rooms as $room)
-        {
+        foreach ($rooms as $room) {
             echoLine($room->id);
             $room->theme_type = ROOM_THEME_TYPE_NORMAL;
             $room->audio_id = 0;
