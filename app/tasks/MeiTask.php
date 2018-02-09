@@ -1382,10 +1382,8 @@ class MeiTask extends \Phalcon\Cli\Task
             debug("dddd");
         }
 
-        $user = Users::findFirstById(100145);
-        if (!$user->isSilent()) {
-            echoLine($user);
-        }
+        $user = Users::findFirstById(10397);
+        echoLine($user);
     }
 
     function test87Action()
@@ -1408,6 +1406,22 @@ class MeiTask extends \Phalcon\Cli\Task
         $room = Rooms::findRoomByOnlineToken($token);
         if ($room) {
             echoLine($room);
+        }
+
+        $room = Rooms::findFirstById(369);
+        $hot_cache = Rooms::getHotWriteCache();
+        $key = $room->getUserListKey();
+        echoLine($hot_cache->zscore($key, 100168));
+
+    }
+
+    function test89Action()
+    {
+        $users = Users::findForeach(['conditions' => 'product_channel_id = 0 or product_channel_id is null']);
+
+        foreach ($users as $user) {
+            $user->product_channel_id = 1;
+            $user->save();
         }
     }
 }
