@@ -37,9 +37,7 @@ class WithdrawHistories extends BaseModel
         $history->alipay_account = $account;
         $history->product_channel_id = $user->product_channel_id;
         $history->amount = $money;
-
         $history->status = WITHDRAW_STATUS_WAIT;
-
         $history->save();
 
         return [ERROR_CODE_SUCCESS, '受理中'];

@@ -1472,4 +1472,24 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->sid = $user->generateSid('s');
         $user->save();
     }
+
+    function test93Action()
+    {
+        $user_gifts = UserGifts::findByUserId(117);
+
+        $user_gifts = UserGifts::findForeach();
+        $amount = 0;
+
+        foreach ($user_gifts as $gift) {
+            if ($gift->total_amount != $gift->num * $gift->amount) {
+                $gift->total_amount = $gift->num * $gift->amount;
+                $gift->save();
+                echoLine($gift->total_amount, $gift->id, $gift->num, $gift->amount);
+            }
+            $amount += $gift->total_amount;
+        }
+
+        echoLine($amount);
+        echoLine($amount / 100);
+    }
 }

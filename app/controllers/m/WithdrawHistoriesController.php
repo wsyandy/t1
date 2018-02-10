@@ -46,7 +46,7 @@ class WithdrawHistoriesController extends BaseController
             $opts = ['money' => $money, 'name' => $name, 'account' => $account];
             list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
 
-            $this->renderJSON($error_code, $error_reason);
+            return $this->renderJSON($error_code, $error_reason);
         }
 
     }
