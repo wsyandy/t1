@@ -14,13 +14,8 @@ class RoomsController extends BaseController
     // Signaling Key 用于登录信令系统;
     function signalingKeyAction()
     {
-        $app_id = '';
-        $key = '';
-
-        if ($this->currentUser()) {
-            $key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
-            $app_id = $this->currentProductChannel()->getImAppId();
-        }
+        $key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['app_id' => $app_id, 'signaling_key' => $key]);
     }

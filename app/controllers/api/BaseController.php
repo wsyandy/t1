@@ -23,8 +23,7 @@ class BaseController extends ApplicationController
     static $SKIP_ACTIONS = [
         'devices' => '*',
         'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status'],
-        'soft_versions' => '*',
-        'rooms' => ['signaling_key']
+        'soft_versions' => '*'
     ];
 
     static $CHECK_LOGIN_STATUS_ACTIONS = [
