@@ -21,7 +21,7 @@ class WithdrawHistories extends BaseModel
         $name = fetch($opts, 'name');
         $account = fetch($opts, 'account');
 
-        $max_money = $user->hi_coins / 10;
+        $max_money = $user->withdraw_amount;
         if ($money > $max_money) {
             return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
         }
@@ -46,9 +46,7 @@ class WithdrawHistories extends BaseModel
         $history->alipay_account = $account;
         $history->product_channel_id = $user->product_channel_id;
         $history->amount = $money;
-
         $history->status = WITHDRAW_STATUS_WAIT;
-
         $history->save();
 
         return [ERROR_CODE_SUCCESS, '受理中'];

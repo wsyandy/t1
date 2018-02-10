@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/1/16
  * Time: 下午4:35
  */
-
 class RoomsTask extends \Phalcon\Cli\Task
 {
     //检查用户是否在房间
@@ -270,5 +270,20 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $room->freshManagerNum();
             }
         }
+    }
+
+    function fixNormalRoomsAction()
+    {
+        $rooms = Rooms::find([
+            'conditions' => 'user_type != :user_type: and theme_type = :theme_type:',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'theme_type' => ROOM_THEME_TYPE_BROADCAST]
+        ]);
+        foreach ($rooms as $room) {
+            echoLine($room->id);
+            $room->theme_type = ROOM_THEME_TYPE_NORMAL;
+            $room->audio_id = 0;
+            $room->save();
+        }
+
     }
 }

@@ -14,21 +14,21 @@
     <h3>总共可提现金额：{{ amount }}元</h3>
 </div>
 <div class="get_money_wrap">
-    <h2>提现金额</h2>
+    <h2>提现金额 <span>（满10元可提现，且需为整数）</span></h2>
     <div class="money_num">
         <span>￥</span>
-        <input type="number" placeholder="满10元可提现，且需为整数" id="money">
+        <input type="number" name="" id="money">
     </div>
 </div>
 <div class="get_money_input">
     <ul>
         <li>
             <span>姓名</span>
-            <input type="text" placeholder="请输入您的姓名" id="name">
+            <input type="text" name="" placeholder="请输入您的姓名" id="name">
         </li>
         <li>
             <span>支付宝账号</span>
-            <input type="text" placeholder="请输入您的支付宝账户" id="account">
+            <input type="text" name="" placeholder="请输入您的支付宝账户" id="account">
         </li>
     </ul>
 </div>
@@ -46,10 +46,18 @@
         })
     });
 
+    var amount = {{ amount }};
+
     function create() {
+
         var money = $("#money").val();
         var name = $("#name").val();
         var account = $("#account").val();
+
+        if (money > amount) {
+            return alert("请输入正确的提现金额");
+        }
+
         var data = {
             sid: "{{ sid }}",
             code: "{{ code }}",

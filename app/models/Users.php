@@ -1825,6 +1825,9 @@ class Users extends BaseModel
     static function exportAuthedUser()
     {
         $search_db = \Users::getHotReadCache();
+        $num = $search_db->zcard(\Users::authedKey());
+        info("total_num", $num);
+
         $offset = 0;
         $f = fopen(APP_ROOT . 'log/authed_users.log', 'w');
         while (true) {
@@ -1840,23 +1843,81 @@ class Users extends BaseModel
             $offset += 100;
         }
         fclose($f);
+
+        $search_db->zclear(\Users::authedKey());
     }
 
     static function importAuthedUser()
     {
+        $common_monolog = file_get_contents(APP_ROOT . "doc/user_data/common_monolog.txt");
+        $common_monolog = explode(PHP_EOL, $common_monolog);
+        $common_monolog_num = count($common_monolog);
+        $monologue_index = 0;
+        $a_rate_num = 0;
+        $b_rate_num = 0;
+
+        if ($common_monolog_num < 1) {
+            info("common_monolog_error");
+            return;
+        }
+
         $f = fopen(APP_ROOT . 'log/authed_users.log', 'r');
         $hot_db = \Users::getHotWriteCache();
         while ($line = fgets($f)) {
             echo $line . PHP_EOL;
             $data = json_decode($line, true);
             $user = new \Users();
-            foreach (['sex', 'birthday', 'platform', 'platform_version',
+            foreach (['sex', 'platform', 'platform_version',
                          'login_name', 'nickname', 'mobile', 'height'] as $column) {
                 $user->$column = $data[$column];
             }
 
+            $old_user = \Users::findFirstByLoginName($user->login_name);
+            if (isPresent($old_user)) {
+                info('old user', $user->login_name);
+                continue;
+            }
+
+            $monologue = '';
+            $random = mt_rand(1, 100);
+
+            if ($random <= 70) {
+                $age = mt_rand(16, 21);
+                $a_rate_num++;
+            } else {
+                $b_rate_num++;
+                $age = mt_rand(22, 25);
+
+                if (isset($common_monolog[$monologue_index])) {
+                    $monologue = $common_monolog[$monologue_index];
+                } else {
+                    info("monolog_error", $monologue_index);
+                }
+
+                $monologue_index++;
+                if ($monologue_index > $common_monolog_num - 1) {
+                    $monologue_index = 0;
+                }
+            }
+
+            $birthday = 2018 - $age;
+            $month = mt_rand(1, 12);
+            $day = mt_rand(1, 28);
+
+            if ($day < 10) {
+                $day = "0" . $day;
+            }
+
+            if ($month < 10) {
+                $month = "0" . $month;
+            }
+
+            $new_birthday = $birthday . $month . $day;
+            $user->birthday = strtotime($new_birthday);
             $user->user_status = USER_STATUS_ON;
             $user->user_type = USER_TYPE_SILENT;
+            $user->product_channel_id = 1;
+            $user->monologue = $monologue;
 
             if ($user->height > 175 || $user->height < 150) {
                 $user->height = 150 + mt_rand(0, 30);
@@ -1872,12 +1933,6 @@ class Users extends BaseModel
                 if ($city) {
                     $user->city_id = $city->id;
                 }
-            }
-
-            $old_user = \Users::findFirstByLoginName($user->login_name);
-            if (isPresent($old_user)) {
-                info('old user', $user->login_name);
-                continue;
             }
 
             $user->save();
@@ -1897,6 +1952,8 @@ class Users extends BaseModel
                 }
             }
         }
+
+        info($a_rate_num, $b_rate_num, $monologue_index);
     }
 
     function changeAvatarAuth($avatar_auth)
@@ -1907,7 +1964,7 @@ class Users extends BaseModel
         }
         $this->avatar_auth = $avatar_auth;
         $this->update();
-        
+
         if (AUTH_SUCCESS == intval($avatar_auth)) {
             $this->addAuthedList();
         }

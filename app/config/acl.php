@@ -4,7 +4,7 @@ return [
 
     'editor' => ['dashboard' => '*', 'weixin_menu_templates' => '*', 'push_messages' => '*', 'weixin_template_messages' => '*'],
 
-    'customer' => ['dashboard' => '*', 'users' => ['index','detail', 'basic', 'friend_list', 'followers','avatar'],
+    'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar'],
         'devices' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'albums' => '*'],
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
@@ -16,7 +16,7 @@ return [
 
     'operat_manager' => ['dashboard' => '*', 'devices' => ['index', 'edit', 'update'], 'stats' => '*', 'partners' => '*',
         'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*', 'export_histories' => ['download'],
-        'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
+        'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*'],
 
     'producter' => ['dashboard' => '*', 'product_channels' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'orders' => '*', 'products' => '*', 'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*',
@@ -29,7 +29,7 @@ return [
         'orders' => '*', 'channel_soft_versions' => '*', 'stats' => ['days'], 'wap_visits' => '*',
         'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'partners' => '*',
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
-        'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*',
+        'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*'
     ],
 
     'product_operator_assistant' => ['dashboard' => '*']

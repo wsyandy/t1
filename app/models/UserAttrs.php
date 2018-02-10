@@ -427,4 +427,13 @@ trait UserAttrs
         return intval($time / 60);
     }
 
+    function getWithdrawAmount()
+    {
+        $hi_coins = $this->hi_coins;
+        if (!$hi_coins) {
+            return 0;
+        } else {
+            return $hi_coins / 10;
+        }
+    }
 }

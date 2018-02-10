@@ -1353,7 +1353,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test84Action()
     {
-        $user = Users::findFirstById(80);
+        $user = Users::findFirstById(100137);
         echoLine($user);
     }
 
@@ -1381,5 +1381,115 @@ class MeiTask extends \Phalcon\Cli\Task
         if (!preg_match('/^\d+\d$/', $str)) {
             debug("dddd");
         }
+
+        $user = Users::findFirstById(10397);
+        echoLine($user);
+    }
+
+    function test87Action()
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $token = '79ff4423baa4c9bfc04f7de917c65c9b1f6';
+        if ($token) {
+            debug("sss");
+        }
+        $hot_cache->set($token, 175);
+        debug($hot_cache->get($token));
+    }
+
+    function test88Action()
+    {
+        $user = Users::findFirstById(100140);
+        echoLine($user->online_token);
+
+        $token = '79ff4423baa4c9bfc04f7de917c65c9b1f6';
+        $room = Rooms::findRoomByOnlineToken($token);
+        if ($room) {
+            echoLine($room);
+        }
+
+        $room = Rooms::findFirstById(369);
+        $hot_cache = Rooms::getHotWriteCache();
+        $key = $room->getUserListKey();
+        echoLine($hot_cache->zscore($key, 100168));
+
+    }
+
+    function test89Action()
+    {
+        $users = Users::findForeach(['conditions' => 'product_channel_id = 0 or product_channel_id is null']);
+
+        foreach ($users as $user) {
+            $user->product_channel_id = 1;
+            $user->save();
+        }
+    }
+
+    function test90Action()
+    {
+        $data = file_get_contents(APP_ROOT . "public/gdt2.log");
+        $data = explode(PHP_EOL, $data);
+
+        $res = [];
+        $muids = [];
+
+        foreach ($data as $item) {
+            $log = json_decode($item, true);
+            $muid = fetch($log, 'muid');
+            $res[$muid] = $log;
+            $muids[] = $muid;
+        }
+
+        $muids = array_unique($muids);
+        echoLine(count($muids));
+        $devices = Devices::find(['conditions' => 'created_at >= :begin: and created_at <= :end:', 'bind' => ['begin' => beginOfDay(), 'end' => endOfDay()]]);
+        echoLine(count($devices));
+
+        //echoLine($res);
+        foreach ($devices as $device) {
+            $muid = Partners::generateMuid(['imei' => $device->imei]);
+            //echoLine($muid);
+            if ($muid && in_array($muid, $muids)) {
+                echoLine($device->fr, $device->id);
+                $data = $res[$muid];
+                echoLine($data, $muid);
+                $data['act_time'] = time();
+                Partners::notifyGdt($data);
+            }
+        }
+    }
+
+    function test91Action()
+    {
+        $gift = Gifts::findFirstById(1);
+        $gift->dynamic_image = '';
+        $gift->save();
+    }
+
+    function test92Action()
+    {
+        $user = Users::findFirstById(117);
+        $user->sid = $user->generateSid('s');
+        $user->save();
+    }
+
+    function test93Action()
+    {
+        $user_gifts = UserGifts::findByUserId(117);
+
+        $user_gifts = UserGifts::findForeach();
+        $amount = 0;
+
+        foreach ($user_gifts as $gift) {
+            if ($gift->total_amount != $gift->num * $gift->amount) {
+                $gift->total_amount = $gift->num * $gift->amount;
+                $gift->save();
+                echoLine($gift->total_amount, $gift->id, $gift->num, $gift->amount);
+            }
+            $amount += $gift->total_amount;
+        }
+
+        echoLine($amount);
+        echoLine($amount / 100);
     }
 }

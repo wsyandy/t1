@@ -28,9 +28,11 @@ class WithdrawHistoriesController extends BaseController
             $name = $this->params('name', null);
             $account = $this->params('account', null);
 
-            if (isBlank($money) || !is_int($money) || $money < 10) {
+            if (isBlank($money) || !preg_match('/^\d+\d$/', $money) || $money < 10) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
+
+            $money = intval($money);
 
             if (!$name) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '姓名不能为空');
@@ -44,7 +46,7 @@ class WithdrawHistoriesController extends BaseController
             $opts = ['money' => $money, 'name' => $name, 'account' => $account];
             list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
 
-            $this->renderJSON($error_code, $error_reason);
+            return $this->renderJSON($error_code, $error_reason);
         }
 
     }
@@ -52,8 +54,7 @@ class WithdrawHistoriesController extends BaseController
     function getMoneyAction()
     {
         $user = $this->currentUser();
-        $hi_coins = $user->hi_coins;
-        $this->view->amount = $hi_coins / 10;
+        $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
     }

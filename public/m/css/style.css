@@ -1,95 +1,114 @@
 @charset "utf-8";
 body, p, input, h1, h2, h3, h4,ol, ul, li, dl, dt, dd, form {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  vertical-align: middle;
 }
 body {
-    font-family: '微软雅黑', 'Arial';
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    -o-text-size-adjust: none;
+  font-family: '微软雅黑', 'Arial';
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  -o-text-size-adjust: none;
 }
 html, body {
-    width: 100%;
-    margin: 0 auto;
-    color: #999999;
-    font-size: 14px;
-    background: #F3F3F3;
-    min-width: 320px;
-    max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  color: #999999;
+  font-size: 14px;
+  background: #F3F3F3;
+  min-width: 320px;
+  max-width: 640px;
 }
 input,textarea,select{
-    font-family:inherit;
-    font-size:inherit;
-    font-weight:inherit;
-    appearance:none;
-    -moz-appearance:none;
-    -webkit-appearance:none;
+  font-family:inherit;
+  font-size:inherit;
+  font-weight:inherit;
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
 }
 button,input
 {
-    border:none;
-    outline:none;
-    background:none;
+  border:none;
+  outline:none;
+  background:none;
 }
 a {
-    text-decoration: none;
-    color: #999;
+  text-decoration: none;
+  color: #999;
 }
 i,em
 {
-    font-style: normal;
+  font-style: normal;
 }
 h1,h2,h3,h4{
-	font-weight: normal;
+  font-weight: normal;
 }
 .get_out_btn {
-    margin-top: 20px;
-    padding: 0 3.2%;
+  margin-top: 20px;
+  padding: 0 3.2%;
 }
 .get_out_btn a {
-    display: block;
-    background: #FFFFFF;
-    border-radius: 25px;
-    height: 49px;
-    line-height: 49px;
-    font-size: 18px;
-    color: #F45189;
-    text-align: center;
+  display: block;
+  background: #FFFFFF;
+  border-radius: 25px;
+  height: 49px;
+  line-height: 49px;
+  font-size: 18px;
+  color: #F45189;
+  text-align: center;
 }
 .account_btn {
-    background: #F45189 !important;
-    color: #fff !important;
+  background: #F45189 !important;
+  color: #fff !important;
 }
 /*举报*/
 .jubao_top{
-	font-size: 14px;
-	color: #767676;
-	padding:12px 3.2%;
+  font-size: 14px;
+  color: #767676;
+  padding:12px 3.2%;
 }
 .jubao_list{
-	background: #fff;
-	padding-left: 3.2%;
+  background: #fff;
+  padding-left: 3.2%;
 }
 .jubao_list ul li{
-	padding:16px 0;
-	font-size: 15px;
-	color: #464646;
-	border-bottom: 1px solid #F3F3F3;
-	background: url(../images/jb_select.png) no-repeat 96.8% center;
+  padding:16px 0;
+  font-size: 15px;
+  color: #464646;
+  border-bottom: 1px solid #F3F3F3;
+  background: url(../images/jb_select.png) no-repeat 96.8% center;
 }
 .jubao_list ul li:last-child{
-    border:0;
+  border:0;
 }
 .jb_selected{
-	background: url(../images/jb_selected.png) no-repeat 96.8% center !important;
+  background: url(../images/jb_selected.png) no-repeat 96.8% center !important;
 }
 .jubao_btn{
-	margin-top: 60px;
+  margin-top: 60px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

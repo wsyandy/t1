@@ -9,8 +9,6 @@
 
 {{ f.input('content',['label':'消息内容']) }}
 
-
-
 <div class="error_reason" style="color: red;"></div>
 {{ f.submit('提交') }}
 

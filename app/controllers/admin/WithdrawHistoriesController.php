@@ -60,20 +60,29 @@ class WithdrawHistoriesController extends BaseController
 
     function updateAction()
     {
-        $withdraw_historie_id = $this->params('id');
-        $withdraw_historie = \WithdrawHistories::findFirstById($withdraw_historie_id);
-        if (WITHDRAW_STATUS_WAIT != $withdraw_historie->status) {
+        $withdraw_history_id = $this->params('id');
+        $withdraw_history = \WithdrawHistories::findFirstById($withdraw_history_id);
+
+        if (!$withdraw_history) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if (WITHDRAW_STATUS_WAIT != $withdraw_history->status) {
             return $this->renderJSON(ERROR_CODE_FAIL, '只允许修改提现中状态的订单');
         }
-        $this->assign($withdraw_historie, 'withdraw_history');
-        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $withdraw_historie);
-        if ($withdraw_historie->save()) {
-            if (WITHDRAW_STATUS_SUCCESS == $withdraw_historie->status) {
-                $user = \Users::findFirstById($withdraw_historie->user_id);
-                $user->hi_coins = $user->hi_coins - $withdraw_historie->amount * 10;
+
+        $this->assign($withdraw_history, 'withdraw_history');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $withdraw_history);
+
+        if ($withdraw_history->save()) {
+
+            if (WITHDRAW_STATUS_SUCCESS == $withdraw_history->status) {
+                $user = $withdraw_history->user;
+                $user->hi_coins = $user->hi_coins - $withdraw_history->amount * 10;
                 $user->save();
             }
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', array('withdraw_history' => $withdraw_historie->toJson()));
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['withdraw_history' => $withdraw_history->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
