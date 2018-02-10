@@ -492,10 +492,6 @@ class Users extends BaseModel
      */
     function generateSid($seg)
     {
-        if (isDevelopmentEnv()) {
-            $seg = 's';
-        }
-        
         $src = $this->id . uniqid(mt_rand()) . microtime();
 
         $src = $this->id . $seg . md5($src);
