@@ -1465,4 +1465,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift->dynamic_image = '';
         $gift->save();
     }
+
+    function test92Action()
+    {
+        $user = Users::findFirstById(117);
+        $user->sid = $user->generateSid('s');
+        $user->save();
+    }
 }
