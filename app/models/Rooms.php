@@ -1025,4 +1025,40 @@ class Rooms extends BaseModel
         }
         return true;
     }
+
+    function getDayGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey());
+        return $amount;
+    }
+
+    function getHourGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey(false));
+        return $amount;
+    }
+
+    function getStatGiftAmountKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_amount_room_id" . $this->id;
+    }
+
+    function getStatGiftUserNumKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
+    }
 }

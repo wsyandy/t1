@@ -186,7 +186,7 @@ class PushSever extends BaseModel
         return false;
     }
 
-    function send1($action, $ip, $payload = [])
+    function httpSend($action, $ip, $payload = [])
     {
         info($this->websocket_listen_server_port, $ip, $action, $payload);
 
