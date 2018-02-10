@@ -482,4 +482,25 @@ class KangTask extends \Phalcon\Cli\Task
         }
     }
 
+    function callAction(){
+
+        $hot = Users::getHotWriteCache();
+        $hot->set("key1", 1);
+        $hot->set("key2", 2);
+        $hot->set("key3", 3);
+        $hot->set("key4", 4);
+        echoLine($hot->get("key2"));
+        $keys = $hot->keys('key2*');
+        echoLine($keys);
+    }
+
+    function call2Action(){
+
+        $name = 'aaa:';
+        $m = ['aaa:11', 'aaa:12', 'aaa:13', 'aaa:14'];
+        $m2 = array_map(function ($a) use ($name){ return str_replace($name, '', $a);}, $m);
+
+        echoLine($m2);
+    }
+
 }

@@ -120,7 +120,7 @@ class Yuanfen
         $user->last_at = time();
         if ($avatar_path) {
             $avatar_url = $this->generateCdnUrl($avatar_path);
-            echoLine('avatar_url', $avatar_url);
+            info('avatar_url', $avatar_url);
             $res = httpGet($avatar_url);
             if ($res === false || $res->code != 200) {
                 $avatar_data = explode('/', $avatar_path);
@@ -154,7 +154,7 @@ class Yuanfen
                     \Albums::createAlbum($album_url, $user->id, AUTH_WAIT);
                 }
             }
-            echoLine("create npc " . $user->id);
+            info("create npc " . $user->id);
             return $user;
         }
         return false;
