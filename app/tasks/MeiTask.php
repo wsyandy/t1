@@ -1492,4 +1492,33 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($amount);
         echoLine($amount / 100);
     }
+
+    //[PID 29705]54
+    //[PID 29705]54
+    //[PID 29705]["14901"]
+    //[PID 29705]["14901"]
+    //[PID 29705]["229"]
+    function test94Action()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        $user = Users::findFirstById(14901);
+        $receiver = Users::findFirstById(6);
+        $gift = Gifts::findFirstById(1);
+        $gift_num = 3;
+        $room = $receiver->current_room;
+        echoLine($room->getDayGiftAmountBySilentUser(true));
+        echoLine($room->getHourGiftAmountBySilentUser());
+        echoLine($hot_cache->zrange($room->getStatGiftUserNumKey(), 0, -1));
+        echoLine($hot_cache->zrange($room->getStatGiftUserNumKey(true), 0, -1));
+
+        $key = "user_send_gift_rooms_user_id_14901";
+        echoLine($hot_cache->zrange($key, 0, -1));
+
+        $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+        if ($give_result) {
+            $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+        }
+
+
+    }
 }

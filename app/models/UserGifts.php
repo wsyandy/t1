@@ -109,8 +109,8 @@ class UserGifts extends BaseModel
             $hot_cache->zadd($user_num_hour_key, time(), $sender->id);
             $hot_cache->zadd($send_gift_rooms_key, time(), $current_room->id);
 
-            $day_expire = endOfDay() - time();
-            $hour_expire = endOfHour() - time();
+            $day_expire = endOfDay() + 60 - time();
+            $hour_expire = endOfHour() + 60 - time();
 
             $hot_cache->expire($amount_day_key, $day_expire);
             $hot_cache->expire($amount_hour_key, $hour_expire);
