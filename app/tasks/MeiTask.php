@@ -1424,4 +1424,45 @@ class MeiTask extends \Phalcon\Cli\Task
             $user->save();
         }
     }
+
+    function test90Action()
+    {
+        $data = file_get_contents(APP_ROOT . "public/gdt2.log");
+        $data = explode(PHP_EOL, $data);
+
+        $res = [];
+        $muids = [];
+
+        foreach ($data as $item) {
+            $log = json_decode($item, true);
+            $muid = fetch($log, 'muid');
+            $res[$muid] = $log;
+            $muids[] = $muid;
+        }
+
+        $muids = array_unique($muids);
+        echoLine(count($muids));
+        $devices = Devices::find(['conditions' => 'created_at >= :begin: and created_at <= :end:', 'bind' => ['begin' => beginOfDay(), 'end' => endOfDay()]]);
+        echoLine(count($devices));
+
+        //echoLine($res);
+        foreach ($devices as $device) {
+            $muid = Partners::generateMuid(['imei' => $device->imei]);
+            //echoLine($muid);
+            if ($muid && in_array($muid, $muids)) {
+                echoLine($device->fr, $device->id);
+                $data = $res[$muid];
+                echoLine($data, $muid);
+                $data['act_time'] = time();
+                Partners::notifyGdt($data);
+            }
+        }
+    }
+
+    function test91Action()
+    {
+        $gift = Gifts::findFirstById(1);
+        $gift->dynamic_image = '';
+        $gift->save();
+    }
 }
