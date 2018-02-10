@@ -81,7 +81,7 @@ class UserGifts extends BaseModel
     //统计沉默用户送礼物个数
     function statSilentUserSendGiftNum($gift_order)
     {
-        $sender = $gift_order->sender();
+        $sender = $gift_order->sender;
 
         info($gift_order->user_id, $gift_order->sender_id, $this->id);
 
