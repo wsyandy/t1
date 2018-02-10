@@ -38,8 +38,8 @@
 {% macro room_info(room) %}
     房间名称: {{ room.name }}<br/>
     房间话题: {{ room.topic }}<br/>
-    在线人数: {{ room.user_num }}<br/>
-    主题类型: {{ room.theme_type_text }}<br/>
+    在线人数: {{ room.user_num }} 主题类型: {{ room.theme_type_text }}<br/>
+    沉默用户消费金额: {{ room.getDayGiftAmountBySilentUser() }}沉默用户消费人数: {{ room.getDayGiftUserNumBySilentUser() }}<br/>
     {% if room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}" >{{ room.audio_id }}</a><br/>
     {% endif %}

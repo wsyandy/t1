@@ -1030,14 +1030,28 @@ class Rooms extends BaseModel
     {
         $hot_cache = self::getHotReadCache();
         $amount = $hot_cache->get($this->getStatGiftAmountKey());
-        return $amount;
+        return intval($amount);
     }
 
     function getHourGiftAmountBySilentUser()
     {
         $hot_cache = self::getHotReadCache();
         $amount = $hot_cache->get($this->getStatGiftAmountKey(false));
-        return $amount;
+        return intval($amount);
+    }
+
+    function getDayGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey());
+        return intval($num);
+    }
+
+    function getHourGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey(false));
+        return intval($num);
     }
 
     function getStatGiftAmountKey($day = true)
