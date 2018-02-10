@@ -54,6 +54,13 @@ class WithdrawHistoriesController extends BaseController
     function getMoneyAction()
     {
         $user = $this->currentUser();
+        if ($this->request->isPost()) {
+            if (\WithdrawHistories::isHaveWaitedHistory($user)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现');
+            } else {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+        }
         $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');

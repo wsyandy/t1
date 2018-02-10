@@ -74,6 +74,12 @@ a{text-decoration: none;color: #000;}
 .fd_text .p_mr{
     margin-top: 18px;
 }
+
+.fd_text .error_reason{
+    margin-top: 10px;
+    font-size: 20px;
+}
+
 .fd_text span{
     display: block;
     font-size: 12px;

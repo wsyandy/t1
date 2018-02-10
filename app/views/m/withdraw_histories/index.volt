@@ -13,19 +13,22 @@
 <!-- 弹出层开始 -->
 <div class="fudong">
     <div class="title">
-        <h2>收益说明</h2>
+        <h2 id="title">收益说明</h2>
     </div>
-    <div class="fd_text">
+    <div class="fd_text" id="declare">
         <p>1. 别人送你礼物可以得到Hi币</p>
         <p class="p_mr">2. Hi币可以进行提现</p>
         <span>兑换比例：<b>10</b> Hi币 = <b>1</b> 元</span>
+    </div>
+    <div class="fd_text" id="error_text" >
+        <p class="error_reason" id="error_reason"></p>
     </div>
     <div class="close_btn">知道了</div>
 </div>
 <div class="fudong_bg"></div>
 <!-- 弹出层结束 -->
-<div >
-    <img src="/m/images/question.png" class="money_image"  id="question">
+<div>
+    <img src="/m/images/question.png" class="money_image" id="question">
 </div>
 
 <div class="money_box">
@@ -53,6 +56,9 @@
         function colse_fd() {
             $(".fudong").hide();
             $(".fudong_bg").hide();
+            $("#title").text("收益说明");
+            $("#declare").show();
+            $("#error_text").hide();
         };
 
         function show_fd() {
@@ -66,6 +72,7 @@
 
         $(".fudong").hide();
         $(".fudong_bg").hide();
+        $("#error_text").hide();
 
 //        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
         var div_width = $(".fudong").width();
@@ -85,6 +92,22 @@
 
         $("#question").click(function () {
             show_fd();
+        });
+
+        $('.get_btn').on('click', "a", function (e) {
+            e.preventDefault();
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                if (resp.error_code == 0) {
+                    location.href = href;
+                } else {
+                    $("#title").text("错误");
+                    $("#error_reason").text(resp.error_reason);
+                    $("#declare").hide();
+                    $("#error_text").show();
+                    show_fd();
+                }
+            });
         });
 
     });

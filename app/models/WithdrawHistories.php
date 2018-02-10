@@ -26,17 +26,8 @@ class WithdrawHistories extends BaseModel
             return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
         }
 
-        $withdraw_history = WithdrawHistories::findFirst(
-            [
-                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id:',
-                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id],
-                'order' => 'id desc'
-            ]
-        );
-
-
-        if ($withdraw_history) {
-            return [ERROR_CODE_FAIL, '有受理中的提现记录，不能再提现'];
+        if (self::isHaveWaitedHistory($user)) {
+            return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
         }
 
 
@@ -74,5 +65,21 @@ class WithdrawHistories extends BaseModel
             'status_text' => $this->status_text,
             'created_at_date' => $this->created_at_date
         ];
+    }
+
+    static function isHaveWaitedHistory($user)
+    {
+        $withdraw_history = WithdrawHistories::findFirst(
+            [
+                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id],
+                'order' => 'id desc'
+            ]
+        );
+
+        if ($withdraw_history) {
+            return true;
+        }
+        return false;
     }
 }
