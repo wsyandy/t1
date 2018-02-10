@@ -47,16 +47,12 @@ class BroadcastsController extends BaseController
             if (isBlank($user)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不存在');
             }
-            //如果进入其他房间时 用户身上有房间 先退出房间
-            if ($user->current_room && $user->current_room->id != $room_id) {
-                $user->current_room->exitRoom($user());
-                //如果进入其他房间时 用户身上有麦位 先下麦位
-                if ($user->current_room_seat) {
-                    $user->current_room_seat->down($user);
-                }
+            $current_room = $user->currnet_room;
+            if ($current_room && $current_room->id != $room_id) {
+                $current_room->exitRoom($user);
             }
             $room->enterRoom($user);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '上线成功', ['redirect_url' => '/admin/broadcasts']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '上线成功', ['error_url' => '/admin/broadcasts']);
         }
         $this->view->room_id = $room_id;
     }
@@ -77,9 +73,8 @@ class BroadcastsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '房主不存在');
             }
             if (!$user->isInRoom($room)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功', ['error_url' => '/admin/broadcasts']);
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
             }
-
             $room->exitRoom($user);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '下线成功', ['error_url' => '/admin/broadcasts']);
         }
@@ -97,7 +92,7 @@ class BroadcastsController extends BaseController
             }
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
             if ($room->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/broadcasts']);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
             }
@@ -125,7 +120,7 @@ class BroadcastsController extends BaseController
 
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
             if ($user->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/broadcasts']);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
             }
@@ -156,7 +151,7 @@ class BroadcastsController extends BaseController
             $room_seat->microphone = $microphone;
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room_seat);
             if ($room_seat->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功');
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms/room_seats?id=' . $room_id]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
             }

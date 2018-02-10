@@ -73,6 +73,9 @@
             var href = $(this).attr('href');
             $.post(href, '', function (resp) {
                 alert(resp.error_reason);
+                if (resp.error_code == 0) {
+                    location.href = resp.error_url;
+                }
             });
         }
     });
@@ -83,6 +86,9 @@
             var href = $(this).attr('href');
             $.post(href, '', function (resp) {
                 alert(resp.error_reason);
+                if (resp.error_code == 0) {
+                    location.href = resp.error_url;
+                }
             });
         }
     });
