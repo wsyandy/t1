@@ -101,7 +101,7 @@
                 if (resp.error_code == 0) {
                     location.href = href;
                 } else {
-                    $("#title").text("错误");
+                    $("#title").text("温馨提示");
                     $("#error_reason").text(resp.error_reason);
                     $("#declare").hide();
                     $("#error_text").show();
