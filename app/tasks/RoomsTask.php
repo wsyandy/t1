@@ -38,8 +38,9 @@ class RoomsTask extends \Phalcon\Cli\Task
                         $unbind = false;
                     }
 
+                    $current_room_seat_id = $user->current_room_seat_id;
                     $room->exitRoom($user, $unbind);
-                    $room->pushExitRoomMessage($user);
+                    $room->pushExitRoomMessage($user, $current_room_seat_id);
                 }
             }
         }

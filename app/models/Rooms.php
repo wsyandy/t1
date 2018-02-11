@@ -770,14 +770,17 @@ class Rooms extends BaseModel
             return false;
         }
 
-        info($this->id, $user->sid);
+        info($this->id, $user->sid, $user->current_room_seat_id);
+
+        $current_room_seat_id = $user->current_room_seat_id;
+
         $this->exitRoom($user);
 
         if ($user->isRoomHost($this)) {
             $this->rmOnlineSilentRoom();
         }
 
-        $this->pushExitRoomMessage($user);
+        $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
     function pushEnterRoomMessage($user)
@@ -796,7 +799,7 @@ class Rooms extends BaseModel
         $this->push($receiver, $body);
     }
 
-    function pushExitRoomMessage($user)
+    function pushExitRoomMessage($user, $current_room_seat_id = '')
     {
         $receiver = $this->findRealUser();
 
@@ -807,11 +810,12 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
-        $current_room_seat_id = $user->current_room_seat_id;
-        $current_room_seat = \RoomSeats::findFirstById($current_room_seat_id);
+        if ($current_room_seat_id) {
+            $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
 
-        if ($current_room_seat) {
-            $body['room_seat'] = $current_room_seat->toSimpleJson();
+            if ($current_room_seat) {
+                $body['room_seat'] = $current_room_seat->toSimpleJson();
+            }
         }
 
         $this->push($receiver, $body);

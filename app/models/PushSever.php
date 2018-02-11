@@ -418,14 +418,15 @@ class PushSever extends BaseModel
                 //并发退出房间
                 $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
                 $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
+                $current_room_seat_id = '';
 
                 if ($current_room_seat) {
+                    $current_room_seat_id = $current_room_seat->id;
                     $current_room_seat->down($user);
-                    $room_seat = $current_room_seat->toOnlineJson();
                 }
 
                 $current_room->exitRoom($user);
-                $this->pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip);
+                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
                 //重新连接 用户的key不一样
                 $hot_cache->del($user_online_key);
                 unlock($exce_exit_room_lock);
@@ -461,46 +462,46 @@ class PushSever extends BaseModel
 //        debug("{$task_id}处理结果: {$data}");
 //    }
 
-    function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
-    {
-        $hot_cache = self::getHotWriteCache();
-        $key = $current_room->getRealUserListKey();
-        $user_ids = $hot_cache->zrevrange($key, 0, -1);
-        $channel_name = $current_room->channel_name;
-
-        info($user->sid, $user_ids);
-
-        foreach ($user_ids as $receiver_id) {
-
-            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-
-            info($user->sid, $receiver_id, $receiver_fd);
-
-            $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
-
-            //判断fd是否存在
-            if ($receiver_fd) {
-
-                if (!$server->exist($receiver_fd)) {
-                    info("fd 不存在", $user->sid, $receiver_fd);
-                    return;
-                }
-
-                $payload = ['body' => $data, 'fd' => $receiver_fd];
-                //$res = $this->send('push', $intranet_ip, $payload);
-                $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-
-                if ($res) {
-                    info("exit_room_success", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-                    break;
-                } else {
-                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-                }
-            } else {
-                info("receiver_fd_not_exists", $user->sid, $receiver_fd);
-            }
-        }
-    }
+//    function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
+//    {
+//        $hot_cache = self::getHotWriteCache();
+//        $key = $current_room->getRealUserListKey();
+//        $user_ids = $hot_cache->zrevrange($key, 0, -1);
+//        $channel_name = $current_room->channel_name;
+//
+//        info($user->sid, $user_ids);
+//
+//        foreach ($user_ids as $receiver_id) {
+//
+//            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+//
+//            info($user->sid, $receiver_id, $receiver_fd);
+//
+//            $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
+//
+//            //判断fd是否存在
+//            if ($receiver_fd) {
+//
+//                if (!$server->exist($receiver_fd)) {
+//                    info("fd 不存在", $user->sid, $receiver_fd);
+//                    return;
+//                }
+//
+//                $payload = ['body' => $data, 'fd' => $receiver_fd];
+//                //$res = $this->send('push', $intranet_ip, $payload);
+//                $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+//
+//                if ($res) {
+//                    info("exit_room_success", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+//                    break;
+//                } else {
+//                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
+//                }
+//            } else {
+//                info("receiver_fd_not_exists", $user->sid, $receiver_fd);
+//            }
+//        }
+//    }
 
     function pushHangupInfo($server, $user, $intranet_ip)
     {
