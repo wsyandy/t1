@@ -458,4 +458,13 @@ trait UserAttrs
             return $hi_coins / 10;
         }
     }
+
+    public function lastLoginAt()
+    {
+        if (!$this->last_at) {
+            return $this->created_at;
+        }
+
+        return $this->last_at;
+    }
 }
