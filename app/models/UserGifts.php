@@ -101,7 +101,7 @@ class UserGifts extends BaseModel
             $amount_hour_key = $current_room->getStatGiftAmountKey(false);
             $user_num_day_key = $current_room->getStatGiftUserNumKey();
             $user_num_hour_key = $current_room->getStatGiftUserNumKey(false);
-            $send_gift_rooms_key = "user_send_gift_rooms_user_id_" . $sender->id;
+            $send_gift_rooms_key = date("Ymd") . "_user_send_gift_rooms_user_id_" . $sender->id;
 
             $hot_cache->incrby($amount_day_key, $gift_order->amount);
             $hot_cache->incrby($amount_hour_key, $gift_order->amount);

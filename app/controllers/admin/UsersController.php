@@ -78,7 +78,7 @@ class UsersController extends BaseController
         $this->assign($user, 'user');
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
         $user->update();
-        $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', array('user' => $user->toJson()));
+        $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['user' => $user->toJson()]);
     }
 
     function resetPasswordAction()

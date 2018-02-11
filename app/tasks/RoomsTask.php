@@ -38,6 +38,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     }
 
                     $room->exitRoom($user, $unbind);
+                    $room->pushExitRoomMessage($user);
                 }
             }
         }

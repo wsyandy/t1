@@ -40,6 +40,28 @@ trait UserAttrs
         ];
     }
 
+    function mergeJson()
+    {
+        return [
+            'avatar_small_url' => $this->getAvatarSmallUrl(),
+            'avatar_url' => $this->getAvatarUrl(),
+            'product_channel_name' => $this->product_channel_name,
+            'partner_name' => $this->partner_name,
+            'sex_text' => $this->sex_text,
+            'geo_province_name' => $this->geo_province_name,
+            'geo_city_name' => $this->geo_city_name,
+            'ip_province_name' => $this->ip_province_name,
+            'ip_city_name' => $this->ip_city_name,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'user_type_text' => $this->user_type_text,
+            'user_status_text' => $this->user_status_text,
+            'created_at_text' => $this->created_at_text,
+            'register_at_text' => $this->register_at_text,
+            'last_at_text' => $this->last_at_text
+        ];
+    }
+
     function toBasicJson()
     {
         return [

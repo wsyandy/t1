@@ -1505,7 +1505,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $receiver = Users::findFirstById(6);
         $gift = Gifts::findFirstById(1);
         $gift_num = 3;
-        $room = $receiver->current_room;
+        $room = Rooms::findFirstById(229);
         echoLine($room->getDayGiftAmountBySilentUser(true));
         echoLine($room->getHourGiftAmountBySilentUser());
         echoLine($hot_cache->zrange($room->getStatGiftUserNumKey(), 0, -1));
@@ -1520,5 +1520,46 @@ class MeiTask extends \Phalcon\Cli\Task
         }
 
 
+        $user = Users::findFirstById(101851);
+        echoLine($user);
+
+        $user = Users::findFirstById(10513);
+        $room = $user->room;
+        $room->enterRoom($user);
+
+        $room = Rooms::findFirstById(176);
+        $user = Users::findFirstById(39);
+        $room->exitRoom($user);
+        $room->pushExitRoomMessage($user);
+
+        $ip = "192.168.64.96";
+        $port = 9502;
+        $client = new PushClient($ip, $port, 1);
+
+        if (!$client->connect()) {
+            info("Exce connect fail");
+            return false;
+        }
+
+        $ip = PushSever::getIntranetIp();
+        echoLine($ip);
+
+        $users = Users::findBy(['user_type' => USER_TYPE_ACTIVE]);
+        $hot_cache = Users::getHotWriteCache();
+
+        foreach ($users as $user) {
+            $online_token = $user->online_token;
+
+            if ($online_token) {
+                $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+                $user_ip = $hot_cache->get($fd_intranet_ip_key);
+                echoLine($online_token);
+
+                if ($user_ip && $user_ip != $ip) {
+                    $hot_cache->set($fd_intranet_ip_key, $ip);
+                    info("update user ip", $user_ip, $ip);
+                }
+            }
+        }
     }
 }
