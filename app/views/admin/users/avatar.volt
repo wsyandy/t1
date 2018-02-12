@@ -16,7 +16,7 @@
     <input name="avatar_auth" id="avatar_auth" type="hidden" value="">
     <dl class="thumb_list">
         {% for user in users %}
-            <dd class="unit object_unit" style="height: 180px; width: 130px;" id="avatar_user_{{user.id}}">
+            <dd class="unit object_unit" style="height: 180px; width: 130px;" id="avatar_user_{{ user.id }}">
                 <label for="user_{{ user.id }}">
                     <a href="/admin/users/detail/{{ user.id }}">
                         <img alt="Small lmoubofcto" height="150" id="avatar_{{ user.id }}" src="{{ user.avatar_url }}"
@@ -24,16 +24,19 @@
                     </a>
                 </label>
                 <p>
-                    <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}" autocomplete="off">
+                    <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}"
+                           autocomplete="off">
                     {{ user.sex ? '男' : '女' }}({{ user.age }})
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click' data-user_id="{{user.id}}">过</a>
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click' data-user_id="{{user.id}}">不过</a>
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click'
+                       data-user_id="{{ user.id }}">过</a>
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click'
+                       data-user_id="{{ user.id }}">不过</a>
                 </p>
             </dd>
         {% endfor %}
     </dl>
 </div>
-{{end_form()}}
+{{ end_form() }}
 {{ pagination(users) }}
 <script>
     $(function () {
@@ -94,33 +97,6 @@
                 }
             });
         });
-        $(".batch_pass").click(function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var ids = "";
-            var target = $(this).data("target");
-            $("#" + target + " input:checkbox").each(function () {
-                ids = ids + "," + $(this).val();
-            });
-            var token = $("meta[name='csrf-token']").attr("content");
-            var form = $("#" + target).parent("form");
-            console.log(form);
-            var action = $(this).data("action");
-
-            /*$(".object_unit").remove();*/
-            var c = $(this);
-            $(this).attr({"disabled": "disabled"});
-            $.ajax({
-                url: action,
-                type: 'post',
-                data: {'ids': ids, 'authenticity_token': token},
-                success: function (data) {
-                    $(".object_unit").remove();
-                    c.removeAttr("disabled");
-                }
-            });
-        });
-
     })
 </script>
 

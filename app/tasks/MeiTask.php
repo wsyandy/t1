@@ -1567,4 +1567,49 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($room);
         echoLine($room_seat);
     }
+
+    function test96Action()
+    {
+        //http://www.woyaogexing.com/touxiang/index_42.html
+        //src="http://img2.woyaogexing.com/2018/02/11/ecf67ec708f0c498!400x400_big.jpg"
+
+        for ($i = 1; $i < 10; $i++) {
+
+            $url = "http://www.woyaogexing.com/touxiang/index";
+
+            if ($i < 2) {
+                $url .= ".html";
+            } else {
+                $url .= "_{$i}.html";
+            }
+
+            $content = file_get_contents($url);
+            preg_match_all('/src="(http.+\.jpg)/', $content, $matches);
+
+            if (count($matches) < 2) {
+                echoLine($i, $url);
+                continue;
+            }
+
+            $images = $matches[1];
+            print_r($images);
+
+            foreach ($images as $image) {
+                httpSave($image, APP_ROOT . 'temp/images/' . md5(uniqid(mt_rand())) . '.jpg');
+            }
+        }
+    }
+
+    function test97Action()
+    {
+        $albums = Albums::findForeach();
+
+        foreach ($albums as $album) {
+            if ($album->auth_status == 0) {
+                echoLine($album->id, $album->user_id);
+                $album->auth_status = AUTH_WAIT;
+                $album->update();
+            }
+        }
+    }
 }
