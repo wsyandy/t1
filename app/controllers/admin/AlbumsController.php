@@ -16,7 +16,7 @@ class AlbumsController extends BaseController
         $per_page = $this->params('per_page', 30);
         $user_id = $this->params('user_id');
         $auth_status = $this->params('auth_status');
-        $cond = ['conditions' => 'user_id =' . $user_id, 'order' => 'id desc'];
+        $cond = ['conditions' => 'user_id =' . $user_id, 'order' => 'id asc'];
 
         if ($auth_status) {
             $cond['conditions'] .= " and auth_status = $auth_status";
