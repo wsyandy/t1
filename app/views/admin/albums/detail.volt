@@ -6,10 +6,21 @@
         <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="all">全选</a></li>
         <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="reverse">反选</a>
         </li>
-        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
-               data-action="1">选中通过</a></li>
-        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
-               data-action="2">选中不通过</a></li>
+        {% if 1 == auth_status and user_id == 1 %}
+            <li><a href="#" class="selected_action" data-target="auth_type" data-formid="batch_form"
+                   data-action="1">选中为男</a></li>
+            <li><a href="#" class="selected_action" data-target="auth_type" data-formid="batch_form"
+                   data-action="2">选中为女</a></li>
+            <li><a href="#" class="selected_action" data-target="auth_type" data-formid="batch_form"
+                   data-action="3">选中为通用</a></li>
+        {% else %}
+            <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+                   data-action="1">选中通过</a></li>
+            <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+                   data-action="2">选中不通过</a></li>
+        {% endif %}
+
+        <li><a href="/admin/albums/detail?user_id={{ user_id }}">全部</a></li>
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=3">待审核</a></li>
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=1">已审核通过</a></li>
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=2">审核失败</a></li>
@@ -22,6 +33,7 @@
 {{ form('/admin/albums/batch_update', 'method':'post','class':'form-inline','id':'batch_form','accept-charset':'UTF-8') }}
 <div class="row">
     <input name="auth_status" id="auth_status" type="hidden" value="">
+    <input name="auth_type" id="auth_type" type="hidden" value="">
     <dl class="thumb_list">
         {% for album in albums %}
             <dd class=" unit object_unit" style="height: 180px; width: 130px;">
@@ -36,8 +48,15 @@
                     <input id="user_{{ album.id }}" name="ids[]" type="checkbox" value="{{ album.id }}"
                            autocomplete="off">
                     {% if isAllowed('albums','update') %}
-                        <a href="/admin/albums/update/{{ album.id }}?auth_status=1" class='album_once_click'>过</a>
-                        <a href="/admin/albums/update/{{ album.id }}?auth_status=2" class='album_once_click'>不过</a>
+                        {% if 1 == auth_status and user_id == 1 %}
+                            <a href="/admin/albums/update/{{ album.id }}?auth_type=1" class='album_once_click'>男</a>
+                            <a href="/admin/albums/update/{{ album.id }}?auth_type=2" class='album_once_click'>女</a>
+                            <a href="/admin/albums/update/{{ album.id }}?auth_type=3" class='album_once_click'>通用</a>
+                        {% else %}
+                            <a href="/admin/albums/update/{{ album.id }}?auth_status=1"
+                               class='album_once_click'>过</a>
+                            <a href="/admin/albums/update/{{ album.id }}?auth_status=2" class='album_once_click'>不过</a>
+                        {% endif %}
                     {% endif %}
                 </p>
             </dd>

@@ -1622,13 +1622,27 @@ class MeiTask extends \Phalcon\Cli\Task
     function test97Action()
     {
         $albums = Albums::findForeach();
+//
+//        foreach ($albums as $album) {
+//            if ($album->auth_status == 0) {
+//                echoLine($album->id, $album->user_id);
+//                $album->auth_status = AUTH_WAIT;
+//                $album->update();
+//            }
+//        }
+//
+//        $hot_cahe = Albums::getHotWriteCache();
+//        $hot_cahe->zclear('albums_auth_success_list_user_id1');
+//        $albums = Albums::findBy(['auth_status' => AUTH_SUCCESS, 'user_id' => 1]);
+//
+//        foreach ($albums as $album) {
+//            $hot_cahe->zadd('albums_auth_success_list_user_id1', time(), $album->id);
+//        }
 
-        foreach ($albums as $album) {
-            if ($album->auth_status == 0) {
-                echoLine($album->id, $album->user_id);
-                $album->auth_status = AUTH_WAIT;
-                $album->update();
-            }
-        }
+        $hot_cache = Albums::getHotWriteCache();
+        //$album_ids = $hot_cahe->zcard('albums_auth_success_list_user_id1');
+        $album_ids = $hot_cache->zrange("albums_auth_type_3_list_user_id_10", 0, -1);
+        echoLine($album_ids);
+
     }
 }
