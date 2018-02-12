@@ -1554,4 +1554,17 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test95Action()
+    {
+        $user = Users::findFirstById(117);
+        echoLine($user->getIntranetIp());
+        echoLine($user->getUserFd());
+        echoLine($user->online_token);
+
+        $room = Rooms::findRoomByOnlineToken($user->online_token);
+        $room_seat = RoomSeats::findRoomSeatByOnlineToken($user->online_token);
+        echoLine($room);
+        echoLine($room_seat);
+    }
 }
