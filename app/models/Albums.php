@@ -37,6 +37,7 @@ class Albums extends BaseModel
                 $album = new Albums();
                 $album->user_id = $user->id;
                 $album->image = $dest_filename;
+                $album->auth_status = AUTH_WAIT;
                 $album->save();
             }
         }
