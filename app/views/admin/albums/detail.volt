@@ -24,6 +24,11 @@
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=3">待审核</a></li>
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=1">已审核通过</a></li>
         <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=2">审核失败</a></li>
+        {% if 1 == auth_status and user_id == 1 %}
+            <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=1&auth_type=1">男头像</a></li>
+            <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=1&auth_type=2">女头像</a></li>
+            <li><a href="/admin/albums/detail?user_id={{ user_id }}&auth_status=1&auth_type=3">通用头像</a></li>
+        {% endif %}
     {% endif %}
 </ol>
 
