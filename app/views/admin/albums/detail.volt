@@ -1,7 +1,6 @@
 {{ css('list') }}
 
 
-
 <ol class="breadcrumb">
     {% if isAllowed('albums','update') %}
         <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="all">全选</a></li>
@@ -27,11 +26,11 @@
         {% for album in albums %}
             <dd class=" unit object_unit" style="height: 180px; width: 130px;">
                 <label for="user_{{ album.id }}">
-                    <a href="/admin/users/show/{{ album.user_id }}">
-                        <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}"
-                             src="{{ album.image_small_url }}"
-                             width="120"/>
-                    </a>
+                    {#<a href="/admin/users/show/{{ album.user_id }}">#}
+                    <img alt="Small lmoubofcto" height="150" id="album_{{ album.id }}"
+                         src="{{ album.image_small_url }}"
+                         width="120"/>
+                    {#</a>#}
                 </label>
                 <p>
                     <input id="user_{{ album.id }}" name="ids[]" type="checkbox" value="{{ album.id }}"

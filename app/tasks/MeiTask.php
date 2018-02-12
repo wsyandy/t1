@@ -1573,7 +1573,7 @@ class MeiTask extends \Phalcon\Cli\Task
         //http://www.woyaogexing.com/touxiang/index_42.html
         //src="http://img2.woyaogexing.com/2018/02/11/ecf67ec708f0c498!400x400_big.jpg"
 
-        for ($i = 1; $i < 10; $i++) {
+        for ($i = 1; $i < 500; $i++) {
 
             $url = "http://www.woyaogexing.com/touxiang/index";
 
@@ -1593,9 +1593,28 @@ class MeiTask extends \Phalcon\Cli\Task
 
             $images = $matches[1];
             print_r($images);
+            $user = Users::findFirstById(1);
 
             foreach ($images as $image) {
-                httpSave($image, APP_ROOT . 'temp/images/' . md5(uniqid(mt_rand())) . '.jpg');
+                $image_url = APP_ROOT . 'temp/images/' . md5(uniqid(mt_rand())) . '.jpg';
+                httpSave($image, $image_url);
+
+                if (!file_exists($image_url)) {
+                    continue;
+                }
+
+                $dest_filename = APP_NAME . '/albums/' . $user->id . '_' . date('YmdH') . uniqid() . '.jpg';
+                $res = \StoreFile::upload($image_url, $dest_filename);
+
+                if ($res) {
+                    $album = new Albums();
+                    $album->user_id = $user->id;
+                    $album->image = $dest_filename;
+                    $album->auth_status = AUTH_WAIT;
+                    $album->save();
+                }
+
+                unlink($image_url);
             }
         }
     }
