@@ -33,10 +33,19 @@ class AlbumsController extends BaseController
     {
         $album_id = $this->params('id');
         $auth_status = $this->params('auth_status');
-
         $album = \Albums::findFirstById($album_id);
         $album->auth_status = $auth_status;
         $album->update();
+
+        $hot_cache = \Albums::getHotWriteCache();
+
+        if (1 == $album->user_id) {
+            if (AUTH_SUCCESS == $album->auth_status) {
+                $hot_cache->zadd("albums_auth_success_list_user_id" . $album->user_id, time(), $album->id);
+            } else {
+                $hot_cache->zrem("albums_auth_success_list_user_id" . $album->user_id, $album->id);
+            }
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
@@ -45,12 +54,20 @@ class AlbumsController extends BaseController
     {
         $album_ids = $this->params('ids');
         $auth_status = $this->params('auth_status');
-
+        $hot_cache = \Albums::getHotWriteCache();
+        
         foreach ($album_ids as $album_id) {
             $album = \Albums::findFirstById($album_id);
             $album->auth_status = $auth_status;
             $album->update();
 
+            if (1 == $album->user_id) {
+                if (AUTH_SUCCESS == $album->auth_status) {
+                    $hot_cache->zadd("albums_auth_success_list_user_id" . $album->user_id, time(), $album->id);
+                } else {
+                    $hot_cache->zrem("albums_auth_success_list_user_id" . $album->user_id, $album->id);
+                }
+            }
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
