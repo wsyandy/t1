@@ -888,10 +888,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function test59Action()
     {
         $receiver_user = Users::findById(52);
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver_user->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_user->id));
+        $intranet_ip = $receiver_user->getIntranetIp();
+        $receiver_fd = $receiver_user->getUserFd();
         $room = $receiver_user->current_room;
 
         $user = Users::findFirstById(6);
@@ -910,10 +908,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function test60Action()
     {
         $user = Users::findById(256);
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
         $room = $user->current_room;
         $gift = Gifts::findFirstById(5);
         $data = $gift->toSimpleJson();
@@ -935,10 +931,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function test61Action()
     {
         $user = Users::findById(52);
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
         $current_room = $user->current_room;
         $current_room_seat = $user->current_room_seat;
         $body = ['action' => 'up', 'channel_name' => $current_room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
@@ -951,10 +945,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function test62Action()
     {
         $user = Users::findById(52);
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . 52));
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
         $current_room = $user->current_room;
         $current_room_seat = $user->current_room_seat;
         $body = ['action' => 'down', 'channel_name' => $current_room->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];

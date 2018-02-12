@@ -414,14 +414,6 @@ trait UserAttrs
         return '';
     }
 
-    function getOnlineToken()
-    {
-        $hot_cache = Users::getHotWriteCache();
-        $user_online_key = "socket_user_online_user_id" . $this->id;
-
-        return $hot_cache->get($user_online_key);
-    }
-
     //旁听时间
     function getAudienceTimeByDate($date)
     {
@@ -466,5 +458,44 @@ trait UserAttrs
         }
 
         return $this->last_at;
+    }
+
+    function getOnlineToken()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $user_online_key = "socket_user_online_user_id" . $this->id;
+        return $hot_cache->get($user_online_key);
+    }
+
+    //用户长连接对应的ip
+    function getIntranetIp()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $online_token = $this->getOnlineToken();
+
+        if (!$online_token) {
+            return '';
+        }
+
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+
+        return $intranet_ip;
+    }
+
+    //用户长连接对应的fd
+    function getUserFd()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $online_token = $this->getOnlineToken();
+
+        if (!$online_token) {
+            return '';
+        }
+
+        $fd_key = "socket_push_fd_" . $online_token;
+        $fd = $hot_cache->get($fd_key);
+
+        return $fd;
     }
 }

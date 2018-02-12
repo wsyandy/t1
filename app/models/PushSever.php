@@ -201,6 +201,19 @@ class PushSever extends BaseModel
         return false;
     }
 
+    static function push($server, $payload)
+    {
+        $receiver_fd = fetch($payload, 'fd');
+        $body = fetch($payload, 'body');
+        info($receiver_fd, $payload, $body);
+        if ($receiver_fd) {
+            if (!$server->exist($receiver_fd)) {
+                info($receiver_fd, "Exce not exist");
+                return;
+            }
+            $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+        }
+    }
 
     function onStart($server)
     {
@@ -229,31 +242,19 @@ class PushSever extends BaseModel
         $ip = self::getIntranetIp();
         $sid = self::params($request, 'sid');
         info($sid, $fd, $online_token, $ip);
+
         $user_id = intval($sid);
         $user = Users::findFirstById($user_id);
 
-        $hot_cache = self::getHotWriteCache();
-        $hot_cache->zincrby($this->connection_list, 1, $ip);
+        $this->increaseConnectNum(1, $ip);
+
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
             $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
             return;
         }
 
-        $online_key = "socket_push_online_token_" . $fd;
-        $fd_key = "socket_push_fd_" . $online_token;
-        $user_online_key = "socket_user_online_user_id" . intval($sid);
-        $fd_user_id_key = "socket_fd_user_id" . $online_token;
-
-        $hot_cache->set($online_key, $online_token);
-        $hot_cache->set($fd_key, $fd);
-        $hot_cache->set($user_online_key, $online_token);
-        $hot_cache->set($fd_user_id_key, $user_id);
-
-        if ($ip) {
-            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-            $hot_cache->set($fd_intranet_ip_key, $ip);
-        }
+        PushSever::saveFdInfo($fd, $online_token, $sid, $ip);
 
         if ($user->current_room) {
             $user->current_room->bindOnlineToken($user);
@@ -298,16 +299,7 @@ class PushSever extends BaseModel
                 if ('shutdown' == $action) {
                     $server->shutdown();
                 } elseif ('push' == $action) {
-                    $receiver_fd = fetch($payload, 'fd');
-                    $body = fetch($payload, 'body');
-                    info($receiver_fd, $payload, $body);
-                    if ($receiver_fd) {
-                        if (!$server->exist($receiver_fd)) {
-                            info($receiver_fd, "Exce not exist");
-                            return;
-                        }
-                        $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
-                    }
+                    PushSever::push($server, $payload);
                 }
             } catch (\Exception $e) {
                 info("Exce", $action, $payload, $e->getMessage());
@@ -340,11 +332,8 @@ class PushSever extends BaseModel
 
                 if ('ping' == $action) {
                     //解析数据
-                    $hot_cache = self::getHotReadCache();
-                    $online_key = "socket_push_online_token_" . $fd;
-                    $online_token = $hot_cache->get($online_key);
-                    $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-                    $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+                    $online_token = self::getOnlineTokenByFd($fd);
+                    $intranet_ip = self::getIntranetIpdByOnlineToken($online_token);
                     debug($intranet_ip, $online_token);
                     $payload = ['body' => $data, 'fd' => $fd];
                     self::delay()->send('push', $intranet_ip, $this->websocket_listen_server_port, $payload);
@@ -356,13 +345,11 @@ class PushSever extends BaseModel
 
     function onClose($server, $fd, $from_id)
     {
-        $hot_cache = self::getHotWriteCache();
-        $online_key = "socket_push_online_token_" . $fd;
-        $online_token = $hot_cache->get($online_key);
-
+        $online_token = self::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
 
         $server_port = fetch($connect_info, 'server_port');
+
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onClose");
             return;
@@ -373,65 +360,47 @@ class PushSever extends BaseModel
             return;
         }
 
-        $fd_key = "socket_push_fd_" . $online_token;
-        $fd_user_id_key = "socket_fd_user_id" . $online_token;
-        $user_id = $hot_cache->get($fd_user_id_key);
-        $user_online_key = "socket_user_online_user_id" . $user_id;
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $hot_cache->del($online_key);
-        $hot_cache->del($fd_key);
-        $hot_cache->del($fd_user_id_key);
-        $hot_cache->del($fd_intranet_ip_key);
-
+        $user_id = self::getUserIdByOnlineToken($online_token);
+        $intranet_ip = self::getIntranetIpdByOnlineToken($online_token);
         $user = Users::findFirstById($user_id);
-        $room_seat = null;
-
-        $local_ip = self::getIntranetIp();
-        if ($local_ip) {
-            $hot_cache->zincrby($this->connection_list, -1, $local_ip);
-        }
+        $this->increaseConnectNum(-1, self::getIntranetIp());
 
         if ($user) {
 
-            info($user->sid, $fd, $local_ip, "connect close");
+            info($user->sid, $fd, "connect close");
 
             $current_room = Rooms::findRoomByOnlineToken($online_token);
             $current_room_seat = RoomSeats::findRoomSeatByOnlineToken($online_token);
 
-            $hot_cache->del("room_seat_token_" . $online_token);
-            $hot_cache->del("room_token_" . $online_token);
-
             //用户有新的连接 老的连接不推送
-            if ($user->online_token != $online_token) {
-                info("online_token change", $user->sid, $online_token, $user->online_token);
-                return;
-            }
+            if ($user->online_token == $online_token) {
 
-            if (!$intranet_ip) {
-                info("intranet_ip is null", $user->sid, $online_token);
-                return;
-            }
+                if ($intranet_ip) {
 
-            if ($current_room) {
+                    if ($current_room) {
+                        //并发退出房间
+                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
+                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
+                        $current_room_seat_id = '';
 
-                //并发退出房间
-                $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
-                $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
-                $current_room_seat_id = '';
+                        if ($current_room_seat) {
+                            $current_room_seat_id = $current_room_seat->id;
+                            $current_room_seat->down($user);
+                        }
 
-                if ($current_room_seat) {
-                    $current_room_seat_id = $current_room_seat->id;
-                    $current_room_seat->down($user);
+                        $current_room->exitRoom($user);
+                        $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+                        unlock($exce_exit_room_lock);
+                    } else {
+                        info("room not exists", $user->sid, $online_token);
+                    }
+
+                } else {
+                    info("intranet_ip is null", $user->sid, $online_token);
                 }
 
-                $current_room->exitRoom($user);
-                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
-                //重新连接 用户的key不一样
-                $hot_cache->del($user_online_key);
-                unlock($exce_exit_room_lock);
             } else {
-                info("room not exists", $user->sid, $online_token);
+                info("online_token change", $user->sid, $online_token, $user->online_token);
             }
 
             //如果有电话进行中
@@ -439,6 +408,8 @@ class PushSever extends BaseModel
                 $this->pushHangupInfo($server, $user, $intranet_ip);
             }
         }
+
+        self::deleteFdInfo($fd, $online_token, $user_id);
     }
 
 //    public function onTask($server, $task_id, $from_id, $data)
@@ -460,47 +431,6 @@ class PushSever extends BaseModel
 //    public function onFinish($server, $task_id, $data)
 //    {
 //        debug("{$task_id}处理结果: {$data}");
-//    }
-
-//    function pushExitRoomInfo($server, $user, $current_room, $room_seat, $intranet_ip)
-//    {
-//        $hot_cache = self::getHotWriteCache();
-//        $key = $current_room->getRealUserListKey();
-//        $user_ids = $hot_cache->zrevrange($key, 0, -1);
-//        $channel_name = $current_room->channel_name;
-//
-//        info($user->sid, $user_ids);
-//
-//        foreach ($user_ids as $receiver_id) {
-//
-//            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
-//
-//            info($user->sid, $receiver_id, $receiver_fd);
-//
-//            $data = ['action' => 'exit_room', 'user_id' => $user->id, 'room_seat' => $room_seat, 'channel_name' => $channel_name];
-//
-//            //判断fd是否存在
-//            if ($receiver_fd) {
-//
-//                if (!$server->exist($receiver_fd)) {
-//                    info("fd 不存在", $user->sid, $receiver_fd);
-//                    return;
-//                }
-//
-//                $payload = ['body' => $data, 'fd' => $receiver_fd];
-//                //$res = $this->send('push', $intranet_ip, $payload);
-//                $res = $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
-//
-//                if ($res) {
-//                    info("exit_room_success", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-//                    break;
-//                } else {
-//                    info("exit_room_exce", $user->sid, $user_ids, $receiver_id, $receiver_fd, $data);
-//                }
-//            } else {
-//                info("receiver_fd_not_exists", $user->sid, $receiver_fd);
-//            }
-//        }
 //    }
 
     function pushHangupInfo($server, $user, $intranet_ip)
@@ -545,5 +475,88 @@ class PushSever extends BaseModel
     static function getWebsocketEndPoint()
     {
         return self::config('websocket_client_endpoint');
+    }
+
+    static function getOnlineTokenByFd($fd)
+    {
+        $hot_cache = PushSever::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+
+        return $hot_cache->get($online_key);
+    }
+
+    static function getUserIdByOnlineToken($online_token)
+    {
+        $hot_cache = PushSever::getHotWriteCache();
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+
+        return $hot_cache->get($fd_user_id_key);
+    }
+
+    static function getIntranetIpdByOnlineToken($online_token)
+    {
+        $hot_cache = PushSever::getHotWriteCache();
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+
+        return $hot_cache->get($fd_intranet_ip_key);
+    }
+
+    static function saveFdInfo($fd, $online_token, $sid, $ip)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $user_online_key = "socket_user_online_user_id" . intval($sid);
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+        $user_id = intval($sid);
+
+        $hot_cache->pipeline();
+        $hot_cache->set($online_key, $online_token);
+        $hot_cache->set($fd_key, $fd);
+        $hot_cache->set($user_online_key, $online_token);
+        $hot_cache->set($fd_user_id_key, $user_id);
+
+        if ($ip) {
+            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+            $hot_cache->set($fd_intranet_ip_key, $ip);
+        }
+        $hot_cache->exec();
+
+        info($fd, $online_token, $sid, $ip);
+    }
+
+    static function deleteFdInfo($fd, $online_token, $user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $user_online_key = "socket_user_online_user_id" . $user_id;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+
+        $hot_cache->pipeline();
+        $hot_cache->del($online_key);
+        $hot_cache->del($fd_key);
+        $hot_cache->del($fd_user_id_key);
+        $hot_cache->del($fd_intranet_ip_key);
+        $hot_cache->del($user_online_key);
+        $hot_cache->del("room_seat_token_" . $online_token);
+        $hot_cache->del("room_token_" . $online_token);
+        $hot_cache->exec();
+
+        info($fd, $online_token, $user_id);
+    }
+
+    function increaseConnectNum($num, $ip)
+    {
+        info($num, $ip);
+
+        if (!$ip) {
+            return;
+        }
+
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->zincrby($this->connection_list, $num, $ip);
     }
 }

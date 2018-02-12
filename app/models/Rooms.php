@@ -904,10 +904,8 @@ class Rooms extends BaseModel
 
     function push($receiver, $body)
     {
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver->id));
+        $intranet_ip = $receiver->getIntranetIp();
+        $receiver_fd = $receiver->getUserFd();
         $payload = ['body' => $body, 'fd' => $receiver_fd];
 
         info($intranet_ip, $receiver_fd, $payload);
