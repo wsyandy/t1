@@ -235,6 +235,8 @@ class RoomsTask extends \Phalcon\Cli\Task
          (status = :status: and user_type = :user_type1:)',
             'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
             'order' => 'last_at desc', 'limit' => 60];
+        $cond = ['conditions' => 'online_status = :online_status: and user_type = :user_type:',
+            'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT], 'order' => 'last_at desc', 'limit' => 60];
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
