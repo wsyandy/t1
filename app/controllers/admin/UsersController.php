@@ -245,4 +245,57 @@ class UsersController extends BaseController
         }
         $this->view->receiver = $receiver;
     }
+
+    function selectAvatarAction()
+    {
+        $user_id = 1;
+        $this->view->user_id = $user_id;
+    }
+
+    function avatarInfoAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 30);
+        $user_id = 1;
+        $auth_type = $this->params('auth_type');
+        $auth_status = $this->params('auth_status');
+        $cond = ['conditions' => 'user_id =' . $user_id, 'order' => 'id asc'];
+        $hot_cache = \Albums::getHotWriteCache();
+        $auth_ids = [];
+
+        if ($auth_type) {
+            $auth_ids = $hot_cache->zrange("albums_auth_type_{$auth_type}_list_user_id_" . $user_id, 0, -1);
+
+            debug($auth_ids, $auth_ids);
+            if (count($auth_ids) > 0) {
+                $cond['conditions'] .= ' and id in (' . implode(',', $auth_ids) . ')';
+            }
+        }
+
+        if ($auth_status) {
+            $cond['conditions'] .= " and auth_status = $auth_status";
+
+            if (AUTH_SUCCESS == $auth_status) {
+                $man_ids = $hot_cache->zrange("albums_auth_type_1_list_user_id_" . $user_id, 0, -1);
+                $woman_ids = $hot_cache->zrange("albums_auth_type_2_list_user_id_" . $user_id, 0, -1);
+                $common_ids = $hot_cache->zrange("albums_auth_type_3_list_user_id_" . $user_id, 0, -1);
+                $ids = array_unique(array_merge($man_ids, $woman_ids, $common_ids));
+
+                if (count($auth_ids) > 0) {
+                    $ids = array_diff($ids, $auth_ids);
+                }
+
+                if (count($ids) > 0) {
+                    $cond['conditions'] .= ' and id not in (' . implode(',', $ids) . ')';
+                }
+            }
+        }
+
+        debug($cond);
+        $albums = \Albums::findPagination($cond, $page, $per_page);
+
+        $this->view->albums = $albums;
+        $this->view->user_id = $user_id;
+        $this->view->auth_status = $auth_status;
+    }
 }
