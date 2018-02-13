@@ -995,6 +995,7 @@ class Rooms extends BaseModel
             " and id <>" . $this->user_id . " and avatar_status = " . AUTH_SUCCESS;
         $users = Users::findPagination($cond, $page, $per_page);
 
+        info($users->total_entries);
         foreach ($users as $user) {
 
             if (!$this->canEnter($user)) {
