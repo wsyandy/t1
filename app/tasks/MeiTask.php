@@ -1652,11 +1652,26 @@ class MeiTask extends \Phalcon\Cli\Task
         $auth_types = [1, 2, 3];
 
         foreach ($auth_types as $auth_type) {
-            $ids = $hot_cache->zrange("albums_auth_type_{$auth_type}_list_user_id_1", 0, -1);
-
-            foreach ($ids as $id) {
-                $hot_cache->zadd("albums_auth_type_total_list_user_id_1", time(), $id);
-            }
+            $hot_cache->zclear("albums_auth_type_{$auth_type}_list_user_id_1");
         }
+    }
+
+    function test99Action()
+    {
+        $cond = ['conditions' => 'user_type = ' . USER_TYPE_SILENT];
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_update_avatar_user_ids";
+
+        $filter_user_ids = $hot_cache->zrange($key, 0, -1);
+
+        if (count($filter_user_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ")";
+        }
+
+        $user = Users::findFirst($cond);
+
+        echoLine(count($filter_user_ids));
+        echoLine($user);
     }
 }

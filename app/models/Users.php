@@ -1951,6 +1951,10 @@ class Users extends BaseModel
                     \Albums::createAlbum($album_url, $user->id, AUTH_SUCCESS);
                 }
             }
+
+            if (file_exists($source_filename)) {
+                unlink($source_filename);
+            }
         }
 
         info($a_rate_num, $b_rate_num, $monologue_index);
@@ -1981,5 +1985,4 @@ class Users extends BaseModel
         $hot_db = Users::getHotWriteCache();
         $hot_db->zadd(Users::authedKey(), time(), $this->id);
     }
-
 }

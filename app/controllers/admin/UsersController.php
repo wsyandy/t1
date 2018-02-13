@@ -269,6 +269,8 @@ class UsersController extends BaseController
             debug($auth_ids, $auth_ids);
             if (count($auth_ids) > 0) {
                 $cond['conditions'] .= ' and id in (' . implode(',', $auth_ids) . ')';
+            } else {
+                $cond['conditions'] .= ' and id in (null)';
             }
         }
 
