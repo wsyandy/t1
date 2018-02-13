@@ -1573,7 +1573,7 @@ class MeiTask extends \Phalcon\Cli\Task
         //http://www.woyaogexing.com/touxiang/index_42.html
         //src="http://img2.woyaogexing.com/2018/02/11/ecf67ec708f0c498!400x400_big.jpg"
 
-        for ($i = 1; $i < 500; $i++) {
+        for ($i = 1; $i < 2; $i++) {
 
             $url = "http://www.woyaogexing.com/touxiang/index";
 

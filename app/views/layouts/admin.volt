@@ -38,9 +38,6 @@
                         <li>
                             <a href="/admin/users/avatar">头像审核</a>
                         </li>
-                        <li>
-                            <a href="/admin/users/avatar?avatar_auth=1">已审核列表</a>
-                        </li>
                     {% endif %}
                     {% if isAllowed('devices','index') %}
                         <li>

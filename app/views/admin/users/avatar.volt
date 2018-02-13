@@ -1,14 +1,17 @@
 {{ css('list') }}
-<div class="row">
-    <div class="col-md-12">
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="all">全选</a>
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="reverse">反选</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="avatar_auth" data-formid="batch_form"
-           data-action="1">选中通过</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="avatar_auth" data-formid="batch_form"
-           data-action="2">选中删除</a>
-    </div>
-</div>
+
+<ol class="breadcrumb">
+    {% if isAllowed('users','auth') %}
+        <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="all">全选</a></li>
+        <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="reverse">反选</a>
+        </li>
+        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+               data-action="1">选中通过</a></li>
+        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+               data-action="2">选中不通过</a></li>
+        <li><a href="/admin/users/avatar?avatar_auth=1">已审核列表</a></li>
+    {% endif %}
+</ol>
 
 <div>一共{{ users.total_entries }}个</div>
 {{ form('/admin/users/batch_update_avatar', 'method':'post','class':'form-inline','id':'batch_form','accept-charset':'UTF-8') }}
