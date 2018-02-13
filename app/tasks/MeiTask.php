@@ -1645,4 +1645,18 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($album_ids);
 
     }
+
+    function test98Action()
+    {
+        $hot_cache = \Albums::getHotWriteCache();
+        $auth_types = [1, 2, 3];
+
+        foreach ($auth_types as $auth_type) {
+            $ids = $hot_cache->zrange("albums_auth_type_{$auth_type}_list_user_id_1", 0, -1);
+
+            foreach ($ids as $id) {
+                $hot_cache->zadd("albums_auth_type_total_list_user_id_1", time(), $id);
+            }
+        }
+    }
 }

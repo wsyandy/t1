@@ -276,10 +276,7 @@ class UsersController extends BaseController
             $cond['conditions'] .= " and auth_status = $auth_status";
 
             if (AUTH_SUCCESS == $auth_status) {
-                $man_ids = $hot_cache->zrange("albums_auth_type_1_list_user_id_" . $user_id, 0, -1);
-                $woman_ids = $hot_cache->zrange("albums_auth_type_2_list_user_id_" . $user_id, 0, -1);
-                $common_ids = $hot_cache->zrange("albums_auth_type_3_list_user_id_" . $user_id, 0, -1);
-                $ids = array_unique(array_merge($man_ids, $woman_ids, $common_ids));
+                $ids = $hot_cache->zrange("albums_auth_type_total_list_user_id_" . $user_id, 0, -1);
 
                 if (count($auth_ids) > 0) {
                     $ids = array_diff($ids, $auth_ids);

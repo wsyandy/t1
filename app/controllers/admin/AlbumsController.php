@@ -56,6 +56,7 @@ class AlbumsController extends BaseController
                 }
 
                 $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
+                $hot_cache->zadd("albums_auth_type_total_list_user_id_" . $album->user_id, time(), $album->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
 
@@ -97,6 +98,7 @@ class AlbumsController extends BaseController
                         $hot_cache->zrem("albums_auth_type_2_list_user_id_" . $album->user_id, $album->id);
                     }
 
+                    $hot_cache->zadd("albums_auth_type_total_list_user_id_" . $album->user_id, time(), $album->id);
                     $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
                     continue;
                 }
