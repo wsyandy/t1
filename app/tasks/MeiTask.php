@@ -1673,5 +1673,23 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine(count($filter_user_ids));
         echoLine($user);
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_update_avatar_user_ids";
+
+
+        $filter_user_ids = $hot_cache->zrange($key, 0, -1);
+
+        echoLine(count($filter_user_ids));
+        $cond = ['conditions' => 'avatar_status = ' . AUTH_SUCCESS . ' and user_type = ' . USER_TYPE_SILENT];
+
+        //$cond['conditions'] .= " and sex = 0";
+
+        if (count($filter_user_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ")";
+        }
+
+        $users = Users::find($cond);
+        echoLine(count($users));
     }
 }
