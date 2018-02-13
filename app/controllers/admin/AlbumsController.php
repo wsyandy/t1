@@ -37,13 +37,24 @@ class AlbumsController extends BaseController
         $album = \Albums::findFirstById($album_id);
         $album->auth_status = $auth_status;
 
-        $hot_cache = \Albums::getHotWriteCache();
-
+        //选择头像使用
         if (1 == $album->user_id) {
-
+            $hot_cache = \Albums::getHotWriteCache();
             $auth_type = $this->params('auth_type');
 
             if ($auth_type) {
+
+                if ($auth_type == 1) {
+                    $hot_cache->zrem("albums_auth_type_2_list_user_id_" . $album->user_id, $album->id);
+                    $hot_cache->zrem("albums_auth_type_3_list_user_id_" . $album->user_id, $album->id);
+                } elseif ($auth_type == 2) {
+                    $hot_cache->zrem("albums_auth_type_1_list_user_id_" . $album->user_id, $album->id);
+                    $hot_cache->zrem("albums_auth_type_3_list_user_id_" . $album->user_id, $album->id);
+                } else {
+                    $hot_cache->zrem("albums_auth_type_1_list_user_id_" . $album->user_id, $album->id);
+                    $hot_cache->zrem("albums_auth_type_2_list_user_id_" . $album->user_id, $album->id);
+                }
+
                 $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
@@ -71,9 +82,21 @@ class AlbumsController extends BaseController
             $album = \Albums::findFirstById($album_id);
             $album->auth_status = $auth_status;
 
+            //选择头像使用
             if (1 == $album->user_id) {
-
                 if ($auth_type) {
+
+                    if ($auth_type == 1) {
+                        $hot_cache->zrem("albums_auth_type_2_list_user_id_" . $album->user_id, $album->id);
+                        $hot_cache->zrem("albums_auth_type_3_list_user_id_" . $album->user_id, $album->id);
+                    } elseif ($auth_type == 2) {
+                        $hot_cache->zrem("albums_auth_type_1_list_user_id_" . $album->user_id, $album->id);
+                        $hot_cache->zrem("albums_auth_type_3_list_user_id_" . $album->user_id, $album->id);
+                    } else {
+                        $hot_cache->zrem("albums_auth_type_1_list_user_id_" . $album->user_id, $album->id);
+                        $hot_cache->zrem("albums_auth_type_2_list_user_id_" . $album->user_id, $album->id);
+                    }
+
                     $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
                     continue;
                 }
