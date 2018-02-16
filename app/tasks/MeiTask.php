@@ -1695,7 +1695,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test100Action()
     {
-        Rooms::activeRoom(273);
+        Rooms::activeRoom(307);
 
         $cond = ['conditions' => 'online_status = :online_status: and user_type = :user_type:',
             'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT], 'order' => 'last_at desc', 'limit' => 60];
@@ -1703,6 +1703,22 @@ class MeiTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
             echoLine($room->id);
+        }
+
+        $user = Users::findFirstById(1447);
+        echoLine($user);
+
+
+        $rooms = Rooms::findForeach();
+
+        foreach ($rooms as $room) {
+            $user = $room->user;
+
+            if ($room->id != $user->room_id) {
+                $user->room_id = $room->id;
+                $user->update();
+                echoLine($room->id);
+            }
         }
     }
 }

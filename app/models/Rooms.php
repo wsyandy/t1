@@ -1014,6 +1014,7 @@ class Rooms extends BaseModel
             }
 
             $delay_time = mt_rand(1, 60);
+            info($this->id, $user->id, $delay_time);
             Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
         }
 
