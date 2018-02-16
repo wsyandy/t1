@@ -752,6 +752,11 @@ class Rooms extends BaseModel
             return false;
         }
 
+        if ($user->isInAnyRoom()) {
+            info("user_in_other_room", $user->id, $user->current_room_id, $room_id);
+            return false;
+        }
+
         info($room_id, $user->id);
         $room->enterRoom($user);
 
