@@ -752,7 +752,7 @@ class Rooms extends BaseModel
             return false;
         }
 
-        info($room_id, $user->sid);
+        info($room_id, $user->id);
         $room->enterRoom($user);
 
         if ($user->isRoomHost($room)) {

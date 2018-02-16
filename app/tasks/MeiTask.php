@@ -1692,4 +1692,17 @@ class MeiTask extends \Phalcon\Cli\Task
         $users = Users::find($cond);
         echoLine(count($users));
     }
+
+    function test100Action()
+    {
+        Rooms::activeRoom(273);
+
+        $cond = ['conditions' => 'online_status = :online_status: and user_type = :user_type:',
+            'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT], 'order' => 'last_at desc', 'limit' => 60];
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+            echoLine($room->id);
+        }
+    }
 }
