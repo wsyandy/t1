@@ -760,7 +760,7 @@ class Rooms extends BaseModel
         info($room_id, $user->id);
         $room->enterRoom($user);
 
-        $room->deleteWaitEnterSilentRoomList($user_id);
+        Rooms::deleteWaitEnterSilentRoomList($user_id);
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
@@ -999,7 +999,7 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id];
         $cond['limit'] = $limit;
 
-        $filter_user_ids = $this->getWaitEnterSilentRoomUserIds();
+        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
 
         if (count($filter_user_ids) > 0) {
             info($filter_user_ids);
@@ -1022,7 +1022,7 @@ class Rooms extends BaseModel
 
             $delay_time = mt_rand(1, 60);
             info($this->id, $user->id, $delay_time);
-            $this->addWaitEnterSilentRoomList($user->id);
+            Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
         }
 
@@ -1030,22 +1030,22 @@ class Rooms extends BaseModel
     }
 
     //记录沉默用户进入房间 异步进入后在队列中删除
-    function addWaitEnterSilentRoomList($user_id)
+    static function addWaitEnterSilentRoomList($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $hot_cache->zadd('wait_enter_silent_room_list_room_id' . $this->id, time(), $user_id);
+        $hot_cache->zadd('wait_enter_silent_room_list', time(), $user_id);
     }
 
-    function deleteWaitEnterSilentRoomList($user_id)
+    static function deleteWaitEnterSilentRoomList($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem('wait_enter_silent_room_list_room_id' . $this->id, $user_id);
+        $hot_cache->zrem('wait_enter_silent_room_list_room_id', $user_id);
     }
 
-    function getWaitEnterSilentRoomUserIds()
+    static function getWaitEnterSilentRoomUserIds()
     {
         $hot_cache = self::getHotWriteCache();
-        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id' . $this->id, 0, -1);
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
         return $user_ids;
     }
 
