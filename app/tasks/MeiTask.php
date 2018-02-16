@@ -1683,7 +1683,7 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(count($filter_user_ids));
         $cond = ['conditions' => 'avatar_status = ' . AUTH_SUCCESS . ' and user_type = ' . USER_TYPE_SILENT];
 
-        //$cond['conditions'] .= " and sex = 0";
+        //$cond['conditions'] .= " and sex = 1";
 
         if (count($filter_user_ids) > 0) {
             $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ")";

@@ -1761,9 +1761,9 @@ class Users extends BaseModel
 
         if ($rand_num <= 50) {
             Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
-        } elseif (50 < $rand_num && $rand_num <= 60) {
+        } elseif (50 < $rand_num && $rand_num <= 52) {
             Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
-        } elseif (60 < $rand_num && $rand_num <= 90) {
+        } elseif (53 < $rand_num && $rand_num <= 90) {
             Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
         } else {
             $room->exitSilentRoom($this);
