@@ -760,6 +760,8 @@ class Rooms extends BaseModel
         info($room_id, $user->id);
         $room->enterRoom($user);
 
+        $room->deleteWaitEnterSilentRoomList($user_id);
+
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
         }
@@ -990,17 +992,22 @@ class Rooms extends BaseModel
             return;
         }
 
-        $last_user = Users::findLast(['columns' => 'id']);
-        $last_user_id = $last_user->id;
+        $limit = mt_rand(1, 8);
+        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: 
+        and id <> :user_id: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS,
+            'user_id' => $this->user_id];
+        $cond['limit'] = $limit;
 
-        $per_page = mt_rand(1, 8);
-        $total_page = ceil($last_user_id / $per_page);
-        $page = mt_rand(1, $total_page);
-        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
-            " and id <>" . $this->user_id . " and avatar_status = " . AUTH_SUCCESS;
-        $users = Users::findPagination($cond, $page, $per_page);
+        $filter_user_ids = $this->getWaitEnterSilentRoomUserIds();
 
-        info($users->total_entries);
+        if (count($filter_user_ids) > 0) {
+            info($filter_user_ids);
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
+        }
+
+        $users = Users::find($cond);
+
         foreach ($users as $user) {
 
             if (!$this->canEnter($user)) {
@@ -1015,10 +1022,31 @@ class Rooms extends BaseModel
 
             $delay_time = mt_rand(1, 60);
             info($this->id, $user->id, $delay_time);
+            $this->addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
         }
 
-        info($this->id, $page, $per_page, $total_page);
+        info($this->id, $limit, count($users));
+    }
+
+    //记录沉默用户进入房间 异步进入后在队列中删除
+    function addWaitEnterSilentRoomList($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->zadd('wait_enter_silent_room_list_room_id' . $this->id, time(), $user_id);
+    }
+
+    function deleteWaitEnterSilentRoomList($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->zrem('wait_enter_silent_room_list_room_id' . $this->id, $user_id);
+    }
+
+    function getWaitEnterSilentRoomUserIds()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id' . $this->id, 0, -1);
+        return $user_ids;
     }
 
     function isOnline()
