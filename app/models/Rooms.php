@@ -794,29 +794,15 @@ class Rooms extends BaseModel
 
     function pushEnterRoomMessage($user)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name
         ];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushExitRoomMessage($user, $current_room_seat_id = '')
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
         if ($current_room_seat_id) {
@@ -827,18 +813,11 @@ class Rooms extends BaseModel
             }
         }
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushTopTopicMessage($user, $content = "")
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
             $content = $messages[array_rand($messages)];
@@ -849,45 +828,24 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name
         ];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushUpMessage($user, $current_room_seat)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'up', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushDownMessage($user, $current_room_seat)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'down', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushGiftMessage($user, $receiver, $gift, $gift_num)
     {
-        $real_user = $this->findRealUser();
-
-        if (!$real_user) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $sender_nickname = $user->nickname;
         $receiver_nickname = $receiver->nickname;
 
@@ -908,22 +866,38 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];
 
-        $this->push($real_user, $body);
+        $this->push($body);
     }
 
-    function push($receiver, $body)
+    function push($body)
     {
-        $intranet_ip = $receiver->getIntranetIp();
-        $receiver_fd = $receiver->getUserFd();
-        $payload = ['body' => $body, 'fd' => $receiver_fd];
+        $users = $this->findTotalRealUsers();
 
-        info($intranet_ip, $receiver_fd, $payload);
-
-        if (!$intranet_ip) {
-            info("Exce", $receiver->id, $this->id, $payload);
+        if (count($users) < 1) {
+            info("no_users", $this->id);
             return;
         }
-        PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+
+        foreach ($users as $user) {
+
+            $intranet_ip = $user->getIntranetIp();
+            $receiver_fd = $user->getUserFd();
+            $payload = ['body' => $body, 'fd' => $receiver_fd];
+
+            if (!$intranet_ip) {
+                info("Exce", $user->id, $this->id, $payload);
+                continue;
+            }
+
+            $res = PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+
+            if ($res) {
+                info($user->id, $this->id, $payload);
+                break;
+            } else {
+                info("Exce", $user->id, $this->id, $payload);
+            }
+        }
     }
 
     function findRealUser()
@@ -941,6 +915,21 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         return $user;
+    }
+
+    function findTotalRealUsers()
+    {
+        if ($this->getRealUserNum() < 1) {
+            info("user_real_num < 1");
+            return [];
+        }
+
+        $hot_cache = self::getHotReadCache();
+        $key = $this->getRealUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        return $users;
     }
 
     function isSilent()
