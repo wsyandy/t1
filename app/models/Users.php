@@ -1726,7 +1726,7 @@ class Users extends BaseModel
             return;
         }
 
-        if ($user->current_room_seat_id < 1 && $room->getRealUserNum() > 0) {
+        if ($user->current_room_seat_id < 1) {
 
             $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
 
