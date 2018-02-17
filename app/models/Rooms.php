@@ -690,18 +690,20 @@ class Rooms extends BaseModel
         $hot_cache->zadd($key, $time, $this->id);
     }
 
-    static function getOfflineSilentRooms($page, $per_page)
+    static function getOfflineSilentRooms()
     {
         $orders = ['id asc', 'id desc', 'created_at asc', 'created_at desc', 'updated_at asc', 'updated_at desc',
             'user_id asc', 'user_id desc'];
 
         $rank = array_rand($orders);
         $order = $orders[$rank];
+        $limit = mt_rand(1, 5);
 
         $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
         $cond['order'] = $order;
-        $rooms = Rooms::findPagination($cond, $page, $per_page);
+        $cond['limit'] = $limit;
+        $rooms = Rooms::find($cond);
         return $rooms;
     }
 

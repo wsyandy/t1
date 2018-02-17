@@ -159,12 +159,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             return;
         }
 
-        $per_page = mt_rand(1, 5);
-        $last_room = Rooms::findLast();
-        $last_room_id = $last_room->id;
-        $total_page = ceil($last_room_id / $per_page);
-        $page = mt_rand(1, $total_page);
-        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+        $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
             $user = $room->user;
@@ -179,7 +174,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             info($room->id, $delay_time);
         }
 
-        info($page, $per_page, $online_silent_room_num, count($rooms));
+        info($online_silent_room_num, count($rooms));
     }
 
     //释放离线沉默房间
