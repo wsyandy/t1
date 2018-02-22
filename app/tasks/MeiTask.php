@@ -66,31 +66,10 @@ class MeiTask extends \Phalcon\Cli\Task
         }
     }
 
-    function testArrayAction()
+    function getUserIpAction()
     {
-        $array = [1, 2, 3, 5];
-        print_r($array);
-        $index = array_rand($array);
-        $res = $array[$index];
-        echoLine($res);
-        unset($array[$index]);
-        print_r($array);
-        $res = $array[array_rand($array)];
-        echoLine($res);
-
-        $cond = [
-            'conditions' => 'user_type = :user_type:',
-            'bind' => ['user_type' => USER_TYPE_SILENT]
-        ];
-
-        $rooms = Rooms::find($cond);
-
-        foreach ($rooms as $room) {
-            $user = $room->user;
-            if ($room->isOnline() && $user->current_room_id != $room->id) {
-                $user->current_room_id = $room->id;
-                $user->update();
-            }
-        }
+        $user = Users::findFirstById(39);
+        echoLine($user->getIntranetIp());
+        echoLine($user->getOnlineToken());
     }
 }
