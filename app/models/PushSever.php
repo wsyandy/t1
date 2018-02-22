@@ -409,7 +409,7 @@ class PushSever extends BaseModel
             }
         }
 
-        self::deleteFdInfo($fd, $online_token, $user_id);
+        self::deleteFdInfo($fd, $online_token, $user);
     }
 
 //    public function onTask($server, $task_id, $from_id, $data)
@@ -525,13 +525,12 @@ class PushSever extends BaseModel
         info($fd, $online_token, $sid, $ip);
     }
 
-    static function deleteFdInfo($fd, $online_token, $user_id)
+    static function deleteFdInfo($fd, $online_token, $user)
     {
         $hot_cache = self::getHotWriteCache();
 
         $online_key = "socket_push_online_token_" . $fd;
         $fd_key = "socket_push_fd_" . $online_token;
-        $user_online_key = "socket_user_online_user_id" . $user_id;
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
         $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
 
@@ -540,12 +539,19 @@ class PushSever extends BaseModel
         $hot_cache->del($fd_key);
         $hot_cache->del($fd_user_id_key);
         $hot_cache->del($fd_intranet_ip_key);
-        $hot_cache->del($user_online_key);
         $hot_cache->del("room_seat_token_" . $online_token);
         $hot_cache->del("room_token_" . $online_token);
         $hot_cache->exec();
 
-        info($fd, $online_token, $user_id);
+        if ($user && $user->online_token == $online_token) {
+
+            $user_online_key = "socket_user_online_user_id" . $user->id;
+            $hot_cache->del($user_online_key);
+
+            info($user->id);
+        }
+
+        info($fd, $online_token);
     }
 
     function increaseConnectNum($num, $ip)
