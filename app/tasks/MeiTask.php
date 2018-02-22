@@ -51,10 +51,6 @@ class MeiTask extends \Phalcon\Cli\Task
         }
     }
 
-    function citiesAction()
-    {
-    }
-
     function test2Action()
     {
         $k = '浙江';
@@ -1969,6 +1965,36 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($complaints as $complaint) {
             $complaint->respondent_id = $new_user_id;
             $complaint->save();
+        }
+    }
+
+    function getSilentUsersAction()
+    {
+        $cond = [
+            'conditions' => 'user_type = :user_type: and avatar_status = :avatar_status: and id < 100000',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS]
+        ];
+
+        $users = Users::find($cond);
+
+        echoLine(count($users));
+    }
+
+    function getSilentRoomsAction()
+    {
+        $cond = [
+            'conditions' => 'user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_SILENT]
+        ];
+
+        $rooms = Rooms::find($cond);
+
+        echoLine(count($rooms));
+
+        foreach ($rooms as $room) {
+            if ($room->user_id >= 100000) {
+                echoLine($room->id, $room->user_id);
+            }
         }
     }
 }
