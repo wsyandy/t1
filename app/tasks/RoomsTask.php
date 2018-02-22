@@ -95,7 +95,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT;
+            $cond['conditions'] = '(room_id = 0 or room_id is null) and user_type = ' . USER_TYPE_SILENT;
             $user = Users::findFirst($cond);
 
             $room = Rooms::createRoom($user, $title);
