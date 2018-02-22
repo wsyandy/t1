@@ -73,13 +73,25 @@ class PaymentChannels extends BaseModel
     function match($user)
     {
         debug("user: " . $user->platform);
+
+        $version_code = $user->version_code;
+
+        if ($this->android_version_code && $user->isAndroid() && $this->android_version_code > $version_code) {
+            return false;
+        }
+
+        if ($this->ios_version_code && $user->isIos() && $this->ios_version_code > $version_code) {
+            return false;
+        }
+
         if (isDevelopmentEnv()) {
             return true;
         }
+
         if ($this->isApple()) {
             return $user->isIos();
         }
-        
+
         return $user->isAndroid();
     }
 
@@ -99,7 +111,7 @@ class PaymentChannels extends BaseModel
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
         $selected = [];
         foreach ($payment_channels as $payment_channel) {
-            if ($payment_channel->isValid() && $payment_channel->match($user) || isDevelopmentEnv()) {
+            if ($payment_channel->isValid() && $payment_channel->match($user)) {
                 if (isPresent($format) && $payment_channel->isResponseTo($format)) {
                     $selected[] = $payment_channel->$format();
                 } else {
