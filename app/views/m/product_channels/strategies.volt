@@ -34,7 +34,7 @@
                     <div class="text">
                         <h1>02 .</h1>
                         <p>点击右上角 <i class="edit"></i> ,</p>
-                        <span>进入编辑资料</span>image
+                        <span>进入编辑资料</span>
                     </div>
                 </div>
                 <div class="text_left mr_top">
