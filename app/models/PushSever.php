@@ -205,10 +205,10 @@ class PushSever extends BaseModel
     {
         $receiver_fd = fetch($payload, 'fd');
         $body = fetch($payload, 'body');
-        info($receiver_fd, $payload, $body);
+        info($receiver_fd, $payload);
         if ($receiver_fd) {
             if (!$server->exist($receiver_fd)) {
-                info($receiver_fd, "Exce not exist");
+                info($receiver_fd, $payload, "Exce fd not exist");
                 return;
             }
             $server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
