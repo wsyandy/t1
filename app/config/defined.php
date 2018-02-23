@@ -55,6 +55,7 @@ define('USER_UNSUBSCRIBE', 0); // 取消关注
 #第三方登陆
 define('THIRD_AUTH_THIRD_NAME_WEIXIN', 'weixin');//微信登陆
 define('THIRD_AUTH_THIRD_NAME_QQ', 'qq');//微信登陆
+define('THIRD_AUTH_THIRD_NAME_SINAWEIBO', 'sinaweibo');//微博登陆
 
 //指定平台禁用该客户端主题
 define('VERSION_CODE_FORBIDDEN', -1);
@@ -63,6 +64,7 @@ define('VERSION_CODE_FORBIDDEN', -1);
 define('USER_LOGIN_TYPE_MOBILE', 'mobile');//手机登陆类型
 define('USER_LOGIN_TYPE_WEIXIN', 'weixin');//微信登陆类型
 define('USER_LOGIN_TYPE_QQ', 'qq');//QQ登陆类型
+define('USER_LOGIN_TYPE_SINAWEIBO', 'sinaweibo');//微博登陆类型
 define('USER_LOGIN_TYPE_OTHER', 'other');//其他登陆类型
 
 // 设备状态

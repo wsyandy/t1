@@ -30,7 +30,9 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar') %}
+        {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
+            or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
+            isAllowed('rooms','index') or isAllowed('broadcasts','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -57,6 +59,11 @@
                     {% if isAllowed('users','index') %}
                         <li>
                             <a href="/admin/users">用户列表</a>
+                        </li>
+                    {% endif %}
+                    {% if isAllowed('third_auths','index') %}
+                        <li>
+                            <a href="/admin/third_auths">第三方登录</a>
                         </li>
                     {% endif %}
                     {% if isAllowed('sms_histories','index') %}
