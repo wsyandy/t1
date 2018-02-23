@@ -247,8 +247,12 @@ class UsersController extends BaseController
 
             $user->updatePushToken($device);
 
-            $user_simple_json = $user->toSimpleJson();
-            $user_simple_json['sid'] = $user->sid;
+            $key = $this->currentProductChannel()->getSignalingKey($user->id);
+            $app_id = $this->currentProductChannel()->getImAppId();
+
+            $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key];
+            $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
