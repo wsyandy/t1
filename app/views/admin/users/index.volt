@@ -36,6 +36,7 @@
     激活时间: {{ user.created_at_text }}<br/>
     注册时间: {{ user.register_at_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
+    登录方式: {{ user.login_type_text }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
@@ -98,6 +99,7 @@
             激活时间: ${ user.created_at_text }<br/>
             注册时间: ${ user.register_at_text }<br/>
             最后活跃时间: ${ user.last_at_text }<br/>
+            最后活跃时间: ${ user.login_type_text }
         </td>
         <td>
             {% if isAllowed('users','detail') %}

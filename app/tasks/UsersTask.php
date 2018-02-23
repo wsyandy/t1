@@ -141,5 +141,15 @@ class UsersTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixUserLoginTypeAction()
+    {
+        $users = Users::find(['conditions' => '(mobile != "" or mobile is not null) and user_status = 1']);
+
+        foreach ($users as $user) {
+            $user->login_type = USER_LOGIN_TYPE_MOBILE;
+            $user->update();
+        }
+    }
 }
 

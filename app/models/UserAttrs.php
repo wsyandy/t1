@@ -58,7 +58,8 @@ trait UserAttrs
             'user_status_text' => $this->user_status_text,
             'created_at_text' => $this->created_at_text,
             'register_at_text' => $this->register_at_text,
-            'last_at_text' => $this->last_at_text
+            'last_at_text' => $this->last_at_text,
+            'login_type_text' => $this->login_type_text
         ];
     }
 
