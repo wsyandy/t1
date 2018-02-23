@@ -34,7 +34,7 @@
                     <div class="text">
                         <h1>02 .</h1>
                         <p>点击右上角 <i class="edit"></i> ,</p>
-                        <span>进入编辑资料</span>
+                        <span>进入编辑资料</span>image
                     </div>
                 </div>
                 <div class="text_left mr_top">
@@ -144,10 +144,23 @@
                 <div class="text_left mr_top">
                     <div class="text m_right">
                         <h1>03 .</h1>
-                        <p>点击自己头像，选择下麦旁听或查看资料</p>
+                        <p>点击空余麦位，</br>
+                            即可上麦，</br>
+                            与房主和其它麦位</br>
+                            语音聊天</p>
                     </div>
                     <div class="img">
                         <img src="/m/images/4_3.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/4_4.png">
+                    </div>
+                    <div class="text">
+                        <h1>04 .</h1>
+                        <p>点击自己或他人头像，</br>
+                            选择下麦旁听或查看资料 </p>
                     </div>
                 </div>
             </div>
