@@ -413,7 +413,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
 
@@ -477,12 +477,19 @@ class Users extends BaseModel
         if (!$headimgurl) {
             return;
         }
+
         $user = \Users::findFirstById($user_id);
+
         if ($user) {
             $avatar_file = APP_ROOT . 'temp/' . md5(uniqid(mt_rand())) . '.jpg';
-            httpSave($headimgurl, $avatar_file);
-            $user->updateAvatar($avatar_file);
-            unlink($avatar_file);
+
+            try {
+                httpSave($headimgurl, $avatar_file);
+                $user->updateAvatar($avatar_file);
+                unlink($avatar_file);
+            } catch (\Exception $e) {
+                info("Exce", $e->getMessage());
+            }
         }
     }
 
@@ -2001,4 +2008,108 @@ class Users extends BaseModel
         $hot_db = Users::getHotWriteCache();
         $hot_db->zadd(Users::authedKey(), time(), $this->id);
     }
+
+    //第三方登录
+    static function findFirstByThirdUnionid($product_channel, $third_unionid, $third_name)
+    {
+        $cond['conditions'] = 'third_unionid = :third_unionid: and product_channel_id = :product_channel_id: and user_status != :user_status:' .
+            ' and third_name = :third_name:';
+        $cond['bind'] = ['third_unionid' => $third_unionid, 'product_channel_id' => $product_channel->id,
+            'user_status' => USER_STATUS_OFF, 'third_name' => $third_name];
+        $cond['order'] = 'id desc';
+
+        $user = Users::findFirst($cond);
+        return $user;
+    }
+
+    static function thirdLogin($current_user, $device, $params, $context = [])
+    {
+        if (!$params) {
+            return [ERROR_CODE_FAIL, '参数错误', null];
+        }
+
+        if (!$device || !$device->can_register) {
+            info('false_device', $current_user->product_channel->code, $context);
+            return [ERROR_CODE_FAIL, '设备错误!!', null];
+        }
+
+        $third_id = fetch($params, 'third_id');
+        $third_name = fetch($params, 'third_name');
+        $third_unionid = fetch($params, 'third_unionid');
+
+        $third_auth = \ThirdAuths::findFirstBy(['product_channel_id' => $current_user->product_channel_id, 'third_id' => $third_id,
+            'third_name' => $third_name
+        ]);
+
+        if (!$third_auth) {
+            $third_auth = new \ThirdAuths();
+            $third_auth->third_id = $third_id;
+            $third_auth->third_token = $params['third_token'];
+            $third_auth->third_name = $third_name;
+            $third_auth->product_channel_id = $current_user->product_channel_id;
+            $third_auth->third_unionid = $third_unionid;
+            $third_auth->save();
+        }
+
+        $user = $current_user;
+
+        $third_unionid = $third_unionid ? $third_unionid : $third_id;
+
+        //其他账户的快捷登陆 重新注册新用户
+        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->mobile) {
+            $user = Users::registerForClientByDevice($device, true);
+            $user->register_at = time();
+        }
+
+        $third_auth->user_id = $user->id;
+        $third_auth->save();
+
+        $fr = $device->fr;
+
+        if (!$fr) {
+            $fr = fetch($context, 'fr');
+            $user->fr = $fr;
+            $device->fr = $fr;
+        }
+
+        $partner = \Partners::findFirstByFrHotCache($fr);
+        if ($partner) {
+            $user->partner_id = $partner->id;
+            $device->partner_id = $partner->id;
+        }
+
+        $device->user_id = $user->id;
+        $device->update();
+
+        $fields = ['platform', 'platform_version', 'version_code', 'version_name', 'api_version', 'device_no', 'manufacturer',
+            'ip', 'latitude', 'longitude', 'push_token'];
+
+        foreach ($fields as $field) {
+
+            if ($device->$field) {
+                $user->$field = $device->$field;
+            }
+        }
+
+        $user->third_unionid = $third_unionid;
+        $user->third_name = $third_name;
+        $user->device_id = $device->id;
+        $user->login_name = $params['login_name'];
+        $user->nickname = $params['nickname'];
+        $user->user_type = USER_TYPE_ACTIVE;
+        $user->sid = $user->generateSid('s');
+        $user->update();
+
+        info('third_login_log,user_id=', $user->id);
+
+        $source_url = fetch($params, 'avatar_url');
+
+        //上传头像
+        if ($source_url) {
+            \Users::delay()->uploadWeixinAvatar($user->id, $source_url);
+        }
+
+        return [ERROR_CODE_SUCCESS, '登陆成功', $user];
+    }
+
 }
