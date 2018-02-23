@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 06/01/2018
  * Time: 10:56
  */
-
 class PaymentChannels extends BaseModel
 {
 
@@ -16,6 +16,8 @@ class PaymentChannels extends BaseModel
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
+
+    static $PLATFORMS = ['*' => '全部', 'ios' => 'ios', 'android' => '安卓'];
 
     function toJson()
     {

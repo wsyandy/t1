@@ -1,0 +1,1 @@
+ALTER TABLE payment_channels ADD COLUMN platforms VARCHAR (255) DEFAULT '';
