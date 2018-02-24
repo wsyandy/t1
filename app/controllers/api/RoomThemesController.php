@@ -14,6 +14,6 @@ class RoomThemesController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 100);
         $room_themes = \RoomThemes::findValidList($page, $per_page);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_themes->toJson('themes', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_themes->toJson('room_themes', 'toSimpleJson'));
     }
 }
