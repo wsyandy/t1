@@ -29,6 +29,21 @@ class GiftOrders extends BaseModel
         GIFT_ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    function toJson()
+    {
+        return array(
+            'name' => $this->name,
+            'user_name' => $this->getGiftUser($this->user_id)->nickname,
+            'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
+            'amount' => $this->amount,
+            'gift_num'=>$this->gift_num,
+            'image_url' => $this->gift_image_url,
+            'image_small_url' => $this->gift_image_small_url,
+            'image_big_url' => $this->gift_image_big_url,
+            'created_at_text'=>$this->created_at_text,
+        );
+    }
+
     /**
      * @param $sender_id
      * @param $receiver_id
@@ -103,5 +118,11 @@ class GiftOrders extends BaseModel
     function getSenderUserTypeText()
     {
         return fetch(Users::$USER_TYPE, $this->sender_user_type);
+    }
+
+    function getGiftUser($id)
+    {
+        $user = \Users::findFirstById($id);
+        return $user;
     }
 }
