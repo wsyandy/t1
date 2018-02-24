@@ -954,14 +954,15 @@ class Rooms extends BaseModel
             return;
         }
 
-        if ($room->getRealUserNum() > 0) {
+        $silent_users = $room->findSilentUsers();
 
-            $silent_users = $room->findSilentUsers();
-
+        if (count($silent_users) > 0) {
             foreach ($silent_users as $silent_user) {
                 $silent_user->activeRoom($room);
             }
-        } elseif ($room->isSilent()) {
+        }
+
+        if ($room->isSilent() || $room->getRealUserNum() > 0) {
             $room->addSilentUsers();
         }
     }
