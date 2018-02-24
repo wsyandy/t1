@@ -539,75 +539,11 @@
 }
 ```
 
-### 19 我收到的礼物
+### 19 我的礼物
+###### 19.1 我接收的礼物
+> http-get ```/m/gift_orders/index```  
 
-> http-url ```/m/gifts/index```
+###### 19.1 我发送的礼物
+> http-get ```/m/gift_orders/list```  
 
-##### 19.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|page|页码|int|否||
-|per_page|每页|int|否|||
-
-##### 19.2 回应参数说明
-```
-{
-    "error_code": 
-    "error_reason": 
-    "error_url": 
-    "now_at": 
-    "current_page": 当前页
-    "total_page": 总页数
-    "total_entries": 总记录数
-    "gift_orders": [
-        {
-            "name": 礼物名称
-            "user_name": 礼物接收者姓名
-            "sender_name": 礼物发送者姓名
-            "amount": 支付金额
-            "gift_num": 礼物个数
-            "image_url": 原图
-            "image_small_url": 小图
-            "image_big_url": 大图
-            "created_at_text": 创建时间
-        },
-     ]
-}
-```
-
-### 20 我发送的礼物
-
-> http-url ```/m/gifts/list```
-
-##### 20.1 请求参数说明
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|page|页码|int|否||
-|per_page|每页|int|否|||
-
-##### 20.2 回应参数说明
-```
-{
-    "error_code": 
-    "error_reason": 
-    "error_url": 
-    "now_at": 
-    "current_page": 当前页
-    "total_page": 总页数
-    "total_entries": 总记录数
-    "gift_orders": [
-        {
-            "name": 礼物名称
-            "user_name": 礼物接收者姓名
-            "sender_name": 礼物发送者姓名
-            "amount": 支付金额
-            "gift_num": 礼物个数
-            "image_url": 原图
-            "image_small_url": 小图
-            "image_big_url": 大图
-            "created_at_text": 创建时间
-        },
-     ]
-}
-```
 

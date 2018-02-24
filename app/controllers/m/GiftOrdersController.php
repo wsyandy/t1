@@ -8,7 +8,7 @@
 
 namespace m;
 
-class GiftsController extends BaseController
+class GiftOrdersController extends BaseController
 {
 
     //用户收到的礼物
