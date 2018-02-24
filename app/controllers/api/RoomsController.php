@@ -528,7 +528,7 @@ class RoomsController extends BaseController
 
         $room->room_theme_id = $room_theme_id;
         $room->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功',['image_url'=>$room_theme->image_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->image_url]);
     }
 
     function closeThemeAction()
@@ -540,7 +540,7 @@ class RoomsController extends BaseController
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限','');
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限', '');
         }
 
         $room->room_theme_id = 0;
