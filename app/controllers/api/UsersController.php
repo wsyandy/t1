@@ -474,4 +474,35 @@ class UsersController extends BaseController
         )));
     }
 
+    function qrcodeLoginAction()
+    {
+        $token = $this->params('token');
+        debug($token, $this->params());
+        $access_token = \AccessTokens::validToken($token);
+
+        if (!$access_token) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误, token错误或者过期');
+        }
+
+        $user = $this->currentUser();
+
+        if (!$user || $user->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '没有对应的用户');
+        }
+
+        $confirm = $this->params('confirm');
+
+        if ($confirm) {
+
+            $access_token->status = AUTH_SUCCESS;
+            $access_token->user_id = $user->id;
+            $access_token->save();
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '确认成功');
+        }
+
+        $auth_url = $this->getRoot() . 'api/users/qrcode_login?token=' . $token . '&confirm=1';
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '确认登录', ['auth_url' => $auth_url]);
+    }
 }

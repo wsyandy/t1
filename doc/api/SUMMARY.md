@@ -25,4 +25,5 @@
 * [表情](emoticon_images.md)
 * [音频](audio_chapters.md)
 * [收益](withdraw_histories.md)
+* [房间主题](room_themes.md)
 ## Published with GitBook
