@@ -540,10 +540,6 @@
 ```
 
 ### 19 我的礼物
-###### 19.1 我接收的礼物
-> http-get ```/m/gift_orders/index```  
-
-###### 19.1 我发送的礼物
-> http-get ```/m/gift_orders/list```  
+> http-get ```/m/gift_orders/index```  直接URL跳转
 
 
