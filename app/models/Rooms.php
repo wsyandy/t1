@@ -977,9 +977,9 @@ class Rooms extends BaseModel
             foreach ($silent_users as $silent_user) {
                 $silent_user->activeRoom($room);
             }
+        } elseif ($room->isSilent()) {
+            $room->addSilentUsers();
         }
-
-        $room->addSilentUsers();
     }
 
     function addSilentUsers()
