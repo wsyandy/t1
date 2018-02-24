@@ -79,4 +79,60 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpGet($url, $body);
         echoLine($res);
     }
+
+    function test5Action($params)
+    {
+        $url = "http://chance.com/api/room_themes";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test6Action()
+    {
+        $url = "http://chance.com/api/rooms/set_theme";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => 15,'room_theme_id'=>'2']);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test7Action()
+    {
+        $url = "http://chance.com/api/rooms/close_theme";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => 15]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test8Action()
+    {
+        $url = "http://chance.com/api/rooms/detail";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => 15]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
 }

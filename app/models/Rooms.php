@@ -18,6 +18,11 @@ class Rooms extends BaseModel
      */
     private $_audio;
 
+    /**
+     * @type RoomThemes
+     */
+    private $_room_theme;
+
 
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
@@ -65,7 +70,9 @@ class Rooms extends BaseModel
         $user = $this->user;
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
             'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
-            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers()];
+            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
+            'theme_image' => $this->theme_image_url
+        ];
     }
 
     function toBasicJson()
@@ -432,6 +439,15 @@ class Rooms extends BaseModel
         }
 
         return $chat_text;
+    }
+
+    function getThemeImageUrl()
+    {
+        if (!$this->room_theme_id) {
+            return '';
+        }
+        $room_theme = $this->room_theme;
+        return $room_theme->image_url;
     }
 
     //禁止 踢出房间 禁止用户在10分钟内禁入
