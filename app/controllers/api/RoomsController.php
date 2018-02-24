@@ -507,4 +507,44 @@ class RoomsController extends BaseController
         $managers = $room->findManagers();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['managers' => $managers]);
     }
+
+    function setThemeAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+        }
+
+        $room_theme_id = $this->params('room_theme_id');
+        $room_theme = \RoomThemes::findFirstById($room_theme_id);
+        if (!$room_theme || $room_theme->status != STATUS_ON) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的主题');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room->room_theme_id = $room_theme_id;
+        $room->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->image_url]);
+    }
+
+    function closeThemeAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限', '');
+        }
+
+        $room->room_theme_id = 0;
+        $room->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+    }
 }
