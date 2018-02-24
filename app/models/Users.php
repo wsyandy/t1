@@ -1769,9 +1769,7 @@ class Users extends BaseModel
         if (isProduction()) {
             if ($room->isSilent()) {
                 if ($rand_num <= 70) {
-                    if ($room->getRealUserNum() > 0) {
-                        Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
-                    }
+                    Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
                 } elseif (70 < $rand_num && $rand_num <= 80) {
                     $room->exitSilentRoom($this);
                     return;
@@ -1792,9 +1790,7 @@ class Users extends BaseModel
                     Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
                 }
             } elseif (53 < $rand_num && $rand_num <= 90) {
-                if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
-                }
+                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
             } else {
                 $room->exitSilentRoom($this);
                 return;
