@@ -23,7 +23,7 @@
         {
             id: int 
             name: string 主题名称
-            icon_url: 'https://themes/icon'
+            icon_url: string 主题图标 'https://room_themes/icon'
         }
         ...
     ]
