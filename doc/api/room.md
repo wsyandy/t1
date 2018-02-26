@@ -514,7 +514,7 @@
 ```
 
 ### 21 更换主题
-> http-post ```/api/room/set_theme```
+> http-post ```/api/rooms/set_theme```
 
 ##### 21.1 请求参数说明
 
@@ -533,7 +533,7 @@
 ```
 
 ### 22 关闭主题
-> http-post ```/api/room/close_theme```
+> http-post ```/api/rooms/close_theme```
 
 ##### 22.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
