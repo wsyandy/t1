@@ -14,26 +14,46 @@ class ComplaintsController extends BaseController
     {
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
-        $this->view->room_id = $this->params('room_id', 0);
-        $this->view->user_id = $this->params('user_id', null);
-        $this->view->complaint_types = \Complaints::$COMPLAINT_TYPE;
+
+        $music_id = $this->params('music_id', 0);
+        $room_id = $this->params('room_id', 0);
+        $user_id = $this->params('user_id', null);
+
+        $type = '';
+        $opt_id = 0;
+        if ($room_id) {
+            $opt_id = $room_id;
+            $type = COMPLAINT_ROOM;
+        } else if ($user_id) {
+            $opt_id = $user_id;
+            $type = COMPLAINT_USER;
+        } else if ($music_id) {
+            $opt_id = $music_id;
+            $type = COMPLAINT_MUSIC;
+        }
+
+        $this->view->opt_id = $opt_id;
+        $this->view->type = $type;
+
+        $complaint_types = \Complaints::generateComplaintType($type);
+        $this->view->complaint_types = $complaint_types;
     }
 
     function createAction()
     {
         if ($this->request->isAjax()) {
-            $room_id = $this->params('room_id', 0);
-            $user_id = $this->params('user_id', null);
+            $opt_id = $this->params('opt_id', 0);
+            $type = $this->params('type');
             $complaint_type = $this->params('complaint_type');
             if (!$complaint_type) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '举报类型错误');
             }
 
-            if (!$user_id && !$room_id) {
+            if (!$opt_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '举报对象不能为空');
             }
 
-            $opts = ['room_id' => $room_id, 'respondent_id' => $user_id, 'complaint_type' => $complaint_type];
+            $opts = ['opt_id' => $opt_id, 'type' => $type, 'complaint_type' => $complaint_type];
             \Complaints::createComplaint($this->currentUser(), $opts);
 
             $this->renderJSON(ERROR_CODE_SUCCESS, '举报成功', ['error_url' => "app://back"]);

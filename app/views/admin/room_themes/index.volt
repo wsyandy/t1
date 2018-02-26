@@ -15,7 +15,7 @@
 共{{ room_themes.total_entries }}个
 
 {{ simple_table(room_themes, [
-"ID": 'id', "名称": 'name',"背景图": 'image_link',"Icon": 'icon_link',
+"ID": 'id', "名称": 'name',"背景图": 'image_link',"图标": 'icon_link',
 "有效": 'status_text', "排序":'rank', '编辑': 'edit_link'
 ]) }}
 

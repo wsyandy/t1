@@ -10,6 +10,8 @@
 |---|---|---|---
 |user_id|int|是|被举报用户ID
 |room_id|int|是|被举报房间ID
+|music_id|int|是|被举报音乐ID
+
 
 
 

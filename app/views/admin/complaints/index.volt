@@ -12,7 +12,7 @@
 
 {{ simple_table(complaints, [
 'ID': 'id', '时间': 'created_at_text', '举报人':'complainer_link','被举报人': 'respondent_link',
-'房间': 'room_link','举报类型': 'complaint_type_text',
+'房间': 'room_link','歌曲':'music_id','举报类型': 'complaint_type_text',
 '状态': 'status_text'
 ]
 ) }}
