@@ -38,4 +38,34 @@ class MusicsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
     }
+
+    function downAction()
+    {
+        $id = $this->params('id');
+
+        $music = \Musics::findFirstById($id);
+
+        if (!$music) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $music->down($this->currentUser()->id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function deleteAction()
+    {
+        $id = $this->params('id');
+
+        $music = \Musics::findFirstById($id);
+
+        if (!$music) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $music->remove($this->currentUser()->id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
 }
