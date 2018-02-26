@@ -44,7 +44,7 @@ class RoomsController extends BaseController
         $this->assign($room, 'room');
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms?room[id_eq]=' . $room->id]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
         }

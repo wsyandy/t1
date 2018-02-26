@@ -188,3 +188,49 @@
     status int 麦位状态 0 麦位被封 1麦位正常
 }
 ```
+
+### 9 打开音乐权限 
+
+> http-post ```/api/room_seats/open_music_permission```
+
+##### 9.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|麦位id|int|否|||
+
+##### 9.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 false/true 默认为false
+}
+```
+
+### 10 关闭音乐权限 
+
+> http-post ```/api/room_seats/close_music_permission```
+
+##### 10.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|麦位id|int|否|||
+
+##### 10.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id 麦位id
+    room_id 房间id
+    microphone 麦位麦克风状态 false/true 默认为true
+    rank 麦位排序, 1-8， 8个麦位
+    status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 false/true 默认为false
+}
+```
