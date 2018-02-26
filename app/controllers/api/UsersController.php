@@ -509,6 +509,11 @@ class UsersController extends BaseController
     //用户音乐列表
     function musicsAction()
     {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
 
+        $musics = $this->currentUser()->findMusics($page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
     }
 }
