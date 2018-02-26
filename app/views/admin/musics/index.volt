@@ -8,7 +8,7 @@
 
 
 {{ simple_table(musics, [
-"ID": 'id', "名称": 'name',"歌手名称": 'singer_name', '类型':'type_text',"有效": 'status_text', "排名": 'rank','编辑': 'edit_link'
+"ID": 'id', "名称": 'name',"歌手名称": 'singer_name',"文件大小": 'file_size_text', '类型':'type_text',"有效": 'status_text', "排名": 'rank','编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="music_tpl">
@@ -16,6 +16,7 @@
         <td>${music.id}</td>
         <td>${music.name}</td>
         <td>${music.singer_name}</td>
+        <td>${music.file_size_text}</td>
         <td>${music.type_text}</td>
         <td>${music.status_text}</td>
         <td>${music.rank}</td>
