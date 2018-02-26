@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
@@ -7,6 +8,11 @@
  */
 class Musics extends BaseModel
 {
+    /**
+     * @type Users
+     */
+    private $_user;
+
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
     static $TYPE = [1 => '伴奏', 2 => '原唱'];
     static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
@@ -19,9 +25,8 @@ class Musics extends BaseModel
             'id' => $this->id,
             'name' => $this->name,
             'singer_name' => $this->singer_name,
-            'status_text' => $this->status_text,
-            'type_text' => $this->type_text,
-            'rank' => $this->rank,
+            'user_name' => $this->user_name,
+            'file_size' => $this->file_size_text
         ];
     }
 
@@ -33,4 +38,23 @@ class Musics extends BaseModel
         return StoreFile::getUrl($this->file);
     }
 
+    function getUserName()
+    {
+        if ($this->user) {
+            return $this->user->nickname;
+        }
+
+        return '';
+    }
+
+    function getFileSizeText()
+    {
+        $file_size = 0;
+
+        if ($this->file_size) {
+            $file_size = round($this->file_size / 1000000, 1);
+        }
+
+        return $file_size . "M";
+    }
 }
