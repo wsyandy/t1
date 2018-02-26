@@ -541,7 +541,7 @@
 
 ### 19. 我的礼物(h5)
 
-> http-get ```/m/gift_orders/index```
+> http-get ```/m/gift_orders```
 
 ##### 16.1 请求参数说明
 ```
