@@ -274,4 +274,40 @@ class RoomSeatsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
+
+
+    function openMusicPermissionAction()
+    {
+        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
+        if (!$room_seat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room_seat->can_play_music = true;
+        $room_seat->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '',$room_seat->toSimpleJson());
+
+    }
+
+    function closeMusicPermissionAction()
+    {
+        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
+
+        if (!$room_seat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room_seat->room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room_seat->can_play_music = false;
+        $room_seat->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '',$room_seat->toSimpleJson());
+    }
 }

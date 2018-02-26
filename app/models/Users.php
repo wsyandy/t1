@@ -1781,16 +1781,25 @@ class Users extends BaseModel
                 }
             }
         } else {
-            if ($rand_num <= 50) {
-                if ($room->getRealUserNum() > 0 && $room->chat) {
-                    Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
-                }
-            } elseif (50 < $rand_num && $rand_num <= 52) {
+//            if ($rand_num <= 50) {
+//                if ($room->getRealUserNum() > 0 && $room->chat) {
+//                    Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
+//                }
+//            } elseif (50 < $rand_num && $rand_num <= 52) {
+//                if ($room->getRealUserNum() > 0) {
+//                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+//                }
+//            } elseif (53 < $rand_num && $rand_num <= 90) {
+//                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+//            } else {
+//                $room->exitSilentRoom($this);
+//                return;
+//            }
+
+            if ($rand_num <= 90) {
                 if ($room->getRealUserNum() > 0) {
                     Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
                 }
-            } elseif (53 < $rand_num && $rand_num <= 90) {
-                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
             } else {
                 $room->exitSilentRoom($this);
                 return;
@@ -2116,4 +2125,18 @@ class Users extends BaseModel
         return [ERROR_CODE_SUCCESS, '登陆成功', $user];
     }
 
+    function findMusics($page, $per_page)
+    {
+        $user_db = Users::getUserDb();
+        $key = "user_musics_id" . $this->id;
+        $total_entries = $user_db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $music_ids = $user_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $musics = Musics::findByIds($music_ids);
+
+        $pagination = new PaginationModel($musics, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Musics';
+
+        return $pagination;
+    }
 }

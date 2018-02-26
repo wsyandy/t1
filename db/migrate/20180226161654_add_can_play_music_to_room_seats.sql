@@ -1,0 +1,1 @@
+ALTER TABLE room_seats ADD COLUMN can_play_music  boolean DEFAULT FALSE;

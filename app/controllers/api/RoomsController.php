@@ -39,6 +39,7 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
+        $hot = $this->params('hot', 0);
         $user_id = $this->currentUserId();
 
         //限制搜索条件
@@ -46,6 +47,11 @@ class RoomsController extends BaseController
             'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . ' and user_id <> ' . $user_id,
             'order' => 'last_at desc, user_type asc'
         ];
+
+        //热门条件
+        if ($hot) {
+            $cond['conditions'] .= ' and hot = ' . $hot;
+        }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));

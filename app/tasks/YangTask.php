@@ -103,7 +103,7 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $body = array_merge($body, ['sid' => $user->sid, 'id' => 15,'room_theme_id'=>'2']);
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => 15, 'room_theme_id' => '2']);
         $res = httpGet($url, $body);
         echoLine($res);
     }
@@ -132,6 +132,51 @@ class YangTask extends \Phalcon\Cli\Task
             $user = $this->updateUserInfo($user);
         }
         $body = array_merge($body, ['sid' => $user->sid, 'id' => 15]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function openMusicPermissionAction($params)
+    {
+        $url = "http://chance.com/api/room_seats/open_music_permission";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return echoLine("此用户不存在");
+        }
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $room = $user->room;
+        if (!$room) {
+            return echoLine("此用户的房间不存在");
+        }
+        $room_seat = RoomSeats::findFirstByRoomId($room->id);
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => $room_seat->id]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function closeMusicPermissionAction($params)
+    {
+        $url = "http://chance.com/api/room_seats/close_music_permission";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return echoLine("此用户不存在");
+        }
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $room = $user->room;
+        if (!$room) {
+            return echoLine("此用户的房间不存在");
+        }
+        $room_seat = RoomSeats::findFirstByRoomId($room->id);
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => $room_seat->id]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
