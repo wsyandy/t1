@@ -13,8 +13,8 @@
 ##### 返回参数说明
 ````
 { 
-    error_code: 0/-1/-2
-    error_reason: '赠送成功/失败/余额不足'
+    error_code: ''
+    error_reason: ''
     musics [
         {
             id int 音乐id
