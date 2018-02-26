@@ -8,7 +8,8 @@
 class Musics extends BaseModel
 {
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
-    static $TYPE = ['1' => '伴奏', '2' => '原唱'];
+    static $TYPE = [1 => '伴奏', 2 => '原唱'];
+    static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
 
     static $files = ['file' => APP_NAME . '/musics/file/%s'];
 
