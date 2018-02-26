@@ -66,76 +66,78 @@ class Musics extends BaseModel
         return $file_size . "M";
     }
 
-    function beforeUpdate()
+    function checkField($files, $is_create = true)
     {
-
-    }
-
-    function checkField($files)
-    {
-        if (isBlank($files)) {
+        if (isBlank($files) && $is_create) {
             return [ERROR_CODE_FAIL, '上传文件不能为空'];
         }
+
         $fields = ['name', 'singer_name', 'rank'];
+
         foreach ($fields as $field) {
             if (isBlank($this->$field)) {
                 return [ERROR_CODE_FAIL, '字段不能为空'];
             }
         }
+
         $user = \Users::findFirstById($this->user_id);
+
         if (isBlank($user)) {
             return [ERROR_CODE_FAIL, '用户不存在'];
         }
+
         if ($_FILES['music']['size']['file'] > 20000000) {
             return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
         }
+
+        if ($this->hasChanged('rank')) {
+            if (!$this->checkRank()) {
+                return [ERROR_CODE_FAIL, '排序不能重复'];
+            }
+        }
+
+        if ($files) {
+            $this->file_md5 = md5_file($files['music']['tmp_name']['file']);
+        }
+
+        if ($this->hasChanged('file_md5')) {
+            if (!$this->checkFileMd5()) {
+                return [ERROR_CODE_FAIL, '不能重复上传文件'];
+            }
+
+            $this->file_size = $files['music']['size']['file'];
+        }
+
         return [ERROR_CODE_SUCCESS, ''];
     }
 
-    function checkFileMd5($files)
+    function checkFileMd5()
     {
         $cond = [
             'conditions' => 'file_md5 = :file_md5: and user_id = :user_id:',
-            'bind' => ['file_md5' => md5_file($files['music']['tmp_name']['file']), 'user_id' => $this->user_id]
+            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id]
         ];
+
         $music = \Musics::findFirst($cond);
-        if (!isBlank($music)) {
-            return null;
+
+        if (isPresent($music)) {
+            return false;
         }
+
         return true;
     }
 
     function checkRank()
     {
         $music = \Musics::findFirstByRank($this->rank);
-        if (!isBlank($music)) {
-            return null;
+
+        if (isPresent($music)) {
+            return false;
         }
+
         return true;
     }
 
-    function updateFile($music,$files)
-    {
-        $music->file_md5 = md5_file($files['music']['tmp_name']['file']);
-        $music->file_size = $files['music']['size']['file'];
-    }
-
-    function updateFileMd5($music,$files)
-    {
-        $this->updateFile($music,$files);
-        if($music->hasChanged('file_md5'))
-        {
-            if (!$this->checkFileMd5($files)) {
-                return [ERROR_CODE_FAIL, '不能重复上传文件'];
-            }
-        }
-        if($music->hasChanged('rank'))
-        {
-            if (!$this->checkRank()) {
-                return [ERROR_CODE_FAIL, '排序不能重复'];
-            }
-        }
-    }
 
     function down($user_id)
     {

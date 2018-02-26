@@ -30,23 +30,16 @@ class MusicsController extends BaseController
     {
         $music = new \Musics();
         $this->assign($music, 'music');
-        debug($_FILES);
+
         list($error_code, $error_reason) = $music->checkField($_FILES);
+
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
-        $music->updateFile($music,$_FILES);
-        if(!$music->checkFileMd5($_FILES))
-        {
-            return $this->renderJSON(ERROR_CODE_FAIL, '不能重复上传文件');
-        }
-        if(!$music->checkRank())
-        {
-            return $this->renderJSON(ERROR_CODE_FAIL, '排序不能重复');
-        }
+
         if ($music->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $music);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('music' => $music->toJson()));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['music' => $music->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '', '创建失败');
         }
@@ -60,21 +53,19 @@ class MusicsController extends BaseController
 
     function updateAction()
     {
-
-        debug($_FILES, $this->file('music[file]'));
         $music = \Musics::findById($this->params('id'));
         $this->assign($music, 'music');
-        list($error_code, $error_reason) = $music->checkField($_FILES);
+
+        list($error_code, $error_reason) = $music->checkField($_FILES, false);
+
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
-        list($error_code, $error_reason) = $music->updateFileMd5($music,$_FILES);
-        if ($error_code != ERROR_CODE_SUCCESS) {
-            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
-        }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $music);
+
         if ($music->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('music' => $music->toJson()));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['music' => $music->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');
         }
