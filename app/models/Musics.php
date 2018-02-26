@@ -12,7 +12,7 @@ class Musics extends BaseModel
 
     static $files = ['file' => APP_NAME . '/musics/file/%s'];
 
-    function toJson()
+    function toSimpleJson()
     {
         return [
             'id' => $this->id,
