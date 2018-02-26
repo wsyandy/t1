@@ -174,3 +174,12 @@ define('WITHDRAW_STATUS_FAIL',2); //提现失败
 define('COMPLAINT_USER',1); //举报用户
 define('COMPLAINT_ROOM',2); //举报房间
 define('COMPLAINT_MUSIC',3); //举报音乐
+
+//分享记录类型
+define('SHARE_TYPE_WEIXIN', 1);//微信好友
+define('SHARE_TYPE_WEIXIN_CIRCLE', 2);//朋友圈
+define('SHARE_TYPE_SINA', 3);//新浪微博
+define('SHARE_TYPE_QQ', 4);//QQ
+define('SHARE_TYPE_QZONE', 5);//QQ空间
+define('SHARE_TYPE_URL', 6);//链接
+define('SHARE_TYPE_CARD', 7);//邀请卡
