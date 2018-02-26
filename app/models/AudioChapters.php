@@ -15,7 +15,7 @@ class AudioChapters extends BaseModel
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $files = ['file' => APP_NAME . '/audio_chapter/%s'];
+    static $files = ['file' => APP_NAME . '/audio_chapter/file/%s'];
 
     function toJson()
     {
