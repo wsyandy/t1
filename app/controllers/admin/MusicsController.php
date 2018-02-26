@@ -16,8 +16,8 @@ class MusicsController extends BaseController
         $per_page = 100;
         $cond = $this->getConditions('musics');
         $cond['order'] = 'id desc';
-        $audios = \Musics::findPagination($cond, $page, $per_page);
-        $this->view->audios = $audios;
+        $musics = \Musics::findPagination($cond, $page, $per_page);
+        $this->view->musics = $musics;
     }
 
     function newAction()
@@ -32,12 +32,12 @@ class MusicsController extends BaseController
         $this->assign($music, 'music');
         $user = \Users::findFirstById($music->user_id);
         if (isBlank($user)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '', '用户不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
-        if ($_FILES['music']['size'] > 20000000) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '', '上传文件大小不能超过20M');
+        if ($_FILES['music']['size']['file'] > 20000000) {
+            return $this->renderJSON(ERROR_CODE_FAIL,  '上传文件大小不能超过20M');
         }
-        $music->file_size = $_FILES['music']['size'];
+        $music->file_size = $_FILES['music']['size']['file'];
 
         if ($music->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $music);
@@ -59,12 +59,12 @@ class MusicsController extends BaseController
         $this->assign($music, 'music');
         $user = \Users::findFirstById($music->user_id);
         if (isBlank($user)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '', '用户不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL,  '用户不存在');
         }
-        if ($_FILES['music']['size'] > 20000000) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '', '上传文件大小不能超过20M');
+        if ($_FILES['music']['size']['file'] > 20000000) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '上传文件大小不能超过20M');
         }
-        $music->file_size = $_FILES['music']['size'];
+        $music->file_size = $_FILES['music']['size']['file'];
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $music);
         if ($music->update()) {

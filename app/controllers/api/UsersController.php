@@ -505,4 +505,10 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '确认登录', ['auth_url' => $auth_url]);
     }
+
+    //用户音乐列表
+    function musicsAction()
+    {
+
+    }
 }

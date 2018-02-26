@@ -14,7 +14,8 @@ class Musics extends BaseModel
     private $_user;
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
-    static $TYPE = ['1' => '伴奏', '2' => '原唱'];
+    static $TYPE = [1 => '伴奏', 2 => '原唱'];
+    static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
 
     static $files = ['file' => APP_NAME . '/musics/file/%s'];
 
@@ -25,7 +26,8 @@ class Musics extends BaseModel
             'name' => $this->name,
             'singer_name' => $this->singer_name,
             'user_name' => $this->user_name,
-            'file_size' => $this->file_size_text
+            'file_size' => $this->file_size_text,
+            'file_url' => $this->file_url
         ];
     }
 
@@ -55,5 +57,25 @@ class Musics extends BaseModel
         }
 
         return $file_size . "M";
+    }
+
+    function down($user_id)
+    {
+        $db = Users::getUserDb();
+        $key = "user_musics_id" . $user_id;
+
+        if (!$db->zscore($key, $this->id)) {
+            $db->zadd($key, time(), $this->id);
+        }
+    }
+
+    function remove($user_id)
+    {
+        $db = Users::getUserDb();
+        $key = "user_musics_id" . $user_id;
+
+        if ($db->zscore($key, $this->id)) {
+            $db->zrem($key, $this->id);
+        }
     }
 }
