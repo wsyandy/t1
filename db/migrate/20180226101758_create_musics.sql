@@ -5,7 +5,7 @@ create table musics(
   singer_name VARCHAR (255),
   status integer,
   rank integer,
-  hot boolean DEFAULT false,
+  hot INTEGER DEFAULT 0,
   type integer,
   file VARCHAR (255),
   file_size VARCHAR (255),
