@@ -162,6 +162,7 @@
             status: int 麦位状态，0 麦为被封，1 麦位正常
             microphone 麦克风状态 false/true 默认为true,
             rank 麦位排序, 1-8, 8个麦位
+            can_play_music 能否播放音乐 true/false 默认为false
         }
         ...
     ]

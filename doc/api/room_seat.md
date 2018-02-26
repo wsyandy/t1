@@ -25,6 +25,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -49,6 +50,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -71,6 +73,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -93,6 +96,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -120,6 +124,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -147,6 +152,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 ### 7 确认上麦
@@ -186,6 +192,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -208,7 +215,7 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
-    can_play_music 能否播放音乐 false/true 默认为false
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
 
@@ -231,6 +238,6 @@
     microphone 麦位麦克风状态 false/true 默认为true
     rank 麦位排序, 1-8， 8个麦位
     status int 麦位状态 0 麦位被封 1麦位正常
-    can_play_music 能否播放音乐 false/true 默认为false
+    can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
