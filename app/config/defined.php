@@ -170,3 +170,7 @@ define('AUDIO_TYPE_MUSIC',2); //音乐
 define('WITHDRAW_STATUS_WAIT',0); //等待提现
 define('WITHDRAW_STATUS_SUCCESS',1); //提现成功
 define('WITHDRAW_STATUS_FAIL',2); //提现失败
+
+define('COMPLAINT_USER',1); //举报用户
+define('COMPLAINT_ROOM',2); //举报房间
+define('COMPLAINT_MUSIC',3); //举报音乐

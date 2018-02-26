@@ -50,8 +50,8 @@
         var data = {
             sid: "{{ sid }}",
             code: "{{ code }}",
-            room_id:{{ room_id }},
-            user_id: "{{ user_id }}",
+            opt_id: "{{ opt_id }}",
+            type: "{{ type }}",
             complaint_type: complaint_type
         };
         $.authPost("/m/complaints/create", data, function (resp) {
