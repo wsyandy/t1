@@ -216,4 +216,15 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixActiveRoomAction()
+    {
+        $rooms = Rooms::findBy(['online_status' => STATUS_OFF, 'user_type' => USER_TYPE_SILENT]);
+
+        foreach ($rooms as $room) {
+            if ($room->getRealUserNum() > 0) {
+                echoLine($room->getRealUserNum(), $room->id);
+            }
+        }
+    }
 }
