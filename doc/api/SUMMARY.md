@@ -23,7 +23,8 @@
 * [Websocket](websocket.md)
 * [支付上报](payment.md)
 * [表情](emoticon_images.md)
-* [音频](audio_chapters.md)
+* [电台音频](audio_chapters.md)
 * [收益](withdraw_histories.md)
 * [房间主题](room_themes.md)
+* [音乐](musics.md)
 ## Published with GitBook
