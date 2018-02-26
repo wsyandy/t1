@@ -2125,4 +2125,18 @@ class Users extends BaseModel
         return [ERROR_CODE_SUCCESS, '登陆成功', $user];
     }
 
+    function findMusics($page, $per_page)
+    {
+        $user_db = Users::getUserDb();
+        $key = "user_musics_id" . $this->id;
+        $total_entries = $user_db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $music_ids = $user_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $musics = Musics::findByIds($music_ids);
+
+        $pagination = new PaginationModel($musics, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Musics';
+
+        return $pagination;
+    }
 }

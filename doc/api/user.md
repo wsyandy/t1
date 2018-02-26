@@ -561,3 +561,31 @@
     4. 用户确认登录后再访问auth_url。error_reason 中会返回 确认成功 。到此客户端任务完成。
     5. 登录后台会自动跳转到对应的操作页面
 
+### 21 我的曲库
+
+> http-get ```/api/users/musics```
+
+##### 21.1 参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|page|当前页码|int|否||
+|per_page|每页个数|int|否|||
+
+##### 21.2 回应参数说明
+```
+{
+    error_code
+    error_reason  失败原因，默认为空
+    error_url 跳转地址
+    musics [
+        {
+            id int 音乐id
+            name string 音乐名称
+            singer_name string 演唱者名称
+            user_name string 上传者
+            file_size string 文件大小
+            file_url string 文件路径
+        }
+    ]
+}
+```
