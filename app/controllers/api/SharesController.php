@@ -18,7 +18,7 @@ class SharesController extends BaseController
 
         $user = $this->currentUser();
         $image_url = $user->avatar_small_url;
-        $image_small_url = "http://yiyuan-development.img-cn-hangzhou.aliyuncs.com/chance/product_channels/avatar/5a5c0e601d994.png@!small";
+        $image_small_url = $this->currentProductChannel()->avatar_url;
         $description = "H是目前最稳定、最火爆的语音交友社区,快来跟我一起玩吧！";
 
         $opts = [
@@ -29,7 +29,7 @@ class SharesController extends BaseController
         ];
         $share_history = \ShareHistories::createShareHistory($opts);
 
-        $url = $this->getRoot() . '/shares?share_history_id=' . $share_history->id;
+        $url = $share_history->getShareUrl($this->getRoot());
 
         $res = [
             'title' => $user->nickname . "正在邀请你一起连麦",

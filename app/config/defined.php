@@ -187,3 +187,4 @@ define('SHARE_TYPE_CARD', 7);//邀请卡
 define('SHARE_STATUS_WAIT', 0);
 define('SHARE_STATUS_SUCCESS', 1);  //分享成功
 define('SHARE_STATUS_FAIL', 2); //分享失败
+define('SHARE_STATUS_CANCEL',3); //分享取消

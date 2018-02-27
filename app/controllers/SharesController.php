@@ -15,9 +15,8 @@ class SharesController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $share_history->view_num += 1;
-        $share_history->save();
-        
+        $share_history->increase('view_num');
+
         $str = "第" . $share_history->view_num . "次访问";
         echo($str);
     }
