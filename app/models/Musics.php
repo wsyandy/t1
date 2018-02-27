@@ -34,7 +34,10 @@ class Musics extends BaseModel
     function mergeJson()
     {
         return [
-            'file_size_text' => $this->file_size_text
+            'file_size_text' => $this->file_size_text,
+            'user_nickname' => $this->user_nickname,
+            'sex_text' => $this->user->sex_text,
+            'user_mobile' => $this->user_mobile
         ];
     }
 
@@ -86,7 +89,7 @@ class Musics extends BaseModel
             return [ERROR_CODE_FAIL, '用户不存在'];
         }
 
-        if ($_FILES['music']['size']['file'] > 20000000) {
+        if ($files && $files['music']['size']['file'] > 20000000) {
             return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
         }
 
