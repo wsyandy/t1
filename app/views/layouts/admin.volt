@@ -82,7 +82,8 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') %}
+        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index')
+        or isAllowed('share_histories','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">订单<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -94,6 +95,9 @@
                     {% endif %}
                     {% if isAllowed('withdraw_histories','index') %}
                         <li><a href="/admin/withdraw_histories">提现列表</a></li>
+                    {% endif %}
+                    {% if isAllowed('share_histories','index') %}
+                        <li><a href="/admin/share_histories">分享记录</a></li>
                     {% endif %}
                 </ul>
             </li>
