@@ -27,4 +27,5 @@
 * [收益](withdraw_histories.md)
 * [房间主题](room_themes.md)
 * [音乐](musics.md)
+* [分享](share.md)
 ## Published with GitBook
