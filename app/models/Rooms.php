@@ -28,7 +28,7 @@ class Rooms extends BaseModel
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
-    static $HOT = [0 => '正常', 1 => '热门'];
+    static $HOT = [STATUS_OFF => '否', STATUS_ON => '是'];
 
     function beforeCreate()
     {

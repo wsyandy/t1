@@ -27,9 +27,12 @@ class EmoticonImagesController extends BaseController
     {
         $emoticon_image = new \EmoticonImages();
         $this->assign($emoticon_image, 'emoticon_image');
-        if ($emoticon_image->isRepeating()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '排序或code错误');
+
+        list($error_code, $error_reason) = $emoticon_image->checkFields();
+        if ($error_code == ERROR_CODE_FAIL) {
+            return $this->renderJSON($error_code, $error_reason);
         }
+
         if ($emoticon_image->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $emoticon_image);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('emoticon_image' => $emoticon_image->toJson()));
@@ -48,9 +51,12 @@ class EmoticonImagesController extends BaseController
     {
         $emoticon_image = \EmoticonImages::findById($this->params('id'));
         $this->assign($emoticon_image, 'emoticon_image');
-        if ($emoticon_image->isRepeating()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '排序或code错误');
+
+        list($error_code, $error_reason) = $emoticon_image->checkFields();
+        if ($error_code == ERROR_CODE_FAIL) {
+            return $this->renderJSON($error_code, $error_reason);
         }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $emoticon_image);
         if ($emoticon_image->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('emoticon_image' => $emoticon_image->toJson()));
