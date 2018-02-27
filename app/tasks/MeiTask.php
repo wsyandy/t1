@@ -259,4 +259,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
         echoLine($user_ids);
     }
+
+    function testUserLevelAction()
+    {
+        $user = Users::findFirstById(1);
+        $user->experience = 1.234567892345678923456789;
+        $user->save();
+        echoLine($user->experience);
+    }
 }
