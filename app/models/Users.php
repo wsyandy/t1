@@ -2041,7 +2041,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '参数错误', null];
         }
 
-        if (!$device || !$device->can_register) {
+        if (!$device || (!$device->can_register && isProduction())) {
             info('false_device', $current_user->product_channel->code, $context);
             return [ERROR_CODE_FAIL, '设备错误!!', null];
         }
