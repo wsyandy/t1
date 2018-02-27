@@ -151,5 +151,12 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixUserLevelAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        
+    }
 }
 
