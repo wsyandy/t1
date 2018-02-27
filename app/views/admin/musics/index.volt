@@ -19,8 +19,13 @@
 ]) }}
 
 <script type="text/template" id="music_tpl">
-    <tr id="audio_${ music.id }">
+    <tr id="music_${ music.id }">
         <td>${music.id}</td>
+        <td>
+            姓名:<a href="/admin/users?user[id_eq]=${music.user_id}">${music.user_nickname}</a><br/>
+            性别:${music.sex_text}<br/>
+            手机号码:${music.user_mobile}
+        </td>
         <td>${music.name}</td>
         <td>${music.singer_name}</td>
         <td>${music.file_size_text}</td>

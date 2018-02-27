@@ -227,4 +227,36 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function testMp3Action()
+    {
+//        $fp = fopen(APP_ROOT . "public/temp/5a7d4437e1dc7.mp3", "rb");
+//        fseek($fp, -128, SEEK_END);
+//        $tag = fread($fp, 3);
+//        var_dump($tag, fread($fp, 30));
+
+        $getID3 = new getID3();    //实例化类
+        $ThisFileInfo = $getID3->analyze(APP_ROOT . "public/temp/5a7bcab1b95e2.mp3");   //分析文件
+        $time = $ThisFileInfo['playtime_seconds'];      //获取mp3的长度信息
+        echo $ThisFileInfo['playtime_seconds'];         //获取MP3文件时长
+        var_dump($ThisFileInfo);
+    }
+
+    function testActiveRoomAction()
+    {
+        $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
+         (status = :status: and user_type = :user_type1:)',
+            'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
+            'order' => 'last_at desc', 'limit' => 60];
+
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+            echoLine($room->id, $room->user_id);
+        }
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
+        echoLine($user_ids);
+    }
 }
