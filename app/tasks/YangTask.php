@@ -186,6 +186,7 @@ class YangTask extends \Phalcon\Cli\Task
         $url = "http://chance.com/api/shares/detail";
         $body = $this->commonBody();
         $id = $params[0];
+        $share_source = $params[1];
         $user = \Users::findFirstById($id);
         if (!$user) {
             return echoLine("此用户不存在");
@@ -197,7 +198,7 @@ class YangTask extends \Phalcon\Cli\Task
         if (!$room) {
             return echoLine("此用户的房间不存在");
         }
-        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id]);
+        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id, 'share_source' => $share_source]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
@@ -220,7 +221,7 @@ class YangTask extends \Phalcon\Cli\Task
             $user = $this->updateUserInfo($user);
         }
 
-        $body = array_merge($body, ['sid' => $user->sid, 'id' => $history_id, 'status' => $status, 'type' => $type]);
+        $body = array_merge($body, ['sid' => $user->sid, 'share_history_id' => $history_id, 'status' => $status, 'type' => $type]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
