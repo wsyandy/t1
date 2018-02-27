@@ -45,7 +45,7 @@ class HomeController extends \ApplicationController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/index']);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/home/index']);
             }
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '', ['error_url' => '']);
