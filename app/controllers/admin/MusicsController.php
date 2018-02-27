@@ -30,18 +30,16 @@ class MusicsController extends BaseController
     {
         $music = new \Musics();
         $this->assign($music, 'music');
-        $user = \Users::findFirstById($music->user_id);
-        if (isBlank($user)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+
+        list($error_code, $error_reason) = $music->checkField($_FILES);
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
-        if ($_FILES['music']['size']['file'] > 20000000) {
-            return $this->renderJSON(ERROR_CODE_FAIL,  '上传文件大小不能超过20M');
-        }
-        $music->file_size = $_FILES['music']['size']['file'];
 
         if ($music->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $music);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('music' => $music->toJson()));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['music' => $music->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '', '创建失败');
         }
@@ -57,18 +55,17 @@ class MusicsController extends BaseController
     {
         $music = \Musics::findById($this->params('id'));
         $this->assign($music, 'music');
-        $user = \Users::findFirstById($music->user_id);
-        if (isBlank($user)) {
-            return $this->renderJSON(ERROR_CODE_FAIL,  '用户不存在');
+
+        list($error_code, $error_reason) = $music->checkField($_FILES, false);
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
-        if ($_FILES['music']['size']['file'] > 20000000) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '上传文件大小不能超过20M');
-        }
-        $music->file_size = $_FILES['music']['size']['file'];
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $music);
+
         if ($music->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('music' => $music->toJson()));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['music' => $music->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');
         }

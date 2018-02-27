@@ -1,0 +1,1 @@
+ALTER TABLE musics add COLUMN file_md5 VARCHAR (255);
