@@ -180,4 +180,48 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpGet($url, $body);
         echoLine($res);
     }
+
+    function detailAction($params)
+    {
+        $url = "http://chance.com/api/shares/detail";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return echoLine("此用户不存在");
+        }
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $room = $user->room;
+        if (!$room) {
+            return echoLine("此用户的房间不存在");
+        }
+        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function resultAction($params)
+    {
+        $url = "http://chance.com/api/shares/result";
+        $body = $this->commonBody();
+
+        $id = $params[0];
+        $history_id = $params[1];
+        $status = $params[2];
+        $type = $params[3];
+
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return echoLine("此用户不存在");
+        }
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+
+        $body = array_merge($body, ['sid' => $user->sid, 'id' => $history_id, 'status' => $status, 'type' => $type]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
 }

@@ -41,6 +41,14 @@ class RoomSeats extends BaseModel
 
     }
 
+    function getCanPlayMusicText()
+    {
+        if ($this->can_play_music) {
+            return "打开";
+        }
+        return "关闭";
+    }
+
     function mergeJson()
     {
         $data = [];
