@@ -227,4 +227,17 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function testMp3Action()
+    {
+//        $fp = fopen(APP_ROOT . "public/temp/5a7d4437e1dc7.mp3", "rb");
+//        fseek($fp, -128, SEEK_END);
+//        $tag = fread($fp, 3);
+//        var_dump($tag, fread($fp, 30));
+
+        $getID3 = new getID3();    //实例化类
+        $ThisFileInfo = $getID3->analyze(APP_ROOT . "public/temp/5a7d4437e1dc7.mp3");   //分析文件
+        $time = $ThisFileInfo['playtime_seconds'];      //获取mp3的长度信息
+        echo $ThisFileInfo['playtime_seconds'];         //获取MP3文件时长
+    }
 }
