@@ -14,14 +14,14 @@ class SharesController extends BaseController
     function detailAction()
     {
         $room_id = $this->params('room_id');
-
-        $image_url = $this->currentUser()->avatar_small_url;
+        $user = $this->currentUser();
+        $image_url = $user->avatar_small_url;
         $image_small_url = "http://yiyuan-development.img-cn-hangzhou.aliyuncs.com/chance/product_channels/avatar/5a5c0e601d994.png@!small";
         $description = "H是目前最稳定、最火爆的语音交友社区,快来跟我一起玩吧！";
         $url = "www.baidu.com";
 
         $opts = [
-            'user_id' => $this->currentUserId(),
+            'user_id' => $user->id,
             'product_channel_id' => $this->currentProductChannelId(),
             'share_source' => '房间',
             'data' => $room_id
@@ -29,6 +29,7 @@ class SharesController extends BaseController
         $share_history = \ShareHistories::createShareHistory($opts);
 
         $res = [
+            'title' => $user->nickname . "正在邀请你一起连麦",
             'image_url' => $image_url,
             'image_small_url' => $image_small_url,
             'description' => $description,
