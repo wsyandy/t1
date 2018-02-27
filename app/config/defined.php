@@ -161,19 +161,19 @@ define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 
 // 房间类型
-define('ROOM_THEME_TYPE_NORMAL',0); //正常
+define('ROOM_THEME_TYPE_NORMAL', 0); //正常
 define('ROOM_THEME_TYPE_BROADCAST', 1);//电台
 
-define('AUDIO_TYPE_STORY',1); //故事
-define('AUDIO_TYPE_MUSIC',2); //音乐
+define('AUDIO_TYPE_STORY', 1); //故事
+define('AUDIO_TYPE_MUSIC', 2); //音乐
 
-define('WITHDRAW_STATUS_WAIT',0); //等待提现
-define('WITHDRAW_STATUS_SUCCESS',1); //提现成功
-define('WITHDRAW_STATUS_FAIL',2); //提现失败
+define('WITHDRAW_STATUS_WAIT', 0); //等待提现
+define('WITHDRAW_STATUS_SUCCESS', 1); //提现成功
+define('WITHDRAW_STATUS_FAIL', 2); //提现失败
 
-define('COMPLAINT_USER',1); //举报用户
-define('COMPLAINT_ROOM',2); //举报房间
-define('COMPLAINT_MUSIC',3); //举报音乐
+define('COMPLAINT_USER', 1); //举报用户
+define('COMPLAINT_ROOM', 2); //举报房间
+define('COMPLAINT_MUSIC', 3); //举报音乐
 
 //分享记录类型
 define('SHARE_TYPE_WEIXIN', 1);//微信好友
@@ -183,3 +183,7 @@ define('SHARE_TYPE_QQ', 4);//QQ
 define('SHARE_TYPE_QZONE', 5);//QQ空间
 define('SHARE_TYPE_URL', 6);//链接
 define('SHARE_TYPE_CARD', 7);//邀请卡
+
+define('SHARE_STATUS_WAIT', 0);
+define('SHARE_STATUS_SUCCESS', 1);  //分享成功
+define('SHARE_STATUS_FAIL', 2); //分享失败
