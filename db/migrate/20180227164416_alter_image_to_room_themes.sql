@@ -1,0 +1,1 @@
+ALTER TABLE room_themes rename image to theme_image ;

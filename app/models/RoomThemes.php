@@ -10,7 +10,7 @@ class RoomThemes extends BaseModel
 {
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $files = ['icon' => APP_NAME . '/room_themes/icon/%s', 'image' => APP_NAME . '/room_themes/image/%s'];
+    static $files = ['icon' => APP_NAME . '/room_themes/icon/%s', 'theme_image' => APP_NAME . '/room_themes/theme_image/%s'];
 
     function getIconUrl()
     {
@@ -21,21 +21,21 @@ class RoomThemes extends BaseModel
         return StoreFile::getUrl($this->icon);
     }
 
-    function getImageUrl()
+    function getThemeImageUrl()
     {
-        if (isBlank($this->image)) {
+        if (isBlank($this->theme_image)) {
             return '';
         }
 
-        return StoreFile::getUrl($this->image);
+        return StoreFile::getUrl($this->theme_image);
     }
 
-    function getImageSmallUrl()
+    function getThemeImageSmallUrl()
     {
-        if (isBlank($this->image)) {
+        if (isBlank($this->theme_image)) {
             return '';
         }
-        return StoreFile::getUrl($this->image) . '@!small';
+        return StoreFile::getUrl($this->theme_image) . '@!small';
     }
 
     function toSimpleJson()
@@ -44,6 +44,7 @@ class RoomThemes extends BaseModel
             'id' => $this->id,
             'icon_url' => $this->icon_url,
             'name' => $this->name,
+            'theme_image_url' => $this->theme_image_url
         ];
     }
 
@@ -51,7 +52,7 @@ class RoomThemes extends BaseModel
     {
         return [
             'id' => $this->id,
-            'image_url' => $this->image_url,
+            'theme_image_url' => $this->theme_image_url,
             'icon_url' => $this->icon_url,
             'name' => $this->name,
             'status_text' => $this->status_text,

@@ -534,7 +534,7 @@ class RoomsController extends BaseController
 
         $room->room_theme_id = $room_theme_id;
         $room->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->image_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->theme_image_url]);
     }
 
     function closeThemeAction()

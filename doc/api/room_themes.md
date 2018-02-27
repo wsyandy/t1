@@ -24,6 +24,7 @@
             id: int 
             name: string 主题名称
             icon_url: string 主题图标 'https://room_themes/icon'
+            theme_image_url: string 背景图
         }
         ...
     ]

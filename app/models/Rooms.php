@@ -448,7 +448,7 @@ class Rooms extends BaseModel
             return '';
         }
         $room_theme = $this->room_theme;
-        return $room_theme->image_url;
+        return $room_theme->theme_image_url;
     }
 
     //禁止 踢出房间 禁止用户在10分钟内禁入
