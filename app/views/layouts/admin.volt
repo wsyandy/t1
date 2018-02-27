@@ -32,7 +32,7 @@
 
         {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
         or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
-        isAllowed('rooms','index') or isAllowed('broadcasts','index') %}
+        isAllowed('rooms','index') or isAllowed('broadcasts','index') or isAllowed('share_histories','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -78,12 +78,14 @@
                     {% if isAllowed('broadcasts','index') %}
                         <li><a href="/admin/broadcasts">电台列表</a></li>
                     {% endif %}
+                    {% if isAllowed('share_histories','index') %}
+                        <li><a href="/admin/share_histories">分享记录</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
 
-        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index')
-        or isAllowed('share_histories','index') %}
+        {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">订单<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -95,9 +97,6 @@
                     {% endif %}
                     {% if isAllowed('withdraw_histories','index') %}
                         <li><a href="/admin/withdraw_histories">提现列表</a></li>
-                    {% endif %}
-                    {% if isAllowed('share_histories','index') %}
-                        <li><a href="/admin/share_histories">分享记录</a></li>
                     {% endif %}
                 </ul>
             </li>
