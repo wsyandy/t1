@@ -2139,4 +2139,67 @@ class Users extends BaseModel
 
         return $pagination;
     }
+
+    function calculateLevel()
+    {
+        $level = $this->level;
+        $experience = $this->experience;
+
+        if ($experience < 1) {
+            return 0;
+        } elseif ($experience >= 386000) {
+            return 35;
+        }
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
+            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
+            336000, 386000];
+
+        foreach ($level_ranges as $index => $level_range) {
+
+            if (isset($level_ranges[$index + 1]) && $experience > $level_range &&
+                $experience <= $level_ranges[$index + 1]) {
+                $level = $index;
+                break;
+            }
+
+        }
+
+        return $level;
+    }
+
+    //更新用户等级/经验
+    static function updateExperience($gift_order_id)
+    {
+        $gift_order = \GiftOrders::findById($gift_order_id);
+
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_level_lock_" . $gift_order->user_id;
+        $lock = tryLock($lock_key);
+
+        $sender = $gift_order->sender;
+        $user = $gift_order->user;
+        $amount = $gift_order->amount;
+        $sender_experience = 0.02 * $amount;
+        $user_experience = 0.01 * $amount;
+
+        if ($sender) {
+            $sender_level = $sender->calculateLevel();
+            $sender->experience += $sender_experience;
+            $sender->level = $sender_level;
+            $sender->update();
+        }
+
+        if ($user) {
+            $user->experience += $user_experience;
+            $user_level = $user->calculateLevel();
+            $user->level = $user_level;
+            $user->update();
+        }
+
+        unlock($lock);
+    }
 }

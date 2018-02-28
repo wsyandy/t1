@@ -263,8 +263,10 @@ class MeiTask extends \Phalcon\Cli\Task
     function testUserLevelAction()
     {
         $user = Users::findFirstById(1);
-        $user->experience = 1.234567892345678923456789;
+//        $user->experience = 1.234567892345678923456789;
+//        $user->save();
+        $user->experience = 385000;
         $user->save();
-        echoLine($user->experience);
+        echoLine($user->experience, $user->calculateLevel());
     }
 }

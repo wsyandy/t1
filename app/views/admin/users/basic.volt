@@ -25,6 +25,12 @@
         </td>
         <td><a href="/admin/users/reset_password?id={{ user.id }}" class="modal_action">重置密码</a></td>
     </tr>
+    <tr>
+        <td>用户等级:{{ user.level }}</td>
+        <td>用户经验:{{ user.experience }}</td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>
 
 <table class="table  table-condensed table-hover">

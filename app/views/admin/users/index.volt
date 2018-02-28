@@ -36,7 +36,8 @@
     激活时间: {{ user.created_at_text }}<br/>
     注册时间: {{ user.register_at_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
-    登录方式: {{ user.login_type_text }}
+    登录方式: {{ user.login_type_text }}<br/>
+    用户等级: {{ user.level }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
@@ -95,11 +96,12 @@
             自述城市信息: ${ user.province_name }, ${ user.city_name }
         </td>
         <td>
-            ${ user.user_type_text } | ${ user.user_status_text }<br>
+            ${ user.user_type_text } | ${ user.user_status_text }<br/>
             激活时间: ${ user.created_at_text }<br/>
             注册时间: ${ user.register_at_text }<br/>
             最后活跃时间: ${ user.last_at_text }<br/>
-            最后活跃时间: ${ user.login_type_text }
+            登录方式: ${ user.login_type_text }<br/>
+            用户等级: ${ user.level }
         </td>
         <td>
             {% if isAllowed('users','detail') %}
