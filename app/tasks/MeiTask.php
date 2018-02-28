@@ -269,4 +269,13 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->save();
         echoLine($user->experience, $user->calculateLevel());
     }
+
+    function testUserLevelTextAction()
+    {
+        for ($i = 0; $i <= 36; $i++) {
+            $user = Users::findFirstById(1);
+            $user->level = $i;
+            echoLine($user->level, $user->level_text);
+        }
+    }
 }
