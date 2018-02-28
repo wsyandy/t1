@@ -510,7 +510,7 @@ trait UserAttrs
         if ($user_level < 1) {
             return '';
         } elseif ($user_level >= 35) {
-            return '星耀';
+            return '星耀5';
         }
 
         $level_text = '';
@@ -518,7 +518,7 @@ trait UserAttrs
         foreach ($levels as $index => $level) {
 
             if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
-                $level_text = $level_texts[$index];
+                $level_text = $level_texts[$index] . ($user_level - $index * 5);
             }
         }
 
