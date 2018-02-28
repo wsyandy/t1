@@ -134,6 +134,7 @@
     speaker 扬声器状态 false/true 默认为true
     followed_num 粉丝人数
     follow_num 关注人数,
+    level 用户等级
 }
 ```
 
@@ -174,6 +175,7 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
+    level 用户等级
     albums:[
         {
             id,
@@ -228,6 +230,7 @@
     user_role 当前用户角色，无角色，房主，主播，旁听
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
+    level 用户等级
     albums:[
         {
             id,
@@ -285,6 +288,7 @@
     age 年龄
     birthday 生日
     constellation 星座
+    level 用户等级
     albums:[
         {
             id,
@@ -363,6 +367,7 @@
              current_channel_name 当前所在房间频道名称 
              mobile 手机号
              monologue 个性签名
+             level 用户等级
         }
     ]
 }
@@ -401,6 +406,7 @@
              monologue 个性签名
              distance string 距离,例如 0.5km
              age 年龄
+             level 用户等级
         }
     ]               
 }

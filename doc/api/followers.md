@@ -31,6 +31,7 @@
             current_room_lock  当前房间加锁状态
             current_room_seat_id 用户当前所在麦位id 
             monologue 个性签名
+            level 用户等级
         } 
     ]
 }
@@ -67,6 +68,7 @@
             current_room_lock  当前房间加锁状态
             current_room_seat_id 用户当前所在麦位id
             monologue 个性签名
+            level 用户等级
         } 
     ]
 }

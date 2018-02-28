@@ -35,6 +35,7 @@
             friend_status int 好友状态 1已添加,2等待验证，3等待接受
             friend_status_text string 好友状态名称
             self_introduce 自我介绍
+            level 用户等级
         }
     ] 
     friend_num 好友人数

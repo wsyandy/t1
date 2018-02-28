@@ -36,7 +36,8 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
-            'im_password' => $this->im_password
+            'im_password' => $this->im_password,
+            'level' => $this->level
         ];
     }
 
@@ -59,7 +60,8 @@ trait UserAttrs
             'created_at_text' => $this->created_at_text,
             'register_at_text' => $this->register_at_text,
             'last_at_text' => $this->last_at_text,
-            'login_type_text' => $this->login_type_text
+            'login_type_text' => $this->login_type_text,
+            'level' => $this->level
         ];
     }
 
@@ -82,7 +84,8 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
-            'current_channel_name' => $this->current_channel_name
+            'current_channel_name' => $this->current_channel_name,
+            'level' => $this->level
         ];
     }
 
@@ -101,6 +104,7 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
             'age' => $this->age,
+            'level' => $this->level
         ];
 
         if (isset($this->friend_status)) {
@@ -140,6 +144,7 @@ trait UserAttrs
             'monologue' => $this->monologue,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
             'age' => $this->age,
+            'level' => $this->level
         ];
 
         return $data;
