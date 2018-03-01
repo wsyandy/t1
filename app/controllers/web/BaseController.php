@@ -41,7 +41,7 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
-
+        $show_logout = false;
         $this->view->title = "";
 
         $current_user = $this->currentUser();
@@ -60,6 +60,9 @@ class BaseController extends \ApplicationController
             $this->response->redirect('/web/home/login');
             return;
         }
+        $show_logout = true;
+
+        $this->view->show_logout = $show_logout;
     }
 
 

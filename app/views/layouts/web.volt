@@ -24,7 +24,9 @@
             <ul>
                 <li><a href="/web/home/index">首页</a></li>
                 <li><a href="/web/users/index" class="nav_selected">上传音乐</a></li>
-                <li><a href="/web/home/logout" class="get_out">退出 <i></i></a></li>
+                {% if show_logout %}
+                    <li><a href="/web/home/logout" class="get_out">退出 <i></i></a></li>
+                {% endif %}
             </ul>
         </div>
     </header>
