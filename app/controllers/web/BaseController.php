@@ -18,6 +18,10 @@ class BaseController extends \ApplicationController
         if (!isset($this->_current_user)) {
             $user_id = $this->currentUserId();
             $this->_current_user = \Users::findFirstById($user_id);
+
+//            if (!$this->_current_user && isDevelopmentEnv()) {
+//                $this->_current_user = \Users::findLast();
+//            }
         }
 
         return $this->_current_user;
@@ -25,6 +29,10 @@ class BaseController extends \ApplicationController
 
     function currentUserId()
     {
+//        if (isDevelopmentEnv()) {
+//            $user = \Users::findLast();
+//            return $user->id;
+//        }
         return $this->session->get('user_id');
     }
 

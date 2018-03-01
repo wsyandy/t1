@@ -2,16 +2,21 @@
 
 namespace web;
 
-class HomeController extends \ApplicationController
+class HomeController extends BaseController
 {
     public function indexAction()
     {
-        echo "登录成功";
+        $user = $this->currentUser();
+        $product_channel = $user->product_channel;
+        if(!$product_channel)  {
+            $product_channel =  \ProductChannels::findLast();
+        }
+
+        $this->view->product_channel = $product_channel;
     }
 
     public function errorAction()
     {
-
     }
 
     public function logoutAction()
@@ -45,7 +50,7 @@ class HomeController extends \ApplicationController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/home/index']);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/users']);
             }
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '', ['error_url' => '']);

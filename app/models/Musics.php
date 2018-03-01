@@ -31,6 +31,18 @@ class Musics extends BaseModel
         ];
     }
 
+    function toDetailJson()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'singer_name' => $this->singer_name,
+            'file_size' => $this->file_size_text,
+            'file_url' => $this->file_url,
+            'date' => $this->getDate()
+        ];
+    }
+
     function mergeJson()
     {
         return [
@@ -39,6 +51,19 @@ class Musics extends BaseModel
             'sex_text' => $this->user->sex_text,
             'user_mobile' => $this->user_mobile
         ];
+    }
+
+    function getDate()
+    {
+        $format = 'Y-m-d H:i';
+        // 时间格式
+        $value = $this->created_at;
+
+        if ($value) {
+            return date($format, $value);
+        } else {
+            return "";
+        }
     }
 
     function getFileUrl()
@@ -162,4 +187,73 @@ class Musics extends BaseModel
         }
     }
 
+    function updateFile($filename)
+    {
+        $old_file = $this->file;
+        $dest_filename = APP_NAME . '/musics/file/' . uniqid() . '.mp3';
+        $res = \StoreFile::upload($filename, $dest_filename);
+
+        if ($res) {
+            $this->file = $dest_filename;
+            if ($this->update()) {
+                if ($old_file) {
+                    \StoreFile::delete($old_file);
+                }
+            }
+        }
+    }
+
+    static function upload($files, $opts)
+    {
+        debug($files);
+        if (isBlank($files) || !$files['file']['tmp_name']) {
+            return [ERROR_CODE_FAIL, '上传文件不能为空',''];
+        }
+
+        $name = fetch($opts, 'name');
+        $singer_name = fetch($opts, 'singer_name');
+        $type = fetch($opts, 'type');
+        $user_id = fetch($opts, 'user_id');
+
+
+        if ($files && $files['file']['size'] > 20000000) {
+            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
+        }
+
+        $music = new Musics();
+
+        if ($files) {
+            $music->file_md5 = md5_file($files['file']['tmp_name']);
+        }
+
+        $music->user_id = $user_id;
+
+        if (!$music->checkFileMd5()) {
+            return [ERROR_CODE_FAIL, '不能重复上传文件', ''];
+        }
+
+        $music->name = $name;
+        $music->singer_name = $singer_name;
+        $music->type = $type;
+
+
+        debug($files['file']['tmp_name']);
+//        move_uploaded_file($files['file']['tmp_name'], APP_ROOT . "temp/" . uniqid() . ".mp3");
+
+
+        $music->file_size = $files['file']['size'];
+
+        $music->save();
+        return [ERROR_CODE_SUCCESS, '', $music];
+    }
+
+    static function findByUserId($page, $per_page, $user_id)
+    {
+        $cond = [
+            'conditions' => 'user_id = :user_id: and status = :status:',
+            'bind' => ['user_id' => $user_id, 'status' => STATUS_ON],
+            'order' => 'id desc'
+        ];
+        return self::findPagination($cond, $page, $per_page);
+    }
 }

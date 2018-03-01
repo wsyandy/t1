@@ -1,28 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta content="width=device-width,initial-scale=1,user-scalable=no,shrink-to-fit=no" name="viewport">
-    <meta content="webkit" name="renderer">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="format-detection" content="telephone=no">
-    <meta content="email=no" name="format-detection">
-    <title>扫码登录</title>
-    <link rel="stylesheet" href="/web/css/main.css">
-    <link rel="stylesheet" type="text/css" href="/web/css/style.css">
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-</head>
-<body>
-<header>
-    <div class="wrapper">
-        <span class="logo_icon"></span>
-        <h2>Hi~</h2>
-        <ul>
-            <li><a href="/">首页</a></li>
-            <li><a href="/upload.html" class="nav_selected">上传音乐</a></li>
-        </ul>
-    </div>
-</header>
+{{ block_begin('head') }}
+{{ theme_css('/web/css/main','/web/css/style') }}
+{{ block_end() }}
+
 <div class="qrcode_login">
     <h2>扫码登录，防止被盗</h2>
     <img src="{{ qrcode }}">
@@ -41,6 +20,3 @@
 
     setInterval(refresh, 1000);
 </script>
-
-</body>
-</html>

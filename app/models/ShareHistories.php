@@ -23,7 +23,6 @@ class ShareHistories extends BaseModel
     {
         $user_id = fetch($opts, 'user_id');
         $product_channel_id = fetch($opts, 'product_channel_id');
-        debug($product_channel_id);
         $share_source = fetch($opts, 'share_source');
         $data = fetch($opts, 'data');
 
