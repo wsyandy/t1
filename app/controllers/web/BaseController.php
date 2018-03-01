@@ -11,7 +11,7 @@ class BaseController extends \ApplicationController
     private $_current_user;
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'login', 'logout', 'checkAuth']
+        'home' => ['index', 'login', 'logout', 'check_auth']
     ];
 
     /**
