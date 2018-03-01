@@ -213,7 +213,7 @@ class Musics extends BaseModel
     {
         debug($files);
         if (isBlank($files) || !$files['file']['tmp_name']) {
-            return [ERROR_CODE_FAIL, '上传文件不能为空', ''];
+            return [ERROR_CODE_FAIL, '上传文件非法', ''];
         }
 
         $name = fetch($opts, 'name');
@@ -236,6 +236,7 @@ class Musics extends BaseModel
 
         $fp = fopen($_FILES['file']['tmp_name'], "rb");
         $tag = fread($fp, 8);
+        debug($tag);
         if (strstr($tag, 'ID3') === false) {
             return [ERROR_CODE_FAIL, '无效的文件', ''];
         }
@@ -269,5 +270,18 @@ class Musics extends BaseModel
             'order' => 'id desc'
         ];
         return self::findPagination($cond, $page, $per_page);
+    }
+
+    static function deleteByUser($user_id, $delete_list)
+    {
+        $musics = self::findByIds($delete_list);
+        foreach ($musics as $music) {
+            if ($music->user_id == $user_id) {
+                if ($music->file) {
+                    \StoreFile::delete($music->file);
+                }
+                $music->delete();
+            }
+        }
     }
 }

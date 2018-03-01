@@ -219,6 +219,72 @@ header .wrapper ul li a{
 	background: #ffffff url(../images/selected.png) no-repeat right center;
 	border: 1px solid #D4D4D4;
 }
+
+
+/*分页器 start*/
+
+.pagelist {
+
+}
+
+.pagelist span {
+	display: inline-block;
+	background: #BBBBBB;
+	border-radius: 2px;
+	font-size: 14px;
+	color: #FFFFFF;
+	letter-spacing: -0.19px;
+	width: 90px;
+	height: 34px;
+	line-height: 34px;
+}
+
+.pagelist .bgprimary {
+	cursor: default;
+	color: #fff;
+	background: #115AD5;;
+	border-color: #115AD5;;
+}
+
+.jumpinp input {
+	width: 55px;
+	height: 26px;
+	font-size: 14px;
+	border: 0;
+	border-radius: 4px;
+	text-align: center;
+	outline: none;
+	background-color: transparent;
+}
+
+.ellipsis {
+	padding: 0px 8px;
+}
+
+.jumppoint {
+	margin-left: 30px;
+}
+
+.pagelist .gobtn {
+	font-size: 12px;
+}
+
+.bgprimary {
+	cursor: default;
+	color: #fff;
+	padding: 5px 15px;
+	background: #115AD5;;
+	border-color: #115AD5;;
+}
+
+.pagelist .jump.disabled {
+	pointer-events: none;
+	background: #ddd;
+}
+
+/*分页器 end*/
+
+
 select::-ms-expand {
  display: none; 
 }

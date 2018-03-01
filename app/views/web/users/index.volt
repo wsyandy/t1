@@ -1,6 +1,5 @@
 {{ block_begin('head') }}
 {{ theme_css('/web/css/main','/web/css/style') }}
-{{ theme_js('/web/js/pub_pop') }}
 {{ block_end() }}
 
 <div class="person">
@@ -20,7 +19,7 @@
         <h3>歌曲列表：</h3>
         <div class="top_right">
             <a href="/web/musics/upload">上传音乐</a>
-            <span class="delete" @click="deleteMusic"></span>
+            <span class="delete"></span>
         </div>
     </div>
 
@@ -28,7 +27,6 @@
         <img src="/web/images/music_none.png">
         <p>这里空空如也！快点去上传些音乐吧~</p>
     </div>
-
 
     <div v-show="musics.length">
         <div class="music_list">
@@ -58,20 +56,28 @@
                 </tr>
             </table>
         </div>
-        <div class="page">
-            <a href="#">上一页</a>
-            <select>
-                <option>1/1页</option>
-                <option>1/6页</option>
-            </select>
-            <a href="#" class="up_next">下一页</a>
+
+        {#<select v-model="selected">#}
+        {#<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>#}
+        {#</select>#}
+        {#<span>已选:{{selected}}</span>#}
+
+        <div class="page" v-show="show">
+            <div class="pagelist">
+                <span class="jump" :class="{disabled:pstart}" @click="jumpPage(--page)">上一页</span>
+                <select v-model="selected" @click="jumpPage(selected)">
+                    <option v-for="num in indexs" v-bind:value="num">${ num }/${total_page}页</option>
+                </select>
+                <span :class="{disabled:pend}" class="jump" @click="jumpPage(++page)">下一页</span>
+            </div>
         </div>
+
         <!-- 弹框 开始-->
         <div class="fudong">
             <div class="close_btn close_delete"></div>
             <h3>您确定要删除歌曲吗？</h3>
             <div class="btn_list">
-                <span>确定</span>
+                <span class="close_btn" @click="deleteMusic">确定</span>
                 <span class="close_btn close_right right_60">取消</span>
             </div>
         </div>
@@ -88,30 +94,73 @@
             show_music: false,
             page: 1,
             total_page: 1,
+            change_page: '',
             total_entries: 0,
             musics: [],
             num: [],
             checkedNames: [],
-            delete_list: []
+            delete_list: [],
+            selected: 1
+        },
+        computed: {
+            /*分页器 start*/
+            show: function () {
+                return this.total_page && this.total_page !== 1
+            },
+            pstart: function () {
+                return this.page === 1;
+            },
+            pend: function () {
+                return this.page === this.total_page;
+            },
+            indexs: function () {
+                ar = [];
+                var page = 1;
+                var total_page = this.total_page;
+                while (total_page >= 1) {
+                    ar.push(page);
+                    page++;
+                    total_page--;
+                }
+                return ar;
+            }
+            /*分页器 end*/
         },
         methods: {
             deleteMusic: function () {
-                console.log(this.delete_list);
                 var data = {delete_list: this.delete_list};
                 $.authPost('/web/musics/delete', data, function (resp) {
-                    if (resp.error_code != 1) {
+                    if (resp.error_code != 0) {
                         alert(resp.error_reason);
+                    } else {
+                        location.reload();
                     }
                 });
+            },
+            /*分页器 start*/
+            jumpPage: function (id) {
+//                alert(id);
+                var int_id = parseInt(id);
+                if (!isNaN(int_id)) {
+                    if (int_id >= this.total_page) {
+                        this.page = this.total_page;
+                    } else if (int_id <= 1) {
+                        this.page = 1;
+                    } else {
+                        this.page = int_id;
+                    }
+                    getList();
+                }
+                vm.change_page = '';
             }
-
+            /*分页器 end*/
         }
     };
 
     vm = XVue(opts);
 
     function getList() {
-        var data = {page: vm.page, per_page: 4};
+        var data = {page: vm.page, per_page: 10};
         $.authGet('/web/musics/list', data, function (resp) {
             vm.musics = [];
             vm.total_page = resp.total_page;
@@ -133,6 +182,44 @@
             $("td input[type='checkbox']").prop("checked", false);
         }
     })
+
+
+    $(function () {
+
+        function colse_fd() {
+            $(".fudong").hide();
+            $(".fudong_bg").hide();
+        };
+
+        $(".fudong").hide();
+        $(".fudong_bg").hide();
+        var doc_height = $(document).height();
+        var w_height = $(window).height();
+        var w_width = $(window).width();
+
+        $(".delete").click(function () {
+            $(".fudong").show();
+            $(".fudong_bg").show();
+
+            $(".fudong_bg").attr("style", "height:" + doc_height + "px");
+            var div_width = $(".fudong").width();
+            var div_height = $(".fudong").height();
+
+            var div_left = w_width / 2 - div_width / 2 + "px";
+            var div_top = w_height / 2 - div_height / 2 + "px";
+
+            $(".fudong").css({
+                "left": div_left,
+                "top": div_top
+            });
+        })
+
+
+        $(".close_btn").click(function () {
+            colse_fd();
+        });
+
+    });
 
 </script>
 

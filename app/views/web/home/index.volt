@@ -7,7 +7,7 @@
 <main>
     <section class="one">
         <div class="slider">
-            <img class="active" src="images/pic1_03.png" alt="">
+            <img class="active" src="/web/images/pic1_03.png" alt="">
         </div>
         <div class="title">
             <h2>Hi</h2>
@@ -22,13 +22,13 @@
         </div>
         <div class="phone">
             <!-- <img src=""> -->
-            <img src="images/bg_phone_01.png" alt="">
+            <img src="/web/images/bg_phone_01.png" alt="">
         </div>
     </section>
     <section class="three">
         <div class="bg">
             <div class="phone">
-                <img src="images/bg_phone_02.png" alt="">
+                <img src="/web/images/bg_phone_02.png" alt="">
             </div>
             <div class="title">
                 <h2>发表情</h2>
@@ -37,13 +37,13 @@
             </div>
             <div class="service-cat">
                 <div class="item">
-                    <img src="images/middle_part1_game_03.png" alt="">
+                    <img src="/web/images/middle_part1_game_03.png" alt="">
                 </div>
                 <div class="item">
-                    <img src="images/middle_part1_game_05.png" alt="">
+                    <img src="/web/images/middle_part1_game_05.png" alt="">
                 </div>
                 <div class="item">
-                    <img src="images/middle_part1_game_07.png" alt="">
+                    <img src="/web/images/middle_part1_game_07.png" alt="">
                 </div>
             </div>
         </div>
@@ -54,11 +54,11 @@
 <footer>
     <div class="downlod-code">
         <!--  <div class="item">
-           <img id="download_img_ios" alt="" src="images/qrcode_ios2.png">
+           <img id="download_img_ios" alt="" src="/web/images/qrcode_ios2.png">
            <p><span class="iphone"></span>IOS下载</p>
          </div> -->
         <div class="item">
-            <img id="download_img_android" alt="" src="images/qrcode_android4.png">
+            <img id="download_img_android" alt="" src="/web/images/qrcode_android4.png">
         </div>
     </div>
     <div class="c-info">

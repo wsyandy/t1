@@ -3,13 +3,14 @@
 {{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form') }}
 {{ block_end() }}
 
-<div class="upload_music">
+<div class="upload_music" xmlns="http://www.w3.org/1999/html">
     <div class="music_add" a>
-        <form action="/web/musics/upload_music" method="post" enctype="multipart/form-data" class="form" id="upload_music">
+        <form action="/web/musics/upload_music" method="post" enctype="multipart/form-data" class="form"
+              id="upload_music">
             <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过20个字)</span></div>
-            <input type="text" name="name" placeholder="单行输入" required="required">
+            <input type="text" name="name" placeholder="单行输入" required="required" id="name">
             <div class="upload_music_title"><i></i> 演唱者 <span>(必填 :不超过20个字 , 该信息不准确可能导致下架)</span></div>
-            <input type="text" name="singer_name" placeholder="单行输入" required="required">
+            <input type="text" name="singer_name" placeholder="单行输入" required="required" id="singer_name">
             <div class="upload_music_title"><i></i> 音乐文件 <span>(必填 :仅限MP3格式 , 不超过20M)</span></div>
             <div class="select_file">
                 <b>选择文件</b>
@@ -29,7 +30,7 @@
             </div>
 
             <div class="btn_list music_upload_btn">
-                <input type="submit" name="submit" class="close_btn close_right"/>
+                <input type="submit" name="submit" class="close_btn close_right" value="确认上传" >
             </div>
         </form>
     </div>
@@ -79,11 +80,7 @@
             agreement: true,
             upload_status: false
         },
-        methods: {
-            aaaa: function () {
-
-            }
-        }
+        methods: {}
     };
 
     vm = XVue(opts);
@@ -119,15 +116,16 @@
         $(".fudong").hide();
         $(".fudong_bg").hide();
 
-//        $(".form").submit(function () {
-//            if (!vm.agreement) {
-//                open_fd();
-//                return false;
-//            }
-//        });
+        var can_upload = true;
 
         $(document).on('submit', '#upload_music', function (event) {
             event.preventDefault();
+            if (can_upload == false) {
+                return false;
+            }
+
+            can_upload = false;
+
             var self = $(this);
             var url = self.attr("action");
 
@@ -142,6 +140,7 @@
                 },
 
                 success: function (resp, status, xhr) {
+                    can_upload = true;
                     if (resp.error_url) {
                         location.href = resp.error_url;
                         return;
@@ -154,7 +153,6 @@
             return false;
 
         });
-
 
 
         $(".close_btn").click(function () {

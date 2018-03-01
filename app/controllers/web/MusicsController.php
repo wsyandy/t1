@@ -46,6 +46,14 @@ class MusicsController extends BaseController
         $singer_name = $this->params('singer_name');
         $name = $this->params('name');
 
+        if(isBlank($name)){
+            return $this->renderJSON(ERROR_CODE_FAIL, "歌名不能为空", ['error_url' => ""]);
+        }
+
+        if(isBlank($singer_name)){
+            return $this->renderJSON(ERROR_CODE_FAIL, "演唱者不能为空", ['error_url' => ""]);
+        }
+
         $opts = ['user_id' => $user_id, 'type' => $type, 'singer_name' => $singer_name, 'name' => $name];
         list($error_code, $error_reason, $music) = \Musics::upload($_FILES, $opts);
 
@@ -61,11 +69,14 @@ class MusicsController extends BaseController
     function deleteAction()
     {
         if ($this->request->isPost()) {
+            $user_id = $this->currentUserId();
             $delete_list = $this->params('delete_list', []);
             if (isBlank($delete_list)) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您未选择文件');
             }
             debug($delete_list);
+            \Musics::deleteByUser($user_id,$delete_list);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
         }
         return $this->renderJSON(ERROR_CODE_FAIL, '');
     }
