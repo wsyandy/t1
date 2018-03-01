@@ -292,4 +292,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(117);
         echoLine($user->getReceiveGiftNum());
     }
+
+    function testShareHistoriesAction()
+    {
+        $share_history = new ShareHistories();
+        $share_history->user_id = 117;
+        $share_history->save();
+    }
 }
