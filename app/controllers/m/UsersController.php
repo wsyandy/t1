@@ -30,5 +30,8 @@ class UsersController extends BaseController
         $this->view->product_channel = $this->currentProductChannel();
     }
 
+    function levelIntroduceAction()
+    {
 
+    }
 }

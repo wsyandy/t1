@@ -168,8 +168,8 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             echoLine($user->id, $user->calculateSegment());
-            //$user->segment = $user->calculateSegment();
-            //$user->save();
+            $user->segment = $user->calculateSegment();
+            $user->save();
         }
     }
 }
