@@ -32,9 +32,8 @@
         <div class="music_list">
             <table>
                 <tr style="height:40px;">
-                    <td style="width:60px;text-indent: 1em;"><input type="checkbox" id="checkAllChange"></td>
-                    {#<td style="width:60px;text-indent: 1em;">#}
-                    {#<input type="checkbox" ：checked="fruitIds.length === fruits.length" @click='checkedAll()'></td>#}
+                    <td style="width:60px;text-indent: 1em;"><input type="checkbox" id="checkAllChange"
+                                                                    @click="selectAll"></td>
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
                     <td style="width:200px;color: #666666;">歌曲</td>
@@ -43,7 +42,7 @@
                 </tr>
                 <tr style="height:74px;" v-for="(music,index) in musics" class="music_input_list">
                     <td style="text-indent: 1em;">
-                        <input type="checkbox" :true-value="music.id" v-model="delete_list[index]"></td>
+                        <input type="checkbox" :true-value="music.id" v-model="selected_list[index]"></td>
                     <td>${music.name}</td>
                     <td>${music.singer_name}</td>
                     <td>
@@ -56,11 +55,6 @@
                 </tr>
             </table>
         </div>
-
-        {#<select v-model="selected">#}
-        {#<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>#}
-        {#</select>#}
-        {#<span>已选:{{selected}}</span>#}
 
         <div class="page" v-show="show">
             <div class="pagelist">
@@ -98,8 +92,7 @@
             total_entries: 0,
             musics: [],
             num: [],
-            checkedNames: [],
-            delete_list: [],
+            selected_list: [],
             selected: 1
         },
         computed: {
@@ -128,7 +121,7 @@
         },
         methods: {
             deleteMusic: function () {
-                var data = {delete_list: this.delete_list};
+                var data = {delete_list: this.selected_list};
                 $.authPost('/web/musics/delete', data, function (resp) {
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
@@ -137,9 +130,21 @@
                     }
                 });
             },
+            selectAll: function (event) {
+                console.log(event.currentTarget);
+                if (!event.currentTarget.checked) {
+                    this.selected_list = [];
+                } else { //实现全选
+                    this.selected_list = [];
+                    this.musics.forEach(function (music) {
+                        this.selected_list.push(music.id);
+                    }, this);
+                }
+
+                console.log(this.selected_list);
+            },
             /*分页器 start*/
             jumpPage: function (id) {
-//                alert(id);
                 var int_id = parseInt(id);
                 if (!isNaN(int_id)) {
                     if (int_id >= this.total_page) {
@@ -175,15 +180,6 @@
         getList();
     })
 
-    $(document).on("click", "#checkAllChange", function () {
-        if ($(this).prop("checked")) {
-            $("td input[type='checkbox']").prop("checked", true);
-        } else {
-            $("td input[type='checkbox']").prop("checked", false);
-        }
-    })
-
-
     $(function () {
 
         function colse_fd() {
@@ -198,6 +194,11 @@
         var w_width = $(window).width();
 
         $(".delete").click(function () {
+            if (vm.selected_list.length == 0) {
+                alert("您没有选择文件");
+                return
+            }
+
             $(".fudong").show();
             $(".fudong_bg").show();
 

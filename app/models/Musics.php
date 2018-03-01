@@ -262,7 +262,7 @@ class Musics extends BaseModel
         return [ERROR_CODE_SUCCESS, '上传成功', $music];
     }
 
-    static function findByUserId($page, $per_page, $user_id)
+    static function searchMusic($page, $per_page, $user_id)
     {
         $cond = [
             'conditions' => 'user_id = :user_id: and status = :status:',
@@ -272,7 +272,7 @@ class Musics extends BaseModel
         return self::findPagination($cond, $page, $per_page);
     }
 
-    static function deleteByUser($user_id, $delete_list)
+    static function deleteMusic($user_id, $delete_list)
     {
         $musics = self::findByIds($delete_list);
         foreach ($musics as $music) {
