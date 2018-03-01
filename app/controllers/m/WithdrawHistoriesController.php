@@ -18,6 +18,7 @@ class WithdrawHistoriesController extends BaseController
         $this->view->amount = $hi_coins / 10;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
+        $this->view->title = '我的收益';
     }
 
     function createAction()
@@ -64,6 +65,7 @@ class WithdrawHistoriesController extends BaseController
         $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
+        $this->view->title = '我要提现';
     }
 
     function recordsAction()
@@ -83,6 +85,7 @@ class WithdrawHistoriesController extends BaseController
         );
 
         $this->view->total_money = $total_money;
+        $this->view->title = '领取记录';
     }
 
     function listAction()

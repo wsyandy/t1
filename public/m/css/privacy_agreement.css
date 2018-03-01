@@ -1,0 +1,66 @@
+/* css reset */
+body, div, ul, ol, li, h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+html, body {
+    font-size: calc(100vw / 7.5)
+}
+
+body {
+    background-color: #f2f3f7;
+    overflow: hidden;
+    height: 100%
+}
+
+.agreement_box {
+    padding: 0.3rem;
+    background-color: #ffffff;
+    color: #333333;
+}
+
+.agreement_box h2 {
+    margin-top: 0.60rem;
+    margin-bottom: 0.20rem;
+    font-size: 0.36rem;
+    text-align: center;
+}
+
+.agreement_box h4 {
+    margin-top: 0.30rem;
+    margin-bottom: 0.20rem;
+    font-size: 0.32rem;
+    /*text-align: center;*/
+}
+
+.agreement_box div {
+    font-size: 0.28rem;
+    color: #464646;
+    line-height: 0.48rem;
+    font-weight: bold;
+}
+
+.agreement_box p {
+    font-size: 0.28rem;
+    color: #464646;
+    line-height: 0.48rem;
+    padding: 0.1rem 0;
+    /*text-indent: 0.56rem;*/
+}
+
+.agreement_box span {
+    color: red;
+}
+
+p.bold {
+    font-weight: bold;
+}
+
+p.text-decoration,span.text-decoration,strong.text-decoration{
+    text-decoration: underline;
+}

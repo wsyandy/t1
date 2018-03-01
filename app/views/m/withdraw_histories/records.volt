@@ -1,33 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>领取记录</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/money_style.css">
-    <script src="/js/vue/2.0.5/vue.min.js"></script>
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-    <script src="/js/utils.js"></script>
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/withdraw_histories.css') }}
+{{ block_end() }}
 <div class="vuebox" id="app" v-cloak>
 
     <div class="get_top">累计领取：{{ total_money }}元</div>
     <div class="main_content">
         <div v-show="withdraw_histories.length">
-                <ul class="get_details_ul" v-for="history in withdraw_histories">
-                    <li>
-                        <div class="top">
-                            <p>金额</p>
-                            <span>${ history.created_at_date }</span>
-                        </div>
-                        <div class="bottom">
-                            <span>${ history.amount }</span>
-                            <b>${ history.status_text }</b>
-                        </div>
-                    </li>
-                </ul>
+            <ul class="get_details_ul" v-for="history in withdraw_histories">
+                <li>
+                    <div class="top">
+                        <p>金额</p>
+                        <span>${ history.created_at_date }</span>
+                    </div>
+                    <div class="bottom">
+                        <span>${ history.amount }</span>
+                        <b>${ history.status_text }</b>
+                    </div>
+                </li>
+            </ul>
         </div>
         <div v-if="!withdraw_histories.length">
             <div class="get_none">
@@ -80,5 +70,3 @@
         }
     });
 </script>
-</body>
-</html>

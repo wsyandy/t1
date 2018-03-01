@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>举报</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/complaint.css">
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-    <script src="/js/utils.js"></script>
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/complaint.css') }}
+{{ block_end() }}
 <div class="jubao_top">请告诉我举报理由：</div>
 <div class="jubao_list">
     <ul>
@@ -62,5 +53,4 @@
         })
     }
 </script>
-</body>
-</html>
+
