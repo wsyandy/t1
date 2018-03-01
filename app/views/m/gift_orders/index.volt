@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/gift_orders.css') }}
 {{ block_end() }}
 
-<div id="app">
+<div id="app" v-cloak>
     <div class="gift_nav">
         <p :class="{select_gift:receive}" @click.stop="receive=true">收到</p>
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>

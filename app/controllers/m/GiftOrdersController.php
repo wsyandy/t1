@@ -27,6 +27,7 @@ class GiftOrdersController extends BaseController
         $this->view->sid = $this->currentUser()->sid;
         $this->view->code = $this->currentProductChannel()->code;
         $this->view->hi_coins = $this->currentUser()->hi_coins;
+        $this->view->title = "我的礼物";
     }
 
     //用户送出的礼物
