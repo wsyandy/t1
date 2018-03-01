@@ -39,7 +39,8 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'receive_gift_num' => $this->receive_gift_num
         ];
     }
 
@@ -545,5 +546,11 @@ trait UserAttrs
     {
         $text = fetch(self::$SEGMENT, $this->segment);
         return $text;
+    }
+
+    function getReceiveGiftNum()
+    {
+        $num = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'num']);
+        return $num;
     }
 }

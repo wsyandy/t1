@@ -286,4 +286,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $tag = fread($fp, 8);
         var_dump($tag, fread($fp, 30));
     }
+
+    function testGiftNumAction()
+    {
+        $user = Users::findFirstById(117);
+        echoLine($user->getReceiveGiftNum());
+    }
 }
