@@ -1,15 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>我要提现</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/money_style.css">
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-    <script src="/js/utils.js"></script>
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/withdraw_histories.css') }}
+{{ block_end() }}
+
 <div class="get_money">
     <h3>总共可提现金额：{{ amount }}元</h3>
 </div>
@@ -72,5 +64,4 @@
         })
     }
 </script>
-</body>
-</html>
+

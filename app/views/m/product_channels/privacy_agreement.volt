@@ -1,81 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>隐私条款</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <style>
-        /* css reset */
-        body, div, ul, ol, li, h1, h2, h3, h4, h5, h6, p {
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            overflow-y: scroll;
-        }
-
-        html, body {
-            font-size: calc(100vw / 7.5)
-        }
-
-        body {
-            background-color: #f2f3f7;
-            overflow: hidden;
-            height: 100%
-        }
-
-        .agreement_box {
-            padding: 0.3rem;
-            background-color: #ffffff;
-            color: #333333;
-        }
-
-        .agreement_box h2 {
-            margin-top: 0.60rem;
-            margin-bottom: 0.20rem;
-            font-size: 0.36rem;
-            text-align: center;
-        }
-
-        .agreement_box h4 {
-            margin-top: 0.30rem;
-            margin-bottom: 0.20rem;
-            font-size: 0.32rem;
-            /*text-align: center;*/
-        }
-
-        .agreement_box div {
-            font-size: 0.28rem;
-            color: #464646;
-            line-height: 0.48rem;
-            font-weight: bold;
-        }
-
-        .agreement_box p {
-            font-size: 0.28rem;
-            color: #464646;
-            line-height: 0.48rem;
-            padding: 0.1rem 0;
-            /*text-indent: 0.56rem;*/
-        }
-
-        .agreement_box span {
-            color: red;
-        }
-
-        p.bold {
-            font-weight: bold;
-        }
-
-        p.text-decoration,span.text-decoration,strong.text-decoration{
-            text-decoration: underline;
-        }
-
-    </style>
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/privacy_agreement.css') }}
+{{ block_end() }}
 <div class="agreement_box">
     <h2>{{ product_channel.agreement_company_name }}隐私政策</h2>
     <p>{{ product_channel.agreement_company_name }}（以下简称“我们”）非常重视用户的隐私和个人信息保护。您在使用我们的产品或服务时，我们可能会收集和使用您的相关信息。我们希望通过《{{ product_channel.agreement_company_name }}隐私政策》（“本隐私政策”）向您说明我们在您使用我们的产品或服务时如何收集、使用、保护这些信息。<strong>本隐私政策适用于{{ product_channel.name }}和由{{ product_channel.agreement_company_name }}及其关联公司经营的所有互联网业务平台。本隐私政策不适用于其他独立第三方向您提供的服务，例如我们平台上的第三方依托我们平台向您提供服务时，您向第三方提供的个人信息不适用于本隐私政策，我们对任何第三方使用由您提供的信息不承担任何责任。</strong></p>
@@ -153,5 +78,3 @@
     <p>{{ product_channel.agreement_company_name }}  法务部  <span class="text-decoration">张先生</span>收</p>
     <p>邮编：<span class="text-decoration">201100</span></p>
 </div>
-</body>
-</html>

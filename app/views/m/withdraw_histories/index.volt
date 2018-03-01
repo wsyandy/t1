@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>我的收益</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/money_style.css">
-    <link rel="stylesheet" href="/m/css/pop.css">
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/withdraw_histories.css', '/m/css/pop.css') }}
+{{ block_end() }}
 <!-- 弹出层开始 -->
 <div class="fudong">
     <div class="title">
@@ -20,7 +11,7 @@
         <p class="p_mr">2. Hi币可以进行提现</p>
         <span>兑换比例：<b>10</b> Hi币 = <b>1</b> 元</span>
     </div>
-    <div class="fd_text" id="error_text" >
+    <div class="fd_text" id="error_text">
         <p class="error_reason" id="error_reason"></p>
     </div>
     <div class="close_btn">知道了</div>
@@ -113,5 +104,3 @@
     });
 
 </script>
-</body>
-</html>
