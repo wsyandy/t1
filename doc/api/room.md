@@ -146,6 +146,7 @@
     theme_type 房间主题类型 0普通房间 1电台房间 如果是电台类型 需要请求接口拉取音频资源
     audio_id 房间音频id 拉取音频资源时使用
     theme_image_url string 房间主题背景图
+    room_theme_id int 房间主题id
     system_tips:[
         '内容1',
         '内容2',
