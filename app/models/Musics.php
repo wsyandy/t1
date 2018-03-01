@@ -14,7 +14,7 @@ class Musics extends BaseModel
     private $_user;
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
-    static $TYPE = [1 => '伴奏', 2 => '原唱'];
+    static $TYPE = [2 => '原唱',1 => '伴奏' ];
     static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
 
     static $files = ['file' => APP_NAME . '/musics/file/%s'];
@@ -217,7 +217,7 @@ class Musics extends BaseModel
 
 
         if ($files && $files['file']['size'] > 20000000) {
-            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
+            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M', ''];
         }
 
         $music = new Musics();
@@ -227,6 +227,13 @@ class Musics extends BaseModel
         }
 
         $music->user_id = $user_id;
+
+        $fp = fopen($_FILES['file']['tmp_name'], "rb");
+        $tag = fread($fp, 8);
+        if (strstr($tag, 'ID3') === false) {
+            return [ERROR_CODE_FAIL, '无效的文件', ''];
+        }
+        fclose($fp);
 
         if (!$music->checkFileMd5()) {
             return [ERROR_CODE_FAIL, '不能重复上传文件', ''];

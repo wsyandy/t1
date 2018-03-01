@@ -34,9 +34,9 @@
         <div class="music_list">
             <table>
                 <tr style="height:40px;">
-                    {#<td style="width:60px;text-indent: 1em;"><input type="checkbox" id="checkAllChange"></td>#}
-                    <td style="width:60px;text-indent: 1em;">
-                        {#<input type="checkbox" ：checked="fruitIds.length === fruits.length" @click='checkedAll()'></td>#}
+                    <td style="width:60px;text-indent: 1em;"><input type="checkbox" id="checkAllChange"></td>
+                    {#<td style="width:60px;text-indent: 1em;">#}
+                    {#<input type="checkbox" ：checked="fruitIds.length === fruits.length" @click='checkedAll()'></td>#}
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
                     <td style="width:200px;color: #666666;">歌曲</td>
@@ -49,7 +49,7 @@
                     <td>${music.name}</td>
                     <td>${music.singer_name}</td>
                     <td>
-                        <audio src="music.file_url" controls="controls" style="width: 160px;">
+                        <audio :src="music.file_url" controls="controls" style="width: 160px;">
                             您的浏览器不支持 audio 标签。
                         </audio>
                     </td>
@@ -97,6 +97,12 @@
         methods: {
             deleteMusic: function () {
                 console.log(this.delete_list);
+                var data = {delete_list: this.delete_list};
+                $.authPost('/web/musics/delete', data, function (resp) {
+                    if (resp.error_code != 1) {
+                        alert(resp.error_reason);
+                    }
+                });
             }
 
         }

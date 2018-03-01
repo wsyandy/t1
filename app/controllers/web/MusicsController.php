@@ -49,10 +49,24 @@ class MusicsController extends BaseController
         $opts = ['user_id' => $user_id, 'type' => $type, 'singer_name' => $singer_name, 'name' => $name];
         list($error_code, $error_reason, $music) = \Musics::upload($_FILES, $opts);
 
+        $url = '';
         if ($error_code == ERROR_CODE_SUCCESS) {
             $music->updateFile($this->file('file'));
-        }
-        return $this->renderJSON($error_code, $error_reason);
+            $url = '/web/users';
 
+        }
+        return $this->renderJSON($error_code, $error_reason, ['error_url' => $url]);
+    }
+
+    function deleteAction()
+    {
+        if ($this->request->isPost()) {
+            $delete_list = $this->params('delete_list', []);
+            if (isBlank($delete_list)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您未选择文件');
+            }
+            debug($delete_list);
+        }
+        return $this->renderJSON(ERROR_CODE_FAIL, '');
     }
 }
