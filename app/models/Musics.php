@@ -14,14 +14,14 @@ class Musics extends BaseModel
     private $_user;
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
-    static $TYPE = [2 => '原唱',1 => '伴奏' ];
+    static $TYPE = [2 => '原唱', 1 => '伴奏'];
     static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
 
     static $files = ['file' => APP_NAME . '/musics/file/%s'];
 
     function toSimpleJson()
     {
-        return [
+        $json = [
             'id' => $this->id,
             'name' => $this->name,
             'singer_name' => $this->singer_name,
@@ -29,6 +29,12 @@ class Musics extends BaseModel
             'file_size' => $this->file_size_text,
             'file_url' => $this->file_url
         ];
+
+        if (isset($this->down_at)) {
+            $json['down_at'] = $this->down_at;
+        }
+
+        return $json;
     }
 
     function toDetailJson()

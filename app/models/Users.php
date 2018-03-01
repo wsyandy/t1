@@ -2131,8 +2131,21 @@ class Users extends BaseModel
         $key = "user_musics_id" . $this->id;
         $total_entries = $user_db->zcard($key);
         $offset = $per_page * ($page - 1);
-        $music_ids = $user_db->zrevrange($key, $offset, $offset + $per_page - 1);
-        $musics = Musics::findByIds($music_ids);
+        $music_ids = $user_db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $ids = [];
+        $times = [];
+
+        foreach ($music_ids as $music_id => $time) {
+            $ids[] = $music_id;
+            $times[$music_id] = $time;
+        }
+
+        $musics = Musics::findByIds($ids);
+
+        foreach ($musics as $music) {
+            $music->down_at = fetch($times, $music->id);
+        }
 
         $pagination = new PaginationModel($musics, $total_entries, $page, $per_page);
         $pagination->clazz = 'Musics';

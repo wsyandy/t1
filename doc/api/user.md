@@ -610,7 +610,8 @@
             singer_name string 演唱者名称
             user_name string 上传者
             file_size string 文件大小
-            file_url string 文件路径
+            file_size string 文件大小
+            down_at int 下载时间
         }
     ]
 }

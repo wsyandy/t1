@@ -299,4 +299,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $share_history->user_id = 117;
         $share_history->save();
     }
+
+    function testIsSetFieldAction()
+    {
+        $music = Musics::findFirstById(1);
+        $music->down_at = "";
+        echoLine($music->toSimpleJson());
+    }
 }
