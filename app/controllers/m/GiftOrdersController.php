@@ -15,13 +15,18 @@ class GiftOrdersController extends BaseController
     function indexAction()
     {
         if ($this->request->isAjax()) {
+
             $conds = ['conditions' => 'user_id = ' . $this->currentUserId() . ' and status=' . GIFT_ORDER_STATUS_SUCCESS, 'order' => 'created_at desc'];
             $page = $this->params('page', 1);
             $per_page = $this->params('per_page', 20);
             $gift_orders = \GiftOrders::findPagination($conds, $page, $per_page);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gift_orders->toJson('gift_orders', 'toJson'));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gift_orders->toJson('gift_orders', 'toDetailJson'));
         }
+
+        $this->view->sid = $this->currentUser()->sid;
+        $this->view->code = $this->currentProductChannel()->code;
+        $this->view->hi_coins = $this->currentUser()->hi_coins;
     }
 
     //用户送出的礼物
@@ -34,7 +39,7 @@ class GiftOrdersController extends BaseController
 
             $gift_orders = \GiftOrders::findPagination($conds, $page, $per_page);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gift_orders->toJson('gift_orders', 'toJson'));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gift_orders->toJson('gift_orders', 'toDetailJson'));
         }
     }
 }

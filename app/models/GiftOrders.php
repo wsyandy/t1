@@ -29,19 +29,32 @@ class GiftOrders extends BaseModel
         GIFT_ORDER_STATUS_FAIL => '支付失败'
     ];
 
-    function toJson()
+    function toDetailJson()
     {
-        return array(
+        return [
             'name' => $this->name,
             'user_name' => $this->getGiftUser($this->user_id)->nickname,
             'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
+            'user_avatar_small_url' => $this->getGiftUser($this->user_id)->avatar_small_url,
+            'sender_avatar_small_url' => $this->getGiftUser($this->sender_id)->avatar_small_url,
             'amount' => $this->amount,
             'gift_num' => $this->gift_num,
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
             'created_at_text' => $this->created_at_text,
-        );
+        ];
+    }
+
+    function mergeJson()
+    {
+        return [
+            'user_name' => $this->getGiftUser($this->user_id)->nickname,
+            'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
+            'image_url' => $this->gift_image_url,
+            'image_small_url' => $this->gift_image_small_url,
+            'image_big_url' => $this->gift_image_big_url
+        ];
     }
 
     /**
