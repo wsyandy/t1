@@ -135,6 +135,9 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     level 用户等级
+    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    (例:星耀1 starshine1;星耀王者2 king2)
+    segment_text 段位文本 星耀1
 }
 ```
 
@@ -176,6 +179,9 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
+    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    (例:星耀1 starshine1;星耀王者2 king2)
+    segment_text 段位文本 星耀1
     albums:[
         {
             id,
@@ -231,6 +237,9 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
+    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    (例:星耀1 starshine1;星耀王者2 king2)
+    segment_text 段位文本 星耀1
     albums:[
         {
             id,
@@ -289,6 +298,9 @@
     birthday 生日
     constellation 星座
     level 用户等级
+    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    (例:星耀1 starshine1;星耀王者2 king2)
+    segment_text 段位文本 星耀1
     albums:[
         {
             id,
@@ -368,6 +380,9 @@
              mobile 手机号
              monologue 个性签名
              level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
         }
     ]
 }
@@ -407,6 +422,9 @@
              distance string 距离,例如 0.5km
              age 年龄
              level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
         }
     ]               
 }

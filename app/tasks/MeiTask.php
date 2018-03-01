@@ -265,9 +265,9 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(1);
 //        $user->experience = 1.234567892345678923456789;
 //        $user->save();
-        $user->experience = 385000;
-        $user->save();
-        echoLine($user->experience, $user->calculateLevel());
+//        $user->experience = 385000;
+//        $user->save();
+        echoLine($user->segment, $user->segment_text);
     }
 
     function testUserLevelTextAction()
@@ -277,5 +277,13 @@ class MeiTask extends \Phalcon\Cli\Task
             $user->level = $i;
             echoLine($user->level, $user->level_text);
         }
+    }
+
+    function checkMp3Action()
+    {
+        $fp = fopen(APP_ROOT . "public/temp/5a7bcab1b95e2.mp3", "rb");
+        //fseek($fp, -128, SEEK_END);
+        $tag = fread($fp, 8);
+        var_dump($tag, fread($fp, 30));
     }
 }
