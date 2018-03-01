@@ -207,7 +207,7 @@ class Musics extends BaseModel
     {
         debug($files);
         if (isBlank($files) || !$files['file']['tmp_name']) {
-            return [ERROR_CODE_FAIL, '上传文件不能为空',''];
+            return [ERROR_CODE_FAIL, '上传文件不能为空', ''];
         }
 
         $name = fetch($opts, 'name');
@@ -235,6 +235,7 @@ class Musics extends BaseModel
         $music->name = $name;
         $music->singer_name = $singer_name;
         $music->type = $type;
+        $music->status = STATUS_ON;
 
 
         debug($files['file']['tmp_name']);
@@ -244,7 +245,7 @@ class Musics extends BaseModel
         $music->file_size = $files['file']['size'];
 
         $music->save();
-        return [ERROR_CODE_SUCCESS, '', $music];
+        return [ERROR_CODE_SUCCESS, '上传成功', $music];
     }
 
     static function findByUserId($page, $per_page, $user_id)

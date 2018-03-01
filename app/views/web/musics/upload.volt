@@ -13,7 +13,7 @@
             <div class="upload_music_title"><i></i> 音乐文件 <span>(必填 :仅限MP3格式 , 不超过20M)</span></div>
             <div class="select_file">
                 <b>选择文件</b>
-                <input type="file" name="file" id="file" required="required"/>
+                <input type="file" name="file" id="file" required="required" accept="audio/mp3"/>
             </div>
             <div class="upload_music_title"><i></i> 音乐类型 <span>(必填 :若为伴奏 , 请选择伴奏)</span></div>
             <select type="text" name="type" id="type">
@@ -88,29 +88,6 @@
 
     vm = XVue(opts);
 
-    $(document).on('submit', '#upload_music', function (event) {
-        event.preventDefault();
-        var self = $(this);
-        var url = self.attr("action");
-        self.ajaxSubmit({
-            error: function (xhr, status, error) {
-                alert('服务器错误 ' + error);
-            },
-
-            success: function (resp, status, xhr) {
-                if (resp.error_url) {
-                    location.href = resp.error_url;
-                    return;
-                }
-                console.log(resp);
-                alert(resp.error_reason);
-            }
-        });
-
-        return false;
-
-    });
-
     $(function () {
 
         function colse_fd() {
@@ -149,6 +126,34 @@
 //            }
 //        });
 
+        $(document).on('submit', '#upload_music', function (event) {
+            event.preventDefault();
+            var self = $(this);
+            var url = self.attr("action");
+
+            if (!vm.agreement) {
+                open_fd();
+                return false;
+            }
+
+            self.ajaxSubmit({
+                error: function (xhr, status, error) {
+                    alert('服务器错误 ' + error);
+                },
+
+                success: function (resp, status, xhr) {
+                    if (resp.error_url) {
+                        location.href = resp.error_url;
+                        return;
+                    }
+                    console.log(resp);
+                    alert(resp.error_reason);
+                }
+            });
+
+            return false;
+
+        });
 
 
 
