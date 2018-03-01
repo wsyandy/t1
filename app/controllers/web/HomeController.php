@@ -7,9 +7,10 @@ class HomeController extends BaseController
     public function indexAction()
     {
         $user = $this->currentUser();
-        $product_channel = $user->product_channel;
-        if(!$product_channel)  {
+        if(!$user)  {
             $product_channel =  \ProductChannels::findLast();
+        } else {
+            $product_channel = $user->product_channel;
         }
 
         $this->view->product_channel = $product_channel;

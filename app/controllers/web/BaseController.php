@@ -10,6 +10,10 @@ class BaseController extends \ApplicationController
      */
     private $_current_user;
 
+    static $SKIP_ACTIONS = [
+        'home' => ['index', 'login', 'logout']
+    ];
+
     /**
      * @return \Users
      */
@@ -18,7 +22,6 @@ class BaseController extends \ApplicationController
         if (!isset($this->_current_user)) {
             $user_id = $this->currentUserId();
             $this->_current_user = \Users::findFirstById($user_id);
-
 //            if (!$this->_current_user && isDevelopmentEnv()) {
 //                $this->_current_user = \Users::findLast();
 //            }
@@ -43,9 +46,35 @@ class BaseController extends \ApplicationController
 
         $current_user = $this->currentUser();
 
+        $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
+        $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
+        $controller_name = strtolower($controller_name);
+        $action_name = strtolower($action_name);
+
+        // 不验证用户登录
+        if ($this->skipAuth($controller_name, $action_name)) {
+            return;
+        }
+
         if (isBlank($current_user)) {
             $this->response->redirect('/web/home/login');
             return;
         }
+    }
+
+
+    function skipAuth($controller_name, $action_name)
+    {
+        if (isset(self::$SKIP_ACTIONS[$controller_name])) {
+            $values = self::$SKIP_ACTIONS[$controller_name];
+            if ($values == '*') {
+                return true;
+            }
+
+            if (is_array($values) && in_array($action_name, $values)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
