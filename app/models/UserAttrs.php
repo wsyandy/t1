@@ -36,7 +36,8 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
-            'im_password' => $this->im_password
+            'im_password' => $this->im_password,
+            'level' => $this->level
         ];
     }
 
@@ -59,7 +60,8 @@ trait UserAttrs
             'created_at_text' => $this->created_at_text,
             'register_at_text' => $this->register_at_text,
             'last_at_text' => $this->last_at_text,
-            'login_type_text' => $this->login_type_text
+            'login_type_text' => $this->login_type_text,
+            'level' => $this->level
         ];
     }
 
@@ -82,7 +84,8 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
-            'current_channel_name' => $this->current_channel_name
+            'current_channel_name' => $this->current_channel_name,
+            'level' => $this->level
         ];
     }
 
@@ -101,6 +104,7 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
             'age' => $this->age,
+            'level' => $this->level
         ];
 
         if (isset($this->friend_status)) {
@@ -140,6 +144,7 @@ trait UserAttrs
             'monologue' => $this->monologue,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
             'age' => $this->age,
+            'level' => $this->level
         ];
 
         return $data;
@@ -498,5 +503,30 @@ trait UserAttrs
         $fd = $hot_cache->get($fd_key);
 
         return $fd;
+    }
+
+    //等级文案
+    function getLevelText()
+    {
+        $levels = [1, 6, 11, 16, 21, 26, 31, 36];
+        $level_texts = ['青铜', '白银', '黄金', '铂金', '钻石', '王者', '星耀'];
+        $user_level = $this->level;
+
+        if ($user_level < 1) {
+            return '';
+        } elseif ($user_level >= 35) {
+            return '星耀5';
+        }
+
+        $level_text = '';
+
+        foreach ($levels as $index => $level) {
+
+            if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
+                $level_text = $level_texts[$index] . ($user_level - $index * 5);
+            }
+        }
+
+        return $level_text;
     }
 }

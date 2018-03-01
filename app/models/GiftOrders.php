@@ -36,11 +36,11 @@ class GiftOrders extends BaseModel
             'user_name' => $this->getGiftUser($this->user_id)->nickname,
             'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
             'amount' => $this->amount,
-            'gift_num'=>$this->gift_num,
+            'gift_num' => $this->gift_num,
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
-            'created_at_text'=>$this->created_at_text,
+            'created_at_text' => $this->created_at_text,
         );
     }
 
@@ -84,6 +84,7 @@ class GiftOrders extends BaseModel
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
+                \Users::delay()->updateExperience($gift_order->id);
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
             }
