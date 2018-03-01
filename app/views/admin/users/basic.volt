@@ -28,7 +28,7 @@
     <tr>
         <td>用户等级:{{ user.level }}</td>
         <td>用户经验:{{ user.experience }}</td>
-        <td>段位:{{ user.level_text }}</td>
+        <td>段位:{{ user.segment_text }}</td>
         <td></td>
     </tr>
 </table>

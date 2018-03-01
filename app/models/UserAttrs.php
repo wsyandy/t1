@@ -516,38 +516,6 @@ trait UserAttrs
         return $fd;
     }
 
-    //段位
-    function segment()
-    {
-        $levels = [1, 6, 11, 16, 21, 26, 31, 36];
-        $level_texts = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'king', 'starshine'];
-        $user_level = $this->level;
-
-        if ($user_level < 1) {
-            return '';
-        } elseif ($user_level >= 35) {
-            return '星耀5';
-        }
-
-        $level_text = '';
-
-        foreach ($levels as $index => $level) {
-
-            if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
-                $level_text = $level_texts[$index] . ($user_level - $index * 5);
-            }
-        }
-
-        return $level_text;
-    }
-
-    //段位文案
-    function getSegmentText()
-    {
-        $text = fetch(self::$SEGMENT, $this->segment);
-        return $text;
-    }
-
     function getReceiveGiftNum()
     {
         $num = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'num']);

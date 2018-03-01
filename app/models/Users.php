@@ -2168,6 +2168,32 @@ class Users extends BaseModel
         return $level;
     }
 
+    //段位
+    function calculateSegment()
+    {
+        $levels = [1, 6, 11, 16, 21, 26, 31, 36];
+        $segment_texts = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'king', 'starshine'];
+        $user_level = $this->level;
+
+        if ($user_level < 1) {
+            return '';
+        } elseif ($user_level >= 35) {
+            return 'starshine5';
+        }
+
+        $segment = '';
+
+        foreach ($levels as $index => $level) {
+
+            if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
+                $segment = $segment_texts[$index] . ($user_level - $index * 5);
+            }
+        }
+
+        return $segment;
+    }
+
+
     //更新用户等级/经验
     static function updateExperience($gift_order_id)
     {
@@ -2178,7 +2204,9 @@ class Users extends BaseModel
         }
 
         $lock_key = "update_user_level_lock_" . $gift_order->user_id;
+        $lock_key1 = "update_user_level_lock_" . $gift_order->sender_id;
         $lock = tryLock($lock_key);
+        $lock1 = tryLock($lock_key1);
 
         $sender = $gift_order->sender;
         $user = $gift_order->user;
@@ -2190,6 +2218,7 @@ class Users extends BaseModel
             $sender_level = $sender->calculateLevel();
             $sender->experience += $sender_experience;
             $sender->level = $sender_level;
+            $sender->segment = $sender->calculateSegment();
             $sender->update();
         }
 
@@ -2197,9 +2226,11 @@ class Users extends BaseModel
             $user->experience += $user_experience;
             $user_level = $user->calculateLevel();
             $user->level = $user_level;
+            $sender->segment = $user->calculateSegment();
             $user->update();
         }
 
         unlock($lock);
+        unlock($lock1);
     }
 }

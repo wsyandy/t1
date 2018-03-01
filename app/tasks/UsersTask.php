@@ -161,5 +161,16 @@ class UsersTask extends \Phalcon\Cli\Task
             Users::updateExperience($gift_order->id);
         }
     }
+
+    function fixUserSegmentAction()
+    {
+        $users = Users::find(['conditions' => "level > 0"]);
+
+        foreach ($users as $user) {
+            echoLine($user->id, $user->calculateSegment());
+            //$user->segment = $user->calculateSegment();
+            //$user->save();
+        }
+    }
 }
 
