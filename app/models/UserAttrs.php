@@ -37,7 +37,9 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
             'im_password' => $this->im_password,
-            'level' => $this->level
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -61,7 +63,9 @@ trait UserAttrs
             'register_at_text' => $this->register_at_text,
             'last_at_text' => $this->last_at_text,
             'login_type_text' => $this->login_type_text,
-            'level' => $this->level
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -85,7 +89,9 @@ trait UserAttrs
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'current_channel_name' => $this->current_channel_name,
-            'level' => $this->level
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -104,7 +110,9 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
             'age' => $this->age,
-            'level' => $this->level
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
 
         if (isset($this->friend_status)) {
@@ -144,7 +152,9 @@ trait UserAttrs
             'monologue' => $this->monologue,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
             'age' => $this->age,
-            'level' => $this->level
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
 
         return $data;
@@ -505,11 +515,11 @@ trait UserAttrs
         return $fd;
     }
 
-    //等级文案
-    function getLevelText()
+    //段位
+    function segment()
     {
         $levels = [1, 6, 11, 16, 21, 26, 31, 36];
-        $level_texts = ['青铜', '白银', '黄金', '铂金', '钻石', '王者', '星耀'];
+        $level_texts = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'king', 'starshine'];
         $user_level = $this->level;
 
         if ($user_level < 1) {
@@ -528,5 +538,12 @@ trait UserAttrs
         }
 
         return $level_text;
+    }
+
+    //段位文案
+    function getSegmentText()
+    {
+        $text = fetch(self::$SEGMENT, $this->segment);
+        return $text;
     }
 }

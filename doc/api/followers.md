@@ -32,6 +32,9 @@
             current_room_seat_id 用户当前所在麦位id 
             monologue 个性签名
             level 用户等级
+           segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
         } 
     ]
 }
@@ -69,6 +72,9 @@
             current_room_seat_id 用户当前所在麦位id
             monologue 个性签名
             level 用户等级
+           segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
         } 
     ]
 }
