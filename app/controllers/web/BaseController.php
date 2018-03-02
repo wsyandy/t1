@@ -46,9 +46,6 @@ class BaseController extends \ApplicationController
         $login_time = $this->session->get("login_time");
         debug($login_time);
         $time = 86400;
-        if (isDevelopmentEnv()) {
-            $time = 60 * 1;
-        }
         if ($login_time && time() - $login_time > $time) {
             $this->session->set('user_id', null);
             $this->session->set('login_time', null);
