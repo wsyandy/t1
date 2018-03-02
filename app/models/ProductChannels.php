@@ -435,8 +435,15 @@ class ProductChannels extends BaseModel
     function getSystemNews()
     {
         if (!$this->system_tips) {
-             return [];
+            return [];
         }
         return [$this->system_tips];
+    }
+
+    function toDetailJson()
+    {
+        return [
+            'official_website' => $this->official_website
+        ];
     }
 }
