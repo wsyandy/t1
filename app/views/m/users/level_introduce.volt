@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" style="background:#ffffff;">
-<head>
-    <meta charset="UTF-8">
-    <title>等级</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/css/level_introduce.css">
-</head>
-<body style="background:#ffffff;">
+{{ block_begin('head') }}
+{{ theme_css('/m/css/level_introduce.css') }}
+{{ block_end() }}
 <div class="level_title">
     <p>等级说明</p>
 </div>
@@ -26,5 +19,10 @@
 <div class="level_img">
     <img src="/m/images/level.png">
 </div>
-</body>
-</html>
+
+<script>
+    $(function () {
+        $("html").css('background-color', "#ffffff");
+        $("body").css('background-color', "#ffffff");
+    })
+</script>

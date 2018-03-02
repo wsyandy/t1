@@ -21,6 +21,7 @@ class ComplaintsController extends BaseController
 
         $type = '';
         $opt_id = 0;
+
         if ($room_id) {
             $opt_id = $room_id;
             $type = COMPLAINT_ROOM;
@@ -37,6 +38,7 @@ class ComplaintsController extends BaseController
 
         $complaint_types = \Complaints::generateComplaintType($type);
         $this->view->complaint_types = $complaint_types;
+        $this->view->title = '举报';
     }
 
     function createAction()

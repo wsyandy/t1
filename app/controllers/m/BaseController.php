@@ -194,6 +194,8 @@ class BaseController extends \ApplicationController
         if ($this->currentUser()->isBlocked()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
         }
+
+        $this->view->title = $this->currentProductChannel()->name;
     }
 
 
