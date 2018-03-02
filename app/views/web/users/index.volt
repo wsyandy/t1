@@ -32,15 +32,15 @@
         <div class="music_list">
             <table>
                 <tr style="height:40px;">
-                    <td style="width:60px;text-indent: 1em;"><input type="checkbox" id="checkAllChange"
-                                                                    @click="selectAll"></td>
+                    <td style="width:60px;text-indent: 1em;">
+                        <input type="checkbox" id="checkAllChange" v-model="select_all" @click="selectAll"></td>
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
                     <td style="width:200px;color: #666666;">歌曲</td>
                     <td style="width:120px;color: #666666;">大小</td>
                     <td style="width:180px;color: #666666;">上传时间</td>
                 </tr>
-                <tr style="height:74px;" v-for="(music,index) in musics" class="music_input_list">
+                <tr style="height:74px;" v-for="(music,index) in musics">
                     <td style="text-indent: 1em;">
                         <input type="checkbox" :true-value="music.id" v-model="selected_list[index]"></td>
                     <td>${music.name}</td>
@@ -59,8 +59,8 @@
         <div class="page" v-show="show">
             <div class="pagelist">
                 <span class="jump" :class="{disabled:pstart}" @click="jumpPage(--page)">上一页</span>
-                <select v-model="selected" @click="jumpPage(selected)">
-                    <option v-for="num in indexs" v-bind:value="num">${ num }/${total_page}页</option>
+                <select v-model="page" @click="jumpPage(page)">
+                    <option v-for="num in indexs" v-bind:value="num" v-text='num+"/"+total_page+"页"'></option>
                 </select>
                 <span :class="{disabled:pend}" class="jump" @click="jumpPage(++page)">下一页</span>
             </div>
@@ -93,7 +93,7 @@
             musics: [],
             num: [],
             selected_list: [],
-            selected: 1
+            select_all: ''
         },
         computed: {
             /*分页器 start*/
@@ -119,6 +119,18 @@
             }
             /*分页器 end*/
         },
+        watch: {//深度 watcher
+            'selected_list': {
+                handler: function (val, oldVal) {
+                    if (this.selected_list.length === this.musics.length ) {
+                        this.select_all = true;
+                    } else {
+                        this.select_all = false;
+                    }
+                },
+                deep: true
+            }
+        },
         methods: {
             deleteMusic: function () {
                 var data = {delete_list: this.selected_list};
@@ -140,7 +152,6 @@
                         this.selected_list.push(music.id);
                     }, this);
                 }
-
                 console.log(this.selected_list);
             },
             /*分页器 start*/
@@ -168,6 +179,7 @@
         var data = {page: vm.page, per_page: 10};
         $.authGet('/web/musics/list', data, function (resp) {
             vm.musics = [];
+            vm.selected_list = [];
             vm.total_page = resp.total_page;
             vm.total_entries = resp.total_entries;
             $.each(resp.musics, function (index, item) {
@@ -194,6 +206,7 @@
         var w_width = $(window).width();
 
         $(".delete").click(function () {
+            console.log(vm.selected_list);
             if (vm.selected_list.length == 0) {
                 alert("您没有选择文件");
                 return
