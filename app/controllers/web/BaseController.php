@@ -41,8 +41,18 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
-        $show_logout = false;
         $this->view->title = "";
+
+        $login_time = $this->session->get("login_time");
+        debug($login_time);
+        $time = 86400;
+        if (isDevelopmentEnv()) {
+            $time = 60 * 1;
+        }
+        if ($login_time && time() - $login_time > $time) {
+            $this->session->set('user_id', null);
+            $this->session->set('login_time', null);
+        }
 
         $current_user = $this->currentUser();
 
@@ -50,6 +60,13 @@ class BaseController extends \ApplicationController
         $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
+
+        $show_logout = false;
+        if (isPresent($current_user)) {
+            $show_logout = true;
+        }
+
+        $this->view->show_logout = $show_logout;
 
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
@@ -60,9 +77,6 @@ class BaseController extends \ApplicationController
             $this->response->redirect('/web/home/login');
             return;
         }
-        $show_logout = true;
-
-        $this->view->show_logout = $show_logout;
     }
 
 

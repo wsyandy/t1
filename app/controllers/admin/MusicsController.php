@@ -32,6 +32,7 @@ class MusicsController extends BaseController
         $this->assign($music, 'music');
 
         list($error_code, $error_reason) = $music->checkField($_FILES);
+        debug($_FILES);
 
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);

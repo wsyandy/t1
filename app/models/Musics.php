@@ -265,8 +265,8 @@ class Musics extends BaseModel
     static function searchMusic($page, $per_page, $user_id)
     {
         $cond = [
-            'conditions' => 'user_id = :user_id: and status = :status:',
-            'bind' => ['user_id' => $user_id, 'status' => STATUS_ON],
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user_id],
             'order' => 'id desc'
         ];
         return self::findPagination($cond, $page, $per_page);

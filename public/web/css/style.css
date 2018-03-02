@@ -213,7 +213,7 @@ header .wrapper ul li a{
 
 .page span {
 	display: inline-block;
-	background: #BBBBBB;
+	background: #FE5287;
 	border-radius: 2px;
 	font-size: 14px;
 	color: #FFFFFF;
@@ -313,7 +313,7 @@ select::-ms-expand {
 	margin-top: 52px;
 	text-align: center;
 }
-.btn_list span{
+.btn_list input{
 	display: inline-block;
 	width: 92px;
 	height: 36px;
@@ -397,7 +397,7 @@ select::-ms-expand {
 	vertical-align: middle;
 	margin-right: 10px;
 }
-.upload_music input{
+.upload_music input[type=text]{
 	display: block;
 	width: 220px;
 	height: 30px;
@@ -405,6 +405,10 @@ select::-ms-expand {
 	margin-top: 10px;
 	padding:0 10px;
 }
+.upload_music input.searchable-select-input{
+	display: none;
+}
+
 .select_file{
 	width: 114px;
     height: 36px;
@@ -464,7 +468,7 @@ select::-ms-expand {
 .check_xieyi span{
 	color: #fb000a;
 }
-.music_upload_btn span{
+.music_upload_btn input{
 	width: 160px !important;
 }
 

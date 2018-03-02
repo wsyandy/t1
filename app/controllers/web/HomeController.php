@@ -51,6 +51,8 @@ class HomeController extends BaseController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
+                $this->session->set("login_time",time());
+
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/users']);
             }
         }

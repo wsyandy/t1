@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/main','/web/css/style') }}
-{{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form') }}
+{{ theme_css('/web/css/main','/web/css/style','/web/css/jquery.searchableSelect') }}
+{{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form','/web/js/jquery.searchableSelect') }}
 {{ block_end() }}
 
 <div class="upload_music" xmlns="http://www.w3.org/1999/html">
@@ -30,7 +30,7 @@
             </div>
 
             <div class="btn_list music_upload_btn">
-                <input type="submit" name="submit" class="close_btn close_right" value="确认上传" >
+                <input type="submit" name="submit" class="close_btn close_right" value="确认上传">
             </div>
         </form>
     </div>
@@ -130,6 +130,7 @@
             var url = self.attr("action");
 
             if (!vm.agreement) {
+                can_upload = true;
                 open_fd();
                 return false;
             }
@@ -158,6 +159,8 @@
         $(".close_btn").click(function () {
             colse_fd();
         });
+
+        $('select').searchableSelect();
 
     });
 
