@@ -3,8 +3,12 @@
 {{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form','/web/js/jquery.searchableSelect') }}
 {{ block_end() }}
 
-<div class="upload_music" xmlns="http://www.w3.org/1999/html">
-    <div class="music_add" a>
+<div class="upload_music">
+    <a href="/web/users/index" class="music_list_head">
+        <img src="/web/images/fanhui.png">
+        <span>返回歌曲列表</span>
+    </a>
+    <div class="music_add">
         <form action="/web/musics/upload_music" method="post" enctype="multipart/form-data" class="form"
               id="upload_music">
             <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过20个字)</span></div>
@@ -12,9 +16,14 @@
             <div class="upload_music_title"><i></i> 演唱者 <span>(必填 :不超过20个字 , 该信息不准确可能导致下架)</span></div>
             <input type="text" name="singer_name" placeholder="单行输入" required="required" id="singer_name">
             <div class="upload_music_title"><i></i> 音乐文件 <span>(必填 :仅限MP3格式 , 不超过20M)</span></div>
-            <div class="select_file">
-                <b>选择文件</b>
-                <input type="file" name="file" id="file" required="required" accept="audio/mp3"/>
+            <div class="select_file_box">
+                <div class="select_file">
+                    <b>选择文件</b>
+                    <input type="file" name="file" id="file" required="required" accept="audio/mp3"/>
+                </div>
+                <div class="file_name" id="file_name">
+                </div>
+
             </div>
             <div class="upload_music_title"><i></i> 音乐类型 <span>(必填 :若为伴奏 , 请选择伴奏)</span></div>
             <select type="text" name="type" id="type">
@@ -161,6 +170,13 @@
         });
 
         $('select').searchableSelect();
+
+        $('#file').change(function () {
+            if ($(this)[0].files && $(this)[0].files[0]) {
+                $("#file_name").html($(this)[0].files[0].name);
+            }
+        });
+
 
     });
 
