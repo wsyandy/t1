@@ -209,6 +209,38 @@ class Musics extends BaseModel
         }
     }
 
+    static function isMp3($filename)
+    {
+        $fp = fopen($filename, 'rb');
+        $head = fread($fp, 8);
+
+        $encode = mb_detect_encoding($head, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5", "JIS", "EUC-JP", 'ISO-8859-1']);
+
+        debug($encode, $head);
+
+        if ('ISO-8859-1' == $encode) {
+
+            $pattern = '^\\xFF[\\xE2-\\xE7\\xF2-\\xF7\\xFA-\\xFF][\\x00-\\x0B\\x10-\\x1B\\x20-\\x2B\\x30-\\x3B\\x40-\\x4B\\x50-\\x5B\\x60-\\x6B\\x70-\\x7B\\x80-\\x8B\\x90-\\x9B\\xA0-\\xAB\\xB0-\\xBB\\xC0-\\xCB\\xD0-\\xDB\\xE0-\\xEB\\xF0-\\xFB]';
+
+            if (preg_match('/' . $pattern . '/s', $head)) {
+                return true;
+            }
+
+        } else {
+
+            $head = trim($head);
+            debug($head);
+
+            if (strstr($head, 'ID3') !== false) {
+                return true;
+            }
+        }
+
+        fclose($fp);
+        return false;
+    }
+
+
     static function upload($files, $opts)
     {
         debug($files);
@@ -216,15 +248,18 @@ class Musics extends BaseModel
             return [ERROR_CODE_FAIL, '上传文件非法', ''];
         }
 
+        if ($files && $files['file']['size'] > 20000000) {
+            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M', ''];
+        }
+
+        if (self::isMp3($files['file']['tmp_name']) === false) {
+            return [ERROR_CODE_FAIL, '无效的文件', ''];
+        }
+
         $name = fetch($opts, 'name');
         $singer_name = fetch($opts, 'singer_name');
         $type = fetch($opts, 'type');
         $user_id = fetch($opts, 'user_id');
-
-
-        if ($files && $files['file']['size'] > 20000000) {
-            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M', ''];
-        }
 
         $music = new Musics();
 
@@ -233,14 +268,6 @@ class Musics extends BaseModel
         }
 
         $music->user_id = $user_id;
-
-        $fp = fopen($_FILES['file']['tmp_name'], "rb");
-        $tag = fread($fp, 8);
-        debug($tag);
-        if (strstr($tag, 'ID3') === false) {
-            return [ERROR_CODE_FAIL, '无效的文件', ''];
-        }
-        fclose($fp);
 
         if (!$music->checkFileMd5()) {
             return [ERROR_CODE_FAIL, '不能重复上传文件', ''];
@@ -251,11 +278,8 @@ class Musics extends BaseModel
         $music->type = $type;
         $music->status = STATUS_ON;
 
-
         debug($files['file']['tmp_name']);
 //        move_uploaded_file($files['file']['tmp_name'], APP_ROOT . "temp/" . uniqid() . ".mp3");
-
-
         $music->file_size = $files['file']['size'];
 
         $music->save();

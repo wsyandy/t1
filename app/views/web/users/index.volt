@@ -33,7 +33,8 @@
             <table>
                 <tr style="height:40px;">
                     <td style="width:60px;text-indent: 1em;">
-                        <input type="checkbox" id="checkAllChange" v-model="select_all" @click="selectAll"></td>
+                        <input type="checkbox" id="checkAllChange" :checked="checked_list.length===musics.length" @click="selectAll">
+                    </td>
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
                     <td style="width:200px;color: #666666;">歌曲</td>
@@ -42,7 +43,7 @@
                 </tr>
                 <tr style="height:74px;" v-for="(music,index) in musics">
                     <td style="text-indent: 1em;">
-                        <input type="checkbox" :true-value="music.id" v-model="selected_list[index]"></td>
+                        <input type="checkbox" :value="music.id" v-model="checked_list"></td>
                     <td>${music.name}</td>
                     <td>${music.singer_name}</td>
                     <td>
@@ -93,7 +94,9 @@
             musics: [],
             num: [],
             selected_list: [],
-            select_all: ''
+            checked_list: [],
+            select_all: '',
+
         },
         computed: {
             /*分页器 start*/
@@ -119,21 +122,9 @@
             }
             /*分页器 end*/
         },
-        watch: {//深度 watcher
-            'selected_list': {
-                handler: function (val, oldVal) {
-                    if (this.selected_list.length === this.musics.length ) {
-                        this.select_all = true;
-                    } else {
-                        this.select_all = false;
-                    }
-                },
-                deep: true
-            }
-        },
         methods: {
             deleteMusic: function () {
-                var data = {delete_list: this.selected_list};
+                var data = {delete_list: this.checked_list};
                 $.authPost('/web/musics/delete', data, function (resp) {
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
@@ -145,14 +136,13 @@
             selectAll: function (event) {
                 console.log(event.currentTarget);
                 if (!event.currentTarget.checked) {
-                    this.selected_list = [];
+                    this.checked_list = [];
                 } else { //实现全选
-                    this.selected_list = [];
+                    this.checked_list = [];
                     this.musics.forEach(function (music) {
-                        this.selected_list.push(music.id);
+                        this.checked_list.push(music.id);
                     }, this);
                 }
-                console.log(this.selected_list);
             },
             /*分页器 start*/
             jumpPage: function (id) {
@@ -179,7 +169,7 @@
         var data = {page: vm.page, per_page: 10};
         $.authGet('/web/musics/list', data, function (resp) {
             vm.musics = [];
-            vm.selected_list = [];
+//            vm.selected_list = [];
             vm.total_page = resp.total_page;
             vm.total_entries = resp.total_entries;
             $.each(resp.musics, function (index, item) {
@@ -206,8 +196,8 @@
         var w_width = $(window).width();
 
         $(".delete").click(function () {
-            console.log(vm.selected_list);
-            if (vm.selected_list.length == 0) {
+            console.log(vm.checked_list);
+            if (vm.checked_list.length == 0) {
                 alert("您没有选择文件");
                 return
             }
