@@ -15,12 +15,14 @@
 {% endmacro %}
 
 {{ simple_table(musics, [
-    "ID": 'id', "上传者信息":"user_info","名称": 'name',"歌手名称": 'singer_name',"文件大小": 'file_size_text', '类型':'type_text',"有效": 'status_text', "排名": 'rank','编辑': 'edit_link'
+    "ID": 'id',"上传时间":"created_at_text", "上传者信息":"user_info","名称": 'name',"歌手名称": 'singer_name',"文件大小": 'file_size_text', '类型':'type_text',
+    "有效": 'status_text', "排名": 'rank','编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="music_tpl">
     <tr id="music_${ music.id }">
         <td>${music.id}</td>
+        <td>${music.created_at_text}</td>
         <td>
             姓名:<a href="/admin/users?user[id_eq]=${music.user_id}">${music.user_nickname}</a><br/>
             性别:${music.sex_text}<br/>
