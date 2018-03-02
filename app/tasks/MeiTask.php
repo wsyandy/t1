@@ -236,10 +236,13 @@ class MeiTask extends \Phalcon\Cli\Task
 //        var_dump($tag, fread($fp, 30));
 
         $getID3 = new getID3();    //实例化类
-        $ThisFileInfo = $getID3->analyze(APP_ROOT . "public/temp/5a7bcab1b95e2.mp3");   //分析文件
-        $time = $ThisFileInfo['playtime_seconds'];      //获取mp3的长度信息
-        echo $ThisFileInfo['playtime_seconds'];         //获取MP3文件时长
-        var_dump($ThisFileInfo);
+        $ThisFileInfo = $getID3->analyze(APP_ROOT . "public/temp/test_music.mp4");   //分析文件
+        //$time = $ThisFileInfo['playtime_seconds'];      //获取mp3的长度信息
+        //echo $ThisFileInfo['playtime_seconds'];         //获取MP3文件时长
+        $filename = APP_ROOT . "public/temp/5a7d444ae6cec.mp3";
+        $fp = fopen($filename, "rb");
+        $res = fread($fp, 32774);
+        var_dump($getID3->GetFileFormat($res));
     }
 
     function testActiveRoomAction()
@@ -281,10 +284,22 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function checkMp3Action()
     {
-        $fp = fopen(APP_ROOT . "public/temp/5a7bcab1b95e2.mp3", "rb");
-        //fseek($fp, -128, SEEK_END);
+        $filename = APP_ROOT . "public/temp/test_music.mp3";
+
+        if (is_readable($filename)) {
+            echoLine("is_readable");
+        }
+
+        $fp = fopen($filename, "rb");
+//        //fseek($fp, -128, SEEK_END);
         $tag = fread($fp, 8);
-        var_dump($tag, fread($fp, 30));
+//        //$tag = strstr($tag, "TAG");
+//        //echoLine($tag);
+//        var_dump($tag);
+
+        $encode = mb_detect_encoding($tag, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5", "JIS", "EUC-JP", 'ISO-8859-1']);
+        echoLine($encode, $tag);
+
     }
 
     function testGiftNumAction()
@@ -305,5 +320,36 @@ class MeiTask extends \Phalcon\Cli\Task
         $music = Musics::findFirstById(1);
         $music->down_at = "";
         echoLine($music->toSimpleJson());
+    }
+
+    function pregMp3Action()
+    {
+        $filename = APP_ROOT . "public/temp/test_music2.mp3";
+        $fp = fopen($filename, 'rb');
+        $head = fread($fp, 8);
+
+        $encode = mb_detect_encoding($head, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5", "JIS", "EUC-JP", 'ISO-8859-1']);
+
+        echoLine($encode, $head);
+
+        if ('ISO-8859-1' == $encode) {
+
+            $pattern = '^\\xFF[\\xE2-\\xE7\\xF2-\\xF7\\xFA-\\xFF][\\x00-\\x0B\\x10-\\x1B\\x20-\\x2B\\x30-\\x3B\\x40-\\x4B\\x50-\\x5B\\x60-\\x6B\\x70-\\x7B\\x80-\\x8B\\x90-\\x9B\\xA0-\\xAB\\xB0-\\xBB\\xC0-\\xCB\\xD0-\\xDB\\xE0-\\xEB\\xF0-\\xFB]';
+
+            if (preg_match('/' . $pattern . '/s', $head)) {
+                echoLine("success");
+            }
+
+        } else {
+
+            $head = trim($head);
+            echoLine($head);
+
+            if (strstr($head, 'ID3') !== false) {
+                echoLine("success");
+            }
+        }
+
+        fclose($fp);
     }
 }
