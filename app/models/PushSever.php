@@ -14,7 +14,7 @@ class PushSever extends BaseModel
     private $websocket_listen_server_ip;
     private $websocket_listen_server_port;
     private static $intranet_ip_key = "intranet_ip";
-    private $connection_list = 'websocket_connection_list';
+    private static $connection_list = 'websocket_connection_list';
     private $server;
 
     function __construct()
@@ -27,6 +27,30 @@ class PushSever extends BaseModel
         $this->websocket_listen_server_port = self::config('websocket_listen_server_port'); //监听服务端
         $this->websocket_worker_num = self::config('websocket_worker_num'); //监听服务端
         $this->websocket_max_request = self::config('websocket_max_request'); //监听服务端
+        $this->server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
+        $this->server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
+        $this->server->set(
+            [
+                'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
+                'max_request' => $this->websocket_max_request, //设置多少合适
+                'dispatch_model' => 2,
+                'daemonize' => true,
+                'log_file' => APP_ROOT . 'log/websocket_server.log',
+                'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
+                'reload_async' => true,
+                //'heartbeat_check_interval' => 10, //10秒检测一次
+                //'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
+                //'task_worker_num' => 8
+            ]
+        );
+
+        $this->server->on('start', [$this, 'onStart']);
+        $this->server->on('open', [$this, 'onOpen']);
+        $this->server->on('message', [$this, 'onMessage']);
+        $this->server->on('close', [$this, 'onClose']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        $this->server->on('workerStop', [$this, 'onWorkerStop']);
+        $this->server->start();
     }
 
     static function getJobQueueCache()
@@ -108,54 +132,37 @@ class PushSever extends BaseModel
         return $val;
     }
 
-    function start()
-    {
-        try {
-            $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
-            $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
-            $swoole_server->set(
-                [
-                    'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
-                    'max_request' => $this->websocket_max_request, //设置多少合适
-                    'dispatch_model' => 2,
-                    'daemonize' => true,
-                    'log_file' => APP_ROOT . 'log/websocket_server.log',
-                    'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
-                    'reload_async' => true,
-                    'heartbeat_check_interval' => 10, //10秒检测一次
-                    'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
-                    //'task_worker_num' => 8
-                ]
-            );
-
-            $swoole_server->on('start', [$this, 'onStart']);
-            $swoole_server->on('open', [$this, 'onOpen']);
-            $swoole_server->on('message', [$this, 'onMessage']);
-            $swoole_server->on('close', [$this, 'onClose']);
-            $swoole_server->on('request', function ($request, $response) use ($swoole_server) {
-                $post = $request->post;
-                $action = fetch($post, 'action');
-
-                if ('push' == $action) {
-                    $payload = fetch($post, 'payload');
-                    $receiver_fd = fetch($payload, 'fd');
-                    $body = fetch($payload, 'body');
-                    info($receiver_fd, $body);
-                    if ($receiver_fd) {
-                        if (!$swoole_server->exist($receiver_fd)) {
-                            info($receiver_fd, "Exce not exist");
-                            return;
-                        }
-                        $swoole_server->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
-                    }
-                }
-            });
-            $swoole_server->start();
-            echo "[------------- start -------------]\n";
-        } catch (\Exception $e) {
-            info("Exce", $e->getMessage());
-        }
-    }
+//    function start()
+//    {
+//        try {
+//            $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
+//            $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
+//            $swoole_server->set(
+//                [
+//                    'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
+//                    'max_request' => $this->websocket_max_request, //设置多少合适
+//                    'dispatch_model' => 2,
+//                    'daemonize' => true,
+//                    'log_file' => APP_ROOT . 'log/websocket_server.log',
+//                    'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
+//                    'reload_async' => true,
+//                    'heartbeat_check_interval' => 10, //10秒检测一次
+//                    'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
+//                    //'task_worker_num' => 8
+//                ]
+//            );
+//
+//            $swoole_server->on('start', [$this, 'onStart']);
+//            $swoole_server->on('open', [$this, 'onOpen']);
+//            $swoole_server->on('message', [$this, 'onMessage']);
+//            $swoole_server->on('close', [$this, 'onClose']);
+//            $swoole_server->on('workerStart', [$this, 'onWorkerStart']);
+//            $swoole_server->start();
+//            echo "[------------- start -------------]\n";
+//        } catch (\Exception $e) {
+//            info("Exce", $e->getMessage());
+//        }
+//    }
 
     //服务器内部通信
     static function send($action, $ip, $port, $payload = [])
@@ -217,19 +224,50 @@ class PushSever extends BaseModel
 
     function onStart($server)
     {
+        //cli_set_process_title("reload_master");
         info("start");
+    }
+
+    function onWorkerStart()
+    {
+        //require APP_ROOT . 'vendor/autoload.php';
+        debug("sssss", 1111333);
+    }
+
+    function onWorkerStop()
+    {
+        debug("onWorkerStop");
+    }
+
+    static function asyncSend($count, $fd)
+    {
+        debug($count, $fd);
+        if ($count >= 100) {
+            return;
+        }
+
+        $count = $count + 1;
+
+        self::send('push', '127.0.0.1', '9508', ['fd' => $fd, 'body' => ['a' => $count]]);
+        self::delay(1)->asyncSend($count, $fd);
     }
 
     function onOpen($server, $request)
     {
         $fd = $request->fd;
+
+        //swoole_timer_after(10000, [$this, "testTimer"], $fd);
+        Users::testSwoole($fd);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
+        debug("hello1");
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
-            $server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
+            //$server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
             return;
+        } else {
+            self::delay(1)->asyncSend(1, $fd);
         }
 
         if (!$server->exist($fd)) {
@@ -246,7 +284,7 @@ class PushSever extends BaseModel
         $user_id = intval($sid);
         $user = Users::findFirstById($user_id);
 
-        $this->increaseConnectNum(1, $ip);
+        self::increaseConnectNum(1, $ip);
 
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
@@ -300,6 +338,11 @@ class PushSever extends BaseModel
                     $server->shutdown();
                 } elseif ('push' == $action) {
                     PushSever::push($server, $payload);
+                } elseif ('reload' == $action) {
+                    debug($action, "eeee");
+                    $this->server->reload();
+                    $server->reload();
+                    debug($this->server->getClientInfo($fd), $server->getClientInfo($fd));
                 }
             } catch (\Exception $e) {
                 info("Exce", $action, $payload, $e->getMessage());
@@ -363,7 +406,7 @@ class PushSever extends BaseModel
         $user_id = self::getUserIdByOnlineToken($online_token);
         $intranet_ip = self::getIntranetIpdByOnlineToken($online_token);
         $user = Users::findFirstById($user_id);
-        $this->increaseConnectNum(-1, self::getIntranetIp());
+        self::increaseConnectNum(-1, self::getIntranetIp());
 
         if ($user) {
 
@@ -459,19 +502,6 @@ class PushSever extends BaseModel
         return $intranet_ip == $ip;
     }
 
-    function getConnectionNum()
-    {
-        $hot_cache = self::getHotReadCache();
-        $local_ip = self::getIntranetIp();
-        return $hot_cache->zscore($this->connection_list, $local_ip);
-    }
-
-    function clearConnectionNum()
-    {
-        $hot_cache = self::getHotReadCache();
-        return $hot_cache->del($this->connection_list);
-    }
-
     static function getWebsocketEndPoint()
     {
         return self::config('websocket_client_endpoint');
@@ -554,7 +584,7 @@ class PushSever extends BaseModel
         info($fd, $online_token);
     }
 
-    function increaseConnectNum($num, $ip)
+    static function increaseConnectNum($num, $ip)
     {
         info($num, $ip);
 
@@ -563,6 +593,19 @@ class PushSever extends BaseModel
         }
 
         $hot_cache = self::getHotWriteCache();
-        $hot_cache->zincrby($this->connection_list, $num, $ip);
+        $hot_cache->zincrby(self::$connection_list, $num, $ip);
+    }
+
+    static function clearConnectionNum()
+    {
+        $hot_cache = self::getHotReadCache();
+        return $hot_cache->del(self::$connection_list);
+    }
+
+    static function getConnectionNum()
+    {
+        $hot_cache = self::getHotReadCache();
+        $local_ip = self::getIntranetIp();
+        return $hot_cache->zscore(self::$connection_list, $local_ip);
     }
 }

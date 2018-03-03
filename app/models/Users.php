@@ -2246,4 +2246,16 @@ class Users extends BaseModel
         unlock($lock);
         unlock($lock1);
     }
+
+    function testTimer()
+    {
+
+    }
+
+    static function testSwoole($params)
+    {
+        swoole_timer_after(10000, function () use ($params) {
+            debug("test hello2", $params);
+        });
+    }
 }

@@ -352,4 +352,14 @@ class MeiTask extends \Phalcon\Cli\Task
 
         fclose($fp);
     }
+
+    function freshMusicStatusAction()
+    {
+        $musics = Musics::findForeach();
+
+        foreach ($musics as $music) {
+            $music->hot = 1;
+            $music->update();
+        }
+    }
 }

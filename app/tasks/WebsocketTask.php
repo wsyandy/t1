@@ -31,8 +31,7 @@ class WebsocketTask extends Phalcon\CLI\Task
     function stopAction()
     {
         //停止服务 清空链接数
-        $push_server = new PushSever();
-        $push_server->clearConnectionNum();
+        PushSever::clearConnectionNum();
 
         $log_dir = $this->config->application->log;
         checkDirExists("{$log_dir}/pids/websocket/");
@@ -60,9 +59,8 @@ class WebsocketTask extends Phalcon\CLI\Task
         return true;
     }
 
-    function shutdownAction()
+    function reloadAction()
     {
-        $push_server = new PushSever();
-        $push_server->send('shutdown');
+        PushSever::send('reload', '127.0.0.1', '9508');
     }
 }
