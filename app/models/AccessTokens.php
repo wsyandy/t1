@@ -9,6 +9,12 @@
 
 class AccessTokens extends BaseModel
 {
+    /**
+     * @type Users
+     */
+    private $_user;
+
+    static $STATUS = [AUTH_SUCCESS => '成功', AUTH_WAIT => '等待验证'];
 
     function beforeCreate()
     {
