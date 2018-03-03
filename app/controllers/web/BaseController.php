@@ -39,17 +39,26 @@ class BaseController extends \ApplicationController
         return $this->session->get('user_id');
     }
 
+    function checkLoginTime()
+    {
+        $user_login_at = $this->session->get("user_login_at");
+        if ($user_login_at) {
+            $time = md5(date("Ymd"));
+            if (isDevelopmentEnv()) {
+                $time = md5(date("Ymdh"));
+            }
+            if ($user_login_at != $time) {
+                $this->session->set('user_id', null);
+                $this->session->set('user_login_time', null);
+            }
+        }
+    }
+
     function beforeAction($dispatcher)
     {
         $this->view->title = "";
 
-        $login_time = $this->session->get("login_time");
-        debug($login_time);
-        $time = 86400;
-        if ($login_time && time() - $login_time > $time) {
-            $this->session->set('user_id', null);
-            $this->session->set('login_time', null);
-        }
+        $this->checkLoginTime();
 
         $current_user = $this->currentUser();
 
