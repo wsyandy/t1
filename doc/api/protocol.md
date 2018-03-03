@@ -23,6 +23,9 @@
 ## m协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
 
+## h5打开app协议
+   产品code://start_app?param1=a&param2=b 例: yuewan://start_app?room_id=1&user_id=2
+
 # 2. error_code 状态码协议
 
 状态码|原因|说明
