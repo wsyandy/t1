@@ -6,7 +6,6 @@
  * Date: 18/1/31
  * Time: 下午11:07
  */
-
 class AccessTokens extends BaseModel
 {
     /**
@@ -36,12 +35,16 @@ class AccessTokens extends BaseModel
     {
         $access_token = \AccessTokens::findFirstByToken($token);
         debug($token, $access_token);
-        if ($access_token && AUTH_SUCCESS == $access_token->status &&
-            time() < $access_token->expired_at
-        ) {
-            return $access_token;
+
+        if (time() < $access_token->expired_at) {
+            if ($access_token && AUTH_SUCCESS == $access_token->status) {
+                return [ERROR_CODE_SUCCESS, '', $access_token];
+            }
+        } else {
+            return [ERROR_CODE_FORM, '验证码已过期，请刷新此页面', ''];
         }
-        return false;
+
+        return [ERROR_CODE_FAIL, '', ''];
     }
 
     //客户端验证token合法性

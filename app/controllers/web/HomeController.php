@@ -42,9 +42,9 @@ class HomeController extends BaseController
     function checkAuthAction()
     {
         $token = $this->session->get('token');
-        $access_token = \AccessTokens::checkToken($token);
+        list($error_code, $error_reason, $access_token) = \AccessTokens::checkToken($token);
         debug($token);
-        if ($access_token) {
+        if ($error_code == ERROR_CODE_SUCCESS) {
             $user = \Users::findFirstById($access_token->user_id);
             if ($user && $user->isNormal()) {
 
@@ -60,7 +60,7 @@ class HomeController extends BaseController
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/users']);
             }
         }
-        return $this->renderJSON(ERROR_CODE_FAIL, '', ['error_url' => '']);
+        return $this->renderJSON($error_code, $error_reason, ['error_url' => '']);
     }
 
 }
