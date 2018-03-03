@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/main') }}
+{#{{ theme_css('/web/css/main') }}#}
 {{ block_end() }}
 
 {#{{ partial('head') }}#}

@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/main','/web/css/style','/web/css/jquery.searchableSelect') }}
+{{ theme_css('/web/css/style','/web/css/jquery.searchableSelect') }}
 {{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form','/web/js/jquery.searchableSelect') }}
 {{ block_end() }}
 
@@ -19,7 +19,7 @@
             <div class="select_file_box">
                 <div class="select_file">
                     <b>选择文件</b>
-                    <input type="file" name="file" id="file" required="required" accept="audio/mp3"/>
+                    <input type="file" name="music[file]" id="file" required="required" accept="audio/mp3"/>
                 </div>
                 <div class="file_name" id="file_name">
                 </div>

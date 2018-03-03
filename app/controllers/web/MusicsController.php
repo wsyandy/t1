@@ -40,21 +40,12 @@ class MusicsController extends BaseController
     function uploadMusicAction()
     {
         $user = $this->currentUser();
-        $user_id = $user->id;
 
         $type = $this->params('type');
         $singer_name = $this->params('singer_name');
         $name = $this->params('name');
 
-        if (isBlank($name)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, "歌名不能为空", ['error_url' => ""]);
-        }
-
-        if (isBlank($singer_name)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, "演唱者不能为空", ['error_url' => ""]);
-        }
-
-        $opts = ['user_id' => $user_id, 'type' => $type, 'singer_name' => $singer_name, 'name' => $name];
+        $opts = ['user_id' => $user->id, 'type' => $type, 'singer_name' => $singer_name, 'name' => $name];
         list($error_code, $error_reason, $music) = \Musics::upload($_FILES, $opts);
 
         $url = '';
