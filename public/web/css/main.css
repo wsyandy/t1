@@ -664,3 +664,7 @@ footer p{
 		opacity: 1
 	}
 }
+
+[v-cloak] {
+	display: none !important;
+}

@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="format-detection" content="telephone=no">
     <meta content="email=no" name="format-detection">
-
+    <link rel="stylesheet" href="/web/css/main.css">
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/vue/2.0.5/vue.min.js"></script>
     <script src="/js/utils.js"></script>

@@ -102,16 +102,8 @@ class Musics extends BaseModel
 
     function checkField($files, $is_create = true)
     {
-        if (isBlank($files) && $is_create) {
+        if ($is_create && (isBlank($files) || !$files['music']['tmp_name']['file'])) {
             return [ERROR_CODE_FAIL, '上传文件不能为空'];
-        }
-
-        $fields = ['name', 'singer_name', 'rank'];
-
-        foreach ($fields as $field) {
-            if (isBlank($this->$field)) {
-                return [ERROR_CODE_FAIL, '字段不能为空'];
-            }
         }
 
         $user = \Users::findFirstById($this->user_id);
@@ -120,8 +112,36 @@ class Musics extends BaseModel
             return [ERROR_CODE_FAIL, '用户不存在'];
         }
 
-        if ($files && $files['music']['size']['file'] > 20000000) {
-            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
+        $fields = ['歌名' => 'name', '歌手' => 'singer_name'];
+
+        foreach ($fields as $key => $value) {
+            if (isBlank($this->$value)) {
+                return [ERROR_CODE_FAIL, $key . '不能为空'];
+            }
+        }
+
+        if ($files) {
+            $file_size = $files['music']['size']['file'];
+            $file_name = $files['music']['tmp_name']['file'];;
+
+            if ($file_size > 20000000) {
+                return [ERROR_CODE_FAIL, '上传文件大小不能超过20M'];
+            }
+
+            if (self::isMp3($file_name) === false) {
+                return [ERROR_CODE_FAIL, '无效的文件'];
+            }
+
+            $file_md5 = md5_file($file_name);
+
+            if (!$this->file_md5 || $this->file_md5 !== $file_md5) {
+                if (!self::checkFileMd5($file_md5, $this->user_id)) {
+                    return [ERROR_CODE_FAIL, '不能重复上传文件'];
+                }
+            }
+
+            $this->file_md5 = $file_md5;
+            $this->file_size = $file_size;
         }
 
         if ($this->hasChanged('rank')) {
@@ -130,26 +150,42 @@ class Musics extends BaseModel
             }
         }
 
-        if ($files) {
-            $this->file_md5 = md5_file($files['music']['tmp_name']['file']);
-        }
-
-        if ($this->hasChanged('file_md5')) {
-            if (!$this->checkFileMd5()) {
-                return [ERROR_CODE_FAIL, '不能重复上传文件'];
-            }
-
-            $this->file_size = $files['music']['size']['file'];
-        }
-
         return [ERROR_CODE_SUCCESS, ''];
     }
 
-    function checkFileMd5()
+    static function upload($files, $opts)
+    {
+        debug($files);
+        if (isBlank($files) || !$files['music']['tmp_name']['file']) {
+            return [ERROR_CODE_FAIL, '上传文件非法', ''];
+        }
+
+        $user_id = fetch($opts, 'user_id');
+        $name = fetch($opts, 'name');
+        $singer_name = fetch($opts, 'singer_name');
+        $type = fetch($opts, 'type');
+
+        $music = new Musics();
+        $music->name = $name;
+        $music->singer_name = $singer_name;
+        $music->user_id = $user_id;
+
+        list($error_code, $error_reason) = $music->checkField($files);
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return [$error_code, $error_reason, ''];
+        }
+
+        $music->type = $type;
+        $music->status = STATUS_ON;
+        $music->save();
+        return [ERROR_CODE_SUCCESS, '上传成功', $music];
+    }
+
+    static function checkFileMd5($file_md5, $user_id)
     {
         $cond = [
             'conditions' => 'file_md5 = :file_md5: and user_id = :user_id:',
-            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id]
+            'bind' => ['file_md5' => $file_md5, 'user_id' => $user_id]
         ];
 
         $music = \Musics::findFirst($cond);
@@ -238,52 +274,6 @@ class Musics extends BaseModel
 
         fclose($fp);
         return false;
-    }
-
-
-    static function upload($files, $opts)
-    {
-        debug($files);
-        if (isBlank($files) || !$files['file']['tmp_name']) {
-            return [ERROR_CODE_FAIL, '上传文件非法', ''];
-        }
-
-        if ($files && $files['file']['size'] > 20000000) {
-            return [ERROR_CODE_FAIL, '上传文件大小不能超过20M', ''];
-        }
-
-        if (self::isMp3($files['file']['tmp_name']) === false) {
-            return [ERROR_CODE_FAIL, '无效的文件', ''];
-        }
-
-        $name = fetch($opts, 'name');
-        $singer_name = fetch($opts, 'singer_name');
-        $type = fetch($opts, 'type');
-        $user_id = fetch($opts, 'user_id');
-
-        $music = new Musics();
-
-        if ($files) {
-            $music->file_md5 = md5_file($files['file']['tmp_name']);
-        }
-
-        $music->user_id = $user_id;
-
-        if (!$music->checkFileMd5()) {
-            return [ERROR_CODE_FAIL, '不能重复上传文件', ''];
-        }
-
-        $music->name = $name;
-        $music->singer_name = $singer_name;
-        $music->type = $type;
-        $music->status = STATUS_ON;
-
-        debug($files['file']['tmp_name']);
-//        move_uploaded_file($files['file']['tmp_name'], APP_ROOT . "temp/" . uniqid() . ".mp3");
-        $music->file_size = $files['file']['size'];
-
-        $music->save();
-        return [ERROR_CODE_SUCCESS, '上传成功', $music];
     }
 
     static function searchMusic($page, $per_page, $user_id)
