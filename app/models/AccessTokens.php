@@ -85,4 +85,9 @@ class AccessTokens extends BaseModel
         }
     }
 
+    function mergeJson()
+    {
+        return ['user_nickname' => $this->user->nickname];
+    }
+
 }
