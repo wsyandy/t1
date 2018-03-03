@@ -34,7 +34,7 @@ class AccessTokensController extends BaseController
         $this->assign($access_token, 'access_token');
 
         if ($access_token->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['access_token' => $access_token->toJson()]);
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');
