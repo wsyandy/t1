@@ -45,7 +45,8 @@
         <span class="close_right">去下载</span>
     </div>
 </div>
-<a  id="jump_room" href="yuewan://start_app?room_id={{ room_id }}"></a>
+{#<a  id="jump_room" href="yuewan://start_app?room_id={{ room_id }}"></a>#}
+<a  id="jump_room" href="hello://enterroom?uid=3620134279"></a>
 
 <div class="fudong_bg"></div>
 <!-- 弹框结束 -->
