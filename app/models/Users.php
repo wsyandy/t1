@@ -122,11 +122,11 @@ class Users extends BaseModel
         }
 
         if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
-            $this->bindMobile();
+            $this->registerStat();
         }
 
         if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
-            $this->bindThirdUnionid();
+            $this->registerStat();
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
@@ -233,6 +233,7 @@ class Users extends BaseModel
             // 统计活跃
             // 做手机号剔重计算活跃手机号数
             $attrs['mobile'] = $this->mobile;
+            $attrs['third_unionid'] = $this->third_unionid;
             \Stats::delay()->record('user', 'active_user', $attrs);
         }
         // 重置任务
@@ -938,19 +939,7 @@ class Users extends BaseModel
         }
     }
 
-    function bindMobile()
-    {
-        self::delay(2)->checkRegisterMobile($this->mobile);
-        self::delay(2)->registerStat($this->id);
-    }
-
-    function bindThirdUnionid()
-    {
-        info($this->id, $this->third_unionid, $this->login_type, $this->third_name);
-        self::delay(2)->checkRegisterThirdUnionid($this->third_unionid, $this->third_name);
-        self::delay(2)->registerByThirdUnionidStat($this->id);
-    }
-
+    //废弃
     static function checkRegisterMobile($mobile)
     {
         $mobile_operator = mobileOperator($mobile);
@@ -967,20 +956,9 @@ class Users extends BaseModel
         }
     }
 
-    static function registerStat($user_id)
+    function registerStat()
     {
-        $user = Users::findFirstById($user_id);
-        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
-
-        $other_user = Users::findFirst(['conditions' => 'mobile=:mobile: and id!=:id:',
-            'bind' => ['mobile' => $user->mobile, 'id' => $user->id], 'order' => 'id asc'
-        ]);
-
-        // 手机第一次注册
-        if (!$other_user && time() - $user->register_at < 60) {
-            debug('first_register_mobile', $user->mobile);
-            \Stats::delay()->record('user', 'first_register_mobile', $user->getStatAttrs());
-        }
+        \Stats::delay()->record('user', 'register', $this->getStatAttrs());
     }
 
     static function checkRegisterThirdUnionid($third_unionid, $third_name)
@@ -998,18 +976,6 @@ class Users extends BaseModel
             $user->third_unionid_register_num = $num;
             $user->save();
         }
-    }
-
-    static function registerByThirdUnionidStat($user_id)
-    {
-        $user = Users::findFirstById($user_id);
-        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
-
-//        $other_user = Users::findFirst([
-//            'conditions' => 'third_unionid = :third_unionid: and third_name = :third_name: and id!=:id:',
-//            'bind' => ['third_unionid' => $user->third_unionid, 'third_name' => $user->third_name, 'id' => $user->id],
-//            'order' => 'id asc'
-//        ]);
     }
 
     function pushType()
