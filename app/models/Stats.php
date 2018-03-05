@@ -24,7 +24,7 @@ class Stats extends BaseModel
 
     static $ACTION_FIELDS = [
         'device_active', 'subscribe', 'touch_active', 'web_active', // 激活
-        'register', 'first_register_mobile', 'unsubscribe', // 注册
+        'register', 'unsubscribe', // 注册
         'active_user', // 活跃用户
         'create_order', 'create_payment', 'payment_success'
     ];
@@ -41,13 +41,13 @@ class Stats extends BaseModel
         'total_active_num' => '总激活数',
         'register_num' => "注册数",
         'register_rate' => '注册率%',
-        'first_register_mobile_num' => '注册新手机号数',
-        'register_repeat_rate' => '注册重复率%',
+        //'first_register_mobile_num' => '注册新手机号数',
+        //'register_repeat_rate' => '注册重复率%',
         'register_ip_num' => "注册IP数",
 //        'unsubscribe_num' => '微信取消关注数',
         'active_user_num' => '活跃用户数',
         'active_register_user_num' => '活跃注册用户数',
-        'active_register_mobile_num' => '活跃注册手机号数',
+        //'active_register_mobile_num' => '活跃注册手机号数',
 
         'create_order_num' => '下单次数',
         'create_order_user' => '下单人数',
@@ -124,6 +124,7 @@ class Stats extends BaseModel
         $ip = fetch($attrs, 'ip', '');
         $stat_at = fetch($attrs, 'stat_at', time());
         $mobile = fetch($attrs, 'mobile', ''); // 剔重手机号
+        $third_unionid = fetch($attrs, 'third_unionid', ''); //第三方登录标识
         $add_value = fetch($attrs, 'add_value', 0);
 
         // platform-1后面的-1表示所有
@@ -173,9 +174,8 @@ class Stats extends BaseModel
             }
 
             // 活跃统计
-            if (in_array($action, ['active_user']) && $mobile) {
+            if (in_array($action, ['active_user']) && ($mobile || $third_unionid)) {
                 $stat_db->zadd($date_key . "_register_user", $stat_at, $id); // 注册用户
-                $stat_db->zadd($hour_key . "_register_mobile", $stat_at, $mobile); // 注册手机号
             }
 
             // 新用户
@@ -874,7 +874,7 @@ class Stats extends BaseModel
         }
         $this->data_hash['new_payment_success_rate'] = $rate;
     }
-    
+
     /**
      * 微信用户统计
      * @param $product_channel_id
