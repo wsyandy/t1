@@ -11,6 +11,13 @@
 </div>
 
 <script>
+    var opts = {
+        data: {},
+        methods: {}
+    };
+
+    vm = XVue(opts);
+
     function refresh() {
         $.post("/web/home/check_auth", {}, function (resp) {
             if (resp.error_code == -400) {
