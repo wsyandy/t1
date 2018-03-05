@@ -10,8 +10,8 @@ class SharesController extends ApplicationController
 {
     function indexAction()
     {
-        debug($ua = $this->request->getUserAgent());
-        $share_history = \ShareHistories::findFirstById($this->params('share_history_id', 0));
+        debug($this->request->getUserAgent());
+        $share_history = \ShareHistories::findFirstById($this->params('share_history_id', '0'));
 
         if (!$share_history) {
             echo "参数错误";
