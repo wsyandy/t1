@@ -121,8 +121,12 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('mobile') && $this->mobile) {
+        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
             $this->bindMobile();
+        }
+
+        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
+            $this->bindThirdUnionid();
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
@@ -940,9 +944,15 @@ class Users extends BaseModel
         self::delay(2)->registerStat($this->id);
     }
 
+    function bindThirdUnionid()
+    {
+        info($this->id, $this->third_unionid, $this->login_type, $this->third_name);
+        self::delay(2)->checkRegisterThirdUnionid($this->third_unionid, $this->third_name);
+        self::delay(2)->registerByThirdUnionidStat($this->id);
+    }
+
     static function checkRegisterMobile($mobile)
     {
-
         $mobile_operator = mobileOperator($mobile);
         if ($mobile_operator < 1 || $mobile_operator > 3) {
             info('false', $mobile, 'mobile_operator', $mobile_operator);
@@ -971,6 +981,35 @@ class Users extends BaseModel
             debug('first_register_mobile', $user->mobile);
             \Stats::delay()->record('user', 'first_register_mobile', $user->getStatAttrs());
         }
+    }
+
+    static function checkRegisterThirdUnionid($third_unionid, $third_name)
+    {
+        $users = Users::find([
+            'conditions' => 'third_unionid=:third_unionid: and third_name = :third_name:',
+            'bind' => ['third_unionid' => $third_unionid, 'third_name' => $third_name]
+        ]);
+
+        $num = count($users);
+
+        info($num, $third_unionid, $third_name);
+
+        foreach ($users as $user) {
+            $user->third_unionid_register_num = $num;
+            $user->save();
+        }
+    }
+
+    static function registerByThirdUnionidStat($user_id)
+    {
+        $user = Users::findFirstById($user_id);
+        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
+
+//        $other_user = Users::findFirst([
+//            'conditions' => 'third_unionid = :third_unionid: and third_name = :third_name: and id!=:id:',
+//            'bind' => ['third_unionid' => $user->third_unionid, 'third_name' => $user->third_name, 'id' => $user->id],
+//            'order' => 'id asc'
+//        ]);
     }
 
     function pushType()
