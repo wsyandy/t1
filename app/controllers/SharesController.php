@@ -39,8 +39,12 @@ class SharesController extends ApplicationController
         }
 
         $data = $share_history->data;
-        $data = json_decode($data, true);
-        $room_id = fetch('room_id', $data);
+        $room_id = '';
+        
+        if ($data) {
+            $data = json_decode($data, true);
+            $room_id = fetch($data, 'room_id');
+        }
 
         $this->view->user = $user;
         $this->view->room_id = $room_id;

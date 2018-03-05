@@ -352,4 +352,14 @@ class MeiTask extends \Phalcon\Cli\Task
 
         fclose($fp);
     }
+
+    function test10Action()
+    {
+        $share_history = ShareHistories::findFirstById(79);
+        echoLine($share_history->data);
+
+        $data = json_decode($share_history->data, true);
+        $room_id = fetch($data, 'room_id');
+        echoLine($room_id);
+    }
 }
