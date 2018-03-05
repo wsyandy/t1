@@ -365,14 +365,26 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function fixUserSegmentAction()
     {
-        $users = Users::find(['conditions' => 'level > 0']);
+        $users = Users::find(['conditions' => 'experience > 0']);
 
         foreach ($users as $user) {
-            if (!$user->segment) {
-                echoLine($user->id);
-                $user->segment = $user->calculateSegment();
-                $user->update();
+
+            $user_level = $user->calculateLevel();
+
+            if ($user_level != $user->level) {
+                echoLine($user->id, $user_level, $user->level);
+                $user->level = $user_level;
             }
+
+            $user_segment = $user->calculateSegment();
+
+            if ($user_segment != $user->segment) {
+                echoLine($user->id, $user_segment, $user->segment);
+                $user->segment = $user_segment;
+            }
+
+            $user->update();
         }
+
     }
 }
