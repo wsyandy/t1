@@ -18,11 +18,17 @@ class Rooms extends BaseModel
      */
     private $_audio;
 
+    /**
+     * @type RoomThemes
+     */
+    private $_room_theme;
+
 
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
+    static $HOT = [STATUS_OFF => '否', STATUS_ON => '是'];
 
     function beforeCreate()
     {
@@ -65,7 +71,9 @@ class Rooms extends BaseModel
         $user = $this->user;
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
             'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
-            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers()];
+            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
+            'theme_image_url' => $this->theme_image_url
+        ];
     }
 
     function toBasicJson()
@@ -434,6 +442,15 @@ class Rooms extends BaseModel
         return $chat_text;
     }
 
+    function getThemeImageUrl()
+    {
+        if (!$this->room_theme_id) {
+            return '';
+        }
+        $room_theme = $this->room_theme;
+        return $room_theme->theme_image_url;
+    }
+
     //禁止 踢出房间 禁止用户在10分钟内禁入
     function forbidEnter($user)
     {
@@ -690,18 +707,20 @@ class Rooms extends BaseModel
         $hot_cache->zadd($key, $time, $this->id);
     }
 
-    static function getOfflineSilentRooms($page, $per_page)
+    static function getOfflineSilentRooms()
     {
         $orders = ['id asc', 'id desc', 'created_at asc', 'created_at desc', 'updated_at asc', 'updated_at desc',
             'user_id asc', 'user_id desc'];
 
         $rank = array_rand($orders);
         $order = $orders[$rank];
+        $limit = mt_rand(1, 5);
 
         $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
         $cond['order'] = $order;
-        $rooms = Rooms::findPagination($cond, $page, $per_page);
+        $cond['limit'] = $limit;
+        $rooms = Rooms::find($cond);
         return $rooms;
     }
 
@@ -752,8 +771,15 @@ class Rooms extends BaseModel
             return false;
         }
 
-        info($room_id, $user->sid);
+        if ($user->isInAnyRoom()) {
+            info("user_in_other_room", $user->id, $user->current_room_id, $room_id);
+            return false;
+        }
+
+        info($room_id, $user->id);
         $room->enterRoom($user);
+
+        Rooms::deleteWaitEnterSilentRoomList($user_id);
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
@@ -770,62 +796,45 @@ class Rooms extends BaseModel
             return false;
         }
 
-        info($this->id, $user->sid);
+        info($this->id, $user->sid, $user->current_room_seat_id);
+
+        $current_room_seat_id = $user->current_room_seat_id;
+
         $this->exitRoom($user);
 
         if ($user->isRoomHost($this)) {
             $this->rmOnlineSilentRoom();
         }
 
-        $this->pushExitRoomMessage($user);
+        $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
     function pushEnterRoomMessage($user)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name
         ];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
-    function pushExitRoomMessage($user)
+    function pushExitRoomMessage($user, $current_room_seat_id = '')
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
-        $current_room_seat_id = $user->current_room_seat_id;
-        $current_room_seat = \RoomSeats::findFirstById($current_room_seat_id);
+        if ($current_room_seat_id) {
+            $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
 
-        if ($current_room_seat) {
-            $body['room_seat'] = $current_room_seat->toSimpleJson();
+            if ($current_room_seat) {
+                $body['room_seat'] = $current_room_seat->toSimpleJson();
+            }
         }
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushTopTopicMessage($user, $content = "")
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
             $content = $messages[array_rand($messages)];
@@ -836,45 +845,24 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name
         ];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushUpMessage($user, $current_room_seat)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'up', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushDownMessage($user, $current_room_seat)
     {
-        $receiver = $this->findRealUser();
-
-        if (!$receiver) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $body = ['action' => 'down', 'channel_name' => $this->channel_name, 'room_seat' => $current_room_seat->toSimpleJson()];
 
-        $this->push($receiver, $body);
+        $this->push($body);
     }
 
     function pushGiftMessage($user, $receiver, $gift, $gift_num)
     {
-        $real_user = $this->findRealUser();
-
-        if (!$real_user) {
-            info("no real user", $this->id, $user->id);
-            return;
-        }
-
         $sender_nickname = $user->nickname;
         $receiver_nickname = $receiver->nickname;
 
@@ -895,24 +883,38 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];
 
-        $this->push($real_user, $body);
+        $this->push($body);
     }
 
-    function push($receiver, $body)
+    function push($body)
     {
-        $hot_cache = Users::getHotReadCache();
-        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $receiver->online_token;
-        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-        $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver->id));
-        $payload = ['body' => $body, 'fd' => $receiver_fd];
+        $users = $this->findTotalRealUsers();
 
-        info($intranet_ip, $receiver_fd, $payload);
-
-        if (!$intranet_ip) {
-            info("Exce", $receiver->id, $this->id, $payload);
+        if (count($users) < 1) {
+            info("no_users", $this->id);
             return;
         }
-        PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+
+        foreach ($users as $user) {
+
+            $intranet_ip = $user->getIntranetIp();
+            $receiver_fd = $user->getUserFd();
+            $payload = ['body' => $body, 'fd' => $receiver_fd];
+
+            if (!$intranet_ip) {
+                info("Exce", $user->id, $this->id, $payload);
+                continue;
+            }
+
+            $res = PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+
+            if ($res) {
+                info($user->id, $this->id, $payload);
+                break;
+            } else {
+                info("Exce", $user->id, $this->id, $payload);
+            }
+        }
     }
 
     function findRealUser()
@@ -930,6 +932,21 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         return $user;
+    }
+
+    function findTotalRealUsers()
+    {
+        if ($this->getRealUserNum() < 1) {
+            info("user_real_num < 1");
+            return [];
+        }
+
+        $hot_cache = self::getHotReadCache();
+        $key = $this->getRealUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        return $users;
     }
 
     function isSilent()
@@ -954,16 +971,17 @@ class Rooms extends BaseModel
             return;
         }
 
-        if ($room->getRealUserNum() > 0) {
+        $silent_users = $room->findSilentUsers();
 
-            $silent_users = $room->findSilentUsers();
-
+        if (count($silent_users) > 0) {
             foreach ($silent_users as $silent_user) {
                 $silent_user->activeRoom($room);
             }
         }
 
-        $room->addSilentUsers();
+        if ($room->isSilent() || $room->getRealUserNum() > 0) {
+            $room->addSilentUsers();
+        }
     }
 
     function addSilentUsers()
@@ -983,15 +1001,21 @@ class Rooms extends BaseModel
             return;
         }
 
-        $last_user = Users::findLast(['columns' => 'id']);
-        $last_user_id = $last_user->id;
+        $limit = mt_rand(1, 8);
+        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: 
+        and id <> :user_id: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS,
+            'user_id' => $this->user_id];
+        $cond['limit'] = $limit;
 
-        $per_page = mt_rand(1, 8);
-        $total_page = ceil($last_user_id / $per_page);
-        $page = mt_rand(1, $total_page);
-        $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT .
-            " and id <>" . $this->user_id . " and avatar_status = " . AUTH_SUCCESS;
-        $users = Users::findPagination($cond, $page, $per_page);
+        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
+
+        if (count($filter_user_ids) > 0) {
+            info($filter_user_ids);
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
+        }
+
+        $users = Users::find($cond);
 
         foreach ($users as $user) {
 
@@ -1006,10 +1030,32 @@ class Rooms extends BaseModel
             }
 
             $delay_time = mt_rand(1, 60);
+            info($this->id, $user->id, $delay_time);
+            Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($this->id, $user->id);
         }
 
-        info($this->id, $page, $per_page, $total_page);
+        info($this->id, $limit, count($users));
+    }
+
+    //记录沉默用户进入房间 异步进入后在队列中删除
+    static function addWaitEnterSilentRoomList($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->zadd('wait_enter_silent_room_list', time(), $user_id);
+    }
+
+    static function deleteWaitEnterSilentRoomList($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->zrem('wait_enter_silent_room_list_room_id', $user_id);
+    }
+
+    static function getWaitEnterSilentRoomUserIds()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
+        return $user_ids;
     }
 
     function isOnline()
@@ -1024,5 +1070,55 @@ class Rooms extends BaseModel
             return false;
         }
         return true;
+    }
+
+    function getDayGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey());
+        return intval($amount);
+    }
+
+    function getHourGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey(false));
+        return intval($amount);
+    }
+
+    function getDayGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey());
+        return intval($num);
+    }
+
+    function getHourGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey(false));
+        return intval($num);
+    }
+
+    function getStatGiftAmountKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_amount_room_id" . $this->id;
+    }
+
+    function getStatGiftUserNumKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
     }
 }

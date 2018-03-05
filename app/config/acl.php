@@ -8,8 +8,8 @@ return [
         'devices' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'albums' => '*'],
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
-        'product_channels' => ['index'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
-        'rooms' => ['index', 'detail']],
+        'product_channels' => ['index', 'edit', 'update', 'push'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
+        'rooms' => ['index', 'detail'], 'soft_versions' => '*', 'payment_channels' => ['index', 'product_channels', 'edit', 'update']],
 
     'operator' => ['dashboard' => '*', 'devices' => ['index'], 'stats' => ['hours', 'days'], 'export_histories' => ['download'],
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],

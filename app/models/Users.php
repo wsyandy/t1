@@ -88,9 +88,7 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
-            if ($this->mobile) {
-                $this->bindMobile();
-            }
+            
             \Emchat::delay()->createEmUser($this->id);
             \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
@@ -121,8 +119,12 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('mobile') && $this->mobile) {
-            $this->bindMobile();
+        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
+            $this->registerStat();
+        }
+
+        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
+            $this->registerStat();
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
@@ -229,6 +231,7 @@ class Users extends BaseModel
             // 统计活跃
             // 做手机号剔重计算活跃手机号数
             $attrs['mobile'] = $this->mobile;
+            $attrs['third_unionid'] = $this->third_unionid;
             \Stats::delay()->record('user', 'active_user', $attrs);
         }
         // 重置任务
@@ -298,9 +301,9 @@ class Users extends BaseModel
 
         $user = $current_user;
         //换个手机号注册，重新生成用户
-        if ($current_user->mobile && $current_user->mobile != $mobile) {
+        if ($current_user->mobile && $current_user->mobile != $mobile || $current_user->third_unionid) {
             $user = Users::registerForClientByDevice($device, true);
-            info('换个手机号注册', $user->id, $context);
+            info('换个手机号注册', $user->id, $user->third_unionid, $context);
         }
 
         //$user->checkRegisterFr($device, $mobile);
@@ -413,7 +416,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
 
@@ -477,12 +480,19 @@ class Users extends BaseModel
         if (!$headimgurl) {
             return;
         }
+
         $user = \Users::findFirstById($user_id);
+
         if ($user) {
             $avatar_file = APP_ROOT . 'temp/' . md5(uniqid(mt_rand())) . '.jpg';
-            httpSave($headimgurl, $avatar_file);
-            $user->updateAvatar($avatar_file);
-            unlink($avatar_file);
+
+            try {
+                httpSave($headimgurl, $avatar_file);
+                $user->updateAvatar($avatar_file);
+                unlink($avatar_file);
+            } catch (\Exception $e) {
+                info("Exce", $e->getMessage());
+            }
         }
     }
 
@@ -504,7 +514,7 @@ class Users extends BaseModel
     function isLogin()
     {
         if ($this->isClientPlatform()) {
-            return $this->mobile && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
         }
 
         return !!$this->mobile;
@@ -927,15 +937,9 @@ class Users extends BaseModel
         }
     }
 
-    function bindMobile()
-    {
-        self::delay(2)->checkRegisterMobile($this->mobile);
-        self::delay(2)->registerStat($this->id);
-    }
-
+    //废弃
     static function checkRegisterMobile($mobile)
     {
-
         $mobile_operator = mobileOperator($mobile);
         if ($mobile_operator < 1 || $mobile_operator > 3) {
             info('false', $mobile, 'mobile_operator', $mobile_operator);
@@ -950,19 +954,25 @@ class Users extends BaseModel
         }
     }
 
-    static function registerStat($user_id)
+    function registerStat()
     {
-        $user = Users::findFirstById($user_id);
-        \Stats::delay()->record('user', 'register', $user->getStatAttrs());
+        \Stats::delay()->record('user', 'register', $this->getStatAttrs());
+    }
 
-        $other_user = Users::findFirst(['conditions' => 'mobile=:mobile: and id!=:id:',
-            'bind' => ['mobile' => $user->mobile, 'id' => $user->id], 'order' => 'id asc'
+    static function checkRegisterThirdUnionid($third_unionid, $third_name)
+    {
+        $users = Users::find([
+            'conditions' => 'third_unionid=:third_unionid: and third_name = :third_name:',
+            'bind' => ['third_unionid' => $third_unionid, 'third_name' => $third_name]
         ]);
 
-        // 手机第一次注册
-        if (!$other_user && time() - $user->register_at < 60) {
-            debug('first_register_mobile', $user->mobile);
-            \Stats::delay()->record('user', 'first_register_mobile', $user->getStatAttrs());
+        $num = count($users);
+
+        info($num, $third_unionid, $third_name);
+
+        foreach ($users as $user) {
+            $user->third_unionid_register_num = $num;
+            $user->save();
         }
     }
 
@@ -1726,7 +1736,7 @@ class Users extends BaseModel
             return;
         }
 
-        if ($user->current_room_seat_id < 1 && $room->getRealUserNum() > 0) {
+        if ($user->current_room_seat_id < 1) {
 
             $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
 
@@ -1759,15 +1769,44 @@ class Users extends BaseModel
 
         info($rand_num, $this->id, $room->id);
 
-        if ($rand_num <= 50) {
-            Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
-        } elseif (50 < $rand_num && $rand_num <= 60) {
-            Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
-        } elseif (60 < $rand_num && $rand_num <= 90) {
-            Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+        if (isProduction()) {
+            if ($room->isSilent()) {
+                if ($rand_num <= 70) {
+                    Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+                } elseif (70 < $rand_num && $rand_num <= 80) {
+                    $room->exitSilentRoom($this);
+                    return;
+                }
+            } else {
+                if (1 <= $rand_num && $rand_num <= 10) {
+                    $room->exitSilentRoom($this);
+                    return;
+                }
+            }
         } else {
-            $room->exitSilentRoom($this);
-            return;
+//            if ($rand_num <= 50) {
+//                if ($room->getRealUserNum() > 0 && $room->chat) {
+//                    Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
+//                }
+//            } elseif (50 < $rand_num && $rand_num <= 52) {
+//                if ($room->getRealUserNum() > 0) {
+//                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+//                }
+//            } elseif (53 < $rand_num && $rand_num <= 90) {
+//                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+//            } else {
+//                $room->exitSilentRoom($this);
+//                return;
+//            }
+
+            if ($rand_num <= 90) {
+                if ($room->getRealUserNum() > 0) {
+                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+                }
+            } else {
+                $room->exitSilentRoom($this);
+                return;
+            }
         }
     }
 
@@ -1951,6 +1990,10 @@ class Users extends BaseModel
                     \Albums::createAlbum($album_url, $user->id, AUTH_SUCCESS);
                 }
             }
+
+            if (file_exists($source_filename)) {
+                unlink($source_filename);
+            }
         }
 
         info($a_rate_num, $b_rate_num, $monologue_index);
@@ -1982,4 +2025,228 @@ class Users extends BaseModel
         $hot_db->zadd(Users::authedKey(), time(), $this->id);
     }
 
+    //第三方登录
+    static function findFirstByThirdUnionid($product_channel, $third_unionid, $third_name)
+    {
+        $cond['conditions'] = 'third_unionid = :third_unionid: and product_channel_id = :product_channel_id: and user_status != :user_status:' .
+            ' and third_name = :third_name:';
+        $cond['bind'] = ['third_unionid' => $third_unionid, 'product_channel_id' => $product_channel->id,
+            'user_status' => USER_STATUS_OFF, 'third_name' => $third_name];
+        $cond['order'] = 'id desc';
+
+        $user = Users::findFirst($cond);
+        return $user;
+    }
+
+    static function thirdLogin($current_user, $device, $params, $context = [])
+    {
+        if (!$params) {
+            return [ERROR_CODE_FAIL, '参数错误', null];
+        }
+
+        if (!$device || (!$device->can_register && isProduction())) {
+            info('false_device', $current_user->product_channel->code, $context);
+            return [ERROR_CODE_FAIL, '设备错误!!', null];
+        }
+
+        $third_id = fetch($params, 'third_id');
+        $third_name = fetch($params, 'third_name');
+        $third_unionid = fetch($params, 'third_unionid');
+
+        $third_auth = \ThirdAuths::findFirstBy(['product_channel_id' => $current_user->product_channel_id, 'third_id' => $third_id,
+            'third_name' => $third_name
+        ]);
+
+        if (!$third_auth) {
+            $third_auth = new \ThirdAuths();
+            $third_auth->third_id = $third_id;
+            $third_auth->third_token = $params['third_token'];
+            $third_auth->third_name = $third_name;
+            $third_auth->product_channel_id = $current_user->product_channel_id;
+            $third_auth->third_unionid = $third_unionid;
+            $third_auth->save();
+        }
+
+        $user = $current_user;
+
+        $third_unionid = $third_unionid ? $third_unionid : $third_id;
+
+        //其他账户的快捷登陆 重新注册新用户
+        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->mobile) {
+            $user = Users::registerForClientByDevice($device, true);
+            $user->register_at = time();
+        }
+
+        $third_auth->user_id = $user->id;
+        $third_auth->save();
+
+        $fr = $device->fr;
+
+        if (!$fr) {
+            $fr = fetch($context, 'fr');
+            $user->fr = $fr;
+            $device->fr = $fr;
+        }
+
+        $partner = \Partners::findFirstByFrHotCache($fr);
+        if ($partner) {
+            $user->partner_id = $partner->id;
+            $device->partner_id = $partner->id;
+        }
+
+        $device->user_id = $user->id;
+        $device->update();
+
+        $fields = ['platform', 'platform_version', 'version_code', 'version_name', 'api_version', 'device_no', 'manufacturer',
+            'ip', 'latitude', 'longitude', 'push_token'];
+
+        foreach ($fields as $field) {
+
+            if ($device->$field) {
+                $user->$field = $device->$field;
+            }
+        }
+
+        $user->third_unionid = $third_unionid;
+        $user->third_name = $third_name;
+        $user->device_id = $device->id;
+        $user->login_name = $params['login_name'];
+        $user->nickname = $params['nickname'];
+        $user->user_type = USER_TYPE_ACTIVE;
+        $user->sid = $user->generateSid('s');
+        $user->update();
+
+        info('third_login_log,user_id=', $user->id);
+
+        $source_url = fetch($params, 'avatar_url');
+
+        //上传头像
+        if ($source_url) {
+            \Users::delay()->uploadWeixinAvatar($user->id, $source_url);
+        }
+
+        return [ERROR_CODE_SUCCESS, '登陆成功', $user];
+    }
+
+    function findMusics($page, $per_page)
+    {
+        $user_db = Users::getUserDb();
+        $key = "user_musics_id" . $this->id;
+        $total_entries = $user_db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $music_ids = $user_db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $ids = [];
+        $times = [];
+
+        foreach ($music_ids as $music_id => $time) {
+            $ids[] = $music_id;
+            $times[$music_id] = $time;
+        }
+
+        $musics = Musics::findByIds($ids);
+
+        foreach ($musics as $music) {
+            $music->down_at = fetch($times, $music->id);
+        }
+
+        $pagination = new PaginationModel($musics, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Musics';
+
+        return $pagination;
+    }
+
+    function calculateLevel()
+    {
+        $level = $this->level;
+        $experience = $this->experience;
+
+        if ($experience < 1) {
+            return 0;
+        } elseif ($experience >= 386000) {
+            return 35;
+        }
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
+            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
+            336000, 386000];
+
+        foreach ($level_ranges as $index => $level_range) {
+
+            if (isset($level_ranges[$index + 1]) && $experience > $level_range &&
+                $experience <= $level_ranges[$index + 1]) {
+                $level = $index;
+                break;
+            }
+
+        }
+
+        return $level;
+    }
+
+    //段位
+    function calculateSegment()
+    {
+        $levels = [1, 6, 11, 16, 21, 26, 31, 36];
+        $segment_texts = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'king', 'starshine'];
+        $user_level = $this->level;
+
+        if ($user_level < 1) {
+            return '';
+        } elseif ($user_level >= 35) {
+            return 'starshine5';
+        }
+
+        $segment = '';
+
+        foreach ($levels as $index => $level) {
+
+            if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
+                $segment = $segment_texts[$index] . ($user_level - $index * 5);
+            }
+        }
+
+        return $segment;
+    }
+
+
+    //更新用户等级/经验
+    static function updateExperience($gift_order_id)
+    {
+        $gift_order = \GiftOrders::findById($gift_order_id);
+
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_level_lock_" . $gift_order->user_id;
+        $lock_key1 = "update_user_level_lock_" . $gift_order->sender_id;
+        $lock = tryLock($lock_key);
+        $lock1 = tryLock($lock_key1);
+
+        $sender = $gift_order->sender;
+        $user = $gift_order->user;
+        $amount = $gift_order->amount;
+        $sender_experience = 0.02 * $amount;
+        $user_experience = 0.01 * $amount;
+
+        if ($sender) {
+            $sender->experience += $sender_experience;
+            $sender_level = $sender->calculateLevel();
+            $sender->level = $sender_level;
+            $sender->segment = $sender->calculateSegment();
+            $sender->update();
+        }
+
+        if ($user) {
+            $user->experience += $user_experience;
+            $user_level = $user->calculateLevel();
+            $user->level = $user_level;
+            $user->segment = $user->calculateSegment();
+            $user->update();
+        }
+
+        unlock($lock);
+        unlock($lock1);
+    }
 }

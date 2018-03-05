@@ -1,15 +1,6 @@
-<!-- saved from url=(0047)http://watchdev.365yf.com/orders/c0116060455805 -->
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>玩转Hi</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <!-- <link rel="stylesheet" type="text/css" href="css/global.css"> -->
-    <link rel="stylesheet" type="text/css" href="/m/css/success.css">
-</head>
-<body>
+{{ block_begin('head') }}
+{{ theme_css('/m/css/success.css') }}
+{{ block_end() }}
 <div class="wrapper">
     <div class="problem">
         <div class="problem-box">
@@ -144,10 +135,23 @@
                 <div class="text_left mr_top">
                     <div class="text m_right">
                         <h1>03 .</h1>
-                        <p>点击自己头像，选择下麦旁听或查看资料</p>
+                        <p>点击空余麦位，</br>
+                            即可上麦，</br>
+                            与房主和其它麦位</br>
+                            语音聊天</p>
                     </div>
                     <div class="img">
                         <img src="/m/images/4_3.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/4_4.png">
+                    </div>
+                    <div class="text">
+                        <h1>04 .</h1>
+                        <p>点击自己或他人头像，</br>
+                            选择下麦旁听或查看资料 </p>
                     </div>
                 </div>
             </div>
@@ -245,7 +249,7 @@
                     </div>
                     <div class="text">
                         <h1>04 .</h1>
-                        <p>房主的权限当然是最大，看到谁跟自己不在同一频道，就可以狠心踢出去哦！</span>
+                        <p>房主的权限当然是最大，看到谁跟自己不在同一频道，就可以狠心踢出去哦！</p>
                     </div>
                 </div>
             </div>
@@ -253,7 +257,7 @@
     </div>
 
 </div>
-<script src='/js/jquery/1.11.2/jquery.min.js'></script>
+
 <script type="text/javascript">
     $(function () {
         $('.question').on('click', function () {
@@ -279,22 +283,6 @@
                 }, 400);
 
             }
-            // if($answer.is(':visible')){
-            //     $answer.hide();
-            //     $dot.removeClass('up_dot');
-            //     $('html,body').animate({
-            //         scrollTop: 0
-            //     }, 400);
-            // }else{
-            //     allAnswer.hide();
-            //     $answer.show();
-            //     $dot.addClass('up_dot');
-            //     $('html,body').animate({
-            //         scrollTop: 0
-            //     }, 400);
-            // }
         });
     })
 </script>
-</body>
-</html>

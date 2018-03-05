@@ -27,7 +27,7 @@ class PaymentChannelsController extends BaseController
         $payment_channel = new \PaymentChannels();
         $this->assign($payment_channel, 'payment_channel');
         if ($payment_channel->create()) {
-            \OperatingRecords::logAfterCreate($this->currentOperator(),$payment_channel);
+            \OperatingRecords::logAfterCreate($this->currentOperator(), $payment_channel);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
                 array('payment_channel' => $payment_channel->toJson()));
         } else {
@@ -44,9 +44,9 @@ class PaymentChannelsController extends BaseController
 
     function updateAction()
     {
-       $payment_channel = \PaymentChannels::findById($this->params('id'));
-       $this->assign($payment_channel, 'payment_channel');
-        \OperatingRecords::logBeforeUpdate($this->currentOperator(),$payment_channel);
+        $payment_channel = \PaymentChannels::findById($this->params('id'));
+        $this->assign($payment_channel, 'payment_channel');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $payment_channel);
         if ($payment_channel->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
                 array('payment_channel' => $payment_channel->toJson()));
@@ -74,5 +74,29 @@ class PaymentChannelsController extends BaseController
         $this->view->payment_channel_id = $payment_channel_id;
         $this->view->product_channels = $product_channels;
         $this->view->checked = $checked;
+    }
+
+    function platformsAction()
+    {
+        $payment_channel = \PaymentChannels::findFirstById($this->params('id'));
+        debug($payment_channel->id);
+        $platforms = \PaymentChannels::$PLATFORMS;
+        $all_select_platforms = explode(',', $payment_channel->platforms);
+        $this->view->payment_channel = $payment_channel;
+        $this->view->platforms = $platforms;
+        $this->view->all_select_platforms = $all_select_platforms;
+    }
+
+    function updatePlatformsAction()
+    {
+        $payment_channel = \PaymentChannels::findFirstById($this->params('id'));
+        $platforms = $this->params('platforms', ['*']);
+        if (in_array('*', $platforms)) {
+            $platforms = ['*'];
+        }
+        $payment_channel->platforms = implode(',', $platforms);
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $payment_channel);
+        $payment_channel->update();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/payment_channels']);
     }
 }

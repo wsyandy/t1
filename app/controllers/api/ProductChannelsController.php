@@ -17,4 +17,8 @@ class ProductChannelsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $product_channel->toAboutJson());
     }
 
+    function detailAction()
+    {
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $this->currentProductChannel()->toDetailJson());
+    }
 }

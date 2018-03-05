@@ -69,22 +69,30 @@ class EmoticonImages extends BaseModel
     }
 
     //是否存在 code 或 rank 相同的表情
-    function isRepeating()
+    function checkFields()
     {
-        if (!$this->code ) {
-            return true;
+
+        $fields = ['code', 'rank'];
+
+        foreach ($fields as $field) {
+            $val = $this->$field;
+            if (isBlank($val)) {
+                return [ERROR_CODE_FAIL, $field . "不能为空"];
+            }
+
+            if ($this->hasChanged($field)) {
+                $obj = self::findFirst([
+                    'conditions' => "$field  = :$field:",
+                    'bind' => [$field => $val]
+                ]);
+
+                if (isPresent($obj)) {
+                    return [ERROR_CODE_FAIL, $field . "不能重复"];
+                }
+            }
         }
-        $cond = [];
-        $cond['conditions'] = "(code = :code: or rank = :rank:)  and id != :id:";
-        $cond['bind'] = [
-            'id' => $this->id,
-            'rank' => $this->rank,
-            'code' => $this->code
-        ];
-        if(self::findFirst($cond))
-        {
-            return true;
-        }
+
+        return [ERROR_CODE_SUCCESS, ''];
     }
 
     /**

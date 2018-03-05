@@ -36,6 +36,8 @@
     激活时间: {{ user.created_at_text }}<br/>
     注册时间: {{ user.register_at_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
+    登录方式: {{ user.login_type_text }}<br/>
+    用户等级: {{ user.level }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
@@ -55,7 +57,11 @@
         <a class="modal_action" href="/admin/users/edit?id={{ user.id }}">编辑</a><br/>
     {% endif %}
     {% if isAllowed('rooms','index') %}
-        <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a><br/>
+        <a href="/admin/rooms?room[id_eq]={{ user.room_id }}">房间</a>
+        {% if user.current_room_id %}
+            <a href="/admin/rooms?room[id_eq]={{ user.current_room_id }}">所在房间</a>
+        {% endif %}
+        <br/>
     {% endif %}
     {% if isAllowed('users','send_message') %}
         <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
@@ -82,7 +88,7 @@
             客户端版本: ${user.version_code}<br/>
         </td>
         <td>
-            姓名:${ user.id_name } 性别:${ user.sex_text }<br/>
+            姓名:${ user.nickname } 性别:${ user.sex_text }<br/>
             手机号码:${ user.mobile }<br/>
             设备ID:<a href="/admin/devices?device[id_eq]=${user.device_id}">${user.device_id}</a><br/>
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
@@ -90,17 +96,33 @@
             自述城市信息: ${ user.province_name }, ${ user.city_name }
         </td>
         <td>
-            ${ user.user_type_text } | ${ user.user_status_text }<br>
+            ${ user.user_type_text } | ${ user.user_status_text }<br/>
             激活时间: ${ user.created_at_text }<br/>
             注册时间: ${ user.register_at_text }<br/>
             最后活跃时间: ${ user.last_at_text }<br/>
+            登录方式: ${ user.login_type_text }<br/>
+            用户等级: ${ user.level }
         </td>
         <td>
-            <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
-            <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
-            <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a><br/>
-            <a href="/admin/users/send_message?id=${ user.id }" class="modal_action">发送系统消息</a><br/>
-            <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
+            {% if isAllowed('users','detail') %}
+                <a href="/admin/users/detail?id=${ user.id }">详情</a><br/>
+            {% endif %}
+            {% if isAllowed('users','edit') %}
+                <a href="/admin/users/edit/${user.id}" class="modal_action">编辑</a><br/>
+            {% endif %}
+            {% if isAllowed('rooms','index') %}
+                <a href="/admin/rooms?room[id_eq]=${ user.room_id }">房间</a>
+                {@if user.current_room_id }
+                <a href="/admin/rooms?room[id_eq]=${ user.current_room_id }">所在房间</a>
+                {@/if}
+                <br/>
+            {% endif %}
+            {% if isAllowed('users','send_message') %}
+                <a href="/admin/users/send_message?id=${ user.id }" class="modal_action">发送系统消息</a><br/>
+            {% endif %}
+            {% if isAllowed('users','getui') %}
+                <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
+            {% endif %}
         </td>
 
     </tr>

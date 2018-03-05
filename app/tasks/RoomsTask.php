@@ -11,7 +11,8 @@ class RoomsTask extends \Phalcon\Cli\Task
     //检查用户是否在房间
     function checkUserRoomAction()
     {
-        $rooms = Rooms::findForeach();
+        $cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]];
+        $rooms = Rooms::findForeach($cond);
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
@@ -37,7 +38,9 @@ class RoomsTask extends \Phalcon\Cli\Task
                         $unbind = false;
                     }
 
+                    $current_room_seat_id = $user->current_room_seat_id;
                     $room->exitRoom($user, $unbind);
+                    $room->pushExitRoomMessage($user, $current_room_seat_id);
                 }
             }
         }
@@ -92,7 +95,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $cond['conditions'] = '(current_room_id = 0 or current_room_id is null) and user_type = ' . USER_TYPE_SILENT;
+            $cond['conditions'] = '(room_id = 0 or room_id is null) and user_type = ' . USER_TYPE_SILENT;
             $user = Users::findFirst($cond);
 
             $room = Rooms::createRoom($user, $title);
@@ -156,12 +159,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             return;
         }
 
-        $per_page = mt_rand(1, 5);
-        $last_room = Rooms::findLast();
-        $last_room_id = $last_room->id;
-        $total_page = ceil($last_room_id / $per_page);
-        $page = mt_rand(1, $total_page);
-        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+        $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
             $user = $room->user;
@@ -176,7 +174,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             info($room->id, $delay_time);
         }
 
-        info($page, $per_page, $online_silent_room_num, count($rooms));
+        info($online_silent_room_num, count($rooms));
     }
 
     //释放离线沉默房间
@@ -228,7 +226,12 @@ class RoomsTask extends \Phalcon\Cli\Task
     //沉默用户活跃房间
     function activeSilentRoomAction()
     {
-        $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 60]);
+        $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
+         (status = :status: and user_type = :user_type1:)',
+            'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
+            'order' => 'last_at desc', 'limit' => 60];
+
+        $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
             Rooms::delay()->activeRoom($room->id);

@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 06/01/2018
  * Time: 10:56
  */
-
 class PaymentChannels extends BaseModel
 {
 
@@ -16,6 +16,8 @@ class PaymentChannels extends BaseModel
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
+
+    static $PLATFORMS = ['*' => '全部', 'ios' => 'ios', 'android' => '安卓'];
 
     function toJson()
     {
@@ -73,11 +75,24 @@ class PaymentChannels extends BaseModel
     function match($user)
     {
         debug("user: " . $user->platform);
-        if (isDevelopmentEnv()) {
-            return true;
+
+        $version_code = $user->version_code;
+
+        if ($this->android_version_code && $user->isAndroid() && $this->android_version_code > $version_code) {
+            return false;
         }
+
+        if ($this->ios_version_code && $user->isIos() && $this->ios_version_code > $version_code) {
+            return false;
+        }
+
+
         if ($this->isApple()) {
             return $user->isIos();
+        }
+
+        if (isDevelopmentEnv()) {
+            return true;
         }
         
         return $user->isAndroid();
@@ -99,7 +114,7 @@ class PaymentChannels extends BaseModel
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
         $selected = [];
         foreach ($payment_channels as $payment_channel) {
-            if ($payment_channel->isValid() && $payment_channel->match($user) || isDevelopmentEnv()) {
+            if ($payment_channel->isValid() && $payment_channel->match($user)) {
                 if (isPresent($format) && $payment_channel->isResponseTo($format)) {
                     $selected[] = $payment_channel->$format();
                 } else {

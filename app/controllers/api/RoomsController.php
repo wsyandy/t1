@@ -39,6 +39,7 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
+        $hot = intval($this->params('hot', 0));
         $user_id = $this->currentUserId();
 
         //限制搜索条件
@@ -46,6 +47,11 @@ class RoomsController extends BaseController
             'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . ' and user_id <> ' . $user_id,
             'order' => 'last_at desc, user_type asc'
         ];
+
+        //热门条件
+        if (STATUS_ON == $hot) {
+            $cond['conditions'] .= ' and hot = ' . $hot;
+        }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
@@ -506,5 +512,45 @@ class RoomsController extends BaseController
 
         $managers = $room->findManagers();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['managers' => $managers]);
+    }
+
+    function setThemeAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+        }
+
+        $room_theme_id = $this->params('room_theme_id');
+        $room_theme = \RoomThemes::findFirstById($room_theme_id);
+        if (!$room_theme || $room_theme->status != STATUS_ON) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的主题');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room->room_theme_id = $room_theme_id;
+        $room->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->theme_image_url]);
+    }
+
+    function closeThemeAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限', '');
+        }
+
+        $room->room_theme_id = 0;
+        $room->save();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 }

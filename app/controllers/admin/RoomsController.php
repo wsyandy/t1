@@ -27,9 +27,27 @@ class RoomsController extends BaseController
         $per_page = 30;
         $total_entries = $total_page * $per_page;
         $cond['order'] = "id desc";
-        $rooms = \Rooms::findPagination($cond, $page, $per_page,$total_entries);
+        $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->rooms = $rooms;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+    }
+
+    function editAction()
+    {
+        $room = \Rooms::findFirstById($this->params('id'));
+        $this->view->room = $room;
+    }
+
+    function updateAction()
+    {
+        $room = \Rooms::findFirstById($this->params('id'));
+        $this->assign($room, 'room');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
+        if ($room->update()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms?room[id_eq]=' . $room->id]);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
+        }
     }
 
     //在线用户
@@ -84,10 +102,8 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '发送者不存在');
             }
 
-            $hot_cache = \Users::getHotReadCache();
-            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $user->online_token;
-            $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
-            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $user_id));
+            $intranet_ip = $user->getIntranetIp();
+            $receiver_fd = $user->getUserFd();
 
             if ($action == 'enter_room') {
 

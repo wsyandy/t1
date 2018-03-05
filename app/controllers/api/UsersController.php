@@ -155,6 +155,8 @@ class UsersController extends BaseController
                 }
             }
 
+            $context['login_type'] = USER_LOGIN_TYPE_MOBILE;
+
             list($error_code, $error_reason) = $user->clientLogin($context, $device);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
@@ -181,6 +183,81 @@ class UsersController extends BaseController
         }
     }
 
+    //第三方登陆 qq weixin sinaweibo
+    //access_token openid app_id(微信不需要此参数)
+    function thirdLoginAction()
+    {
+        if ($this->request->isPost()) {
+
+            $device = $this->currentDevice();
+
+            if (!$device) {
+                $device = $this->currentUser()->device;
+            }
+
+            if (!$device) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
+            }
+
+            $third_name = $this->params('third_name');
+
+            $third_gateway = \thirdgateway\Base::gateway($third_name);
+
+            if (!$third_gateway) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
+            }
+
+            $context = $this->context();
+
+            //登陆认证
+            $form = $third_gateway->auth($context);
+
+            if (!$form) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
+            }
+
+            info('third_login_info=', $form);
+
+            if ($form['error_code'] != ERROR_CODE_SUCCESS) {
+                return $this->renderJSON($form['error_code'], $form['error_reason']);
+            }
+
+            $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
+
+            $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
+
+            if (!$user) {
+                list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
+                if ($error_code != ERROR_CODE_SUCCESS) {
+                    return $this->renderJSON($error_code, $error_reason);
+                }
+            }
+
+            if (!$user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
+            }
+
+            $context['login_type'] = $third_name;
+
+            list($error_code, $error_reason) = $user->clientLogin($context, $device);
+
+            if ($error_code != ERROR_CODE_SUCCESS) {
+                return $this->renderJSON($error_code, $error_reason);
+            }
+
+            $user->updatePushToken($device);
+
+            $key = $this->currentProductChannel()->getSignalingKey($user->id);
+            $app_id = $this->currentProductChannel()->getImAppId();
+
+            $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key];
+            $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+        }
+    }
 
     function logoutAction()
     {
@@ -397,4 +474,46 @@ class UsersController extends BaseController
         )));
     }
 
+    function qrcodeLoginAction()
+    {
+        $token = $this->params('token');
+        debug($token, $this->params());
+        $access_token = \AccessTokens::validToken($token);
+
+        if (!$access_token) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误, token错误或者过期');
+        }
+
+        $user = $this->currentUser();
+
+        if (!$user || $user->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '没有对应的用户');
+        }
+
+        $confirm = $this->params('confirm');
+
+        if ($confirm) {
+
+            $access_token->status = AUTH_SUCCESS;
+            $access_token->user_id = $user->id;
+            $access_token->save();
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '确认成功');
+        }
+
+        $auth_url = $this->getRoot() . 'api/users/qrcode_login?token=' . $token . '&confirm=1';
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '确认登录', ['auth_url' => $auth_url]);
+    }
+
+    //用户音乐列表
+    function musicsAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+
+        $musics = $this->currentUser()->findMusics($page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
+    }
 }

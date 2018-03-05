@@ -36,7 +36,37 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'constellation' => $this->constellation_text,
-            'im_password' => $this->im_password
+            'im_password' => $this->im_password,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text,
+            'receive_gift_num' => $this->receive_gift_num
+        ];
+    }
+
+    function mergeJson()
+    {
+        return [
+            'avatar_small_url' => $this->getAvatarSmallUrl(),
+            'avatar_url' => $this->getAvatarUrl(),
+            'product_channel_name' => $this->product_channel_name,
+            'partner_name' => $this->partner_name,
+            'sex_text' => $this->sex_text,
+            'geo_province_name' => $this->geo_province_name,
+            'geo_city_name' => $this->geo_city_name,
+            'ip_province_name' => $this->ip_province_name,
+            'ip_city_name' => $this->ip_city_name,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'user_type_text' => $this->user_type_text,
+            'user_status_text' => $this->user_status_text,
+            'created_at_text' => $this->created_at_text,
+            'register_at_text' => $this->register_at_text,
+            'last_at_text' => $this->last_at_text,
+            'login_type_text' => $this->login_type_text,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -59,7 +89,10 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
-            'current_channel_name' => $this->current_channel_name
+            'current_channel_name' => $this->current_channel_name,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -78,6 +111,9 @@ trait UserAttrs
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
             'age' => $this->age,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
 
         if (isset($this->friend_status)) {
@@ -117,6 +153,9 @@ trait UserAttrs
             'monologue' => $this->monologue,
             'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
             'age' => $this->age,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
         ];
 
         return $data;
@@ -392,14 +431,6 @@ trait UserAttrs
         return '';
     }
 
-    function getOnlineToken()
-    {
-        $hot_cache = Users::getHotWriteCache();
-        $user_online_key = "socket_user_online_user_id" . $this->id;
-
-        return $hot_cache->get($user_online_key);
-    }
-
     //旁听时间
     function getAudienceTimeByDate($date)
     {
@@ -435,5 +466,59 @@ trait UserAttrs
         } else {
             return $hi_coins / 10;
         }
+    }
+
+    public function lastLoginAt()
+    {
+        if (!$this->last_at) {
+            return $this->created_at;
+        }
+
+        return $this->last_at;
+    }
+
+    function getOnlineToken()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $user_online_key = "socket_user_online_user_id" . $this->id;
+        return $hot_cache->get($user_online_key);
+    }
+
+    //用户长连接对应的ip
+    function getIntranetIp()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $online_token = $this->getOnlineToken();
+
+        if (!$online_token) {
+            return '';
+        }
+
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+        $intranet_ip = $hot_cache->get($fd_intranet_ip_key);
+
+        return $intranet_ip;
+    }
+
+    //用户长连接对应的fd
+    function getUserFd()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $online_token = $this->getOnlineToken();
+
+        if (!$online_token) {
+            return '';
+        }
+
+        $fd_key = "socket_push_fd_" . $online_token;
+        $fd = $hot_cache->get($fd_key);
+
+        return $fd;
+    }
+
+    function getReceiveGiftNum()
+    {
+        $num = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'num']);
+        return $num;
     }
 }

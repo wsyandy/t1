@@ -154,6 +154,27 @@ ts = function () {
         }
 
         return /^1[34578]{1}\d{9}$/.test(mobile) ? true : false;
+    };
+    $.isWeixinClient = function () {
+        var ua = navigator.userAgent;
+
+        if (ua.indexOf('MicroMessenger/') < 0) {
+            return false;
+        }
+
+        return true;
+    };
+    $.getWeixinVersion = function () {
+        var ua = navigator.userAgent;
+        if (ua.indexOf('MicroMessenger/') < 0) {
+            return 0;
+        }
+
+        var temp = ua.split('MicroMessenger/');
+
+        var weixin_info = temp[1].split(' ');
+        var weixin_version = weixin_info[0];
+        return weixin_version;
     }
 })(jQuery);
 

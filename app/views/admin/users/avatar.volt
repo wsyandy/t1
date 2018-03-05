@@ -1,14 +1,17 @@
 {{ css('list') }}
-<div class="row">
-    <div class="col-md-12">
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="all">全选</a>
-        <a href="#" class="batch_select btn btn-sm" data-target="batch_form" data-select_option="reverse">反选</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="avatar_auth" data-formid="batch_form"
-           data-action="1">选中通过</a>
-        <a href="#" class="selected_action btn btn-sm" data-target="avatar_auth" data-formid="batch_form"
-           data-action="2">选中删除</a>
-    </div>
-</div>
+
+<ol class="breadcrumb">
+    {% if isAllowed('users','auth') %}
+        <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="all">全选</a></li>
+        <li><a href="#" class="batch_select" data-target="batch_form" data-select_option="reverse">反选</a>
+        </li>
+        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+               data-action="1">选中通过</a></li>
+        <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
+               data-action="2">选中不通过</a></li>
+        <li><a href="/admin/users/avatar?avatar_auth=1">已审核列表</a></li>
+    {% endif %}
+</ol>
 
 <div>一共{{ users.total_entries }}个</div>
 {{ form('/admin/users/batch_update_avatar', 'method':'post','class':'form-inline','id':'batch_form','accept-charset':'UTF-8') }}
@@ -16,7 +19,7 @@
     <input name="avatar_auth" id="avatar_auth" type="hidden" value="">
     <dl class="thumb_list">
         {% for user in users %}
-            <dd class="unit object_unit" style="height: 180px; width: 130px;" id="avatar_user_{{user.id}}">
+            <dd class="unit object_unit" style="height: 180px; width: 130px;" id="avatar_user_{{ user.id }}">
                 <label for="user_{{ user.id }}">
                     <a href="/admin/users/detail/{{ user.id }}">
                         <img alt="Small lmoubofcto" height="150" id="avatar_{{ user.id }}" src="{{ user.avatar_url }}"
@@ -24,16 +27,19 @@
                     </a>
                 </label>
                 <p>
-                    <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}" autocomplete="off">
+                    <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}"
+                           autocomplete="off">
                     {{ user.sex ? '男' : '女' }}({{ user.age }})
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click' data-user_id="{{user.id}}">过</a>
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click' data-user_id="{{user.id}}">不过</a>
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click'
+                       data-user_id="{{ user.id }}">过</a>
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click'
+                       data-user_id="{{ user.id }}">不过</a>
                 </p>
             </dd>
         {% endfor %}
     </dl>
 </div>
-{{end_form()}}
+{{ end_form() }}
 {{ pagination(users) }}
 <script>
     $(function () {
@@ -94,33 +100,6 @@
                 }
             });
         });
-        $(".batch_pass").click(function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var ids = "";
-            var target = $(this).data("target");
-            $("#" + target + " input:checkbox").each(function () {
-                ids = ids + "," + $(this).val();
-            });
-            var token = $("meta[name='csrf-token']").attr("content");
-            var form = $("#" + target).parent("form");
-            console.log(form);
-            var action = $(this).data("action");
-
-            /*$(".object_unit").remove();*/
-            var c = $(this);
-            $(this).attr({"disabled": "disabled"});
-            $.ajax({
-                url: action,
-                type: 'post',
-                data: {'ids': ids, 'authenticity_token': token},
-                success: function (data) {
-                    $(".object_unit").remove();
-                    c.removeAttr("disabled");
-                }
-            });
-        });
-
     })
 </script>
 

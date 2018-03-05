@@ -41,6 +41,14 @@ class RoomSeats extends BaseModel
 
     }
 
+    function getCanPlayMusicText()
+    {
+        if ($this->can_play_music) {
+            return "打开";
+        }
+        return "关闭";
+    }
+
     function mergeJson()
     {
         $data = [];
@@ -72,7 +80,7 @@ class RoomSeats extends BaseModel
         $json['rank'] = $this->rank;
         $json['room_id'] = $this->room_id;
         $json['user_id'] = $this->user_id;
-
+        $json['can_play_music'] = $this->can_play_music;
         return $json;
     }
 

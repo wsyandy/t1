@@ -4,7 +4,7 @@
         <td>sid: {{ user.sid }}</td>
         <td>注册时间: {{ user.created_at_text }}</td>
         <td>最后活跃时间: {{ user.last_at_text }}</td>
-        <td>状态: {{ user.user_status_text }}</td>
+        <td>状态: {{ user.user_status_text }} 登录方式: {{ user.login_type_text }}</td>
     </tr>
     <tr>
         <td>昵称:{{ user.nickname }}</td>
@@ -21,8 +21,15 @@
     <tr>
         <td>IP:{{ user.ip }}</td>
         <td>经纬度：{{ user.latitude }}，{{ user.longitude }}</td>
-        <td>钻石: <a href="/admin/account_histories?user_id={{ user.id }}">{{ user.diamond }}</a>，hi币：{{ user.hi_coins }}</td>
+        <td>钻石: <a href="/admin/account_histories?user_id={{ user.id }}">{{ user.diamond }}</a>，hi币：{{ user.hi_coins }}
+        </td>
         <td><a href="/admin/users/reset_password?id={{ user.id }}" class="modal_action">重置密码</a></td>
+    </tr>
+    <tr>
+        <td>用户等级:{{ user.level }}</td>
+        <td>用户经验:{{ user.experience }}</td>
+        <td>段位:{{ user.segment_text }}</td>
+        <td></td>
     </tr>
 </table>
 

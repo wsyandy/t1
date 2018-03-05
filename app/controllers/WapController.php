@@ -27,13 +27,21 @@ class WapController extends \ApplicationController
 
     function indexAction()
     {
-        $soft_version_id = $this->params('id',1);
+        $soft_version_id = $this->params('id', 1);
 
         $soft_version = \SoftVersions::findFirstById($soft_version_id);
+
         if (!$soft_version) {
             return false;
         }
-        $this->view->file_url = $soft_version->file_url;
+
+        $file_url = $soft_version->file_url;
+
+        if ($this->isIos()) {
+            $file_url = $soft_version->ios_down_url;
+        }
+
+        $this->view->file_url = $file_url;
     }
 
     function platformVersion()

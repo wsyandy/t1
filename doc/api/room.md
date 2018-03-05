@@ -145,6 +145,8 @@
     user_role 当前用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
     theme_type 房间主题类型 0普通房间 1电台房间 如果是电台类型 需要请求接口拉取音频资源
     audio_id 房间音频id 拉取音频资源时使用
+    theme_image_url string 房间主题背景图
+    room_theme_id int 房间主题id
     system_tips:[
         '内容1',
         '内容2',
@@ -161,6 +163,7 @@
             status: int 麦位状态，0 麦为被封，1 麦位正常
             microphone 麦克风状态 false/true 默认为true,
             rank 麦位排序, 1-8, 8个麦位
+            can_play_music 能否播放音乐 true/false 默认为false
         }
         ...
     ]
@@ -297,6 +300,10 @@
             user_role 用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
             monologue 个性签名
             age 年龄  
+            level 用户等级
+           segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
         },
         ...
     ]
@@ -311,7 +318,8 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |page|页码|int|否||
-|per_page|每页|int|否|||
+|per_page|每页|int|否||
+|hot|热门|int|是|1表示请求热门房间|
 
 ##### 12.2 回应参数说明
 ```
@@ -509,5 +517,40 @@
         },
         ...
     ]     
+}
+```
+
+### 21 更换主题
+> http-post ```/api/rooms/set_theme```
+
+##### 21.1 请求参数说明
+
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间ID|int|否||
+|room_theme_id|主题ID|int|否|||
+
+##### 21.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: '返回码说明'
+    theme_image_url: string 背景图
+}
+```
+
+### 22 关闭主题
+> http-post ```/api/rooms/close_theme```
+
+##### 22.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间ID|int|否|||
+
+##### 22.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: '返回码说明'
 }
 ```

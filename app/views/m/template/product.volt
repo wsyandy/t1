@@ -1,18 +1,9 @@
 {# 支付页面模板. 我的账户跟产品页面引用 #}
+{{ block_begin('head') }}
+{{ theme_css('/m/css/product.css') }}
+{{ theme_js('/js/fastclick.js') }}
+{{ block_end() }}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>我的账户</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/css/product1.css">
-
-    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
-    <script src="/js/fastclick.js"></script>
-</head>
-<body>
 <div class="account_top">
     <p>钻石余额：<span>{{ user.diamond }}</span></p>
     <div class="top_text">(钻石是用来送礼物的)</div>
@@ -39,7 +30,8 @@
         {% for payment_channel in payment_channels %}
             {% if (payment_channel.id == selected_payment_channel.id) %}
                 <li data-payment_channel_id="{{ payment_channel.id }}"
-                    data-payment_type="{{ payment_channel.payment_type }}" id="payment_type_{{ payment_channel.payment_type }}">
+                    data-payment_type="{{ payment_channel.payment_type }}"
+                    id="payment_type_{{ payment_channel.payment_type }}">
                     <span>{{ payment_channel.name }}</span>
                     <i class="selected_pay select_pay"></i>
                 </li>
@@ -59,13 +51,12 @@
        id="pay_submit_btn" class="account_btn">确定</a>
 </div>
 <script type="text/javascript">
-    function generatePayUrl()
-    {
+    function generatePayUrl() {
         var product_id = $(".selected").parent().data('product_id');
         var payment_channel = $(".selected_pay").parent();
         var payment_channel_id = payment_channel.data('payment_channel_id');
         var payment_type = payment_channel.data('payment_type');
-        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type  + "&product_id=" + product_id + "&code={{ product_channel.code }}";
+        var url = "/m/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type + "&product_id=" + product_id + "&code={{ product_channel.code }}";
         if (payment_channel_id == undefined) {
             url = $("#pay_submit_btn").attr("href");
         }
@@ -101,5 +92,3 @@
         });
     })
 </script>
-</body>
-</html>

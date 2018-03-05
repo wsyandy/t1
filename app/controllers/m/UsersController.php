@@ -28,7 +28,11 @@ class UsersController extends BaseController
         $this->view->user = $this->currentUser();
         $this->view->payment_channels = $payment_channels;
         $this->view->product_channel = $this->currentProductChannel();
+        $this->view->title = '我的账户';
     }
 
-
+    function levelIntroduceAction()
+    {
+        $this->view->title = '等级';
+    }
 }

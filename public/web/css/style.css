@@ -1,0 +1,566 @@
+html, body {
+    background: #F7F7F7;
+}
+
+header {
+    background: #ffffff;
+}
+
+header .wrapper h2 {
+    font-size: 38px;
+    color: #4D2BB1;
+}
+
+header .wrapper ul li a {
+    font-size: 16px;
+    color: #321877;
+}
+
+.nav_selected {
+    border-bottom: 2px solid #281060;
+    padding-bottom: 5px;
+    font-size: 18px !important;
+}
+
+.get_out {
+    font-size: 18px !important;
+}
+
+.get_out i {
+    display: inline-block;
+    width: 15px;
+    height: 18px;
+    background: url(../images/get_out_icon.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+}
+
+/*扫码登录*/
+.qrcode_login {
+    width: 564px;
+    height: 584px;
+    margin: 160px auto;
+    background: #ffffff;
+    border: 1px solid #E4DDFA;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.qrcode_login h2 {
+    font-size: 24px;
+    color: #333333;
+    margin-top: 76px;
+    letter-spacing: -0.27px;
+}
+
+.qrcode_login img {
+    width: 214px;
+    height: 214px;
+    margin-top: 42px;
+}
+
+.qrcode_login h3 {
+    font-size: 20px;
+    color: #333333;
+    letter-spacing: -0.22px;
+    margin-top: 54px;
+}
+
+.qrcode_login p {
+    font-size: 16px;
+    color: #696969;
+    letter-spacing: -0.18px;
+    margin-top: 32px;
+}
+
+/*上传音乐-无音乐*/
+.person {
+    width: 982px;
+    padding: 35px 0;
+    margin: 0 auto;
+    margin-top: 20px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.person .person_left {
+    float: left;
+    margin-left: 40px;
+}
+
+.person .person_left .person_pic {
+    float: left;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #999;
+}
+
+.person .person_left .person_pic img {
+    width: 78px;
+}
+
+.person .person_left .name {
+    float: left;
+    margin-left: 30px;
+    margin-top: 6px;
+}
+
+.person .person_left .name h3 {
+    font-size: 18px;
+    color: #323232;
+    letter-spacing: -0.2px;
+    margin-top: 12px;
+}
+
+.person .person_left .name p {
+    font-size: 12px;
+    color: #5A5A5A;
+    letter-spacing: -0.13px;
+    margin-top: 12px;
+}
+
+.person .person_right {
+    float: right;
+    margin-right: 40px;
+    margin-top: 26px;
+    font-size: 22px;
+    color: #5A5A5A;
+    letter-spacing: -0.24px;
+}
+
+.music_box {
+    background: #ffffff;
+    padding: 0 20px;
+    width: 942px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding-bottom: 25px;
+}
+
+.music_box .music_top {
+    padding: 23px 0;
+    overflow: hidden;
+}
+
+.music_box .music_top h3 {
+    float: left;
+    font-size: 22px;
+    color: #323232;
+    letter-spacing: -0.24px;
+    margin-top: 12px;
+}
+
+.music_box .music_top .top_right {
+    float: right;
+}
+
+.music_box .music_top .top_right a {
+    display: inline-block;
+    width: 128px;
+    height: 42px;
+    border: 1px solid #FE5287;
+    border-radius: 100px;
+    font-size: 18px;
+    color: #FE5287;
+    letter-spacing: -0.24px;
+    line-height: 42px;
+    text-align: center;
+}
+
+.music_box .music_top .top_right span {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    background: url(../images/delete.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+    margin-left: 30px;
+}
+
+.music_none {
+    width: 942px;
+    margin: 0 auto;
+    background: #F9F9F9;
+    padding: 222px 0;
+    text-align: center;
+}
+
+.music_none img {
+    display: block;
+    margin: 0 auto;
+    width: 156px;
+}
+
+.music_none p {
+    font-size: 18px;
+    color: #4C4C4C;
+    letter-spacing: -0.24px;
+    margin-top: 50px;
+}
+
+/*音乐列表*/
+.music_list_box {
+    padding-bottom: 0px !important;
+}
+
+.music_list {
+}
+
+.music_list table tr td {
+    color: #333333;
+    font-size: 16px;
+    letter-spacing: -0.22px;
+}
+
+.music_list table tr:nth-child(odd) {
+    background: #F9F9F9;
+}
+
+.music_list table tr:nth-child(even) {
+    background: #FFFFFF;
+}
+
+/*分页器 start*/
+.page {
+    padding: 40px 0;
+    background: #ffffff;
+    text-align: center;
+}
+
+.page select {
+    /*width: 150px;*/
+    padding: 0 64px 0 30px;
+    height: 34px;
+    margin: 0 20px;
+    border-radius: 2px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    font-size: 14px;
+    color: #4C4C4C;
+    background: #ffffff url(../images/selected.png) no-repeat right center;
+    border: 1px solid #D4D4D4;
+}
+
+.page span {
+    display: inline-block;
+    background: #FE5287;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: -0.19px;
+    width: 90px;
+    height: 34px;
+    line-height: 34px;
+}
+
+.page .jump.disabled {
+    pointer-events: none;
+    background: #ddd;
+}
+
+/*分页器 end*/
+
+select::-ms-expand {
+    display: none;
+}
+
+.up_next {
+    background: #FE5287 !important;
+}
+
+/*删除弹框*/
+.fudong {
+    width: 512px;
+    height: 270px;
+    position: fixed;
+    z-index: 999999;
+    background-color: #FFFFFF;
+    border: 1px solid #E4DDFA;
+    border-radius: 10px;
+}
+
+.xy_fudong {
+    width: 512px;
+    height: 270px;
+    position: fixed;
+    z-index: 999999;
+    background-color: #FFFFFF;
+    border: 1px solid #E4DDFA;
+    border-radius: 10px;
+}
+
+.fudong_bg {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+
+.xy_fudong_bg {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+
+.fudong h3 {
+    text-align: center;
+    font-size: 16px;
+    color: #4C4C4C;
+    margin-top: 79px;
+}
+
+.fudong span {
+    font-size: 12px;
+    color: #666666;
+    display: block;
+    text-align: center;
+}
+
+.fudong .close_delete {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: url(../images/pop_close_btn.png) no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}
+
+.xy_fudong .close_delete {
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: url(../images/pop_close_btn.png) no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}
+
+.btn_list {
+    margin-top: 52px;
+    text-align: center;
+}
+
+.btn_list span, input[type=submit] {
+    display: inline-block;
+    width: 92px;
+    height: 36px;
+    line-height: 36px;
+    background: #F7F7F7;
+    border: 1px solid #C5C5C5;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #333333;
+    cursor: pointer;
+}
+
+.btn_list .close_right {
+    background: #FE5287;
+    font-size: 14px;
+    color: #FFFFFF;
+    border: 1px solid #FE5287;
+}
+
+.right_60 {
+    margin-left: 60px;
+}
+
+.xiyi {
+    width: 840px;
+    height: 723px;
+}
+
+.xieyi_box {
+    padding: 40px 48px;
+}
+
+.xiyi h1 {
+    font-size: 18px;
+    color: #323232;
+    letter-spacing: -0.22px;
+    text-align: center;
+}
+
+.xiyi h2 {
+    font-size: 15px;
+    color: #4C4C4C;
+    letter-spacing: -0.22px;
+    margin-top: 20px;
+    line-height: 24px;
+}
+
+.xiyi h4 {
+    font-size: 16px;
+    color: #323232;
+    letter-spacing: -0.22px;
+    margin-top: 20px;
+}
+
+.xiyi p {
+    font-size: 14px;
+    color: #4C4C4C;
+    letter-spacing: -0.22px;
+    margin-top: 10px;
+    line-height: 24px;
+}
+
+/*上传音乐*/
+.upload_music {
+    width: 982px;
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 40px 0 200px 0;
+    margin-top: 20px;
+}
+
+.upload_music .upload_music_title {
+    color: #333;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+.upload_music .music_add {
+    width: 420px;
+    margin: 0 auto;
+}
+
+.upload_music .upload_music_title span {
+    color: #999;
+    font-size: 14px;
+}
+
+.upload_music .upload_music_title i {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: url(../images/star.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.upload_music .file_name {
+    color: #999;
+    font-size: 15px;
+    height: 10px;
+}
+
+.upload_music input[type=text] {
+    display: block;
+    width: 220px;
+    height: 30px;
+    font-size: 14px;
+    margin-top: 10px;
+    padding: 0 10px;
+}
+
+.upload_music input.searchable-select-input {
+    display: none;
+}
+
+.select_file_box {
+    width: 100%;
+    display: flex;
+    /*justify-content: ;*/
+    align-items: center;
+
+}
+
+.select_file {
+    width: 114px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #565656;
+    position: relative;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 0 10px;
+    background-color: #ffa04f;
+}
+
+.select_file input[type=file] {
+    width: 114px;
+    height: 36px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    -moz-opacity: 0;
+    -ms-opacity: 0;
+    -webkit-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+    margin-top: 0;
+}
+
+.music_add select {
+    display: block;
+    margin-top: 10px;
+    padding: 0 90px 0 30px;
+    height: 34px;
+    border-radius: 2px;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    font-size: 14px;
+    color: #4C4C4C;
+    background: #ffffff url(../images/selected.png) no-repeat right center;
+    border: 1px solid #D4D4D4;
+}
+
+.check_xieyi {
+    margin-top: 30px;
+    color: #4c4c4c;
+    font-size: 14px;
+}
+
+.music_add .check_xieyi .checkbox_xy {
+    display: inline-block !important;
+    width: 25px !important;
+    height: auto;
+    vertical-align: middle;
+    margin-top: 0;
+}
+
+.check_xieyi span {
+    color: #fb000a;
+}
+
+.music_upload_btn input {
+    width: 160px !important;
+}
+
+.music_list_head {
+    padding: 40px;
+}
+
+.music_list_head img{
+    vertical-align: middle;
+    width: 15px;
+}
+
+.music_list_head span{
+    font-size: 15px;
+    color: #999;
+}
+
