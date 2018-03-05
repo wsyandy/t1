@@ -67,9 +67,9 @@
         if (from_mobile()) {
             if (ua.match(/iphone|ipod|ipad/i)) {
                 //$("#jump").attr('href','https://itunes.apple.com/cn/app/hello-yu-yin-jiao-you/id885737901?l=en&mt=8');//ios下载链接
-                $("#jump").attr('href', '：http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobileu');//自动识别，跳转IOS，还是和安卓
+                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//
             } else {
-                $("#jump").attr('href', '：http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobile');//android下载链接
+                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//android下载链接
             }
         }
 
