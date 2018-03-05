@@ -302,9 +302,9 @@ class Users extends BaseModel
 
         $user = $current_user;
         //换个手机号注册，重新生成用户
-        if ($current_user->mobile && $current_user->mobile != $mobile) {
+        if ($current_user->mobile && $current_user->mobile != $mobile || $current_user->third_unionid) {
             $user = Users::registerForClientByDevice($device, true);
-            info('换个手机号注册', $user->id, $context);
+            info('换个手机号注册', $user->id, $user->third_unionid, $context);
         }
 
         //$user->checkRegisterFr($device, $mobile);
