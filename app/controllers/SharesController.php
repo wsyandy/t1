@@ -49,5 +49,6 @@ class SharesController extends ApplicationController
         $this->view->user = $user;
         $this->view->room_id = $room_id;
         //$this->view->soft_version_id = $soft_version_id;
+        $this->view->soft_version_id = '';
     }
 }
