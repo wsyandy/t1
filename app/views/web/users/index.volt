@@ -48,7 +48,7 @@
                     <td>${item.name}</td>
                     <td>${item.singer_name}</td>
                     <td>
-                        <div class="audio_box" >
+                        <div class="audio_box">
                             {#<input type="checkbox" class="check_box" :id="'id'+item.id" :value="item.id" v-model="checked_list">#}
                             {#<label :for="'id'+item.id"></label>#}
                             <!--播放/暂停按钮-->
@@ -61,7 +61,8 @@
                                     <span class="audio_line"></span>
                                     <span class="audio_blue" :style="{width: item.leftDot+item.wDot + 'px'}"></span>
                                     <span class="audio_dot" :style="{left: item.leftDot+ 'px'}"></span>
-                                    <input type="range" min="0" :max="Math.round(item.duration)" step="0.4" class="scale"
+                                    <input type="range" min="0" :max="Math.round(item.duration)" step="0.4"
+                                           class="scale"
                                            @change="scaleChange($event,index)">
                                 </div>
                                 <!--HTML5音频标签 不设置控制属性使其不显示-->
@@ -81,7 +82,7 @@
                 </tr>
 
             </table>
-       <div/>
+        </div>
 
         <div class="page" v-show="show">
             <div class="pagelist">
@@ -200,9 +201,6 @@
                     music[i].pause();
                     _this.$set(item, 'isPlay', false);
                 });
-
-                // this.$set(this.musics[index],'isPlay', curIsPlay ? false : true );
-                // curIsPlay?music[index].pause():music[index].play();
                 if (curIsPlay) {
                     this.$set(this.musics[index], 'isPlay', false);
                     music[index].pause()
@@ -227,23 +225,20 @@
                             _this.$set(_this.musics[index], 'currentTime', 0);
                             _this.$set(_this.musics[index], 'leftDot', 0);
                         }
-
                     }, 100);
-
                 }
-
             },
             getMusic: function () {
                 var data = {page: this.page, per_page: 10};
                 $.authGet('/web/musics/list', data, function (resp) {
                     vm.musics = [];
+                    vm.checked_list = [];
                     vm.total_page = resp.total_page;
                     vm.total_entries = resp.total_entries;
 //                        $.each(resp.musics, function (index, item) {
 //                            vm.musics.push(item);
 //                        });
                     vm.musics = resp.musics;
-                    console.log("111", vm.musics);
                     vm.$nextTick(function () {
 //                        var _this = this;
                         var music = document.querySelectorAll(".music");
@@ -266,12 +261,9 @@
                                     }
                                 }, 100);
                             }
-                            console.log(item.id);
                         });
                     });
                 });
-
-
             },
             scaleChange: function (e, index) {
                 var music = document.querySelectorAll(".music");
@@ -291,21 +283,7 @@
 
     vm = XVue(opts);
 
-    function getList() {
-        var data = {page: vm.page, per_page: 1};
-        $.authGet('/web/musics/list', data, function (resp) {
-            vm.musics = [];
-            vm.total_page = resp.total_page;
-            vm.total_entries = resp.total_entries;
-            $.each(resp.musics, function (index, item) {
-                vm.musics.push(item);
-            })
-        })
-    }
-
     $(function () {
-//        getList();
-
         function colse_fd() {
             $(".fudong").hide();
             $(".fudong_bg").hide();
