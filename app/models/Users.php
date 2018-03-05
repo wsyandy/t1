@@ -88,9 +88,7 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
-            if ($this->mobile) {
-                $this->bindMobile();
-            }
+            
             \Emchat::delay()->createEmUser($this->id);
             \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
