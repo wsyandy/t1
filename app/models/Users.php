@@ -2228,8 +2228,8 @@ class Users extends BaseModel
         $user_experience = 0.01 * $amount;
 
         if ($sender) {
-            $sender_level = $sender->calculateLevel();
             $sender->experience += $sender_experience;
+            $sender_level = $sender->calculateLevel();
             $sender->level = $sender_level;
             $sender->segment = $sender->calculateSegment();
             $sender->update();
@@ -2239,7 +2239,7 @@ class Users extends BaseModel
             $user->experience += $user_experience;
             $user_level = $user->calculateLevel();
             $user->level = $user_level;
-            $sender->segment = $user->calculateSegment();
+            $user->segment = $user->calculateSegment();
             $user->update();
         }
 

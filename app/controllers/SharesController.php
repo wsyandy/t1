@@ -38,7 +38,12 @@ class SharesController extends ApplicationController
             $soft_version_id = $soft_version->id;
         }
 
+        $data = $share_history->data;
+        $data = json_decode($data, true);
+        $room_id = fetch('room_id', $data);
+
         $this->view->user = $user;
+        $this->view->room_id = $room_id;
         $this->view->soft_version_id = $soft_version_id;
     }
 }

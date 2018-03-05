@@ -35,9 +35,16 @@ $(function () {
         }
 
         var code = $("#code").val();
-        window.location = code + '://';
+        var app_url = code + '://start_app';
 
         var soft_version_id = $("#soft_version_id").val();
+        var room_id = $("#room_id").val();
+
+        if (room_id) {
+            app_url += '?room_id=' + room_id;
+        }
+
+        window.location = app_url;
 
         if (soft_version_id) {
             setTimeout(function () {
