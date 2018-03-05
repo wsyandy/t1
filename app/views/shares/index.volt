@@ -34,8 +34,7 @@
         <a href="#" class="upload_btn">立即下载</a>
     </div>
 </div>
-{#<input type="hidden" id="code" value="{{ user.product_channel.code }}"/>#}
-<input type="hidden" id="code" value="weibo"/>
+<input type="hidden" id="code" value="{{ user.product_channel.code }}"/>
 <input type="hidden" id="soft_version_id" value="{{ soft_version_id }}"/>
 <input type="hidden" id="room_id" value="{{ room_id }}"/>
 <!-- 弹框 开始-->
