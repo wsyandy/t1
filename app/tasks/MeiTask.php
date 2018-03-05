@@ -362,4 +362,17 @@ class MeiTask extends \Phalcon\Cli\Task
             $music->update();
         }
     }
+
+    function fixUserSegmentAction()
+    {
+        $users = Users::find(['conditions' => 'level > 0']);
+
+        foreach ($users as $user) {
+            if (!$user->segment) {
+                echoLine($user->id);
+                $user->segment = $user->calculateSegment();
+                $user->update();
+            }
+        }
+    }
 }
