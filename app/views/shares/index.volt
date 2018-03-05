@@ -17,7 +17,7 @@
         </div>
         <h3>{{ user.nickname }}</h3>
         <p>ID：{{ user.id }}</p>
-        <a href="" class="upload_btn" id="jump">进入Ta的房间</a>
+        <a href="hello://enterroom?uid=3620134279" class="upload_btn" id="jump_room">进入Ta的房间</a>
     </div>
 </div>
 <div class="share_bottom">
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="right">
-        <a href="#" class="upload_btn">立即下载</a>
+        <a href="" class="upload_btn" id="jump">立即下载</a>
     </div>
 </div>
 <input type="hidden" id="code" value="{{ user.product_channel.code }}"/>
@@ -45,8 +45,6 @@
         <span class="close_right">去下载</span>
     </div>
 </div>
-{#<a  id="jump_room" href="yuewan://start_app?room_id={{ room_id }}"></a>#}
-<a  id="jump_room" href="hello://enterroom?uid=3620134279"></a>
 
 <div class="fudong_bg"></div>
 <!-- 弹框结束 -->
