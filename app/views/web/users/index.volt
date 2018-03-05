@@ -1,5 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/style') }}
+{{ theme_css('/web/css/style','/web/css/audio_player','/web/css/iconfont') }}
+{{ theme_js('/web/js/vue-resource.min') }}
 {{ block_end() }}
 
 <div class="person">
@@ -33,7 +34,7 @@
             <table>
                 <tr style="height:40px;">
                     <td style="width:60px;text-indent: 1em;">
-                        <input type="checkbox" id="checkAllChange" :checked="checked_list.length===musics.length" @click="selectAll">
+                        <input type="checkbox" :checked="checked_list.length==musics.length" @click="selectAll">
                     </td>
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
@@ -41,19 +42,45 @@
                     <td style="width:120px;color: #666666;">大小</td>
                     <td style="width:180px;color: #666666;">上传时间</td>
                 </tr>
-                <tr style="height:74px;" v-for="(music,index) in musics">
+                <tr style="height:74px;" class="audio_box" v-for="(item,index) in musics">
                     <td style="text-indent: 1em;">
-                        <input type="checkbox" :value="music.id" v-model="checked_list"></td>
-                    <td>${music.name}</td>
-                    <td>${music.singer_name}</td>
+                        <input type="checkbox" :value="item.id" v-model="checked_list"></td>
+                    <td>${item.name}</td>
+                    <td>${item.singer_name}</td>
                     <td>
-                        <audio :src="music.file_url" controls="controls" style="width: 160px;">
-                            您的浏览器不支持 audio 标签。
-                        </audio>
+                        <div class="audio_box">
+                            {#<input type="checkbox" class="check_box" :id="'id'+item.id" :value="item.id" v-model="checked_list">#}
+                            {#<label :for="'id'+item.id"></label>#}
+                            <!--播放/暂停按钮-->
+                            <div :class="['iconfont',{ 'btn_play': item.isPlay }  ,{'btn_pause': !item.isPlay }]"
+                                 @click="audioPlay($event,index)"></div>
+                            <!--模拟音频进度条-->
+                            <div class="music-nav">
+                                <!--进度条-->
+                                <div class="audio_progress">
+                                    <span class="audio_line"></span>
+                                    <span class="audio_blue" :style="{width: item.leftDot+item.wDot + 'px'}"></span>
+                                    <span class="audio_dot" :style="{left: item.leftDot+ 'px'}"></span>
+                                    <input type="range" min="0" :max="Math.round(item.duration)" step="0.4"
+                                           class="scale"
+                                           @change="scaleChange($event,index)">
+                                </div>
+                                <!--HTML5音频标签 不设置控制属性使其不显示-->
+                                <audio class="music" :src="item.file_url">
+                                    Your browser does not support HTML5 audio.
+                                </audio>
+                            </div>
+                            <!--当前时间-->
+                            <div class="time time_cur">${ toTwo(item.currentTime) }</div>
+                            <div class="time_line">/</div>
+                            <!--歌曲时长-->
+                            <div class="time time_long">${ toTwo(item.duration) }</div>
+                        </div>
                     </td>
-                    <td>${music.file_size}</td>
-                    <td>${music.date}</td>
+                    <td>${item.file_size}</td>
+                    <td>${item.date}</td>
                 </tr>
+
             </table>
         </div>
 
@@ -84,19 +111,21 @@
 <!-- 弹框结束 -->
 
 <script>
+    var playtimer;
+
     var opts = {
         data: {
-            show_music: false,
+            show: false,
             page: 1,
             total_page: 1,
             change_page: '',
             total_entries: 0,
             musics: [],
-            num: [],
-            selected_list: [],
             checked_list: [],
-            select_all: '',
-
+            playtimer: null
+        },
+        created: function () {
+            this.getMusic();
         },
         computed: {
             /*分页器 start*/
@@ -133,17 +162,6 @@
                     }
                 });
             },
-            selectAll: function (event) {
-                console.log(event.currentTarget);
-                if (!event.currentTarget.checked) {
-                    this.checked_list = [];
-                } else { //实现全选
-                    this.checked_list = [];
-                    this.musics.forEach(function (music) {
-                        this.checked_list.push(music.id);
-                    }, this);
-                }
-            },
             /*分页器 start*/
             jumpPage: function (id) {
                 var int_id = parseInt(id);
@@ -155,35 +173,118 @@
                     } else {
                         this.page = int_id;
                     }
-                    getList();
+                    this.getMusic();
                 }
                 vm.change_page = '';
-            }
+            },
             /*分页器 end*/
+            /*音乐播放 start*/
+            selectAll: function () {
+                if (this.checked_list.length === this.musics.length) {
+                    // 全不选
+                    this.checked_list = [];
+                } else {
+                    this.checked_list = [];
+                    var _this = this;
+                    // 全选
+                    this.musics.forEach(function (item) {
+                        _this.checked_list.push(item.id);
+                    })
+                }
+            },
+            audioPlay: function (e, index) {
+                clearInterval(playtimer);
+                var music = document.querySelectorAll(".music");
+                var _this = this;
+                /*当前播放状态*/
+                var curIsPlay = this.musics[index].isPlay;
+                this.musics.forEach(function (item, i) {
+                    music[i].pause();
+                    _this.$set(item, 'isPlay', false);
+                });
+                if (curIsPlay) {
+                    this.$set(this.musics[index], 'isPlay', false);
+                    music[index].pause()
+                } else {
+                    this.$set(this.musics[index], 'isPlay', true);
+                    music[index].play();
+                    var wLine = music[index].parentNode.querySelector('.audio_progress').offsetWidth;
+                    var wDot = music[index].parentNode.querySelector('.audio_dot').offsetWidth;
+
+                    var max = Math.round(this.musics[index].duration);
+                    playtimer = setInterval(function () {
+                        _this.$set(_this.musics[index], 'currentTime', music[index].currentTime);
+
+                        var value = Math.round(_this.musics[index].currentTime);
+                        // console.log("歌曲时长：" + max + "~~~~~~~现在的时间：" + value);
+                        _this.$set(_this.musics[index], 'leftDot', wLine * value / max);
+                        _this.$set(_this.musics[index], 'wDot', wDot);
+
+                        if (value === max) {
+                            clearInterval(playtimer);
+                            _this.$set(_this.musics[index], 'isPlay', false);
+                            _this.$set(_this.musics[index], 'currentTime', 0);
+                            _this.$set(_this.musics[index], 'leftDot', 0);
+                        }
+                    }, 100);
+                }
+            },
+            getMusic: function () {
+                var data = {page: this.page, per_page: 10};
+                $.authGet('/web/musics/list', data, function (resp) {
+                    vm.musics = [];
+                    vm.checked_list = [];
+                    vm.total_page = resp.total_page;
+                    vm.total_entries = resp.total_entries;
+//                    $.each(resp.musics, function (index, item) {
+//                        vm.musics.push(item);
+//                    });
+                    vm.musics = resp.musics;
+                    vm.$nextTick(function () {
+                        var music = document.querySelectorAll(".music");
+                        vm.musics.forEach(function (item, i) {
+                            // 初始化当前播放时间和时长
+                            vm.$set(item, 'currentTime', 0);
+                            vm.$set(item, 'duration', 0);
+                            // 初始化模拟进度条位置
+                            vm.$set(item, 'leftDot', 0);
+                            /*设置播放状态isPlay，初始为false*/
+                            vm.$set(item, 'isPlay', false);
+                            // 获取音频时长设置为 musics自定义属性duration
+                            getTime();
+                            function getTime() {
+                                setTimeout(function () {
+                                    if (isNaN(music[i].duration)) {
+                                        getTime();
+                                    } else {
+                                        vm.$set(item, 'duration', music[i].duration);
+                                    }
+                                }, 100);
+                            }
+                        });
+                    });
+                });
+            },
+            scaleChange: function (e, index) {
+                var music = document.querySelectorAll(".music");
+                if (this.musics[index].isPlay) {
+                    music[index].currentTime = e.target.value;
+                }
+            },
+            toTwo: function (num) {  // 转换时间格式
+                function changInt(num) {
+                    return (num < 10) ? '0' + num : num;
+                }
+
+                return changInt(parseInt(num / 60)) + ":" + changInt(Math.floor(num % 60));
+            }
+            /*音乐播放 end*/
         }
     };
 
     vm = XVue(opts);
 
-    function getList() {
-        var data = {page: vm.page, per_page: 10};
-        $.authGet('/web/musics/list', data, function (resp) {
-            vm.musics = [];
-//            vm.selected_list = [];
-            vm.total_page = resp.total_page;
-            vm.total_entries = resp.total_entries;
-            $.each(resp.musics, function (index, item) {
-                vm.musics.push(item);
-            })
-        })
-    }
-
     $(function () {
-        getList();
-    })
-
-    $(function () {
-
         function colse_fd() {
             $(".fudong").hide();
             $(".fudong_bg").hide();
@@ -197,6 +298,7 @@
 
         $(".delete").click(function () {
             console.log(vm.checked_list);
+            console.log(vm.musics);
             if (vm.checked_list.length == 0) {
                 alert("您没有选择文件");
                 return
