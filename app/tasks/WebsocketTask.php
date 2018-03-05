@@ -56,11 +56,39 @@ class WebsocketTask extends Phalcon\CLI\Task
                 return false;
             }
         }
+
         return true;
     }
 
     function reloadAction()
     {
-        PushSever::send('reload', '127.0.0.1', '9508');
+        //PushSever::send('reload', '127.0.0.1', '9508');
+
+        $log_dir = $this->config->application->log;
+
+        checkDirExists("{$log_dir}/pids/websocket/");
+
+        if (file_exists("{$log_dir}/pids/websocket/server.pid")) {
+
+            $pid = file_get_contents("{$log_dir}/pids/websocket/server.pid");
+            $pid = intval(trim($pid));
+
+            if (!$pid || @pcntl_getpriority($pid) === false) {
+                info('websocket process not exited!');
+                return true;
+            }
+
+            $result = posix_kill($pid, SIGUSR1);
+
+            if ($result) {
+                info('websocket process reloaded!');
+                return true;
+            } else {
+                info('can not reload websocket process!');
+                return false;
+            }
+        }
+
+        return true;
     }
 }

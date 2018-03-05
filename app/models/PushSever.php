@@ -248,7 +248,7 @@ class PushSever extends BaseModel
 
         $count = $count + 1;
 
-        self::send('push', '127.0.0.1', '9508', ['fd' => $fd, 'body' => ['a' => $count]]);
+        self::send('push', '127.0.0.1', '9508', ['fd' => $fd, 'body' => ['a' => $count, 'b' => ++$count]]);
         self::delay(1)->asyncSend($count, $fd);
     }
 

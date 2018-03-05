@@ -383,7 +383,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $user->segment = $user_segment;
             }
 
-            $user->update();
+            //$user->update();
         }
 
     }
