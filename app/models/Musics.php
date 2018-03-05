@@ -132,15 +132,15 @@ class Musics extends BaseModel
                 return [ERROR_CODE_FAIL, '无效的文件'];
             }
 
-            $file_md5 = md5_file($file_name);
+            $this->file_md5 = md5_file($file_name);
 
-            if (!$this->file_md5 || $this->file_md5 !== $file_md5) {
-                if (!self::checkFileMd5($file_md5, $this->user_id)) {
-                    return [ERROR_CODE_FAIL, '不能重复上传文件'];
+            if ($this->hasChanged('file_md5')) {
+                $repeating_file = $this->checkFileMd5();
+                if ($repeating_file) {
+                    $this->file = $repeating_file;
                 }
             }
 
-            $this->file_md5 = $file_md5;
             $this->file_size = $file_size;
         }
 
@@ -181,20 +181,20 @@ class Musics extends BaseModel
         return [ERROR_CODE_SUCCESS, '上传成功', $music];
     }
 
-    static function checkFileMd5($file_md5, $user_id)
+    function checkFileMd5()
     {
         $cond = [
-            'conditions' => 'file_md5 = :file_md5: and user_id = :user_id:',
-            'bind' => ['file_md5' => $file_md5, 'user_id' => $user_id]
+            'conditions' => 'file_md5 = :file_md5: and user_id = :user_id: and file is not null and id != :id:',
+            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id , 'id' => $this->id]
         ];
 
         $music = \Musics::findFirst($cond);
 
         if (isPresent($music)) {
-            return false;
+            return $music->file;
         }
 
-        return true;
+        return false;
     }
 
     function checkRank()
@@ -291,7 +291,7 @@ class Musics extends BaseModel
         $musics = self::findByIds($delete_list);
         foreach ($musics as $music) {
             if ($music->user_id == $user_id) {
-                if ($music->file) {
+                if ($music->file && !$music->checkFileMd5()) {
                     \StoreFile::delete($music->file);
                 }
                 $music->delete();

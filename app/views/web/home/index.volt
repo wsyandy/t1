@@ -93,3 +93,12 @@
         display: none !important;
     }
 </style>
+
+<script>
+    var opts = {
+        data: {},
+        methods: {}
+    };
+
+    vm = XVue(opts);
+</script>

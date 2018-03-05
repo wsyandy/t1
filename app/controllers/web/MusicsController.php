@@ -50,9 +50,10 @@ class MusicsController extends BaseController
 
         $url = '';
         if ($error_code == ERROR_CODE_SUCCESS) {
-            $music->updateFile($this->file('file'));
+            if(!$music->file){
+                $music->updateFile($this->file('music[file]'));
+            }
             $url = '/web/users';
-
         }
         return $this->renderJSON($error_code, $error_reason, ['error_url' => $url]);
     }
