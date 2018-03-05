@@ -36,6 +36,7 @@
 </div>
 <input type="hidden" id="code" value="{{ user.product_channel.code }}"/>
 <input type="hidden" id="soft_version_id" value="{{ soft_version_id }}"/>
+<input type="hidden" id="room_id" value="{{ room_id }}"/>
 <!-- 弹框 开始-->
 <div class="fudong">
     <h3>您还未安装 <b>Hi语音 </b>，无法直接进入Ta的房间，请先去下载</h3>
