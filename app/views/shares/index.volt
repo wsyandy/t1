@@ -17,7 +17,7 @@
         </div>
         <h3>{{ user.nickname }}</h3>
         <p>ID：{{ user.id }}</p>
-        <a href="#" class="upload_btn">进入Ta的房间</a>
+        <a href="" class="upload_btn" id="jump">进入Ta的房间</a>
     </div>
 </div>
 <div class="share_bottom">
@@ -45,10 +45,41 @@
         <span class="close_right">去下载</span>
     </div>
 </div>
+<a  id="jump_room" href="yuewan://start_app?room_id={{ room_id }}"></a>
+
 <div class="fudong_bg"></div>
 <!-- 弹框结束 -->
 <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 <script src="/js/utils.js"></script>
 <script src="/shares/js/index.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        function from_mobile() {
+            var reg =
+                /(iPad|nokia|iphone|android|motorola|^mot\-|softbank|foma|docomo|kddi|up\.browser|up\.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|meizu|miui|ucweb|UCBrowser|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam\-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte\-|longcos|pantech|gionee|^sie\-|portalmmm|jig\s browser|hiptop|^ucweb|^benq|haier|^lct|opera\s*mobi|opera\*mini|320x320|240x320|176x220|\(X11;)/i;
+            return reg.test(navigator.userAgent);
+        }
+
+        var ua = navigator.userAgent.toLowerCase();
+        if (from_mobile()) {
+            if (ua.match(/iphone|ipod|ipad/i)) {
+                //$("#jump").attr('href','https://itunes.apple.com/cn/app/hello-yu-yin-jiao-you/id885737901?l=en&mt=8');//ios下载链接
+                $("#jump").attr('href', '：http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobileu');//自动识别，跳转IOS，还是和安卓
+            } else {
+                $("#jump").attr('href', '：http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobile');//android下载链接
+            }
+        }
+
+    })
+
+
+    $(window).load(function () {
+        var url = $("#jump_room").attr('href');
+        window.location.href = url;
+    });
+</script>
+
 </body>
 </html>
