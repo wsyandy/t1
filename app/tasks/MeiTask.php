@@ -387,4 +387,18 @@ class MeiTask extends \Phalcon\Cli\Task
         }
 
     }
+
+    function fixRoomStatusAction()
+    {
+        $room = Rooms::findFirstById(416);
+        $room->status = STATUS_OFF;
+        $room->online_status = STATUS_OFF;
+        $room->save();
+
+        $share_histories = ShareHistories::findForeach();
+        foreach ($share_histories as $share_history) {
+            echoLine($share_history->data, $share_history->id);
+
+        }
+    }
 }
