@@ -17,7 +17,7 @@
         </div>
         <h3>{{ user.nickname }}</h3>
         <p>ID：{{ user.id }}</p>
-        <a href="yuewan://start_app?room_id=2" class="upload_btn" id="jump_room">进入Ta的房间</a>
+        <a href="yuewan://enter_room?room_id=2" class="upload_btn" id="jump_room">进入Ta的房间</a>
     </div>
 </div>
 <div class="share_bottom">
