@@ -36,8 +36,8 @@ class AccessTokens extends BaseModel
         $access_token = \AccessTokens::findFirstByToken($token);
         debug($token, $access_token);
 
-        if (time() < $access_token->expired_at) {
-            if ($access_token && AUTH_SUCCESS == $access_token->status) {
+        if ($access_token && time() < $access_token->expired_at) {
+            if ( AUTH_SUCCESS == $access_token->status) {
                 return [ERROR_CODE_SUCCESS, '', $access_token];
             }
         } else {
