@@ -162,19 +162,6 @@
                     }
                 });
             },
-            selectAll: function () {
-                if (this.checked_list.length === this.musics.length) {
-                    // 全不选
-                    this.checked_list = [];
-                } else {
-                    this.checked_list = [];
-                    var _this = this;
-                    // 全选
-                    this.musics.forEach(function (item) {
-                        _this.checked_list.push(item.id);
-                    })
-                }
-            },
             /*分页器 start*/
             jumpPage: function (id) {
                 var int_id = parseInt(id);
@@ -191,6 +178,20 @@
                 vm.change_page = '';
             },
             /*分页器 end*/
+            /*音乐播放 start*/
+            selectAll: function () {
+                if (this.checked_list.length === this.musics.length) {
+                    // 全不选
+                    this.checked_list = [];
+                } else {
+                    this.checked_list = [];
+                    var _this = this;
+                    // 全选
+                    this.musics.forEach(function (item) {
+                        _this.checked_list.push(item.id);
+                    })
+                }
+            },
             audioPlay: function (e, index) {
                 clearInterval(playtimer);
                 var music = document.querySelectorAll(".music");
@@ -235,12 +236,11 @@
                     vm.checked_list = [];
                     vm.total_page = resp.total_page;
                     vm.total_entries = resp.total_entries;
-//                        $.each(resp.musics, function (index, item) {
-//                            vm.musics.push(item);
-//                        });
+//                    $.each(resp.musics, function (index, item) {
+//                        vm.musics.push(item);
+//                    });
                     vm.musics = resp.musics;
                     vm.$nextTick(function () {
-//                        var _this = this;
                         var music = document.querySelectorAll(".music");
                         vm.musics.forEach(function (item, i) {
                             // 初始化当前播放时间和时长
@@ -278,6 +278,7 @@
 
                 return changInt(parseInt(num / 60)) + ":" + changInt(Math.floor(num % 60));
             }
+            /*音乐播放 end*/
         }
     };
 

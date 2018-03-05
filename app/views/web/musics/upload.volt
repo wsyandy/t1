@@ -144,6 +144,13 @@
                 return false;
             }
 
+            var fileSize = $('#file')[0].files[0].size;
+            if (fileSize > 20 * 1024 * 1024) {
+                alert("歌曲不能大于20M");
+                can_upload = true;
+                return false;
+            }
+
             self.ajaxSubmit({
                 error: function (xhr, status, error) {
                     alert('服务器错误 ' + error);
@@ -176,8 +183,6 @@
                 $("#file_name").html($(this)[0].files[0].name);
             }
         });
-
-
     });
 
 </script>
