@@ -4,6 +4,7 @@ html, body {
 
 header {
     background: #ffffff;
+    background-image: none;
 }
 
 header .wrapper h2 {

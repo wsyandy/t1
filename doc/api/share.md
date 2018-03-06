@@ -18,8 +18,8 @@
     error_reason: '返回码说明'    
     title string 标题
     description string 描述
-    image_url string
-    image_small_url  string
+    image_url 分享用户的头像 string
+    image_small_url  产品头像 string
     url string  用户点击的链接
     share_history_id int 分享记录id。分享后，调用分享结果接口需要此参数
 }

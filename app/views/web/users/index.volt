@@ -34,7 +34,9 @@
             <table>
                 <tr style="height:40px;">
                     <td style="width:60px;text-indent: 1em;">
-                        <input type="checkbox" :checked="checked_list.length==musics.length" @click="selectAll">
+                        <input type="checkbox" :checked="checked_list.length==musics.length" @click="selectAll"
+                               id="select_all">
+                        <label for="select_all"></label>
                     </td>
                     <td style="width:200px;color: #666666;">歌曲名</td>
                     <td style="width:200px;color: #666666;">演唱者</td>
@@ -44,13 +46,13 @@
                 </tr>
                 <tr style="height:74px;" class="audio_box" v-for="(item,index) in musics">
                     <td style="text-indent: 1em;">
-                        <input type="checkbox" :value="item.id" v-model="checked_list"></td>
+                        <input type="checkbox" :id="'id'+item.id" :value="item.id" v-model="checked_list">
+                        <label :for="'id'+item.id"></label>
+                    </td>
                     <td>${item.name}</td>
                     <td>${item.singer_name}</td>
                     <td>
                         <div class="audio_box">
-                            {#<input type="checkbox" class="check_box" :id="'id'+item.id" :value="item.id" v-model="checked_list">#}
-                            {#<label :for="'id'+item.id"></label>#}
                             <!--播放/暂停按钮-->
                             <div :class="['iconfont',{ 'btn_play': item.isPlay }  ,{'btn_pause': !item.isPlay }]"
                                  @click="audioPlay($event,index)"></div>
@@ -61,9 +63,6 @@
                                     <span class="audio_line"></span>
                                     <span class="audio_blue" :style="{width: item.leftDot+item.wDot + 'px'}"></span>
                                     <span class="audio_dot" :style="{left: item.leftDot+ 'px'}"></span>
-                                    <input type="range" min="0" :max="Math.round(item.duration)" step="0.4"
-                                           class="scale"
-                                           @change="scaleChange($event,index)">
                                 </div>
                                 <!--HTML5音频标签 不设置控制属性使其不显示-->
                                 <audio class="music" :src="item.file_url">
@@ -105,13 +104,13 @@
         </div>
         <div class="fudong_bg"></div>
     </div>
-
 </div>
 
 <!-- 弹框结束 -->
 
 <script>
     var playtimer;
+    var tag = true;
 
     var opts = {
         data: {
@@ -208,18 +207,62 @@
                 } else {
                     this.$set(this.musics[index], 'isPlay', true);
                     music[index].play();
-                    var wLine = music[index].parentNode.querySelector('.audio_progress').offsetWidth;
-                    var wDot = music[index].parentNode.querySelector('.audio_dot').offsetWidth;
+                    var oProgress = music[index].parentNode.querySelector('.audio_progress'),
+                            wLine = music[index].parentNode.querySelector('.audio_line').offsetWidth,
+                            oDot = music[index].parentNode.querySelector('.audio_dot'),
+                            wDot = oDot.offsetWidth,
+                            max = Math.round(this.musics[index].duration),
+                            // 此处必须用jQuery 才能获取到 元素距离文档顶端和左边的偏移值
+                            bpgLeft = $('.audio_progress').offset().left;
+                    oProgress.onclick = function (e) {
+                        if (tag) {
 
-                    var max = Math.round(this.musics[index].duration);
+                            var leftP = e.clientX - bpgLeft;
+                            console.log(leftP);
+                            if (leftP < 0) {
+                                leftP = bpgLeft;
+                            } else if (leftP > oProgress.offsetWidth) {
+                                leftP = oProgress.offsetWidth;
+                            }
+                            oDot.style.left = (leftP - wDot / 2) + 'px';
+                            _this.$set(_this.musics[index], 'leftDot', leftP - wDot / 2);
+                            _this.$set(_this.musics[index], 'currentTime', music[index].currentTime);
+                            music[index].currentTime = (leftP - wDot / 2) * max / (wLine - wDot);
+                        }
+                        tag = true;
+                    };
+                    oDot.onmousedown = function (e) {
+                        tag = false;
+                        var disX = e.clientX - oDot.offsetLeft;
+                        document.onmousemove = function (e) {
+                            if (!tag) {
+                                var leftVal = e.clientX - disX;
+                                if (leftVal <= 0) {
+                                    leftVal = 0;
+                                } else if (leftVal > wLine - wDot) {
+                                    leftVal = wLine - wDot;
+                                }
+                                oDot.style.left = leftVal + 'px';
+                                _this.$set(_this.musics[index], 'leftDot', leftVal);
+                                _this.$set(_this.musics[index], 'wDot', wDot);
+                                _this.$set(_this.musics[index], 'currentTime', music[index].currentTime);
+                                music[index].currentTime = leftVal * max / (wLine - wDot);
+                            }
+                            //防止选择内容--当拖动鼠标过快时候，弹起鼠标，bar也会移动，修复bug
+                            window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+                        };
+                        document.onmouseup = function () {
+                            document.onmousemove = null;
+                            document.onmouseup = null;
+
+                        };
+                    };
                     playtimer = setInterval(function () {
                         _this.$set(_this.musics[index], 'currentTime', music[index].currentTime);
-
                         var value = Math.round(_this.musics[index].currentTime);
                         // console.log("歌曲时长：" + max + "~~~~~~~现在的时间：" + value);
-                        _this.$set(_this.musics[index], 'leftDot', wLine * value / max);
+                        _this.$set(_this.musics[index], 'leftDot', (wLine - wDot) * value / max);
                         _this.$set(_this.musics[index], 'wDot', wDot);
-
                         if (value === max) {
                             clearInterval(playtimer);
                             _this.$set(_this.musics[index], 'isPlay', false);
