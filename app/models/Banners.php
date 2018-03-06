@@ -35,12 +35,20 @@ class Banners extends BaseModel
         return $this->getImageUrl('small');
     }
 
+    function mergeJson()
+    {
+        return [
+            'image_url' => $this->image_url,
+            'image_small_url' => $this->image_small_url,
+        ];
+    }
+
     function toSimpleJson()
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'url' => $this->url,
+            'url' => $this->generateUrl(),
             'new' => $this->new,
             'hot' => $this->hot,
             'image_url' => $this->image_url,
@@ -50,29 +58,54 @@ class Banners extends BaseModel
 
     function checkFields()
     {
-        if ($this->material_type == BANNER_TYPE_ROOM) {
-            if ($this->url) {
-                return [ERROR_CODE_FAIL, '产品类型为房间，则不能有URL'];
-            }
-        }
+        $clazz = $this->getCheckClass();
 
-        if ($this->material_type == BANNER_TYPE_URL) {
+        if ($this->isRedirectUrl()) {
             if ($this->material_ids) {
                 return [ERROR_CODE_FAIL, '产品类型为链接，则不能有房间ID'];
             }
-        }
 
+            if (!$this->url) {
+                return [ERROR_CODE_FAIL, '产品类型为链接，则需要URL'];
+            }
+
+        } elseif ($this->isRoom()) {
+            if ($this->url) {
+                return [ERROR_CODE_FAIL, '产品类型为房间，则不能有URL'];
+            }
+
+            if ($this->material_ids) {
+
+                $room_ids = explode(',', $this->material_ids);
+
+                foreach ($room_ids as $room_id) {
+                    if (!$clazz::findFirstById($room_id)) {
+                        return [ERROR_CODE_FAIL, 'id：' . $room_id . '不存在'];
+                    }
+                }
+            } else {
+                return [ERROR_CODE_FAIL, "产品id不存在"];
+            }
+        }
         return [ERROR_CODE_SUCCESS, ''];
     }
 
-
-    function getRoomId()
+    function generateUrl()
     {
-        if ($this->material_type == BANNER_TYPE_ROOM && $this->material_ids) {
-            $material_ids = explode(',', $this->material_ids);
-            return $material_ids[0];
+        if ($this->isRedirectUrl() && $this->url) {
+            return $this->url;
         }
-        return 0;
+
+        if ($this->isRoom() && $this->material_ids) {
+            $material_ids = explode(',', $this->material_ids);
+            return self::generateRoomDetailUrl($material_ids[0]);
+        }
+        return '';
+    }
+
+    static function generateRoomDetailUrl($id)
+    {
+        return "app://rooms/detail?id=" . $id;
     }
 
 
@@ -151,4 +184,22 @@ class Banners extends BaseModel
 //            $stat_db->hincrby($banner_stat_key, $cache_key, 1);
 //        }
 //    }
+
+    function isRoom()
+    {
+        return $this->material_type == BANNER_TYPE_ROOM;
+    }
+
+    function isRedirectUrl()
+    {
+        return $this->material_type == BANNER_TYPE_URL;
+    }
+
+    function getCheckClass()
+    {
+        if ($this->isRoom()) {
+            return 'Rooms';
+        }
+        return null;
+    }
 }
