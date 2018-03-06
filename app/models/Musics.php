@@ -185,7 +185,7 @@ class Musics extends BaseModel
     {
         $cond = [
             'conditions' => 'file_md5 = :file_md5: and user_id = :user_id: and file is not null and id != :id:',
-            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id , 'id' => $this->id]
+            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id, 'id' => $this->id]
         ];
 
         $music = \Musics::findFirst($cond);
@@ -294,6 +294,7 @@ class Musics extends BaseModel
                 if ($music->file && !$music->checkFileMd5()) {
                     \StoreFile::delete($music->file);
                 }
+                $music->remove($music->user_id);
                 $music->delete();
             }
         }
