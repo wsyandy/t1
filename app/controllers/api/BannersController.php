@@ -23,7 +23,7 @@ class BannersController extends BaseController
         if (count($banners)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $banners->toJson('banners', 'toSimpleJson'));
         }
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', []);
     }
 
     function clickAction()

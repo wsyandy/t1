@@ -40,9 +40,7 @@ class Banners extends BaseModel
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'type' => $this->material_type,
             'url' => $this->url,
-            'room_id' => $this->room_id,
             'new' => $this->new,
             'hot' => $this->hot,
             'image_url' => $this->image_url,
