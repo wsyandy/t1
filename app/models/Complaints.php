@@ -49,7 +49,7 @@ class  Complaints extends BaseModel
             $complaint->music_id = $opt_id;
         }
 
-        $complaint->type = type;
+        $complaint->type = $type;
         $complaint->complaint_type = $complaint_type;
         $complaint->status = AUTH_WAIT;
 
