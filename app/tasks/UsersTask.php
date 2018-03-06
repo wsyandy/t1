@@ -172,5 +172,34 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->save();
         }
     }
+
+    function fixExperienceAction()
+    {
+        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
+
+        foreach ($users as $user) {
+
+            $gift_orders = GiftOrders::findBy(['sender_id' => $user->id]);
+
+            if (count($gift_orders) < 1) {
+                echoLine("no gift_order");
+                continue;
+            }
+
+            $experience = 0;
+
+            foreach ($gift_orders as $gift_order) {
+                $amount = $gift_order->amount;
+                $sender_experience = 0.02 * $amount;
+                $experience += $sender_experience;
+            }
+
+            $user->experience = $experience;
+            $user->level = $user->calculateLevel();
+            $user->segment = $user->calculateSegment();
+            echoLine($user->experience, $user->level, $user->segment);
+            $user->update();
+        }
+    }
 }
 

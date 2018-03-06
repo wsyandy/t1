@@ -50,7 +50,8 @@ class MusicsController extends BaseController
 
         $url = '';
         if ($error_code == ERROR_CODE_SUCCESS) {
-            if(!$music->file){
+            $music->down($user->id);
+            if (!$music->file) {
                 $music->updateFile($this->file('music[file]'));
             }
             $url = '/web/users';

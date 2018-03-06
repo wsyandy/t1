@@ -94,7 +94,20 @@
 
     vm = XVue(opts);
 
+    var browserCfg = {};
+
+    function Version() {
+        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        //判断是否IE<11浏览器
+        if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1) {
+            browserCfg.ie = true;
+        } else {
+            browserCfg.other = true;
+        }
+    }
+
     $(function () {
+        Version();
 
         function colse_fd() {
             $(".fudong").hide();
@@ -144,11 +157,14 @@
                 return false;
             }
 
-            var fileSize = $('#file')[0].files[0].size;
-            if (fileSize > 20 * 1024 * 1024) {
-                alert("歌曲不能大于20M");
-                can_upload = true;
-                return false;
+            if (browserCfg.other) {
+                var fileSize = $('#file')[0].files[0].size;
+                console.log(fileSize);
+                if (fileSize > 20 * 1024 * 1024) {
+                    alert("歌曲不能大于20M");
+                    can_upload = true;
+                    return false;
+                }
             }
 
             self.ajaxSubmit({
