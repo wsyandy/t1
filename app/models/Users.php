@@ -88,7 +88,7 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
-            
+
             \Emchat::delay()->createEmUser($this->id);
             \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
@@ -2219,16 +2219,12 @@ class Users extends BaseModel
             return false;
         }
 
-        $lock_key = "update_user_level_lock_" . $gift_order->user_id;
-        $lock_key1 = "update_user_level_lock_" . $gift_order->sender_id;
+        $lock_key = "update_user_level_lock_" . $gift_order->sender_id;
         $lock = tryLock($lock_key);
-        $lock1 = tryLock($lock_key1);
 
         $sender = $gift_order->sender;
-        $user = $gift_order->user;
         $amount = $gift_order->amount;
         $sender_experience = 0.02 * $amount;
-        $user_experience = 0.01 * $amount;
 
         if ($sender) {
             $sender->experience += $sender_experience;
@@ -2238,15 +2234,16 @@ class Users extends BaseModel
             $sender->update();
         }
 
-        if ($user) {
-            $user->experience += $user_experience;
-            $user_level = $user->calculateLevel();
-            $user->level = $user_level;
-            $user->segment = $user->calculateSegment();
-            $user->update();
-        }
+//        $user = $gift_order->user;
+//        $user_experience = 0.01 * $amount;
+//        if ($user) {
+//            $user->experience += $user_experience;
+//            $user_level = $user->calculateLevel();
+//            $user->level = $user_level;
+//            $user->segment = $user->calculateSegment();
+//            $user->update();
+//        }
 
         unlock($lock);
-        unlock($lock1);
     }
 }
