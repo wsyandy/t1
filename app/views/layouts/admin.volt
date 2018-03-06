@@ -248,6 +248,9 @@
                     {% if isAllowed('musics','index') %}
                         <li><a href="/admin/musics">音乐配置</a></li>
                     {% endif %}
+                    {% if isAllowed('banners','index') %}
+                        <li><a href="/admin/banners">banner配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

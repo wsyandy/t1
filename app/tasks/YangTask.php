@@ -225,4 +225,26 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpGet($url, $body);
         echoLine($res);
     }
+
+
+    function bannersAction($params)
+    {
+        $url = "http://chance.com/api/banners/index";
+        $body = $this->commonBody();
+
+        $id = $params[0];
+
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            echoLine("此用户不存在");
+            return;
+        }
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+
+        $body = array_merge($body, ['sid' => $user->sid, 'new' => 1, 'hot' => 1]);
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
 }

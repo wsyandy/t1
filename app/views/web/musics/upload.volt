@@ -178,7 +178,6 @@
                         location.href = resp.error_url;
                         return;
                     }
-                    console.log(resp);
                     alert(resp.error_reason);
                 }
             });

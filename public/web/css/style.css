@@ -5,6 +5,7 @@ html, body {
 header {
     background: #ffffff;
     background-image: none;
+    filter: none;
 }
 
 header .wrapper h2 {
