@@ -270,7 +270,7 @@ trait UserAttrs
 
     function getDefaultAvatar()
     {
-        $avatar = APP_NAME . '/users/avatar/default_avatar.png';
+        $avatar = APP_NAME . '/users/avatar/default_avatar' . $this->sex . '.png';
         return StoreFile::getUrl($avatar);
     }
 

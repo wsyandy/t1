@@ -458,7 +458,10 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function uploadDefaultAvatarAction()
     {
-        $image = APP_ROOT . "public/images/defalut_avatar0.png";
-        StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
+        $default_avatar0 = APP_ROOT . "public/images/default_avatar0.png";
+        $default_avatar1 = APP_ROOT . "public/images/default_avatar1.png";
+
+        StoreFile::upload($default_avatar0, APP_NAME . '/users/avatar/default_avatar0.png');
+        StoreFile::upload($default_avatar1, APP_NAME . '/users/avatar/default_avatar1.png');
     }
 }
