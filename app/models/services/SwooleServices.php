@@ -19,7 +19,7 @@ class SwooleServices extends \BaseModel
     public $side_server_ip;
     public $side_server_port;
     public $server;
-    public $dispatcher; //请求拦截处理对象
+    public $request_dispatcher; //请求拦截处理对象
 
     function __construct()
     {
