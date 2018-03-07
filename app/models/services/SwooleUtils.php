@@ -172,6 +172,7 @@ class SwooleUtils extends \BaseModel
                 return false;
             }
             $payload = ['action' => $action, 'payload' => $payload];
+            $payload['sign'] = SwooleUtils::generateSign($payload);
             $data = json_encode($payload, JSON_UNESCAPED_UNICODE);
             $client->send($data);
             $client->close();
@@ -181,5 +182,19 @@ class SwooleUtils extends \BaseModel
         }
 
         return false;
+    }
+
+    static function generateSign($data)
+    {
+        $sign = '';
+
+        if ($data) {
+
+            ksort($data);
+
+            $sign = md5(json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+
+        return $sign;
     }
 }
