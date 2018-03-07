@@ -1375,6 +1375,11 @@ class Users extends BaseModel
     //需要更新资料
     function needUpdateInfo()
     {
+        //第三方授权登录 不校验
+        if ($this->third_name) {
+            return false;
+        }
+
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
         foreach ($update_info as $k) {
             if (!$this->$k && $k != 'sex' || $k == 'sex' && is_null($this->sex)) {
@@ -2028,6 +2033,10 @@ class Users extends BaseModel
     //第三方登录
     static function findFirstByThirdUnionid($product_channel, $third_unionid, $third_name)
     {
+        if (USER_LOGIN_TYPE_SINAWEIBO == $third_name) {
+            $third_name = 'sina';
+        }
+
         $cond['conditions'] = 'third_unionid = :third_unionid: and product_channel_id = :product_channel_id: and user_status != :user_status:' .
             ' and third_name = :third_name:';
         $cond['bind'] = ['third_unionid' => $third_unionid, 'product_channel_id' => $product_channel->id,

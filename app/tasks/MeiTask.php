@@ -410,4 +410,49 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function testTimeAction()
+    {
+        $time = time();
+        $millisecond_time = millisecondTime();
+        echoLine($time, $millisecond_time, $millisecond_time / 1000, microtime());
+
+        echoLine(date("Ymd h:i:s", $time));
+        echoLine(date("Ymd h:i:s", $millisecond_time));
+    }
+
+    function getConnectInfoAction()
+    {
+        $user = Users::findFirstById(117);
+        $online_token = $user->getOnlineToken();
+        echoLine($user->getUserFd(), $user->getIntranetIp(), $online_token);
+
+        $current_room = \Rooms::findRoomByOnlineToken($online_token);
+        $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
+
+        echoLine($current_room);
+        echoLine($current_room_seat);
+    }
+
+    function unbindThirdAccountAction()
+    {
+        $user = Users::findFirstById(31194);
+        echoLine($user->third_name, $user->third_unionid, $user->login_type);
+        $user->third_name = 'test';
+        $user->third_unionid = 'test';
+        $user->login_type = USER_LOGIN_TYPE_SINAWEIBO;
+        $user->update();
+    }
+
+    function userInfoAction()
+    {
+        $user = Users::findFirstById(31285);
+        Users::uploadWeixinAvatar(31286, 'http://thirdqq.qlogo.cn/qqapp/1106728586/2C7E9E4E4D5D99C561239D414DFA3F4A/100');
+        echoLine($user);
+
+        $product_channel = ProductChannels::findFirstById(1);
+        $user = \Users::findFirstByThirdUnionid($product_channel, '2997469905', 'sina');
+        $user = Users::findFirstById(31279);
+        echoLine($user);
+    }
 }

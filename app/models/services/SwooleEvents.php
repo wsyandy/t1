@@ -12,27 +12,27 @@ class SwooleEvents extends \BaseModel
 {
     static $_only_cache = true;
 
-    static function onStartEvent($swoole_service, $server)
+    static function onStartEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server)
     {
         info("------ <services start> ------pid", posix_getpid());
     }
 
-    static function onWorkerStartEvent($swoole_service, $server, $worker_id)
+    static function onWorkerStartEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $worker_id)
     {
         if ($worker_id < $server->setting['worker_num']) {
-            $swoole_service->dispatcher = new \services\RequestDispatcher();
+            $swoole_service->request_dispatcher = new \services\RequestDispatcher();
             info("-------- <services onWorkerStart event worker>----worker_id", $worker_id, 'pid', posix_getpid());
         } else {
             info("-------- <services onWorkerStart task worker>----worker_id", $worker_id, 'pid', posix_getpid());
         }
     }
 
-    static function onWorkerStopEvent($swoole_service, $server, $worker_id)
+    static function onWorkerStopEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $worker_id)
     {
         info("------ <services onWorkerStop> ------worker_id", $worker_id, 'pid', posix_getpid());
     }
 
-    static function onOpenEvent($swoole_service, $server, $request)
+    static function onOpenEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $request)
     {
         $fd = $request->fd;
 
@@ -80,14 +80,14 @@ class SwooleEvents extends \BaseModel
         $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
     }
 
-    static function onMessageEvent($swoole_service, $server, $frame)
+    static function onMessageEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $frame)
     {
         $request = new \services\BaseRequest($server, $frame);
-        $swoole_service->dispatcher->startAction($swoole_service, $request);
+        $swoole_service->request_dispatcher->startAction($swoole_service, $request);
         return;
     }
 
-    static function onCloseEvent($swoole_service, $server, $fd, $from_id)
+    static function onCloseEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $fd, $from_id)
     {
         $online_token = SwooleUtils::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
@@ -156,12 +156,12 @@ class SwooleEvents extends \BaseModel
         $user->deleteFdInfo($fd, $online_token);
     }
 
-    static function onTaskEvent($swoole_service, $server, $task_id, $from_id, $data)
+    static function onTaskEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $task_id, $from_id, $data)
     {
         info("<services onTask>----task_id", $task_id, 'from_id', $from_id, 'pid', posix_getpid());
     }
 
-    static function onFinishEvent($swoole_service, $server, $task_id, $data)
+    static function onFinishEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $task_id, $data)
     {
         info("<services onFinish>----task_id", $task_id, 'pid', posix_getpid());
 
@@ -173,7 +173,7 @@ class SwooleEvents extends \BaseModel
 
     }
 
-    static function onRequestEvent($swoole_service, $request, $response)
+    static function onRequestEvent(\services\SwooleServices $swoole_service, \swoole_http_request $request, \swoole_http_response $response)
     {
 
     }
