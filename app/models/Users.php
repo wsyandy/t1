@@ -2122,7 +2122,7 @@ class Users extends BaseModel
 
         //上传头像
         if ($source_url) {
-            \Users::delay()->uploadWeixinAvatar($user->id, $source_url);
+            \Users::uploadWeixinAvatar($user->id, $source_url);
         }
 
         return [ERROR_CODE_SUCCESS, '登陆成功', $user];

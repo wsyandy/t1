@@ -259,6 +259,15 @@ trait UserAttrs
         return StoreFile::getUrl($this->avatar) . '@!small';
     }
 
+    function getAvatarBigUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!big';
+    }
+
     function getDefaultAvatar()
     {
         $avatar = APP_NAME . '/users/avatar/default_avatar.png';

@@ -20,11 +20,19 @@ class PaymentsController extends BaseController
         if (isBlank($this->params('payment_channel_id'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
+
         $product = \Products::findById($this->params('product_id'));
-        $order = \Orders::createOrder($this->currentUser(), $product);
+
+        list($error_code, $error_reason, $order) = \Orders::createOrder($this->currentUser(), $product);
+
+        if (ERROR_CODE_FAIL == $error_code) {
+            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
+        }
+
         if (!$order) {
             return $this->renderJSON(ERROR_CODE_FAIL, '订单创建失败');
         }
+
         $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
         $payment = \Payments::createPayment($this->currentUser(), $order, $payment_channel);
         if (!$payment) {
