@@ -2,7 +2,7 @@
 
 {%- macro product_channel_banners_link(banner) %}
     <a class="modal_action"
-       href="/admin/banners/product_channels/{{ banner.id }}">查看</a>
+       href="/admin/banners/product_channels/{{ banner.id }}">查看({{ banner.product_channel_num }})</a>
 {%- endmacro %}
 
 {% macro avatar_image(banner) %}
@@ -10,7 +10,7 @@
 {% endmacro %}
 
 {%- macro platforms_link(banner) %}
-    <a class="modal_action" href="/admin/banners/platforms/{{ banner.id }}">查看</a>
+    <a class="modal_action" href="/admin/banners/platforms/{{ banner.id }}">查看({{ banner.platform_num }})</a>
 {%- endmacro %}
 
 
@@ -27,10 +27,10 @@
         <td>${banner.status_text}</td>
         <td>${banner.created_at_text}</td>
         <td>
-            <a class="modal_action" href="/admin/banners/product_channels/${ banner.id }">查看</a>
+            <a class="modal_action" href="/admin/banners/product_channels/${ banner.id }">查看(${banner.product_channel_num})</a>
         </td>
         <td>
-            <a class="modal_action" href="/admin/banners/platforms/${ banner.id }">查看</a>
+            <a class="modal_action" href="/admin/banners/platforms/${ banner.id }">查看(${banner.platform_num})</a>
         </td>
         <td>
             <a href="/admin/banners/edit/${banner.id}" class="modal_action">编辑</a><br/>

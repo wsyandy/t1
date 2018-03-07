@@ -115,6 +115,9 @@ class BannersController extends BaseController
     {
         $product_channel_ids = $this->params('product_channel_ids');
         $id = $this->params('id');
+        if (!is_array($product_channel_ids)) {
+            $product_channel_ids = [];
+        }
 
         $banner = \Banners::findFirstById($id);
 

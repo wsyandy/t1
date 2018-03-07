@@ -40,6 +40,8 @@ class Banners extends BaseModel
         return [
             'image_url' => $this->image_url,
             'image_small_url' => $this->image_small_url,
+            'platform_num' => $this->platform_num,
+            'product_channel_num' => $this->product_channel_num
         ];
     }
 
@@ -88,6 +90,34 @@ class Banners extends BaseModel
         return [ERROR_CODE_SUCCESS, ''];
     }
 
+    function platformNum()
+    {
+        $platforms = $this->platforms;
+        $num = 0;
+
+        if ('*' == $platforms) {
+            $num = count(self::$PLATFORMS) - 1;
+        } elseif ($platforms) {
+            $platforms = array_filter(explode(',', $platforms));
+            $num = count($platforms);
+        }
+
+        return $num;
+    }
+
+    function productChannelNum()
+    {
+        $num = 0;
+
+        $product_channel_banners = ProductChannelBanners::findByBannerId($this->id);
+
+        if ($product_channel_banners) {
+            $num = count($product_channel_banners);
+        }
+
+        return $num;
+    }
+
     function generateUrl()
     {
         if ($this->isRedirectUrl() && $this->url) {
@@ -107,7 +137,7 @@ class Banners extends BaseModel
     }
 
 
-    static function searchBanners($current_user, $hot = 0, $new = 0)
+    static function searchBanners($current_user, $fields)
     {
         $conds = [
             'conditions' => 'product_channel_id = :product_channel_id:',
@@ -133,33 +163,36 @@ class Banners extends BaseModel
         }
 
         $product_channel_banner_ids = implode(',', $product_channel_banner_ids);
-        $new_conds = [
+        $basic_cond = [
             'conditions' => "id in ({$product_channel_banner_ids}) and status=:status: and " .
                 "(platforms like '*' or platforms = '' or platforms like :platforms:)",
             'bind' => ['status' => STATUS_ON, 'platforms' => '%' . $platform . '%'],
             'order' => 'rank desc'];
 
-        if ($hot) {
-            $new_conds['conditions'] .= 'and hot = :hot:';
-            $new_conds['bind']['hot'] = $hot;
+        $all_banners_json = [];
+
+        foreach ($fields as $key => $value) {
+            if ($value) {
+                $banner_cond = $basic_cond;
+                $banner_cond['conditions'] .= "and $key = :$key:";
+                $banner_cond['bind'][$key] = $value;
+                debug($banner_cond);
+
+                $banners = self::find($banner_cond);
+                $banners_json = [];
+                foreach ($banners as $banner) {
+                    $banners_json[] = $banner->toSimpleJson();
+                }
+
+                if ($key != 'new') {
+                    $all_banners_json[$key . "_banners"] = $banners_json;
+                } else {
+                    $all_banners_json["latest" . "_banners"] = $banners_json;
+                }
+            }
         }
 
-        if ($new) {
-            $new_conds['conditions'] .= ' and new = :new:';
-            $new_conds['bind']['new'] = $new;
-        }
-        debug($new_conds);
-
-        $banners_json = [];
-
-        $banners = self::find($new_conds);
-
-        foreach ($banners as $banner) {
-            $banners_json[] = $banner->toSimpleJson();
-        }
-
-        return $banners_json;
-
+        return $all_banners_json;
     }
 
     function click($current_user)
