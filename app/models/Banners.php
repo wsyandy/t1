@@ -49,8 +49,6 @@ class Banners extends BaseModel
             'id' => $this->id,
             'name' => $this->name,
             'url' => $this->generateUrl(),
-            'new' => $this->new,
-            'hot' => $this->hot,
             'image_url' => $this->image_url,
             'image_small_url' => $this->image_small_url
         ];

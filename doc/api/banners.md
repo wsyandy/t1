@@ -26,8 +26,6 @@
             id: int 
             name: string 
             url: string
-            new:  int 1热门，0非热门
-            hot:   int 1最新，0非最新
             image_url: 'https://banners/image'
             image_small_url: 'https://banners/small'
         }
