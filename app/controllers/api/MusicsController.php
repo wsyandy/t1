@@ -34,6 +34,7 @@ class MusicsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
+        debug("music_search", $cond, $this->params());
         $musics = \Musics::findPagination($cond, $page, $per_page);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
