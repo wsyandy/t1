@@ -18,7 +18,7 @@ class MusicsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
 
-        $cond = [];
+        $cond = ['order' => 'rank desc, id desc'];
 
         if ($hot) {
             $cond['conditions'] = 'hot = :hot:';
