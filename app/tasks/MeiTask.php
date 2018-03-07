@@ -353,13 +353,52 @@ class MeiTask extends \Phalcon\Cli\Task
         fclose($fp);
     }
 
-    function test10Action()
+    function freshMusicStatusAction()
     {
-        $share_history = ShareHistories::findFirstById(79);
-        echoLine($share_history->data);
+        $musics = Musics::findForeach();
 
-        $data = json_decode($share_history->data, true);
-        $room_id = fetch($data, 'room_id');
-        echoLine($room_id);
+        foreach ($musics as $music) {
+            $music->hot = 1;
+            $music->update();
+        }
+    }
+
+    function fixUserSegmentAction()
+    {
+        $users = Users::find(['conditions' => 'experience > 0']);
+
+        foreach ($users as $user) {
+
+            $user_level = $user->calculateLevel();
+
+            if ($user_level != $user->level) {
+                echoLine($user->id, $user_level, $user->level);
+                $user->level = $user_level;
+            }
+
+            $user_segment = $user->calculateSegment();
+
+            if ($user_segment != $user->segment) {
+                echoLine($user->id, $user_segment, $user->segment);
+                $user->segment = $user_segment;
+            }
+
+            //$user->update();
+        }
+
+    }
+
+    function fixRoomStatusAction()
+    {
+        $room = Rooms::findFirstById(416);
+        $room->status = STATUS_OFF;
+        $room->online_status = STATUS_OFF;
+        $room->save();
+
+        $share_histories = ShareHistories::findForeach();
+        foreach ($share_histories as $share_history) {
+            echoLine($share_history->data, $share_history->id);
+
+        }
     }
 }
