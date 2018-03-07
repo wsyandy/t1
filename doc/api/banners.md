@@ -8,8 +8,6 @@
 
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|page | 当前页| int |是||
-|per_page | 每页个数| int |是||
 |new|最新|int|是|1最新|
 |hot|热门|int|是|1热门|
 
@@ -17,10 +15,7 @@
 ```
 {
     error_code:   0/-1  
-    error_reason: '返回码说明'  
-    total_page: 
-    current_page: 
-    total_entries:   
+    error_reason: '返回码说明'    
     hot_banners: [
         {
             id: int 
@@ -31,7 +26,7 @@
         }
         ...
     ]
-    new_banners: [
+    latest_banners: [
             {
                 id: int 
                 name: string 
