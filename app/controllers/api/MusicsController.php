@@ -34,7 +34,7 @@ class MusicsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $cond['order'] = 'rank desc';
+        $cond['order'] = 'rank desc,id desc';
 
         debug("music_search", $cond, $this->params());
         $musics = \Musics::findPagination($cond, $page, $per_page);
