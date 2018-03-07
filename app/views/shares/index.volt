@@ -17,7 +17,7 @@
         </div>
         <h3>{{ user.nickname }}</h3>
         <p>ID：{{ user.id }}</p>
-        <a href="yuewan://enter_room?room_id=2" class="upload_btn" id="jump_room">进入Ta的房间</a>
+        <a href="yuewan://enter_room?room_id={{ room_id }}" class="upload_btn" id="jump_room">进入Ta的房间</a>
     </div>
 </div>
 <div class="share_bottom">
@@ -65,9 +65,9 @@
         if (from_mobile()) {
             if (ua.match(/iphone|ipod|ipad/i)) {
                 //$("#jump").attr('href','https://itunes.apple.com/cn/app/hello-yu-yin-jiao-you/id885737901?l=en&mt=8');//ios下载链接
-                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//
+                $("#jump").attr('href','http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobile');//
             } else {
-                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//android下载链接
+                $("#jump").attr('href','http://android.myapp.com/myapp/detail.htm?apkName=com.yuewan.main&amp;amp;ADTAG=mobile');//android下载链接
             }
         }
 
