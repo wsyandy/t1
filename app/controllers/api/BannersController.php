@@ -12,17 +12,12 @@ class BannersController extends BaseController
     {
         $hot = intval($this->params('hot', 1));
         $new = intval($this->params('new', 1));
-        debug($hot, $new);
 
         $current_user = $this->currentUser();
 
-        $hot_banners = \Banners::searchBanners($current_user, $hot, 0);
-        $latest_banners = \Banners::searchBanners($current_user, 0, $new);
+        $all_banners_json = \Banners::searchBanners($current_user, ['hot' => $hot, 'new' => $new]);
 
-        $opts = ['hot_banners' => $hot_banners, 'latest_banners' => $latest_banners];
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
-
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $all_banners_json);
     }
 
     function clickAction()
