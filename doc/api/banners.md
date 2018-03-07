@@ -10,8 +10,8 @@
 |---|---|---|---|---
 |page | 当前页| int |是||
 |per_page | 每页个数| int |是||
-|new|最新|int|是|1最新,0非最新|
-|hot|热门|int|是|1热门,0非热门|
+|new|最新|int|是|1最新|
+|hot|热门|int|是|1热门|
 
 ##### 1.2 返回参数说明
 ```
@@ -21,7 +21,7 @@
     total_page: 
     current_page: 
     total_entries:   
-    banners: [
+    hot_banners: [
         {
             id: int 
             name: string 
@@ -31,6 +31,16 @@
         }
         ...
     ]
+    new_banners: [
+            {
+                id: int 
+                name: string 
+                url: string
+                image_url: 'https://banners/image'
+                image_small_url: 'https://banners/small'
+            }
+            ...
+     ]
 }
 ```
 
