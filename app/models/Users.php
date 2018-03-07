@@ -1375,6 +1375,11 @@ class Users extends BaseModel
     //需要更新资料
     function needUpdateInfo()
     {
+        //第三方授权登录 不校验
+        if ($this->third_name) {
+            return false;
+        }
+
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
         foreach ($update_info as $k) {
             if (!$this->$k && $k != 'sex' || $k == 'sex' && is_null($this->sex)) {

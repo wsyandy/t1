@@ -443,4 +443,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->login_type = USER_LOGIN_TYPE_SINAWEIBO;
         $user->update();
     }
+
+    function userInfoAction()
+    {
+        $user = Users::findFirstById(31284);
+        echoLine($user);
+    }
 }
