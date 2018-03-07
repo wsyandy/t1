@@ -201,5 +201,18 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixUserHiCoinsAction()
+    {
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
+            $user->hi_coins = $total_amount / 20;
+            $users->update();
+            echoLine($total_amount, $user->hi_coins);
+        }
+    }
 }
 

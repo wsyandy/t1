@@ -43,7 +43,7 @@ class UserGifts extends BaseModel
         $user_gift->save();
 
         $user = $user_gift->user;
-        $hi_coins = ($gift_amount * $gift_num) / 5;
+        $hi_coins = ($gift_amount * $gift_num) / 20;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
 

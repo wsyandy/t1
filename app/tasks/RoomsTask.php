@@ -289,4 +289,25 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
     }
+
+    function initRoomsAction()
+    {
+        while (true) {
+            $room = new Rooms();
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->product_channel_id = 1;
+            $room->user_type = USER_TYPE_SILENT;
+            $room->save();
+
+            echoLine($room->id);
+
+            if ($room->id >= 1000000) {
+                break;
+            }
+        }
+
+        $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
+        echoLine(count($users));
+    }
 }
