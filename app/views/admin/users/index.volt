@@ -69,6 +69,9 @@
     {% if isAllowed('users','getui') %}
         <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
     {% endif %}
+    {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+        <a href="/admin/users/unbind_third_account?id={{ user.id }}" id="unbind_third_account">解绑第三方账号</a><br/>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
@@ -123,6 +126,9 @@
             {% if isAllowed('users','getui') %}
                 <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
             {% endif %}
+            {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+                <a href="/admin/users/unbind_third_account?id=${ user.id }" id="unbind_third_account">解绑第三方账号</a><br/>
+            {% endif %}
         </td>
 
     </tr>
@@ -149,4 +155,17 @@
             })
         }
     })
+
+    $('body').on('click', '#unbind_third_account', function (e) {
+        e.preventDefault();
+        if (confirm('确认解绑？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+                if (resp.error_code == 0) {
+                    location.href = resp.error_url;
+                }
+            });
+        }
+    });
 </script>
