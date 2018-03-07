@@ -216,7 +216,7 @@ class Musics extends BaseModel
         $key = "user_musics_id" . $user_id;
 
         if (!$db->zscore($key, $this->id)) {
-            $db->zadd($key, time(), $this->id);
+            $db->zadd($key, millisecondTime(), $this->id);
         }
     }
 
