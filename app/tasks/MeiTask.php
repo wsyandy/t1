@@ -455,4 +455,10 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(31279);
         echoLine($user);
     }
+
+    function uploadDefaultAvatarAction()
+    {
+        $image = APP_ROOT . "public/images/defalut_avatar0.png";
+        StoreFile::upload($image, APP_NAME . '/users/avatar/default_avatar.png');
+    }
 }
