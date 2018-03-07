@@ -64,7 +64,7 @@ define('VERSION_CODE_FORBIDDEN', -1);
 define('USER_LOGIN_TYPE_MOBILE', 'mobile');//手机登陆类型
 define('USER_LOGIN_TYPE_WEIXIN', 'weixin');//微信登陆类型
 define('USER_LOGIN_TYPE_QQ', 'qq');//QQ登陆类型
-define('USER_LOGIN_TYPE_SINAWEIBO', 'sinaweibo');//微博登陆类型
+define('USER_LOGIN_TYPE_SINAWEIBO', 'sina');//微博登陆类型
 define('USER_LOGIN_TYPE_OTHER', 'other');//其他登陆类型
 
 // 设备状态

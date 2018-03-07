@@ -446,7 +446,13 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function userInfoAction()
     {
-        $user = Users::findFirstById(31284);
+        $user = Users::findFirstById(31285);
+        Users::uploadWeixinAvatar(31286, 'http://thirdqq.qlogo.cn/qqapp/1106728586/2C7E9E4E4D5D99C561239D414DFA3F4A/100');
+        echoLine($user);
+
+        $product_channel = ProductChannels::findFirstById(1);
+        $user = \Users::findFirstByThirdUnionid($product_channel, '2997469905', 'sina');
+        $user = Users::findFirstById(31279);
         echoLine($user);
     }
 }

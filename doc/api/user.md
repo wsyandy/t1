@@ -534,7 +534,7 @@
 ###### 18.1.1 参数
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|third_name|登录方式名称|string|是|微信:weixin,QQ:qq,新浪微博:sinaweibo|
+|third_name|登录方式名称|string|是|微信:weixin,QQ:qq,新浪微博:sina|
 |access_token|登录的token|string|是||
 |openid|用户的唯一id|string|是||
 |app_id|应用的appid|string|否|QQ登录需要此参数||
