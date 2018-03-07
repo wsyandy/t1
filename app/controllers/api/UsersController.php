@@ -183,7 +183,7 @@ class UsersController extends BaseController
         }
     }
 
-    //第三方登陆 qq weixin sina
+    //第三方登陆 qq weixin sinaweibo
     //access_token openid app_id(微信不需要此参数)
     function thirdLoginAction()
     {
