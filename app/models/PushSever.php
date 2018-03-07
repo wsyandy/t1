@@ -226,8 +226,6 @@ class PushSever extends BaseModel
     {
         $fd = $request->fd;
 
-        Users::testSwoole($fd);
-        self::testSwoole($fd);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
