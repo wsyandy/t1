@@ -26,10 +26,7 @@ class RequestDispatcher
     // 请求处理
     public function logicHandler(\services\SwooleServices $swoole_service, \services\BaseRequest $request)
     {
-
-        info("----------------------------------");
-        info('sid', $request->getSid(), "Action:", $request->getAction(), 'fd', $request->getFd());
-        info("----------------------------------");
+        info("Action:", $request->getAction(), 'fd', $request->getFd(), 'sid', $request->getSid());
 
         if (!$request->checkSign()) {
             return $this->requestError('sign error1');
