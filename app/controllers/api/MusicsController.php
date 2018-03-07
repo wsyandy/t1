@@ -18,7 +18,7 @@ class MusicsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
 
-        $cond = ['order' => 'rank desc, id desc'];
+        $cond = [];
 
         if ($hot) {
             $cond['conditions'] = 'hot = :hot:';
@@ -33,6 +33,8 @@ class MusicsController extends BaseController
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
+
+        $cond['order'] = 'rank desc, id desc';
 
         debug("music_search", $cond, $this->params());
         $musics = \Musics::findPagination($cond, $page, $per_page);
