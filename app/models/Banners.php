@@ -107,7 +107,7 @@ class Banners extends BaseModel
     }
 
 
-    static function searchBanners($current_user, $page, $per_page, $hot = 0, $new = 0)
+    static function searchBanners($current_user, $hot = 0, $new = 0)
     {
         $conds = [
             'conditions' => 'product_channel_id = :product_channel_id:',
@@ -150,9 +150,15 @@ class Banners extends BaseModel
         }
         debug($new_conds);
 
-        $banners = self::findPagination($new_conds, $page, $per_page);
+        $banners_json = [];
 
-        return $banners;
+        $banners = self::find($new_conds);
+
+        foreach ($banners as $banner) {
+            $banners_json[] = $banner->toSimpleJson();
+        }
+
+        return $banners_json;
 
     }
 

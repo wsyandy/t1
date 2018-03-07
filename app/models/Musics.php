@@ -112,7 +112,7 @@ class Musics extends BaseModel
             return [ERROR_CODE_FAIL, '用户不存在'];
         }
 
-        $fields = ['歌名' => 'name', '歌手' => 'singer_name'];
+        $fields = ['歌名' => 'name', '歌手' => 'singer_name', '排序' => 'rank'];
 
         foreach ($fields as $key => $value) {
             if (isBlank($this->$value)) {
@@ -144,11 +144,11 @@ class Musics extends BaseModel
             $this->file_size = $file_size;
         }
 
-        if ($this->hasChanged('rank')) {
-            if (!$this->checkRank()) {
-                return [ERROR_CODE_FAIL, '排序不能重复'];
-            }
-        }
+//        if ($this->hasChanged('rank')) {
+//            if (!$this->checkRank()) {
+//                return [ERROR_CODE_FAIL, '排序不能重复'];
+//            }
+//        }
 
         return [ERROR_CODE_SUCCESS, ''];
     }
@@ -169,6 +169,7 @@ class Musics extends BaseModel
         $music->name = $name;
         $music->singer_name = $singer_name;
         $music->user_id = $user_id;
+        $music->rank = 1;
 
         list($error_code, $error_reason) = $music->checkField($files);
         if ($error_code != ERROR_CODE_SUCCESS) {
