@@ -413,17 +413,34 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function testTimeAction()
     {
-//        $time = time();
-//        $millisecond_time = millisecondTime();
-//        echoLine($time, $millisecond_time, $millisecond_time / 1000, microtime());
-//
-//        echoLine(date("Ymd h:i:s", $time));
-//        echoLine(date("Ymd h:i:s", $millisecond_time));
+        $time = time();
+        $millisecond_time = millisecondTime();
+        echoLine($time, $millisecond_time, $millisecond_time / 1000, microtime());
 
-        $db = Users::getUserDb();
-        $key = "test_user_musics_id" . 1;
+        echoLine(date("Ymd h:i:s", $time));
+        echoLine(date("Ymd h:i:s", $millisecond_time));
+    }
 
-        $db->zadd($key, millisecondTime(), 1);
-        echoLine($db->zscore($key, 1));
+    function getConnectInfoAction()
+    {
+        $user = Users::findFirstById(117);
+        $online_token = $user->getOnlineToken();
+        echoLine($user->getUserFd(), $user->getIntranetIp(), $online_token);
+
+        $current_room = \Rooms::findRoomByOnlineToken($online_token);
+        $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
+
+        echoLine($current_room);
+        echoLine($current_room_seat);
+    }
+
+    function unbindThirdAccountAction()
+    {
+        $user = Users::findFirstById(31194);
+        echoLine($user->third_name, $user->third_unionid, $user->login_type);
+        $user->third_name = 'test';
+        $user->third_unionid = 'test';
+        $user->login_type = USER_LOGIN_TYPE_SINAWEIBO;
+        $user->update();
     }
 }

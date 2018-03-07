@@ -307,9 +307,8 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
 
-        $user->third_name = '';
-        $user->third_unionid = '';
-        $user->login_type = '';
+        $user->third_name = 'jiebang';
+        $user->third_unionid = uniqid() . time();
         $user->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '解绑成功');
