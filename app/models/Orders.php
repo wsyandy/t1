@@ -36,6 +36,16 @@ class Orders extends BaseModel
 
     static function createOrder($user, $product)
     {
+        $lock_key = 'order_create_lock_' . $user->id;
+        $hot_cache = self::getHotWriteCache();
+
+        if (!$hot_cache->setnx($lock_key, $user->id)) {
+            info('Exce', $user->id, '请求多次，lock', $lock_key);
+            return [ERROR_CODE_FAIL, '您发起支付太快啦,请稍后.', null];
+        }
+
+        $hot_cache->expire($lock_key, 5);
+
         $order = new \Orders();
         $order->user_id = $user->id;
         $order->product_id = $product->id;
@@ -46,11 +56,13 @@ class Orders extends BaseModel
         $order->platform = $user->platform;
         $order->province_id = $user->getSearchCityId();
         $order->mobile = $user->mobile;
+
         if ($order->create()) {
             \Stats::delay()->record('user', 'create_order', $user->getStatAttrs());
-            return $order;
+            return [ERROR_CODE_SUCCESS, '', $order];
         }
-        return false;
+
+        return [ERROR_CODE_FAIL, '创建订单失败,请稍后.', null];
     }
 
     function getStatusText()
