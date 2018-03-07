@@ -400,5 +400,14 @@ class MeiTask extends \Phalcon\Cli\Task
             echoLine($share_history->data, $share_history->id);
 
         }
+
+        $musics = Musics::findForeach();
+
+        foreach ($musics as $music) {
+            if (!$music->rank) {
+                $music->rank = 1;
+                $music->update();
+            }
+        }
     }
 }
