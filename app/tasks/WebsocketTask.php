@@ -24,14 +24,14 @@ class WebsocketTask extends Phalcon\CLI\Task
             }
         }
 
-        $server = new PushSever();
-        $server->start();
+        $swoole_services = new \services\SwooleServices();
+        $swoole_services->startService();
     }
 
     function stopAction()
     {
         //停止服务 清空链接数
-        PushSever::clearConnectionNum();
+        \services\SwooleUtils::clearConnectionNum();
 
         $log_dir = $this->config->application->log;
         checkDirExists("{$log_dir}/pids/websocket/");

@@ -906,7 +906,7 @@ class Rooms extends BaseModel
                 continue;
             }
 
-            $res = PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+            $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
                 info($user->id, $this->id, $payload);

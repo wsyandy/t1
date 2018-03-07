@@ -2247,15 +2247,56 @@ class Users extends BaseModel
         unlock($lock);
     }
 
-    function testTimer()
+    function saveFdInfo($fd, $online_token, $ip)
     {
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $user_online_key = "socket_user_online_user_id" . $this->id;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
 
+        $hot_cache->pipeline();
+        $hot_cache->set($online_key, $online_token);
+        $hot_cache->set($fd_key, $fd);
+        $hot_cache->set($user_online_key, $online_token);
+        $hot_cache->set($fd_user_id_key, $this->id);
+
+        if ($ip) {
+            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+            $hot_cache->set($fd_intranet_ip_key, $ip);
+        }
+
+        $hot_cache->exec();
+
+        info($fd, $online_token, $this->sid, $ip);
     }
 
-    static function testSwoole($params)
+    function deleteFdInfo($fd, $online_token)
     {
-        swoole_timer_after(10000, function () use ($params) {
-            debug("test hello2", $params);
-        });
+        $hot_cache = Users::getHotWriteCache();
+
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+
+        $hot_cache->pipeline();
+        $hot_cache->del($online_key);
+        $hot_cache->del($fd_key);
+        $hot_cache->del($fd_user_id_key);
+        $hot_cache->del($fd_intranet_ip_key);
+        $hot_cache->del("room_seat_token_" . $online_token);
+        $hot_cache->del("room_token_" . $online_token);
+        $hot_cache->exec();
+
+        if ($this && $this->online_token == $online_token) {
+
+            $user_online_key = "socket_user_online_user_id" . $this->id;
+            $hot_cache->del($user_online_key);
+
+            info($this->id);
+        }
+
+        info($fd, $online_token);
     }
 }

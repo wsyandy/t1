@@ -20,7 +20,11 @@ class PushSever extends BaseModel
     function __construct()
     {
         parent::__construct();
+        $this->initService();
+    }
 
+    function initService()
+    {
         $this->websocket_listen_client_ip = self::config('websocket_listen_client_ip'); //监听客户端
         $this->websocket_listen_client_port = self::config('websocket_listen_client_port'); //监听客户端
         $this->websocket_listen_server_ip = self::config('websocket_listen_server_ip'); //监听服务端
@@ -38,8 +42,8 @@ class PushSever extends BaseModel
                 'log_file' => APP_ROOT . 'log/websocket_server.log',
                 'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
                 'reload_async' => true,
-                //'heartbeat_check_interval' => 10, //10秒检测一次
-                //'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
+                'heartbeat_check_interval' => 10, //10秒检测一次
+                'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
                 //'task_worker_num' => 8
             ]
         );
@@ -50,6 +54,10 @@ class PushSever extends BaseModel
         $this->server->on('close', [$this, 'onClose']);
         $this->server->on('workerStart', [$this, 'onWorkerStart']);
         $this->server->on('workerStop', [$this, 'onWorkerStop']);
+    }
+
+    function startService()
+    {
         $this->server->start();
     }
 
@@ -132,38 +140,6 @@ class PushSever extends BaseModel
         return $val;
     }
 
-//    function start()
-//    {
-//        try {
-//            $swoole_server = new swoole_websocket_server($this->websocket_listen_client_ip, $this->websocket_listen_client_port);
-//            $swoole_server->addListener($this->websocket_listen_server_ip, $this->websocket_listen_server_port, SWOOLE_SOCK_TCP);
-//            $swoole_server->set(
-//                [
-//                    'worker_num' => $this->websocket_worker_num, //cpu的1~4倍
-//                    'max_request' => $this->websocket_max_request, //设置多少合适
-//                    'dispatch_model' => 2,
-//                    'daemonize' => true,
-//                    'log_file' => APP_ROOT . 'log/websocket_server.log',
-//                    'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
-//                    'reload_async' => true,
-//                    'heartbeat_check_interval' => 10, //10秒检测一次
-//                    'heartbeat_idle_time' => 20, //20秒未向服务器发送任何数据包,此链接强制关闭
-//                    //'task_worker_num' => 8
-//                ]
-//            );
-//
-//            $swoole_server->on('start', [$this, 'onStart']);
-//            $swoole_server->on('open', [$this, 'onOpen']);
-//            $swoole_server->on('message', [$this, 'onMessage']);
-//            $swoole_server->on('close', [$this, 'onClose']);
-//            $swoole_server->on('workerStart', [$this, 'onWorkerStart']);
-//            $swoole_server->start();
-//            echo "[------------- start -------------]\n";
-//        } catch (\Exception $e) {
-//            info("Exce", $e->getMessage());
-//        }
-//    }
-
     //服务器内部通信
     static function send($action, $ip, $port, $payload = [])
     {
@@ -224,50 +200,41 @@ class PushSever extends BaseModel
 
     function onStart($server)
     {
-        //cli_set_process_title("reload_master");
-        info("start");
+        info("------ <services start> ------pid", posix_getpid());
     }
 
-    function onWorkerStart()
+    function onWorkerStart($server, $worker_id)
     {
-        //require APP_ROOT . 'vendor/autoload.php';
-        debug("sssss", 1111333);
-    }
-
-    function onWorkerStop()
-    {
-        debug("onWorkerStop");
-    }
-
-    static function asyncSend($count, $fd)
-    {
-        debug($count, $fd);
-        if ($count >= 100) {
-            return;
+        if ($worker_id < $server->setting['worker_num']) {
+            info("-------- <services onWorkerStart event worker>----worker_id", $worker_id, 'pid', posix_getpid());
+        } else {
+            info("-------- <services onWorkerStart task worker>----worker_id", $worker_id, 'pid', posix_getpid());
         }
+    }
 
-        $count = $count + 1;
+    function onWorkerStop($server, $worker_id)
+    {
+        info("------ <services onWorkerStop> ------worker_id", $worker_id, 'pid', posix_getpid());
+    }
 
-        self::send('push', '127.0.0.1', '9508', ['fd' => $fd, 'body' => ['a' => $count, 'b' => ++$count]]);
-        self::delay(1)->asyncSend($count, $fd);
+    static function testSwoole($fd)
+    {
+        debug($fd, "hello word1");
     }
 
     function onOpen($server, $request)
     {
         $fd = $request->fd;
 
-        //swoole_timer_after(10000, [$this, "testTimer"], $fd);
         Users::testSwoole($fd);
+        self::testSwoole($fd);
         $connect_info = $server->connection_info($fd);
         $server_port = fetch($connect_info, 'server_port');
 
-        debug("hello1");
         if ($this->websocket_listen_server_port == $server_port) {
             info($fd, "server_to_server onOpen");
             //$server->push($request->fd, json_encode(['welcome'], JSON_UNESCAPED_UNICODE));
             return;
-        } else {
-            self::delay(1)->asyncSend(1, $fd);
         }
 
         if (!$server->exist($fd)) {
@@ -334,15 +301,8 @@ class PushSever extends BaseModel
             $payload = fetch($data, 'payload');
 
             try {
-                if ('shutdown' == $action) {
-                    $server->shutdown();
-                } elseif ('push' == $action) {
+                if ('push' == $action) {
                     PushSever::push($server, $payload);
-                } elseif ('reload' == $action) {
-                    debug($action, "eeee");
-                    $this->server->reload();
-                    $server->reload();
-                    debug($this->server->getClientInfo($fd), $server->getClientInfo($fd));
                 }
             } catch (\Exception $e) {
                 info("Exce", $action, $payload, $e->getMessage());
