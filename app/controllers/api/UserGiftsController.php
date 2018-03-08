@@ -19,7 +19,9 @@ class UserGiftsController extends BaseController
 
         $user_gifts = \UserGifts::findPagination($conds, $page, $per_page);
 
-        $total_gift_num = $this->currentUser()->getReceiveGiftNum();
+        $users = \Users::findFirstById($user_id);
+
+        $total_gift_num = $users->getReceiveGiftNum();
 
         $opts = array_merge(['total_gift_num' => $total_gift_num], $user_gifts->toJson('user_gifts', 'toJson'));
 
