@@ -1,4 +1,4 @@
-<form method="get" action="/admin/users/stat_room_time" name="search_form" autocomplete="off">
+<form method="get" action="/admin/stats/stat_room_time" name="search_form" autocomplete="off">
     <label for="stat_at">时间</label>
     <input type="text" name="stat_at" class="form_datetime" id="stat_at" value="{{ stat_at }}" size="16">
 
