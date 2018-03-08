@@ -152,6 +152,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixUserLevelAction()
     {
         $gift_orders = GiftOrders::findForeach();
@@ -162,6 +163,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixUserSegmentAction()
     {
         $users = Users::find(['conditions' => "level > 0"]);
@@ -173,6 +175,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixExperienceAction()
     {
         $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
@@ -202,6 +205,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixUserHiCoinsAction()
     {
         $users = Users::find(['conditions' => 'hi_coins > 0']);
@@ -223,6 +227,71 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->hi_coins = $total_amount / $rate;
             echoLine($i, $total_amount, $user->hi_coins);
             $user->update();
+        }
+    }
+
+    function initUsersAction()
+    {
+        while (true) {
+            $user = new Users();
+            $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
+            $user->sex = mt_rand(0, 1);
+            $user->product_channel_id = 1;
+            $user->login_name = '';
+            $user->nickname = '';
+            $user->avatar = '';
+            $user->platform = '';
+            $user->province_id = 0;
+            $user->city_id = 0;
+            $user->ip = '';
+            $user->last_at = time();
+            $user->mobile = '';
+            $user->device_id = 0;
+            $user->push_token = '';
+            $user->sid = '';
+            $user->version_code = '';
+            $user->openid = '';
+            $user->password = '';
+            $user->fr = '';
+            $user->partner_id = 0;
+            $user->subscribe = 0;
+            $user->event_at = 0;
+            $user->latitude = 0;
+            $user->longitude = 0;
+            $user->geo_province_id = 0;
+            $user->geo_city_id = 0;
+            $user->ip_province_id = 0;
+            $user->ip_city_id = 0;
+            $user->register_at = 0;
+            $user->mobile_operator = 0;
+            $user->api_version = '';
+            $user->monologue = '';
+            $user->room_id = 0;
+            $user->height = 0;
+            $user->interests = '';
+            $user->gold = 0;
+            $user->diamond = 0;
+            $user->birthday = 0;
+            $user->current_room_seat_id = 0;
+            $user->user_role = 0;
+            $user->current_room_id = 0;
+            $user->geo_hash = '';
+            $user->platform_version = '';
+            $user->version_name = '';
+            $user->manufacturer = '';
+            $user->device_no = '';
+            $user->client_status = 0;
+            $user->user_role_at = 0;
+            $user->hi_coins = 0;
+            $user->third_unionid = '';
+            $user->login_type = '';
+            $user->save();
+
+            echoLine($user->id);
+            if ($user->id >= 1000000) {
+                break;
+            }
         }
     }
 }

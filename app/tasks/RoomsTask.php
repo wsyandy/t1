@@ -298,6 +298,14 @@ class RoomsTask extends \Phalcon\Cli\Task
             $room->online_status = STATUS_OFF;
             $room->product_channel_id = 1;
             $room->user_type = USER_TYPE_SILENT;
+            $room->name = '';
+            $room->topic = '';
+            $room->user_id = 0;
+            $room->password = '';
+            $room->last_at = 0;
+            $room->room_seat_id = 0;
+            $room->audio_id = 0;
+            $room->room_theme_id = 0;
             $room->save();
 
             echoLine($room->id);
