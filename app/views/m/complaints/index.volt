@@ -46,15 +46,6 @@
             complaint_type: complaint_type
         };
 
-        window.alert = function(name){
-            var iframe = document.createElement("IFRAME");
-            iframe.style.display="none";
-            iframe.setAttribute("src", 'data:text/plain,');
-            document.documentElement.appendChild(iframe);
-            window.frames[0].window.alert(name);
-            iframe.parentNode.removeChild(iframe);
-        }
-
         $.authPost("/m/complaints/create", data, function (resp) {
             alert(resp.error_reason);
             if (resp.error_code == 0 && resp.error_url) {
