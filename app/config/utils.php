@@ -41,3 +41,16 @@ function millisecondTime()
     $time = $usec2msec + $sec2msec;
     return $time;
 }
+
+function secondsToText($seconds)
+{
+    if ($seconds <= 60) {
+        return $seconds . '秒';
+    }
+
+    if ($seconds <= 60 * 60) {
+        return intval($seconds / 60) . '分' . ($seconds % 60) . '秒';
+    }
+
+    return intval($seconds / 3600) . '时' . intval($seconds % 3600) . '分' . ($seconds % 60) . '秒';
+}

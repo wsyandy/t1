@@ -217,7 +217,7 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $user->hi_coins = $total_amount / 20;
+            $user->hi_coins = $total_amount / 25;
             echoLine($i, $total_amount, $user->hi_coins);
             $user->update();
         }

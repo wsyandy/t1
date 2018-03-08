@@ -78,7 +78,7 @@ class WithdrawHistoriesController extends BaseController
 
             if (WITHDRAW_STATUS_SUCCESS == $withdraw_history->status) {
                 $user = $withdraw_history->user;
-                $user->hi_coins = $user->hi_coins - $withdraw_history->amount * 10;
+                $user->hi_coins = $user->hi_coins - $withdraw_history->amount;
                 $user->save();
             }
 

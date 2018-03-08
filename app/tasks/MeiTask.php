@@ -464,4 +464,9 @@ class MeiTask extends \Phalcon\Cli\Task
         StoreFile::upload($default_avatar0, APP_NAME . '/users/avatar/default_avatar0.png');
         StoreFile::upload($default_avatar1, APP_NAME . '/users/avatar/default_avatar1.png');
     }
+
+    function testSecondAction()
+    {
+        echoLine(secondsToText(7261));
+    }
 }
