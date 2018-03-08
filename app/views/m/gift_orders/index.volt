@@ -3,7 +3,7 @@
 {{ block_end() }}
 
 <div id="app" v-cloak>
-    <div class="gift_nav">
+    <div class="gift_nav" id="top">
         <p :class="{select_gift:receive}" @click.stop="receive=true">收到</p>
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>
     </div>
@@ -106,6 +106,17 @@
     }
 
     $(function () {
+
+        window.onscroll = function () {
+            var ht = document.documentElement.scrollTop || document.body.scrollTop;
+            if (ht > 30) {
+                $("#top").css({"position": "fixed", "top": "0px", "margin": "auto"});
+            }
+            else {
+                $("#top").css({"position": "static"});
+            }
+        }
+
 
         getGiftOrders();
 

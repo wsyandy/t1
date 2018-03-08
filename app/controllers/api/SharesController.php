@@ -19,7 +19,7 @@ class SharesController extends BaseController
         $user = $this->currentUser();
         $image_url = $user->avatar_small_url;
         $image_small_url = $this->currentProductChannel()->avatar_url;
-        $description = "Hi——很好玩的语音直播软件，连麦聊天，组队开黑哦";
+        $description = "Hi—很好玩的语音直播软件，连麦聊天，组队开黑哦";
 
         $opts = [
             'user_id' => $user->id,
@@ -32,7 +32,7 @@ class SharesController extends BaseController
         $url = $share_history->getShareUrl($this->getRoot());
 
         $res = [
-            'title' => $user->nickname . "我正在这个房间玩，快来一起连麦嗨！",
+            'title' => $user->nickname . "正在这个房间玩，快来一起连麦嗨！",
             'image_url' => $image_url,
             'image_small_url' => $image_small_url,
             'description' => $description,
