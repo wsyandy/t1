@@ -39,8 +39,7 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text,
-            'receive_gift_num' => $this->receive_gift_num
+            'segment_text' => $this->segment_text
         ];
     }
 

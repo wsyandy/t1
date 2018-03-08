@@ -103,6 +103,7 @@
     current_page: 1
     total_page: 100,
     total_entries: 1000
+    total_gift_num: 礼物总个数
     user_gifts: [
         {
             gift_id: 1
