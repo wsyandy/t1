@@ -15,13 +15,17 @@ class RoomsController extends BaseController
     {
         $cond = $this->getConditions('room');
         $name = $this->params('name');
-        if ($name) {
-            if (isset($cond['conditions'])) {
-                $cond['conditions'] .= " and name like '%$name%' ";
-            } else {
-                $cond['conditions'] = " name like '%$name%' ";
-            }
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and user_id > 0";
+        } else {
+            $cond['conditions'] = " user_id > 0";
         }
+
+        if ($name) {
+            $cond['conditions'] .= " and name like '%$name%' ";
+        }
+        
         $page = 1;
         $total_page = 1;
         $per_page = 30;
