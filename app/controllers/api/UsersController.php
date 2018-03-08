@@ -287,7 +287,7 @@ class UsersController extends BaseController
         $params = $this->params();
         $monologue = fetch($params, 'monologue');
 
-        if ($monologue && mb_strlen($monologue) >= 250) {
+        if ($monologue && mb_strlen($monologue) > 250) {
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
         }
 
