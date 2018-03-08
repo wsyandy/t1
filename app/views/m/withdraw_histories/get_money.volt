@@ -47,6 +47,7 @@
         var account = $("#account").val();
 
         if (money > amount) {
+            $('.get_btn a').removeClass('changecolor');
             return alert("请输入正确的提现金额");
         }
 
@@ -60,7 +61,7 @@
 
         $.authPost("/m/withdraw_histories/create", data, function (resp) {
             alert(resp.error_reason);
-            $('.get_btn a').removeClass('changecolor')
+            $('.get_btn a').removeClass('changecolor');
         })
     }
 </script>
