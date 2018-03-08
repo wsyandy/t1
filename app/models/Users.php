@@ -1661,6 +1661,7 @@ class Users extends BaseModel
 
     }
 
+    //废弃
     static function pushTopTopicMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1677,6 +1678,7 @@ class Users extends BaseModel
         $room->pushTopTopicMessage($user);
     }
 
+    //废弃
     static function pushGiftMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1720,6 +1722,7 @@ class Users extends BaseModel
         }
     }
 
+    //废弃
     static function pushUpMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1742,6 +1745,92 @@ class Users extends BaseModel
                 $room->pushUpMessage($user, $room_seat);
             }
         }
+    }
+
+    //上麦
+    static function upRoomSeat($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($user->current_room_seat_id < 1) {
+
+            $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
+
+            if ($room_seat) {
+                $room_seat->up($user);
+                $room->pushUpMessage($user, $room_seat);
+            }
+        }
+    }
+
+    //送礼物
+    static function sendGift($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($room->getRealUserNum() > 0) {
+
+            $receiver = $room->findRandomUser([$user_id]);
+
+            if ($receiver) {
+
+                $gift_num = mt_rand(1, 15);
+                $gifts = Gifts::findBy(['status' => STATUS_ON]);
+                $gift_ids = [];
+
+                foreach ($gifts as $gift) {
+                    $gift_ids[] = $gift->id;
+                }
+
+                $index = array_rand($gift_ids);
+                $gift_id = $gift_ids[$index];
+                $gift = Gifts::findFirstById($gift_id);
+
+                if ($receiver->isActive()) {
+                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+                    if ($give_result) {
+                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                    }
+                } else {
+                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                }
+            }
+        }
+    }
+
+    //公屏消息
+    static function sendTopTopicMessage($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        $room->pushTopTopicMessage($user);
     }
 
     //启动房间互动
@@ -1769,7 +1858,7 @@ class Users extends BaseModel
         if (isProduction()) {
             if ($room->isSilent()) {
                 if ($rand_num <= 70) {
-                    Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+                    Users::delay(mt_rand(1, 50))->upRoomSeat($this->id, $room->id);
                 } elseif (70 < $rand_num && $rand_num <= 80) {
                     $room->exitSilentRoom($this);
                     return;
@@ -1783,14 +1872,14 @@ class Users extends BaseModel
         } else {
 //            if ($rand_num <= 50) {
 //                if ($room->getRealUserNum() > 0 && $room->chat) {
-//                    Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
+//                    Users::delay(mt_rand(1, 50))->sendTopTopicMessage($this->id, $room->id);
 //                }
 //            } elseif (50 < $rand_num && $rand_num <= 52) {
 //                if ($room->getRealUserNum() > 0) {
-//                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+//                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
 //                }
 //            } elseif (53 < $rand_num && $rand_num <= 90) {
-//                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+//                Users::delay(mt_rand(1, 50))->upRoomSeat($this->id, $room->id);
 //            } else {
 //                $room->exitSilentRoom($this);
 //                return;
@@ -1798,7 +1887,7 @@ class Users extends BaseModel
 
             if ($rand_num <= 90) {
                 if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
                 }
             } else {
                 $room->exitSilentRoom($this);
