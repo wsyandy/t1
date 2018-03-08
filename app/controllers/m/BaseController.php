@@ -16,7 +16,7 @@ class BaseController extends \ApplicationController
     public $remote_ip;
 
     static $SKIP_ACTIONS = [
-        'product_channels' =>['user_agreement','privacy_agreement']
+        'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies']
     ];
 
     function currentUserId()
