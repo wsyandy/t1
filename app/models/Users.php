@@ -172,29 +172,21 @@ class Users extends BaseModel
                     break;
             }
 
-            if ($action) {
-                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
-                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
-            }
-            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
-            return;
-        }
+        } elseif (USER_ROLE_MANAGER == $user_role) {
 
-        //上麦下面为角色发生变化
-        if (USER_ROLE_MANAGER == $user_role) {
-
+            //上麦下麦时角色发生变化
             if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
                 $action = "broadcaster";
             } else {
                 $action = "audience";
             }
-
-            if ($action) {
-                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
-                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
-            }
-            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
         }
+
+        if ($action) {
+            $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+            $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+        }
+        info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
     }
 
     static function generateStatRoomTimeKey($action, $date = null)
