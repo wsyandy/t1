@@ -167,7 +167,7 @@ class Banners extends BaseModel
             'conditions' => "id in ({$product_channel_banner_ids}) and status=:status: and " .
                 "(platforms like '*' or platforms = '' or platforms like :platforms:)",
             'bind' => ['status' => STATUS_ON, 'platforms' => '%' . $platform . '%'],
-            'order' => 'rank desc'];
+            'order' => 'rank desc,id desc'];
 
         $all_banners_json = [];
 

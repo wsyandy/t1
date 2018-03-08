@@ -20,6 +20,10 @@ class  Complaints extends BaseModel
      * @type Rooms
      */
     private $_room;
+    /**
+     * @type Musics
+     */
+    private $_music;
 
     static $STATUS = [AUTH_WAIT => '等待处理', AUTH_SUCCESS => '举报成功', AUTH_FAIL => '举报失败'];
 
