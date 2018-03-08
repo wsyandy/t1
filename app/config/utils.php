@@ -52,5 +52,8 @@ function secondsToText($seconds)
         return intval($seconds / 60) . '分' . ($seconds % 60) . '秒';
     }
 
-    return intval($seconds / 3600) . '时' . intval($seconds % 3600) . '分' . ($seconds % 60) . '秒';
+    $hour = intval($seconds / 3600);
+    $minute = intval(($seconds % 3600) / 60);
+
+    return $hour . '时' . $minute . '分' . ($seconds % 60) . '秒';
 }

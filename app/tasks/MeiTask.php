@@ -467,6 +467,6 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function testSecondAction()
     {
-        echoLine(secondsToText(7261));
+        echoLine(secondsToText(3721));
     }
 }

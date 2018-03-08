@@ -445,7 +445,7 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('audience', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return $time;
     }
 
     //主播时间
@@ -454,7 +454,7 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('broadcaster', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return $time;
     }
 
     //房主时间
@@ -463,7 +463,25 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('host_broadcaster', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return $time;
+    }
+
+    //旁听时间
+    function getAudienceTimeByDateText($date)
+    {
+        return secondsToText($this->getAudienceTimeByDate($date));
+    }
+
+    //主播时间
+    function getBroadcasterTimeByDateText($date)
+    {
+        return secondsToText($this->getBroadcasterTimeByDate($date));
+    }
+
+    //房主时间
+    function getHostBroadcasterTimeByDateText($date)
+    {
+        return secondsToText($this->getHostBroadcasterTimeByDate($date));
     }
 
     function getWithdrawAmount()

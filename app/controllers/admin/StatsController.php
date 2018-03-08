@@ -181,9 +181,9 @@ class StatsController extends BaseController
         $users = \Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            $user->audience_time = $user->getAudienceTimeByDate($stat_at);
-            $user->broadcaster_time = $user->getBroadcasterTimeByDate($stat_at);
-            $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($stat_at);
+            $user->audience_time_text = $user->getAudienceTimeByDateText($stat_at);
+            $user->broadcaster_time_text = $user->getBroadcasterTimeByDateText($stat_at);
+            $user->host_broadcaster_time_text = $user->getHostBroadcasterTimeByDateText($stat_at);
         }
 
         $pagination = new \PaginationModel($users, $total_entries, $page, $per_page);

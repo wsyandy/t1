@@ -8,8 +8,8 @@
     <button class="ui button" type="submit">搜索</button>
 </form>
 
-{{ simple_table(users, ['ID': 'id', '昵称': 'nickname','房主时长':'host_broadcaster_time','主播时长':'broadcaster_time',
-    '旁听时长':'audience_time']) }}
+{{ simple_table(users, ['ID': 'id', '昵称': 'nickname','房主时长':'host_broadcaster_time_text','主播时长':'broadcaster_time_text',
+    '旁听时长':'audience_time_text']) }}
 
 <script type="text/javascript">
 
