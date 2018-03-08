@@ -2174,8 +2174,8 @@ class Users extends BaseModel
 
         foreach ($level_ranges as $index => $level_range) {
 
-            if (isset($level_ranges[$index + 1]) && $experience > $level_range &&
-                $experience <= $level_ranges[$index + 1]) {
+            if (isset($level_ranges[$index + 1]) && $experience >= $level_range &&
+                $experience < $level_ranges[$index + 1]) {
                 $level = $index;
                 break;
             }

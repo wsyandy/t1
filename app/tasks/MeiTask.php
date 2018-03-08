@@ -266,11 +266,11 @@ class MeiTask extends \Phalcon\Cli\Task
     function testUserLevelAction()
     {
         $user = Users::findFirstById(1);
-//        $user->experience = 1.234567892345678923456789;
+        $user->experience = 385999;
+        $user->level = $user->calculateLevel();
+        $user->segment = $user->calculateSegment();
 //        $user->save();
-//        $user->experience = 385000;
-//        $user->save();
-        echoLine($user->segment, $user->segment_text);
+        echoLine($user->level, $user->segment, $user->segment_text);
     }
 
     function testUserLevelTextAction()
@@ -467,6 +467,6 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function testSecondAction()
     {
-        echoLine(secondsToText(3721));
+        echoLine(millisecondTime());
     }
 }
