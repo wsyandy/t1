@@ -449,19 +449,13 @@ class ProductChannels extends BaseModel
         ];
     }
 
-    function RateOfDiamondToHiCoin()
+    function rateOfDiamondToHiCoin()
     {
-        if ($this->code === "yuewan") {
-            return 25;
-        }
         return 25;
     }
 
-    function RateOfHiCoinToMoney()
+    function rateOfHiCoinToMoney()
     {
-        if ($this->code === "yuewan") {
-            return 1;
-        }
         return 1;
     }
 }

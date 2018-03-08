@@ -492,7 +492,7 @@ trait UserAttrs
             return 0;
         } else {
             $product_channel = $this->product_channel;
-            $rate = $product_channel->RateOfHiCoinToMoney();
+            $rate = $product_channel->rateOfHiCoinToMoney();
             return $hi_coins / $rate;
         }
     }

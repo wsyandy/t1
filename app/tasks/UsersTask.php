@@ -218,7 +218,7 @@ class UsersTask extends \Phalcon\Cli\Task
             }
 
             $product_channel = $user->product_channel;
-            $rate = $product_channel->RateOfDiamondToHiCoin();
+            $rate = $product_channel->rateOfDiamondToHiCoin();
 
             $user->hi_coins = $total_amount / $rate;
             echoLine($i, $total_amount, $user->hi_coins);
