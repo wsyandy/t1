@@ -75,16 +75,6 @@ class WithdrawHistoriesController extends BaseController
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $withdraw_history);
 
         if ($withdraw_history->save()) {
-
-            if (WITHDRAW_STATUS_SUCCESS == $withdraw_history->status) {
-                $user = $withdraw_history->user;
-                $product_channel = $withdraw_history->product_channel;
-                $rate = $product_channel->rateOfHiCoinToMoney();
-                debug($user->id, $withdraw_history->amount, $rate);
-                $user->hi_coins = $user->hi_coins - $withdraw_history->amount * $rate;
-                $user->save();
-            }
-
             return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['withdraw_history' => $withdraw_history->toJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '');
