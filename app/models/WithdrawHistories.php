@@ -13,6 +13,12 @@ class WithdrawHistories extends BaseModel
      */
     private $_user;
 
+    /**
+     * @type ProductChannels
+     */
+    private $_product_channel;
+
+
     static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
 
     static function createWithdrawHistories($user, $opts)
