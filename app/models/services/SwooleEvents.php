@@ -32,8 +32,10 @@ class SwooleEvents extends \BaseModel
         info("------ <services onWorkerStop> ------worker_id", $worker_id, 'pid', posix_getpid());
     }
 
-    static function onOpenEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $request)
+    static function onOpenEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, \swoole_http_request $request)
     {
+        $request_start_at = microtime(true);
+
         $fd = $request->fd;
 
         if (!$server->exist($fd)) {
@@ -78,17 +80,31 @@ class SwooleEvents extends \BaseModel
 
         $data = ['online_token' => $online_token, 'action' => 'create_token'];
         $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $request_start_at);
+
+        $visit_info = 'VISIT ' . SwooleUtils::remoteIp($request) . ' Completed ' . $execute_time . "s " .
+            'Parameters: ' . json_encode($request->server, JSON_UNESCAPED_UNICODE);
+
+        info($visit_info);
     }
 
-    static function onMessageEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $frame)
+    static function onMessageEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, \swoole_websocket_frame $frame)
     {
+        $request_start_at = microtime(true);
         $request = new \services\BaseRequest($server, $frame);
         $swoole_service->request_dispatcher->startAction($swoole_service, $request);
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $request_start_at);
+        $visit_info = 'VISIT ' . ' Completed ' . $execute_time . 's Parameters: ' . $frame->data;
+        info($visit_info);
+
         return;
     }
 
     static function onCloseEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $fd, $from_id)
     {
+        $request_start_at = microtime(true);
         $online_token = SwooleUtils::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
 
@@ -154,6 +170,10 @@ class SwooleEvents extends \BaseModel
         }
 
         $user->deleteFdInfo($fd, $online_token);
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $request_start_at);
+        $visit_info = 'VISIT ' . ' Completed ' . $execute_time . 's Parameters: fd ' . $fd . ' from_id ' .$from_id;
+        info($visit_info);
     }
 
     static function onTaskEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $task_id, $from_id, $data)

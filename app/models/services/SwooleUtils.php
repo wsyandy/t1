@@ -14,6 +14,12 @@ class SwooleUtils extends \BaseModel
     private static $intranet_ip_key = "intranet_ip";
     private static $connection_list = 'websocket_connection_list';
 
+    static function remoteIp($request)
+    {
+        $server = $request->server;
+        return fetch($server, 'remote_addr');
+    }
+
     static function params($request, $field, $default = null)
     {
         if (isBlank($field)) {
