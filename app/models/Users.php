@@ -131,7 +131,7 @@ class Users extends BaseModel
             $this->current_room->exitRoom($this);
         }
 
-        if ($this->hasChanged('user_role_at')) {
+        if ($this->hasChanged('user_role_at') && $this->isActive()) {
             $this->statRoomTime();
         }
     }
