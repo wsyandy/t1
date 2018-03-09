@@ -40,6 +40,7 @@
 
             <div class="btn_list music_upload_btn">
                 <input type="submit" name="submit" class="close_btn close_right" value="确认上传">
+                <img src="/web/images/jindutiao.gif" id="jindutiao">
             </div>
         </form>
     </div>
@@ -107,6 +108,8 @@
     }
 
     $(function () {
+        $("#jindutiao").hide();
+
         Version();
 
         function colse_fd() {
@@ -167,13 +170,17 @@
                 }
             }
 
+            $("#jindutiao").show();
+
             self.ajaxSubmit({
                 error: function (xhr, status, error) {
                     alert('服务器错误 ' + error);
+                    $("#jindutiao").hide();
                 },
 
                 success: function (resp, status, xhr) {
                     can_upload = true;
+                    $("#jindutiao").hide();
                     if (resp.error_url) {
                         location.href = resp.error_url;
                         return;

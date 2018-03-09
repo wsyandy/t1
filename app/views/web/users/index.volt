@@ -96,10 +96,10 @@
         <!-- 弹框 开始-->
         <div class="fudong">
             <div class="close_btn close_delete"></div>
-            <h3>您确定要删除歌曲吗？</h3>
+            <h3 id="error_text">您确定要删除歌曲吗？</h3>
             <div class="btn_list">
                 <span class="close_btn" @click="deleteMusic">确定</span>
-                <span class="close_btn close_right right_60">取消</span>
+                <span class="close_btn close_right right_60" id="close_right">取消</span>
             </div>
         </div>
         <div class="fudong_bg"></div>
@@ -152,6 +152,9 @@
         },
         methods: {
             deleteMusic: function () {
+                if (vm.checked_list.length == 0) {
+                    return;
+                }
                 var data = {delete_list: this.checked_list};
                 $.authPost('/web/musics/delete', data, function (resp) {
                     if (resp.error_code != 0) {
@@ -331,43 +334,46 @@
         function colse_fd() {
             $(".fudong").hide();
             $(".fudong_bg").hide();
-        };
+        }
 
-        $(".fudong").hide();
-        $(".fudong_bg").hide();
+        //设置弹窗位置
         var doc_height = $(document).height();
         var w_height = $(window).height();
         var w_width = $(window).width();
 
+        var div_width = $(".fudong").width();
+        var div_height = $(".fudong").height();
+
+        var div_left = w_width / 2 - div_width / 2 + "px";
+        var div_top = w_height / 2 - div_height / 2 + "px";
+
+        $(".fudong").css({
+            "left": div_left,
+            "top": div_top
+        });
+
+        //设置背景
+        $(".fudong_bg").attr("style", "height:" + doc_height + "px");
+
+        $(".fudong").hide();
+        $(".fudong_bg").hide();
+
         $(".delete").click(function () {
             console.log(vm.checked_list);
-            console.log(vm.musics);
             if (vm.checked_list.length == 0) {
-                alert("您没有选择文件");
-                return
+                $("#error_text").html("您没有选择文件");
+                $("#close_right").hide();
             }
 
             $(".fudong").show();
             $(".fudong_bg").show();
-
-            $(".fudong_bg").attr("style", "height:" + doc_height + "px");
-            var div_width = $(".fudong").width();
-            var div_height = $(".fudong").height();
-
-            var div_left = w_width / 2 - div_width / 2 + "px";
-            var div_top = w_height / 2 - div_height / 2 + "px";
-
-            $(".fudong").css({
-                "left": div_left,
-                "top": div_top
-            });
-        })
-
-
-        $(".close_btn").click(function () {
-            colse_fd();
         });
 
+        $(".close_btn").click(function () {
+            $("#error_text").html("您确定要删除歌曲吗？");
+            $("#close_right").show();
+            colse_fd();
+        });
     });
 
 </script>

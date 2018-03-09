@@ -21,6 +21,7 @@ class BaseController extends ApplicationController
 
 
     static $SKIP_ACTIONS = [
+        'banners' => '*',
         'devices' => '*',
         'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status', 'third_login'],
         'soft_versions' => '*'
@@ -233,7 +234,8 @@ class BaseController extends ApplicationController
 
         if (isProduction()) {
             if ($this->currentProductChannel()->ckey &&
-                $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android') {
+                $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android'
+            ) {
                 info("Exce 客户端异常", $this->context());
                 return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
             }
@@ -262,7 +264,8 @@ class BaseController extends ApplicationController
 
         //对方用户不存在
         if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
-            || $this->otherUserId() && !$this->otherUser()) {
+            || $this->otherUserId() && !$this->otherUser()
+        ) {
             return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
         }
 
