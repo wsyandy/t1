@@ -90,6 +90,11 @@ class GiftOrders extends BaseModel
         $gift_order->gift_num = $gift_num;
         $gift_order->receiver_user_type = $receiver->user_type;
         $gift_order->sender_user_type = $sender->user_type;
+
+        if ($sender->room_id && $receiver->room_id && $sender->room_id == $receiver->room_id) {
+            $gift_order->room_id = $sender->room_id;
+        }
+
         if ($gift_order->create()) {
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];

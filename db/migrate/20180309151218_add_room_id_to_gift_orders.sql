@@ -1,0 +1,1 @@
+ALTER TABLE gift_orders ADD COLUMN room_id INTEGER DEFAULT 0;
