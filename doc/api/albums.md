@@ -7,7 +7,7 @@
 ##### 1.1 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|image_file0~8|图片文件|file|否|上传的图片 支持多张上传,多张图片传参格式:image_file0,image_file1--image_file8最多传9张
+|image_file0~26|图片文件|file|否|上传的图片 支持多张上传,多张图片传参格式:image_file0,image_file1--image_file26最多传27张
 
 ##### 1.2 回应参数说明
 ```
