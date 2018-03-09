@@ -179,7 +179,7 @@ class Rooms extends BaseModel
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
             $user->user_role_at = time();
         }
-        
+
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
         $this->last_at = time();
@@ -1126,5 +1126,20 @@ class Rooms extends BaseModel
         }
 
         return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
+    }
+
+    function statIncome($amount)
+    {
+        $db = Users::getUserDb();
+
+        if ($amount) {
+            $db->zincrby("stat_room_income_list", $amount, $this->id);
+        }
+    }
+
+    static function roomIncomeList()
+    {
+        $db = Users::getUserDb();
+        return $db->zrange("stat_room_income_list", 0, -1);
     }
 }

@@ -23,6 +23,11 @@ class GiftOrders extends BaseModel
      */
     private $_sender;
 
+    /**
+     * @type Rooms
+     */
+    private $_room;
+
     static $STATUS = [
         GIFT_ORDER_STATUS_WAIT => '等待支付',
         GIFT_ORDER_STATUS_SUCCESS => '支付成功',
@@ -103,6 +108,12 @@ class GiftOrders extends BaseModel
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
+
+                //统计房间收益
+                if ($gift_order->room) {
+                    $gift_order->room->statIncome($gift_order->amount);
+                }
+
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
             }
