@@ -294,5 +294,21 @@ class UsersTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    //修复没有产品渠道的用户
+    function fixProductChannelId()
+    {
+        $cond = [
+            'conditions' => 'product_channel_id is null'
+        ];
+        $users = Users::find($cond);
+        foreach ($users as $user) {
+            if (!$user->product_channel_id) {
+                $user->product_channel_id = 1;
+                echoLine($user->id);
+                $user->save();
+            }
+        }
+    }
 }
 
