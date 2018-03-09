@@ -96,8 +96,8 @@ class GiftOrders extends BaseModel
         $gift_order->receiver_user_type = $receiver->user_type;
         $gift_order->sender_user_type = $sender->user_type;
 
-        if ($sender->room_id && $receiver->room_id && $sender->room_id == $receiver->room_id) {
-            $gift_order->room_id = $sender->room_id;
+        if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
+            $gift_order->room_id = $sender->current_room_id;
         }
 
         if ($gift_order->create()) {

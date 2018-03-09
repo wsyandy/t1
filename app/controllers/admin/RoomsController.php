@@ -278,6 +278,7 @@ class RoomsController extends BaseController
     function earningsAction()
     {
         $room_ids = \Rooms::roomIncomeList();
+        echoLine($room_ids);
         $rooms = \Rooms::findByIds($room_ids);
 
         $this->view->rooms = $rooms;
@@ -302,7 +303,6 @@ class RoomsController extends BaseController
             $results[date('Ymd', $start_at)][2] = $end_at;
         }
 
-        $this->view->user_id = $room->user_id;
         $this->view->room_id = $room_id;
         $this->view->results = $results;
     }

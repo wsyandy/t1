@@ -1132,8 +1132,8 @@ class Rooms extends BaseModel
     function getDayAmount($start_at, $end_at)
     {
         $cond = [
-            'conditions' => "user_id = :user_id：and room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at:",
-            'bind' => ["user_id" => $this->user_id, 'room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at]
+            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at:",
+            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at]
         ];
         $gift_orders = GiftOrders::find($cond);
         $diamonds = 0;
