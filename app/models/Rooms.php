@@ -179,6 +179,11 @@ class Rooms extends BaseModel
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
         $this->last_at = time();
 
+        //用户有可能在房间时进入房间
+        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+            $user->user_role_at = time();
+        }
+
         //如果有麦位id 为主播
         if ($user->current_room_seat_id) {
             $user->user_role = USER_ROLE_BROADCASTER; // 主播
@@ -198,8 +203,6 @@ class Rooms extends BaseModel
         $this->addUser($user);
 
         $this->save();
-
-        $user->user_role_at = time();
         $user->save();
 
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
