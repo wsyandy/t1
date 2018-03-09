@@ -179,7 +179,7 @@ class Rooms extends BaseModel
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
             $user->user_role_at = time();
         }
-        
+
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
         $this->last_at = time();
@@ -1126,5 +1126,21 @@ class Rooms extends BaseModel
         }
 
         return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
+    }
+
+    function getRoomDiamond()
+    {
+        $date = date('Y-m-d');
+        $date_at = endOfDay(strtotime($date));
+        $cond = [
+            'conditions' => "user_id = :user_id：and room_id = :room_id: and status = :status: and created_at >=:date_at: and created_at <=:date_at:",
+            'bind' => ["user_id" => $this->user_id, 'room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'data_at' => $date_at]
+        ];
+        $gift_orders = GiftOrders::find($cond);
+        $diamonds = 0;
+        foreach ($gift_orders as $gift_order) {
+            $diamonds += $gift_order->amount;
+        }
+        return $diamonds;
     }
 }

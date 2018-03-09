@@ -164,6 +164,9 @@
                     {% if isAllowed('stats', 'stat_room_time') %}
                         <li><a href="/admin/stats/stat_room_time">用户主播时长统计</a></li>
                     {% endif %}
+                    {% if isAllowed('room_earnings', 'index') %}
+                        <li><a href="/admin/room_earnings/index">房间收益统计</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
