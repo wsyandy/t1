@@ -25,7 +25,7 @@ class RoomsController extends BaseController
         if ($name) {
             $cond['conditions'] .= " and name like '%$name%' ";
         }
-        
+
         $page = 1;
         $total_page = 1;
         $per_page = 30;
@@ -273,5 +273,37 @@ class RoomsController extends BaseController
         $this->view->id = $id;
         $this->view->audios = $audios_collection;
         $this->view->room = $room;
+    }
+
+    function earningsAction()
+    {
+        $room_ids = \Rooms::roomIncomeList();
+        $rooms = \Rooms::findByIds($room_ids);
+
+        $this->view->rooms = $rooms;
+    }
+
+    function earningsDeatilAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+//        if ($room) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+//        }
+
+        $results = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $start_at = beginOfDay(time() - $i * 60 * 60 * 24);
+            $end_at = endOfDay(time() - $i * 60 * 60 * 24);
+
+            $results[date('Ymd', $start_at)][0] = $room->getDayAmount($start_at, $end_at);
+            $results[date('Ymd', $start_at)][1] = $start_at;
+            $results[date('Ymd', $start_at)][2] = $end_at;
+        }
+
+        $this->view->user_id = $room->user_id;
+        $this->view->room_id = $room_id;
+        $this->view->results = $results;
     }
 }

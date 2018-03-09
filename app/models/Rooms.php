@@ -1129,13 +1129,11 @@ class Rooms extends BaseModel
     }
 
 
-    function getRoomDiamond()
+    function getDayAmount($start_at, $end_at)
     {
-        $date = date('Y-m-d');
-        $date_at = endOfDay(strtotime($date));
         $cond = [
-            'conditions' => "user_id = :user_id：and room_id = :room_id: and status = :status: and created_at >=:date_at: and created_at <=:date_at:",
-            'bind' => ["user_id" => $this->user_id, 'room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'data_at' => $date_at]
+            'conditions' => "user_id = :user_id：and room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at:",
+            'bind' => ["user_id" => $this->user_id, 'room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at]
         ];
         $gift_orders = GiftOrders::find($cond);
         $diamonds = 0;
@@ -1152,6 +1150,12 @@ class Rooms extends BaseModel
         if ($amount) {
             $db->zincrby("stat_room_income_list", $amount, $this->id);
         }
+    }
+
+    function getAmount()
+    {
+        $db = Users::getUserDb();
+        return $db->zscore("stat_room_income_list", $this->id);
     }
 
     static function roomIncomeList()
