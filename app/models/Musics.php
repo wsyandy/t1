@@ -227,6 +227,12 @@ class Musics extends BaseModel
 
         if ($db->zscore($key, $this->id)) {
             $db->zrem($key, $this->id);
+            if ($user_id == $this->user_id) {
+                if ($this->file && !$this->checkFileMd5()) {
+                    \StoreFile::delete($this->file);
+                }
+                $this->delete();
+            }
         }
     }
 

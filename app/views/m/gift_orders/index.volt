@@ -109,7 +109,7 @@
 
         window.onscroll = function () {
             var ht = document.documentElement.scrollTop || document.body.scrollTop;
-            if (ht > 30) {
+            if (ht > 0) {
                 $("#top").css({"position": "fixed", "top": "0px", "margin": "auto"});
             }
             else {

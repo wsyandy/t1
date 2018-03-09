@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="music_none" v-show="!musics.length">
+    <div class="music_none" v-show="show_img">
         <img src="/web/images/music_none.png">
         <p>这里空空如也！快点去上传些音乐吧~</p>
     </div>
@@ -114,6 +114,7 @@
 
     var opts = {
         data: {
+            show_img: false,
             show: false,
             page: 1,
             total_page: 1,
@@ -160,7 +161,7 @@
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
                     } else {
-                        location.reload();
+                        vm.getMusic();
                     }
                 });
             },
@@ -286,6 +287,11 @@
 //                        vm.musics.push(item);
 //                    });
                     vm.musics = resp.musics;
+                    if (vm.musics.length == 0) {
+                        vm.show_img = true;
+                    } else {
+                        vm.show_img = false;
+                    }
                     vm.$nextTick(function () {
                         var music = document.querySelectorAll(".music");
                         vm.musics.forEach(function (item, i) {
