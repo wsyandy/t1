@@ -177,19 +177,17 @@ ts = function () {
         return weixin_version;
     }
 
-    $.isWeibo = function () {
+    $.isWeiboClient = function () {
         var ua = navigator.userAgent;
-        console.log('Weibo');
-
-        if (ua.indexOf('Weibo/') < 0) {
+        if (ua.indexOf('Weibo') < 0) {
             return false;
         }
+
         return true;
     };
 
-    $.isQq = function () {
+    $.isQqClient = function () {
         var ua = navigator.userAgent;
-        console.log('Qq')
         if (ua.indexOf('QQ/') < 0) {
             return false;
         }
