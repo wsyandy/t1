@@ -1128,6 +1128,7 @@ class Rooms extends BaseModel
         return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
     }
 
+
     function getRoomDiamond()
     {
         $date = date('Y-m-d');
@@ -1142,5 +1143,20 @@ class Rooms extends BaseModel
             $diamonds += $gift_order->amount;
         }
         return $diamonds;
+    }
+
+    function statIncome($amount)
+    {
+        $db = Users::getUserDb();
+
+        if ($amount) {
+            $db->zincrby("stat_room_income_list", $amount, $this->id);
+        }
+    }
+
+    static function roomIncomeList()
+    {
+        $db = Users::getUserDb();
+        return $db->zrange("stat_room_income_list", 0, -1);
     }
 }
