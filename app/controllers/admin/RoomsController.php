@@ -284,7 +284,7 @@ class RoomsController extends BaseController
         $this->view->rooms = $rooms;
     }
 
-    function earningsDeatilAction()
+    function earningsDetailAction()
     {
         $room_id = $this->params('id');
         $room = \Rooms::findFirstById($room_id);
