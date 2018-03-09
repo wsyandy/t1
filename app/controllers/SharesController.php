@@ -21,6 +21,7 @@ class SharesController extends ApplicationController
         $user = $share_history->user;
 
         $user_agent = $this->request->getUserAgent();
+        debug($user_agent);
 
         $platform = 'android';
         if (preg_match('/ios|iphone|ipad/i', $user_agent)) {
@@ -40,7 +41,7 @@ class SharesController extends ApplicationController
 
         $data = $share_history->data;
         $room_id = '';
-        
+
         if ($data) {
             $data = json_decode($data, true);
             $room_id = fetch($data, 'room_id');
