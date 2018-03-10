@@ -371,8 +371,7 @@ class UsersController extends BaseController
         }
 
         //声网登录密码
-        $basic_json['im_password'] = md5($this->currentUser()->id);
-        $basic_json['sidebar_list'] = ['show_union' => $show_union];
+        $detail_json['sidebar_list'] = ['show_union' => $show_union];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
