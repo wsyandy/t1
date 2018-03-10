@@ -697,7 +697,7 @@ class Rooms extends BaseModel
 
         $rank = array_rand($orders);
         $order = $orders[$rank];
-        $limit = mt_rand(1, 5);
+        $limit = mt_rand(1, 2);
 
         $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
