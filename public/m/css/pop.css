@@ -78,6 +78,7 @@ a{text-decoration: none;color: #000;}
 .fd_text .error_reason{
     margin-top: 10px;
     font-size: 20px;
+    text-align: center;
 }
 
 .fd_text span{
