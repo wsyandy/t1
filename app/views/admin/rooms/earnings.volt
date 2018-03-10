@@ -11,12 +11,12 @@
     房间话题: {{ room.topic }}<br/>
 {% endmacro %}
 
-{% macro room_earnings_link(room) %}
-    房主总收益:<a href="/admin/rooms/earnings_detail?id={{ room.id }}">{{ room.amount }}钻石</a><br/>
+{% macro earnings_detail(room) %}
+    <a href="/admin/rooms/earnings_detail?id={{ room.id }}">明细</a><br/>
 {% endmacro %}
 
 {% macro avatar_image(room) %}
     <img src="{{ room.user_avatar_url }}" height="50" width="50"/>
 {% endmacro %}
 
-{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info","房主收益":"room_earnings_link"]) }}
+{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info","房主收益(钻石)":"amount","明细":"earnings_detail"]) }}
