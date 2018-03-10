@@ -68,7 +68,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getUserIpAction()
     {
-        $user = Users::findFirstById(39);
+        $user = Users::findFirstById(31290);
+        echoLine($user->user_role);
         echoLine($user->getIntranetIp());
         echoLine($user->getOnlineToken());
     }
