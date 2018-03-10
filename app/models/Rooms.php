@@ -1165,9 +1165,9 @@ class Rooms extends BaseModel
         $total_entries = $db->zcard($key);
         $offset = $per_page * ($page - 1);
         $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $room_ids = implode(',', $room_ids);
 
-        if (isset($cond['conditions'])) {
-            $cond['conditions'] .= " and id in ({$room_ids})";
+        if (isset($cond['conditions']) ) {
             debug($cond);
             $rooms = self::find($cond);
         } else {

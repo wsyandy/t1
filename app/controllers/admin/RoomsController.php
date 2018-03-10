@@ -286,9 +286,9 @@ class RoomsController extends BaseController
             $cond['conditions'] = " user_id > 0";
         }
 
-        if ($name) {
-            $cond['conditions'] .= " and name like '%$name%' ";
-        }
+//        if ($name) {
+//            $cond['conditions'] .= " and name like '%$name%' ";
+//        }
 
         $page = $this->params('page', 1);
 
