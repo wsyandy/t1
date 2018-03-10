@@ -13,11 +13,15 @@ class WithdrawHistoriesController extends BaseController
     function indexAction()
     {
         $user = $this->currentUser();
+        $product_channel = $user->product_channel;
+        $rate = $product_channel->rateOfHiCoinToMoney();
         $hi_coins = $user->hi_coins;
+        $this->view->rate = $rate;
         $this->view->hi_coins = $hi_coins;
-        $this->view->amount = $hi_coins / 10;
+        $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
+        $this->view->title = '我的收益';
     }
 
     function createAction()
@@ -28,7 +32,7 @@ class WithdrawHistoriesController extends BaseController
             $name = $this->params('name', null);
             $account = $this->params('account', null);
 
-            if (isBlank($money) || !preg_match('/^\d+\d$/', $money) || $money < 10) {
+            if (isBlank($money) || !preg_match('/^\d+\d$/', $money) || $money < 50) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
@@ -64,6 +68,7 @@ class WithdrawHistoriesController extends BaseController
         $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
+        $this->view->title = '我要提现';
     }
 
     function recordsAction()
@@ -83,6 +88,7 @@ class WithdrawHistoriesController extends BaseController
         );
 
         $this->view->total_money = $total_money;
+        $this->view->title = '领取记录';
     }
 
     function listAction()
