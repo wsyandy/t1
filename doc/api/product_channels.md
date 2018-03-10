@@ -21,7 +21,7 @@
 
 ## 2. 侧边栏显示控制
 
-> http-post ```/api/product_channels/boot_config```
+> http-get ```/api/product_channels/boot_config```
  
 ##### 2.1 请求参数说明
 
