@@ -439,4 +439,21 @@ class ProductChannels extends BaseModel
         }
         return [$this->system_tips];
     }
+
+    function toDetailJson()
+    {
+        return [
+            'official_website' => $this->official_website
+        ];
+    }
+
+    function rateOfDiamondToHiCoin()
+    {
+        return 25;
+    }
+
+    function rateOfHiCoinToMoney()
+    {
+        return 1;
+    }
 }
