@@ -296,7 +296,7 @@ class UsersTask extends \Phalcon\Cli\Task
     }
 
     //修复没有产品渠道的用户
-    function fixProductChannelId()
+    function fixProductChannelIdAction()
     {
         $cond = [
             'conditions' => 'product_channel_id is null'
