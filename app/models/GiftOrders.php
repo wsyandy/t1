@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/1/3
  * Time: 上午10:48
  */
-
 class GiftOrders extends BaseModel
 {
     /**
@@ -48,6 +48,8 @@ class GiftOrders extends BaseModel
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
             'created_at_text' => $this->created_at_text,
+            'user_id' => $this->user_id,
+            'sender_id' => $this->sender_id
         ];
     }
 
