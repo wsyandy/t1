@@ -91,12 +91,6 @@
             $("#jump").click(function (e) {
                 e.preventDefault();
 
-                if ('disabled' == $(this).attr('disabled')) {
-                    return;
-                }
-
-                $(this).attr('disabled', 'disabled');
-
                 var code = $("#code").val();
                 var app_url = code + '://enter_room';
                 var soft_version_id = $("#soft_version_id").val();
