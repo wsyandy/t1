@@ -278,13 +278,7 @@ class RoomsController extends BaseController
     function earningsAction()
     {
         $cond = $this->getConditions('room');
-        $name = $this->params('name');
-
-        if (isset($cond['conditions'])) {
-            $cond['conditions'] .= " and user_id > 0";
-        } else {
-            $cond['conditions'] = " user_id > 0";
-        }
+//        $name = $this->params('name');
 
 //        if ($name) {
 //            $cond['conditions'] .= " and name like '%$name%' ";
