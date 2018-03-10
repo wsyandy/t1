@@ -215,17 +215,30 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             $i++;
+            echoLine("======");
             $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
 
             if ($total_amount > 100000000) {
                 continue;
             }
-
+            echoLine($total_amount, $user->id, $user->hi_coins);
             $product_channel = $user->product_channel;
+
+            if (!$product_channel) {
+                echoLine($user->id);
+                continue;
+            }
+
             $rate = $product_channel->rateOfDiamondToHiCoin();
 
+            if ($total_amount < 1) {
+                echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
+                continue;
+            }
+
             $user->hi_coins = $total_amount / $rate;
-            echoLine($i, $total_amount, $user->hi_coins);
+            echoLine($total_amount, $rate);
+            //echoLine($i, $total_amount, $user->id, $user->hi_coins);
             $user->update();
         }
     }
