@@ -175,6 +175,12 @@ define('COMPLAINT_USER', 1); //举报用户
 define('COMPLAINT_ROOM', 2); //举报房间
 define('COMPLAINT_MUSIC', 3); //举报音乐
 
+define('COMPLAINT_TYPE_SEX',1); //色情
+define('COMPLAINT_TYPE_HARASS',2); //骚扰
+define('COMPLAINT_TYPE_BAD_INFO',3); //不良信息
+define('COMPLAINT_TYPE_AD',4); //广告
+define('COMPLAINT_TYPE_ERROR_CONTENT',5); //歌名不符和内容
+
 //分享记录类型
 define('SHARE_TYPE_WEIXIN', 1);//微信好友
 define('SHARE_TYPE_WEIXIN_CIRCLE', 2);//朋友圈
