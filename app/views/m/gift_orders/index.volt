@@ -13,7 +13,7 @@
         <p><span>{{ hi_coins }}</span> Hi币 <img src="/m/images/gift_icon.png"></p>
     </div>
     <div class="gift_list" v-for="gift_order in gift_orders" v-if="receive">
-        <div class="list_left">
+        <div class="list_left " @click.stop="userDetail(gift_order.sender_id)">
             <img :src="gift_order.sender_avatar_small_url">
         </div>
         <div class="list_right">
@@ -34,12 +34,12 @@
     </div>
 
     <div class="gift_list" v-for="gift_order in gift_orders" v-if="!receive">
-        <div class="list_left">
+        <div class="list_left" @click.stop="userDetail(gift_order.user_id)">
             <img :src="gift_order.user_avatar_small_url">
         </div>
         <div class="list_right">
             <div class="top">
-                <h3 @click.stop="userDetail(gift_order.sender_id)">${gift_order.user_name} <span>收到您的礼物</span></h3>
+                <h3 @click.stop="userDetail(gift_order.user_id)">${gift_order.user_name} <span>收到您的礼物</span></h3>
                 <p>${ gift_order.created_at_text }</p>
             </div>
             <div class="bottom">
@@ -77,6 +77,7 @@
         },
         methods: {
             userDetail: function (user_id) {
+                console.log(user_id);
                 location.href = "app://users/other_detail?user_id=" + user_id;
             }
         }
