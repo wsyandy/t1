@@ -1,3 +1,16 @@
+<form action="/admin/rooms/earnings" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="id_eq">ID</label>
+    <input name="room[id_eq]" type="text" id="id_eq"/>
+
+    <label for="user_id_eq">房主ID</label>
+    <input name="room[user_id_eq]" type="text" id="user_id_eq"/>
+
+    <label for="name">房间名</label>
+    <input name="name" type="text" id="name"/>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
 {% macro user_info(room) %}
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
