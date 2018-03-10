@@ -408,7 +408,16 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
+        $show_union = false;
+
+        if (isProduction()) {
+            $show_union = true;
+        }
+
+        $sidebar_list = ['show_union' => $show_union]; //侧边栏展示控制
+
+        $res = array_merge($basic_json, ['sidebar_list' => $sidebar_list]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
     function emchatAction()
