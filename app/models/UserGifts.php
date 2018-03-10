@@ -31,8 +31,11 @@ class UserGifts extends BaseModel
 
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findFirstById($gift_order->gift_id);
+
         $gift_amount = $gift->amount;
         $gift_num = $gift_order->gift_num;
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
@@ -48,6 +51,8 @@ class UserGifts extends BaseModel
         $hi_coins = ($gift_amount * $gift_num) / $rate;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
