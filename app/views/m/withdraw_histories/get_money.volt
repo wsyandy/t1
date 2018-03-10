@@ -14,7 +14,7 @@
     <h3>总共可提现金额：{{ amount }}元</h3>
 </div>
 <div class="get_money_wrap">
-    <h2>提现金额 <span>（满10元可提现，且需为整数）</span></h2>
+    <h2>提现金额 <span>（满50元可提现，且需为整数）</span></h2>
     <div class="money_num">
         <span>￥</span>
         <input type="number" name="" id="money">
