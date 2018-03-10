@@ -13,7 +13,7 @@
             <td>{{ day }}</td>
             <td>{{ result }}钻石</td>
             <td>
-                <a href="/admin/gift_orders?gift_order[room_id_eq]={{ room_id }}&status=1&start_at={{ result }}&end_at={{ result }}">明细</a>
+                <a href="/admin/gift_orders?gift_order[room_id_eq]={{ room_id }}&status=1&start_at={{ day }}&end_at={{ day }}">明细</a>
             </td>
         </tr>
     {% endfor %}
