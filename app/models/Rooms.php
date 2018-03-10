@@ -1167,7 +1167,7 @@ class Rooms extends BaseModel
         $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
         $room_ids = implode(',', $room_ids);
 
-        if (isset($cond['conditions']) ) {
+        if (isPresent($cond)) {
             debug($cond);
             $rooms = self::find($cond);
         } else {
