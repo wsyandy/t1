@@ -12,8 +12,8 @@ class GiftOrdersController extends BaseController
 {
     function indexAction()
     {
-        $conds = $this->getConditions('gift_order');
-        $conds['order'] = 'id desc';
+        $cond = $this->getConditions('gift_order');
+        $cond['order'] = 'id desc';
 
         $start_at = $this->params('start_at', date('Y-m-d'));
         $end_at = $this->params('end_at', date('Y-m-d'));
@@ -39,7 +39,7 @@ class GiftOrdersController extends BaseController
         $page = 1;
         $per_page = 50;
         $total_entries = $page * $per_page;
-        $gift_orders = \GiftOrders::findPagination($conds, $page,$per_page, $total_entries);
+        $gift_orders = \GiftOrders::findPagination($cond, $page,$per_page, $total_entries);
         $this->view->gift_orders = $gift_orders;
 
         $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');

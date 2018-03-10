@@ -104,25 +104,32 @@ h1, h2, h3, h4 {
 .gift_money p {
     font-size: 14px;
     color: #686868;
-    position: relative;
+    /*position: relative;*/
     padding-right: 20px;
 }
 
-.gift_money p::before {
-    position: absolute;
-    content: '';
-    width: 12px;
+.gift_money img {
+    /*width: 12px;*/
     height: 12px;
-    background: url(../images/gift_icon.png) no-repeat;
     background-size: 100%;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -webkit-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
 }
+
+/*.gift_money p::before {*/
+    /*position: absolute;*/
+    /*content: '';*/
+    /*width: 12px;*/
+    /*height: 12px;*/
+    /*background: url(../images/gift_icon.png) no-repeat;*/
+    /*background-size: 100%;*/
+    /*right: 0;*/
+    /*top: 50%;*/
+    /*transform: translateY(-50%);*/
+    /*-ms-transform: translateY(-50%);*/
+    /*-moz-transform: translateY(-50%);*/
+    /*-webkit-transform: translateY(-50%);*/
+    /*-o-transform: translateY(-50%);*/
+/*}*/
 
 .gift_money p span {
     font-size: 18px;

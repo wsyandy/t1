@@ -18,10 +18,10 @@ class WithdrawHistoriesController extends BaseController
         $total_page = 1;
         $total_entries = $per_page * $total_page;
         $cond = $this->getConditions('withdraw_history');
-        $cond['withdraw_history'] = 'id desc';
 
         $start_at = $this->params('start_at', date('Y-m-d'));
         $end_at = $this->params('end_at', date('Y-m-d'));
+        debug($start_at,$end_at);
         if ($start_at) {
             $start_at = beginOfDay(strtotime($start_at));
             if (isset($cond['conditions'])) {
@@ -42,6 +42,7 @@ class WithdrawHistoriesController extends BaseController
         }
 
         $cond['order'] = 'id desc';
+        debug($cond);
 
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
