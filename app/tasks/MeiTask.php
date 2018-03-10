@@ -468,5 +468,20 @@ class MeiTask extends \Phalcon\Cli\Task
     function testSecondAction()
     {
         echoLine(millisecondTime());
+
+        Chats::sendSystemMessage(4, CHAT_CONTENT_TYPE_TEXT, "ss");
+
+        $emchat = new \Emchat();
+        $action = 'admin_message';
+        $target_type = 'users';
+
+        $ext = ['id' => 1, 'sender_id' => 1, 'receiver_id' => 4, 'created_at' => time(), 'content' => 'ddd', 'content_type' => 'text/plain'];
+
+        $emchat->sendText("系统", 4, "3333");
+    }
+
+    function testGiftOrderAction()
+    {
+        echoLine(GiftOrders::findFirstById(30351));
     }
 }
