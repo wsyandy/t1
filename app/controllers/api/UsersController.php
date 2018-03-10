@@ -363,8 +363,17 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
+
+        $show_union = false;
+
+        if (isProduction()) {
+            $show_union = true;
+        }
+
         //声网登录密码
         $basic_json['im_password'] = md5($this->currentUser()->id);
+        $basic_json['sidebar_list'] = ['show_union' => $show_union];
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
@@ -408,16 +417,7 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
-        $show_union = false;
-
-        if (isProduction()) {
-            $show_union = true;
-        }
-
-        $sidebar_list = ['show_union' => $show_union]; //侧边栏展示控制
-
-        $res = array_merge($basic_json, ['sidebar_list' => $sidebar_list]);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 
     function emchatAction()
