@@ -43,7 +43,9 @@ class UserGifts extends BaseModel
         $user_gift->save();
 
         $user = $user_gift->user;
-        $hi_coins = ($gift_amount * $gift_num) / 10;
+        $product_channel = $user->product_channel;
+        $rate = $product_channel->rateOfDiamondToHiCoin();
+        $hi_coins = ($gift_amount * $gift_num) / $rate;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
 
