@@ -191,6 +191,9 @@
         }
         ...
     ]
+    sidebar_list: [ //侧边栏展示控制
+        show_union boolean 是否展示家族 true/false  true展示 false不展示
+    ]
 }
 ```
 
