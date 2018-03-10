@@ -63,8 +63,14 @@
             $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
         } else {
 
-            $(".upload_btn").click(function (e) {
+            $("#jump_room").click(function (e) {
                 e.preventDefault();
+
+                if ('disabled' == $(this).attr('disabled')) {
+                    return;
+                }
+
+                $(this).attr('disabled', 'disabled');
 
                 var code = $("#code").val();
                 var app_url = code + '://enter_room';
@@ -78,13 +84,44 @@
                 window.location = app_url;
 
                 if (soft_version_id) {
-                    setTimeout(function () {
-                        window.location = "/soft_versions/index?id=" + soft_version_id;
-                    }, 2000);
+                    setTimeout(showTip, 2000);
+                }
+            });
+
+            $("#jump").click(function (e) {
+                e.preventDefault();
+
+                if ('disabled' == $(this).attr('disabled')) {
+                    return;
+                }
+
+                $(this).attr('disabled', 'disabled');
+
+                var code = $("#code").val();
+                var app_url = code + '://enter_room';
+                var soft_version_id = $("#soft_version_id").val();
+                var room_id = $("#room_id").val();
+
+                if (room_id) {
+                    app_url += '?room_id=' + room_id;
+                }
+
+                window.location = app_url;
+
+                if (soft_version_id) {
+                    setTimeout(Download, 2000);
                 }
             });
         }
+
+        $(".close_right").click(function () {
+            Download()
+        })
     })
+
+    function Download() {
+        window.location = "/soft_versions/index?id=" + {{  soft_version_id }};
+    }
 </script>
 
 </body>
