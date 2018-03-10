@@ -484,5 +484,9 @@ class MeiTask extends \Phalcon\Cli\Task
     function testGiftOrderAction()
     {
         echoLine(GiftOrders::findFirstById(30351));
+
+        $num = GiftOrders::sum(['conditions' => 'user_id = :user_id: and gift_id=:gift_id:',
+            'bind' => ['user_id' => 31279, 'gift_id' => 10], 'column' => 'gift_num']);
+        echoLine($num);
     }
 }
