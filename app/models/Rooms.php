@@ -1158,9 +1158,26 @@ class Rooms extends BaseModel
         return $db->zscore("stat_room_income_list", $this->id);
     }
 
-    static function roomIncomeList()
+    static function roomIncomeList($page, $per_page, $cond)
     {
         $db = Users::getUserDb();
-        return $db->zrange("stat_room_income_list", 0, -1);
+        $key = "stat_room_income_list";
+        $total_entries = $db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and id in ({$room_ids})";
+            debug($cond);
+            $rooms = self::find($cond);
+        } else {
+            $rooms = self::findByIds($room_ids);
+        }
+
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
     }
 }

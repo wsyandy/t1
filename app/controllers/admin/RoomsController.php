@@ -277,9 +277,24 @@ class RoomsController extends BaseController
 
     function earningsAction()
     {
-        $room_ids = \Rooms::roomIncomeList();
-        echoLine($room_ids);
-        $rooms = \Rooms::findByIds($room_ids);
+        $cond = $this->getConditions('room');
+        $name = $this->params('name');
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and user_id > 0";
+        } else {
+            $cond['conditions'] = " user_id > 0";
+        }
+
+        if ($name) {
+            $cond['conditions'] .= " and name like '%$name%' ";
+        }
+
+        $page = $this->params('page', 1);
+
+        $per_page = $this->params('per_page', 20);
+
+        $rooms = \Rooms::roomIncomeList($page, $per_page, $cond);
 
         $this->view->rooms = $rooms;
     }
