@@ -288,9 +288,6 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id');
         $room = \Rooms::findFirstById($room_id);
-//        if ($room) {
-//            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-//        }
 
         $results = [];
 
@@ -298,9 +295,7 @@ class RoomsController extends BaseController
             $start_at = beginOfDay(time() - $i * 60 * 60 * 24);
             $end_at = endOfDay(time() - $i * 60 * 60 * 24);
 
-            $results[date('Ymd', $start_at)][0] = $room->getDayAmount($start_at, $end_at);
-            $results[date('Ymd', $start_at)][1] = $start_at;
-            $results[date('Ymd', $start_at)][2] = $end_at;
+            $results[date('Ymd', $start_at)] = $room->getDayAmount($start_at, $end_at);
         }
 
         $this->view->room_id = $room_id;
