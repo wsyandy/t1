@@ -364,15 +364,6 @@ class UsersController extends BaseController
     {
         $detail_json = $this->currentUser()->toDetailJson();
 
-        $show_union = false;
-
-        if (isProduction()) {
-            $show_union = true;
-        }
-
-        //声网登录密码
-        $detail_json['sidebar_list'] = ['show_union' => $show_union];
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 

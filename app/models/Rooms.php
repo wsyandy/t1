@@ -908,7 +908,7 @@ class Rooms extends BaseModel
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("Exce", $user->id, $this->id, $payload);
+                info("user_already_close", $user->id, $this->id, $payload);
                 continue;
             }
 
