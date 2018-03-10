@@ -13,6 +13,18 @@ class WithdrawHistories extends BaseModel
      */
     private $_user;
 
+    function afterUpdate()
+    {
+        if ($this->hasChanged('status') && WITHDRAW_STATUS_SUCCESS == $this->status) {
+            $user = $this->user;
+            $product_channel = $this->product_channel;
+            $rate = $product_channel->rateOfHiCoinToMoney();
+            debug($user->id, $this->amount, $rate);
+            $user->hi_coins = $user->hi_coins - $this->amount * $rate;
+            $user->save();
+        }
+    }
+
     static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
 
     static function createWithdrawHistories($user, $opts)
