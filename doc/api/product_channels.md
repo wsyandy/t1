@@ -19,7 +19,7 @@
 }
 ```
 
-## 2. 侧边栏显示控制
+## 2. 启动配置
 
 > http-get ```/api/product_channels/boot_config```
  
