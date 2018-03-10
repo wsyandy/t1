@@ -5,8 +5,8 @@
     <label for="user_id_eq">房主ID</label>
     <input name="room[user_id_eq]" type="text" id="user_id_eq"/>
 
-    <label for="name">房间名</label>
-    <input name="name" type="text" id="name"/>
+    {#<label for="name">房间名</label>#}
+    {#<input name="name" type="text" id="name"/>#}
 
     <button type="submit" class="ui button">搜索</button>
 </form>
