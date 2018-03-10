@@ -88,9 +88,6 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
-
-            \Emchat::delay()->createEmUser($this->id);
-            \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
     }
 
@@ -121,10 +118,12 @@ class Users extends BaseModel
 
         if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
             $this->registerStat();
+            $this->createEmUser();
         }
 
         if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
             $this->registerStat();
+            $this->createEmUser();
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
@@ -944,6 +943,12 @@ class Users extends BaseModel
             $user->mobile_operator = $mobile_operator;
             $user->save();
         }
+    }
+
+    function createEmUser()
+    {
+        \Emchat::delay()->createEmUser($this->id);
+        \Chats::delay(5)->sendWelcomeMessage($this->id);
     }
 
     function registerStat()
