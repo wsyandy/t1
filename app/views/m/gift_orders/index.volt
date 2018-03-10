@@ -18,7 +18,7 @@
         </div>
         <div class="list_right">
             <div class="top">
-                <h3>${gift_order.sender_name} <span>送给您的礼物</span></h3>
+                <h3 @click.stop="userDetail(gift_order.sender_id)">${gift_order.sender_name} <span>送给您的礼物</span></h3>
                 <p>${ gift_order.created_at_text }</p>
             </div>
             <div class="bottom">
@@ -39,7 +39,7 @@
         </div>
         <div class="list_right">
             <div class="top">
-                <h3>${gift_order.user_name} <span>收到您的礼物</span></h3>
+                <h3 @click.stop="userDetail(gift_order.sender_id)">${gift_order.user_name} <span>收到您的礼物</span></h3>
                 <p>${ gift_order.created_at_text }</p>
             </div>
             <div class="bottom">
@@ -75,7 +75,11 @@
                 getGiftOrders();
             }
         },
-        methods: {}
+        methods: {
+            userDetail: function (user_id) {
+                location.href = "app://users/other_detail?user_id=" + user_id;
+            }
+        }
     };
 
     var vm = XVue(opts);
