@@ -445,10 +445,13 @@ trait UserAttrs
     function getWithdrawAmount()
     {
         $hi_coins = $this->hi_coins;
+
         if (!$hi_coins) {
             return 0;
         } else {
-            return $hi_coins / 10;
+            $product_channel = $this->product_channel;
+            $rate = $product_channel->rateOfHiCoinToMoney();
+            return $hi_coins / $rate;
         }
     }
 
