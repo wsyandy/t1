@@ -384,6 +384,11 @@ class Rooms extends BaseModel
         $user_ids = $hot_cache->zrange($key, 0, -1);
         $user_ids = array_diff($user_ids, $filter_user_ids);
         $user_id = $user_ids[array_rand($user_ids)];
+
+        if (!$user_id) {
+            return null;
+        }
+
         $user = Users::findFirstById($user_id);
 
         return $user;
