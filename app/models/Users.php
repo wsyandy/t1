@@ -1798,7 +1798,10 @@ class Users extends BaseModel
             if ($receiver) {
 
                 $gift_num = mt_rand(1, 15);
-                $gifts = Gifts::findBy(['status' => STATUS_ON]);
+
+                $gifts = Gifts::find(['conditions' => 'status = :status:',
+                    'bind' => ['status' => STATUS_ON], 'columns' => 'id']);
+
                 $gift_ids = [];
 
                 foreach ($gifts as $gift) {
