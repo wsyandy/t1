@@ -175,11 +175,11 @@ define('COMPLAINT_USER', 1); //举报用户
 define('COMPLAINT_ROOM', 2); //举报房间
 define('COMPLAINT_MUSIC', 3); //举报音乐
 
-define('COMPLAINT_TYPE_SEX',1); //色情
-define('COMPLAINT_TYPE_HARASS',2); //骚扰
-define('COMPLAINT_TYPE_BAD_INFO',3); //不良信息
-define('COMPLAINT_TYPE_AD',4); //广告
-define('COMPLAINT_TYPE_ERROR_CONTENT',5); //歌名不符和内容
+define('COMPLAINT_TYPE_SEX', 1); //色情
+define('COMPLAINT_TYPE_HARASS', 2); //骚扰
+define('COMPLAINT_TYPE_BAD_INFO', 3); //不良信息
+define('COMPLAINT_TYPE_AD', 4); //广告
+define('COMPLAINT_TYPE_ERROR_CONTENT', 5); //歌名不符和内容
 
 //分享记录类型
 define('SHARE_TYPE_WEIXIN', 1);//微信好友
@@ -193,7 +193,10 @@ define('SHARE_TYPE_CARD', 7);//邀请卡
 define('SHARE_STATUS_WAIT', 0);
 define('SHARE_STATUS_SUCCESS', 1);  //分享成功
 define('SHARE_STATUS_FAIL', 2); //分享失败
-define('SHARE_STATUS_CANCEL',3); //分享取消
+define('SHARE_STATUS_CANCEL', 3); //分享取消
 
-define('BANNER_TYPE_ROOM',1); //房间banner图
-define('BANNER_TYPE_URL',2); //链接banner图
+define('BANNER_TYPE_ROOM', 1); //房间banner图
+define('BANNER_TYPE_URL', 2); //链接banner图
+
+define('UNION_TYPE_PUBLIC', 1); //工会
+define('UNION_TYPE_PRIVATE', 2); //家族

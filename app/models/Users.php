@@ -57,6 +57,11 @@ class Users extends BaseModel
      */
     private $_current_room_seat;
 
+    /**
+     * @type Unions
+     */
+    private $_union;
+
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
@@ -2397,5 +2402,11 @@ class Users extends BaseModel
         }
 
         info($fd, $online_token);
+    }
+
+    //是否为公会长
+    function isUnionHost($union)
+    {
+        return $this->id == $union->user_id;
     }
 }

@@ -489,4 +489,12 @@ class MeiTask extends \Phalcon\Cli\Task
             'bind' => ['user_id' => 31279, 'gift_id' => 10], 'column' => 'gift_num']);
         echoLine($num);
     }
+
+    function goodNumAction()
+    {
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
+        echoLine($db->zrange($good_num_list_key, 0, -1));
+        $db->zadd($good_num_list_key, time(), 1000777);
+    }
 }
