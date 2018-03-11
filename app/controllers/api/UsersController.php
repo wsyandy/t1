@@ -64,6 +64,9 @@ class UsersController extends BaseController
             $user->password = '';
             $user->update();
 
+            $device->user_id = 0;
+            $device->update();
+
             list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
         }
 

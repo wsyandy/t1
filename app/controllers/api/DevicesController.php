@@ -38,6 +38,8 @@ class DevicesController extends BaseController
                     $user->user_type = USER_TYPE_SILENT;
                     $user->user_status = USER_STATUS_OFF;
                     $user->device_id = 0;
+                    $device->user_id = 0;
+                    $device->update();
                     $user->update();
 
                     $user = \Users::registerForClientByDevice($device);
