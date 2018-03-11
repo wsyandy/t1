@@ -1809,12 +1809,13 @@ class Users extends BaseModel
                 $gift_id = $gift_ids[$index];
                 $gift = Gifts::findFirstById($gift_id);
 
+                $give_result = true;
+
                 if ($receiver->isActive()) {
                     $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
-                    if ($give_result) {
-                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
-                    }
-                } else {
+                }
+
+                if ($give_result) {
                     $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                 }
             }
