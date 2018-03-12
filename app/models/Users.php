@@ -952,8 +952,10 @@ class Users extends BaseModel
 
     function createEmUser()
     {
-        \Emchat::delay()->createEmUser($this->id);
-        \Chats::delay(5)->sendWelcomeMessage($this->id);
+        if ($this->isActive()) {
+            \Emchat::delay()->createEmUser($this->id);
+            \Chats::delay(5)->sendWelcomeMessage($this->id);
+        }
     }
 
     function registerStat()
