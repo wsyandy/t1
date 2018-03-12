@@ -323,5 +323,42 @@ class UsersTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    //上线需修复资料
+    function fixCharmAndWealthAction()
+    {
+        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
+
+        foreach ($users as $user) {
+
+            $gift_orders = GiftOrders::find([
+                'conditions' => "sender_id = :user_id: or user_id = :user_id: and status = :status:",
+                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+            ]);
+
+            $charm = 0;
+            $wealth = 0;
+
+            if (count($gift_orders) < 1) {
+                echoLine("no gift_order");
+                continue;
+            }
+
+            foreach ($gift_orders as $gift_order) {
+                if ($gift_order->sender_id == $user->id) {
+                    $wealth += $gift_order->amount;
+                }
+                if ($gift_order->user_id == $user->id) {
+                    $charm += $gift_order->amount;
+                }
+            }
+
+            $user->charm = $charm;
+            $user->wealth = $wealth;
+
+            echoLine($user->id,"charm：" . $user->charm, "wealth：" . $user->wealth);
+            $user->update();
+        }
+    }
 }
 
