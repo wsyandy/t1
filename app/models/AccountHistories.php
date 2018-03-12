@@ -21,7 +21,8 @@ class AccountHistories extends BaseModel
     static $FEE_TYPE = [
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
-        ACCOUNT_TYPE_GIVE => '系统赠送'
+        ACCOUNT_TYPE_GIVE => '系统赠送',
+        ACCOUNT_TYPE_CREATE_UNION => '创建工会'
     ];
 
     /**
@@ -41,13 +42,14 @@ class AccountHistories extends BaseModel
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
 
-        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile', 'union_id'] as $column) {
             $account_history->$column = fetch($opts, $column);
         }
 
         if ($account_history->create()) {
             return true;
         }
+
         return false;
     }
 

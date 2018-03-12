@@ -1,0 +1,1 @@
+ALTER TABLE unions ADD COLUMN error_reason VARCHAR (255);
