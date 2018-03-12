@@ -118,7 +118,6 @@ class GiftOrders extends BaseModel
 
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 $gift_order->update();
-
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
                 \Users::delay()->updateCharmAndWealth($gift_order->id);
@@ -130,6 +129,7 @@ class GiftOrders extends BaseModel
 
             return $result;
         }
+
         return false;
     }
 
