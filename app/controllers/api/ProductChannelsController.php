@@ -32,8 +32,8 @@ class ProductChannelsController extends BaseController
 
         $root = $this->getRoot();
         //声网登录密码
-        $detail_json['menu_config'][] = ['show' => $show, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'menu_union.png'];
-        $detail_json['menu_config'][] = ['show' => $show, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'menu_game.png'];
+        $detail_json['menu_config'][] = ['show' => $show, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union.png'];
+        $detail_json['menu_config'][] = ['show' => $show, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
