@@ -23,7 +23,7 @@
 {% endmacro %}
 
 {% macro user_info(user) %}
-    姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
+    姓名:{{ user.nickname }}  性别:{{ user.sex_text }} 段位:{{ user.segment_text }}<br/>
     魅力值:{{ user.charm_value }} 财富值:{{ user.wealth_value }}<br/>
     手机号码:{{ user.mobile }}<br/>
     设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>

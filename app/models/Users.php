@@ -2383,7 +2383,7 @@ class Users extends BaseModel
             $sender->wealth_value += $wealth_value;
             $union = $sender->union;
             if (isPresent($union)) {
-                $union->updateFameValue($sender);
+                $union->updateFameValue($wealth_value);
             }
             $sender->update;
         }
