@@ -34,8 +34,13 @@
 {
     error: 0/-1 
     error_reason: ''
-    menu_config : {
-        show_union boolean 是否展示家族 true/false  true展示 false不展示
-    }
+    menu_config : [ //菜单配置
+        {
+            show boolean 是否展示 true展示 false不展示
+            title string 名称
+            url string 跳转地址
+            icon string 图片地址
+        }
+    ]
 }
 ```

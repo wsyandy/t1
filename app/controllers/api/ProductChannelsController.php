@@ -24,14 +24,16 @@ class ProductChannelsController extends BaseController
 
     function bootConfigAction()
     {
-        $show_union = true;
+        $show = true;
 
         if (isProduction()) {
-            $show_union = false;
+            $show = false;
         }
 
+        $root = $this->getRoot();
         //声网登录密码
-        $detail_json['menu_config'] = ['show_union' => $show_union];
+        $detail_json['menu_config'][] = ['show' => $show, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'menu_union.png'];
+        $detail_json['menu_config'][] = ['show' => $show, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'menu_game.png'];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
