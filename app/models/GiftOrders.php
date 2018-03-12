@@ -108,21 +108,26 @@ class GiftOrders extends BaseModel
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
             $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+
             if ($result) {
-                $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
-                \UserGifts::delay()->updateGiftNum($gift_order->id);
-                \Users::delay()->updateExperience($gift_order->id);
-                \Users::delay()->updateCharmAndWealth($gift_order->id);
 
                 //统计房间收益
                 if ($gift_order->room) {
                     $gift_order->room->statIncome($gift_order->amount);
                 }
 
+                $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+                $gift_order->update();
+
+                \UserGifts::delay()->updateGiftNum($gift_order->id);
+                \Users::delay()->updateExperience($gift_order->id);
+                \Users::delay()->updateCharmAndWealth($gift_order->id);
+
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+                $gift_order->update();
             }
-            $gift_order->update();
+
             return $result;
         }
         return false;
