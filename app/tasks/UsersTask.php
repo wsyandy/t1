@@ -215,13 +215,15 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
             $i++;
-            echoLine("======");
+
             $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
 
             if ($total_amount > 100000000) {
                 continue;
             }
-            echoLine($total_amount, $user->id, $user->hi_coins);
+
+            //echoLine($total_amount, $user->id, $user->hi_coins);
+
             $product_channel = $user->product_channel;
 
             if (!$product_channel) {
@@ -236,8 +238,15 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $user->hi_coins = $total_amount / $rate;
-            echoLine($total_amount, $rate);
+            $hi_coins = $total_amount / $rate;
+
+            if ($hi_coins == $user->hi_coins) {
+                //echoLine("no need fix", $user->id, $hi_coins);
+                continue;
+            }
+
+            $user->hi_coins = $hi_coins;
+            //echoLine($total_amount, $rate);
             //echoLine($i, $total_amount, $user->id, $user->hi_coins);
             $user->update();
         }
@@ -356,7 +365,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->charm = $charm;
             $user->wealth = $wealth;
 
-            echoLine($user->id,"charm：" . $user->charm, "wealth：" . $user->wealth);
+            echoLine($user->id, "charm：" . $user->charm, "wealth：" . $user->wealth);
             $user->update();
         }
     }
