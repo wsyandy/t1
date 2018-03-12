@@ -67,7 +67,7 @@ trait UserEnumerations
         'starshine5' => '星耀V', 'king1' => '王者I', 'king2' => '王者II', 'king3' => '王者III', 'king4' => '王者IV', 'king5' => '王者V',
         'diamond1' => '钻石I', 'diamond2' => '钻石II', 'diamond3' => '钻石III', 'diamond4' => '钻石IV', 'diamond5' => '钻石V',
         'platinum1' => '铂金I', 'platinum2' => '铂金II', 'platinum3' => '铂金III', 'platinum4' => '铂金IV', 'platinum5' => '铂金V',
-        'gold1' => '黄金I', 'gold2' => '黄金II', 'gold3' => '黄金III', 'gold4' => '黄金IV', 'gold5' => '黄金V,', 'silver1' => '白银I',
+        'gold1' => '黄金I', 'gold2' => '黄金II', 'gold3' => '黄金III', 'gold4' => '黄金IV', 'gold5' => '黄金V', 'silver1' => '白银I',
         'silver2' => '白银II', 'silver3' => '白银III', 'silver4' => '白银IV', 'silver5' => '白银V', 'bronze1' => '青铜I', 'bronze2' => '青铜II',
         'bronze3' => '青铜III', 'bronze4' => '青铜IV', 'bronze5' => '青铜V',
     ];
