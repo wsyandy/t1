@@ -20,6 +20,8 @@ class UserGifts extends BaseModel
 
     static function updateGiftNum($gift_order_id)
     {
+        info($gift_order_id);
+
         $gift_order = \GiftOrders::findById($gift_order_id);
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
