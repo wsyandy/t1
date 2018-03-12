@@ -33,6 +33,6 @@ class ProductChannelsController extends BaseController
         //声网登录密码
         $detail_json['menu_config'] = ['show_union' => $show_union];
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, $detail_json);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 }
