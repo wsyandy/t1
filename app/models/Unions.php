@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: meixinghao
  * Date: 2018/3/11
  * Time: 下午4:05
  */
-
 class Unions extends BaseModel
 {
     /**
@@ -32,6 +32,22 @@ class Unions extends BaseModel
                 return [ERROR_CODE_FAIL, '您已加入工会,不能创建家族'];
             } elseif (STATUS_ON == $user->union->status || STATUS_PROGRESS == $user->status) {
                 return [ERROR_CODE_FAIL, '您已加入家族,不能创建家族'];
+            }
+        }
+
+        $status = implode(',', [STATUS_ON, STATUS_PROGRESS]);
+
+        $user_union = self::findFirst([
+            'conditions' => "user_id = :user_id: and status in ({$status})",
+            'bind' => ['user_id' => $user->id, 'status' => $status]
+        ]);
+
+
+        if ($user_union) {
+            if ($user_union->type = UNION_TYPE_PUBLIC) {
+                return [ERROR_CODE_FAIL, '您已创建工会'];
+            } else if ($user_union->type = UNION_TYPE_PRIVATE) {
+                return [ERROR_CODE_FAIL, '您已创建家族'];
             }
         }
 
@@ -122,7 +138,7 @@ class Unions extends BaseModel
         }
 
         $cond = [
-            'conditions' => 'type = :type: and status = :status: and auth_status',
+            'conditions' => 'type = :type: and status = :status: and auth_status = :auth_status:',
             'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_SUCCESS],
         ];
 
@@ -132,14 +148,18 @@ class Unions extends BaseModel
         }
 
         //根据id name搜索是否需要recommend
-        if ($id) {
-            $cond['conditions'] .= " and id = :id:";
-            $cond['bind']['id'] = $id;
-        }
-
-        if ($name) {
-            $cond['conditions'] .= " and name = :name:";
+        if ($name && $id) {
+            $cond['conditions'] .= " and (name = :name: or id = :id:)";
             $cond['bind']['name'] = "%" . $name . "%";
+            $cond['bind']['id'] = $id;
+        } else {
+            if ($name) {
+                $cond['conditions'] .= " and name like :name:";
+                $cond['bind']['name'] = "%" . $name . "%";
+            } else if ($id) {
+                $cond['conditions'] .= " and id = :id:";
+                $cond['bind']['id'] = $id;
+            }
         }
 
         if ($order) {
@@ -149,8 +169,9 @@ class Unions extends BaseModel
         if (isset($cond['order'])) {
             $cond['order'] .= ",id desc";
         } else {
-            $cond['order'] .= "id desc";
+            $cond['order'] = "id desc";
         }
+        debug($cond);
 
         $unions = Unions::findPagination($cond, $page, $per_page);
 
@@ -361,5 +382,24 @@ class Unions extends BaseModel
     {
         $this->fame_value += $charm_value;
         $this->update();
+    }
+
+    function getAvatarUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return '/m/images/avatar.png';
+        }
+
+        return StoreFile::getUrl($this->avatar);
+    }
+
+    function toSimpleJson()
+    {
+        return [
+            'name' => $this->name,
+            'fame_value' => $this->fame_value,
+            'user_num' => $this->user_num,
+            'avatar_url' => $this->avatar_url
+        ];
     }
 }
