@@ -15,7 +15,7 @@ class UserGiftsController extends BaseController
         $user_id = $this->params('user_id', $this->currentUserId());
         $conds = ['conditions' => 'user_id = ' . $user_id, 'order' => 'amount desc'];
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 20);
+        $per_page = $this->params('per_page', 100);
 
         $user_gifts = \UserGifts::findPagination($conds, $page, $per_page);
 
