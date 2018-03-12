@@ -2353,8 +2353,7 @@ class Users extends BaseModel
         unlock($lock);
     }
 
-
-    static function updateCharmValue($gift_order_id)
+    static function updateCharmAndWealth($gift_order_id)
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -2362,12 +2361,15 @@ class Users extends BaseModel
             return false;
         }
 
-        $lock_key = "update_user_charm_value_lock_" . $gift_order->user_id;
+        $lock_key = "update_user_charm_and_wealth_lock_" . $gift_order->id;
         $lock = tryLock($lock_key);
 
         $user = $gift_order->user;
+        $sender = $gift_order->sender;
         $amount = $gift_order->amount;
         $charm_value = $amount;
+        $wealth_value = $amount;
+
         if (isPresent($user)) {
             $user->charm_value += $charm_value;
             $union = $user->union;
@@ -2376,22 +2378,7 @@ class Users extends BaseModel
             }
             $user->update;
         }
-        unlock($lock);
-    }
 
-    static function updateWealthValue($gift_order_id)
-    {
-        $gift_order = GiftOrders::findById($gift_order_id);
-        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
-            return false;
-        }
-
-        $lock_key = "update_user_wealth_value_lock_" . $gift_order->sender_id;
-        $lock = tryLock($lock_key);
-
-        $sender = $gift_order->sender;
-        $amount = $gift_order->amount;
-        $wealth_value = $amount;
         if (isPresent($sender)) {
             $sender->wealth_value += $wealth_value;
             $union = $sender->union;
