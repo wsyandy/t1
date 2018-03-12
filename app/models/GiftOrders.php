@@ -110,6 +110,8 @@ class GiftOrders extends BaseModel
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
+                \Users::delay()->updateCharmValue($gift_order->id);
+                \Users::delay()->updateWealthValue($gift_order->id);
 
                 //统计房间收益
                 if ($gift_order->room) {

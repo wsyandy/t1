@@ -2102,7 +2102,8 @@ class Users extends BaseModel
     function changeAvatarAuth($avatar_auth)
     {
         if (isBlank($avatar_auth) ||
-            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)) {
+            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)
+        ) {
             return;
         }
         $this->avatar_auth = $avatar_auth;
@@ -2278,7 +2279,8 @@ class Users extends BaseModel
         foreach ($level_ranges as $index => $level_range) {
 
             if (isset($level_ranges[$index + 1]) && $experience >= $level_range &&
-                $experience < $level_ranges[$index + 1]) {
+                $experience < $level_ranges[$index + 1]
+            ) {
                 $level = $index;
                 break;
             }
@@ -2347,6 +2349,56 @@ class Users extends BaseModel
 //            $user->segment = $user->calculateSegment();
 //            $user->update();
 //        }
+
+        unlock($lock);
+    }
+
+
+    static function updateCharmValue($gift_order_id)
+    {
+        $gift_order = GiftOrders::findByIds($gift_order_id);
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_charm_value_lock_" . $gift_order->user_id;
+        $lock = tryLock($lock_key);
+
+        $user = $gift_order->user;
+        $amount = $gift_order->amount;
+        $charm_value = $amount;
+        if (isPresent($user)) {
+            $user->charm_value += $charm_value;
+            $union = $user->union;
+            if (isPresent($union)) {
+                $union->updateFameValue($charm_value);
+            }
+            $user->update;
+        }
+        unlock($lock);
+    }
+
+    static function updateWealthValue($gift_order_id)
+    {
+        $gift_order = GiftOrders::findByIds($gift_order_id);
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_wealth_value_lock_" . $gift_order->sender_id;
+        $lock = tryLock($lock_key);
+
+        $sender = $gift_order->sender;
+        $amount = $gift_order->amount;
+        $wealth_value = $amount;
+        if (isPresent($sender)) {
+            $sender->wealth_value += $wealth_value;
+            $union = $sender->union;
+            if (isPresent($union)) {
+                $union->updateFameValue($sender);
+            }
+            $sender->update;
+        }
 
         unlock($lock);
     }

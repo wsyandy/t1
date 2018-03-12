@@ -173,7 +173,7 @@ class Unions extends BaseModel
         }
 
         $total_entries = $user_db->zcard($key);
-        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
         $pagination->clazz = 'Unions';
 
         return $pagination;
@@ -335,5 +335,11 @@ class Unions extends BaseModel
             $union_history->status = STATUS_OFF;
             $union_history->update();
         }
+    }
+
+    function updateFameValue($charm_value)
+    {
+        $this->fame_value += $charm_value;
+        $this->update();
     }
 }
