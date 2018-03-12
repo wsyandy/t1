@@ -68,11 +68,12 @@ class GiftOrders extends BaseModel
             $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
             if ($result) {
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+                $gift_order->update();
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+                $gift_order->update();
             }
-            $gift_order->update();
             return $result;
         }
         return false;
