@@ -24,10 +24,10 @@ class ProductChannelsController extends BaseController
 
     function bootConfigAction()
     {
-        $show_union = false;
+        $show_union = true;
 
         if (isProduction()) {
-            $show_union = true;
+            $show_union = false;
         }
 
         //声网登录密码
