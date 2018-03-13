@@ -48,18 +48,20 @@
         },
         methods: {
             list: function () {
+                var data = {
+                    type: 2,
+                    recommend: 1,
+                    order: 'created_at desc',
+                    page: this.page,
+                    per_page: 10,
+                    sid: this.sid,
+                    code: this.code
+                };
                 if (this.searchText) {
-                    var data = {
-                        search_value: this.searchText,
-                        type: 2,
-                        recommend: 0,
-                        page: this.page,
-                        per_page: 10,
-                        sid: this.sid,
-                        code: this.code
-                    };
+                    data.search_value = this.searchText;
+                    data.recommend = 0;
                 } else {
-                    var data = {type: 2, recommend: 1, page: this.page, per_page: 10, sid: this.sid, code: this.code};
+                    data.recommend = 1;
                 }
                 $.authGet('/m/unions/search', data, function (resp) {
                     vm.unions = [];
@@ -69,7 +71,6 @@
 //                        vm.unions.push(item);
 //                    });
                     vm.unions = resp.unions;
-                    console.log(resp.unions);
                 });
             },
             clearSearch: function () {

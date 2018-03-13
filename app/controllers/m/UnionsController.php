@@ -64,7 +64,7 @@ class UnionsController extends BaseController
         $recommend = $this->params('recommend', 0);
         $id = $this->params('search_value', 0);
         $type = $this->params('type', 0);
-        $order = 'created_at desc';
+        $order = $this->params('order',null);
 //        if (preg_match('/^\d+$/', $search_value)) {
 //            $id = $search_value;
 //        } else {
@@ -116,7 +116,9 @@ class UnionsController extends BaseController
     //家族排行榜
     function rankAction()
     {
-
+        $this->view->title = "家族排行";
+        $this->view->sid = $this->params('sid');
+        $this->view->code = $this->params('code');
     }
 
     //用户列表

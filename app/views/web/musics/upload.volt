@@ -11,7 +11,7 @@
     <div class="music_add">
         <form action="/web/musics/upload_music" method="post" enctype="multipart/form-data" class="form"
               id="upload_music">
-            <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过20个字)</span></div>
+            <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过10个字)</span></div>
             <input type="text" name="name" placeholder="单行输入" required="required" id="name">
             <div class="upload_music_title"><i></i> 演唱者 <span>(必填 :不超过20个字 , 该信息不准确可能导致下架)</span></div>
             <input type="text" name="singer_name" placeholder="单行输入" required="required" id="singer_name">

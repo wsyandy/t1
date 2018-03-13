@@ -10,7 +10,7 @@
             <img src="" class="ico-img-update" id="img_preview" :src="isEdit?family_info.ico:img_update">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
             <input class="img_update" type="file" required="required" id="avatar_file"
-                   name="avatar_file" accept="image/*" capture="camera" @click.stop="test()">
+                   name="avatar_file" accept="image/*" capture="camera">
         </div>
 
         <div class="family-edit">
@@ -109,9 +109,6 @@
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
                 }
-            },
-            test: function () {
-                alert("测试");
             }
         }
     };
@@ -175,7 +172,6 @@
             }
         });
         /*上传单张图片 end*/
-
     });
 
 </script>

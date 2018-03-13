@@ -129,7 +129,8 @@
         },
         methods: {
             moreShow: function () {
-                console.log(111);
+                var url = "/m/unions/rank&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
+                location.href = url;
             },
             tabClick: function (index) {
                 this.cueIdx = index;
