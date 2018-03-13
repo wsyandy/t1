@@ -21,6 +21,8 @@ class UserGiftsController extends BaseController
 
         $user = \Users::findFirstById($user_id);
 
+        info($this->currentUserId(), $user_id);
+
         $total_gift_num = $user->getReceiveGiftNum();
 
         $opts = array_merge(['total_gift_num' => $total_gift_num], $user_gifts->toJson('user_gifts', 'toJson'));
