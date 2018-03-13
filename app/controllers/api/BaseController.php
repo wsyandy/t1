@@ -439,7 +439,7 @@ class BaseController extends ApplicationController
         }
 
         if (isDevelopmentEnv()) {
-            debug('base_valid_sign_signature_error', $sign_str);
+            debug('base_valid_sign_signature_error', $sign_str, md5($sign_str), $sign);
             return [false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign client_sign=" . $this->params('h')];
         }
 
