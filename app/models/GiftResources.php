@@ -15,4 +15,11 @@ class GiftResources extends BaseModel
         return StoreFile::getUrl($this->resource_file);
     }
 
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'resource_file_url' => $this->resourceFileUrl()
+        ];
+    }
 }

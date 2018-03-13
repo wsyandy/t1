@@ -120,3 +120,22 @@
     ]
 }
 ````
+
+## 4 礼物资源 svga使用 
+
+> http-get ```/api/gift_resources```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+公共参数
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1
+    error_reason: ''
+    error_url: "",
+    now_at: 1515508744,
+    resource_file_url : 资源地址 xxx.zip
+}
+````
