@@ -518,5 +518,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $zip->open($filename, ZipArchive::CREATE);   //打开压缩包
         $zip->addFile($path, basename($path));   //向压缩包中添加文件
         $zip->close();  //关闭压缩包
+
+        $gift_resources = GiftResources::findForeach();
+        foreach ($gift_resources as $resource) {
+            $resource->resource_code = $resource->id;
+            $resource->save();
+        }
     }
 }
