@@ -502,5 +502,21 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $sms_history = SmsHistories::findFirstById(554);
         echoLine($sms_history);
+
+        $devices = Devices::findBy(['platform' => 'ios']);
+
+        foreach ($devices as $device) {
+            echoLine($device->idfa);
+        }
+    }
+
+    function zipAction()
+    {
+        $path = APP_ROOT . "temp/test.txt";
+        $filename = APP_ROOT . "temp/test.zip";
+        $zip = new ZipArchive();
+        $zip->open($filename, ZipArchive::CREATE);   //打开压缩包
+        $zip->addFile($path, basename($path));   //向压缩包中添加文件
+        $zip->close();  //关闭压缩包
     }
 }

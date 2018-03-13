@@ -1,0 +1,2 @@
+ALTER TABLE gifts ADD COLUMN render_type VARCHAR (255);
+ALTER TABLE gifts ADD COLUMN svga_image VARCHAR (255);
