@@ -9,8 +9,8 @@
         <div class="family-logo">
             <img src="" class="ico-img-update" id="img_preview" :src="isEdit?family_info.ico:img_update">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
-            <input v-show=" !isEdit" class="img_update" type="file" required="required" id="avatar_file"
-                   name="avatar_file" accept="image/*;capture=camera">
+            <input class="img_update" type="file" required="required" id="avatar_file"
+                   name="avatar_file" accept="image/*">
         </div>
 
         <div class="family-edit">
