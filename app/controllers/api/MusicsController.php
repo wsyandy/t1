@@ -29,11 +29,14 @@ class MusicsController extends BaseController
             $singer_name = $search_name;
 
             $cond['conditions'] = 'name like :name: or singer_name like :singer_name:';
-            $cond['bind'] = ['name' => $name, 'singer_name' => $singer_name];
+            $cond['bind'] = ['name' => '%' . $name . "%", 'singer_name' => "%" . $singer_name . "%"];
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
+        $cond['order'] = 'rank desc,id desc';
+
+        debug("music_search", $cond, $this->params());
         $musics = \Musics::findPagination($cond, $page, $per_page);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));

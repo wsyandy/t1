@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/1/3
  * Time: 上午10:48
  */
-
 class GiftOrders extends BaseModel
 {
     /**
@@ -22,6 +22,11 @@ class GiftOrders extends BaseModel
      * @type Users
      */
     private $_sender;
+
+    /**
+     * @type Rooms
+     */
+    private $_room;
 
     static $STATUS = [
         GIFT_ORDER_STATUS_WAIT => '等待支付',
@@ -43,6 +48,8 @@ class GiftOrders extends BaseModel
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
             'created_at_text' => $this->created_at_text,
+            'user_id' => $this->user_id,
+            'sender_id' => $this->sender_id
         ];
     }
 
@@ -90,20 +97,39 @@ class GiftOrders extends BaseModel
         $gift_order->gift_num = $gift_num;
         $gift_order->receiver_user_type = $receiver->user_type;
         $gift_order->sender_user_type = $sender->user_type;
+        $gift_order->receiver_union_id = $receiver->union_id;
+        $gift_order->sender_union_id = $sender->union_id;
+
+        if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
+            $gift_order->room_id = $sender->current_room_id;
+        }
+
         if ($gift_order->create()) {
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
             $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+
             if ($result) {
+
+                //统计房间收益
+                if ($gift_order->room) {
+                    $gift_order->room->statIncome($gift_order->amount);
+                }
+
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+                $gift_order->update();
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
+                \Users::delay()->updateCharmAndWealth($gift_order->id);
+
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+                $gift_order->update();
             }
-            $gift_order->update();
+
             return $result;
         }
+
         return false;
     }
 

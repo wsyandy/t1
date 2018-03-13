@@ -1,4 +1,4 @@
-<form method="get" action="/admin/users/stat_room_time" name="search_form" autocomplete="off">
+<form method="get" action="/admin/stats/stat_room_time" name="search_form" autocomplete="off">
     <label for="stat_at">时间</label>
     <input type="text" name="stat_at" class="form_datetime" id="stat_at" value="{{ stat_at }}" size="16">
 
@@ -8,8 +8,8 @@
     <button class="ui button" type="submit">搜索</button>
 </form>
 
-{{ simple_table(users, ['ID': 'id', '昵称': 'nickname','房主时长':'host_broadcaster_time','主播时长':'broadcaster_time',
-    '旁听时长':'audience_time']) }}
+{{ simple_table(users, ['ID': 'id', '昵称': 'nickname','房主时长':'host_broadcaster_time_text','主播时长':'broadcaster_time_text',
+    '旁听时长':'audience_time_text']) }}
 
 <script type="text/javascript">
 

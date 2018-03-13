@@ -5,6 +5,7 @@
  * Date: 2018/2/5
  * Time: 下午4:18
  */
+
 namespace admin;
 
 class AudiosController extends BaseController
@@ -72,21 +73,24 @@ class AudiosController extends BaseController
             }
 
             $room_id = $this->params('room_id', 0);
+
             if ($room_id == 0) {
                 $rooms = \Rooms::find(
                     [
-                        'conditions' => 'theme_type != :theme_type: and user_type = :user_type: and audio_id is null',
+                        'conditions' => 'theme_type != :theme_type: and user_id > 0 and user_type = :user_type: and audio_id is null',
                         'bind' => ['theme_type' => ROOM_THEME_TYPE_BROADCAST, 'user_type' => USER_TYPE_SILENT]
                     ]
                 );
-                if ($rooms->total_entries == 0) {
+
+                if (count($rooms) == 0) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '可配置音频的沉默用户房间已用尽');
                 }
-                $rand = mt_rand(0, $rooms->total_entries - 1);
+                $rand = mt_rand(0, count($rooms) - 1);
                 $room = $rooms[$rand];
             } else {
                 $room = \Rooms::findFirstById($room_id);
             }
+
             if (isBlank($room) || !$room->canSetAudio()) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
@@ -94,17 +98,20 @@ class AudiosController extends BaseController
             $room->theme_type = ROOM_THEME_TYPE_BROADCAST;
             $room->audio_id = $audio_id;
             $room_seats = \RoomSeats::findByRoomId($room->id);
+
             foreach ($room_seats as $room_seat) {
                 $room_seat->close();
             }
 
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
+
             if ($room->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '配置成功');
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
             }
         }
+        
         $this->view->audio_id = $audio_id;
     }
 }

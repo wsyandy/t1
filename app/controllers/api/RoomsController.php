@@ -44,13 +44,15 @@ class RoomsController extends BaseController
 
         //限制搜索条件
         $cond = [
-            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . ' and user_id <> ' . $user_id,
+            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
             'order' => 'last_at desc, user_type asc'
         ];
 
         //热门条件
         if (STATUS_ON == $hot) {
             $cond['conditions'] .= ' and hot = ' . $hot;
+        } else {
+            $cond['conditions'] .= ' and user_id <> ' . $user_id;
         }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);

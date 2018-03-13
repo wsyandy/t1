@@ -12,7 +12,7 @@ class WebsocketController extends BaseController
 {
     function endPointAction()
     {
-        $websocket_end_point = \PushSever::getWebsocketEndPoint();
+        $websocket_end_point = \services\SwooleUtils::getWebsocketEndPoint();
 
         $ping_interval = 15;
         if (isDevelopmentEnv()) {

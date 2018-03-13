@@ -297,4 +297,20 @@ class UsersController extends BaseController
         $this->view->user_id = $user_id;
         $this->view->auth_status = $auth_status;
     }
+
+    function unbindThirdAccountAction()
+    {
+        $id = $this->params('id');
+        $user = \Users::findFirstById($id);
+
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        $user->third_name = 'jiebang';
+        $user->third_unionid = uniqid() . time();
+        $user->update();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '解绑成功');
+    }
 }

@@ -12,8 +12,8 @@
 
     var msg = document.getElementById('msg');
     //wss://lalive.momoyuedu.cn
-    var ws_server = 'wss://lalive2.momoyuedu.cn';
-    // var ws_server = 'ws://116.62.103.161:9509?user_id=1';
+    // var ws_server = 'wss://lalive2.momoyuedu.cn';
+    var ws_server = 'ws://127.0.0.1:9509?sid=117s4a65d4134328990e1eb922ae0c0f4d3169';
     var web_socket = new WebSocket(ws_server);
     web_socket.onopen = function (evt) {
         alert("connect successful!");
@@ -30,6 +30,10 @@
 
     web_socket.onmessage = function (evt) {
         console.log(evt);
+    }
+
+    web_socket.onclose = function (ev) {
+        console.log(ev);
     }
 
     //web_socket.close();

@@ -11,7 +11,7 @@
     <div class="music_add">
         <form action="/web/musics/upload_music" method="post" enctype="multipart/form-data" class="form"
               id="upload_music">
-            <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过20个字)</span></div>
+            <div class="upload_music_title"><i></i> 歌曲名称 <span>(必填：不超过10个字)</span></div>
             <input type="text" name="name" placeholder="单行输入" required="required" id="name">
             <div class="upload_music_title"><i></i> 演唱者 <span>(必填 :不超过20个字 , 该信息不准确可能导致下架)</span></div>
             <input type="text" name="singer_name" placeholder="单行输入" required="required" id="singer_name">
@@ -40,6 +40,7 @@
 
             <div class="btn_list music_upload_btn">
                 <input type="submit" name="submit" class="close_btn close_right" value="确认上传">
+                <img src="/web/images/jindutiao.gif" id="jindutiao">
             </div>
         </form>
     </div>
@@ -94,7 +95,22 @@
 
     vm = XVue(opts);
 
+    var browserCfg = {};
+
+    function Version() {
+        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        //判断是否IE<11浏览器
+        if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1) {
+            browserCfg.ie = true;
+        } else {
+            browserCfg.other = true;
+        }
+    }
+
     $(function () {
+        $("#jindutiao").hide();
+
+        Version();
 
         function colse_fd() {
             $(".fudong").hide();
@@ -144,25 +160,31 @@
                 return false;
             }
 
-            var fileSize = $('#file')[0].files[0].size;
-            if (fileSize > 20 * 1024 * 1024) {
-                alert("歌曲不能大于20M");
-                can_upload = true;
-                return false;
+            if (browserCfg.other) {
+                var fileSize = $('#file')[0].files[0].size;
+                console.log(fileSize);
+                if (fileSize > 20 * 1024 * 1024) {
+                    alert("歌曲不能大于20M");
+                    can_upload = true;
+                    return false;
+                }
             }
+
+            $("#jindutiao").show();
 
             self.ajaxSubmit({
                 error: function (xhr, status, error) {
                     alert('服务器错误 ' + error);
+                    $("#jindutiao").hide();
                 },
 
                 success: function (resp, status, xhr) {
                     can_upload = true;
+                    $("#jindutiao").hide();
                     if (resp.error_url) {
                         location.href = resp.error_url;
                         return;
                     }
-                    console.log(resp);
                     alert(resp.error_reason);
                 }
             });

@@ -152,6 +152,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixUserLevelAction()
     {
         $gift_orders = GiftOrders::findForeach();
@@ -162,6 +163,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    //上线需修复资料
     function fixUserSegmentAction()
     {
         $users = Users::find(['conditions' => "level > 0"]);
@@ -170,6 +172,203 @@ class UsersTask extends \Phalcon\Cli\Task
             echoLine($user->id, $user->calculateSegment());
             $user->segment = $user->calculateSegment();
             $user->save();
+        }
+    }
+
+    //上线需修复资料
+    function fixExperienceAction()
+    {
+        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
+
+        foreach ($users as $user) {
+
+            $gift_orders = GiftOrders::findBy(['sender_id' => $user->id]);
+
+            if (count($gift_orders) < 1) {
+                echoLine("no gift_order");
+                continue;
+            }
+
+            $experience = 0;
+
+            foreach ($gift_orders as $gift_order) {
+                $amount = $gift_order->amount;
+                $sender_experience = 0.02 * $amount;
+                $experience += $sender_experience;
+            }
+
+            $user->experience = $experience;
+            $user->level = $user->calculateLevel();
+            $user->segment = $user->calculateSegment();
+            echoLine($user->experience, $user->level, $user->segment);
+            $user->update();
+        }
+    }
+
+    //上线需修复资料
+    function fixUserHiCoinsAction()
+    {
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+        echoLine(count($users));
+
+        $i = 0;
+
+        foreach ($users as $user) {
+            $i++;
+
+            $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
+
+            if ($total_amount > 100000000) {
+                continue;
+            }
+
+            //echoLine($total_amount, $user->id, $user->hi_coins);
+
+            $product_channel = $user->product_channel;
+
+            if (!$product_channel) {
+                echoLine($user->id);
+                continue;
+            }
+
+            $rate = $product_channel->rateOfDiamondToHiCoin();
+
+            if ($total_amount < 1) {
+                echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
+                continue;
+            }
+
+            $hi_coins = $total_amount / $rate;
+
+            if ($hi_coins == $user->hi_coins) {
+                //echoLine("no need fix", $user->id, $hi_coins);
+                continue;
+            }
+
+            echoLine("fix", $user->id, $hi_coins, $user->hi_coins);
+
+            $user->hi_coins = $hi_coins;
+            //echoLine($total_amount, $rate);
+            //echoLine($i, $total_amount, $user->id, $user->hi_coins);
+            //$user->update();
+        }
+    }
+
+    function initUsersAction()
+    {
+        while (true) {
+            $user = new Users();
+            $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
+            $user->sex = mt_rand(0, 1);
+            $user->product_channel_id = 1;
+            $user->login_name = '';
+            $user->nickname = '';
+            $user->avatar = '';
+            $user->platform = '';
+            $user->province_id = 0;
+            $user->city_id = 0;
+            $user->ip = '';
+            $user->last_at = time();
+            $user->mobile = '';
+            $user->device_id = 0;
+            $user->push_token = '';
+            $user->sid = '';
+            $user->version_code = '';
+            $user->openid = '';
+            $user->password = '';
+            $user->fr = '';
+            $user->partner_id = 0;
+            $user->subscribe = 0;
+            $user->event_at = 0;
+            $user->latitude = 0;
+            $user->longitude = 0;
+            $user->geo_province_id = 0;
+            $user->geo_city_id = 0;
+            $user->ip_province_id = 0;
+            $user->ip_city_id = 0;
+            $user->register_at = 0;
+            $user->mobile_operator = 0;
+            $user->api_version = '';
+            $user->monologue = '';
+            $user->room_id = 0;
+            $user->height = 0;
+            $user->interests = '';
+            $user->gold = 0;
+            $user->diamond = 0;
+            $user->birthday = 0;
+            $user->current_room_seat_id = 0;
+            $user->user_role = 0;
+            $user->current_room_id = 0;
+            $user->geo_hash = '';
+            $user->platform_version = '';
+            $user->version_name = '';
+            $user->manufacturer = '';
+            $user->device_no = '';
+            $user->client_status = 0;
+            $user->user_role_at = 0;
+            $user->hi_coins = 0;
+            $user->third_unionid = '';
+            $user->login_type = '';
+            $user->save();
+
+            echoLine($user->id);
+            if ($user->id >= 1000000) {
+                break;
+            }
+        }
+    }
+
+    //修复没有产品渠道的用户
+    function fixProductChannelIdAction()
+    {
+        $cond = [
+            'conditions' => 'product_channel_id is null'
+        ];
+        $users = Users::find($cond);
+        foreach ($users as $user) {
+            if (!$user->product_channel_id) {
+                $user->product_channel_id = 1;
+                echoLine($user->id);
+                $user->save();
+            }
+        }
+    }
+
+    //上线需修复资料
+    function fixCharmAndWealthAction()
+    {
+        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
+
+        foreach ($users as $user) {
+
+            $gift_orders = GiftOrders::find([
+                'conditions' => "sender_id = :user_id: or user_id = :user_id: and status = :status:",
+                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+            ]);
+
+            $charm = 0;
+            $wealth = 0;
+
+            if (count($gift_orders) < 1) {
+                echoLine("no gift_order");
+                continue;
+            }
+
+            foreach ($gift_orders as $gift_order) {
+                if ($gift_order->sender_id == $user->id) {
+                    $wealth += $gift_order->amount;
+                }
+                if ($gift_order->user_id == $user->id) {
+                    $charm += $gift_order->amount;
+                }
+            }
+
+            $user->charm = $charm;
+            $user->wealth = $wealth;
+
+            echoLine($user->id, "charm：" . $user->charm, "wealth：" . $user->wealth);
+            $user->update();
         }
     }
 }

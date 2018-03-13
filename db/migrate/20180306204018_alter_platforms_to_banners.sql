@@ -1,0 +1,1 @@
+ALTER TABLE banners ALTER platforms SET DEFAULT '*';

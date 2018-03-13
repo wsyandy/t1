@@ -335,6 +335,8 @@
             user_id 房主用户id
             sex	性别 0:女 1:男
             avatar_small_url 房主小头像
+            avatar_url 房主头像原图
+            avatar_big_url 房主头像大图
             nickname 房主昵称
             age int 年龄
             monologue 个性签名

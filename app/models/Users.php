@@ -57,6 +57,11 @@ class Users extends BaseModel
      */
     private $_current_room_seat;
 
+    /**
+     * @type Unions
+     */
+    private $_union;
+
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
@@ -88,9 +93,6 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
-            
-            \Emchat::delay()->createEmUser($this->id);
-            \Chats::delay(5)->sendWelcomeMessage($this->id);
         }
     }
 
@@ -121,17 +123,19 @@ class Users extends BaseModel
 
         if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
             $this->registerStat();
+            $this->createEmUser();
         }
 
         if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
             $this->registerStat();
+            $this->createEmUser();
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
         }
 
-        if ($this->hasChanged('user_role_at')) {
+        if ($this->hasChanged('user_role_at') && $this->isActive()) {
             $this->statRoomTime();
         }
     }
@@ -172,29 +176,21 @@ class Users extends BaseModel
                     break;
             }
 
-            if ($action) {
-                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
-                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
-            }
-            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
-            return;
-        }
+        } elseif (USER_ROLE_MANAGER == $user_role) {
 
-        //上麦下面为角色发生变化
-        if (USER_ROLE_MANAGER == $user_role) {
-
+            //上麦下麦时角色发生变化
             if ($this->hasChanged('current_room_seat_id') && $old_current_room_seat_id) {
                 $action = "broadcaster";
             } else {
                 $action = "audience";
             }
-
-            if ($action) {
-                $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
-                $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
-            }
-            info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
         }
+
+        if ($action) {
+            $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
+            $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
+        }
+        info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
     }
 
     static function generateStatRoomTimeKey($action, $date = null)
@@ -954,6 +950,14 @@ class Users extends BaseModel
         }
     }
 
+    function createEmUser()
+    {
+        if ($this->isActive()) {
+            \Emchat::delay()->createEmUser($this->id);
+            \Chats::delay(5)->sendWelcomeMessage($this->id);
+        }
+    }
+
     function registerStat()
     {
         \Stats::delay()->record('user', 'register', $this->getStatAttrs());
@@ -1375,6 +1379,11 @@ class Users extends BaseModel
     //需要更新资料
     function needUpdateInfo()
     {
+        //第三方授权登录 不校验
+        if ($this->third_name) {
+            return false;
+        }
+
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
         foreach ($update_info as $k) {
             if (!$this->$k && $k != 'sex' || $k == 'sex' && is_null($this->sex)) {
@@ -1664,6 +1673,7 @@ class Users extends BaseModel
 
     }
 
+    //废弃
     static function pushTopTopicMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1680,6 +1690,7 @@ class Users extends BaseModel
         $room->pushTopTopicMessage($user);
     }
 
+    //废弃
     static function pushGiftMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1723,6 +1734,7 @@ class Users extends BaseModel
         }
     }
 
+    //废弃
     static function pushUpMessage($user_id, $room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1745,6 +1757,96 @@ class Users extends BaseModel
                 $room->pushUpMessage($user, $room_seat);
             }
         }
+    }
+
+    //上麦
+    static function upRoomSeat($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($user->current_room_seat_id < 1) {
+
+            $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
+
+            if ($room_seat) {
+                $room_seat->up($user);
+                $room->pushUpMessage($user, $room_seat);
+            }
+        }
+    }
+
+    //送礼物
+    static function sendGift($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        if ($room->getRealUserNum() > 0) {
+
+            $receiver = $room->findRandomUser([$user_id]);
+
+            if ($receiver) {
+
+                $gift_num = mt_rand(1, 15);
+
+                $gifts = Gifts::find(['conditions' => 'status = :status:',
+                    'bind' => ['status' => STATUS_ON], 'columns' => 'id']);
+
+                $gift_ids = [];
+
+                foreach ($gifts as $gift) {
+                    $gift_ids[] = $gift->id;
+                }
+
+                $index = array_rand($gift_ids);
+                $gift_id = $gift_ids[$index];
+                $gift = Gifts::findFirstById($gift_id);
+
+                $give_result = true;
+
+                if ($receiver->isActive()) {
+                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+                }
+
+                if ($give_result) {
+                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
+                }
+            }
+        }
+    }
+
+    //公屏消息
+    static function sendTopTopicMessage($user_id, $room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            return;
+        }
+
+        if (!$user->isInRoom($room)) {
+            return;
+        }
+
+        $room->pushTopTopicMessage($user);
     }
 
     //启动房间互动
@@ -1772,7 +1874,7 @@ class Users extends BaseModel
         if (isProduction()) {
             if ($room->isSilent()) {
                 if ($rand_num <= 70) {
-                    Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+                    Users::delay(mt_rand(1, 50))->upRoomSeat($this->id, $room->id);
                 } elseif (70 < $rand_num && $rand_num <= 80) {
                     $room->exitSilentRoom($this);
                     return;
@@ -1786,14 +1888,14 @@ class Users extends BaseModel
         } else {
 //            if ($rand_num <= 50) {
 //                if ($room->getRealUserNum() > 0 && $room->chat) {
-//                    Users::delay(mt_rand(1, 50))->pushTopTopicMessage($this->id, $room->id);
+//                    Users::delay(mt_rand(1, 50))->sendTopTopicMessage($this->id, $room->id);
 //                }
 //            } elseif (50 < $rand_num && $rand_num <= 52) {
 //                if ($room->getRealUserNum() > 0) {
-//                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+//                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
 //                }
 //            } elseif (53 < $rand_num && $rand_num <= 90) {
-//                Users::delay(mt_rand(1, 50))->pushUpMessage($this->id, $room->id);
+//                Users::delay(mt_rand(1, 50))->upRoomSeat($this->id, $room->id);
 //            } else {
 //                $room->exitSilentRoom($this);
 //                return;
@@ -1801,7 +1903,7 @@ class Users extends BaseModel
 
             if ($rand_num <= 90) {
                 if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->pushGiftMessage($this->id, $room->id);
+                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
                 }
             } else {
                 $room->exitSilentRoom($this);
@@ -2002,7 +2104,8 @@ class Users extends BaseModel
     function changeAvatarAuth($avatar_auth)
     {
         if (isBlank($avatar_auth) ||
-            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)) {
+            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)
+        ) {
             return;
         }
         $this->avatar_auth = $avatar_auth;
@@ -2028,6 +2131,10 @@ class Users extends BaseModel
     //第三方登录
     static function findFirstByThirdUnionid($product_channel, $third_unionid, $third_name)
     {
+        if (USER_LOGIN_TYPE_SINAWEIBO == $third_name) {
+            $third_name = 'sina';
+        }
+
         $cond['conditions'] = 'third_unionid = :third_unionid: and product_channel_id = :product_channel_id: and user_status != :user_status:' .
             ' and third_name = :third_name:';
         $cond['bind'] = ['third_unionid' => $third_unionid, 'product_channel_id' => $product_channel->id,
@@ -2112,6 +2219,7 @@ class Users extends BaseModel
         $user->device_id = $device->id;
         $user->login_name = $params['login_name'];
         $user->nickname = $params['nickname'];
+        $user->sex = $params['sex'];
         $user->user_type = USER_TYPE_ACTIVE;
         $user->sid = $user->generateSid('s');
         $user->update();
@@ -2122,7 +2230,7 @@ class Users extends BaseModel
 
         //上传头像
         if ($source_url) {
-            \Users::delay()->uploadWeixinAvatar($user->id, $source_url);
+            \Users::uploadWeixinAvatar($user->id, $source_url);
         }
 
         return [ERROR_CODE_SUCCESS, '登陆成功', $user];
@@ -2173,8 +2281,9 @@ class Users extends BaseModel
 
         foreach ($level_ranges as $index => $level_range) {
 
-            if (isset($level_ranges[$index + 1]) && $experience > $level_range &&
-                $experience <= $level_ranges[$index + 1]) {
+            if (isset($level_ranges[$index + 1]) && $experience >= $level_range &&
+                $experience < $level_ranges[$index + 1]
+            ) {
                 $level = $index;
                 break;
             }
@@ -2219,16 +2328,12 @@ class Users extends BaseModel
             return false;
         }
 
-        $lock_key = "update_user_level_lock_" . $gift_order->user_id;
-        $lock_key1 = "update_user_level_lock_" . $gift_order->sender_id;
+        $lock_key = "update_user_level_lock_" . $gift_order->sender_id;
         $lock = tryLock($lock_key);
-        $lock1 = tryLock($lock_key1);
 
         $sender = $gift_order->sender;
-        $user = $gift_order->user;
         $amount = $gift_order->amount;
         $sender_experience = 0.02 * $amount;
-        $user_experience = 0.01 * $amount;
 
         if ($sender) {
             $sender->experience += $sender_experience;
@@ -2238,15 +2343,113 @@ class Users extends BaseModel
             $sender->update();
         }
 
-        if ($user) {
-            $user->experience += $user_experience;
-            $user_level = $user->calculateLevel();
-            $user->level = $user_level;
-            $user->segment = $user->calculateSegment();
-            $user->update();
+//        $user = $gift_order->user;
+//        $user_experience = 0.01 * $amount;
+//        if ($user) {
+//            $user->experience += $user_experience;
+//            $user_level = $user->calculateLevel();
+//            $user->level = $user_level;
+//            $user->segment = $user->calculateSegment();
+//            $user->update();
+//        }
+
+        unlock($lock);
+    }
+
+    static function updateCharmAndWealth($gift_order_id)
+    {
+        $gift_order = \GiftOrders::findById($gift_order_id);
+
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_charm_and_wealth_lock_" . $gift_order->id;
+        $lock = tryLock($lock_key);
+
+        $user = $gift_order->user;
+        $sender = $gift_order->sender;
+        $amount = $gift_order->amount;
+        $charm_value = $amount;
+        $wealth_value = $amount;
+
+        if (isPresent($user)) {
+            $user->charm_value += $charm_value;
+            $union = $user->union;
+            if (isPresent($union)) {
+                $union->updateFameValue($charm_value);
+            }
+            $user->update;
+        }
+
+        if (isPresent($sender)) {
+            $sender->wealth_value += $wealth_value;
+            $union = $sender->union;
+            if (isPresent($union)) {
+                $union->updateFameValue($wealth_value);
+            }
+            $sender->update;
         }
 
         unlock($lock);
-        unlock($lock1);
+    }
+
+    function saveFdInfo($fd, $online_token, $ip)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $user_online_key = "socket_user_online_user_id" . $this->id;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+
+        $hot_cache->pipeline();
+        $hot_cache->set($online_key, $online_token);
+        $hot_cache->set($fd_key, $fd);
+        $hot_cache->set($user_online_key, $online_token);
+        $hot_cache->set($fd_user_id_key, $this->id);
+
+        if ($ip) {
+            $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+            $hot_cache->set($fd_intranet_ip_key, $ip);
+        }
+
+        $hot_cache->exec();
+
+        info($fd, $online_token, $this->sid, $ip);
+    }
+
+    function deleteFdInfo($fd, $online_token)
+    {
+        $hot_cache = Users::getHotWriteCache();
+
+        $online_key = "socket_push_online_token_" . $fd;
+        $fd_key = "socket_push_fd_" . $online_token;
+        $fd_user_id_key = "socket_fd_user_id" . $online_token;
+        $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
+
+        $hot_cache->pipeline();
+        $hot_cache->del($online_key);
+        $hot_cache->del($fd_key);
+        $hot_cache->del($fd_user_id_key);
+        $hot_cache->del($fd_intranet_ip_key);
+        $hot_cache->del("room_seat_token_" . $online_token);
+        $hot_cache->del("room_token_" . $online_token);
+        $hot_cache->exec();
+
+        if ($this && $this->online_token == $online_token) {
+
+            $user_online_key = "socket_user_online_user_id" . $this->id;
+            $hot_cache->del($user_online_key);
+
+            info($this->id);
+        }
+
+        info($fd, $online_token);
+    }
+
+    //是否为公会长
+    function isUnionHost($union)
+    {
+        return $this->id == $union->user_id;
     }
 }

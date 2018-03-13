@@ -29,7 +29,7 @@ class AlbumsController extends BaseController
 
         $image_files = [];
 
-        for ($i = 0; $i < 9; $i++) {
+        for ($i = 0; $i < 27; $i++) {
             $image_file = $this->file('image_file' . $i);
 
             if ($image_file) {

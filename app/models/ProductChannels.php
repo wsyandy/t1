@@ -293,6 +293,8 @@ class ProductChannels extends BaseModel
         //return '4b00a7416f75498093bfd7ad09cb31e9';
         $config = self::di('config');
         $agora_app_id = $config->agora_app_id;
+
+        debug($agora_app_id);
         return $agora_app_id;
     }
 
@@ -445,5 +447,15 @@ class ProductChannels extends BaseModel
         return [
             'official_website' => $this->official_website
         ];
+    }
+
+    function rateOfDiamondToHiCoin()
+    {
+        return 25;
+    }
+
+    function rateOfHiCoinToMoney()
+    {
+        return 1;
     }
 }

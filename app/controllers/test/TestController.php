@@ -12,6 +12,8 @@ class TestController extends \ApplicationController
 {
     function indexAction()
     {
-
+        $user = \Users::findFirstById(1);
+        $user->user_role_at = time();
+        $user->save();
     }
 }

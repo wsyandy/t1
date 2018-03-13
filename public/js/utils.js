@@ -176,6 +176,24 @@ ts = function () {
         var weixin_version = weixin_info[0];
         return weixin_version;
     }
+
+    $.isWeiboClient = function () {
+        var ua = navigator.userAgent;
+        if (ua.indexOf('Weibo') < 0) {
+            return false;
+        }
+
+        return true;
+    };
+
+    $.isQqClient = function () {
+        var ua = navigator.userAgent;
+        if (ua.indexOf('QQ/') < 0) {
+            return false;
+        }
+
+        return true;
+    };
 })(jQuery);
 
 

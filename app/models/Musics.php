@@ -112,11 +112,14 @@ class Musics extends BaseModel
             return [ERROR_CODE_FAIL, '用户不存在'];
         }
 
-        $fields = ['歌名' => 'name', '歌手' => 'singer_name'];
+        $fields = ['歌名' => 'name', '歌手' => 'singer_name', '排序' => 'rank'];
 
         foreach ($fields as $key => $value) {
             if (isBlank($this->$value)) {
                 return [ERROR_CODE_FAIL, $key . '不能为空'];
+            }
+            if ($value == "name" && mb_strlen($this->$value) > 10) {
+                return [ERROR_CODE_FAIL, $key . '不能超过十个字'];
             }
         }
 
@@ -144,11 +147,11 @@ class Musics extends BaseModel
             $this->file_size = $file_size;
         }
 
-        if ($this->hasChanged('rank')) {
-            if (!$this->checkRank()) {
-                return [ERROR_CODE_FAIL, '排序不能重复'];
-            }
-        }
+//        if ($this->hasChanged('rank')) {
+//            if (!$this->checkRank()) {
+//                return [ERROR_CODE_FAIL, '排序不能重复'];
+//            }
+//        }
 
         return [ERROR_CODE_SUCCESS, ''];
     }
@@ -169,6 +172,7 @@ class Musics extends BaseModel
         $music->name = $name;
         $music->singer_name = $singer_name;
         $music->user_id = $user_id;
+        $music->rank = 1;
 
         list($error_code, $error_reason) = $music->checkField($files);
         if ($error_code != ERROR_CODE_SUCCESS) {
@@ -185,7 +189,7 @@ class Musics extends BaseModel
     {
         $cond = [
             'conditions' => 'file_md5 = :file_md5: and user_id = :user_id: and file is not null and id != :id:',
-            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id , 'id' => $this->id]
+            'bind' => ['file_md5' => $this->file_md5, 'user_id' => $this->user_id, 'id' => $this->id]
         ];
 
         $music = \Musics::findFirst($cond);
@@ -215,7 +219,7 @@ class Musics extends BaseModel
         $key = "user_musics_id" . $user_id;
 
         if (!$db->zscore($key, $this->id)) {
-            $db->zadd($key, time(), $this->id);
+            $db->zadd($key, millisecondTime(), $this->id);
         }
     }
 
@@ -226,6 +230,12 @@ class Musics extends BaseModel
 
         if ($db->zscore($key, $this->id)) {
             $db->zrem($key, $this->id);
+            if ($user_id == $this->user_id) {
+                if ($this->file && !$this->checkFileMd5()) {
+                    \StoreFile::delete($this->file);
+                }
+                $this->delete();
+            }
         }
     }
 
@@ -294,6 +304,7 @@ class Musics extends BaseModel
                 if ($music->file && !$music->checkFileMd5()) {
                     \StoreFile::delete($music->file);
                 }
+                $music->remove($music->user_id);
                 $music->delete();
             }
         }

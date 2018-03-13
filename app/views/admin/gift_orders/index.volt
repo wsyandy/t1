@@ -5,8 +5,16 @@
     <label for="sender_id_eq">发送方ID</label>
     <input name="gift_order[sender_id_eq]" type="text" id="sender_id_eq"/>
 
-    <label for-="user_id_eq">接收方ID</label>
+    <label for="user_id_eq">接收方ID</label>
     <input name="gift_order[user_id_eq]" type="text" id="user_id_eq"/>
+
+    <label for="gift_id_eq">礼物ID</label>
+    <input name="gift_order[gift_id_eq]" type="text" id="gift_id_eq"/>
+
+    <label for="start_at_eq">开始时间</label>
+    <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
+    <label for="end_at_eq">结束时间</label>
+    <input name="end_at" type="text" id="end_at_eq" class="form_datetime" value="{{ end_at }}"/>
 
     <button type="submit" class="ui button">搜索</button>
 </form>
@@ -30,3 +38,17 @@
     '支付金额': 'amount', '发送方': 'sender_link',
     '接收方': 'user_link', '支付状态': 'status_text', '备注': 'remark'
 ]) }}
+
+
+<script type="text/javascript">
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: "month"
+    });
+    $('.selectpicker').selectpicker();
+</script>

@@ -10,14 +10,14 @@
 <body style="background:#6f4dda">
 <div class="share_box">
     <img src="/shares/images/share_bg.png" class="share_bg">
-    <img src="/shares/images/right.png" class="share_right none">
+    <img src="/shares/images/right.png" class="share_right none" id="open_in_browser_tip">
     <div class="share_person">
         <div class="share_pic">
             <img src="{{ user.avatar_small_url }}">
         </div>
         <h3>{{ user.nickname }}</h3>
         <p>ID：{{ user.id }}</p>
-        <a href="yuewan://start_app?room_id=2" class="upload_btn" id="jump_room">进入Ta的房间</a>
+        <a href="" class="upload_btn" id="jump_room">进入Ta的房间</a>
     </div>
 </div>
 <div class="share_bottom">
@@ -55,29 +55,67 @@
 <script>
 
     $(document).ready(function () {
-        function from_mobile() {
-            var reg =
-                /(iPad|nokia|iphone|android|motorola|^mot\-|softbank|foma|docomo|kddi|up\.browser|up\.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|meizu|miui|ucweb|UCBrowser|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam\-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte\-|longcos|pantech|gionee|^sie\-|portalmmm|jig\s browser|hiptop|^ucweb|^benq|haier|^lct|opera\s*mobi|opera\*mini|320x320|240x320|176x220|\(X11;)/i;
-            return reg.test(navigator.userAgent);
+
+        if ($.isWeixinClient() || $.isWeiboClient()) {
+            $("#open_in_browser_tip").removeClass('none');
+        } else if ($.isQqClient()) {
+            $("#jump_room").attr('href', '{{ user.product_channel.code }}://enter_room?room_id={{ room_id }}');
+            $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
+        } else {
+
+            $("#jump_room").click(function (e) {
+                e.preventDefault();
+
+                if ('disabled' == $(this).attr('disabled')) {
+                    return;
+                }
+
+                $(this).attr('disabled', 'disabled');
+
+                var code = $("#code").val();
+                var app_url = code + '://enter_room';
+                var soft_version_id = $("#soft_version_id").val();
+                var room_id = $("#room_id").val();
+
+                if (room_id) {
+                    app_url += '?room_id=' + room_id;
+                }
+
+                window.location = app_url;
+
+                if (soft_version_id) {
+                    setTimeout(showTip, 2000);
+                }
+            });
+
+            $("#jump").click(function (e) {
+                e.preventDefault();
+
+                var code = $("#code").val();
+                var app_url = code + '://enter_room';
+                var soft_version_id = $("#soft_version_id").val();
+                var room_id = $("#room_id").val();
+
+                if (room_id) {
+                    app_url += '?room_id=' + room_id;
+                }
+
+                window.location = app_url;
+
+                if (soft_version_id) {
+                    setTimeout(Download, 2000);
+                }
+            });
         }
 
-        var ua = navigator.userAgent.toLowerCase();
-        if (from_mobile()) {
-            if (ua.match(/iphone|ipod|ipad/i)) {
-                //$("#jump").attr('href','https://itunes.apple.com/cn/app/hello-yu-yin-jiao-you/id885737901?l=en&mt=8');//ios下载链接
-                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//
-            } else {
-                $("#jump").attr('href','http://a.app.qq.com/o/simple.jsp?pkgname=com.yy.huanju');//android下载链接
-            }
-        }
-
+        $(".close_right").click(function () {
+            Download()
+        })
     })
 
-
-    $(window).load(function () {
-        var url = $("#jump_room").attr('href');
-        window.location.href = url;
-    });
+    function Download() {
+        window.location = "/soft_versions/index?id=" + {{  soft_version_id }};
+    }
 </script>
 
 </body>

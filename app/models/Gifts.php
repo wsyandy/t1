@@ -16,17 +16,149 @@ class Gifts extends BaseModel
     static $TYPE = [1 => '普通礼物', 2 => '幸运礼物', 3 => '座驾'];
 
     //礼物状态
-    static $STATUS = [GIFT_STATUS_ON => '有效', GIFT_STATUS_OFF => '无效'];
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
+
+    //渲染类型
+    static $RENDER_TYPE = ['gif' => 'gif', 'svga' => 'svga'];
 
     //图片文件
     static $files = ['image' => APP_NAME . '/gifts/image/%s', 'big_image' => APP_NAME . '/gifts/big_image/%s',
-        'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s'];
+        'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s'];
 
     static function getCacheEndPoint()
     {
         $config = self::di('config');
         $endpoints = $config->cache_endpoint;
         return explode(',', $endpoints)[0];
+    }
+
+    function beforeCreate()
+    {
+        if (isBlank($this->pay_type)) {
+            $this->pay_type = 'diamond';
+        }
+    }
+
+
+    function afterCreate()
+    {
+        if ($this->svga_image) {
+            self::uploadLock();
+            self::delay()->zipSvgaImage($this->id);
+        }
+    }
+
+    function afterUpdate()
+    {
+        if ($this->hasChanged('svga_image')) {
+            self::uploadLock();
+            self::delay()->zipSvgaImage($this->id);
+        }
+    }
+
+    static function uploadLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->setex('upload_gift_svga_image_lock', 10, 1);
+    }
+
+    static function uploadUnLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->del('upload_gift_svga_image_lock');
+    }
+
+    static function hasUploadLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        return $hot_cache->get('upload_gift_svga_image_lock') > 0;
+    }
+
+    static function zipSvgaImage($gift_id)
+    {
+        $zip_gift = Gifts::findFirstById($gift_id);
+
+        debug($zip_gift->getSvgaImageName());
+
+        $gifts = Gifts::findBy(['render_type' => 'svga']);
+
+        if (count($gifts) < 1) {
+            debug("no svga");
+            return;
+        }
+
+        $dir_name = APP_ROOT . "temp/gift_svga_images";
+        checkDirExists($dir_name);
+        $dest_filenames = [];
+
+        foreach ($gifts as $gift) {
+            debug($gift->id);
+            if (!$gift->getSvgaImageUrl()) {
+                info("svga_image_not_exists", $gift->id);
+                continue;
+            }
+
+            try {
+                $dest_filename = httpSave($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
+
+                debug($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
+
+                if (!$dest_filename) {
+                    debug($dest_filename);
+                    continue;
+                }
+
+                $dest_filenames[] = $dest_filename;
+
+            } catch (Exception $exception) {
+                info("Exce", $gift->id);
+            }
+        }
+
+        $zip_filename = APP_ROOT . "temp/" . uniqid() . ".zip";
+        $zip = new ZipArchive();
+        $zip->open($zip_filename, ZipArchive::CREATE);   //打开压缩包
+
+        foreach ($dest_filenames as $dest_filename) {
+            if (file_exists($dest_filename)) {
+                debug($dest_filename, basename($dest_filename));
+                $zip->addFile($dest_filename, basename($dest_filename));   //向压缩包中添加文件
+                //unlink($dest_filename);
+            }
+        }
+
+        $zip->close();  //关闭压缩包
+
+        foreach ($dest_filenames as $dest_filename) {
+            if (file_exists($dest_filename)) {
+                unlink($dest_filename);
+            }
+        }
+
+        $resource_file = APP_NAME . "/gift_resources/resource_file/" . uniqid() . ".zip";
+        $res = StoreFile::upload($zip_filename, $resource_file);
+
+        if ($res) {
+            $old_gift_resource = GiftResources::findFirst(['order' => 'resource_code desc']);
+            $resource_code = 0;
+
+            if ($old_gift_resource) {
+                $resource_code = $old_gift_resource->resource_code;
+            }
+
+            $gift_resource = new GiftResources();
+            $gift_resource->resource_file = $resource_file;
+            $gift_resource->status = STATUS_ON;
+            $gift_resource->resource_code = $resource_code + 1;
+            $gift_resource->remark = $zip_gift->name . "更新";
+            $gift_resource->save();
+        }
+
+        if (file_exists($zip_filename)) {
+            unlink($zip_filename);
+        }
+
+        Gifts::uploadUnLock();
     }
 
     function toSimpleJson()
@@ -39,7 +171,10 @@ class Gifts extends BaseModel
             'name' => $this->name,
             'amount' => $this->amount,
             'pay_type' => $this->pay_type,
-            'dynamic_image_url' => $this->dynamic_image_url
+            'dynamic_image_url' => $this->dynamic_image_url,
+            'svga_image_name' => $this->svga_image_name,
+            'render_type' => $this->render_type,
+            'svga_image_url' => $this->svga_image_url
         ];
     }
 
@@ -53,7 +188,11 @@ class Gifts extends BaseModel
             'status_text' => $this->status_text,
             'image_small_url' => $this->image_small_url,
             'image_big_url' => $this->image_big_url,
-            'dynamic_image_url' => $this->dynamic_image_url
+            'dynamic_image_url' => $this->dynamic_image_url,
+            'render_type' => $this->render_type,
+            'svga_image_name' => $this->svga_image_name,
+            'render_type_text' => $this->render_type_text,
+            'svga_image_url' => $this->svga_image_url
         ];
     }
 
@@ -73,6 +212,15 @@ class Gifts extends BaseModel
         }
 
         return StoreFile::getUrl($this->image);
+    }
+
+    function getSvgaImageUrl()
+    {
+        if (isBlank($this->svga_image)) {
+            return '';
+        }
+
+        return StoreFile::getUrl($this->svga_image);
     }
 
     function getImageSmallUrl()
@@ -95,11 +243,19 @@ class Gifts extends BaseModel
         return StoreFile::getUrl($this->image) . '@!big';
     }
 
-    function beforeCreate()
+    function getSvgaImageName()
     {
-        if (isBlank($this->pay_type)) {
-            $this->pay_type = 'diamond';
+        if (!$this->svga_image) {
+            return '';
         }
+
+        $names = explode("/", $this->svga_image);
+
+        if (count($names) < 1) {
+            return '';
+        }
+
+        return end($names);
     }
 
     function isInvalid()

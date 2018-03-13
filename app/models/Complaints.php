@@ -20,10 +20,15 @@ class  Complaints extends BaseModel
      * @type Rooms
      */
     private $_room;
+    /**
+     * @type Musics
+     */
+    private $_music;
 
     static $STATUS = [AUTH_WAIT => '等待处理', AUTH_SUCCESS => '举报成功', AUTH_FAIL => '举报失败'];
 
-    static $COMPLAINT_TYPE = [1 => '色情', 2 => '骚扰', 3 => '不良信息', 4 => '广告', 5 => '歌名不符合歌曲内容'];
+    static $COMPLAINT_TYPE = [COMPLAINT_TYPE_SEX => '色情', COMPLAINT_TYPE_HARASS => '骚扰',
+        COMPLAINT_TYPE_BAD_INFO => '不良信息', COMPLAINT_TYPE_AD => '广告', COMPLAINT_TYPE_ERROR_CONTENT => '歌名不符合歌曲内容'];
 
     static $TYPE = [COMPLAINT_USER => '举报用户', COMPLAINT_ROOM => '举报房间', COMPLAINT_MUSIC => '举报音乐'];
 
@@ -49,7 +54,7 @@ class  Complaints extends BaseModel
             $complaint->music_id = $opt_id;
         }
 
-        $complaint->type = type;
+        $complaint->type = $type;
         $complaint->complaint_type = $complaint_type;
         $complaint->status = AUTH_WAIT;
 
@@ -61,13 +66,13 @@ class  Complaints extends BaseModel
         if ($type == COMPLAINT_ROOM || $type == COMPLAINT_USER) {
 
             $complaint_type = self::$COMPLAINT_TYPE;
-            unset($complaint_type[5]);
+            unset($complaint_type[COMPLAINT_TYPE_ERROR_CONTENT]);
             return $complaint_type;
 
         } else if ($type == COMPLAINT_MUSIC) {
 
             $complaint_type = self::$COMPLAINT_TYPE;
-            unset($complaint_type[2]);
+            unset($complaint_type[COMPLAINT_TYPE_HARASS]);
             return $complaint_type;
 
         }

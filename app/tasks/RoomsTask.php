@@ -154,7 +154,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
-        if ($online_silent_room_num >= 60) {
+        if ($online_silent_room_num >= 5) {
             info("online_silent_room_num", $online_silent_room_num);
             return;
         }
@@ -288,5 +288,34 @@ class RoomsTask extends \Phalcon\Cli\Task
             $room->save();
         }
 
+    }
+
+    function initRoomsAction()
+    {
+        while (true) {
+            $room = new Rooms();
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->product_channel_id = 1;
+            $room->user_type = USER_TYPE_SILENT;
+            $room->name = '';
+            $room->topic = '';
+            $room->user_id = 0;
+            $room->password = '';
+            $room->last_at = 0;
+            $room->room_seat_id = 0;
+            $room->audio_id = 0;
+            $room->room_theme_id = 0;
+            $room->save();
+
+            echoLine($room->id);
+
+            if ($room->id >= 1000000) {
+                break;
+            }
+        }
+
+        $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
+        echoLine(count($users));
     }
 }

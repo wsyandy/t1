@@ -31,3 +31,29 @@ function getRequestProtocol()
     $key = $di->request_protocol;
     return $key;
 }
+
+//获取毫秒时间戳
+function millisecondTime()
+{
+    list($usec, $sec) = explode(' ', microtime());
+    $usec2msec = intval($usec * 1000);
+    $sec2msec = intval($sec * 1000);
+    $time = $usec2msec + $sec2msec;
+    return $time;
+}
+
+function secondsToText($seconds)
+{
+    if ($seconds <= 60) {
+        return $seconds . '秒';
+    }
+
+    if ($seconds <= 60 * 60) {
+        return intval($seconds / 60) . '分' . ($seconds % 60) . '秒';
+    }
+
+    $hour = intval($seconds / 3600);
+    $minute = intval(($seconds % 3600) / 60);
+
+    return $hour . '时' . $minute . '分' . ($seconds % 60) . '秒';
+}

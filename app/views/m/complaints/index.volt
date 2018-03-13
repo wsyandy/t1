@@ -45,6 +45,7 @@
             type: "{{ type }}",
             complaint_type: complaint_type
         };
+
         $.authPost("/m/complaints/create", data, function (resp) {
             alert(resp.error_reason);
             if (resp.error_code == 0 && resp.error_url) {

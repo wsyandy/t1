@@ -24,15 +24,14 @@ class WebsocketTask extends Phalcon\CLI\Task
             }
         }
 
-        $server = new PushSever();
-        $server->start();
+        $swoole_services = new \services\SwooleServices();
+        $swoole_services->startService();
     }
 
     function stopAction()
     {
         //停止服务 清空链接数
-        $push_server = new PushSever();
-        $push_server->clearConnectionNum();
+        \services\SwooleUtils::clearConnectionNum();
 
         $log_dir = $this->config->application->log;
         checkDirExists("{$log_dir}/pids/websocket/");
@@ -57,12 +56,39 @@ class WebsocketTask extends Phalcon\CLI\Task
                 return false;
             }
         }
+
         return true;
     }
 
-    function shutdownAction()
+    function reloadAction()
     {
-        $push_server = new PushSever();
-        $push_server->send('shutdown');
+        //PushSever::send('reload', '127.0.0.1', '9508');
+
+        $log_dir = $this->config->application->log;
+
+        checkDirExists("{$log_dir}/pids/websocket/");
+
+        if (file_exists("{$log_dir}/pids/websocket/server.pid")) {
+
+            $pid = file_get_contents("{$log_dir}/pids/websocket/server.pid");
+            $pid = intval(trim($pid));
+
+            if (!$pid || @pcntl_getpriority($pid) === false) {
+                info('websocket process not exited!');
+                return true;
+            }
+
+            $result = posix_kill($pid, SIGUSR1);
+
+            if ($result) {
+                info('websocket process reloaded!');
+                return true;
+            } else {
+                info('can not reload websocket process!');
+                return false;
+            }
+        }
+
+        return true;
     }
 }

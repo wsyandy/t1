@@ -52,11 +52,13 @@ class Rooms extends BaseModel
 
     function toSimpleJson()
     {
+        $user = $this->user;
+
         return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
-            'user_id' => $this->user_id, 'sex' => $this->user->sex, 'avatar_small_url' => $this->user->avatar_small_url,
-            'nickname' => $this->user->nickname, 'age' => $this->user->age, 'monologue' => $this->user->monologue,
-            'channel_name' => $this->channel_name, 'online_status' => $this->online_status, 'user_num' => $this->user_num,
-            'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
+            'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
+            'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
     }
 
@@ -173,6 +175,11 @@ class Rooms extends BaseModel
 
     function enterRoom($user)
     {
+        //用户有可能在房间时进入房间
+        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+            $user->user_role_at = time();
+        }
+
         $user->current_room_id = $this->id;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
         $this->last_at = time();
@@ -196,8 +203,6 @@ class Rooms extends BaseModel
         $this->addUser($user);
 
         $this->save();
-
-        $user->user_role_at = time();
         $user->save();
 
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
@@ -379,6 +384,11 @@ class Rooms extends BaseModel
         $user_ids = $hot_cache->zrange($key, 0, -1);
         $user_ids = array_diff($user_ids, $filter_user_ids);
         $user_id = $user_ids[array_rand($user_ids)];
+
+        if (!$user_id) {
+            return null;
+        }
+
         $user = Users::findFirstById($user_id);
 
         return $user;
@@ -714,7 +724,7 @@ class Rooms extends BaseModel
 
         $rank = array_rand($orders);
         $order = $orders[$rank];
-        $limit = mt_rand(1, 5);
+        $limit = mt_rand(1, 2);
 
         $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
@@ -812,7 +822,8 @@ class Rooms extends BaseModel
     function pushEnterRoomMessage($user)
     {
         $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
-            'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name
+            'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name,
+            'segment' => $user->segment, 'segment_text' => $user->segment_text
         ];
 
         $this->push($body);
@@ -902,11 +913,11 @@ class Rooms extends BaseModel
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("Exce", $user->id, $this->id, $payload);
+                info("user_already_close", $user->id, $this->id, $payload);
                 continue;
             }
 
-            $res = PushSever::send('push', $intranet_ip, self::config('websocket_listen_server_port'), $payload);
+            $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
                 info($user->id, $this->id, $payload);
@@ -1120,5 +1131,58 @@ class Rooms extends BaseModel
         }
 
         return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
+    }
+
+
+    function getDayAmount($start_at, $end_at)
+    {
+        $cond = [
+            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at:",
+            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at]
+        ];
+        $gift_orders = GiftOrders::find($cond);
+        $diamonds = 0;
+        foreach ($gift_orders as $gift_order) {
+            $diamonds += $gift_order->amount;
+        }
+        return $diamonds;
+    }
+
+    function statIncome($amount)
+    {
+        $db = Users::getUserDb();
+
+        if ($amount) {
+            $db->zincrby("stat_room_income_list", $amount, $this->id);
+        }
+    }
+
+    function getAmount()
+    {
+        $db = Users::getUserDb();
+        return $db->zscore("stat_room_income_list", $this->id);
+    }
+
+    static function roomIncomeList($page, $per_page, $cond)
+    {
+        $db = Users::getUserDb();
+        $key = "stat_room_income_list";
+        $total_entries = $db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $room_ids = implode(',', $room_ids);
+
+        if (isPresent($cond)) {
+            debug($cond);
+            $rooms = self::find($cond);
+        } else {
+            $rooms = self::findByIds($room_ids);
+        }
+
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
     }
 }

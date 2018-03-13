@@ -52,6 +52,24 @@ class UsersController extends BaseController
         $current_user->product_channel = $product_channel;
         list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
 
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
+
+        if ($db->zscore($good_num_list_key, $user->id)) {
+            info("good_num", $user->id);
+            $user->user_type = USER_TYPE_SILENT;
+            $user->user_status = USER_STATUS_OFF;
+            $user->mobile = '';
+            $user->device_id = 0;
+            $user->password = '';
+            $user->update();
+
+            $device->user_id = 0;
+            $device->update();
+
+            list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
+        }
+
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
@@ -287,7 +305,7 @@ class UsersController extends BaseController
         $params = $this->params();
         $monologue = fetch($params, 'monologue');
 
-        if ($monologue && mb_strlen($monologue) > 200) {
+        if ($monologue && mb_strlen($monologue) > 250) {
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
         }
 
@@ -363,8 +381,7 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
-        //声网登录密码
-        $basic_json['im_password'] = md5($this->currentUser()->id);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 

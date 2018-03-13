@@ -26,13 +26,17 @@ class GiftsController extends BaseController
 
     function createAction()
     {
+        if (\Gifts::hasUploadLock()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '有文件上传中,请稍后上传');
+        }
+
         $gift = new \Gifts();
         $this->assign($gift, 'gift');
         if ($gift->save()) {
-            \OperatingRecords::logAfterCreate($this->currentOperator(),$gift);
+            \OperatingRecords::logAfterCreate($this->currentOperator(), $gift);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '', '创建失败');
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
     }
 
@@ -44,9 +48,13 @@ class GiftsController extends BaseController
 
     function updateAction()
     {
+        if (\Gifts::hasUploadLock()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '有文件上传中,请稍后上传');
+        }
+
         $gift = \Gifts::findById($this->params('id'));
         $this->assign($gift, 'gift');
-        \OperatingRecords::logBeforeUpdate($this->currentOperator(),$gift);
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $gift);
         if ($gift->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));
         } else {

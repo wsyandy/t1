@@ -20,6 +20,8 @@ class UserGifts extends BaseModel
 
     static function updateGiftNum($gift_order_id)
     {
+        info($gift_order_id);
+
         $gift_order = \GiftOrders::findById($gift_order_id);
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
@@ -31,8 +33,11 @@ class UserGifts extends BaseModel
 
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findFirstById($gift_order->gift_id);
+
         $gift_amount = $gift->amount;
         $gift_num = $gift_order->gift_num;
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
@@ -43,9 +48,13 @@ class UserGifts extends BaseModel
         $user_gift->save();
 
         $user = $user_gift->user;
-        $hi_coins = ($gift_amount * $gift_num) / 10;
+        $product_channel = $user->product_channel;
+        $rate = $product_channel->rateOfDiamondToHiCoin();
+        $hi_coins = ($gift_amount * $gift_num) / $rate;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
 

@@ -182,7 +182,6 @@
     segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
-    receive_gift_num 接受的礼物个数
     albums:[
         {
             id,
@@ -534,10 +533,10 @@
 ###### 18.1.1 参数
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|third_name|登录方式名称|string|是|微信:weixin,QQ:qq,新浪微博:sinaweibo|
-|access_token|登录的token|string|是||
-|openid|用户的唯一id|string|是||
-|app_id|应用的appid|string|否|QQ登录需要此参数||
+|third_name|登录方式名称|string|否|微信:weixin,QQ:qq,新浪微博:sinaweibo|
+|access_token|登录的token|string|否||
+|openid|用户的唯一id|string|否||
+|app_id|应用的appid|string|是|QQ登录需要此参数||
 
 ###### 18.1.2 回应参数说明
 ```

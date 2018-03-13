@@ -39,8 +39,7 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text,
-            'receive_gift_num' => $this->receive_gift_num
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -205,6 +204,24 @@ trait UserAttrs
         return $data;
     }
 
+    function toUnionJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'age' => $this->age,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'charm_value' => $this->charm_value,
+            'wealth_value' => $this->wealth_value,
+            'monologue' => $this->monologue,
+            'current_room_id' =>$this->current_room_id
+        ];
+
+        return $data;
+    }
+
     public function isWebPlatform()
     {
         if (preg_match('/^(web)$/i', $this->platform)) {
@@ -259,9 +276,18 @@ trait UserAttrs
         return StoreFile::getUrl($this->avatar) . '@!small';
     }
 
+    function getAvatarBigUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!big';
+    }
+
     function getDefaultAvatar()
     {
-        $avatar = APP_NAME . '/users/avatar/default_avatar.png';
+        $avatar = APP_NAME . '/users/avatar/default_avatar' . $this->sex . '.png';
         return StoreFile::getUrl($avatar);
     }
 
@@ -437,7 +463,7 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('audience', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return intval($time);
     }
 
     //主播时间
@@ -446,7 +472,7 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('broadcaster', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return intval($time);
     }
 
     //房主时间
@@ -455,16 +481,37 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = Users::generateStatRoomTimeKey('host_broadcaster', $date);
         $time = $db->zscore($key, $this->id);
-        return intval($time / 60);
+        return intval($time);
+    }
+
+    //旁听时间
+    function getAudienceTimeByDateText($date)
+    {
+        return secondsToText($this->getAudienceTimeByDate($date));
+    }
+
+    //主播时间
+    function getBroadcasterTimeByDateText($date)
+    {
+        return secondsToText($this->getBroadcasterTimeByDate($date));
+    }
+
+    //房主时间
+    function getHostBroadcasterTimeByDateText($date)
+    {
+        return secondsToText($this->getHostBroadcasterTimeByDate($date));
     }
 
     function getWithdrawAmount()
     {
         $hi_coins = $this->hi_coins;
+
         if (!$hi_coins) {
             return 0;
         } else {
-            return $hi_coins / 10;
+            $product_channel = $this->product_channel;
+            $rate = $product_channel->rateOfHiCoinToMoney();
+            return $hi_coins / $rate;
         }
     }
 

@@ -1,5 +1,14 @@
 <a href="/admin/musics/new" class="modal_action">新增</a>
 
+<form action="/admin/musics" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="id_eq">ID</label>
+    <input name="music[id_eq]" type="text" id="id_eq"/>
+
+    <label for="user_id_eq">用户ID</label>
+    <input name="music[user_id_eq]" type="text" id="user_id_eq"/>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
 
 {%- macro edit_link(music) %}
     <a href="/admin/musics/edit/{{ music.id }}" class="modal_action">编辑</a>

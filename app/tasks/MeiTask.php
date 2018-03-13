@@ -68,7 +68,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getUserIpAction()
     {
-        $user = Users::findFirstById(39);
+        $user = Users::findFirstById(31290);
+        echoLine($user->user_role);
         echoLine($user->getIntranetIp());
         echoLine($user->getOnlineToken());
     }
@@ -266,11 +267,11 @@ class MeiTask extends \Phalcon\Cli\Task
     function testUserLevelAction()
     {
         $user = Users::findFirstById(1);
-//        $user->experience = 1.234567892345678923456789;
+        $user->experience = 385999;
+        $user->level = $user->calculateLevel();
+        $user->segment = $user->calculateSegment();
 //        $user->save();
-//        $user->experience = 385000;
-//        $user->save();
-        echoLine($user->segment, $user->segment_text);
+        echoLine($user->level, $user->segment, $user->segment_text);
     }
 
     function testUserLevelTextAction()
@@ -353,13 +354,175 @@ class MeiTask extends \Phalcon\Cli\Task
         fclose($fp);
     }
 
-    function test10Action()
+    function freshMusicStatusAction()
     {
-        $share_history = ShareHistories::findFirstById(79);
-        echoLine($share_history->data);
+        $musics = Musics::findForeach();
 
-        $data = json_decode($share_history->data, true);
-        $room_id = fetch($data, 'room_id');
-        echoLine($room_id);
+        foreach ($musics as $music) {
+            $music->hot = 1;
+            $music->update();
+        }
+    }
+
+    function fixUserSegmentAction()
+    {
+        $users = Users::find(['conditions' => 'experience > 0']);
+
+        foreach ($users as $user) {
+
+            $user_level = $user->calculateLevel();
+
+            if ($user_level != $user->level) {
+                echoLine($user->id, $user_level, $user->level);
+                $user->level = $user_level;
+            }
+
+            $user_segment = $user->calculateSegment();
+
+            if ($user_segment != $user->segment) {
+                echoLine($user->id, $user_segment, $user->segment);
+                $user->segment = $user_segment;
+            }
+
+            //$user->update();
+        }
+
+    }
+
+    function fixRoomStatusAction()
+    {
+        $room = Rooms::findFirstById(416);
+        $room->status = STATUS_OFF;
+        $room->online_status = STATUS_OFF;
+        $room->save();
+
+        $share_histories = ShareHistories::findForeach();
+        foreach ($share_histories as $share_history) {
+            echoLine($share_history->data, $share_history->id);
+
+        }
+
+        $musics = Musics::findForeach();
+
+        foreach ($musics as $music) {
+            if (!$music->rank) {
+                $music->rank = 1;
+                $music->update();
+            }
+        }
+    }
+
+    function testTimeAction()
+    {
+        $time = time();
+        $millisecond_time = millisecondTime();
+        echoLine($time, $millisecond_time, $millisecond_time / 1000, microtime());
+
+        echoLine(date("Ymd h:i:s", $time));
+        echoLine(date("Ymd h:i:s", $millisecond_time));
+    }
+
+    function getConnectInfoAction()
+    {
+        $user = Users::findFirstById(117);
+        $online_token = $user->getOnlineToken();
+        echoLine($user->getUserFd(), $user->getIntranetIp(), $online_token);
+
+        $current_room = \Rooms::findRoomByOnlineToken($online_token);
+        $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
+
+        echoLine($current_room);
+        echoLine($current_room_seat);
+    }
+
+    function unbindThirdAccountAction()
+    {
+        $user = Users::findFirstById(31194);
+        echoLine($user->third_name, $user->third_unionid, $user->login_type);
+        $user->third_name = 'test';
+        $user->third_unionid = 'test';
+        $user->login_type = USER_LOGIN_TYPE_SINAWEIBO;
+        $user->update();
+    }
+
+    function userInfoAction()
+    {
+        $user = Users::findFirstById(31285);
+        Users::uploadWeixinAvatar(31286, 'http://thirdqq.qlogo.cn/qqapp/1106728586/2C7E9E4E4D5D99C561239D414DFA3F4A/100');
+        echoLine($user);
+
+        $product_channel = ProductChannels::findFirstById(1);
+        $user = \Users::findFirstByThirdUnionid($product_channel, '2997469905', 'sina');
+        $user = Users::findFirstById(31279);
+        echoLine($user);
+    }
+
+    function uploadDefaultAvatarAction()
+    {
+        $default_avatar0 = APP_ROOT . "public/images/default_avatar0.png";
+        $default_avatar1 = APP_ROOT . "public/images/default_avatar1.png";
+
+        StoreFile::upload($default_avatar0, APP_NAME . '/users/avatar/default_avatar0.png');
+        StoreFile::upload($default_avatar1, APP_NAME . '/users/avatar/default_avatar1.png');
+    }
+
+    function testSecondAction()
+    {
+        echoLine(millisecondTime());
+
+        Chats::sendSystemMessage(4, CHAT_CONTENT_TYPE_TEXT, "ss");
+
+        $emchat = new \Emchat();
+        $action = 'admin_message';
+        $target_type = 'users';
+
+        $ext = ['id' => 1, 'sender_id' => 1, 'receiver_id' => 4, 'created_at' => time(), 'content' => 'ddd', 'content_type' => 'text/plain'];
+
+        $emchat->sendText("系统", 4, "3333");
+    }
+
+    function testGiftOrderAction()
+    {
+        echoLine(GiftOrders::findFirstById(30351));
+
+        $num = GiftOrders::sum(['conditions' => 'user_id = :user_id: and gift_id=:gift_id:',
+            'bind' => ['user_id' => 31279, 'gift_id' => 10], 'column' => 'gift_num']);
+        echoLine($num);
+    }
+
+    function goodNumAction()
+    {
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
+        echoLine($db->zrange($good_num_list_key, 0, -1));
+        $db->zadd($good_num_list_key, time(), 1000777);
+    }
+
+    function smsHistoryAction()
+    {
+        $sms_history = SmsHistories::findFirstById(554);
+        echoLine($sms_history);
+
+        $devices = Devices::findBy(['platform' => 'ios']);
+
+        foreach ($devices as $device) {
+            echoLine($device->idfa);
+        }
+    }
+
+    function zipAction()
+    {
+        $path = APP_ROOT . "temp/test.txt";
+        $filename = APP_ROOT . "temp/test.zip";
+        $zip = new ZipArchive();
+        $zip->open($filename, ZipArchive::CREATE);   //打开压缩包
+        $zip->addFile($path, basename($path));   //向压缩包中添加文件
+        $zip->close();  //关闭压缩包
+
+        $gift_resources = GiftResources::findForeach();
+        foreach ($gift_resources as $resource) {
+            $resource->resource_code = $resource->id;
+            $resource->save();
+        }
     }
 }

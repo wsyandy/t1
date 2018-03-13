@@ -15,13 +15,17 @@ class RoomsController extends BaseController
     {
         $cond = $this->getConditions('room');
         $name = $this->params('name');
-        if ($name) {
-            if (isset($cond['conditions'])) {
-                $cond['conditions'] .= " and name like '%$name%' ";
-            } else {
-                $cond['conditions'] = " name like '%$name%' ";
-            }
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and user_id > 0";
+        } else {
+            $cond['conditions'] = " user_id > 0";
         }
+
+        if ($name) {
+            $cond['conditions'] .= " and name like '%$name%' ";
+        }
+
         $page = 1;
         $total_page = 1;
         $per_page = 30;
@@ -217,7 +221,7 @@ class RoomsController extends BaseController
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             info($payload);
-            $server = \PushSever::send('push', $intranet_ip, 9508, $payload);
+            \services\SwooleUtils::send('push', $intranet_ip, 9508, $payload);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
 
         }
@@ -269,5 +273,41 @@ class RoomsController extends BaseController
         $this->view->id = $id;
         $this->view->audios = $audios_collection;
         $this->view->room = $room;
+    }
+
+    function earningsAction()
+    {
+        $cond = $this->getConditions('room');
+//        $name = $this->params('name');
+
+//        if ($name) {
+//            $cond['conditions'] .= " and name like '%$name%' ";
+//        }
+
+        $page = $this->params('page', 1);
+
+        $per_page = $this->params('per_page', 20);
+
+        $rooms = \Rooms::roomIncomeList($page, $per_page, $cond);
+
+        $this->view->rooms = $rooms;
+    }
+
+    function earningsDetailAction()
+    {
+        $room_id = $this->params('id');
+        $room = \Rooms::findFirstById($room_id);
+
+        $results = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $start_at = beginOfDay(time() - $i * 60 * 60 * 24);
+            $end_at = endOfDay(time() - $i * 60 * 60 * 24);
+
+            $results[date('Ymd', $start_at)] = $room->getDayAmount($start_at, $end_at);
+        }
+
+        $this->view->room_id = $room_id;
+        $this->view->results = $results;
     }
 }

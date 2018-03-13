@@ -10,6 +10,11 @@ class BaseController extends \ApplicationController
      */
     private $_current_user;
 
+    /**
+     * @var \ProductChannels
+     */
+    private $_current_product_channel;
+
     static $SKIP_ACTIONS = [
         'home' => ['index', 'login', 'logout', 'check_auth']
     ];
@@ -22,9 +27,6 @@ class BaseController extends \ApplicationController
         if (!isset($this->_current_user)) {
             $user_id = $this->currentUserId();
             $this->_current_user = \Users::findFirstById($user_id);
-//            if (!$this->_current_user && isDevelopmentEnv()) {
-//                $this->_current_user = \Users::findLast();
-//            }
         }
 
         return $this->_current_user;
@@ -32,11 +34,32 @@ class BaseController extends \ApplicationController
 
     function currentUserId()
     {
-//        if (isDevelopmentEnv()) {
-//            $user = \Users::findLast();
-//            return $user->id;
-//        }
         return $this->session->get('user_id');
+    }
+
+    /**
+     * @return \ProductChannels
+     */
+    function currentProductChannel()
+    {
+
+        if (isset($this->_current_product_channel)) {
+            return $this->_current_product_channel;
+        }
+
+        $domain = $this->getHost();
+        $this->_current_product_channel = \ProductChannels::findFirstByWebDomain($domain);
+        return $this->_current_product_channel;
+
+    }
+
+    function currentProductChannelId()
+    {
+        if ($this->currentProductChannel()) {
+            return $this->_current_product_channel->id;
+        }
+
+        return 0;
     }
 
     function checkLoginTime()

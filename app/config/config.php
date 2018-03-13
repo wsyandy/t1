@@ -30,10 +30,18 @@ return new \Phalcon\Config([
     'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http'),
 
     'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.yueyuewo.cn"),
-    'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"),
-    'websocket_listen_client_port' => env('websocket_listen_client_port', 9509),
-    'websocket_listen_server_ip' => env('websocket_listen_server_ip', "0.0.0.0"),
-    'websocket_listen_server_port' => env('websocket_listen_server_port', 9508),
+
+    'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"), //废弃
+    'websocket_listen_client_port' => env('websocket_listen_client_port', 9509), //废弃
+    'websocket_listen_server_ip' => env('websocket_listen_server_ip', "0.0.0.0"), //废弃
+    'websocket_listen_server_port' => env('websocket_listen_server_port', 9508), //废弃
+
+    'websocket_side_server_ip' => env('websocket_side_server_ip', "0.0.0.0"),
+    'websocket_side_server_port' => env('websocket_side_server_port', 9509),
+    'websocket_local_server_ip' => env('websocket_local_server_ip', "0.0.0.0"),
+    'websocket_local_server_port' => env('websocket_local_server_port', 9508),
     'websocket_worker_num' => env('websocket_worker_num', 4),
     'websocket_max_request' => env('websocket_max_request', 10000),
+    'websocket_task_worker_num' => env('websocket_task_worker_num', 3),
+    'websocket_reactor_num' => env('websocket_reactor_num', 2),
 ]);

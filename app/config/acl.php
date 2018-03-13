@@ -16,12 +16,15 @@ return [
 
     'operat_manager' => ['dashboard' => '*', 'devices' => ['index', 'edit', 'update'], 'stats' => '*', 'partners' => '*',
         'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*', 'export_histories' => ['download'],
-        'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*'],
+        'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*',
+        'partner_urls' => '*'],
 
     'producter' => ['dashboard' => '*', 'product_channels' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'orders' => '*', 'products' => '*', 'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*',
         'sms_channels' => '*', 'soft_versions' => '*', 'client_themes' => '*', 'push_messages' => '*', 'partners' => '*',
-        'channel_soft_versions' => '*',
+        'channel_soft_versions' => '*', 'gifts' => '*', 'emoticon_images' => '*', 'audios' => "*", 'room_themes' => '*',
+        'musics' => '*', 'banners' => '*', 'complaints' => '*', 'sms_histories' => '*', 'rooms' => '*', 'broadcasts' => '*',
+        'share_histories' => '*', 'audio_chapters' => '*'
     ],
 
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],

@@ -23,7 +23,8 @@
 {% endmacro %}
 
 {% macro user_info(user) %}
-    姓名:{{ user.nickname }}  性别:{{ user.sex_text }}<br/>
+    姓名:{{ user.nickname }}  性别:{{ user.sex_text }} 段位:{{ user.segment_text }}<br/>
+    魅力值:{{ user.charm_value }} 财富值:{{ user.wealth_value }}<br/>
     手机号码:{{ user.mobile }}<br/>
     设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
@@ -69,10 +70,13 @@
     {% if isAllowed('users','getui') %}
         <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
     {% endif %}
+    {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+        <a href="/admin/users/unbind_third_account?id={{ user.id }}" id="unbind_third_account">解绑第三方账号</a><br/>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-    '状态':'user_status_info', '操作':'profile_link'
+'状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -123,6 +127,9 @@
             {% if isAllowed('users','getui') %}
                 <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
             {% endif %}
+            {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+                <a href="/admin/users/unbind_third_account?id=${ user.id }" id="unbind_third_account">解绑第三方账号</a><br/>
+            {% endif %}
         </td>
 
     </tr>
@@ -149,4 +156,17 @@
             })
         }
     })
+
+    $('body').on('click', '#unbind_third_account', function (e) {
+        e.preventDefault();
+        if (confirm('确认解绑？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+                if (resp.error_code == 0) {
+                    location.href = resp.error_url;
+                }
+            });
+        }
+    });
 </script>

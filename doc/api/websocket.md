@@ -158,17 +158,17 @@
   }
   ```
  #### 挂断电话
-    ```
+```
     {
         action:hang_up 挂断电话(由于网络异常或进程退出导致的电话中断)
         user_id 挂断电话的用户id
         receiver_id 对方用户id
         channel_name 房间频道
     }
-    ``` 
+``` 
   
   #### 进入房间
-    ```
+```
     {
         action:enter_room 进入房间
         user_id 进入房间的用户id
@@ -177,11 +177,14 @@
         avatar_url 进入房间的用户的头像
         avatar_small_url 进入房间的用户头像小图
         channel_name 房间频道
+        segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+        (例:星耀1 starshine1;星耀王者2 king2)
+        segment_text 段位文本 星耀1
     }
-    ```  
+```  
   
   #### 发公屏消息 
-    ```
+```
     {
         action:send_topic_msg 发送公屏消息
         user_id 发送消息的用户id
@@ -192,10 +195,10 @@
         content 消息内容
         channel_name 房间频道
     }
-    ```  
+```  
     
   #### 送礼物
-  ```
+```
     {
         action: send_gift 送礼物      
         notify_type bc 通知类型bc广播 ptp点对点
@@ -216,10 +219,10 @@
             num 礼物个数
         }
     }
-  ```   
+```   
   
    #### 上麦
-    ```
+```
     {
         action: up 上麦
         channel_name 房间频道
@@ -236,10 +239,10 @@
             room_id 房间id
         }
     }
-    ```   
+```   
     
    #### 下麦
-    ```
+```
     {
         action: down 下麦
         channel_name 房间频道
@@ -251,4 +254,4 @@
             room_id 房间id
         }
     }
-    ```   
+```   
