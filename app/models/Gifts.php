@@ -97,17 +97,24 @@ class Gifts extends BaseModel
 
         $zip_filename = APP_ROOT . "temp/" . uniqid() . ".zip";
         $zip = new ZipArchive();
+        $zip->open($zip_filename, ZipArchive::CREATE);   //打开压缩包
 
         foreach ($dest_filenames as $dest_filename) {
             if (file_exists($dest_filename)) {
-                $zip->open($zip_filename, ZipArchive::CREATE);   //打开压缩包
                 debug($dest_filename, basename($dest_filename));
                 $zip->addFile($dest_filename, basename($dest_filename));   //向压缩包中添加文件
-                unlink($dest_filename);
+                //unlink($dest_filename);
             }
         }
 
         $zip->close();  //关闭压缩包
+
+        foreach ($dest_filenames as $dest_filename) {
+            if (file_exists($dest_filename)) {
+                unlink($dest_filename);
+            }
+        }
+
         $resource_file = APP_NAME . "/gift_resources/resource_file/" . uniqid() . ".zip";
         $res = StoreFile::upload($zip_filename, $resource_file);
 
@@ -121,7 +128,7 @@ class Gifts extends BaseModel
         }
 
         if (file_exists($zip_filename)) {
-//            unlink($zip_filename);
+            unlink($zip_filename);
         }
     }
 

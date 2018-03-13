@@ -10,7 +10,7 @@ class GiftResources extends BaseModel
 {
     static $status = [STATUS_ON => '正常', STATUS_OFF => '过期'];
 
-    function resourceFile()
+    function resourceFileUrl()
     {
         return StoreFile::getUrl($this->resource_file);
     }
