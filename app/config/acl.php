@@ -22,7 +22,8 @@ return [
     'producter' => ['dashboard' => '*', 'product_channels' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'orders' => '*', 'products' => '*', 'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*',
         'sms_channels' => '*', 'soft_versions' => '*', 'client_themes' => '*', 'push_messages' => '*', 'partners' => '*',
-        'channel_soft_versions' => '*',
+        'channel_soft_versions' => '*', 'gifts' => '*', 'emoticon_images' => '*', 'audios' => "*", 'room_themes' => '*',
+        'musics' => '*', 'banners' => '*'
     ],
 
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
