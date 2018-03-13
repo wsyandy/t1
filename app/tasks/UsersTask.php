@@ -245,10 +245,12 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            echoLine("fix", $user->id, $hi_coins, $user->hi_coins);
+
             $user->hi_coins = $hi_coins;
             //echoLine($total_amount, $rate);
             //echoLine($i, $total_amount, $user->id, $user->hi_coins);
-            $user->update();
+            //$user->update();
         }
     }
 
