@@ -139,5 +139,6 @@
     error_url: "",
     now_at: 1515508744,
     resource_file_url : 资源地址 xxx.zip
+    resource_code:资源code 客户端根据此参数判断是否拉取礼物
 }
 ````

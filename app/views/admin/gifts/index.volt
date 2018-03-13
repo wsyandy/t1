@@ -39,6 +39,6 @@
         <td>${gift.render_type_text}</td>
         <td>${gift.status_text}</td>
         <td>${gift.rank}</td>
-        <td><a href="/admin/gifts/edit/${gift.id}">编辑</a></td>
+        <td><a href="/admin/gifts/edit/${gift.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>

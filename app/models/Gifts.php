@@ -43,6 +43,7 @@ class Gifts extends BaseModel
     function afterCreate()
     {
         if ($this->svga_image) {
+            self::uploadLock();
             self::delay()->zipSvgaImage($this->id);
         }
     }
@@ -50,8 +51,27 @@ class Gifts extends BaseModel
     function afterUpdate()
     {
         if ($this->hasChanged('svga_image')) {
+            self::uploadLock();
             self::delay()->zipSvgaImage($this->id);
         }
+    }
+
+    static function uploadLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->setex('upload_gift_svga_image_lock', 10, 1);
+    }
+
+    static function uploadUnLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        $hot_cache->del('upload_gift_svga_image_lock');
+    }
+
+    static function hasUploadLock()
+    {
+        $hot_cache = self::getHotWriteCache();
+        return $hot_cache->get('upload_gift_svga_image_lock') > 0;
     }
 
     static function zipSvgaImage($gift_id)
@@ -118,11 +138,18 @@ class Gifts extends BaseModel
         $resource_file = APP_NAME . "/gift_resources/resource_file/" . uniqid() . ".zip";
         $res = StoreFile::upload($zip_filename, $resource_file);
 
-        debug($res);
         if ($res) {
+            $old_gift_resource = GiftResources::findFirst(['order' => 'resource_code desc']);
+            $resource_code = 0;
+
+            if ($old_gift_resource) {
+                $resource_code = $old_gift_resource->resource_code;
+            }
+
             $gift_resource = new GiftResources();
             $gift_resource->resource_file = $resource_file;
             $gift_resource->status = STATUS_ON;
+            $gift_resource->resource_code = $resource_code + 1;
             $gift_resource->remark = $zip_gift->name . "更新";
             $gift_resource->save();
         }
@@ -130,6 +157,8 @@ class Gifts extends BaseModel
         if (file_exists($zip_filename)) {
             unlink($zip_filename);
         }
+
+        Gifts::uploadUnLock();
     }
 
     function toSimpleJson()

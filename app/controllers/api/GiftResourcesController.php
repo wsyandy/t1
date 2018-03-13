@@ -15,6 +15,7 @@ class GiftResourcesController extends BaseController
     {
         $gift_resource = \GiftResources::findFirstBy(['status' => STATUS_ON], 'id desc');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['resource_file_url' => $gift_resource->resourceFileUrl()]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '',
+            ['resource_file_url' => $gift_resource->resourceFileUrl(), 'resource_code' => $gift_resource->resource_code]);
     }
 }
