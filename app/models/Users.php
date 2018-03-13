@@ -2219,6 +2219,7 @@ class Users extends BaseModel
         $user->device_id = $device->id;
         $user->login_name = $params['login_name'];
         $user->nickname = $params['nickname'];
+        $user->sex = $params['sex'];
         $user->user_type = USER_TYPE_ACTIVE;
         $user->sid = $user->generateSid('s');
         $user->update();
