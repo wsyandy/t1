@@ -1,35 +1,66 @@
 <?php
 
-namespace union;
+namespace partner;
 
 class BaseController extends \ApplicationController
 {
 
     /**
-     * @var \Users
+     * @var \Unions
      */
-    private $_current_user;
+    private $_current_union;
+
+    /**
+     * @var \ProductChannels
+     */
+    private $_current_product_channel;
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'login', 'logout', 'check_auth']
+        'home' => ['index'],
+        'unions' => ['register', 'send_auth', 'login']
     ];
 
     /**
-     * @return \Users
+     * @return \Unions
      */
-    function currentUser()
+    function currentUnion()
     {
-        if (!isset($this->_current_user)) {
-            $user_id = $this->currentUserId();
-            $this->_current_user = \Users::findFirstById($user_id);
+        if (!isset($this->_current_union)) {
+            $union_id = $this->currentUnionId();
+            $this->_current_union = \Unions::findFirstById($union_id);
         }
 
-        return $this->_current_user;
+        return $this->_current_union;
     }
 
-    function currentUserId()
+    function currentUnionId()
     {
-        return $this->session->get('user_id');
+        return $this->session->get('union_id');
+    }
+
+    /**
+     * @return \ProductChannels
+     */
+    function currentProductChannel()
+    {
+
+        if (isset($this->_current_product_channel)) {
+            return $this->_current_product_channel;
+        }
+
+        $domain = $this->getHost();
+        $this->_current_product_channel = \ProductChannels::findFirstByWebDomain($domain);
+        return $this->_current_product_channel;
+
+    }
+
+    function currentProductChannelId()
+    {
+        if ($this->currentProductChannel()) {
+            return $this->_current_product_channel->id;
+        }
+
+        return 0;
     }
 
     function checkLoginTime()
@@ -53,27 +84,20 @@ class BaseController extends \ApplicationController
 
         $this->checkLoginTime();
 
-        $current_user = $this->currentUser();
+        $current_union = $this->currentUnion();
 
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
         $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
 
-        $show_logout = false;
-        if (isPresent($current_user)) {
-            $show_logout = true;
-        }
-
-        $this->view->show_logout = $show_logout;
-
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
         }
 
-        if (isBlank($current_user)) {
-            $this->response->redirect('/web/home/login');
+        if (isBlank($current_union)) {
+            $this->response->redirect('/unions/home');
             return;
         }
     }

@@ -497,4 +497,10 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($db->zrange($good_num_list_key, 0, -1));
         $db->zadd($good_num_list_key, time(), 1000777);
     }
+
+    function smsHistoryAction()
+    {
+        $sms_history = SmsHistories::findFirstById(554);
+        echoLine($sms_history);
+    }
 }

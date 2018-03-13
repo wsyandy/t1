@@ -18,7 +18,7 @@ class Unions extends BaseModel
      */
     private $_user;
 
-    static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散', STATUS_PROGRESS => '创建中'];
+    static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散'];
     static $TYPE = [UNION_TYPE_PUBLIC => '工会', UNION_TYPE_PRIVATE => '家族'];
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
@@ -30,7 +30,7 @@ class Unions extends BaseModel
 
             if (UNION_TYPE_PUBLIC == $user->union->type) {
                 return [ERROR_CODE_FAIL, '您已加入工会,不能创建家族'];
-            } elseif (STATUS_ON == $user->union->status || STATUS_PROGRESS == $user->status) {
+            } elseif (STATUS_ON == $user->union->status) {
                 return [ERROR_CODE_FAIL, '您已加入家族,不能创建家族'];
             }
         }
@@ -88,7 +88,6 @@ class Unions extends BaseModel
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
-        $union->status = STATUS_PROGRESS;
 
         $dest_filename = APP_NAME . '/unions/avatar/' . uniqid() . '.jpg';
         $res = \StoreFile::upload($avatar_file, $dest_filename);
@@ -107,21 +106,38 @@ class Unions extends BaseModel
         $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 
         if ($res) {
-            $union->status = STATUS_ON;
             return [ERROR_CODE_SUCCESS, '创建成功'];
         }
 
-        $union->error_reason = "扣除钻石失败,创建失败";
         $union->status = STATUS_OFF;
+        $union->error_reason = "扣除钻石失败,创建失败";
         $union->update();
 
         return [ERROR_CODE_FAIL, '创建失败'];
     }
 
     //创建公会
-    static function createPublicUnion()
+    static function createPublicUnion($opts = [])
     {
+        $mobile = fetch($opts, 'mobile');
+        $password = fetch($opts, 'password');
 
+        if (!$mobile || !$password) {
+            return [ERROR_CODE_FAIL, '手机号或密码不能为空', null];
+        }
+
+        $union = new Unions();
+        $union->mobile = $mobile;
+        $union->auth_status = AUTH_WAIT;
+        $union->type = UNION_TYPE_PUBLIC;
+        $union->password = md5($password);
+        $union->save();
+
+        if ($union->save()) {
+            return [ERROR_CODE_SUCCESS, '创建成功', $union];
+        }
+
+        return [ERROR_CODE_FAIL, '创建失败', null];
     }
 
     //搜索公会
@@ -403,5 +419,18 @@ class Unions extends BaseModel
             'user_num' => $this->user_num,
             'avatar_url' => $this->avatar_url
         ];
+    }
+
+    function updateProfile($opts)
+    {
+        if (count($opts) < 1) {
+            return;
+        }
+
+        foreach ($opts as $filed => $value) {
+            $this->$filed = $value;
+        }
+
+        $this->update();
     }
 }

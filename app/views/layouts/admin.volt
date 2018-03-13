@@ -88,6 +88,21 @@
             </li>
         {% endif %}
 
+        {% if isAllowed('unions','index') %}
+            <li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">工会<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('unions', 'index') %}
+                        <li><a href="/admin/unions?type=1">工会</a></li>
+                    {% endif %}
+                    {% if isAllowed('unions', 'index') %}
+                        <li><a href="/admin/unions?type=2">家族</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+
         {% if isAllowed('orders','index') or isAllowed('gift_orders','index') or isAllowed('withdraw_histories','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">订单<b class="caret"></b></a>
