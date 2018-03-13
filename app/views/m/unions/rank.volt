@@ -13,7 +13,7 @@
                         <div v-show="index>2" class="family_flag"> ${ index+1 }</div>
                     </div>
 
-                    <img class="family_avatar" :src="item.avatar_url" alt="">
+                    <img class="family_avatar" :src="item.avatar_url" alt="" @click.stop="unionDetail(item.id)">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
                         <span class="family_prestige"> 声望${ item.fame_value }</span>
@@ -62,6 +62,10 @@
                     vm.total_entries = resp.total_entries;
                     vm.union_list = resp.unions;
                 });
+            },
+            unionDetail: function (id) {
+                var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
+                location.href = url;
             }
         }
     };

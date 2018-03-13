@@ -39,7 +39,7 @@
     <ul class="member_list" v-show="cueIdx==0">
         <li v-for="(member,index) in member_list">
             <div class="member_left">
-                <img class="member_avatar" :src="member.avatar_small_url" alt="">
+                <img class="member_avatar" :src="member.avatar_small_url" alt="" @click="userDetail(member.id)">
                 <div class="member_name">
                     <div class="name">
                         <span> ${member.nickname}</span>
@@ -149,6 +149,10 @@
                     vm.total_entries = resp.total_entries;
                     vm.member_list = resp.users;
                 });
+            },
+            userDetail: function (id) {
+                console.log(id);
+                location.href = "app://users/other_detail?user_id=" + id;
             },
             roomDetail: function (id) {
                 var url = "app://rooms/detail?id=" + id;
