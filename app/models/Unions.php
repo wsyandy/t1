@@ -198,6 +198,18 @@ class Unions extends BaseModel
     function users($page, $per_page, $opts = [])
     {
         $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $this->id]];
+        $order = fetch($opts, 'order', '');
+
+        if ($order) {
+            $cond['order'] = $order;
+        }
+
+        if (isset($cond['order'])) {
+            $cond['order'] .= ",id desc";
+        } else {
+            $cond['order'] = "id desc";
+        }
+
         debug($cond);
         $users = Users::findPagination($cond, $page, $per_page);
 

@@ -126,15 +126,18 @@ class UnionsController extends BaseController
 
             $union_id = $this->params('union_id');
 
-            $page = $this->params('page', 1);
-            $per_page = $this->params('per_page', 10);
-
             $res = [];
 
             $union = \Unions::findFirstById($union_id);
 
             if ($union) {
-                $users = $union->users($page, $per_page);
+                $page = $this->params('page', 1);
+                $per_page = $this->params('per_page', 10);
+                $order = $this->params('order', null);
+
+                $opts = ['order' => $order];
+
+                $users = $union->users($page, $per_page, $opts);
 
                 if (count($users)) {
                     $res = $users->toJson('users', 'toUnionJson');

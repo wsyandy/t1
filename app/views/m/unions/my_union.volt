@@ -57,7 +57,8 @@
                 </div>
             </div>
             <div class="member_right">
-                <img v-if="member.current_room_id" class="flag_manage" :src="flag_manage" alt="" @click="roomDetail(member.current_room_id)">
+                <img v-if="member.current_room_id" class="flag_manage" :src="flag_manage" alt=""
+                     @click="roomDetail(member.current_room_id)">
                 <span v-if="!member.manage" class="member_time">${member.time}</span>
             </div>
         </li>
@@ -124,17 +125,23 @@
             member_list: []
         },
         created: function () {
-            this.memberList();
+            this.memberList(0);
         },
         methods: {
             moreShow: function () {
                 console.log(111);
             },
             tabClick: function (index) {
-                this.cueIdx = index
+                this.cueIdx = index;
+                this.memberList(index);
             },
-            memberList: function () {
+            memberList: function (index) {
                 var data = {union_id:{{ union.id }}, page: this.page, per_page: 20, sid: this.sid, code: this.code};
+                if (index == 1) {
+                    data.order = "charm_value desc";
+                } else if (index == 2) {
+                    data.order = "wealth_value desc";
+                }
                 $.authGet('/m/unions/users', data, function (resp) {
                     vm.member_list = [];
                     vm.total_page = resp.total_page;
