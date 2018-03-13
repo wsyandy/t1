@@ -12,7 +12,12 @@ class UserGiftsController extends BaseController
 {
     function indexAction()
     {
-        $user_id = $this->params('user_id', $this->currentUserId());
+        $user_id = $this->params('user_id');
+
+        if (isBlank($user_id)) {
+            $user_id = $this->currentUserId();
+        }
+
         $conds = ['conditions' => 'user_id = ' . $user_id, 'order' => 'amount desc'];
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 100);
@@ -20,8 +25,6 @@ class UserGiftsController extends BaseController
         $user_gifts = \UserGifts::findPagination($conds, $page, $per_page);
 
         $user = \Users::findFirstById($user_id);
-
-        info($this->currentUserId(), $user_id);
 
         $total_gift_num = $user->getReceiveGiftNum();
 
