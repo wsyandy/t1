@@ -62,20 +62,20 @@ class UnionsController extends BaseController
     function searchAction()
     {
         $recommend = $this->params('recommend', 0);
-        $search_value = $this->params('search_value', null);
+        $id = $this->params('search_value', 0);
         $type = $this->params('type', 0);
         $order = 'created_at desc';
-
-        if (preg_match('/^\d+$/', $search_value)) {
-            $id = $search_value;
-        } else {
-            $id = 0;
-        }
+//        if (preg_match('/^\d+$/', $search_value)) {
+//            $id = $search_value;
+//        } else {
+//            $id = 0;
+//        }
 
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-        $opts = ['type' => $type, 'recommend' => $recommend, 'name' => $search_value, 'id' => $id, 'order' => $order];
+//        $opts = ['type' => $type, 'recommend' => $recommend, 'name' => $search_value, 'id' => $id, 'order' => $order];
+        $opts = ['type' => $type, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
         $user = $this->currentUser();
 
         $unions = \Unions::search($user, $page, $per_page, $opts);
@@ -91,7 +91,20 @@ class UnionsController extends BaseController
     //我的家族
     function myUnionAction()
     {
-
+        $union_id = $this->params('union_id');
+        $union = \Unions::findFirstById($union_id);
+        //要做找到union处理
+        $user = $this->currentUser();
+        if ($union && $union->user_id == $user->id) {
+            $is_president = 1;
+        } else {
+            $is_president = 0;
+        }
+        $this->view->is_president = $is_president;
+        $this->view->union = $union;
+        $this->view->title = "我的家族";
+        $this->view->sid = $this->params('sid');
+        $this->view->code = $this->params('code');
     }
 
     //其他家族
@@ -109,7 +122,27 @@ class UnionsController extends BaseController
     //用户列表
     function usersAction()
     {
+        if ($this->request->isAjax()) {
 
+            $union_id = $this->params('union_id');
+
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 10);
+
+            $res = [];
+
+            $union = \Unions::findFirstById($union_id);
+
+            if ($union) {
+                $users = $union->users($page, $per_page);
+
+                if (count($users)) {
+                    $res = $users->toJson('users', 'toUnionJson');
+                }
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+        }
     }
 
     //新用户

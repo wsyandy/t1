@@ -1,0 +1,256 @@
+body{
+    background-color: #fff;
+}
+.family_info{
+    position: relative;
+    width: 6.9rem;
+    height: 2.68rem;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 0.3rem 0 rgba(0,0,0,0.14);
+    border-radius: 0.2rem;
+    margin: 0.4rem auto;
+    padding: 0.3rem;
+}
+.family-more{
+    position: absolute;
+    right: 0.4rem;
+    top:0.2rem;
+    width: 0.4rem;
+    height: 0.4rem;
+}
+.family-ico{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+}
+.family_top{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.family_top_left{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.family_name{
+    height: 1rem;
+    padding-left: 0.3rem;
+    font-size: .32rem;
+    color: #3F3F3F;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.family_id{
+    padding-top: 0.1rem;
+    font-size: .24rem;
+    color: #969696;
+}
+.family_top_right{
+    height: 1rem;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-justify-content: flex-end;
+    justify-content: flex-end;
+    padding-bottom: 0.1rem;
+}
+
+.family_prestige{
+    font-size: 0.24rem;
+    color: #FFFFFF;
+    background-color: #F45189;
+    border-radius: 0.04rem;
+    padding: 0.02rem 0.1rem;
+}
+
+.family_slogan{
+    padding-top: 0.3rem ;
+    font-size: .26rem;
+    color: #888888;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    
+}
+.new_member{
+    width: 6.9rem;
+    height: 0.88rem;
+    background-color: #F7F7F7;
+    border-radius: 0.14rem;
+    padding: 0 0.3rem;
+    margin: 0 auto;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+
+}
+.new_member_title{
+    font-size: 0.28rem;
+    color: #5F5F5F;
+}
+.new_member_right{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.new_dot{
+    width: 0.14rem;
+    height: 0.14rem;
+    background-color: #FF1111;
+    border-radius: 50%;
+}
+
+.arrow-right{
+    margin-left: 0.1rem;
+    width: 0.26rem;
+    height: 0.26rem;
+}
+
+/*成员列表*/
+.member_tab{
+    width: 100%;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.member_tab[data-fixed="fixed"]{
+    position: fixed;
+    top:0;
+    left: 0;
+    margin: 0;
+    background-color: #fff;
+
+}
+.member_tab li{
+    color: #BFBFBF;
+    font-size: 0.3rem;
+    padding: 0.3rem 0;
+    flex: 1;
+    text-align: center;
+    border-bottom: 0.05rem solid transparent;
+}
+
+.member_tab li.member_only{
+    text-align: left;
+    padding-left: 0.3rem;
+    border-bottom: 0;
+}
+.member_tab li.active{
+    border-bottom: 0.05rem solid #F45189;
+    color: #434343;
+
+}
+.member_list{
+    border-top: 1px solid #f6f6f6;
+}
+.member_list li{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    padding: 0 0.3rem;
+    height: 1.4rem;
+    border-bottom: 1px solid #f6f6f6;
+}
+.member_left{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.member_avatar{
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50%;
+}
+.member_name{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding-left: 0.24rem;
+}
+.member_name .name{
+    font-size: 0.28rem;
+    color: #3C3C3C;
+}
+.member_name .slogan{
+    padding-top: 0.1rem;
+    font-size: 0.24rem;
+    color: #969696;
+}
+.member_name  .female{
+    background-color: #F99AD3;
+    border-radius: 1rem;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+    padding: 0 0.1rem 0 0.38rem;
+    background-image: url("../images/flag-female.png");
+    background-size: 0.18rem;
+    background-repeat: no-repeat;
+    background-position: 0.1rem center;
+}
+.member_name .president{
+    background-color: #886BFF;
+    border-radius: 1rem;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+    padding: 0 0.1rem 0 0.38rem;
+    background-image: url("../images/flag-president.png");
+    background-size: 0.18rem;
+    background-repeat: no-repeat;
+    background-position: 0.1rem center;
+    margin-left: 0.1rem;
+}
+
+.flag_manage{
+    width: 0.5rem;
+    height: 0.5rem;
+}
+.member_time{
+    font-size: .24rem;
+    color: #9F9F9F;
+}
+
+
+.member_charm,.member_wealth{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+.charm_tit,.wealth_tit{
+    font-size: 0.24rem;
+    color: #FF1111;
+    padding-bottom: 0.1rem;
+}
+.charm_num,.wealth_num{
+    font-size: 0.28rem;
+    color: #FF1111;
+}

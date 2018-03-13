@@ -4,7 +4,7 @@
 
 <div class="vueBox" id="app" v-cloak>
     <div class="family_box">
-        <a class="family_establish" v-for="(item,index) in family" :href="item.url">
+        <a class="family_establish" v-for="(item,index) in family" :href="hasFamily&&index==0?my_family.url:item.url">
             <img class="family_bg" :src="item.bg" alt="">
             <div class="family_left">
                 <div class="family_info">
@@ -27,7 +27,6 @@
             </ul>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -39,24 +38,21 @@
             sid: '{{ sid }}',
             code: '{{ code }}',
             my_family: {
-                ico: "images/avatar.jpg",
-                name: "王者之家",
-                slogan: "快来召唤伙伴一起玩啊",
                 slogan_other: "看看其他好玩的家族"
             },
             arrow_right: "images/ico-arrow-right.png",
             family: [
                 {
                     url: "/m/unions/add_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}',
-                    bg: "images/bg-family.png",
-                    ico: "images/ico-family.png",
+                    bg: "/m/images/bg-family.png",
+                    ico: "/m/images/ico-family.png",
                     name: "创建家族",
                     slogan: "我要做会长，召唤伙伴一起玩"
                 },
                 {
-                    url: "family_heart.html",
-                    bg: "images/bg-heart.png",
-                    ico: "images/ico-heart.png",
+                    url: "/m/unions/recommend&sid=" + '{{ sid }}' + "&code=" + '{{ code }}',
+                    bg: "/m/images/bg-heart.png",
+                    ico: "/m/images/ico-heart.png",
                     name: "推荐家族",
                     slogan: "寻找与你兴趣相同的那群人"
                 }
@@ -66,16 +62,20 @@
                 "家族徽章可以享有一定特权，例如推荐用户上热门等。",
                 "每个用户只能加入一个家族，不能重复加入。",
                 "会长可设置新成员加入方式，所有人都可以加入或需要申请才能加入。  ",
-                "上热门申请通过后，在申请时间内，用户不开房间，家族会长和该用户会受到一定处罚哦！",
-
+                "上热门申请通过后，在申请时间内，用户不开房间，家族会长和该用户会受到一定处罚哦！"
             ]
         },
         created: function () {
+            if (this.union !== 0) {
+                this.my_family.url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + {{ union.id }};
+                this.my_family.ico = "{{ union.avatar_url }}";
+                this.my_family.name = this.union.name;
+                this.my_family.slogan = this.union.notice;
+            }
         },
         computed: {
             hasFamily: function () {
                 if (this.union !== 0) {
-                    this.my_family.ico = "{{ union.avatar_url }}";
                     return true;
                 } else {
                     return false;

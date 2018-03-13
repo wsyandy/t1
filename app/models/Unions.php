@@ -182,6 +182,7 @@ class Unions extends BaseModel
     function users($page, $per_page, $opts = [])
     {
         $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $this->id]];
+        debug($cond);
         $users = Users::findPagination($cond, $page, $per_page);
 
         return $users;
@@ -396,6 +397,7 @@ class Unions extends BaseModel
     function toSimpleJson()
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'fame_value' => $this->fame_value,
             'user_num' => $this->user_num,

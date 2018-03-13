@@ -5,21 +5,19 @@
 <div class="vueBox" id="app" v-cloak>
     <div class="family-search">
         {#<input type="text" class="input-search" v-model="searchText" placeholder="请输入家族ID或昵称">#}
-
         <div class="text-search">
-            <input type="text" class="input-search" v-model="searchText" placeholder="请输入家族ID或昵称">
+            <input type="number" class="input-search" v-model="searchText" placeholder="请输入家族ID">
             <img v-show="searchText" class="ico-clear" src="/m/images/ico-clear.png" alt="" @click="clearSearch()">
         </div>
         <div class="btn-search">
             <img class="ico-search" src="/m/images/ico-search.png" alt="" @click="searchFamily()">
         </div>
-
     </div>
     <div class="family-list">
         <ul>
             <li v-for="item in unions">
                 <div class="list_left">
-                    <img class="family_avatar" :src="item.avatar_url" alt="">
+                    <img class="family_avatar" :src="item.avatar_url" alt="" @click.stop="unionDetail(item.id)">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
                         <span class="family_prestige"> 声望${ item.fame_value }</span>
@@ -79,6 +77,10 @@
             },
             searchFamily: function () {
                 this.list();
+            },
+            unionDetail: function (id) {
+                var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
+                location.href = url;
             }
         }
     };

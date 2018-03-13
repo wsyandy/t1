@@ -204,6 +204,24 @@ trait UserAttrs
         return $data;
     }
 
+    function toUnionJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'age' => $this->age,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'charm_value' => $this->charm_value,
+            'wealth_value' => $this->wealth_value,
+            'monologue' => $this->monologue,
+            'current_room_id' =>$this->current_room_id
+        ];
+
+        return $data;
+    }
+
     public function isWebPlatform()
     {
         if (preg_match('/^(web)$/i', $this->platform)) {
