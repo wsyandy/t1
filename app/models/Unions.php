@@ -123,7 +123,7 @@ class Unions extends BaseModel
         $password = fetch($opts, 'password');
 
         if (!$mobile || !$password) {
-            return [ERROR_CODE_FAIL, '手机号或密码不能为空'];
+            return [ERROR_CODE_FAIL, '手机号或密码不能为空', null];
         }
 
         $union = new Unions();
@@ -134,10 +134,10 @@ class Unions extends BaseModel
         $union->save();
 
         if ($union->save()) {
-            return [ERROR_CODE_SUCCESS, '创建失败'];
+            return [ERROR_CODE_SUCCESS, '创建成功', $union];
         }
 
-        return [ERROR_CODE_FAIL, '创建失败'];
+        return [ERROR_CODE_FAIL, '创建失败', null];
     }
 
     //搜索公会
@@ -417,5 +417,18 @@ class Unions extends BaseModel
             'user_num' => $this->user_num,
             'avatar_url' => $this->avatar_url
         ];
+    }
+
+    function updateProfile($opts)
+    {
+        if (count($opts) < 1) {
+            return;
+        }
+
+        foreach ($opts as $filed => $value) {
+            $this->$filed = $value;
+        }
+
+        $this->update();
     }
 }

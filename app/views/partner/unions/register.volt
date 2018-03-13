@@ -198,7 +198,7 @@
                         <div class="agree-head">
                             <span>设置用户名</span>
                         </div>
-                        <form method="post" class="form-x union_info" action="/partner/unions/register">
+                        <form method="post" class="form-x union_info" action="/partner/unions/register" data-step="1">
 
                             <div class="form-group">
                                 <div class="label">
@@ -255,13 +255,13 @@
                         <div class="agree-head">
                             <span>填写基本信息</span>
                         </div>
-                        <form method="post" class="form-x union_info" action="/partner/unions/update">
+                        <form method="post" class="form-x union_info" action="/partner/unions/update" data-step="2">
                             <div class="form-group">
                                 <div class="label">
                                     <label for="sitename">公会名称：</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" class="input user_input" id="union" name="union" size="50"
+                                    <input type="text" class="input user_input" id="union" name="name" size="50"
                                            placeholder="请输入公会名称" data-validate="required:请输入公会名称"/>
                                 </div>
                             </div>
@@ -270,7 +270,7 @@
                                     <label for="sitename">真实姓名：</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" class="input user_input" id="username" name="username" size="50"
+                                    <input type="text" class="input user_input" id="username" name="id_name" size="50"
                                            placeholder="请输入你的真实姓名" data-validate="required:请输入你的真实姓名"/>
                                 </div>
                             </div>
@@ -279,7 +279,7 @@
                                     <label for="sitename">身份证：</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" class="input user_input" id="idcard" name="idcard" size="50"
+                                    <input type="text" class="input user_input" id="idcard" name="id_no" size="50"
                                            placeholder="请输入身份证号" data-validate="required:请输入你的身份证号码"/>
                                 </div>
                             </div>
@@ -288,7 +288,7 @@
                                     <label for="sitename">支付宝：</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" class="input user_input" id="alipay_account" name="idcard"
+                                    <input type="text" class="input user_input" id="alipay_account" name="alipay_account"
                                            size="50"
                                            placeholder="请输入支付宝账号用于结算" data-validate="required:请输入支付宝账号用于结算"/>
                                 </div>
@@ -337,6 +337,13 @@
 <script src="/partner/js/swiperTab.js"></script>
 
 <script>
+
+    var opts = {
+        data: {},
+        methods: {}
+    };
+
+    var vm = XVue(opts);
 
     var $agree = $('#agreeScroll'), $Btn = $('.agree-btn'), $agreeShow = $('.agree-show'), $regShow = $('.reg-show'),
         $warn = $(".warn");
@@ -391,7 +398,7 @@
                     return
                 }
 
-                tabs('.swiperTab > li', '.swiper-container', 'cur', 1);
+                tabs('.swiperTab > li', '.swiper-container', 'cur', self.data('step'));
             }
         });
 
@@ -410,7 +417,7 @@
 
         var self = $(this);
         if (validCode) {
-            alert("ss");
+
             $.authPost('/partner/unions/send_auth', {mobile: mobile}, function (resp) {
 
                 var error_code = resp.error_code;
@@ -438,12 +445,5 @@
             });
         }
     })
-
-    var opts = {
-        data: {},
-        methods: {}
-    };
-
-    var vm = XVue(opts);
 
 </script>

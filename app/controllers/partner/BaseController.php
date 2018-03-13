@@ -17,7 +17,7 @@ class BaseController extends \ApplicationController
 
     static $SKIP_ACTIONS = [
         'home' => ['index'],
-        'unions' => ['register']
+        'unions' => ['register', 'send_auth', 'login']
     ];
 
     /**
@@ -97,7 +97,7 @@ class BaseController extends \ApplicationController
         }
 
         if (isBlank($current_union)) {
-            //$this->response->redirect('/unions/home');
+            $this->response->redirect('/unions/home');
             return;
         }
     }

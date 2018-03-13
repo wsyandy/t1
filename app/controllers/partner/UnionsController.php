@@ -39,7 +39,11 @@ class UnionsController extends BaseController
 
             $opts = ['mobile' => $mobile, 'password' => $password];
 
-            list($error_code, $error_reason) = \Unions::createPublicUnion($opts);
+            list($error_code, $error_reason, $union) = \Unions::createPublicUnion($opts);
+
+            if ($union) {
+                $this->session->set('union_id', $union->id);
+            }
 
             return $this->renderJSON($error_code, $error_reason);
         }
@@ -81,7 +85,7 @@ class UnionsController extends BaseController
             }
 
             list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
-                $mobile, 'register');
+                $mobile, 'login');
 
             $this->session->set('sms_token', $sms_token);
 
@@ -91,6 +95,23 @@ class UnionsController extends BaseController
 
     function updateAction()
     {
+        $name = $this->params('name');
+        $id_name = $this->params('id_name');
+        $id_no = $this->params('id_no');
+        $alipay_account = $this->params('alipay_account');
 
+        if (isBlank($name) || isBlank($id_name) || isBlank($id_no) || isBlank($alipay_account)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if (!checkIdCard($id_no)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '身份证号码错误');
+        }
+
+        $params = ['name' => $name, 'id_name' => $id_name, 'id_no' => $id_no, 'alipay_account' => $alipay_account];
+
+        $this->currentUnion()->updateProfile($params);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }
