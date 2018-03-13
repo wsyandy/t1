@@ -122,7 +122,8 @@
             page: 1,
             total_page: 1,
             total_entries: 0,
-            member_list: []
+            member_list: [],
+            user: {{ user }}
         },
         created: function () {
             this.memberList(0);
@@ -151,7 +152,12 @@
                 });
             },
             userDetail: function (id) {
-                console.log(id);
+                if (id == this.user.id) {
+                    url = "app://users/detail";
+                } else {
+                    url = "app://users/other_detail?user_id=" + id;
+                }
+                console.log(url);
                 location.href = "app://users/other_detail?user_id=" + id;
             },
             roomDetail: function (id) {

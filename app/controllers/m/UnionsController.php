@@ -64,7 +64,7 @@ class UnionsController extends BaseController
         $recommend = $this->params('recommend', 0);
         $id = $this->params('search_value', 0);
         $type = $this->params('type', 0);
-        $order = $this->params('order',null);
+        $order = $this->params('order', null);
 //        if (preg_match('/^\d+$/', $search_value)) {
 //            $id = $search_value;
 //        } else {
@@ -100,6 +100,7 @@ class UnionsController extends BaseController
         } else {
             $is_president = 0;
         }
+        $this->view->user = $user;
         $this->view->is_president = $is_president;
         $this->view->union = $union;
         $this->view->title = "我的家族";
