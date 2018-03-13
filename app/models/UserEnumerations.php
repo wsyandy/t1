@@ -62,13 +62,13 @@ trait UserEnumerations
 
     static $USER_ROLE = [0 => '无角色', 1 => '房主', 2 => '主播', 3 => '旁听'];
     static $AVATAR_STATUS = [AUTH_NONE => '等待上传', AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
-    //段位
-    static $SEGMENT = ['starshine1' => '星耀I', 'starshine2' => '星耀II', 'starshine3' => '星耀III', 'starshine4' => '星耀IV',
-        'starshine5' => '星耀V', 'king1' => '王者I', 'king2' => '王者II', 'king3' => '王者III', 'king4' => '王者IV', 'king5' => '王者V',
-        'diamond1' => '钻石I', 'diamond2' => '钻石II', 'diamond3' => '钻石III', 'diamond4' => '钻石IV', 'diamond5' => '钻石V',
-        'platinum1' => '铂金I', 'platinum2' => '铂金II', 'platinum3' => '铂金III', 'platinum4' => '铂金IV', 'platinum5' => '铂金V',
-        'gold1' => '黄金I', 'gold2' => '黄金II', 'gold3' => '黄金III', 'gold4' => '黄金IV', 'gold5' => '黄金V', 'silver1' => '白银I',
-        'silver2' => '白银II', 'silver3' => '白银III', 'silver4' => '白银IV', 'silver5' => '白银V', 'bronze1' => '青铜I', 'bronze2' => '青铜II',
-        'bronze3' => '青铜III', 'bronze4' => '青铜IV', 'bronze5' => '青铜V',
+    //段位 Ⅰ   Ⅱ  Ⅲ  Ⅳ Ⅴ 
+    static $SEGMENT = ['starshine1' => '星耀Ⅰ', 'starshine2' => '星耀Ⅱ', 'starshine3' => '星耀Ⅲ', 'starshine4' => '星耀Ⅳ',
+        'starshine5' => '星耀Ⅴ', 'king1' => '王者Ⅰ', 'king2' => '王者Ⅱ', 'king3' => '王者Ⅲ', 'king4' => '王者Ⅳ', 'king5' => '王者Ⅴ',
+        'diamond1' => '钻石Ⅰ', 'diamond2' => '钻石Ⅱ', 'diamond3' => '钻石Ⅲ', 'diamond4' => '钻石Ⅳ', 'diamond5' => '钻石Ⅴ',
+        'platinum1' => '铂金Ⅰ', 'platinum2' => '铂金Ⅱ', 'platinum3' => '铂金Ⅲ', 'platinum4' => '铂金Ⅳ', 'platinum5' => '铂金Ⅴ',
+        'gold1' => '黄金Ⅰ', 'gold2' => '黄金Ⅱ', 'gold3' => '黄金Ⅲ', 'gold4' => '黄金Ⅳ', 'gold5' => '黄金Ⅴ', 'silver1' => '白银Ⅰ',
+        'silver2' => '白银Ⅱ', 'silver3' => '白银Ⅲ', 'silver4' => '白银Ⅳ', 'silver5' => '白银Ⅴ', 'bronze1' => '青铜Ⅰ', 'bronze2' => '青铜Ⅱ',
+        'bronze3' => '青铜Ⅲ', 'bronze4' => '青铜Ⅳ', 'bronze5' => '青铜Ⅴ',
     ];
 }
