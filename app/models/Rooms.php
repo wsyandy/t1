@@ -1072,13 +1072,13 @@ class Rooms extends BaseModel
     static function deleteWaitEnterSilentRoomList($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem('wait_enter_silent_room_list_room_id', $user_id);
+        $hot_cache->zrem('wait_enter_silent_room_list', $user_id);
     }
 
     static function getWaitEnterSilentRoomUserIds()
     {
-        $hot_cache = self::getHotWriteCache();
-        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list', 0, -1);
         return $user_ids;
     }
 
