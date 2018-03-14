@@ -92,6 +92,8 @@ class Rooms extends BaseModel
         $room->status = STATUS_ON;
         $room->product_channel_id = $user->product_channel_id;
         $room->user_type = $user->user_type;
+        $room->union_id = $user->union_id;
+        $room->union_type = $user->union_type;
         $room->last_at = time();
         $room->save();
 
@@ -724,7 +726,12 @@ class Rooms extends BaseModel
 
         $rank = array_rand($orders);
         $order = $orders[$rank];
+
         $limit = mt_rand(1, 2);
+
+        if (isDevelopmentEnv()) {
+            $limit = mt_rand(1, 7);
+        }
 
         $cond['conditions'] = 'user_type = :user_type: and (online_status = :online_status: or online_status is null)';
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'online_status' => STATUS_OFF];
@@ -777,23 +784,29 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         if (!$room || !$user) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
             info("Exce", $room_id, $user_id);
             return false;
         }
 
         if ($user->isInAnyRoom()) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
             info("user_in_other_room", $user->id, $user->current_room_id, $room_id);
             return false;
         }
 
         info($room_id, $user->id);
-        $room->enterRoom($user);
-
-        Rooms::deleteWaitEnterSilentRoomList($user_id);
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
+        } elseif ($room->getRealUserNum() < 1) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
+            info("room_no_real_user", $room_id, $user_id);
+            return false;
         }
+
+        $room->enterRoom($user);
+        Rooms::deleteWaitEnterSilentRoomList($user_id);
 
         $room->pushEnterRoomMessage($user);
     }
@@ -1059,13 +1072,13 @@ class Rooms extends BaseModel
     static function deleteWaitEnterSilentRoomList($user_id)
     {
         $hot_cache = self::getHotWriteCache();
-        $hot_cache->zrem('wait_enter_silent_room_list_room_id', $user_id);
+        $hot_cache->zrem('wait_enter_silent_room_list', $user_id);
     }
 
     static function getWaitEnterSilentRoomUserIds()
     {
-        $hot_cache = self::getHotWriteCache();
-        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list_room_id', 0, -1);
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange('wait_enter_silent_room_list', 0, -1);
         return $user_ids;
     }
 

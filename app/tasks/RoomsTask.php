@@ -154,7 +154,13 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
-        if ($online_silent_room_num >= 5) {
+        $num = 5;
+
+        if (isDevelopmentEnv()) {
+            $num = 30;
+        }
+
+        if ($online_silent_room_num >= $num) {
             info("online_silent_room_num", $online_silent_room_num);
             return;
         }

@@ -37,12 +37,20 @@ class AccountHistories extends BaseModel
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            return false;
+        }
+
         $account_history = new \AccountHistories();
         $account_history->user_id = $user_id;
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
+        $account_history->union_id = $user->union_id;
+        $account_history->union_type = $user->union_type;
 
-        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile', 'union_id'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $account_history->$column = fetch($opts, $column);
         }
 

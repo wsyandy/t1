@@ -138,6 +138,21 @@ class Users extends BaseModel
         if ($this->hasChanged('user_role_at') && $this->isActive()) {
             $this->statRoomTime();
         }
+
+        if ($this->hasChanged('union_id') || $this->hasChanged('union_type')) {
+            $this->bindRoomUnionId();
+        }
+    }
+
+    function bindRoomUnionId()
+    {
+        $room = $this->room;
+
+        if ($room) {
+            $room->union_id = $this->union_id;
+            $room->union_type = $this->union_type;
+            $room->update();
+        }
     }
 
     //统计用户在房间时间
@@ -1806,8 +1821,8 @@ class Users extends BaseModel
 
                 $gift_num = mt_rand(1, 15);
 
-                $gifts = Gifts::find(['conditions' => 'status = :status:',
-                    'bind' => ['status' => STATUS_ON], 'columns' => 'id']);
+                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type:',
+                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga'], 'columns' => 'id']);
 
                 $gift_ids = [];
 
