@@ -91,7 +91,7 @@ class RoomsController extends BaseController
             $user = \Users::findFirstById($user_id);
 
             if (!$user || $user->current_room_id < 1) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户不在房间');
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
             }
 
             $room = $user->current_room;
@@ -102,18 +102,20 @@ class RoomsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
             }
 
-            //如果不是房主
-            if (!$this->currentUser()->isRoomHost($room)) {
+            $user = $this->currentUser();
+        }
 
-                //房主不在房间且当前用户不在房间
-                if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '房主不在房间');
-                }
+        //如果不是房主
+        if (!$user->isRoomHost($room)) {
 
-                //房间内没有人
-                if ($room->user_num < 1) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
-                }
+            //房主不在房间且当前用户不在房间
+//            if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '房主不在房间');
+//            }
+
+            //房间内没有人
+            if ($room->user_num < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
             }
         }
 

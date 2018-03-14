@@ -100,9 +100,10 @@ class Unions extends BaseModel
         $union->save();
 
         $user->union_id = $union->id;
+        $user->union_type = $union->type;
         $user->update();
 
-        $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'union_id' => $union->id, 'mobile' => $user->mobile];
+        $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
         $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 
         if ($res) {
@@ -315,6 +316,7 @@ class Unions extends BaseModel
             $union_history = new UnionHistories();
             $union_history->user_id = $user->id;
             $union_history->union_id = $this->id;
+            $union_history->union_type = $this->type;
             $union_history->join_at = time();
             $union_history->save();
 
