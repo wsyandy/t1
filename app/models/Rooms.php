@@ -777,16 +777,19 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         if (!$room || !$user) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
             info("Exce", $room_id, $user_id);
             return false;
         }
 
         if ($user->isInAnyRoom()) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
             info("user_in_other_room", $user->id, $user->current_room_id, $room_id);
             return false;
         }
 
         if ($room->getRealUserNum() < 1) {
+            Rooms::deleteWaitEnterSilentRoomList($user_id);
             info("room_no_real_user", $room_id, $user_id);
             return false;
         }
