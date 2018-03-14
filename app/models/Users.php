@@ -1821,8 +1821,8 @@ class Users extends BaseModel
 
                 $gift_num = mt_rand(1, 15);
 
-                $gifts = Gifts::find(['conditions' => 'status = :status:',
-                    'bind' => ['status' => STATUS_ON], 'columns' => 'id']);
+                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type:',
+                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga'], 'columns' => 'id']);
 
                 $gift_ids = [];
 
