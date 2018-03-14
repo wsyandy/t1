@@ -193,13 +193,13 @@
                 $('.pop_bottom_bg').show();
             },
             userDetail: function () {
-                console.log(this.selected_user_id);
-                if (this.selected_user_id == this.user.id) {
+                console.log(this.selected_user.id);
+                if (this.selected_user.id == this.user.id) {
                     url = "app://users/detail";
                 } else {
-                    url = "app://users/other_detail?user_id=" + this.selected_user_id;
+                    url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }
-                location.href = "app://users/other_detail?user_id=" + this.selected_user_id;
+                location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
             },
             roomDetail: function (id) {
                 var url = "app://rooms/detail?id=" + id;
