@@ -543,4 +543,13 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function giveDiamondAction()
+    {
+        $user_id = 8888;
+
+        $user = Users::findFirstById($user_id);
+        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+    }
 }

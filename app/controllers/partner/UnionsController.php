@@ -26,6 +26,9 @@ class UnionsController extends BaseController
             ];
             $this->dispatcher->forward($forward);
         }
+
+        $this->view->current_user = $this->currentUser();
+        $this->view->union = $union;
     }
 
     function updateAction()
@@ -50,5 +53,31 @@ class UnionsController extends BaseController
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions']);
         }
+    }
+
+    public function logoutAction()
+    {
+        $this->session->set("user_id", null);
+        $this->response->redirect("/partner/home");
+    }
+
+    function usersAction()
+    {
+
+    }
+
+    function roomsAction()
+    {
+
+    }
+
+    function incomeDetailsAction()
+    {
+
+    }
+
+    function withdrawHistoriesAction()
+    {
+
     }
 }
