@@ -9,11 +9,15 @@
     <link rel="stylesheet" href="/partner/css/pintuer.css">
     <link rel="stylesheet" href="/partner/css/admin.css">
     <link rel="stylesheet" href="/partner/css/login.css">
+    <link rel="stylesheet" href="/partner/css/jedate-select.css">
+    <link rel="stylesheet" href="/partner/css/jedate.css">
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/jquery.form/3.51.0/jquery.form.js"></script>
     <script src="/js/vue/2.0.5/vue.min.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/partner/js/pintuer.js"></script>
+    <script src="/partner/js/jquery.jedate.min.js"></script>
+    <script src="/partner/js/jedate-select.js"></script>
     {{ block_holder('head') }}
 </head>
 <body>

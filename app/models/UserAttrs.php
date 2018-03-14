@@ -216,7 +216,7 @@ trait UserAttrs
             'charm_value' => $this->charm_value,
             'wealth_value' => $this->wealth_value,
             'monologue' => $this->monologue,
-            'current_room_id' =>$this->current_room_id
+            'current_room_id' => $this->current_room_id
         ];
 
         return $data;
@@ -567,5 +567,10 @@ trait UserAttrs
     {
         $num = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'num']);
         return $num;
+    }
+
+    function getIncomeToday()
+    {
+        $num = GiftOrders::sum(['conditions' => 'user_id = :user_id: and ']);
     }
 }

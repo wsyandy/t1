@@ -20,12 +20,6 @@ class HomeController extends BaseController
     {
     }
 
-    public function logoutAction()
-    {
-        $this->session->set("user_id", null);
-        $this->response->redirect("/partner/home");
-    }
-
     // 扫码登录
     function checkAuthAction()
     {
