@@ -1028,7 +1028,8 @@ class Rooms extends BaseModel
             return;
         }
 
-        if ($real_user_num <= 5 && $user_num >= 10 || $real_user_num > 5 && $user_num >= 30) {
+        if (($real_user_num <= 5 && $user_num >= 10 || $real_user_num > 5 && $user_num >= 20) &&
+            $real_user_num < 20) {
             info("user_is_full", $real_user_num, $user_num);
             return;
         }
