@@ -192,7 +192,7 @@ h1, h2, h3, h4 {
 .gift_list .bottom .gift_pic {
     width: 40px;
     height: 40px;
-    background: pink;
+    background: #f6f6f6;
     border-radius: 50%;
     overflow: hidden;
 }
