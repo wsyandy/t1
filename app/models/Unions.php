@@ -215,10 +215,44 @@ class Unions extends BaseModel
         return $users;
     }
 
+    //用户申请状态
+    function applicationStatus($user_id)
+    {
+        $user_db = Users::getUserDb();
+        $agreed_key = $this->generateUersKey();
+        $refused_key = $this->generateRefusedUersKey();
+
+        if ($user_db->zscore($agreed_key, $user_id)) {
+            return 1;
+        } else if ($user_db->zscore($refused_key, $user_id)) {
+            return -1;
+        }
+
+        return 0;
+    }
+
     //新的公会成员
     function newUsers($page, $per_page)
     {
-        return self::findUsersByCache($this->generateNewUersKey(), $page, $per_page);
+        $user_db = Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+
+        $new_user_key = $this->generateNewUersKey();
+
+        $user_ids = $user_db->zrevrange($new_user_key, $offset, $offset + $per_page - 1);
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->application_status = $this->applicationStatus($user->id);
+        }
+
+        $total_entries = $user_db->zcard($new_user_key);
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
     static function findUsersByCache($key, $page, $per_page)
@@ -283,16 +317,16 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '你已经申请该家族'];
         }
 
-        if ($db->zadd($this->generateNewUersKey(), time(), $user->id)) {
+        if ($db->zadd($key, time(), $user->id)) {
             return [ERROR_CODE_SUCCESS, '申请成功'];
         }
 
         return [ERROR_CODE_FAIL, '系统异常'];
     }
 
-    function agreeJoinUnion($user)
+    function agreeJoinUnion($union_host, $user)
     {
-        if (!$user->isUnionHost($this)) {
+        if (!$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
@@ -307,6 +341,10 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '该用户已经加入您的家族'];
         }
 
+        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已拒绝'];
+        }
+
         if ($db->zadd($key, time(), $user->id)) {
 
             $user->union_id = $this->id;
@@ -319,15 +357,24 @@ class Unions extends BaseModel
         return [ERROR_CODE_FAIL, '系统异常'];
     }
 
-    function refusedJoinUnion($user)
+    function refuseJoinUnion($union_host, $user)
     {
-        if (!$user->isUnionHost($this)) {
+        if (!$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
         $db = Users::getUserDb();
+
+        if ($db->zscore($this->generateUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已同意'];
+        }
+
+        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已拒绝'];
+        }
+
         $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
-        return [ERROR_CODE_SUCCESS, ''];
+        return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
     function exitUnion($user, $opts = [])
@@ -380,6 +427,7 @@ class Unions extends BaseModel
             $db->zclear($this->generateUersKey());
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
+        return [ERROR_CODE_SUCCESS, ''];
     }
 
     static function asyncDissolutionUnion($union_id)

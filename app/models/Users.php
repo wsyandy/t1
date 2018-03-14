@@ -71,6 +71,9 @@ class Users extends BaseModel
     //是否可以发公屏消息 true可以,false不可以
     public $user_chat;
 
+    //申请状态 1已同意,-1拒绝，0等待,
+    public $application_status;
+
     function beforeCreate()
     {
         $this->user_status = USER_STATUS_ON;

@@ -66,7 +66,8 @@
             ]
         },
         created: function () {
-            if (this.union !== 0) {
+            if (this.union) {
+                console.log(this.union);
                 this.my_family.url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
                 this.my_family.ico = "{{ union.avatar_url }}";
                 this.my_family.name = this.union.name;

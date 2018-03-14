@@ -216,8 +216,13 @@ trait UserAttrs
             'charm_value' => $this->charm_value,
             'wealth_value' => $this->wealth_value,
             'monologue' => $this->monologue,
-            'current_room_id' =>$this->current_room_id
+            'current_room_id' => $this->current_room_id
         ];
+
+        if (isset($this->application_status)) {
+            $data['application_status'] = $this->application_status;
+            $data['application_status_text'] = $this->application_status_text;
+        }
 
         return $data;
     }
@@ -567,5 +572,18 @@ trait UserAttrs
     {
         $num = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'num']);
         return $num;
+    }
+
+    function getApplicationStatusText()
+    {
+        if ($this->application_status == 1) {
+            return "已同意";
+        }
+
+        if ($this->application_status == -1) {
+            return "已拒绝";
+        }
+
+        return "同意";
     }
 }
