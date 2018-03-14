@@ -364,6 +364,10 @@ class Unions extends BaseModel
             $union_history->save();
         }
 
+        $user->union_id = 0;
+        $user->union_type = 0;
+
+        $user->update();
         return [ERROR_CODE_SUCCESS, '退出成功'];
     }
 

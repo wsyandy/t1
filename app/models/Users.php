@@ -138,6 +138,21 @@ class Users extends BaseModel
         if ($this->hasChanged('user_role_at') && $this->isActive()) {
             $this->statRoomTime();
         }
+
+        if ($this->hasChanged('union_id') || $this->hasChanged('union_type')) {
+            $this->bindRoomUnionId();
+        }
+    }
+
+    function bindRoomUnionId()
+    {
+        $room = $this->room;
+
+        if ($room) {
+            $room->union_id = $this->union_id;
+            $room->union_type = $this->union_type;
+            $room->update();
+        }
     }
 
     //统计用户在房间时间
