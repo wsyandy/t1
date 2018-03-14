@@ -524,5 +524,8 @@ class MeiTask extends \Phalcon\Cli\Task
             $resource->resource_code = $resource->id;
             $resource->save();
         }
+
+        $rooms = Rooms::getOfflineSilentRooms();
+        echoLine(count($rooms));
     }
 }
