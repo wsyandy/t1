@@ -2,7 +2,7 @@
     'ID': 'id',
     '手机号码': 'mobile',
     '工会名称': 'name',
-    '用户': 'user_name',
+    '用户': 'user_nickname',
     '真实姓名': 'id_name',
     '身份证':'id_no',
     '支付宝':'alipay_account',

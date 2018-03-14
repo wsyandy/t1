@@ -8,7 +8,7 @@
             <div class="panel loginbox">
                 <div class="login_title"><h1>Hi语音公会-登录</h1></div>
                 <div class="panel-body ">
-                    <img src="images/qr-code.png" class="login_qr" alt="">
+                    <img src="{{ qrcode }}" class="login_qr" alt="">
                 </div>
 
             </div>
@@ -26,5 +26,26 @@
     };
 
     vm = XVue(opts);
+
+    function refresh() {
+
+        $.post("/partner/home/check_auth", {}, function (resp) {
+
+            if (resp.error_code == -400) {
+
+                console.log(resp.error_reason);
+
+                $("#error_reason").html(resp.error_reason);
+
+                clearInterval(timer);
+            }
+
+            if (resp.error_url) {
+                location.href = resp.error_url;
+            }
+        })
+    }
+
+    var timer = setInterval(refresh, 1000);
 
 </script>

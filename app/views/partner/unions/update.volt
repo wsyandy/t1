@@ -7,17 +7,7 @@
         <ul class="reg-step clearfix swiperTab">
             <li class="cur">
                 <span class="step-num">1</span>
-                <span class="step-txt">设置用户名</span>
-            </li>
-
-            <li>
-                <span class="step-num">2</span>
-                <span class="step-txt">填写基本信息</span>
-            </li>
-
-            <li>
-                <span class="step-num">3</span>
-                <span class="step-txt">Hi语音id绑定</span>
+                <span class="step-txt">完善基本信息</span>
             </li>
         </ul>
     </div>
@@ -196,64 +186,7 @@
                 <div class="swiper-slide swiper-no-swiping">
                     <div class="reg-body user_info">
                         <div class="agree-head">
-                            <span>设置用户名</span>
-                        </div>
-                        <form method="post" class="form-x union_info" action="/partner/unions/register" data-step="1">
-
-                            <div class="form-group">
-                                <div class="label">
-                                    <label for="sitename">手机号：</label>
-                                </div>
-                                <div class="field">
-                                    <input type="text" class="input user_input" id="mobile" name="mobile" size="50"
-                                           placeholder="请输入手机号" data-validate="required:请输入你的手机号"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="label">
-                                    <label for="sitename">验证码：</label>
-                                </div>
-                                <div class="field">
-                                    <input type="text" class="input prove_input" name="auth_code" size="50"
-                                           placeholder="请输入验证码" data-validate="required:请输入验证码,length#>=4:验证码不能小于4位"/>
-
-                                    <div class="get_auth_code" id="get_auth_code">
-                                        <span>获取验证码</span>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="form-group">
-                                <div class="label">
-                                    <label for="sitename">密码：</label>
-                                </div>
-                                <div class="field">
-                                    <input type="password" class="input user_input" name="password" size="50"
-                                           placeholder="请输入密码" data-validate="required:请输入密码,length#>=5:密码不能小于5位"/>
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                 <div class="label">
-                                     <label for="sitename">确认密码：</label>
-                                 </div>
-                                 <div class="field">
-                                     <input type="password" class="input user_input" name="renewpass" size="50" placeholder="请再次输入密码" data-validate="required:请再次输入密码,repeat#newpass:两次输入的密码不一致" />
-                                 </div>
-                             </div>
- -->
-                            <div class="form-group">
-                                <div class="field">
-                                    <button class="user_submit" type="submit"> 确认</button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-                <div class="swiper-slide swiper-no-swiping">
-                    <div class="reg-body user_info">
-                        <div class="agree-head">
-                            <span>填写基本信息</span>
+                            <span>完善基本信息</span>
                         </div>
                         <form method="post" class="form-x union_info" action="/partner/unions/update" data-step="2">
                             <div class="form-group">
@@ -288,7 +221,8 @@
                                     <label for="sitename">支付宝：</label>
                                 </div>
                                 <div class="field">
-                                    <input type="text" class="input user_input" id="alipay_account" name="alipay_account"
+                                    <input type="text" class="input user_input" id="alipay_account"
+                                           name="alipay_account"
                                            size="50"
                                            placeholder="请输入支付宝账号用于结算" data-validate="required:请输入支付宝账号用于结算"/>
                                 </div>
@@ -304,30 +238,6 @@
                     </div>
 
                 </div>
-                <div class="swiper-slide swiper-no-swiping">
-                    <div class="reg-body user_info">
-                        <div class="agree-head">
-                            <span>Hi语音id绑定</span>
-                        </div>
-                        <div class="qr_box">
-                            <div class="qr_title">扫码绑定HI语音ID</div>
-                            <img class="qr_code" src="/partner/images/qr-code.jpg" alt="">
-                            <div class="qr_text">使用HI语音交友手机版扫描二维码</div>
-                            <div class="qr_txt">在Hi~软件里-->侧边栏-->设置-->扫一扫，打开扫一扫公告</div>
-
-                            <div class="downward_right">
-                                <img src="/partner/images/qr-code.jpg" alt="">
-                                <div class="qr_txt">
-                                    <p>如还未下载嗨语音</p>
-                                    <p>微信扫一扫下载</p>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -392,13 +302,17 @@
             success: function (resp, status, xhr) {
                 var error_code = resp.error_code;
                 var error_reason = resp.error_reason;
+                var error_url = resp.error_url;
 
                 if (0 != error_code) {
                     alert(error_reason);
                     return
                 }
 
-                tabs('.swiperTab > li', '.swiper-container', 'cur', self.data('step'));
+                if (error_url) {
+                    location.href = error_url;
+                }
+                // tabs('.swiperTab > li', '.swiper-container', 'cur', self.data('step'));
             }
         });
 

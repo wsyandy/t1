@@ -153,6 +153,10 @@ class Users extends BaseModel
             $room->union_type = $this->union_type;
             $room->update();
         }
+
+        if ($this->union_id) {
+            UnionHistories::delay()->createRecord($this->id, $this->union_id);
+        }
     }
 
     //统计用户在房间时间

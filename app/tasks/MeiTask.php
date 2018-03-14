@@ -528,4 +528,19 @@ class MeiTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
         echoLine(count($rooms));
     }
+
+    function getRoomUserNum()
+    {
+        $room = Rooms::findFirstById(1000245);
+        echoLine($room->getUserNum(), $room->getSilentUserNum());
+
+        $gifts = Gifts::findForeach();
+
+        foreach ($gifts as $gift) {
+            if (!$gift->render_type) {
+                $gift->render_type = 'gif';
+                $gift->update();
+            }
+        }
+    }
 }

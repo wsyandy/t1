@@ -15,28 +15,34 @@ class BaseController extends \ApplicationController
      */
     private $_current_product_channel;
 
-    static $SKIP_ACTIONS = [
-        'home' => ['index'],
-        'unions' => ['register', 'send_auth', 'login']
-    ];
+    /**
+     * @var \Users
+     */
+    private $_current_user;
+
 
     /**
-     * @return \Unions
+     * @return \Users
      */
-    function currentUnion()
+    function currentUser()
     {
-        if (!isset($this->_current_union)) {
-            $union_id = $this->currentUnionId();
-            $this->_current_union = \Unions::findFirstById($union_id);
+        if (!isset($this->_current_user)) {
+            $user_id = $this->currentUserId();
+            $this->_current_user = \Users::findFirstById($user_id);
         }
 
-        return $this->_current_union;
+        return $this->_current_user;
     }
 
-    function currentUnionId()
+    function currentUserId()
     {
-        return $this->session->get('union_id');
+        return $this->session->get('user_id');
     }
+
+    static $SKIP_ACTIONS = [
+        'home' => ['index', 'check_auth'],
+        'unions' => ['register', 'send_auth', 'login']
+    ];
 
     /**
      * @return \ProductChannels
@@ -63,28 +69,11 @@ class BaseController extends \ApplicationController
         return 0;
     }
 
-    function checkLoginTime()
-    {
-        $user_login_at = $this->session->get("user_login_at");
-        if ($user_login_at) {
-            $time = md5(date("Ymd"));
-            if (isDevelopmentEnv()) {
-                $time = md5(date("Ymdh"));
-            }
-            if ($user_login_at != $time) {
-                $this->session->set('user_id', null);
-                $this->session->set('user_login_time', null);
-            }
-        }
-    }
-
     function beforeAction($dispatcher)
     {
         $this->view->title = "";
 
-        $this->checkLoginTime();
-
-        $current_union = $this->currentUnion();
+        $current_user = $this->currentUser();
 
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
         $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
@@ -96,8 +85,8 @@ class BaseController extends \ApplicationController
             return;
         }
 
-        if (isBlank($current_union)) {
-            $this->response->redirect('/unions/home');
+        if (isBlank($current_user)) {
+            $this->response->redirect('/partner/home/index');
             return;
         }
     }
