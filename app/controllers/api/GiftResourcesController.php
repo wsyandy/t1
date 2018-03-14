@@ -18,7 +18,7 @@ class GiftResourcesController extends BaseController
         $resource_file_url = '';
         $resource_code = '';
 
-        if (!$gift_resource) {
+        if ($gift_resource) {
             $resource_file_url = $gift_resource->resourceFileUrl();
             $resource_code = $gift_resource->resource_code;
         }
