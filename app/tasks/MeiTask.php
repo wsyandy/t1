@@ -556,7 +556,15 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->nickname = "寒";
         $user->update();
 
-        $num = Users::count(['conditions' => 'id < 1000 and user_type = :user_type:', 'bind' => ['user_type' => USER_TYPE_ACTIVE]]);
-        echoLine($num);
+        $users = Users::find(['conditions' => 'id < 10000 and user_type = :user_type:', 'bind' => ['user_type' => USER_TYPE_ACTIVE]]);
+
+        $file = APP_ROOT . 'temp/user_idx.txt';
+        $f = fopen($file, 'w');
+
+        foreach ($users as $user) {
+            fwrite($f, $user->id . PHP_EOL);
+        }
+
+        fclose($f);
     }
 }
