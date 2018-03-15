@@ -26,9 +26,6 @@ class UnionsController extends BaseController
             ];
             $this->dispatcher->forward($forward);
         }
-
-        $this->view->current_user = $this->currentUser();
-        $this->view->union = $union;
     }
 
     function updateAction()
