@@ -118,7 +118,7 @@ class Musics extends BaseModel
             if (isBlank($this->$value)) {
                 return [ERROR_CODE_FAIL, $key . '不能为空'];
             }
-            if ($value == "name" && mb_strlen($this->$value) > 10) {
+            if ($value == "name" && mb_strlen($this->$value) > 50) {
                 return [ERROR_CODE_FAIL, $key . '不能超过十个字'];
             }
         }

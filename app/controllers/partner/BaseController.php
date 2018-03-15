@@ -89,6 +89,9 @@ class BaseController extends \ApplicationController
             $this->response->redirect('/partner/home/index');
             return;
         }
+
+        $this->view->current_user = $this->currentUser();
+        $this->view->union = $this->currentUser()->union;
     }
 
 
