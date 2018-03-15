@@ -92,6 +92,7 @@ class UsersTask extends \Phalcon\Cli\Task
         $users = Users::find($cond);
 
         foreach ($users as $user) {
+            echoLine($user->id);
             if ($user->current_room_id) {
                 echoLine($user->id, $user->current_room_id, $user->current_room->name);
                 //$user->current_room->exitSilentRoom($user);
@@ -136,6 +137,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $user->mobile = '1';
         $user->user_status = USER_STATUS_OFF;
+        $user->avatar_status = AUTH_FAIL;
         $user->room_id = 0;
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;

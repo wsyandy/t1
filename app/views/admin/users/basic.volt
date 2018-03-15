@@ -29,7 +29,7 @@
         <td>用户等级:{{ user.level }}</td>
         <td>用户经验:{{ user.experience }}</td>
         <td>段位:{{ user.segment_text }}</td>
-        <td></td>
+        <td>头像审核状态:{{ user.avatar_status_text }}</td>
     </tr>
 </table>
 
