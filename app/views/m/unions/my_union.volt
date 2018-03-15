@@ -110,7 +110,7 @@
     <div class="pop_bottom_bg"></div>
     <div class="pop_bottom">
         <ul>
-            <li v-show="!user_operation && is_president">修改家族资料</li>
+            <li v-show="!user_operation && is_president" @click.stop="edit">修改家族资料</li>
             <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
             <li v-show="!user_operation && is_president">上热门</li>
             <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
@@ -247,6 +247,10 @@
                         location.href = url;
                     }
                 });
+            },
+            edit: function () {
+                var url = "/m/unions/edit&sid=" + this.sid + "&code=" + this.code;
+                location.href = url;
             }
         }
     };

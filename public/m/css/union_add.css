@@ -58,6 +58,18 @@
     width: 5.1rem;
 }
 
+.textarea_text{
+    font-size: .3rem;
+    color: #404040;
+    width: 5.1rem;
+}
+.textarea_text textarea{
+    font-size: .3rem;
+    color: #404040;
+    width: 5.1rem;
+    resize : none;
+}
+
 .family-edit ul li.select {
     margin-top: 0.3rem;
 }

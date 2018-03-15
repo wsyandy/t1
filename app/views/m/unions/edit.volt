@@ -4,12 +4,12 @@
 {{ block_end() }}
 
 <div class="vueBox" id="app" v-cloak>
-    <form action="/m/unions/create?sid={{ sid }}&code={{ code }}" method="post" enctype="multipart/form-data"
+    <form action="/m/unions/update?sid={{ sid }}&code={{ code }}" method="post" enctype="multipart/form-data"
           class="form" id="create_union">
         <div class="family-logo">
-            <img src="" class="ico-img-update" id="img_preview" :src="img_update">
+            <img class="ico-img-update" id="img_preview" src="{{ union.avatar_url }}">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
-            <input class="img_update" type="file" required="required" id="avatar_file"
+            <input class="img_update" type="file" id="avatar_file"
                    name="avatar_file" accept="image/*" capture="camera">
         </div>
 
@@ -18,14 +18,15 @@
                 <li>
                     <span>家族名称 </span>
                     <input class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
-                           name="name">
+                           value="{{ union.name }}" name="name">
                 </li>
                 <li>
                     <span>家族公告 </span>
                     <div class="textarea_text">
                         <textarea name="notice" maxlength="50" placeholder="最多输50个字"
                                   onpropertychange="this.style.height=this.scrollHeight + 'px'"
-                                  oninput="this.style.height=this.scrollHeight + 'px'"></textarea>
+                                  oninput="this.style.height=this.scrollHeight + 'px'"
+                        >{{ union.notice }}</textarea>
                     </div>
                 </li>
 
@@ -36,7 +37,6 @@
                         <input type="hidden" v-model="selected" name="need_apply">
                     </div>
                 </li>
-
             </ul>
             <div class="agree_div" @click="agreeSelect">
                 <img class="agree_img" :src="set_select"/>
@@ -46,21 +46,8 @@
             </div>
 
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                <input type="submit" name="submit" value="申请创建（100钻石）"
+                <input type="submit" name="submit" value="保存修改"
                        :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-            </div>
-
-            <div class="popup_cover" v-if="isPop">
-                <div class="popup_box">
-                    <img class="ico-warn" src="images/ico-warn.png" alt="">
-                    <div class="popup_text">
-                        创建家族需要支付100钻石，您的钻石数量不足，请先充值
-                    </div>
-                    <div class="popup_btn">
-                        <a class="btn_cancel" href="#" @click="establishFamily(0)">取消</a>
-                        <a class="btn_recharge" href="#" @click="establishFamily(1)">前往充值</a>
-                    </div>
-                </div>
             </div>
 
         </div>
@@ -79,15 +66,14 @@
 <script>
     var opts = {
         data: {
-            isEdit: false,
+            isEdit: true,
             isPop: false,
             isSet: false,
+            selected: {{ union.need_apply }},
             options: [
-                {text: '任何人可加入', value: 0},
-                {text: '申请才可加入', value: 1}
+                {text: '所有人都可加入', value: 0},
+                {text: '申请才能可加入', value: 1}
             ],
-            selected: 1,
-            img_update: '/m/images/ico-img-update.png',
             set_select: '/m/images/ico-select.png',
             hasAgree: true,
             agreement: true,
@@ -133,6 +119,7 @@
     var can_create = true;
     $(document).on('submit', '#create_union', function (event) {
         event.preventDefault();
+        console.log("aaaaa");
         if (can_create == false) {
             return false;
         }

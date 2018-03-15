@@ -74,9 +74,9 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '家族公告有误'];
         }
 
-        if (isBlank($need_apply)) {
-            return [ERROR_CODE_FAIL, '家族设置有误'];
-        }
+//        if (isBlank($need_apply)) {
+//            return [ERROR_CODE_FAIL, '家族设置有误'];
+//        }
 
         $union = new Unions();
         $union->name = $name;
@@ -377,7 +377,7 @@ class Unions extends BaseModel
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
-    function exitUnion($union_host, $user, $opts = [])
+    function exitUnion($user, $opts = [], $union_host = null)
     {
         $db = Users::getUserDb();
         $exit = fetch($opts, 'exit');
@@ -458,9 +458,9 @@ class Unions extends BaseModel
         }
     }
 
-    function updateFameValue($charm_value)
+    function updateFameValue($value)
     {
-        $this->fame_value += $charm_value;
+        $this->fame_value += $value;
         $this->update();
     }
 
@@ -495,6 +495,24 @@ class Unions extends BaseModel
         }
 
         $this->update();
+    }
+
+    function updateAvatar($filename)
+    {
+        $old_avatar = $this->avatar;
+        $dest_filename = APP_NAME . '/unions/avatar/' . uniqid() . '.jpg';
+        $res = \StoreFile::upload($filename, $dest_filename);
+
+        if ($res) {
+            $this->avatar = $dest_filename;
+            $this->avatar_status = AUTH_SUCCESS;
+            if ($this->update()) {
+                //  删除老头像
+                if ($old_avatar) {
+                    \StoreFile::delete($old_avatar);
+                }
+            }
+        }
     }
 
     function isNormal()
