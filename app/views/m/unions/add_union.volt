@@ -7,7 +7,7 @@
     <form action="/m/unions/create?sid={{ sid }}&code={{ code }}" method="post" enctype="multipart/form-data"
           class="form" id="create_union">
         <div class="family-logo">
-            <img src="" class="ico-img-update" id="img_preview" :src="isEdit?family_info.ico:img_update">
+            <img src="" class="ico-img-update" id="img_preview" :src="img_update">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
             <input class="img_update" type="file" required="required" id="avatar_file"
                    name="avatar_file" accept="image/*" capture="camera">
@@ -17,27 +17,24 @@
             <ul>
                 <li>
                     <span>家族名称 </span>
-                    <div class="family_name" v-show="isEdit"> ${ family_info.name }</div>
-                    <input v-show="!isEdit" class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
+                    <input class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
                            name="name">
                 </li>
                 <li>
                     <span>家族公告 </span>
-                    <div class="family_name" v-show="isEdit"> ${ family_info.slogan }</div>
-                    <input v-show="!isEdit" class="input_text" maxlength="50" type="text" placeholder="最多输入50个字"
+                    <input class="input_text" maxlength="50" type="text" placeholder="最多输入50个字"
                            name="notice">
+                    {#<textarea class="input_text" maxlength="50"></textarea>#}
                 </li>
 
                 <li class="select">
                     <span>家族设置 </span>
-                    <div class="select_area">
-                        <select v-model="selected">
-                            <option v-for="option in options" v-bind:value="option.value">
-                                ${ option.text }
-                            </option>
-                        </select>
+                    <div class="select_area" @click="setSelect">
+                        <span>${options[selected].text}</span>
+                        <input type="hidden" v-model="selected" name="need_apply">
                     </div>
                 </li>
+
             </ul>
             <div class="agree_div" @click="agreeSelect">
                 <img class="agree_img" :src="set_select"/>
@@ -49,7 +46,6 @@
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input type="submit" name="submit" value="申请创建（100钻石）"
                        :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                {#<span>${ isEdit?'保存修改':'申请创建（100钻石）' } </span>#}
             </div>
 
             <div class="popup_cover" v-if="isPop">
@@ -67,22 +63,28 @@
 
         </div>
     </form>
+
+    <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
+        <div :class="[isSet ? '' : 'fixed', 'pop_bottom']">
+            <ul>
+                <li v-for="(option, index) in options" @click="setSelected(index)"> ${ option.text }</li>
+            </ul>
+            <div class="close_btn" @click="cancelSelect">取消</div>
+        </div>
+    </div>
+    
 </div>
 <script>
     var opts = {
         data: {
             isEdit: false,
             isPop: false,
-            selected: 1,
+            isSet: false,
             options: [
                 {text: '任何人可加入', value: 0},
                 {text: '申请才可加入', value: 1}
             ],
-            family_info: {
-                ico: 'images/avatar.jpg',
-                name: '二逼青年欢乐多',
-                slogan: '花瓣网, 设计师寻找灵感的天堂!图片素材领导者,帮你采集,发现网络上你喜欢的事物.你可以用它收集灵感,保存有用的素材'
-            },
+            selected: 1,
             img_update: '/m/images/ico-img-update.png',
             set_select: '/m/images/ico-select.png',
             hasAgree: true,
@@ -109,6 +111,17 @@
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
                 }
+            },
+            setSelect: function () {
+                this.isSet = true
+            },
+            cancelSelect: function () {
+                this.isSet = false
+            },
+            setSelected: function (index) {
+                console.log(index);
+                this.selected = this.options[index].value;
+                this.isSet = false
             }
         }
     };
@@ -118,7 +131,6 @@
     var can_create = true;
     $(document).on('submit', '#create_union', function (event) {
         event.preventDefault();
-        console.log("aaaaa");
         if (can_create == false) {
             return false;
         }

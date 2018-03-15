@@ -18,7 +18,7 @@
     justify-content: center;
 }
 
-.family-logo span, input {
+.family-logo span {
     font-size: 0.24rem;
     color: #767676;
     padding-top: 0.2rem;
@@ -68,10 +68,6 @@
     background-size: 0.26rem 0.26rem;
     background-repeat: no-repeat;
     background-position: right center;
-}
-
-.select_area select {
-    width: 100%;
 }
 
 .agree_div {
@@ -209,4 +205,42 @@
 
 .btn_recharge:hover{
     color: #fff;
+}
+
+
+/*家族设置底部弹窗*/
+
+.pop_bottom{
+    background: #ffffff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    transition: 0.5s;
+}
+.popup_cover.fixed{
+    /*transform: scale3d(0,0,0);*/
+    /*transition: 0s;*/
+    transition-delay: 0.5s;
+    top:100%;
+}
+.pop_bottom.fixed{
+    bottom: -100%;
+    transition: 0.5s;
+}
+.pop_bottom ul li{
+    display: block;
+    padding:0.26rem 0;
+    border-bottom: 1px solid #F3F3F3;
+    font-size: 0.32rem;
+    color: #595959;
+    text-align: center;
+}
+.pop_bottom .close_btn{
+    padding:0.26rem 0;
+    text-align: center;
+    font-size: 0.32rem;
+    color: #595959;
+    border-top: 0.08rem solid #F3F3F3;
 }
