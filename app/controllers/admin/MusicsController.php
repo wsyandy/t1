@@ -12,8 +12,8 @@ class MusicsController extends BaseController
 {
     function indexAction()
     {
-        $page = 1;
-        $per_page = 100;
+        $page = $this->params('page');
+        $per_page = 25;
         $cond = $this->getConditions('music');
         $cond['order'] = 'id desc';
         $musics = \Musics::findPagination($cond, $page, $per_page);

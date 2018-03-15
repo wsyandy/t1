@@ -245,7 +245,7 @@ class Unions extends BaseModel
         $users = Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            $user->application_status = $this->applicationStatus($user->id);
+            $user->apply_status = $this->applicationStatus($user->id);
         }
 
         $total_entries = $user_db->zcard($new_user_key);
@@ -310,6 +310,10 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '你已经加入其它家族'];
         }
 
+        if ($this->status != STATUS_ON) {
+            return [ERROR_CODE_FAIL, '家族错误'];
+        }
+
         $db = Users::getUserDb();
         $key = $this->generateNewUersKey();
 
@@ -318,6 +322,10 @@ class Unions extends BaseModel
         }
 
         if ($db->zadd($key, time(), $user->id)) {
+            if ($this->need_apply == 0) {
+                list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
+                return [$error_code, $err_reason];
+            }
             return [ERROR_CODE_SUCCESS, '申请成功'];
         }
 

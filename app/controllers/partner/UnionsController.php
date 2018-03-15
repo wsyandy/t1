@@ -26,9 +26,6 @@ class UnionsController extends BaseController
             ];
             $this->dispatcher->forward($forward);
         }
-
-        $this->view->current_user = $this->currentUser();
-        $this->view->union = $union;
     }
 
     function updateAction()
@@ -63,7 +60,39 @@ class UnionsController extends BaseController
 
     function usersAction()
     {
+        $union = $this->currentUser()->union;
 
+        if ($this->request->isAjax()) {
+
+            $page = $this->params('page');
+            $per_page = 8;
+
+            $cond = [
+                'conditions' => 'sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:',
+                'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id],
+                'columns' => 'distinct user_id'
+            ];
+
+            $user_ids = [];
+            $gift_orders = \GiftOrders::find($cond);
+
+            foreach ($gift_orders as $gift_order) {
+                $user_ids[] = $gift_order->user_id;
+            }
+
+            if (count($user_ids) < 1) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => []]);
+            }
+
+            $cond = [
+                'conditions' => 'id <> :union_user_id: and id in (' . implode(',', $user_ids) . ')',
+                'bind' => ['union_user_id' => $union->user_id]
+            ];
+
+            $users = \Users::findPagination($cond, $page, $per_page);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
+        }
     }
 
     function roomsAction()

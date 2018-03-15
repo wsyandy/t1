@@ -50,7 +50,14 @@ class UnionsController extends BaseController
 
             list($error_code, $error_reason) = \Unions::createPrivateUnion($user, $opts);
 
-            return $this->renderJSON($error_code, $error_reason);
+            $url = '';
+            if ($error_reason == ERROR_CODE_SUCCESS) {
+                $sid = $this->params('sid');
+                $code = $this->params('code');
+                $url = "/m/unions/index?sid={$sid}&code={$code}";
+            }
+
+            return $this->renderJSON($error_code, $error_reason, ['error_url' => $url]);
         }
     }
 
@@ -164,8 +171,7 @@ class UnionsController extends BaseController
 
     function applicationListAction()
     {
-        $user_id = $this->currentUserId();
-        $union = \Unions::findFirstByUserId($user_id);
+        $union = $this->currentUser()->union;
 
         $res = [];
         if (isPresent($union)) {
@@ -185,7 +191,7 @@ class UnionsController extends BaseController
     {
         $user = \Users::findFirstById($this->params('user_id'));
         $union = $this->currentUser()->union;
-        $user->application_status = $union->applicationStatus($user->id);
+        $user->apply_status = $union->applicationStatus($user->id);
         $this->view->user = $user;
         $this->view->title = "申请详情";
         $this->view->sid = $this->params('sid');
@@ -243,7 +249,14 @@ class UnionsController extends BaseController
         $union_id = $this->params('union_id');
         $union = \Unions::findFirstById($union_id);
         list($error_code, $error_reason) = $union->applyJoinUnion($user);
-        return $this->renderJSON($error_code, $error_reason, '');
+        $url = '';
+        if ($error_code == ERROR_CODE_SUCCESS && $union->applicationStatus($user->id) == 1) {
+            $sid = $this->params('sid');
+            $code = $this->params('code');
+            $url = "/m/unions/my_union?sid=${sid}&code=${code}&union_id=${union_id}";
+        }
+
+        return $this->renderJSON($error_code, $error_reason, ['error_url' => $url]);
     }
 
     //处理申请
@@ -300,6 +313,46 @@ class UnionsController extends BaseController
     //申请上热门
     function applyGoHotAction()
     {
+        $time = time();
+        $days = [];
+//        $hours = [8, 10, 12, 14, 16, 20];
+//        for ($i = 0; $i < 6; $i++) {
+//            $day = beginOfDay($time + $i * 60 * 60 * 24);
+//            $times = [];
+//            foreach ($hours as $hour) {
+//                $time_at = $day + $hour * 60 * 60;
+//                $times[date('H-i', $time_at)] = $time_at;
+//            }
+//            $days[date("m月d日", $day)] = $times;
+//        }
+        for ($i = 0; $i < 7; $i++) {
+            $day = beginOfDay($time + $i * 60 * 60 * 24);
+            $days[date("m月d日", $day)] = $day;
+        }
 
+        $this->view->days = $days;
+        $this->view->user = $this->currentUser();
+        $this->view->title = "申请上热门";
+        $this->view->sid = $this->params('sid');
+        $this->view->code = $this->params('code');
     }
+
+    function hotRoomHistoryAction()
+    {
+        if ($this->request->isAjax()) {
+            $applicant = $this->currentUser();
+
+            $user_id = $this->params('user_id');
+            $day = $this->params('day');
+            $hour = $this->params('hour');
+            $start_at = $day + $hour * 60 * 60;
+            $introduce = $this->params('introduce');
+
+            $opts = ['user_id' => $user_id, 'start_at' => $start_at, 'introduce' => $introduce];
+
+            list($error_code, $error_reason) = \HotRoomHistories::createHistories($opts, $applicant);
+            return $this->renderJSON($error_code, $error_reason);
+        }
+    }
+
 }

@@ -87,8 +87,11 @@ class BaseController extends \ApplicationController
 
         if (isBlank($current_user)) {
             $this->response->redirect('/partner/home/index');
-            return;
+            return false;
         }
+
+        $this->view->current_user = $this->currentUser();
+        $this->view->union = $this->currentUser()->union;
     }
 
 

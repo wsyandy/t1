@@ -1,4 +1,3 @@
-
 <form method="post" action="">
     <div class="search">
 
@@ -36,39 +35,49 @@
             <tr>
                 <td class="flexbox">
                     <div class="member_avatar">
-                        <img src="images/avatar.jpg" class="radius-circle " alt=""/>
+                        <img src="{{ union.user.avatar_small_url }}" class="radius-circle " alt=""/>
                     </div>
                     <ul class="member_name">
-                        <li class="nickname "> 会长始终显示第一位 <span class="president">会长</span></li>
-                        <li> 13420925611</li>
+                        <li class="nickname "> {{ union.user.nickname }} <span class="president">会长</span></li>
+                        <li> {{ union.user.id }}</li>
                     </ul>
                 </td>
-                <td>现金</td>
+                <td>22</td>
                 <td> 10:02:32</td>
                 <td> 10:02:32</td>
             </tr>
-            <tr>
+
+            <tr v-for="user in datas">
                 <td class="flexbox">
                     <div class="member_avatar">
-                        <img src="images/avatar.jpg" class="radius-circle " alt=""/>
+                        <img :src="user.avatar_small_url" class="radius-circle " alt=""/>
                     </div>
                     <ul class="member_name">
-                        <li class="nickname"> 成员昵称</li>
-                        <li> 13420925611</li>
+                        <li class="nickname"> ${user.nickname}</li>
+                        <li> ${user.id}</li>
                     </ul>
                 </td>
-                <td>现金</td>
-                <td> 10:02:32</td>
-                <td> 10:02:32</td>
+                <td>${user.income}</td>
+                <td> ${user.host_broadcaster_time_text}</td>
+                <td> ${user.broadcaster_time_text}</td>
             </tr>
 
             </tbody>
 
-            <tfoot>
+            <tfoot v-if="total_page > 1">
             <tr>
                 <td colspan="8">
-                    <div class="pagelist"><a href="">上一页</a> <span class="current">1</span><a href="">2</a><a
-                                href="">3</a><a href="">下一页</a><a href="">尾页</a></div>
+                    <div class="pagelist">
+                        <a href="">首页</a>
+                        <a href="">上一页</a>
+                        <span class="current">${current_page}</span>
+
+                        <a href="">2</a>
+                        <a href="">3</a>
+
+                        <a href="">下一页</a>
+                        <a href="">尾页</a>
+                    </div>
                 </td>
             </tr>
             </tfoot>
@@ -79,11 +88,34 @@
 <script type="text/javascript">
     var opts = {
         data: {
-            agreement: true,
-            upload_status: false
+            datas: [],
+            current_page: 0,
+            total_entries: 0,
+            total_page: 1
         },
         methods: {}
     };
 
     vm = XVue(opts);
+
+    function loadData() {
+
+        vm.current_page++;
+
+        if (vm.current_page > vm.total_page) {
+            return;
+        }
+
+        $.authGet('/partner/unions/users', {page: vm.current_page}, function (resp) {
+            var users = resp.users;
+
+            $.each(users, function (index, item) {
+                vm.datas.push(item);
+                vm.total_page = resp.total_page;
+            })
+
+        })
+    }
+
+    loadData();
 </script>

@@ -44,6 +44,8 @@ function millisecondTime()
 
 function secondsToText($seconds)
 {
+    $seconds = intval($seconds);
+
     if ($seconds <= 60) {
         return $seconds . '秒';
     }

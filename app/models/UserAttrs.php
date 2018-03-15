@@ -219,12 +219,24 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id
         ];
 
-        if (isset($this->application_status)) {
-            $data['application_status'] = $this->application_status;
-            $data['application_status_text'] = $this->application_status_text;
+        if (isset($this->apply_status)) {
+            $data['apply_status'] = $this->apply_status;
+            $data['apply_status_text'] = $this->apply_status_text;
         }
 
         return $data;
+    }
+
+    function toUnionStatJson()
+    {
+        $json = [
+            'income' => 100,
+            'host_broadcaster_time_text' => $this->getHostBroadcasterTimeText(),
+            'broadcaster_time_text' => $this->getBroadcasterTimeText(),
+            'audience_time_text' => $this->getAudienceTimeText(),
+        ];
+
+        return array_merge($this->toBasicJson(), $json);
     }
 
     public function isWebPlatform()
@@ -490,21 +502,21 @@ trait UserAttrs
     }
 
     //旁听时间
-    function getAudienceTimeByDateText($date)
+    function getAudienceTimeText()
     {
-        return secondsToText($this->getAudienceTimeByDate($date));
+        return secondsToText($this->audience_time);
     }
 
     //主播时间
-    function getBroadcasterTimeByDateText($date)
+    function getBroadcasterTimeText()
     {
-        return secondsToText($this->getBroadcasterTimeByDate($date));
+        return secondsToText($this->broadcaster_time);
     }
 
     //房主时间
-    function getHostBroadcasterTimeByDateText($date)
+    function getHostBroadcasterTimeText()
     {
-        return secondsToText($this->getHostBroadcasterTimeByDate($date));
+        return secondsToText($this->host_broadcaster_time);
     }
 
     function getWithdrawAmount()
@@ -574,13 +586,13 @@ trait UserAttrs
         return $num;
     }
 
-    function getApplicationStatusText()
+    function getApplyStatusText()
     {
-        if ($this->application_status == 1) {
+        if ($this->apply_status == 1) {
             return "已同意";
         }
 
-        if ($this->application_status == -1) {
+        if ($this->apply_status == -1) {
             return "已拒绝";
         }
 

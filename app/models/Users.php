@@ -72,7 +72,7 @@ class Users extends BaseModel
     public $user_chat;
 
     //申请状态 1已同意,-1拒绝，0等待,
-    public $application_status;
+    public $apply_status;
 
     function beforeCreate()
     {

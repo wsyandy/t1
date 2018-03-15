@@ -104,7 +104,7 @@ class BaseController extends \ApplicationController
 
         if (isBlank($current_user)) {
             $this->response->redirect('/web/home/login');
-            return;
+            return false;
         }
     }
 

@@ -47,6 +47,12 @@ ul,li{ list-style-type:none;}
     background-size: 17px 18px;
     background-position: 30px center;
 }
+.leftnav ul li a.room {
+    background-image: url("../images/room.png");
+    background-repeat: no-repeat;
+    background-size: 17px 18px;
+    background-position: 30px center;
+}
 .leftnav ul li a.account {
     background-image: url("../images/ico-account.png");
 }
