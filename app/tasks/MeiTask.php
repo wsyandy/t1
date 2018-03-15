@@ -553,5 +553,13 @@ class MeiTask extends \Phalcon\Cli\Task
         \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
     }
 
+    function createUnionAction()
+    {
+        $union = new Unions();
+        $union->name = "test";
+        $union->stauts = STATUS_ON;
+        $union->auth_status = AUTH_WAIT;
+        $union->save();
+    }
 
 }
