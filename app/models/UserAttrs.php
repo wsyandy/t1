@@ -219,9 +219,9 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id
         ];
 
-        if (isset($this->application_status)) {
-            $data['application_status'] = $this->application_status;
-            $data['application_status_text'] = $this->application_status_text;
+        if (isset($this->apply_status)) {
+            $data['apply_status'] = $this->apply_status;
+            $data['apply_status_text'] = $this->apply_status_text;
         }
 
         return $data;
@@ -586,13 +586,13 @@ trait UserAttrs
         return $num;
     }
 
-    function getApplicationStatusText()
+    function getApplyStatusText()
     {
-        if ($this->application_status == 1) {
+        if ($this->apply_status == 1) {
             return "已同意";
         }
 
-        if ($this->application_status == -1) {
+        if ($this->apply_status == -1) {
             return "已拒绝";
         }
 

@@ -245,7 +245,7 @@ class Unions extends BaseModel
         $users = Users::findByIds($user_ids);
 
         foreach ($users as $user) {
-            $user->application_status = $this->applicationStatus($user->id);
+            $user->apply_status = $this->applicationStatus($user->id);
         }
 
         $total_entries = $user_db->zcard($new_user_key);

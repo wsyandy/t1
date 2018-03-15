@@ -191,7 +191,7 @@ class UnionsController extends BaseController
     {
         $user = \Users::findFirstById($this->params('user_id'));
         $union = $this->currentUser()->union;
-        $user->application_status = $union->applicationStatus($user->id);
+        $user->apply_status = $union->applicationStatus($user->id);
         $this->view->user = $user;
         $this->view->title = "申请详情";
         $this->view->sid = $this->params('sid');

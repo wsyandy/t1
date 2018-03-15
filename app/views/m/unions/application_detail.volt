@@ -45,11 +45,11 @@
             });
         }
 
-        var application_status = {{ user.application_status }};
-        if (application_status == -1) {
+        var apply_status = {{ user.apply_status }};
+        if (apply_status == -1) {
             $('.refuse').addClass('refuse_selected').text('已拒绝');
             $('.refuse').siblings().remove();
-        } else if (application_status == 1) {
+        } else if (apply_status == 1) {
             $('.agree').addClass('refuse_selected').text('已同意');
             $('.agree').siblings().remove();
         }

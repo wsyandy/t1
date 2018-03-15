@@ -13,11 +13,11 @@
                     <h3>${item.nickname} <span class="women">${item.age}</span></h3>
                     <p>申请加入家族</p>
                 </div>
-                <div class="list_agree list_selected" v-show="item.application_status">
-                    ${item.application_status_text}
+                <div class="list_agree list_selected" v-show="item.apply_status">
+                    ${item.apply_status_text}
                 </div>
-                <div class="list_agree" v-show="!item.application_status" @click.stop="applicationDetail(item.id)">
-                    ${item.application_status_text }
+                <div class="list_agree" v-show="!item.apply_status" @click.stop="applicationDetail(item.id)">
+                    ${item.apply_status_text }
                 </div>
             </div>
         </div>
