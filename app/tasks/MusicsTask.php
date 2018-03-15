@@ -31,14 +31,12 @@ class MusicsTask extends \Phalcon\Cli\Task
             $user_ids[] = $user->id;
         }
 
-        $user_ids = [39, 117];
-
         if (count($user_ids) < 1) {
             echoLine("no user");
             return;
         }
 
-        $music_files = glob(APP_ROOT . "temp/musics/*");
+        $music_files = glob(APP_ROOT . "temp/100首音乐/*");
 
         foreach ($music_files as $music_file) {
             $file_size = filesize($music_file);
