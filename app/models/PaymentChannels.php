@@ -12,7 +12,7 @@ class PaymentChannels extends BaseModel
     static $PAYMENT_TYPE = [
         'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
-        'apple' => 'apple'
+        'apple' => 'apple', 'weixin_js' => 'weixin_js'
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -76,6 +76,10 @@ class PaymentChannels extends BaseModel
     {
         debug("user: " . $user->platform);
 
+        if($user->isWxPlatform() && 'weixin_js' == $this->payment_type){
+            return true;
+        }
+
         $version_code = $user->version_code;
 
         if ($this->android_version_code && $user->isAndroid() && $this->android_version_code > $version_code) {
@@ -94,7 +98,7 @@ class PaymentChannels extends BaseModel
         if (isDevelopmentEnv()) {
             return true;
         }
-        
+
         return $user->isAndroid();
     }
 

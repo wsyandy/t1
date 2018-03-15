@@ -431,12 +431,12 @@ trait UserAttrs
 
     function isIos()
     {
-        return preg_match('/ios/i', $this->platform);
+        return preg_match('/^ios/i', $this->platform);
     }
 
     function isAndroid()
     {
-        return preg_match('/android/i', $this->platform);
+        return preg_match('/^android/i', $this->platform);
     }
 
     function generateVoiceChannelKey($channel_name)

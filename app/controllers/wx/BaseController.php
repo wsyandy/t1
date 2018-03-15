@@ -19,6 +19,7 @@ class BaseController extends \ApplicationController
 
 
     static $SKIP_ACTIONS = [
+        'home' => '*',
         'banners' => '*',
         'devices' => '*',
         'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status', 'third_login'],
@@ -70,7 +71,6 @@ class BaseController extends \ApplicationController
     {
         if (!$this->_current_user) {
             $user_id = $this->session->get('user_id');
-
             if (!$user_id) {
                 return null;
             }
@@ -141,10 +141,7 @@ class BaseController extends \ApplicationController
         $action_name = \Phalcon\Text::uncamelize($action_name);
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
-        if (!$this->skipAuth($controller_name, $action_name)) {
-            $this->renderJSON(ERROR_CODE_FAIL, '非法操作');
-            return false;
-        }
+
 
         $this->remote_ip = $this->remoteIp();
         $this->view->title = $this->currentProductChannel()->weixin_name;
