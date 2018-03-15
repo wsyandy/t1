@@ -551,5 +551,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById($user_id);
         $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
         \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+
+        $user = Users::findFirstById(100776);
+        $user->nickname = "寒";
+        $user->update();
+
+        $num = Users::count(['conditions' => 'id < 1000 and user_type = :user_type:', 'bind' => ['user_type' => USER_TYPE_ACTIVE]]);
+        echoLine($num);
     }
 }
