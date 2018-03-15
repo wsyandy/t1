@@ -118,4 +118,12 @@ class Operators extends BaseModel
         return $partners;
     }
 
+    function isSuperOperator()
+    {
+        if (isDevelopmentEnv()) {
+            return true;
+        }
+
+        return 10 == $this->id;
+    }
 }

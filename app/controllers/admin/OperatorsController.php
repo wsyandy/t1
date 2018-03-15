@@ -29,6 +29,10 @@ class OperatorsController extends BaseController
         $old_password = $operator->password;
         $this->assign($operator, 'operator');
 
+        if ($operator->hasChanged('role') && $operator->isAdmin() && !$this->currentOperator()->isSuperOperator()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限创建admin账户,请联系技术人员');
+        }
+
         if (isBlank($operator->password)) {
             $operator->password = $old_password;
         } else {
@@ -54,6 +58,11 @@ class OperatorsController extends BaseController
     {
         $operator = new \Operators();
         $this->assign($operator, 'operator');
+
+        if ($operator->isAdmin() && !$this->currentOperator()->isSuperOperator()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限创建admin账户,请联系技术人员');
+        }
+
         //去重
         $res = \Operators::findFirstByUsername($operator->username);
 
