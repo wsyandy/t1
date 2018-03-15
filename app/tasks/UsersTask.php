@@ -370,6 +370,13 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_music_key = "user_musics_id" . $user_id;
         $new_user_music_key = "user_musics_id" . $new_user_id;
 
+        $musics = Musics::findBy(['user_id' => $user_id]);
+
+        foreach ($musics as $music) {
+            $music->user_id = $new_user_id;
+            $music->update();
+        }
+
         $music_ids = $user_db->zrange($user_music_key, 0, -1, true);
 
         foreach ($music_ids as $music_id => $time) {
