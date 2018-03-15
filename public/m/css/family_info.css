@@ -81,7 +81,7 @@ body{
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    
+
 }
 .new_member{
     width: 6.9rem;
@@ -253,4 +253,31 @@ body{
 .charm_num,.wealth_num{
     font-size: 0.28rem;
     color: #FF1111;
+}
+.family_info_box{
+    width: 100%;
+    height: 1.4rem;
+}
+.family_info_box .info_btn{
+    width: 100%;
+    height: 1.1rem;
+    background-color: #FFFFFF;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    border-top: 1px solid #E3E3E3;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+}
+.family_info_box .info_btn p{
+    width: 6.9rem;
+    height: 0.82rem;
+    line-height: 0.82rem;
+    background: #F45189;
+    border-radius: 1rem;
+    font-size: 0.34rem;
+    color: #FFFFFF;
+    text-align: center;
+    margin:0 auto;
 }

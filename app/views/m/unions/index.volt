@@ -4,7 +4,7 @@
 
 <div class="vueBox" id="app" v-cloak>
     <div class="family_box">
-        <a class="family_establish" v-for="(item,index) in family" :href="hasFamily&&index==0?my_family.url:item.url">
+        <div class="family_establish" v-for="(item,index) in family" @click.stop="enterUnion(index,item.url)">
             <img class="family_bg" :src="item.bg" alt="">
             <div class="family_left">
                 <div class="family_info">
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <img class="family-arrow" :src="arrow_right" alt="">
-        </a>
+        </div>
 
         <div class="family_introduce">
             <div class="family_introduce_title">【 家族说明 】</div>
@@ -66,9 +66,10 @@
             ]
         },
         created: function () {
-            if (this.union !== 0) {
+            if (this.union) {
+                console.log(this.union);
                 this.my_family.url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
-                this.my_family.ico = "{{ union.avatar_url }}";
+                this.my_family.ico = "{{ avatar_url }}";
                 this.my_family.name = this.union.name;
                 this.my_family.slogan = this.union.notice;
             }
@@ -82,7 +83,18 @@
                 }
             }
         },
-        methods: {}
+        methods: {
+            enterUnion: function (index, url) {
+                if (this.union && this.union.type == 1) {
+                    return;
+                }
+                if (this.hasFamily && index == 0) {
+                    location.href = this.my_family.url
+                } else {
+                    location.href = url;
+                }
+            }
+        }
     };
     vm = XVue(opts);
 </script>

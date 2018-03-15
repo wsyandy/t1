@@ -528,4 +528,43 @@ class MeiTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
         echoLine(count($rooms));
     }
+
+    function getRoomUserNum()
+    {
+        $room = Rooms::findFirstById(1000245);
+        echoLine($room->getUserNum(), $room->getSilentUserNum());
+
+        $gifts = Gifts::findForeach();
+
+        foreach ($gifts as $gift) {
+            if (!$gift->render_type) {
+                $gift->render_type = 'gif';
+                $gift->update();
+            }
+        }
+    }
+
+    function giveDiamondAction()
+    {
+        $user_id = 8888;
+
+        $user = Users::findFirstById($user_id);
+        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+
+        $user = Users::findFirstById(100776);
+        $user->nickname = "寒";
+        $user->update();
+
+        $users = Users::find(['conditions' => 'id < 10000 and user_type = :user_type:', 'bind' => ['user_type' => USER_TYPE_ACTIVE]]);
+
+        $file = APP_ROOT . 'temp/user_idx.txt';
+        $f = fopen($file, 'w');
+
+        foreach ($users as $user) {
+            fwrite($f, $user->id . PHP_EOL);
+        }
+
+        fclose($f);
+    }
 }

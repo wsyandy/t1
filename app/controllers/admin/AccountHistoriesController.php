@@ -26,6 +26,10 @@ class AccountHistoriesController extends BaseController
         $user_id = $this->params('user_id');
         if ($this->request->isPost()) {
 
+            if (!$this->currentOperator()->isSuperOperator()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            }
+
             $user = \Users::findFirstById($user_id);
 
             $amount = intval($this->params('diamond'));

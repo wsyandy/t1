@@ -48,6 +48,9 @@
         },
         methods: {
             list: function () {
+                if (this.page > this.total_page) {
+                    return;
+                }
                 var data = {
                     type: 2,
                     recommend: 1,
@@ -71,12 +74,14 @@
 //                        vm.unions.push(item);
 //                    });
                     vm.unions = resp.unions;
+                    vm.page++;
                 });
             },
             clearSearch: function () {
                 this.searchText = "";
             },
             searchFamily: function () {
+                vm.page = 1;
                 this.list();
             },
             unionDetail: function (id) {
@@ -86,4 +91,12 @@
         }
     };
     vm = XVue(opts);
+
+    $(function () {
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.list();
+            }
+        });
+    });
 </script>

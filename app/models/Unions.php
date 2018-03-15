@@ -18,7 +18,7 @@ class Unions extends BaseModel
      */
     private $_user;
 
-    static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散'];
+    static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散', STATUS_PROGRESS => '创建中'];
     static $TYPE = [UNION_TYPE_PUBLIC => '工会', UNION_TYPE_PRIVATE => '家族'];
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
@@ -118,23 +118,21 @@ class Unions extends BaseModel
     }
 
     //创建公会
-    static function createPublicUnion($opts = [])
+    static function createPublicUnion($user, $opts = [])
     {
-        $mobile = fetch($opts, 'mobile');
-        $password = fetch($opts, 'password');
-
-        if (!$mobile || !$password) {
-            return [ERROR_CODE_FAIL, '手机号或密码不能为空', null];
-        }
-
         $union = new Unions();
-        $union->mobile = $mobile;
         $union->auth_status = AUTH_WAIT;
         $union->type = UNION_TYPE_PUBLIC;
-        $union->password = md5($password);
+        $union->status = STATUS_PROGRESS; //创建中
+        $union->user_id = $user->id;
         $union->save();
 
         if ($union->save()) {
+
+            $user->union_id = $union->id;
+            $user->union_type = $union->type;
+            $user->update();
+
             return [ERROR_CODE_SUCCESS, '创建成功', $union];
         }
 
@@ -217,10 +215,44 @@ class Unions extends BaseModel
         return $users;
     }
 
+    //用户申请状态
+    function applicationStatus($user_id)
+    {
+        $user_db = Users::getUserDb();
+        $agreed_key = $this->generateUersKey();
+        $refused_key = $this->generateRefusedUersKey();
+
+        if ($user_db->zscore($agreed_key, $user_id)) {
+            return 1;
+        } else if ($user_db->zscore($refused_key, $user_id)) {
+            return -1;
+        }
+
+        return 0;
+    }
+
     //新的公会成员
     function newUsers($page, $per_page)
     {
-        return self::findUsersByCache($this->generateNewUersKey(), $page, $per_page);
+        $user_db = Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+
+        $new_user_key = $this->generateNewUersKey();
+
+        $user_ids = $user_db->zrevrange($new_user_key, $offset, $offset + $per_page - 1);
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->application_status = $this->applicationStatus($user->id);
+        }
+
+        $total_entries = $user_db->zcard($new_user_key);
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
     static function findUsersByCache($key, $page, $per_page)
@@ -285,16 +317,16 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '你已经申请该家族'];
         }
 
-        if ($db->zadd($this->generateNewUersKey(), time(), $user->id)) {
+        if ($db->zadd($key, time(), $user->id)) {
             return [ERROR_CODE_SUCCESS, '申请成功'];
         }
 
         return [ERROR_CODE_FAIL, '系统异常'];
     }
 
-    function agreeJoinUnion($user)
+    function agreeJoinUnion($union_host, $user)
     {
-        if (!$user->isUnionHost($this)) {
+        if (!$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
@@ -309,16 +341,15 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '该用户已经加入您的家族'];
         }
 
-        if ($db->zadd($key, time(), $user->id)) {
-            $user->union_id = $this->id;
-            $user->update();
+        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已拒绝'];
+        }
 
-            $union_history = new UnionHistories();
-            $union_history->user_id = $user->id;
-            $union_history->union_id = $this->id;
-            $union_history->union_type = $this->type;
-            $union_history->join_at = time();
-            $union_history->save();
+        if ($db->zadd($key, time(), $user->id)) {
+
+            $user->union_id = $this->id;
+            $user->union_type = $this->type;
+            $user->update();
 
             return [ERROR_CODE_SUCCESS, '加入成功'];
         }
@@ -326,28 +357,40 @@ class Unions extends BaseModel
         return [ERROR_CODE_FAIL, '系统异常'];
     }
 
-    function refusedJoinUnion($user)
+    function refuseJoinUnion($union_host, $user)
     {
-        if (!$user->isUnionHost($this)) {
+        if (!$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
         $db = Users::getUserDb();
+
+        if ($db->zscore($this->generateUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已同意'];
+        }
+
+        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '您已拒绝'];
+        }
+
         $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
-        return [ERROR_CODE_SUCCESS, ''];
+        return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
-    function exitUnion($user, $opts = [])
+    function exitUnion($union_host, $user, $opts = [])
     {
         $db = Users::getUserDb();
-        $key = $this->generateUersKey();
-        $db->zrem($key, $user->id);
         $exit = fetch($opts, 'exit');
         $kicking = fetch($opts, 'kicking');
 
-        if ($kicking && !$user->isUnionHost($this)) {
+        if ($kicking && !$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
+
+        $key = $this->generateUersKey();
+        $db->zrem($key, $user->id);
+        $db->zrem($this->generateRefusedUersKey(), $user->id);
+        $db->zrem($this->generateNewUersKey(), $user->id);
 
         $union_history = UnionHistories::findFirstBy(
             ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
@@ -368,7 +411,7 @@ class Unions extends BaseModel
         $user->union_type = 0;
 
         $user->update();
-        return [ERROR_CODE_SUCCESS, '退出成功'];
+        return [ERROR_CODE_SUCCESS, '操作成功'];
     }
 
     //解散公会
@@ -387,6 +430,7 @@ class Unions extends BaseModel
             $db->zclear($this->generateUersKey());
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
+        return [ERROR_CODE_SUCCESS, ''];
     }
 
     static function asyncDissolutionUnion($union_id)
@@ -400,6 +444,7 @@ class Unions extends BaseModel
 
         foreach ($users as $user) {
             $user->union_id = 0;
+            $user->union_type = 0;
             $user->update();
         }
 
@@ -450,5 +495,28 @@ class Unions extends BaseModel
         }
 
         $this->update();
+    }
+
+    function isNormal()
+    {
+        return $this->status == STATUS_ON;
+    }
+
+    function isAuthSuccess()
+    {
+        return $this->auth_status == AUTH_SUCCESS;
+    }
+
+    function needUpdateProfile()
+    {
+        if ($this->isNormal() && $this->isAuthSuccess()) {
+            return false;
+        }
+
+        if (isBlank($this->name) || isBlank($this->id_name) || isBlank($this->id_no) || isBlank($this->alipay_account)) {
+            return true;
+        }
+
+        return false;
     }
 }
