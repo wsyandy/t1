@@ -577,6 +577,13 @@ class MeiTask extends \Phalcon\Cli\Task
                     echoLine($user->id);
                 }
             }
+
+            $musics = Musics::findBy(['user_id' => 31]);
+
+            foreach ($musics as $music) {
+                $music->user_id = 1001309;
+                $music->update();
+            }
         }
     }
 
