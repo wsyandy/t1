@@ -152,6 +152,17 @@ class RoomsTask extends \Phalcon\Cli\Task
     //唤醒离线沉默房间
     function wakeUpOfflineSilentRoomsAction()
     {
+        $room_num = Rooms::count(
+            [
+                'conditions' => 'status = :status: and = :online_status:',
+                'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON]
+            ]);
+
+        if ($room_num >= 15) {
+            info("room_num", $room_num);
+            return;
+        }
+
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         $num = 5;
