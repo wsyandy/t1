@@ -82,6 +82,25 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    function getSilentUsersAction()
+    {
+        $cond = [
+            'conditions' => 'user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS]
+        ];
+
+        $users = Users::find($cond);
+
+        foreach ($users as $user) {
+            if ($user->current_room_id) {
+                echoLine($user->id, $user->current_room_id, $user->current_room->name);
+                //$user->current_room->exitSilentRoom($user);
+            }
+        }
+
+        echoLine(count($users));
+    }
+
     function resetAction($params)
     {
         if (!isset($params[0]) || !isset($params[1])) {
