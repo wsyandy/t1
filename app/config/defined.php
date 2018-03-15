@@ -201,3 +201,6 @@ define('BANNER_TYPE_URL', 2); //链接banner图
 
 define('UNION_TYPE_PUBLIC', 1); //工会
 define('UNION_TYPE_PRIVATE', 2); //家族
+
+define('WITHDRAW_TYPE_USER', 1); //用户体现
+define('WITHDRAW_TYPE_UNION', 2); //家族体现

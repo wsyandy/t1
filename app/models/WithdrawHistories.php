@@ -18,6 +18,13 @@ class WithdrawHistories extends BaseModel
      */
     private $_product_channel;
 
+    /**
+     * @type Unions
+     */
+    private $_union;
+
+    static $TYPE = [WITHDRAW_TYPE_USER => '用户体体现', WITHDRAW_TYPE_UNION => '公会体现'];
+
     function afterUpdate()
     {
         if ($this->hasChanged('status') && WITHDRAW_STATUS_SUCCESS == $this->status) {
