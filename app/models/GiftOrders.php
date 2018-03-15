@@ -104,6 +104,8 @@ class GiftOrders extends BaseModel
         // 在房间里送里面
         if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
             $gift_order->room_id = $sender->current_room_id;
+            $gift_order->room_union_id = $sender->current_room->union_id;
+            $gift_order->room_union_type = $sender->current_room->union_type;
         }
 
         if ($gift_order->create()) {

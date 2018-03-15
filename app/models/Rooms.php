@@ -1020,12 +1020,23 @@ class Rooms extends BaseModel
             return;
         }
 
-        if (!$this->isOnline() && $this->getRealUserNum() < 1) {
+        $real_user_num = $this->getRealUserNum();
+        $user_num = $this->getUserNum();
+
+        if (!$this->isOnline() && $real_user_num < 1) {
             info("room_is_offline", $this->id);
             return;
         }
 
-        $limit = mt_rand(1, 8);
+        if (($real_user_num <= 5 && $user_num >= 10 || $real_user_num > 5 && $user_num >= 30) &&
+            $real_user_num < 20) {
+            info("user_is_full", $real_user_num, $user_num);
+            return;
+        }
+
+        $rand = $real_user_num <= 5 ? 5 : 8;
+
+        $limit = mt_rand(1, $rand);
         $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: 
         and id <> :user_id: and avatar_status = :avatar_status:";
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS,

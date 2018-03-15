@@ -377,17 +377,20 @@ class Unions extends BaseModel
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
-    function exitUnion($user, $opts = [])
+    function exitUnion($union_host, $user, $opts = [])
     {
         $db = Users::getUserDb();
-        $key = $this->generateUersKey();
-        $db->zrem($key, $user->id);
         $exit = fetch($opts, 'exit');
         $kicking = fetch($opts, 'kicking');
 
-        if ($kicking && !$user->isUnionHost($this)) {
+        if ($kicking && !$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
+
+        $key = $this->generateUersKey();
+        $db->zrem($key, $user->id);
+        $db->zrem($this->generateRefusedUersKey(), $user->id);
+        $db->zrem($this->generateNewUersKey(), $user->id);
 
         $union_history = UnionHistories::findFirstBy(
             ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
@@ -408,7 +411,7 @@ class Unions extends BaseModel
         $user->union_type = 0;
 
         $user->update();
-        return [ERROR_CODE_SUCCESS, '退出成功'];
+        return [ERROR_CODE_SUCCESS, '操作成功'];
     }
 
     //解散公会

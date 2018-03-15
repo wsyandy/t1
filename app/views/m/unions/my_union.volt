@@ -4,7 +4,7 @@
 
 <div class="vueBox" id="app" v-cloak>
     <div class="family_info">
-        <img class="family-more" :src="ico_more" alt="" v-show="is_president">
+        <img class="family-more" :src="ico_more" alt="" v-show="union.id == user.union_id">
         <div class="family_top">
             <div class="family_top_left">
                 <img class="family-ico" src="{{ union.avatar_url }}" alt="">
@@ -39,7 +39,7 @@
     <ul class="member_list" v-show="cueIdx==0">
         <li v-for="(member,index) in member_list">
             <div class="member_left">
-                <img class="member_avatar" :src="member.avatar_small_url" alt="" @click="userDetail(member.id)">
+                <img class="member_avatar" :src="member.avatar_small_url" alt="" @click="userOperation(member)">
                 <div class="member_name">
                     <div class="name">
                         <span> ${member.nickname}</span>
@@ -110,21 +110,29 @@
     <div class="pop_bottom_bg"></div>
     <div class="pop_bottom">
         <ul>
-            <li>修改家族资料</li>
-            <li @click.stop="rankUnion">家族排行</li>
-            <li>上热门</li>
-            <li id="dissolution_pop">解散家族</li>
+            <li v-show="!user_operation && is_president">修改家族资料</li>
+            <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
+            <li v-show="!user_operation && is_president">上热门</li>
+            <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
+            <li v-show="user_operation && is_president" @click.stop="userDetail">查看资料</li>
+            <li v-show="user_operation && selected_user.id != union.user_id && is_president" @click.stop="confirmPop">
+                踢出家族
+            </li>
+            <li v-show="!is_president" @click.stop="confirmPop">退出家族</li>
         </ul>
         <div class="close_btn">取消</div>
     </div>
 
     <div class="middle_pop">
         <div class="close_btn" id="middle_close_btn"></div>
-        <p>确认解散家族，解散后，不可恢复！</p>
-        <div class="middle_btn" id="dissolution">确认解散</div>
+        <p v-show="!user_operation && is_president">确认解散家族，解散后，不可恢复！</p>
+        <p v-show="user_operation && is_president">确认将${selected_user.nickname}踢出家族</p>
+        <p v-show="!is_president">魅力值，土豪值将清零</p>
+        <div class="middle_btn" v-show="!user_operation && is_president" id="dissolution">确认解散</div>
+        <div class="middle_btn" v-show="user_operation && is_president" @click.stop="kickUser">确认踢出</div>
+        <div class="middle_btn" v-show="!is_president" @click.stop="exitUnion">确认退出</div>
     </div>
     <div class="middle_pop_bg"></div>
-
 </div>
 
 <script>
@@ -144,7 +152,9 @@
             total_entries: 0,
             member_list: [],
             user: {{ user }},
-            can_apply: true
+            can_apply: true,
+            user_operation: true,
+            selected_user: {{ user }}
         },
         created: function () {
             this.memberList(0);
@@ -160,7 +170,7 @@
                 this.memberList(index);
             },
             memberList: function (index) {
-                var data = {union_id:{{ union.id }}, page: this.page, per_page: 20, sid: this.sid, code: this.code};
+                var data = {union_id:{{ union.id }}, page: this.page, per_page: 30, sid: this.sid, code: this.code};
                 if (index == 1) {
                     data.order = "charm_value desc";
                 } else if (index == 2) {
@@ -173,13 +183,23 @@
                     vm.member_list = resp.users;
                 });
             },
-            userDetail: function (id) {
-                if (id == this.user.id) {
+            userOperation: function (user) {
+                if (!this.is_president) {
+                    return;
+                }
+                this.user_operation = true;
+                this.selected_user = user;
+                $('.pop_bottom').show();
+                $('.pop_bottom_bg').show();
+            },
+            userDetail: function () {
+                console.log(this.selected_user.id);
+                if (this.selected_user.id == this.user.id) {
                     url = "app://users/detail";
                 } else {
-                    url = "app://users/other_detail?user_id=" + id;
+                    url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }
-                location.href = "app://users/other_detail?user_id=" + id;
+                location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
             },
             roomDetail: function (id) {
                 var url = "app://rooms/detail?id=" + id;
@@ -200,6 +220,33 @@
             applicationList: function () {
                 var url = "/m/unions/new_users&sid=" + this.sid + "&code=" + this.code;
                 location.href = url;
+            },
+            confirmPop: function () {
+                $('.pop_bottom').hide();
+                $('.pop_bottom_bg').hide();
+                $(".middle_pop").show();
+                $(".middle_pop_bg").show();
+            },
+            kickUser: function () {
+                var url = "/m/unions/kicking";
+                var data = {user_id: this.selected_user.id, sid: this.sid, code: this.code};
+                $.authPost(url, data, function (resp) {
+                    alert(resp.error_reason);
+                    if (resp.error_code == 0) {
+                        location.reload();
+                    }
+                });
+            },
+            exitUnion: function () {
+                var url = "/m/unions/exit_union";
+                var data = {union_id: this.union.id, sid: this.sid, code: this.code};
+                $.authPost(url, data, function (resp) {
+                    alert(resp.error_reason);
+                    if (resp.error_code == 0) {
+                        var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
+                        location.href = url;
+                    }
+                });
             }
         }
     };
@@ -260,6 +307,7 @@
 
 
         $('.family-more').click(function () {
+            vm.user_operation = false;
             $('.pop_bottom').show();
             $('.pop_bottom_bg').show();
         });
@@ -273,11 +321,6 @@
             close_mp();
         });
 
-        $("#dissolution_pop").click(function () {
-            close_pb();
-            $(".middle_pop").show();
-            $(".middle_pop_bg").show();
-        });
 
         $("#dissolution").click(function () {
             dissolution();

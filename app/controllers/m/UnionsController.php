@@ -18,7 +18,9 @@ class UnionsController extends BaseController
         $union = $user->union;
         if (isBlank($union)) {
             $this->view->union = 0;
+            $this->view->avatar_url = '';
         } else {
+            $this->view->avatar_url = $union->avatar_url;
             $this->view->union = $union;
         }
 
@@ -236,13 +238,33 @@ class UnionsController extends BaseController
     //退出
     function exitUnionAction()
     {
+        if ($this->request->isAjax()) {
 
+            $user = $this->currentUser();
+            $union = \Unions::findFirstById($this->params('union_id'));
+
+            $opts = ['exit' => "exit"];
+
+            list($error_code, $error_reason) = $union->exitUnion($user, $user, $opts);
+            return $this->renderJSON($error_code, $error_reason);
+        }
     }
 
     //踢出工会
     function kickingAction()
     {
+        if ($this->request->isAjax()) {
 
+            $current_user = $this->currentUser();
+            $union = $current_user->union;
+
+            $user = \Users::findFirstById($this->params('user_id'));
+
+            $opts = ['kicking' => "kicking"];
+
+            list($error_code, $error_reason) = $union->exitUnion($current_user, $user, $opts);
+            return $this->renderJSON($error_code, $error_reason);
+        }
     }
 
     //申请上热门

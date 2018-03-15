@@ -4,4 +4,5 @@
 {{ f.select('role', ['label': '角色', 'collection': Operators.ROLE]) }}
 
 {{ f.submit('保存') }}
+<div style="color: red" class="error_reason"></div>
 {{ f.end }}

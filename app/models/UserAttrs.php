@@ -586,4 +586,9 @@ trait UserAttrs
 
         return "同意";
     }
+
+    function getIncomeToday()
+    {
+        $num = GiftOrders::sum(['conditions' => 'user_id = :user_id: and ']);
+    }
 }

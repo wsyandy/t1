@@ -1,5 +1,5 @@
 /* css reset */
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td {
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td,a {
     margin:0;
     padding:0;
     border: 0 ;
@@ -27,4 +27,15 @@ html {font-size:calc(100vw / 7.5);}
 }
 :-ms-input-placeholder { /* Internet Explorer 10+ */
     color:#999;
+}
+.women{
+    background-color: #F99AD3;
+    border-radius: 1rem;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+    padding: 0 0.1rem 0 0.38rem;
+    background-image: url("../images/flag-female.png");
+    background-size: 0.18rem;
+    background-repeat: no-repeat;
+    background-position: 0.1rem center;
 }
