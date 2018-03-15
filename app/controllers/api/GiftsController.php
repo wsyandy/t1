@@ -56,7 +56,10 @@ class GiftsController extends BaseController
                         'user_id' => $user_id
                     ]
                 );
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '赠送成功', $notify_data);
+
+                $res = array_merge($notify_data, ['diamond' => $this->currentUser()->diamond]);
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '赠送成功', $res);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '赠送失败');
             }

@@ -227,6 +227,18 @@ trait UserAttrs
         return $data;
     }
 
+    function toUnionStatJson()
+    {
+        $json = [
+            'income' => 100,
+            'host_broadcaster_time_text' => $this->getHostBroadcasterTimeText(),
+            'broadcaster_time_text' => $this->getBroadcasterTimeText(),
+            'audience_time_text' => $this->getAudienceTimeText(),
+        ];
+
+        return array_merge($this->toBasicJson(), $json);
+    }
+
     public function isWebPlatform()
     {
         if (preg_match('/^(web)$/i', $this->platform)) {
@@ -490,21 +502,21 @@ trait UserAttrs
     }
 
     //旁听时间
-    function getAudienceTimeByDateText($date)
+    function getAudienceTimeText()
     {
-        return secondsToText($this->getAudienceTimeByDate($date));
+        return secondsToText($this->audience_time);
     }
 
     //主播时间
-    function getBroadcasterTimeByDateText($date)
+    function getBroadcasterTimeText()
     {
-        return secondsToText($this->getBroadcasterTimeByDate($date));
+        return secondsToText($this->broadcaster_time);
     }
 
     //房主时间
-    function getHostBroadcasterTimeByDateText($date)
+    function getHostBroadcasterTimeText()
     {
-        return secondsToText($this->getHostBroadcasterTimeByDate($date));
+        return secondsToText($this->host_broadcaster_time);
     }
 
     function getWithdrawAmount()
