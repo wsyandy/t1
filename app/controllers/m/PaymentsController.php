@@ -10,6 +10,11 @@ namespace m;
 
 class PaymentsController extends BaseController
 {
+    function indexAction()
+    {
+
+    }
+
     function createAction()
     {
         $user = $this->currentUser();
