@@ -345,6 +345,17 @@ class UsersTask extends \Phalcon\Cli\Task
             $complaint->respondent_id = $new_user_id;
             $complaint->save();
         }
+
+        $user_music_key = "user_musics_id" . $user_id;
+        $new_user_music_key = "user_musics_id" . $new_user_id;
+
+        $music_ids = $user_db->zrange($user_music_key, 0, -1, true);
+
+        foreach ($music_ids as $music_id => $time) {
+            $user_db->zadd($new_user_music_key, $time, $music_id);
+        }
+
+        $user_db->zclear($user_music_key);
     }
 
     function updateSilentUserAvatarAction()

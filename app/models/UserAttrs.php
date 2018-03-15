@@ -589,6 +589,7 @@ trait UserAttrs
 
     function getIncomeToday()
     {
-        $num = GiftOrders::sum(['conditions' => 'user_id = :user_id: and ']);
+        $total_amount = GiftOrders::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'amount']);
+        return $total_amount;
     }
 }

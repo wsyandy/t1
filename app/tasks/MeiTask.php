@@ -566,5 +566,19 @@ class MeiTask extends \Phalcon\Cli\Task
         }
 
         fclose($f);
+
+        $users = Users::find(['conditions' => 'id > 1000000']);
+
+        foreach ($users as $user) {
+            if ($user->room) {
+                if ($user->room->user_id != $user->id) {
+                    $user->room->user_id = $user->id;
+                    $user->room->update();
+                    echoLine($user->id);
+                }
+            }
+        }
     }
+
+
 }
