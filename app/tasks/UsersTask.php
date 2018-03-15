@@ -82,6 +82,26 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
+    function getSilentUsersAction()
+    {
+        $cond = [
+            'conditions' => 'user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS]
+        ];
+
+        $users = Users::find($cond);
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+            if ($user->current_room_id) {
+                echoLine($user->id, $user->current_room_id, $user->current_room->name);
+                //$user->current_room->exitSilentRoom($user);
+            }
+        }
+
+        echoLine(count($users));
+    }
+
     function resetAction($params)
     {
         if (!isset($params[0]) || !isset($params[1])) {
@@ -117,6 +137,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $user->mobile = '1';
         $user->user_status = USER_STATUS_OFF;
+        $user->avatar_status = AUTH_FAIL;
         $user->room_id = 0;
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
@@ -345,6 +366,17 @@ class UsersTask extends \Phalcon\Cli\Task
             $complaint->respondent_id = $new_user_id;
             $complaint->save();
         }
+
+        $user_music_key = "user_musics_id" . $user_id;
+        $new_user_music_key = "user_musics_id" . $new_user_id;
+
+        $music_ids = $user_db->zrange($user_music_key, 0, -1, true);
+
+        foreach ($music_ids as $music_id => $time) {
+            $user_db->zadd($new_user_music_key, $time, $music_id);
+        }
+
+        $user_db->zclear($user_music_key);
     }
 
     function updateSilentUserAvatarAction()

@@ -17,7 +17,7 @@
 </div>
 
 <div class="admin">
-    <iframe scrolling="auto" rameborder="0" src="" name="right" width="100%" height="100%"></iframe>
+    <iframe scrolling="auto" rameborder="0" src="/partner/unions/users" name="right" width="100%" height="100%"></iframe>
 </div>
 
 <script type="text/javascript">

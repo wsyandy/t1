@@ -39,10 +39,11 @@ class UnionsController extends BaseController
     function createAction()
     {
         if ($this->request->isAjax()) {
+
             $file = $this->file('avatar_file');
             $name = $this->params('name');
             $notice = $this->params('notice');
-            $need_apply = $this->params('need_apply', 1);
+            $need_apply = $this->params('need_apply');
             $opts = ['avatar_file' => $file, 'name' => $name, 'notice' => $notice, 'need_apply' => $need_apply];
 
             $user = $this->currentUser();
@@ -191,10 +192,39 @@ class UnionsController extends BaseController
         $this->view->code = $this->params('code');
     }
 
+    function editAction()
+    {
+        $user = $this->currentUser();
+        $union = $user->union;
+        $this->view->sid = $this->params('sid');
+        $this->view->code = $this->params('code');
+        $this->view->union = $union;
+        $this->view->title = "修改资料";
+    }
+
     //更新家族资料
     function updateAction()
     {
+        $avatar_file = $this->file('avatar_file');
 
+        $name = $this->params('name');
+        $notice = $this->params('notice');
+        $need_apply = $this->params('need_apply', 1);
+        $opts = ['name' => $name, 'notice' => $notice, 'need_apply' => $need_apply];
+
+        $user = $this->currentUser();
+        $union = $user->union;
+        if (!$user->isUnionHost($union)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您没有权限');
+        }
+
+        if ($avatar_file) {
+            $union->updateAvatar($avatar_file);
+        }
+
+        $union->updateProfile($opts);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
 
     //解散
@@ -245,7 +275,7 @@ class UnionsController extends BaseController
 
             $opts = ['exit' => "exit"];
 
-            list($error_code, $error_reason) = $union->exitUnion($user, $user, $opts);
+            list($error_code, $error_reason) = $union->exitUnion($user, $opts);
             return $this->renderJSON($error_code, $error_reason);
         }
     }
@@ -262,7 +292,7 @@ class UnionsController extends BaseController
 
             $opts = ['kicking' => "kicking"];
 
-            list($error_code, $error_reason) = $union->exitUnion($current_user, $user, $opts);
+            list($error_code, $error_reason) = $union->exitUnion($user, $opts, $current_user);
             return $this->renderJSON($error_code, $error_reason);
         }
     }

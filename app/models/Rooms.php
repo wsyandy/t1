@@ -1003,7 +1003,7 @@ class Rooms extends BaseModel
             }
         }
 
-        if ($room->isSilent() || $room->getRealUserNum() > 0) {
+        if ($room->isSilent()) {
             $room->addSilentUsers();
         }
     }
