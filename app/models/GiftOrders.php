@@ -74,19 +74,18 @@ class GiftOrders extends BaseModel
 
     static function giveTo($sender_id, $receiver_id, $gift, $gift_num)
     {
-        $sender = \Users::findById($sender_id);
 
+        $sender = Users::findFirstById($sender_id);
         if (!$sender->isSilent() && !$sender->canGiveGift($gift, $gift_num)) {
             return false;
         }
 
         $receiver = Users::findFirstById($receiver_id);
-
         if (!$receiver) {
             return false;
         }
 
-        $gift_order = new \GiftOrders();
+        $gift_order = new GiftOrders();
         $gift_order->sender_id = $sender_id;
         $gift_order->user_id = $receiver_id;
         $gift_order->gift_id = $gift->id;
@@ -102,6 +101,7 @@ class GiftOrders extends BaseModel
         $gift_order->receiver_union_type = $receiver->union_type;
         $gift_order->sender_union_type = $sender->union_type;
 
+        // 在房间里送里面
         if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
             $gift_order->room_id = $sender->current_room_id;
         }
@@ -112,7 +112,6 @@ class GiftOrders extends BaseModel
             $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
 
             if ($result) {
-
                 //统计房间收益
                 if ($gift_order->room) {
                     $gift_order->room->statIncome($gift_order->amount);
@@ -120,6 +119,7 @@ class GiftOrders extends BaseModel
 
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 $gift_order->update();
+
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
                 \Users::delay()->updateCharmAndWealth($gift_order->id);
