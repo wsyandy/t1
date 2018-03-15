@@ -12,7 +12,7 @@
 <div class="weixin_cz_list">
 	<ul>
         {% for product in products %}
-			<li>
+			<li @click="submitAction({{ product.id }})">
 				<div class="num">
 					<i></i>
 					<span>+{{ product.diamond }}</span>
@@ -30,6 +30,9 @@
 
         },
         methods: {
+            submitAction: function (id) {
+                console.log(id)
+            }
         }
     };
     var vm = new XVue(opts);

@@ -16,22 +16,9 @@ class PaymentsController extends BaseController
     {
 
         $products = \Products::findDiamondListByUser($this->currentUser());
-        $payment_channels = \PaymentChannels::selectByUser($this->currentUser());
 
-        $selected_payment_channel = null;
-        foreach ($payment_channels as $payment_channel){
-            if($payment_channel->payment_type == 'weixin_js'){
-                $selected_payment_channel = $payment_channel;
-            }
-        }
-
-        foreach ($products as $product){
-            debug($product);
-        }
-
-        $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
-        $this->view->user = $this->currentUser();
+        $this->view->current_user = $this->currentUser();
         $this->view->product_channel = $this->currentProductChannel();
         $this->view->title = '充值';
     }
