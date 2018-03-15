@@ -89,7 +89,7 @@
     var opts = {
         data: {
             datas: [],
-            current_page: 1,
+            current_page: 0,
             total_entries: 0,
             total_page: 1
         },
@@ -99,6 +99,8 @@
     vm = XVue(opts);
 
     function loadData() {
+
+        vm.current_page++;
 
         if (vm.current_page > vm.total_page) {
             return;
@@ -112,8 +114,7 @@
                 vm.total_page = resp.total_page;
             })
 
-            vm.current_page++;
-        });
+        })
     }
 
     loadData();
