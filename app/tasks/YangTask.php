@@ -247,4 +247,34 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpGet($url, $body);
         echoLine($res);
     }
+
+    function test9Action()
+    {
+        $time = time();
+        $days = [];
+        $hours = [8, 10, 12, 14, 16, 18];
+        for ($i = 0; $i < 5; $i++) {
+            $day = beginOfDay($time + $i * 60 * 60 * 24);
+            $times = [];
+            foreach ($hours as $hour) {
+                $time_at = $day + $hour * 60 * 60;
+                $times[date('H-i', $time_at)] = $time_at;
+            }
+
+            $days[date("m月d日", $day)] = $times;
+        }
+        var_dump($days);
+//        echoLine("----------------");
+//        $test2 = beginOfDay(time());
+//        echoLine($test2 + 60 * 60 * 4);
+//        $time3 = strtotime(date('Y-m-d 04:00', $time));
+//        echoLine($time3);
+//        echoLine(date('Y-m-d-h-i-sa', $time3));
+//        echoLine("----------------");
+//        $time4 = $time3 + 60 * 60 * 2 - 1;
+//        echoLine($time4);
+//        $time5 = strtotime(date('Y-m-d 05:59:59', $time));
+//        echoLine($time5);
+//        echoLine(date('Y-m-d-h-i-sa', $time5));
+    }
 }

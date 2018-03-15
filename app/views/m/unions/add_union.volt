@@ -159,6 +159,9 @@
                 } else {
                     alert(resp.error_reason);
                 }
+                if (resp.error_url) {
+                    location.href = resp.error_url
+                }
             }
         });
 

@@ -1,29 +1,33 @@
-body{
+body {
     background-color: #fff;
 }
-.family_info{
+
+.family_info {
     position: relative;
     width: 6.9rem;
     height: 2.68rem;
     background-color: #FFFFFF;
-    box-shadow: 0 2px 0.3rem 0 rgba(0,0,0,0.14);
+    box-shadow: 0 2px 0.3rem 0 rgba(0, 0, 0, 0.14);
     border-radius: 0.2rem;
     margin: 0.4rem auto;
     padding: 0.3rem;
 }
-.family-more{
+
+.family-more {
     position: absolute;
     right: 0.4rem;
-    top:0.2rem;
+    top: 0.2rem;
     width: 0.4rem;
     height: 0.4rem;
 }
-.family-ico{
+
+.family-ico {
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
 }
-.family_top{
+
+.family_top {
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
@@ -31,13 +35,15 @@ body{
     -webkit-justify-content: space-between;
     justify-content: space-between;
 }
-.family_top_left{
+
+.family_top_left {
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
     align-items: center;
 }
-.family_name{
+
+.family_name {
     height: 1rem;
     padding-left: 0.3rem;
     font-size: .32rem;
@@ -49,12 +55,14 @@ body{
     -webkit-justify-content: center;
     justify-content: center;
 }
-.family_id{
+
+.family_id {
     padding-top: 0.1rem;
     font-size: .24rem;
     color: #969696;
 }
-.family_top_right{
+
+.family_top_right {
     height: 1rem;
     display: -webkit-flex;
     display: flex;
@@ -65,7 +73,7 @@ body{
     padding-bottom: 0.1rem;
 }
 
-.family_prestige{
+.family_prestige {
     font-size: 0.24rem;
     color: #FFFFFF;
     background-color: #F45189;
@@ -73,8 +81,8 @@ body{
     padding: 0.02rem 0.1rem;
 }
 
-.family_slogan{
-    padding-top: 0.3rem ;
+.family_slogan {
+    padding-top: 0.3rem;
     font-size: .26rem;
     color: #888888;
     overflow: hidden;
@@ -83,7 +91,8 @@ body{
     -webkit-box-orient: vertical;
 
 }
-.new_member{
+
+.new_member {
     width: 6.9rem;
     height: 0.88rem;
     background-color: #F7F7F7;
@@ -98,31 +107,34 @@ body{
     justify-content: space-between;
 
 }
-.new_member_title{
+
+.new_member_title {
     font-size: 0.28rem;
     color: #5F5F5F;
 }
-.new_member_right{
+
+.new_member_right {
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
     align-items: center;
 }
-.new_dot{
+
+.new_dot {
     width: 0.14rem;
     height: 0.14rem;
     background-color: #FF1111;
     border-radius: 50%;
 }
 
-.arrow-right{
+.arrow-right {
     margin-left: 0.1rem;
     width: 0.26rem;
     height: 0.26rem;
 }
 
 /*成员列表*/
-.member_tab{
+.member_tab {
     width: 100%;
     display: -webkit-flex;
     display: flex;
@@ -131,15 +143,17 @@ body{
     -webkit-justify-content: center;
     justify-content: center;
 }
-.member_tab[data-fixed="fixed"]{
+
+.member_tab[data-fixed="fixed"] {
     position: fixed;
-    top:0;
+    top: 0;
     left: 0;
     margin: 0;
     background-color: #fff;
 
 }
-.member_tab li{
+
+.member_tab li {
     color: #BFBFBF;
     font-size: 0.3rem;
     padding: 0.3rem 0;
@@ -148,20 +162,23 @@ body{
     border-bottom: 0.05rem solid transparent;
 }
 
-.member_tab li.member_only{
+.member_tab li.member_only {
     text-align: left;
     padding-left: 0.3rem;
     border-bottom: 0;
 }
-.member_tab li.active{
+
+.member_tab li.active {
     border-bottom: 0.05rem solid #F45189;
     color: #434343;
 
 }
-.member_list{
+
+.member_list {
     border-top: 1px solid #f6f6f6;
 }
-.member_list li{
+
+.member_list li {
     display: -webkit-flex;
     display: flex;
     -webkit-align-items: center;
@@ -172,18 +189,21 @@ body{
     height: 1.4rem;
     border-bottom: 1px solid #f6f6f6;
 }
-.member_left{
+
+.member_left {
     display: -webkit-flex;
     display: flex;
     -webkit-justify-content: center;
     justify-content: center;
 }
-.member_avatar{
+
+.member_avatar {
     width: 0.9rem;
     height: 0.9rem;
     border-radius: 50%;
 }
-.member_name{
+
+.member_name {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -192,16 +212,23 @@ body{
     justify-content: center;
     padding-left: 0.24rem;
 }
-.member_name .name{
+
+.member_name .name {
     font-size: 0.28rem;
     color: #3C3C3C;
 }
-.member_name .slogan{
+
+.member_name .slogan {
     padding-top: 0.1rem;
     font-size: 0.24rem;
     color: #969696;
+    width: 260px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
-.member_name  .female{
+
+.member_name .female {
     background-color: #F99AD3;
     border-radius: 1rem;
     font-size: 0.2rem;
@@ -212,7 +239,8 @@ body{
     background-repeat: no-repeat;
     background-position: 0.1rem center;
 }
-.member_name .president{
+
+.member_name .president {
     background-color: #886BFF;
     border-radius: 1rem;
     font-size: 0.2rem;
@@ -225,17 +253,17 @@ body{
     margin-left: 0.1rem;
 }
 
-.flag_manage{
+.flag_manage {
     width: 0.5rem;
     height: 0.5rem;
 }
-.member_time{
+
+.member_time {
     font-size: .24rem;
     color: #9F9F9F;
 }
 
-
-.member_charm,.member_wealth{
+.member_charm, .member_wealth {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -245,20 +273,24 @@ body{
     -webkit-align-items: center;
     align-items: center;
 }
-.charm_tit,.wealth_tit{
+
+.charm_tit, .wealth_tit {
     font-size: 0.24rem;
     color: #FF1111;
     padding-bottom: 0.1rem;
 }
-.charm_num,.wealth_num{
+
+.charm_num, .wealth_num {
     font-size: 0.28rem;
     color: #FF1111;
 }
-.family_info_box{
+
+.family_info_box {
     width: 100%;
     height: 1.4rem;
 }
-.family_info_box .info_btn{
+
+.family_info_box .info_btn {
     width: 100%;
     height: 1.1rem;
     background-color: #FFFFFF;
@@ -270,7 +302,8 @@ body{
     display: flex;
     align-items: center;
 }
-.family_info_box .info_btn p{
+
+.family_info_box .info_btn p {
     width: 6.9rem;
     height: 0.82rem;
     line-height: 0.82rem;
@@ -279,5 +312,5 @@ body{
     font-size: 0.34rem;
     color: #FFFFFF;
     text-align: center;
-    margin:0 auto;
+    margin: 0 auto;
 }

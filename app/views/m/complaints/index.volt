@@ -5,7 +5,10 @@
 <div class="jubao_list">
     <ul>
         {% for key,value in complaint_types %}
-            <li id="{{ key }}"><span>{{ value }}</span><i class="jb_select"></i></li>
+            <li id="{{ key }}">
+                <span>{{ value }}</span>
+                <i class="jb_select"></i>
+            </li>
         {% endfor %}
     </ul>
 </div>

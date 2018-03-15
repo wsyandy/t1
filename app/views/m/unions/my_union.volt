@@ -112,7 +112,7 @@
         <ul>
             <li v-show="!user_operation && is_president" @click.stop="edit">修改家族资料</li>
             <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
-            <li v-show="!user_operation && is_president">上热门</li>
+            <li v-show="!user_operation && is_president" @click.stop="applyGoHot">上热门</li>
             <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
             <li v-show="user_operation && is_president" @click.stop="userDetail">查看资料</li>
             <li v-show="user_operation && selected_user.id != union.user_id && is_president" @click.stop="confirmPop">
@@ -215,6 +215,9 @@
                 $.authPost(url, data, function (resp) {
                     vm.can_apply = true;
                     alert(resp.error_reason);
+                    if (resp.error_url) {
+                        location.href = resp.error_url;
+                    }
                 });
             },
             applicationList: function () {
@@ -250,6 +253,10 @@
             },
             edit: function () {
                 var url = "/m/unions/edit&sid=" + this.sid + "&code=" + this.code;
+                location.href = url;
+            },
+            applyGoHot: function () {
+                var url = "/m/unions/apply_go_hot&sid=" + this.sid + "&code=" + this.code;
                 location.href = url;
             }
         }
@@ -309,7 +316,6 @@
             "top": div_top
         });
 
-
         $('.family-more').click(function () {
             vm.user_operation = false;
             $('.pop_bottom').show();
@@ -324,7 +330,6 @@
         $("#middle_close_btn").click(function () {
             close_mp();
         });
-
 
         $("#dissolution").click(function () {
             dissolution();
