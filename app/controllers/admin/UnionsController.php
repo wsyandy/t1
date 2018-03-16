@@ -106,4 +106,19 @@ class UnionsController extends BaseController
         $this->view->union = $union;
         $this->view->id = $id;
     }
+
+    function familyAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+        $auth_status = $this->params('auth_status');
+
+        $cond = ['conditions' => '  type = :type',
+            'bind' => ['type' => UNION_TYPE_PRIVATE]];
+
+        $unions = \Unions::findPagination($cond, $page, $per_page);
+
+        $this->view->unions = $unions;
+        $this->view->auth_status = $auth_status;
+    }
 }
