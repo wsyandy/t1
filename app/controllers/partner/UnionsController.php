@@ -71,18 +71,30 @@ class UnionsController extends BaseController
             $per_page = 6;
 
             $cond = [
-                'conditions' => '(sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:)' .
-                    ' and created_at >= :begin_at: and created_at <= :end_at:',
-                'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
+                'conditions' => 'sender_union_id = :sender_union_id: and created_at >= :begin_at: and created_at <= :end_at:',
+                'bind' => ['sender_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
+                'columns' => 'distinct sender_id'
+            ];
+
+            $cond2 = [
+                'conditions' => 'receiver_union_id = :receiver_union_id:and created_at >= :begin_at: and created_at <= :end_at:',
+                'bind' => ['receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
                 'columns' => 'distinct user_id'
             ];
 
             $user_ids = [];
-            $gift_orders = \GiftOrders::find($cond);
+            $user_gift_orders = \GiftOrders::find($cond);
+            $sender_gift_orders = \GiftOrders::find($cond2);
 
-            foreach ($gift_orders as $gift_order) {
+            foreach ($user_gift_orders as $gift_order) {
                 $user_ids[] = $gift_order->user_id;
             }
+
+            foreach ($sender_gift_orders as $gift_order) {
+                $user_ids[] = $gift_order->user_id;
+            }
+
+            $user_ids = array_unique($user_ids);
 
             if (count($user_ids) < 1) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => []]);
