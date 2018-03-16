@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/success.css') }}
+{{ theme_css('/m/css/strategies.css') }}
 {{ block_end() }}
 <div class="wrapper">
     <div class="problem">
@@ -249,13 +249,144 @@
                     </div>
                     <div class="text">
                         <h1>04 .</h1>
-                        <p>房主的权限当然是最大，看到谁跟自己不在同一频道，就可以狠心踢出去哦！</p>
+                        <p>房主的权限当然是最大，看到谁跟自己不在同一频道，就可以狠心踢出去哦！</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="problem-box">
+            <p class="question">
+                <span class="dot"></span>8. 房主如何更换房间主题？
+            </p>
+            <div class="answer">
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>01 .</h1>
+                        <p>进入房间，点击右下方</p>
+                        <p><i class="add01"></i> 弹出选择区域，选择主题图标</p>
+                        <span>进入更换主题界面</span>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/8_1.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/8_2.png">
+                    </div>
+                    <div class="text">
+                        <h1>02 .</h1>
+                        <p>众多主题任你选，不用时可点击“关闭主题”</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="problem-box">
+            <p class="question">
+                <span class="dot"></span>9. 房主如何添加管理员？
+            </p>
+            <div class="answer">
+                <div class="answer_title">
+                    管理员拥有抱人、封麦、禁麦、设为旁听等权限，可以帮助房主管理房间哦～
+                </div>
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>01 .</h1>
+                        <p>进入房间，点击右下方</p>
+                        <p><i class="add01"></i> 弹出选择区域，择“管理员”图标</p>
+                        <span>进入管理员界面</span>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/9_1.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/9_2.png">
+                    </div>
+                    <div class="text">
+                        <h1>02 .</h1>
+                        <p>点击“立即添加”按钮或点右上角进行添加</p>
+                    </div>
+                </div>
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>03 .</h1>
+                        <p>进入添加管理员页面</p>
+                        <span>／输入Ta的ID进行查找</span>
+                        <span>／设置管理时长</span>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/9_3.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/9_4.png">
+                    </div>
+                    <div class="text">
+                        <h1>04 .</h1>
+                        <p>进入管理员页面</p>
+                        <span>／左滑可以将其移除</span>
+                        <span>／点击右侧的加时按钮可增加其管理时长</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="problem-box">
+            <p class="question">
+                <span class="dot"></span>10. 在房间内如何播放音乐？
+            </p>
+            <div class="answer">
+                <div class="answer_title">
+                    房主拥有音乐权限，而8个麦位则需要房主打开音乐权限
+                </div>
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>01 .</h1>
+                        <p>房主进入房间，点右下方</p>
+                        <p><i class="add01"></i>
+                            弹出选择区域，选择“音乐”图标</p>
+                        <span>进入音乐界面</span>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/10_1.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/10_2.png">
+                    </div>
+                    <div class="text">
+                        <h1>02 .</h1>
+                        <p>进入“我的曲库”播放音乐</p>
+                        <span>可在“热门曲库”中进行下载或点击页面右上角 <i class="diandian"></i></span>
+                        <span>（上传音乐或本地音乐）</span>
+                    </div>
+                </div>
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>03 .</h1>
+                        <p>回到房间页面时，可点击左侧音乐转动图</p>
+                        <span>展开窗口，可关闭音乐／暂停音乐／播放下一首／显示音乐列表</span>
+                        <i class="yinyue"></i>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/10_3.png">
+                    </div>
+                </div>
+                <div class="text_left mr_top mr_text">
+                    <div class="img">
+                        <img src="/m/images/10_4.png">
+                    </div>
+                    <div class="text">
+                        <h1>04 .</h1>
+                        <p>麦位上的人需要房主打开该麦位的音乐权限，才能播放音乐</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 
 <script type="text/javascript">
