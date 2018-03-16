@@ -65,7 +65,7 @@ class Chats extends BaseModel
 
     static function getCacheEndPoint()
     {
-        $config= self::di('config');
+        $config = self::di('config');
         $endpoints = explode(',', $config->user_db_endpoints);
         return $endpoints[0];
     }
@@ -83,6 +83,17 @@ class Chats extends BaseModel
     static function sendWelcomeMessage($user_id)
     {
         $content = \Chats::welcomeMessage();
+        $content_type = CHAT_CONTENT_TYPE_TEXT;
+        return \Chats::sendSystemMessage($user_id, $content_type, $content);
+    }
+
+    static function sendTextSystemMessage($user_id, $content = '')
+    {
+        if (!$content) {
+            info("content_error", $user_id, $content);
+            return false;
+        }
+
         $content_type = CHAT_CONTENT_TYPE_TEXT;
         return \Chats::sendSystemMessage($user_id, $content_type, $content);
     }
@@ -180,7 +191,7 @@ class Chats extends BaseModel
 
         $total = $cache_db->zcard($key);
         $offset = ($page - 1) * $per_page;
-        $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page -1);
+        $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
         $chats = \Chats::findByIds($chat_ids);
         $results = \Chats::sortByCreatedAt($chats);
         return new \PaginationModel($results, $total, $page, $per_page);

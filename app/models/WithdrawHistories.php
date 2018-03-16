@@ -24,20 +24,45 @@ class WithdrawHistories extends BaseModel
     private $_union;
 
     static $TYPE = [WITHDRAW_TYPE_USER => '用户体体现', WITHDRAW_TYPE_UNION => '公会体现'];
+    static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
 
     function afterUpdate()
     {
-        if ($this->hasChanged('status') && WITHDRAW_STATUS_SUCCESS == $this->status) {
-            $user = $this->user;
-            $product_channel = $this->product_channel;
-            $rate = $product_channel->rateOfHiCoinToMoney();
-            debug($user->id, $this->amount, $rate);
-            $user->hi_coins = $user->hi_coins - $this->amount * $rate;
-            $user->save();
+        if ($this->hasChanged('status')) {
+
+            if (WITHDRAW_TYPE_USER == $this->type) {
+
+                if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+                    $user = $this->user;
+                    $product_channel = $this->product_channel;
+                    $rate = $product_channel->rateOfHiCoinToMoney();
+                    debug($user->id, $this->amount, $rate);
+                    $user->hi_coins = $user->hi_coins - $this->amount * $rate;
+                    $user->save();
+                    $content = '提现失败！如有疑问请联系官方客服中心400-018-7755解决。';
+                }
+
+                if (WITHDRAW_STATUS_FAIL == $this->status) {
+                    $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
+
+                    if ($this->error_reason) {
+                        $content = $this->error_reason;
+                    }
+                }
+
+                Chats::sendTextSystemMessage($this->user_id, $content);
+            }
+
+            
         }
     }
 
-    static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
+    function afterCreate()
+    {
+        if (WITHDRAW_TYPE_USER == $this->type) {
+            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，预计24小时内到账！');
+        }
+    }
 
     static function createWithdrawHistories($user, $opts)
     {
