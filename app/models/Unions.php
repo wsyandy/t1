@@ -331,12 +331,13 @@ class Unions extends BaseModel
 //        }
         $db->zrem($this->generateRefusedUersKey(), $user->id);
 
-        if ($db->zadd($key, time(), $user->id)) {
-            if ($this->need_apply == 0) {
-                list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
-                return [$error_code, $err_reason];
-            }
+        if ($this->need_apply == 0) {
+            list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
+            return [$error_code, $err_reason];
         }
+
+        $db->zadd($key, time(), $user->id);
+
         return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
 //        return [ERROR_CODE_FAIL, '系统异常'];
     }
@@ -441,8 +442,8 @@ class Unions extends BaseModel
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
                 Chats::sendSystemMessage($user->id, $content_type, $content);
             } else {
-                $content = "$user->nickname" . "已将退出了家族";
-                Chats::sendSystemMessage($union_host->id, $content_type, $content);
+                $content = "$user->nickname" . "已经退出了家族";
+                Chats::sendSystemMessage($this->user_id, $content_type, $content);
             }
         }
 
