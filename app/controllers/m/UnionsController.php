@@ -242,7 +242,7 @@ class UnionsController extends BaseController
         return $this->renderJSON($error_code, $error_reason);
     }
 
-    //申请加入工会
+    //申请加入公会
     function applyJoinUnionAction()
     {
         $user = $this->currentUser();
@@ -293,7 +293,7 @@ class UnionsController extends BaseController
         }
     }
 
-    //踢出工会
+    //踢出公会
     function kickingAction()
     {
         if ($this->request->isAjax()) {

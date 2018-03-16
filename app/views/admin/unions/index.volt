@@ -10,7 +10,7 @@
 
 {{ simple_table(unions, [
     'ID': 'id',
-    '工会名称': 'name',
+    '公会名称': 'name',
     '用户': 'user_nickname',
     '真实姓名': 'id_name',
     '身份证':'id_no',

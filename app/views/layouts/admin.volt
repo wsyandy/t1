@@ -101,10 +101,10 @@
 
         {% if isAllowed('unions','index') %}
             <li>
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">工会和家族<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">公会和家族<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('unions', 'index') %}
-                        <li><a href="/admin/unions?auth_status=1">工会</a></li>
+                        <li><a href="/admin/unions?auth_status=1">公会</a></li>
                     {% endif %}
                     {% if isAllowed('unions', 'index') %}
                         <li><a href="/admin/unions?auth_status=3">待审核的公会</a></li>

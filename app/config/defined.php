@@ -129,7 +129,7 @@ define('GIFT_STATUS_OFF', 0); //无效
 define('ACCOUNT_TYPE_BUY_DIAMOND', 1); //购买钻石
 define('ACCOUNT_TYPE_BUY_GIFT', 2); //购买礼物
 define('ACCOUNT_TYPE_GIVE', 3); //系统赠送
-define('ACCOUNT_TYPE_CREATE_UNION', 4); //创建工会
+define('ACCOUNT_TYPE_CREATE_UNION', 4); //创建公会
 
 define('ERROR_CODE_NEED_PAY', -2);//需要付费
 
@@ -199,7 +199,7 @@ define('SHARE_STATUS_CANCEL', 3); //分享取消
 define('BANNER_TYPE_ROOM', 1); //房间banner图
 define('BANNER_TYPE_URL', 2); //链接banner图
 
-define('UNION_TYPE_PUBLIC', 1); //工会
+define('UNION_TYPE_PUBLIC', 1); //公会
 define('UNION_TYPE_PRIVATE', 2); //家族
 
 define('WITHDRAW_TYPE_USER', 1); //用户体现

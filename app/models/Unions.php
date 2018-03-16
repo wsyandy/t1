@@ -19,7 +19,7 @@ class Unions extends BaseModel
     private $_user;
 
     static $STATUS = [STATUS_ON => '正常', STATUS_BLOCKED => '被封', STATUS_OFF => '解散', STATUS_PROGRESS => '创建中'];
-    static $TYPE = [UNION_TYPE_PUBLIC => '工会', UNION_TYPE_PRIVATE => '家族'];
+    static $TYPE = [UNION_TYPE_PUBLIC => '公会', UNION_TYPE_PRIVATE => '家族'];
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
     static $NEED_APPLY = [STATUS_ON => '申请能加入', STATUS_OFF => '所有人可加入'];
@@ -39,7 +39,7 @@ class Unions extends BaseModel
         if ($user->union) {
 
             if (UNION_TYPE_PUBLIC == $user->union->type) {
-                return [ERROR_CODE_FAIL, '您已加入工会,不能创建家族'];
+                return [ERROR_CODE_FAIL, '您已加入公会,不能创建家族'];
             } elseif (STATUS_ON == $user->union->status) {
                 return [ERROR_CODE_FAIL, '您已加入家族,不能创建家族'];
             }
@@ -55,7 +55,7 @@ class Unions extends BaseModel
 
         if ($user_union) {
             if ($user_union->type = UNION_TYPE_PUBLIC) {
-                return [ERROR_CODE_FAIL, '您已创建工会'];
+                return [ERROR_CODE_FAIL, '您已创建公会'];
             } else if ($user_union->type = UNION_TYPE_PRIVATE) {
                 return [ERROR_CODE_FAIL, '您已创建家族'];
             }
