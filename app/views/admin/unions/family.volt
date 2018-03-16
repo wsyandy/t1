@@ -5,7 +5,7 @@
 {% endmacro %}
 
 {% macro avatar_img(union) %}
-    <img src="{{ union.avatar_url }}" height="50%">
+    <img src="{{ union.avatar_small_url }}" height="20%">
 {% endmacro %}
 
 {% macro family_info(union) %}
