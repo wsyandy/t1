@@ -61,15 +61,19 @@ class UnionsController extends BaseController
     function usersAction()
     {
         $union = $this->currentUser()->union;
+        $stat_at = $this->params('stat_at', date("Y-m-d"));
+        $begin_at = beginOfDay(strtotime($stat_at));
+        $end_at = endOfDay(strtotime($stat_at));
 
         if ($this->request->isAjax()) {
 
             $page = $this->params('page');
-            $per_page = 8;
+            $per_page = 6;
 
             $cond = [
-                'conditions' => 'sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:',
-                'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id],
+                'conditions' => '(sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:)' .
+                    ' and created_at >= :begin_at: and created_at <= :end_at:',
+                'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
                 'columns' => 'distinct user_id'
             ];
 
@@ -91,13 +95,59 @@ class UnionsController extends BaseController
 
             $users = \Users::findPagination($cond, $page, $per_page);
 
+            foreach ($users as $user) {
+                $user->income = $user->getDaysIncome($begin_at, $end_at);
+            }
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
         }
+
+        $this->currentUser()->income = $this->currentUser()->getDaysIncome($begin_at, $end_at);
+        $this->view->stat_at = $stat_at;
     }
 
     function roomsAction()
     {
+        $union = $this->currentUser()->union;
+        $stat_at = $this->params('stat_at', date("Y-m-d"));
+        $begin_at = beginOfDay(strtotime($stat_at));
+        $end_at = endOfDay(strtotime($stat_at));
 
+        $cond = [
+            'conditions' => 'room_union_id = :room_union_id: and created_at >= :begin_at: and created_at <= :end_at:',
+            'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
+            'columns' => 'distinct room_id'
+        ];
+
+        $room_ids = [];
+        $gift_orders = \GiftOrders::find($cond);
+
+        foreach ($gift_orders as $gift_order) {
+            $room_ids[] = $gift_order->room_id;
+        }
+
+        $total_amount = 0;
+
+        if (count($room_ids) < 1) {
+            $rooms = [];
+        } else {
+
+            $cond = [
+                'conditions' => 'id in (' . implode(',', $room_ids) . ')',
+            ];
+
+            $rooms = \Rooms::find($cond);
+
+            foreach ($rooms as $room) {
+                $room->amount = $room->getDayAmount($begin_at, $end_at);
+                $total_amount += $room->amount;
+            }
+
+        }
+
+        $this->view->rooms = $rooms;
+        $this->view->total_amount = $total_amount;
+        $this->view->stat_at = $stat_at;
     }
 
     function incomeDetailsAction()
@@ -107,6 +157,16 @@ class UnionsController extends BaseController
 
     function withdrawHistoriesAction()
     {
+        $union = $this->currentUser()->union;
 
+        if ($this->request->isAjax()) {
+            $page = $this->params('page');
+            $per_page = 15;
+
+            $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $union->id], 'order' => 'id desc'];
+
+            $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $withdraw_histories->toJson('withdraw_histories', 'toSimpleJson'));
+        }
     }
 }

@@ -195,7 +195,7 @@
                                 </div>
                                 <div class="field">
                                     <input type="text" class="input user_input" id="union" name="name" size="50"
-                                           placeholder="请输入公会名称" data-validate="required:请输入公会名称"/>
+                                           placeholder="请输入公会名称" value="{{ union ? union.name : '' }}" data-validate="required:请输入公会名称"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -204,7 +204,7 @@
                                 </div>
                                 <div class="field">
                                     <input type="text" class="input user_input" id="username" name="id_name" size="50"
-                                           placeholder="请输入你的真实姓名" data-validate="required:请输入你的真实姓名"/>
+                                           placeholder="请输入你的真实姓名" value="{{ union ? union.id_name : '' }}" data-validate="required:请输入你的真实姓名"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -213,7 +213,7 @@
                                 </div>
                                 <div class="field">
                                     <input type="text" class="input user_input" id="idcard" name="id_no" size="50"
-                                           placeholder="请输入身份证号" data-validate="required:请输入你的身份证号码"/>
+                                           placeholder="请输入身份证号" value="{{ union ? union.id_no : '' }}" data-validate="required:请输入你的身份证号码"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -223,7 +223,7 @@
                                 <div class="field">
                                     <input type="text" class="input user_input" id="alipay_account"
                                            name="alipay_account"
-                                           size="50"
+                                           size="50" value="{{ union ? union.alipay_account : '' }}"
                                            placeholder="请输入支付宝账号用于结算" data-validate="required:请输入支付宝账号用于结算"/>
                                 </div>
                             </div>

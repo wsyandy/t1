@@ -97,6 +97,8 @@ class UnionsController extends BaseController
             $user->union_type = $union->type;
             $user->update();
 
+            \UnionHistories::createRecord($user_id, $union->id);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, "", ['error_url' => '/admin/unions/users/' . $id]);
         }
 

@@ -11,7 +11,7 @@
     <ul>
         <li><a href="/partner/unions/users" target="right" class="on"> 公会成员</a></li>
         <li><a href="/partner/unions/rooms" target="right" class="room">公会房间</a></li>
-        <li><a href="/partner/unions/income_details" target="right" class="account">流水明细</a></li>
+        {#<li><a href="/partner/unions/income_details" target="right" class="account">流水明细</a></li>#}
         <li><a href="/partner/unions/withdraw_histories" target="right" class="settle">结算明细</a></li>
     </ul>
 </div>

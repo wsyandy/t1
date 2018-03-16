@@ -85,7 +85,8 @@ class WithdrawHistories extends BaseModel
             'id' => $this->id,
             'amount' => $this->amount,
             'status_text' => $this->status_text,
-            'created_at_date' => $this->created_at_date
+            'created_at_date' => $this->created_at_date,
+            'created_at_text' => $this->created_at_text,
         ];
     }
 

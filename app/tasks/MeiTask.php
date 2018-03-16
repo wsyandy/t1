@@ -562,4 +562,15 @@ class MeiTask extends \Phalcon\Cli\Task
         $union->save();
     }
 
+    function createWithdrawHistoriesAction()
+    {
+        $withdraw_history = new WithdrawHistories();
+        $withdraw_history->type = WITHDRAW_TYPE_UNION;
+        $withdraw_history->union_id = 8;
+        $withdraw_history->amount = 1000;
+        $withdraw_history->status = WITHDRAW_STATUS_WAIT;
+        $withdraw_history->save();
+
+    }
+
 }
