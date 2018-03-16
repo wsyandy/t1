@@ -28,17 +28,21 @@ class PaymentsController extends BaseController
     function createAction()
     {
         $user_id = $this->params('user_id');
-        if($user_id){
+        if ($user_id) {
             $user = \Users::findFirstById($user_id);
-        }else{
+        } else {
             $user = $this->currentUser();
         }
 
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户非法');
+        }
+
         if (isBlank($this->params('product_id'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
         if (isBlank($this->params('payment_channel_id'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
         $product = \Products::findById($this->params('product_id'));
@@ -68,7 +72,7 @@ class PaymentsController extends BaseController
             'show_url' => $cancel_url,
             'cancel_url' => $cancel_url,
             'callback_url' => $this->getRoot() . $result_url,
-            'openid' => $this->currentUser()->openid,
+            'openid' => $this->currentUser()->openid, // 代替充值特殊处理
             'product_name' => '订单-' . $order->order_no
         ];
 
