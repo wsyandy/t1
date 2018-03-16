@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-    {{ weixin_css('mine_wallet.css') }}
+    {{ weixin_css('pay_result.css') }}
 {{ block_end() }}
 
 <div class="haeder_nav">
@@ -7,7 +7,8 @@
     <span>{{title}}</span>
     <span class="haeder_right_text"></span>
 </div>
-<div class="main_content" id="app" v-cloak>
+
+<div class="main_content">
     <div class="topup_select_money">
 
         {% if order is defined and order.isPaid() %}
