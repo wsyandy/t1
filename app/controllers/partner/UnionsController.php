@@ -83,15 +83,15 @@ class UnionsController extends BaseController
             ];
 
             $user_ids = [];
-            $user_gift_orders = \GiftOrders::find($cond);
-            $sender_gift_orders = \GiftOrders::find($cond2);
+            $sender_gift_orders = \GiftOrders::find($cond);
+            $user_gift_orders = \GiftOrders::find($cond2);
 
             foreach ($user_gift_orders as $gift_order) {
                 $user_ids[] = $gift_order->user_id;
             }
 
             foreach ($sender_gift_orders as $gift_order) {
-                $user_ids[] = $gift_order->user_id;
+                $user_ids[] = $gift_order->sender_id;
             }
 
             $user_ids = array_unique($user_ids);
