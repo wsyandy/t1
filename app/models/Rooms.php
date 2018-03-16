@@ -803,9 +803,9 @@ class Rooms extends BaseModel
 
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
-        } elseif ($room->getRealUserNum() < 1) {
+        } elseif ($room->isActive() && ($room->getRealUserNum() < 1 || $room->user_agreement_num < 1)) {
             Rooms::deleteWaitEnterSilentRoomList($user_id);
-            info("room_no_real_user", $room_id, $user_id);
+            info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
             return false;
         }
 
@@ -994,6 +994,11 @@ class Rooms extends BaseModel
     function isSilent()
     {
         return USER_TYPE_SILENT == $this->user_type;
+    }
+
+    function isActive()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
     }
 
     function canEnter($user)
@@ -1258,12 +1263,34 @@ class Rooms extends BaseModel
             if (isDevelopmentEnv()) {
                 $delay_time = mt_rand(1, 30);
             }
-            
+
             info($room->id, $user->id, $delay_time);
             Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
         }
 
         info($room->id, $room->user_agreement_num, count($users));
+    }
+
+    static function deleteUserAgreement($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return;
+        }
+
+        $silent_users = $room->findSilentUsers();
+
+        foreach ($silent_users as $user) {
+
+            $delay_time = mt_rand(1, 120);
+
+            if (isDevelopmentEnv()) {
+                $delay_time = mt_rand(1, 30);
+            }
+
+            Rooms::delay($delay_time)->asyncExitSilentRoom($room->id, $user->id);
+        }
     }
 }
