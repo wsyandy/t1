@@ -24,7 +24,7 @@ return [
         'sms_channels' => '*', 'soft_versions' => '*', 'client_themes' => '*', 'push_messages' => '*', 'partners' => '*',
         'channel_soft_versions' => '*', 'gifts' => '*', 'emoticon_images' => '*', 'audios' => "*", 'room_themes' => '*',
         'musics' => '*', 'banners' => '*', 'complaints' => '*', 'sms_histories' => '*', 'rooms' => '*', 'broadcasts' => '*',
-        'share_histories' => '*', 'audio_chapters' => '*', 'payment_channels' => '*'
+        'share_histories' => '*', 'audio_chapters' => '*', 'payment_channels' => '*', 'product_groups' => '*'
     ],
 
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
