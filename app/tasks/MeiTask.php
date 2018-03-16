@@ -571,6 +571,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $withdraw_history->status = WITHDRAW_STATUS_WAIT;
         $withdraw_history->save();
 
+        echoLine(Users::findFirstById(1001347));
     }
 
 }

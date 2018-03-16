@@ -192,4 +192,20 @@ class UnionsController extends BaseController
     {
 
     }
+
+    function withdrawAction()
+    {
+        $amount = $this->params('amount');
+        $alipay_account = $this->params('alipay_account');
+        $opts = ['amount' => $amount, 'alipay_account' => $alipay_account];
+        $union = $this->currentUser()->union;
+
+        if (!$union) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '提现失败,请联系官方人员');
+        }
+
+        list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
+
+        return $this->renderJSON($error_code, $error_reason);
+    }
 }
