@@ -22,7 +22,7 @@ class Unions extends BaseModel
     static $TYPE = [UNION_TYPE_PUBLIC => '工会', UNION_TYPE_PRIVATE => '家族'];
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
-    static $NEED_APPLY = [STATUS_ON => '申请能加入',STATUS_OFF=>'所有人可加入'];
+    static $NEED_APPLY = [STATUS_ON => '申请能加入', STATUS_OFF => '所有人可加入'];
 
     function afterUpdate()
     {
@@ -488,6 +488,15 @@ class Unions extends BaseModel
         }
 
         return StoreFile::getUrl($this->avatar);
+    }
+
+    function getAvatarSmallUrl()
+    {
+        if (isBlank($this->avatar)) {
+            return '/m/images/avatar.png';
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!small';
     }
 
     function toSimpleJson()
