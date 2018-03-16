@@ -118,6 +118,9 @@ class UnionsController extends BaseController
         }
 
         $this->currentUser()->income = $this->currentUser()->getDaysIncome($begin_at, $end_at);
+        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
+        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
+        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
         $this->view->stat_at = $stat_at;
     }
 
