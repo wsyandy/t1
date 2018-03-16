@@ -19,7 +19,7 @@
         {{ options(Rooms.THEME_TYPE) }}
     </select>
 
-    <input type="hidden" name="room[hot]", value="{{ hot }}">
+    <input type="hidden" name="room[hot]" , value="{{ hot }}">
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
@@ -51,6 +51,10 @@
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>
+    {% if room.union_id %}
+        公会: {{ room.union.name }}<br/>
+        公会类型: {{ room.union.type_text }}<br/>
+    {% endif %}
 {% endmacro %}
 
 
