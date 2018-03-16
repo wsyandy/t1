@@ -16,6 +16,7 @@ class RoomsController extends BaseController
         $cond = $this->getConditions('room');
         $name = $this->params('name');
         $hot = $this->params('hot', 0);
+        $union_id = $this->params('union_id', 0);
 
         if (isset($cond['conditions'])) {
             $cond['conditions'] .= " and user_id > 0";
@@ -29,6 +30,10 @@ class RoomsController extends BaseController
 
         if ($hot) {
             $cond['conditions'] .= " and hot = 1 ";
+        }
+
+        if ($union_id) {
+            $cond['conditions'] .= " and union_id = " . $union_id;
         }
 
         $page = 1;
