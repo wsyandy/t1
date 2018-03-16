@@ -41,27 +41,55 @@ class WithdrawHistories extends BaseModel
 
     static function createWithdrawHistories($user, $opts)
     {
-        $money = fetch($opts, 'money');
-        $name = fetch($opts, 'name');
-        $account = fetch($opts, 'account');
+        $amount = fetch($opts, 'money');
+        $user_name = fetch($opts, 'name');
+        $alipay_account = fetch($opts, 'account');
 
-        $max_money = $user->withdraw_amount;
-        if ($money > $max_money) {
+        $max_amount = $user->withdraw_amount;
+
+        if ($amount > $max_amount) {
             return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
         }
 
-        if (self::isHaveWaitedHistory($user)) {
+        if (self::hasWaitedHistoryByUser($user)) {
             return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
         }
 
 
         $history = new WithdrawHistories();
         $history->user_id = $user->id;
-        $history->user_name = $name;
-        $history->alipay_account = $account;
+        $history->user_name = $user_name;
+        $history->alipay_account = $alipay_account;
         $history->product_channel_id = $user->product_channel_id;
-        $history->amount = $money;
+        $history->amount = $amount;
         $history->status = WITHDRAW_STATUS_WAIT;
+        $history->type = WITHDRAW_TYPE_USER;
+        $history->save();
+
+        return [ERROR_CODE_SUCCESS, '受理中'];
+    }
+
+    static function createUnionWithdrawHistories($union, $opts)
+    {
+        $amount = fetch($opts, 'amount');
+        $alipay_account = fetch($opts, 'alipay_account');
+
+        if ($amount > $union->amount) {
+            return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
+        }
+
+        if (self::hasWaitedHistoryByUser($union)) {
+            return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
+        }
+
+
+        $history = new WithdrawHistories();
+        $history->union_id = $union->id;
+        $history->alipay_account = $alipay_account;
+        $history->product_channel_id = $union->product_channel_id;
+        $history->amount = $amount;
+        $history->status = WITHDRAW_STATUS_WAIT;
+        $history->type = WITHDRAW_TYPE_UNION;
         $history->save();
 
         return [ERROR_CODE_SUCCESS, '受理中'];
@@ -90,12 +118,12 @@ class WithdrawHistories extends BaseModel
         ];
     }
 
-    static function isHaveWaitedHistory($user)
+    static function hasWaitedHistoryByUser($user)
     {
         $withdraw_history = WithdrawHistories::findFirst(
             [
-                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id:',
-                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id],
+                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id: and type = :type:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id, 'type' => WITHDRAW_TYPE_USER],
                 'order' => 'id desc'
             ]
         );
@@ -103,6 +131,24 @@ class WithdrawHistories extends BaseModel
         if ($withdraw_history) {
             return true;
         }
+
+        return false;
+    }
+
+    static function hasWaitedHistoryByUnion($union)
+    {
+        $withdraw_history = WithdrawHistories::findFirst(
+            [
+                'conditions' => 'status = :status: and union_id = :union_id: and product_channel_id = :product_channel_id: and type = :type:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'union_id' => $union->id, 'product_channel_id' => $union->product_channel_id, 'type' => WITHDRAW_TYPE_UNION],
+                'order' => 'id desc'
+            ]
+        );
+
+        if ($withdraw_history) {
+            return true;
+        }
+
         return false;
     }
 }

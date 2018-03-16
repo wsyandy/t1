@@ -1,64 +1,105 @@
 {{ block_begin('head') }}
-{{ theme_css('/partner/css/jedate-select.css', '/partner/css/jedate.css') }}
+{{ theme_css('/partner/css/jedate-select.css', '/partner/css/jedate.css','/partner/css/settle.css') }}
 {{ theme_js('/partner/css/jquery.jedate.min.js', '/partner/css/jedate-select.js') }}
 {{ block_end() }}
-<form method="post" action="">
-    <div class="search">
-        <div class="form-group ">
-            <label class="search_label">待结算金额：</label>
-            <span class="search_span">
+
+<div class="search">
+    <div class="form-group ">
+        <label class="search_label">待结算金额：</label>
+        <span class="search_span">
                   {{ union.amount }}（元）
               </span>
 
-        </div>
-        <div class="form-group ">
-            <label class="search_label">已结算金额：</label>
-            <span class="search_span">
+    </div>
+    <div class="form-group ">
+        <label class="search_label">已结算金额：</label>
+        <span class="search_span">
                    {{ union.settled_amount }}（元）
               </span>
-
-        </div>
-
     </div>
-    <div class="admin-panel padding" v-if="total_page > 0">
-        <table class="table table-hover  ">
-            <thead>
-            <tr>
-                <th>结算金额（元）</th>
-                <th>结算状态</th>
-                <th>结算日期</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="withdraw_history in datas">
+    <div class="form-group ">
+        <div class="field padding-large-left">
+            <button class="button  bg-main dialogs icon-dollar" data-toggle="click" data-target="#mydialog"
+                    data-mask="1"
+                    data-width="50%"> 提现
+            </button>
+        </div>
+    </div>
 
-                <td>${withdraw_history.amount}</td>
-                <td>${withdraw_history.status_text}</td>
-                <td>${withdraw_history.created_at_text}</td>
-            </tr>
-            </tbody>
+</div>
+
+<div id="mydialog">
+    <div class="dialog">
+        <div class="dialog-head"><span class="close rotate-hover"></span><strong>请输入以下信息，提取现金</strong></div>
+        <div class="dialog-body user_info">
+            <form method="post" class="form-x" action="">
+                <div class="form-group">
+                    <div class="label">
+                        <label>提取金额：</label>
+                    </div>
+                    <div class="field">
+                        <input type="text" class="input  " id="amount" name="amount" size="50"
+                               placeholder="请输入提取金额"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="label">
+                        <label>支付宝：</label>
+                    </div>
+                    <div class="field">
+                        <input type="text" class="input  " id="alipay_account" name="alipay_account" size="50"
+                               placeholder="请输入支付宝账号"/>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="dialog-foot">
+            <button class="button dialog-close"> 取消</button>
+            <button class="button bg-green"> 确认</button>
+        </div>
+    </div>
+</div>
+
+<div class="admin-panel padding" v-if="total_page > 0">
+    <table class="table table-hover  ">
+        <thead>
+        <tr>
+            <th>结算金额（元）</th>
+            <th>结算状态</th>
+            <th>结算日期</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="withdraw_history in datas">
+
+            <td>${withdraw_history.amount}</td>
+            <td>${withdraw_history.status_text}</td>
+            <td>${withdraw_history.created_at_text}</td>
+        </tr>
+        </tbody>
 
 
-            <tfoot v-if="total_page > 1">
-            <tr>
-                <td colspan="8">
-                    <div class="pagelist">
-                        <span @click.stop="firstPage(1)" v-if="current_page > 1">首页</span>
-                        <span @click.stop="prePage()" v-if="current_page > 1">上一页</span>
+        <tfoot v-if="total_page > 1">
+        <tr>
+            <td colspan="8">
+                <div class="pagelist">
+                    <span @click.stop="firstPage(1)" v-if="current_page > 1">首页</span>
+                    <span @click.stop="prePage()" v-if="current_page > 1">上一页</span>
 
-                        <span v-for="page in (1, total_page)" :class="{current:page == current_page}"
-                              @click="jumpPage(page)" v-if="page < current_page + 5 && page + 5 > current_page">
+                    <span v-for="page in (1, total_page)" :class="{current:page == current_page}"
+                          @click="jumpPage(page)" v-if="page < current_page + 5 && page + 5 > current_page">
                             ${page}</span>
 
-                        <span @click.stop="nextPage()" v-if="current_page < total_page">下一页</span>
-                        <span @click.stop="lastPage(total_page)" v-if="current_page < total_page">尾页</span>
-                    </div>
-                </td>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-</form>
+                    <span @click.stop="nextPage()" v-if="current_page < total_page">下一页</span>
+                    <span @click.stop="lastPage(total_page)" v-if="current_page < total_page">尾页</span>
+                </div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+
 <script type="text/javascript">
 
     var opts = {
