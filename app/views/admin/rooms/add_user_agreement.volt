@@ -1,4 +1,4 @@
-{% set f = simple_form('/admin/rooms/add_user_agreement', ['class': 'ajax_model_form', 'data-model': 'room']) %}
+{% set f = simple_form('/admin/rooms/add_user_agreement',['class': 'ajax_model_form', 'method':'POST', 'data-model': 'room']) %}
 
 <input type="hidden" name="id" value="{{ room.id }}"/>
 {{ f.input('user_agreement_num', ['label': '人数']) }}
