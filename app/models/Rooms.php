@@ -1244,7 +1244,7 @@ class Rooms extends BaseModel
             return;
         }
 
-        $users = $room->selectUsers($room->user_agreement_num);
+        $users = $room->selectSilentUsers($room->user_agreement_num);
 
         foreach ($users as $user) {
 
