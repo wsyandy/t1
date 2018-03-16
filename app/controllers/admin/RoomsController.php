@@ -321,4 +321,25 @@ class RoomsController extends BaseController
         $this->view->room_id = $room_id;
         $this->view->results = $results;
     }
+
+    function addUserAgreementAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+
+        if ($this->request->isPost()) {
+
+            $user_agreement_num  = $this->params('user_agreement_num');
+            $room->user_agreement_num = $user_agreement_num;
+
+            if ($room->update()) {
+                \Rooms::delay()->addUserAgreement($room->id);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+
+        $this->view->room = $room;
+    }
 }

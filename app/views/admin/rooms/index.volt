@@ -51,6 +51,8 @@
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>
+    是否热门: {{ room.hot_text }}<br/>
+    协议: {{ intval(room.user_segment_num) }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>
@@ -61,6 +63,9 @@
 {% macro operate_link(room) %}
     {% if isAllowed('rooms','detail') %}
         <a href="/admin/rooms/detail?id={{ room.id }}">详细</a></br>
+    {% endif %}
+    {% if isAllowed('rooms','add_user_agreement') %}
+        <a href="/admin/rooms/add_user_agreement?id={{ room.id }}" class="modal_action">添加协议</a></br>
     {% endif %}
     {% if isAllowed('rooms','edit') %}
         <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a></br>

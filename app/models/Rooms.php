@@ -815,6 +815,20 @@ class Rooms extends BaseModel
         $room->pushEnterRoomMessage($user);
     }
 
+    static function asyncExitSilentRoom($room_id, $user_id)
+    {
+        info($room_id, $user_id);
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$user || !$room) {
+            info("no_user", $room_id, $user_id);
+            return;
+        }
+
+        $room->exitSilentRoom($user);
+    }
+
     function exitSilentRoom($user)
     {
 
@@ -1041,20 +1055,7 @@ class Rooms extends BaseModel
         $rand = $real_user_num <= 5 ? 5 : 8;
 
         $limit = mt_rand(1, $rand);
-        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: 
-        and id <> :user_id: and avatar_status = :avatar_status:";
-        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS,
-            'user_id' => $this->user_id];
-        $cond['limit'] = $limit;
-
-        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
-
-        if (count($filter_user_ids) > 0) {
-            info($filter_user_ids);
-            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
-        }
-
-        $users = Users::find($cond);
+        $users = $this->selectSilentUsers($limit);
 
         foreach ($users as $user) {
 
@@ -1075,6 +1076,27 @@ class Rooms extends BaseModel
         }
 
         info($this->id, $limit, count($users));
+
+    }
+
+    function selectSilentUsers($limit)
+    {
+        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: 
+        and id <> :user_id: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS,
+            'user_id' => $this->user_id];
+        $cond['limit'] = $limit;
+
+        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
+
+        if (count($filter_user_ids) > 0) {
+            info($filter_user_ids);
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
+        }
+
+        $users = Users::find($cond);
+
+        return $users;
     }
 
     //记录沉默用户进入房间 异步进入后在队列中删除
@@ -1212,5 +1234,31 @@ class Rooms extends BaseModel
         $pagination->clazz = 'Rooms';
 
         return $pagination;
+    }
+
+    static function addUserAgreement($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room || $room->user_agreement_num < 1) {
+            return;
+        }
+
+        $users = $room->selectUsers($room->user_agreement_num);
+
+        foreach ($users as $user) {
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 120);
+            info($room->id, $user->id, $delay_time);
+            Rooms::addWaitEnterSilentRoomList($user->id);
+            Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
+        }
+
+        info($room->id, $room->user_agreement_num, count($users));
     }
 }

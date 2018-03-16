@@ -1902,8 +1902,8 @@ class Users extends BaseModel
                     return;
                 }
             } else {
-                if (1 <= $rand_num && $rand_num <= 10) {
-                    $room->exitSilentRoom($this);
+                if ($room->getRealUserNum() < 1) {
+                    Rooms::delay(mt_rand(1, 300))->asyncExitSilentRoom($room->id, $this->id);
                     return;
                 }
             }
@@ -1922,6 +1922,11 @@ class Users extends BaseModel
 //                $room->exitSilentRoom($this);
 //                return;
 //            }
+
+            if ($room->getRealUserNum() < 1) {
+                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
+                return;
+            }
 
             if ($rand_num <= 90) {
                 if ($room->getRealUserNum() > 0) {
