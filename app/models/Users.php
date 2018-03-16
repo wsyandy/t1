@@ -2404,6 +2404,7 @@ class Users extends BaseModel
             $user->charm_value += $charm_value;
             $union = $user->union;
             if (isPresent($union)) {
+                $user->union_charm_value += $charm_value;
                 $union->updateFameValue($charm_value);
             }
             $user->update;
@@ -2413,6 +2414,7 @@ class Users extends BaseModel
             $sender->wealth_value += $wealth_value;
             $union = $sender->union;
             if (isPresent($union)) {
+                $sender->union_wealth_value += $wealth_value;
                 $union->updateFameValue($wealth_value);
             }
             $sender->update;

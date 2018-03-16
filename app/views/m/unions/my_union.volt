@@ -75,7 +75,7 @@
             <div class="member_right">
                 <div class="member_charm">
                     <span class="charm_tit">魅力值</span>
-                    <span class="charm_num">${member.charm_value}</span>
+                    <span class="charm_num">${member.union_charm_value}</span>
                 </div>
             </div>
         </li>
@@ -96,7 +96,7 @@
             <div class="member_right">
                 <div class="member_wealth">
                     <span class="wealth_tit">财富值</span>
-                    <span class="wealth_num">${member.wealth_value}</span>
+                    <span class="wealth_num">${member.union_wealth_value}</span>
                 </div>
             </div>
         </li>
@@ -172,9 +172,9 @@
             memberList: function (index) {
                 var data = {union_id:{{ union.id }}, page: this.page, per_page: 30, sid: this.sid, code: this.code};
                 if (index == 1) {
-                    data.order = "charm_value desc";
+                    data.order = "union_charm_value desc";
                 } else if (index == 2) {
-                    data.order = "wealth_value desc";
+                    data.order = "union_wealth_value desc";
                 }
                 $.authGet('/m/unions/users', data, function (resp) {
                     vm.member_list = [];

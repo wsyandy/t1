@@ -61,7 +61,7 @@ class Unions extends BaseModel
             }
         }
 
-        $amount = 100;
+        $amount = -100;
 
         if ($user->diamond < $amount) {
             return [ERROR_CODE_FORM, '钻石余额不足'];
@@ -77,11 +77,11 @@ class Unions extends BaseModel
         }
 
         if (isBlank($name) || mb_strlen($name) > 5) {
-            return [ERROR_CODE_FAIL, '家族名称有误'];
+            return [ERROR_CODE_FAIL, '家族名称不能为空或字数超过限制'];
         }
 
         if (isBlank($notice) || mb_strlen($notice) > 50) {
-            return [ERROR_CODE_FAIL, '家族公告有误'];
+            return [ERROR_CODE_FAIL, '家族公告不能为空或字数超过限制'];
         }
 
 //        if (isBlank($need_apply)) {
@@ -335,7 +335,7 @@ class Unions extends BaseModel
                 list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
                 return [$error_code, $err_reason];
             }
-            return [ERROR_CODE_SUCCESS, '申请成功'];
+            return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
         }
 
         return [ERROR_CODE_FAIL, '系统异常'];
@@ -356,10 +356,6 @@ class Unions extends BaseModel
 
         if ($db->zscore($key, $user->id)) {
             return [ERROR_CODE_FAIL, '该用户已经加入您的家族'];
-        }
-
-        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
-            return [ERROR_CODE_FAIL, '您已拒绝'];
         }
 
         if ($db->zadd($key, time(), $user->id)) {
@@ -426,6 +422,9 @@ class Unions extends BaseModel
 
         $user->union_id = 0;
         $user->union_type = 0;
+        //清空家族土豪值，声望值
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
 
         $user->update();
         return [ERROR_CODE_SUCCESS, '操作成功'];
@@ -462,6 +461,9 @@ class Unions extends BaseModel
         foreach ($users as $user) {
             $user->union_id = 0;
             $user->union_type = 0;
+            //清空家族土豪值，声望值
+            $user->union_charm_value = 0;
+            $user->union_wealth_value = 0;
             $user->update();
         }
 
@@ -563,5 +565,10 @@ class Unions extends BaseModel
         }
 
         return false;
+    }
+
+    function isBlocked()
+    {
+        return $this->status == STATUS_BLOCKED;
     }
 }

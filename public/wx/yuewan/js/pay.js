@@ -11,7 +11,7 @@ function onBridgeReady() {
         // alert(JSON.stringify(js_api_parameters));
         // alert(JSON.stringify(res));
         // WeixinJSBridge.log(res.err_msg);
-        // $("#pay_success_form").submit();
+
         paySuccess();
     });
 }

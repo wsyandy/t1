@@ -27,18 +27,27 @@ class PaymentsController extends BaseController
 
     function createAction()
     {
-        $user = $this->currentUser();
+        $user_id = $this->params('user_id');
+        if ($user_id) {
+            $user = \Users::findFirstById($user_id);
+        } else {
+            $user = $this->currentUser();
+        }
+
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户非法');
+        }
 
         if (isBlank($this->params('product_id'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
         if (isBlank($this->params('payment_channel_id'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
         $product = \Products::findById($this->params('product_id'));
 
-        list($error_code, $error_reason, $order) = \Orders::createOrder($this->currentUser(), $product);
+        list($error_code, $error_reason, $order) = \Orders::createOrder($user, $product);
 
         if (ERROR_CODE_FAIL == $error_code) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
@@ -49,7 +58,7 @@ class PaymentsController extends BaseController
         }
 
         $payment_channel = \PaymentChannels::findFirstById($this->params('payment_channel_id'));
-        $payment = \Payments::createPayment($this->currentUser(), $order, $payment_channel);
+        $payment = \Payments::createPayment($user, $order, $payment_channel);
         if (!$payment) {
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
@@ -63,15 +72,18 @@ class PaymentsController extends BaseController
             'show_url' => $cancel_url,
             'cancel_url' => $cancel_url,
             'callback_url' => $this->getRoot() . $result_url,
-            'openid' => $this->currentUser()->openid,
+            'openid' => $this->currentUser()->openid, // 代替充值特殊处理
             'product_name' => '订单-' . $order->order_no
         ];
-        debug('openid', $this->currentUser()->openid, 'userinfo', $this->currentUser());
+
+        debug($user->id, 'openid', $user->openid);
 
         # 返回支付sdk需要的相关信息
         $pay_gateway = $payment_channel->gateway();
         $form = $pay_gateway->buildForm($payment, $opt);
-        debug('payment build_form=', $form);
+
+        debug($user->id, 'payment build_form=', $form);
+
         $result = [
             'form' => $form,
             'payment_type' => $payment_channel->payment_type,
@@ -89,7 +101,7 @@ class PaymentsController extends BaseController
         $order_no = $this->params('order_no');
         $order = \Orders::findFirstByOrderNo($order_no);
 
-        if (!$order || $order->user_id != $this->currentUser()->id) {
+        if (!$order) {
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '订单不存在!');
             }

@@ -42,6 +42,12 @@
                     return false;
                 }
 
+                var user_id = $('#user_id').val();
+                if (!user_id) {
+                    alert("请输入用户ID!");
+                    return;
+                }
+
                 var product_id = id;
                 if (!product_id) {
                     alert("请选择钻石!");
@@ -54,6 +60,7 @@
                 }
 
                 var data = {
+                    'user_id':user_id,
                     'payment_channel_id':this.payment_channel_id,
                     'payment_type':this.payment_type,
 					'product_id':product_id
@@ -67,6 +74,8 @@
                         js_api_parameters = resp.form;
                         if ('weixin_js' == resp.payment_type){//微信支付
                             wxPay();
+                        }else {
+                            alert(resp.payment_type);
                         }
                     }else {
                         alert(resp.error_reason);
