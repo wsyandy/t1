@@ -591,6 +591,7 @@ class Emchat extends BaseModel
 
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
+        info($result->body);
         return $this->sendResult($result, $target);
     }
 
