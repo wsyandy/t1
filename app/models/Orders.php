@@ -34,6 +34,20 @@ class Orders extends BaseModel
         ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    function afterUpdate()
+    {
+        if ($this->hasChanged('status') && $this->isPaid()) {
+            $this->updateUserPayAmount();
+        }
+    }
+
+    function updateUserPayAmount()
+    {
+        $user = $this->user;
+        $user->pay_amount += $this->amount;
+        $user->update();
+    }
+
     static function createOrder($user, $product)
     {
         $lock_key = 'order_create_lock_' . $user->id;
