@@ -40,7 +40,7 @@
             my_family: {
                 slogan_other: "看看其他好玩的家族"
             },
-            arrow_right: "images/ico-arrow-right.png",
+            arrow_right: "/m/images/ico-arrow-right.png",
             family: [
                 {
                     url: "/m/unions/add_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}',

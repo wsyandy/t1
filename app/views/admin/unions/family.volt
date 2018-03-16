@@ -1,6 +1,9 @@
 {% macro oper_link(union) %}
-    {% if isAllowed('users','index')  %}
-        <a href="/admin/users/index?user[union_id_eq]={{ union.id }}" >家族成员</a><br/>
+    {% if isAllowed('users','index') %}
+        <a href="/admin/users/index?user[union_id_eq]={{ union.id }}">家族成员</a><br/>
+    {% endif %}
+    {% if isAllowed('unions','edit') %}
+        <a href="/admin/unions/edit/{{ union.id }}" class="modal_action">编辑</a><br/>
     {% endif %}
 {% endmacro %}
 
@@ -9,8 +12,9 @@
 {% endmacro %}
 
 {% macro family_info(union) %}
-    声望：{{ union.fame_value }} 公告：{{ union.notice }}<br/>
-    家族设置：{{ union.need_apply_text }} 家族成员数：{{ union.user_num }}<br/>
+    声望：{{ union.fame_value }} 成员数：{{ union.user_num }}<br/>
+    推荐：{{ union.recommend_text }} 设置：{{ union.need_apply_text }} <br/>
+    公告：{{ union.notice }}<br/>
 {% endmacro %}
 
 {{ simple_table(unions, ['ID': 'id',"头像":"avatar_img",'家族名称': 'name','用户': 'user_nickname','家族信息':'family_info',

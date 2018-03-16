@@ -42,7 +42,7 @@
 }
 
 .family-edit ul li span {
-    width: 1.2rem;
+    width: 1.4rem;
     padding-right: 0.6rem;
 }
 
@@ -124,7 +124,7 @@
     color: #FFFFFF;
 }
 
-input[type=submit] {
+.family-btn input[type=submit] {
     -webkit-appearance: none;
 }
 

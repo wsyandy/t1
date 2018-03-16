@@ -116,6 +116,8 @@ class UnionsController extends BaseController
         $cond = ['conditions' => '  type = :type',
             'bind' => ['type' => UNION_TYPE_PRIVATE]];
 
+        $cond['order'] = "id desc";
+
         $unions = \Unions::findPagination($cond, $page, $per_page);
 
         $this->view->unions = $unions;

@@ -74,9 +74,8 @@
                 {text: '所有人都可加入', value: 0},
                 {text: '申请才能可加入', value: 1}
             ],
-            set_select: '/m/images/ico-select.png',
-            hasAgree: true,
-            agreement: true,
+            set_select: '/m/images/ico-selected.png',
+            hasAgree: false,
             sid: '{{ sid }}',
             code: '{{ code }}'
         },
