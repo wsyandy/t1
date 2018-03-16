@@ -39,11 +39,11 @@ class WithdrawHistories extends BaseModel
                     debug($user->id, $this->amount, $rate);
                     $user->hi_coins = $user->hi_coins - $this->amount * $rate;
                     $user->save();
-                    $content = '提现失败！如有疑问请联系官方客服中心400-018-7755解决。';
+                    $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
                 }
 
                 if (WITHDRAW_STATUS_FAIL == $this->status) {
-                    $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
+                    $content = '提现失败！如有疑问请联系官方客服中心400-018-7755解决。';
 
                     if ($this->error_reason) {
                         $content = $this->error_reason;
