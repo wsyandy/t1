@@ -23,6 +23,10 @@ class Rooms extends BaseModel
      */
     private $_room_theme;
 
+    /**
+     * @type Unions
+     */
+    private $_union;
 
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
