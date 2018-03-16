@@ -1,0 +1,1 @@
+ALTER TABLE withdraw_histories ADD column error_reason text;
