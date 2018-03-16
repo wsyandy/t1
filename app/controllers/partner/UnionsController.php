@@ -195,8 +195,20 @@ class UnionsController extends BaseController
 
     function withdrawAction()
     {
+
         $amount = $this->params('amount');
         $alipay_account = $this->params('alipay_account');
+
+        if (isBlank($amount) || !preg_match('/^\d+\d$/', $amount) || $amount < 1000) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
+        }
+
+        $amount = intval($amount);
+
+        if (!$alipay_account) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '支付宝账户不能为空');
+        }
+
         $opts = ['amount' => $amount, 'alipay_account' => $alipay_account];
         $union = $this->currentUser()->union;
 
@@ -204,7 +216,7 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '提现失败,请联系官方人员');
         }
 
-        list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
+        list($error_code, $error_reason) = \WithdrawHistories::createUnionWithdrawHistories($union, $opts);
 
         return $this->renderJSON($error_code, $error_reason);
     }

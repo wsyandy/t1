@@ -123,4 +123,25 @@ class UnionsController extends BaseController
         $this->view->unions = $unions;
         $this->view->auth_status = $auth_status;
     }
+
+    function settledAmountAction()
+    {
+        $id = $this->params('union_id');
+        $union = \Unions::findFirstById($id);
+
+        if ($this->request->isPost()) {
+            $amount = $this->params('amount');
+            $union->amount = $amount;
+
+            if ($union->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '添加失败');
+        }
+
+        $this->view->union = $union;
+        $this->view->amount = $union->amount;
+        $this->view->union_id = $id;
+    }
 }

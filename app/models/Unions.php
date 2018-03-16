@@ -621,4 +621,9 @@ class Unions extends BaseModel
 
         return count($new_users_id);
     }
+
+    function getWaitWithdrawAmount()
+    {
+        return $this->amount - $this->frozen_amount;
+    }
 }

@@ -53,7 +53,18 @@ class WithdrawHistories extends BaseModel
                 Chats::sendTextSystemMessage($this->user_id, $content);
             }
 
-            
+            if (WITHDRAW_TYPE_UNION == $this->type) {
+
+                $union = $this->union;
+
+                if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+                    $union->settled_amount += $this->amount;
+                    $union->amount = $union->amount - $this->amount;
+                }
+
+                $union->frozen_amount = 0; //冻结金额
+                $union->save();
+            }
         }
     }
 
@@ -72,14 +83,13 @@ class WithdrawHistories extends BaseModel
 
         $max_amount = $user->withdraw_amount;
 
-        if ($amount > $max_amount) {
-            return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
-        }
-
         if (self::hasWaitedHistoryByUser($user)) {
             return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
         }
 
+        if ($amount > $max_amount) {
+            return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
+        }
 
         $history = new WithdrawHistories();
         $history->user_id = $user->id;
@@ -99,14 +109,13 @@ class WithdrawHistories extends BaseModel
         $amount = fetch($opts, 'amount');
         $alipay_account = fetch($opts, 'alipay_account');
 
-        if ($amount > $union->amount) {
-            return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
-        }
-
-        if (self::hasWaitedHistoryByUser($union)) {
+        if (self::hasWaitedHistoryByUnion($union)) {
             return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
         }
 
+        if ($amount > $union->amount) {
+            return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
+        }
 
         $history = new WithdrawHistories();
         $history->union_id = $union->id;
@@ -116,6 +125,9 @@ class WithdrawHistories extends BaseModel
         $history->status = WITHDRAW_STATUS_WAIT;
         $history->type = WITHDRAW_TYPE_UNION;
         $history->save();
+
+        $union->frozen_amount = $amount;
+        $union->update();
 
         return [ERROR_CODE_SUCCESS, '受理中'];
     }

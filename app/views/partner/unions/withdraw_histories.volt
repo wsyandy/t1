@@ -7,9 +7,15 @@
     <div class="form-group ">
         <label class="search_label">待结算金额：</label>
         <span class="search_span">
-                  {{ union.amount }}（元）
+                  {{ union.getWaitWithdrawAmount() }}（元）
               </span>
 
+    </div>
+    <div class="form-group ">
+        <label class="search_label">冻结金额：</label>
+        <span class="search_span">
+                   {{ union.frozen_amount }}（元）
+              </span>
     </div>
     <div class="form-group ">
         <label class="search_label">已结算金额：</label>
@@ -29,10 +35,10 @@
 </div>
 
 <div id="mydialog">
-    <div class="dialog">
-        <div class="dialog-head"><span class="close rotate-hover"></span><strong>请输入以下信息，提取现金</strong></div>
-        <div class="dialog-body user_info">
-            <form method="post" class="form-x" action="">
+    <form method="post" action="/partner/unions/withdraw" class="form-x" id="withdraw_history_form">
+        <div class="dialog">
+            <div class="dialog-head"><span class="close rotate-hover"></span><strong>请输入以下信息，提取现金</strong></div>
+            <div class="dialog-body user_info">
                 <div class="form-group">
                     <div class="label">
                         <label>提取金额：</label>
@@ -52,13 +58,15 @@
                     </div>
                 </div>
 
-            </form>
+
+            </div>
+            <div class="dialog-foot">
+                <strong style="color: red" class="error_reason"> </strong>
+                <button class="button dialog-close"> 取消</button>
+                <button class="button bg-green" type="submit"> 确认</button>
+            </div>
         </div>
-        <div class="dialog-foot">
-            <button class="button dialog-close"> 取消</button>
-            <button class="button bg-green"> 确认</button>
-        </div>
-    </div>
+    </form>
 </div>
 
 <div class="admin-panel padding" v-if="total_page > 0">
@@ -101,6 +109,29 @@
 </div>
 
 <script type="text/javascript">
+
+    $(document).on('submit', '#withdraw_history_form', function (event) {
+        event.preventDefault();
+        var self = $(this);
+
+        self.ajaxSubmit({
+            error: function (xhr, status, error) {
+                alert('服务器错误 ' + error);
+            },
+
+            success: function (resp, status, xhr) {
+                if (resp.error_code != 0) {
+                    $(".error_reason").html(resp.error_reason)
+                } else {
+                    $('.dialog-mask').remove();
+                    $('.dialog-win').remove();
+                    window.location.reload();
+                }
+            }
+
+        });
+
+    });
 
     var opts = {
         data: {

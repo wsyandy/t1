@@ -574,4 +574,13 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(Users::findFirstById(1001347));
     }
 
+    function getUnionInfoAction()
+    {
+        $union = Unions::findFirstById(1);
+//        $union->user_id = 3;
+//        echoLine($union->created_at_text);
+        $union->amount = 100000;
+        $union->update();
+    }
+
 }

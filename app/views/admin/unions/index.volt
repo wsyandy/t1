@@ -5,6 +5,7 @@
     {% if isAllowed('unions','add_user') and 1 == union.auth_status %}
         <a href="/admin/unions/users/{{ union.id }}">添加公会成员</a><br/>
         <a href="/admin/rooms?union_id={{ union.id }}">房间列表</a><br/>
+        <a href="/admin/unions/settled_amount?union_id={{ union.id }}" class="modal_action">结算金额</a><br/>
     {% endif %}
 {% endmacro %}
 

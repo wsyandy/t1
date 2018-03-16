@@ -1,0 +1,1 @@
+ALTER TABLE unions ADD frozen_amount DECIMAL (10, 2);
