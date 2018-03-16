@@ -115,7 +115,7 @@ class UnionsController extends BaseController
 
         $cond = [
             'conditions' => 'room_union_id = :room_union_id: and created_at >= :begin_at: and created_at <= :end_at:',
-            'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
+            'bind' => ['room_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
             'columns' => 'distinct room_id'
         ];
 
