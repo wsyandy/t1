@@ -51,7 +51,7 @@ class UnionsController extends BaseController
             list($error_code, $error_reason) = \Unions::createPrivateUnion($user, $opts);
 
             $url = '';
-            if ($error_reason == ERROR_CODE_SUCCESS) {
+            if ($error_code  == ERROR_CODE_SUCCESS) {
                 $sid = $this->params('sid');
                 $code = $this->params('code');
                 $url = "/m/unions/index?sid={$sid}&code={$code}";
