@@ -528,6 +528,7 @@ class Emchat extends BaseModel
         $send_results = [];
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
+            info($result_data);
             $datas = $result_data['data'];
             foreach ($datas as $key => $value) {
                 $send_results[$key] = $value == 'success';
@@ -591,7 +592,6 @@ class Emchat extends BaseModel
 
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        info($result->body);
         return $this->sendResult($result, $target);
     }
 
