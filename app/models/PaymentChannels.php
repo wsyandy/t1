@@ -94,11 +94,7 @@ class PaymentChannels extends BaseModel
         if ($this->isApple()) {
             return $user->isIos();
         }
-
-        if (isDevelopmentEnv()) {
-            return true;
-        }
-
+        
         return $user->isAndroid();
     }
 
