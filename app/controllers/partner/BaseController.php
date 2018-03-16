@@ -90,6 +90,22 @@ class BaseController extends \ApplicationController
             return false;
         }
 
+        $union = $this->currentUser()->union;
+
+        if (!$union) {
+            list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
+
+            if (ERROR_CODE_SUCCESS != $error_code) {
+                echo "登录失败";
+                return false;
+            }
+        }
+
+        if ($union->status == STATUS_BLOCKED || STATUS_OFF == $union->status) {
+            echo "账号异常,请联系管理员";
+            return false;
+        }
+
         $this->view->current_user = $this->currentUser();
         $this->view->union = $this->currentUser()->union;
     }

@@ -9,16 +9,25 @@
         </div>
     </div>
     <ul>
-        <li><a href="/partner/unions/users" target="right" class="on"> 公会成员</a></li>
-        <li><a href="/partner/unions/rooms" target="right" class="room">公会房间</a></li>
-        {#<li><a href="/partner/unions/income_details" target="right" class="account">流水明细</a></li>#}
-        <li><a href="/partner/unions/withdraw_histories" target="right" class="settle">结算明细</a></li>
+        {% if 1 == union.status and 1 == union.auth_status %}
+            <li><a href="/partner/unions/users" target="right" class="on"> 公会成员</a></li>
+            <li><a href="/partner/unions/rooms" target="right" class="room">公会房间</a></li>
+            {#<li><a href="/partner/unions/income_details" target="right" class="account">流水明细</a></li>#}
+            <li><a href="/partner/unions/withdraw_histories" target="right" class="settle">结算明细</a></li>
+        {% endif %}
     </ul>
 </div>
 
 <div class="admin">
-    <iframe scrolling="auto" rameborder="0" src="/partner/unions/users" name="right" width="100%" height="100%"></iframe>
+    {% if 1 == union.status and 1 == union.auth_status %}
+        <iframe scrolling="auto" rameborder="0" src="/partner/unions/users" name="right" width="100%"
+                height="100%"></iframe>
+    {% else %}
+        <iframe scrolling="auto" rameborder="0" src="/partner/unions/auth_wait" name="right" width="100%"
+                height="100%"></iframe>
+    {% endif %}
 </div>
+
 
 <script type="text/javascript">
 
