@@ -2346,7 +2346,7 @@ class Users extends BaseModel
     }
 
 
-    //更新用户等级/经验
+    //更新用户等级/经验/财富值
     static function updateExperience($gift_order_id)
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
@@ -2361,12 +2361,21 @@ class Users extends BaseModel
         $sender = $gift_order->sender;
         $amount = $gift_order->amount;
         $sender_experience = 0.02 * $amount;
+        $wealth_value = $amount;
 
         if ($sender) {
             $sender->experience += $sender_experience;
             $sender_level = $sender->calculateLevel();
             $sender->level = $sender_level;
             $sender->segment = $sender->calculateSegment();
+
+            $sender->wealth_value += $wealth_value;
+            $union = $sender->union;
+            if (isPresent($union)) {
+                $sender->union_wealth_value += $wealth_value;
+                $union->updateFameValue($wealth_value);
+            }
+
             $sender->update();
         }
 
@@ -2383,7 +2392,7 @@ class Users extends BaseModel
         unlock($lock);
     }
 
-    static function updateCharmAndWealth($gift_order_id)
+    static function updateCharm($gift_order_id)
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -2391,14 +2400,12 @@ class Users extends BaseModel
             return false;
         }
 
-        $lock_key = "update_user_charm_and_wealth_lock_" . $gift_order->id;
+        $lock_key = "update_user_charm_lock_" . $gift_order->user_id;
         $lock = tryLock($lock_key);
 
         $user = $gift_order->user;
-        $sender = $gift_order->sender;
         $amount = $gift_order->amount;
         $charm_value = $amount;
-        $wealth_value = $amount;
 
         if (isPresent($user)) {
             $user->charm_value += $charm_value;
@@ -2408,16 +2415,6 @@ class Users extends BaseModel
                 $union->updateFameValue($charm_value);
             }
             $user->update;
-        }
-
-        if (isPresent($sender)) {
-            $sender->wealth_value += $wealth_value;
-            $union = $sender->union;
-            if (isPresent($union)) {
-                $sender->union_wealth_value += $wealth_value;
-                $union->updateFameValue($wealth_value);
-            }
-            $sender->update;
         }
 
         unlock($lock);

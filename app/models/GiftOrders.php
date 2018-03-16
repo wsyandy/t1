@@ -124,7 +124,7 @@ class GiftOrders extends BaseModel
 
                 \UserGifts::delay()->updateGiftNum($gift_order->id);
                 \Users::delay()->updateExperience($gift_order->id);
-                \Users::delay()->updateCharmAndWealth($gift_order->id);
+                \Users::delay()->updateCharm($gift_order->id);
 
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
