@@ -66,12 +66,14 @@ class PaymentsController extends BaseController
             'openid' => $this->currentUser()->openid,
             'product_name' => '订单-' . $order->order_no
         ];
-        debug('openid', $this->currentUser()->openid, 'userinfo', $this->currentUser());
+        debug($this->currentUser()->id, 'openid', $this->currentUser()->openid);
 
         # 返回支付sdk需要的相关信息
         $pay_gateway = $payment_channel->gateway();
         $form = $pay_gateway->buildForm($payment, $opt);
-        debug('payment build_form=', $form);
+
+        debug($this->currentUser()->id, 'payment build_form=', $form);
+
         $result = [
             'form' => $form,
             'payment_type' => $payment_channel->payment_type,

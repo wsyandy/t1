@@ -8,10 +8,10 @@ function onBridgeReady() {
     runFlag = true;
     WeixinJSBridge.invoke('getBrandWCPayRequest', js_api_parameters, function (res) {
         runFlag = false;
-        // alert(JSON.stringify(js_api_parameters));
-        // alert(JSON.stringify(res));
-        // WeixinJSBridge.log(res.err_msg);
-        // $("#pay_success_form").submit();
+        alert(JSON.stringify(js_api_parameters));
+        alert(JSON.stringify(res));
+        WeixinJSBridge.log(res.err_msg);
+
         paySuccess();
     });
 }
