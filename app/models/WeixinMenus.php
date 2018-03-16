@@ -47,9 +47,9 @@ class WeixinMenus extends BaseModel
 
         $protocol = "http://";
 
-//        if (isProduction()) {
-//            $protocol = "https://";
-//        }
+        if (isProduction()) {
+            $protocol = "https://";
+        }
 
         $domain = $protocol . $domain;
 
