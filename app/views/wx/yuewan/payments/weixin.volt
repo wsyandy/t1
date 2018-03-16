@@ -62,6 +62,7 @@
                 this.submit_status = true;
                 $.authPost('/wx/payments/create',data, function(resp){
                     vm.submit_status = false;
+                    alert(resp.error_code);
                     if(0 == resp.error_code){
                         redirect_url = '/wx/payments/result?order_no=' + resp.order_no;
                         js_api_parameters = resp.form;
