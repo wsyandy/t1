@@ -36,7 +36,7 @@
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    {% if isAllowed('users','avatar') %}
+                    {% if is_development %}
                         <li>
                             <a href="/admin/users/avatar">头像审核</a>
                         </li>
