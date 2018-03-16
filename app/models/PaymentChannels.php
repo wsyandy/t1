@@ -76,8 +76,11 @@ class PaymentChannels extends BaseModel
     {
         debug("user: " . $user->platform);
 
-        if($user->isWxPlatform() && 'weixin_js' == $this->payment_type){
-            return true;
+        if ($user->isWxPlatform()) {
+            if ('weixin_js' == $this->payment_type) {
+                return true;
+            }
+            return false;
         }
 
         $version_code = $user->version_code;
@@ -94,7 +97,7 @@ class PaymentChannels extends BaseModel
         if ($this->isApple()) {
             return $user->isIos();
         }
-        
+
         return $user->isAndroid();
     }
 
