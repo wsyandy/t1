@@ -1,3 +1,7 @@
+{{ block_begin('head') }}
+{{ weixin_js('pay.js') }}
+{{ block_end() }}
+
 <div class="weixin_warn_box">
 	<div class="wran">
 		<i></i> 请填写正确的HI ID
@@ -12,7 +16,7 @@
 <div class="weixin_cz_list">
 	<ul>
         {% for product in products %}
-			<li @click="submitAction({{ product.id }})">
+			<li @click="rechargeAction({{ product.id }})">
 				<div class="num">
 					<i></i>
 					<span>+{{ product.diamond }}</span>
@@ -27,11 +31,48 @@
 
     var opts = {
         data: {
-
+            payment_channel_id:{{ selected_payment_channel.id }},
+            payment_type:"{{ selected_payment_channel.payment_type }}",
+            submit_status:false
         },
         methods: {
-            submitAction: function (id) {
-                console.log(id)
+            rechargeAction: function (id) {
+
+                if(this.submit_status){
+                    return false;
+                }
+
+                var product_id = id;
+                if (!product_id) {
+                    alert("请选择钻石!");
+                    return;
+                }
+
+                if (!this.payment_channel_id || !this.payment_type) {
+                    alert("请选择支付渠道!");
+                    return;
+                }
+
+                var data = {
+                    'payment_channel_id':this.payment_channel_id,
+                    'payment_type':this.payment_type,
+					'product_id':product_id
+                };
+
+                this.submit_status = true;
+                $.authPost('/wx/payments/create',data, function(resp){
+                    vm.submit_status = false;
+                    if(0 == resp.error_code){
+                        redirect_url = '/wx/payments/result?order_no=' + resp.order_no;
+                        js_api_parameters = resp.form;
+                        if ('weixin_js' == resp.payment_type){//微信支付
+                            wxPay();
+                        }
+                    }else {
+                        alert(resp.error_reason);
+                    }
+                });
+
             }
         }
     };

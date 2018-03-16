@@ -16,7 +16,9 @@ class PaymentsController extends BaseController
     {
 
         $products = \Products::findDiamondListByUser($this->currentUser());
-
+        $payment_channels = \PaymentChannels::selectByUser($this->currentUser());
+        $selected_payment_channel = $payment_channels[0];
+        $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
         $this->view->current_user = $this->currentUser();
         $this->view->product_channel = $this->currentProductChannel();
@@ -46,38 +48,39 @@ class PaymentsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '订单创建失败');
         }
 
-        $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
+        $payment_channel = \PaymentChannels::findFirstById($this->params('payment_channel_id'));
         $payment = \Payments::createPayment($this->currentUser(), $order, $payment_channel);
         if (!$payment) {
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
-        $opts = [
-            'ip' => $this->remoteIp(),
-            'product_name' => $product->name,
+
+        $result_url = '/wx/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
+        $cancel_url = $this->headers('Referer');
+
+        $opt = [
             'request_root' => $this->getRoot(),
-            'mobile' => $this->currentUser()->mobile
+            'ip' => $this->remoteIp(),
+            'show_url' => $cancel_url,
+            'cancel_url' => $cancel_url,
+            'callback_url' => $this->getRoot() . $result_url,
+            'openid' => $this->currentUser()->openid,
+            'product_name' => '订单-' . $order->order_no
         ];
-        $result = $payment_channel->gateway()->buildForm($payment, $opts);
+        debug('openid', $this->currentUser()->openid, 'userinfo', $this->currentUser());
 
-        $result_url = '/m/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
-
-        info($result);
-
-        if (is_array($result) && isset($result['url'])) {
-            return $this->response->redirect($result['url']);
-        }
-
-        if ($payment_channel->payment_type == "alipay_sdk") {
-            $result['rsa2'] = true;
-        }
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge([
-            'name' => $order->name,
-            'amount' => $order->amount,
-            'payment_id' => $payment->id,
-            'payment_no' => $payment->payment_no,
+        # 返回支付sdk需要的相关信息
+        $pay_gateway = $payment_channel->gateway();
+        $form = $pay_gateway->buildForm($payment, $opt);
+        debug('payment build_form=', $form);
+        $result = [
+            'form' => $form,
+            'payment_type' => $payment_channel->payment_type,
+            'order_no' => $order->order_no,
+            'paid_status' => $payment->pay_status,
             'result_url' => $result_url
-        ], $result));
+        ];
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);
     }
 
     function resultAction()
