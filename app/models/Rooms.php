@@ -1254,6 +1254,11 @@ class Rooms extends BaseModel
             }
 
             $delay_time = mt_rand(1, 120);
+
+            if (isDevelopmentEnv()) {
+                $delay_time = mt_rand(1, 30);
+            }
+            
             info($room->id, $user->id, $delay_time);
             Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
