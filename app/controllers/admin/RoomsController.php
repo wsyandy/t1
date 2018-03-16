@@ -40,7 +40,7 @@ class RoomsController extends BaseController
         $total_page = 1;
         $per_page = 30;
         $total_entries = $total_page * $per_page;
-        $cond['order'] = "id desc";
+        $cond['order'] = "last_at desc, user_type asc, id desc";
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
@@ -329,7 +329,7 @@ class RoomsController extends BaseController
 
         if ($this->request->isPost()) {
 
-            $user_agreement_num  = $this->params('user_agreement_num');
+            $user_agreement_num = $this->params('user_agreement_num');
             $room->user_agreement_num = $user_agreement_num;
 
             if ($room->update()) {
@@ -341,5 +341,19 @@ class RoomsController extends BaseController
         }
 
         $this->view->room = $room;
+    }
+
+    function deleteUserAgreementAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+        $room->user_agreement_num = 0;
+
+        if ($room->update()) {
+            \Rooms::delay()->deleteUserAgreement($room->id);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '清除失败');
     }
 }
