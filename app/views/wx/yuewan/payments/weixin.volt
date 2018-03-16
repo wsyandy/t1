@@ -62,12 +62,11 @@
                 this.submit_status = true;
                 $.authPost('/wx/payments/create',data, function(resp){
                     vm.submit_status = false;
-                    alert(resp.error_code);
+                    alert(resp.payment_type);
                     if(0 == resp.error_code){
                         redirect_url = '/wx/payments/result?order_no=' + resp.order_no;
                         js_api_parameters = resp.form;
                         if ('weixin_js' == resp.payment_type){//微信支付
-                            alert(resp.payment_type);
                             wxPay();
                         }
                     }else {
