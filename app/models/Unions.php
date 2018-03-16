@@ -23,6 +23,15 @@ class Unions extends BaseModel
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
 
+    function afterUpdate()
+    {
+        if ($this->hasChanged('auth_status') && AUTH_FAIL == $this->auth_status) {
+            $this->user->union_id = 0;
+            $this->user->union_type = 0;
+            $this->user->update();
+        }
+    }
+
     //创建家族
     static function createPrivateUnion($user, $opts = [])
     {
@@ -121,7 +130,6 @@ class Unions extends BaseModel
     static function createPublicUnion($user, $opts = [])
     {
         $union = new Unions();
-        $union->auth_status = AUTH_WAIT;
         $union->type = UNION_TYPE_PUBLIC;
         $union->status = STATUS_PROGRESS; //创建中
         $union->user_id = $user->id;
@@ -502,6 +510,11 @@ class Unions extends BaseModel
             $this->$filed = $value;
         }
 
+        if (!$this->needUpdateProfile()) {
+            $this->auth_status = AUTH_WAIT;
+            $this->status = STATUS_ON;
+        }
+
         $this->update();
     }
 
@@ -535,14 +548,6 @@ class Unions extends BaseModel
 
     function needUpdateProfile()
     {
-        if (STATUS_PROGRESS == $this->status) {
-            return true;
-        }
-        
-        if ($this->isNormal() && $this->isAuthSuccess()) {
-            return false;
-        }
-
         if (isBlank($this->name) || isBlank($this->id_name) || isBlank($this->id_no) || isBlank($this->alipay_account)) {
             return true;
         }

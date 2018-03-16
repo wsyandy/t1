@@ -56,8 +56,6 @@
 
     var opts = {
         data: {
-            agreement: true,
-            upload_status: false
         },
         methods: {}
     };

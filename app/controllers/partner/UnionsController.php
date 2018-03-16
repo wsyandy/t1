@@ -17,7 +17,7 @@ class UnionsController extends BaseController
             }
         }
 
-        if ($union->needUpdateProfile()) {
+        if ($union->needUpdateProfile() || STATUS_PROGRESS == $union->status) {
             $forward = [
                 "namespace" => "partner",
                 "controller" => "unions",
@@ -168,5 +168,10 @@ class UnionsController extends BaseController
             $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $withdraw_histories->toJson('withdraw_histories', 'toSimpleJson'));
         }
+    }
+
+    function authWaitAction()
+    {
+
     }
 }
