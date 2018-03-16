@@ -16,8 +16,8 @@ class UnionsController extends BaseController
         $per_page = $this->params('per_page');
         $auth_status = $this->params('auth_status');
 
-        $cond = ['conditions' => 'auth_status = :auth_status: and status = :status:',
-            'bind' => ['auth_status' => $auth_status, 'status' => STATUS_ON]];
+        $cond = ['conditions' => 'auth_status = :auth_status: and status = :status: and type = :type:',
+            'bind' => ['auth_status' => $auth_status, 'status' => STATUS_ON, 'type' => UNION_TYPE_PUBLIC]];
 
         $unions = \Unions::findPagination($cond, $page, $per_page);
 
