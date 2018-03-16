@@ -121,6 +121,8 @@ class BaseController extends \ApplicationController
             $url = $this->getFullUrl();
             $url = preg_replace('/^http:/', 'https:', $url);
 
+            info($url);
+
             $this->response->redirect($url);
             return false;
         }
