@@ -52,7 +52,7 @@
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>
     是否热门: {{ room.hot_text }}<br/>
-    协议: {{ intval(room.user_segment_num) }}<br/>
+    协议: {{ intval(room.user_agreement_num) }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>
