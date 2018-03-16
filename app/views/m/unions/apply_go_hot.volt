@@ -38,31 +38,12 @@
         </div>
         <div class="time_min">
             <ul>
-                <li class="time_min_selected">
-                    <span id="8">08:00-10:00</span>
-                    <i></i>
-                </li>
-                <li>
-                    <span id="10">10:00-12:00</span>
-                    <i></i>
-                </li>
-                <li>
-                    <span id="12">12:00-14:00</span>
-                    <i></i>
-                </li>
-                <li>
-                    <span id="14">14:00-16:00</span>
-                    <i></i>
-                </li>
-                <li>
-                    <span id="16">16:00-18:00</span>
-                    <i></i>
-                </li>
-                <li>
-                    <span id="18">18:00-20:00</span>
-                    <i></i>
-                </li>
-                ol
+                {% for key,value in hours %}
+                    <li>
+                        <span id="{{ value }}">{{ key }}</span>
+                        <i></i>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
@@ -71,22 +52,30 @@
 <script>
 
     var day = '';
-    var hour = 8;
-    var hour_html = '08:00-10:00';
+    var hour = '';
+    var hour_html = '';
     var day_html = '';
     $(function () {
-        //设置默认选项
+        //设置日期默认选项
         var first_li_1 = $("ol li:eq(0)");
         first_li_1.addClass('day_selected');
         first_li_1.html(first_li_1.html() + "（今天）");
         day = first_li_1.attr("id");
         day_html = first_li_1.html();
-        $(".select_time").html(day_html + hour_html);
 
         var first_li_2 = $("ol li:eq(1)");
         first_li_2.html(first_li_2.html() + "（明天）");
 
-        $('.select_time').click(function () {
+        //设置时间段默认选项
+        var selected_ul_li = $(".time_min ul li:eq(4)");
+        selected_ul_li.addClass('time_min_selected');
+        hour = selected_ul_li.find('span').attr("id");
+        hour_html = selected_ul_li.find('span').html();
+
+        var select_time = $(".select_time");
+        select_time.html(day_html + hour_html);
+
+        select_time.click(function () {
             $('.hot_time_box').show();
             $('.hot_time_box_bg').show();
         });

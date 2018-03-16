@@ -1,40 +1,47 @@
-.hot_box{
-	margin-top: 0.2rem;
-	background: #ffffff;
-	border-bottom: 1px solid #E7E7E7;
-	border-top: 1px solid #E7E7E7;
+.hot_box {
+    margin-top: 0.2rem;
+    background: #ffffff;
+    border-bottom: 1px solid #E7E7E7;
+    border-top: 1px solid #E7E7E7;
 }
-.hot_box ul{
-	padding:0 0 0 0.3rem;
+
+.hot_box ul {
+    padding: 0 0 0 0.3rem;
 }
-.hot_box ul li{
-	padding:0.3rem 0.3rem 0.3rem 0; 
-	display: flex;
-	align-items: center;
-	border-bottom: 1px solid #E7E7E7;
+
+.hot_box ul li {
+    padding: 0.3rem 0.3rem 0.3rem 0;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #E7E7E7;
 }
-.hot_box ul li:last-child{
-	border-bottom: none;
+
+.hot_box ul li:last-child {
+    border-bottom: none;
 }
-.hot_box ul li span{
-	display: block;
-	width: 2rem;
-	font-size: 0.3rem;
-	color: #404040;
+
+.hot_box ul li span {
+    display: block;
+    width: 2rem;
+    font-size: 0.3rem;
+    color: #404040;
 }
-.hot_box ul li input{
-	flex: 1;
-	font-size: 0.3rem;
-	/*color: #C6C6C6;*/
+
+.hot_box ul li input {
+    flex: 1;
+    font-size: 0.3rem;
+    color: #C6C6C6;
 }
-.hot_box ul li b{
-	font-size: 0.3rem;
-	color: #727272;
-	text-align: left;
-	font-weight: normal;
+
+.hot_box ul li b {
+    font-size: 0.3rem;
+    color: #727272;
+    text-align: left;
+    font-weight: normal;
 }
-.hot_btn{
-	margin: 1.35rem auto 0 auto;
+
+.hot_btn {
+    margin: 1.35rem auto 0 auto;
     width: 6.9rem;
     height: 0.88rem;
     background-color: #FDC8DA;
@@ -43,91 +50,107 @@
     align-items: center;
     justify-content: center;
 }
-.hot_btn span{
-	font-size: 0.36rem;
-	color: #FFFFFF;
+
+.hot_btn span {
+    font-size: 0.36rem;
+    color: #FFFFFF;
 }
-.hot_btn_selected{
-	background: #F45189 !important;
+
+.hot_btn_selected {
+    background: #F45189 !important;
 }
-.hot_time_box_bg{
-	background: rgba(0,0,0,0.50);
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	display: none;
+
+.hot_time_box_bg {
+    background: rgba(0, 0, 0, 0.50);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: none;
 }
-.hot_time_box{
-	width: 100%;
-	height: 5.45rem;
-	background: #FFFFFF;
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	display: none;
+
+.hot_time_box {
+    width: 100%;
+    height: 5.45rem;
+    background: #FFFFFF;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
 }
-.hot_time_box h3{
-	font-size: 0.28rem;
-	text-align: center;
-	color: #777777;
-	height: 0.88rem;
-	line-height: 0.88rem;
-	border-bottom: 1px solid #E4E4E4;
+
+.hot_time_box h3 {
+    font-size: 0.28rem;
+    text-align: center;
+    color: #777777;
+    height: 0.88rem;
+    line-height: 0.88rem;
+    border-bottom: 1px solid #E4E4E4;
 }
-.hot_time_box .time_list{
-	display: flex;
+
+.hot_time_box .time_list {
+    display: flex;
 }
-.hot_time_box .time_list .time_day{
-	width: 2.98rem;
-	height: 4.56rem;
-	background: #F7F7F7;
-	overflow-y: scroll;
+
+.hot_time_box .time_list .time_day {
+    width: 2.98rem;
+    height: 4.56rem;
+    background: #F7F7F7;
+    overflow-y: scroll;
 }
-.hot_time_box .time_list .time_day li{
-	font-size: 0.26rem;
-	color: #595959;
-	height: 0.76rem;
-	line-height: 0.76rem;
-	border-bottom: 1px solid #E9E9E9;
-	padding-left: 0.3rem;
+
+.hot_time_box .time_list .time_day li {
+    font-size: 0.26rem;
+    color: #595959;
+    height: 0.76rem;
+    line-height: 0.76rem;
+    border-bottom: 1px solid #E9E9E9;
+    padding-left: 0.3rem;
 }
-.hot_time_box .time_list .time_day .day_selected{
-	color: #FF3B3B !important;
+
+.hot_time_box .time_list .time_day .day_selected {
+    color: #FF3B3B !important;
 }
-.hot_time_box .time_list .time_min{
-	flex: 1;
+
+.hot_time_box .time_list .time_min {
+    flex: 1;
+    height: 4.56rem;
+    overflow-y: scroll;
 }
-.hot_time_box .time_list .time_min li{
-	display: flex;
-	align-items: center;
-	height: 0.76rem;
-	border-bottom: 1px solid #E9E9E9;
-	position: relative;
+
+.hot_time_box .time_list .time_min li {
+    display: flex;
+    align-items: center;
+    height: 0.76rem;
+    border-bottom: 1px solid #E9E9E9;
+    position: relative;
 }
-.hot_time_box .time_list .time_min span{
-	font-size: 0.28rem;
-	color: #686468;
-	padding-left: 0.7rem;
+
+.hot_time_box .time_list .time_min span {
+    font-size: 0.28rem;
+    color: #686468;
+    padding-left: 0.7rem;
 }
-.time_min_selected span{
-	color: #FF3B3B !important;
+
+.time_min_selected span {
+    color: #FF3B3B !important;
 }
-.time_min_selected i{
-	position: absolute;
-	display: block;
-	width: 0.25rem;
-	height: 0.22rem;
-	background: url(../images/time_min_selected.png) no-repeat;
-	background-size: 100%;
-	margin-left: 0.71rem;
-	left: 2rem;
-	top: 50%;
-	transform: translateY(-50%);
+
+.time_min_selected i {
+    position: absolute;
+    display: block;
+    width: 0.25rem;
+    height: 0.22rem;
+    background: url(../images/time_min_selected.png) no-repeat;
+    background-size: 100%;
+    margin-left: 0.71rem;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);

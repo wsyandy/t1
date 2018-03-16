@@ -315,6 +315,7 @@ class UnionsController extends BaseController
     {
         $time = time();
         $days = [];
+        $hours = [];
 //        $hours = [8, 10, 12, 14, 16, 20];
 //        for ($i = 0; $i < 6; $i++) {
 //            $day = beginOfDay($time + $i * 60 * 60 * 24);
@@ -325,12 +326,20 @@ class UnionsController extends BaseController
 //            }
 //            $days[date("m月d日", $day)] = $times;
 //        }
-        for ($i = 0; $i < 7; $i++) {
+        for ($i = 0; $i < 8; $i++) {
             $day = beginOfDay($time + $i * 60 * 60 * 24);
             $days[date("m月d日", $day)] = $day;
         }
 
+        for ($j = 0; $j < 24; $j = $j + 2) {
+            $k = $j + 2;
+            $key = "$j:00-$k:00";
+            $hours[$key] = $j;
+        }
+
+
         $this->view->days = $days;
+        $this->view->hours = $hours;
         $this->view->user = $this->currentUser();
         $this->view->title = "申请上热门";
         $this->view->sid = $this->params('sid');
