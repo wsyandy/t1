@@ -26,7 +26,7 @@
     <div class="new_member" v-if="is_president" @click.stop="applicationList">
         <div class="new_member_title">新的成员</div>
         <div class="new_member_right">
-            <span class="new_dot"></span>
+            <span class="new_dot" v-show="{{ union.apply_user_num }}"></span>
             <img class="arrow-right" src="/m/images/arrow-right.png" alt="">
         </div>
     </div>
@@ -199,6 +199,7 @@
                 } else {
                     url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }
+                console.log(url);
                 location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
             },
             roomDetail: function (id) {

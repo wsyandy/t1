@@ -326,19 +326,19 @@ class Unions extends BaseModel
         $db = Users::getUserDb();
         $key = $this->generateNewUersKey();
 
-        if ($db->zscore($key, $user->id)) {
-            return [ERROR_CODE_FAIL, '你已经申请该家族'];
-        }
+//        if ($db->zscore($key, $user->id)) {
+//            return [ERROR_CODE_FAIL, '你已经申请该家族'];
+//        }
+        $db->zrem($this->generateRefusedUersKey(), $user->id);
 
         if ($db->zadd($key, time(), $user->id)) {
             if ($this->need_apply == 0) {
                 list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
                 return [$error_code, $err_reason];
             }
-            return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
         }
-
-        return [ERROR_CODE_FAIL, '系统异常'];
+        return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
+//        return [ERROR_CODE_FAIL, '系统异常'];
     }
 
     function agreeJoinUnion($union_host, $user)
@@ -359,10 +359,15 @@ class Unions extends BaseModel
         }
 
         if ($db->zadd($key, time(), $user->id)) {
-
+            $db->zrem($this->generateRefusedUersKey(), $user->id);
             $user->union_id = $this->id;
             $user->union_type = $this->type;
             $user->update();
+            if ($this->type == UNION_TYPE_PRIVATE && $this->need_apply == STATUS_ON) {
+                $content = "恭喜您，" . "$union_host->nickname" . "已同意您的申请，您现在已经是家族中的一员了。";
+                $content_type = CHAT_CONTENT_TYPE_TEXT;
+                Chats::sendSystemMessage($user->id, $content_type, $content);
+            }
 
             return [ERROR_CODE_SUCCESS, '加入成功'];
         }
@@ -387,6 +392,11 @@ class Unions extends BaseModel
         }
 
         $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
+
+        $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
+        $content_type = CHAT_CONTENT_TYPE_TEXT;
+        Chats::sendSystemMessage($user->id, $content_type, $content);
+
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
@@ -422,9 +432,20 @@ class Unions extends BaseModel
 
         $user->union_id = 0;
         $user->union_type = 0;
-        //清空家族土豪值，声望值
-        $user->union_charm_value = 0;
-        $user->union_wealth_value = 0;
+        if ($this->type == UNION_TYPE_PRIVATE) {
+            $user->union_charm_value = 0;
+            $user->union_wealth_value = 0;
+
+            $content_type = CHAT_CONTENT_TYPE_TEXT;
+            if ($kicking) {
+                $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
+                Chats::sendSystemMessage($user->id, $content_type, $content);
+            } else {
+                $content = "$user->nickname" . "已将退出了家族";
+                Chats::sendSystemMessage($union_host->id, $content_type, $content);
+            }
+        }
+
 
         $user->update();
         return [ERROR_CODE_SUCCESS, '操作成功'];
@@ -458,7 +479,14 @@ class Unions extends BaseModel
 
         $users = Users::findBy(['union_id' => $union_id]);
 
+        $union = self::findFirstById($union_id);
+
         foreach ($users as $user) {
+            if ($union->type == UNION_TYPE_PRIVATE && !$user->isUnionHost($union)) {
+                $content = "您的家族解散了，快去看看其它家族吧！";
+                $content_type = CHAT_CONTENT_TYPE_TEXT;
+                Chats::sendSystemMessage($user->id, $content_type, $content);
+            }
             $user->union_id = 0;
             $user->union_type = 0;
             //清空家族土豪值，声望值
@@ -570,5 +598,26 @@ class Unions extends BaseModel
     function isBlocked()
     {
         return $this->status == STATUS_BLOCKED;
+    }
+
+    function applyUserNum()
+    {
+        $db = Users::getUserDb();
+
+        $apply_user_key = $this->generateNewUersKey();
+        $apply_user_ids = $db->zrevrange($apply_user_key, 0, -1);
+        if (count($apply_user_ids) <= 0) {
+            return 0;
+        }
+
+        $agreed_user_key = $this->generateUersKey();
+        $refused_user_key = $this->generateRefusedUersKey();
+
+        $agreed_user_ids = $db->zrevrange($agreed_user_key, 0, -1);
+        $refused_user_ids = $db->zrevrange($refused_user_key, 0, -1);
+
+        $new_users_id = array_diff($apply_user_ids, $agreed_user_ids, $refused_user_ids);
+
+        return count($new_users_id);
     }
 }
