@@ -566,4 +566,9 @@ class Unions extends BaseModel
 
         return false;
     }
+
+    function isBlocked()
+    {
+        return $this->status == STATUS_BLOCKED;
+    }
 }

@@ -102,7 +102,7 @@ class BaseController extends \ApplicationController
         }
 
         if ($union->status == STATUS_BLOCKED || STATUS_OFF == $union->status) {
-            echo "账号异常,请联系管理员";
+            echo "账号异常,请联系官方员";
             return false;
         }
 
