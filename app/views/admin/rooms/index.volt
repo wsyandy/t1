@@ -67,6 +67,9 @@
     {% if isAllowed('rooms','add_user_agreement') %}
         <a href="/admin/rooms/add_user_agreement?id={{ room.id }}" class="modal_action">添加协议</a></br>
     {% endif %}
+    {% if isAllowed('rooms','delete_user_agreement') %}
+        <a href="/admin/rooms/delete_user_agreement?id={{ room.id }}" id="delete_user_agreement">清除协议</a></br>
+    {% endif %}
     {% if isAllowed('rooms','edit') %}
         <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a></br>
     {% endif %}
@@ -77,3 +80,15 @@
 {% endmacro %}
 
 {{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"操作":"operate_link"]) }}
+
+<script>
+    $('body').on('click', '#delete_user_agreement', function (e) {
+        e.preventDefault();
+        var href = $(this).attr('href');
+        if (confirm('确认清除?')) {
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+            })
+        }
+    })
+</script>
