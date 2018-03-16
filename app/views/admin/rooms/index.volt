@@ -19,6 +19,7 @@
         {{ options(Rooms.THEME_TYPE) }}
     </select>
 
+    <input type="hidden" name="room[hot]", value="{{ hot }}">
 
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>

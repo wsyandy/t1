@@ -535,6 +535,10 @@ class Unions extends BaseModel
 
     function needUpdateProfile()
     {
+        if (STATUS_PROGRESS == $this->status) {
+            return true;
+        }
+        
         if ($this->isNormal() && $this->isAuthSuccess()) {
             return false;
         }

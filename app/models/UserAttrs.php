@@ -230,7 +230,7 @@ trait UserAttrs
     function toUnionStatJson()
     {
         $json = [
-            'income' => 100,
+            'income' => $this->income,
             'host_broadcaster_time_text' => $this->getHostBroadcasterTimeText(),
             'broadcaster_time_text' => $this->getBroadcasterTimeText(),
             'audience_time_text' => $this->getAudienceTimeText(),
@@ -599,9 +599,10 @@ trait UserAttrs
         return "同意";
     }
 
-    function getIncomeToday()
+    function getDaysIncome($start_at, $end_at)
     {
-        $total_amount = GiftOrders::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $this->id], 'column' => 'amount']);
-        return $total_amount;
+        $total_amount = GiftOrders::sum(['conditions' => 'user_id = :user_id: and created_at >= :start_at: and created_at <= :end_at:',
+            'bind' => ['user_id' => $this->id, 'start_at' => $start_at, 'end_at' => $end_at], 'column' => 'amount']);
+        return intval($total_amount);
     }
 }

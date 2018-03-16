@@ -15,6 +15,7 @@ class RoomsController extends BaseController
     {
         $cond = $this->getConditions('room');
         $name = $this->params('name');
+        $hot = $this->params('hot', 0);
 
         if (isset($cond['conditions'])) {
             $cond['conditions'] .= " and user_id > 0";
@@ -26,6 +27,10 @@ class RoomsController extends BaseController
             $cond['conditions'] .= " and name like '%$name%' ";
         }
 
+        if ($hot) {
+            $cond['conditions'] .= " and hot = 1 ";
+        }
+
         $page = 1;
         $total_page = 1;
         $per_page = 30;
@@ -33,6 +38,7 @@ class RoomsController extends BaseController
         $cond['order'] = "id desc";
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->rooms = $rooms;
+        $this->view->hot = $hot;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 

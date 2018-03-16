@@ -32,7 +32,7 @@
 
         {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
             or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
-            isAllowed('rooms','index') or isAllowed('broadcasts','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') %}
+            isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -72,12 +72,6 @@
                     {% if isAllowed('complaints','index') %}
                         <li><a href="/admin/complaints">举报列表</a></li>
                     {% endif %}
-                    {% if isAllowed('rooms','index') %}
-                        <li><a href="/admin/rooms">房间列表</a></li>
-                    {% endif %}
-                    {% if isAllowed('broadcasts','index') %}
-                        <li><a href="/admin/broadcasts">电台房间列表</a></li>
-                    {% endif %}
                     {% if isAllowed('share_histories','index') %}
                         <li><a href="/admin/share_histories">分享记录</a></li>
                     {% endif %}
@@ -88,15 +82,32 @@
             </li>
         {% endif %}
 
+        {% if isAllowed('rooms','index') or isAllowed('broadcasts','index') %}
+            <li>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">房间<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('rooms','index') %}
+                        <li><a href="/admin/rooms">房间列表</a></li>
+                    {% endif %}
+                    {% if isAllowed('rooms','index') %}
+                        <li><a href="/admin/rooms?hot=1">热门房间</a></li>
+                    {% endif %}
+                    {% if isAllowed('broadcasts','index') %}
+                        <li><a href="/admin/broadcasts">电台房间列表</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
         {% if isAllowed('unions','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">工会<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('unions', 'index') %}
-                        <li><a href="/admin/unions?type=1">工会</a></li>
+                        <li><a href="/admin/unions?auth_status=1">工会</a></li>
                     {% endif %}
                     {% if isAllowed('unions', 'index') %}
-                        <li><a href="/admin/unions?type=2">家族</a></li>
+                        <li><a href="/admin/unions?auth_status=3">待审核的公会</a></li>
                     {% endif %}
                 </ul>
             </li>
