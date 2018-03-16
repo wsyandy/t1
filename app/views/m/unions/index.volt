@@ -8,11 +8,11 @@
             <img class="family_bg" :src="item.bg" alt="">
             <div class="family_left">
                 <div class="family_info">
-                    <img class="family-ico" :src="hasFamily&&index==0?my_family.ico:item.ico" alt="">
-                    <span class="family_name">${ hasFamily?(index==0?my_family.name:item.name):"" }</span>
+                    <img class="family-ico" :src="item.ico" alt="">
+                    <span class="family_name">${ item.name }</span>
                 </div>
                 <div class="family_slogan">
-                    ${ hasFamily?(index==0?my_family.slogan:my_family.slogan_other):item.slogan }
+                    ${ item.slogan }
                 </div>
             </div>
             <img class="family-arrow" :src="arrow_right" alt="">
@@ -33,13 +33,11 @@
     var opts = {
         data: {
             avatar: "",
-            hasFamily: true, /*判断是否有家族*/
+            hasFamily: false, /*判断是否有家族*/
             union: {{ union }},
             sid: '{{ sid }}',
             code: '{{ code }}',
-            my_family: {
-                slogan_other: "看看其他好玩的家族"
-            },
+            slogan_other: "看看其他好玩的家族",
             arrow_right: "/m/images/ico-arrow-right.png",
             family: [
                 {
@@ -68,10 +66,11 @@
         created: function () {
             if (this.union) {
                 console.log(this.union);
-                this.my_family.url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
-                this.my_family.ico = "{{ avatar_url }}";
-                this.my_family.name = this.union.name;
-                this.my_family.slogan = this.union.notice;
+                this.family[0].url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
+                this.family[0].ico = "{{ avatar_url }}";
+                this.family[0].name = this.union.name;
+                this.family[0].slogan = this.union.notice;
+                this.family[1].slogan = this.slogan_other;
             }
         },
         computed: {
@@ -88,11 +87,7 @@
                 if (this.union && this.union.type == 1) {
                     return;
                 }
-                if (this.hasFamily && index == 0) {
-                    location.href = this.my_family.url
-                } else {
-                    location.href = url;
-                }
+                location.href = url;
             }
         }
     };

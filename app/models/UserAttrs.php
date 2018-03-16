@@ -213,8 +213,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'charm_value' => $this->charm_value,
-            'wealth_value' => $this->wealth_value,
+            'union_charm_value' => $this->union_charm_value,
+            'union_wealth_value' => $this->union_wealth_value,
             'monologue' => $this->monologue,
             'current_room_id' => $this->current_room_id
         ];
