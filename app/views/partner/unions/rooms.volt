@@ -26,7 +26,7 @@
         <thead>
         <tr>
             <th width="20%">日期</th>
-            <th width="20%">项目</th>
+            <th width="20%">房间</th>
             <th>金额</th>
 
         </tr>
@@ -35,7 +35,7 @@
         {% for room in rooms %}
             <tr>
                 <td>{{ stat_at }}</td>
-                <td>流水</td>
+                <td>{{ room.name }}</td>
                 <td>{{ room.amount }}</td>
             </tr>
         {% endfor %}
