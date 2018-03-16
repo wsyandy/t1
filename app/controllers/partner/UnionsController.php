@@ -109,6 +109,9 @@ class UnionsController extends BaseController
 
             foreach ($users as $user) {
                 $user->income = $user->getDaysIncome($begin_at, $end_at);
+                $user->audience_time = $user->getAudienceTimeByDate($begin_at);
+                $user->broadcaster_time = $user->getBroadcasterTimeByDate($begin_at);
+                $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($begin_at);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
