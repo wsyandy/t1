@@ -49,6 +49,14 @@ class Devices extends BaseModel
         }
     }
 
+    function beforeUpdate(){
+
+        if($this->hasChanged('user_id')){
+            $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->id]]);
+            $this->reg_num = $reg_num;
+        }
+    }
+
     function afterUpdate()
     {
         if ($this->hasChanged('status')) {
@@ -479,4 +487,5 @@ class Devices extends BaseModel
 
         return $hot_cache->zscore($key, $this->device_no) > 0;
     }
+
 }

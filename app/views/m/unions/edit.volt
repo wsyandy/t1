@@ -18,14 +18,14 @@
                 <li>
                     <span>家族名称 </span>
                     <input class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
-                           value="{{ union.name }}" name="name">
+                           value="{{ union.name }}" name="name" id="name">
                 </li>
                 <li>
                     <span>家族公告 </span>
                     <div class="textarea_text">
                         <textarea name="notice" maxlength="50" placeholder="最多输50个字"
                                   onpropertychange="this.style.height=this.scrollHeight + 'px'"
-                                  oninput="this.style.height=this.scrollHeight + 'px'"
+                                  oninput="this.style.height=this.scrollHeight + 'px'" id="notice"
                         >{{ union.notice }}</textarea>
                     </div>
                 </li>
@@ -118,7 +118,6 @@
     var can_create = true;
     $(document).on('submit', '#create_union', function (event) {
         event.preventDefault();
-        console.log("aaaaa");
         if (can_create == false) {
             return false;
         }
@@ -131,6 +130,22 @@
             can_create = true;
             return false;
         }
+
+        var name_length = $("#name").val().length;
+        var notice_length = $("#notice").val().length;
+
+        if (name_length == 0) {
+            alert("家族名称不能为空");
+            can_create = true;
+            return false;
+        }
+
+        if (notice_length == 0) {
+            alert("家族公告不能为空");
+            can_create = true;
+            return false;
+        }
+
 
         self.ajaxSubmit({
             error: function (xhr, status, error) {
