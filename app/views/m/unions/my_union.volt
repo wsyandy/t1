@@ -171,7 +171,9 @@
             },
             memberList: function (index) {
                 var data = {union_id:{{ union.id }}, page: this.page, per_page: 30, sid: this.sid, code: this.code};
-                if (index == 1) {
+                if (index == 0) {
+                    data.order = "current_room_id desc";
+                } else if (index == 1) {
                     data.order = "union_charm_value desc";
                 } else if (index == 2) {
                     data.order = "union_wealth_value desc";
