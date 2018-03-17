@@ -115,7 +115,7 @@
                 <div class="text_left">
                     <div class="text m_right">
                         <h1>01 .</h1>
-                        <p>在“最新上线”界面，找到自己感兴趣的房间，点击进入</p>
+                        <p>在“最新”界面，找到自己感兴趣的房间，点击进入</p>
                     </div>
                     <div class="img">
                         <img src="/m/images/4_1.png">

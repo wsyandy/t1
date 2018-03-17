@@ -16,7 +16,7 @@
         <td>星座: {{ user.constellation_text }} 身高: {{ user.height }}</td>
         <td>粉丝人数: {{ user.followed_num }} 关注数: {{ user.follow_num }} 好友人数: {{ user.friend_num }}</td>
         <td>fr: {{ user.fr }}, 渠道:{{ user.partner_name }}</td>
-        <td>省份: {{ user.province_name }} 城市: {{ user.city_name }}</td>
+        <td>头像审核状态:{{ user.avatar_status_text }}</td>
     </tr>
     <tr>
         <td>IP:{{ user.ip }}</td>
@@ -29,12 +29,12 @@
         <td>用户等级:{{ user.level }}</td>
         <td>用户经验:{{ user.experience }}</td>
         <td>段位:{{ user.segment_text }}</td>
-        <td>头像审核状态:{{ user.avatar_status_text }}</td>
+        <td>充值金额:{{ user.pay_amount }}</td>
     </tr>
     <tr>
-        <td>充值金额:{{ user.pay_amount }}</td>
-        <td></td>
-        <td></td>
+        <td>经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}</td>
+        <td>IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}</td>
+        <td>自述城市信息: {{ user.province_name }}, {{ user.city_name }}</td>
         <td></td>
     </tr>
 </table>
