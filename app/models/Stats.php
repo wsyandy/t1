@@ -75,11 +75,11 @@ class Stats extends BaseModel
         'payment_success_rate' => '支付成功率%',
         'new_payment_success_rate' => '新用户支付成功率%',
         'payment_success_total' => '支付总额',
-        'arpu' => '人均客单价',
-        'paid_arpu' => '人均arpu',
+        'paid_arpu' => '人均客单价',
+        'arpu' => '人均arpu',
         'new_payment_success_total' => '新用户支付总额',
-        'new_arpu' => '新用户人均客单价',
-        'new_paidarpu' => '新用户人均arpu'
+        'new_paid_arpu' => '新用户人均客单价',
+        'new_arpu' => '新用户人均arpu'
     ];
 
     // 渠道统计
