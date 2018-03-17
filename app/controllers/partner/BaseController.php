@@ -92,7 +92,18 @@ class BaseController extends \ApplicationController
 
         $union = $this->currentUser()->union;
 
+        if ($union && $union->type == UNION_TYPE_PRIVATE) {
+            echo "您已经加入其它家族, 不能参加家族";
+            return false;
+        }
+
+        if ($this->currentUser()->isUnionHost($union)) {
+            echo "您无权限登录";
+            return false;
+        }
+
         if (!$union) {
+
             list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
 
             if (ERROR_CODE_SUCCESS != $error_code) {
