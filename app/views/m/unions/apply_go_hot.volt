@@ -125,9 +125,10 @@
             };
 
             $.authPost("/m/unions/hot_room_history", data, function (resp) {
-                alert(resp.error_reason);
-                if (resp.error_code == 0 && resp.error_url) {
+                if (resp.error_code == 0) {
                     location.href = "/m/unions/my_union?sid={{ sid }}&code={{ code }}";
+                } else {
+                    alert(resp.error_reason);
                 }
             })
         }
