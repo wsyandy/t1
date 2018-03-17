@@ -97,7 +97,7 @@ class BaseController extends \ApplicationController
             return false;
         }
 
-        if (!$this->currentUser()->isUnionHost($union)) {
+        if ($union && !$this->currentUser()->isUnionHost($union)) {
             echo "您无权限登录";
             return false;
         }
