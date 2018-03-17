@@ -87,7 +87,7 @@ class AccountHistories extends BaseModel
 
     function isCostDiamond()
     {
-        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT;
+        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION;
     }
 
     function afterCreate()

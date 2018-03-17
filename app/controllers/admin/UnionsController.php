@@ -122,8 +122,7 @@ class UnionsController extends BaseController
         $opts = ['exit' => 'exit'];
         $union->exitUnion($user, $opts);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, "", ['error_url' => '/admin/unions/users/' . $user->union_id]);
-
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
 
     function familyAction()
