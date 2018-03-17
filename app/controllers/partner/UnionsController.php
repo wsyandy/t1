@@ -108,6 +108,15 @@ class UnionsController extends BaseController
             $users = \Users::findPagination($cond, $page, $per_page);
 
             foreach ($users as $user) {
+
+                $union_history = \UnionHistories::findFirstBy([
+                    'user_id' => $user->id, 'union_id' => $union->id
+                ], 'id desc');
+
+                if ($union_history->join_at < $begin_at) {
+                    $begin_at = $union_history->join_at;
+                }
+
                 $user->income = $user->getDaysIncome($begin_at, $end_at);
                 $user->audience_time = $user->getAudienceTimeByDate($begin_at);
                 $user->broadcaster_time = $user->getBroadcasterTimeByDate($begin_at);
@@ -157,6 +166,15 @@ class UnionsController extends BaseController
             $rooms = \Rooms::find($cond);
 
             foreach ($rooms as $room) {
+
+                $union_history = \UnionHistories::findFirstBy([
+                    'user_id' => $room->user->id, 'union_id' => $union->id
+                ], 'id desc');
+
+                if ($union_history->join_at < $begin_at) {
+                    $begin_at = $union_history->join_at;
+                }
+
                 $room->amount = $room->getDayAmount($begin_at, $end_at);
                 $total_amount += $room->amount;
             }
