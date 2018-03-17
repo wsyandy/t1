@@ -45,10 +45,10 @@
     产品渠道:{{ user.product_channel_name }}<br/>
     FR:{{ user.fr }}<br/>
     FR名称:{{ user.partner_name }}<br/>
-    平台:{{ device.platform }}<br/>
-    平台版本:{{ device.platform_version }}<br/>
-    版本名字:{{ device.version_name }}<br/>
-    版本号:{{ device.version_code }}<br/>
+    平台:{{ user.platform }}<br/>
+    平台版本:{{ user.platform_version }}<br/>
+    版本名字:{{ user.version_name }}<br/>
+    版本号:{{ user.version_code }}<br/>
     api协议版本: {{ user.api_version }}<br/>
 {% endmacro %}
 
