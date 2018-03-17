@@ -20,13 +20,36 @@ class OrdersController extends BaseController
 
         $cond = $this->getConditions('order');
         $cond['order'] = 'id desc';
-        $orders = \Orders::findPagination($cond, $page, $per_page,$total_entries);
+
+        $order_id = $this->params('id');
+
+        if ($order_id) {
+            $cond = ['conditions' => "id = " . $order_id];
+        }
+
+        $orders = \Orders::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->orders = $orders;
-        $this->view->product_channels = \ProductChannels::find(['order'=>'id desc']);
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 
     function detailAction()
     {
+        $page = 1;
+        $per_page = 30;
+        $total_page = 1;
+        $total_entries = $per_page * $total_page;
 
+        $cond = $this->getConditions('order');
+        $cond['order'] = 'id desc';
+
+        $order_id = $this->params('id');
+
+        if ($order_id) {
+            $cond = ['conditions' => "id = " . $order_id];
+        }
+
+        $orders = \Orders::findPagination($cond, $page, $per_page, $total_entries);
+        $this->view->orders = $orders;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 }

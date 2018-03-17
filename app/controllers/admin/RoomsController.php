@@ -45,6 +45,7 @@ class RoomsController extends BaseController
         $this->view->rooms = $rooms;
         $this->view->hot = $hot;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->total_entries = \Rooms::count($cond);
     }
 
     function editAction()

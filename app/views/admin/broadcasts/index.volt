@@ -17,6 +17,10 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
+<ol class="breadcrumb">
+    <li class="active">总个数 {{ total_entries }}</li>
+</ol>
+
 {% macro user_info(room) %}
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>

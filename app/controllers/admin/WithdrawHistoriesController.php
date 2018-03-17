@@ -19,9 +19,9 @@ class WithdrawHistoriesController extends BaseController
         $total_entries = $per_page * $total_page;
         $cond = $this->getConditions('withdraw_history');
 
-        $start_at = $this->params('start_at', date('Y-m-d'));
-        $end_at = $this->params('end_at', date('Y-m-d'));
-        debug($start_at,$end_at);
+        $start_at = $this->params('start_at');
+        $end_at = $this->params('end_at');
+        debug($start_at, $end_at);
         if ($start_at) {
             $start_at = beginOfDay(strtotime($start_at));
             if (isset($cond['conditions'])) {
@@ -47,8 +47,8 @@ class WithdrawHistoriesController extends BaseController
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
         $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
-        $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');
-        $this->view->end_at = $this->params('end_at', null) ?? date('Y-m-d');
+        $this->view->start_at = $this->params('start_at');
+        $this->view->end_at = $this->params('end_at');
     }
 
     function editAction()
