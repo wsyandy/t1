@@ -45,10 +45,13 @@
     产品渠道:{{ user.product_channel_name }}<br/>
     FR:{{ user.fr }}<br/>
     FR名称:{{ user.partner_name }}<br/>
-    平台:{{ user.platform }}<br/>
+    平台:{{ device.platform }}<br/>
+    平台版本:{{ device.platform_version }}<br/>
+    版本名字:{{ device.version_name }}<br/>
+    版本号:{{ device.version_code }}<br/>
     api协议版本: {{ user.api_version }}<br/>
-    客户端版本: {{ user.version_code }}<br/>
 {% endmacro %}
+
 
 {% macro profile_link(user) %}
     {% if isAllowed('users','detail') %}
@@ -88,9 +91,12 @@
             FR:${ user.fr }<br/>
             FR名称:${ user.partner_name }<br/>
             平台:${ user.platform }<br/>
+            平台版本:{{ user.platform_version }}<br/>
+            版本名字:{{ user.version_name }}<br/>
+            版本号:{{ user.version_code }}<br/>
             api协议版本: ${ user.api_version }<br/>
-            客户端版本: ${user.version_code}<br/>
         </td>
+
         <td>
             姓名:${ user.nickname } 性别:${ user.sex_text }<br/>
             手机号码:${ user.mobile }<br/>
