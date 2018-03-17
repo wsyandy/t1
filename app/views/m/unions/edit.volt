@@ -155,6 +155,12 @@
 
             success: function (resp, status, xhr) {
                 can_create = true;
+
+                if (resp.error_code == 0) {
+                    location.href = "/m/unions/my_union?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}";
+                    return;
+                }
+
                 if (resp.error_code == -400) {
                     vm.isPop = true;
                 } else {
