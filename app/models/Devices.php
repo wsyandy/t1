@@ -49,9 +49,10 @@ class Devices extends BaseModel
         }
     }
 
-    function beforeUpdate(){
+    function beforeUpdate()
+    {
 
-        if($this->hasChanged('user_id')){
+        if ($this->hasChanged('user_id')) {
             $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->id]]);
             $this->reg_num = $reg_num;
         }
@@ -171,6 +172,10 @@ class Devices extends BaseModel
 
     function canRegister()
     {
+        if ($this->isBlocked()) {
+            return false;
+        }
+
         if ($this->status == DEVICE_STATUS_WHITE) {
             return true;
         }
