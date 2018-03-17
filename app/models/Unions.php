@@ -63,10 +63,6 @@ class Unions extends BaseModel
 
         $amount = 100;
 
-        if ($user->diamond < $amount) {
-            return [ERROR_CODE_FORM, '钻石余额不足'];
-        }
-
         $name = trim(fetch($opts, 'name', '')); //家族名称
         $notice = trim(fetch($opts, 'notice', '')); //家族公告
         $need_apply = fetch($opts, 'need_apply', 0); //是否需要申请
@@ -74,6 +70,10 @@ class Unions extends BaseModel
 
         if (!file_exists($avatar_file)) {
             return [ERROR_CODE_FAIL, '头像不能为空'];
+        }
+
+        if ($user->diamond < $amount) {
+            return [ERROR_CODE_FORM, '钻石余额不足'];
         }
 
         if (isBlank($name) || mb_strlen($name) > 5) {

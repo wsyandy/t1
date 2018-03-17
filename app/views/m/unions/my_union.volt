@@ -44,6 +44,7 @@
                     <div class="name">
                         <span> ${member.nickname}</span>
                         <span class="female" v-if="member.sex == 1">${member.age}</span>
+                        <span class="male" v-if="member.sex == 0">${member.age}</span>
                         <span class="president" v-if="member.id == union.user_id">会长</span>
                     </div>
                     <div class="slogan">

@@ -240,6 +240,18 @@ body {
     background-position: 0.1rem center;
 }
 
+.member_name .male {
+    background-color: #F99AD3;
+    border-radius: 1rem;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+    padding: 0 0.1rem 0 0.38rem;
+    background-image: url("../images/male.png");
+    background-size: 0.18rem;
+    background-repeat: no-repeat;
+    background-position: 0.1rem center;
+}
+
 .member_name .president {
     background-color: #886BFF;
     border-radius: 1rem;
