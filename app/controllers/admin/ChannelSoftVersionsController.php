@@ -94,4 +94,18 @@ class ChannelSoftVersionsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
 
+    function generatePartnerUrlsAction()
+    {
+        $soft_version = \SoftVersions::findFirstById($this->params('id'));
+        $host = "https://t.momoyuedu.cn";
+        $soft_version->host = $host;
+
+        if ($this->request->isPost()) {
+            $host = $this->params('soft_version[host]', $host);
+            $host = trim($host, '/');
+            return $this->renderJSON(ERROR_CODE_FAIL, $host . "/soft_versions/" . $soft_version->id . ".apk");
+        }
+
+        $this->view->soft_version = $soft_version;
+    }
 }
