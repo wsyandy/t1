@@ -222,6 +222,9 @@
                     if (resp.error_url) {
                         location.href = resp.error_url;
                     }
+                    if (resp.error_code == 0) {
+                        window.history.back();
+                    }
                 });
             },
             applicationList: function () {
