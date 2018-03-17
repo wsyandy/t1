@@ -61,7 +61,7 @@ class Unions extends BaseModel
             }
         }
 
-        $amount = -100;
+        $amount = 100;
 
         if ($user->diamond < $amount) {
             return [ERROR_CODE_FORM, '钻石余额不足'];

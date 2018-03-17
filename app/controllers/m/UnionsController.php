@@ -23,7 +23,7 @@ class UnionsController extends BaseController
             if (isPresent($union->avatar_url)) {
                 $this->view->avatar_url = $union->avatar_url;
             } else {
-                $this->view->avatar_url = $user->avatar_url;
+                $this->view->avatar_url = $union->$user->avatar_url;
             }
             $this->view->union = $union;
         }
