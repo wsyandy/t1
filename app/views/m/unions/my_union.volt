@@ -248,10 +248,11 @@
                 var url = "/m/unions/exit_union";
                 var data = {union_id: this.union.id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
-                    alert(resp.error_reason);
                     if (resp.error_code == 0) {
                         var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
                         location.href = url;
+                    } else {
+                        alert(resp.error_reason);
                     }
                 });
             },
