@@ -9,7 +9,7 @@
         <div class="family-logo">
             <img src="" class="ico-img-update" id="img_preview" :src="img_update">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
-            <input class="img_update" type="file" required="required" id="avatar_file"
+            <input class="img_update" type="file" id="avatar_file" required="required"
                    name="avatar_file" accept="image/*" capture="camera">
         </div>
 
@@ -38,12 +38,12 @@
                 </li>
 
             </ul>
-            {#<div class="agree_div" @click="agreeSelect">#}
-                {#<img class="agree_img" :src="set_select"/>#}
-                {#<div class="agree_text">#}
-                    {#<span class="agree_txt">阅读并同意</span>#}
-                    {#<span class="agree_txt">《家族使用协议》</span></div>#}
-            {#</div>#}
+            <div class="agree_div" >
+                <img class="agree_img" :src="set_select" @click="agreeSelect"/>
+                <div class="agree_text">
+                    <span class="agree_txt">阅读并同意</span>
+                    <span class="agree_txt" @click="agreement">《家族使用协议》</span></div>
+            </div>
 
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input type="submit" name="submit" value="申请创建（100钻石）"
@@ -88,8 +88,8 @@
             ],
             selected: 1,
             img_update: '/m/images/ico-img-update.png',
-            set_select: '/m/images/ico-selected.png',
-            hasAgree: false,
+            set_select: '/m/images/ico-select.png',
+            hasAgree: true,
             sid: '{{ sid }}',
             code: '{{ code }}'
         },
@@ -123,6 +123,10 @@
                 console.log(index);
                 this.selected = this.options[index].value;
                 this.isSet = false
+            },
+            agreement: function () {
+                var url = "/m/unions/agreement&sid=" + vm.sid + "&code=" + vm.code;
+                location.href = url;
             }
         }
     };
@@ -140,6 +144,14 @@
 
         var self = $(this);
 
+        var fileSize = $('#avatar_file')[0].size;
+        console.log(fileSize);
+        if (!fileSize) {
+            alert("请选择图片");
+            can_create = true;
+            return false;
+        }
+
         var name_length = $("#name").val().length;
         var notice_length = $("#notice").val().length;
 
@@ -155,10 +167,10 @@
             return false;
         }
 
-//        if (vm.hasAgree) {
-//            can_create = true;
-//            return false;
-//        }
+        if (vm.hasAgree) {
+            can_create = true;
+            return false;
+        }
 
         self.ajaxSubmit({
             error: function (xhr, status, error) {

@@ -369,4 +369,8 @@ class UnionsController extends BaseController
         }
     }
 
+    function agreementAction()
+    {
+        $this->view->product_channel = $this->currentProductChannel();
+    }
 }
