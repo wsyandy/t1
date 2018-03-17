@@ -14,4 +14,10 @@ class ProductChannelsController extends BaseController
     {
         $this->view->title = '玩转Hi';
     }
+
+    function serviceAction()
+    {
+        $this->view->product_channel = $this->currentProductChannel();
+        $this->view->title = '客服中心';
+    }
 }
