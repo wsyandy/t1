@@ -38,12 +38,12 @@
                     </div>
                 </li>
             </ul>
-            <div class="agree_div" @click="agreeSelect">
-                <img class="agree_img" :src="set_select"/>
-                <div class="agree_text">
-                    <span class="agree_txt">阅读并同意</span>
-                    <span class="agree_txt">《家族使用协议》</span></div>
-            </div>
+            {#<div class="agree_div" @click="agreeSelect">#}
+                {#<img class="agree_img" :src="set_select"/>#}
+                {#<div class="agree_text">#}
+                    {#<span class="agree_txt">阅读并同意</span>#}
+                    {#<span class="agree_txt">《家族使用协议》</span></div>#}
+            {#</div>#}
 
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input type="submit" name="submit" value="保存修改"
@@ -126,10 +126,10 @@
 
         var self = $(this);
 
-        if (vm.hasAgree) {
-            can_create = true;
-            return false;
-        }
+//        if (vm.hasAgree) {
+//            can_create = true;
+//            return false;
+//        }
 
         var name_length = $("#name").val().length;
         var notice_length = $("#notice").val().length;

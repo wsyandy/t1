@@ -38,12 +38,12 @@
                 </li>
 
             </ul>
-            <div class="agree_div" @click="agreeSelect">
-                <img class="agree_img" :src="set_select"/>
-                <div class="agree_text">
-                    <span class="agree_txt">阅读并同意</span>
-                    <span class="agree_txt">《家族使用协议》</span></div>
-            </div>
+            {#<div class="agree_div" @click="agreeSelect">#}
+                {#<img class="agree_img" :src="set_select"/>#}
+                {#<div class="agree_text">#}
+                    {#<span class="agree_txt">阅读并同意</span>#}
+                    {#<span class="agree_txt">《家族使用协议》</span></div>#}
+            {#</div>#}
 
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input type="submit" name="submit" value="申请创建（100钻石）"
@@ -52,7 +52,7 @@
 
             <div class="popup_cover" v-if="isPop">
                 <div class="popup_box">
-                    <img class="ico-warn" src="images/ico-warn.png" alt="">
+                    <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
                     <div class="popup_text">
                         创建家族需要支付100钻石，您的钻石数量不足，请先充值
                     </div>
@@ -88,9 +88,8 @@
             ],
             selected: 1,
             img_update: '/m/images/ico-img-update.png',
-            set_select: '/m/images/ico-select.png',
-            hasAgree: true,
-            agreement: true,
+            set_select: '/m/images/ico-selected.png',
+            hasAgree: false,
             sid: '{{ sid }}',
             code: '{{ code }}'
         },
@@ -156,10 +155,10 @@
             return false;
         }
 
-        if (vm.hasAgree) {
-            can_create = true;
-            return false;
-        }
+//        if (vm.hasAgree) {
+//            can_create = true;
+//            return false;
+//        }
 
         self.ajaxSubmit({
             error: function (xhr, status, error) {

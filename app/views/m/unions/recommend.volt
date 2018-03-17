@@ -15,9 +15,9 @@
     </div>
     <div class="family-list">
         <ul>
-            <li v-for="item in unions">
+            <li v-for="item in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
-                    <img class="family_avatar" :src="item.avatar_url" alt="" @click.stop="unionDetail(item.id)">
+                    <img class="family_avatar" :src="item.avatar_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
                         <span class="family_prestige"> 声望${ item.fame_value }</span>
