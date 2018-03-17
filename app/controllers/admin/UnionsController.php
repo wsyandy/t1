@@ -109,28 +109,21 @@ class UnionsController extends BaseController
 
     function deleteUserAction()
     {
-        $id = $this->params('id');
-        $union = \Unions::findFirstById($id);
-        if ($this->request->isPost()) {
-            if (!$union) {
-                return $this->renderJSON(ERROR_CODE_FAIL, "公会不存在");
-            }
-            $user_id = $this->params('user_id');
+        $user_id = $this->params('user_id');
 
-            $user = \Users::findFirstById($user_id);
+        $user = \Users::findFirstById($user_id);
 
-            if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, "用户不存在");
-            }
+        $union = \Unions::findFirstById($user->union_id);
 
-            $opts = ['exit' => 'exit'];
-            $union->exitUnion($user, $opts);
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, "", ['error_url' => '/admin/unions/users/' . $id]);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, "用户不存在");
         }
 
-        $this->view->union = $union;
-        $this->view->id = $id;
+        $opts = ['exit' => 'exit'];
+        $union->exitUnion($user, $opts);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, "", ['error_url' => '/admin/unions/users/' . $user->union_id]);
+
     }
 
     function familyAction()
