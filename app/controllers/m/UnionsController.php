@@ -345,6 +345,7 @@ class UnionsController extends BaseController
         $this->view->days = $days;
         $this->view->hours = $hours;
         $this->view->user = $this->currentUser();
+        $this->view->union = $this->currentUser()->union;
         $this->view->title = "申请上热门";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
