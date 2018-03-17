@@ -93,7 +93,7 @@ class BaseController extends \ApplicationController
         $union = $this->currentUser()->union;
 
         if ($union && $union->type == UNION_TYPE_PRIVATE) {
-            echo "您已经加入其它家族, 不能参加家族";
+            echo "您已经加入其它家族, 不能加入工会";
             return false;
         }
 
