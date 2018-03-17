@@ -417,7 +417,17 @@ class Unions extends BaseModel
         $db->zrem($this->generateNewUersKey(), $user->id);
 
         $union_history = UnionHistories::findFirstBy(
-            ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
+            ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON], 'id desc');
+
+        $expire_at = time() - 86400 * 7;
+
+        if (isDevelopmentEnv()) {
+            $expire_at = time() - 60;
+        }
+
+        if ($union_history->join_at > $expire_at) {
+            return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
+        }
 
         if ($union_history) {
 
@@ -433,11 +443,14 @@ class Unions extends BaseModel
 
         $user->union_id = 0;
         $user->union_type = 0;
+
         if ($this->type == UNION_TYPE_PRIVATE) {
+
             $user->union_charm_value = 0;
             $user->union_wealth_value = 0;
 
             $content_type = CHAT_CONTENT_TYPE_TEXT;
+
             if ($kicking) {
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
                 Chats::sendSystemMessage($user->id, $content_type, $content);
@@ -447,8 +460,8 @@ class Unions extends BaseModel
             }
         }
 
-
         $user->update();
+
         return [ERROR_CODE_SUCCESS, '操作成功'];
     }
 
