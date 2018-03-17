@@ -31,6 +31,12 @@
         <td>段位:{{ user.segment_text }}</td>
         <td>头像审核状态:{{ user.avatar_status_text }}</td>
     </tr>
+    <tr>
+        <td>充值金额:{{ user.pay_amount }}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>
 
 <table class="table  table-condensed table-hover">
