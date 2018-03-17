@@ -548,6 +548,13 @@ class Unions extends BaseModel
         }
 
         foreach ($opts as $filed => $value) {
+
+            if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 5)) {
+                continue;
+            } else if ($filed == 'notice' && (isBlank($value) || mb_strlen($value) > 50)) {
+                continue;
+            }
+
             $this->$filed = $value;
         }
 

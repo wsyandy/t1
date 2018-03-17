@@ -30,7 +30,7 @@
 .hot_box ul li input {
     flex: 1;
     font-size: 0.3rem;
-    color: #C6C6C6;
+    /*color: #C6C6C6;*/
 }
 
 .hot_box ul li b {
