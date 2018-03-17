@@ -10,10 +10,27 @@ class HotRoomHistories extends BaseModel
 {
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效', STATUS_PROGRESS => '申请中'];
 
-    function generateTime($date, $hour)
+    /**
+     * @type Unions
+     */
+    private $_union;
+
+    /**
+     * @type Users
+     */
+    private $_user;
+
+    function afterUpdate()
     {
-        $start_at = beginOfDay($date) + 60 * 60 * $hour;
-        $end_at = $start_at + 60 * 60 * 2 - 1;
+        if ($this->hasChanged('status')) {
+            if (STATUS_ON == $this->status) {
+                //还需要将房间,时间段添加到热门房间
+                Chats::sendTextSystemMessage($this->union->user_id, $this->successMessage());
+            }
+            if (STATUS_OFF == $this->status) {
+                Chats::sendTextSystemMessage($this->union->user_id, $this->failMessage());
+            }
+        }
     }
 
     static function createHistories($opts, $applicant)
@@ -32,11 +49,15 @@ class HotRoomHistories extends BaseModel
             return [ERROR_CODE_FAIL, '此用户不存在或不在您家族中'];
         }
 
+        if (!$user->room) {
+            return [ERROR_CODE_FAIL, '此用户还没有创建房间'];
+        }
+
         if (isBlank($start_at) || $start_at < time()) {
             return [ERROR_CODE_FAIL, '选取时间段错误'];
         }
 
-        if (isBlank($introduce) || mb_strlen($introduce) >= 50 || mb_strlen($introduce) <= 5) {
+        if (isBlank($introduce) || mb_strlen($introduce) > 50 || mb_strlen($introduce) < 5) {
             return [ERROR_CODE_FAIL, '直播简介错误'];
         }
 
@@ -53,10 +74,9 @@ class HotRoomHistories extends BaseModel
         $history->introduce = $introduce;
         $history->status = STATUS_PROGRESS;
         $history->union_id = $union->id;
-
         $history->save();
 
-        return [ERROR_CODE_SUCCESS, '申请提交成功'];
+        return [ERROR_CODE_SUCCESS, '申请提交成功，请耐心等待结果'];
     }
 
     static function checkTime($start_at, $end_at, $user_id)
@@ -73,5 +93,23 @@ class HotRoomHistories extends BaseModel
         }
 
         return true;
+    }
+
+    function successMessage()
+    {
+        $time = date('Y年m月d日H点', $this->start_at) . "-" . date('H点', $this->end_at + 1);
+
+        $content = "您的上热门申请通过了，请通知" . $this->user->nickname . "(ID: $this->user_id)" .
+            "在" . $time . "之间准时开播哦！我们会把" .
+            $this->user->nickname . "的房间准时推荐到热门房间，快去准备吧";
+
+        return $content;
+    }
+
+    function failMessage()
+    {
+        $content = "很遗憾，您的上热门申请未通过，您的申请时间段已被别的家族申请了，快去挑选其它的时间段吧！";
+
+        return $content;
     }
 }

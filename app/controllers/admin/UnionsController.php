@@ -111,17 +111,21 @@ class UnionsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page');
-        $auth_status = $this->params('auth_status');
 
-        $cond = ['conditions' => '  type = :type',
-            'bind' => ['type' => UNION_TYPE_PRIVATE]];
-
+        $cond = $this->getConditions('union');
         $cond['order'] = "id desc";
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= "and type = " . UNION_TYPE_PRIVATE;
+        } else {
+            $cond['conditions'] = "type = " . UNION_TYPE_PRIVATE;
+        }
+
+        debug($cond);
 
         $unions = \Unions::findPagination($cond, $page, $per_page);
 
         $this->view->unions = $unions;
-        $this->view->auth_status = $auth_status;
     }
 
     function settledAmountAction()

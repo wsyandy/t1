@@ -18,7 +18,7 @@
     <ul>
         <li>
             <span>时间选取</span>
-            <b class="select_time" id="select_time">3月9日(今天) 10:00-12:00</b>
+            <b class="select_time" id="select_time"></b>
         </li>
     </ul>
 </div>
@@ -59,12 +59,12 @@
         //设置日期默认选项
         var first_li_1 = $("ol li:eq(0)");
         first_li_1.addClass('day_selected');
-        first_li_1.html(first_li_1.html() + "（今天）");
+        first_li_1.html(first_li_1.html() + "（明天）");
         day = first_li_1.attr("id");
         day_html = first_li_1.html();
 
         var first_li_2 = $("ol li:eq(1)");
-        first_li_2.html(first_li_2.html() + "（明天）");
+        first_li_2.html(first_li_2.html() + "（后天）");
 
         //设置时间段默认选项
         var selected_ul_li = $(".time_min ul li:eq(4)");
