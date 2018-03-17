@@ -51,8 +51,10 @@ class Devices extends BaseModel
 
     function beforeUpdate(){
 
-        $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->id]]);
-        $this->reg_num = $reg_num;
+        if($this->hasChanged('user_id')){
+            $reg_num = Users::count(['conditions' => 'device_id = :device_id:', 'bind' => ['device_id' => $this->id]]);
+            $this->reg_num = $reg_num;
+        }
     }
 
     function afterUpdate()
