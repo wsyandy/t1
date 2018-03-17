@@ -515,7 +515,7 @@ class Unions extends BaseModel
     function getAvatarUrl()
     {
         if (isBlank($this->avatar)) {
-            return '/m/images/avatar.png';
+            return null;
         }
 
         return StoreFile::getUrl($this->avatar);
@@ -524,7 +524,7 @@ class Unions extends BaseModel
     function getAvatarSmallUrl()
     {
         if (isBlank($this->avatar)) {
-            return '/m/images/avatar.png';
+            return null;
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';

@@ -20,7 +20,11 @@ class UnionsController extends BaseController
             $this->view->union = 0;
             $this->view->avatar_url = '';
         } else {
-            $this->view->avatar_url = $union->avatar_url;
+            if (isPresent($union->avatar_url)) {
+                $this->view->avatar_url = $union->avatar_url;
+            } else {
+                $this->view->avatar_url = $user->avatar_url;
+            }
             $this->view->union = $union;
         }
 
@@ -51,7 +55,7 @@ class UnionsController extends BaseController
             list($error_code, $error_reason) = \Unions::createPrivateUnion($user, $opts);
 
             $url = '';
-            if ($error_code  == ERROR_CODE_SUCCESS) {
+            if ($error_code == ERROR_CODE_SUCCESS) {
                 $sid = $this->params('sid');
                 $code = $this->params('code');
                 $url = "/m/unions/index?sid={$sid}&code={$code}";

@@ -84,7 +84,7 @@
         },
         methods: {
             enterUnion: function (index, url) {
-                if (this.union && this.union.type == 1) {
+                if (this.union && this.union.type == 1 && index == 0) {
                     return;
                 }
                 location.href = url;
