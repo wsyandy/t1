@@ -75,9 +75,11 @@ class Stats extends BaseModel
         'payment_success_rate' => '支付成功率%',
         'new_payment_success_rate' => '新用户支付成功率%',
         'payment_success_total' => '支付总额',
-        'arpu' => '人均arpu',
+        'arpu' => '人均客单价',
+        'paid_arpu' => '人均arpu',
         'new_payment_success_total' => '新用户支付总额',
-        'new_arpu' => '新用户人均arpu'
+        'new_arpu' => '新用户人均客单价',
+        'new_paidarpu' => '新用户人均arpu'
     ];
 
     // 渠道统计
@@ -176,6 +178,7 @@ class Stats extends BaseModel
             // 活跃统计
             if (in_array($action, ['active_user']) && ($mobile || $third_unionid)) {
                 $stat_db->zadd($date_key . "_register_user", $stat_at, $id); // 注册用户
+                $stat_db->zadd($hour_key . "_register_user", $stat_at, $id); // 注册用户
             }
 
             // 新用户
@@ -766,15 +769,30 @@ class Stats extends BaseModel
         $this->data_hash['payment_success_total'] = intval($num);
     }
 
+    //人均贡献值
     function arpu()
     {
         $payment_success_total = $this->data_hash['payment_success_total'];
-        $payment_success_user = $this->data_hash['payment_success_user'];
+        $active_register_user_num = $this->data_hash['active_register_user_num'];
         $avg = 0;
+        if ($active_register_user_num > 0) {
+            $avg = intval($payment_success_total * 100 / $active_register_user_num) / 100;
+        }
+        $this->data_hash['arpu'] = $avg;
+    }
+
+    //客单价
+    function paidArpu()
+    {
+        $payment_success_total = $this->data_hash['payment_success_total'];
+        $payment_success_user = $this->data_hash['payment_success_user'];
+
+        $avg = 0;
+
         if ($payment_success_user > 0) {
             $avg = intval($payment_success_total * 100 / $payment_success_user) / 100;
         }
-        $this->data_hash['arpu'] = $avg;
+        $this->data_hash['paid_arpu'] = $avg;
     }
 
     function newPaymentSuccessTotal()
@@ -789,12 +807,25 @@ class Stats extends BaseModel
     function newArpu()
     {
         $payment_success_total = $this->data_hash['new_payment_success_total'];
+        $register_num = $this->data_hash['register_num'];
+        $avg = 0;
+        if ($register_num > 0) {
+            $avg = intval($payment_success_total * 100 / $register_num) / 100;
+        }
+        $this->data_hash['new_arpu'] = $avg;
+    }
+
+    function newPaidArpu()
+    {
+        $payment_success_total = $this->data_hash['new_payment_success_total'];
         $payment_success_user = $this->data_hash['new_payment_success_user'];
         $avg = 0;
+
         if ($payment_success_user > 0) {
             $avg = intval($payment_success_total * 100 / $payment_success_user) / 100;
         }
-        $this->data_hash['new_arpu'] = $avg;
+
+        $this->data_hash['new_paid_arpu'] = $avg;
     }
 
     /**
