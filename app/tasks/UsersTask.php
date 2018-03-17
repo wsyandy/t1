@@ -675,5 +675,30 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixPayAmountAction()
+    {
+        $orders = Orders::find(['columns' => 'distinct user_id']);
+
+        $user_ids = [];
+
+        foreach ($orders as $order) {
+            $user_ids[] = $order->user_id;
+        }
+
+        $users = Users::find(['conditions' => 'id in (' . implode(',', $user_ids) . ')']);
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            $user->pay_amount = Orders::sum([
+                'conditions' => 'user_id = ' . $user->id,
+                'column' => 'amount'
+            ]);
+
+            echoLine($user->pay_amount);
+
+            $user->update();
+        }
+    }
 }
 

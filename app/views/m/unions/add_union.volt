@@ -18,14 +18,14 @@
                 <li>
                     <span>家族名称 </span>
                     <input class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
-                           name="name">
+                           name="name" id="name">
                 </li>
                 <li>
                     <span>家族公告 </span>
                     <div class="textarea_text">
                         <textarea name="notice" maxlength="50" placeholder="最多输50个字"
                                   onpropertychange="this.style.height=this.scrollHeight + 'px'"
-                                  oninput="this.style.height=this.scrollHeight + 'px'"></textarea>
+                                  oninput="this.style.height=this.scrollHeight + 'px'" id="notice"></textarea>
                     </div>
                 </li>
 
@@ -140,6 +140,21 @@
         can_create = false;
 
         var self = $(this);
+
+        var name_length = $("#name").val().length;
+        var notice_length = $("#notice").val().length;
+
+        if (name_length == 0) {
+            alert("家族名称不能为空");
+            can_create = true;
+            return false;
+        }
+
+        if (notice_length == 0) {
+            alert("家族公告不能为空");
+            can_create = true;
+            return false;
+        }
 
         if (vm.hasAgree) {
             can_create = true;

@@ -583,4 +583,25 @@ class MeiTask extends \Phalcon\Cli\Task
         $union->update();
     }
 
+    function fixStatAction()
+    {
+        $stats = Stats::find(['order' => 'id desc']);
+
+        foreach ($stats as $stat) {
+            $data = $stat->data;
+
+            if ($data) {
+                $stat->data_hash = json_decode($data, true);
+
+                echoLine($stat->data_hash);
+                $stat->newArpu();
+                $stat->arpu();
+                $stat->paidArpu();
+                $stat->newPaidArpu();
+                $stat->data = json_encode($stat->data_hash, JSON_UNESCAPED_UNICODE);
+                $stat->update();
+                echoLine($stat->data_hash);
+            }
+        }
+    }
 }

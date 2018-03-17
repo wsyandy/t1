@@ -326,7 +326,7 @@ class UnionsController extends BaseController
 //            }
 //            $days[date("m月d日", $day)] = $times;
 //        }
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 1; $i < 8; $i++) {
             $day = beginOfDay($time + $i * 60 * 60 * 24);
             $days[date("m月d日", $day)] = $day;
         }

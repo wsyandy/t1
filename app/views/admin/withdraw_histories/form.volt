@@ -1,4 +1,4 @@
-{% set f = simple_form(['admin', withdraw_historie],['method':'post', 'class':'ajax_model_form', 'model': 'withdraw_historie',
+{% set f = simple_form(['admin', withdraw_historie],['method':'post', 'class':'ajax_model_form', 'model': 'withdraw_history',
 'enctype': 'multipart/form-data']) %}
 
 {{ f.select('status', ['label': '状态', 'collection': WithdrawHistories.STATUS]) }}

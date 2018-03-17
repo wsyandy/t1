@@ -370,7 +370,7 @@ class Unions extends BaseModel
                 Chats::sendSystemMessage($user->id, $content_type, $content);
             }
 
-            return [ERROR_CODE_SUCCESS, '加入成功'];
+            return [ERROR_CODE_SUCCESS, '成功加入家族'];
         }
 
         return [ERROR_CODE_FAIL, '系统异常'];
@@ -548,6 +548,13 @@ class Unions extends BaseModel
         }
 
         foreach ($opts as $filed => $value) {
+
+            if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 5)) {
+                continue;
+            } else if ($filed == 'notice' && (isBlank($value) || mb_strlen($value) > 50)) {
+                continue;
+            }
+
             $this->$filed = $value;
         }
 

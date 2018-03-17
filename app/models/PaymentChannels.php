@@ -17,7 +17,8 @@ class PaymentChannels extends BaseModel
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $PLATFORMS = ['*' => '全部', 'ios' => 'ios', 'android' => '安卓'];
+    static $PLATFORMS = ['client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
+        'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
 
     function toJson()
     {
@@ -100,6 +101,11 @@ class PaymentChannels extends BaseModel
         }
 
         return $user->isAndroid();
+    }
+
+    function isWeixinH5()
+    {
+        return 'weixin_h5' == $this->payment_type;
     }
 
     function isApple()
