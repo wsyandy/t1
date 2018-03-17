@@ -20,10 +20,10 @@ class UnionsController extends BaseController
             $this->view->union = 0;
             $this->view->avatar_url = '';
         } else {
-            if (isPresent($union->avatar_url)) {
+            if ($union->type == UNION_TYPE_PRIVATE) {
                 $this->view->avatar_url = $union->avatar_url;
             } else {
-                $this->view->avatar_url = $union->$user->avatar_url;
+                $this->view->avatar_url = $union->user->avatar_url;
             }
             $this->view->union = $union;
         }
