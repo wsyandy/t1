@@ -36,13 +36,29 @@ class GiftOrdersController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
-        $page = $this->params('page',1);
-        $per_page = $this->params('per_page',30);
-        $gift_orders = \GiftOrders::findPagination($cond, $page,$per_page);
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 30);
+        $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $this->view->gift_orders = $gift_orders;
 
         $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');
         $this->view->end_at = $this->params('end_at', null) ?? date('Y-m-d');
+    }
+
+    function detailAction()
+    {
+        $user_id = $this->params('user_id');
+
+        if ($user_id) {
+            $cond['conditions'] = 'user_id = ' . $user_id;
+        }
+
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 30);
+
+        $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
+
+        $this->view->gift_orders = $gift_orders;
     }
 
     function showAction()

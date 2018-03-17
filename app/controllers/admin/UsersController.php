@@ -25,6 +25,13 @@ class UsersController extends BaseController
         }
 
         $cond['order'] = 'id desc';
+
+        $id = $this->params('id');
+
+        if ($id) {
+            $cond['conditions'] = ' id = ' . $id;
+        }
+
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
