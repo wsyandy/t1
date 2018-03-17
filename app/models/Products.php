@@ -103,7 +103,9 @@ class Products extends BaseModel
             ),
             'order' => 'amount asc'
         ));
-        $selected_products = array();
+
+        $selected_products = [];
+
         foreach ($products as $product) {
             debug("product: " . strval($product->id));
             if ($product->match($user)) {
