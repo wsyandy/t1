@@ -366,8 +366,7 @@ class Unions extends BaseModel
             $user->update();
             if ($this->type == UNION_TYPE_PRIVATE && $this->need_apply == STATUS_ON) {
                 $content = "恭喜您，" . "$union_host->nickname" . "已同意您的申请，您现在已经是家族中的一员了。";
-                $content_type = CHAT_CONTENT_TYPE_TEXT;
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
 
             return [ERROR_CODE_SUCCESS, '成功加入家族'];
@@ -395,8 +394,7 @@ class Unions extends BaseModel
         $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
 
         $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
-        $content_type = CHAT_CONTENT_TYPE_TEXT;
-        Chats::sendSystemMessage($user->id, $content_type, $content);
+        Chats::sendTextSystemMessage($user->id, $content);
 
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
@@ -449,14 +447,12 @@ class Unions extends BaseModel
             $user->union_charm_value = 0;
             $user->union_wealth_value = 0;
 
-            $content_type = CHAT_CONTENT_TYPE_TEXT;
-
             if ($kicking) {
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             } else {
                 $content = "$user->nickname" . "已经退出了家族";
-                Chats::sendSystemMessage($this->user_id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
         }
 
@@ -498,8 +494,7 @@ class Unions extends BaseModel
         foreach ($users as $user) {
             if ($union->type == UNION_TYPE_PRIVATE && !$user->isUnionHost($union)) {
                 $content = "您的家族解散了，快去看看其它家族吧！";
-                $content_type = CHAT_CONTENT_TYPE_TEXT;
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
             $user->union_id = 0;
             $user->union_type = 0;
