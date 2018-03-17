@@ -22,7 +22,8 @@
 
 
 {% macro down_url(soft_version) %}
-    <a target="_blank" href="{{ soft_version.file_url }}">点击下载</a>
+    <a target="_blank" href="{{ soft_version.file_url }}">点击下载</a><br>
+    <a href="/admin/channel_soft_versions/generate_partner_urls/{{ soft_version.id }}" class="modal_action">生成推广链接地址</a>
 {% endmacro %}
 {% macro info(soft_version) %}
     渠道: {{ soft_version.product_channel_name }} 平台: {{ soft_version.platform_text }}<br/>
