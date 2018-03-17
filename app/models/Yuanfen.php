@@ -136,7 +136,7 @@ class Yuanfen
             }
 
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
-            $dest_filename = APP_NAME . '/avatar/' . date('Y/m/d/') . md5(uniqid(mt_rand())) . '.jpg';
+            $dest_filename = APP_NAME . '/avatar/' . date('Ymd') . md5(uniqid(mt_rand())) . '.jpg';
             $f = fopen($source_filename, 'w');
             fwrite($f, $res);
             $avatar_res = \StoreFile::upload($source_filename, $dest_filename);
