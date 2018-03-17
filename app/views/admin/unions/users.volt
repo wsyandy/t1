@@ -38,10 +38,13 @@
         {% endif %}
         <br/>
     {% endif %}
+    {% if isAllowed('unions','delete_user') %}
+        <a href="/admin/unions/delete_user?user_id={{ user.id }}&id={{ id }}" id="delete_user">删除</a>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '用户信息':'user_info',
-    '状态':'user_status_info', '操作':'profile_link'
+'状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -76,3 +79,14 @@
 </script>
 
 
+<script type="text/javascript">
+    $('body').on('click', '#delete_user', function (e) {
+        e.preventDefault();
+        if (confirm('确认删除？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+            });
+        }
+    });
+</script>

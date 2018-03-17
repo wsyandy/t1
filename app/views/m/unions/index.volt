@@ -68,7 +68,11 @@
                 console.log(this.union);
                 this.family[0].url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
                 this.family[0].ico = "{{ avatar_url }}";
-                this.family[0].name = this.union.name;
+                if (this.union.type == 1) {
+                    this.family[0].name = this.union.name;
+                } else {
+                    this.family[0].name = "我的家族";
+                }
                 this.family[0].slogan = this.union.notice;
                 this.family[1].slogan = this.slogan_other;
             }
