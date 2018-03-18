@@ -84,10 +84,6 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '家族公告不能为空或字数超过限制'];
         }
 
-//        if (isBlank($need_apply)) {
-//            return [ERROR_CODE_FAIL, '家族设置有误'];
-//        }
-
         $union = new Unions();
         $union->name = $name;
         $union->notice = $notice;
@@ -228,8 +224,8 @@ class Unions extends BaseModel
     function applicationStatus($user_id)
     {
         $user_db = Users::getUserDb();
-        $agreed_key = $this->generateUersKey();
-        $refused_key = $this->generateRefusedUersKey();
+        $agreed_key = $this->generateUsersKey();
+        $refused_key = $this->generateRefusedUsersKey();
 
         if ($user_db->zscore($agreed_key, $user_id)) {
             return 1;
@@ -247,7 +243,7 @@ class Unions extends BaseModel
 
         $offset = $per_page * ($page - 1);
 
-        $new_user_key = $this->generateNewUersKey();
+        $new_user_key = $this->generateNewUsersKey();
 
         $user_ids = $user_db->zrevrange($new_user_key, $offset, $offset + $per_page - 1);
 
@@ -291,17 +287,22 @@ class Unions extends BaseModel
         return $pagination;
     }
 
-    function generateNewUersKey()
+    function generateNewUsersKey()
     {
         return "union_total_users_list" . $this->id;
     }
 
-    function generateRefusedUersKey()
+    function generateCheckUsersKey()
+    {
+        return "union_check_users_list" . $this->id;
+    }
+
+    function generateRefusedUsersKey()
     {
         return "union_refused_users_list" . $this->id;
     }
 
-    function generateUersKey()
+    function generateUsersKey()
     {
         return "union_users_list" . $this->id;
     }
@@ -324,12 +325,15 @@ class Unions extends BaseModel
         }
 
         $db = Users::getUserDb();
-        $key = $this->generateNewUersKey();
+        $key = $this->generateNewUsersKey();
 
-//        if ($db->zscore($key, $user->id)) {
-//            return [ERROR_CODE_FAIL, '你已经申请该家族'];
-//        }
-        $db->zrem($this->generateRefusedUersKey(), $user->id);
+        $check_key = $this->generateCheckUsersKey();
+
+        if ($db->zscore($check_key, $user->id)) {
+            return [ERROR_CODE_FAIL, '你已经申请该家族'];
+        }
+
+        $db->zrem($this->generateRefusedUsersKey(), $user->id);
 
         if ($this->need_apply == 0) {
             list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
@@ -337,6 +341,7 @@ class Unions extends BaseModel
         }
 
         $db->zadd($key, time(), $user->id);
+        $db->zadd($check_key, time(), $user->id);
 
         return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
 //        return [ERROR_CODE_FAIL, '系统异常'];
@@ -353,14 +358,17 @@ class Unions extends BaseModel
         }
 
         $db = Users::getUserDb();
-        $key = $this->generateUersKey();
+        $key = $this->generateUsersKey();
 
         if ($db->zscore($key, $user->id)) {
             return [ERROR_CODE_FAIL, '该用户已经加入您的家族'];
         }
 
         if ($db->zadd($key, time(), $user->id)) {
-            $db->zrem($this->generateRefusedUersKey(), $user->id);
+
+            $db->zrem($this->generateRefusedUsersKey(), $user->id);
+            $db->zrem($this->generateCheckUsersKey(), $user->id);
+
             $user->union_id = $this->id;
             $user->union_type = $this->type;
             $user->update();
@@ -383,15 +391,16 @@ class Unions extends BaseModel
 
         $db = Users::getUserDb();
 
-        if ($db->zscore($this->generateUersKey(), $user->id)) {
+        if ($db->zscore($this->generateUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '您已同意'];
         }
 
-        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+        if ($db->zscore($this->generateRefusedUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '您已拒绝'];
         }
 
-        $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
+        $db->zadd($this->generateRefusedUsersKey(), time(), $user->id);
+        $db->zrem($this->generateCheckUsersKey(),$user->id);
 
         $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
         Chats::sendTextSystemMessage($user->id, $content);
@@ -409,10 +418,10 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
-        $key = $this->generateUersKey();
+        $key = $this->generateUsersKey();
         $db->zrem($key, $user->id);
-        $db->zrem($this->generateRefusedUersKey(), $user->id);
-        $db->zrem($this->generateNewUersKey(), $user->id);
+        $db->zrem($this->generateRefusedUsersKey(), $user->id);
+        $db->zrem($this->generateNewUsersKey(), $user->id);
 
         $union_history = UnionHistories::findFirstBy(
             ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON], 'id desc');
@@ -420,7 +429,7 @@ class Unions extends BaseModel
         $expire_at = time() - 86400 * 7;
 
         if (isDevelopmentEnv()) {
-            $expire_at = time() - 60;
+            $expire_at = time() - 2;
         }
 
         if ($union_history->join_at > $expire_at) {
@@ -472,9 +481,9 @@ class Unions extends BaseModel
 
         if ($this->update()) {
             $db = Users::getUserDb();
-            $db->zclear($this->generateNewUersKey());
-            $db->zclear($this->generateRefusedUersKey());
-            $db->zclear($this->generateUersKey());
+            $db->zclear($this->generateNewUsersKey());
+            $db->zclear($this->generateRefusedUsersKey());
+            $db->zclear($this->generateUsersKey());
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
         return [ERROR_CODE_SUCCESS, ''];
@@ -620,14 +629,14 @@ class Unions extends BaseModel
     {
         $db = Users::getUserDb();
 
-        $apply_user_key = $this->generateNewUersKey();
+        $apply_user_key = $this->generateNewUsersKey();
         $apply_user_ids = $db->zrevrange($apply_user_key, 0, -1);
         if (count($apply_user_ids) <= 0) {
             return 0;
         }
 
-        $agreed_user_key = $this->generateUersKey();
-        $refused_user_key = $this->generateRefusedUersKey();
+        $agreed_user_key = $this->generateUsersKey();
+        $refused_user_key = $this->generateRefusedUsersKey();
 
         $agreed_user_ids = $db->zrevrange($agreed_user_key, 0, -1);
         $refused_user_ids = $db->zrevrange($refused_user_key, 0, -1);
