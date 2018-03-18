@@ -544,17 +544,23 @@ class UsersTask extends \Phalcon\Cli\Task
 
             $hi_coins = $total_amount / $rate;
 
+
+            $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'amount']);
+
+            echoLine($hi_coins);
+            if ($widthdraw_hi_coins > 0) {
+                $hi_coins = $hi_coins - $widthdraw_hi_coins;
+            }
+
             if ($hi_coins == $user->hi_coins) {
                 //echoLine("no need fix", $user->id, $hi_coins);
                 continue;
             }
 
-            echoLine("fix", $user->id, $hi_coins, $user->hi_coins);
-
+            echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             $user->hi_coins = $hi_coins;
             //echoLine($total_amount, $rate);
-            //echoLine($i, $total_amount, $user->id, $user->hi_coins);
-            //$user->update();
+            $user->update();
         }
     }
 
