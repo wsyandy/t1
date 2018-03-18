@@ -33,10 +33,10 @@
         <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
     {% endif %}
     {% if isAllowed('unions_histories','basic') %}
-        <li role="presentation"><a href="/admin/unions_histories/basic?user_id={{ user.id }}&type=1">加入公会记录</a></li>
+        <li role="presentation"><a href="/admin/union_histories/basic?user_id={{ user.id }}&type=1">加入公会记录</a></li>
     {% endif %}
     {% if isAllowed('unions_histories','basic') %}
-        <li role="presentation"><a href="/admin/unions_histories/basic?user_id={{ user.id }}&type=2">加入家族记录</a></li>
+        <li role="presentation"><a href="/admin/union_histories/basic?user_id={{ user.id }}&type=2">加入家族记录</a></li>
     {% endif %}
 </ul>
 
