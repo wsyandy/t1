@@ -140,9 +140,9 @@ class UnionsController extends BaseController
 
             $union_id = $this->params('union_id');
 
-            $res = [];
-
             $union = \Unions::findFirstById($union_id);
+
+            $res = ['users' => []];
 
             if ($union) {
                 $page = $this->params('page', 1);
@@ -158,6 +158,8 @@ class UnionsController extends BaseController
                     $res = $users->toJson('users', 'toUnionJson');
                 }
             }
+
+            $res['user_num'] = $union->userNum();
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
         }

@@ -32,9 +32,9 @@
     </div>
     <ul class="member_tab" id="member_tab">
         <li v-if="!is_president" v-for="(item,index) in tab" class="member_only" v-show="!index"> ${item} <span
-                    v-if="!index">(${total_entries})</span></li>
+                    v-if="!index">(${user_num})</span></li>
         <li v-if="is_president" v-for="(item,index) in tab" :class="[cueIdx===index?'active':'']"
-            @click="tabClick(index)"> ${item} <span v-if="!index">(${total_entries})</span></li>
+            @click="tabClick(index)"> ${item} <span v-if="!index">(${user_num})</span></li>
     </ul>
     <ul class="member_list" v-show="cueIdx==0">
         <li>
@@ -174,7 +174,7 @@
             code: '{{ code }}',
             page: 1,
             total_page: 1,
-            total_entries: 0,
+            user_num: 0,
             member_list: [],
             can_apply: true,
             user_operation: true,
@@ -212,7 +212,7 @@
                 this.selected_index = index;
                 $.authGet('/m/unions/users', data, function (resp) {
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
+                    vm.user_num = resp.user_num;
                     $.each(resp.users, function (index, item) {
                         vm.member_list.push(item);
                     })
