@@ -79,9 +79,13 @@
                     if ($(this).data('support_apple_pay')) {
                         $("#payment_type_apple").show();
                     } else {
-                        $(".account_pay li").eq(0).find('.select_pay').addClass('selected_pay');
-                        $(".account_pay li").eq(0).siblings().find('.select_pay').removeClass('selected_pay');
-                        $("#payment_type_apple").hide();
+                        var flag = $("#payment_type_apple").is(":hidden");
+
+                        if (!flag) {
+                            $(".account_pay li").eq(0).find('.select_pay').addClass('selected_pay');
+                            $(".account_pay li").eq(0).siblings().find('.select_pay').removeClass('selected_pay');
+                            $("#payment_type_apple").hide();
+                        }
                     }
                 }
 
