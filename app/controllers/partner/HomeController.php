@@ -12,7 +12,7 @@ class HomeController extends BaseController
         $qrcode = generateQrcode($url);
 
         $this->session->set("user_id", null);
-        $this->session->set('login_token', $token);
+        $this->session->set('union_login_token', $token);
         $this->view->qrcode = $qrcode;
     }
 
@@ -23,7 +23,7 @@ class HomeController extends BaseController
     // 扫码登录
     function checkAuthAction()
     {
-        $token = $this->session->get('login_token');
+        $token = $this->session->get('union_login_token');
 
         list($error_code, $error_reason, $access_token) = \AccessTokens::checkToken($token);
 

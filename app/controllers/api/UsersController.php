@@ -517,6 +517,7 @@ class UsersController extends BaseController
 
             $access_token->status = AUTH_SUCCESS;
             $access_token->user_id = $user->id;
+            $access_token->login_at = time();
             $access_token->save();
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '确认成功');
