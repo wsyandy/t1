@@ -293,6 +293,18 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    function roomAutoToHotAction()
+    {
+        $cond = [
+            'conditions' => 'hot = :hot: and status = :status: and ',
+            'bind' => [],
+            'order' => 'last_at desc',
+            'limit' => 10
+        ];
+
+        $manual_hot_rooms = Rooms::find($cond);
+    }
+
     function fixNormalRoomsAction()
     {
         $rooms = Rooms::find([

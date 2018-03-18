@@ -545,7 +545,8 @@ class UsersTask extends \Phalcon\Cli\Task
             $hi_coins = $total_amount / $rate;
 
 
-            $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'amount']);
+            $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
+                'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS], 'column' => 'amount']);
 
             echoLine($hi_coins);
             if ($widthdraw_hi_coins > 0) {
