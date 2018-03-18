@@ -130,6 +130,18 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
         }
 
+        $union_history = \UnionHistories::findFirstBy([
+            'user_id' => $this->currentUser()->id, 'union_id' => $union->id
+        ], 'id desc');
+
+        if ($union_history->join_at && $union_history->join_at > $begin_at) {
+            $begin_at = $union_history->join_at;
+        }
+
+        if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+            $end_at = $union_history->exit_at;
+        }
+
         $this->currentUser()->income = $this->currentUser()->getDaysIncome($begin_at, $end_at);
         $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
         $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
