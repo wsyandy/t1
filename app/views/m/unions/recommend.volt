@@ -53,7 +53,7 @@
                 var data = {
                     type: 2,
                     recommend: 1,
-                    order: 'created_at desc',
+                    order: 'fame_value desc',
                     page: this.page,
                     per_page: 10,
                     sid: this.sid,

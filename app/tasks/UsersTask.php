@@ -706,5 +706,25 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixRoomIdAndCurrentRoomIdAction()
+    {
+        $cond = [
+            "conditions" => "room_id is null or current_room_id is null"
+        ];
+        $users = Users::findForeach($cond);
+        foreach ($users as $user) {
+            if (!$user->current_room_id) {
+                echo "+++++";
+                $user->current_room_id = 0;
+            }
+            if (!$user->room_id) {
+                echo "------";
+                $user->room_id = 0;
+            }
+            echoLine($user->id, $user->room_id, $user->current_room_id);
+            $user->update();
+        }
+    }
 }
 
