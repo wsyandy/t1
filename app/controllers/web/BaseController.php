@@ -79,6 +79,17 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
+        $params = $this->params();
+
+        foreach ($params as $k => $v) {
+
+            if (preg_match('/.*script.*/', $v) || preg_match('/.*script.*/', $k)) {
+                info("web_attack", $params);
+                return false;
+            }
+
+        }
+
         $this->view->title = "";
 
         $this->checkLoginTime();
