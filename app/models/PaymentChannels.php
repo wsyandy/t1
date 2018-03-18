@@ -27,7 +27,8 @@ class PaymentChannels extends BaseModel
             'name' => $this->name,
             'mer_no' => $this->mer_no,
             'mer_name' => $this->mer_name,
-            'status_text' => $this->status_text
+            'status_text' => $this->status_text,
+            'rank' => $this->rank
         ];
     }
 
@@ -132,6 +133,40 @@ class PaymentChannels extends BaseModel
                 }
             }
         }
+        return $selected;
+    }
+
+
+    static function search($user, $opts = [])
+    {
+
+        $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
+
+        if (count($payment_channel_ids) < 1) {
+            return [];
+        }
+
+        $platform = $user->platform;
+
+        if ($user->isClientPlatform()) {
+            $platform = "client_" . $platform;
+        }
+
+        $cond = [
+            'conditions' => '(platforms like :platform: or platforms like "") and status = :status: and id in (' .
+                implode(',', $payment_channel_ids) . ')',
+            'bind' => ['platform' => "%" . $platform . "%", 'status' => STATUS_ON],
+            'order' => 'rank desc'
+        ];
+
+        $payment_channels = PaymentChannels::find($cond);
+
+        $selected = [];
+
+        foreach ($payment_channels as $payment_channel) {
+            $selected[] = $payment_channel;
+        }
+
         return $selected;
     }
 }

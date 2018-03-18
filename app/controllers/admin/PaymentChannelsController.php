@@ -90,10 +90,8 @@ class PaymentChannelsController extends BaseController
     function updatePlatformsAction()
     {
         $payment_channel = \PaymentChannels::findFirstById($this->params('id'));
-        $platforms = $this->params('platforms', ['*']);
-        if (in_array('*', $platforms)) {
-            $platforms = ['*'];
-        }
+        $platforms = $this->params('platforms', []);
+
         $payment_channel->platforms = implode(',', $platforms);
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $payment_channel);
         $payment_channel->update();

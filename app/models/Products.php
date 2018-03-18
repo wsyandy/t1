@@ -120,6 +120,15 @@ class Products extends BaseModel
         return $selected_products;
     }
 
+    function supportApplePay()
+    {
+        if (isPresent($this->apple_product_no)) {
+            return true;
+        }
+
+        return false;
+    }
+
     function match($user)
     {
         debug("apple_product_no: " . $this->apple_product_no);
@@ -136,4 +145,55 @@ class Products extends BaseModel
         }
         return $this->diamond;
     }
+
+    static function search($user, $format = null)
+    {
+        $fee_type = 'diamond';
+        $product_groups = \ProductGroups::findByConditions(
+            [
+                'product_channel_id' => $user->product_channel_id,
+                'fee_type' => $fee_type,
+                'status' => STATUS_ON
+            ]
+        );
+
+        if (isBlank($product_groups)) {
+            return false;
+        }
+
+        $product_group = $product_groups[0];
+        debug("product_group: " . strval($product_group->id));
+
+        $apple_product = \Products::findFirst([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and apple_product_no != ""',
+            'bind' => [
+                'product_group_id' => $product_group->id,
+                'status' => STATUS_ON
+            ],
+            'order' => 'amount asc'
+        ]);
+
+        $selected_products[] = $apple_product;
+
+        $products = \Products::find([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and apple_product_no = ""',
+            'bind' => [
+                'product_group_id' => $product_group->id,
+                'status' => STATUS_ON
+            ],
+            'order' => 'amount asc'
+        ]);
+
+        foreach ($products as $product) {
+
+            if ($product->amount == $apple_product->amount) {
+                continue;
+            }
+
+            debug("product: " . strval($product->id));
+            $selected_products[] = $product;
+        }
+        return $selected_products;
+    }
+
 }

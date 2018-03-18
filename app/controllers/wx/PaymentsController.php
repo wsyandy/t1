@@ -14,7 +14,6 @@ class PaymentsController extends BaseController
 
     function weixinAction()
     {
-
         $products = \Products::findDiamondListByUser($this->currentUser());
         $payment_channels = \PaymentChannels::selectByUser($this->currentUser());
         $selected_payment_channel = $payment_channels[0];
