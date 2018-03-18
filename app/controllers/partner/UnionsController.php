@@ -113,8 +113,12 @@ class UnionsController extends BaseController
                     'user_id' => $user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at > $begin_at) {
+                if ($union_history->join_at && $union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
+                }
+
+                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+                    $end_at = $union_history->exit_at;
                 }
 
                 $user->income = $user->getDaysIncome($begin_at, $end_at);
@@ -171,8 +175,12 @@ class UnionsController extends BaseController
                     'user_id' => $room->user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at > $begin_at) {
+                if ($union_history->join_at && $union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
+                }
+
+                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+                    $end_at = $union_history->exit_at;
                 }
 
                 $room->amount = $room->getDayAmount($begin_at, $end_at);
