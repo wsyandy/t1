@@ -604,4 +604,15 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixBirthDayAction()
+    {
+        $time = strtotime('1962-12-31');
+        echoLine($time);
+        $user = Users::findFirstById(1);
+        $user->birthday = $time;
+        $user->update();
+        echoLine($user->birthday_text);
+        echoLine(date("Ymd", -4954550400));
+    }
 }

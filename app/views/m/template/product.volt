@@ -37,7 +37,8 @@
                 </li>
             {% else %}
                 <li data-payment_channel_id="{{ payment_channel.id }}"
-                    data-payment_type="{{ payment_channel.payment_type }}">
+                    data-payment_type="{{ payment_channel.payment_type }}"
+                    id="payment_type_{{ payment_channel.payment_type }}">
                     <span>{{ payment_channel.name }}</span>
                     <i class="select_pay"></i>
                 </li>
