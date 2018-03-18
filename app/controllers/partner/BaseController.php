@@ -81,7 +81,7 @@ class BaseController extends \ApplicationController
             $expire_at = 300;
         }
 
-        if ($access_token && time() - $access_token->login_at > $expire_at || $access_token) {
+        if ($access_token && time() - $access_token->login_at > $expire_at || !$access_token) {
             $this->session->set('user_id', null);
         }
     }
