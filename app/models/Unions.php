@@ -445,6 +445,7 @@ class Unions extends BaseModel
             }
 
             $union_history->status = $status;
+            $union_history->exit_at = time();
             $union_history->save();
         }
 
