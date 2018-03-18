@@ -11,7 +11,7 @@
 <div class="account_money">
     <ol>
         {% for product in products %}
-            <li data-product_id="{{ product.id }}">
+            <li data-product_id="{{ product.id }}" data-support_apple_pay="{{ product.supportApplePay() }}">
                 {% if (product.id == selected_product.id) %}
                     <span class="select_color selected_color">钻石{{ product.getShowDiamond(user) }}</span>
                     <span>¥{{ product.amount }}</span>
@@ -72,6 +72,16 @@
         // 钻石选择
         $('.account_money ol li').each(function () {
             $(this).click(function () {
+
+                //支持苹果支付
+                if ($("#payment_type_apple").length > 0) {
+                    if ($(this).data('support_apple_pay')) {
+                        $("#payment_type_apple").show();
+                    } else {
+                        $("#payment_type_apple").hide();
+                    }
+                }
+
                 $(this).find('.select').addClass('selected');
                 $(this).siblings().find('.select').removeClass('selected');
 
@@ -81,6 +91,7 @@
                 $("#pay_submit_btn").attr('href', url);
             })
         });
+
         // 支付方式选择
         $('.account_pay ul li').each(function () {
             $(this).click(function () {

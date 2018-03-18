@@ -43,11 +43,15 @@ class PaymentChannelProductChannels extends BaseModel
     static function findPaymentChannelIdsByProductChannelId($product_channel_id)
     {
         $conditions = ['product_channel_id' => $product_channel_id];
+
         $payment_channel_ids = [];
+
         $payment_channel_product_channels = \PaymentChannelProductChannels::findByConditions($conditions);
+
         foreach ($payment_channel_product_channels as $payment_channel_product_channel) {
             $payment_channel_ids[] = $payment_channel_product_channel->payment_channel_id;
         }
+
         return $payment_channel_ids;
     }
 }

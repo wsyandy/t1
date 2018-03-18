@@ -148,6 +148,10 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
             }
 
+            if ($user->isBlocked()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+            }
+
             // 测试白名单
             $is_white_mobile = false;
             if ($mobile && in_array($mobile, ['13912345678'])
