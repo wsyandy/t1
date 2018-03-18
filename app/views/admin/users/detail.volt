@@ -32,6 +32,12 @@
     {% if isAllowed('voice_calls','index') %}
         <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
     {% endif %}
+    {% if isAllowed('users','join_private_union_histories.volt') %}
+        <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% endif %}
+    {% if isAllowed('users','join_public_union_histories.volt') %}
+        <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% endif %}
 </ul>
 
 

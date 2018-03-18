@@ -14,10 +14,15 @@ class UnionsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page');
+        $union_id = $this->params('union_id');
         $auth_status = $this->params('auth_status');
 
         $cond = ['conditions' => 'auth_status = :auth_status: and status = :status: and type = :type:',
             'bind' => ['auth_status' => $auth_status, 'status' => STATUS_ON, 'type' => UNION_TYPE_PUBLIC]];
+
+        if ($union_id) {
+            $cond = ['conditions' => 'id = ' . $union_id];
+        }
 
         $unions = \Unions::findPagination($cond, $page, $per_page);
 
@@ -129,6 +134,7 @@ class UnionsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page');
+        $union_id = $this->params('union_id');
 
         $cond = $this->getConditions('union');
         $cond['order'] = "id desc";
@@ -137,6 +143,10 @@ class UnionsController extends BaseController
             $cond['conditions'] .= "and type = " . UNION_TYPE_PRIVATE;
         } else {
             $cond['conditions'] = "type = " . UNION_TYPE_PRIVATE;
+        }
+
+        if ($union_id) {
+            $cond = ['conditions' => 'id = ' . $union_id];
         }
 
         debug($cond);

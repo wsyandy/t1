@@ -65,6 +65,16 @@
         {% endif %}
         <br/>
     {% endif %}
+    {% if isAllowed('unions','index') %}
+        {% if user.union %}
+            {% if user.union.type == 1 %}
+                <a href="/admin/unions?union_id={{ user.union_id }}">工会</a>
+            {% else %}
+                <a href="/admin/unions/family?union_id={{ user.union_id }}">家族</a>
+            {% endif %}
+            <br/>
+        {% endif %}
+    {% endif %}
     {% if isAllowed('users','send_message') %}
         <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
     {% endif %}
@@ -77,7 +87,7 @@
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-'状态':'user_status_info', '操作':'profile_link'
+    '状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
