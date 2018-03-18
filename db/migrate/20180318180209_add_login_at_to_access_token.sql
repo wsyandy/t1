@@ -1,0 +1,1 @@
+ALTER TABLE access_tokens ADD COLUMN login_at INTEGER ;

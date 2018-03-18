@@ -65,11 +65,15 @@ class BaseController extends \ApplicationController
     function checkLoginTime()
     {
         $user_login_at = $this->session->get("user_login_at");
+
         if ($user_login_at) {
+
             $time = md5(date("Ymd"));
+
             if (isDevelopmentEnv()) {
                 $time = md5(date("Ymdh"));
             }
+
             if ($user_login_at != $time) {
                 $this->session->set('user_id', null);
                 $this->session->set('user_login_time', null);
