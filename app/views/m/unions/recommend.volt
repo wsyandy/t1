@@ -40,7 +40,6 @@
             unions: [],
             page: 1,
             total_page: 1,
-            total_entries: 0,
             searchText: ''
         },
         created: function () {
@@ -67,21 +66,19 @@
                     data.recommend = 1;
                 }
                 $.authGet('/m/unions/search', data, function (resp) {
-                    vm.unions = [];
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
-//                    $.each(resp.unions, function (index, item) {
-//                        vm.unions.push(item);
-//                    });
-                    vm.unions = resp.unions;
-                    vm.page++;
+                    $.each(resp.unions, function (index, item) {
+                        vm.unions.push(item);
+                    });
                 });
+                this.page++;
             },
             clearSearch: function () {
                 this.searchText = "";
             },
             searchFamily: function () {
-                vm.page = 1;
+                this.page = 1;
+                this.unions = [];
                 this.list();
             },
             unionDetail: function (id) {

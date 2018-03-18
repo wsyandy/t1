@@ -40,7 +40,6 @@
             rankingLst: [],
             page: 1,
             total_page: 1,
-            total_entries: 0,
             union_list: []
         },
         created: function () {
@@ -48,6 +47,9 @@
         },
         methods: {
             list: function () {
+                if (this.page > this.total_page) {
+                    return
+                }
                 var data = {
                     type: 2,
                     order: "fame_value desc",
@@ -57,11 +59,12 @@
                     code: this.code
                 };
                 $.authGet('/m/unions/search', data, function (resp) {
-                    vm.union_list = [];
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
-                    vm.union_list = resp.unions;
+                    $.each(resp.unions, function (index, item) {
+                        vm.union_list.push(item);
+                    })
                 });
+                this.page++;
             },
             unionDetail: function (id) {
                 var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
@@ -71,4 +74,12 @@
     };
 
     vm = XVue(opts);
+
+    $(function () {
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.list();
+            }
+        });
+    })
 </script>

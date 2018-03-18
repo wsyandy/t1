@@ -32,9 +32,9 @@
     </div>
     <ul class="member_tab" id="member_tab">
         <li v-if="!is_president" v-for="(item,index) in tab" class="member_only" v-show="!index"> ${item} <span
-                    v-if="!index">(${member_list.length})</span></li>
+                    v-if="!index">(${total_entries})</span></li>
         <li v-if="is_president" v-for="(item,index) in tab" :class="[cueIdx===index?'active':'']"
-            @click="tabClick(index)"> ${item} <span v-if="!index">(${member_list.length})</span></li>
+            @click="tabClick(index)"> ${item} <span v-if="!index">(${total_entries})</span></li>
     </ul>
     <ul class="member_list" v-show="cueIdx==0">
         <li v-for="(member,index) in member_list">
@@ -155,7 +155,8 @@
             user: {{ user }},
             can_apply: true,
             user_operation: true,
-            selected_user: {{ user }}
+            selected_user: {{ user }},
+            selected_index: 0
         },
         created: function () {
             this.memberList(0);
@@ -168,23 +169,31 @@
             },
             tabClick: function (index) {
                 this.cueIdx = index;
+                this.member_list = [];
+                this.page = 0;
                 this.memberList(index);
             },
             memberList: function (index) {
-                var data = {union_id:{{ union.id }}, page: this.page, per_page: 30, sid: this.sid, code: this.code};
+                if (this.page > this.total_page) {
+                    return;
+                }
+                var data = {union_id:{{ union.id }}, page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 if (index == 0) {
-                    data.order = "current_room_id desc";
+                    data.order = "current_room_id asc";
                 } else if (index == 1) {
                     data.order = "union_charm_value desc";
                 } else if (index == 2) {
                     data.order = "union_wealth_value desc";
                 }
+                this.selected_index = index;
                 $.authGet('/m/unions/users', data, function (resp) {
-                    vm.member_list = [];
                     vm.total_page = resp.total_page;
                     vm.total_entries = resp.total_entries;
-                    vm.member_list = resp.users;
+                    $.each(resp.users,function (index,item) {
+                        vm.member_list.push(item);
+                    })
                 });
+                this.page++;
             },
             userOperation: function (user) {
                 if (!this.is_president) {
@@ -275,7 +284,7 @@
     var ot = obj.offsetTop;
     document.onscroll = function () {
         var st = document.body.scrollTop || document.documentElement.scrollTop;
-        obj.setAttribute("data-fixed", st >= ot ? "fixed" : "")
+        obj.setAttribute("data-fixed", st >= ot ? "fixed" : "");
     };
 
     $(function () {
@@ -322,6 +331,12 @@
         $(".middle_pop").css({
             "left": div_left,
             "top": div_top
+        });
+
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.memberList(vm.selected_index);
+            }
         });
 
         $('.family-more').click(function () {
