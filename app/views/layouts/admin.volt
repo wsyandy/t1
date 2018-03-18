@@ -112,6 +112,9 @@
                     {% if isAllowed('unions', 'family') %}
                         <li><a href="/admin/unions/family">家族</a></li>
                     {% endif %}
+                    {% if isAllowed("hot_room_histories",'index') %}
+                        <li><a href="/admin/hot_room_histories">上热门申请</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
@@ -129,9 +132,6 @@
                     {% endif %}
                     {% if isAllowed('withdraw_histories','index') %}
                         <li><a href="/admin/withdraw_histories">提现列表</a></li>
-                    {% endif %}
-                    {% if isAllowed("hot_room_histories",'index') %}
-                        <li><a href="/admin/hot_room_histories">上热门申请</a></li>
                     {% endif %}
                 </ul>
             </li>

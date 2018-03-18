@@ -308,9 +308,14 @@ class UsersController extends BaseController
 
         $params = $this->params();
         $monologue = fetch($params, 'monologue');
+        $birthday = fetch($params, 'birthday');
 
         if ($monologue && mb_strlen($monologue) > 250) {
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
+        }
+
+        if ($birthday && (strtotime($birthday) > time() || strtotime($birthday) < strtotime('1935-01-01'))) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的生日');
         }
 
         $user->updateProfile($params);
