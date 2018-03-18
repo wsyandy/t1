@@ -89,7 +89,8 @@ class PaymentsController extends BaseController
             'payment_type' => $payment_channel->payment_type,
             'order_no' => $order->order_no,
             'paid_status' => $payment->pay_status,
-            'result_url' => $result_url
+            'result_url' => $result_url,
+            'nickname' => $user->nickname
         ];
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);

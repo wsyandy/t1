@@ -2,15 +2,15 @@
 {{ weixin_js('pay.js') }}
 {{ block_end() }}
 
-<div class="weixin_warn_box">
-	<div class="wran">
-		<i></i> 请填写正确的HI ID
-	</div>
-</div>
+{#<div class="weixin_warn_box">#}
+	{#<div class="wran">#}
+		{#<i></i> 请填写正确的HI ID#}
+	{#</div>#}
+{#</div>#}
 <div class="weixin_chongzhi_top">
-	<input required="required" type="text" class="name_input" placeholder="请输入您的Hi~ID" />
+	<input required="required" id="user_id" name="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
 	<i class="close_btn"></i>
-	<input type="text" id="user_id" name="user_id" />
+	<input type="text" style="color:#red;" v-model="nickname"/>
 </div>
 <div class="weixin_title">选择充值金额</div>
 <div class="weixin_cz_list">
@@ -31,9 +31,10 @@
 
     var opts = {
         data: {
-            payment_channel_id:{{ selected_payment_channel.id }},
+            payment_channel_id:'{{ selected_payment_channel.id }}',
             payment_type:"{{ selected_payment_channel.payment_type }}",
-            submit_status:false
+            submit_status:false,
+            nickname:""
         },
         methods: {
             rechargeAction: function (id) {
@@ -69,6 +70,7 @@
                 this.submit_status = true;
                 $.authPost('/wx/payments/create',data, function(resp){
                     vm.submit_status = false;
+                    vm.nickname = resp.nickname;
                     if(0 == resp.error_code){
                         redirect_url = '/wx/payments/result?order_no=' + resp.order_no;
                         js_api_parameters = resp.form;
