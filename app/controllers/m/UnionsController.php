@@ -16,6 +16,7 @@ class UnionsController extends BaseController
         $this->view->title = "家族";
         $user = $this->currentUser();
         $union = $user->union;
+
         if (isBlank($union)) {
             $this->view->union = 0;
             $this->view->avatar_url = '';
@@ -32,7 +33,7 @@ class UnionsController extends BaseController
         $this->view->code = $this->params('code');
     }
 
-    function AddUnionAction()
+    function addUnionAction()
     {
         $this->view->title = "创建家族";
         $this->view->sid = $this->params('sid');
@@ -55,6 +56,7 @@ class UnionsController extends BaseController
             list($error_code, $error_reason) = \Unions::createPrivateUnion($user, $opts);
 
             $url = '';
+
             if ($error_code == ERROR_CODE_SUCCESS) {
                 $sid = $this->params('sid');
                 $code = $this->params('code');
@@ -77,24 +79,18 @@ class UnionsController extends BaseController
     {
         $recommend = $this->params('recommend', 0);
         $id = $this->params('search_value', 0);
-        $type = $this->params('type', 0);
         $order = $this->params('order', null);
-//        if (preg_match('/^\d+$/', $search_value)) {
-//            $id = $search_value;
-//        } else {
-//            $id = 0;
-//        }
 
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-//        $opts = ['type' => $type, 'recommend' => $recommend, 'name' => $search_value, 'id' => $id, 'order' => $order];
-        $opts = ['type' => $type, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
+        $opts = ['type' => UNION_TYPE_PRIVATE, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
         $user = $this->currentUser();
 
         $unions = \Unions::search($user, $page, $per_page, $opts);
 
         $res = [];
+
         if (count($unions)) {
             $res = $unions->toJson('unions', 'toSimpleJson');
         }

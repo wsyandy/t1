@@ -51,7 +51,6 @@
                     return
                 }
                 var data = {
-                    type: 2,
                     order: "fame_value desc",
                     page: this.page,
                     per_page: 10,

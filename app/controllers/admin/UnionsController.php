@@ -99,6 +99,15 @@ class UnionsController extends BaseController
                 }
             }
 
+            $db = \Users::getUserDb();
+            $key = $union->generateUsersKey();
+
+            if ($db->zscore($key, $user->id)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, "该用户已经加入您的家族");
+            }
+
+            $db->zadd($key, time(), $user_id);
+
             $user->union_id = $union->id;
             $user->union_type = $union->type;
             $user->update();
