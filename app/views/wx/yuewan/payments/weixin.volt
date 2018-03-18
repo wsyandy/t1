@@ -10,7 +10,7 @@
 <div class="weixin_chongzhi_top">
 	<input required="required" id="user_id" name="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
 	<i class="close_btn"></i>
-	<input type="text" readonly="true" v-model="nickname"/>
+    <p>${nickname}</p>
 </div>
 <div class="weixin_title">选择充值金额</div>
 <div class="weixin_cz_list">
