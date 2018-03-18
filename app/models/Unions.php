@@ -203,6 +203,11 @@ class Unions extends BaseModel
     {
         $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $this->id]];
         $order = fetch($opts, 'order', '');
+        $filter_id = fetch($opts, 'filter_id', '');
+
+        if ($filter_id) {
+            $cond['conditions'] .= " and id != $filter_id";
+        }
 
         if ($order) {
             $cond['order'] = $order;
@@ -348,7 +353,7 @@ class Unions extends BaseModel
         $expire = 3600 * 24 * 7;
 
         if (isDevelopmentEnv()) {
-            $expire = 60 ;
+            $expire = 60;
         }
 
         $db->setex($this->generateNewApplyNumKey(), $expire, 1);

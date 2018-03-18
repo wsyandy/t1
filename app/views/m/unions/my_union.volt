@@ -37,6 +37,28 @@
             @click="tabClick(index)"> ${item} <span v-if="!index">(${total_entries})</span></li>
     </ul>
     <ul class="member_list" v-show="cueIdx==0">
+        <li>
+            <div class="member_left">
+                <img class="member_avatar" src="{{ president.avatar_small_url }}" alt=""
+                     @click="userOperation(president)">
+                <div class="member_name">
+                    <div class="name">
+                        <span> ${president.nickname}</span>
+                        <span class="female" v-if="president.sex == 1">${president.age}</span>
+                        <span class="male" v-if="president.sex == 0">${president.age}</span>
+                        <span class="president">会长</span>
+                    </div>
+                    <div class="slogan">
+                        ${president.monologue}
+                    </div>
+                </div>
+            </div>
+            <div class="member_right">
+                <img v-if="president.current_room_id" class="flag_manage" :src="flag_manage" alt=""
+                     @click="roomDetail(president.current_room_id)">
+                <span v-if="!president.manage" class="member_time">${president.time}</span>
+            </div>
+        </li>
         <li v-for="(member,index) in member_list">
             <div class="member_left">
                 <img class="member_avatar" :src="member.avatar_small_url" alt="" @click="userOperation(member)">
@@ -140,6 +162,8 @@
     var opts = {
         data: {
             union: {{ union }},
+            president: {{ president }},
+            user: {{ user }},
             cueIdx: 0,
             is_president: {{ is_president }},
             flag_manage: '/m/images/flag-manage.png',
@@ -152,7 +176,6 @@
             total_page: 1,
             total_entries: 0,
             member_list: [],
-            user: {{ user }},
             can_apply: true,
             user_operation: true,
             selected_user: {{ user }},
@@ -179,7 +202,8 @@
                 }
                 var data = {union_id:{{ union.id }}, page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 if (index == 0) {
-                    data.order = "current_room_id asc";
+                    data.order = "current_room_id desc";
+                    data.filter_id = this.president.id;
                 } else if (index == 1) {
                     data.order = "union_charm_value desc";
                 } else if (index == 2) {
@@ -230,8 +254,7 @@
                     alert(resp.error_reason);
                     if (resp.error_url) {
                         location.href = resp.error_url;
-                    }
-                    if (resp.error_code == 0) {
+                    } else if (resp.error_code == 0) {
                         window.history.back();
                     }
                 });

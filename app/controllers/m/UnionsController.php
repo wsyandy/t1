@@ -107,12 +107,14 @@ class UnionsController extends BaseController
     {
         $union_id = $this->params('union_id');
         $union = \Unions::findFirstById($union_id);
+        $president = $union->user;
         $user = $this->currentUser();
         if ($union && $union->user_id == $user->id) {
             $is_president = 1;
         } else {
             $is_president = 0;
         }
+        $this->view->president = $president;
         $this->view->user = $user;
         $this->view->is_president = $is_president;
         $this->view->union = $union;
@@ -150,8 +152,9 @@ class UnionsController extends BaseController
                 $page = $this->params('page', 1);
                 $per_page = $this->params('per_page', 10);
                 $order = $this->params('order', null);
+                $filter_id = $this->params('filter_id', null);
 
-                $opts = ['order' => $order];
+                $opts = ['order' => $order, 'filter_id' => $filter_id];
 
                 $users = $union->users($page, $per_page, $opts);
 
