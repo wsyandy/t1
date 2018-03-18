@@ -193,14 +193,15 @@
             tabClick: function (index) {
                 this.cueIdx = index;
                 this.member_list = [];
-                this.page = 0;
+                this.page = 1;
+                this.total_page = 1;
                 this.memberList(index);
             },
             memberList: function (index) {
                 if (this.page > this.total_page) {
                     return;
                 }
-                var data = {union_id:{{ union.id }}, page: this.page, per_page: 10, sid: this.sid, code: this.code};
+                var data = {union_id:'{{ union.id }}', page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 if (index == 0) {
                     data.order = "current_room_id desc";
                     data.filter_id = this.president.id;
