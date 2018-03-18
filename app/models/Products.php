@@ -140,7 +140,8 @@ class Products extends BaseModel
 
     function getShowDiamond($user)
     {
-        if (isPresent($this->full_name) && $user->canShowProductFullName()) {
+        //&& $user->canShowProductFullName()
+        if (isPresent($this->full_name)) {
             return $this->full_name;
         }
         return $this->diamond;
