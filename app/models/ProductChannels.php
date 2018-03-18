@@ -451,7 +451,7 @@ class ProductChannels extends BaseModel
 
     function rateOfDiamondToHiCoin()
     {
-        return 25;
+        return 100/4;
     }
 
     function rateOfHiCoinToMoney()
