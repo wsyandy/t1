@@ -170,7 +170,8 @@ class UnionsController extends BaseController
         $this->view->title = "新的成员";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
-
+        $union = $this->currentUser()->union;
+        $union->clearNewApplyNum();
     }
 
     function applicationListAction()

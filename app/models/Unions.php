@@ -287,6 +287,11 @@ class Unions extends BaseModel
         return $pagination;
     }
 
+    function generateNewApplyNumKey()
+    {
+        return "new_apply_num_union_id_" . $this->id;
+    }
+
     function generateNewUsersKey()
     {
         return "union_total_users_list" . $this->id;
@@ -339,6 +344,14 @@ class Unions extends BaseModel
             list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
             return [$error_code, $err_reason];
         }
+
+        $expire = 3600 * 24 * 7;
+
+        if (isDevelopmentEnv()) {
+            $expire = 60 ;
+        }
+
+        $db->setex($this->generateNewApplyNumKey(), $expire, 1);
 
         $db->zadd($key, time(), $user->id);
         $db->zadd($check_key, time(), $user->id);
@@ -400,7 +413,7 @@ class Unions extends BaseModel
         }
 
         $db->zadd($this->generateRefusedUsersKey(), time(), $user->id);
-        $db->zrem($this->generateCheckUsersKey(),$user->id);
+        $db->zrem($this->generateCheckUsersKey(), $user->id);
 
         $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
         Chats::sendTextSystemMessage($user->id, $content);
@@ -625,25 +638,33 @@ class Unions extends BaseModel
         return $this->status == STATUS_BLOCKED;
     }
 
-    function applyUserNum()
+
+    function newApplyNum()
     {
         $db = Users::getUserDb();
 
-        $apply_user_key = $this->generateNewUsersKey();
-        $apply_user_ids = $db->zrevrange($apply_user_key, 0, -1);
-        if (count($apply_user_ids) <= 0) {
-            return 0;
-        }
+//        $apply_user_key = $this->generateNewUsersKey();
+//        $apply_user_ids = $db->zrevrange($apply_user_key, 0, -1);
+//        if (count($apply_user_ids) <= 0) {
+//            return 0;
+//        }
+//
+//        $agreed_user_key = $this->generateUsersKey();
+//        $refused_user_key = $this->generateRefusedUsersKey();
+//
+//        $agreed_user_ids = $db->zrevrange($agreed_user_key, 0, -1);
+//        $refused_user_ids = $db->zrevrange($refused_user_key, 0, -1);
+//
+//        $new_users_id = array_diff($apply_user_ids, $agreed_user_ids, $refused_user_ids);
+//
+//        return count($new_users_id);
+        return intval($db->get($this->generateNewApplyNumKey()));
+    }
 
-        $agreed_user_key = $this->generateUsersKey();
-        $refused_user_key = $this->generateRefusedUsersKey();
-
-        $agreed_user_ids = $db->zrevrange($agreed_user_key, 0, -1);
-        $refused_user_ids = $db->zrevrange($refused_user_key, 0, -1);
-
-        $new_users_id = array_diff($apply_user_ids, $agreed_user_ids, $refused_user_ids);
-
-        return count($new_users_id);
+    function clearNewApplyNum()
+    {
+        $user_db = Users::getUserDb();
+        $user_db->del($this->generateNewApplyNumKey());
     }
 
     function getWaitWithdrawAmount()
