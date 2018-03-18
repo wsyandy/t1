@@ -81,8 +81,6 @@
                     } else {
                         $(".account_pay li").eq(0).find('.select_pay').addClass('selected_pay');
                         $(".account_pay li").eq(0).siblings().find('.select_pay').removeClass('selected_pay');
-                        var url = generatePayUrl();
-
                         $("#payment_type_apple").hide();
                     }
                 }
