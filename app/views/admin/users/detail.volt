@@ -32,11 +32,11 @@
     {% if isAllowed('voice_calls','index') %}
         <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
     {% endif %}
-    {% if isAllowed('users','join_private_union_histories.volt') %}
-        <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% if isAllowed('unions_histories','basic') %}
+        <li role="presentation"><a href="/admin/unions_histories/basic?user_id={{ user.id }}&type=1">加入公会记录</a></li>
     {% endif %}
-    {% if isAllowed('users','join_public_union_histories.volt') %}
-        <li role="presentation"><a href="/admin/voice_calls?user_id={{ user.id }}">通话记录</a></li>
+    {% if isAllowed('unions_histories','basic') %}
+        <li role="presentation"><a href="/admin/unions_histories/basic?user_id={{ user.id }}&type=2">加入家族记录</a></li>
     {% endif %}
 </ul>
 
