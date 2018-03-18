@@ -113,7 +113,7 @@ class UnionsController extends BaseController
                     'user_id' => $user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at < $begin_at) {
+                if ($union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
                 }
 
@@ -171,7 +171,7 @@ class UnionsController extends BaseController
                     'user_id' => $room->user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at < $begin_at) {
+                if ($union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
                 }
 
