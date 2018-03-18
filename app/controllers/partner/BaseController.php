@@ -104,7 +104,7 @@ class BaseController extends \ApplicationController
         }
 
         if (isBlank($current_user)) {
-            $this->response->redirect('/partner/home/index');
+            $this->response->redirect("/partner/home");
             return false;
         }
 
