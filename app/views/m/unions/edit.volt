@@ -137,16 +137,9 @@
         }
 
         var name_length = $("#name").val().length;
-        var notice_length = $("#notice").val().length;
 
         if (name_length == 0) {
             alert("家族名称不能为空");
-            can_create = true;
-            return false;
-        }
-
-        if (notice_length == 0) {
-            alert("家族公告不能为空");
             can_create = true;
             return false;
         }

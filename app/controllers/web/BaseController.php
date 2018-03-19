@@ -64,9 +64,9 @@ class BaseController extends \ApplicationController
 
     function checkLoginTime()
     {
-        $user_login_at = $this->session->get("user_login_at");
+        $user_login_time = $this->session->get("user_login_time");
 
-        if ($user_login_at) {
+        if ($user_login_time) {
 
             $time = md5(date("Ymd"));
 
@@ -74,7 +74,7 @@ class BaseController extends \ApplicationController
                 $time = md5(date("Ymdh"));
             }
 
-            if ($user_login_at != $time) {
+            if ($user_login_time != $time) {
                 $this->session->set('user_id', null);
                 $this->session->set('user_login_time', null);
             }
