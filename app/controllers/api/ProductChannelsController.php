@@ -24,7 +24,7 @@ class ProductChannelsController extends BaseController
 
     function bootConfigAction()
     {
-        $show = true;
+        $show = false;
 
         if (isProduction()) {
             $show = false;
@@ -32,8 +32,21 @@ class ProductChannelsController extends BaseController
 
         $root = $this->getRoot();
         //声网登录密码
-        $detail_json['menu_config'][] = ['show' => $show, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union.png'];
+
         $detail_json['menu_config'][] = ['show' => $show, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
+
+        $ip = $this->remoteIp();
+        $ip_list = "permit_ip_list";
+        $hot_cache = \Users::getHotWriteCache();
+        $ips = $hot_cache->zrange($ip_list, 0, -1);
+
+        if (count($ips) > 0) {
+            if (in_array($ip, $ips)) {
+                $show = true;
+            }
+        }
+
+        $detail_json['menu_config'][] = ['show' => $show, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union.png'];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
