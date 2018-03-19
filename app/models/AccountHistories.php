@@ -40,6 +40,7 @@ class AccountHistories extends BaseModel
         $user = Users::findFirstById($user_id);
 
         if (!$user) {
+            info($user_id);
             return false;
         }
 
@@ -58,6 +59,7 @@ class AccountHistories extends BaseModel
             return true;
         }
 
+        info($user->sid, $fee_type, $amount, $opts);
         return false;
     }
 

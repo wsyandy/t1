@@ -134,6 +134,7 @@ class GiftOrders extends BaseModel
             return $result;
         }
 
+        info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
         return false;
     }
 
