@@ -8,8 +8,8 @@ class Operators extends BaseModel
     static $ROLE = [
         'admin' => '管理员', 'customer' => '客服', 'tester' => '测试', 'editor' => '编辑',
         'producter' => '产品经理',
-        'product_operator' => '产品运营', 'product_operator_assistant' => '产品运营助理',
-        'operat_manager' => '推广运营经理', 'operator' => '推广运营'
+        'product_operator' => '产品运营专员', 'product_operator_assistant' => '产品运营助理',
+        'operat_manager' => '推广运营经理', 'operator' => '推广运营专员'
     ];
 
     static function login($username, $password)

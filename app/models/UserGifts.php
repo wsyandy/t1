@@ -47,12 +47,7 @@ class UserGifts extends BaseModel
         $user_gift->pay_type = 'diamond';
         $user_gift->save();
 
-        $user = $user_gift->user;
-        $product_channel = $user->product_channel;
-        $rate = $product_channel->rateOfDiamondToHiCoin();
-        $hi_coins = ($gift_amount * $gift_num) / $rate;
-        $user->hi_coins = $user->hi_coins + $hi_coins;
-        $user->save();
+        Users::delay()->updateHiCoins($gift_order);
 
         info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
