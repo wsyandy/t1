@@ -66,7 +66,7 @@ h1,h2,h3,h4{
 	border:none;
 	background: #fff;
 	color: #333333;
-	font-size: 16px;
+	font-size: 18px;
 }
 input:-moz-placeholder{
 	color: #B6B6B6;
@@ -108,7 +108,7 @@ input::-webkit-input-placeholder{
 }
 .weixin_chongzhi_top .name{
 	margin-top: 5px;
-	font-size: 13px;
+	font-size: 15px;
 	color: #F5538A;
 }
 .name_input:valid + .close_btn {display: block;}
