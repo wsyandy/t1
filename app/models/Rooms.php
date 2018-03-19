@@ -32,7 +32,7 @@ class Rooms extends BaseModel
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
-    static $HOT = [STATUS_OFF => '否', STATUS_ON => '是'];
+    static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
 
     function beforeCreate()
     {
@@ -1292,5 +1292,11 @@ class Rooms extends BaseModel
 
             Rooms::delay($delay_time)->asyncExitSilentRoom($room->id, $user->id);
         }
+    }
+
+    //总的热门房间列表
+    static function generateHotRoomListKey()
+    {
+        return "hot_room_list";
     }
 }

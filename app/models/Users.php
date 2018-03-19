@@ -1072,10 +1072,21 @@ class Users extends BaseModel
 
             if ('birthday' == $k) {
                 $time = strtotime($v);
-                info($this->sid, $k, $time, $v);
+
+                if (date("Y") - date("Y", $time) < 18) {
+                    $birthday = date("Y") - 18;
+                }
+
+                if (date("Y") - date("Y", $time) > 70) {
+                    $birthday = date("Y") - 70;
+                }
+
+                $time = strtotime($birthday . "-" . date("m-d", $time));
+
                 if ($time < time()) {
                     $this->birthday = $time;
                 }
+
                 continue;
             }
 

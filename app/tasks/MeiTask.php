@@ -615,4 +615,34 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($user->birthday_text);
         echoLine(date("Ymd", -4954550400));
     }
+
+    function fixUserConinsAction()
+    {
+        $withdraw_histories = WithdrawHistories::findForeach();
+
+        foreach ($withdraw_histories as $history) {
+            if (WITHDRAW_STATUS_SUCCESS != $history->status) {
+                echoLine($history);
+
+                $user = $history->user;
+                $user->hi_coins += $history->amount;
+                $user->update();
+            }
+        }
+
+        $user = Users::findFirstById(1003455);
+        $user->hi_coins  = $user->hi_coins - 184;
+        $user->update();
+        echoLine($user->hi_coins);
+
+        $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => 1003455], 'column' => 'total_amount']);
+
+        echoLine($total_amount/(100/4.5));
+
+        $rooms = Rooms::find(['conditions' => 'user_type = :user_type: and lock != :lock:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'lock' => true]]);
+
+        echoLine(count($rooms));
+
+    }
 }
