@@ -26,7 +26,13 @@ class DevicesController extends BaseController
             }
 
             $device = \Devices::active($this->currentProductChannel(), $attributes);
+
             if ($device) {
+
+                if ($device->isBlocked()) {
+                    info("block_device_active", $device->id, $device->dno);
+                    return $this->renderJSON(ERROR_CODE_FAIL, "设备异常!");
+                }
 
                 $user = \Users::registerForClientByDevice($device);
 
