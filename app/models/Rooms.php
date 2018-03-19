@@ -1052,7 +1052,8 @@ class Rooms extends BaseModel
         }
 
         if (($real_user_num <= 5 && $user_num >= 10 || $real_user_num > 5 && $user_num >= 30) &&
-            $real_user_num < 20) {
+            $real_user_num < 20
+        ) {
             info("user_is_full", $real_user_num, $user_num);
             return;
         }
@@ -1298,5 +1299,26 @@ class Rooms extends BaseModel
     static function generateHotRoomListKey()
     {
         return "hot_room_list";
+    }
+
+    static function isNeedPassword($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+        if ($room && $room->lock) {
+            return true;
+        }
+        return false;
+    }
+
+    function generateFilterUserKey($user_id)
+    {
+        return "filter_user_" . $this->id . "and" . $user_id;
+    }
+
+    function addFilterUser($user_id)
+    {
+        $db = Rooms::getRoomDb();
+        $expire = 60;
+        $db->setex($this->generateFilterUserKey($user_id), $expire, time());
     }
 }

@@ -326,3 +326,82 @@ body {
     text-align: center;
     margin: 0 auto;
 }
+
+.room_cover{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top:0;
+    left: 0;
+    background-color: rgba(0,0,0,0.50);
+
+}
+.room_pop{
+    width: 5.20rem;
+    height: 4rem;
+    background-color: #fff;
+    position: absolute;
+    top:50%;
+    left: 50%;
+    margin-top: -2rem;
+    margin-left: -2.6rem;
+    border-radius: 0.2rem;
+
+}
+.room_pop_bg{
+    position: absolute;
+    top:-0.5rem;
+    left: 0;
+    width: 5.20rem;
+    height: 2.09rem;
+}
+.room_lock{
+    position: relative;
+    font-size: 0.28rem;
+    color: #717171;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3rem 0;
+    margin-top: 1.5rem;
+    margin-bottom: 0.2rem;
+}
+.room_lock label{
+    padding-right: 0.1rem;
+}
+.room_btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.room_btn span{
+    background: #FFFFFF;
+    border-radius: 1rem;
+    font-size: 0.32rem;
+    color: #A0A0A0;
+    width: 2rem;
+    height:0.76rem ;
+    line-height: 0.76rem;
+    text-align: center;
+}
+.room_btn span.room_out{
+    background-color: #fff;
+    border: 1px solid #D4D4D4;
+    color: #A0A0A0;
+    margin-right: 0.1rem;
+
+}
+
+.room_btn span.room_in{
+    background-color: #F45189;
+    border: 1px solid #D4D4D4;
+    color: #fff;
+
+}
+.room_locked{
+    position: absolute;
+    top:0.1rem;
+    left: .5rem;
+    font-size: 0.46rem;
+    color: #F45189;
+}

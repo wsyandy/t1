@@ -379,4 +379,32 @@ class UnionsController extends BaseController
     {
         $this->view->product_channel = $this->currentProductChannel();
     }
+
+
+    function isNeedPasswordAction()
+    {
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        $user_id = $this->currentUserId();
+        if ($room && $room->isNeedPassword($user_id)) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '需要密码');
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+    }
+
+    function checkPasswordAction()
+    {
+        $password = $this->params('password');
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        $user_id = $this->currentUserId();
+        if (!$room->lock) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        } else if ($room->password == $password) {
+            $room->addFilterUser($user_id);
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '密码错误,哈哈哈');
+    }
 }

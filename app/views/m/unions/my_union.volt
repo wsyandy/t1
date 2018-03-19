@@ -156,6 +156,22 @@
         <div class="middle_btn" v-show="!is_president" @click.stop="exitUnion">确认退出</div>
     </div>
     <div class="middle_pop_bg"></div>
+
+    <div class="room_cover">
+        <div class="room_pop">
+            <img class="room_pop_bg" src="images/room_pop_bg.png" alt="">
+            <div class="room_locked">房间已上锁</div>
+            <div class="room_lock">
+                <label for="">密码</label>
+                <input class="input_text" maxlength="10" type="text" placeholder="最多输入10个字" id="password">
+            </div>
+            <div class="room_btn">
+                <span class="room_out">取消</span>
+                <span class="room_in">进入房间</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -179,7 +195,8 @@
             can_apply: true,
             user_operation: true,
             selected_user: {{ user }},
-            selected_index: 0
+            selected_index: 0,
+            selected_room_id: 0
         },
         created: function () {
             this.memberList(0);
@@ -240,8 +257,17 @@
                 location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
             },
             roomDetail: function (id) {
-                var url = "app://rooms/detail?id=" + id;
-                location.href = url;
+                var url = "/m/unions/is_need_password";
+                var data = {room_id: this.room_id, sid: this.sid, code: this.code};
+                $.authPost(url, data, function (resp) {
+                    if (resp.error_code == 0) {
+                        this.selected_room_id = id;
+                        $('.room_cover').show();
+                    } else {
+                        var url = "app://rooms/detail?id=" + id;
+                        location.href = url;
+                    }
+                });
             },
             applyJoinUnion: function () {
                 if (vm.can_apply == false) {
@@ -318,6 +344,7 @@
         }
 
         function close_pb() {
+            $('.room_cover').hide();
             $('.pop_bottom').hide();
             $('.pop_bottom_bg').hide();
         }
@@ -382,6 +409,24 @@
             dissolution();
             close_mp();
             close_pb();
+        });
+
+        $(".room_out").on("click", function () {
+            $(".room_cover").fadeOut();
+        });
+
+        $(".room_in").on("click", function () {
+            var url = "/m/unions/check_password";
+            var password = $('#password').val();
+            var data = {sid: this.sid, code: this.code, password: password, room_id: vm.selected_room_id};
+            $.authPost(url, data, function (resp) {
+                if (resp.error_code == 0) {
+                    var url = "app://rooms/detail?id=" + vm.selected_room_id;
+                    location.href = url;
+                } else {
+                    alert(resp.error_reason);
+                }
+            });
         });
     })
 
