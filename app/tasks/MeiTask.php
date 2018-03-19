@@ -635,7 +635,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->update();
         echoLine($user->hi_coins);
 
-        $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => 1003455], 'column' => 'total_amount']);
+        $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => 1000555], 'column' => 'total_amount']);
 
         echoLine($total_amount/(100/4.5));
 
