@@ -8,7 +8,7 @@
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>
     </div>
 
-    {% if currenr_user.union_id < 1 %}
+    {% if current_user.union_id < 1 %}
         <div class="gift_money" v-if="receive"
              @click.stop="redirectAction('/m/withdraw_histories?sid={{ sid }}&code={{ code }}')">
             <h3>我的收益</h3>

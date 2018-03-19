@@ -29,7 +29,7 @@
 
 {% macro operate_link(id_card_auth) %}
     {% if isAllowed('id_card_auth','edit') %}
-        <a href="/admin/id_card_auth/edit?id={{ id_card_auth.id }}" class="modal_action">编辑</a></br>
+        <a href="/admin/id_card_auths/edit?id={{ id_card_auth.id }}" class="modal_action">编辑</a></br>
     {% endif %}
 {% endmacro %}
 

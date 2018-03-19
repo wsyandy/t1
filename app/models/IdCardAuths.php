@@ -54,10 +54,6 @@ class IdCardAuths extends BaseModel
         $id_name = fetch($opts, 'id_name');
         $bank_account = fetch($opts, 'bank_account');
 
-        if (!$id_no || checkIdCard($id_no) || !$id_name || !$bank_account) {
-            return [ERROR_CODE_FAIL, '参数错误'];
-        }
-
         $id_card_auth = IdCardAuths::findFirstByUserId($user->id);
 
         if (!$id_card_auth) {
