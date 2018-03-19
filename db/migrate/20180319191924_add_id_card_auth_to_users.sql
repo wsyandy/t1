@@ -1,0 +1,1 @@
+ALTER TABLE users add id_card_auth INTEGER DEFAULT 0;

@@ -71,4 +71,6 @@ trait UserEnumerations
         'silver2' => '白银Ⅱ', 'silver3' => '白银Ⅲ', 'silver4' => '白银Ⅳ', 'silver5' => '白银Ⅴ', 'bronze1' => '青铜Ⅰ', 'bronze2' => '青铜Ⅱ',
         'bronze3' => '青铜Ⅲ', 'bronze4' => '青铜Ⅳ', 'bronze5' => '青铜Ⅴ',
     ];
+
+    static $ID_ACRD_AUTH = [AUTH_SUCCESS => '认证成功', AUTH_FAIL => '认证失败', AUTH_WAIT => '等待认证'];
 }
