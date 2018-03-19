@@ -199,7 +199,7 @@ class BaseController extends \ApplicationController
         $this->view->title = $this->currentProductChannel()->name;
         $this->view->sid = $this->currentUser()->sid;
         $this->view->code = $this->currentProductChannel()->code;
-        $this->view->currenr_user = $this->currentUser();
+        $this->view->current_user = $this->currentUser();
     }
 
 

@@ -18,6 +18,18 @@
             <img class="family-arrow" :src="arrow_right" alt="">
         </div>
 
+        <div class="compere_auth" @click="idCardAuth()">
+            <div class="compere_avatar">
+                <img class="ico_compere_avatar" src="/m/images/ico_compere_avatar.png" alt="">
+                <span class="compere_tit">主持认证</span>
+            </div>
+            <div class="compere_arrow">
+                <span class="compere_txt">{{ current_user.id_card_auth_text }}</span>
+                <img class="ico_compere_arrow" alt="" src="/m/images/arrow-right.png">
+            </div>
+
+        </div>
+
         <div class="family_introduce">
             <div class="family_introduce_title">【 家族说明 】</div>
             <ul>
@@ -39,6 +51,7 @@
             code: '{{ code }}',
             slogan_other: "看看其他好玩的家族",
             arrow_right: "/m/images/ico-arrow-right.png",
+            id_card_auth: '{{ current_user.id_card_auth }}',
             family: [
                 {
                     url: "/m/unions/add_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}',
@@ -92,6 +105,12 @@
                     return;
                 }
                 location.href = url;
+            },
+            idCardAuth: function () {
+                if (vm.id_card_auth == 1 || vm.id_card_auth == 3) {
+                    return;
+                }
+                vm.redirectAction('/m/id_card_auths?code=' + vm.code + "&sid=" + vm.sid);
             }
         }
     };

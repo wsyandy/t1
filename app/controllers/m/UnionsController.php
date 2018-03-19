@@ -31,6 +31,7 @@ class UnionsController extends BaseController
 
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
+        $this->view->current_user = $this->currentUser();
     }
 
     function addUnionAction()

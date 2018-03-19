@@ -644,5 +644,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine(count($rooms));
 
+        $user = Users::findFirstById(379);
+        echoLine($user->id_card_auth, $user->id_card_auth_text);
     }
 }
