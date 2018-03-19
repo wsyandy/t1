@@ -1,4 +1,4 @@
-.application_details_box{
+.application_details_box {
     width: 7.5rem;
     height: 13.34rem;
     background: url(../images/application_details_bg.png) no-repeat;
@@ -6,25 +6,27 @@
     overflow: hidden;
 
 }
-.application_details_box .applicat_wrap{
+
+.application_details_box .applicat_wrap {
     width: 6.2rem;
     height: 5.34rem;
     background: #fff;
-    margin:0 auto;
-    box-shadow: 0 2px 21px 0 rgba(4,4,4,0.06);
-    -webkit-box-shadow: 0 2px 21px 0 rgba(4,4,4,0.06);
-    -moz-box-shadow: 0 2px 21px 0 rgba(4,4,4,0.06);
+    margin: 0 auto;
+    box-shadow: 0 2px 21px 0 rgba(4, 4, 4, 0.06);
+    -webkit-box-shadow: 0 2px 21px 0 rgba(4, 4, 4, 0.06);
+    -moz-box-shadow: 0 2px 21px 0 rgba(4, 4, 4, 0.06);
     border-radius: 0.2rem;
     margin-top: 3.34rem;
     position: relative;
 }
-.application_details_box .applicat_wrap .img{
+
+.application_details_box .applicat_wrap .img {
     width: 1.48rem;
     height: 1.48rem;
     border-radius: 50%;
     /*border: 3px solid #FFFFFF;*/
     background: #eeeeee;
-    margin:0 auto;
+    margin: 0 auto;
     position: absolute;
     top: -0.74rem;
     left: 50%;
@@ -34,35 +36,42 @@
     -webkit-transform: translateX(-50%);
     -o-transform: translateX(-50%);
 }
-.application_details_box .applicat_wrap .img img{
+
+.application_details_box .applicat_wrap .img img {
     width: 1.48rem;
 }
-.application_details_box .applicat_wrap h3{
+
+.application_details_box .applicat_wrap h3 {
     font-size: 0.32rem;
     color: #5A5A5A;
     padding-top: 1rem;
     text-align: center;
 }
-.application_details_box .love_wealth{
+
+.application_details_box .love_wealth {
     text-align: center;
 }
-.application_details_box .love_wealth span{
+
+.application_details_box .love_wealth span {
     font-size: 0.28rem;
     color: #979797;
-} 
-.application_details_box .applicat_wrap h4{
+}
+
+.application_details_box .applicat_wrap h4 {
     font-size: 0.32rem;
     color: #606060;
     text-align: center;
     margin-top: 0.7rem;
 }
-.application_details_box .application_btn{
+
+.application_details_box .application_btn {
     text-align: center;
     display: flex;
     justify-content: space-between;
-    padding:0.59rem 0.5rem 0 0.5rem;
+    padding: 0.5rem 0.5rem 0 0.5rem;
 }
-.application_details_box .application_btn span{
+
+.application_details_box .application_btn span {
     font-size: 0.32rem;
     display: block;
     width: 2.4rem;
@@ -70,59 +79,71 @@
     line-height: 0.76rem;
     border-radius: 1rem;
 }
-.application_btn .refuse{
+
+.application_btn .refuse {
     color: #686868;
     background: #E9E9E9;
 }
-.application_btn .agree{
+
+.application_btn .agree {
     background: #F45189;
     color: #fff;
 }
-.refuse_selected{
+
+.refuse_selected {
     border: 1px solid #D2D2D2 !important;
     color: #707070 !important;
     background: #FFFFFF !important;
-    margin:0 auto;
+    margin: 0 auto;
 }
-.application_list_box{
+
+.application_list_box {
     background: #FFFFFF;
-    padding:0 0 0 0.3rem;
+    padding: 0 0 0 0.3rem;
 }
-.application_list{
-    padding:0.25rem 0.3rem 0.25rem 0;
+
+.application_list {
+    padding: 0.25rem 0.3rem 0.25rem 0;
     display: flex;
     border-bottom: 1px solid #F3F3F3;
 }
-.application_list:last-child{
+
+.application_list:last-child {
     border-bottom: none;
 }
-.application_list .list_img{
+
+.application_list .list_img {
     width: 0.9rem;
     height: 0.9rem;
     background: #eeeeee;
     border-radius: 50%;
     overflow: hidden;
 }
-.application_list .list_img img{
+
+.application_list .list_img img {
     width: 0.9rem;
 }
-.application_list .list_message{
+
+.application_list .list_message {
     flex: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left:0.24rem;
+    margin-left: 0.24rem;
 }
-.application_list .list_message h3{
+
+.application_list .list_message h3 {
     font-size: 0.29rem;
     color: #3C3C3C;
 }
-.application_list .list_message p{
+
+.application_list .list_message p {
     font-size: 0.24rem;
     color: #A5A5A5;
     margin-top: 0.09rem;
 }
-.application_list .list_message .list_agree{
+
+.application_list .list_message .list_agree {
     width: 1.12rem;
     height: 0.5rem;
     line-height: 0.5rem;
@@ -132,7 +153,8 @@
     color: #FFFFFF;
     font-size: 0.24rem;
 }
-.list_message .list_selected{
+
+.list_message .list_selected {
     border: 1px solid #E3E3E3 !important;
     color: #898989 !important;
     background: #FFFFFF !important;

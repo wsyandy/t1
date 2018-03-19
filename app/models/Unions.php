@@ -558,12 +558,13 @@ class Unions extends BaseModel
         }
     }
 
-    function updateFameValue($value)
+    static function updateFameValue($value,$id)
     {
-        $lock_key = "update_union_fame_lock_" . $this->id;
+        $lock_key = "update_union_fame_lock_" . $id;
         $lock = tryLock($lock_key);
-        $this->fame_value += $value;
-        $this->update();
+        $union = self::findFirstById($id);
+        $union->fame_value += $value;
+        $union->update();
         unlock($lock);
     }
 
