@@ -26,9 +26,14 @@ class DevicesController extends BaseController
             }
 
             $device = \Devices::active($this->currentProductChannel(), $attributes);
+
             if ($device) {
 
                 $user = \Users::registerForClientByDevice($device);
+
+                if (!$user) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
+                }
 
                 $db = \Users::getUserDb();
                 $good_num_list_key = 'good_num_list';

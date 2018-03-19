@@ -324,6 +324,10 @@ class Users extends BaseModel
             info('换个手机号注册', $user->id, $user->third_unionid, $context);
         }
 
+        if (!$user) {
+            return [ERROR_CODE_FAIL, '注册失败!', null];
+        }
+
         //$user->checkRegisterFr($device, $mobile);
 
         $fr = $device->fr;
@@ -376,6 +380,11 @@ class Users extends BaseModel
     //根据设备注册
     static function registerForClientByDevice($device, $is_force = false)
     {
+        if ($device->isBlocked()) {
+            info("block_device_active", $device->id, $device->dno);
+            return null;
+        }
+
         // 重复激活
         // dno重复，存在bug
         $user = $device->user;
@@ -2209,6 +2218,11 @@ class Users extends BaseModel
         //其他账户的快捷登陆 重新注册新用户
         if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->mobile) {
             $user = Users::registerForClientByDevice($device, true);
+
+            if (!$user) {
+                return [ERROR_CODE_FAIL, '登录失败', $user];
+            }
+
             $user->register_at = time();
         }
 
