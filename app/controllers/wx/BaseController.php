@@ -17,48 +17,6 @@ class BaseController extends \ApplicationController
 
     public $remote_ip;
 
-
-    static $SKIP_ACTIONS = [
-        'home' => '*',
-        'banners' => '*',
-        'devices' => '*',
-        'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status', 'third_login'],
-        'soft_versions' => '*'
-    ];
-
-    static $CHECK_LOGIN_STATUS_ACTIONS = [
-        'users' => ['create', 'login', 'client_status'],
-        'rooms' => '*'
-    ];
-
-    static $CHECK_OTHER_USER_ACTIONS = [
-        'blacks' => ['create', 'destroy'],
-        'followers' => ['create', 'destroy'],
-        'friends' => ['create', 'destroy', 'agree'],
-        'users' => ['other_detail'],
-        'rooms' => ['open_user_chat', 'close_user_chat', 'kicking', 'add_manager', 'delete_manager', 'update_manager'],
-    ];
-
-    static $SKIP_USER_INFO_ACTIONS = [
-        'users' => ['update', 'emchat']
-    ];
-
-    function skipAuth($controller_name, $action_name)
-    {
-        if (isset(self::$SKIP_ACTIONS[$controller_name])) {
-            $values = self::$SKIP_ACTIONS[$controller_name];
-            if ($values == '*') {
-                return true;
-            }
-
-            if (is_array($values) && in_array($action_name, $values)) {
-                return true;
-            }
-        }
-        return false;
-
-    }
-
     function isDebug()
     {
         return '1' == $this->params('debug') && isDevelopmentEnv();
@@ -112,6 +70,11 @@ class BaseController extends \ApplicationController
         return 0;
     }
 
+    function currentOpenid()
+    {
+        $openid = $this->session->get('openid');
+        return $openid;
+    }
 
     function beforeAction($dispatcher)
     {
@@ -121,7 +84,7 @@ class BaseController extends \ApplicationController
             $url = $this->getFullUrl();
             $url = preg_replace('/^http:/', 'https:', $url);
 
-            info($url);
+            info('isHttps', $url);
 
             $this->response->redirect($url);
             return false;
@@ -161,7 +124,7 @@ class BaseController extends \ApplicationController
             }
         }
 
-        if (!$this->currentUser() || $this->currentUser()->product_channel_id != $this->currentProductChannel()->id) {
+        if (!$this->currentOpenid()) {
 
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '需要登录授权', ['error_url' => '/wx/home/error']);
@@ -190,11 +153,11 @@ class BaseController extends \ApplicationController
         }
 
 
-        if (!$this->request->isAjax()) {
-            if (!$this->checkLoginStatus()) {
-                return false;
-            }
-        }
+//        if (!$this->request->isAjax()) {
+//            if (!$this->checkLoginStatus()) {
+//                return false;
+//            }
+//        }
 
         return true;
 
@@ -211,7 +174,7 @@ class BaseController extends \ApplicationController
         $this->currentUser()->onlineFresh($fresh_attrs);
 
         // 启动离线任务
-       // $this->currentUser()->startOfflineTask();
+        // $this->currentUser()->startOfflineTask();
 
         return true;
     }

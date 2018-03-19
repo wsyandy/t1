@@ -715,6 +715,14 @@ class Users extends BaseModel
             return null;
         }
 
+        $user = new Users();
+        $user->id = 0;
+        $user->openid = $openid;
+        $session = self::di('session');
+        $session->set('openid', $openid);
+
+        return $user;
+
         $user = self::findFirstByOpenid($product_channel, $openid);
         //有用户
         if ($user) {

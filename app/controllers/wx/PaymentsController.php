@@ -15,23 +15,40 @@ class PaymentsController extends BaseController
     function weixinAction()
     {
 
-        $products = \Products::findDiamondListByUser($this->currentUser());
-        $payment_channels = \PaymentChannels::selectByUser($this->currentUser());
-        $selected_payment_channel = $payment_channels[0];
+        $fee_type = 'diamond';
+        $product_group = \ProductGroups::findFirst(['product_channel_id' => $this->currentProductChannel()->id, 'fee_type' => $fee_type, 'status' => STATUS_ON]);
+        $products = \Products::find([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and (apple_product_no="" or apple_product_no is null)',
+            'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
+            'order' => 'amount asc']);
+
+        $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($this->currentProductChannel()->id);
+        $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
+        $selected_payment_channel = null;
+        foreach ($payment_channels as $payment_channel) {
+            if (!$payment_channel->isValid()) {
+                continue;
+            }
+            if ($payment_channel->payment_type == 'weixin_js') {
+                $selected_payment_channel = $payment_channel;
+                break;
+            }
+        }
+
+        $this->view->pay_user_id = $this->session->get('pay_user_id');
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
-        $this->view->current_user = $this->currentUser();
         $this->view->product_channel = $this->currentProductChannel();
         $this->view->title = '充值';
     }
 
     function createAction()
     {
+
         $user_id = $this->params('user_id');
+        $user = null;
         if ($user_id) {
             $user = \Users::findFirstById($user_id);
-        } else {
-            $user = $this->currentUser();
         }
 
         if (!$user) {
@@ -41,11 +58,12 @@ class PaymentsController extends BaseController
         if (isBlank($this->params('product_id'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
+
         if (isBlank($this->params('payment_channel_id'))) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $product = \Products::findById($this->params('product_id'));
+        $product = \Products::findFirstById($this->params('product_id'));
 
         list($error_code, $error_reason, $order) = \Orders::createOrder($user, $product);
 
@@ -72,7 +90,7 @@ class PaymentsController extends BaseController
             'show_url' => $cancel_url,
             'cancel_url' => $cancel_url,
             'callback_url' => $this->getRoot() . $result_url,
-            'openid' => $this->currentUser()->openid, // 代替充值特殊处理
+            'openid' => $this->currentOpenid(), // 代替充值特殊处理
             'product_name' => '订单-' . $order->order_no
         ];
 
@@ -110,21 +128,13 @@ class PaymentsController extends BaseController
         }
 
         $this->view->order = $order;
-        $this->view->user = $this->currentUser();
-        $this->view->product_channel = $this->currentUser()->product_channel;
-
         $payment = \Payments::findFirstByOrderId($order->id);
-        if (!$payment) {
-            if ($this->request->isAjax()) {
-                $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
-            }
+        if (!$payment || !$order->isPaid()) {
+            $this->response->redirect('/wx/payments/weixin?ts=' . time());
             return;
         }
 
-        if ($this->request->isAjax()) {
-            $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pay_status' => $payment->pay_status]);
-            return;
-        }
+        $this->session->set('pay_user_id', $order->user_id);
 
         $this->view->title = '支付结果';
         $this->view->payment = $payment;
