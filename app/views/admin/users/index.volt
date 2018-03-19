@@ -87,7 +87,7 @@
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-    '状态':'user_status_info', '操作':'profile_link'
+'状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -99,7 +99,7 @@
             FR:${ user.fr }<br/>
             FR名称:${ user.partner_name }<br/>
             平台:${ user.platform } 平台版本:${ user.platform_version }<br/>
-            版本名称:{{ user.version_name }} 软件版本号:{{ user.version_code }}<br/>
+            版本名称:${ user.version_name } 软件版本号:${ user.version_code }<br/>
             api协议版本: ${ user.api_version }<br/>
         </td>
 
