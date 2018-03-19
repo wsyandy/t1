@@ -1073,6 +1073,8 @@ class Users extends BaseModel
             if ('birthday' == $k) {
                 $time = strtotime($v);
 
+                $birthday = '';
+
                 if (date("Y") - date("Y", $time) < 18) {
                     $birthday = date("Y") - 18;
                 }
@@ -1081,7 +1083,9 @@ class Users extends BaseModel
                     $birthday = date("Y") - 70;
                 }
 
-                $time = strtotime($birthday . "-" . date("m-d", $time));
+                if ($birthday) {
+                    $time = strtotime($birthday . "-" . date("m-d", $time));
+                }
 
                 if ($time < time()) {
                     $this->birthday = $time;
