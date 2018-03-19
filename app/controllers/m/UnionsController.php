@@ -385,8 +385,7 @@ class UnionsController extends BaseController
     {
         $room_id = $this->params('room_id');
         $room = \Rooms::findFirstById($room_id);
-        $user_id = $this->currentUserId();
-        if ($room && $room->isNeedPassword($user_id)) {
+        if ($room && $room->lock) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '需要密码');
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '');

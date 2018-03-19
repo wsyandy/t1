@@ -1301,15 +1301,6 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
-    static function isNeedPassword($room_id)
-    {
-        $room = Rooms::findFirstById($room_id);
-        if ($room && $room->lock) {
-            return true;
-        }
-        return false;
-    }
-
     function generateFilterUserKey($user_id)
     {
         return "filter_user_" . $this->id . "and" . $user_id;
