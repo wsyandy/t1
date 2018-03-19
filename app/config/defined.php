@@ -9,7 +9,6 @@ define('STATUS_OFF', 0);   //无效
 define('STATUS_ON', 1);    //有效
 define('STATUS_PROGRESS', 3); // 进行中
 define('STATUS_BLOCKED', 4); // 被封
-define('STATUS_EXPIRE',5); // 过期
 
 //有无状态
 define('STATUS_NO_LIMIT', 0); // 不限
