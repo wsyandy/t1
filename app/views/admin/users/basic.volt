@@ -9,8 +9,8 @@
     <tr>
         <td>昵称:{{ user.nickname }}</td>
         <td>手机号码:{{ user.mobile }}</td>
+        <td>第三方登录标识: {{ user.third_unionid }}</td>
         <td>生日: {{ user.birthday_text }}, {{ user.age }}岁</td>
-        <td>个性签名: {{ user.monologue }}</td>
     </tr>
     <tr>
         <td>星座: {{ user.constellation_text }} 身高: {{ user.height }}</td>
@@ -35,7 +35,7 @@
         <td>经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}</td>
         <td>IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}</td>
         <td>自述城市信息: {{ user.province_name }}, {{ user.city_name }}</td>
-        <td></td>
+        <td>个性签名: {{ user.monologue }}</td>
     </tr>
 </table>
 
