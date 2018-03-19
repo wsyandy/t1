@@ -137,11 +137,11 @@
             <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
             <li v-show="!user_operation && is_president" @click.stop="applyGoHot">上热门</li>
             <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
-            <li v-show="user_operation && is_president" @click.stop="userDetail">查看资料</li>
+            <li v-show="user_operation " @click.stop="userDetail">查看资料</li>
             <li v-show="user_operation && selected_user.id != union.user_id && is_president" @click.stop="confirmPop">
                 踢出家族
             </li>
-            <li v-show="!is_president" @click.stop="confirmPop">退出家族</li>
+            <li v-show="!user_operation && !is_president" @click.stop="confirmPop">退出家族</li>
         </ul>
         <div class="close_btn">取消</div>
     </div>
@@ -201,7 +201,7 @@
                 if (this.page > this.total_page) {
                     return;
                 }
-                var data = {union_id:'{{ union.id }}', page: this.page, per_page: 10, sid: this.sid, code: this.code};
+                var data = {union_id: '{{ union.id }}', page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 if (index == 0) {
                     data.order = "current_room_id desc";
                     data.filter_id = this.president.id;
@@ -221,7 +221,7 @@
                 this.page++;
             },
             userOperation: function (user) {
-                if (!this.is_president) {
+                if (this.user.union_id != this.union.id) {
                     return;
                 }
                 this.user_operation = true;
