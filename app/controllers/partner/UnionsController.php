@@ -65,6 +65,10 @@ class UnionsController extends BaseController
         $begin_at = beginOfDay(strtotime($stat_at));
         $end_at = endOfDay(strtotime($stat_at));
 
+        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
+        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
+        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
+
         if ($this->request->isAjax()) {
 
             $page = $this->params('page');
@@ -133,10 +137,6 @@ class UnionsController extends BaseController
         $union_history = \UnionHistories::findFirstBy([
             'user_id' => $this->currentUser()->id, 'union_id' => $union->id
         ], 'id desc');
-
-        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
-        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
-        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
 
         if ($union_history->join_at && $union_history->join_at > $begin_at) {
             $begin_at = $union_history->join_at;
