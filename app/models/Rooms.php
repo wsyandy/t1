@@ -1309,7 +1309,7 @@ class Rooms extends BaseModel
     function addFilterUser($user_id)
     {
         $db = Rooms::getRoomDb();
-        $expire = 60;
+        $expire = 2;
         $db->setex($this->generateFilterUserKey($user_id), $expire, time());
     }
 
