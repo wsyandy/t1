@@ -108,7 +108,7 @@ input::-webkit-input-placeholder{
 }
 .weixin_chongzhi_top .name{
 	margin-top: 5px;
-	font-size: 15px;
+	font-size: 17px;
 	color: #F5538A;
 }
 .name_input:valid + .close_btn {display: block;}
