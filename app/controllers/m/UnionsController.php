@@ -404,6 +404,6 @@ class UnionsController extends BaseController
             $room->addFilterUser($user_id);
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '密码错误,哈哈哈');
+        return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
     }
 }
