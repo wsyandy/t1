@@ -126,7 +126,7 @@ class RoomsController extends BaseController
         $current_user_id = $this->currentUser()->id;
         $current_room_id = $this->currentUser()->current_room_id;
         //房间加锁并且不是房主且用户不在这个房间检验密码
-        if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && ($room->password != $password || !$room->checkFilterUser($current_user_id))) {
+        if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && ($room->password != $password && !$room->checkFilterUser($current_user_id))) {
             return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
         }
 
