@@ -482,11 +482,10 @@ class Unions extends BaseModel
 
         $user->union_id = 0;
         $user->union_type = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
 
         if ($this->type == UNION_TYPE_PRIVATE) {
-
-            $user->union_charm_value = 0;
-            $user->union_wealth_value = 0;
 
             if ($kicking) {
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";

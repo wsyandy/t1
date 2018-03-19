@@ -336,4 +336,51 @@ class RoomsTask extends \Phalcon\Cli\Task
         $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
         echoLine(count($users));
     }
+
+
+    function handleSuccessHotRoomHistories()
+    {
+        $cond = [
+            "conditions" => "status = :status:",
+            "bind" => ["status" => STATUS_ON]
+        ];
+
+        $hot_room_histories = HotRoomHistories::find(
+            $cond
+        );
+
+        foreach ($hot_room_histories as $hot_room_history) {
+            if (time() - $hot_room_history->end_at <= 60 * 10) {
+                //设置过期
+                $room_id = $hot_room_history->user->room_id;
+                $room = Rooms::findFirstById($room_id);
+                if (isBlank($room)) {
+                    debug("no room", $hot_room_history->id);
+                }
+                if ($room->hot != STATUS_ON) {
+                    continue;
+                }
+                $room->hot = STATUS_OFF;
+                $room->update();
+
+                $hot_room_histories->status = STATUS_EXPIRE;
+                $hot_room_histories->update();
+                continue;
+            }
+
+            if ($hot_room_history->start_at - time() >= 60 * 5) {
+                $room_id = $hot_room_history->user->room_id;
+                $room = Rooms::findFirstById($room_id);
+                if (isBlank($room)) {
+                    debug("no room", $hot_room_history->id);
+                }
+                if ($room->hot != STATUS_ON) {
+                    continue;
+                }
+                debug("success handle hot_room",$room->id);
+                $room->hot = STATUS_ON;
+                $room->update();
+            }
+        }
+    }
 }

@@ -2372,7 +2372,7 @@ class Users extends BaseModel
 
             $sender->wealth_value += $wealth_value;
             $union = $sender->union;
-            if (isPresent($union)) {
+            if (isPresent($union) && $union->type == UNION_TYPE_PUBLIC) {
                 $sender->union_wealth_value += $wealth_value;
                 $union->updateFameValue($wealth_value);
             }
@@ -2408,10 +2408,10 @@ class Users extends BaseModel
         $amount = $gift_order->amount;
         $charm_value = $amount;
 
-        if (isPresent($user)) {
+        if (isPresent($user) ) {
             $user->charm_value += $charm_value;
             $union = $user->union;
-            if (isPresent($union)) {
+            if (isPresent($union) && $union->type == UNION_TYPE_PUBLIC) {
                 $user->union_charm_value += $charm_value;
                 $union->updateFameValue($charm_value);
             }
