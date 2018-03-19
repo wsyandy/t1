@@ -261,7 +261,7 @@
                 var data = {room_id: id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
                     if (resp.error_code == 0) {
-                        this.selected_room_id = id;
+                        vm.selected_room_id = id;
                         $('.room_cover').show();
                     } else {
                         var url = "app://rooms/detail?id=" + id;
