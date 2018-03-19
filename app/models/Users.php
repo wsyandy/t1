@@ -2508,4 +2508,20 @@ class Users extends BaseModel
     {
         return $this->id == $union->user_id;
     }
+
+    static function updateHiCoins($user, $gift_order)
+    {
+        $user = $gift_order->user;
+        $lock_key = "user_update_hi_coins_lock_" . $user->id;
+        $lock = tryLock($lock_key);
+        $gift = $gift_order->gift;
+        $gift_amount = $gift->amount;
+        $gift_num = $gift_order->gift_num;
+        $product_channel = $user->product_channel;
+        $rate = $product_channel->rateOfDiamondToHiCoin();
+        $hi_coins = ($gift_amount * $gift_num) / $rate;
+        $user->hi_coins = $user->hi_coins + $hi_coins;
+        $user->save();
+        unlock($lock);
+    }
 }
