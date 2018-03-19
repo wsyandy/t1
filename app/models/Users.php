@@ -2509,7 +2509,7 @@ class Users extends BaseModel
         return $this->id == $union->user_id;
     }
 
-    static function updateHiCoins($user, $gift_order)
+    static function updateHiCoins($gift_order)
     {
         $user = $gift_order->user;
         $lock_key = "user_update_hi_coins_lock_" . $user->id;
