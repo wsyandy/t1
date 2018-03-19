@@ -421,6 +421,7 @@
             var data = {sid: vm.sid, code: vm.code, password: password, room_id: vm.selected_room_id};
             $.authPost(url, data, function (resp) {
                 if (resp.error_code == 0) {
+                    console.log(password, vm.selected_room_id);
                     var url = "app://rooms/detail?id=" + vm.selected_room_id;
                     location.href = url;
                 } else {
