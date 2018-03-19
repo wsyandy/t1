@@ -258,7 +258,7 @@
             },
             roomDetail: function (id) {
                 var url = "/m/unions/is_need_password";
-                var data = {room_id: this.room_id, sid: this.sid, code: this.code};
+                var data = {room_id: id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
                     if (resp.error_code == 0) {
                         this.selected_room_id = id;
