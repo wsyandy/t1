@@ -45,10 +45,8 @@
                     <span class="agree_txt" @click="agreement">《家族使用协议》</span></div>
             </div>
 
-            <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                <input type="submit" name="submit" value="保存修改"
-                       :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-            </div>
+            <input class="close_submit" type="submit" name="submit" value="保存修改"
+                   :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
 
         </div>
     </form>

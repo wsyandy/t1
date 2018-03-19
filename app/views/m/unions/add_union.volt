@@ -38,22 +38,20 @@
                 </li>
 
             </ul>
-            <div class="agree_div" >
+            <div class="agree_div">
                 <img class="agree_img" :src="set_select" @click="agreeSelect"/>
                 <div class="agree_text">
                     <span class="agree_txt">阅读并同意</span>
                     <span class="agree_txt" @click="agreement">《家族使用协议》</span></div>
             </div>
 
-            <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                <input type="submit" name="submit" value="申请创建（100钻石）"
-                       :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-            </div>
+            <input class="close_submit" type="submit" name="submit" value="申请创建（100钻石）"
+                   :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
 
             <div class="popup_cover" v-if="isPop">
                 <div class="popup_box">
                     <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
-                    <div class="popup_text">
+                    <div class="popup_text" id="popup_text">
                         创建家族需要支付100钻石，您的钻石数量不足，请先充值
                     </div>
                     <div class="popup_btn">
@@ -77,6 +75,10 @@
 
 </div>
 <script>
+    //解决上传图片时capture="camera"在安卓与IOS的兼容性问题（在IOS只能拍照，不能选相册）
+    var ua = navigator.userAgent.toLowerCase();//获取浏览器的userAgent,并转化为小写——注：userAgent是用户可以修改的
+    var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
+
     var opts = {
         data: {
             isEdit: false,
@@ -107,7 +109,10 @@
             },
             establishFamily: function (index) {
                 this.isPop = false;
-
+                if (isIos) {
+                    alert("请到我的账户充值");
+                    return;
+                }
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
@@ -188,9 +193,6 @@
     });
 
     $(function () {
-        //解决上传图片时capture="camera"在安卓与IOS的兼容性问题（在IOS只能拍照，不能选相册）
-        var ua = navigator.userAgent.toLowerCase();//获取浏览器的userAgent,并转化为小写——注：userAgent是用户可以修改的
-        var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
         if (isIos) {
             $("input:file").removeAttr("capture");
         }
