@@ -159,7 +159,7 @@
 
     <div class="room_cover">
         <div class="room_pop">
-            <img class="room_pop_bg" src="images/room_pop_bg.png" alt="">
+            <img class="room_pop_bg" src="/m/images/room_pop_bg.png" alt="">
             <div class="room_locked">房间已上锁</div>
             <div class="room_lock">
                 <label for="">密码</label>
@@ -418,7 +418,7 @@
         $(".room_in").on("click", function () {
             var url = "/m/unions/check_password";
             var password = $('#password').val();
-            var data = {sid: this.sid, code: this.code, password: password, room_id: vm.selected_room_id};
+            var data = {sid: vm.sid, code: vm.code, password: password, room_id: vm.selected_room_id};
             $.authPost(url, data, function (resp) {
                 if (resp.error_code == 0) {
                     var url = "app://rooms/detail?id=" + vm.selected_room_id;
