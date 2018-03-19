@@ -402,6 +402,7 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         } else if ($room->password == $password) {
             $room->addFilterUser($user_id);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
