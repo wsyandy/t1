@@ -11,11 +11,10 @@ return [
         'product_channels' => ['index', 'edit', 'update', 'push'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
         'rooms' => ['index', 'detail'], 'soft_versions' => '*', 'payment_channels' => ['index', 'product_channels', 'edit', 'update']],
 
-    'operator' => ['dashboard' => '*', 'devices' => ['index'], 'stats' => ['hours', 'days'], 'export_histories' => ['download'],
-        'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
+    'operator' => ['dashboard' => '*', 'stats' => ['hours', 'days'], 'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
 
-    'operat_manager' => ['dashboard' => '*', 'devices' => ['index', 'edit', 'update'], 'stats' => '*', 'partners' => '*',
-        'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*', 'export_histories' => ['download'],
+    'operat_manager' => ['dashboard' => '*', 'stats' => ['hours', 'days'], 'partners' => '*',
+        'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*',
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*',
         'partner_urls' => '*'],
 

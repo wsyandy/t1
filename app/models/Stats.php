@@ -957,4 +957,25 @@ class Stats extends BaseModel
         return $stat_data;
     }
 
+    //'operat_manager' => '推广运营经理', 'operator' => '推广运营专员'
+    static function statFields($operator)
+    {
+        $fields = ['device_active_num', 'subscribe_num', 'register_num', 'register_rate', 'new_payment_success_total',
+            'new_paid_arpu', 'new_arpu'];
+
+        if (in_array($operator->role, ['operat_manager', 'operator'])) {
+
+            $res = [];
+
+            foreach (self::$STAT_FIELDS as $filed => $value) {
+                if (in_array($filed, $fields)) {
+                    $res[$filed] = $value;
+                }
+            }
+
+            return $res;
+        }
+
+        return self::$STAT_FIELDS;
+    }
 }

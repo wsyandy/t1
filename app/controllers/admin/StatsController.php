@@ -62,7 +62,7 @@ class StatsController extends BaseController
             array_push($hour_array, $hour);
         }
 
-        $stat_fields = \Stats::$STAT_FIELDS;
+        $stat_fields = \Stats::statFields($this->currentOperator());
 
         $this->view->stats = $stats;
         $this->view->stat_at = date('Y-m-d', $stat_at);
@@ -143,6 +143,8 @@ class StatsController extends BaseController
             $day_array[$day] = $year . "-" . $month . "-" . $day;
         }
 
+        $stat_fields = \Stats::statFields($this->currentOperator());
+
         $this->view->stats = $stats;
         $this->view->stat_at = $stat_at;
         $this->view->year = intval($year);
@@ -156,7 +158,7 @@ class StatsController extends BaseController
         $this->view->partner_id = $partner_id;
         $this->view->platforms = \Stats::$PLATFORM;
         $this->view->platform = $platform;
-        $this->view->data_array = \Stats::$STAT_FIELDS;
+        $this->view->data_array = $stat_fields;
     }
 
     function statRoomTimeAction()
