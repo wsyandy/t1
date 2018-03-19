@@ -149,6 +149,7 @@ class UsersController extends BaseController
             }
 
             if ($user->isBlocked()) {
+                info("block_user_login", $user->sid);
                 return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
             }
 
@@ -257,6 +258,11 @@ class UsersController extends BaseController
 
             if (!$user) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
+            }
+
+            if ($user->isBlocked()) {
+                info("block_user_login", $user->sid);
+                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
             }
 
             $context['login_type'] = $third_name;
