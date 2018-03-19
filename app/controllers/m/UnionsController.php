@@ -114,7 +114,11 @@ class UnionsController extends BaseController
         $this->view->user = $user;
         $this->view->is_president = $is_president;
         $this->view->union = $union;
-        $this->view->title = "我的家族";
+        if ($union && $union->id == $user->union_id) {
+            $this->view->title = "我的家族";
+        } else {
+            $this->view->title = $union->name;
+        }
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
     }
