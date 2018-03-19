@@ -125,9 +125,13 @@ class PaymentsController extends BaseController
             $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pay_status' => $payment->pay_status]);
             return;
         }
-
+        
         $this->view->title = '支付结果';
         $this->view->payment = $payment;
     }
 
+    function questionsAction()
+    {
+
+    }
 }

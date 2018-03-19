@@ -1,47 +1,47 @@
 @charset "utf-8";
 body, p, input, h1, h2, h3, h4,ol, ul, li, dl, dt, dd, form {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    vertical-align: middle;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	vertical-align: middle;
 }
 body {
-    font-family: '微软雅黑', 'Arial';
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    -o-text-size-adjust: none;
+	font-family: '微软雅黑', 'Arial';
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
 }
 html, body {
-    width: 100%;
-    margin: 0 auto;
-    color: #999999;
-    font-size: 14px;
-    background: #F3F3F3;
-    min-width: 320px;
-    max-width: 640px;
+	width: 100%;
+	margin: 0 auto;
+	color: #999999;
+	font-size: 14px;
+	background: #F3F3F3;
+	min-width: 320px;
+	max-width: 640px;
 }
 input,textarea,select{
-    font-family:inherit;
-    font-size:inherit;
-    font-weight:inherit;
-    appearance:none;
-    -moz-appearance:none;
-    -webkit-appearance:none;
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:inherit;
+	appearance:none;
+	-moz-appearance:none;
+	-webkit-appearance:none;
 }
 button,input
 {
-    border:none;
-    outline:none;
-    background:none;
+	border:none;
+	outline:none;
+	background:none;
 }
 a {
-    text-decoration: none;
-    color: #999;
+	text-decoration: none;
+	color: #999;
 }
 i,em
 {
-    font-style: normal;
+	font-style: normal;
 }
 h1,h2,h3,h4{
 	font-weight: normal;
@@ -68,34 +68,35 @@ h1,h2,h3,h4{
 	color: #333333;
 	font-size: 16px;
 }
-input:-moz-placeholder{   
-    color: #B6B6B6;   
-}   
-  
-input:-ms-input-placeholder{   
-    color: #B6B6B6; 
-}   
-  
-input::-webkit-input-placeholder{   
-    color: #B6B6B6;  
-}  
+input:-moz-placeholder{
+	color: #B6B6B6;
+}
+
+input:-ms-input-placeholder{
+	color: #B6B6B6;
+}
+
+input::-webkit-input-placeholder{
+	color: #B6B6B6;
+}
 .weixin_warn_box{
-	padding:0 23px;
-	position: fixed;
+	margin:0 40px;
+	position: absolute;
 	left: 0;
-	right: 0;
-	top: 0;
+	right:0;
+	top:0;
 	z-index: 9999;
+	display: none;
 }
 .weixin_warn_box .wran{
 	height: 40px;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	background: rgba(211,118,0,0.7);
 	border-radius: 4px;
 	color: #fff;
-	text-align: center;
-	justify-content: center;
+
 }
 .weixin_warn_box .wran i{
 	display: inline-block;
@@ -136,7 +137,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 24px;
 	height: 24px;
-	background: url(../images/weixin_zuanshi.png) no-repeat;
+	background: url(../images/ico-diamond.png) no-repeat;
 	background-size: 100%;
 }
 .weixin_cz_list .num span{
@@ -158,6 +159,73 @@ input::-webkit-input-placeholder{
 	color: #fff !important;
 }
 
+
+/*常见问题 按钮样式*/
+.faq_btn{
+	position: fixed;
+	left: 0;
+	bottom:18px;
+	width: 100%;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-webkit-align-items: center;
+	align-items: center;
+	font-size: 14px;
+	color: rgba(112,112,112,0.72);
+}
+.ico_faq{
+	width: 16px;
+	height: 16px;
+}
+.faq_btn span{
+	padding-left: 5px;
+}
+
+/*常见问题 页面 样式*/
+
+.q_text {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-justify-content: space-between;
+	justify-content: space-between;
+	-webkit-align-items: center;
+	align-items: center;
+	width: 100%;
+	height: 55px;
+	color: #464646;
+	font-size: 15px;
+	background-color: #fff;
+	border-bottom: 1px solid #F3F3F3;
+	padding: 0 15px;
+
+}
+
+.q_image {
+	width: 13px;
+	height: 13px;
+	background-image: url("../images/arrow-down.png");
+	background-repeat: no-repeat;
+	background-position: right center ;
+	background-size: 13px ;
+	transition: transform 0.5s;
+}
+
+.q_image.up {
+	transform: rotate(180deg);
+}
+
+.answer_text {
+	display: none;
+	padding: 15px;
+	font-size: 13px;
+	line-height: 21px;
+	color: #757575;
+}
 
 
 
