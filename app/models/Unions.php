@@ -80,8 +80,8 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '家族名称不能为空或字数超过限制'];
         }
 
-        if (isBlank($notice) || mb_strlen($notice) > 50) {
-            return [ERROR_CODE_FAIL, '家族公告不能为空或字数超过限制'];
+        if (isPresent($notice) && mb_strlen($notice) > 50) {
+            return [ERROR_CODE_FAIL, '家族公告字数超过限制'];
         }
 
         $union = new Unions();
@@ -604,7 +604,7 @@ class Unions extends BaseModel
 
             if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 5)) {
                 continue;
-            } else if ($filed == 'notice' && (isBlank($value) || mb_strlen($value) > 50)) {
+            } else if ($filed == 'notice' && (isPresent($value) && mb_strlen($value) > 50)) {
                 continue;
             }
 
