@@ -52,10 +52,14 @@ class AccountHistories extends BaseModel
         $account_history->union_type = $user->union_type;
 
         foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
-            $account_history->$column = fetch($opts, $column);
+            $value = fetch($opts, $column);
+
+            if ($value) {
+                $account_history->$column = $value;
+            }
         }
 
-        if ($account_history->create()) {
+        if ($account_history->save()) {
             return true;
         }
 
