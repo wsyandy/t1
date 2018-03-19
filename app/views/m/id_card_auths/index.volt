@@ -36,7 +36,7 @@
             <img class="agree_img" :src="set_select"/>
             <div class="agree_text">
                 <span class="agree_txt">阅读并同意</span>
-                <span class="agree_txt">《主持认证协议》</span></div>
+                <span class="agree_txt" @click.stop="agreement">《主持认证协议》</span></div>
         </div>
 
         <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}" @click="submit()">
@@ -89,7 +89,14 @@
                     this.set_select = '/m/images/ico-select.png';
                 }
             },
+            agreement: function () {
+                var url = "/m/id_card_auths/agreement?sid=" + this.sid + "&code=" + this.code;
+                location.href = url;
+            },
             submit: function () {
+                if (vm.hasAgree) {
+                    return;
+                }
                 var id_name = $("#id_name").val();
                 var id_no = $("#id_no").val();
                 var mobile = $("#mobile").val();

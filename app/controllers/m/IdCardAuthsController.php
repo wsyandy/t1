@@ -40,4 +40,10 @@ class IdCardAuthsController extends BaseController
 
         return $this->renderJSON($error_code, $error_reason);
     }
+
+    function agreementAction()
+    {
+        $product_channel = $this->currentProductChannel();
+        $this->view->product_channel = $product_channel;
+    }
 }
