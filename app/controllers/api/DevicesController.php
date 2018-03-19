@@ -29,12 +29,11 @@ class DevicesController extends BaseController
 
             if ($device) {
 
-                if ($device->isBlocked()) {
-                    info("block_device_active", $device->id, $device->dno);
-                    return $this->renderJSON(ERROR_CODE_FAIL, "设备异常!");
-                }
-
                 $user = \Users::registerForClientByDevice($device);
+
+                if (!$user) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
+                }
 
                 $db = \Users::getUserDb();
                 $good_num_list_key = 'good_num_list';
