@@ -12,8 +12,8 @@ class ProductsController extends BaseController
 {
     function indexAction()
     {
-        $payment_channels = \PaymentChannels::search($this->currentUser());
-        $products = \Products::search($this->currentUser());
+        $products = \Products::findDiamondListByUser($this->currentUser());
+        $payment_channels = \PaymentChannels::selectByUser($this->currentUser());
 
         $selected_product = $products[0];
         $selected_payment_channel = $payment_channels[0];
