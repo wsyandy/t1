@@ -180,7 +180,7 @@ class Devices extends BaseModel
             return true;
         }
 
-        return $this->reg_num <= 5;
+        return $this->reg_num <= 10;
     }
 
     public function getStatAttrs()
