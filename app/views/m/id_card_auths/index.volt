@@ -104,8 +104,12 @@
                     code: vm.code,
                 };
 
-                $.authPost('/m/id_card_auths', params, function () {
-
+                $.authPost('/m/id_card_auths', params, function (resp) {
+                    if (0 == resp.error_code) {
+                        location.href = "/m/unions/index?sid={{ sid }}&code={{ code }}";
+                    } else {
+                        alert(resp.error_reason);
+                    }
                 })
             }
         }
