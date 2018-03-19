@@ -560,8 +560,11 @@ class Unions extends BaseModel
 
     function updateFameValue($value)
     {
+        $lock_key = "update_union_fame_lock_" . $this->id;
+        $lock = tryLock($lock_key);
         $this->fame_value += $value;
         $this->update();
+        unlock($lock);
     }
 
     function getAvatarUrl()
