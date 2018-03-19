@@ -1312,4 +1312,15 @@ class Rooms extends BaseModel
         $expire = 60;
         $db->setex($this->generateFilterUserKey($user_id), $expire, time());
     }
+
+    function checkFilterUser($user_id)
+    {
+        $db = Rooms::getRoomDb();
+
+        $key = $this->generateFilterUserKey($user_id);
+        if ($db->get($key)) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -424,6 +424,7 @@
                 if (resp.error_code == 0) {
                     var url = "app://rooms/detail?id=" + vm.selected_room_id;
                     location.href = url;
+                    $(".room_cover").fadeOut();
                 } else {
                     alert(resp.error_reason);
                 }
