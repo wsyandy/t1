@@ -248,7 +248,6 @@
                 $('.pop_bottom_bg').show();
             },
             userDetail: function () {
-                console.log(this.selected_user.id);
                 if (this.selected_user.id == this.user.id) {
                     url = "app://users/detail";
                 } else {
