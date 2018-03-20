@@ -593,7 +593,8 @@ class Unions extends BaseModel
             'name' => $this->name,
             'fame_value' => $this->fame_value,
             'user_num' => $this->user_num,
-            'avatar_url' => $this->avatar_url
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url
         ];
     }
 

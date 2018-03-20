@@ -17,7 +17,7 @@
         <ul>
             <li v-for="item in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
-                    <img class="family_avatar" :src="item.avatar_url" alt="">
+                    <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
                         <div class="family_prestige">

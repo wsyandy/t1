@@ -19,12 +19,12 @@ class UnionsController extends BaseController
 
         if (isBlank($union)) {
             $this->view->union = 0;
-            $this->view->avatar_url = '';
+            $this->view->avatar_small_url = '';
         } else {
             if ($union->type == UNION_TYPE_PRIVATE) {
-                $this->view->avatar_url = $union->avatar_url;
+                $this->view->avatar_small_url = $union->avatar_small_url;
             } else {
-                $this->view->avatar_url = $union->user->avatar_url;
+                $this->view->avatar_small_url = $union->user->avatar_small_url;
             }
             $this->view->union = $union;
         }
