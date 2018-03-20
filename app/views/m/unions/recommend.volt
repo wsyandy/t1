@@ -69,9 +69,14 @@
                 }
                 $.authGet('/m/unions/search', data, function (resp) {
                     vm.total_page = resp.total_page;
-                    $.each(resp.unions, function (index, item) {
-                        vm.unions.push(item);
-                    });
+                    if (resp.unions) {
+                        $.each(resp.unions, function (index, item) {
+                            vm.unions.push(item);
+                        });
+                    }
+                    if (vm.searchText && vm.unions.length == 0) {
+                        alert("没有搜索到家族");
+                    }
                 });
                 this.page++;
             },
@@ -82,11 +87,6 @@
                 this.page = 1;
                 this.unions = [];
                 this.list();
-                setTimeout(function () {
-                    if (vm.unions.length == 0) {
-                        alert("没有搜索到家族");
-                    }
-                }, 100);
             },
             unionDetail: function (id) {
                 var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
