@@ -451,10 +451,10 @@ class Unions extends BaseModel
         $union_history = UnionHistories::findFirstBy(
             ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON], 'id desc');
 
-        $expire_at = time() - 86400 * 7;
+        //$expire_at = time() - 86400 * 7;
 
         if (isDevelopmentEnv()) {
-            $expire_at = time() - 2;
+            $expire_at = time() - 60;
         }
 
         if ($union_history->join_at > $expire_at) {
