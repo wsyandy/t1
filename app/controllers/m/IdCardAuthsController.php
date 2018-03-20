@@ -47,6 +47,10 @@ class IdCardAuthsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '身份证号码错误');
         }
 
+        if(!isMobile($mobile)){
+            return $this->renderJSON(ERROR_CODE_FAIL,"手机号错误");
+        }
+
         $opts = ['id_name' => $id_name, 'id_no' => $id_no, 'mobile' => $mobile, 'bank_account' => $bank_account, 'account_bank_id' => $account_bank_id];
         list($error_code, $error_reason) = \IdCardAuths::createIdCardAuth($this->currentUser(), $opts);
 
