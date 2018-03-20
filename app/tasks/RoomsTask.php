@@ -348,4 +348,17 @@ class RoomsTask extends \Phalcon\Cli\Task
         $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
         echoLine(count($users));
     }
+
+    function initTotalUserNumAction()
+    {
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_ACTIVE]);
+        $hot_cache = Rooms::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0) {
+                echoLine($room->user_num);
+                $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $room->user_num, $room->id);
+            }
+        }
+    }
 }
