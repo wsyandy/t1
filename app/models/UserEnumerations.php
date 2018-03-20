@@ -72,5 +72,5 @@ trait UserEnumerations
         'bronze3' => '青铜Ⅲ', 'bronze4' => '青铜Ⅳ', 'bronze5' => '青铜Ⅴ',
     ];
 
-    static $ID_CARD_AUTH = [AUTH_NONE => '等待认证', AUTH_SUCCESS => '认证成功', AUTH_FAIL => '认证失败', AUTH_WAIT => '等待审核'];
+    static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
 }
