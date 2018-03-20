@@ -15,7 +15,7 @@ class IdCardAuthsController extends BaseController
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
         $this->view->current_user = $this->currentUser();
-
+        $this->view->title = "主持认证";
         $id_auth_auth = \IdCardAuths::findFirstByUserId($this->currentUser()->id);
         $this->view->id_auth_auth = $id_auth_auth;
     }

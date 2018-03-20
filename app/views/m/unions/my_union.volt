@@ -163,7 +163,7 @@
             <div class="room_locked">房间已上锁</div>
             <div class="room_lock">
                 <label for="">密码</label>
-                <input class="input_text" maxlength="10" type="text" placeholder="最多输入10个字" id="password" style="
+                <input class="input_text" maxlength="10" type="number" placeholder="最多输入10个字" id="password" style="
     background-color: #F0F0F0;">
             </div>
             <div class="room_btn">
