@@ -711,5 +711,26 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->union_type = $union->type;
         $user->update();
         echoLine($union);
+
+        $user = Users::findFirstById(1001316);
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->update();
+        echoLine($user->union_id);
+
+        $union = Unions::findFirstById(4);
+        echoLine($union);
+
+
+    }
+
+    function getChatListAction()
+    {
+        $user = Users::findFirstById(31426);
+        $chats = \Chats::findChatsList($user, 1, 20, SYSTEM_ID);
+
+        foreach ($chats as $chat) {
+            echoLine($chat, $chat->created_at_text);
+        }
     }
 }

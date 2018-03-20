@@ -58,7 +58,7 @@ class HotRoomHistories extends BaseModel
         }
 
         if (isBlank($introduce) || mb_strlen($introduce) > 50 || mb_strlen($introduce) < 5) {
-            return [ERROR_CODE_FAIL, '直播简介错误'];
+            return [ERROR_CODE_FAIL, '直播简介5到50个字'];
         }
 
         $end_at = $start_at + 60 * 60 * 2 - 1;
