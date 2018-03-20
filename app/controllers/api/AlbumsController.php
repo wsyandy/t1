@@ -17,8 +17,13 @@ class AlbumsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 9);
         $user = $this->currentUser();
-
-        $albums = \Albums::findPagination(['conditions' => "user_id" . $user->id, 'order' => 'id desc'], $page, $per_page);
+        //AUTH_SUCCESS
+        $cond = [
+            'conditions' => "user_id = :user_id: and auth_status = :auth_status:",
+            'bind' => ['user_id' => $user->id, 'auth_status' => AUTH_SUCCESS],
+            'order' => 'id desc'
+        ];
+        $albums = \Albums::findPagination($cond, $page, $per_page);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $albums->toJson('albums', 'toSimpleJson'));
     }

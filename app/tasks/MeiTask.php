@@ -652,6 +652,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $ip_list = "permit_ip_list";
         $hot_cache = \Users::getHotWriteCache();
-        $hot_cache->zadd($ip_list, time(), '116.226.124.47');
+        // 116.226.124.121 116.226.124.47
+        $hot_cache->zadd($ip_list, time(), '116.226.124.121');
     }
 }

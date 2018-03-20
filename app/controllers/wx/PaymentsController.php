@@ -129,12 +129,12 @@ class PaymentsController extends BaseController
 
         $this->view->order = $order;
         $payment = \Payments::findFirstByOrderId($order->id);
+        $this->session->set('pay_user_id', $order->user_id);
+
         if (!$payment || !$order->isPaid()) {
             $this->response->redirect('/wx/payments/weixin?ts=' . time());
             return;
         }
-
-        $this->session->set('pay_user_id', $order->user_id);
 
         $this->view->title = '支付结果';
         $this->view->payment = $payment;
