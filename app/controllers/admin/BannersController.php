@@ -26,6 +26,7 @@ class BannersController extends BaseController
         $product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->product_channels = $product_channels;
         $this->view->banner = $banner;
+        $this->view->types = array_merge([0 => '请选择'], \Banners::$TYPE);
     }
 
     function createAction()
@@ -51,6 +52,7 @@ class BannersController extends BaseController
         $product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->banner = $banner;
         $this->view->product_channels = $product_channels;
+        $this->view->types = array_merge([0 => '请选择'], \Banners::$TYPE);
     }
 
     function updateAction()

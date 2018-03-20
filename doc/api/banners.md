@@ -10,6 +10,7 @@
 |---|---|---|---|---
 |new|最新|int|是|1最新|
 |hot|热门|int|是|1热门|
+|type|banner类型|int|是|1附近的banner|
 
 ##### 1.2 返回参数说明
 ```
@@ -36,6 +37,16 @@
             }
             ...
      ]
+    near_banners: [
+                 {
+                     id: int 
+                     name: string 
+                     url: string
+                     image_url: 'https://banners/image'
+                     image_small_url: 'https://banners/small'
+                 }
+                 ...
+          ]
 }
 ```
 

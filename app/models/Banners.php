@@ -14,6 +14,8 @@ class Banners extends BaseModel
 
     static $NEW = [STATUS_ON => '是', STATUS_OFF => '否'];
 
+    static $TYPE = [1 => '附近页面'];
+
     static $MATERIAL_TYPE = [BANNER_TYPE_ROOM => '房间', BANNER_TYPE_URL => '链接'];
 
     static $files = ['image' => APP_NAME . '/banners/image/%s'];
@@ -184,10 +186,12 @@ class Banners extends BaseModel
                     $banners_json[] = $banner->toSimpleJson();
                 }
 
-                if ($key != 'new') {
-                    $all_banners_json[$key . "_banners"] = $banners_json;
-                } else {
+                if ('new' == $key) {
                     $all_banners_json["latest" . "_banners"] = $banners_json;
+                } elseif ('type' == $key && 1 == $key) {
+                    $all_banners_json["near_banners"] = $banners_json;
+                } else {
+                    $all_banners_json[$key . "_banners"] = $banners_json;
                 }
             }
         }

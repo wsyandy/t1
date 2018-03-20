@@ -1,0 +1,1 @@
+ALTER TABLE banners add COLUMN type INTEGER ;
