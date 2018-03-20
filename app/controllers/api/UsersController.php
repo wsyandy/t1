@@ -480,6 +480,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
+        info($this->params());
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 
