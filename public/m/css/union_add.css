@@ -135,6 +135,8 @@
     -webkit-align-items: center;
     align-items: center;
     -webkit-justify-content: center;
+    justify-content: center;
+    text-align: center;
     font-size: .36rem;
     color: #FFFFFF;
     -webkit-appearance: none;
