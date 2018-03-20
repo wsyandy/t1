@@ -189,6 +189,8 @@ class BaseController extends \ApplicationController
         $ip = $this->remoteIp();
         $data = \Users::ipLocation($ip);
 
+        debug("is_foreign_ip", $data);
+
         if (is_array($data) && preg_match('/中国/', $data[0])) {
             $is_foreign_ip = false;
         }

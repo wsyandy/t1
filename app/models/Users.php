@@ -2549,8 +2549,6 @@ class Users extends BaseModel
 
         $data = \IPLocation::find($ip);
 
-        debug($data, $ip);
-
         if (is_array($data)) {
             $x_redis->setex($key, 3600 * 24, json_encode($data, JSON_UNESCAPED_UNICODE));
         }
