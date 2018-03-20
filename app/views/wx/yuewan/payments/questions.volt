@@ -1,6 +1,6 @@
 <div  class="faq_title">
     <div class="q_text">
-        <span class="">1. 如何更改并完善个人资料？</span>
+        <span class="">1. 我充值后怎么查看是否到账？</span>
         <div class="q_image"></div>
     </div>
     <div class="answer_text">
@@ -9,7 +9,7 @@
 </div>
 <div  class="faq_title">
     <div class="q_text">
-        <span class="">2. 如何添加联系人？</span>
+        <span class="">2. 充错账号怎么办？</span>
         <div class="q_image"></div>
     </div>
     <div class="answer_text">
