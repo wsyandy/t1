@@ -19,7 +19,7 @@ class IdCardAuthsController extends BaseController
         $id_auth_auth = \IdCardAuths::findFirstByUserId($this->currentUser()->id);
         $this->view->id_auth_auth = $id_auth_auth;
 
-        $banks = \AccountBanks::find(['conditions' => "status = " . STATUS_ON]);
+        $banks = \AccountBanks::find(['conditions' => "status = " . STATUS_ON, 'order' => 'rank desc']);
         $banks_json = [];
 
         foreach ($banks as $bank) {

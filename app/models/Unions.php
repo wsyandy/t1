@@ -84,6 +84,12 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '家族公告字数超过限制'];
         }
 
+        $exist_union = Unions::findFirstByName($name);
+
+        if ($exist_union) {
+            return [ERROR_CODE_FAIL, '家族名称已存在'];
+        }
+
         $union = new Unions();
         $union->name = $name;
         $union->notice = $notice;
@@ -559,7 +565,7 @@ class Unions extends BaseModel
         }
     }
 
-    static function updateFameValue($value,$id)
+    static function updateFameValue($value, $id)
     {
         $lock_key = "update_union_fame_lock_" . $id;
         $lock = tryLock($lock_key);

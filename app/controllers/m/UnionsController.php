@@ -249,6 +249,15 @@ class UnionsController extends BaseController
             $union->updateAvatar($avatar_file);
         }
 
+        if ($name != $union->name) {
+
+            $exist_union = Unions::findFirstByName($name);
+
+            if ($exist_union) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '家族名称已存在');
+            }
+        }
+
         $union->updateProfile($opts);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
