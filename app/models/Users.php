@@ -1435,9 +1435,9 @@ class Users extends BaseModel
     function needUpdateInfo()
     {
         //第三方授权登录 不校验
-//        if ($this->third_name) {
-//            return false;
-//        }
+        if ($this->third_name && isProduction() ) {
+            return false;
+        }
 
         $update_info = ['nickname', 'sex', 'province_id', 'city_id', 'avatar'];
         foreach ($update_info as $k) {
