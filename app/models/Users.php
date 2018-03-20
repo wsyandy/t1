@@ -2409,9 +2409,9 @@ class Users extends BaseModel
 
             $sender->wealth_value += $wealth_value;
             $union = $sender->union;
-            if (isPresent($union)) {
+            if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
-                $union->updateFameValue($wealth_value);
+                Unions::delay()->updateFameValue($wealth_value, $union->id);
             }
 
             $sender->update();
@@ -2448,9 +2448,9 @@ class Users extends BaseModel
         if (isPresent($user)) {
             $user->charm_value += $charm_value;
             $union = $user->union;
-            if (isPresent($union)) {
+            if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $user->union_charm_value += $charm_value;
-                $union->updateFameValue($charm_value);
+                Unions::delay()->updateFameValue($charm_value, $union->id);
             }
             $user->update;
         }

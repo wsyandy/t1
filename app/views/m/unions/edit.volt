@@ -42,13 +42,11 @@
                 <img class="agree_img" :src="set_select"/>
                 <div class="agree_text">
                     <span class="agree_txt">阅读并同意</span>
-                    <span class="agree_txt">《家族使用协议》</span></div>
+                    <span class="agree_txt" @click="agreement">《家族使用协议》</span></div>
             </div>
 
-            <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                <input type="submit" name="submit" value="保存修改"
-                       :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-            </div>
+            <input class="close_submit" type="submit" name="submit" value="保存修改"
+                   :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
 
         </div>
     </form>
@@ -109,6 +107,11 @@
                 console.log(index);
                 this.selected = this.options[index].value;
                 this.isSet = false
+            },
+            agreement: function () {
+                var url = "/m/unions/agreement&sid=" + vm.sid + "&code=" + vm.code;
+                console.log(url);
+                location.href = url;
             }
         }
     };
@@ -132,16 +135,9 @@
         }
 
         var name_length = $("#name").val().length;
-        var notice_length = $("#notice").val().length;
 
         if (name_length == 0) {
             alert("家族名称不能为空");
-            can_create = true;
-            return false;
-        }
-
-        if (notice_length == 0) {
-            alert("家族公告不能为空");
             can_create = true;
             return false;
         }
@@ -155,6 +151,12 @@
 
             success: function (resp, status, xhr) {
                 can_create = true;
+
+                if (resp.error_code == 0) {
+                    location.href = "/m/unions/my_union?sid={{ sid }}&code={{ code }}&union_id={{ union.id }}";
+                    return;
+                }
+
                 if (resp.error_code == -400) {
                     vm.isPop = true;
                 } else {

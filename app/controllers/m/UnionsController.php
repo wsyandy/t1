@@ -16,6 +16,7 @@ class UnionsController extends BaseController
         $this->view->title = "家族";
         $user = $this->currentUser();
         $union = $user->union;
+
         if (isBlank($union)) {
             $this->view->union = 0;
             $this->view->avatar_url = '';
@@ -30,9 +31,10 @@ class UnionsController extends BaseController
 
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
+        $this->view->current_user = $this->currentUser();
     }
 
-    function AddUnionAction()
+    function addUnionAction()
     {
         $this->view->title = "创建家族";
         $this->view->sid = $this->params('sid');
@@ -55,6 +57,7 @@ class UnionsController extends BaseController
             list($error_code, $error_reason) = \Unions::createPrivateUnion($user, $opts);
 
             $url = '';
+
             if ($error_code == ERROR_CODE_SUCCESS) {
                 $sid = $this->params('sid');
                 $code = $this->params('code');
@@ -77,24 +80,18 @@ class UnionsController extends BaseController
     {
         $recommend = $this->params('recommend', 0);
         $id = $this->params('search_value', 0);
-        $type = $this->params('type', 0);
         $order = $this->params('order', null);
-//        if (preg_match('/^\d+$/', $search_value)) {
-//            $id = $search_value;
-//        } else {
-//            $id = 0;
-//        }
 
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-//        $opts = ['type' => $type, 'recommend' => $recommend, 'name' => $search_value, 'id' => $id, 'order' => $order];
-        $opts = ['type' => $type, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
+        $opts = ['type' => UNION_TYPE_PRIVATE, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
         $user = $this->currentUser();
 
         $unions = \Unions::search($user, $page, $per_page, $opts);
 
         $res = [];
+
         if (count($unions)) {
             $res = $unions->toJson('unions', 'toSimpleJson');
         }
@@ -107,16 +104,22 @@ class UnionsController extends BaseController
     {
         $union_id = $this->params('union_id');
         $union = \Unions::findFirstById($union_id);
+        $president = $union->user;
         $user = $this->currentUser();
         if ($union && $union->user_id == $user->id) {
             $is_president = 1;
         } else {
             $is_president = 0;
         }
+        $this->view->president = $president;
         $this->view->user = $user;
         $this->view->is_president = $is_president;
         $this->view->union = $union;
-        $this->view->title = "我的家族";
+        if ($union && $union->id == $user->union_id) {
+            $this->view->title = "我的家族";
+        } else {
+            $this->view->title = $union->name;
+        }
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
     }
@@ -142,16 +145,17 @@ class UnionsController extends BaseController
 
             $union_id = $this->params('union_id');
 
-            $res = [];
-
             $union = \Unions::findFirstById($union_id);
+
+            $res = ['users' => []];
 
             if ($union) {
                 $page = $this->params('page', 1);
                 $per_page = $this->params('per_page', 10);
                 $order = $this->params('order', null);
+                $filter_id = $this->params('filter_id', null);
 
-                $opts = ['order' => $order];
+                $opts = ['order' => $order, 'filter_id' => $filter_id];
 
                 $users = $union->users($page, $per_page, $opts);
 
@@ -159,6 +163,8 @@ class UnionsController extends BaseController
                     $res = $users->toJson('users', 'toUnionJson');
                 }
             }
+
+            $res['user_num'] = $union->userNum();
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
         }
@@ -170,7 +176,8 @@ class UnionsController extends BaseController
         $this->view->title = "新的成员";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
-
+        $union = $this->currentUser()->union;
+        $union->clearNewApplyNum();
     }
 
     function applicationListAction()
@@ -345,6 +352,7 @@ class UnionsController extends BaseController
         $this->view->days = $days;
         $this->view->hours = $hours;
         $this->view->user = $this->currentUser();
+        $this->view->union = $this->currentUser()->union;
         $this->view->title = "申请上热门";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
@@ -368,4 +376,38 @@ class UnionsController extends BaseController
         }
     }
 
+    function agreementAction()
+    {
+        $this->view->product_channel = $this->currentProductChannel();
+    }
+
+
+    function isNeedPasswordAction()
+    {
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        $current_user_id = $this->currentUserId();
+        $current_room_id = $this->currentUser()->current_room_id;
+        if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '需要密码');
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+    }
+
+    function checkPasswordAction()
+    {
+        $password = $this->params('password');
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        $user_id = $this->currentUserId();
+        if (!$room->lock) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        } else if ($room->password == $password) {
+            $room->addFilterUser($user_id);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '密码错误');
+    }
 }

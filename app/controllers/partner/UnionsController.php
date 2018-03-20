@@ -65,6 +65,10 @@ class UnionsController extends BaseController
         $begin_at = beginOfDay(strtotime($stat_at));
         $end_at = endOfDay(strtotime($stat_at));
 
+        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
+        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
+        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
+
         if ($this->request->isAjax()) {
 
             $page = $this->params('page');
@@ -113,23 +117,37 @@ class UnionsController extends BaseController
                     'user_id' => $user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at < $begin_at) {
-                    $begin_at = $union_history->join_at;
-                }
-
-                $user->income = $user->getDaysIncome($begin_at, $end_at);
                 $user->audience_time = $user->getAudienceTimeByDate($begin_at);
                 $user->broadcaster_time = $user->getBroadcasterTimeByDate($begin_at);
                 $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($begin_at);
+                
+                if ($union_history->join_at && $union_history->join_at > $begin_at) {
+                    $begin_at = $union_history->join_at;
+                }
+
+                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+                    $end_at = $union_history->exit_at;
+                }
+
+                $user->income = $user->getDaysIncome($begin_at, $end_at);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
         }
 
+        $union_history = \UnionHistories::findFirstBy([
+            'user_id' => $this->currentUser()->id, 'union_id' => $union->id
+        ], 'id desc');
+
+        if ($union_history->join_at && $union_history->join_at > $begin_at) {
+            $begin_at = $union_history->join_at;
+        }
+
+        if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+            $end_at = $union_history->exit_at;
+        }
+
         $this->currentUser()->income = $this->currentUser()->getDaysIncome($begin_at, $end_at);
-        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
-        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
-        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
         $this->view->stat_at = $stat_at;
     }
 
@@ -171,8 +189,12 @@ class UnionsController extends BaseController
                     'user_id' => $room->user->id, 'union_id' => $union->id
                 ], 'id desc');
 
-                if ($union_history->join_at < $begin_at) {
+                if ($union_history->join_at && $union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
+                }
+
+                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
+                    $end_at = $union_history->exit_at;
                 }
 
                 $room->amount = $room->getDayAmount($begin_at, $end_at);

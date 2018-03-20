@@ -65,6 +65,16 @@
         {% endif %}
         <br/>
     {% endif %}
+    {% if isAllowed('unions','index') %}
+        {% if user.union %}
+            {% if user.union.type == 1 %}
+                <a href="/admin/unions?union_id={{ user.union_id }}">工会</a>
+            {% else %}
+                <a href="/admin/unions/family?union_id={{ user.union_id }}">家族</a>
+            {% endif %}
+            <br/>
+        {% endif %}
+    {% endif %}
     {% if isAllowed('users','send_message') %}
         <a href="/admin/users/send_message?id={{ user.id }}" class="modal_action">发送系统消息</a><br/>
     {% endif %}
@@ -88,8 +98,8 @@
             产品渠道:${ user.product_channel_name }<br/>
             FR:${ user.fr }<br/>
             FR名称:${ user.partner_name }<br/>
-            平台:${ user.platform } 平台版本:{{ user.platform_version }}<br/>
-            版本名称:{{ user.version_name }} 软件版本号:{{ user.version_code }}<br/>
+            平台:${ user.platform } 平台版本:${ user.platform_version }<br/>
+            版本名称:${ user.version_name } 软件版本号:${ user.version_code }<br/>
             api协议版本: ${ user.api_version }<br/>
         </td>
 

@@ -1,5 +1,5 @@
 {% if isAllowed('unions','add_user') %}
-    <a href="/admin/unions/add_user?id={{ id }}" class="modal_action">新建</a>
+    <a href="/admin/unions/add_user?id={{ id }}" class="modal_action">添加</a>
 {% endif %}
 
 {% macro avatar_image(user) %}

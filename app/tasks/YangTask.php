@@ -277,4 +277,30 @@ class YangTask extends \Phalcon\Cli\Task
 //        echoLine($time5);
 //        echoLine(date('Y-m-d-h-i-sa', $time5));
     }
+
+    function test10Action()
+    {
+        $users = Users::find([
+            'limit' => 30
+        ]);
+        $union = Unions::findFirstById(59);
+        foreach ($users as $user) {
+            $union->applyJoinUnion($user);
+        }
+    }
+
+    function test11Action()
+    {
+
+        for ($i = 1; $i < 20; $i++) {
+            $union = new Unions();
+            $union->name = "dasdad" ;
+            $union->user_id = 1;
+            $union->auth_status = AUTH_SUCCESS;
+            $union->type = UNION_TYPE_PRIVATE;
+            $union->avatar_status = AUTH_SUCCESS;
+            $union->save();
+        }
+
+    }
 }

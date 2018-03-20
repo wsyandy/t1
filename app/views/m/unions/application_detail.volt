@@ -7,7 +7,7 @@
         <div class="img">
             <img src="{{ user.avatar_small_url }}">
         </div>
-        <h3>{{user.nickname}} <span class="women">{{ user.age }}</span></h3>
+        <h3>{{ user.nickname }} <span class="women">{{ user.age }}</span></h3>
         <div class="love_wealth">
             <span>魅力值：{{ user.charm_value }}</span>
             <span>财富值：{{ user.wealth_value }}</span>
@@ -38,8 +38,9 @@
             };
             $.authPost("/m/unions/handel_application", data, function (resp) {
                 can_click = true;
-                alert(resp.error_reason);
-                if (resp.error_code == 0) {
+                if (resp.error_code != 0) {
+                    alert(resp.error_reason);
+                } else {
                     _this.siblings().remove();
                 }
             });

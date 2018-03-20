@@ -32,7 +32,6 @@
             code: '{{ code }}',
             page: 1,
             total_page: 1,
-            total_entries: 0,
             application_list: []
         },
         created: function () {
@@ -40,21 +39,33 @@
         },
         methods: {
             applicationList: function () {
-                var data = {page: this.page, per_page: 20, sid: this.sid, code: this.code};
+                if (this.page > this.total_page) {
+                    return;
+                }
+
+                var data = {page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 $.authGet('/m/unions/application_list', data, function (resp) {
-                    vm.application_list = [];
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
-                    vm.application_list = resp.users;
-                    console.log(vm.application_list);
+                    $.each(resp.users, function (index, item) {
+                        vm.application_list.push(item);
+                    })
                 });
+                this.page++;
             },
             applicationDetail: function (id) {
                 console.log(id);
-                var url = "/m/unions/application_detail&sid=" + this.sid + "&code=" + this.code + "&user_id=" + id
+                var url = "/m/unions/application_detail&sid=" + this.sid + "&code=" + this.code + "&user_id=" + id;
                 location.href = url;
             }
         }
     };
     vm = XVue(opts);
+
+    $(function () {
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.applicationList();
+            }
+        });
+    })
 </script>

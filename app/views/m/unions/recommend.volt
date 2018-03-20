@@ -15,9 +15,9 @@
     </div>
     <div class="family-list">
         <ul>
-            <li v-for="item in unions">
+            <li v-for="item in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
-                    <img class="family_avatar" :src="item.avatar_url" alt="" @click.stop="unionDetail(item.id)">
+                    <img class="family_avatar" :src="item.avatar_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
                         <span class="family_prestige"> 声望${ item.fame_value }</span>
@@ -40,7 +40,6 @@
             unions: [],
             page: 1,
             total_page: 1,
-            total_entries: 0,
             searchText: ''
         },
         created: function () {
@@ -52,7 +51,6 @@
                     return;
                 }
                 var data = {
-                    type: 2,
                     recommend: 1,
                     order: 'created_at desc',
                     page: this.page,
@@ -67,21 +65,19 @@
                     data.recommend = 1;
                 }
                 $.authGet('/m/unions/search', data, function (resp) {
-                    vm.unions = [];
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
-//                    $.each(resp.unions, function (index, item) {
-//                        vm.unions.push(item);
-//                    });
-                    vm.unions = resp.unions;
-                    vm.page++;
+                    $.each(resp.unions, function (index, item) {
+                        vm.unions.push(item);
+                    });
                 });
+                this.page++;
             },
             clearSearch: function () {
                 this.searchText = "";
             },
             searchFamily: function () {
-                vm.page = 1;
+                this.page = 1;
+                this.unions = [];
                 this.list();
             },
             unionDetail: function (id) {

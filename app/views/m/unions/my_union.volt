@@ -26,17 +26,39 @@
     <div class="new_member" v-if="is_president" @click.stop="applicationList">
         <div class="new_member_title">新的成员</div>
         <div class="new_member_right">
-            <span class="new_dot" v-show="{{ union.apply_user_num }}"></span>
+            <span class="new_dot" v-show="{{ union.new_apply_num }}"></span>
             <img class="arrow-right" src="/m/images/arrow-right.png" alt="">
         </div>
     </div>
     <ul class="member_tab" id="member_tab">
         <li v-if="!is_president" v-for="(item,index) in tab" class="member_only" v-show="!index"> ${item} <span
-                    v-if="!index">(${member_list.length})</span></li>
+                    v-if="!index">(${user_num})</span></li>
         <li v-if="is_president" v-for="(item,index) in tab" :class="[cueIdx===index?'active':'']"
-            @click="tabClick(index)"> ${item} <span v-if="!index">(${member_list.length})</span></li>
+            @click="tabClick(index)"> ${item} <span v-if="!index">(${user_num})</span></li>
     </ul>
     <ul class="member_list" v-show="cueIdx==0">
+        <li>
+            <div class="member_left">
+                <img class="member_avatar" src="{{ president.avatar_small_url }}" alt=""
+                     @click="userOperation(president)">
+                <div class="member_name">
+                    <div class="name">
+                        <span> ${president.nickname}</span>
+                        <span class="female" v-if="president.sex == 1">${president.age}</span>
+                        <span class="male" v-if="president.sex == 0">${president.age}</span>
+                        <span class="president">会长</span>
+                    </div>
+                    <div class="slogan">
+                        ${president.monologue}
+                    </div>
+                </div>
+            </div>
+            <div class="member_right">
+                <img v-if="president.current_room_id" class="flag_manage" :src="flag_manage" alt=""
+                     @click="roomDetail(president.current_room_id)">
+                <span v-if="!president.manage" class="member_time">${president.time}</span>
+            </div>
+        </li>
         <li v-for="(member,index) in member_list">
             <div class="member_left">
                 <img class="member_avatar" :src="member.avatar_small_url" alt="" @click="userOperation(member)">
@@ -44,6 +66,7 @@
                     <div class="name">
                         <span> ${member.nickname}</span>
                         <span class="female" v-if="member.sex == 1">${member.age}</span>
+                        <span class="male" v-if="member.sex == 0">${member.age}</span>
                         <span class="president" v-if="member.id == union.user_id">会长</span>
                     </div>
                     <div class="slogan">
@@ -114,11 +137,11 @@
             <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
             <li v-show="!user_operation && is_president" @click.stop="applyGoHot">上热门</li>
             <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
-            <li v-show="user_operation && is_president" @click.stop="userDetail">查看资料</li>
+            <li v-show="user_operation " @click.stop="userDetail">查看资料</li>
             <li v-show="user_operation && selected_user.id != union.user_id && is_president" @click.stop="confirmPop">
                 踢出家族
             </li>
-            <li v-show="!is_president" @click.stop="confirmPop">退出家族</li>
+            <li v-show="!user_operation && !is_president" @click.stop="confirmPop">退出家族</li>
         </ul>
         <div class="close_btn">取消</div>
     </div>
@@ -133,12 +156,31 @@
         <div class="middle_btn" v-show="!is_president" @click.stop="exitUnion">确认退出</div>
     </div>
     <div class="middle_pop_bg"></div>
+
+    <div class="room_cover">
+        <div class="room_pop">
+            <img class="room_pop_bg" src="/m/images/room_pop_bg.png" alt="">
+            <div class="room_locked">房间已上锁</div>
+            <div class="room_lock">
+                <label for="">密码</label>
+                <input class="input_text" maxlength="10" type="text" placeholder="最多输入10个字" id="password" style="
+    background-color: #F0F0F0;">
+            </div>
+            <div class="room_btn">
+                <span class="room_out">取消</span>
+                <span class="room_in">进入房间</span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
     var opts = {
         data: {
             union: {{ union }},
+            president: {{ president }},
+            user: {{ user }},
             cueIdx: 0,
             is_president: {{ is_president }},
             flag_manage: '/m/images/flag-manage.png',
@@ -149,12 +191,13 @@
             code: '{{ code }}',
             page: 1,
             total_page: 1,
-            total_entries: 0,
+            user_num: 0,
             member_list: [],
-            user: {{ user }},
             can_apply: true,
             user_operation: true,
-            selected_user: {{ user }}
+            selected_user: {{ user }},
+            selected_index: 0,
+            selected_room_id: 0
         },
         created: function () {
             this.memberList(0);
@@ -167,26 +210,36 @@
             },
             tabClick: function (index) {
                 this.cueIdx = index;
+                this.member_list = [];
+                this.page = 1;
+                this.total_page = 1;
                 this.memberList(index);
             },
             memberList: function (index) {
-                var data = {union_id:{{ union.id }}, page: this.page, per_page: 30, sid: this.sid, code: this.code};
+                if (this.page > this.total_page) {
+                    return;
+                }
+                var data = {union_id: '{{ union.id }}', page: this.page, per_page: 10, sid: this.sid, code: this.code};
                 if (index == 0) {
                     data.order = "current_room_id desc";
+                    data.filter_id = this.president.id;
                 } else if (index == 1) {
                     data.order = "union_charm_value desc";
                 } else if (index == 2) {
                     data.order = "union_wealth_value desc";
                 }
+                this.selected_index = index;
                 $.authGet('/m/unions/users', data, function (resp) {
-                    vm.member_list = [];
                     vm.total_page = resp.total_page;
-                    vm.total_entries = resp.total_entries;
-                    vm.member_list = resp.users;
+                    vm.user_num = resp.user_num;
+                    $.each(resp.users, function (index, item) {
+                        vm.member_list.push(item);
+                    })
                 });
+                this.page++;
             },
             userOperation: function (user) {
-                if (!this.is_president) {
+                if (this.user.union_id != this.union.id) {
                     return;
                 }
                 this.user_operation = true;
@@ -195,7 +248,6 @@
                 $('.pop_bottom_bg').show();
             },
             userDetail: function () {
-                console.log(this.selected_user.id);
                 if (this.selected_user.id == this.user.id) {
                     url = "app://users/detail";
                 } else {
@@ -205,8 +257,17 @@
                 location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
             },
             roomDetail: function (id) {
-                var url = "app://rooms/detail?id=" + id;
-                location.href = url;
+                var url = "/m/unions/is_need_password";
+                var data = {room_id: id, sid: this.sid, code: this.code};
+                $.authPost(url, data, function (resp) {
+                    if (resp.error_code == 0) {
+                        vm.selected_room_id = id;
+                        $('.room_cover').show();
+                    } else {
+                        var url = "app://rooms/detail?id=" + id;
+                        location.href = url;
+                    }
+                });
             },
             applyJoinUnion: function () {
                 if (vm.can_apply == false) {
@@ -220,6 +281,8 @@
                     alert(resp.error_reason);
                     if (resp.error_url) {
                         location.href = resp.error_url;
+                    } else if (resp.error_code == 0) {
+                        window.history.back();
                     }
                 });
             },
@@ -247,10 +310,11 @@
                 var url = "/m/unions/exit_union";
                 var data = {union_id: this.union.id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
-                    alert(resp.error_reason);
                     if (resp.error_code == 0) {
                         var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
                         location.href = url;
+                    } else {
+                        alert(resp.error_reason);
                     }
                 });
             },
@@ -270,7 +334,7 @@
     var ot = obj.offsetTop;
     document.onscroll = function () {
         var st = document.body.scrollTop || document.documentElement.scrollTop;
-        obj.setAttribute("data-fixed", st >= ot ? "fixed" : "")
+        obj.setAttribute("data-fixed", st >= ot ? "fixed" : "");
     };
 
     $(function () {
@@ -280,6 +344,7 @@
         }
 
         function close_pb() {
+            $('.room_cover').hide();
             $('.pop_bottom').hide();
             $('.pop_bottom_bg').hide();
         }
@@ -319,6 +384,12 @@
             "top": div_top
         });
 
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.memberList(vm.selected_index);
+            }
+        });
+
         $('.family-more').click(function () {
             vm.user_operation = false;
             $('.pop_bottom').show();
@@ -338,6 +409,26 @@
             dissolution();
             close_mp();
             close_pb();
+        });
+
+        $(".room_out").on("click", function () {
+            $(".room_cover").fadeOut();
+        });
+
+        $(".room_in").on("click", function () {
+            var url = "/m/unions/check_password";
+            var password = $('#password').val();
+            console.log(password, vm.selected_room_id);
+            var data = {sid: vm.sid, code: vm.code, password: password, room_id: vm.selected_room_id};
+            $.authPost(url, data, function (resp) {
+                if (resp.error_code == 0) {
+                    var url = "app://rooms/detail?id=" + vm.selected_room_id;
+                    location.href = url;
+                    $(".room_cover").fadeOut();
+                } else {
+                    alert(resp.error_reason);
+                }
+            });
         });
     })
 

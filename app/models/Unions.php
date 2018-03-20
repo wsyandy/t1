@@ -26,7 +26,7 @@ class Unions extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('auth_status') && AUTH_FAIL == $this->auth_status) {
+        if ($this->hasChanged('auth_status') && AUTH_FAIL == $this->auth_status && UNION_TYPE_PUBLIC == $this->type) {
             $this->user->union_id = 0;
             $this->user->union_type = 0;
             $this->user->update();
@@ -63,10 +63,6 @@ class Unions extends BaseModel
 
         $amount = 100;
 
-        if ($user->diamond < $amount) {
-            return [ERROR_CODE_FORM, '钻石余额不足'];
-        }
-
         $name = trim(fetch($opts, 'name', '')); //家族名称
         $notice = trim(fetch($opts, 'notice', '')); //家族公告
         $need_apply = fetch($opts, 'need_apply', 0); //是否需要申请
@@ -76,17 +72,17 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '头像不能为空'];
         }
 
+        if ($user->diamond < $amount) {
+            return [ERROR_CODE_FORM, '钻石余额不足'];
+        }
+
         if (isBlank($name) || mb_strlen($name) > 5) {
             return [ERROR_CODE_FAIL, '家族名称不能为空或字数超过限制'];
         }
 
-        if (isBlank($notice) || mb_strlen($notice) > 50) {
-            return [ERROR_CODE_FAIL, '家族公告不能为空或字数超过限制'];
+        if (isPresent($notice) && mb_strlen($notice) > 50) {
+            return [ERROR_CODE_FAIL, '家族公告字数超过限制'];
         }
-
-//        if (isBlank($need_apply)) {
-//            return [ERROR_CODE_FAIL, '家族设置有误'];
-//        }
 
         $union = new Unions();
         $union->name = $name;
@@ -107,22 +103,30 @@ class Unions extends BaseModel
         }
 
         $union->avatar = $dest_filename;
-        $union->save();
 
-        $user->union_id = $union->id;
-        $user->union_type = $union->type;
-        $user->update();
+        if ($union->save()) {
 
-        $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
-        $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
+            $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
+            $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 
-        if ($res) {
-            return [ERROR_CODE_SUCCESS, '创建成功'];
+            if ($res) {
+
+                $user->union_id = $union->id;
+                $user->union_type = $union->type;
+                $user->update();
+
+                $db = Users::getUserDb();
+                $key = $union->generateUsersKey();
+                $db->zadd($key, time(), $user->id);
+
+
+                return [ERROR_CODE_SUCCESS, '创建成功'];
+            }
+
+            $union->status = STATUS_OFF;
+            $union->error_reason = "扣除钻石失败,创建失败";
+            $union->update();
         }
-
-        $union->status = STATUS_OFF;
-        $union->error_reason = "扣除钻石失败,创建失败";
-        $union->update();
 
         return [ERROR_CODE_FAIL, '创建失败'];
     }
@@ -134,6 +138,7 @@ class Unions extends BaseModel
         $union->type = UNION_TYPE_PUBLIC;
         $union->status = STATUS_PROGRESS; //创建中
         $union->user_id = $user->id;
+        $union->product_channel_id = $user->product_channel_id;
         $union->save();
 
         if ($union->save()) {
@@ -141,6 +146,10 @@ class Unions extends BaseModel
             $user->union_id = $union->id;
             $user->union_type = $union->type;
             $user->update();
+
+            $db = Users::getUserDb();
+            $key = $union->generateUsersKey();
+            $db->zadd($key, time(), $user->id);
 
             return [ERROR_CODE_SUCCESS, '创建成功', $union];
         }
@@ -195,7 +204,6 @@ class Unions extends BaseModel
         } else {
             $cond['order'] = "id desc";
         }
-        debug($cond);
 
         $unions = Unions::findPagination($cond, $page, $per_page);
 
@@ -207,6 +215,11 @@ class Unions extends BaseModel
     {
         $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $this->id]];
         $order = fetch($opts, 'order', '');
+        $filter_id = fetch($opts, 'filter_id', '');
+
+        if ($filter_id) {
+            $cond['conditions'] .= " and id != $filter_id";
+        }
 
         if ($order) {
             $cond['order'] = $order;
@@ -228,8 +241,8 @@ class Unions extends BaseModel
     function applicationStatus($user_id)
     {
         $user_db = Users::getUserDb();
-        $agreed_key = $this->generateUersKey();
-        $refused_key = $this->generateRefusedUersKey();
+        $agreed_key = $this->generateUsersKey();
+        $refused_key = $this->generateRefusedUsersKey();
 
         if ($user_db->zscore($agreed_key, $user_id)) {
             return 1;
@@ -247,7 +260,7 @@ class Unions extends BaseModel
 
         $offset = $per_page * ($page - 1);
 
-        $new_user_key = $this->generateNewUersKey();
+        $new_user_key = $this->generateNewUsersKey();
 
         $user_ids = $user_db->zrevrange($new_user_key, $offset, $offset + $per_page - 1);
 
@@ -291,17 +304,27 @@ class Unions extends BaseModel
         return $pagination;
     }
 
-    function generateNewUersKey()
+    function generateNewApplyNumKey()
+    {
+        return "new_apply_num_union_id_" . $this->id;
+    }
+
+    function generateNewUsersKey()
     {
         return "union_total_users_list" . $this->id;
     }
 
-    function generateRefusedUersKey()
+    function generateCheckUsersKey()
+    {
+        return "union_check_users_list" . $this->id;
+    }
+
+    function generateRefusedUsersKey()
     {
         return "union_refused_users_list" . $this->id;
     }
 
-    function generateUersKey()
+    function generateUsersKey()
     {
         return "union_users_list" . $this->id;
     }
@@ -309,8 +332,8 @@ class Unions extends BaseModel
     //成员人数
     function userNum()
     {
-        $cond = ['conditions' => 'union_id = :union_id:', 'bind' => ['union_id' => $this->id]];
-        return Users::count($cond);
+        $user_db = Users::getUserDb();
+        return $user_db->zcard($this->generateUsersKey());
     }
 
     function applyJoinUnion($user)
@@ -324,22 +347,33 @@ class Unions extends BaseModel
         }
 
         $db = Users::getUserDb();
-        $key = $this->generateNewUersKey();
+        $key = $this->generateNewUsersKey();
 
-//        if ($db->zscore($key, $user->id)) {
-//            return [ERROR_CODE_FAIL, '你已经申请该家族'];
-//        }
-        $db->zrem($this->generateRefusedUersKey(), $user->id);
+        $check_key = $this->generateCheckUsersKey();
+
+        if ($db->zscore($check_key, $user->id)) {
+            return [ERROR_CODE_FAIL, '你已经申请该家族'];
+        }
+
+        $db->zrem($this->generateRefusedUsersKey(), $user->id);
 
         if ($this->need_apply == 0) {
             list($error_code, $err_reason) = $this->agreeJoinUnion($this->user, $user);
             return [$error_code, $err_reason];
         }
 
+        $expire = 3600 * 24 * 7;
+
+        if (isDevelopmentEnv()) {
+            $expire = 60;
+        }
+
+        $db->setex($this->generateNewApplyNumKey(), $expire, 1);
+
         $db->zadd($key, time(), $user->id);
+        $db->zadd($check_key, time(), $user->id);
 
         return [ERROR_CODE_SUCCESS, '您的家族申请已提交，请耐心等待'];
-//        return [ERROR_CODE_FAIL, '系统异常'];
     }
 
     function agreeJoinUnion($union_host, $user)
@@ -353,21 +387,24 @@ class Unions extends BaseModel
         }
 
         $db = Users::getUserDb();
-        $key = $this->generateUersKey();
+        $key = $this->generateUsersKey();
 
         if ($db->zscore($key, $user->id)) {
             return [ERROR_CODE_FAIL, '该用户已经加入您的家族'];
         }
 
         if ($db->zadd($key, time(), $user->id)) {
-            $db->zrem($this->generateRefusedUersKey(), $user->id);
+
+            $db->zrem($this->generateRefusedUsersKey(), $user->id);
+            $db->zrem($this->generateCheckUsersKey(), $user->id);
+
             $user->union_id = $this->id;
             $user->union_type = $this->type;
             $user->update();
+
             if ($this->type == UNION_TYPE_PRIVATE && $this->need_apply == STATUS_ON) {
                 $content = "恭喜您，" . "$union_host->nickname" . "已同意您的申请，您现在已经是家族中的一员了。";
-                $content_type = CHAT_CONTENT_TYPE_TEXT;
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
 
             return [ERROR_CODE_SUCCESS, '成功加入家族'];
@@ -384,19 +421,19 @@ class Unions extends BaseModel
 
         $db = Users::getUserDb();
 
-        if ($db->zscore($this->generateUersKey(), $user->id)) {
+        if ($db->zscore($this->generateUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '您已同意'];
         }
 
-        if ($db->zscore($this->generateRefusedUersKey(), $user->id)) {
+        if ($db->zscore($this->generateRefusedUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '您已拒绝'];
         }
 
-        $db->zadd($this->generateRefusedUersKey(), time(), $user->id);
+        $db->zadd($this->generateRefusedUsersKey(), time(), $user->id);
+        $db->zrem($this->generateCheckUsersKey(), $user->id);
 
         $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
-        $content_type = CHAT_CONTENT_TYPE_TEXT;
-        Chats::sendSystemMessage($user->id, $content_type, $content);
+        Chats::sendTextSystemMessage($user->id, $content);
 
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
@@ -411,13 +448,24 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
-        $key = $this->generateUersKey();
-        $db->zrem($key, $user->id);
-        $db->zrem($this->generateRefusedUersKey(), $user->id);
-        $db->zrem($this->generateNewUersKey(), $user->id);
-
         $union_history = UnionHistories::findFirstBy(
-            ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
+            ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON], 'id desc');
+
+        $expire_at = time() - 86400 * 7;
+
+        if (isDevelopmentEnv()) {
+            $expire_at = time() - 2;
+        }
+
+        if ($union_history->join_at > $expire_at) {
+            return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
+        }
+
+        $key = $this->generateUsersKey();
+        $db->zrem($key, $user->id);
+        $db->zrem($this->generateRefusedUsersKey(), $user->id);
+        $db->zrem($this->generateNewUsersKey(), $user->id);
+        $db->zrem($this->generateCheckUsersKey(), $user->id);
 
         if ($union_history) {
 
@@ -428,27 +476,28 @@ class Unions extends BaseModel
             }
 
             $union_history->status = $status;
+            $union_history->exit_at = time();
             $union_history->save();
         }
 
         $user->union_id = 0;
         $user->union_type = 0;
-        if ($this->type == UNION_TYPE_PRIVATE) {
-            $user->union_charm_value = 0;
-            $user->union_wealth_value = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
 
-            $content_type = CHAT_CONTENT_TYPE_TEXT;
+        if ($this->type == UNION_TYPE_PRIVATE) {
+
             if ($kicking) {
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             } else {
                 $content = "$user->nickname" . "已经退出了家族";
-                Chats::sendSystemMessage($this->user_id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
         }
 
-
         $user->update();
+
         return [ERROR_CODE_SUCCESS, '操作成功'];
     }
 
@@ -463,9 +512,10 @@ class Unions extends BaseModel
 
         if ($this->update()) {
             $db = Users::getUserDb();
-            $db->zclear($this->generateNewUersKey());
-            $db->zclear($this->generateRefusedUersKey());
-            $db->zclear($this->generateUersKey());
+            $db->zclear($this->generateNewUsersKey());
+            $db->zclear($this->generateRefusedUsersKey());
+            $db->zclear($this->generateUsersKey());
+            $db->zclear($this->generateCheckUsersKey());
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
         return [ERROR_CODE_SUCCESS, ''];
@@ -483,11 +533,12 @@ class Unions extends BaseModel
         $union = self::findFirstById($union_id);
 
         foreach ($users as $user) {
+
             if ($union->type == UNION_TYPE_PRIVATE && !$user->isUnionHost($union)) {
                 $content = "您的家族解散了，快去看看其它家族吧！";
-                $content_type = CHAT_CONTENT_TYPE_TEXT;
-                Chats::sendSystemMessage($user->id, $content_type, $content);
+                Chats::sendTextSystemMessage($user->id, $content);
             }
+
             $user->union_id = 0;
             $user->union_type = 0;
             //清空家族土豪值，声望值
@@ -502,14 +553,19 @@ class Unions extends BaseModel
 
         foreach ($union_histories as $union_history) {
             $union_history->status = STATUS_OFF;
+            $union_history->exit_at = time();
             $union_history->update();
         }
     }
 
-    function updateFameValue($value)
+    static function updateFameValue($value,$id)
     {
-        $this->fame_value += $value;
-        $this->update();
+        $lock_key = "update_union_fame_lock_" . $id;
+        $lock = tryLock($lock_key);
+        $union = self::findFirstById($id);
+        $union->fame_value += $value;
+        $union->update();
+        unlock($lock);
     }
 
     function getAvatarUrl()
@@ -551,7 +607,7 @@ class Unions extends BaseModel
 
             if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 5)) {
                 continue;
-            } else if ($filed == 'notice' && (isBlank($value) || mb_strlen($value) > 50)) {
+            } else if ($filed == 'notice' && (isPresent($value) && mb_strlen($value) > 50)) {
                 continue;
             }
 
@@ -608,25 +664,17 @@ class Unions extends BaseModel
         return $this->status == STATUS_BLOCKED;
     }
 
-    function applyUserNum()
+
+    function newApplyNum()
     {
         $db = Users::getUserDb();
+        return intval($db->get($this->generateNewApplyNumKey()));
+    }
 
-        $apply_user_key = $this->generateNewUersKey();
-        $apply_user_ids = $db->zrevrange($apply_user_key, 0, -1);
-        if (count($apply_user_ids) <= 0) {
-            return 0;
-        }
-
-        $agreed_user_key = $this->generateUersKey();
-        $refused_user_key = $this->generateRefusedUersKey();
-
-        $agreed_user_ids = $db->zrevrange($agreed_user_key, 0, -1);
-        $refused_user_ids = $db->zrevrange($refused_user_key, 0, -1);
-
-        $new_users_id = array_diff($apply_user_ids, $agreed_user_ids, $refused_user_ids);
-
-        return count($new_users_id);
+    function clearNewApplyNum()
+    {
+        $user_db = Users::getUserDb();
+        $user_db->del($this->generateNewApplyNumKey());
     }
 
     function getWaitWithdrawAmount()

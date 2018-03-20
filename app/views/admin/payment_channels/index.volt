@@ -13,7 +13,8 @@
 {%- endmacro %}
 
 {{ simple_table(payment_channels, [
-    'ID': 'id', '名称': 'name', '商户名称': 'mer_name', '产品渠道': 'product_channel_link','支持平台':'platforms_link','状态': 'status_text', '编辑': 'edit_link'
+    'ID': 'id', '名称': 'name', '商户名称': 'mer_name', '产品渠道': 'product_channel_link','支持平台':'platforms_link','状态': 'status_text',
+    '排序':'rank','编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="payment_channel_tpl">
@@ -24,6 +25,7 @@
     <td><a href="/admin/payment_channels/product_channels?payment_channel_id=${payment_channel.id}" class="modal_action">产品渠道</a></td>
     <td><a href=/admin/payment_channels/platforms?id=${payment_channel.id}" class="modal_action">支持平台</a></td>
     <td>${payment_channel.status_text}</td>
+    <td>${payment_channel.rank}</td>
     <td><a href="/admin/payment_channels/edit/${payment_channel.id}" class="modal_action">编辑</a></td>
 </tr>
 </script>

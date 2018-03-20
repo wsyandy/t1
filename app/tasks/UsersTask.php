@@ -489,7 +489,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $gift_orders = GiftOrders::findBy(['sender_id' => $user->id]);
 
             if (count($gift_orders) < 1) {
-                echoLine("no gift_order");
+                //echoLine("no gift_order");
                 continue;
             }
 
@@ -501,10 +501,14 @@ class UsersTask extends \Phalcon\Cli\Task
                 $experience += $sender_experience;
             }
 
+            if ($experience - $user->experience >= 0.02) {
+                echoLine($user->id, $user->experience, $experience);
+            }
+
             $user->experience = $experience;
             $user->level = $user->calculateLevel();
             $user->segment = $user->calculateSegment();
-            echoLine($user->experience, $user->level, $user->segment);
+
             $user->update();
         }
     }
@@ -544,17 +548,22 @@ class UsersTask extends \Phalcon\Cli\Task
 
             $hi_coins = $total_amount / $rate;
 
-            if ($hi_coins == $user->hi_coins) {
-                //echoLine("no need fix", $user->id, $hi_coins);
+
+            $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
+                'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS], 'column' => 'amount']);
+
+            if ($widthdraw_hi_coins > 0) {
+                $hi_coins = $hi_coins - $widthdraw_hi_coins;
+            }
+
+            if ($hi_coins - $user->hi_coins >= 0.04) {
+                echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
+            } else {
                 continue;
             }
 
-            echoLine("fix", $user->id, $hi_coins, $user->hi_coins);
-
             $user->hi_coins = $hi_coins;
-            //echoLine($total_amount, $rate);
-            //echoLine($i, $total_amount, $user->id, $user->hi_coins);
-            //$user->update();
+            $user->update();
         }
     }
 
@@ -697,6 +706,26 @@ class UsersTask extends \Phalcon\Cli\Task
 
             echoLine($user->pay_amount);
 
+            $user->update();
+        }
+    }
+
+    function fixRoomIdAndCurrentRoomIdAction()
+    {
+        $cond = [
+            "conditions" => "room_id is null or current_room_id is null"
+        ];
+        $users = Users::findForeach($cond);
+        foreach ($users as $user) {
+            if (!$user->current_room_id) {
+                echo "+++++";
+                $user->current_room_id = 0;
+            }
+            if (!$user->room_id) {
+                echo "------";
+                $user->room_id = 0;
+            }
+            echoLine($user->id, $user->room_id, $user->current_room_id);
             $user->update();
         }
     }

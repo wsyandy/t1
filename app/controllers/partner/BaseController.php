@@ -69,10 +69,28 @@ class BaseController extends \ApplicationController
         return 0;
     }
 
+    function checkLoginTime()
+    {
+        $union_login_token = $this->session->get("union_login_token");
+
+        $access_token = \AccessTokens::findFirstByToken($union_login_token);
+
+        $expire_at = 3600;
+
+        if (isDevelopmentEnv()) {
+            $expire_at = 300;
+        }
+
+        if ($access_token && time() - $access_token->login_at > $expire_at || !$access_token) {
+            $this->session->set('user_id', null);
+        }
+    }
+
     function beforeAction($dispatcher)
     {
-        $this->view->title = "";
+        $this->checkLoginTime();
 
+        $this->view->title = "";
         $current_user = $this->currentUser();
 
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
@@ -86,19 +104,21 @@ class BaseController extends \ApplicationController
         }
 
         if (isBlank($current_user)) {
-            $this->response->redirect('/partner/home/index');
+            $this->response->redirect("/partner/home");
             return false;
         }
 
         $union = $this->currentUser()->union;
 
         if ($union && $union->type == UNION_TYPE_PRIVATE) {
-            echo "您已经加入其它家族, 不能加入工会";
+            $this->clearLoginInfo();
+            echo "您已经加入其它家族, 不能进入工会";
             return false;
         }
 
         if ($union && !$this->currentUser()->isUnionHost($union)) {
-            echo "您无权限登录";
+            $this->clearLoginInfo();
+            echo "您不是公会会长,无权限登录";
             return false;
         }
 
@@ -107,12 +127,14 @@ class BaseController extends \ApplicationController
             list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
 
             if (ERROR_CODE_SUCCESS != $error_code) {
+                $this->clearLoginInfo();
                 echo "登录失败";
                 return false;
             }
         }
 
-        if ($union->status == STATUS_BLOCKED || STATUS_OFF == $union->status) {
+        if (!$union || $union->status == STATUS_BLOCKED || STATUS_OFF == $union->status) {
+            $this->clearLoginInfo();
             echo "账号异常,请联系官方员";
             return false;
         }
@@ -135,5 +157,11 @@ class BaseController extends \ApplicationController
             }
         }
         return false;
+    }
+
+    function clearLoginInfo()
+    {
+        $this->session->set("user_id", null);
+        $this->session->set('union_login_token', null);
     }
 }

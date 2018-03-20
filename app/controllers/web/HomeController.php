@@ -23,6 +23,7 @@ class HomeController extends BaseController
     public function logoutAction()
     {
         $this->session->set("user_id", null);
+        $this->session->set("user_login_time", null);
         $this->response->redirect("/web/home/login");
     }
 
@@ -51,11 +52,11 @@ class HomeController extends BaseController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
-                $user_login_at = md5(date("Ymd"));
+                $user_login_time = md5(date("Ymd"));
                 if (isDevelopmentEnv()) {
-                    $user_login_at = md5(date("Ymdh"));
+                    $user_login_time = md5(date("Ymdh"));
                 }
-                $this->session->set("user_login_at", $user_login_at);
+                $this->session->set("user_login_time", $user_login_time);
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/web/users']);
             }
