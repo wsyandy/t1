@@ -12,7 +12,7 @@ class BannersController extends BaseController
     {
         $hot = intval($this->params('hot', 1));
         $new = intval($this->params('new', 1));
-        $type = intval($this->params('type', 0));
+        $type = intval($this->params('type', 1));
 
         $current_user = $this->currentUser();
 
