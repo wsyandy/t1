@@ -20,7 +20,10 @@
                     <img class="family_avatar" :src="item.avatar_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
-                        <span class="family_prestige"> 声望${ item.fame_value }</span>
+                        <div class="family_prestige">
+                            <span>声望${ item.fame_value }</span>
+                        </div>
+                        {#<span class="family_prestige"> 声望${ item.fame_value }</span>#}
                     </div>
                 </div>
                 <div class="list_right">
@@ -79,6 +82,11 @@
                 this.page = 1;
                 this.unions = [];
                 this.list();
+                if (!this.unions.length) {
+                    setTimeout(function () {
+                        alert("没有搜索到家族");
+                    }, 1);
+                }
             },
             unionDetail: function (id) {
                 var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
