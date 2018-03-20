@@ -46,9 +46,9 @@
             </div>
 
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
-                {#<input class="close_submit" type="submit" name="submit" value="保存修改"#}
-                       {#:style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">#}
-                <span>申请创建（100钻石） </span>
+                <input class="close_submit" type="submit" name="submit" value="">
+
+                <span>保存修改</span>
             </div>
 
         </div>
