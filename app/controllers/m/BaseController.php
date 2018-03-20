@@ -185,6 +185,14 @@ class BaseController extends \ApplicationController
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
 
+        $is_foreign_ip = true;
+        $ip = $this->remoteIp();
+        $data = \Users::ipLocation($ip);
+
+        if (is_array($data) && preg_match('/中国/', $data[0])) {
+            $is_foreign_ip = false;
+        }
+
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
@@ -200,6 +208,7 @@ class BaseController extends \ApplicationController
         $this->view->sid = $this->currentUser()->sid;
         $this->view->code = $this->currentProductChannel()->code;
         $this->view->current_user = $this->currentUser();
+        $this->view->is_foreign_ip = $is_foreign_ip;
     }
 
 
