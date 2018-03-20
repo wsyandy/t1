@@ -53,7 +53,7 @@ class PaymentsController extends BaseController
         }
 
         if (!$user) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '请填写正确的HI ID');
         }
 
         if (isBlank($this->params('product_id'))) {

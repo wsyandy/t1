@@ -2532,4 +2532,27 @@ class Users extends BaseModel
         $user->save();
         unlock($lock);
     }
+
+    static function ipLocation($ip)
+    {
+
+        $config = self::di('config');
+        $endpoint = $config->job_queue->endpoint;
+        $x_redis = XRedis::getInstance($endpoint);
+
+        $key = 'ip_location_data_' . $ip;
+        $data = $x_redis->get($key);
+
+        if ($data) {
+            return json_decode($data, true);
+        }
+
+        $data = \IPLocation::find($ip);
+
+        if (is_array($data)) {
+            $x_redis->setex($key, 3600 * 24, json_encode($data, JSON_UNESCAPED_UNICODE));
+        }
+
+        return $data;
+    }
 }
