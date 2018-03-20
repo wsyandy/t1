@@ -175,7 +175,8 @@ class Chats extends BaseModel
             'receiver_id' => $this->receiver_id,
             'created_at' => $this->created_at,
             'content_type' => $this->content_type,
-            'content' => $this->content
+            'content' => $this->content,
+            'created_at_text' => $this->created_at_text
         );
     }
 
