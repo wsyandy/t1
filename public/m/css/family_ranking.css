@@ -54,14 +54,27 @@ body {
     color: #5E5E5E;
     padding-bottom: 0.14rem;
 }
+
 .family_prestige{
+    font-size: 0.24rem;
+    color: #FFFFFF;
+}
+.family_prestige span{
     font-size: 0.24rem;
     color: #FFFFFF;
     background-color: #F45189;
     border-radius: 0.04rem;
     padding: 0.02rem 0.1rem;
-    width: 80px;
 }
+
+/*.family_prestige{*/
+    /*font-size: 0.24rem;*/
+    /*color: #FFFFFF;*/
+    /*background-color: #F45189;*/
+    /*border-radius: 0.04rem;*/
+    /*padding: 0.02rem 0.1rem;*/
+    /*width: 80px;*/
+/*}*/
 .family_info{
     display: -webkit-flex;
     display: flex;

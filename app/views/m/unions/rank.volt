@@ -6,17 +6,19 @@
 <div class="vueBox" id="app" v-cloak="">
     <div class="family-list">
         <ul>
-            <li v-for="(item,index) in union_list">
+            <li v-for="(item,index) in union_list" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
                     <div class="family_order">
                         <img v-show="index<3" :src="index<2?(index<1?ranking_1:ranking_2):ranking_3" alt="">
                         <div v-show="index>2" class="family_flag"> ${ index+1 }</div>
                     </div>
 
-                    <img class="family_avatar" :src="item.avatar_small_url" alt="" @click.stop="unionDetail(item.id)">
+                    <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
-                        <span class="family_prestige"> 声望${ item.fame_value }</span>
+                        <div class="family_prestige">
+                            <span>声望${ item.fame_value }</span>
+                        </div>
                     </div>
                 </div>
                 <div class="list_right">

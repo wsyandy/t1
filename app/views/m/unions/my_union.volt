@@ -144,6 +144,7 @@
             <li v-show="!user_operation && !is_president" @click.stop="confirmPop">退出家族</li>
         </ul>
         <div class="close_btn">取消</div>
+        <div class="close_btn" id="more_close_btn">取消</div>
     </div>
 
     <div class="middle_pop">
@@ -240,7 +241,7 @@
             },
             userOperation: function (user) {
                 if (this.user.union_id != this.union.id) {
-                    return;
+                    $("#more_close_btn").show();
                 }
                 this.user_operation = true;
                 this.selected_user = user;
@@ -341,6 +342,7 @@
         function close_mp() {
             $(".middle_pop").hide();
             $(".middle_pop_bg").hide();
+            $("#more_close_btn").hide();
         }
 
         function close_pb() {
