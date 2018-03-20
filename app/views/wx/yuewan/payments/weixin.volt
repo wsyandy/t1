@@ -65,7 +65,7 @@
             payment_channel_id: '{{ selected_payment_channel.id }}',
             payment_type: "{{ selected_payment_channel.payment_type }}",
             submit_status: false,
-            nickname: ""
+            nickname: "{{ pay_user_name }}"
         },
         methods: {
             rechargeAction: function (id) {

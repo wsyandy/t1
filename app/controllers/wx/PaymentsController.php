@@ -36,6 +36,7 @@ class PaymentsController extends BaseController
         }
 
         $this->view->pay_user_id = $this->session->get('pay_user_id');
+        $this->view->pay_user_name = $this->session->get('pay_user_name');
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
         $this->view->product_channel = $this->currentProductChannel();
@@ -130,6 +131,7 @@ class PaymentsController extends BaseController
         $this->view->order = $order;
         $payment = \Payments::findFirstByOrderId($order->id);
         $this->session->set('pay_user_id', $order->user_id);
+        $this->session->set('pay_user_name', $order->user->nickname);
 
         if (!$payment || !$order->isPaid()) {
             $this->response->redirect('/wx/payments/weixin?ts=' . time());
