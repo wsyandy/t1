@@ -10,8 +10,8 @@ class BannersController extends BaseController
 {
     function indexAction()
     {
-        $hot = intval($this->params('hot', 0));
-        $new = intval($this->params('new', 0));
+        $hot = intval($this->params('hot', 1));
+        $new = intval($this->params('new', 1));
         $type = intval($this->params('type', 0));
 
         $current_user = $this->currentUser();
