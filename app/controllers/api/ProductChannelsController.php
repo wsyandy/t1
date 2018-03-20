@@ -24,10 +24,10 @@ class ProductChannelsController extends BaseController
 
     function bootConfigAction()
     {
-        $show = false;
+        $show = true;
 
         if (isProduction()) {
-            $show = false;
+            $show = true;
         }
 
         $root = $this->getRoot();
@@ -41,8 +41,8 @@ class ProductChannelsController extends BaseController
         $ips = $hot_cache->zrange($ip_list, 0, -1);
 
         if (count($ips) > 0) {
-            if (in_array($ip, $ips)) {
-                $show = true;
+            if (!in_array($ip, $ips)) {
+                $show = false;
             }
         }
 
