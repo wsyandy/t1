@@ -667,6 +667,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $db = \Users::getUserDb();
         $good_num_list_key = 'good_num_list';
+        $db->zrem($good_num_list_key, 1001);
         $db->zadd($good_num_list_key, time(), 1001);
         $db->zadd($good_num_list_key, time(), 1002);
         $db->zadd($good_num_list_key, time(), 1111);
