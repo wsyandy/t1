@@ -35,6 +35,14 @@ class IdCardAuths extends BaseModel
 
     function updateUserIdCardAuth()
     {
+        if (AUTH_SUCCESS == $this->auth_status) {
+            Chats::sendTextSystemMessage($this->user->id, '您的主持认证通过了,赶紧开房间连麦吧~');
+        }
+
+        if (AUTH_FAIL == $this->auth_status) {
+            Chats::sendTextSystemMessage($this->user->id, "很遗憾,您的主持认证申请未通过");
+        }
+
         $this->auth_at = time();
         $this->update();
 
