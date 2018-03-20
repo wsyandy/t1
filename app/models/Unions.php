@@ -452,6 +452,7 @@ class Unions extends BaseModel
             ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON], 'id desc');
 
         //$expire_at = time() - 86400 * 7;
+        $expire_at = time() - 60;
 
         if (isDevelopmentEnv()) {
             $expire_at = time() - 60;
