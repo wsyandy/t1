@@ -654,5 +654,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache = \Users::getHotWriteCache();
         // 116.226.124.121 116.226.124.47
         $hot_cache->zadd($ip_list, time(), '116.226.124.121');
+
+        $user = Users::findFirstById(31253);
+        $user->province_id = 0;
+        $user->city_id = 0;
+        $user->sex = 0;
+        $user->avatar = '';
+        $user->save();
     }
 }

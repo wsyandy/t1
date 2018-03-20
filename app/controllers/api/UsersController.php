@@ -258,7 +258,7 @@ class UsersController extends BaseController
 
                 if (isDevelopmentEnv()) {
                     //第一次注册 跳转更新资料
-                    $error_url = 'app://users/update_info';
+                    //$error_url = 'app://users/update_info';
                 }
             }
 

@@ -1435,7 +1435,7 @@ class Users extends BaseModel
     function needUpdateInfo()
     {
         //第三方授权登录 不校验
-        if ($this->third_name && isProduction() ) {
+        if ($this->third_name) {
             return false;
         }
 
