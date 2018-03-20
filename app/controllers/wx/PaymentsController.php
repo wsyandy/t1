@@ -142,4 +142,8 @@ class PaymentsController extends BaseController
         $this->view->payment = $payment;
     }
 
+    function questionsAction()
+    {
+        
+    }
 }
