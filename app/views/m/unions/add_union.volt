@@ -93,7 +93,8 @@
             set_select: '/m/images/ico-select.png',
             hasAgree: true,
             sid: '{{ sid }}',
-            code: '{{ code }}'
+            code: '{{ code }}',
+            is_development: '{{ isDevelopmentEnv() }}'
         },
         created: function () {
         },
@@ -109,7 +110,7 @@
             },
             establishFamily: function (index) {
                 this.isPop = false;
-                if (isIos) {
+                if (isIos && !vm.is_development) {
                     alert("请到我的账户充值");
                     return;
                 }
