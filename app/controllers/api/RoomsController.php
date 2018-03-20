@@ -56,6 +56,19 @@ class RoomsController extends BaseController
         }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
+
+        if ($rooms->total_entries < 2) {
+
+            $cond = [
+                'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
+                'order' => 'last_at desc, user_type asc'
+            ];
+
+            info("no_hot_rooms", $this->currentUser()->sid);
+
+            $rooms = \Rooms::findPagination($cond, $page, $per_page);
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
