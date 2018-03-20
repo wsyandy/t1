@@ -109,30 +109,54 @@ class Unions extends BaseModel
         }
 
         $union->avatar = $dest_filename;
+        $union->save();
 
-        if ($union->save()) {
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
 
-            $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
-            $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
-
-            if ($res) {
-
-                $user->union_id = $union->id;
-                $user->union_type = $union->type;
-                $user->update();
-
-                $db = Users::getUserDb();
-                $key = $union->generateUsersKey();
-                $db->zadd($key, time(), $user->id);
-
-
-                return [ERROR_CODE_SUCCESS, '创建成功'];
-            }
-
+        if ($db->zscore($good_num_list_key, $union->id)) {
             $union->status = STATUS_OFF;
-            $union->error_reason = "扣除钻石失败,创建失败";
+            $union->mobile = '';
+            $union->type = 0;
+            $union->user_id = 0;
+            $union->auth_status = 0;
             $union->update();
+
+            $union = new Unions();
+            $union->name = $name;
+            $union->notice = $notice;
+            $union->need_apply = $need_apply;
+            $union->product_channel_id = $user->product_channel_id;
+            $union->user_id = $user->id;
+            $union->auth_status = AUTH_SUCCESS;
+            $union->mobile = $user->mobile;
+            $union->type = UNION_TYPE_PRIVATE;
+            $union->avatar_status = AUTH_SUCCESS;
+            $union->avatar = $dest_filename;
+            $union->save();
         }
+
+
+        $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
+        $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
+
+        if ($res) {
+
+            $user->union_id = $union->id;
+            $user->union_type = $union->type;
+            $user->update();
+
+            $db = Users::getUserDb();
+            $key = $union->generateUsersKey();
+            $db->zadd($key, time(), $user->id);
+
+
+            return [ERROR_CODE_SUCCESS, '创建成功'];
+        }
+
+        $union->status = STATUS_OFF;
+        $union->error_reason = "扣除钻石失败,创建失败";
+        $union->update();
 
         return [ERROR_CODE_FAIL, '创建失败'];
     }

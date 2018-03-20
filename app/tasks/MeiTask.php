@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1001316;
+        $user_id = 1001303;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+        $opts = ['remark' => '系统赠送' . 1000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 1000, $opts);
     }
 
     function createUnionAction()
@@ -667,6 +667,10 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $db = \Users::getUserDb();
         $good_num_list_key = 'good_num_list';
+        $db->zrem($good_num_list_key, 1001);
+        $db->zadd($good_num_list_key, time(), 1001);
+        $db->zadd($good_num_list_key, time(), 1002);
+        $db->zadd($good_num_list_key, time(), 1111);
 
         $array = [];
         for ($i = 1000; $i < 100000000; $i++) {
@@ -692,5 +696,41 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(count($array));
 
 //        $db->zadd($good_num_list_key, time(), 10001);
+
+        $union = Unions::findFirstById(1002);
+        $union->type = UNION_TYPE_PRIVATE;
+        $union->notice = '呵呵';
+        $union->name = '呵呵';
+        $union->user_id = 1001303;
+        $union->auth_status = AUTH_SUCCESS;
+        $union->avatar = '';
+        $union->save();
+
+        $user = Users::findFirstById(1001303);
+        $user->union_id = $union->id;
+        $user->union_type = $union->type;
+        $user->update();
+        echoLine($union);
+
+        $user = Users::findFirstById(1001316);
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->update();
+        echoLine($user->union_id);
+
+        $union = Unions::findFirstById(4);
+        echoLine($union);
+
+
+    }
+
+    function getChatListAction()
+    {
+        $user = Users::findFirstById(31426);
+        $chats = \Chats::findChatsList($user, 1, 20, SYSTEM_ID);
+
+        foreach ($chats as $chat) {
+            echoLine($chat, $chat->created_at_text);
+        }
     }
 }
