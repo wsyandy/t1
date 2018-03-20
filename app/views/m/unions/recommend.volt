@@ -82,11 +82,11 @@
                 this.page = 1;
                 this.unions = [];
                 this.list();
-                if (!this.unions.length) {
-                    setTimeout(function () {
+                setTimeout(function () {
+                    if (vm.unions.length == 0) {
                         alert("没有搜索到家族");
-                    }, 1);
-                }
+                    }
+                }, 100);
             },
             unionDetail: function (id) {
                 var url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + id;
