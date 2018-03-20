@@ -6,7 +6,7 @@
     <div class="application_list_box">
         <div class="application_list" v-for="item in application_list">
             <div class="list_img">
-                <img :src="item.avatar_url">
+                <img :src="item.avatar_small_url">
             </div>
             <div class="list_message">
                 <div class="name">

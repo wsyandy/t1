@@ -7,7 +7,7 @@
         <img class="family-more" :src="ico_more" alt="" v-show="union.id == user.union_id">
         <div class="family_top">
             <div class="family_top_left">
-                <img class="family-ico" src="{{ union.avatar_url }}" alt="">
+                <img class="family-ico" src="{{ union.avatar_small_url }}" alt="">
                 <div class="family_name">
                     <span>   {{ union.name }}</span>
                     <span class="family_id">家族ID:{{ union.id }} </span>

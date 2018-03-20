@@ -7,7 +7,7 @@
     <form action="/m/unions/update?sid={{ sid }}&code={{ code }}" method="post" enctype="multipart/form-data"
           class="form" id="create_union">
         <div class="family-logo">
-            <img class="ico-img-update" id="img_preview" src="{{ union.avatar_url }}">
+            <img class="ico-img-update" id="img_preview" src="{{ union.avatar_small_url }}">
             <span>${ isEdit?'点击更换':'点击添加' }</span>
             <input class="img_update" type="file" id="avatar_file"
                    name="avatar_file" accept="image/*" capture="camera">
