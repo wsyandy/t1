@@ -44,8 +44,7 @@
                 <div class="member_name">
                     <div class="name">
                         <span> ${president.nickname}</span>
-                        <span class="female" v-if="president.sex == 1">${president.age}</span>
-                        <span class="male" v-if="president.sex == 0">${president.age}</span>
+                        <span :class="[president.sex?'male':'female']">${president.age}</span>
                         <span class="president">会长</span>
                     </div>
                     <div class="slogan">
@@ -65,8 +64,7 @@
                 <div class="member_name">
                     <div class="name">
                         <span> ${member.nickname}</span>
-                        <span class="female" v-if="member.sex == 1">${member.age}</span>
-                        <span class="male" v-if="member.sex == 0">${member.age}</span>
+                        <span :class="[member.sex?'male':'female']">${member.age}</span>
                         <span class="president" v-if="member.id == union.user_id">会长</span>
                     </div>
                     <div class="slogan">
@@ -89,7 +87,7 @@
                 <div class="member_name">
                     <div class="name">
                         <span> ${member.nickname}</span>
-                        <span class="female" v-if="member.sex == 1">${member.age}</span>
+                        <span :class="[member.sex?'male':'female']">${member.age}</span>
                         <span class="president" v-if="member.id == union.user_id">会长</span>
                     </div>
                     <div class="slogan">${member.monologue}</div>
@@ -110,7 +108,7 @@
                 <div class="member_name">
                     <div class="name">
                         <span> ${member.nickname}</span>
-                        <span class="female" v-if="member.sex == 1">${member.age}</span>
+                        <span :class="[member.sex?'male':'female']">${member.age}</span>
                         <span class="president" v-if="member.id == union.user_id">会长</span>
                     </div>
                     <div class="slogan">${member.monologue}</div>

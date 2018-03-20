@@ -228,25 +228,25 @@ body {
     text-overflow: ellipsis;
 }
 
-.member_name .female {
+.member_name .male {
     background-color: #4e91f9;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
-    background-image: url("../images/flag-female.png");
+    background-image: url("../images/male.png");
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;
 }
 
-.member_name .male {
+.member_name .female {
     background-color: #F99AD3;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
-    background-image: url("../images/male.png");
+    background-image: url("../images/flag-female.png");
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;

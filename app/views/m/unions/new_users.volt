@@ -10,7 +10,8 @@
             </div>
             <div class="list_message">
                 <div class="name">
-                    <h3>${item.nickname} <span class="women">${item.age}</span></h3>
+                    <h3>${item.nickname}
+                        <span :class="[item.sex ? 'men':'women']">${item.age}</span></h3>
                     <p>申请加入家族</p>
                 </div>
                 <div class="list_agree list_selected" v-show="item.apply_status">
