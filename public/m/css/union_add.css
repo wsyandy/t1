@@ -42,12 +42,12 @@
 }
 
 .family-edit ul li span {
-    width: 1.4rem;
+    /*width: 1.4rem;*/
     padding-right: 0.6rem;
 }
 
 .family-edit ul li .family_name {
-    width: 5.1rem;
+    width: 5rem;
     font-size: 0.3rem;
     color: #727272;
 }
@@ -55,19 +55,19 @@
 .input_text {
     font-size: .3rem;
     color: #404040;
-    width: 5.1rem;
+    width: 5rem;
 }
 
 .textarea_text {
     font-size: .3rem;
     color: #404040;
-    width: 5.1rem;
+    width: 5rem;
 }
 
 .textarea_text textarea {
     font-size: .3rem;
     color: #404040;
-    width: 5.1rem;
+    width: 5rem;
     resize: none;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .select_area {
-    width: 5.1rem;
+    width: 5rem;
     background-image: url("../images/arrow-down.png");
     background-size: 0.26rem 0.26rem;
     background-repeat: no-repeat;
