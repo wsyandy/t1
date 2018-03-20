@@ -697,7 +697,19 @@ class MeiTask extends \Phalcon\Cli\Task
 
 //        $db->zadd($good_num_list_key, time(), 10001);
 
-        $union = Unions::findFirstById(1001);
+        $union = Unions::findFirstById(1002);
+        $union->type = UNION_TYPE_PRIVATE;
+        $union->notice = '呵呵';
+        $union->name = '呵呵';
+        $union->user_id = 1001303;
+        $union->auth_status = AUTH_SUCCESS;
+        $union->avatar = '';
+        $union->save();
+
+        $user = Users::findFirstById(1001303);
+        $user->union_id = $union->id;
+        $user->union_type = $union->type;
+        $user->update();
         echoLine($union);
     }
 }
