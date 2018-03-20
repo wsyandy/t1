@@ -307,11 +307,18 @@ class Rooms extends BaseModel
             $hot_cache->zadd($key, time(), $user->id);
         }
 
+        $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
+
         info($user->sid, $this->id, $key, $real_user_key);
         if ($this->user_num > 0 && $this->status == STATUS_OFF) {
             $this->status = STATUS_ON;
             $this->update();
         }
+    }
+
+    static function getTotalRoomUserNumListKey()
+    {
+        return "total_room_user_num_list";
     }
 
     function remUser($user)
