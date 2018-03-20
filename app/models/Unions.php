@@ -499,7 +499,7 @@ class Unions extends BaseModel
                 Chats::sendTextSystemMessage($user->id, $content);
             } else {
                 $content = "$user->nickname" . "已经退出了家族";
-                Chats::sendTextSystemMessage($user->id, $content);
+                Chats::sendTextSystemMessage($this->user_id, $content);
             }
         }
 
