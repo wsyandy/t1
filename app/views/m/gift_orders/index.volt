@@ -8,13 +8,12 @@
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>
     </div>
 
-    {% if current_user.union_id < 1 %}
-        <div class="gift_money" v-if="receive"
-             @click.stop="redirectAction('/m/withdraw_histories?sid={{ sid }}&code={{ code }}')">
-            <h3>我的收益</h3>
-            <p><span>{{ hi_coins }}</span> Hi币 <img src="/m/images/gift_icon.png"></p>
-        </div>
-    {% endif %}
+    <div class="gift_money" v-if="receive"
+         @click.stop="redirectAction('/m/withdraw_histories?sid={{ sid }}&code={{ code }}')">
+        <h3>我的收益</h3>
+        <p><span>{{ hi_coins }}</span> Hi币 <img src="/m/images/gift_icon.png"></p>
+    </div>
+
     <div class="gift_list" v-for="gift_order in gift_orders" v-if="receive">
         <div class="list_left " @click.stop="userDetail(gift_order.sender_id)">
             <img :src="gift_order.sender_avatar_small_url">

@@ -28,6 +28,10 @@ class WithdrawHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
+            if (UNION_TYPE_PUBLIC == $this->currentUser()->union_type) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
+            }
+
             $money = $this->params('money');
             $name = $this->params('name', null);
             $account = $this->params('account', null);
