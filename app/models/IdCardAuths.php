@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/3/19
  * Time: 下午7:29
  */
-
 class IdCardAuths extends BaseModel
 {
     /**
@@ -17,6 +17,11 @@ class IdCardAuths extends BaseModel
      * @type ProductChannels
      */
     private $_product_channel;
+
+    /**
+     * @type AccountBanks
+     */
+    private $_account_bank;
 
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
 
@@ -61,6 +66,7 @@ class IdCardAuths extends BaseModel
         $id_no = fetch($opts, 'id_no');
         $id_name = fetch($opts, 'id_name');
         $bank_account = fetch($opts, 'bank_account');
+        $account_bank_id = fetch($opts, 'account_bank_id');
 
         $id_card_auth = IdCardAuths::findFirstByUserId($user->id);
 
@@ -74,6 +80,7 @@ class IdCardAuths extends BaseModel
         $id_card_auth->id_no = $id_no;
         $id_card_auth->bank_account = $bank_account;
         $id_card_auth->auth_status = AUTH_WAIT;
+        $id_card_auth->account_bank_id = $account_bank_id;
 
         if ($id_card_auth->save()) {
             return [ERROR_CODE_SUCCESS, '认证成功,请等待审核'];

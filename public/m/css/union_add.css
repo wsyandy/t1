@@ -131,7 +131,7 @@
     background-color: #FDC8DA;
     border-radius: 1rem;
     display: -webkit-flex;
-    display: flex;
+    /*display: flex;*/
     -webkit-align-items: center;
     align-items: center;
     justify-content: center;

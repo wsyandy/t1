@@ -30,6 +30,13 @@
                        placeholder="请输入您的银行卡号">
             </li>
 
+            <li class="select">
+                <span>开户行</span>
+                <div class="select_area" @click="setSelect">
+                    <span>${options[selected].text}</span>
+                </div>
+            </li>
+
 
         </ul>
         <div class="agree_div" @click="agreeSelect">
@@ -44,11 +51,24 @@
         </div>
     </div>
 
+    <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
+        <div :class="[isSet ? '' : 'fixed', 'pop_bottom']">
+            <ul>
+                <li v-for="(option, index) in options" @click="setSelected(index)"> ${ option.text }</li>
+            </ul>
+            <div class="close_btn" @click="cancelSelect">取消</div>
+        </div>
+    </div>
+
 </div>
 
 <script>
     var opts = {
         data: {
+            isPop: false,
+            isSet: false,
+            selected: 0,
+            options: {{ banks }},
             gift_orders: [],
             sid: '{{ sid }}',
             code: '{{ code }}',
@@ -107,8 +127,9 @@
                     id_no: id_no,
                     mobile: mobile,
                     bank_account: bank_account,
+                    account_bank_id: this.options[this.selected].value,
                     sid: vm.sid,
-                    code: vm.code,
+                    code: vm.code
                 };
 
                 $.authPost('/m/id_card_auths', params, function (resp) {
@@ -118,6 +139,17 @@
                         alert(resp.error_reason);
                     }
                 })
+            },
+            setSelect: function () {
+                this.isSet = true
+            },
+            cancelSelect: function () {
+                this.isSet = false
+            },
+            setSelected: function (index) {
+                console.log(index);
+                this.selected = this.options[index].value;
+                this.isSet = false
             }
         }
     };
