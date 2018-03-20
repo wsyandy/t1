@@ -26,7 +26,8 @@ class Stats extends BaseModel
         'device_active', 'subscribe', 'touch_active', 'web_active', // 激活
         'register', 'unsubscribe', // 注册
         'active_user', // 活跃用户
-        'create_order', 'create_payment', 'payment_success'
+        'create_order', 'create_payment', 'payment_success',
+        'diamond_recharge', 'diamond_cost' //钻石充值和消耗
     ];
 
     // 单课：要同时记录浏览课程和浏览章节
@@ -78,7 +79,19 @@ class Stats extends BaseModel
         'arpu' => '人均arpu',
         'new_payment_success_total' => '新用户支付总额',
         'new_paid_arpu' => '新用户人均客单价',
-        'new_arpu' => '新用户人均arpu'
+        'new_arpu' => '新用户人均arpu',
+
+        'diamond_recharge_total' => '充值钻石总额',
+        'diamond_recharge_num' => '充值钻石次数',
+        'diamond_recharge_user' => '充值钻石人数',
+        'diamond_recharge_num_average' => '人均充值钻石次数',
+        'diamond_recharge_user_average' => '人均充值钻石数额',
+
+        'diamond_cost_total' => '消耗钻石总额',
+        'diamond_cost_num' => '消耗钻石次数',
+        'diamond_cost_user' => '消耗钻石人数',
+        'diamond_cost_num_average' => '人均消耗钻石次数',
+        'diamond_cost_user_average' => '人均消耗钻石数额',
     ];
 
     // 渠道统计
@@ -180,13 +193,13 @@ class Stats extends BaseModel
                 $stat_db->zadd($hour_key . "_register_user", $stat_at, $id); // 注册用户
             }
 
+            if ($add_value) {
+                $stat_db->incrby($date_key . "_total", $add_value);
+                $stat_db->incrby($hour_key . "_total", $add_value);
+            }
+
             // 新用户
             if (in_array($action, ['create_order', 'create_payment', 'payment_success'])) {
-
-                if ($add_value) {
-                    $stat_db->incrby($date_key . "_total", $add_value);
-                    $stat_db->incrby($hour_key . "_total", $add_value);
-                }
 
                 // 天新用户
                 if ($created_at > strtotime(date('Ymd 00:00:00', $stat_at))) {
@@ -904,6 +917,143 @@ class Stats extends BaseModel
         }
         $this->data_hash['new_payment_success_rate'] = $rate;
     }
+
+    /**
+     * 充值钻石总额
+     */
+    function diamondRechargeTotal()
+    {
+        $key = $this->statCacheKey("user", "diamond_recharge");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['diamond_recharge_total'] = intval($num);
+    }
+
+    /**
+     * 充值钻石次数
+     */
+    function diamondRechargeNum()
+    {
+        $key = $this->statCacheKey("user", "diamond_recharge");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['diamond_recharge_num'] = intval($num);
+    }
+
+    /**
+     * 充值钻石人数
+     */
+    function diamondRechargeUser()
+    {
+        $key = $this->statCacheKey("user", "diamond_recharge");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['diamond_recharge_user'] = intval($num);
+    }
+
+    /**
+     * 人均充值钻石次数
+     */
+    function diamondRechargeNumAverage()
+    {
+        $diamond_recharge_num = $this->data_hash['diamond_recharge_num'];
+        $diamond_recharge_user = $this->data_hash['diamond_recharge_user'];
+        $avg = 0;
+
+        if ($diamond_recharge_user > 0) {
+            $avg = intval($diamond_recharge_num * 100 / $diamond_recharge_user) / 100;
+        }
+
+        $this->data_hash['diamond_recharge_num_average'] = $avg;
+    }
+
+    /**
+     * 人均充值钻石数额
+     */
+    function diamondRechargeUserAverage()
+    {
+        $diamond_recharge_total = $this->data_hash['diamond_recharge_total'];
+        $diamond_recharge_user = $this->data_hash['diamond_recharge_user'];
+
+        $avg = 0;
+
+        if ($diamond_recharge_user > 0) {
+            $avg = intval($diamond_recharge_total * 100 / $diamond_recharge_user) / 100;
+        }
+
+        $this->data_hash['diamond_recharge_user_average'] = $avg;
+    }
+
+    /**
+     * 消耗钻石总额
+     */
+    function diamondCostTotal()
+    {
+        $key = $this->statCacheKey("user", "diamond_cost");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['diamond_cost_total'] = intval($num);
+    }
+
+    /**
+     * 消耗钻石次数
+     */
+    function diamondCostNum()
+    {
+        $key = $this->statCacheKey("user", "diamond_cost");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['diamond_cost_num'] = intval($num);
+    }
+
+    /**
+     * 消耗钻石人数
+     */
+    function diamondCostUser()
+    {
+        $key = $this->statCacheKey("user", "diamond_cost");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['diamond_cost_user'] = intval($num);
+    }
+
+    /**
+     * 人均消耗钻石次数
+     */
+    function diamondCostNumAverage()
+    {
+        $diamond_cost_num = $this->data_hash['diamond_cost_num'];
+        $diamond_cost_user = $this->data_hash['diamond_cost_user'];
+        $avg = 0;
+
+        if ($diamond_cost_user > 0) {
+            $avg = intval($diamond_cost_num * 100 / $diamond_cost_user) / 100;
+        }
+
+        $this->data_hash['diamond_cost_num_average'] = $avg;
+    }
+
+    /**
+     * 人均消耗钻石数额
+     */
+    function diamondCostUserAverage()
+    {
+        $diamond_cost_total = $this->data_hash['diamond_cost_total'];
+        $diamond_cost_user = $this->data_hash['diamond_cost_user'];
+
+        $avg = 0;
+
+        if ($diamond_cost_user > 0) {
+            $avg = intval($diamond_cost_total * 100 / $diamond_cost_user) / 100;
+        }
+
+        $this->data_hash['diamond_cost_user_average'] = $avg;
+    }
+
 
     /**
      * 微信用户统计

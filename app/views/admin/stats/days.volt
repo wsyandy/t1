@@ -166,5 +166,24 @@
             $("#new_arpu .total").html(Math.ceil(new_payment_success_total * 100 / register_num) / 100);
         }
 
+        var diamond_recharge_user = parseFloat($("#diamond_recharge_user .total").eq(1).html());
+        var diamond_recharge_num = parseFloat($("#diamond_recharge_num .total").eq(1).html());
+        var diamond_recharge_total = parseFloat($("#diamond_recharge_total .total").eq(1).html());
+
+        if (diamond_recharge_user > 0) {
+            $("#diamond_recharge_num_average .total").html(Math.ceil(diamond_recharge_num * 100 / diamond_recharge_user) / 100);
+            $("#diamond_recharge_user_average .total").html(Math.ceil(diamond_recharge_total * 100 / diamond_recharge_user) / 100);
+        }
+
+        var diamond_cost_user = parseFloat($("#diamond_cost_user .total").eq(1).html());
+        var diamond_cost_num = parseFloat($("#diamond_cost_num .total").eq(1).html());
+        var diamond_cost_total = parseFloat($("#diamond_cost_total .total").eq(1).html());
+
+        if (diamond_cost_user > 0) {
+            $("#diamond_cost_num_average .total").html(Math.ceil(diamond_cost_num * 100 / diamond_cost_user) / 100);
+            $("#diamond_recharge_user_average .total").html(Math.ceil(diamond_cost_total * 100 / diamond_cost_user) / 100);
+        }
+
+
     });
 </script>
