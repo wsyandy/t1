@@ -30,13 +30,12 @@
                        placeholder="请输入您的银行卡号">
             </li>
 
-            <li class="select">
+            <li class="select" v-if="options.length">
                 <span>开户行</span>
                 <div class="select_area" @click="setSelect">
                     <span>${options[selected].text}</span>
                 </div>
             </li>
-
 
         </ul>
         <div class="agree_div" @click="agreeSelect">
@@ -148,7 +147,7 @@
             },
             setSelected: function (index) {
                 console.log(index);
-                this.selected = this.options[index].value;
+                this.selected = index;
                 this.isSet = false
             }
         }

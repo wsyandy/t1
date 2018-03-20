@@ -76,7 +76,7 @@ class Unions extends BaseModel
             return [ERROR_CODE_FORM, '钻石余额不足'];
         }
 
-        if (isBlank($name) || mb_strlen($name) > 5) {
+        if (isBlank($name) || mb_strlen($name) > 10) {
             return [ERROR_CODE_FAIL, '家族名称不能为空或字数超过限制'];
         }
 
@@ -607,7 +607,7 @@ class Unions extends BaseModel
 
         foreach ($opts as $filed => $value) {
 
-            if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 5)) {
+            if ($filed == 'name' && $this->type == UNION_TYPE_PRIVATE && (isBlank($value) || mb_strlen($value) > 10)) {
                 continue;
             } else if ($filed == 'notice' && (isPresent($value) && mb_strlen($value) > 50)) {
                 continue;

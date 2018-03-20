@@ -17,7 +17,7 @@
             <ul>
                 <li>
                     <span>家族名称 </span>
-                    <input class="input_text" maxlength="5" type="text" placeholder="最多输入5个字"
+                    <input class="input_text" maxlength="10" type="text" placeholder="最多输入10个字"
                            name="name" id="name">
                 </li>
                 <li>
