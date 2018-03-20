@@ -73,7 +73,7 @@ class WeixinEvents extends WeixinBaseEvents
     {
 
         $this->user = \Users::registerByOpenid($this->product_channel, $openid, $info);
-        if ($this->user) {
+        if ($this->user && $this->user->id) {
             $this->user->subscribe = USER_SUBSCRIBE;
             $this->user->update();
 
@@ -86,9 +86,9 @@ class WeixinEvents extends WeixinBaseEvents
     function eventUnsubscribe($openid)
     {
 
-        if ($this->user) {
+        if ($this->user && $this->user->id) {
             if ($this->product_channel && $this->product_channel->isWhiteList($this->user->nickname)) {
-                debug('clear white list', $this->user->id,  $this->user->openid);
+                debug('clear white list', $this->user->id, $this->user->openid);
                 $this->user->openid = '';
                 $this->user->mobile = '';
                 $this->user->id_no = '';
