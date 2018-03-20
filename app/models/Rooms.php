@@ -337,8 +337,14 @@ class Rooms extends BaseModel
         info($user->sid, $this->id, $key, $real_user_key);
 
         if ($this->user_num < 1) {
+
+            $hot_cache->zrem(Rooms::getTotalRoomUserNumListKey(), $this->id);
+
             $this->status = STATUS_OFF;
             $this->update();
+            
+        } else {
+            $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
         }
     }
 
