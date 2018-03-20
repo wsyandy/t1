@@ -240,7 +240,7 @@
                 this.page++;
             },
             userOperation: function (user) {
-                if (this.user.union_id != this.union.id) {
+                if (!this.user.union_id) {
                     $("#more_close_btn").show();
                 }
                 this.user_operation = true;
