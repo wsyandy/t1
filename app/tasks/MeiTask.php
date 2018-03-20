@@ -661,6 +661,11 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->sex = 0;
         $user->avatar = '';
         $user->save();
+
+        $union_history = UnionHistories::findFirstBy(
+            ['user_id' => 1003557, 'union_id' => 2, 'status' => STATUS_ON], 'id desc');
+        $union_history->join_at = time() - 60 * 10;
+        $union_history->update();
     }
 
     function setGoodNumAction()
@@ -726,6 +731,10 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getChatListAction()
     {
+        $user = Users::findFirstById(1001314);
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->update();
         $user = Users::findFirstById(31426);
         $chats = \Chats::findChatsList($user, 1, 20, SYSTEM_ID);
 

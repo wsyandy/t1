@@ -102,6 +102,15 @@ class AccountHistories extends BaseModel
         $user->diamond = $this->balance;
         $user->update();
 
+        $user_attrs = $user->getStatAttrs();
+        $user_attrs['add_value'] = abs($this->amount);
+        $action = "diamond_recharge";
+
+        if ($this->isCostDiamond()) {
+            $action = "diamond_cost";
+        }
+
+        \Stats::delay()->record('user', $action, $user_attrs);
     }
 
     static function findUserLast($user_id)
