@@ -19,8 +19,8 @@ class AlbumsController extends BaseController
         $user = $this->currentUser();
         //AUTH_SUCCESS
         $cond = [
-            'conditions' => "user_id = :user_id: and auth_status = :auth_status:",
-            'bind' => ['user_id' => $user->id, 'auth_status' => AUTH_SUCCESS],
+            'conditions' => "user_id = :user_id: and auth_status != :auth_status:",
+            'bind' => ['user_id' => $user->id, 'auth_status' => AUTH_FAIL],
             'order' => 'id desc'
         ];
         $albums = \Albums::findPagination($cond, $page, $per_page);

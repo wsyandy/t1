@@ -319,7 +319,13 @@ trait UserAttrs
 
     function albums()
     {
-        $albums = Albums::findByUserId($this->id);
+        $cond = [
+            'conditions' => "user_id = :user_id: and auth_status != :auth_status:",
+            'bind' => ['user_id' => $this->id, 'auth_status' => AUTH_FAIL],
+            'order' => 'id desc'
+        ];
+
+        $albums = Albums::find($cond);
         $data = [];
         foreach ($albums as $album) {
             $data[] = $album->toSimpleJson();
