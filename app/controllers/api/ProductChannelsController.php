@@ -33,7 +33,7 @@ class ProductChannelsController extends BaseController
         $root = $this->getRoot();
         //声网登录密码
 
-        $detail_json['menu_config'][] = ['show' => $show, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
+        $detail_json['menu_config'][] = ['show' => false, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
 
         $ip = $this->remoteIp();
         $ip_list = "permit_ip_list";
