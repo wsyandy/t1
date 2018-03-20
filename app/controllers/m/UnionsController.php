@@ -16,6 +16,8 @@ class UnionsController extends BaseController
         $this->view->title = "家族";
         $user = $this->currentUser();
         $union = $user->union;
+        $sid = $this->params('sid');
+        $code = $this->params('code');
 
         if (isBlank($union)) {
             $this->view->union = 0;
@@ -27,10 +29,12 @@ class UnionsController extends BaseController
                 $this->view->avatar_small_url = $union->user->avatar_small_url;
             }
             $this->view->union = $union;
+
+            return $this->response->redirect("/m/unions/my_union?union_id={$union->id}&sid={$sid}&code={$code}");
         }
 
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
+        $this->view->sid = $sid;
+        $this->view->code = $code;
         $this->view->current_user = $this->currentUser();
     }
 
