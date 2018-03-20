@@ -662,4 +662,35 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->avatar = '';
         $user->save();
     }
+
+    function setGoodNumAction()
+    {
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
+
+        $array = [];
+        for ($i = 1000; $i < 100000000; $i++) {
+//            if (preg_match("/(?:(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}|(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){5})\d/", $i)) {
+//                $array[] = $i;
+//                echoLine($i);
+//                continue;
+//            }
+
+//            if (preg_match("/(?:(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){3,}|(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){3,})\d/", $i)) {
+//                $array[] = $i;
+//                echoLine($i);
+//                continue;
+//            }
+
+            if (preg_match("/([\d])\1{2,}/", $i)) {
+                $array[] = $i;
+                echoLine($i);
+                continue;
+            }
+        }
+
+        echoLine(count($array));
+
+//        $db->zadd($good_num_list_key, time(), 10001);
+    }
 }
