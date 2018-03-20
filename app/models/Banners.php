@@ -188,7 +188,7 @@ class Banners extends BaseModel
 
                 if ('new' == $key) {
                     $all_banners_json["latest" . "_banners"] = $banners_json;
-                } elseif ('type' == $key && 1 == $key) {
+                } elseif ('type' == $key && 1 == $value) {
                     $all_banners_json["near_banners"] = $banners_json;
                 } else {
                     $all_banners_json[$key . "_banners"] = $banners_json;
