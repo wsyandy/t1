@@ -5,7 +5,6 @@
     </div>
     <div class="answer_text">
         <p>充值后可到APP-我的帐户中查看账户余额，此处冲的钻石实时到账</p>
-        <p>充值后可到APP-我的帐户中查看账户余额，此处冲的钻石实时到账</p>
     </div>
 </div>
 <div  class="faq_title">
