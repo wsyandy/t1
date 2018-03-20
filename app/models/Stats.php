@@ -33,7 +33,7 @@ class Stats extends BaseModel
 
     static $STAT_FIELDS = [
         'device_active_num' => '设备激活数',
-        'subscribe_num' => '微信关注数',
+        //'subscribe_num' => '微信关注数',
         //'touch_active_num' => 'H5激活数',
         //'web_active_num' => 'web站点激活数',
         //'sem_sms_active_num' => '落地页激活手机次数',
