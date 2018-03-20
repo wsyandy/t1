@@ -653,6 +653,8 @@ class UsersTask extends \Phalcon\Cli\Task
     {
         $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
 
+        echoLine(count($users));
+
         foreach ($users as $user) {
 
             $gift_orders = GiftOrders::find([
