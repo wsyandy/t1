@@ -732,5 +732,7 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($chats as $chat) {
             echoLine($chat, $chat->created_at_text);
         }
+
+        echoLine(Users::findFirstById(1014243));
     }
 }

@@ -916,6 +916,7 @@ class Users extends BaseModel
             $province = \Provinces::findFirstByName($result[0]);
             if ($province) {
                 $user->geo_province_id = $province->id;
+                $user->geo_city_id = 0;
             } else {
                 info('false province', $result);
             }
@@ -956,7 +957,10 @@ class Users extends BaseModel
                 }
 
                 $user->ip_province_id = $province->id;
+                $user->ip_city_id = 0;
+
                 $city = \Cities::findByIp($user->ip);
+
                 if ($city) {
 
                     if (!$user->city_id) {
