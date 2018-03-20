@@ -361,4 +361,35 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function calculateRoomIncomeAction()
+    {
+        $start = time() - 11 * 60;
+        $end = time() - 60;
+        $cond = [
+            'conditions' => 'room_id > 0 and created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => $end],
+            'columns' => 'distinct room_id'];
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $key = "room_recent_10m_income";
+        $hot_cache->zclear($key);
+
+        $gift_orders = GiftOrders::find($cond);
+
+
+        foreach ($gift_orders as $gift_order) {
+
+            $room_id = $gift_order->room_id;
+
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
+                'column' => 'amount'
+            ];
+            $income = GiftOrders::sum($cond);
+
+            $hot_cache->zadd($key, $income, $room_id);
+        }
+    }
 }
