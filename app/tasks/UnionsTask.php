@@ -119,4 +119,27 @@ class UnionsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixRankListAction()
+    {
+        $gift_orders = GiftOrders::findForeach(
+            [
+                'conditions' => 'created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => beginOfDay(), 'end' => endOfDay()]
+            ]);
+
+        foreach ($gift_orders as $gift_order) {
+            $sender = $gift_order->sender;
+            $user = $gift_order->user;
+
+            echoLine($gift_order->amount);
+            if ($sender->union_id) {
+                $sender->union->updateDayFameValue($gift_order->amount);
+            }
+
+            if ($user->union_id) {
+                $user->union->updateDayFameValue($gift_order->amount);
+            }
+        }
+    }
 }
