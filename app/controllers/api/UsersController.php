@@ -566,7 +566,7 @@ class UsersController extends BaseController
         if ($gold) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 2, 'tip' => $tip, 'message' => $message]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['sign_in_status' => 1, 'tip' => '', 'message' => '']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 1, 'tip' => '', 'message' => '']);
         }
     }
 
