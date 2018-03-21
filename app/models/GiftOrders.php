@@ -61,10 +61,22 @@ class GiftOrders extends BaseModel
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
-            'gift_type_text' => fetch(Gifts::$TYPE, $this->gift_type),
-            'pay_type_text' => fetch(Gifts::$PAY_TYPE, $this->pay_type),
+            'gift_type_text' => $this->getGiftTypeText(),
+            'pay_type_text' => $this->getPayTypeText(),
         ];
     }
+
+
+    function getGiftTypeText()
+    {
+        return fetch(Gifts::$TYPE, $this->gift_type);
+    }
+
+    function getPayTypeText()
+    {
+        return fetch(Gifts::$PAY_TYPE, $this->pay_type);
+    }
+
 
     /**
      * @param $sender_id
