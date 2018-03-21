@@ -624,22 +624,7 @@
 公共参数
 ```
 
-### 23 签到金币
-> http-get ```/api/users/sign_in_gold```
-
-##### 23.1 请求参数说明
-无
-
-##### 23.2 回应参数说明
-```
-{
-    error_code: 0/-1
-    error_reason: 失败原因，默认为空
-    gold： 金币
-}
-```
-
-### 24 签到
+### 23 签到
 > http-post ```/api/users/sign_in```
 
 ##### 24.1 请求参数说明
@@ -650,5 +635,6 @@
 {
     error-code: 0/-1
     error_reason: 失败原因，默认为空
+    gold: 本次签到领取的金币
 }
 ```

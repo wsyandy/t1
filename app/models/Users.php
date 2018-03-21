@@ -2595,7 +2595,7 @@ class Users extends BaseModel
 
     function addSignInHistory()
     {
-        $golds = [30, 50, 80, 120, 180, 250];
+        $golds = [30, 50, 80, 120, 180, 250, 320];
 
         $res = $this->signInGold();
 
@@ -2605,7 +2605,7 @@ class Users extends BaseModel
         $times = $db->get($key);
 
         if ($res <= 0) {
-            return false;
+            return $res;
         } else if ($res > $golds[0]) {
             $times += 1;
         } else {
@@ -2616,6 +2616,6 @@ class Users extends BaseModel
         $this->update();
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);
-        return true;
+        return $res;
     }
 }
