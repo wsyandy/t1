@@ -602,9 +602,11 @@ class Unions extends BaseModel
 
     function updateDayFameValue($value)
     {
-        $db = Users::getUserDb();
-        $key = "total_union_fame_value_day_" . date("Ymd");
-        $db->zincrby($key, $value, $this->id);
+        if ($value > 0) {
+            $db = Users::getUserDb();
+            $key = "total_union_fame_value_day_" . date("Ymd");
+            $db->zincrby($key, $value, $this->id);
+        }
     }
 
     function getAvatarUrl()

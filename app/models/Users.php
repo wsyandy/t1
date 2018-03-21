@@ -2535,7 +2535,27 @@ class Users extends BaseModel
         $hi_coins = ($gift_amount * $gift_num) / $rate;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
+        $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         unlock($lock);
+    }
+
+    //更新hi币贡献榜
+    function updateHiCoinRankList($sender_id, $hi_coins)
+    {
+        if ($hi_coins > 0) {
+            $db = Users::getUserDb();
+
+            $day_key = "user_hi_coin_rank_list_" . date("Ymd");
+
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $weeks_key = "user_hi_coin_rank_list_" . $start . "_" . $end;
+            $total_key = "user_hi_coin_rank_list";
+
+            $db->zincrby($day_key, $hi_coins * 100, $sender_id);
+            $db->zincrby($weeks_key, $hi_coins * 100, $sender_id);
+            $db->zincrby($total_key, $hi_coins * 100, $sender_id);
+        }
     }
 
     static function ipLocation($ip)
