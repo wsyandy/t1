@@ -596,7 +596,15 @@ class Unions extends BaseModel
         $union = self::findFirstById($id);
         $union->fame_value += $value;
         $union->update();
+        $union->updateDayFameValue($value);
         unlock($lock);
+    }
+
+    function updateDayFameValue($value)
+    {
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd");
+        $db->zincrby($key, $value, $this->id);
     }
 
     function getAvatarUrl()
