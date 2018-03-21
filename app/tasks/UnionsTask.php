@@ -8,6 +8,29 @@
 
 class UnionsTask extends \Phalcon\Cli\Task
 {
+    //推荐家族
+    function recommendAction()
+    {
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime('-1 day'));
+
+        $unions = Unions::findBy(['recommend' => STATUS_ON]);
+
+        foreach ($unions as $union) {
+            $union->recommend = STATUS_OFF;
+            $union->update();
+        }
+
+        $union_ids = $db->zrevrange($key, 0, 4);
+        $unions = Unions::findByIds($union_ids);
+
+        foreach ($unions as $union) {
+            $union->recommend = STATUS_ON;
+            $union->update();
+        }
+
+    }
+
     function initGiftOrdersAction()
     {
         $gift_orders = GiftOrders::findForeach();
