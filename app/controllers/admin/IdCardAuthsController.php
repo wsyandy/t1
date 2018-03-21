@@ -17,10 +17,19 @@ class IdCardAuthsController extends BaseController
         $page = $this->params('page');
         $per_page = 30;
 
+
+        if (!isset($cond['conditions'])) {
+            $cond['conditions'] = "auth_status !=" . AUTH_FAIL;
+        }
+
+        $cond['order'] = 'auth_status desc';
         $id_card_auths = \IdCardAuths::findPagination($cond, $page, $per_page);
 
         $this->view->id_card_auths = $id_card_auths;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->auth_status = intval($this->params('id_card_auth[auth_status_eq]'));
+        $this->view->id = $this->params('id_card_auth[id_eq]');
+        $this->view->user_id = $this->params('id_card_auth[user_id_eq]');
     }
 
     function editAction()

@@ -6,14 +6,14 @@
 
     <label for="auth_status_eq">审核状态</label>
     <select name="id_card_auth[auth_status_eq]" id="auth_status_eq">
-        {{ options(IdCardAuths.AUTH_STATUS) }}
+        {{ options(IdCardAuths.AUTH_STATUS, auth_status) }}
     </select>
 
     <label for="id_eq">ID</label>
-    <input name="id_card_auth[id_eq]" type="text" id="id_eq"/>
+    <input name="id_card_auth[id_eq]" value="{{ id }}" type="text" id="id_eq"/>
 
     <label for="user_id_eq">用户id</label>
-    <input name="id_card_auth[user_id_eq]" type="text" id="user_id_eq"/>
+    <input name="id_card_auth[user_id_eq]" value="{{ user_id }}" type="text" id="user_id_eq"/>
     <button type="submit" class="ui button">搜索</button>
 </form>
 
@@ -43,3 +43,12 @@
 {% endmacro %}
 
 {{ simple_table(id_card_auths,['id': 'id','头像':'avatar_image','审核时间':'auth_at_text','用户信息':"user_info",'账户':'account_link','审核状态':'auth_status_text',"操作":"operate_link"]) }}
+
+<script>
+    {% for id_card_auth in id_card_auths %}
+    {% if id_card_auth.auth_status == 2 %}
+    $("#id_card_auth_{{ id_card_auth.id }}").css({"background-color": "grey"});
+    {% endif %}
+    {% endfor %}
+
+</script>
