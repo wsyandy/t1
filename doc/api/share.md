@@ -9,7 +9,7 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |room_id|房间ID|int|是|要分享的房间id|
-|share_source|分享来源|string|否|若是从房间分享，就传room|
+|share_source|分享来源|string|否|房间room，赚金币gold_works|
 
 ##### 1.2 返回参数说明
 ```
@@ -47,7 +47,7 @@
 
 ## 3 赚金币
 
-> http-get ```/api/shares/gold_work```
+> http-get ```/api/shares/gold_works```
 
 ##### 3.1 请求参数说明
 

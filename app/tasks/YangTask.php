@@ -332,7 +332,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function test15Action($params)
     {
-        $url = "http://chance.com/api/shares/gold_work";
+        $url = "http://chance.com/api/shares/gold_works";
         $body = $this->commonBody();
         $id = $params[0];
         $user = \Users::findFirstById($id);

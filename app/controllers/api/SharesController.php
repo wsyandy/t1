@@ -10,7 +10,7 @@ namespace api;
 
 class SharesController extends BaseController
 {
-    function goldWorkAction()
+    function goldWorksAction()
     {
         $user = $this->currentUser();
         $share_json = [];
