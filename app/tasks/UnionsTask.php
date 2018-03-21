@@ -21,14 +21,14 @@ class UnionsTask extends \Phalcon\Cli\Task
             $union->update();
         }
 
-        $union_ids = $db->zrevrange($key, 0, 4);
-        $unions = Unions::findByIds($union_ids);
+        $union_recommend_key = "union_recommend_list";
+        $db->zclear($union_recommend_key);
 
-        foreach ($unions as $union) {
-            $union->recommend = STATUS_ON;
-            $union->update();
+        $union_ids = $db->zrevrange($key, 0, 4, true);
+
+        foreach ($union_ids as $union_id => $value) {
+            $db->zadd($union_recommend_key, $value, $union_id);
         }
-
     }
 
     function initGiftOrdersAction()
