@@ -80,8 +80,8 @@ class UserGifts extends BaseModel
             'image_big_url' => $this->gift_image_big_url,
             'dynamic_image_url' => $this->gift_dynamic_image_url,
             'num' => $this->num,
-            'pay_type_text' => fetch(Gifts::$PAY_TYPE, $this->pay_type),
-            'gift_type_text' => fetch(Gifts::$TYPE, $this->gift_type)
+            'pay_type_text' => $this->getPayTypeText(),
+            'gift_type_text' => $this->getGiftTypeText()
         );
     }
 
@@ -125,5 +125,15 @@ class UserGifts extends BaseModel
             $hot_cache->expire($user_num_hour_key, $hour_expire);
             $hot_cache->expire($send_gift_rooms_key, $day_expire);
         }
+    }
+
+    function getGiftTypeText()
+    {
+        return fetch(Gifts::$TYPE, $this->gift_type);
+    }
+
+    function getPayTypeText()
+    {
+        return fetch(Gifts::$PAY_TYPE, $this->pay_type);
     }
 }
