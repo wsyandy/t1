@@ -29,3 +29,14 @@
     <td><a href="/admin/payment_channels/edit/${payment_channel.id}" class="modal_action">编辑</a></td>
 </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+
+        {% for payment_channel in payment_channels %}
+        {% if payment_channel.status != 1 %}
+        $("#payment_channel_{{ payment_channel.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
+</script>

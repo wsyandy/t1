@@ -54,7 +54,7 @@
     {#<a href="/admin/product_channels/emchat/{{ product_channel.id }}" class="modal_action">环信配置</a><br/>#}
     {#<a href="/admin/product_channels/copy?id={{ product_channel.id }}" class="modal_action">复制产品渠道到</a><br/>#}
     {% if isAllowed('product_channels','getui_global_push') and !isDevelopmentEnv() %}
-        <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a>
+    <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a>
     {% endif %}
 {% endmacro %}
 
@@ -83,9 +83,9 @@
 {%- endmacro %}
 
 {{ simple_table(product_channels, ['ID': 'id', '产品渠道名称': 'name', 'Code':'code', '计费配置': 'product_group_link', 'Icon':'avatar_link',
-    '公司信息':'company_info', '版本信息': 'client_info', 'ios测试主题':'test_client_info',
-    '状态': 'status_text', '微信':'weixin_link',
-    '操作':'oper_link' ]) }}
+'公司信息':'company_info', '版本信息': 'client_info', 'ios测试主题':'test_client_info',
+'状态': 'status_text', '微信':'weixin_link',
+'操作':'oper_link' ]) }}
 
 <script type="text/template" id="product_channel_tpl">
     <tr id="product_channel_${product_channel.id}">
@@ -154,5 +154,11 @@
 <script type="text/javascript">
     $(function () {
         $('.selectpicker').selectpicker();
+
+        {% for product_channel in product_channels %}
+        {% if product_channel.status != 1 %}
+        $("#product_channel_{{ product_channel.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
     });
 </script>

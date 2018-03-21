@@ -28,3 +28,14 @@
       <td><a href="/admin/products/edit/${product.id}" class="modal_action">编辑</a></td>
   </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+
+        {% for product in products %}
+        {% if product.status != 1 %}
+        $("#product_{{ product.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
+</script>

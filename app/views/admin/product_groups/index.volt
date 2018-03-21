@@ -36,3 +36,14 @@
     <td><a href="/admin/product_groups/edit/${ product_group.id }" class="modal_action">编辑</a></td>
 </tr>
 </script>
+
+
+<script type="text/javascript">
+    $(function () {
+        {% for product_group in product_groups %}
+        {% if product_group.status != 1 %}
+        $("#product_group_{{ product_group.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
+</script>
