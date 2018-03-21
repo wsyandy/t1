@@ -2634,9 +2634,7 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
-        $this->update();
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);
         return $res;
@@ -2691,10 +2689,29 @@ class Users extends BaseModel
         $key = $this->generateShareTask($share_task_type);
         if ($db->get($key)) {
             //分享任务已完成
-            return 1;
+            return STATUS_YES;
         } else {
             //分享任务未完成
-            return 2;
+            return STATUS_NO;
         }
+    }
+
+    function changeShareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+        if ($db->get($key)) {
+            return false;
+        }
+
+        $gold = $this->ShareTaskGold();
+
+        $share_des = ShareHistories::$TYPE[$share_task_type];
+
+        $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
+
+        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+
+        $db->setex($key, endOfDay(), time());
     }
 }

@@ -206,8 +206,9 @@ define('WITHDRAW_TYPE_USER', 1); //用户体现
 define('WITHDRAW_TYPE_UNION', 2); //家族体现
 
 //金币
-define('GOLD_TYPE_SIGN_IN',1); //用户签到
-define('GOLD_TYPE_BUY_GIFT',2); //购买礼物
+define('GOLD_TYPE_SIGN_IN', 1); //用户签到
+define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
+define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');

@@ -66,20 +66,11 @@ class SharesController extends BaseController
         }
 
         $type = intval($this->params('type', 0));
-        if (!$type || !array_key_exists($type, \ShareHistories::$TYPE)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-
         $status = intval($this->params('status', 0));
-        if (!$status || !array_key_exists($status, \ShareHistories::$STATUS)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
 
-        $share_history->type = $type;
-        $share_history->status = $status;
+        $opts = ['type' => $type, 'status' => $status];
 
-        $share_history->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        list($error_code, $error_reason) = $share_history->result($opts);
+        return $this->renderJSON($error_code, $error_reason);
     }
-
 }

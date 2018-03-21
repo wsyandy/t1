@@ -194,11 +194,8 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $room = $user->room;
-        if (!$room) {
-            return echoLine("此用户的房间不存在");
-        }
-        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id, 'share_source' => $share_source]);
+
+        $body = array_merge($body, ['sid' => $user->sid, 'share_source' => $share_source]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
