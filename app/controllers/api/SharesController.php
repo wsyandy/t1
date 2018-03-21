@@ -20,10 +20,10 @@ class SharesController extends BaseController
             $name = $value;
             $status = $user->ShareTaskStatus($type);
             $gold = $user->ShareTaskGold();
-            $share_json[] = ['name' => $name, 'type' => $type, 'share_status' => $status, 'share_gold' => $gold];
+            $share_json[] = ['name' => $name, 'type' => $type, 'work_status' => $status, 'work_gold' => $gold];
         }
 
-        $opts = ['gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message, 'share_tasks' => $share_json];
+        $opts = ['gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message, 'gold_works' => $share_json];
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
     }
 
