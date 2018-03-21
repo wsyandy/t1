@@ -194,7 +194,7 @@ class Unions extends BaseModel
         $user_db = Users::getUserDb();
 
         $offset = $per_page * ($page - 1);
-        $union_ids = $user_db->zrevrange($union_recommend_key, $offset, $offset + $per_page - 1, 'withscores');
+        $union_ids = $user_db->zrevrange($union_recommend_key, $offset, $offset + $per_page - 1);
         $unions = Unions::findByIds($union_ids);
         $total_entries = $user_db->zcard($union_recommend_key);
         $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
