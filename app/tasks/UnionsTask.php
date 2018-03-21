@@ -12,7 +12,7 @@ class UnionsTask extends \Phalcon\Cli\Task
     function recommendAction()
     {
         $db = Users::getUserDb();
-        $key = "total_union_fame_value_day_" . date("Ymd");
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime('-1 day'));
 
         $unions = Unions::findBy(['recommend' => STATUS_ON]);
 
@@ -22,8 +22,6 @@ class UnionsTask extends \Phalcon\Cli\Task
         }
 
         $union_recommend_key = "union_recommend_list";
-        echoLine($db->zrange($union_recommend_key, 0, -1, true));
-
         $db->zclear($union_recommend_key);
 
         $union_ids = $db->zrevrange($key, 0, 4, true);
@@ -33,8 +31,6 @@ class UnionsTask extends \Phalcon\Cli\Task
         foreach ($union_ids as $union_id => $value) {
             $db->zadd($union_recommend_key, $value, $union_id);
         }
-
-        echoLine($db->zrange($union_recommend_key, 0, -1));
     }
 
     function initGiftOrdersAction()
