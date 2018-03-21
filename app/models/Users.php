@@ -2598,10 +2598,10 @@ class Users extends BaseModel
         $expire = $db->ttl($key);
         debug($expire);
 
-        if ($expire > time() + 3600 * 24) {
+        if ($expire > 3600 * 24) {
             //已签到
             return 0;
-        } else if ($expire > time()) {
+        } else if ($expire > 0) {
             //连续签到
             if ($times < count($golds)) {
                 return $golds[$times];
@@ -2636,7 +2636,7 @@ class Users extends BaseModel
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
 
-        $db->setex($key, endOfDay() + 3600 * 24, $times);
+        $db->setex($key, endOfDay() - time() + 3600 * 24, $times);
         return $res;
     }
 
@@ -2712,6 +2712,6 @@ class Users extends BaseModel
 
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
 
-        $db->setex($key, endOfDay(), time());
+        $db->setex($key, endOfDay() - time(), time());
     }
 }
