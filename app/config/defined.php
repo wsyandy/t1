@@ -208,3 +208,11 @@ define('WITHDRAW_TYPE_UNION', 2); //家族体现
 //金币
 define('GOLD_TYPE_SIGN_IN',1); //用户签到
 define('GOLD_TYPE_BUY_GIFT',2); //购买礼物
+
+//礼物付费类型
+define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
+define('GIFT_PAY_TYPE_GOLD', 'gold');
+
+//礼物类型
+define('GIFT_TYPE_COMMON', 1);
+define('GIFT_TYPE_CAR', 2);

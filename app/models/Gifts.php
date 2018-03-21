@@ -10,10 +10,10 @@ class Gifts extends BaseModel
 {
 
     //礼物支付类型
-    static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
+    static $PAY_TYPE = [GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_DIAMOND => '钻石'];
 
     //礼物类型 暂定
-    static $TYPE = [1 => '普通礼物', 2 => '座驾'];
+    static $TYPE = [GIFT_TYPE_COMMON => '普通礼物', GIFT_TYPE_CAR => '座驾'];
 
     //礼物状态
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -30,6 +30,21 @@ class Gifts extends BaseModel
         $config = self::di('config');
         $endpoints = $config->cache_endpoint;
         return explode(',', $endpoints)[0];
+    }
+
+    function isDiamondPayType()
+    {
+        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function isGoldPayType()
+    {
+        return GIFT_PAY_TYPE_GOLD == $this->pay_type;
+    }
+
+    function isCar()
+    {
+        return GIFT_TYPE_CAR == $this->type;
     }
 
     function beforeCreate()
@@ -269,14 +284,22 @@ class Gifts extends BaseModel
      * 获取所有的有效礼物，这里先做一个限制，最多100个
      * @return PaginationModel
      */
-    static function findValidList()
+    static function findValidList($opts = [])
     {
+        $gift_type = fetch($opts, 'gift_type');
+
         $conditions = [
             'conditions' => "status = :status:",
             'bind' => [
                 'status' => GIFT_STATUS_ON
             ],
             'order' => 'rank desc, amount asc'];
+
+        if ($gift_type) {
+            $conditions['conditions'] .= ' and type = :gift_type:';
+            $conditions['bind']['gift_type'] = $gift_type;
+        }
+
         $page = 1;
         $per_page = 100;
 

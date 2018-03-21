@@ -6,9 +6,10 @@
 
 ##### 1.1 请求参数说明
 
-```
-   公共参数
-```
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|---|---|---|---|---|
+|gift_type|礼物类型|int|否|默认为1普通礼物,2:座驾礼物|
 
 ##### 1.2 返回参数说明
 ```
@@ -58,8 +59,9 @@
 |---|---|---|---|---|
 |gift_id|礼物ID|integer|否||
 |gift_num|礼物数量|integer|可空|空表示数量是1
-|user_id|接收方ID|integer|否||
+|user_id|接收方ID 自己买座驾不需要传此参数|integer|是||
 |src|来源|string|可|默认是room
+|renew|续期|integer|可|座驾续期时传此参数
 
 ##### 返回参数说明
 ````
@@ -97,6 +99,8 @@
 |page|页码|integer|否||
 |per_page|每页个数|integer|可空|空表示数量20
 |user_id|用户ID|integer|可空|空表示查看自己收到的礼物
+|car_gift|座驾礼物|integer|可空|座驾礼物需要传1
+|common_gift|普通礼物|integer|可空|普通礼物需要传1
 
 ##### 返回参数说明
 ````
@@ -120,6 +124,21 @@
             image_big_url: ''
             dynamic_image_url: ''
             num: 10
+        }
+        ...
+    ]
+    user_car_gifts: [ //座驾礼物
+        {
+            gift_id: 1
+            name: ''
+            amount: 10
+            pay_type 'gold/diamond'
+            image_url: ''
+            image_small_url: ''
+            image_big_url: ''
+            dynamic_image_url: ''
+            num: 10
+            expire_day 过期天数
         }
         ...
     ]
