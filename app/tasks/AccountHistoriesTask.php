@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
@@ -34,5 +35,24 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
 
         $user->diamond = 0;
         $user->update();
+    }
+
+    function giveAction($params)
+    {
+        $amount = $params[0];
+        if($amount > 100){
+            echoLine('error', $params);
+            return;
+        }
+
+        unset($params[0]);
+        $user_ids = $params;
+
+        foreach ($user_ids as $user_id) {
+            $opts = ['remark' => '系统赠送' . $amount . '钻石', 'operator_id' => 1];
+            echoLine($user_id, $opts);
+            \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+        }
+
     }
 }
