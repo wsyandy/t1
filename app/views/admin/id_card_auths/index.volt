@@ -29,8 +29,7 @@
 {% macro account_link(id_card_auth) %}
     姓名:{{ id_card_auth.id_name }}<br/>
     身份证:{{ id_card_auth.id_no }}<br/>
-    银行账户:{{ id_card_auth.bank_account }}<br/>
-    银行:{{ id_card_auth.account_bank.name }}<br/>
+    手机号码:{{ id_card_auth.mobile }}<br/>
 {% endmacro %}
 
 

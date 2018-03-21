@@ -23,19 +23,19 @@
                 <div class="family_name" v-show="isEdit"> ${ user_info.id_no }</div>
                 <input v-show="!isEdit" id="id_no" class="input_text" type="text" placeholder="请输入您的身份证号">
             </li>
-            <li>
-                <span>银行卡号 </span>
-                <div class="family_name" v-show="isEdit"> ${ user_info.bank_account }</div>
-                <input v-show="!isEdit" id="bank_account" class="input_text" type="text"
-                       placeholder="请输入您的银行卡号">
-            </li>
+            {#<li>#}
+                {#<span>银行卡号 </span>#}
+                {#<div class="family_name" v-show="isEdit"> ${ user_info.bank_account }</div>#}
+                {#<input v-show="!isEdit" id="bank_account" class="input_text" type="text"#}
+                       {#placeholder="请输入您的银行卡号">#}
+            {#</li>#}
 
-            <li class="select" v-if="options.length">
-                <span>开户行</span>
-                <div class="select_area" @click="setSelect">
-                    <span>${options[selected].text}</span>
-                </div>
-            </li>
+            {#<li class="select" v-if="options.length">#}
+                {#<span>开户行</span>#}
+                {#<div class="select_area" @click="setSelect">#}
+                    {#<span>${options[selected].text}</span>#}
+                {#</div>#}
+            {#</li>#}
 
         </ul>
         <div class="agree_div" @click="agreeSelect">
@@ -125,8 +125,6 @@
                     id_name: id_name,
                     id_no: id_no,
                     mobile: mobile,
-                    bank_account: bank_account,
-                    account_bank_id: this.options[this.selected].value,
                     sid: vm.sid,
                     code: vm.code
                 };
@@ -146,7 +144,6 @@
                 this.isSet = false
             },
             setSelected: function (index) {
-                console.log(index);
                 this.selected = index;
                 this.isSet = false
             }
