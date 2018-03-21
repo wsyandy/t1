@@ -316,15 +316,10 @@ class Rooms extends BaseModel
 
         info($user->sid, $this->id, $key, $real_user_key);
 
-        if ($this->user_num > 0 && $this->status == STATUS_OFF) {
+        if ($this->user_num > 0 && $this->status == STATUS_OFF && !$this->isBlocked()) {
             $this->status = STATUS_ON;
+            $this->update();
         }
-
-        if ($this->isBlocked()) {
-            $this->status = STATUS_BLOCKED;
-        }
-
-        $this->update();
     }
 
     static function getTotalRoomUserNumListKey()
@@ -351,14 +346,12 @@ class Rooms extends BaseModel
 
         if ($this->user_num < 1) {
             $hot_cache->zrem(Rooms::getTotalRoomUserNumListKey(), $this->id);
-            $this->status = STATUS_OFF;
-        }
 
-        if ($this->isBlocked()) {
-            $this->status = STATUS_BLOCKED;
+            if (!$this->isBlocked()) {
+                $this->status = STATUS_OFF;
+                $this->update();
+            }
         }
-
-        $this->update();
     }
 
     function updateUserRank($user, $asc = true)
