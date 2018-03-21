@@ -184,6 +184,7 @@
             $("#diamond_recharge_user_average .total").html(Math.ceil(diamond_cost_total * 100 / diamond_cost_user) / 100);
         }
 
+        $("#diamond_recharge_balance .total").html(Math.ceil(diamond_recharge_total - diamond_cost_total));
 
     });
 </script>

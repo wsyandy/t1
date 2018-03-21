@@ -105,6 +105,9 @@ class AccountHistories extends BaseModel
         $user_attrs = $user->getStatAttrs();
         $user_attrs['add_value'] = abs($this->amount);
         $action = "diamond_recharge";
+        if($this->fee_type == ACCOUNT_TYPE_GIVE){
+            $action = "diamond_recharge_give";
+        }
 
         if ($this->isCostDiamond()) {
             $action = "diamond_cost";

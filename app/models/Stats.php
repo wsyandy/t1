@@ -27,7 +27,7 @@ class Stats extends BaseModel
         'register', 'unsubscribe', // 注册
         'active_user', // 活跃用户
         'create_order', 'create_payment', 'payment_success',
-        'diamond_recharge', 'diamond_cost' //钻石充值和消耗
+        'diamond_recharge', 'diamond_recharge_give', 'diamond_cost' //钻石购买和消耗
     ];
 
     // 单课：要同时记录浏览课程和浏览章节
@@ -52,46 +52,49 @@ class Stats extends BaseModel
         'create_order_num' => '下单次数',
         'create_order_user' => '下单人数',
         'create_order_average' => '人均下单次数',
-        'new_create_order_num' => '新用户下单次数',
-        'new_create_order_user' => '新用户下单人数',
-        'new_create_order_average' => '新用户人均下单次数',
-
         'create_payment_num' => '支付次数',
         'create_payment_user' => '支付人数',
         'create_payment_average' => '人均支付次数',
-        'new_create_payment_num' => '新用户支付次数',
-        'new_create_payment_user' => '新用户支付人数',
-        'new_create_payment_average' => '新用户人均支付次数',
-
         'payment_success_num' => '支付成功次数',
         'payment_success_user' => '支付成功人数',
         'payment_success_average' => '人均支付成功次数',
+
+        'diamond_recharge_total' => '购买钻石总额',
+        'diamond_recharge_give_total' => '赠送钻石总额',
+        'diamond_recharge_user' => '购买钻石人数',
+        'diamond_recharge_give_user' => '赠送钻石人数',
+        'diamond_recharge_user_average' => '人均购买钻石数额',
+        'diamond_recharge_give_user_average' => '人均赠送钻石数额',
+
+        'diamond_cost_total' => '消耗钻石总额',
+        'diamond_cost_num' => '消耗钻石次数',
+        'diamond_cost_num_average' => '人均消耗钻石次数',
+        'diamond_cost_user' => '消耗钻石人数',
+        'diamond_cost_user_average' => '人均消耗钻石数额',
+        'diamond_recharge_balance' => '购买钻石余额**',
+
+        'new_create_order_num' => '新用户下单次数',
+        'new_create_order_user' => '新用户下单人数',
+        'new_create_order_average' => '新用户人均下单次数',
+        'new_create_payment_num' => '新用户支付次数',
+        'new_create_payment_user' => '新用户支付人数',
+        'new_create_payment_average' => '新用户人均支付次数',
         'new_payment_success_num' => '新用户支付成功次数',
         'new_payment_success_user' => '新用户支付成功人数',
         'new_payment_success_average' => '新用户人均支付成功次数',
 
+
         'order_payment_rate' => '订单转化率%',
-        'new_order_payment_rate' => '新用户订单转化率%',
         'payment_success_rate' => '支付成功率%',
-        'new_payment_success_rate' => '新用户支付成功率%',
         'payment_success_total' => '支付总额',
         'paid_arpu' => '人均客单价',
         'arpu' => '人均arpu',
+
+        'new_order_payment_rate' => '新用户订单转化率%',
+        'new_payment_success_rate' => '新用户支付成功率%',
         'new_payment_success_total' => '新用户支付总额',
         'new_paid_arpu' => '新用户人均客单价',
-        'new_arpu' => '新用户人均arpu',
-
-        'diamond_recharge_total' => '充值钻石总额',
-        'diamond_recharge_num' => '充值钻石次数',
-        'diamond_recharge_user' => '充值钻石人数',
-        'diamond_recharge_num_average' => '人均充值钻石次数',
-        'diamond_recharge_user_average' => '人均充值钻石数额',
-
-        'diamond_cost_total' => '消耗钻石总额',
-        'diamond_cost_num' => '消耗钻石次数',
-        'diamond_cost_user' => '消耗钻石人数',
-        'diamond_cost_num_average' => '人均消耗钻石次数',
-        'diamond_cost_user_average' => '人均消耗钻石数额',
+        'new_arpu' => '新用户人均arpu'
     ];
 
     // 渠道统计
@@ -919,7 +922,7 @@ class Stats extends BaseModel
     }
 
     /**
-     * 充值钻石总额
+     * 购买钻石总额
      */
     function diamondRechargeTotal()
     {
@@ -931,7 +934,7 @@ class Stats extends BaseModel
     }
 
     /**
-     * 充值钻石次数
+     * 购买钻石次数
      */
     function diamondRechargeNum()
     {
@@ -943,7 +946,7 @@ class Stats extends BaseModel
     }
 
     /**
-     * 充值钻石人数
+     * 购买钻石人数
      */
     function diamondRechargeUser()
     {
@@ -954,7 +957,7 @@ class Stats extends BaseModel
     }
 
     /**
-     * 人均充值钻石次数
+     * 人均购买钻石次数
      */
     function diamondRechargeNumAverage()
     {
@@ -970,7 +973,7 @@ class Stats extends BaseModel
     }
 
     /**
-     * 人均充值钻石数额
+     * 人均购买钻石数额
      */
     function diamondRechargeUserAverage()
     {
@@ -984,6 +987,46 @@ class Stats extends BaseModel
         }
 
         $this->data_hash['diamond_recharge_user_average'] = $avg;
+    }
+
+    /**
+     * 赠送钻石总额
+     */
+    function diamondRechargeGiveTotal()
+    {
+        $key = $this->statCacheKey("user", "diamond_recharge_give");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['diamond_recharge_give_total'] = intval($num);
+    }
+
+    /**
+     * 赠送钻石人数
+     */
+    function diamondRechargeGiveUser()
+    {
+        $key = $this->statCacheKey("user", "diamond_recharge_give");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['diamond_recharge_give_user'] = intval($num);
+    }
+
+    /**
+     * 人均赠送钻石数额
+     */
+    function diamondRechargeGiveUserAverage()
+    {
+        $diamond_recharge_total = $this->data_hash['diamond_recharge_give_total'];
+        $diamond_recharge_user = $this->data_hash['diamond_recharge_give_user'];
+
+        $avg = 0;
+
+        if ($diamond_recharge_user > 0) {
+            $avg = intval($diamond_recharge_total * 100 / $diamond_recharge_user) / 100;
+        }
+
+        $this->data_hash['diamond_recharge_give_user_average'] = $avg;
     }
 
     /**
@@ -1054,6 +1097,17 @@ class Stats extends BaseModel
         $this->data_hash['diamond_cost_user_average'] = $avg;
     }
 
+    /**
+     * 购买钻石余额
+     */
+    function diamondRechargeBalance()
+    {
+        $diamond_cost_total = $this->data_hash['diamond_cost_total'];
+        $diamond_recharge_total = $this->data_hash['diamond_recharge_total'];
+        $avg = $diamond_recharge_total - $diamond_cost_total;
+
+        $this->data_hash['diamond_recharge_balance'] = $avg;
+    }
 
     /**
      * 微信用户统计
