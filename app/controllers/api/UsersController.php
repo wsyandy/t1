@@ -562,9 +562,9 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $gold = $user->signInGold();
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold, 'sign_in_status' => 0]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold, 'sign_in_status' => 2]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold, 'sign_in_status' => -1]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold, 'sign_in_status' => 1]);
         }
     }
 

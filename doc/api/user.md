@@ -637,7 +637,7 @@
 {
     error_code: 0/-1
     error_reason: 失败原因，默认为空
-    sign_in_status: 签到状态 0未签到 ，-1已签到
+    sign_in_status: 签到状态 1已签到，2未签到 
     gold: 本次签到可以领取的金币
 }
 ```
