@@ -2613,7 +2613,9 @@ class Users extends BaseModel
             $times = 1;
         }
 
-        $this->gold += $res;
+        $opts = ['remark' => '签到,获得金币' . $res . "个"];
+
+        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
         $this->update();
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);

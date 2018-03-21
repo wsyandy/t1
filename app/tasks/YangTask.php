@@ -304,9 +304,9 @@ class YangTask extends \Phalcon\Cli\Task
 
     function test13Action()
     {
-        $url = "http://chance.com/api/users/sign_in_gold";
+        $url = "http://chance.com/api/users/is_sign_in";
         $body = $this->commonBody();
-        $id = 97;
+        $id = 93;
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
@@ -316,11 +316,11 @@ class YangTask extends \Phalcon\Cli\Task
         echoLine($res);
     }
 
-    function test14Action()
+    function test14Action($params)
     {
         $url = "http://chance.com/api/users/sign_in";
         $body = $this->commonBody();
-        $id = 97;
+        $id = $params[0];
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);

@@ -17,6 +17,9 @@
     {% if isAllowed('account_histories','index') %}
         <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
     {% endif %}
+    {% if isAllowed('gold_histories','index') %}
+        <li role="presentation"><a href="/admin/gold_histories?user_id={{ user.id }}">金币消费记录</a></li>
+    {% endif %}
     {% if isAllowed('gift_orders','detail') %}
         <li role="presentation"><a href="/admin/gift_orders/detail?user_id={{ user.id }}">收到的礼物</a></li>
     {% endif %}
