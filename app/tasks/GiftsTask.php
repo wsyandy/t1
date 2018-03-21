@@ -101,4 +101,21 @@ class GiftsTask extends \Phalcon\Cli\Task
             $gift->update();
         }
     }
+
+    function fixGifOrderGiftTypeAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->gift_type = $gift_order->gift->type;
+            $gift_order->update();
+        }
+
+        $user_gifts = UserGifts::findForeach();
+
+        foreach ($user_gifts as $user_gift) {
+            $user_gift->gift_type = $user_gift->gift->type;
+            $user_gift->update();
+        }
+    }
 }
