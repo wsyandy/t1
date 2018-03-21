@@ -16,6 +16,7 @@ class GiftsController extends BaseController
         $gifts = \Gifts::findValidList();
         $user_diamond_info = array(
             'diamond' => intval($this->currentUser()->diamond),
+            'gold' => intval($this->currentUser()->gold),
             'pay_url' => 'url://m/products'
         );
         if ($this->currentUser()->isNativePay()) {
