@@ -6,14 +6,14 @@
 
     <label for="auth_status_eq">审核状态</label>
     <select name="id_card_auth[auth_status_eq]" id="auth_status_eq">
-        {{ options(IdCardAuths.AUTH_STATUS) }}
+        {{ options(IdCardAuths.AUTH_STATUS, auth_status) }}
     </select>
 
     <label for="id_eq">ID</label>
-    <input name="id_card_auth[id_eq]" type="text" id="id_eq"/>
+    <input name="id_card_auth[id_eq]" value="{{ id }}" type="text" id="id_eq"/>
 
     <label for="user_id_eq">用户id</label>
-    <input name="id_card_auth[user_id_eq]" type="text" id="user_id_eq"/>
+    <input name="id_card_auth[user_id_eq]" value="{{ user_id }}" type="text" id="user_id_eq"/>
     <button type="submit" class="ui button">搜索</button>
 </form>
 
