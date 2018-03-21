@@ -89,4 +89,13 @@ class GiftsTask extends \Phalcon\Cli\Task
             $gift_order->save();
         }
     }
+
+    function fixGiftPayTypeAction()
+    {
+        $gifts = GiftOrders::findForeach();
+
+        foreach ($gifts as $gift) {
+
+        }
+    }
 }

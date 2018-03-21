@@ -13,7 +13,7 @@ class Gifts extends BaseModel
     static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
 
     //礼物类型 暂定
-    static $TYPE = [1 => '普通礼物', 2 => '幸运礼物', 3 => '座驾'];
+    static $TYPE = [1 => '普通礼物', 2 => '座驾'];
 
     //礼物状态
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];

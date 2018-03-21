@@ -53,7 +53,7 @@
     {#<a href="/admin/product_channels/agora/{{ product_channel.id }}" class="modal_action">声网配置</a><br/>#}
     {#<a href="/admin/product_channels/emchat/{{ product_channel.id }}" class="modal_action">环信配置</a><br/>#}
     {#<a href="/admin/product_channels/copy?id={{ product_channel.id }}" class="modal_action">复制产品渠道到</a><br/>#}
-    {% if isAllowed('product_channels','getui_global_push') %}
+    {% if isAllowed('product_channels','getui_global_push') and !isDevelopmentEnv() %}
         <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a>
     {% endif %}
 {% endmacro %}
