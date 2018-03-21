@@ -54,6 +54,11 @@ class Rooms extends BaseModel
 
     }
 
+    function isBlocked()
+    {
+        return $this->status == STATUS_OFF;
+    }
+
     function toSimpleJson()
     {
         $user = $this->user;
@@ -310,7 +315,8 @@ class Rooms extends BaseModel
         $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
 
         info($user->sid, $this->id, $key, $real_user_key);
-        if ($this->user_num > 0 && $this->status == STATUS_OFF) {
+
+        if ($this->user_num > 0 && $this->status == STATUS_OFF && !$this->isBlocked()) {
             $this->status = STATUS_ON;
             $this->update();
         }
@@ -342,7 +348,7 @@ class Rooms extends BaseModel
 
             $this->status = STATUS_OFF;
             $this->update();
-            
+
         } else {
             $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
         }

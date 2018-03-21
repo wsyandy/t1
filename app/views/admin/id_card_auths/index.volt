@@ -43,3 +43,12 @@
 {% endmacro %}
 
 {{ simple_table(id_card_auths,['id': 'id','头像':'avatar_image','审核时间':'auth_at_text','用户信息':"user_info",'账户':'account_link','审核状态':'auth_status_text',"操作":"operate_link"]) }}
+
+<script>
+    {% for id_card_auth in id_card_auths %}
+    {% if id_card_auth.auth_status == 2 %}
+    $("#id_card_auth_{{ id_card_auth.id }}").css({"background-color": "grey"});
+    {% endif %}
+    {% endfor %}
+
+</script>

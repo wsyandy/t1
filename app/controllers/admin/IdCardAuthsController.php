@@ -17,6 +17,7 @@ class IdCardAuthsController extends BaseController
         $page = $this->params('page');
         $per_page = 30;
 
+        $cond['order'] = 'auth_status desc';
         $id_card_auths = \IdCardAuths::findPagination($cond, $page, $per_page);
 
         $this->view->id_card_auths = $id_card_auths;
