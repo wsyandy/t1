@@ -63,12 +63,12 @@
     gold: 剩余金币
     sign_in_status: 签到状态
     sign_in_message: 连续签到xx天，今天/明天签到可获得xxxx金币
-    share_tasks:[
+    gold_tasks:[
             {
              name  名称
              type   类型
-             share_status 状态 1完成，2未完成
-             share_gold: 分享能获得的金币
+             task_status 状态 1完成，2未完成
+             task_gold: 分享能获得的金币
             }
         ...
     ]
