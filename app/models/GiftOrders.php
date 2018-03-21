@@ -60,7 +60,9 @@ class GiftOrders extends BaseModel
             'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
-            'image_big_url' => $this->gift_image_big_url
+            'image_big_url' => $this->gift_image_big_url,
+            'gift_type_text' => fetch(Gifts::$TYPE, $this->gift_type),
+            'pay_type_text' => fetch(Gifts::$PAY_TYPE, $this->pay_type),
         ];
     }
 

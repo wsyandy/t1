@@ -79,7 +79,9 @@ class UserGifts extends BaseModel
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
             'dynamic_image_url' => $this->gift_dynamic_image_url,
-            'num' => $this->num
+            'num' => $this->num,
+            'pay_type_text' => fetch(Gifts::$PAY_TYPE, $this->pay_type),
+            'gift_type_text' => fetch(Gifts::$TYPE, $this->gift_type)
         );
     }
 

@@ -1483,7 +1483,8 @@ class Users extends BaseModel
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
 
-        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and user_status = ' . USER_STATUS_ON;
+        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
+            ' or user_status = ' . USER_STATUS_LOGOUT . ')';
         $cond['order'] = 'last_at desc,id desc';
 
         info($user->id, $cond);
