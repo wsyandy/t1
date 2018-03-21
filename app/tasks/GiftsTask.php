@@ -107,8 +107,9 @@ class GiftsTask extends \Phalcon\Cli\Task
         $gift_orders = GiftOrders::findForeach();
 
         foreach ($gift_orders as $gift_order) {
-            $gift_order->gift_type = $gift_order->gift->type;
-            $gift_order->update();
+            echoLine($gift_order->toJson());
+//            $gift_order->gift_type = $gift_order->gift->type;
+//            $gift_order->update();
         }
 
         $user_gifts = UserGifts::findForeach();
