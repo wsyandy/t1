@@ -2545,12 +2545,12 @@ class Users extends BaseModel
         if ($hi_coins > 0) {
             $db = Users::getUserDb();
 
-            $day_key = "user_hi_coin_rank_list_" . date("Ymd");
+            $day_key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
 
             $start = date("Ymd", strtotime("last sunday next day", time()));
             $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $weeks_key = "user_hi_coin_rank_list_" . $start . "_" . $end;
-            $total_key = "user_hi_coin_rank_list";
+            $weeks_key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+            $total_key = "user_hi_coin_rank_list_" . $this->id;
 
             $db->zincrby($day_key, $hi_coins * 100, $sender_id);
             $db->zincrby($weeks_key, $hi_coins * 100, $sender_id);

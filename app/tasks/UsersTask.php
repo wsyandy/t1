@@ -731,5 +731,29 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixHiConinRankListAction()
+    {
+        $start = beginOfDay(strtotime('2018-03-19'));
+        $end = beginOfDay(strtotime('2018-03-20'));
+
+        $cond = [
+            'conditions' => 'created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => beginOfDay()]
+        ];
+
+        $gift_orders = GiftOrders::findForeach($cond);
+
+        $db = Users::getUserDb();
+        $total_key = "user_hi_coin_rank_list";
+        echoLine($db->zrange($total_key, 0, -1, true));
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $hi_coins = $gift_order->amount / $user->product_channel->rateOfDiamondToHiCoin();
+            $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
+            //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+        }
+    }
 }
 
