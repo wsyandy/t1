@@ -16,6 +16,7 @@
     error_code:   0/-1  
     error_reason: '返回码说明'  
     diamond: 100
+    gold: 金币
     pay_url: 'url://m/products'
     total_page: 10
     current_page: 1
