@@ -14,8 +14,14 @@ class GiftsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = 30;
-        $gifts = \Gifts::findPagination(['order' => 'rank asc'], $page, $per_page);
+
+        $cond = $this->getConditions('gift');
+        $cond['order'] = 'status desc, rank asc';
+        $gifts = \Gifts::findPagination($cond, $page, $per_page);
         $this->view->gifts = $gifts;
+        $this->view->type = intval($this->params('gift[type_eq]'));
+        $this->view->pay_type = $this->params('gift[pay_type_eq]');
+        $this->view->id = $this->params('gift[id_eq]');
     }
 
     function newAction()
