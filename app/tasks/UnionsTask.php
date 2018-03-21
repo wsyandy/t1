@@ -28,6 +28,8 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         $union_ids = $db->zrevrange($key, 0, 4, true);
 
+        info($union_ids);
+
         foreach ($union_ids as $union_id => $value) {
             $db->zadd($union_recommend_key, $value, $union_id);
         }
