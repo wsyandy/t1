@@ -56,7 +56,7 @@ class Rooms extends BaseModel
 
     function isBlocked()
     {
-        return $this->status == STATUS_OFF;
+        return $this->status == STATUS_BLOCKED;
     }
 
     function toSimpleJson()
