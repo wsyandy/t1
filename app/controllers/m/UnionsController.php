@@ -98,7 +98,12 @@ class UnionsController extends BaseController
         $opts = ['type' => UNION_TYPE_PRIVATE, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
         $user = $this->currentUser();
 
-        $unions = \Unions::search($user, $page, $per_page, $opts);
+        if ($recommend) {
+            $unions = \Unions::recommend($page, $per_page);
+        } else {
+            $unions = \Unions::search($user, $page, $per_page, $opts);
+        }
+
 
         $res = [];
 
