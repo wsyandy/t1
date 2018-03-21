@@ -557,14 +557,25 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
     }
 
+    function isSignInAction()
+    {
+        $user = $this->currentUser();
+        $gold = $user->signInGold();
+        if ($gold) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold, 'sign_in_status' => 0]);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold, 'sign_in_status' => -1]);
+        }
+    }
+
     function signInAction()
     {
         $user = $this->currentUser();
         $gold = $user->addSignInHistory();
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到');
         }
     }
 }

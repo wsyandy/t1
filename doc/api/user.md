@@ -624,8 +624,8 @@
 公共参数
 ```
 
-### 23 签到
-> http-post ```/api/users/sign_in```
+### 23 判断是否签到
+> http-get ```/api/users/is_sign_in```
 
 ##### 23.1 请求参数说明
 ```
@@ -637,6 +637,23 @@
 {
     error_code: 0/-1
     error_reason: 失败原因，默认为空
-    gold: 本次签到领取的金币
+    sign_in_status: 签到状态 0未签到 ，-1已签到
+    gold: 本次签到可以领取的金币
+}
+```
+
+### 24 签到
+> http-post ```/api/users/sign_in```
+
+##### 24.1 请求参数说明
+```
+公共参数
+```
+
+##### 24.2 回应参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: 失败原因，默认为空
 }
 ```
