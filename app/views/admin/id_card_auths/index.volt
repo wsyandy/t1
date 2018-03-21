@@ -27,6 +27,8 @@
 {% endmacro %}
 
 {% macro account_link(id_card_auth) %}
+    账户:{{ id_card_auth.id_name }}<br/>
+    账户:{{ id_card_auth.id_no }}<br/>
     账户:{{ id_card_auth.bank_account }}<br/>
     银行:{{ id_card_auth.account_bank.name }}<br/>
 {% endmacro %}
@@ -42,7 +44,7 @@
     <img src="{{ id_card_auth.user_avatar_url }}" height="50" width="50"/>
 {% endmacro %}
 
-{{ simple_table(id_card_auths,['id': 'id','头像':'avatar_image','审核时间':'auth_at_text','用户信息':"user_info",'账户':'account_link','审核状态':'auth_status_text',"操作":"operate_link"]) }}
+{{ simple_table(id_card_auths,['id': 'id','头像':'avatar_image','审核时间':'auth_at_text','用户信息':"user_info",'认证信息':'account_link','审核状态':'auth_status_text',"操作":"operate_link"]) }}
 
 <script>
     {% for id_card_auth in id_card_auths %}
