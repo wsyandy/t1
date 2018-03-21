@@ -2559,4 +2559,63 @@ class Users extends BaseModel
 
         return $data;
     }
+
+    function generateSignInHistoryKey()
+    {
+        return "sign_in_history_user_" . $this->id;
+    }
+
+    function signInGold()
+    {
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+
+        $times = $db->get($key);
+
+        $expire = $db->ttl($key);
+        debug($expire);
+
+        if ($expire > time() + 3600 * 24) {
+            //已签到
+            return 0;
+        } else if ($expire > time()) {
+            //连续签到
+            if ($times < 6) {
+                return $golds[$times];
+            } else {
+                return $golds[6];
+            }
+        } else {
+            //非连续签到
+            return $golds[0];
+        }
+    }
+
+    function addSignInHistory()
+    {
+        $golds = [30, 50, 80, 120, 180, 250];
+
+        $res = $this->signInGold();
+
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+
+        $times = $db->get($key);
+
+        if ($res <= 0) {
+            return false;
+        } else if ($res > $golds[0]) {
+            $times += 1;
+        } else {
+            $times = 1;
+        }
+
+        $this->gold += $res;
+        $this->update();
+
+        $db->setex($key, endOfDay() + 3600 * 24, $times);
+        return true;
+    }
 }

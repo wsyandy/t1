@@ -289,18 +289,44 @@ class YangTask extends \Phalcon\Cli\Task
         }
     }
 
-    function test11Action()
+    function test12Action($params)
     {
+        $db = Users::getUserDb();
 
-        for ($i = 1; $i < 20; $i++) {
-            $union = new Unions();
-            $union->name = "dasdad" ;
-            $union->user_id = 1;
-            $union->auth_status = AUTH_SUCCESS;
-            $union->type = UNION_TYPE_PRIVATE;
-            $union->avatar_status = AUTH_SUCCESS;
-            $union->save();
+        $command = $params[0];
+        if ($command == 1) {
+            echoLine("----" . $db->setex("yangxing", 60, 2));
+        } else {
+            echoLine("++++" . $db->ttl("yangxing"));
         }
+    }
 
+
+    function test13Action()
+    {
+        $url = "http://chance.com/api/users/sign_in_gold";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test14Action()
+    {
+        $url = "http://chance.com/api/users/sign_in";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpPost($url, $body);
+        echoLine($res);
     }
 }
