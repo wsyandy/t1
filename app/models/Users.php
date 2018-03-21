@@ -2583,10 +2583,10 @@ class Users extends BaseModel
             return 0;
         } else if ($expire > time()) {
             //连续签到
-            if ($times < 6) {
+            if ($times < count($golds)) {
                 return $golds[$times];
             } else {
-                return $golds[6];
+                return end($golds);
             }
         } else {
             //非连续签到
@@ -2620,5 +2620,61 @@ class Users extends BaseModel
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);
         return $res;
+    }
+
+
+    function signInStatus()
+    {
+        if ($this->signInGold()) {
+            return USER_SIGN_IN_WAIT;
+        }
+
+        return USER_SIGN_IN_SUCCESS;
+    }
+
+    function signInMessage()
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+        $times = $db->get($key);
+
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        if ($times < count($golds)) {
+            $gold = $golds[$times];
+        } else {
+            $gold = end($golds);
+        }
+
+        if ($this->signInStatus() == USER_SIGN_IN_SUCCESS) {
+            return "连续签到{$times}天，今天签到可获得{$gold}金币";
+        }
+        if ($this->signInStatus() == USER_SIGN_IN_WAIT) {
+            return "连续签到{$times}天，明天签到可获得{$gold}金币";
+        }
+    }
+
+
+    function generateShareTask($share_task_type)
+    {
+        return 'share_task_user_' . $this->id . "share_task_type_" . $share_task_type;
+    }
+
+    function ShareTaskGold()
+    {
+        return 50;
+    }
+
+    function ShareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+        if ($db->get($key)) {
+            //分享任务已完成
+            return 1;
+        } else {
+            //分享任务未完成
+            return 2;
+        }
     }
 }

@@ -10,6 +10,22 @@ namespace api;
 
 class SharesController extends BaseController
 {
+    function goldWorkAction()
+    {
+        $user = $this->currentUser();
+        $share_json = [];
+        foreach ([SHARE_TYPE_WEIXIN => '微信好友', SHARE_TYPE_WEIXIN_CIRCLE => '微信朋友圈', SHARE_TYPE_QQ => 'QQ好友',
+                     SHARE_TYPE_QZONE => 'QQ空间', SHARE_TYPE_SINA => '新浪微博'] as $key => $value) {
+            $type = $key;
+            $name = $value;
+            $status = $user->ShareTaskStatus($type);
+            $gold = $user->ShareTaskGold();
+            $share_json[] = ['name' => $name, 'type' => $type, 'share_status' => $status, 'share_gold' => $gold];
+        }
+
+        $opts = ['gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message, 'share_tasks' => $share_json];
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
+    }
 
     function detailAction()
     {

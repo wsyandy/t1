@@ -216,3 +216,6 @@ define('GIFT_PAY_TYPE_GOLD', 'gold');
 //礼物类型
 define('GIFT_TYPE_COMMON', 1);
 define('GIFT_TYPE_CAR', 2);
+
+define('USER_SIGN_IN_SUCCESS', 1); //已签到
+define("USER_SIGN_IN_WAIT", 2); //未签到

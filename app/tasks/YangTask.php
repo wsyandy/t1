@@ -329,4 +329,18 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpPost($url, $body);
         echoLine($res);
     }
+
+    function test15Action($params)
+    {
+        $url = "http://chance.com/api/shares/gold_work";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
 }

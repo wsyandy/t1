@@ -564,9 +564,9 @@ class UsersController extends BaseController
         $tip = "恭喜您获得" . $gold . "金币";
         $message = "七天以上连续签到可每天获得320金币";
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 2, 'tip' => $tip, 'message' => $message]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_WAIT, 'tip' => $tip, 'message' => $message]);
         } else {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 1, 'tip' => '', 'message' => '']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_SUCCESS, 'tip' => '', 'message' => '']);
         }
     }
 
