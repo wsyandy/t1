@@ -561,10 +561,12 @@ class UsersController extends BaseController
     {
         $user = $this->currentUser();
         $gold = $user->signInGold();
+        $tip = "恭喜您获得" . $gold . "金币";
+        $message = "七天以上连续签到可每天获得320金币";
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold, 'sign_in_status' => 2]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 2, 'tip' => $tip, 'message' => $message]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold, 'sign_in_status' => 1]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['sign_in_status' => 1, 'tip' => '', 'message' => '']);
         }
     }
 
