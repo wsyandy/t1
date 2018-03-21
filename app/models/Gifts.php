@@ -186,6 +186,8 @@ class Gifts extends BaseModel
             'amount' => $this->amount,
             'rank' => $this->rank,
             'status_text' => $this->status_text,
+            'type_text' => $this->type_text,
+            'pay_type_text' => $this->pay_type_text,
             'image_small_url' => $this->image_small_url,
             'image_big_url' => $this->image_big_url,
             'dynamic_image_url' => $this->dynamic_image_url,

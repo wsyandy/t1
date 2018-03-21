@@ -92,10 +92,13 @@ class GiftsTask extends \Phalcon\Cli\Task
 
     function fixGiftPayTypeAction()
     {
-        $gifts = GiftOrders::findForeach();
+        $gifts = Gifts::findForeach();
 
         foreach ($gifts as $gift) {
-
+            echoLine($gift->pay_type, $gift->type);
+            $gift->pay_type = 'diamond';
+            $gift->type = 1;
+            $gift->update();
         }
     }
 }
