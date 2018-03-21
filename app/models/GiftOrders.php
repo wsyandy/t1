@@ -92,6 +92,7 @@ class GiftOrders extends BaseModel
         $gift_order->amount = $gift->amount * $gift_num;
         $gift_order->name = $gift->name;
         $gift_order->pay_type = 'diamond';
+        $gift_order->gift_type = $gift->type;
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
         $gift_order->gift_num = $gift_num;
         $gift_order->receiver_user_type = $receiver->user_type;
