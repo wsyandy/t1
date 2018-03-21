@@ -655,6 +655,5 @@
 {
     error_code: 0/-1
     error_reason: 失败原因，默认为空
-    gold: 本次签到领取的金币
 }
 ```
