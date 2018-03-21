@@ -45,6 +45,7 @@ class UserGifts extends BaseModel
         $user_gift->num = $gift_num + intval($user_gift->num);
         $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
         $user_gift->pay_type = 'diamond';
+        $user_gift->gift_type = $gift->type;
         $user_gift->save();
 
         Users::delay()->updateHiCoins($gift_order);
