@@ -762,5 +762,21 @@ class UsersTask extends \Phalcon\Cli\Task
             $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
         }
     }
+
+    function getRankListInfoAction()
+    {
+        $db = Users::getUserDb();
+
+        $day_key = "user_hi_coin_rank_list_117_" . date("Ymd");
+
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $weeks_key = "user_hi_coin_rank_list_" . 117 . "_" . $start . "_" . $end;
+        $total_key = "user_hi_coin_rank_list_" . 117;
+
+        echoLine($db->zrange($day_key, 0, -1, true));
+        echoLine($db->zrange($weeks_key, 0, -1, true));
+        echoLine($db->zrange($total_key, 0, -1, true));
+    }
 }
 
