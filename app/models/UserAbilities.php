@@ -12,7 +12,16 @@ trait UserAbilities
     {
         $total_amount = intval($gift->amount) * $gift_num;
         info($this->diamond, $total_amount, $gift_num, $gift->id);
-        return intval($this->diamond) >= $total_amount;
+
+        if ($gift->isDiamondPayType()) {
+            return intval($this->diamond) >= $total_amount;
+        }
+
+        if ($gift->isGoldPayType()) {
+            return intval($this->gold) >= $total_amount;
+        }
+
+        return false;
     }
 
     /**

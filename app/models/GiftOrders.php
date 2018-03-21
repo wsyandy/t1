@@ -105,7 +105,7 @@ class GiftOrders extends BaseModel
         $gift_order->gift_id = $gift->id;
         $gift_order->amount = $gift->amount * $gift_num;
         $gift_order->name = $gift->name;
-        $gift_order->pay_type = 'diamond';
+        $gift_order->pay_type = $gift->pay_type;
         $gift_order->gift_type = $gift->type;
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
         $gift_order->gift_num = $gift_num;
@@ -126,20 +126,35 @@ class GiftOrders extends BaseModel
         if ($gift_order->create()) {
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
-            $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+
+            //扣除钻石
+            if ($gift->isDiamondPayType()) {
+                $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+            } else {
+                //扣除金币
+                $result = \GoldHistories::changeBalance($gift_order->sender_id, GOLD_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+            }
 
             if ($result) {
-                //统计房间收益
-                if ($gift_order->room) {
-                    $gift_order->room->statIncome($gift_order->amount);
-                }
 
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 $gift_order->update();
 
-                \UserGifts::delay()->updateGiftNum($gift_order->id);
-                \Users::delay()->updateExperience($gift_order->id);
-                \Users::delay()->updateCharm($gift_order->id);
+                if ($gift->isCar()) {
+                    \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
+                } else {
+                    \UserGifts::delay()->updateGiftNum($gift_order->id);
+                }
+
+                if ($gift->isDiamondPayType()) {
+                    //统计房间收益
+                    if ($gift_order->room) {
+                        $gift_order->room->statIncome($gift_order->amount);
+                    }
+
+                    \Users::delay()->updateExperience($gift_order->id);
+                    \Users::delay()->updateCharm($gift_order->id);
+                }
 
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;

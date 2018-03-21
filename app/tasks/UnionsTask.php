@@ -102,4 +102,21 @@ class UnionsTask extends \Phalcon\Cli\Task
             $union->delete();
         }
     }
+
+    function fixUnionHOstAction()
+    {
+        $unions = Unions::findForeach();
+
+        $user = Users::findFirstById(1010438);
+        $user->union_id = 1009;
+        $user->update();
+
+        foreach ($unions as $union) {
+            if ($union->user && $union->user->union_id != $union->id) {
+                $union->user->union_id = $union->id;
+                $union->user->update();
+                echoLine($union, $union->user->union_id);
+            }
+        }
+    }
 }
