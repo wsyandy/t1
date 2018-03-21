@@ -142,4 +142,29 @@ class UnionsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function getFameValueAction()
+    {
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd");
+
+        $union_ids = $db->zrange($key, 0, -1, true);
+
+        foreach ($union_ids as $union_id => $value) {
+            $union = Unions::findFirstById($union_id);
+
+            if ($union) {
+                $amount = GiftOrders::sum([
+                    'conditions' => '(sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) and created_at' .
+                        ' >= :start: and created_at <= :end:',
+                    'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'start' => beginOfDay(), 'end' => endOfDay()],
+                    'column' => 'amount']);
+
+                if ($amount != $value) {
+                    echoLine($amount, $value, $union_id);
+                }
+            }
+        }
+        echoLine($db->zrange($key, 0, -1, true));
+    }
 }
