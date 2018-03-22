@@ -581,7 +581,7 @@ class UsersController extends BaseController
         }
     }
 
-    function HiCoinRankList()
+    function HiCoinRankListAction()
     {
         $list_type = $this->params('list_type');
         $page = $this->params('page', 1);
@@ -594,6 +594,6 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $users = $user->findHiCoinRankList($list_type, $page, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', [$users->toJson('users', 'toHiCoinRankListJson')]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toHiCoinRankListJson'));
     }
 }

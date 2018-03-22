@@ -2584,7 +2584,7 @@ class Users extends BaseModel
         $offset = ($page - 1) * $per_page;
 
         $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
-        $total_entries = $db->zcrad($key);
+        $total_entries = $db->zcard($key);
 
         $ids = [];
         $hi_coins = [];

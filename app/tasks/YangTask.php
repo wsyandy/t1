@@ -343,7 +343,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function test16Action($params)
     {
-        $url = "http://chance.com/api/users/hi_coins_rank_list";
+        $url = "http://chance.com/api/users/hi_coin_rank_list";
         $body = $this->commonBody();
         $id = $params[0];
         $type = $params[1];
