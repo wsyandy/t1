@@ -214,8 +214,8 @@ class RoomsTask extends \Phalcon\Cli\Task
     function roomAutoToHotAction()
     {
         $cond = [
-            'conditions' => 'hot = :hot: and status = :status:',
-            'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON],
+            'conditions' => 'hot = :hot: and status = :status: and last_at >= :last_at:',
+            'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON, 'last_at' => time() - 10 * 60],
             'order' => 'last_at desc',
             'limit' => 10
         ];
