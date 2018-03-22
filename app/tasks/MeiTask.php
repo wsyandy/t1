@@ -759,5 +759,10 @@ class MeiTask extends \Phalcon\Cli\Task
 
 
         $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
+
+        $room = Rooms::findFirstById(1003137);
+        $hot_cache = Rooms::getHotWriteCache();
+        $key = $room->getUserListKey();
+        echoLine($hot_cache->zrange($key, 0, -1, true));
     }
 }
