@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/union_main','/m/css/family_heart') }}
+{{ theme_css('/m/css/union_main','/m/css/family_heart', '/m/css/family_ranking') }}
 {{ block_end() }}
 
 <div class="vueBox" id="app" v-cloak>
@@ -15,8 +15,11 @@
     </div>
     <div class="family-list">
         <ul>
-            <li v-for="item in unions" @click.stop="unionDetail(item.id)">
+            <li v-for="item, index in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
+                    <div class="family_order" v-show="searchText == ''">
+                        <img v-show="index<3" :src="index<2?(index<1?ranking_1:ranking_2):ranking_3" alt="">
+                    </div>
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
@@ -43,7 +46,10 @@
             unions: [],
             page: 1,
             total_page: 1,
-            searchText: ''
+            searchText: '',
+            ranking_1: "/m/images/ranking_1.png",
+            ranking_2: "/m/images/ranking_2.png",
+            ranking_3: "/m/images/ranking_3.png",
         },
         created: function () {
             this.list();

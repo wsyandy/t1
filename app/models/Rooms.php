@@ -312,7 +312,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($key, time(), $user->id);
         }
 
-        $hot_cache->zincrby(Rooms::getTotalRoomUserNumListKey(), 1, $this->id);
+        $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
 
         info($user->sid, $this->id, $key, $real_user_key);
 
@@ -342,8 +342,6 @@ class Rooms extends BaseModel
 
         info($user->sid, $this->id, $key, $real_user_key);
 
-        $hot_cache->zincrby(Rooms::getTotalRoomUserNumListKey(), -1, $this->id);
-
         if ($this->user_num < 1) {
             $hot_cache->zrem(Rooms::getTotalRoomUserNumListKey(), $this->id);
 
@@ -351,6 +349,8 @@ class Rooms extends BaseModel
                 $this->status = STATUS_OFF;
                 $this->update();
             }
+        } else {
+            $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
         }
     }
 

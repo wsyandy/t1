@@ -8,8 +8,7 @@ return [
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
         'product_channels' => ['index', 'edit', 'update', 'push'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
-        'rooms' => ['index', 'detail'], 'soft_versions' => '*', 'payment_channels' => ['index', 'product_channels', 'edit', 'update'],
-        'unions' => '*', 'hot_room_histories' => '*', 'id_card_auths' => '*'
+        'rooms' => ['index', 'detail'], 'soft_versions' => '*', 'payment_channels' => ['index', 'product_channels', 'edit', 'update']
     ],
 
     'operator' => ['dashboard' => '*', 'stats' => ['hours', 'days'], 'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],

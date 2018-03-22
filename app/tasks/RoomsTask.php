@@ -357,7 +357,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function initTotalUserNumAction()
     {
-        $rooms = Rooms::findBy(['user_type' => USER_TYPE_ACTIVE]);
+        $rooms = Rooms::find(['conditions' => 'user_id > 0']);
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
@@ -397,5 +397,19 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_cache->zadd($key, $income, $room_id);
         }
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1, true);
+
+        foreach ($room_ids as $room_id => $num) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            if ($num != $room->user_num) {
+                echoLine($num, $room->user_num, $room_id);
+            }
+        }
+        echoLine();
+        $hot_cache->zincrby(Rooms::getTotalRoomUserNumListKey(), 1, $this->id);
     }
 }
