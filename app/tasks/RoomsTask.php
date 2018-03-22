@@ -252,7 +252,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($gift_orders as $gift_order) {
 
             if (!$gift_order->room) {
-                $gift_order->room_id;
+                info($gift_order->room_id);
                 continue;
             }
 
