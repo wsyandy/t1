@@ -760,4 +760,238 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
     }
+
+    function initRoomRealNumAction()
+    {
+        $rooms = Rooms::findForeach();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0) {
+                $user_ids = $hot_cache->zrange($room->getUserListKey(), 0, -1, true);
+                echoLine($room->id);
+                $real_user_list_key = $room->getRealUserListKey();
+                foreach ($user_ids as $user_id => $time) {
+                    $user = Users::findFirstById($user_id);
+
+                    if ($user->isSilent()) {
+                        echoLine("silent user", $user_id);
+                        continue;
+                    }
+
+                    $hot_cache->zadd($real_user_list_key, $time, $user_id);
+                }
+            }
+        }
+    }
+
+    function initSilentRoomsAction()
+    {
+        $name_file = APP_ROOT . "doc/room_topic.xls";
+        $names = readExcel($name_file);
+
+        foreach ($names as $name) {
+            $title = $name[0];
+            $topic = $name[1];
+
+            $room = Rooms::findFirstByName($title);
+
+            if ($room) {
+                continue;
+            }
+
+            $cond['conditions'] = '(room_id = 0 or room_id is null) and user_type = ' . USER_TYPE_SILENT;
+            $user = Users::findFirst($cond);
+
+            $room = Rooms::createRoom($user, $title);
+            $room->topic = $topic;
+            $room->status = STATUS_OFF;
+            $room->save();
+        }
+    }
+
+    function generateStableRoomAction()
+    {
+        $per_page = 2;
+        $last_room = Rooms::findLast();
+        $last_room_id = $last_room->id;
+        $total_page = ceil($last_room_id / $per_page);
+        $page = mt_rand(1, $total_page);
+        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
+
+        echoLine(count($rooms));
+        foreach ($rooms as $room) {
+            $user = $room->user;
+
+            if ($user->isInAnyRoom()) {
+                info($user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            Rooms::enterSilentRoom($room->id, $user->id);
+            info($room->id);
+        }
+    }
+
+    function initRoomsAction()
+    {
+        while (true) {
+            $room = new Rooms();
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->product_channel_id = 1;
+            $room->user_type = USER_TYPE_SILENT;
+            $room->name = '';
+            $room->topic = '';
+            $room->user_id = 0;
+            $room->password = '';
+            $room->last_at = 0;
+            $room->room_seat_id = 0;
+            $room->audio_id = 0;
+            $room->room_theme_id = 0;
+            $room->save();
+
+            echoLine($room->id);
+
+            if ($room->id >= 1000000) {
+                break;
+            }
+        }
+
+        $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
+        echoLine(count($users));
+    }
+
+    function getTotalRoomUserNunAction()
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1, true);
+
+        foreach ($room_ids as $room_id => $num) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            if ($num != $room->user_num) {
+                echoLine($num, $room->user_num, $room_id);
+            }
+        }
+
+        $hot_cache->zincrby(Rooms::getTotalRoomUserNumListKey(), 1, $this->id);
+    }
+
+    function initTotalUserNumAction()
+    {
+        $rooms = Rooms::findBy(['user_type' => USER_TYPE_ACTIVE]);
+        $hot_cache = Rooms::getHotWriteCache();
+
+        foreach ($rooms as $room) {
+            if ($room->user_num > 0) {
+                echoLine($room->user_num);
+                $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $room->user_num, $room->id);
+            }
+        }
+    }
+
+    function initGiftOrdersAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->sendder_union_id = 8;
+            $gift_order->receiver_union_id = 8;
+            $gift_order->update();
+        }
+    }
+
+    function initUnionsAction()
+    {
+        while (true) {
+            $union = new Unions();
+            $union->status = STATUS_OFF;
+            $union->user_id = 0;
+            $union->name = '';
+            $union->product_channel_id = 0;
+            $union->save();
+
+            if ($union->id >= 1000) {
+                echoLine($union->id);
+                break;
+            }
+        }
+    }
+
+    function fixUnionIdAction()
+    {
+        $users = Users::find(['conditions' => 'union_id > 0']);
+
+        foreach ($users as $user) {
+            $user->uninon_id = 0;
+            $user->uninon_type = 0;
+            $user->update();
+        }
+
+        $orders = Orders::find(['conditions' => 'union_id > 0']);
+
+        foreach ($orders as $order) {
+            $order->union_id = 0;
+            $order->union_type = 0;
+            $order->update();
+        }
+
+        $account_histories = AccountHistories::find(['conditions' => 'union_id > 0']);
+
+        foreach ($account_histories as $account_history) {
+            $account_history->union_id = 0;
+            $account_history->union_type = 0;
+            $account_history->update();
+        }
+
+        $gift_orders = GiftOrders::find(['conditions' => 'sender_union_id > 0 or receiver_union_id > 0']);
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->sender_union_id = 0;
+            $gift_order->sender_union_type = 0;
+            $gift_order->receiver_union_id = 0;
+            $gift_order->receiver_union_type = 0;
+            $gift_order->update();
+        }
+
+        $rooms = Rooms::find(['conditions' => 'union_id > 0']);
+
+        foreach ($rooms as $room) {
+            $room->union_id = 0;
+            $room->union_type = 0;
+            $room->update();
+        }
+
+        $withdraw_histories = WithdrawHistories::find(['conditions' => 'union_id > 0']);;
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $withdraw_history->union_id = 0;
+            $withdraw_history->union_type = 0;
+            $withdraw_history->update();
+        }
+
+        $union_histories = UnionHistories::find(['conditions' => 'union_id > 0']);;
+
+        foreach ($union_histories as $union_history) {
+            $union_history->union_id = 0;
+            $union_history->union_type = 0;
+            $union_history->update();
+        }
+
+        $unions = Unions::findForeach();
+
+        foreach ($unions as $union) {
+            $union->delete();
+        }
+    }
+
+    function getUserUnionIdAction()
+    {
+        $url = "https://graph.qq.com/oauth2.0/me?access_token=12AD4F9E03B6363FB8D9C8563CFEC647";
+
+        $res = httpGet($url);
+        echoLine($res->body);
+    }
 }
