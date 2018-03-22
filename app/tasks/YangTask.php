@@ -142,7 +142,6 @@ class YangTask extends \Phalcon\Cli\Task
         $body = $this->commonBody();
         $id = $params[0];
         $user = \Users::findFirstById($id);
-        $user = \Users::findFirstById($id);
         if (!$user) {
             return echoLine("此用户不存在");
         }
@@ -349,6 +348,9 @@ class YangTask extends \Phalcon\Cli\Task
         $type = $params[1];
         $page = $params[2];
         $per_page = $params[3];
+        if ($params[4]) {
+            $url = "http://ctest.yueyuewo.cn/api/users/hi_coin_rank_list";
+        }
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);

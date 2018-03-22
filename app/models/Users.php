@@ -2595,8 +2595,11 @@ class Users extends BaseModel
 
         $users = Users::findByIds($ids);
 
+        $rank = 1;
         foreach ($users as $user) {
             $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
+            $user->rank = $rank;
+            $rank += 1;
         }
 
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
@@ -2705,20 +2708,28 @@ class Users extends BaseModel
 
         $golds = [30, 50, 80, 120, 180, 250, 320];
 
-        if ($times < count($golds)) {
-            $gold = $golds[$times];
+        $expire = $db->ttl($key);
+
+        if ($expire > 0) {
+            if ($times < count($golds)) {
+                $gold = $golds[$times];
+            } else {
+                $gold = end($golds);
+            }
+            if ($expire > 3600 * 24) {
+                $day = "明天";
+            } else {
+                $day = "今天";
+            }
         } else {
-            $gold = end($golds);
+            //非连续签到
+            $gold = $golds[0];
+            $times = 0;
+            $day = "今天";
         }
 
-        if ($this->signInStatus() == USER_SIGN_IN_SUCCESS) {
-            return "连续签到{$times}天，今天签到可获得{$gold}金币";
-        }
-        if ($this->signInStatus() == USER_SIGN_IN_WAIT) {
-            return "连续签到{$times}天，明天签到可获得{$gold}金币";
-        }
+        return "连续签到{$times}天，{$day}签到可获得{$gold}金币";
     }
-
 
     function generateShareTask($share_task_type)
     {
