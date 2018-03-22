@@ -581,7 +581,7 @@ class UsersController extends BaseController
         }
     }
 
-    function HiCoinRankListAction()
+    function hiCoinRankListAction()
     {
         $list_type = $this->params('list_type');
         $page = $this->params('page', 1);

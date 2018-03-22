@@ -2595,7 +2595,7 @@ class Users extends BaseModel
 
         $users = Users::findByIds($ids);
 
-        $rank = 1;
+        $rank = $offset + 1;
         foreach ($users as $user) {
             $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
             $user->rank = $rank;
@@ -2736,12 +2736,12 @@ class Users extends BaseModel
         return 'share_task_user_' . $this->id . "share_task_type_" . $share_task_type;
     }
 
-    function ShareTaskGold()
+    function shareTaskGold()
     {
         return 50;
     }
 
-    function ShareTaskStatus($share_task_type)
+    function shareTaskStatus($share_task_type)
     {
         $db = Users::getUserDb();
         $key = $this->generateShareTask($share_task_type);
@@ -2762,7 +2762,7 @@ class Users extends BaseModel
             return false;
         }
 
-        $gold = $this->ShareTaskGold();
+        $gold = $this->shareTaskGold();
 
         $share_des = ShareHistories::$TYPE[$share_task_type];
 

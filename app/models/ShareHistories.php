@@ -66,7 +66,7 @@ class ShareHistories extends BaseModel
         $share_task_type = [SHARE_TYPE_WEIXIN => '微信好友', SHARE_TYPE_WEIXIN_CIRCLE => '微信朋友圈', SHARE_TYPE_QQ => 'QQ好友',
             SHARE_TYPE_QZONE => 'QQ空间', SHARE_TYPE_SINA => '新浪微博'];
 
-        if ($this->status == SHARE_STATUS_SUCCESS && $user->ShareTaskStatus($this->type) == STATUS_NO && $this->share_source == 'gold_works'
+        if ($this->status == SHARE_STATUS_SUCCESS && $user->shareTaskStatus($this->type) == STATUS_NO && $this->share_source == 'gold_works'
             && array_key_exists($type, $share_task_type)
         ) {
             $user->changeShareTaskStatus($this->type);
