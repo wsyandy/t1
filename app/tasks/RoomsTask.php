@@ -251,6 +251,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($gift_orders as $gift_order) {
 
+            if ($gift_order->room->isForbiddenHot()) {
+                info("isForbiddenHot", $gift_order->room_id);
+                continue;
+            }
+
             $room_id = $gift_order->room_id;
 
             $cond = [
@@ -296,6 +301,13 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     if ($num > $need_room_num) {
                         break;
+                    }
+
+                    $user_num_room = Rooms::findFirstById($user_num_room_id);
+
+                    if ($user_num_room->isForbiddenHot()) {
+                        info("isForbiddenHot", $user_num_room_id);
+                        continue;
                     }
 
                     if (!in_array($user_num_room_id, $total_room_ids)) {
@@ -355,8 +367,8 @@ class RoomsTask extends \Phalcon\Cli\Task
             $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
                 'bind' => ['room_id' => $hot_room_id]]);
 
-            if (!$room_seat || $hot_room->lock || $hot_room->isBlocked()) {
-                info("room_seat_is_null", $hot_room_id, "lock", $hot_room->lock, "blocked", $hot_room->isBlocked());
+            if (!$room_seat || $hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
+                info("room_seat_is_null", $hot_room_id, "lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 continue;
             }
