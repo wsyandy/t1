@@ -251,12 +251,14 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($gift_orders as $gift_order) {
 
-            if (!$gift_order->room) {
+            $room = Rooms::findFirstById($gift_order->room_id);
+
+            if (!$room) {
                 info($gift_order->room_id);
                 continue;
             }
 
-            if ($gift_order->room->isForbiddenHot()) {
+            if ($room->isForbiddenHot()) {
                 info("isForbiddenHot", $gift_order->room_id);
                 continue;
             }
