@@ -14,8 +14,8 @@ class SharesController extends BaseController
     {
         $user = $this->currentUser();
         $share_json = [];
-        foreach ([SHARE_TYPE_WEIXIN => '微信好友', SHARE_TYPE_WEIXIN_CIRCLE => '微信朋友圈', SHARE_TYPE_SINA => '新浪微博',
-                     SHARE_TYPE_QQ => 'QQ好友', SHARE_TYPE_QZONE => 'QQ空间'] as $key => $value) {
+        foreach ([SHARE_TYPE_WEIXIN => '微信好友', SHARE_TYPE_WEIXIN_CIRCLE => '微信朋友圈', SHARE_TYPE_QQ => 'QQ好友',
+                     SHARE_TYPE_QZONE => 'QQ空间', SHARE_TYPE_SINA => '新浪微博'] as $key => $value) {
             $type = $key;
             $name = $value;
             $status = $user->ShareTaskStatus($type);
