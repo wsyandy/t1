@@ -41,7 +41,8 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
-            'experience' => $this->experience
+            'experience' => $this->experience,
+            'id_card_auth' =>$this->id_card_auth
         ];
 
         if (isset($this->union_id)) {
