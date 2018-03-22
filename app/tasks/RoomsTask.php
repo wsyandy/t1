@@ -349,7 +349,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     }
 
     //热门房间排序
-    function calculateRoomIncomeAction()
+    function hotRoomRankAction()
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
