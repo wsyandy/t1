@@ -15,8 +15,8 @@ class GiftOrdersController extends BaseController
         $cond = $this->getConditions('gift_order');
         $cond['order'] = 'id desc';
 
-        $start_at = $this->params('start_at', date('Y-m-d'));
-        $end_at = $this->params('end_at', date('Y-m-d'));
+        $start_at = $this->params('start_at', date('Y-m-d H:i:s', beginOfDay()));
+        $end_at = $this->params('end_at', date('Y-m-d H:i:s', endOfDay()));
         if ($start_at) {
             $start_at = strtotime($start_at);
             if (isset($cond['conditions'])) {
@@ -44,8 +44,8 @@ class GiftOrdersController extends BaseController
         $cond['column'] = 'amount';
         $total_amount = \GiftOrders::sum($cond);
 
-        $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');
-        $this->view->end_at = $this->params('end_at', null) ?? date('Y-m-d');
+        $this->view->start_at = date("Y-m-d H:i:s", $start_at);
+        $this->view->end_at = date("Y-m-d H:i:s", $end_at);
         $this->view->total_amount = $total_amount;
     }
 
