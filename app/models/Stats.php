@@ -192,7 +192,7 @@ class Stats extends BaseModel
 
             // 活跃统计
             if (in_array($action, ['active_user']) && ($mobile || $third_unionid)) {
-                info($third_unionid, $third_unionid);
+                info($mobile, $third_unionid);
                 $stat_db->zadd($date_key . "_register_user", $stat_at, $id); // 注册用户
                 $stat_db->zadd($hour_key . "_register_user", $stat_at, $id); // 注册用户
             }
