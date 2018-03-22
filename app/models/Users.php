@@ -2435,6 +2435,7 @@ class Users extends BaseModel
         unlock($lock);
     }
 
+    //魅力值
     static function updateCharm($gift_order_id)
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
@@ -2453,10 +2454,16 @@ class Users extends BaseModel
         if (isPresent($user)) {
             $user->charm_value += $charm_value;
             $union = $user->union;
+
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $user->union_charm_value += $charm_value;
-                Unions::delay()->updateFameValue($charm_value, $union->id);
+
+                //不在同一个工会才更新声望值
+                if ($gift_order->sender->union_id != $union->id) {
+                    Unions::delay()->updateFameValue($charm_value, $union->id);
+                }
             }
+
             $user->update;
         }
 
