@@ -731,5 +731,52 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->update();
         }
     }
+
+    function fixHiConinRankListAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $hi_coins = $gift_order->amount / $user->product_channel->rateOfDiamondToHiCoin();
+
+            $day_key = "user_hi_coin_rank_list_" . $user->id . "_" . date("Ymd");
+
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $weeks_key = "user_hi_coin_rank_list_" . $user->id . "_" . $start . "_" . $end;
+            $total_key = "user_hi_coin_rank_list_" . $user->id;
+
+            echoLine($hi_coins);
+
+            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
+                $db->zincrby($day_key, $hi_coins * 100, $gift_order->sender_id);
+            }
+
+            if ($gift_order->created_at >= beginOfDay(strtotime('2018-03-19')) && $gift_order->created_at <= endOfDay(strtotime('2018-03-25'))) {
+                $db->zincrby($weeks_key, $hi_coins * 100, $gift_order->sender_id);
+            }
+
+            $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
+        }
+    }
+
+    function getRankListInfoAction()
+    {
+        $db = Users::getUserDb();
+
+        $day_key = "user_hi_coin_rank_list_117_" . date("Ymd");
+
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $weeks_key = "user_hi_coin_rank_list_" . 117 . "_" . $start . "_" . $end;
+        $total_key = "user_hi_coin_rank_list_" . 117;
+
+        echoLine($db->zrange($day_key, 0, -1, true));
+        echoLine($db->zrange($weeks_key, 0, -1, true));
+        echoLine($db->zrange($total_key, 0, -1, true));
+    }
 }
 

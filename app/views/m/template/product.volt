@@ -45,9 +45,16 @@
         {% endfor %}
     </ul>
 </div>
+
 {% if !is_foreign_ip %}
-    <div style="padding: 11px; text-align: center; color: #3C3C3C">优惠充值关注公众号Hi-6888</div>
+    <div class="discount_tips">
+        <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
+        <span>优惠充值</span>
+        <span>关注公众号</span>
+        <span class="WeChatID">Hi-6888</span>
+    </div>
 {% endif %}
+
 <div class="get_out_btn">
     <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}"
        id="pay_submit_btn" class="account_btn">确定</a>
@@ -94,3 +101,5 @@
         });
     })
 </script>
+
+

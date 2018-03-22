@@ -52,7 +52,7 @@ class PaymentsController extends BaseController
             $user = \Users::findFirstById($user_id);
         }
 
-        if (!$user) {
+        if (!$user || $user->isSilent()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '请填写正确的HI ID');
         }
 

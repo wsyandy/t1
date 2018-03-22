@@ -556,4 +556,44 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $musics->toJson('musics', 'toSimpleJson'));
     }
+
+    function isSignInAction()
+    {
+        $user = $this->currentUser();
+        $gold = $user->signInGold();
+        $tip = "恭喜您获得" . $gold . "金币";
+        $message = "七天以上连续签到可每天获得320金币";
+        if ($gold) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_WAIT, 'tip' => $tip, 'message' => $message]);
+        } else {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_SUCCESS, 'tip' => '', 'message' => '']);
+        }
+    }
+
+    function signInAction()
+    {
+        $user = $this->currentUser();
+        $gold = $user->addSignInHistory();
+        if ($gold) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到');
+        }
+    }
+
+    function HiCoinRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user = $this->currentUser();
+        $users = $user->findHiCoinRankList($list_type, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toHiCoinRankListJson'));
+    }
 }

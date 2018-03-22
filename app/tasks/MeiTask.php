@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1001303;
+        $user_id = 1001306;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 1000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 1000, $opts);
+        $opts = ['remark' => '系统赠送' . 5000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 5000, $opts);
     }
 
     function createUnionAction()
@@ -743,5 +743,21 @@ class MeiTask extends \Phalcon\Cli\Task
         }
 
         echoLine(Users::findFirstById(1014243));
+
+        $union_recommend_key = "union_recommend_list";
+
+        $user_db = Users::getUserDb();
+
+        $per_page = 10;
+        $page = 1;
+        $offset = $per_page * ($page - 1);
+        $union_ids = $user_db->zrevrange($union_recommend_key, $offset, $offset + $per_page - 1, 'withscores');
+        echoLine($union_ids);
+        $unions = Unions::findByIds($union_ids);
+        $total_entries = $user_db->zcard($union_recommend_key);
+        echoLine($total_entries, count($unions));
+
+
+        $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
     }
 }

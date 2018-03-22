@@ -35,11 +35,8 @@ class IdCardAuthsController extends BaseController
         $id_name = $this->params('id_name');
         $id_no = $this->params('id_no');
         $mobile = $this->params('mobile');
-        $bank_account = $this->params('bank_account');
-        $account_bank_id = $this->params('account_bank_id');
-        debug($account_bank_id);
 
-        if (!$id_no || !$id_name || !$mobile || !$bank_account || !$account_bank_id) {
+        if (!$id_no || !$id_name || !$mobile) {
             return $this->renderJSON(ERROR_CODE_FAIL, '请填写正确的信息');
         }
 
@@ -51,7 +48,7 @@ class IdCardAuthsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL,"手机号错误");
         }
 
-        $opts = ['id_name' => $id_name, 'id_no' => $id_no, 'mobile' => $mobile, 'bank_account' => $bank_account, 'account_bank_id' => $account_bank_id];
+        $opts = ['id_name' => $id_name, 'id_no' => $id_no, 'mobile' => $mobile];
         list($error_code, $error_reason) = \IdCardAuths::createIdCardAuth($this->currentUser(), $opts);
 
         return $this->renderJSON($error_code, $error_reason);

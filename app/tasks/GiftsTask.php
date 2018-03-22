@@ -89,4 +89,34 @@ class GiftsTask extends \Phalcon\Cli\Task
             $gift_order->save();
         }
     }
+
+    function fixGiftPayTypeAction()
+    {
+        $gifts = Gifts::findForeach();
+
+        foreach ($gifts as $gift) {
+            echoLine($gift->pay_type, $gift->type);
+            $gift->pay_type = 'diamond';
+            $gift->type = 1;
+            $gift->update();
+        }
+    }
+
+    function fixGifOrderGiftTypeAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        foreach ($gift_orders as $gift_order) {
+            echoLine($gift_order->toJson());
+            $gift_order->gift_type = $gift_order->gift->type;
+            $gift_order->update();
+        }
+
+        $user_gifts = UserGifts::findForeach();
+
+        foreach ($user_gifts as $user_gift) {
+            $user_gift->gift_type = $user_gift->gift->type;
+            $user_gift->update();
+        }
+    }
 }

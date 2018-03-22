@@ -204,3 +204,19 @@ define('UNION_TYPE_PRIVATE', 2); //家族
 
 define('WITHDRAW_TYPE_USER', 1); //用户体现
 define('WITHDRAW_TYPE_UNION', 2); //家族体现
+
+//金币
+define('GOLD_TYPE_SIGN_IN', 1); //用户签到
+define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
+define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
+
+//礼物付费类型
+define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
+define('GIFT_PAY_TYPE_GOLD', 'gold');
+
+//礼物类型
+define('GIFT_TYPE_COMMON', 1);
+define('GIFT_TYPE_CAR', 2);
+
+define('USER_SIGN_IN_SUCCESS', 1); //已签到
+define("USER_SIGN_IN_WAIT", 2); //未签到

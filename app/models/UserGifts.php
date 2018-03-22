@@ -44,10 +44,14 @@ class UserGifts extends BaseModel
         $user_gift->amount = $gift_amount;
         $user_gift->num = $gift_num + intval($user_gift->num);
         $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
-        $user_gift->pay_type = 'diamond';
+        $user_gift->pay_type = $gift->pay_type;
+        $user_gift->gift_type = $gift->type;
         $user_gift->save();
 
-        Users::delay()->updateHiCoins($gift_order);
+        //钻石更新hi币
+        if ($gift->isDiamondPayType()) {
+            Users::delay()->updateHiCoins($gift_order);
+        }
 
         info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
@@ -56,6 +60,50 @@ class UserGifts extends BaseModel
         unlock($lock);
         return $user_gift;
     }
+
+    static function updateGiftExpireAt($gift_order_id)
+    {
+        info($gift_order_id);
+
+        $gift_order = \GiftOrders::findById($gift_order_id);
+
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
+        $lock = tryLock($lock_key);
+
+        $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
+        $gift = \Gifts::findFirstById($gift_order->gift_id);
+
+        $gift_amount = $gift->amount;
+        $gift_num = $gift_order->gift_num;
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
+
+        $user_gift->gift_id = $gift->id;
+        $user_gift->name = $gift->name;
+        $user_gift->amount = $gift_amount;
+        $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
+        $user_gift->pay_type = $gift->pay_type;
+        $user_gift->gift_type = $gift->type;
+        $user_gift->expire_at += $gift->expire_day * 86400;
+        $user_gift->save();
+
+        //钻石更新hi币
+        if ($gift->isDiamondPayType()) {
+            Users::delay()->updateHiCoins($gift_order);
+        }
+
+        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
+
+        $user_gift->statSilentUserSendGiftNum($gift_order);
+
+        unlock($lock);
+        return $user_gift;
+    }
+
 
     static function findListByUserId($user_id, $page, $per_page)
     {
@@ -78,8 +126,25 @@ class UserGifts extends BaseModel
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
             'dynamic_image_url' => $this->gift_dynamic_image_url,
-            'num' => $this->num
+            'num' => $this->num,
+            'pay_type_text' => $this->getPayTypeText(),
+            'gift_type_text' => $this->getGiftTypeText(),
+            'expire_day' => $this->expire_day
         );
+    }
+
+    function expireDay()
+    {
+        $expire_at = $this->expire_at;
+        $expire_time = $expire_at - time();
+
+        if ($expire_time < 1) {
+            return 0;
+        }
+
+        $day = ceil($expire_time / 86400);
+
+        return $day;
     }
 
     //统计沉默用户送礼物个数
@@ -122,5 +187,53 @@ class UserGifts extends BaseModel
             $hot_cache->expire($user_num_hour_key, $hour_expire);
             $hot_cache->expire($send_gift_rooms_key, $day_expire);
         }
+    }
+
+    function getGiftTypeText()
+    {
+        return fetch(Gifts::$TYPE, $this->gift_type);
+    }
+
+    function getPayTypeText()
+    {
+        return fetch(Gifts::$PAY_TYPE, $this->pay_type);
+    }
+
+    static function searchCarGifts($user_id)
+    {
+        $conds = [
+            'conditions' => 'user_id = :user_id: and gift_type = :gift_type:',
+            'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_CAR],
+            'order' => 'amount desc'
+        ];
+
+        $user_gifts = Gifts::find($conds);
+
+        $res = [];
+
+        foreach ($user_gifts as $user_gift) {
+            $res[] = $user_gift->toJson();
+        }
+
+        return $res;
+    }
+
+    static function searchCommonGifts($user_id)
+    {
+        $conds = [
+            'conditions' => 'user_id = :user_id: and gift_type = :gift_type:',
+            'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_COMMON],
+            'order' => 'amount desc'
+        ];
+
+        $user_gifts = Gifts::find($conds);
+
+        $res = [];
+
+        foreach ($user_gifts as $user_gift) {
+            $res[] = $user_gift->toJson();
+        }
+
+        return $res;
     }
 }

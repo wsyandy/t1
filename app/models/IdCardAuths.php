@@ -65,8 +65,7 @@ class IdCardAuths extends BaseModel
 
         $id_no = fetch($opts, 'id_no');
         $id_name = fetch($opts, 'id_name');
-        $bank_account = fetch($opts, 'bank_account');
-        $account_bank_id = fetch($opts, 'account_bank_id');
+        $mobile = fetch($opts, 'mobile');
 
         $id_card_auth = IdCardAuths::findFirstByUserId($user->id);
 
@@ -77,10 +76,9 @@ class IdCardAuths extends BaseModel
         }
 
         $id_card_auth->id_name = $id_name;
+        $id_card_auth->mobile = $mobile;
         $id_card_auth->id_no = $id_no;
-        $id_card_auth->bank_account = $bank_account;
         $id_card_auth->auth_status = AUTH_WAIT;
-        $id_card_auth->account_bank_id = $account_bank_id;
 
         if ($id_card_auth->save()) {
             return [ERROR_CODE_SUCCESS, '认证成功,请等待审核'];

@@ -45,4 +45,35 @@ class ShareHistories extends BaseModel
 
         return $root . 'shares?share_history_id=' . $this->id;
     }
+
+    function result($opts)
+    {
+        $type = fetch($opts, 'type');
+        $status = fetch($opts, 'status');
+
+        $this->type = $type;
+        $this->status = $status;
+
+        if (!$type || !array_key_exists($type, \ShareHistories::$TYPE)) {
+            return [ERROR_CODE_FAIL, '参数错误'];
+        }
+        if (!$status || !array_key_exists($status, \ShareHistories::$STATUS)) {
+            return [ERROR_CODE_FAIL, '参数错误'];
+        }
+
+        $user = $this->user;
+
+        $share_task_type = [SHARE_TYPE_WEIXIN => '微信好友', SHARE_TYPE_WEIXIN_CIRCLE => '微信朋友圈', SHARE_TYPE_QQ => 'QQ好友',
+            SHARE_TYPE_QZONE => 'QQ空间', SHARE_TYPE_SINA => '新浪微博'];
+
+        if ($this->status == SHARE_STATUS_SUCCESS && $user->ShareTaskStatus($this->type) == STATUS_NO && $this->share_source == 'gold_works'
+            && array_key_exists($type, $share_task_type)
+        ) {
+            $user->changeShareTaskStatus($this->type);
+        }
+
+        $this->save();
+
+        return [ERROR_CODE_SUCCESS, ''];
+    }
 }

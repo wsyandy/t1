@@ -194,11 +194,8 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $room = $user->room;
-        if (!$room) {
-            return echoLine("此用户的房间不存在");
-        }
-        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id, 'share_source' => $share_source]);
+
+        $body = array_merge($body, ['sid' => $user->sid, 'share_source' => $share_source]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
@@ -289,18 +286,75 @@ class YangTask extends \Phalcon\Cli\Task
         }
     }
 
-    function test11Action()
+    function test12Action($params)
     {
+        $db = Users::getUserDb();
 
-        for ($i = 1; $i < 20; $i++) {
-            $union = new Unions();
-            $union->name = "dasdad" ;
-            $union->user_id = 1;
-            $union->auth_status = AUTH_SUCCESS;
-            $union->type = UNION_TYPE_PRIVATE;
-            $union->avatar_status = AUTH_SUCCESS;
-            $union->save();
+        $command = $params[0];
+        if ($command == 1) {
+            echoLine("----" . $db->setex("yangxing", 60, 2));
+        } else {
+            echoLine("++++" . $db->ttl("yangxing"));
         }
+    }
 
+
+    function test13Action($params)
+    {
+        $url = "http://chance.com/api/users/is_sign_in";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test14Action($params)
+    {
+        $url = "http://chance.com/api/users/sign_in";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpPost($url, $body);
+        echoLine($res);
+    }
+
+    function test15Action($params)
+    {
+        $url = "http://chance.com/api/shares/gold_works";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test16Action($params)
+    {
+        $url = "http://chance.com/api/users/hi_coin_rank_list";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $type = $params[1];
+        $page = $params[2];
+        $per_page = $params[3];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'list_type' => $type, 'page' => $page, 'per_page' => $per_page));
+        $res = httpGet($url, $body);
+        echoLine($res);
     }
 }

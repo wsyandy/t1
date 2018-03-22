@@ -8,6 +8,31 @@
 
 class UnionsTask extends \Phalcon\Cli\Task
 {
+    //推荐家族
+    function recommendAction()
+    {
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime('-1 day'));
+
+        $unions = Unions::findBy(['recommend' => STATUS_ON]);
+
+        foreach ($unions as $union) {
+            $union->recommend = STATUS_OFF;
+            $union->update();
+        }
+
+        $union_recommend_key = "union_recommend_list";
+        $db->zclear($union_recommend_key);
+
+        $union_ids = $db->zrevrange($key, 0, 4, true);
+
+        info($union_ids);
+
+        foreach ($union_ids as $union_id => $value) {
+            $db->zadd($union_recommend_key, $value, $union_id);
+        }
+    }
+
     function initGiftOrdersAction()
     {
         $gift_orders = GiftOrders::findForeach();
@@ -101,5 +126,76 @@ class UnionsTask extends \Phalcon\Cli\Task
         foreach ($unions as $union) {
             $union->delete();
         }
+    }
+
+    function fixUnionHOstAction()
+    {
+        $unions = Unions::findForeach();
+
+        $user = Users::findFirstById(1010438);
+        $user->union_id = 1009;
+        $user->update();
+
+        foreach ($unions as $union) {
+            if ($union->user && $union->user->union_id != $union->id) {
+                $union->user->union_id = $union->id;
+                $union->user->update();
+                echoLine($union, $union->user->union_id);
+            }
+        }
+    }
+
+    function fixRankListAction()
+    {
+        $gift_orders = GiftOrders::findForeach(
+            [
+                'conditions' => 'created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => beginOfDay(strtotime("-1 day")), 'end' => endOfDay(strtotime("-1 day"))]
+            ]);
+
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime("-1 day"));
+
+        echoLine($db->zrange($key, 0, -1, true));
+
+        echoLine($key);
+        foreach ($gift_orders as $gift_order) {
+            $sender = $gift_order->sender;
+            $user = $gift_order->user;
+
+            echoLine($gift_order->amount);
+            if ($sender->union_id) {
+                $db->zincrby($key, $gift_order->amount, $sender->union_id);
+            }
+
+            if ($user->union_id) {
+                $db->zincrby($key, $gift_order->amount, $user->union_id);
+            }
+        }
+    }
+
+    function getFameValueAction()
+    {
+        $db = Users::getUserDb();
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime("-1 day"));
+
+        $union_ids = $db->zrange($key, 0, -1, true);
+
+        foreach ($union_ids as $union_id => $value) {
+            $union = Unions::findFirstById($union_id);
+
+            if ($union) {
+                $amount = GiftOrders::sum([
+                    'conditions' => '(sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) and created_at' .
+                        ' >= :start: and created_at <= :end:',
+                    'bind' => ['sender_union_id' => $union->id, 'receiver_union_id' => $union->id, 'start' => beginOfDay(), 'end' => endOfDay()],
+                    'column' => 'amount']);
+
+                if ($amount != $value) {
+                    echoLine($amount, $value, $union_id);
+                }
+            }
+        }
+        echoLine($db->zrange($key, 0, -1, true));
     }
 }

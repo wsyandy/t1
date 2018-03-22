@@ -192,6 +192,7 @@ class Stats extends BaseModel
 
             // 活跃统计
             if (in_array($action, ['active_user']) && ($mobile || $third_unionid)) {
+                info($mobile, $third_unionid);
                 $stat_db->zadd($date_key . "_register_user", $stat_at, $id); // 注册用户
                 $stat_db->zadd($hour_key . "_register_user", $stat_at, $id); // 注册用户
             }
@@ -407,7 +408,10 @@ class Stats extends BaseModel
         $key .= '_register_user';
         $stat_db = Stats::getStatDb();
         $num = $stat_db->zcard($key);
-        $this->data_hash['active_register_user_num'] = intval($num);
+        $register_num = fetch($this->data_hash, 'register_num', 0);
+        $num = intval($num) + $register_num;
+        
+        $this->data_hash['active_register_user_num'] = $num;
     }
 
     function activeRegisterMobileNum()

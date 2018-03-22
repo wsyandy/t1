@@ -1483,7 +1483,8 @@ class Users extends BaseModel
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
 
-        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and user_status = ' . USER_STATUS_ON;
+        $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
+            ' or user_status = ' . USER_STATUS_LOGOUT . ')';
         $cond['order'] = 'last_at desc,id desc';
 
         info($user->id, $cond);
@@ -2534,7 +2535,74 @@ class Users extends BaseModel
         $hi_coins = ($gift_amount * $gift_num) / $rate;
         $user->hi_coins = $user->hi_coins + $hi_coins;
         $user->save();
+        $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         unlock($lock);
+    }
+
+    //更新hi币贡献榜
+    function updateHiCoinRankList($sender_id, $hi_coins)
+    {
+        if ($hi_coins > 0) {
+            $db = Users::getUserDb();
+
+            $day_key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $weeks_key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+            $total_key = "user_hi_coin_rank_list_" . $this->id;
+
+            $db->zincrby($day_key, $hi_coins * 100, $sender_id);
+            $db->zincrby($weeks_key, $hi_coins * 100, $sender_id);
+            $db->zincrby($total_key, $hi_coins * 100, $sender_id);
+        }
+    }
+
+    function findHiCoinRankList($list_type, $page, $per_page)
+    {
+        $db = Users::getUserDb();
+
+        switch ($list_type) {
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
+            default:
+                return [];
+        }
+
+        $offset = ($page - 1) * $per_page;
+
+        $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $total_entries = $db->zcard($key);
+
+        $ids = [];
+        $hi_coins = [];
+        foreach ($result as $user_id => $hi_coin) {
+            $ids[] = $user_id;
+            $hi_coins[$user_id] = $hi_coin;
+        }
+
+        $users = Users::findByIds($ids);
+
+        foreach ($users as $user) {
+            $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
+        }
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
     }
 
     static function ipLocation($ip)
@@ -2558,5 +2626,139 @@ class Users extends BaseModel
         }
 
         return $data;
+    }
+
+    function generateSignInHistoryKey()
+    {
+        return "sign_in_history_user_" . $this->id;
+    }
+
+    function signInGold()
+    {
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+
+        $times = $db->get($key);
+
+        $expire = $db->ttl($key);
+        debug($expire);
+
+        if ($expire > 3600 * 24) {
+            //已签到
+            return 0;
+        } else if ($expire > 0) {
+            //连续签到
+            if ($times < count($golds)) {
+                return $golds[$times];
+            } else {
+                return end($golds);
+            }
+        } else {
+            //非连续签到
+            return $golds[0];
+        }
+    }
+
+    function addSignInHistory()
+    {
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        $res = $this->signInGold();
+
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+
+        $times = $db->get($key);
+
+        if ($res <= 0) {
+            return $res;
+        } else if ($res > $golds[0]) {
+            $times += 1;
+        } else {
+            $times = 1;
+        }
+
+        $opts = ['remark' => '签到,获得金币' . $res . "个"];
+        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
+
+        $db->setex($key, endOfDay() - time() + 3600 * 24, $times);
+        return $res;
+    }
+
+
+    function signInStatus()
+    {
+        if ($this->signInGold()) {
+            return USER_SIGN_IN_WAIT;
+        }
+
+        return USER_SIGN_IN_SUCCESS;
+    }
+
+    function signInMessage()
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+        $times = $db->get($key);
+
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        if ($times < count($golds)) {
+            $gold = $golds[$times];
+        } else {
+            $gold = end($golds);
+        }
+
+        if ($this->signInStatus() == USER_SIGN_IN_SUCCESS) {
+            return "连续签到{$times}天，今天签到可获得{$gold}金币";
+        }
+        if ($this->signInStatus() == USER_SIGN_IN_WAIT) {
+            return "连续签到{$times}天，明天签到可获得{$gold}金币";
+        }
+    }
+
+
+    function generateShareTask($share_task_type)
+    {
+        return 'share_task_user_' . $this->id . "share_task_type_" . $share_task_type;
+    }
+
+    function ShareTaskGold()
+    {
+        return 50;
+    }
+
+    function ShareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+        if ($db->get($key)) {
+            //分享任务已完成
+            return STATUS_YES;
+        } else {
+            //分享任务未完成
+            return STATUS_NO;
+        }
+    }
+
+    function changeShareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+        if ($db->get($key)) {
+            return false;
+        }
+
+        $gold = $this->ShareTaskGold();
+
+        $share_des = ShareHistories::$TYPE[$share_task_type];
+
+        $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
+
+        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+
+        $db->setex($key, endOfDay() - time(), time());
     }
 }
