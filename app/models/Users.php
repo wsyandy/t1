@@ -2674,14 +2674,14 @@ class Users extends BaseModel
 
         $offset = ($page - 1) * $per_page;
 
-        $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $results = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
         $total_entries = $db->zcard($key);
 
         $ids = [];
         $fields = [];
-        foreach ($result as $user_id => $field) {
+        foreach ($results as $user_id => $result) {
             $ids[] = $user_id;
-            $fields[$user_id] = $field;
+            $fields[$user_id] = $result;
         }
 
         $users = Users::findByIds($ids);
