@@ -99,7 +99,7 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('unions','index') or isAllowed('hot_room_histories','index') or isAllowed('id_account_auths','index') %}
+        {% if isAllowed('unions','index') or isAllowed('hot_room_histories','index') or isAllowed('id_card_auths','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">公会和家族<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -115,7 +115,7 @@
                     {% if isAllowed("hot_room_histories",'index') %}
                         <li><a href="/admin/hot_room_histories">上热门申请</a></li>
                     {% endif %}
-                    {% if isAllowed("id_account_auths",'index') %}
+                    {% if isAllowed("id_card_auths",'index') %}
                         <li><a href="/admin/id_card_auths">主播认证</a></li>
                     {% endif %}
                 </ul>
