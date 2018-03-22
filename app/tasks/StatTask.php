@@ -314,4 +314,141 @@ class StatTask extends \Phalcon\Cli\Task
         echoLine($endpoints);
     }
 
+    function getConds2($time)
+    {
+        $stat_db = Stats::getStatDb();
+        $all_stat_key = 'stats_keys_' . date('Ymd', $time);
+        $total = $stat_db->zcard($all_stat_key);
+        info($all_stat_key, 'total', $total);
+
+        $stat_keys = $stat_db->zrevrange($all_stat_key, 0, -1);
+        $stat_keys = array_unique($stat_keys);
+
+        $preg_str = "/platform(.*)_version_code(.*)_product_channel_id(.*)_partner_id(.*)_province_id(.*)_sex(.*)/";
+
+        $conds = [];
+        foreach ($stat_keys as $stat_key) {
+
+            preg_match($preg_str, $stat_key, $matches);
+
+            $cond['platform'] = $matches[1];
+            $cond['version_code'] = $matches[2];
+            $cond['product_channel_id'] = intval($matches[3]);
+            $cond['partner_id'] = intval($matches[4]);
+            $cond['province_id'] = intval($matches[5]);
+            $cond['sex'] = intval($matches[6]);
+
+            $conds[] = $cond;
+        }
+
+        return $conds;
+    }
+
+    function hour2Action(){
+        $time = time() - 1800;
+        for ($i = 1; $i < 80; $i++){
+            $time3 = $time - $i * 3600;
+            echoLine(date('YmdH', $time3));
+            $this->hour3Action($time3);
+        }
+
+    }
+
+    function hour3Action($time3)
+    {
+
+        $time = $time3;
+        $conds = $this->getConds2($time);
+        $stat_at = strtotime(date('Ymd H:00:00', $time));
+        $fields = Stats::$STAT_FIELDS;
+
+        foreach ($conds as $cond) {
+
+            $hour_conds = ['time_type' => STAT_HOUR, 'stat_at' => $stat_at, 'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
+                'province_id' => $cond['province_id'], 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
+
+            $stat = Stats::findFirstBy($hour_conds);
+            if (!$stat) {
+                $stat = new Stats();
+                $stat->time_type = STAT_HOUR;
+                $stat->stat_at = $stat_at;
+                foreach ($cond as $k => $v) {
+                    $stat->$k = $v;
+                }
+            }
+
+            foreach ($fields as $method_name => $text_name) {
+                $method_name = Phalcon\Text::camelize($method_name);
+                $method_name = lcfirst($method_name);
+                if (method_exists($stat, $method_name)) {
+                    $stat->$method_name();
+                }
+            }
+
+            if (!$stat->needSave()) {
+                debug('false needSave continue', $cond, $stat->data_hash);
+                continue;
+            }
+
+            $stat->data = json_encode($stat->data_hash, JSON_UNESCAPED_UNICODE);
+            if (!$stat->hasChanged('data') && md5($stat->was('data')) == md5($stat->data)) {
+                debug('continue data not modify', $cond);
+                continue;
+            }
+
+            $stat->save();
+        }
+
+    }
+
+    function day2Action($params)
+    {
+
+        $time = time() - 1800 - $params[0] * 3600 * 24;
+        echoLine(date("Ymd", $time));
+        
+        $conds = $this->getConds2($time);
+        $fields = Stats::$STAT_FIELDS;
+        $stat_at = strtotime(date('Ymd 00:00:00', $time)); // 零点
+
+        foreach ($conds as $cond) {
+
+            $day_conds = ['time_type' => STAT_DAY, 'stat_at' => $stat_at, 'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
+                'province_id' => $cond['province_id'], 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
+
+            $stat = Stats::findFirstBy($day_conds);
+
+            if (!$stat) {
+                $stat = new Stats();
+                $stat->time_type = STAT_DAY;
+                $stat->stat_at = $stat_at;
+                foreach ($cond as $k => $v) {
+                    $stat->$k = $v;
+                }
+            }
+
+            foreach ($fields as $method_name => $text_name) {
+                $method_name = Phalcon\Text::camelize($method_name);
+                $method_name = lcfirst($method_name);
+                if (method_exists($stat, $method_name)) {
+                    $stat->$method_name();
+                }
+            }
+
+            if (!$stat->needSave()) {
+                debug('continue', $cond);
+                continue;
+            }
+
+            $stat->data = json_encode($stat->data_hash, JSON_UNESCAPED_UNICODE);
+            if (!$stat->hasChanged('data') && md5($stat->was('data')) == md5($stat->data)) {
+                debug('continue data not modify');
+                continue;
+            }
+
+            $stat->save();
+        }
+
+    }
+
 }
