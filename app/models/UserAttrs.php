@@ -249,6 +249,7 @@ trait UserAttrs
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'hi_coins' =>$this->contributing_hi_conins,
+            'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text

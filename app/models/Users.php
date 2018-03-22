@@ -81,7 +81,7 @@ class Users extends BaseModel
             $this->user_type = USER_TYPE_ACTIVE;
         }
 
-        if ($this->mobile) {
+        if ($this->mobile || $this->third_unionid) {
             $this->register_at = time();
         }
     }
@@ -104,6 +104,9 @@ class Users extends BaseModel
         if ($this->hasChanged('mobile') && $this->mobile && $this->register_at < 1) {
             $this->register_at = time();
         }
+        if ($this->hasChanged('third_unionid') && $this->third_unionid && $this->register_at < 1) {
+            $this->register_at = time();
+        }
     }
 
     function afterUpdate()
@@ -124,11 +127,12 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
+        // 手机注册
         if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
             $this->registerStat();
             $this->createEmUser();
         }
-
+        // 第三方注册
         if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
             $this->registerStat();
             $this->createEmUser();
@@ -491,7 +495,6 @@ class Users extends BaseModel
 
         $this->sid = $this->generateSid('s');
         $this->device_id = $device->id;
-        $this->user_status = USER_STATUS_ON;
         $this->device_no = $device->device_no;
         $this->push_token = $device->push_token;
         $this->update();
@@ -638,7 +641,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = randStr(20) . '@touch.com';
         $user->platform = 'touch_unknow';
         foreach ($opts as $k => $v) {
@@ -677,7 +679,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = randStr(20) . '@web.com';
         $user->platform = 'web';
         foreach ($opts as $k => $v) {
@@ -774,7 +775,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = $login_name;
         $user->province_id = $province_id;
         $user->city_id = $city_id;
@@ -2120,7 +2120,6 @@ class Users extends BaseModel
 
             $new_birthday = $birthday . $month . $day;
             $user->birthday = strtotime($new_birthday);
-            $user->user_status = USER_STATUS_ON;
             $user->user_type = USER_TYPE_SILENT;
             $user->product_channel_id = 1;
             $user->monologue = $monologue;
@@ -2251,7 +2250,7 @@ class Users extends BaseModel
                 return [ERROR_CODE_FAIL, '登录失败', $user];
             }
 
-            $user->register_at = time();
+            //$user->register_at = time();
         }
 
         $third_auth->user_id = $user->id;
@@ -2595,8 +2594,11 @@ class Users extends BaseModel
 
         $users = Users::findByIds($ids);
 
+        $rank = $offset + 1;
         foreach ($users as $user) {
             $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
+            $user->rank = $rank;
+            $rank += 1;
         }
 
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
@@ -2705,32 +2707,40 @@ class Users extends BaseModel
 
         $golds = [30, 50, 80, 120, 180, 250, 320];
 
-        if ($times < count($golds)) {
-            $gold = $golds[$times];
+        $expire = $db->ttl($key);
+
+        if ($expire > 0) {
+            if ($times < count($golds)) {
+                $gold = $golds[$times];
+            } else {
+                $gold = end($golds);
+            }
+            if ($expire > 3600 * 24) {
+                $day = "明天";
+            } else {
+                $day = "今天";
+            }
         } else {
-            $gold = end($golds);
+            //非连续签到
+            $gold = $golds[0];
+            $times = 0;
+            $day = "今天";
         }
 
-        if ($this->signInStatus() == USER_SIGN_IN_SUCCESS) {
-            return "连续签到{$times}天，今天签到可获得{$gold}金币";
-        }
-        if ($this->signInStatus() == USER_SIGN_IN_WAIT) {
-            return "连续签到{$times}天，明天签到可获得{$gold}金币";
-        }
+        return "连续签到{$times}天，{$day}签到可获得{$gold}金币";
     }
-
 
     function generateShareTask($share_task_type)
     {
         return 'share_task_user_' . $this->id . "share_task_type_" . $share_task_type;
     }
 
-    function ShareTaskGold()
+    function shareTaskGold()
     {
         return 50;
     }
 
-    function ShareTaskStatus($share_task_type)
+    function shareTaskStatus($share_task_type)
     {
         $db = Users::getUserDb();
         $key = $this->generateShareTask($share_task_type);
@@ -2751,7 +2761,7 @@ class Users extends BaseModel
             return false;
         }
 
-        $gold = $this->ShareTaskGold();
+        $gold = $this->shareTaskGold();
 
         $share_des = ShareHistories::$TYPE[$share_task_type];
 

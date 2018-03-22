@@ -18,8 +18,8 @@ class SharesController extends BaseController
                      SHARE_TYPE_QZONE => 'QQ空间', SHARE_TYPE_SINA => '新浪微博'] as $key => $value) {
             $type = $key;
             $name = $value;
-            $status = $user->ShareTaskStatus($type);
-            $gold = $user->ShareTaskGold();
+            $status = $user->shareTaskStatus($type);
+            $gold = $user->shareTaskGold();
             $share_json[] = ['name' => $name, 'type' => $type, 'work_status' => $status, 'work_gold' => $gold];
         }
 

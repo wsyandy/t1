@@ -683,6 +683,7 @@
             avatar_url 用户头像
             avatar_small_url 用户小头像
             hi_coin 贡献的hi币
+            rank 排名
             level 用户等级
             segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
