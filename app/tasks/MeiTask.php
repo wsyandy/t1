@@ -989,9 +989,10 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getUserUnionIdAction()
     {
-        $url = "https://graph.qq.com/oauth2.0/me?access_token=12AD4F9E03B6363FB8D9C8563CFEC647";
+        $url = "https://graph.qq.com/oauth2.0/me?access_token=12AD4F9E03B6363FB8D9C8563CFEC647&unionid=1";
 
         $res = httpGet($url);
-        echoLine($res->body);
+        echoLine($res->body, true);
+        echoLine(json_decode($res->body, true));
     }
 }
