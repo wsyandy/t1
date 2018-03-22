@@ -46,65 +46,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function initRoomTypeAction()
-    {
-        $rooms = Rooms::findForeach();
-
-        foreach ($rooms as $room) {
-            $room->user_type = $room->user->user_type;
-            $room->save();
-        }
-    }
-
-    function initRoomRealNumAction()
-    {
-        $rooms = Rooms::findForeach();
-        $hot_cache = Rooms::getHotWriteCache();
-
-        foreach ($rooms as $room) {
-            if ($room->user_num > 0) {
-                $user_ids = $hot_cache->zrange($room->getUserListKey(), 0, -1, true);
-                echoLine($room->id);
-                $real_user_list_key = $room->getRealUserListKey();
-                foreach ($user_ids as $user_id => $time) {
-                    $user = Users::findFirstById($user_id);
-
-                    if ($user->isSilent()) {
-                        echoLine("silent user", $user_id);
-                        continue;
-                    }
-
-                    $hot_cache->zadd($real_user_list_key, $time, $user_id);
-                }
-            }
-        }
-    }
-
-    function initSilentRoomsAction()
-    {
-        $name_file = APP_ROOT . "doc/room_topic.xls";
-        $names = readExcel($name_file);
-
-        foreach ($names as $name) {
-            $title = $name[0];
-            $topic = $name[1];
-
-            $room = Rooms::findFirstByName($title);
-
-            if ($room) {
-                continue;
-            }
-
-            $cond['conditions'] = '(room_id = 0 or room_id is null) and user_type = ' . USER_TYPE_SILENT;
-            $user = Users::findFirst($cond);
-
-            $room = Rooms::createRoom($user, $title);
-            $room->topic = $topic;
-            $room->status = STATUS_OFF;
-            $room->save();
-        }
-    }
-
     //释放所有离线沉默房间
     function clearAllOfflineSilentRoomsAction()
     {
@@ -122,30 +63,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             foreach ($users as $user) {
                 $online_silent_room->exitSilentRoom($user);
             }
-        }
-    }
-
-    //
-    function generateStableRoomAction()
-    {
-        $per_page = 2;
-        $last_room = Rooms::findLast();
-        $last_room_id = $last_room->id;
-        $total_page = ceil($last_room_id / $per_page);
-        $page = mt_rand(1, $total_page);
-        $rooms = Rooms::getOfflineSilentRooms($page, $per_page);
-
-        echoLine(count($rooms));
-        foreach ($rooms as $room) {
-            $user = $room->user;
-
-            if ($user->isInAnyRoom()) {
-                info($user->id, $user->current_room_id, $room->id);
-                continue;
-            }
-
-            Rooms::enterSilentRoom($room->id, $user->id);
-            info($room->id);
         }
     }
 
@@ -293,6 +210,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    //自动上热门
     function roomAutoToHotAction()
     {
         $cond = [
@@ -308,66 +226,31 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_db = Users::getUserDb();
         $manual_hot_room_num = count($manual_hot_rooms);
 
+        $start = time() - 11 * 60;
+        $end = time() - 60;
 
-    }
+        $cond = [
+            'conditions' => 'room_id > 0 and created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => $end],
+            'columns' => 'distinct room_id'];
 
-    function fixNormalRoomsAction()
-    {
-        $rooms = Rooms::find([
-            'conditions' => 'user_type != :user_type: and theme_type = :theme_type:',
-            'bind' => ['user_type' => USER_TYPE_SILENT, 'theme_type' => ROOM_THEME_TYPE_BROADCAST]
-        ]);
-        foreach ($rooms as $room) {
-            echoLine($room->id);
-            $room->theme_type = ROOM_THEME_TYPE_NORMAL;
-            $room->audio_id = 0;
-            $room->save();
-        }
+        $gift_orders = GiftOrders::find($cond);
 
-    }
 
-    function initRoomsAction()
-    {
-        while (true) {
-            $room = new Rooms();
-            $room->status = STATUS_OFF;
-            $room->online_status = STATUS_OFF;
-            $room->product_channel_id = 1;
-            $room->user_type = USER_TYPE_SILENT;
-            $room->name = '';
-            $room->topic = '';
-            $room->user_id = 0;
-            $room->password = '';
-            $room->last_at = 0;
-            $room->room_seat_id = 0;
-            $room->audio_id = 0;
-            $room->room_theme_id = 0;
-            $room->save();
+        foreach ($gift_orders as $gift_order) {
 
-            echoLine($room->id);
+            $room_id = $gift_order->room_id;
 
-            if ($room->id >= 1000000) {
-                break;
-            }
-        }
-
-        $users = Users::find(['conditions' => 'user_type = ' . USER_TYPE_ACTIVE . ' and (mobile != "" or mobile is not null)']);
-        echoLine(count($users));
-    }
-
-    function initTotalUserNumAction()
-    {
-        $rooms = Rooms::find(['conditions' => 'user_id > 0']);
-        $hot_cache = Rooms::getHotWriteCache();
-
-        foreach ($rooms as $room) {
-            if ($room->user_num > 0) {
-                echoLine($room->user_num);
-                $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $room->user_num, $room->id);
-            }
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
+                'column' => 'amount'
+            ];
+            $income = GiftOrders::sum($cond);
         }
     }
 
+    //热门房间排序
     function calculateRoomIncomeAction()
     {
         $start = time() - 11 * 60;
@@ -398,18 +281,5 @@ class RoomsTask extends \Phalcon\Cli\Task
             $hot_cache->zadd($key, $income, $room_id);
         }
 
-        $hot_cache = Rooms::getHotWriteCache();
-        $room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1, true);
-
-        echoLine($room_ids);
-
-        foreach ($room_ids as $room_id => $num) {
-
-            $room = Rooms::findFirstById($room_id);
-
-            if ($num != $room->user_num) {
-                echoLine($num, $room->user_num, $room_id);
-            }
-        }
     }
 }
