@@ -41,7 +41,7 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
-            'need_experience' => $this->need_experience
+            'experience' => $this->experience
         ];
 
         if (isset($this->union_id)) {
@@ -653,26 +653,8 @@ trait UserAttrs
             return 0;
         }
 
-        $next_level_experience = $level_ranges[$level + 1] - $level_ranges[$level];
+        $next_level_experience = $level_ranges[$level + 1];
 
         return $next_level_experience;
-    }
-
-    function getNeedExperience()
-    {
-        $level = $this->level;
-        $experience = $this->experience;
-
-        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
-            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
-            336000, 386000];
-
-        if ($experience >= end($level_ranges)) {
-            return 0;
-        }
-
-        $need_experience = $level_ranges[$level + 1] - $this->experience;
-
-        return $need_experience;
     }
 }
