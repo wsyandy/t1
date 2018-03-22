@@ -28,7 +28,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     continue;
                 }
 
-                if ($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) {
+                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) && STATUS_ON != $room->hot) {
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
@@ -296,13 +296,19 @@ class RoomsTask extends \Phalcon\Cli\Task
     function roomAutoToHotAction()
     {
         $cond = [
-            'conditions' => 'hot = :hot: and status = :status: and ',
-            'bind' => [],
+            'conditions' => 'hot = :hot: and status = :status:',
+            'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON],
             'order' => 'last_at desc',
             'limit' => 10
         ];
 
+        //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_db = Users::getUserDb();
+        $manual_hot_room_num = count($manual_hot_rooms);
+
+
     }
 
     function fixNormalRoomsAction()

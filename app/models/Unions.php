@@ -187,6 +187,22 @@ class Unions extends BaseModel
         return [ERROR_CODE_FAIL, '创建失败', null];
     }
 
+    static function recommend($page, $per_page)
+    {
+        $union_recommend_key = "union_recommend_list";
+
+        $user_db = Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $union_ids = $user_db->zrevrange($union_recommend_key, $offset, $offset + $per_page - 1);
+        $unions = Unions::findByIds($union_ids);
+        $total_entries = $user_db->zcard($union_recommend_key);
+        $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Unions';
+
+        return $pagination;
+    }
+
     //搜索公会
     static function search($user, $page, $per_page, $opts = [])
     {
@@ -205,10 +221,10 @@ class Unions extends BaseModel
             'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_SUCCESS],
         ];
 
-        if ($recommend) {
-            $cond['conditions'] .= " and recommend = :recommend:";
-            $cond['bind']['recommend'] = $recommend;
-        }
+//        if ($recommend) {
+//            $cond['conditions'] .= " and recommend = :recommend:";
+//            $cond['bind']['recommend'] = $recommend;
+//        }
 
         //根据id name搜索是否需要recommend
         if ($name && $id) {
@@ -602,11 +618,14 @@ class Unions extends BaseModel
 
     function updateDayFameValue($value)
     {
+        debug($value);
+
         if ($value > 0) {
             $db = Users::getUserDb();
             $key = "total_union_fame_value_day_" . date("Ymd");
             $db->zincrby($key, $value, $this->id);
         }
+
     }
 
     function getAvatarUrl()
