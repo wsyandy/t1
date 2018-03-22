@@ -2596,7 +2596,7 @@ class Users extends BaseModel
         $users = Users::findByIds($ids);
 
         foreach ($users as $user) {
-            $user->contributing_hi_conins = $hi_coins[$user->id];
+            $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
         }
 
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
