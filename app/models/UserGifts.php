@@ -207,7 +207,7 @@ class UserGifts extends BaseModel
             'order' => 'amount desc'
         ];
 
-        $user_gifts = Gifts::find($conds);
+        $user_gifts = UserGifts::find($conds);
 
         $res = [];
 
@@ -226,7 +226,7 @@ class UserGifts extends BaseModel
             'order' => 'amount desc'
         ];
 
-        $user_gifts = Gifts::find($conds);
+        $user_gifts = UserGifts::find($conds);
 
         $res = [];
 
