@@ -239,6 +239,24 @@ trait UserAttrs
         return array_merge($this->toBasicJson(), $json);
     }
 
+    function toHiCoinRankListJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'age' => $this->age,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'hi_coins' =>$this->contributing_hi_conins,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
+        ];
+
+        return $data;
+    }
+
     public function isWebPlatform()
     {
         if (preg_match('/^(web)$/i', $this->platform)) {

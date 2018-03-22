@@ -299,11 +299,11 @@ class YangTask extends \Phalcon\Cli\Task
     }
 
 
-    function test13Action()
+    function test13Action($params)
     {
         $url = "http://chance.com/api/users/is_sign_in";
         $body = $this->commonBody();
-        $id = 93;
+        $id = $params[0];
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
@@ -337,6 +337,23 @@ class YangTask extends \Phalcon\Cli\Task
             $user = $this->updateUserInfo($user);
         }
         $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test16Action($params)
+    {
+        $url = "http://chance.com/api/users/hi_coins_rank_list";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $type = $params[1];
+        $page = $params[2];
+        $per_page = $params[3];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'list_type' => $type, 'page' => $page, 'per_page' => $per_page));
         $res = httpGet($url, $body);
         echoLine($res);
     }

@@ -2558,6 +2558,53 @@ class Users extends BaseModel
         }
     }
 
+    function findHiCoinRankList($list_type, $page, $per_page)
+    {
+        $db = Users::getUserDb();
+
+        switch ($list_type) {
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
+            default:
+                return [];
+        }
+
+        $offset = ($page - 1) * $per_page;
+
+        $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $total_entries = $db->zcrad($key);
+
+        $ids = [];
+        $hi_coins = [];
+        foreach ($result as $user_id => $hi_coin) {
+            $ids[] = $user_id;
+            $hi_coins[$user_id] = $hi_coin;
+        }
+
+        $users = Users::findByIds($ids);
+
+        foreach ($users as $user) {
+            $user->contributing_hi_conins = $hi_coins[$user->id];
+        }
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
+    }
+
     static function ipLocation($ip)
     {
 
