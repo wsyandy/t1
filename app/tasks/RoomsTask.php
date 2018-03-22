@@ -251,6 +251,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($gift_orders as $gift_order) {
 
+            if (!$gift_order->room) {
+                $gift_order->room_id;
+                continue;
+            }
+
             if ($gift_order->room->isForbiddenHot()) {
                 info("isForbiddenHot", $gift_order->room_id);
                 continue;
