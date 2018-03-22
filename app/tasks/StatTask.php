@@ -391,10 +391,12 @@ class StatTask extends \Phalcon\Cli\Task
 
     }
 
-    function day2Action()
+    function day2Action($params)
     {
 
-        $time = time() - 1800;
+        $time = time() - 1800 - $params[0] * 3600 * 24;
+        echoLine(date("Ymd", $time));
+        
         $conds = $this->getConds2($time);
         $fields = Stats::$STAT_FIELDS;
         $stat_at = strtotime(date('Ymd 00:00:00', $time)); // 零点
