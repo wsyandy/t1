@@ -270,6 +270,10 @@ class BaseController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
         }
 
+        if ($this->currentUser() && $this->currentUser()->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
+        }
+
         // 更新设备或用户状态
         if (!$this->skipCheckLoginStatus($controller_name, $action_name)) {
             $this->checkLoginStatus();
@@ -289,10 +293,6 @@ class BaseController extends ApplicationController
             }
 
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
-        }
-
-        if ($this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
         }
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
@@ -388,6 +388,10 @@ class BaseController extends ApplicationController
     public function checkLoginStatus()
     {
 
+        if (!$this->currentUser()) {
+            return;
+        }
+
         $fresh_attrs = [
             'platform_version' => $this->context('platform_version'),
             'platform' => $this->context('platform'),
@@ -400,10 +404,8 @@ class BaseController extends ApplicationController
             'manufacturer' => $this->context('manufacturer'),
         ];
 
-        if ($this->currentUser()) {
-            $this->currentUser()->onlineFresh($fresh_attrs);
-            $this->currentUser()->startOfflineTask();
-        }
+        $this->currentUser()->onlineFresh($fresh_attrs);
+        $this->currentUser()->startOfflineTask();
     }
 
     function validSign()

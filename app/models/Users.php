@@ -274,7 +274,7 @@ class Users extends BaseModel
 
     function isBlocked()
     {
-        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status || USER_STATUS_BLOCKED_DEVICE == $this->user_status;
     }
 
     function isNormal()
@@ -492,7 +492,7 @@ class Users extends BaseModel
             }
         }
 
-
+        $this->user_status = USER_STATUS_ON;
         $this->sid = $this->generateSid('s');
         $this->device_id = $device->id;
         $this->device_no = $device->device_no;
