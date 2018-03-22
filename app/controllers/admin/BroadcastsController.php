@@ -5,6 +5,7 @@
  * Date: 2018/2/8
  * Time: 下午4:18
  */
+
 namespace admin;
 
 class BroadcastsController extends BaseController
@@ -20,7 +21,10 @@ class BroadcastsController extends BaseController
         }
 
         $name = $this->params('name');
-        $cond['conditions'] .= " and name like '%$name%' ";
+
+        if ($name) {
+            $cond['conditions'] .= " and name like '%$name%' ";
+        }
 
         $page = 1;
         $total_page = 1;
