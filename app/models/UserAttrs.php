@@ -11,7 +11,7 @@ trait UserAttrs
 
     function toDetailJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
             'sex' => $this->sex,
             'province_name' => $this->province_name,
@@ -39,8 +39,18 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'next_level_experience' => $this->next_level_experience,
+            'need_experience' => $this->need_experience
         ];
+
+        if (isset($this->union_id)) {
+            $data['union_name'] = $this->union->name;
+        } else {
+            $data['union_name'] = '';
+        }
+
+        return $data;
     }
 
     function mergeJson()
@@ -248,7 +258,7 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'hi_coins' =>$this->contributing_hi_conins,
+            'hi_coins' => $this->contributing_hi_conins,
             'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
@@ -629,5 +639,40 @@ trait UserAttrs
         $total_amount = GiftOrders::sum(['conditions' => 'user_id = :user_id: and created_at >= :start_at: and created_at <= :end_at:',
             'bind' => ['user_id' => $this->id, 'start_at' => $start_at, 'end_at' => $end_at], 'column' => 'amount']);
         return intval($total_amount);
+    }
+
+    function getNextLevelExperience()
+    {
+        $level = $this->level;
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
+            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
+            336000, 386000];
+
+        if ($level >= count($level_ranges) - 1) {
+            return 0;
+        }
+
+        $next_level_experience = $level_ranges[$level + 1] - $level_ranges[$level];
+
+        return $next_level_experience;
+    }
+
+    function getNeedExperience()
+    {
+        $level = $this->level;
+        $experience = $this->experience;
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
+            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
+            336000, 386000];
+
+        if ($experience >= end($level_ranges)) {
+            return 0;
+        }
+
+        $need_experience = $level_ranges[$level + 1] - $this->experience;
+
+        return $need_experience;
     }
 }
