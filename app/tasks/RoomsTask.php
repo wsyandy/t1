@@ -357,7 +357,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function initTotalUserNumAction()
     {
-        $rooms = Rooms::findBy(['user_type' => USER_TYPE_ACTIVE]);
+        $rooms = Rooms::find(['conditions' => 'user_id > 0']);
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
