@@ -18,7 +18,7 @@ class GiftOrdersController extends BaseController
         $start_at = $this->params('start_at', date('Y-m-d'));
         $end_at = $this->params('end_at', date('Y-m-d'));
         if ($start_at) {
-            $start_at = beginOfDay(strtotime($start_at));
+            $start_at = strtotime($start_at);
             if (isset($cond['conditions'])) {
                 $cond['conditions'] .= ' and created_at >=:start_at:';
             } else {
@@ -27,7 +27,7 @@ class GiftOrdersController extends BaseController
             $cond['bind']['start_at'] = $start_at;
         }
         if ($end_at) {
-            $end_at = endOfDay(strtotime($end_at));
+            $end_at = strtotime($end_at);
             if (isset($cond['conditions'])) {
                 $cond['conditions'] .= ' and created_at <=:end_at:';
             } else {
@@ -41,8 +41,12 @@ class GiftOrdersController extends BaseController
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $this->view->gift_orders = $gift_orders;
 
+        $cond['column'] = 'amount';
+        $total_amount = \GiftOrders::sum($cond);
+
         $this->view->start_at = $this->params('start_at', null) ?? date('Y-m-d');
         $this->view->end_at = $this->params('end_at', null) ?? date('Y-m-d');
+        $this->view->total_amount = $total_amount;
     }
 
     function detailAction()
