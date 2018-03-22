@@ -592,6 +592,36 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $users = $user->findHiCoinRankList($list_type, $page, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toHiCoinRankListJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+    }
+
+    function charmRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+    }
+
+    function wealthRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
     }
 }
