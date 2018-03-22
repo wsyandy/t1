@@ -1362,4 +1362,17 @@ class Rooms extends BaseModel
 
         return $pagination;
     }
+
+    //判断麦位上没有用户
+    function checkRoomSeat()
+    {
+        $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
+            'bind' => ['room_id' => $this->id]]);
+
+        if ($room_seat) {
+            return true;
+        }
+
+        return false;
+    }
 }
