@@ -250,7 +250,6 @@ class BaseController extends ApplicationController
 
         // 修复老用户
         $fix_user = $this->fixOldUser();
-
         if ($fix_user) {
             info('fix_user', $fix_user->id, $this->params());
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $fix_user->generateSid('d.')]);
