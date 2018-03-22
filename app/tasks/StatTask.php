@@ -344,10 +344,20 @@ class StatTask extends \Phalcon\Cli\Task
         return $conds;
     }
 
-    function hour2Action()
+    function hour2Action(){
+        $time = time() - 1800;
+        for ($i = 1; $i < 80; $i++){
+            $time3 = $time - $i * 3600;
+            echoLine(date('YmdH', $time3));
+            $this->hour3Action($time3);
+        }
+
+    }
+
+    function hour3Action($time3)
     {
 
-        $time = time() - 1800;
+        $time = $time3;
         $conds = $this->getConds2($time);
         $stat_at = strtotime(date('Ymd H:00:00', $time));
         $fields = Stats::$STAT_FIELDS;
