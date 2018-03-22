@@ -1347,4 +1347,19 @@ class Rooms extends BaseModel
         }
         return false;
     }
+
+    static function searchHotRooms($user, $page, $per_page)
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
+        $offset = $per_page * ($page - 1);
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+        $total_entries = $hot_cache->zcard($hot_room_list_key);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
 }
