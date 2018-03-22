@@ -342,6 +342,23 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
 
+        $total_room_num = count($total_room_ids);
+
+        if ($total_room_num < 8) {
+
+            $broadcast_rooms = Rooms::find(
+                [
+                    'conditions' => "theme_type = :theme_type:",
+                    'bind' => ['theme_type' => ROOM_THEME_TYPE_BROADCAST],
+                    'limit' => 8 - $total_room_num
+                ]);
+
+            foreach ($broadcast_rooms as $broadcast_room) {
+                $broadcast_room->enterRoom($broadcast_room->user);
+                $total_room_ids[] = $broadcast_room->id;
+            }
+        }
+
         $hot_room_ids = [];
 
         foreach ($total_room_ids as $room_id) {
@@ -362,7 +379,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         arsort($hot_room_ids);
 
         foreach ($hot_room_ids as $hot_room_id => $income) {
-            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_ids);
+            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_id);
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
