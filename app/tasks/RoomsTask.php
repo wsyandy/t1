@@ -401,6 +401,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
         $room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1, true);
 
+        echoLine($room_ids);
+
         foreach ($room_ids as $room_id => $num) {
 
             $room = Rooms::findFirstById($room_id);
@@ -409,7 +411,5 @@ class RoomsTask extends \Phalcon\Cli\Task
                 echoLine($num, $room->user_num, $room_id);
             }
         }
-        echoLine();
-        $hot_cache->zincrby(Rooms::getTotalRoomUserNumListKey(), 1, $this->id);
     }
 }
