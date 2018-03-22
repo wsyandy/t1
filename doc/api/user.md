@@ -182,8 +182,8 @@
     segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
-    next_level_experience 下一级经验
-    need_experience 距离下一级所需要的经验
+    next_level_experience 下一级经验值
+    experience 当前经验值
     union_name 家族名，不存在为空字符
     albums:[
         {
