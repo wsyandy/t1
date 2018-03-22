@@ -189,7 +189,8 @@ class Gifts extends BaseModel
             'dynamic_image_url' => $this->dynamic_image_url,
             'svga_image_name' => $this->svga_image_name,
             'render_type' => $this->render_type,
-            'svga_image_url' => $this->svga_image_url
+            'svga_image_url' => $this->svga_image_url,
+            'expire_day' => $this->expire_day
         ];
     }
 

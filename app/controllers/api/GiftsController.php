@@ -38,9 +38,11 @@ class GiftsController extends BaseController
     function createAction()
     {
         list($result, $reason) = $this->checkParams();
+
         if (!$result) {
             return $this->renderJSON(ERROR_CODE_FAIL, $reason);
         }
+
         $gift_num = $this->params('gift_num', 1);
         $renew = $this->params('renew', 1);
         $src = $this->params('src', 'room');
@@ -58,7 +60,7 @@ class GiftsController extends BaseController
             if ($gift->isCar()) {
                 $user_id = $this->currentUser()->id;
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
             }
         }
 
@@ -93,9 +95,7 @@ class GiftsController extends BaseController
         if (isBlank($this->params('gift_id'))) {
             return [false, '礼物错误'];
         }
-        if (isBlank($this->params('user_id'))) {
-            return [false, '用户不存在'];
-        }
+        
         return [true, ''];
     }
 }

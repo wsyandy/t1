@@ -128,8 +128,23 @@ class UserGifts extends BaseModel
             'dynamic_image_url' => $this->gift_dynamic_image_url,
             'num' => $this->num,
             'pay_type_text' => $this->getPayTypeText(),
-            'gift_type_text' => $this->getGiftTypeText()
+            'gift_type_text' => $this->getGiftTypeText(),
+            'expire_day' => $this->expire_day
         );
+    }
+
+    function expireDay()
+    {
+        $expire_at = $this->expire_at;
+        $expire_time = $expire_at - time();
+
+        if ($expire_time < 1) {
+            return 0;
+        }
+
+        $day = ceil($expire_time / 86400);
+
+        return $day;
     }
 
     //统计沉默用户送礼物个数
