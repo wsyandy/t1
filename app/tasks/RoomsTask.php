@@ -222,9 +222,9 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
+
         $hot_room_list_key = Rooms::generateHotRoomListKey();
-        $hot_db = Users::getUserDb();
-        $manual_hot_room_num = count($manual_hot_rooms);
+        $hot_cache = Users::getHotWriteCache();
 
         $start = time() - 11 * 60;
         $end = time() - 60;
@@ -236,6 +236,18 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
+        //有收益的房间
+        $has_income_room_ids = [];
+
+        //总的热门房间
+        $total_room_ids = [];
+
+        //手动上热门id
+        $manual_hot_room_ids = [];
+
+        foreach ($manual_hot_rooms as $manual_hot_room) {
+            $manual_hot_room_ids[$manual_hot_room->id] = 0;
+        }
 
         foreach ($gift_orders as $gift_order) {
 
@@ -246,40 +258,117 @@ class RoomsTask extends \Phalcon\Cli\Task
                 'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
                 'column' => 'amount'
             ];
+
             $income = GiftOrders::sum($cond);
+
+            if (in_array($room_id, $manual_hot_room_ids)) {
+                $manual_hot_room_ids[$room_id] = $income;
+                continue;
+            }
+
+            if ($income > 0) {
+                $has_income_room_ids[$room_id] = $income;
+            }
         }
+
+        foreach ($manual_hot_room_ids as $manual_hot_room_id => $income) {
+            $total_room_ids[$manual_hot_room_id] = $income;
+        }
+
+        foreach ($has_income_room_ids as $has_income_room_id => $income) {
+            $total_room_ids[$has_income_room_id] = $income;
+        }
+
+        $total_room_num = count($total_room_ids);
+        $need_room_num = 0;
+
+        if ($total_room_num < 20) {
+
+            $need_room_num = 20 - $total_room_num;
+
+            if ($hot_cache->zcard(Rooms::getTotalRoomUserNumListKey()) > 0) {
+
+                $user_num_room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1);
+
+                $num = 1;
+
+                foreach ($user_num_room_ids as $user_num_room_id) {
+
+                    if ($num > $need_room_num) {
+                        break;
+                    }
+
+                    if (!in_array($user_num_room_id, $total_room_ids)) {
+
+                        $cond = [
+                            'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                            'bind' => ['start' => $start, 'end' => $end, 'room_id' => $user_num_room_id],
+                            'column' => 'amount'
+                        ];
+
+                        $income = GiftOrders::sum($cond);
+
+                        $total_room_ids[$user_num_room_id] = $income;
+
+                        $num++;
+                    }
+                }
+            }
+        }
+
+        arsort($total_room_ids);
+
+        foreach ($total_room_ids as $total_room_id => $income) {
+            $hot_cache->zadd($hot_room_list_key, $income, $total_room_id);
+        }
+
+        info($hot_cache->zrange($hot_room_list_key, 0, -1, true));
+
+        info($manual_hot_room_ids, $has_income_room_ids, $total_room_ids, $total_room_num, $need_room_num);
     }
 
     //热门房间排序
     function calculateRoomIncomeAction()
     {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
+        $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
+        $total_room_ids = [];
+
         $start = time() - 11 * 60;
         $end = time() - 60;
-        $cond = [
-            'conditions' => 'room_id > 0 and created_at >= :start: and created_at <= :end:',
-            'bind' => ['start' => $start, 'end' => $end],
-            'columns' => 'distinct room_id'];
 
-        $hot_cache = Rooms::getHotWriteCache();
-        $key = "room_recent_10m_income";
-        $hot_cache->zclear($key);
+        foreach ($hot_room_ids as $hot_room_id) {
 
-        $gift_orders = GiftOrders::find($cond);
-
-
-        foreach ($gift_orders as $gift_order) {
-
-            $room_id = $gift_order->room_id;
+            $hot_room = Rooms::findFirstById($hot_room_id);
 
             $cond = [
                 'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $hot_room_id],
                 'column' => 'amount'
             ];
-            $income = GiftOrders::sum($cond);
 
-            $hot_cache->zadd($key, $income, $room_id);
+            //判断麦位上没有用户
+            $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
+                'bind' => ['room_id' => $hot_room_id]]);
+
+            if (!$room_seat || $hot_room->lock || $hot_room->isBlocked()) {
+                info("room_seat_is_null", $hot_room_id, "lock", $hot_room->lock, "blocked", $hot_room->isBlocked());
+                $hot_cache->zrem($hot_room_list_key, $hot_room_id);
+                continue;
+            }
+
+            $income = GiftOrders::sum($cond);
+            $total_room_ids[$hot_room_id] = $income;
         }
 
+        arsort($total_room_ids);
+
+        foreach ($total_room_ids as $total_room_id => $income) {
+            $hot_cache->zadd($hot_room_list_key, $income, $total_room_id);
+        }
+
+        info($total_room_ids);
     }
 }
