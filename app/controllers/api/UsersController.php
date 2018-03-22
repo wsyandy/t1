@@ -210,87 +210,85 @@ class UsersController extends BaseController
     //access_token openid app_id(微信不需要此参数)
     function thirdLoginAction()
     {
-        if ($this->request->isPost()) {
+        if (!$this->request->isPost()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+        }
 
-            $device = $this->currentDevice();
+        $device = $this->currentDevice();
+        if (!$device) {
+            $device = $this->currentUser()->device;
+        }
 
-            if (!$device) {
-                $device = $this->currentUser()->device;
-            }
+        if (!$device) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
+        }
 
-            if (!$device) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
-            }
+        $third_name = $this->params('third_name'); // qq, weixin
+        $third_gateway = \thirdgateway\Base::gateway($third_name);
+        if (!$third_gateway) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
+        }
 
-            $third_name = $this->params('third_name');
+        $context = $this->context();
+        if($third_name == 'qq'){
+            $context['has_unionid'] = 1;
+        }
 
-            $third_gateway = \thirdgateway\Base::gateway($third_name);
+        //登陆认证
+        $form = $third_gateway->auth($context);
+        if (!$form) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
+        }
 
-            if (!$third_gateway) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
-            }
+        info($third_name, 'third_login_info=', $form);
 
-            $context = $this->context();
+        if ($form['error_code'] != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($form['error_code'], $form['error_reason']);
+        }
 
-            //登陆认证
-            $form = $third_gateway->auth($context);
+        $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
 
-            if (!$form) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
-            }
+        $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
+        $error_url = '';
 
-            info('third_login_info=', $form);
-
-            if ($form['error_code'] != ERROR_CODE_SUCCESS) {
-                return $this->renderJSON($form['error_code'], $form['error_reason']);
-            }
-
-            $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
-
-            $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
-            $error_url = '';
-
-            if (!$user) {
-                list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
-                if ($error_code != ERROR_CODE_SUCCESS) {
-                    return $this->renderJSON($error_code, $error_reason);
-                }
-
-                if (isDevelopmentEnv()) {
-                    //第一次注册 跳转更新资料
-                    //$error_url = 'app://users/update_info';
-                }
-            }
-
-            if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
-            }
-
-            if ($user->isBlocked()) {
-                info("block_user_login", $user->sid);
-                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
-            }
-
-            $context['login_type'] = $third_name;
-
-            list($error_code, $error_reason) = $user->clientLogin($context, $device);
-
+        if (!$user) {
+            list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
             }
 
-            $user->updatePushToken($device);
-
-            $key = $this->currentProductChannel()->getSignalingKey($user->id);
-            $app_id = $this->currentProductChannel()->getImAppId();
-
-            $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
-            $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
-        } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+            if (isDevelopmentEnv()) {
+                //第一次注册 跳转更新资料
+                //$error_url = 'app://users/update_info';
+            }
         }
+
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
+        }
+
+        if ($user->isBlocked()) {
+            info("block_user_login", $user->sid);
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+        }
+
+        $context['login_type'] = $third_name;
+
+        list($error_code, $error_reason) = $user->clientLogin($context, $device);
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
+        $user->updatePushToken($device);
+
+        $key = $this->currentProductChannel()->getSignalingKey($user->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+
+        $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
+        $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
     }
 
     function logoutAction()
