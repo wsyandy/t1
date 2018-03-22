@@ -88,7 +88,11 @@ class UserGifts extends BaseModel
         $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
         $user_gift->pay_type = $gift->pay_type;
         $user_gift->gift_type = $gift->type;
-        $user_gift->expire_at += $gift->expire_day * 86400;
+        if ($user_gift->expire_at > time()) {
+            $user_gift->expire_at += $gift->expire_day * 86400;
+        } else {
+            $user_gift->expire_at = time() + $gift->expire_day * 86400;
+        }
         $user_gift->save();
 
         //钻石更新hi币
