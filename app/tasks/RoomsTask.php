@@ -362,7 +362,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         arsort($hot_room_ids);
 
         foreach ($hot_room_ids as $hot_room_id => $income) {
-            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_ids);
+            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_id);
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
