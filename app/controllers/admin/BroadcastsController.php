@@ -27,6 +27,9 @@ class BroadcastsController extends BaseController
         $per_page = 30;
         $total_entries = $total_page * $per_page;
         $cond['order'] = "id desc";
+
+        debug($cond);
+
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->rooms = $rooms;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
