@@ -2688,7 +2688,9 @@ class Users extends BaseModel
 
         $rank = $offset + 1;
         foreach ($users as $user) {
+            debug($fields[$user->id]);
             $user->$field = $fields[$user->id];
+            debug($user->$field);
             $user->rank = $rank;
             $rank += 1;
         }
