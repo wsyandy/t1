@@ -2690,7 +2690,7 @@ class Users extends BaseModel
         foreach ($users as $user) {
             debug($fields[$user->id]);
             $user->$field = $fields[$user->id];
-            debug($user->$field);
+            debug($field, $user->$field);
             $user->rank = $rank;
             $rank += 1;
         }
