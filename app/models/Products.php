@@ -2,6 +2,11 @@
 
 class Products extends BaseModel
 {
+    /**
+     * @type ProductGroups
+     */
+    private $_product_group;
+
     static $STATUS = [STATUS_ON => '上架', STATUS_OFF => '下架', STATUS_FORBIDDEN => '禁用'];
 
     static $files = ['icon' => APP_NAME . '/products/icon/%s'];
@@ -9,10 +14,6 @@ class Products extends BaseModel
     static $PLATFORMS = ['client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
         'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
 
-    /**
-     * @type ProductGroups
-     */
-    private $_product_group;
 
     function getIconUrl($size = null)
     {
@@ -41,7 +42,7 @@ class Products extends BaseModel
     {
         return \Products::find(
             [
-                'conditions' => 'product_group_id = :product_group_id:',
+                'conditions' => 'product_group_id=:product_group_id:',
                 'bind' => ['product_group_id' => $product_group_id],
                 'order' => 'rank desc'
             ]
@@ -82,33 +83,30 @@ class Products extends BaseModel
     static function findDiamondListByUser($user, $format = null)
     {
         $fee_type = 'diamond';
-        $product_groups = \ProductGroups::findByConditions(
+        $product_group = \ProductGroups::findFirst(
             [
-                'product_channel_id' => $user->product_channel_id,
-                'fee_type' => $fee_type,
-                'status' => STATUS_ON
+                'conditions' => 'product_group_id=:product_group_id: and fee_type=:fee_type: and status=:status:',
+                'bind' => ['product_channel_id' => $user->product_channel_id,
+                    'fee_type' => $fee_type, 'status' => STATUS_ON]
             ]
         );
-        if (isBlank($product_groups)) {
+
+        if (isBlank($product_group)) {
             return false;
         }
-        $product_group = $product_groups[0];
+
         debug("product_group: " . strval($product_group->id));
 
         $products = \Products::find(array(
-            'conditions' => 'product_group_id = :product_group_id: and status = :status:',
-            'bind' => array(
-                'product_group_id' => $product_group->id,
-                'status' => STATUS_ON
-            ),
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount<3000',
+            'bind' => array('product_group_id' => $product_group->id, 'status' => STATUS_ON),
             'order' => 'amount asc'
         ));
 
         $selected_products = [];
-
         foreach ($products as $product) {
-            debug("product: " . strval($product->id));
             if ($product->match($user)) {
+
                 debug("match_product: " . strval($product->id));
                 if (isPresent($format) && $product->isResponseTo($format)) {
                     $selected_products[] = $product->$format();
@@ -117,6 +115,7 @@ class Products extends BaseModel
                 }
             }
         }
+
         return $selected_products;
     }
 
@@ -131,70 +130,22 @@ class Products extends BaseModel
 
     function match($user)
     {
-        debug("apple_product_no: " . $this->apple_product_no);
         if (isPresent($this->apple_product_no)) {
+            debug($user->id, $this->id, "apple_product_no: ", $this->apple_product_no);
             return $user->isIos();
         }
+
+        debug($user->id, $this->id, "not_apple_product_no");
         return !$user->isIos();
     }
 
     function getShowDiamond($user)
     {
-        //&& $user->canShowProductFullName()
         if (isPresent($this->full_name)) {
             return $this->full_name;
         }
+
         return $this->diamond;
-    }
-
-    static function search($user, $format = null)
-    {
-        $fee_type = 'diamond';
-        $product_groups = \ProductGroups::findByConditions(
-            [
-                'product_channel_id' => $user->product_channel_id,
-                'fee_type' => $fee_type,
-                'status' => STATUS_ON
-            ]
-        );
-
-        if (isBlank($product_groups)) {
-            return false;
-        }
-
-        $product_group = $product_groups[0];
-        debug("product_group: " . strval($product_group->id));
-
-        $apple_product = \Products::findFirst([
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and apple_product_no != ""',
-            'bind' => [
-                'product_group_id' => $product_group->id,
-                'status' => STATUS_ON
-            ],
-            'order' => 'amount asc'
-        ]);
-
-        $selected_products[] = $apple_product;
-
-        $products = \Products::find([
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and apple_product_no = ""',
-            'bind' => [
-                'product_group_id' => $product_group->id,
-                'status' => STATUS_ON
-            ],
-            'order' => 'amount asc'
-        ]);
-
-        foreach ($products as $product) {
-
-            if ($product->amount == $apple_product->amount) {
-                continue;
-            }
-
-            debug("product: " . strval($product->id));
-            $selected_products[] = $product;
-        }
-        return $selected_products;
     }
 
 }
