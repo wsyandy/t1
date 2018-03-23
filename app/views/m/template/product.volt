@@ -1,6 +1,6 @@
 {# 支付页面模板. 我的账户跟产品页面引用 #}
 {{ block_begin('head') }}
-{{ theme_css('/m/css/product.css') }}
+{{ theme_css('/m/css/product_index.css') }}
 {{ theme_js('/js/fastclick.js','/js/clipboard.min.js') }}
 {{ block_end() }}
 
