@@ -28,7 +28,9 @@ class RoomsTask extends \Phalcon\Cli\Task
                     continue;
                 }
 
-                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) && STATUS_ON != $room->hot) {
+                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
+                    && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
+                    
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
