@@ -1961,18 +1961,21 @@ class Users extends BaseModel
 //                return;
 //            }
 
-            if ($room->getRealUserNum() < 1) {
-                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
-                return;
-            }
-
-            if ($rand_num <= 90) {
-                if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
+//            if ($room->getRealUserNum() < 1) {
+//                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
+//                return;
+//            }
+            if ($room->getRealUserNum() > 0) {
+                if ($rand_num <= 60) {
+                    Users::delay(mt_rand(1, 10))->sendGift($this->id, $room->id);
+                } elseif ($rand_num > 60 && $rand_num <= 88) {
+                    Users::delay(mt_rand(1, 10))->upRoomSeat($this->id, $room->id);
+                } elseif ($rand_num > 85 && $rand_num <= 95) {
+                    Users::delay(mt_rand(1, 10))->sendTopTopicMessage($this->id, $room->id);
+                } else {
+                    $room->exitSilentRoom($this);
+                    return;
                 }
-            } else {
-                $room->exitSilentRoom($this);
-                return;
             }
         }
     }
@@ -2412,6 +2415,7 @@ class Users extends BaseModel
             $sender->segment = $sender->calculateSegment();
 
             $sender->wealth_value += $wealth_value;
+            Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
             $union = $sender->union;
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
@@ -2452,6 +2456,7 @@ class Users extends BaseModel
 
         if (isPresent($user)) {
             $user->charm_value += $charm_value;
+            Users::updateFiledRankList($user->id, 'charm', $charm_value);
             $union = $user->union;
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
@@ -2569,20 +2574,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2613,6 +2621,95 @@ class Users extends BaseModel
 
         return $pagination;
     }
+
+    static function updateFiledRankList($user_id, $field, $value)
+    {
+        if ($field != 'wealth' && $field != 'charm') {
+            return '';
+        }
+
+        if ($value > 0) {
+            $db = Users::getUserDb();
+
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+            $total_key = "total_" . $field . "_rank_list_";
+
+            $db->zincrby($day_key, $value, $user_id);
+            $db->zincrby($week_key, $value, $user_id);
+            $db->zincrby($total_key, $value, $user_id);
+        }
+    }
+
+    static function findFieldRankList($list_type, $field, $page, $per_page)
+    {
+        if ($field != 'wealth' && $field != 'charm') {
+            return [];
+        }
+
+        switch ($list_type) {
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
+            default:
+                return [];
+        }
+        return Users::findFieldRankListByKey($key, $field, $page, $per_page);
+    }
+
+    static function findFieldRankListByKey($key, $field, $page, $per_page)
+    {
+        if (isBlank($key)) {
+            return [];
+        }
+
+        $db = Users::getUserDb();
+
+        $offset = ($page - 1) * $per_page;
+
+        $results = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $total_entries = $db->zcard($key);
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $user_id => $result) {
+            $ids[] = $user_id;
+            $fields[$user_id] = $result;
+        }
+
+        $users = Users::findByIds($ids);
+
+        $rank = $offset + 1;
+        foreach ($users as $user) {
+            debug($fields[$user->id]);
+            $user->$field = $fields[$user->id];
+            debug($field, $user->$field);
+            $user->rank = $rank;
+            $rank += 1;
+        }
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
+    }
+
 
     static function ipLocation($ip)
     {

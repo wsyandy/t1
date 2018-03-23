@@ -272,6 +272,10 @@ class YangTask extends \Phalcon\Cli\Task
 //        $time5 = strtotime(date('Y-m-d 05:59:59', $time));
 //        echoLine($time5);
 //        echoLine(date('Y-m-d-h-i-sa', $time5));
+        $start = date("Y-m-d-H-i-s", strtotime("last sunday next day", time()));
+        $end = date("Y-m-d-H-i-s", strtotime("next monday", time()) - 1);
+        echoLine($start);
+        echoLine($end);
     }
 
     function test10Action()
@@ -350,6 +354,28 @@ class YangTask extends \Phalcon\Cli\Task
         $per_page = $params[3];
         if ($params[4]) {
             $url = "http://ctest.yueyuewo.cn/api/users/hi_coin_rank_list";
+        }
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'list_type' => $type, 'page' => $page, 'per_page' => $per_page));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test17Action($params)
+    {
+        $body = $this->commonBody();
+        $id = $params[0];
+        $type = $params[1];
+        $field = $params[2];
+        $page = 1;
+        $per_page = 10;
+        if ($params[3]) {
+            $url = "http://ctest.yueyuewo.cn/api/users/" . $field . "_rank_list";
+        } else {
+            $url = "http://chance.com/api/users/" . $field . "_rank_list";
         }
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {

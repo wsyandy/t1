@@ -41,14 +41,19 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
-            'experience' => $this->experience,
-            'id_card_auth' =>$this->id_card_auth
+            'id_card_auth' => $this->id_card_auth
         ];
 
-        if (isset($this->union_id)) {
+        if (isPresent($this->union_id)) {
             $data['union_name'] = $this->union->name;
         } else {
             $data['union_name'] = '';
+        }
+
+        if (isPresent($this->experience)) {
+            $data['experience'] = $this->experience;
+        } else {
+            $data['experience'] = 0;
         }
 
         return $data;
@@ -250,7 +255,7 @@ trait UserAttrs
         return array_merge($this->toBasicJson(), $json);
     }
 
-    function toHiCoinRankListJson()
+    function toRankListJson()
     {
         $data = [
             'id' => $this->id,
@@ -259,12 +264,23 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'hi_coins' => $this->contributing_hi_conins,
             'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text
         ];
+
+        if (isset($this->contributing_hi_conins)) {
+            $data['hi_coins'] = $this->contributing_hi_conins;
+        }
+
+        if (isset($this->charm)) {
+            $data['charm_value'] = $this->charm;
+        }
+
+        if (isset($this->wealth)) {
+            $data['wealth_value'] = $this->wealth;
+        }
 
         return $data;
     }

@@ -133,7 +133,10 @@ class UserGifts extends BaseModel
             'num' => $this->num,
             'pay_type_text' => $this->getPayTypeText(),
             'gift_type_text' => $this->getGiftTypeText(),
-            'expire_day' => $this->expire_day
+            'expire_day' => $this->expire_day,
+            'svga_image_name' => $this->gift_svga_image_name,
+            'render_type' => $this->gift_render_type,
+            'svga_image_url' => $this->gift_svga_image_url,
         );
     }
 
