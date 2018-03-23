@@ -5,7 +5,8 @@ class PayController extends ApplicationController
 
     function indexAction()
     {
-        $code = 'yuewan';
+
+        $code = $this->params('code', 'yuewan');
         $product_channel = \ProductChannels::findFirstByCode($code);
 
         $fee_type = 'diamond';
@@ -17,32 +18,28 @@ class PayController extends ApplicationController
 
         $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($product_channel->id);
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
-        $selected_payment_channel = null;
+        $selected_payment_channels = [];
         foreach ($payment_channels as $payment_channel) {
             if (!$payment_channel->isValid()) {
                 continue;
             }
-            if ($payment_channel->payment_type == 'weixin_js') {
-                $selected_payment_channel = $payment_channel;
-                break;
+
+            if (in_array($payment_channel->payment_type, ['weixin_h5', 'alipay_h5'])) {
+                $selected_payment_channels[] = $payment_channel;
             }
         }
 
+        $this->view->title = '大额充值';
         $this->view->pay_user_id = $this->session->get('pay_user_id');
         $this->view->pay_user_name = $this->session->get('pay_user_name');
-        $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
         $this->view->product_channel = $product_channel;
-        $this->view->title = '充值';
-
-        $payment_channels = \PaymentChannels::find();
-        $this->view->payment_channels = $payment_channels;
+        $this->view->payment_channels = $selected_payment_channels;
 
     }
 
     function createAction()
     {
-
 
         $user_id = $this->params('user_id');
         $user = null;
@@ -65,7 +62,6 @@ class PayController extends ApplicationController
         $product = \Products::findFirstById($this->params('product_id'));
 
         list($error_code, $error_reason, $order) = \Orders::createOrder($user, $product);
-
         if (ERROR_CODE_FAIL == $error_code) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
@@ -80,7 +76,7 @@ class PayController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
 
-        $result_url = '/wx/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
+        $result_url = '/pay/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
         $cancel_url = $this->headers('Referer');
 
         $opt = [
@@ -89,7 +85,6 @@ class PayController extends ApplicationController
             'show_url' => $cancel_url,
             'cancel_url' => $cancel_url,
             'callback_url' => $this->getRoot() . $result_url,
-            'openid' => $this->currentOpenid(), // 代替充值特殊处理
             'product_name' => '订单-' . $order->order_no
         ];
 
@@ -101,16 +96,7 @@ class PayController extends ApplicationController
 
         debug($user->id, 'payment build_form=', $form);
 
-        $result = [
-            'form' => $form,
-            'payment_type' => $payment_channel->payment_type,
-            'order_no' => $order->order_no,
-            'paid_status' => $payment->pay_status,
-            'result_url' => $result_url,
-            'nickname' => $user->nickname
-        ];
-
-        $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $form);
     }
 
     function resultAction()
@@ -118,7 +104,6 @@ class PayController extends ApplicationController
 
         $order_no = $this->params('order_no');
         $order = \Orders::findFirstByOrderNo($order_no);
-
         if (!$order) {
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '订单不存在!');
@@ -132,11 +117,24 @@ class PayController extends ApplicationController
         $this->session->set('pay_user_name', $order->user->nickname);
 
         if (!$payment || !$order->isPaid()) {
-            $this->response->redirect('/wx/payments/weixin?ts=' . time());
+            $this->response->redirect('/pay/index?ts=' . time());
             return;
         }
 
         $this->view->title = '支付结果';
         $this->view->payment = $payment;
+    }
+
+    function checkUserAction()
+    {
+        $user_id = $this->params('user_id');
+        $user = \Users::findFirstById($user_id);
+        $nickname = '此ID不存在';
+        if ($user) {
+            $nickname = $user->nickname;
+        }
+        $result = ['nickname' => $nickname];
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);
+
     }
 }
