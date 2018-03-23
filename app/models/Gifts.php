@@ -190,7 +190,8 @@ class Gifts extends BaseModel
             'svga_image_name' => $this->svga_image_name,
             'render_type' => $this->render_type,
             'svga_image_url' => $this->svga_image_url,
-            'expire_day' => $this->expire_day
+            'expire_day' => $this->expire_day,
+            'show_rank' => $this->show_rank
         ];
     }
 
@@ -210,7 +211,8 @@ class Gifts extends BaseModel
             'render_type' => $this->render_type,
             'svga_image_name' => $this->svga_image_name,
             'render_type_text' => $this->render_type_text,
-            'svga_image_url' => $this->svga_image_url
+            'svga_image_url' => $this->svga_image_url,
+            'show_rank' => $this->show_rank
         ];
     }
 

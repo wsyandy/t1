@@ -183,6 +183,7 @@ class UserGifts extends BaseModel
             'svga_image_name' => $this->gift_svga_image_name,
             'render_type' => $this->gift_render_type,
             'svga_image_url' => $this->gift_svga_image_url,
+            'show_rank' => $this->gift_show_rank
         );
     }
 

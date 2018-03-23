@@ -36,6 +36,7 @@
             render_type 渲染类型 gif svga
             svga_image_url svga 图片
             expire_day int 有效天数
+            show_rank int 礼物展示排序
         }
     ],
     products: [
@@ -86,6 +87,7 @@
         sender_id: 2
         sender_nickname: '发送方昵称'
         amount 礼物金额
+        show_rank int 礼物展示排序
     }
 } 
 ````
@@ -125,6 +127,7 @@
             image_big_url: ''
             dynamic_image_url: ''
             num: 10
+            show_rank int 礼物展示排序
         }
         ...
     ]
@@ -144,6 +147,7 @@
             render_type 渲染类型 gif svga
             svga_image_url svga 图片
             status 0 未使用 1 使用中
+            show_rank int 礼物展示排序
         }
         ...
     ]

@@ -8,7 +8,8 @@
 {{ f.select('pay_type', ['label': '支付类型', 'collection': Gifts.PAY_TYPE, 'width':'33%']) }}
 {{ f.select('type', ['label': '礼物类型', 'collection': Gifts.TYPE, 'width':'33%']) }}
 {{ f.input('rank', ['label': '排序','width':'33%']) }}
-{{ f.input('expire_day', ['label': '有效天数']) }}
+{{ f.input('expire_day', ['label': '有效天数', 'width':'50%']) }}
+{{ f.input('show_rank', ['label': '礼物展示排序',  'width':'50%']) }}
 {{ f.file('image', ['label': '图片',  'width':'50%']) }}
 {{ f.file('big_image', ['label': '大图',  'width':'50%']) }}
 {{ f.file('dynamic_image', ['label': 'gif动态图', 'width':'50%']) }}
