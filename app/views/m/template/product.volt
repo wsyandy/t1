@@ -52,7 +52,7 @@
     <span>优惠充值</span>
     <span>关注公众号</span>
     <a href="weixin://" class="WeChatID">Hi-6888</a>
-    <span class="btn_copy" data-clipboard-text="Hi-6888">复制</span>
+    <span class="btn_copy" data-clipboard-text="Hi-6888" id="copy">复制</span>
 </div>
 {% endif %}
 
@@ -99,6 +99,10 @@
                 var url = generatePayUrl();
                 $("#pay_submit_btn").attr('href', url);
             })
+        });
+
+        $('#copy').click(function () {
+            alert("复制成功");
         });
 
         new ClipboardJS('.btn_copy');
