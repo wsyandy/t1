@@ -153,7 +153,7 @@ class UserGifts extends BaseModel
 
     function toJson()
     {
-        return array(
+        return [
             'gift_id' => $this->gift_id,
             'name' => $this->gift_name,
             'amount' => $this->amount,
@@ -170,12 +170,12 @@ class UserGifts extends BaseModel
             'render_type' => $this->gift_render_type,
             'svga_image_url' => $this->gift_svga_image_url,
             'status' => $this->status
-        );
+        ];
     }
 
     function toSimpleJson()
     {
-        return array(
+        return [
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
@@ -183,8 +183,9 @@ class UserGifts extends BaseModel
             'svga_image_name' => $this->gift_svga_image_name,
             'render_type' => $this->gift_render_type,
             'svga_image_url' => $this->gift_svga_image_url,
-            'show_rank' => $this->gift_show_rank
-        );
+            'show_rank' => $this->gift_show_rank,
+            'status' => $this->status
+        ];
     }
 
     function expireDay()

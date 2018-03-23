@@ -190,5 +190,15 @@
     error_reason: ''
     error_url: "",
     now_at: 1515508744
+    name: ''
+    image_url: ''
+    image_small_url: ''
+    image_big_url: ''
+    dynamic_image_url: ''
+    svga_image_name: svga 对应zip包中的图片名称
+    render_type 渲染类型 gif svga
+    svga_image_url svga 图片
+    show_rank int 礼物展示排序
+    status  使用状态 0未使用 1 使用中
 }
 ````
