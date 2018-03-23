@@ -828,9 +828,13 @@ class Rooms extends BaseModel
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
         } elseif ($room->isActive() && ($room->getRealUserNum() < 1 || $room->user_agreement_num < 1)) {
-            Rooms::deleteWaitEnterSilentRoomList($user_id);
-            info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
-            return false;
+
+            if (isProduction()) {
+                Rooms::deleteWaitEnterSilentRoomList($user_id);
+                info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
+                return false;
+            }
+            
         }
 
         $room->enterRoom($user);
