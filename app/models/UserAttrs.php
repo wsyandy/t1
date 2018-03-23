@@ -674,4 +674,17 @@ trait UserAttrs
 
         return $next_level_experience;
     }
+
+    //用户的座驾
+    function getUserCarGift()
+    {
+        $exist_user_gift = \UserGifts::findFirstBy(['user_id' => $this->user_id,
+            'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON], 'id desc');
+
+        if ($exist_user_gift) {
+            return $exist_user_gift->toJson();
+        }
+
+        return [];
+    }
 }

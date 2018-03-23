@@ -95,7 +95,35 @@ class GiftsController extends BaseController
         if (isBlank($this->params('gift_id'))) {
             return [false, '礼物错误'];
         }
-        
+
         return [true, ''];
+    }
+
+    function setCarGiftAction()
+    {
+        $gift_id = $this->params('gift_id');
+
+        $gift = \Gifts::findById($this->params('gift_id'));
+
+        if ($gift) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user_gift = \UserGifts::findFirstBy(['gift_id' => $gift_id, 'user_id' => $this->currentUser()->id, 'gift_type' => GIFT_TYPE_CAR]);
+
+        if ($user_gift->isExpired()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '座驾已过期');
+        }
+
+        if (STATUS_ON != $user_gift->status) {
+
+            $user_gift->status = STATUS_ON;
+
+            if ($user_gift->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功');
+            }
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功');
     }
 }

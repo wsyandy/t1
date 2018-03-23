@@ -143,6 +143,7 @@
             svga_image_name: svga 对应zip包中的图片名称
             render_type 渲染类型 gif svga
             svga_image_url svga 图片
+            status 0 未使用 1 使用中
         }
         ...
     ]
@@ -166,5 +167,23 @@
     now_at: 1515508744,
     resource_file_url : 资源地址 xxx.zip
     resource_code:资源code 客户端根据此参数判断是否拉取礼物
+}
+````
+
+## 5 设置我的座驾礼物
+
+> http-post ```/api/gifts/set_car_gift```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|gift_id|礼物ID|integer|否|礼物id
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1
+    error_reason: ''
+    error_url: "",
+    now_at: 1515508744
 }
 ````

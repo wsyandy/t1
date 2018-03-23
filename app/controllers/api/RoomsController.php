@@ -204,6 +204,7 @@ class RoomsController extends BaseController
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
+        $res['user_car_gift'] = $this->currentUser()->getUserCarGift();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 

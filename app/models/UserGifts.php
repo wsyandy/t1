@@ -18,6 +18,30 @@ class UserGifts extends BaseModel
      */
     private $_gift;
 
+    static $STATUS = [STATUS_ON => '使用中', STATUS_OFF => '未使用'];
+
+    function afterUpdate()
+    {
+        if ($this->hasChanged('status') && STATUS_ON == $this->status) {
+            $user_gifts = UserGifts::find(['conditions' => 'status = :status: and id != :id: and gift_type = :gift_type:',
+                'bind' => ['status' => STATUS_ON, 'id' => $this->id, 'gift_type' => GIFT_TYPE_CAR]
+            ]);
+
+            if (count($user_gifts) > 0) {
+                foreach ($user_gifts as $user_gift) {
+                    $user_gift->status = STATUS_OFF;
+                    $user_gift->update();
+                }
+            }
+
+        }
+    }
+
+    function isExpired()
+    {
+        return $this->expire_at <= time();
+    }
+
     static function updateGiftNum($gift_order_id)
     {
         info($gift_order_id);
@@ -74,6 +98,9 @@ class UserGifts extends BaseModel
         $lock_key = "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
         $lock = tryLock($lock_key);
 
+        $exist_user_gift = \UserGifts::findFirstBy(['gift_id' => $gift_order->gift_id, 'user_id' => $gift_order->user_id,
+            'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON]);
+
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findFirstById($gift_order->gift_id);
 
@@ -88,6 +115,11 @@ class UserGifts extends BaseModel
         $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
         $user_gift->pay_type = $gift->pay_type;
         $user_gift->gift_type = $gift->type;
+
+        if (!$exist_user_gift) {
+            $user_gift->status = STATUS_ON;
+        }
+
         if ($user_gift->expire_at > time()) {
             $user_gift->expire_at += $gift->expire_day * 86400;
         } else {
@@ -134,6 +166,20 @@ class UserGifts extends BaseModel
             'pay_type_text' => $this->getPayTypeText(),
             'gift_type_text' => $this->getGiftTypeText(),
             'expire_day' => $this->expire_day,
+            'svga_image_name' => $this->gift_svga_image_name,
+            'render_type' => $this->gift_render_type,
+            'svga_image_url' => $this->gift_svga_image_url,
+            'status' => $this->status
+        );
+    }
+
+    function toSimpleJson()
+    {
+        return array(
+            'image_url' => $this->gift_image_url,
+            'image_small_url' => $this->gift_image_small_url,
+            'image_big_url' => $this->gift_image_big_url,
+            'dynamic_image_url' => $this->gift_dynamic_image_url,
             'svga_image_name' => $this->gift_svga_image_name,
             'render_type' => $this->gift_render_type,
             'svga_image_url' => $this->gift_svga_image_url,
