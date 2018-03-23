@@ -1961,18 +1961,21 @@ class Users extends BaseModel
 //                return;
 //            }
 
-            if ($room->getRealUserNum() < 1) {
-                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
-                return;
-            }
-
-            if ($rand_num <= 90) {
-                if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
+//            if ($room->getRealUserNum() < 1) {
+//                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
+//                return;
+//            }
+            if ($room->getRealUserNum() > 0) {
+                if ($rand_num <= 60) {
+                    Users::delay(mt_rand(1, 10))->sendGift($this->id, $room->id);
+                } elseif ($rand_num > 60 && $rand_num <= 88) {
+                    Users::delay(mt_rand(1, 10))->upRoomSeat($this->id, $room->id);
+                } elseif ($rand_num > 85 && $rand_num <= 95) {
+                    Users::delay(mt_rand(1, 10))->sendTopTopicMessage($this->id, $room->id);
+                } else {
+                    $room->exitSilentRoom($this);
+                    return;
                 }
-            } else {
-                $room->exitSilentRoom($this);
-                return;
             }
         }
     }
@@ -2571,20 +2574,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2644,20 +2650,23 @@ class Users extends BaseModel
         }
 
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
             default:
                 return [];
         }
