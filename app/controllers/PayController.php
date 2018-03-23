@@ -87,14 +87,12 @@ class PayController extends ApplicationController
             'callback_url' => $this->getRoot() . $result_url,
             'product_name' => '订单-' . $order->order_no
         ];
-
-        debug($user->id, 'openid', $user->openid);
-
+        
         # 返回支付sdk需要的相关信息
         $pay_gateway = $payment_channel->gateway();
         $form = $pay_gateway->buildForm($payment, $opt);
 
-        debug($user->id, 'payment build_form=', $form);
+        info($user->id, 'payment build_form=', $form);
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $form);
     }
