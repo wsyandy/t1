@@ -24,7 +24,7 @@
 <div class="weixin_chongzhi_top">
     <input required="required" id="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
     <i class="close_btn"></i>
-    <p class="name"> 此ID不存在</p>
+    {#<p class="name"> 此ID不存在</p>#}
 </div>
 <div class="weixin_title">选择充值金额</div>
 <div class="weixin_cz_list">
@@ -51,7 +51,12 @@
             <li @click="rechargeAction({{ payment_channel.id }})" class="zhifubao_pay_li recharge" data-payment_channel_id="{{ payment_channel.id }}"
                 data-payment_type="{{ payment_channel.payment_type }}"
                 id="payment_type_{{ payment_channel.payment_type }}">
-                <i class="zhifubao"></i>{{ payment_channel.name }}
+                {% if payment_channel.payment_type == 'weixin_h5' or payment_channel.payment_type == 'weixin' or  payment_channel.payment_type == 'weixin_js' %}
+                    <i class="weixin"></i>{{ payment_channel.name }}
+                {% else %}
+                    <i class="zhifubao"></i>{{ payment_channel.name }}
+                {% endif %}
+
                 <b></b>
             </li>
         {% endfor %}
@@ -129,7 +134,6 @@
             var data = form.serialize();
             $.post('/pay/create', data, function (resp) {
                 form.data('status', '0');
-
                 if (0 == resp.error_code) {
                     redirect_url = '/pay/result?order_no=' + resp.order_no;
                     js_api_parameters = resp.form;
@@ -141,7 +145,6 @@
                 } else {
                     alert(resp);
                 }
-
             });
 
 
