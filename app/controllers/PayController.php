@@ -5,7 +5,8 @@ class PayController extends ApplicationController
 
     function indexAction()
     {
-        $code = 'yuewan';
+
+        $code = $this->params('code', 'yuewan');
         $product_channel = \ProductChannels::findFirstByCode($code);
 
         $fee_type = 'diamond';
@@ -17,32 +18,28 @@ class PayController extends ApplicationController
 
         $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($product_channel->id);
         $payment_channels = \PaymentChannels::findByIds($payment_channel_ids);
-        $selected_payment_channel = null;
+        $selected_payment_channels = [];
         foreach ($payment_channels as $payment_channel) {
             if (!$payment_channel->isValid()) {
                 continue;
             }
-            if ($payment_channel->payment_type == 'weixin_js') {
-                $selected_payment_channel = $payment_channel;
-                break;
+
+            if (in_array($payment_channel->payment_type, ['weixin_h5', 'alipay_h5'])) {
+                $selected_payment_channels[] = $payment_channel;
             }
         }
 
+        $this->view->title = '大额充值';
         $this->view->pay_user_id = $this->session->get('pay_user_id');
         $this->view->pay_user_name = $this->session->get('pay_user_name');
-        $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
         $this->view->product_channel = $product_channel;
-        $this->view->title = '充值';
-
-        $payment_channels = \PaymentChannels::find();
-        $this->view->payment_channels = $payment_channels;
+        $this->view->payment_channels = $selected_payment_channels;
 
     }
 
     function createAction()
     {
-
 
         $user_id = $this->params('user_id');
         $user = null;
