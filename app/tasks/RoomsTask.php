@@ -28,7 +28,9 @@ class RoomsTask extends \Phalcon\Cli\Task
                     continue;
                 }
 
-                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600) && STATUS_ON != $room->hot) {
+                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
+                    && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
+
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
@@ -173,6 +175,36 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    //压力测试
+    function pressureTestAction($params)
+    {
+        $room_id = $params[0];
+        $user_num = $params[1];
+
+        debug($room_id, $user_num);
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room || $room->user_num >= 500) {
+            return;
+        }
+
+        $users = $room->selectSilentUsers($user_num);
+
+        foreach ($users as $user) {
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 60);
+
+            info($room->id, $user->id, $delay_time);
+            Rooms::addWaitEnterSilentRoomList($user->id);
+            Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
+        }
+    }
+
     //刷新管理员
     function freshManagersAction()
     {
@@ -213,18 +245,53 @@ class RoomsTask extends \Phalcon\Cli\Task
     //自动上热门
     function roomAutoToHotAction()
     {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
         $cond = [
             'conditions' => 'hot = :hot: and status = :status: and last_at >= :last_at:',
             'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON, 'last_at' => time() - 10 * 60],
             'order' => 'last_at desc',
-            'limit' => 10
         ];
+
+        $manual_hot_room_num = 5;
+        $total_num = 10;
+        $least_num = 3;
+
+        if (isProduction()) {
+            $manual_hot_room_num = 10;
+            $total_num = 20;
+            $least_num = 5;
+        }
+
+        //总的热门房间
+        $total_room_ids = [];
 
         //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
 
-        $hot_room_list_key = Rooms::generateHotRoomListKey();
-        $hot_cache = Users::getHotWriteCache();
+        info(count($manual_hot_rooms));
+
+        foreach ($manual_hot_rooms as $manual_hot_room) {
+
+            if (!$manual_hot_room->checkRoomSeat()) {
+                info("room_seat_is_null", $manual_hot_room->id);
+                continue;
+            }
+
+            if ($manual_hot_room->lock) {
+                info("room_seat_is_lock", $manual_hot_room->id);
+                continue;
+            }
+
+            $total_room_ids[] = $manual_hot_room->id;
+
+            //选10个手动房间
+            if (count($total_room_ids) >= $manual_hot_room_num) {
+                info($total_room_ids, count($total_room_ids), $manual_hot_room_num);
+                break;
+            }
+        }
 
         $start = time() - 11 * 60;
         $end = time() - 60;
@@ -236,19 +303,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
-        //有收益的房间
-        $has_income_room_ids = [];
-
-        //总的热门房间
-        $total_room_ids = [];
-
-        //手动上热门id
-        $manual_hot_room_ids = [];
-
-        foreach ($manual_hot_rooms as $manual_hot_room) {
-            $manual_hot_room_ids[$manual_hot_room->id] = 0;
-        }
-
+        info($total_room_ids, count($total_room_ids));
         foreach ($gift_orders as $gift_order) {
 
             $room = Rooms::findFirstById($gift_order->room_id);
@@ -259,44 +314,43 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             if ($room->isForbiddenHot()) {
-                info("isForbiddenHot", $gift_order->room_id);
+                info("isForbiddenHot", $room->id);
                 continue;
             }
 
-            $room_id = $gift_order->room_id;
-
-            $cond = [
-                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
-                'column' => 'amount'
-            ];
-
-            $income = GiftOrders::sum($cond);
-
-            if (in_array($room_id, $manual_hot_room_ids)) {
-                $manual_hot_room_ids[$room_id] = $income;
+            if (!$room->checkRoomSeat()) {
+                info("room_seat_is_null", $room->id);
                 continue;
             }
 
-            if ($income > 0) {
-                $has_income_room_ids[$room_id] = $income;
+            if ($room->lock) {
+                info("room_seat_is_lock", $room->id);
+                continue;
             }
-        }
 
-        foreach ($manual_hot_room_ids as $manual_hot_room_id => $income) {
-            $total_room_ids[$manual_hot_room_id] = $income;
-        }
+            if (in_array($room->id, $total_room_ids)) {
+                continue;
+            }
 
-        foreach ($has_income_room_ids as $has_income_room_id => $income) {
-            $total_room_ids[$has_income_room_id] = $income;
+            if ($room->isHot()) {
+                continue;
+            }
+
+            $total_room_ids[] = $room->id;
+
+            if (count($total_room_ids) >= $total_num) {
+                info($total_room_ids, count($total_room_ids), $total_num);
+                break;
+            }
         }
 
         $total_room_num = count($total_room_ids);
-        $need_room_num = 0;
 
-        if ($total_room_num < 20) {
+        info($total_room_ids, $total_room_num);
 
-            $need_room_num = 20 - $total_room_num;
+        if ($total_room_num < $total_num) {
+
+            $need_room_num = $total_num - $total_room_num;
 
             if ($hot_cache->zcard(Rooms::getTotalRoomUserNumListKey()) > 0) {
 
@@ -312,40 +366,83 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
 
+                    if ($room->isHot()) {
+                        continue;
+                    }
+
                     if ($user_num_room->isForbiddenHot()) {
                         info("isForbiddenHot", $user_num_room_id);
                         continue;
                     }
 
+                    if (!$user_num_room->checkRoomSeat()) {
+                        info("room_seat_is_null", $user_num_room->id);
+                        continue;
+                    }
+
+                    if ($user_num_room->lock) {
+                        info("room_seat_is_lock", $user_num_room->id);
+                        continue;
+                    }
+
                     if (!in_array($user_num_room_id, $total_room_ids)) {
 
-                        $cond = [
-                            'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                            'bind' => ['start' => $start, 'end' => $end, 'room_id' => $user_num_room_id],
-                            'column' => 'amount'
-                        ];
-
-                        $income = GiftOrders::sum($cond);
-
-                        $total_room_ids[$user_num_room_id] = $income;
+                        $total_room_ids[] = $user_num_room_id;
 
                         $num++;
+
+                        if (count($total_room_ids) >= $total_num) {
+                            info($total_room_ids, count($total_room_ids), $total_num);
+                            break;
+                        }
                     }
                 }
             }
         }
 
+        $total_room_num = count($total_room_ids);
+
+        info($total_room_ids, $total_room_num);
+
+        if ($total_room_num < $least_num) {
+
+            $broadcast_rooms = Rooms::find(
+                [
+                    'conditions' => "theme_type = :theme_type:",
+                    'bind' => ['theme_type' => ROOM_THEME_TYPE_BROADCAST],
+                    'limit' => $least_num - $total_room_num
+                ]);
+
+            foreach ($broadcast_rooms as $broadcast_room) {
+                $broadcast_room->enterRoom($broadcast_room->user);
+                $total_room_ids[] = $broadcast_room->id;
+            }
+        }
+
+        $hot_room_ids = [];
+
+        foreach ($total_room_ids as $room_id) {
+
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
+                'column' => 'amount'
+            ];
+
+            $income = GiftOrders::sum($cond);
+
+            $hot_room_ids[$room_id] = $income;
+        }
+
         $hot_cache->zclear($hot_room_list_key);
 
-        arsort($total_room_ids);
+        arsort($hot_room_ids);
 
-        foreach ($total_room_ids as $total_room_id => $income) {
-            $hot_cache->zadd($hot_room_list_key, $income, $total_room_id);
+        foreach ($hot_room_ids as $hot_room_id => $income) {
+            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_id);
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
-
-        info($manual_hot_room_ids, $has_income_room_ids, $total_room_ids, $total_room_num, $need_room_num);
     }
 
     //热门房间排序
@@ -364,18 +461,19 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
+            if (!$hot_room->checkRoomSeat()) {
+                info("room_seat_is_null", $hot_room->id);
+                continue;
+            }
+
             $cond = [
                 'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
                 'bind' => ['start' => $start, 'end' => $end, 'room_id' => $hot_room_id],
                 'column' => 'amount'
             ];
 
-            //判断麦位上没有用户
-            $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
-                'bind' => ['room_id' => $hot_room_id]]);
-
-            if (!$room_seat || $hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
-                info("room_seat_is_null", $hot_room_id, "lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
+            if ($hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
+                info("lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 continue;
             }

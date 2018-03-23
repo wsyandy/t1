@@ -11,6 +11,9 @@
     <label for="gift_id_eq">礼物ID</label>
     <input name="gift_order[gift_id_eq]" type="text" id="gift_id_eq"/>
 
+    <label for="room_id_eq">房间ID</label>
+    <input name="gift_order[room_id_eq]" type="text" id="room_id_eq"/>
+
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
     <label for="end_at_eq">结束时间</label>
@@ -18,6 +21,10 @@
 
     <button type="submit" class="ui button">搜索</button>
 </form>
+
+<ol class="breadcrumb">
+    <li class="active">总金额 {{ total_amount }}</li>
+</ol>
 
 {%- macro sender_link(object) %}
     ID:<a href="/admin/users?user[id_eq]={{ object.sender_id }}">{{ object.sender_id }}</a><br/>
@@ -41,14 +48,14 @@
 
 
 <script type="text/javascript">
+    // $('.selectpicker').selectpicker();
+
     $(".form_datetime").datetimepicker({
         language: "zh-CN",
-        format: 'yyyy-mm-dd',
+        format: 'yyyy-mm-dd hh:ii',
         autoclose: 1,
         todayBtn: 1,
         todayHighlight: 1,
         startView: 2,
-        minView: "month"
     });
-    $('.selectpicker').selectpicker();
 </script>
