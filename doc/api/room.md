@@ -178,7 +178,17 @@
                 deadline int 管理员管理时长的截止时间戳 1517319489
             },
             ...
-        ]     		   
+        ]  
+     user_car_gift: {
+        name: ''
+        image_url: ''
+        image_small_url: ''
+        image_big_url: ''
+        dynamic_image_url: ''
+        svga_image_name: svga 对应zip包中的图片名称
+        render_type 渲染类型 gif svga
+        svga_image_url svga 图片
+     }      		   
 }
 ```
 
