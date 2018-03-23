@@ -22,7 +22,7 @@
     </div>
 </div>
 <div class="weixin_chongzhi_top">
-    <input required="required" id="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
+    <input required="required" id="user_id"  type="number" class="name_input" placeholder="请输入您的Hi~ID" />
     <i class="close_btn"></i>
     <p class="name"></p>
 </div>
@@ -145,7 +145,7 @@
         $('.close_btn').click(function(){
             $('.name_input').val('');
         });
-        
+
 //        $('.zhifubao_pay_t').click(function(){
 //            $(this).hide();
 //        })
