@@ -13,7 +13,7 @@
 <!-- 支付宝支付提示 -->
 <div class="zhifubao_pay_t">
     <div class="share_box">
-        <h2>只需两步即可选择支付宝支付：</h2>
+        <h2>只需两步即可完成支付：</h2>
         <img src="/pay/images/share.png" class="share">
         <div class="share_text">
             <p><i class="one"></i>点击右上角的<img src="/pay/images/share_icon.png" class="share_icon">按钮</p>
