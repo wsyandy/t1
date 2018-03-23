@@ -247,7 +247,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
-        $last = time() - 10 * 60;
+        $last = time() - 5 * 60;
         $manual_hot_room_num = 5;
         $total_num = 10;
         $least_num = 3;
@@ -255,8 +255,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         if (isProduction()) {
             $manual_hot_room_num = 10;
             $total_num = 20;
-            $least_num = 5;
-            $last = time() - 5 * 60;
+            $least_num = 8;
+            $last = time() - 10 * 60;
         }
 
         $cond = [
