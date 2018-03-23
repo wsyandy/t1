@@ -12,7 +12,7 @@ class PayController extends ApplicationController
         $fee_type = 'diamond';
         $product_group = \ProductGroups::findFirst(['product_channel_id' => $product_channel->id, 'fee_type' => $fee_type, 'status' => STATUS_ON]);
         $products = \Products::find([
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and (apple_product_no="" or apple_product_no is null)',
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount>3000 and (apple_product_no="" or apple_product_no is null)',
             'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
             'order' => 'amount asc']);
 
@@ -76,7 +76,7 @@ class PayController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
 
-        $result_url = '/pay/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
+        $result_url = '/pay/result?order_no=' . $order->order_no;
         $cancel_url = $this->headers('Referer');
 
         $opt = [
@@ -88,13 +88,11 @@ class PayController extends ApplicationController
             'product_name' => '订单-' . $order->order_no
         ];
 
-        debug($user->id, 'openid', $user->openid);
-
         # 返回支付sdk需要的相关信息
         $pay_gateway = $payment_channel->gateway();
         $form = $pay_gateway->buildForm($payment, $opt);
 
-        debug($user->id, 'payment build_form=', $form);
+        info($user->id, 'payment build_form=', $form);
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $form);
     }
