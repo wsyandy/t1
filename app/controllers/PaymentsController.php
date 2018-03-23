@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 08/01/2018
  * Time: 10:30
  */
-
 class PaymentsController extends ApplicationController
 {
     function notifyAction()
@@ -38,5 +38,10 @@ class PaymentsController extends ApplicationController
             return;
         }
     }
-    
+
+    function successAction()
+    {
+
+    }
+
 }

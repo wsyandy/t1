@@ -11,7 +11,7 @@ class PaymentChannelsController extends BaseController
 {
     function indexAction()
     {
-        $payment_channels = \PaymentChannels::find();
+        $payment_channels = \PaymentChannels::find(['order' => 'rank desc']);
         $this->view->payment_channels = $payment_channels;
     }
 
