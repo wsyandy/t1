@@ -230,7 +230,7 @@ class UsersController extends BaseController
         }
 
         $context = $this->context();
-        if($third_name == 'qq'){
+        if ($third_name == 'qq') {
             $context['has_unionid'] = 1;
         }
 
@@ -607,7 +607,14 @@ class UsersController extends BaseController
 
         $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+        $res = $users->toJson('users', 'toRankListJson');
+
+        $user = $this->currentUser();
+
+        $res['current_rank'] = $user->myFieldRank($list_type, 'charm');
+        $res['changed_rank'] = $res['current_rank'] - $user->myLastFieldRank($list_type, 'charm');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
     function wealthRankListAction()
@@ -621,6 +628,13 @@ class UsersController extends BaseController
         }
 
         $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+
+        $res = $users->toJson('users', 'toRankListJson');
+
+        $user = $this->currentUser();
+
+        $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
+        $res['changed_rank'] = $res['current_rank'] - $user->myLastFieldRank($list_type, 'wealth');
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
     }

@@ -729,6 +729,8 @@
         }
         ...
     ]
+    current_rank 当前排名
+    changed_rank 变化的排名
 }
 ```
     
@@ -763,5 +765,7 @@
         }
         ...
     ]
+    current_rank 当前排名
+    changed_rank 变化的排名
 }
 ```    

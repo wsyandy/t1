@@ -2574,23 +2574,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -2631,6 +2628,8 @@ class Users extends BaseModel
         if ($value > 0) {
             $db = Users::getUserDb();
 
+            self::saveLastFieldRankList($user_id, $field);
+
             $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
             $start = date("Ymd", strtotime("last sunday next day", time()));
             $end = date("Ymd", strtotime("next monday", time()) - 1);
@@ -2643,6 +2642,56 @@ class Users extends BaseModel
         }
     }
 
+    static function saveLastFieldRankList($user_id, $field)
+    {
+        $db = Users::getUserDb();
+
+        $user = Users::findFirstById($user_id);
+
+        $day_rank = $user->myFieldRank('day', $field);
+        $week_rank = $user->myFieldRank("week", $field);
+        $total_rank = $user->myfieldRank('total', $field);
+
+        $db->zadd("last_day_" . $field . "_rank_list", $day_rank, $user_id);
+        $db->zadd("last_weeK_" . $field . "_rank_list", $week_rank, $user_id);
+        $db->zadd("last_total_" . $field . "_rank_list", $total_rank, $user_id);
+    }
+
+    function myFieldRank($list_type, $field)
+    {
+        $db = Users::getUserDb();
+
+        switch ($list_type) {
+            case 'day': {
+                $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list_";
+                break;
+            }
+            default: {
+                return 0;
+            }
+        }
+        return $db->zrrank($key, $this->id) + 1;
+    }
+
+    function myLastFieldRank($list_type, $field)
+    {
+        $db = Users::getUserDb();
+
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
+
+        return $db->zrrank($key, $this->id) + 1;
+    }
+
     static function findFieldRankList($list_type, $field, $page, $per_page)
     {
         if ($field != 'wealth' && $field != 'charm') {
@@ -2650,23 +2699,20 @@ class Users extends BaseModel
         }
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list_";
-                    break;
-                }
+            case 'day': {
+                $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list_";
+                break;
+            }
             default:
                 return [];
         }
@@ -2697,9 +2743,7 @@ class Users extends BaseModel
 
         $rank = $offset + 1;
         foreach ($users as $user) {
-            debug($fields[$user->id]);
             $user->$field = $fields[$user->id];
-            debug($field, $user->$field);
             $user->rank = $rank;
             $rank += 1;
         }
