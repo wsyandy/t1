@@ -47,7 +47,7 @@ class GiftOrdersController extends BaseController
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
         $this->view->total_amount = $total_amount;
-        $room_id = $this->params('room[id_eq]');
+        $room_id = $this->params('gift_order[room_id_eq]');
         $this->view->room_id = $room_id ? intval($room_id) : '';
     }
 
