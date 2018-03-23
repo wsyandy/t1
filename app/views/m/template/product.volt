@@ -1,7 +1,7 @@
 {# 支付页面模板. 我的账户跟产品页面引用 #}
 {{ block_begin('head') }}
-{{ theme_css('/m/css/product.css') }}
-{{ theme_js('/js/fastclick.js') }}
+{{ theme_css('/m/css/product_index.css') }}
+{{ theme_js('/js/fastclick.js','/js/clipboard.min.js') }}
 {{ block_end() }}
 
 <div class="account_top">
@@ -46,14 +46,17 @@
     </ul>
 </div>
 
-{% if !is_foreign_ip %}
-    <div class="discount_tips">
-        <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
-        <span>优惠充值</span>
-        <span>关注公众号</span>
-        <span class="WeChatID">Hi-6888</span>
-    </div>
+{% if !is_foreign_ip and is_ios%}
+<div class="discount_tips">
+    <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
+    <span>优惠充值</span>
+    <span>关注公众号</span>
+    <a href="weixin://" class="WeChatID">Hi-6888</a>
+    <span class="btn_copy" data-clipboard-text="Hi-6888" id="copy">复制</span>
+</div>
 {% endif %}
+
+<div class="copy_tip">复制成功</div>
 
 <div class="get_out_btn">
     <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}"
@@ -99,6 +102,14 @@
                 $("#pay_submit_btn").attr('href', url);
             })
         });
+
+        $('#copy').click(function () {
+            $(".copy_tip").fadeIn();
+            $(".copy_tip").fadeOut(1000);
+
+        });
+
+        new ClipboardJS('.btn_copy');
     })
 </script>
 
