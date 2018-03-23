@@ -12,11 +12,13 @@ class GiftOrdersController extends BaseController
 {
     function indexAction()
     {
+        $user_id = $this->params('user_id');
         $cond = $this->getConditions('gift_order');
         $cond['order'] = 'id desc';
 
         $start_at = $this->params('start_at', date('Y-m-d H:i:s', beginOfDay()));
         $end_at = $this->params('end_at', date('Y-m-d H:i:s', endOfDay()));
+
         if ($start_at) {
             $start_at = strtotime($start_at);
             if (isset($cond['conditions'])) {
@@ -37,13 +39,12 @@ class GiftOrdersController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
-        $room_user_id = $this->params('room_user_id', 0);
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
 
-        if ($room_user_id) {
+        if ($user_id) {
 
-            $room_user = \Users::findFirstById($room_user_id);
+            $room_user = \Users::findFirstById($user_id);
 
             if ($room_user->room_id) {
 
@@ -57,6 +58,7 @@ class GiftOrdersController extends BaseController
             }
         }
 
+
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $cond['column'] = 'amount';
         $total_amount = \GiftOrders::sum($cond);
@@ -65,8 +67,7 @@ class GiftOrdersController extends BaseController
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
         $this->view->total_amount = $total_amount;
-        $room_user_id = $this->params('room_user_id');
-        $this->view->room_user_id = $room_user_id ? intval($room_user_id) : '';
+        $this->view->user_id = $user_id ? intval($user_id) : '';
     }
 
     function detailAction()
