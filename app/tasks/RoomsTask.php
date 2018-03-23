@@ -367,11 +367,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
 
-                    if (!$room) {
+                    if (!$user_num_room) {
                         continue;
                     }
                     
-                    if ($room->isHot()) {
+                    if ($user_num_room->isHot()) {
                         continue;
                     }
 
