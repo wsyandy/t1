@@ -44,7 +44,7 @@ trait UserAttrs
             'id_card_auth' => $this->id_card_auth
         ];
 
-        if (isset($this->union_id)) {
+        if (isPresent($this->union_id)) {
             $data['union_name'] = $this->union->name;
         } else {
             $data['union_name'] = '';
