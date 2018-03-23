@@ -72,6 +72,10 @@
 <script src="/pay/js/jquery.min.js"></script>
 <script type="text/javascript">
     $(function(){
+        if (isWeiXin()) {
+            $('.zhifubao_pay_t').show();
+        }
+
         $('.money_pay_list').addClass('selected_pay');
 
         var amount = $('.weixin_cz_selected').data('amount');
@@ -142,10 +146,23 @@
             $('.name_input').val('');
         });
 
+        $('.zhifubao_pay_t').click(function(){
+            $(this).hide();
+        })
+
     });
 
     function smsTip(conetnt) {
         alert(conetnt);
+    }
+
+    function isWeiXin() {
+        var ua = window.navigator.userAgent.toLowerCase();
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 </script>
