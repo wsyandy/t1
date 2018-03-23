@@ -19,6 +19,7 @@
 8. 其他用户详情页面：app://users/other_detail?user_id=xxx
 9. 新的好友列表：app://friends/new?new=1
 10. 好友列表：app://friends
+11. 消息列表页面 app://messages
 
 ## m协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
