@@ -120,10 +120,12 @@ class GiftsController extends BaseController
             $user_gift->status = STATUS_ON;
 
             if ($user_gift->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功');
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功', $user_gift->toSimpleJson());
             }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '设置失败');
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功', $user_gift->toSimpleJson());
     }
 }
