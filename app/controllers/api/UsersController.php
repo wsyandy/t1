@@ -636,6 +636,6 @@ class UsersController extends BaseController
         $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
         $res['changed_rank'] = $res['current_rank'] - $user->myLastFieldRank($list_type, 'wealth');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 }
