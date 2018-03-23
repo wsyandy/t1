@@ -270,6 +270,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
 
+        info(count($manual_hot_rooms));
+
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
             if (!$manual_hot_room->checkRoomSeat()) {
