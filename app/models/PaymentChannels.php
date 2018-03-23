@@ -76,32 +76,41 @@ class PaymentChannels extends BaseModel
      */
     function match($user)
     {
-        debug("user: " . $user->platform);
 
-        if ('weixin_js' == $this->payment_type) {
-            if ($user->isWxPlatform()) {
+        debug("user: ", $user->id, $user->platform, $this->payment_type);
+        if ($user->isWxPlatform()) {
+
+            if (in_array($this->payment_type, ['weixin_js'])) {
                 return true;
             }
+
             return false;
         }
-
 
         $version_code = $user->version_code;
+        if ($user->isAndroid()) {
 
-        if ($this->android_version_code && $user->isAndroid() && $this->android_version_code > $version_code) {
+            if ($this->android_version_code && $user->isAndroid() && $this->android_version_code > $version_code) {
+                return false;
+            }
+
+            if (in_array($this->payment_type, ['weixin', 'alipay_sdk'])) {
+                return true;
+            }
+
             return false;
         }
 
-        if ($this->ios_version_code && $user->isIos() && $this->ios_version_code > $version_code) {
-            return false;
+        if ($user->isIos()) {
+
+            if ($this->ios_version_code && $user->isIos() && $this->ios_version_code > $version_code) {
+                return false;
+            }
+
+            return $this->isApple();
         }
 
-
-        if ($this->isApple()) {
-            return $user->isIos();
-        }
-
-        return $user->isAndroid();
+        return false;
     }
 
     function isWeixinH5()
@@ -133,40 +142,8 @@ class PaymentChannels extends BaseModel
                 }
             }
         }
+        
         return $selected;
     }
 
-
-    static function search($user, $opts = [])
-    {
-
-        $payment_channel_ids = \PaymentChannelProductChannels::findPaymentChannelIdsByProductChannelId($user->product_channel_id);
-
-        if (count($payment_channel_ids) < 1) {
-            return [];
-        }
-
-        $platform = $user->platform;
-
-        if ($user->isClientPlatform()) {
-            $platform = "client_" . $platform;
-        }
-
-        $cond = [
-            'conditions' => '(platforms like :platform: or platforms like "") and status = :status: and id in (' .
-                implode(',', $payment_channel_ids) . ')',
-            'bind' => ['platform' => "%" . $platform . "%", 'status' => STATUS_ON],
-            'order' => 'rank desc'
-        ];
-
-        $payment_channels = PaymentChannels::find($cond);
-
-        $selected = [];
-
-        foreach ($payment_channels as $payment_channel) {
-            $selected[] = $payment_channel;
-        }
-
-        return $selected;
-    }
 }

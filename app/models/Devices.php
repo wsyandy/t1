@@ -402,16 +402,6 @@ class Devices extends BaseModel
         return $this->last_at;
     }
 
-    function isIos()
-    {
-        return preg_match('/ios/i', $this->platform);
-    }
-
-    function isAndroid()
-    {
-        return preg_match('/android/i', $this->platform);
-    }
-
     public function isTouchPlatform()
     {
         if (preg_match('/^(touch_unknow|touch_ios|touch_android)$/i', $this->platform)) {
