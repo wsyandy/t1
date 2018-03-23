@@ -205,6 +205,9 @@ class BaseController extends \ApplicationController
         if ($this->currentUser()->isBlocked()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
         }
+        $is_ios = $this->isIos();
+
+        $this->view->is_ios = $is_ios;
 
         $this->view->title = $this->currentProductChannel()->name;
         $this->view->sid = $this->currentUser()->sid;
