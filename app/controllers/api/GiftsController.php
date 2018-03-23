@@ -105,7 +105,7 @@ class GiftsController extends BaseController
 
         $gift = \Gifts::findById($this->params('gift_id'));
 
-        if ($gift) {
+        if (!$gift) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 

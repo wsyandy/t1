@@ -1001,4 +1001,17 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine($res->raw_body);
     }
+
+    function getUnionInfo()
+    {
+        $unions = Unions::findForeach(['conditions' => 'user_id > 0']);
+
+        foreach ($unions as $union) {
+
+            if ($union->user->union_id != $union->id) {
+                echoLine($union->id, $union->user_id);
+            }
+
+        }
+    }
 }
