@@ -30,7 +30,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
                     && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
-                    
+
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
@@ -172,6 +172,36 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
             Rooms::delay()->activeRoom($room->id);
+        }
+    }
+
+    //压力测试
+    function pressureTestAction($params)
+    {
+        $room_id = $params[0];
+        $user_num = $params[1];
+
+        debug($room_id, $user_num);
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room || $room->user_num >= 500) {
+            return;
+        }
+
+        $users = $room->selectSilentUsers($user_num);
+
+        foreach ($users as $user) {
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 60);
+
+            info($room->id, $user->id, $delay_time);
+            Rooms::addWaitEnterSilentRoomList($user->id);
+            Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
         }
     }
 
