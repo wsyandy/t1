@@ -30,7 +30,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
                     && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
-                    
+
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
@@ -224,6 +224,16 @@ class RoomsTask extends \Phalcon\Cli\Task
             'order' => 'last_at desc',
         ];
 
+        $manual_hot_room_num = 5;
+        $total_num = 10;
+        $least_num = 3;
+
+        if (isProduction()) {
+            $manual_hot_room_num = 10;
+            $total_num = 20;
+            $least_num = 5;
+        }
+
         //总的热门房间
         $total_room_ids = [];
 
@@ -245,7 +255,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $total_room_ids[] = $manual_hot_room->id;
 
             //选10个手动房间
-            if (count($total_room_ids) >= 10) {
+            if (count($total_room_ids) >= $manual_hot_room_num) {
                 break;
             }
         }
@@ -290,16 +300,16 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $total_room_ids[] = $room->id;
 
-            if (count($total_room_ids) >= 20) {
+            if (count($total_room_ids) >= $total_num) {
                 break;
             }
         }
 
         $total_room_num = count($total_room_ids);
 
-        if ($total_room_num < 20) {
+        if ($total_room_num < $total_num) {
 
-            $need_room_num = 20 - $total_room_num;
+            $need_room_num = $total_num - $total_room_num;
 
             if ($hot_cache->zcard(Rooms::getTotalRoomUserNumListKey()) > 0) {
 
@@ -336,7 +346,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                         $num++;
 
-                        if (count($total_room_ids) >= 20) {
+                        if (count($total_room_ids) >= $total_num) {
                             break;
                         }
                     }
@@ -346,13 +356,13 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $total_room_num = count($total_room_ids);
 
-        if ($total_room_num < 8) {
+        if ($total_room_num < $least_num) {
 
             $broadcast_rooms = Rooms::find(
                 [
                     'conditions' => "theme_type = :theme_type:",
                     'bind' => ['theme_type' => ROOM_THEME_TYPE_BROADCAST],
-                    'limit' => 8 - $total_room_num
+                    'limit' => $least_num - $total_room_num
                 ]);
 
             foreach ($broadcast_rooms as $broadcast_room) {
