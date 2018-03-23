@@ -50,7 +50,7 @@ trait UserAttrs
             $data['union_name'] = '';
         }
 
-        if (isset($this->experience)) {
+        if (isPresent($this->experience)) {
             $data['experience'] = $this->experience;
         } else {
             $data['experience'] = 0;

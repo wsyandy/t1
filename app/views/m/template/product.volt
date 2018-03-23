@@ -47,12 +47,12 @@
 </div>
 
 {% if !is_foreign_ip %}
-<div class="discount_tips">
-    <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
-    <span>优惠充值</span>
-    <span>关注公众号</span>
-    <span class="WeChatID"><a href="weixin://">Hi-6888</a></span>
-</div>
+    <div class="discount_tips">
+        <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
+        <span>优惠充值</span>
+        <span>关注公众号</span>
+        <span class="WeChatID">Hi-6888</span>
+    </div>
 {% endif %}
 
 <div class="get_out_btn">

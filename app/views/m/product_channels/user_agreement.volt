@@ -1,7 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/privacy_agreement.css') }}
 {{ block_end() }}
-<a href="weixin://">约玩</a>
 <div class="agreement_box">
     <h2>{{ product_channel.name }}许可及服务协议</h2>
     <h4>1. 前言</h4>
