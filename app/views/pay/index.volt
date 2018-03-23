@@ -135,15 +135,9 @@
             $.post('/pay/create', data, function (resp) {
                 form.data('status', '0');
                 if (0 == resp.error_code) {
-                    redirect_url = '/pay/result?order_no=' + resp.order_no;
-                    js_api_parameters = resp.form;
-                    if ('weixin_js' == resp.payment_type) {//微信支付
-                        wxPay();
-                    } else {
-                        alert(resp.payment_type);
-                    }
+
                 } else {
-                    alert(resp);
+                    alert(resp.error_code);
                 }
             });
 
