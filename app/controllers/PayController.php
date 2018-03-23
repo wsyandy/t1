@@ -76,7 +76,7 @@ class PayController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
 
-        $result_url = '/pay/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
+        $result_url = '/pay/result?order_no=' . $order->order_no;
         $cancel_url = $this->headers('Referer');
 
         $opt = [
@@ -87,7 +87,7 @@ class PayController extends ApplicationController
             'callback_url' => $this->getRoot() . $result_url,
             'product_name' => '订单-' . $order->order_no
         ];
-        
+
         # 返回支付sdk需要的相关信息
         $pay_gateway = $payment_channel->gateway();
         $form = $pay_gateway->buildForm($payment, $opt);
