@@ -292,3 +292,9 @@ h1,h2,h3,h4{
 .discount_tips span.WeChatID{
 	color: #F45189;
 }
+
+.discount_tips a.WeChatID, .discount_tips span.btn_copy{
+	color: #F45189;
+	font-size: 14px;
+	padding:4px;
+}
