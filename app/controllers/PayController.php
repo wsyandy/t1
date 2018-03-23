@@ -29,9 +29,9 @@ class PayController extends ApplicationController
             }
         }
 
+        $pay_user_id = $this->session->get('pay_user_id');
         $this->view->title = '大额充值';
-        $this->view->pay_user_id = $this->session->get('pay_user_id');
-        $this->view->pay_user_name = $this->session->get('pay_user_name');
+        $this->view->pay_user_id = intval($pay_user_id);
         $this->view->products = $products;
         $this->view->product_channel = $product_channel;
         $this->view->payment_channels = $selected_payment_channels;
@@ -76,6 +76,8 @@ class PayController extends ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
         }
 
+        $this->session->set('pay_user_id', $order->user_id);
+
         $result_url = '/pay/result?order_no=' . $order->order_no;
         $cancel_url = $this->headers('Referer');
 
@@ -111,9 +113,6 @@ class PayController extends ApplicationController
 
         $this->view->order = $order;
         $payment = \Payments::findFirstByOrderId($order->id);
-        $this->session->set('pay_user_id', $order->user_id);
-        $this->session->set('pay_user_name', $order->user->nickname);
-
         if (!$payment || !$order->isPaid()) {
             $this->response->redirect('/pay/index?ts=' . time());
             return;

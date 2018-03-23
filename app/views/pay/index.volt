@@ -22,7 +22,7 @@
     </div>
 </div>
 <div class="weixin_chongzhi_top">
-    <input required="required" id="user_id"  type="number" class="name_input" placeholder="请输入您的Hi~ID" />
+    <input required="required" id="user_id"  type="number" class="name_input" value="{{ pay_user_id }}" placeholder="请输入您的Hi~ID" />
     <i class="close_btn"></i>
     <p class="name"></p>
 </div>
