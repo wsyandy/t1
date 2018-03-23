@@ -175,6 +175,36 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    //压力测试
+    function pressureTestAction($params)
+    {
+        $room_id = $params[0];
+        $user_num = $params[1];
+
+        debug($room_id, $user_num);
+        $room = Rooms::findFirstById($room_id);
+
+        if (!$room || $room->user_num >= 500) {
+            return;
+        }
+
+        $users = $room->selectSilentUsers($user_num);
+
+        foreach ($users as $user) {
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            $delay_time = mt_rand(1, 60);
+
+            info($room->id, $user->id, $delay_time);
+            Rooms::addWaitEnterSilentRoomList($user->id);
+            Rooms::delay($delay_time)->enterSilentRoom($room->id, $user->id);
+        }
+    }
+
     //刷新管理员
     function freshManagersAction()
     {
@@ -300,6 +330,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            if ($room->isHot()) {
+                continue;
+            }
+
             $total_room_ids[] = $room->id;
 
             if (count($total_room_ids) >= $total_num) {
@@ -329,6 +363,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                     }
 
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
+
+                    if ($room->isHot()) {
+                        continue;
+                    }
 
                     if ($user_num_room->isForbiddenHot()) {
                         info("isForbiddenHot", $user_num_room_id);
