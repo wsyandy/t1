@@ -41,7 +41,6 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
-            'experience' => $this->experience,
             'id_card_auth' => $this->id_card_auth
         ];
 
@@ -49,6 +48,12 @@ trait UserAttrs
             $data['union_name'] = $this->union->name;
         } else {
             $data['union_name'] = '';
+        }
+
+        if (isset($this->experience)) {
+            $data['experience'] = $this->experience;
+        } else {
+            $data['experience'] = 0;
         }
 
         return $data;
