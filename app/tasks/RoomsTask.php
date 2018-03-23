@@ -286,6 +286,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             //选10个手动房间
             if (count($total_room_ids) >= $manual_hot_room_num) {
+                info($total_room_ids, count($total_room_ids), $manual_hot_room_num);
                 break;
             }
         }
@@ -331,6 +332,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $total_room_ids[] = $room->id;
 
             if (count($total_room_ids) >= $total_num) {
+                info($total_room_ids, count($total_room_ids), $total_num);
                 break;
             }
         }
@@ -377,6 +379,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                         $num++;
 
                         if (count($total_room_ids) >= $total_num) {
+                            info($total_room_ids, count($total_room_ids), $total_num);
                             break;
                         }
                     }
