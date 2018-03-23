@@ -612,7 +612,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
 
         $res['current_rank'] = $user->myFieldRank($list_type, 'charm');
-        $res['changed_rank'] = $res['current_rank'] - $user->myLastFieldRank($list_type, 'charm');
+        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'charm') - $res['current_rank'];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
@@ -634,7 +634,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
 
         $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
-        $res['changed_rank'] = $res['current_rank'] - $user->myLastFieldRank($list_type, 'wealth');
+        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'wealth') - $res['current_rank'];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }

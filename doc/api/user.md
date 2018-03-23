@@ -245,6 +245,10 @@
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
     receive_gift_num 接受的礼物个数
+    next_level_experience 下一级经验值
+    experience 当前经验值
+    union_name 家族名，不存在为空字符
+    id_card_auth 主持认证状态  1已认证
     albums:[
         {
             id,
