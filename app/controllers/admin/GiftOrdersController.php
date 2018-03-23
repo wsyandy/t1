@@ -56,7 +56,7 @@ class GiftOrdersController extends BaseController
 
                 $cond['bind']['room_id'] = $room_user->room_id;
             }
-            
+
         }
 
 

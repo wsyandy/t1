@@ -1358,6 +1358,16 @@ class Rooms extends BaseModel
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
 
+        $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
+        $total_user_num_key = Rooms::getTotalRoomUserNumListKey();
+
+        foreach ($total_room_ids as $room_id) {
+
+            if ($hot_cache->zscore($total_user_num_key, $room_id) < 1) {
+                $hot_cache->zrem($hot_room_list_key, $room_id);
+            }
+        }
+
         $offset = $per_page * ($page - 1);
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
         $rooms = Rooms::findByIds($room_ids);
