@@ -85,7 +85,7 @@
         user_nickname: '接收方昵称'
         sender_id: 2
         sender_nickname: '发送方昵称'
-        
+        amount 礼物金额
     }
 } 
 ````
