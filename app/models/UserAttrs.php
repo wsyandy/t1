@@ -678,11 +678,11 @@ trait UserAttrs
     //用户的座驾
     function getUserCarGift()
     {
-        $exist_user_gift = \UserGifts::findFirstBy(['user_id' => $this->user_id,
+        $exist_user_gift = \UserGifts::findFirstBy(['user_id' => $this->id,
             'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON], 'id desc');
 
         if ($exist_user_gift) {
-            return $exist_user_gift->toJson();
+            return $exist_user_gift->toSimpleJson();
         }
 
         return [];
