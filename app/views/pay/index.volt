@@ -5,7 +5,7 @@
     <title>大额支付</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/pay/css/style.css">
+    <link rel="stylesheet" href="/pay/css/style.css?t=2">
     {{ weixin_js('/js/jquery/1.11.2/jquery.min.js') }}
 
 </head>
@@ -145,7 +145,7 @@
         $('.close_btn').click(function(){
             $('.name_input').val('');
         });
-
+        
 //        $('.zhifubao_pay_t').click(function(){
 //            $(this).hide();
 //        })
