@@ -546,7 +546,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1003380;
+        $user_id = 1001306;
 
         $user = Users::findFirstById($user_id);
         $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];

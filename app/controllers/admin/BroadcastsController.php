@@ -5,6 +5,7 @@
  * Date: 2018/2/8
  * Time: 下午4:18
  */
+
 namespace admin;
 
 class BroadcastsController extends BaseController
@@ -20,13 +21,19 @@ class BroadcastsController extends BaseController
         }
 
         $name = $this->params('name');
-        $cond['conditions'] .= " and name like '%$name%' ";
+
+        if ($name) {
+            $cond['conditions'] .= " and name like '%$name%' ";
+        }
 
         $page = 1;
         $total_page = 1;
         $per_page = 30;
         $total_entries = $total_page * $per_page;
         $cond['order'] = "id desc";
+
+        debug($cond);
+
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->rooms = $rooms;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
