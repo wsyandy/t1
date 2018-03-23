@@ -271,6 +271,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
+        info($total_room_ids, count($total_room_ids));
         foreach ($gift_orders as $gift_order) {
 
             $room = Rooms::findFirstById($gift_order->room_id);
@@ -308,6 +309,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         $total_room_num = count($total_room_ids);
+
+        info($total_room_ids, $total_room_num);
 
         if ($total_room_num < $total_num) {
 
@@ -358,6 +361,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         $total_room_num = count($total_room_ids);
+
+        info($total_room_ids, $total_room_num);
 
         if ($total_room_num < $least_num) {
 
