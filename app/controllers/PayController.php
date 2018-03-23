@@ -31,7 +31,7 @@ class PayController extends ApplicationController
 
         $pay_user_id = $this->session->get('pay_user_id');
         $this->view->title = '大额充值';
-        $this->view->pay_user_id = intval($pay_user_id);
+        $this->view->pay_user_id = $pay_user_id;
         $this->view->products = $products;
         $this->view->product_channel = $product_channel;
         $this->view->payment_channels = $selected_payment_channels;

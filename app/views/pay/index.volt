@@ -88,6 +88,10 @@
             $(this).click(function(){
                 //查找用户
                 var user_id = $('#user_id').val();
+                if(user_id < 1){
+                    alert('请先输入Hi~ID');
+                    return;
+                }
                 $.post('/pay/check_user', {'user_id': user_id}, function (resp) {
                     $(".name").text(resp.nickname);
                 });
