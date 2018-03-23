@@ -1004,12 +1004,18 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function getUnionInfo()
     {
-        $unions = Unions::findForeach(['conditions' => 'user_id > 0']);
+        $user = Users::findFirstById(1010438);
+        $user->user_type = UNION_TYPE_PRIVATE;
+        $user->update();
+        echoLine($user->union_id, $user->union_type);
+        $unions = Unions::findForeach(['conditions' => 'user_id > 0 and status = 1']);
 
         foreach ($unions as $union) {
 
             if ($union->user->union_id != $union->id) {
-                echoLine($union->id, $union->user_id);
+                $union->user->union_id = $union->id;
+                $union->user->update();
+                echoLine($union->id, $union->user_id, $union->user->union_id);
             }
 
         }
