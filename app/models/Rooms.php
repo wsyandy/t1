@@ -54,6 +54,16 @@ class Rooms extends BaseModel
 
     }
 
+    function isHot()
+    {
+        return $this->hot == STATUS_ON;
+    }
+
+    function isForbiddenHot()
+    {
+        return $this->hot == STATUS_FORBIDDEN;
+    }
+
     function isBlocked()
     {
         return $this->status == STATUS_BLOCKED;
@@ -1340,6 +1350,34 @@ class Rooms extends BaseModel
         if ($db->get($key)) {
             return true;
         }
+        return false;
+    }
+
+    static function searchHotRooms($user, $page, $per_page)
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
+        $offset = $per_page * ($page - 1);
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+        $total_entries = $hot_cache->zcard($hot_room_list_key);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
+
+    //判断麦位上没有用户
+    function checkRoomSeat()
+    {
+        $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
+            'bind' => ['room_id' => $this->id]]);
+
+        if ($room_seat) {
+            return true;
+        }
+
         return false;
     }
 }
