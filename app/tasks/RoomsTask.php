@@ -469,7 +469,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
         }
 
-        foreach ($no_amount_room_ids as $no_amount_room_id => $income) {
+        foreach ($no_amount_room_ids as $no_amount_room_id => $user_num) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
         }
@@ -519,7 +519,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
 
-        foreach ($hot_room_ids as $room_id => $income) {
+        foreach ($total_room_ids as $room_id => $income) {
 
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
