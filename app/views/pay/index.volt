@@ -24,23 +24,18 @@
 <div class="weixin_chongzhi_top">
     <input required="required" id="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
     <i class="close_btn"></i>
-    {#<p class="name"> 此ID不存在</p>#}
+    <p class="name"></p>
 </div>
 <div class="weixin_title">选择充值金额</div>
 <div class="weixin_cz_list">
     <ul>
         {% for index,product in products %}
-            {% if index == 0 %}
-                <li class="weixin_cz_selected" id="" data-amount="{{ product.amount }}"  data-product_id="{{ product.id }}">
-                    <i></i>
-                    <span>{{ product.diamond }}</span>
-                </li>
-            {% else %}
-                <li class="" id="" data-amount="{{ product.amount }}" data-product_id="{{ product.id }}">
-                    <i></i>
-                    <span>{{ product.diamond }}</span>
-                </li>
-            {% endif %}
+
+            <li class="" id="" data-amount="{{ product.amount }}" data-product_id="{{ product.id }}">
+                <i></i>
+                <span>{{ product.diamond }}</span>
+            </li>
+
         {% endfor %}
     </ul>
 </div>
@@ -87,6 +82,12 @@
 
         $('.weixin_cz_list ul li').each(function(){
             $(this).click(function(){
+                //查找用户
+                var user_id = $('#user_id').val();
+                $.post('/pay/check_user', {'user_id': user_id}, function (resp) {
+                    $(".name").text(resp.nickname);
+                });
+
                 $(this).addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
                 var amount = $(this).data('amount');
                 $(".amount").text(amount);

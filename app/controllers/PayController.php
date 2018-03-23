@@ -124,4 +124,17 @@ class PayController extends ApplicationController
         $this->view->title = '支付结果';
         $this->view->payment = $payment;
     }
+
+    function checkUserAction()
+    {
+        $user_id = $this->params('user_id');
+        $user = \Users::findFirstById($user_id);
+        $nickname = '此ID不存在';
+        if ($user) {
+            $nickname = $user->nickname;
+        }
+        $result = ['nickname' => $nickname];
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);
+
+    }
 }
