@@ -370,7 +370,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     if (!$user_num_room) {
                         continue;
                     }
-                    
+
                     if ($user_num_room->isHot()) {
                         continue;
                     }
@@ -447,8 +447,31 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         arsort($hot_room_ids);
 
-        foreach ($hot_room_ids as $hot_room_id => $income) {
-            $hot_cache->zadd($hot_room_list_key, $income, $hot_room_id);
+        $has_amount_room_ids = [];
+        $no_amount_room_ids = [];
+
+        foreach ($hot_room_ids as $room_id => $income) {
+
+            if ($income > 0) {
+                $has_amount_room_ids[] = $room_id;
+            } else {
+                $room = Rooms::findFirstById($room_id);
+                $no_amount_room_ids[$room_id] = $room->user_num;
+            }
+        }
+
+        arsort($no_amount_room_ids);
+
+        $time = time();
+
+        foreach ($has_amount_room_ids as $has_amount_room_id) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+        }
+
+        foreach ($no_amount_room_ids as $no_amount_room_id => $income) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
@@ -493,10 +516,33 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         arsort($total_room_ids);
 
-        foreach ($total_room_ids as $total_room_id => $income) {
-            $hot_cache->zadd($hot_room_list_key, $income, $total_room_id);
+        $has_amount_room_ids = [];
+        $no_amount_room_ids = [];
+
+        foreach ($hot_room_ids as $room_id => $income) {
+
+            if ($income > 0) {
+                $has_amount_room_ids[] = $room_id;
+            } else {
+                $room = Rooms::findFirstById($room_id);
+                $no_amount_room_ids[$room_id] = $room->user_num;
+            }
         }
 
-        info($total_room_ids);
+        arsort($no_amount_room_ids);
+
+        $time = time();
+
+        foreach ($has_amount_room_ids as $has_amount_room_id) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+        }
+
+        foreach ($no_amount_room_ids as $no_amount_room_id => $income) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
+        }
+
+        info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
     }
 }
