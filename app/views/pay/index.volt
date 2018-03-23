@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>微信</title>
+    <title>大额支付</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
     <link rel="stylesheet" href="/pay/css/style.css">
@@ -62,6 +62,7 @@
         {% endfor %}
     </ul>
 </div>
+
 <div class="money_pay_question">
     <h3><i></i>温馨提示</h3>
     <p>请到微信公众号：Hi-6888关注最新充值活动信息</p>
@@ -69,10 +70,8 @@
 
 <form action="/pay/create" id="payment_form" method="get" autocomplete="off">
     <input type="hidden" id="payment_channel_id" name="payment_channel_id" value="">
-    <input type="hidden" id="payment_type" name="payment_type" value="">
     <input type="hidden" id="product_id" name="product_id" value="">
     <input type="hidden" id="user_id_hid" name="user_id" value="">
-
 </form>
 
 <script src="/pay/js/jquery.min.js"></script>
@@ -89,7 +88,6 @@
         $('.weixin_cz_list ul li').each(function(){
             $(this).click(function(){
                 $(this).addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
-//                $('.money_pay_list').addClass('selected_pay');
                 var amount = $(this).data('amount');
                 $(".amount").text(amount);
                 var product_id = $(this).data('product_id');
@@ -104,9 +102,6 @@
 
             var payment_channel_id = $(this).data('payment_channel_id');
             $("#payment_channel_id").val(payment_channel_id);
-
-            var payment_type = $(this).data('payment_type');
-            $("#payment_type").val(payment_type);
 
             if (!user_id) {
                 smsTip('请填写正确的HI ID');
@@ -125,46 +120,33 @@
             }
 
             var form = $("#payment_form");
-
             var form_status = form.data('status');
             if (form_status == '1') {
                 return;
             }
+
             form.data('status', '1');
             var data = form.serialize();
             $.post('/pay/create', data, function (resp) {
                 form.data('status', '0');
                 if (0 == resp.error_code) {
-
+                    location.href = resp.url;
                 } else {
                     alert(resp.error_code);
                 }
             });
-
-
-
         });
 
         $('.close_btn').click(function(){
             $('.name_input').val('');
         });
 
-
-
-//        $('.zhifubao_pay_li').click(function(){
-//            $('.zhifubao_pay_t').show();
-//        })
-//        $('.zhifubao_pay_t').click(function(){
-//            $(this).hide();
-//        })
-
     });
-
-
 
     function smsTip(conetnt) {
         alert(conetnt);
     }
+
 </script>
 </body>
 </html>
