@@ -49,13 +49,14 @@ class GiftOrdersController extends BaseController
             if ($room_user->room_id) {
 
                 if (isset($cond['conditions'])) {
-                    $cond['conditions'] .= ' and room_id <=:room_id:';
+                    $cond['conditions'] .= ' and room_id =:room_id:';
                 } else {
-                    $cond['conditions'] = ' room_id <=:room_id:';
+                    $cond['conditions'] = ' room_id =:room_id:';
                 }
 
                 $cond['bind']['room_id'] = $room_user->room_id;
             }
+            
         }
 
 
