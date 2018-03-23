@@ -48,9 +48,18 @@ class RoomsController extends BaseController
             'order' => 'last_at desc, user_type asc'
         ];
 
-        if (isDevelopmentEnv() && STATUS_ON == $hot) {
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        $ip = $this->remoteIp();
+        $ip_list = "permit_ip_list";
+        $hot_cache = \Users::getHotWriteCache();
+        $ips = $hot_cache->zrange($ip_list, 0, -1);
+
+        if (count($ips) > 0) {
+            if (in_array($ip, $ips)) {
+                if (STATUS_ON == $hot) {
+                    $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+                }
+            }
         }
 
         //热门条件
