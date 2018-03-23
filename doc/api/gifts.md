@@ -140,6 +140,9 @@
             dynamic_image_url: ''
             num: 10
             expire_day 过期天数
+            svga_image_name: svga 对应zip包中的图片名称
+            render_type 渲染类型 gif svga
+            svga_image_url svga 图片
         }
         ...
     ]
