@@ -146,9 +146,9 @@
             $('.name_input').val('');
         });
 
-        $('.zhifubao_pay_t').click(function(){
-            $(this).hide();
-        })
+//        $('.zhifubao_pay_t').click(function(){
+//            $(this).hide();
+//        })
 
     });
 
