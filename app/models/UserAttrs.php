@@ -270,11 +270,11 @@ trait UserAttrs
         }
 
         if (isset($this->charm)) {
-            $data['charm'] = $this->charm;
+            $data['charm_value'] = $this->charm;
         }
 
         if (isset($this->wealth)) {
-            $data['wealth'] = $this->wealth;
+            $data['wealth_value'] = $this->wealth;
         }
 
         return $data;
