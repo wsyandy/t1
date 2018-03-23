@@ -128,7 +128,7 @@ class PayController extends ApplicationController
         $user_id = $this->params('user_id');
         $user = \Users::findFirstById($user_id);
         $nickname = '此ID不存在';
-        if ($user) {
+        if ($user && $user->isActive()) {
             $nickname = $user->nickname;
         }
         $result = ['nickname' => $nickname];
