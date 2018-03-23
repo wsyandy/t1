@@ -330,6 +330,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            if ($room->isHot()) {
+                continue;
+            }
+
             $total_room_ids[] = $room->id;
 
             if (count($total_room_ids) >= $total_num) {
@@ -359,6 +363,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                     }
 
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
+
+                    if ($room->isHot()) {
+                        continue;
+                    }
 
                     if ($user_num_room->isForbiddenHot()) {
                         info("isForbiddenHot", $user_num_room_id);

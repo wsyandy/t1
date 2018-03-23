@@ -54,6 +54,11 @@ class Rooms extends BaseModel
 
     }
 
+    function isHot()
+    {
+        return $this->hot == STATUS_ON;
+    }
+
     function isForbiddenHot()
     {
         return $this->hot == STATUS_FORBIDDEN;
