@@ -11,8 +11,8 @@
     <label for="gift_id_eq">礼物ID</label>
     <input name="gift_order[gift_id_eq]" type="text" id="gift_id_eq"/>
 
-    <label for="room_id_eq">房间ID</label>
-    <input name="gift_order[room_id_eq]" type="text" value="{{ room_id }}" id="room_id_eq"/>
+    <label for="room_user_id">房主ID</label>
+    <input name="room_user_id" type="text" value="{{ room_user_id }}" id="room_user_id"/>
 
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>

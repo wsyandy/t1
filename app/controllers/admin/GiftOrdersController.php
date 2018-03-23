@@ -26,6 +26,7 @@ class GiftOrdersController extends BaseController
             }
             $cond['bind']['start_at'] = $start_at;
         }
+
         if ($end_at) {
             $end_at = strtotime($end_at);
             if (isset($cond['conditions'])) {
@@ -36,19 +37,36 @@ class GiftOrdersController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
+        $room_user_id = $this->params('room_user_id', 0);
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
-        $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
-        $this->view->gift_orders = $gift_orders;
 
+        if ($room_user_id) {
+
+            $room_user = \Users::findFirstById($room_user_id);
+
+            if ($room_user->room_id) {
+
+                if (isset($cond['conditions'])) {
+                    $cond['conditions'] .= ' and room_id <=:room_id:';
+                } else {
+                    $cond['conditions'] = ' room_id <=:room_id:';
+                }
+
+                $cond['bind']['room_id'] = $room_user->room_id;
+            }
+        }
+
+        $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $cond['column'] = 'amount';
         $total_amount = \GiftOrders::sum($cond);
 
+        $this->view->gift_orders = $gift_orders;
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
         $this->view->total_amount = $total_amount;
-        $room_id = $this->params('gift_order[room_id_eq]');
-        $this->view->room_id = $room_id ? intval($room_id) : '';
+        $room_user_id = $this->params('room_user_id');
+        $this->view->room_user_id = $room_user_id ? intval($room_user_id) : '';
     }
 
     function detailAction()
