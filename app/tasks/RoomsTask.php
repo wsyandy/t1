@@ -247,13 +247,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
-
-        $cond = [
-            'conditions' => 'hot = :hot: and status = :status: and last_at >= :last_at:',
-            'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON, 'last_at' => time() - 10 * 60],
-            'order' => 'last_at desc',
-        ];
-
+        $last = time() - 10 * 60;
         $manual_hot_room_num = 5;
         $total_num = 10;
         $least_num = 3;
@@ -262,7 +256,14 @@ class RoomsTask extends \Phalcon\Cli\Task
             $manual_hot_room_num = 10;
             $total_num = 20;
             $least_num = 5;
+            $last = time() - 5 * 60;
         }
+
+        $cond = [
+            'conditions' => 'hot = :hot: and status = :status: and last_at >= :last_at:',
+            'bind' => ['hot' => STATUS_ON, 'status' => STATUS_ON, 'last_at' => $last],
+            'order' => 'last_at desc',
+        ];
 
         //总的热门房间
         $total_room_ids = [];
@@ -366,6 +367,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
 
+                    if (!$room) {
+                        continue;
+                    }
+                    
                     if ($room->isHot()) {
                         continue;
                     }
@@ -431,8 +436,12 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $income = GiftOrders::sum($cond);
 
+            info($income);
+
             $hot_room_ids[$room_id] = $income;
         }
+
+        info($hot_room_ids);
 
         $hot_cache->zclear($hot_room_list_key);
 
@@ -466,17 +475,17 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $cond = [
-                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $hot_room_id],
-                'column' => 'amount'
-            ];
-
             if ($hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
                 info("lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 continue;
             }
+
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $hot_room_id],
+                'column' => 'amount'
+            ];
 
             $income = GiftOrders::sum($cond);
             $total_room_ids[$hot_room_id] = $income;
