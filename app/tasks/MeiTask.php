@@ -995,5 +995,9 @@ class MeiTask extends \Phalcon\Cli\Task
         $res = httpGet($url, ['access_token' => '3B46F3B3FD190B9A4B21AFFE16149AAA', 'unionid' => 1], ['Content-Type' => 'text/json']);
 
         echoLine($res->raw_body);
+
+        $user = Users::findFirstById(1001315);
+        $user->sex = 0;
+        $user->update();
     }
 }
