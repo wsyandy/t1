@@ -65,7 +65,12 @@ class WeixinEvents extends WeixinBaseEvents
     function subscribeMessageText()
     {
 
-        $content = '欢迎关注' . $this->product_channel->name;
+        if ($this->product_channel->weixin_welcome) {
+            $content = $this->product_channel->weixin_welcome;
+        } else {
+            $content = '欢迎关注' . $this->product_channel->name;
+        }
+
         return ['msg_type' => 'text', 'content' => $content];
     }
 
