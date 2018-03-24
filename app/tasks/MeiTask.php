@@ -1033,4 +1033,75 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine(count($gift_orders));
     }
+
+    function readExceWordAction()
+    {
+        $file = APP_ROOT . "doc/words/word1.xlsx";
+        $word_arrays = readExcel($file);
+
+        foreach ($word_arrays as $word_array) {
+            if (isset($word_array[3])) {
+                $word = $word_array[3];
+                $word = trim($word);
+
+                if (!$word) {
+                    echoLine("=====");
+                    continue;
+                }
+
+                echoLine($word);
+
+                $banned_word = BannedWords::findFirstByWord($word);
+
+                if ($banned_word) {
+                    continue;
+                }
+
+                $new_banned_word = new BannedWords();
+                $new_banned_word->word = $word;
+                $new_banned_word->save();
+            }
+        }
+    }
+
+    function readTextAction()
+    {
+        $files = [];
+
+        foreach (glob(APP_ROOT . 'doc/words/*.txt') as $filename) {
+            $basename = basename($filename);
+            $files[] = $basename;
+        }
+
+        foreach ($files as $file) {
+
+            $file = APP_ROOT . "doc/words/" . $file;
+            
+            $f = fopen($file, 'r');
+
+            while ($word = fgets($f)) {
+
+                $word = trim($word);
+
+                if (!$word) {
+                    echoLine("=====");
+                    continue;
+                }
+
+                echoLine($word);
+
+                $banned_word = BannedWords::findFirstByWord($word);
+
+                if ($banned_word) {
+                    continue;
+                }
+
+                $new_banned_word = new BannedWords();
+                $new_banned_word->word = $word;
+                $new_banned_word->save();
+            }
+
+            fclose($f);
+        }
+    }
 }
