@@ -169,12 +169,29 @@ class Rooms extends BaseModel
     function updateRoom($params)
     {
         $name = fetch($params, 'name');
+
         if (!isBlank($name)) {
+
+            list($res, $name) = BannedWords::checkWord($name);
+
+            if ($res) {
+                Chats::sendTextSystemMessage($this->user_id, "您设置的房间名称违反规则,请及时修改");
+            }
+
             $this->name = $name;
         }
 
+
         $topic = fetch($params, 'topic');
+
         if (!isBlank($topic)) {
+
+            list($res, $topic) = BannedWords::checkWord($topic);
+
+            if ($res) {
+                Chats::sendTextSystemMessage($this->user_id, "您设置的房间话题违反规则,请及时修改");
+            }
+
             $this->topic = $topic;
         }
 

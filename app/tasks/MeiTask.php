@@ -1076,7 +1076,7 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($files as $file) {
 
             $file = APP_ROOT . "doc/words/" . $file;
-            
+
             $f = fopen($file, 'r');
 
             while ($word = fgets($f)) {
@@ -1103,5 +1103,12 @@ class MeiTask extends \Phalcon\Cli\Task
 
             fclose($f);
         }
+    }
+
+    function bannedWordAction()
+    {
+        $res = BannedWords::checkWord("淫");
+        echoLine($res);
+
     }
 }
