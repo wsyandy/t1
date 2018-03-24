@@ -275,6 +275,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
+            if (!$manual_hot_room->checkRoomSeat()) {
+                info("room_seat_is_null", $manual_hot_room->id);
+                continue;
+            }
+
             if ($manual_hot_room->getRealUserNum() < 5) {
                 info("room_no_user", $manual_hot_room->id);
                 continue;
@@ -311,6 +316,11 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if (!$room) {
                 info($gift_order->room_id);
+                continue;
+            }
+
+            if (!$room->checkRoomSeat()) {
+                info("room_seat_is_null", $room->id);
                 continue;
             }
 
@@ -373,6 +383,11 @@ class RoomsTask extends \Phalcon\Cli\Task
                     $user_num_room = Rooms::findFirstById($user_num_room_id);
 
                     if (!$user_num_room) {
+                        continue;
+                    }
+
+                    if (!$user_num_room->checkRoomSeat()) {
+                        info("room_seat_is_null", $user_num_room->id);
                         continue;
                     }
 
@@ -513,6 +528,11 @@ class RoomsTask extends \Phalcon\Cli\Task
             if ($hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
                 info("lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
+                continue;
+            }
+
+            if (!$hot_room->checkRoomSeat()) {
+                info("room_seat_is_null", $hot_room->id);
                 continue;
             }
 
