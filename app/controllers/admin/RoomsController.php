@@ -357,4 +357,22 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_FAIL, '清除失败');
     }
+
+    function autoHotAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+
+        foreach ($rooms as $room) {
+            if ($room->hot == STATUS_ON) {
+                $room->auto_hot = 0;
+            } else {
+                $room->auto_hot = 1;
+            }
+        }
+
+        $this->view->rooms = $rooms;
+        $this->view->total_entries = $rooms->total_entries;
+    }
 }

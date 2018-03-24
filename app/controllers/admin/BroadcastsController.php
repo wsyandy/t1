@@ -15,9 +15,9 @@ class BroadcastsController extends BaseController
         $cond = $this->getConditions('room');
 
         if (isset($cond['conditions'])) {
-            $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+            $cond['conditions'] .= " and (theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_BROADCAST . ")";
         } else {
-            $cond['conditions'] = "theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+            $cond['conditions'] = "(theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_BROADCAST . ")";
         }
 
         $name = $this->params('name');
@@ -114,6 +114,7 @@ class BroadcastsController extends BaseController
     {
         $user_id = $this->params('user_id');
         $user = \Users::findFirstById($user_id);
+
         if ($this->request->isPost()) {
             $sex = $this->params('user[sex]');
             $nickname = $this->params('user[nickname]');
@@ -124,7 +125,6 @@ class BroadcastsController extends BaseController
             if ($avatar) {
                 $user->updateAvatar($avatar);
             }
-//            $this->assign($user, 'user');
 
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
             if ($user->update()) {
@@ -133,6 +133,7 @@ class BroadcastsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
             }
         }
+
         $this->view->user_id = $user_id;
         $this->view->user = $user;
     }
@@ -141,6 +142,7 @@ class BroadcastsController extends BaseController
     {
         $seat_id = $this->params('seat_id');
         $room_seat = \RoomSeats::findFirstById($seat_id);
+
         if ($this->request->isPost()) {
             $room_id = $room_seat->room_id;
             $room = \Rooms::findFirstById($room_id);
@@ -158,12 +160,14 @@ class BroadcastsController extends BaseController
             $room_seat->status = $status;
             $room_seat->microphone = $microphone;
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room_seat);
+
             if ($room_seat->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms/room_seats?id=' . $room_id]);
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
             }
         }
+
         $this->view->seat_id = $seat_id;
         $this->view->room_seat = $room_seat;
         $this->view->microphone = [true => '允许', false => '禁止'];
