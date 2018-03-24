@@ -18,8 +18,9 @@ class WithdrawHistoriesController extends BaseController
         $total_entries = $per_page * $total_page;
         $cond = $this->getConditions('withdraw_history');
 
-        $start_at = $this->params('start_at', date('Y-m-d H:i:s', beginOfDay()));
-        $end_at = $this->params('end_at', date('Y-m-d H:i:s', endOfDay()));
+        $start_at = $this->params('start_at');
+        $end_at = $this->params('end_at');
+
         if ($start_at) {
             $start_at = beginOfDay(strtotime($start_at));
             if (isset($cond['conditions'])) {
@@ -29,19 +30,18 @@ class WithdrawHistoriesController extends BaseController
             }
             $cond['bind']['start_at'] = $start_at;
         }
+
         if ($end_at) {
+
             $end_at = endOfDay(strtotime($end_at));
+
             if (isset($cond['conditions'])) {
                 $cond['conditions'] .= ' and created_at <=:end_at:';
             } else {
                 $cond['conditions'] = ' created_at <=:end_at:';
             }
-            $cond['bind']['end_at'] = $end_at;
-        }
 
-        $status_eq = $this->params('withdraw_history[status_eq]');
-        if ($status_eq == null) {
-            $cond['conditions'] .= ' and status = ' . WITHDRAW_STATUS_WAIT;
+            $cond['bind']['end_at'] = $end_at;
         }
 
         debug($cond);
@@ -50,9 +50,12 @@ class WithdrawHistoriesController extends BaseController
 
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
-        $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->start_at = date("Y-m-d", $start_at);
         $this->view->end_at = date("Y-m-d", $end_at);
+        $this->view->user_name = $this->params('withdraw_history[user_name_eq]');
+        $this->view->id = $this->params('withdraw_history[id_eq]');
+        $this->view->status = intval($this->params('withdraw_history[status_eq]'));
     }
 
     function editAction()
