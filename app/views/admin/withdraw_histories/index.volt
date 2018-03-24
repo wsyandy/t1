@@ -7,6 +7,11 @@
     <label for="id_eq">ID</label>
     <input name="withdraw_history[id_eq]" type="text" id="id_eq"/>
 
+    <label for="status_eq">提现状态</label>
+    <select name="withdraw_history[status_eq]" id="status_eq">
+        {{ options(WithdrawHistories.STATUS) }}
+    </select>
+
     <label for="user_name_eq">用户昵称</label>
     <input name="withdraw_history[user_name_eq]" type="text" id="user_name_eq"/>
 
@@ -17,6 +22,20 @@
 
     <button type="submit" class="ui button">搜索</button>
 </form>
+
+{% if isAllowed('withdraw_histories', 'export') %}
+    <form action="/admin/withdraw_histories/export" target="_blank" method="get" class="search_form"
+          autocomplete="off">
+        <label for="start_at">开始时间</label>
+        <input type="text" name="start_at" class="form_datetime" id="start_at" value="{{ start_at }}" size="16">
+
+        <label for="end_at">结束时间</label>
+        <input type="text" name="end_at" class="form_datetime" id="end_at" value="{{ end_at }}" size="16">
+
+        <button type="submit" class="ui button">导出</button>
+    </form>
+{% endif %}
+
 {%- macro oper_link(withdraw_histories) %}
     {% if(withdraw_histories.status == 0) %}
         <a href="/admin/withdraw_histories/edit/{{ withdraw_histories.id }}" class="modal_action">编辑</a>
@@ -51,4 +70,14 @@
         minView: "month"
     });
     $('.selectpicker').selectpicker();
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        {% for withdraw_history in withdraw_histories %}
+        {% if withdraw_history.status == 2 %}
+        $("#withdraw_history_{{ withdraw_history.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
 </script>

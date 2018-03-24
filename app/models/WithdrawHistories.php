@@ -188,4 +188,24 @@ class WithdrawHistories extends BaseModel
 
         return false;
     }
+
+    static function exportData($export_history_id, $cond)
+    {
+        debug($cond);
+        $withdraw_histories = self::find($cond);
+        $titles = ['姓名', '支付宝账号', '提现金额'];
+        $data = [];
+        foreach ($withdraw_histories as $withdraw_history) {
+            $data[] = [$withdraw_history->user_name, $withdraw_history->alipay_account, $withdraw_history->amount];
+        }
+        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+        $uri = writeExcel($titles, $data, $temp_file, true);
+
+        if ($uri) {
+            $export_history = ExportHistories::findFirstById($export_history_id);
+            $export_history->file = $uri;
+            $export_history->save();
+        }
+    }
+
 }
