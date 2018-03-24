@@ -1,0 +1,1 @@
+{% include "/admin/banned_words/form.volt" %}

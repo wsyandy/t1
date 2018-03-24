@@ -1047,6 +1047,32 @@ class Users extends BaseModel
                 continue;
             }
 
+            if ('nickname' == $k) {
+
+                list($res, $v) = BannedWords::checkWord($v);
+
+                if ($res) {
+                    Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
+                }
+
+                $this->nickname = $v;
+
+                continue;
+            }
+
+            if ('monologue' == $k) {
+
+                list($res, $v) = BannedWords::checkWord($v);
+
+                if ($res) {
+                    Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
+                }
+
+                $this->monologue = $v;
+
+                continue;
+            }
+
             if ('province_name' == $k) {
                 $province = Provinces::findFirstByName($v);
                 if ($province) {

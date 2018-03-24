@@ -549,8 +549,8 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_id = 1001306;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 5000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 5000, $opts);
+        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()
@@ -759,11 +759,6 @@ class MeiTask extends \Phalcon\Cli\Task
 
 
         $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
-
-        $room = Rooms::findFirstById(1003137);
-        $hot_cache = Rooms::getHotWriteCache();
-        $key = $room->getUserListKey();
-        echoLine($hot_cache->zrange($key, 0, -1, true));
     }
 
     function initRoomRealNumAction()
@@ -1006,26 +1001,6 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->update();
     }
 
-    function getUnionInfo()
-    {
-        $user = Users::findFirstById(1010438);
-        $user->user_type = UNION_TYPE_PRIVATE;
-        $user->update();
-        echoLine($user->union_id, $user->union_type);
-        $unions = Unions::findForeach(['conditions' => 'user_id > 0 and status = 1']);
-
-        foreach ($unions as $union) {
-
-            if ($union->user->union_id != $union->id) {
-                $union->user->union_id = $union->id;
-                $union->user->update();
-                echoLine($union->id, $union->user_id, $union->user->union_id);
-            }
-
-        }
-
-    }
-
     function fixUserGiftAction()
     {
         $gift_orders = GiftOrders::findBy(['gift_id' => 8, 'name' => 'YSL口红']);
@@ -1058,5 +1033,82 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine(count($gift_orders));
     }
-    
+
+    function readExceWordAction()
+    {
+        $file = APP_ROOT . "doc/words/word1.xlsx";
+        $word_arrays = readExcel($file);
+
+        foreach ($word_arrays as $word_array) {
+            if (isset($word_array[3])) {
+                $word = $word_array[3];
+                $word = trim($word);
+
+                if (!$word) {
+                    echoLine("=====");
+                    continue;
+                }
+
+                echoLine($word);
+
+                $banned_word = BannedWords::findFirstByWord($word);
+
+                if ($banned_word) {
+                    continue;
+                }
+
+                $new_banned_word = new BannedWords();
+                $new_banned_word->word = $word;
+                $new_banned_word->save();
+            }
+        }
+    }
+
+    function readTextAction()
+    {
+        $files = [];
+
+        foreach (glob(APP_ROOT . 'doc/words/*.txt') as $filename) {
+            $basename = basename($filename);
+            $files[] = $basename;
+        }
+
+        foreach ($files as $file) {
+
+            $file = APP_ROOT . "doc/words/" . $file;
+
+            $f = fopen($file, 'r');
+
+            while ($word = fgets($f)) {
+
+                $word = trim($word);
+
+                if (!$word) {
+                    echoLine("=====");
+                    continue;
+                }
+
+                echoLine($word);
+
+                $banned_word = BannedWords::findFirstByWord($word);
+
+                if ($banned_word) {
+                    continue;
+                }
+
+                $new_banned_word = new BannedWords();
+                $new_banned_word->word = $word;
+                $new_banned_word->save();
+            }
+
+            fclose($f);
+        }
+    }
+
+    function bannedWordAction()
+    {
+        $res = BannedWords::checkWord("淫");
+        echoLine($res);
+
+    }
 }
