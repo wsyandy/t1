@@ -12,16 +12,14 @@ class WithdrawHistoriesController extends BaseController
 {
     function indexAction()
     {
-
         $page = 1;
         $per_page = 30;
         $total_page = 1;
         $total_entries = $per_page * $total_page;
         $cond = $this->getConditions('withdraw_history');
 
-        $start_at = $this->params('start_at');
-        $end_at = $this->params('end_at');
-        debug($start_at, $end_at);
+        $start_at = $this->params('start_at', date('Y-m-d H:i:s', beginOfDay()));
+        $end_at = $this->params('end_at', date('Y-m-d H:i:s', endOfDay()));
         if ($start_at) {
             $start_at = beginOfDay(strtotime($start_at));
             if (isset($cond['conditions'])) {
@@ -41,14 +39,20 @@ class WithdrawHistoriesController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
-        $cond['order'] = 'id desc';
+        $status_eq = $this->params('withdraw_history[status_eq]');
+        if ($status_eq == null) {
+            $cond['conditions'] .= ' and status = ' . WITHDRAW_STATUS_WAIT;
+        }
+
         debug($cond);
+
+        $cond['order'] = 'id desc';
 
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
         $this->view->product_channels = \ProductChannels::find(['withdraw_historie' => 'id desc']);
-        $this->view->start_at = $this->params('start_at');
-        $this->view->end_at = $this->params('end_at');
+        $this->view->start_at = date("Y-m-d", $start_at);
+        $this->view->end_at = date("Y-m-d", $end_at);
     }
 
     function editAction()
@@ -81,5 +85,40 @@ class WithdrawHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
     }
+
+    function exportAction()
+    {
+
+        $start_at = $this->params('start_at', date('Y-m-d'));
+        $end_at = $this->params('end_at', date('Y-m-d'));
+
+        $start_at_time = beginOfDay(strtotime($start_at));
+        $end_at_time = endOfDay(strtotime($end_at));
+
+        if ($end_at_time - $start_at_time > 60 * 60 * 24 * 32) {
+            $this->renderJSON(ERROR_CODE_FAIL, '时间跨度最大一个月');
+            return;
+        }
+
+        $cond = ['conditions' => ' created_at >= :start_at: and created_at <= :end_at: ',
+            'bind' => ['start_at' => $start_at_time, 'end_at' => $end_at_time],
+            'order' => 'id desc'
+        ];
+
+        $export_history = new \ExportHistories();
+        $export_history->operator_id = $this->currentOperator()->id;
+        $export_history->name = '提现统计';
+        $export_history->table_name = 'WithdrawHistories';
+        $export_history->conditions = json_encode($cond['bind'], JSON_UNESCAPED_UNICODE);
+        $export_history->download_num = 1;
+        $export_history->save();
+
+        \WithdrawHistories::delay()->exportData($export_history->id, $cond);
+
+        $this->response->redirect('/admin/export_histories/download?id=' . $export_history->id);
+
+        $this->view->disable;
+    }
+
 
 }
