@@ -275,7 +275,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
-            if ($manual_hot_room->getRealUserNum() < 1) {
+            if ($manual_hot_room->getRealUserNum() < 5) {
                 info("room_no_user", $manual_hot_room->id);
                 continue;
             }
