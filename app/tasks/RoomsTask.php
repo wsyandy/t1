@@ -299,7 +299,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
 
-        $start = time() - 11 * 60;
+        $start = time() - 31 * 60;
         $end = time() - 60;
 
         $cond = [
@@ -512,7 +512,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
 
-        $start = time() - 11 * 60;
+        $start = time() - 31 * 60;
         $end = time() - 60;
 
         foreach ($hot_room_ids as $hot_room_id) {
