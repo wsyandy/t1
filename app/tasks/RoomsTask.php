@@ -448,8 +448,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         info($hot_room_ids);
 
-        $hot_cache->zclear($hot_room_list_key);
-
         arsort($hot_room_ids);
 
         $has_amount_room_ids = [];
@@ -467,6 +465,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         arsort($no_amount_room_ids);
 
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+
         $time = time();
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
@@ -480,6 +482,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
+
+        unlock($lock);
     }
 
     //热门房间排序
@@ -539,6 +543,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $time = time();
 
+        $lock = tryLock($hot_room_list_key, 1000);
+
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
@@ -550,5 +556,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
+
+        unlock($lock);
     }
 }
