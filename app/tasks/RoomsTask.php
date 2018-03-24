@@ -247,7 +247,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
-        $last = time() - 10 * 60;
+        $last = time() - 5 * 60;
         $manual_hot_room_num = 5;
         $total_num = 10;
         $least_num = 3;
@@ -255,8 +255,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         if (isProduction()) {
             $manual_hot_room_num = 10;
             $total_num = 20;
-            $least_num = 5;
-            $last = time() - 5 * 60;
+            $least_num = 8;
+            $last = time() - 10 * 60;
         }
 
         $cond = [
@@ -275,8 +275,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
-            if (!$manual_hot_room->checkRoomSeat()) {
-                info("room_seat_is_null", $manual_hot_room->id);
+            if ($manual_hot_room->user_num < 1) {
+                info("room_no_user", $manual_hot_room->id);
                 continue;
             }
 
@@ -319,8 +319,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if (!$room->checkRoomSeat()) {
-                info("room_seat_is_null", $room->id);
+            if ($room->user_num < 1) {
+                info("room_no_user", $room->id);
                 continue;
             }
 
@@ -355,11 +355,16 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if ($hot_cache->zcard(Rooms::getTotalRoomUserNumListKey()) > 0) {
 
-                $user_num_room_ids = $hot_cache->zrange(Rooms::getTotalRoomUserNumListKey(), 0, -1);
-
+                $hot_cache = Users::getHotWriteCache();
+                $user_num_room_ids = $hot_cache->zrevrange(Rooms::getTotalRoomUserNumListKey(), 0, -1, true);
+                echoLine($user_num_room_ids);
                 $num = 1;
 
-                foreach ($user_num_room_ids as $user_num_room_id) {
+                foreach ($user_num_room_ids as $user_num_room_id => $user_room_num) {
+
+                    if ($user_room_num < 5) {
+                        break;
+                    }
 
                     if ($num > $need_room_num) {
                         break;
@@ -380,8 +385,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
-                    if (!$user_num_room->checkRoomSeat()) {
-                        info("room_seat_is_null", $user_num_room->id);
+                    if ($user_num_room->user_num < 1) {
+                        info("room_no_user", $user_num_room->id);
                         continue;
                     }
 
@@ -443,8 +448,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         info($hot_room_ids);
 
-        $hot_cache->zclear($hot_room_list_key);
-
         arsort($hot_room_ids);
 
         $has_amount_room_ids = [];
@@ -462,6 +465,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         arsort($no_amount_room_ids);
 
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+
         $time = time();
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
@@ -475,6 +482,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
+
+        unlock($lock);
     }
 
     //热门房间排序
@@ -482,6 +491,8 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
+
+        $lock = tryLock($hot_room_list_key, 1000);
 
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
@@ -493,7 +504,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if (!$hot_room->checkRoomSeat()) {
+            if ($hot_room->user_num < 1) {
+                $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
             }
@@ -544,5 +556,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
+
+        unlock($lock);
     }
 }

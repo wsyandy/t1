@@ -5,7 +5,7 @@
     <title>大额支付</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/pay/css/style.css">
+    <link rel="stylesheet" href="/pay/css/style.css?t=2">
     {{ weixin_js('/js/jquery/1.11.2/jquery.min.js') }}
 
 </head>
@@ -13,7 +13,7 @@
 <!-- 支付宝支付提示 -->
 <div class="zhifubao_pay_t">
     <div class="share_box">
-        <h2>只需两步即可选择支付宝支付：</h2>
+        <h2>只需两步即可完成支付：</h2>
         <img src="/pay/images/share.png" class="share">
         <div class="share_text">
             <p><i class="one"></i>点击右上角的<img src="/pay/images/share_icon.png" class="share_icon">按钮</p>
@@ -22,7 +22,7 @@
     </div>
 </div>
 <div class="weixin_chongzhi_top">
-    <input required="required" id="user_id"  type="text" class="name_input" placeholder="请输入您的Hi~ID" />
+    <input required="required" id="user_id"  type="number" class="name_input" value="{{ pay_user_id }}" placeholder="请输入您的Hi~ID" />
     <i class="close_btn"></i>
     <p class="name"></p>
 </div>
@@ -88,6 +88,10 @@
             $(this).click(function(){
                 //查找用户
                 var user_id = $('#user_id').val();
+                if(user_id < 1){
+                    alert('请先输入Hi~ID');
+                    return;
+                }
                 $.post('/pay/check_user', {'user_id': user_id}, function (resp) {
                     $(".name").text(resp.nickname);
                 });
@@ -146,9 +150,9 @@
             $('.name_input').val('');
         });
 
-        $('.zhifubao_pay_t').click(function(){
-            $(this).hide();
-        })
+//        $('.zhifubao_pay_t').click(function(){
+//            $(this).hide();
+//        })
 
     });
 
