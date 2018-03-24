@@ -32,6 +32,7 @@
             dynamic_image_url: 'https://gifts/dynamic'
             amount: 100
             pay_type: 'diamond/gold' 钻石 diamond gold金币
+            gift_type: 1 普通礼物 2 座驾
             svga_image_name: svga 对应zip包中的图片名称
             render_type 渲染类型 gif svga
             svga_image_url svga 图片

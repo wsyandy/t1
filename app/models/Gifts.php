@@ -186,6 +186,7 @@ class Gifts extends BaseModel
             'name' => $this->name,
             'amount' => $this->amount,
             'pay_type' => $this->pay_type,
+            'gift_type' => $this->type,
             'dynamic_image_url' => $this->dynamic_image_url,
             'svga_image_name' => $this->svga_image_name,
             'render_type' => $this->render_type,
