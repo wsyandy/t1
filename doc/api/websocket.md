@@ -255,3 +255,11 @@
         }
     }
 ```   
+
+   #### 房间通知信息
+```
+    {
+        action: room_notice 房间通知信息
+        message: string "" 信息内容
+    }
+```   
