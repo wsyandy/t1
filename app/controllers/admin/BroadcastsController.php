@@ -15,9 +15,9 @@ class BroadcastsController extends BaseController
         $cond = $this->getConditions('room');
 
         if (isset($cond['conditions'])) {
-            $cond['conditions'] .= " and (theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_BROADCAST . ")";
+            $cond['conditions'] .= " and (theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_USER_BROADCAST . ")";
         } else {
-            $cond['conditions'] = "(theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_BROADCAST . ")";
+            $cond['conditions'] = "(theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_USER_BROADCAST . ")";
         }
 
         $name = $this->params('name');
