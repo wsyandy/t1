@@ -1000,4 +1000,37 @@ class MeiTask extends \Phalcon\Cli\Task
         $user->sex = 0;
         $user->update();
     }
+
+    function fixUserGiftAction()
+    {
+        $gift_orders = GiftOrders::findBy(['gift_id' => 8, 'name' => 'YSL口红']);
+
+        foreach ($gift_orders as $gift_order) {
+
+            $user = $gift_order->user;
+            $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift_order->gift_id]);
+
+            if ($user_gift) {
+                $fix_user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => 27]);
+
+                if ($fix_user_gift) {
+                    $fix_user_gift->num += $user_gift->num;
+                    $fix_user_gift->total_amount += $user_gift->total_amount;
+                    $fix_user_gift->update();
+                    $user_gift->delete();
+
+                } else {
+
+                    $user_gift->gift_id = 27;
+                    $user_gift->update();
+                    echoLine($user->id);
+                }
+            }
+
+            $gift_order->gift_id = 27;
+            $gift_order->update();
+        }
+
+        echoLine(count($gift_orders));
+    }
 }
