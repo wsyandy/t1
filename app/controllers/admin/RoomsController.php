@@ -219,6 +219,15 @@ class RoomsController extends BaseController
                 $body = ['action' => $action, 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
             }
 
+            if ($action == 'room_notice') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                $body = ['action' => $action, 'channel_name' => $room->channel_name, 'content' => $content];
+            }
+
             if ($action == 'hang_up') {
 
                 if (!$sender->isCalling()) {
@@ -244,7 +253,7 @@ class RoomsController extends BaseController
         }
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
-            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话'
+            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知'
         ];
         $this->view->room = $room;
     }

@@ -260,6 +260,7 @@
 ```
     {
         action: room_notice 房间通知信息
-        message: string "" 信息内容
+        channel_name 房间频道
+        content: string "" 信息内容
     }
 ```   
