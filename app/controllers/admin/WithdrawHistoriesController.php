@@ -109,10 +109,8 @@ class WithdrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        if ($status) {
-            $cond['conditions'] .= " and status = :status:";
-            $cond['bind']['status'] = $status;
-        }
+        $cond['conditions'] .= " and status = :status:";
+        $cond['bind']['status'] = $status;
 
         $export_history = new \ExportHistories();
         $export_history->operator_id = $this->currentOperator()->id;
