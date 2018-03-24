@@ -183,7 +183,8 @@ class UserGifts extends BaseModel
             'render_type' => $this->gift_render_type,
             'svga_image_url' => $this->gift_svga_image_url,
             'show_rank' => $this->gift_show_rank,
-            'status' => $this->status
+            'status' => $this->status,
+            'expire_at' => $this->gift->expire_at
         ];
     }
 

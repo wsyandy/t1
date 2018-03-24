@@ -37,7 +37,6 @@
             svga_image_url svga 图片
             expire_day int 有效天数
             show_rank int 礼物展示排序
-        }
     ],
     products: [
         {
@@ -88,6 +87,8 @@
         sender_nickname: '发送方昵称'
         amount 礼物金额
         show_rank int 礼物展示排序
+        expire_at int 礼物过期时间
+        created_at int 礼物创建时间
     }
 } 
 ````

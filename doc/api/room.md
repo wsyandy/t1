@@ -189,6 +189,8 @@
         render_type 渲染类型 gif svga
         svga_image_url svga 图片
         show_rank int 礼物展示排序
+        expire_at int 礼物过期时间
+        created_at int 礼物创建时间
      }      		   
 }
 ```
