@@ -97,6 +97,11 @@ class Rooms extends BaseModel
         ];
     }
 
+    function toDetailJson()
+    {
+        $opts = [];
+    }
+
     function toBasicJson()
     {
         return ['id' => $this->id, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
