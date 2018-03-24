@@ -114,7 +114,15 @@ class RoomsController extends BaseController
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
-        if ($user_id) {
+        if ($room_id) {
+
+            $room = \Rooms::findFirstById($room_id);
+
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+
+        } else {
 
             $user = \Users::findFirstById($user_id);
 
@@ -123,18 +131,10 @@ class RoomsController extends BaseController
             }
 
             $room = $user->current_room;
-        } else {
-            $room = \Rooms::findFirstById($room_id);
-
-            if (!$room) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-            }
-
-            $user = $this->currentUser();
         }
 
         //如果不是房主
-        if (!$user->isRoomHost($room)) {
+//        if (!$this->currentUser()->isRoomHost($room)) {
 
             //房主不在房间且当前用户不在房间
 //            if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
@@ -142,10 +142,10 @@ class RoomsController extends BaseController
 //            }
 
             //房间内没有人
-            if ($room->user_num < 1) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
-            }
-        }
+//            if ($room->user_num < 1) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
+//            }
+//        }
 
         if ($room->isForbidEnter($this->currentUser())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
@@ -153,8 +153,8 @@ class RoomsController extends BaseController
 
         $current_user_id = $this->currentUser()->id;
         $current_room_id = $this->currentUser()->current_room_id;
-        //房间加锁并且不是房主且用户不在这个房间检验密码
 
+        //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
         if (!$room->checkFilterUser($current_user_id)) {
             if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && $room->password != $password) {
                 return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
