@@ -94,6 +94,7 @@ class WithdrawHistoriesController extends BaseController
 
         $start_at = $this->params('start_at', date('Y-m-d'));
         $end_at = $this->params('end_at', date('Y-m-d'));
+        $status = $this->params('status', date('Y-m-d'));
 
         $start_at_time = beginOfDay(strtotime($start_at));
         $end_at_time = endOfDay(strtotime($end_at));
@@ -107,6 +108,11 @@ class WithdrawHistoriesController extends BaseController
             'bind' => ['start_at' => $start_at_time, 'end_at' => $end_at_time],
             'order' => 'id desc'
         ];
+
+        if ($status) {
+            $cond['conditions'] .= " and status = :status:";
+            $cond['bind']['status'] = $status;
+        }
 
         $export_history = new \ExportHistories();
         $export_history->operator_id = $this->currentOperator()->id;
