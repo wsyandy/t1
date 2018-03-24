@@ -32,7 +32,8 @@ class UserGiftsController extends BaseController
             $per_page = $this->params('per_page', 100);
 
             $user_gifts = \UserGifts::findPagination($conds, $page, $per_page);
-            $opts = array_merge(['total_gift_num' => $total_gift_num], $user_gifts->toJson('user_gifts', 'toJson'));
+
+            $opts = $user_gifts->toJson('user_gifts', 'toJson');
 
         } else {
 
@@ -44,6 +45,8 @@ class UserGiftsController extends BaseController
                 $opts['user_gifts'] = \UserGifts::searchCommonGifts($user_id);
             }
         }
+
+        $opts = array_merge(['total_gift_num' => $total_gift_num], $opts);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
     }

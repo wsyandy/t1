@@ -685,6 +685,6 @@ trait UserAttrs
             return $exist_user_gift->toSimpleJson();
         }
 
-        return [];
+        return "";
     }
 }
