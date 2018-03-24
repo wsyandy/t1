@@ -301,8 +301,8 @@ h1,h2,h3,h4{
 
 .discount_tips span.btn_copy{
 	color: #F45189;
-	font-size: 1px;
-	padding:1px 2px;
+	font-size: 12px;
+	padding:1px 1px;
 	border:1px solid #F45189;
 	margin-left: 4px;
 	border-radius: 4px;
