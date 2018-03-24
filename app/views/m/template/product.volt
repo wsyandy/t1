@@ -51,8 +51,8 @@
     <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
     <span>优惠充值</span>
     <span>关注公众号</span>
-    <a href="weixin://" class="WeChatID">Hi-6888</a>
-    <span class="btn_copy" data-clipboard-text="Hi-6888" id="copy">复制</span>
+    <a href="#" class="WeChatID">Hi-6888</a>
+    <span class="btn_copy" data-clipboard-text="Hi-6888" id="copy">复制去微信</span>
 </div>
 {% endif %}
 
@@ -104,9 +104,9 @@
         });
 
         $('#copy').click(function () {
-            $(".copy_tip").fadeIn();
-            $(".copy_tip").fadeOut(1000);
-
+            /*$(".copy_tip").fadeIn();
+             $(".copy_tip").fadeOut(1000);*/
+            window.open("weixin://");
         });
 
         new ClipboardJS('.btn_copy');

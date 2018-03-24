@@ -293,11 +293,21 @@ h1,h2,h3,h4{
 	color: #F45189;
 }
 
-.discount_tips a.WeChatID, .discount_tips span.btn_copy{
+.discount_tips a.WeChatID{
 	color: #F45189;
 	font-size: 14px;
-	padding:4px;
+	padding:4px
 }
+
+.discount_tips span.btn_copy{
+	color: #F45189;
+	font-size: 14px;
+	padding:2px 8px;
+	border:1px solid #F45189;
+	margin-left: 4px;
+	border-radius: 4px;
+}
+
 
 .copy_tip {
 	display: none;
