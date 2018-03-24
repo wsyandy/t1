@@ -192,7 +192,8 @@ class Gifts extends BaseModel
             'svga_image_url' => $this->svga_image_url,
             'expire_day' => $this->expire_day,
             'show_rank' => $this->show_rank,
-            'expire_at' => $this->expire_at
+            'expire_at' => $this->expire_at,
+            'send_at' => time() //判断礼物赠送时间
         ];
     }
 

@@ -88,7 +88,7 @@
         amount 礼物金额
         show_rank int 礼物展示排序
         expire_at int 礼物过期时间
-        created_at int 礼物创建时间
+        send_at int 送礼物时间
     }
 } 
 ````
