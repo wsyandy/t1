@@ -9,6 +9,10 @@
 class BannedWords extends BaseModel
 {
 
+    /**
+     * @param $word
+     * @return array
+     */
     static function checkWord($word)
     {
         $conditions = ['conditions' => "word like :word:", 'bind' => ['word' => '%' . $word . '%']];
