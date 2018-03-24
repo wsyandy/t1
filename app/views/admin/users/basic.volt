@@ -49,24 +49,16 @@
             <td>设备平台:{{ device.platform }} {{ device.platform_version }} </td>
             <td>手机型号:{{ device.manufacturer }} - {{ device.model }}</td>
             <td>网络: {{ device.net }} {{ device.ip_text }} </td>
-            <td>激活次数: {{ device.active_num }}</td>
         </tr>
 
         <tr>
-            <td>sdks:{{ device.sdks }}</td>
             <td>api版本:{{ device.api_version }}</td>
             <td>经纬度:{{ device.latitude }} {{ device.longitude }}</td>
             <td>状态:{{ device.status_text }}</td>
-            <td>登陆次数:{{ device.login_num }}</td>
             <td>设备No: {{ device.device_no }}</td>
-        </tr>
-        <tr>
-            <td>渠道</td>
-            <td>fr:{{ device.fr }}</td>
+            <td>推广fr: {{ device.fr }}</td>
             <td>渠道:{{ device.partner_name }}</td>
-            <td></td>
-            <td></td>
-            <td>最后登陆时间: {{ device.last_at_text }}</td>
         </tr>
+
     {% endfor %}
 </table>
