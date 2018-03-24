@@ -99,7 +99,26 @@ class Rooms extends BaseModel
 
     function toDetailJson()
     {
-        $opts = [];
+        $opts = [
+            'audio_id' => $this->audio_id,
+            'user_nickname' => $this->user->nickname,
+            'user_sex_text' => $this->user->sex_text,
+            'user_mobile' => $this->user->mobile,
+            'status_text' => $this->status_text,
+            'online_status_text' => $this->online_status_text,
+            'user_type_text' => $this->user->type_text,
+            'last_at_text' => $this->last_at_text,
+            'chat_text' => $this->chat_text,
+            'lock_text' => $this->lock_text,
+            'hot_text' => $this->hot_text,
+            'user_agreement_num' => $this->user->agreement_num,
+            'union_id' => $this->union_id,
+            'union_name' => $this->union_name,
+            'type_text' => $this->union_type_text,
+            'theme_type' => $this->theme_type,
+        ];
+
+        return array_merge($opts, $this->toJson());
     }
 
     function toBasicJson()

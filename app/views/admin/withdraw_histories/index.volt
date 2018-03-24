@@ -5,15 +5,15 @@
     </select>
 
     <label for="id_eq">ID</label>
-    <input name="withdraw_history[id_eq]" type="text" id="id_eq"/>
+    <input name="withdraw_history[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
 
     <label for="status_eq">提现状态</label>
     <select name="withdraw_history[status_eq]" id="status_eq">
-        {{ options(WithdrawHistories.STATUS) }}
+        {{ options(WithdrawHistories.STATUS, status) }}
     </select>
 
     <label for="user_name_eq">用户昵称</label>
-    <input name="withdraw_history[user_name_eq]" type="text" id="user_name_eq"/>
+    <input name="withdraw_history[user_name_eq]" type="text" id="user_name_eq" value="{{ user_name }}"/>
 
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
