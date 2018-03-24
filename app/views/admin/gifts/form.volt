@@ -10,7 +10,7 @@
 {{ f.input('rank', ['label': '排序','width':'33%']) }}
 {{ f.input('expire_day', ['label': '有效天数', 'width':'33%']) }}
 {{ f.input('show_rank', ['label': '礼物展示排序',  'width':'50%']) }}
-{{ f.input('expire_time', ['label': '礼物展示过期时间(单位:分钟)',  'width':'50%']) }}
+{{ f.input('expire_time', ['label': '礼物展示过期时间(单位:秒)',  'width':'50%']) }}
 {{ f.file('image', ['label': '图片',  'width':'50%']) }}
 {{ f.file('big_image', ['label': '大图',  'width':'50%']) }}
 {{ f.file('dynamic_image', ['label': 'gif动态图', 'width':'50%']) }}

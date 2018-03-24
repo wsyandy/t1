@@ -184,8 +184,7 @@ class UserGifts extends BaseModel
             'svga_image_url' => $this->gift_svga_image_url,
             'show_rank' => $this->gift_show_rank,
             'status' => $this->status,
-            'expire_at' => $this->gift->expire_at,
-            'send_at' => time() //判断礼物赠送时间
+            'expire_time' => $this->gift->expire_time
         ];
     }
 
