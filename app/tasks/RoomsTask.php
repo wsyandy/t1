@@ -492,6 +492,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
 
+        $lock = tryLock($hot_room_list_key, 1000);
+
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
 
@@ -542,8 +544,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         arsort($no_amount_room_ids);
 
         $time = time();
-
-        $lock = tryLock($hot_room_list_key, 1000);
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
