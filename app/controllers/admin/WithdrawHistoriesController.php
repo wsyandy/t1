@@ -94,7 +94,7 @@ class WithdrawHistoriesController extends BaseController
 
         $start_at = $this->params('start_at', date('Y-m-d'));
         $end_at = $this->params('end_at', date('Y-m-d'));
-        $status = $this->params('status', date('Y-m-d'));
+        $status = $this->params('status', 0);
 
         $start_at_time = beginOfDay(strtotime($start_at));
         $end_at_time = endOfDay(strtotime($end_at));
