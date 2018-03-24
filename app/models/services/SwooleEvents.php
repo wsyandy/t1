@@ -125,7 +125,7 @@ class SwooleEvents extends \BaseModel
         $user = \Users::findFirstById($user_id);
         SwooleUtils::increaseConnectNum(-1, SwooleUtils::getIntranetIp());
 
-        if ($user) {
+        /*if ($user) {
 
             info($user->sid, $fd, "connect close");
 
@@ -167,7 +167,7 @@ class SwooleEvents extends \BaseModel
             if ($user->isCalling()) {
                 \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
             }
-        }
+        }*/
 
         $user->deleteFdInfo($fd, $online_token);
 
