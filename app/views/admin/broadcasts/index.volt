@@ -70,6 +70,50 @@
 {{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"操作":"operate_link"]) }}
 
 
+<script type="text/template" id="room_tpl">
+    <tr id="room_${room.id}">
+        <td>${room.id}</td>
+        <td><img src="${room.avatar_small_url}" height="50" width="50"/></td>
+        <td>
+            房间名称: ${ room.name }<br/>
+            房间话题: ${ room.topic }<br/>
+            在线人数: ${ room.user_num }<br/>
+            主题类型: ${ room.theme_type_text }<br/>
+            音频:<a href="/admin/audios?audio[id_eq]=${ room.audio_id }">${ room.audio_id }</a><br/>
+        </td>
+        <td>
+            {% if isAllowed('users','index') %}
+                姓名:<a href="/admin/users?user[id_eq]=${ room.user_id }">${ room.user_nickname }</a><br/>
+            {% endif %}
+            性别:${ room.user_sex_text }<br/>
+            手机号码:${ room.user_mobile }<br/>
+        </td>
+        <td>
+            ${ room.status_text }|${ room.online_status_text }|${ room.user_type_text }<br/>
+            最后活跃时间: ${ room.last_at_text }<br/>
+            公频聊天状态: ${ room.chat_text }<br/>
+            是否加锁: ${ room.lock_text }<br/>
+        </td>
+        <td>
+            {% if isAllowed('rooms','detail') %}
+                <a href="/admin/rooms/detail?id=${ room.id }">详细</a></br>
+            {% endif %}
+            {% if isAllowed('broadcasts','online') %}
+                <a href="/admin/broadcasts/online?room_id=${ room.id }" id="online">上线</a></br>
+            {% endif %}
+            {% if isAllowed('broadcasts','offline') %}
+                <a href="/admin/broadcasts/offline?room_id=${ room.id }" id="offline">下线</a></br>
+            {% endif %}
+            {% if isAllowed('broadcasts','compile') %}
+                <a href="/admin/broadcasts/compile_room?room_id=${ room.id }" class="modal_action">编辑房间</a></br>
+            {% endif %}
+            {% if isAllowed('broadcasts','compile_user') %}
+                <a href="/admin/broadcasts/compile_user?user_id=${ room.user_id }" class="modal_action">编辑房主</a></br>
+            {% endif %}
+        </td>
+    </tr>
+</script>
+
 <script type="text/javascript">
     $('body').on('click', '#online', function (e) {
         e.preventDefault();

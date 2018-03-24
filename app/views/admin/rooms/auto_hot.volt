@@ -44,7 +44,7 @@
     房间名称: {{ room.name }}<br/>
     房间话题: {{ room.topic }}<br/>
     在线人数: {{ room.user_num }} 主题类型: {{ room.theme_type_text }}<br/>
-    {% if room.theme_type == ROOM_THEME_TYPE_BROADCAST %}
+    {% if room.audio_id > 0 %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
     是否热门：{{ room.hot_text }}
@@ -84,6 +84,55 @@
 {% endmacro %}
 
 {{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"操作":"operate_link"]) }}
+
+<script type="text/template" id="room_tpl">
+    <tr id="room_${room.id}">
+        <td>${room.id}</td>
+        <td><img src="${room.avatar_small_url}" height="50" width="50"/></td>
+        <td>
+            房间名称: ${ room.name }<br/>
+            房间话题: ${ room.topic }<br/>
+            在线人数: ${ room.user_num } 主题类型: ${ room.theme_type_text }<br/>
+            {@if room.audio_id > 0 }
+            音频ID:<a href="/admin/audios?audio[id_eq]=${ room.audio_id }">${ room.audio_id }</a><br/>
+            {@/if}
+            是否热门：${ room.hot_text }
+        </td>
+        <td>
+            {% if isAllowed('users','index') %}
+                姓名:<a href="/admin/users?user[id_eq]=${ room.user_id }">${ room.user_nickname }</a><br/>
+            {% endif %}
+            性别:${ room.user_sex_text }<br/>
+            手机号码:${ room.user_mobile }<br/>
+        </td>
+        <td>
+            ${ room.status_text }|${ room.online_status_text }|${ room.user_type_text }<br/>
+            最后活跃时间: ${ room.last_at_text }<br/>
+            公频聊天状态: ${ room.chat_text }<br/>
+            是否加锁: ${ room.lock_text }<br/>
+            是否热门: ${ room.hot_text }<br/>
+            协议: ${room.user_agreement_num}<br/>
+            {@if room.union_id }
+            公会: ${ room.union_name }<br/>
+            公会类型: ${ room.union_type_text }<br/>
+            {@/if}
+        </td>
+        <td>
+            {% if isAllowed('rooms','detail') %}
+                <a href="/admin/rooms/detail?id=${ room.id }">详细</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','add_user_agreement') %}
+                <a href="/admin/rooms/add_user_agreement?id=${ room.id }" class="modal_action">添加协议</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','delete_user_agreement') %}
+                <a href="/admin/rooms/delete_user_agreement?id=${ room.id }" id="delete_user_agreement">清除协议</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','edit') %}
+                <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
+            {% endif %}
+        </td>
+    </tr>
+</script>
 
 <script>
     $('body').on('click', '#delete_user_agreement', function (e) {

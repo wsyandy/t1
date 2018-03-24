@@ -60,7 +60,7 @@ class RoomsController extends BaseController
         $this->assign($room, 'room');
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['error_url' => '/admin/rooms?room[id_eq]=' . $room->id]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '编辑失败');
         }
@@ -335,7 +335,7 @@ class RoomsController extends BaseController
 
             if ($room->update()) {
                 \Rooms::delay()->addUserAgreement($room->id);
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
             }
 
             return $this->renderJSON(ERROR_CODE_FAIL, '');
@@ -352,7 +352,7 @@ class RoomsController extends BaseController
 
         if ($room->update()) {
             \Rooms::delay()->deleteUserAgreement($room->id);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['room' => $room->toDetailJson()]);
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '清除失败');
