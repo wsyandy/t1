@@ -275,7 +275,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
-            if ($manual_hot_room->user_num < 1) {
+            if ($manual_hot_room->getRealUserNum() < 5) {
                 info("room_no_user", $manual_hot_room->id);
                 continue;
             }
@@ -319,7 +319,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if ($room->user_num < 1) {
+            if ($room->getRealUserNum() < 1) {
                 info("room_no_user", $room->id);
                 continue;
             }
@@ -385,7 +385,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
-                    if ($user_num_room->user_num < 1) {
+                    if ($user_num_room->getRealUserNum() < 1) {
                         info("room_no_user", $user_num_room->id);
                         continue;
                     }
@@ -459,7 +459,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $has_amount_room_ids[] = $room_id;
             } else {
                 $room = Rooms::findFirstById($room_id);
-                $no_amount_room_ids[$room_id] = $room->user_num;
+                $no_amount_room_ids[$room_id] = $room->getRealUserNum();
             }
         }
 
@@ -504,7 +504,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if ($hot_room->user_num < 1) {
+            if ($hot_room->getRealUserNum() < 1) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
@@ -537,7 +537,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $has_amount_room_ids[] = $room_id;
             } else {
                 $room = Rooms::findFirstById($room_id);
-                $no_amount_room_ids[$room_id] = $room->user_num;
+                $no_amount_room_ids[$room_id] = $room->getRealUserNum();
             }
         }
 
