@@ -1387,6 +1387,10 @@ class Rooms extends BaseModel
     //判断麦位上没有用户
     function checkRoomSeat()
     {
+        if ($this->isBroadcast()) {
+            return true;
+        }
+
         $room_seat = RoomSeats::findFirst(['conditions' => 'room_id = :room_id: and user_id > 0',
             'bind' => ['room_id' => $this->id]]);
 
