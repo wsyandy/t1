@@ -191,7 +191,8 @@ class Gifts extends BaseModel
             'render_type' => $this->render_type,
             'svga_image_url' => $this->svga_image_url,
             'expire_day' => $this->expire_day,
-            'show_rank' => $this->show_rank
+            'show_rank' => $this->show_rank,
+            'expire_at' => $this->expire_at
         ];
     }
 
@@ -316,6 +317,7 @@ class Gifts extends BaseModel
         $user = \Users::findById($opts['user_id']);
         $sender = fetch($opts, 'sender');
         $data = [];
+
         if ($gift) {
             $data = array_merge($data, $gift->toSimpleJson());
             $data['num'] = $gift_num;
@@ -326,5 +328,10 @@ class Gifts extends BaseModel
         }
         return $data;
 
+    }
+
+    function expireAt()
+    {
+        return time() + $this->expire_time * 60;
     }
 }
