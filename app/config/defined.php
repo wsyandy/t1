@@ -164,6 +164,7 @@ define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 // 房间类型
 define('ROOM_THEME_TYPE_NORMAL', 0); //正常
 define('ROOM_THEME_TYPE_BROADCAST', 1);//电台
+define('ROOM_THEME_TYPE_USER_BROADCAST', 2);//个人电台
 
 define('AUDIO_TYPE_STORY', 1); //故事
 define('AUDIO_TYPE_MUSIC', 2); //音乐
@@ -206,5 +207,5 @@ define('WITHDRAW_TYPE_USER', 1); //用户体现
 define('WITHDRAW_TYPE_UNION', 2); //家族体现
 
 //金币
-define('GOLD_TYPE_SIGN_IN',1); //用户签到
-define('GOLD_TYPE_BUY_GIFT',2); //购买礼物
+define('GOLD_TYPE_SIGN_IN', 1); //用户签到
+define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
