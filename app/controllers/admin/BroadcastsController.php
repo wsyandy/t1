@@ -13,6 +13,7 @@ class BroadcastsController extends BaseController
     function indexAction()
     {
         $cond = $this->getConditions('room');
+        $user_id = $this->params('user_id', 0);
 
         if (isset($cond['conditions'])) {
             $cond['conditions'] .= " and (theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_USER_BROADCAST . ")";
@@ -24,6 +25,10 @@ class BroadcastsController extends BaseController
 
         if ($name) {
             $cond['conditions'] .= " and name like '%$name%' ";
+        }
+
+        if ($user_id) {
+            $cond['conditions'] .= " and user_id = " . $user_id;
         }
 
         $page = 1;

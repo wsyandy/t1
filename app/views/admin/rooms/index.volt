@@ -25,6 +25,10 @@
     <input name="room[id_eq]" type="text" id="id_eq"/>
     <label for="name">房间名</label>
     <input name="name" type="text" id="name"/>
+
+    <label for="user_id_eq">房主ID</label>
+    <input name="user_id" type="text" id="user_id_eq"/>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 
