@@ -282,7 +282,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if ($manual_hot_room->getRealUserNum() < $least_user_num) {
+            if ($manual_hot_room->getUserNum() < $least_user_num) {
                 info("room_no_user", $manual_hot_room->id);
                 continue;
             }
@@ -334,7 +334,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if ($room->getRealUserNum() < $least_user_num) {
+            if ($room->getUserNum() < $least_user_num) {
                 info("room_no_user", $room->id);
                 continue;
             }
@@ -423,7 +423,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
-                    if ($user_num_room->getRealUserNum() < $least_user_num) {
+                    if ($user_num_room->getUserNum() < $least_user_num) {
                         info("room_no_user", $user_num_room->id);
                         continue;
                     }
@@ -497,7 +497,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $has_amount_room_ids[] = $room_id;
             } else {
                 $room = Rooms::findFirstById($room_id);
-                $no_amount_room_ids[$room_id] = $room->getRealUserNum();
+                $no_amount_room_ids[$room_id] = $room->getUserNum();
             }
         }
 
@@ -547,7 +547,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if ($hot_room->getRealUserNum() < $least_user_num) {
+            if ($hot_room->getUserNum() < $least_user_num) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
@@ -585,7 +585,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $has_amount_room_ids[] = $room_id;
             } else {
                 $room = Rooms::findFirstById($room_id);
-                $no_amount_room_ids[$room_id] = $room->getRealUserNum();
+                $no_amount_room_ids[$room_id] = $room->getUserNum();
             }
         }
 
