@@ -106,9 +106,12 @@
         });
 
         $('#copy').click(function () {
-            /*$(".copy_tip").fadeIn();
-             $(".copy_tip").fadeOut(1000);*/
-            window.open("weixin://");
+            $(".copy_tip").fadeIn();
+            $(".copy_tip").fadeOut(1000);
+
+            setTimeout(function () {
+                window.open("weixin://");
+            }, 700);
         });
 
         new ClipboardJS('.btn_copy');
