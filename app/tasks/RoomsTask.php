@@ -251,11 +251,13 @@ class RoomsTask extends \Phalcon\Cli\Task
         $manual_hot_room_num = 5;
         $total_num = 10;
         $least_num = 3;
+        $least_user_num = 1;
 
         if (isProduction()) {
             $manual_hot_room_num = 10;
             $total_num = 20;
             $least_num = 8;
+            $least_user_num = 5;
             $last = time() - 10 * 60;
         }
 
@@ -280,7 +282,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if ($manual_hot_room->getRealUserNum() < 5) {
+            if ($manual_hot_room->getRealUserNum() < $least_user_num) {
                 info("room_no_user", $manual_hot_room->id);
                 continue;
             }
@@ -332,7 +334,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if ($room->getRealUserNum() < 1) {
+            if ($room->getRealUserNum() < $least_user_num) {
                 info("room_no_user", $room->id);
                 continue;
             }
@@ -393,7 +395,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 foreach ($user_num_room_ids as $user_num_room_id => $user_room_num) {
 
-                    if ($user_room_num < 5) {
+                    if ($user_room_num < $least_user_num) {
                         break;
                     }
 
@@ -421,7 +423,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
-                    if ($user_num_room->getRealUserNum() < 1) {
+                    if ($user_num_room->getRealUserNum() < $least_user_num) {
                         info("room_no_user", $user_num_room->id);
                         continue;
                     }
@@ -535,12 +537,17 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $start = time() - 61 * 60;
         $end = time() - 60;
+        $least_user_num = 5;
+
+        if (isDevelopmentEnv()) {
+            $least_user_num = 1;
+        }
 
         foreach ($hot_room_ids as $hot_room_id) {
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if ($hot_room->getRealUserNum() < 1) {
+            if ($hot_room->getRealUserNum() < $least_user_num) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
