@@ -350,28 +350,27 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $cond = [
-                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id],
-                'column' => 'amount'
-            ];
-
-            $has_income_room_ids[$room->id] = GiftOrders::sum($cond);
-        }
-
-        arsort($has_income_room_ids);
-
-        info($has_income_room_ids);
-        
-        foreach ($has_income_room_ids as $has_income_room_id) {
-
-            $total_room_ids[] = $has_income_room_id;
+            $total_room_ids[] = $room->id;
 
             if (count($total_room_ids) >= $total_num) {
                 info($total_room_ids, count($total_room_ids), $total_num);
                 break;
             }
         }
+
+//        arsort($has_income_room_ids);
+//
+//        info($has_income_room_ids);
+//
+//        foreach ($has_income_room_ids as $has_income_room_id) {
+//
+//            $total_room_ids[] = $has_income_room_id;
+//
+//            if (count($total_room_ids) >= $total_num) {
+//                info($total_room_ids, count($total_room_ids), $total_num);
+//                break;
+//            }
+//        }
 
 
         $total_room_num = count($total_room_ids);
