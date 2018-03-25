@@ -390,7 +390,7 @@ trait UserAttrs
         $birthday = $this->birthday;
 
         if (!$birthday) {
-            return '';
+            return 0;
         }
 
         $age = date("Y") - date("Y", $birthday);
