@@ -7,6 +7,9 @@
     <label for="id_eq">ID</label>
     <input name="withdraw_history[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
 
+    <label for="user_id_eq">用户ID</label>
+    <input name="user_id" type="text" id="user_id_eq" value="{{ user_id }}"/>
+
     <label for="status_eq">提现状态</label>
     <select name="withdraw_history[status_eq]" id="status_eq">
         {{ options(WithdrawHistories.STATUS, status) }}
@@ -26,11 +29,18 @@
 {% if isAllowed('withdraw_histories', 'export') %}
     <form action="/admin/withdraw_histories/export" target="_blank" method="get" class="search_form"
           autocomplete="off">
+
         <label for="start_at">开始时间</label>
         <input type="text" name="start_at" class="form_datetime" id="start_at" value="{{ start_at }}" size="16">
 
         <label for="end_at">结束时间</label>
         <input type="text" name="end_at" class="form_datetime" id="end_at" value="{{ end_at }}" size="16">
+
+
+        <label for="status_eq">提现状态</label>
+        <select name="status" id="status_eq">
+            {{ options(WithdrawHistories.STATUS, status) }}
+        </select>
 
         <button type="submit" class="ui button">导出</button>
     </form>
