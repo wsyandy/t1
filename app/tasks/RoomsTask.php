@@ -299,7 +299,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
 
-        $start = time() - 31 * 60;
+        $start = time() - 61 * 60;
         $end = time() - 60;
 
         $cond = [
@@ -309,7 +309,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
+        $has_income_room_ids = [];
+
         info($total_room_ids, count($total_room_ids));
+
         foreach ($gift_orders as $gift_order) {
 
             $room = Rooms::findFirstById($gift_order->room_id);
@@ -347,13 +350,29 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $total_room_ids[] = $room->id;
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id],
+                'column' => 'amount'
+            ];
+
+            $has_income_room_ids[$room->id] = GiftOrders::sum($cond);
+        }
+
+        arsort($has_income_room_ids);
+
+        info($has_income_room_ids);
+        
+        foreach ($has_income_room_ids as $has_income_room_id) {
+
+            $total_room_ids[] = $has_income_room_id;
 
             if (count($total_room_ids) >= $total_num) {
                 info($total_room_ids, count($total_room_ids), $total_num);
                 break;
             }
         }
+
 
         $total_room_num = count($total_room_ids);
 
@@ -512,7 +531,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
 
-        $start = time() - 31 * 60;
+        $start = time() - 61 * 60;
         $end = time() - 60;
 
         foreach ($hot_room_ids as $hot_room_id) {
