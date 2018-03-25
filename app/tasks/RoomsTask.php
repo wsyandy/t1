@@ -537,7 +537,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $start = time() - 61 * 60;
         $end = time() - 60;
-        $least_user_num = 5;
+        $least_user_num = 3;
 
         if (isDevelopmentEnv()) {
             $least_user_num = 1;
