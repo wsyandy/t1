@@ -1107,8 +1107,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function bannedWordAction()
     {
-        $res = BannedWords::checkWord("淫");
+        $res = BannedWords::checkWord("嫖");
         echoLine($res);
-
     }
 }

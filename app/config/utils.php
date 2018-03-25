@@ -59,3 +59,9 @@ function secondsToText($seconds)
 
     return $hour . '时' . $minute . '分' . ($seconds % 60) . '秒';
 }
+
+//字符串转为数组
+function mbStrSplit($str)
+{
+    return preg_split('/(?<!^)(?!$)/u', $str);
+}

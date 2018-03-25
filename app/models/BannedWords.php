@@ -15,15 +15,23 @@ class BannedWords extends BaseModel
      */
     static function checkWord($word)
     {
-        $conditions = ['conditions' => "word like :word:", 'bind' => ['word' => '%' . $word . '%']];
+        $conditions = [
+            'conditions' => "word like :word:",
+            'bind' => ['word' => '%' . $word . '%'],
+            'order' => 'id desc'
+        ];
+
         $banned_word = self::findFirst($conditions);
+
         if (!$banned_word) {
             return [false, $word];
         }
 
-        $new_word = str_replace($banned_word->word, '***', $word);
+        $search_word = mbStrSplit($banned_word->word);
+
+        $new_word = str_replace($search_word, '*', $word);
 
         return [true, $new_word];
     }
-    
+
 }
