@@ -1109,5 +1109,79 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $res = BannedWords::checkWord("嫖");
         echoLine($res);
+
+        $start = time() - 61 * 60;
+        $end = time() - 60;
+
+        $cond = [
+            'conditions' => 'room_id > 0 and created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => $end],
+            'columns' => 'distinct room_id'];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        $has_income_room_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+
+            $room = Rooms::findFirstById($gift_order->room_id);
+
+            if (!$room) {
+                info($gift_order->room_id);
+                continue;
+            }
+
+            if (!$room->checkRoomSeat()) {
+                info("room_seat_is_null", $room->id);
+                continue;
+            }
+
+            if ($room->isForbiddenHot()) {
+                info("isForbiddenHot", $room->id);
+                continue;
+            }
+
+            if ($room->getRealUserNum() < 1) {
+                info("room_no_user", $room->id);
+                continue;
+            }
+
+            if ($room->lock) {
+                info("room_seat_is_lock", $room->id);
+                continue;
+            }
+
+            if ($room->isHot()) {
+                continue;
+            }
+
+            $cond = [
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id],
+                'column' => 'amount'
+            ];
+
+            $income = GiftOrders::sum($cond);
+
+            $has_income_room_ids[$room->id] = $income;
+        }
+
+        arsort($has_income_room_ids);
+
+        info($has_income_room_ids);
+        $total_room_ids = [];
+
+        foreach ($has_income_room_ids as $has_income_room_id) {
+
+            $total_room_ids[] = $has_income_room_id;
+
+            if (count($total_room_ids) >= 20) {
+                info($total_room_ids, count($total_room_ids), 20);
+                break;
+            }
+        }
+
+        echoLine($total_room_ids);
+
     }
 }
