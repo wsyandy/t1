@@ -7,6 +7,9 @@
     <label for="id_eq">ID</label>
     <input name="withdraw_history[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
 
+    <label for="user_id_eq">用户ID</label>
+    <input name="user_id" type="text" id="user_id_eq" value="{{ user_id }}"/>
+
     <label for="status_eq">提现状态</label>
     <select name="withdraw_history[status_eq]" id="status_eq">
         {{ options(WithdrawHistories.STATUS, status) }}
