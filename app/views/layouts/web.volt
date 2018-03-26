@@ -28,6 +28,7 @@
                 {% if show_logout %}
                     <li><a href="/web/home/logout" class="get_out">退出 <i></i></a></li>
                 {% endif %}
+                <li><a href="{{ file_url }}">Android模拟器专用版</a></li>
             </ul>
         </div>
     </header>

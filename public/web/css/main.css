@@ -21,8 +21,8 @@ audio:not([controls]) {
 	display: none;
 	height: 0
 }[hidden],template {
-	display: none
-}
+	 display: none
+ }
 
 a {
 	background: transparent
@@ -235,26 +235,26 @@ body,html {
 	display: inline-block
 }
 header .wrapper ul {
-    height: 60px;
-    float: right;
+	height: 60px;
+	float: right;
 }
 header .wrapper ul li {
-    padding: 0 40px;
-    float: left;
+	padding: 0 40px;
+	float: left;
 }
 header .wrapper ul li a {
-    width: 33px;
-    font-family: MicrosoftYaHei;
-    font-size: 16px;
-    font-weight: normal;
-    font-stretch: normal;
-    letter-spacing: 0px;
-    color: #ffffff;
+	width: 33px;
+	font-family: MicrosoftYaHei;
+	font-size: 16px;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #ffffff;
 }
 .index_selected{
 	border-bottom: 2px solid #fff;
-    padding-bottom: 5px;
-    font-size: 18px !important;
+	padding-bottom: 5px;
+	font-size: 18px !important;
 }
 header {
 	width: 100%;
@@ -287,19 +287,6 @@ header .wrapper h2{
 	font-size: 30px;
 	color: #FFFFFF;
 	margin-left: 10px;
-}
-
-header .get_out{
-	font-size: 18px !important;
-}
-
-header .get_out i{
-	display: inline-block;
-	width: 15px;
-	height: 18px;
-	background: url(../images/get_out_icon.png) no-repeat;
-	background-size: 100%;
-	vertical-align: middle;
 }
 
 main .one {
@@ -562,12 +549,14 @@ footer .c-info {
 
 footer .c-info .left {
 	width: 45%;
-	float: left
+	float: left;
+	margin-top: 300px;
 }
 
 footer .c-info .right {
 	float: right;
 	width:45%;
+	margin-top: 300px;
 }
 footer h1{
 	font-size: 48px;
@@ -663,6 +652,288 @@ footer p{
 		left: 40%;
 		opacity: 1
 	}
+}
+/*充值页面*/
+.recarge_box{
+	width: 540px;
+	margin:0 auto;
+}
+.recarge_box ul li{
+	overflow:hidden;
+	margin-top: 20px;
+}
+.recarge_box ul li:first-child{
+	padding:30px 0 30px 0;
+	display: flex;
+	align-items: center;
+}
+.recarge_box ul li span{
+	float: left;
+	font-size: 14px;
+	color: #000000;
+}
+.recarge_box ul li input{
+	float: left;
+	width: 160px;
+	margin-left: 10px;
+}
+.recarge_box ul li b{
+	float: left;
+	font-size: 14px;
+	color: #1887FF;
+	margin-left: 10px;
+}
+.recarge_list_box{
+	float: left;
+	width: 460px;
+}
+.recarge_list {
+	width: 100px;
+	height: 150px;
+	border:1px solid #3D268B;
+	border-radius: 8px;
+	position: relative;
+	margin: 0 0 20px 10px;
+	float: left;
+}
+.icon_top{
+	padding-top: 22px;
+	padding-bottom: 20px;
+}
+.recarge_list .top_bg i{
+	display: block;
+	width: 60px;
+	margin:0 auto;
+	height: 50px;
+	background: url(../images/zuanshi.png) no-repeat;
+	background-size: 100%;
+}
+.recarge_list .top_bg p{
+	margin-top: 10px;
+	text-align: center;
+	font-size: 26px;
+	color: #1887FF;
+}
+.recarge_list .recarge_money{
+	text-align: center;
+	background: #3D268B;
+	font-size: 16px;
+	color: #FFFFFF;
+	height: 25px;
+	line-height: 25px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 0px 0px 8px 8px;
+}
+.recarge_selected .top_bg{
+	background: #3D268B;
+
+}
+.recarge_selected .top_bg p{
+	color: #FFFFFF;
+}
+.recarge_selected .top_bg i{
+	background: url(../images/zuanshi_selected.png) no-repeat;
+	background-size: 100%;
+}
+.recarge_selected .recarge_money{
+	background: #FFFFFF !important;
+	color: #3D268B;
+}
+.sale_yh{
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: url(../images/sale_yh.png) no-repeat;
+	background-size: 100%;
+	padding:5px 0 0 5px;
+	color: #FFFFFF;
+	font-size: 16px;
+}
+.sale_list .top_bg .icon_top p{
+	font-size: 20px !important;
+}
+.pay_list_box{
+	display: flex;
+	align-items: center;
+}
+.pay_list{
+	float: left;
+	width: 380px;
+}
+.pay_list p{
+	float: left;
+	width: 100px;
+	height: 28px;
+	line-height: 28px;
+	text-align: center;
+	font-size: 12px;
+	font-style: normal;
+	margin-left: 10px;
+}
+.pay_list i{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: pink;
+	vertical-align: middle;
+}
+.pay_list .saoma{
+	border: 1px solid #FFBC16;
+	border-radius: 4px;
+	color: #FFBC16;
+}
+.pay_list .saoma i{
+	background: url(../images/saoma.png) no-repeat;
+	background-size: 100%;
+}
+.pay_list .zhifubao{
+	border: 1px solid #3691FF;
+	border-radius: 4px;
+	color: #3691FF;
+}
+.pay_list .zhifubao i{
+	background: url(../images/zhifubao.png) no-repeat;
+	background-size: 100%;
+}
+.pay_list .weixin{
+	border: 1px solid #12DA00;
+	border-radius: 4px;
+	color: #12DA00;
+}
+.pay_list .weixin i{
+	background: url(../images/weixin.png) no-repeat;
+	background-size: 100%;
+}
+.recarge_money_num_box{
+	display: flex;
+	align-items: center;
+}
+.recarge_money_num{
+	font-size: 28px;
+	color: #fe6457;
+	float: left;
+	margin-left: 10px;
+}
+.recarge_agree{
+	font-size: 12px;
+	color: #333333;
+	margin-left: 81px;
+}
+.recarge_agree i{
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background: url(../images/agree_icon.png) no-repeat;
+	background-size: 100%;
+	vertical-align: middle;
+}
+.agree_icon_selected{
+	background: url(../images/agree_icon_selected.png) no-repeat !important;
+	background-size: 100% !important;
+}
+.recarge_agree a{
+	font-size: 12px;
+	color: #3691FF;
+}
+.recarge_btn{
+	margin-left: 81px;
+}
+.recarge_btn p{
+	display: block;
+	width: 170px;
+	height: 40px;
+	line-height: 40px;
+	background: #3A2386;
+	border-radius: 12px;
+	font-size: 16px;
+	color: #FFFFFF;
+	text-align: center;
+}
+.recarge_text{
+	float: left;
+	width: 460px;
+}
+.recarge_text p{
+	font-size: 12px;
+	color: #333333;
+	padding-bottom: 10px;
+	margin-left: 10px;
+}
+.recarge_text p:last-child{
+	padding-bottom: 30px;
+}
+.recarge_xieyi_box{
+	padding:20px 0;
+	width: 1280px;
+	margin:0 auto;
+}
+.recarge_xieyi_box h3{
+	font-size: 28px;
+	color: #333333;
+	border-bottom: 1px solid #333333;
+	text-align: center;
+	padding-bottom: 20px;
+}
+.recarge_xieyi_box p{
+	font-size: 14px;
+	color: #333333;
+	text-indent: 2em;
+	line-height: 22px;
+}
+.recarge_xieyi_box h4{
+	font-size: 14px;
+	color: #333333;
+}
+.recarge_xieyi_box span{
+	color: #333333;
+	font-size: 14px;
+	text-indent: 4em;
+	display: block;
+}
+
+.downlod-code{
+	width: 410px;
+	margin:0 auto;
+}
+.downlod-code .item{
+	float: left;
+}
+.downlod-code .item p{
+	width: 180px;
+	height: 45px;
+	line-height: 45px;
+	text-align: center;
+	border-radius: 50px;
+	margin-left: 20px;
+}
+.downlod-code .item p span{
+	display: inline-block;
+	vertical-align: middle;
+}
+.downlod-code .item .android{
+	border: 1px solid #1EBC22;
+	color: #1EBC22;
+}
+.downlod-code .item .android span{
+	width: 18px;
+	height: 20px;
+	background: url(../images/android.png) no-repeat;
+	background-size: 100%;
+}
+.downlod-code .item .iphone{
+	border: 1px solid #499BFF;
+	color: #499BFF;
+}
+.downlod-code .item .iphone span{
+	width: 20px;
+	height: 26px;
+	background: url(../images/iphone.png) no-repeat;
+	background-size: 100%;
 }
 
 [v-cloak] {

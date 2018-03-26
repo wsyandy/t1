@@ -13,6 +13,22 @@ class HomeController extends BaseController
             $product_channel = $user->product_channel;
         }
 
+        $ios_apk = \SoftVersions::findFirst([
+                'conditions' => "platform = :platform: and status = :status:",
+                'bind' => ['platform' => 'ios', 'status' => SOFT_VERSION_STATUS_ON]
+            ]
+        );
+
+        $android_apk = \SoftVersions::findFirst([
+                'conditions' => "platform = :platform: and status = :status:",
+                'bind' => ['platform' => 'android', 'status' => SOFT_VERSION_STATUS_ON]
+            ]
+        );
+        
+        $this->view->ios_url = $ios_apk->ios_down_url;
+
+        $this->view->android_url = $android_apk->weixin_url;
+
         $this->view->product_channel = $product_channel;
     }
 

@@ -50,17 +50,16 @@
     </section>
 </main>
 <a name="download"></a>
-<h2 class="download-title">安卓下载</h2>
-<footer>
-    <div class="downlod-code">
-        <!--  <div class="item">
-           <img id="download_img_ios" alt="" src="/web/images/qrcode_ios2.png">
-           <p><span class="iphone"></span>IOS下载</p>
-         </div> -->
-        <div class="item">
-            <img id="download_img_android" alt="" src="/web/images/qrcode_android4.png">
-        </div>
+<div class="downlod-code">
+    <div class="item" @click.stop="downLoad('android')">
+        <p class="android"><span></span> 安卓下载</p>
     </div>
+    <div class="item" @click.stop="downLoad('ios')">
+        <p class="iphone"><span></span> IOS下载</p>
+    </div>
+</div>
+
+<footer>
     <div class="c-info">
         <div class="left">
             <h1>产品介绍</h1>
@@ -71,7 +70,9 @@
         <div class="right">
             <h1>公司介绍</h1>
             <p>
-                {{ product_channel.name }}~是上海棕熊网络科技有限公司开发的一款可以多方实时语音直播的软件，利用声音作为唯一沟通介质为用户提供沟通平台，特色的主题聊天室和互动直播玩法功能受到广大年轻人追捧，用真实的语音传递真实的情感，用轻松的方式感受长情的陪伴。{{ product_channel.name }}绝对是你值得拥有的语音直播软件。</p>
+                {{ product_channel.name }}
+                ~是上海棕熊网络科技有限公司开发的一款可以多方实时语音直播的软件，利用声音作为唯一沟通介质为用户提供沟通平台，特色的主题聊天室和互动直播玩法功能受到广大年轻人追捧，用真实的语音传递真实的情感，用轻松的方式感受长情的陪伴。{{ product_channel.name }}
+                绝对是你值得拥有的语音直播软件。</p>
         </div>
     </div>
 </footer>
@@ -96,8 +97,19 @@
 
 <script>
     var opts = {
-        data: {},
-        methods: {}
+        data: {
+            ios_url: '{{ ios_url }}',
+            android_url: '{{ android_url }}'
+        },
+        methods: {
+            downLoad: function (item) {
+                if (item == 'ios') {
+                    location.href = this.ios_url;
+                } else if (item == 'android') {
+                    location.href = this.android_url;
+                }
+            }
+        }
     };
 
     vm = XVue(opts);
