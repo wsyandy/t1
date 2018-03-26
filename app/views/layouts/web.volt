@@ -28,7 +28,7 @@
                 {% if show_logout %}
                     <li><a href="/web/home/logout" class="get_out">退出 <i></i></a></li>
                 {% endif %}
-                <li><a href="{{ file_url }}">Android模拟器专用版</a></li>
+                <li><a href="#" id="download_simulator_apk">Android模拟器专用版</a></li>
             </ul>
         </div>
     </header>
@@ -36,5 +36,17 @@
     {{ content() }}
 </div>
 
+<script>
+    $("#download_simulator_apk").click(function (e) {
+
+        e.preventDefault();
+
+        $.authGet('/web/home/simulator_apk', function (resp) {
+            if (resp.error_url) {
+                location.href = resp.error_url;
+            }
+        })
+    })
+</script>
 </body>
 </html>

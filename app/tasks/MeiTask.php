@@ -1205,19 +1205,8 @@ class MeiTask extends \Phalcon\Cli\Task
                 $hi_coin_history->user_id = $user->id;
                 $hi_coin_history->gift_order_id = $gift_order->id;
                 $amount = $gift_order->amount;
-
-                if ($amount > 100000000) {
-                    echoLine($amount, $gift_order->id);
-                    continue;
-                }
-
-                echoLine($amount, $user->rateOfDiamondToHiCoin());
                 $hi_coins = $amount * $user->rateOfDiamondToHiCoin();
-
-                if ($hi_coins > 10000) {
-                    continue;
-                }
-
+                $hi_coins = intval($hi_coins * 10000) / 10000;
                 $hi_coin_history->hi_coins = $hi_coins;
                 $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
                 $hi_coin_history->remark = "接收礼物总额: $amount 收益:" . $hi_coins;
@@ -1227,6 +1216,52 @@ class MeiTask extends \Phalcon\Cli\Task
                 $hi_coin_history->created_at = $gift_order->created_at;
                 $hi_coin_history->save();
             }
+        }
+    }
+
+    function fixUserHiCoinsAction()
+    {
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+        echoLine(count($users));
+
+        $i = 0;
+
+        foreach ($users as $user) {
+            $i++;
+
+            $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
+
+            if ($total_amount > 100000000) {
+                continue;
+            }
+
+            //echoLine($total_amount, $user->id, $user->hi_coins);
+
+            $rate = $user->rateOfDiamondToHiCoin();
+
+            if ($total_amount < 1) {
+                echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
+                continue;
+            }
+
+            $hi_coins = $total_amount / $rate;
+
+
+            $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
+                'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS], 'column' => 'amount']);
+
+            if ($widthdraw_hi_coins > 0) {
+                $hi_coins = $hi_coins - $widthdraw_hi_coins;
+            }
+
+            if ($hi_coins - $user->hi_coins >= 0.04) {
+                echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
+            } else {
+                continue;
+            }
+
+            $user->hi_coins = $hi_coins;
+            $user->update();
         }
     }
 }

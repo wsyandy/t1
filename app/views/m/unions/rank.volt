@@ -58,10 +58,10 @@
         </ul>
     </div>
     <div class="my_ranking" v-show="!cur_idx">
-        我的家族日榜排名 <span class="num">190</span> 位
+        我的家族日榜排名 <span class="num">${my_rank}</span> 位
     </div>
     <div class="my_ranking" v-show="cur_idx">
-        我的家族周榜排名 <span class="num">19</span> 位
+        我的家族周榜排名 <span class="num">${my_rank}</span> 位
     </div>
 
 </div>
