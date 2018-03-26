@@ -16,7 +16,7 @@ class BaseController extends \ApplicationController
     private $_current_product_channel;
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'login', 'logout', 'check_auth']
+        'home' => ['index', 'login', 'logout', 'check_auth', 'simulator_apk']
     ];
 
     /**
