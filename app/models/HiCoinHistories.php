@@ -40,7 +40,7 @@ class HiCoinHistories extends BaseModel
         $old_balance = $this->balance;
 
         if ($old_hi_coin_history) {
-            $old_balance = intval($old_hi_coin_history->balance);
+            $old_balance = $old_hi_coin_history->balance;
         }
 
         $this->balance = $old_balance + $change_amount;
