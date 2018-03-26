@@ -60,6 +60,15 @@ class RoomsTask extends \Phalcon\Cli\Task
                     info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
                 }
 
+
+                if ($user->current_room_seat_id) {
+                    $current_room_seat = $user->current_room_seat;
+                    if ($current_room_seat->user_id != $user->id) {
+                        info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                        $user->current_room_seat_id = 0;
+                        $user->save();
+                    }
+                }
             }
         }
     }
