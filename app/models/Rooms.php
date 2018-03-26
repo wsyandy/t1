@@ -215,12 +215,15 @@ class Rooms extends BaseModel
     {
         //解绑用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
+        $room_online_token = "room_token_" . $online_token;
 
-        info($online_token, $user->sid, $this->id);
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_id = $hot_cache->get($room_online_token);
 
-        if ($online_token) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->del("room_token_" . $online_token);
+        info($online_token, $user->sid, $this->id, 'user_room_id', $room_id);
+        // 房间相同
+        if ($online_token && $this->id == $room_id) {
+            $hot_cache->del($room_online_token);
         }
     }
 
@@ -282,18 +285,22 @@ class Rooms extends BaseModel
 
         $current_room_seat_id = $user->current_room_seat_id;
 
-        // 退出所有麦位
-        $room_seats = RoomSeats::findByUserId($user->id);
-        foreach ($room_seats as $room_seat){
-            $room_seat->user_id = 0;
-            $room_seat->save();
-        }
+        // 房间相同才清除用户信息
+        if($this->id == $user->current_room_id){
 
-        $user->current_room_id = 0;
-        $user->current_room_seat_id = 0;
-        $user->user_role = USER_ROLE_NO;
-        $user->user_role_at = time();
-        $user->save();
+            // 退出所有麦位
+            $room_seats = RoomSeats::findByUserId($user->id);
+            foreach ($room_seats as $room_seat){
+                $room_seat->user_id = 0;
+                $room_seat->save();
+            }
+
+            $user->current_room_id = 0;
+            $user->current_room_seat_id = 0;
+            $user->user_role = USER_ROLE_NO;
+            $user->user_role_at = time();
+            $user->save();
+        }
 
         // 房主
         if ($this->user_id == $user->id) {
