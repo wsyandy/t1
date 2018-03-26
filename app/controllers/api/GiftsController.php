@@ -84,13 +84,17 @@ class GiftsController extends BaseController
 
                 $error_reason = "购买成功";
 
-                if ($user_id) {
+                if ($user_id != $this->currentUser()->id) {
                     $error_reason = "赠送成功";
+                }
+
+                if ($renew) {
+                    $error_reason = "续费成功";
                 }
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, $res);
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '赠送失败');
+                return $this->renderJSON(ERROR_CODE_FAIL, '购买失败');
             }
         }
         return $this->renderJSON(ERROR_CODE_NEED_PAY, '余额不足');
