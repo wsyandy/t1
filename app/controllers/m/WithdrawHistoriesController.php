@@ -13,8 +13,7 @@ class WithdrawHistoriesController extends BaseController
     function indexAction()
     {
         $user = $this->currentUser();
-        $product_channel = $user->product_channel;
-        $rate = $product_channel->rateOfHiCoinToMoney();
+        $rate = $user->rateOfHiCoinToMoney();
         $hi_coins = $user->hi_coins;
         $this->view->rate = $rate;
         $this->view->hi_coins = $hi_coins;

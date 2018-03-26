@@ -448,14 +448,4 @@ class ProductChannels extends BaseModel
             'official_website' => $this->official_website
         ];
     }
-
-    function rateOfDiamondToHiCoin()
-    {
-        return 100/4.5;
-    }
-
-    function rateOfHiCoinToMoney()
-    {
-        return 1;
-    }
 }

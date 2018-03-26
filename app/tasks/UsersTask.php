@@ -532,14 +532,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             //echoLine($total_amount, $user->id, $user->hi_coins);
 
-            $product_channel = $user->product_channel;
-
-            if (!$product_channel) {
-                echoLine($user->id);
-                continue;
-            }
-
-            $rate = $product_channel->rateOfDiamondToHiCoin();
+            $rate = $user->rateOfDiamondToHiCoin();
 
             if ($total_amount < 1) {
                 echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
@@ -732,126 +725,28 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
-    function fixHiCoinRankListAction()
+    function fixHiConinRankListAction()
     {
-        $gift_orders = GiftOrders::findForeach();
+        $start = beginOfDay(strtotime('2018-03-19'));
+        $end = beginOfDay(strtotime('2018-03-20'));
+
+        $cond = [
+            'conditions' => 'created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => beginOfDay()]
+        ];
+
+        $gift_orders = GiftOrders::findForeach($cond);
 
         $db = Users::getUserDb();
-
-        foreach ($gift_orders as $gift_order) {
-            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
-                continue;
-            }
-
-            $user = $gift_order->user;
-            $hi_coins = $gift_order->amount / $user->product_channel->rateOfDiamondToHiCoin();
-
-            $day_key = "user_hi_coin_rank_list_" . $user->id . "_" . date("Ymd");
-
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $weeks_key = "user_hi_coin_rank_list_" . $user->id . "_" . $start . "_" . $end;
-            $total_key = "user_hi_coin_rank_list_" . $user->id;
-
-            echoLine($hi_coins);
-
-            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
-                $db->zincrby($day_key, $hi_coins * 100, $gift_order->sender_id);
-            }
-
-            if ($gift_order->created_at >= beginOfDay(strtotime('2018-03-19')) && $gift_order->created_at <= endOfDay(strtotime('2018-03-25'))) {
-                $db->zincrby($weeks_key, $hi_coins * 100, $gift_order->sender_id);
-            }
-
-            $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
-        }
-    }
-
-    function fixCharmRankListAction()
-    {
-        $gift_orders = GiftOrders::findForeach();
-
-        $db = Users::getUserDb();
-
-        foreach ($gift_orders as $gift_order) {
-            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
-                continue;
-            }
-
-            $user_id = $gift_order->user_id;
-            $charm = $gift_order->amount;
-
-
-            $day_key = "day_charm_rank_list_" . date("Ymd");
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_charm_rank_list_" . $start . "_" . $end;
-            $total_key = "total_charm_rank_list_";
-
-
-            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
-                $db->zincrby($day_key, $charm, $user_id);
-            }
-
-            if ($gift_order->created_at >= strtotime("last sunday next day", time()) && $gift_order->created_at <= strtotime("next monday", time()) - 1) {
-                $db->zincrby($week_key, $charm, $user_id);
-            }
-
-            $db->zincrby($total_key, $charm, $user_id);
-            echoLine($user_id, $charm);
-        }
-    }
-
-
-    function fixWealthRankListAction()
-    {
-        $gift_orders = GiftOrders::findForeach();
-
-        $db = Users::getUserDb();
-
-        foreach ($gift_orders as $gift_order) {
-            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
-                continue;
-            }
-
-            $sender_id = $gift_order->sender_id;
-            $wealth = $gift_order->amount;
-
-
-            $day_key = "day_wealth_rank_list_" . date("Ymd");
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
-            $total_key = "total_wealth_rank_list_";
-
-
-            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
-                $db->zincrby($day_key, $wealth, $sender_id);
-            }
-
-            if ($gift_order->created_at >= strtotime("last sunday next day", time()) && $gift_order->created_at <= strtotime("next monday", time()) - 1) {
-                $db->zincrby($week_key, $wealth, $sender_id);
-            }
-
-            $db->zincrby($total_key, $wealth, $sender_id);
-            echoLine($sender_id, $wealth);
-        }
-    }
-
-    function getRankListInfoAction()
-    {
-        $db = Users::getUserDb();
-
-        $day_key = "user_hi_coin_rank_list_117_" . date("Ymd");
-
-        $start = date("Ymd", strtotime("last sunday next day", time()));
-        $end = date("Ymd", strtotime("next monday", time()) - 1);
-        $weeks_key = "user_hi_coin_rank_list_" . 117 . "_" . $start . "_" . $end;
-        $total_key = "user_hi_coin_rank_list_" . 117;
-
-        echoLine($db->zrange($day_key, 0, -1, true));
-        echoLine($db->zrange($weeks_key, 0, -1, true));
+        $total_key = "user_hi_coin_rank_list";
         echoLine($db->zrange($total_key, 0, -1, true));
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $hi_coins = $gift_order->amount / $user->rateOfDiamondToHiCoin();
+            $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
+            //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+        }
     }
 }
 
