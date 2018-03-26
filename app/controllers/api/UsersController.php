@@ -573,9 +573,9 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $gold = $user->addSignInHistory();
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gold);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', $gold);
         }
     }
 
