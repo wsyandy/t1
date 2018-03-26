@@ -203,7 +203,13 @@ class UserGifts extends BaseModel
             return 0;
         }
 
-        $day = ceil($expire_time / 86400);
+        $time = 86400;
+
+        if (isDevelopmentEnv()) {
+            $time = 60 * 2;
+        }
+
+        $day = ceil($expire_time / $time);
 
         return $day;
     }
