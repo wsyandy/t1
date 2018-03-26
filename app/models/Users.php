@@ -2816,7 +2816,7 @@ class Users extends BaseModel
         debug($expire);
         $time = 3600 * 24;
         if (isDevelopmentEnv()) {
-            $time = 60 * 10;
+            $time = 60 * 5;
         }
         if ($expire > $time) {
             //已签到
@@ -2858,10 +2858,14 @@ class Users extends BaseModel
 
         $time = 3600 * 24;
         if (isDevelopmentEnv()) {
-            $time = 60 * 10;
+            $time = 60 * 5;
+            $current_time = time();
+            $expire = strtotime(date('Y-m-d H:i:59', $current_time)) - $current_time + $time;
+        } else {
+            $expire = endOfDay() - time() + $time;
         }
 
-        $db->setex($key, endOfDay() - time() + $time, $times);
+        $db->setex($key, $expire, $times);
         return $res;
     }
 
@@ -2893,7 +2897,7 @@ class Users extends BaseModel
             }
             $time = 3600 * 24;
             if (isDevelopmentEnv()) {
-                $time = 60 * 10;
+                $time = 60 * 5;
             }
             if ($expire > $time) {
                 $day = "明天";
