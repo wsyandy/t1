@@ -2669,40 +2669,18 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
 
-        switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
-            default: {
-                return 0;
-            }
-        }
+        $key = self::generateFieldRankListKey($list_type, $field);
 
         $rank = $db->zrrank($key, $this->id);
 
         if ($rank === null) {
-
             $total_entries = $db->zcard($key);
             if ($total_entries) {
-                $rank = $total_entries + 1;
+                $rank = $total_entries;
             }
-
-        } else {
-            $rank = $rank + 1;
         }
 
-        return $rank;
+        return $rank + 1;
     }
 
     function myLastFieldRank($list_type, $field)
@@ -2714,12 +2692,8 @@ class Users extends BaseModel
         return $db->zrrank($key, $this->id) + 1;
     }
 
-    static function findFieldRankList($list_type, $field, $page, $per_page)
+    static function generateFieldRankListKey($list_type, $field)
     {
-        if ($field != 'wealth' && $field != 'charm') {
-            return [];
-        }
-
         switch ($list_type) {
             case 'day': {
                 $key = "day_" . $field . "_rank_list_" . date("Ymd");
@@ -2736,8 +2710,20 @@ class Users extends BaseModel
                 break;
             }
             default:
-                return [];
+                return '';
         }
+
+        return $key;
+    }
+
+    static function findFieldRankList($list_type, $field, $page, $per_page)
+    {
+        if ($field != 'wealth' && $field != 'charm') {
+            return [];
+        }
+
+        $key = self::generateFieldRankListKey($list_type, $field);
+
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
 
