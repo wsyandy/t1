@@ -17,9 +17,13 @@
         <ul>
             <li v-for="item, index in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
-                    <div class="family_order" v-show="searchText == ''">
+                    <!--<div class="family_order" v-show="searchText == ''">
                         <img v-show="index<3" :src="index<2?(index<1?ranking_1:ranking_2):ranking_3" alt="">
+                    </div>-->
+                    <div :class="index<3?'list_num list_num'+index:'list_num'">
+                        <span>${index+1}</span>
                     </div>
+
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>

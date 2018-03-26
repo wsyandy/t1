@@ -81,8 +81,21 @@ body {
     justify-content: space-between;
     border-bottom: 1px solid #f4f4f4;
 }
-
-.family-list ul li .list_num1 {
+.family-list ul li .list_num{
+    margin-right: 0.26rem;
+    width: 0.36rem;
+    height: 0.36rem;
+    border-radius: 50%;
+    font-size: 0.3rem;
+    color: #969696;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.family-list ul li .list_num0 {
     width: 0.36rem;
     height: 0.36rem;
     background-color: #FF6200;
@@ -90,7 +103,7 @@ body {
     color: #fff;
 }
 
-.family-list ul li .list_num2 {
+.family-list ul li .list_num1 {
     width: 0.36rem;
     height: 0.36rem;
     background-color: #FF931C;
@@ -98,7 +111,7 @@ body {
     color: #fff;
 }
 
-.family-list ul li .list_num3 {
+.family-list ul li .list_num2 {
     width: 0.36rem;
     height: 0.36rem;
     background-color: #F2CA1F;
