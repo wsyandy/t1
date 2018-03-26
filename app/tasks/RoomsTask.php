@@ -17,7 +17,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
-            $key = $room->getRealUserListKey();
+            //$key = $room->getRealUserListKey();
+            $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
                 $room->status = STATUS_OFF;
@@ -36,7 +37,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 }
 
                 if ($user->isSilent()) {
-                    info("silent_user", $user->id);
                     continue;
                 }
 
