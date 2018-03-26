@@ -17,12 +17,13 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
-            $key = $room->getRealUserListKey();
+            //$key = $room->getRealUserListKey();
+            $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
                 $room->status = STATUS_OFF;
                 $room->save();
-                info('no user', $room->id, 'online_status_text', $room->online_status_text);
+                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('c', $room->last_at));
                 continue;
             }
 
@@ -36,7 +37,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 }
 
                 if ($user->isSilent()) {
-                    info("silent_user", $user->id);
                     continue;
                 }
 
