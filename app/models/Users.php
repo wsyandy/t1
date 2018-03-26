@@ -2494,18 +2494,6 @@ class Users extends BaseModel
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
             }
-
-            if ($gift_order->isDiamondPayType()) {
-
-                info($gift_order->pay_type, $gift_order->id);
-
-                $product_channel = $user->product_channel;
-                $rate = $product_channel->rateOfDiamondToHiCoin();
-                $hi_coins = $gift_order->amount / $rate;
-                $user->hi_coins = $user->hi_coins + $hi_coins;
-                $user->update();
-                $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
-            }
         }
 
         unlock($lock);
