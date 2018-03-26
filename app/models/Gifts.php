@@ -320,7 +320,7 @@ class Gifts extends BaseModel
         if (GIFT_TYPE_CAR == $gift_type) {
 
             foreach ($gifts as $gift) {
-                $user_gift = Users::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
+                $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
 
                 if ($user_gift) {
                     $user->buy_status = true;
