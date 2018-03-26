@@ -743,7 +743,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($gift_orders as $gift_order) {
             $user = $gift_order->user;
-            $hi_coins = $gift_order->amount / $user->rateOfDiamondToHiCoin();
+            $hi_coins = $gift_order->amount * $user->rateOfDiamondToHiCoin();
             $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
             //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         }

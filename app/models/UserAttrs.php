@@ -621,13 +621,13 @@ trait UserAttrs
             info($this->sid, $hour);
 
             if ($hour >= 0 && $hour <= 9) {
-                return 100 / 6;
+                return 6 / 100;
             }
 
-            return 100 / 5;
+            return 5 / 100;
         }
 
-        return 100 / 4.5;
+        return 4.5 / 100;
     }
 
     function rateOfHiCoinToMoney()
