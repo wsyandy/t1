@@ -190,6 +190,7 @@
         svga_image_url svga 图片
         show_rank int 礼物展示排序
         expire_time int 礼物过期时间
+        gift_type 1 普通礼物 2 座驾
      }      		   
 }
 ```
