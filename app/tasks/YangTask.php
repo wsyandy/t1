@@ -276,6 +276,13 @@ class YangTask extends \Phalcon\Cli\Task
         $end = date("Y-m-d-H-i-s", strtotime("next monday", time()) - 1);
         echoLine($start);
         echoLine($end);
+
+        $time_3 = date("Y-m-d-H-i-s", strtotime(date('Y-m-d H:i:59', $time)));
+        $time_4 = date("Y-m-d-H-i-s", strtotime("+10 minute", $time));
+
+
+        echoLine($time_3);
+        echoLine($time_4);
     }
 
     function test10Action()
@@ -330,7 +337,7 @@ class YangTask extends \Phalcon\Cli\Task
         echoLine($res);
     }
 
-    function test15Action($params)
+    function goldWorksAction($params)
     {
         $url = "http://chance.com/api/shares/gold_works";
         $body = $this->commonBody();
@@ -392,7 +399,7 @@ class YangTask extends \Phalcon\Cli\Task
         $i = 0;
         foreach ($users as $user) {
 
-            if($i > 30) {
+            if ($i > 30) {
                 break;
             }
 

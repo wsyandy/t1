@@ -43,6 +43,10 @@ class ShareHistories extends BaseModel
             $root = "https://ctest2.yueyuewo.cn/";
         }
 
+        if ($this->share_source == 'gold_works') {
+            return $root . 'shares/share_work?share_history_id=' . $this->id;
+        }
+
         return $root . 'shares?share_history_id=' . $this->id;
     }
 
