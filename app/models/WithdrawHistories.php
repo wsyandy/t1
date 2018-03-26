@@ -34,8 +34,7 @@ class WithdrawHistories extends BaseModel
 
                 if (WITHDRAW_STATUS_SUCCESS == $this->status) {
                     $user = $this->user;
-                    $product_channel = $this->product_channel;
-                    $rate = $product_channel->rateOfHiCoinToMoney();
+                    $rate = $user->rateOfHiCoinToMoney();
                     debug($user->id, $this->amount, $rate);
                     $user->hi_coins = $user->hi_coins - $this->amount * $rate;
                     $user->save();

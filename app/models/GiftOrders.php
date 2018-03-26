@@ -154,6 +154,7 @@ class GiftOrders extends BaseModel
 
                     \Users::delay()->updateExperience($gift_order->id);
                     \Users::delay()->updateCharm($gift_order->id);
+                    \HiCoinHistories::delay()->createHistory($gift_order->user_id, $gift_order->id);
                 }
 
             } else {

@@ -221,3 +221,8 @@ define('GIFT_TYPE_CAR', 2);
 
 define('USER_SIGN_IN_SUCCESS', 1); //已签到
 define("USER_SIGN_IN_WAIT", 2); //未签到
+
+//hi币记录
+define('HI_COIN_FEE_TYPE_RECEIVE_GIFT', 1); //接收礼物
+define('HI_COIN_FEE_TYPE_HOST_REWARD', 2); //主播奖励
+define('HI_COIN_FEE_TYPE_UNION_HOST_REWARD', 3); //家族长奖励
