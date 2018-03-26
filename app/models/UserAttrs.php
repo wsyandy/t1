@@ -620,6 +620,12 @@ trait UserAttrs
 
             info($this->sid, $hour);
 
+            if (isDevelopmentEnv()) {
+                if ($hour >= 19 && $hour <= 21) {
+                    return 6 / 100;
+                }
+            }
+
             if ($hour >= 0 && $hour <= 9) {
                 return 6 / 100;
             }
