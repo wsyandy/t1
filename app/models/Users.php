@@ -114,6 +114,9 @@ class Users extends BaseModel
 
         if ($this->hasChanged('last_at')) {
             $this->updateLastAt();
+
+            //好友上线提醒(每小时选取最新的一个好友上线提醒)
+            $this->pushonlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -2673,5 +2676,20 @@ class Users extends BaseModel
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);
         return $res;
+    }
+
+    function push($opts = [])
+    {
+        $push_data = [
+            'title' => fetch($opts, 'title', $this->product_channel->name),
+            'body' => fetch($opts, 'body', ''),
+            'badge' => fetch($opts, 'badge', null),
+            'offline' => fetch($opts, 'offline', true),
+            'client_url' => fetch($opts, 'client_url', 'app://home'),
+            'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
+        ];
+        info($push_data);
+
+        \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
     }
 }

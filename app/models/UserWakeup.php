@@ -507,4 +507,17 @@ trait UserWakeup
         return true;
     }
 
+    function pushOnlineRemind()
+    {
+        $body = "你的{$this->nickname}好友已上线，赶紧去唠唠！";
+        $opts = ['title'=>'好友上线提醒','body' => $body];
+
+        $user_db = Users::getUserDb();
+        $relations_key = 'friend_list_user_id_' . $this->id;
+        $user_id = $user_db->zrevrange($relations_key, 0, 1, 'withscores');
+
+        $user = Users::findFirstById($user_id);
+        $user->push($opts);
+
+    }
 }
