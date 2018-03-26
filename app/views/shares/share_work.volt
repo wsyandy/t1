@@ -56,9 +56,18 @@
             $("#open_in_browser_tip").removeClass('none');
         }
 
-        $(".btn_download").click(function () {
-            Download()
-        })
+        $(".btn_download").click(function (e) {
+            e.preventDefault();
+
+            var app_url = '{{ user.product_channel.code }}' + '://';
+
+            window.location = app_url;
+
+            if ({{ soft_version_id }}) {
+                setTimeout(Download, 2000);
+            }
+        });
+
     });
 
     function Download() {
