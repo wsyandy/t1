@@ -2688,7 +2688,21 @@ class Users extends BaseModel
                 return 0;
             }
         }
-        return $db->zrrank($key, $this->id) + 1;
+
+        $rank = $db->zrrank($key, $this->id);
+
+        if ($rank === null) {
+
+            $total_entries = $db->zcard($key);
+            if ($total_entries) {
+                $rank = $total_entries + 1;
+            }
+
+        } else {
+            $rank = $rank + 1;
+        }
+
+        return $rank;
     }
 
     function myLastFieldRank($list_type, $field)
