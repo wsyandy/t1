@@ -29,6 +29,7 @@
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
     {% endif %}
+    房主ID:{{ room.user.id }}<br/>
     性别:{{ room.user.sex_text }}<br/>
     手机号码:{{ room.user_mobile }}<br/>
 {% endmacro %}
@@ -89,6 +90,7 @@
             {% if isAllowed('users','index') %}
                 姓名:<a href="/admin/users?user[id_eq]=${ room.user_id }">${ room.user_nickname }</a><br/>
             {% endif %}
+            房主ID:${ room.user_id }<br/>
             性别:${ room.user_sex_text }<br/>
             手机号码:${ room.user_mobile }<br/>
         </td>
