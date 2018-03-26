@@ -16,33 +16,65 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
+
             $key = $room->getRealUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
+            if (count($user_ids) < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+                info('no user', $room->id, 'online_status_text', $room->online_status_text);
+                continue;
+            }
 
             $users = Users::findByIds($user_ids);
-
             foreach ($users as $user) {
+
+                if((time() - $room->last_at) > 3600 * 12){
+                    $room->exitRoom($user, true);
+                    info("room_last_at", $room->id, 'user', $user->id, 'last_at', date("YmdH", $room->last_at));
+                    continue;
+                }
 
                 if ($user->isSilent()) {
                     info("silent_user", $user->id);
                     continue;
                 }
 
-                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
-                    && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
+                // 用户已不再房间里或者状态不正常
+                if ($user->current_room_id != $room->id || !$user->isNormal() || (time() - $user->last_at) > 3600 * 12) {
 
-                    info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
+                    $current_room_id = $user->current_room_id;
+                    $current_room_seat_id = $user->current_room_seat_id;
+                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
 
-                    $unbind = true;
+                    $room->exitRoom($user, true);
+                    if($current_room_id == $room->id){
+                        $room->pushExitRoomMessage($user, $current_room_seat_id);
+                    }
+                }
 
-                    //用户在新的房间 不解绑
-                    if ($user->current_room_id != $room->id && $user->current_room_id > 0) {
-                        $unbind = false;
+
+                //检测麦位状态
+                $room_seats = RoomSeats::findByUserId($user->id);
+                foreach ($room_seats as $room_seat) {
+                    // 房间和麦位匹配
+                    if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+                        continue;
                     }
 
-                    $current_room_seat_id = $user->current_room_seat_id;
-                    $room->exitRoom($user, $unbind);
-                    $room->pushExitRoomMessage($user, $current_room_seat_id);
+                    $room_seat->user_id = 0;
+                    $room_seat->save();
+                    info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                }
+
+
+                if ($user->current_room_seat_id) {
+                    $current_room_seat = $user->current_room_seat;
+                    if ($current_room_seat->user_id != $user->id) {
+                        info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                        $user->current_room_seat_id = 0;
+                        $user->save();
+                    }
                 }
             }
         }
