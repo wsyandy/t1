@@ -41,7 +41,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     }
 
                     $current_room_seat_id = $user->current_room_seat_id;
-                    info('fix room', $user->id, $room->id, 'current_room_id', $user->current_room_id, $current_room_seat_id);
+                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id);
 
                     $room->exitRoom($user, $unbind);
                     $room->pushExitRoomMessage($user, $current_room_seat_id);
@@ -58,7 +58,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                         $room_seat->user_id = 0;
                         $room_seat->save();
-                        info('fix room_seat', $room_seat->id, $user->id, $user->current_room_seat_id);
+                        info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
                     }
                 }
             }
