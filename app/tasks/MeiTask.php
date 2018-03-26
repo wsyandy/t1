@@ -1214,6 +1214,9 @@ class MeiTask extends \Phalcon\Cli\Task
                 echoLine($amount, $user->rateOfDiamondToHiCoin());
                 $hi_coins = $amount * $user->rateOfDiamondToHiCoin();
 
+                if ($hi_coins > 10000) {
+                    continue;
+                }
 
                 $hi_coin_history->hi_coins = $hi_coins;
                 $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
