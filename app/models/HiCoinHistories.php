@@ -111,6 +111,8 @@ class HiCoinHistories extends BaseModel
         $user->hi_coins += $hi_coin_history->hi_coins;
         $user->update();
 
+        $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+
         unlock($lock);
     }
 }
