@@ -44,7 +44,7 @@ class GiftsController extends BaseController
         }
 
         $gift_num = $this->params('gift_num', 1);
-        $renew = $this->params('renew', 1);
+        $renew = $this->params('renew', 0);
         $src = $this->params('src', 'room');
         $gift = \Gifts::findById($this->params('gift_id'));
 
