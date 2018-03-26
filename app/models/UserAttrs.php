@@ -271,7 +271,7 @@ trait UserAttrs
         ];
 
         if (isset($this->contributing_hi_conins)) {
-            $data['hi_coins'] = $this->contributing_hi_conins;
+            $data['hi_coin'] = $this->contributing_hi_conins;
         }
 
         if (isset($this->charm)) {
