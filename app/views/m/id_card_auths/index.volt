@@ -48,6 +48,17 @@
         <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}" @click="submit()">
             <span>确认提交 </span>
         </div>
+
+        <div class="compere_tips">
+            <div class="compere_tips_tit">【${tips.tit}】</div>
+            <ul class="compere_tips_txt">
+                <li v-for="(tip,index) in tips.txt">
+                    ${index+1}.
+                    <span>${tip}</span></li>
+            </ul>
+
+        </div>
+
     </div>
 
     <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
@@ -58,6 +69,8 @@
             <div class="close_btn" @click="cancelSelect">取消</div>
         </div>
     </div>
+
+
 
 </div>
 
@@ -82,6 +95,13 @@
                 mobile: '{{ id_auth_auth ? id_auth_auth.mobile : '' }}',
                 id_no: '{{ id_auth_auth ? id_auth_auth.id_no : '' }}',
                 bank_account: '{{ id_auth_auth ? id_auth_auth.bank_account : '' }}'
+            },
+            tips:{
+                tit:"主持认证说明",
+                txt:[
+                    "主持认证成功后，主持用户享受钻石礼物分成比例50%和扶持奖励金。",
+                    "请填写真实的姓名、身份证号以及正确的手机号码，如填写错误，Hi语音平台将不予认证通过。 "
+                ]
             },
             hasAgree: true,
             set_select: '/m/images/ico-select.png',

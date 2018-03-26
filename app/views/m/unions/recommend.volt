@@ -26,7 +26,6 @@
                         <div class="family_prestige">
                             <span>声望${ item.fame_value }</span>
                         </div>
-                        {#<span class="family_prestige"> 声望${ item.fame_value }</span>#}
                     </div>
                 </div>
                 <div class="list_right">
@@ -35,6 +34,9 @@
                 </div>
             </li>
         </ul>
+        <div class="top_five" v-show="searchText">
+            昨天家族声望日榜前五名
+        </div>
     </div>
 </div>
 
@@ -49,7 +51,7 @@
             searchText: '',
             ranking_1: "/m/images/ranking_1.png",
             ranking_2: "/m/images/ranking_2.png",
-            ranking_3: "/m/images/ranking_3.png",
+            ranking_3: "/m/images/ranking_3.png"
         },
         created: function () {
             this.list();

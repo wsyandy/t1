@@ -219,3 +219,28 @@
     color: #595959;
     border-top: 0.08rem solid #F3F3F3;
 }
+
+
+/*主持认证说明 */
+.compere_tips{
+    width: 6.9rem;
+    padding-top: 0.6rem;
+    margin:  0 auto;
+}
+.compere_tips_tit{
+    font-size: 0.28rem;
+    color: #626262;
+    font-weight: 700;
+    padding: 0.2rem 0;
+}
+ul.compere_tips_txt li{
+    height:auto;
+    padding: 0.1rem;
+    font-size: 0.24rem;
+    color: #808080;
+    border-bottom: 0;
+    background-color: transparent;
+}
+ul.compere_tips_txt li span{
+    padding-left: 0.1rem;
+}
