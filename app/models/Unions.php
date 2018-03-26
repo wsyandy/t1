@@ -624,6 +624,26 @@ class Unions extends BaseModel
     {
         $db = Users::getUserDb();
 
+        $key = self::generateFameValueRankListKey($list_type);
+
+        $rank = $db->zrrank($key, $this->id);
+
+        if ($rank === null) {
+
+            $total_entries = $db->zcard($key);
+            if ($total_entries) {
+                $rank = $total_entries + 1;
+            }
+
+        } else {
+            $rank = $rank + 1;
+        }
+
+        return $rank;
+    }
+
+    static function generateFameValueRankListKey($list_type)
+    {
         switch ($list_type) {
             case 'day': {
                 $key = "total_union_fame_value_day_" . date("Ymd");
@@ -636,30 +656,17 @@ class Unions extends BaseModel
                 break;
             }
             default:
-                return 0;
+                return '';
         }
-        return $db->zrrank($key, $this->id) + 1;
 
+        return $key;
     }
 
     static function findFameValueRankList($list_type, $page, $per_page)
     {
         $db = Users::getUserDb();
 
-        switch ($list_type) {
-            case 'day': {
-                $key = "total_union_fame_value_day_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "total_union_fame_value_" . $start . "_" . $end;
-                break;
-            }
-            default:
-                return [];
-        }
+        $key = self::generateFameValueRankListKey($list_type);
 
         $offset = ($page - 1) * $per_page;
 
