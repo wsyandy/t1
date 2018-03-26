@@ -178,7 +178,7 @@ class Gifts extends BaseModel
 
     function toSimpleJson()
     {
-        return [
+        $opts = [
             'id' => $this->id,
             'image_url' => $this->image_url,
             'image_small_url' => $this->image_small_url,
@@ -195,6 +195,12 @@ class Gifts extends BaseModel
             'show_rank' => $this->show_rank,
             'expire_time' => $this->expire_time
         ];
+
+        if (isset($this->buy_status)) {
+            $opts['buy_status'] = $this->buy_status;
+        }
+
+        return $opts;
     }
 
     function toJson()
@@ -289,7 +295,7 @@ class Gifts extends BaseModel
      * 获取所有的有效礼物，这里先做一个限制，最多100个
      * @return PaginationModel
      */
-    static function findValidList($opts = [])
+    static function findValidList($user, $opts = [])
     {
         $gift_type = fetch($opts, 'gift_type');
 
@@ -308,7 +314,23 @@ class Gifts extends BaseModel
         $page = 1;
         $per_page = 100;
 
-        return \Gifts::findPagination($conditions, $page, $per_page);
+        $gifts = \Gifts::findPagination($conditions, $page, $per_page);
+
+        //待优化次代码
+        if (GIFT_TYPE_CAR == $gift_type) {
+
+            foreach ($gifts as $gift) {
+                $user_gift = Users::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
+
+                if ($user_gift) {
+                    $user->buy_status = true;
+                } else {
+                    $user->buy_status = false;
+                }
+            }
+        }
+
+        return $gifts;
     }
 
     static function generateNotifyData($opts)
