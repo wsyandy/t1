@@ -2482,13 +2482,13 @@ class Users extends BaseModel
             $union = $user->union;
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
+
                 $user->union_charm_value += $charm_value;
 
                 //不在同一个工会才更新声望值
                 if ($gift_order->sender->union_id != $union->id) {
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
-
             }
         }
 
