@@ -94,7 +94,7 @@ class HiCoinHistories extends BaseModel
 
         if ($gift_order_id) {
             $hi_coin_history->gift_order_id = $gift_order_id;
-            $amount = $hi_coin_history->amount;
+            $amount = $gift_order->amount;
             $hi_coins = $amount / $user->rateOfDiamondToHiCoin();
             $hi_coin_history->hi_coins = $hi_coins;
             $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
