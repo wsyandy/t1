@@ -16,7 +16,7 @@ class BaseController extends \ApplicationController
     private $_current_product_channel;
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'login', 'logout', 'check_auth']
+        'home' => ['index', 'login', 'logout', 'check_auth', 'simulator_apk']
     ];
 
     /**
@@ -109,14 +109,6 @@ class BaseController extends \ApplicationController
         if (isPresent($current_user)) {
             $show_logout = true;
         }
-
-        $soft = \SoftVersions::findFirstById(9);
-        if ($soft) {
-            $file_url = $soft->file_url;
-        } else {
-            $file_url = '#';
-        }
-        $this->view->file_url = $file_url;
 
         $this->view->show_logout = $show_logout;
 
