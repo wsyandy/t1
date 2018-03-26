@@ -93,7 +93,7 @@ class UserGifts extends BaseModel
         $lock_key = "user_gift_lock_" . $gift_order->user_id . '_' . $gift_order->gift_id;
         $lock = tryLock($lock_key);
 
-        $exist_user_gift = \UserGifts::findFirstBy(['user_id' => $gift_order->user_id, 'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON]);
+        $exist_user_gift = $gift_order->user->getUserCarGift();
 
         $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findFirstById($gift_order->gift_id);
@@ -106,6 +106,7 @@ class UserGifts extends BaseModel
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
         $user_gift->amount = $gift_amount;
+        $user_gift->num = $gift_num;
         $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
         $user_gift->pay_type = $gift->pay_type;
         $user_gift->gift_type = $gift->type;

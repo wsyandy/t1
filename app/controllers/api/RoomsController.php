@@ -218,7 +218,7 @@ class RoomsController extends BaseController
         $user_car_gift = $this->currentUser()->getUserCarGift();
 
         if ($user_car_gift) {
-            $res['user_car_gift'] = $user_car_gift;
+            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);

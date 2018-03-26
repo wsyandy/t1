@@ -685,10 +685,6 @@ trait UserAttrs
                 'order' => 'id desc'
             ]);
 
-        if ($exist_user_gift) {
-            return $exist_user_gift->toSimpleJson();
-        }
-
-        return "";
+        return $exist_user_gift;
     }
 }
