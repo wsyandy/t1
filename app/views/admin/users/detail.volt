@@ -41,6 +41,9 @@
     {% if isAllowed('unions_histories','basic') %}
         <li role="presentation"><a href="/admin/union_histories/basic?user_id={{ user.id }}&type=2">加入家族记录</a></li>
     {% endif %}
+    {% if isAllowed('hi_coin_histories','basic') %}
+        <li role="presentation"><a href="/admin/hi_coin_histories/basic?user_id={{ user.id }}">hi币消费记录</a></li>
+    {% endif %}
 </ul>
 
 
