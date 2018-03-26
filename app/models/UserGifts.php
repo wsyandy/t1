@@ -124,13 +124,9 @@ class UserGifts extends BaseModel
         } else {
             $user_gift->expire_at = time() + $gift->expire_day * 86400;
         }
+
         $user_gift->save();
-
-        //钻石更新hi币
-        if ($gift->isDiamondPayType()) {
-            Users::delay()->updateHiCoins($gift_order);
-        }
-
+        
         info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
