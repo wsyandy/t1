@@ -117,6 +117,12 @@ class Users extends BaseModel
 
         if ($this->hasChanged('last_at')) {
             $this->updateLastAt();
+
+            //好友上线提醒(每小时选取最新的一个好友上线提醒)
+            $this->pushFriendOnlineRemind();
+
+            //关注的人上线提醒(每小时选取最新关注的人上线提醒)
+            $this->pushFollowOnlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -2947,5 +2953,20 @@ class Users extends BaseModel
     function isIdCardAuth()
     {
         return AUTH_SUCCESS == $this->id_card_auth;
+    }
+
+    function push($opts = [])
+    {
+        $push_data = [
+            'title' => fetch($opts, 'title', $this->product_channel->name),
+            'body' => fetch($opts, 'body', ''),
+            'badge' => fetch($opts, 'badge', null),
+            'offline' => fetch($opts, 'offline', true),
+            'client_url' => fetch($opts, 'client_url', 'app://home'),
+            'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
+        ];
+        info($push_data);
+
+        \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
     }
 }
