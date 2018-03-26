@@ -281,14 +281,10 @@ class Rooms extends BaseModel
         $this->remUser($user);
 
         $current_room_seat_id = $user->current_room_seat_id;
-        // 麦位
-        $room_seat = RoomSeats::findFirstById($current_room_seat_id);
 
-        if (!$room_seat) {
-            $room_seat = RoomSeats::findFirstByUserId($user->id);
-        }
-
-        if ($room_seat) {
+        // 退出所有麦位
+        $room_seats = RoomSeats::findByUserId($user->id);
+        foreach ($room_seats as $room_seat){
             $room_seat->user_id = 0;
             $room_seat->save();
         }
