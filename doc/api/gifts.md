@@ -38,6 +38,7 @@
             svga_image_url svga 图片
             expire_day int 有效天数
             show_rank int 礼物展示排序
+            buy_status boolean 是否购买
     ],
     products: [
         {

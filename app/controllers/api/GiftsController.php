@@ -17,7 +17,7 @@ class GiftsController extends BaseController
 
         $opts = ['gift_type' => $gift_type];
 
-        $gifts = \Gifts::findValidList($opts);
+        $gifts = \Gifts::findValidList($this->currentUser(), $opts);
 
         $user_diamond_info = array(
             'diamond' => intval($this->currentUser()->diamond),
