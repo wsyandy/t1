@@ -24,15 +24,15 @@ class UserGifts extends BaseModel
     {
         if ($this->hasChanged('status') && STATUS_ON == $this->status && GIFT_TYPE_CAR == $this->gift_type) {
 
-            $user_gifts = UserGifts::find(['conditions' => 'status = :status: and id != :id: and gift_type = :gift_type:',
-                'bind' => ['status' => STATUS_ON, 'id' => $this->id, 'gift_type' => GIFT_TYPE_CAR]
+            $user_gifts = UserGifts::find(['conditions' => 'status = :status: and user_id = :user_id: and id != :id: and gift_type = :gift_type:',
+                'bind' => ['status' => STATUS_ON, 'id' => $this->id, 'user_id' => $this->user_id, 'gift_type' => GIFT_TYPE_CAR]
             ]);
 
             if (count($user_gifts) > 0) {
                 foreach ($user_gifts as $user_gift) {
 
                     debug($user_gift->id, $user_gift->user->sid);
-                    
+
                     $user_gift->status = STATUS_OFF;
                     $user_gift->update();
                 }
