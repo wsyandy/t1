@@ -13,7 +13,6 @@
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/vue/2.0.5/vue.min.js"></script>
     <script src="/js/utils.js"></script>
-    <script src="/web/js/common.js"></script>
     {{ block_holder('head') }}
 </head>
 <body>
@@ -37,5 +36,17 @@
     {{ content() }}
 </div>
 
+<script>
+    $("#download_simulator_apk").click(function (e) {
+
+        e.preventDefault();
+
+        $.authGet('/web/home/simulator_apk', function (resp) {
+            if (resp.error_url) {
+                location.href = resp.error_url;
+            }
+        })
+    })
+</script>
 </body>
 </html>
