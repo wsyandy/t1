@@ -191,6 +191,7 @@
         show_rank int 礼物展示排序
         expire_time int 礼物过期时间
         gift_type 1 普通礼物 2 座驾
+        notice_content 进房间提示文案
      }      		   
 }
 ```
