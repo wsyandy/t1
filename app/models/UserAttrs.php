@@ -621,10 +621,10 @@ trait UserAttrs
             info($this->sid, $hour);
 
             if ($hour >= 0 && $hour <= 9) {
-                return 100 / 60;
+                return 100 / 6;
             }
 
-            return 100 / 50;
+            return 100 / 5;
         }
 
         return 100 / 4.5;
