@@ -47,7 +47,6 @@ class UserGifts extends BaseModel
         $user_gift->pay_type = 'diamond';
         $user_gift->gift_type = $gift->type;
         $user_gift->save();
-
         info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
