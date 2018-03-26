@@ -30,6 +30,9 @@ class UserGifts extends BaseModel
 
             if (count($user_gifts) > 0) {
                 foreach ($user_gifts as $user_gift) {
+
+                    debug($user_gift->id, $user_gift->user->sid);
+                    
                     $user_gift->status = STATUS_OFF;
                     $user_gift->update();
                 }
