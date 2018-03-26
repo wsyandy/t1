@@ -34,8 +34,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 // 用户已不再房间里或者状态不正常
                 if ($user->current_room_id != $room->id || !$user->isNormal()) {
 
-                    info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
-
                     $unbind = true;
                     //用户在新的房间 不解绑
                     if ($user->current_room_id && $user->current_room_id != $room->id) {
@@ -43,7 +41,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     }
 
                     $current_room_seat_id = $user->current_room_seat_id;
-                    info('exit', $user->id, $room->id, 'current_room_id', $user->current_room_id, $current_room_seat_id);
+                    info('fix room', $user->id, $room->id, 'current_room_id', $user->current_room_id, $current_room_seat_id);
 
                     $room->exitRoom($user, $unbind);
                     $room->pushExitRoomMessage($user, $current_room_seat_id);
