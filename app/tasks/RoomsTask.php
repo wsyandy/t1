@@ -20,11 +20,20 @@ class RoomsTask extends \Phalcon\Cli\Task
             $key = $room->getRealUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
+                $room->online_status = STATUS_OFF;
+                $room->save();
+                info('no user', $room->id);
                 continue;
             }
 
             $users = Users::findByIds($user_ids);
             foreach ($users as $user) {
+
+                if((time() - $room->last_at) > 3600 * 12){
+                    $room->exitRoom($user, true);
+                    info("room_last_at", $room->id, 'user', $user->id, 'last_at', date("YmdH", $room->last_at));
+                    continue;
+                }
 
                 if ($user->isSilent()) {
                     info("silent_user", $user->id);
