@@ -44,6 +44,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                     info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
 
                     $room->exitRoom($user, $unbind);
+
+                    if($user->current_room_id == $room->id){
+                        $room->pushExitRoomMessage($user, $current_room_seat_id);
+                    }
                 }
 
 
