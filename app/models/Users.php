@@ -2488,9 +2488,16 @@ class Users extends BaseModel
                 if ($gift_order->sender->union_id != $union->id) {
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
+
             }
 
-            $user->update;
+            $product_channel = $user->product_channel;
+            $rate = $product_channel->rateOfDiamondToHiCoin();
+            $hi_coins = $gift_order->amount / $rate;
+            $user->hi_coins = $user->hi_coins + $hi_coins;
+            $user->update();
+
+            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         }
 
         unlock($lock);
@@ -2553,23 +2560,6 @@ class Users extends BaseModel
     function isUnionHost($union)
     {
         return $this->id == $union->user_id;
-    }
-
-    static function updateHiCoins($gift_order)
-    {
-        $user = $gift_order->user;
-        $lock_key = "user_update_hi_coins_lock_" . $user->id;
-        $lock = tryLock($lock_key);
-        $gift = $gift_order->gift;
-        $gift_amount = $gift->amount;
-        $gift_num = $gift_order->gift_num;
-        $product_channel = $user->product_channel;
-        $rate = $product_channel->rateOfDiamondToHiCoin();
-        $hi_coins = ($gift_amount * $gift_num) / $rate;
-        $user->hi_coins = $user->hi_coins + $hi_coins;
-        $user->save();
-        $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
-        unlock($lock);
     }
 
     //更新hi币贡献榜
