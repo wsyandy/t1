@@ -1200,22 +1200,30 @@ class MeiTask extends \Phalcon\Cli\Task
             $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $user->id, 'gift_order_id' => $gift_order->id]);
 
             if (!$hi_coin_history) {
+
                 $hi_coin_history = new HiCoinHistories();
                 $hi_coin_history->user_id = $user->id;
                 $hi_coin_history->gift_order_id = $gift_order->id;
                 $amount = $gift_order->amount;
+
+                if ($amount > 100000000) {
+                    echoLine($amount, $gift_order->id);
+                    continue;
+                }
+
+                echoLine($amount, $user->rateOfDiamondToHiCoin());
                 $hi_coins = $amount * $user->rateOfDiamondToHiCoin();
+
+
                 $hi_coin_history->hi_coins = $hi_coins;
                 $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
                 $hi_coin_history->remark = "接收礼物总额: $amount 收益:" . $hi_coins;
                 $hi_coin_history->product_channel_id = $user->product_channel_id;
                 $hi_coin_history->union_id = $user->union_id;
                 $hi_coin_history->union_type = $user->union_type;
+                $hi_coin_history->created_at = $gift_order->created_at;
                 $hi_coin_history->save();
             }
         }
-
-        $hi_coin_history = HiCoinHistories::findFirstById(56);
-        echoLine($hi_coin_history);
     }
 }
