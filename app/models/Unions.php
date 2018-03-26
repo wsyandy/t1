@@ -632,14 +632,12 @@ class Unions extends BaseModel
 
             $total_entries = $db->zcard($key);
             if ($total_entries) {
-                $rank = $total_entries + 1;
+                $rank = $total_entries;
             }
 
-        } else {
-            $rank = $rank + 1;
         }
 
-        return $rank;
+        return $rank + 1;
     }
 
     static function generateFameValueRankListKey($list_type)
