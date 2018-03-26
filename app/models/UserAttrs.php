@@ -678,8 +678,12 @@ trait UserAttrs
     //用户的座驾
     function getUserCarGift()
     {
-        $exist_user_gift = \UserGifts::findFirstBy(['user_id' => $this->id,
-            'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON], 'id desc');
+        $exist_user_gift = \UserGifts::findFirst(
+            ['conditions' => 'user_id = :user_id: and gift_type = :gift_type:
+         and status = :status: and expire_at > :expire_at:',
+                'bind' => ['user_id' => $this->id, 'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON, 'expire_at' => time()],
+                'order' => 'id desc'
+            ]);
 
         if ($exist_user_gift) {
             return $exist_user_gift->toSimpleJson();
