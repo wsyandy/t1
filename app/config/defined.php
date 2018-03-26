@@ -209,3 +209,8 @@ define('WITHDRAW_TYPE_UNION', 2); //家族体现
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
 define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
+
+//hi币记录
+define('HI_COIN_FEE_TYPE_RECEIVE_GIFT', 1); //接收礼物
+define('HI_COIN_FEE_TYPE_HOST_REWARD', 2); //主播奖励
+define('HI_COIN_FEE_TYPE_UNION_HOST_REWARD', 3); //家族长奖励

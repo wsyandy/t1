@@ -532,14 +532,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             //echoLine($total_amount, $user->id, $user->hi_coins);
 
-            $product_channel = $user->product_channel;
-
-            if (!$product_channel) {
-                echoLine($user->id);
-                continue;
-            }
-
-            $rate = $product_channel->rateOfDiamondToHiCoin();
+            $rate = $user->rateOfDiamondToHiCoin();
 
             if ($total_amount < 1) {
                 echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
@@ -750,7 +743,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($gift_orders as $gift_order) {
             $user = $gift_order->user;
-            $hi_coins = $gift_order->amount / $user->product_channel->rateOfDiamondToHiCoin();
+            $hi_coins = $gift_order->amount / $user->rateOfDiamondToHiCoin();
             $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
             //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         }
