@@ -45,19 +45,21 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     $room->exitRoom($user, $unbind);
                     $room->pushExitRoomMessage($user, $current_room_seat_id);
-                }
 
-                //检测麦位状态
-                $room_seats = RoomSeats::findByUserId($user->id);
-                foreach ($room_seats as $room_seat) {
-                    // 房间和麦位匹配
-                    if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
-                        continue;
+                } else {
+
+                    //检测麦位状态
+                    $room_seats = RoomSeats::findByUserId($user->id);
+                    foreach ($room_seats as $room_seat) {
+                        // 房间和麦位匹配
+                        if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+                            continue;
+                        }
+
+                        $room_seat->user_id = 0;
+                        $room_seat->save();
+                        info('fix room_seat', $room_seat->id, $user->id, $user->current_room_seat_id);
                     }
-
-                    $room_seat->user_id = 0;
-                    $room_seat->save();
-                    info('fix room_seat', $room_seat->id, $user->id, $user->current_room_seat_id);
                 }
             }
         }
