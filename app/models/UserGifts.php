@@ -248,8 +248,8 @@ class UserGifts extends BaseModel
     static function searchCarGifts($user_id)
     {
         $conds = [
-            'conditions' => 'user_id = :user_id: and gift_type = :gift_type:',
-            'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_CAR],
+            'conditions' => 'user_id = :user_id: and gift_type = :gift_type: and expire_at > :expire_at:',
+            'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_CAR, 'expire_at' => time()],
             'order' => 'amount desc'
         ];
 
