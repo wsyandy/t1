@@ -38,7 +38,7 @@
                 </div>
             </li>
         </ul>
-        <div class="top_five" v-show="searchText">
+        <div class="top_five" v-show="!searchText">
             昨天家族声望日榜前五名
         </div>
     </div>
