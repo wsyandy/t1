@@ -56,7 +56,7 @@
 {% endmacro %}
 
 {% macro room_status_info(room) %}
-    {{ room.status_text }}|{{ room.online_status_text }}|{{ room.user_type_text }}<br/>
+    房间: {{ room.status_text }}|房主:{{ room.online_status_text }}|用户:{{ room.user_type_text }}<br/>
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>
@@ -112,7 +112,7 @@
             手机号码:${ room.user_mobile }<br/>
         </td>
         <td>
-            ${ room.status_text }|${ room.online_status_text }|${ room.user_type_text }<br/>
+            房间:${ room.status_text }|房主:${ room.online_status_text }|用户:${ room.user_type_text }<br/>
             最后活跃时间: ${ room.last_at_text }<br/>
             公频聊天状态: ${ room.chat_text }<br/>
             是否加锁: ${ room.lock_text }<br/>

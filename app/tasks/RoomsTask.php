@@ -17,35 +17,37 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
-            $key = $room->getRealUserListKey();
+            //$key = $room->getRealUserListKey();
+            $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
+                $room->status = STATUS_OFF;
+                $room->save();
+                info('no user', $room->id, 'online_status_text', $room->online_status_text, date('c', $room->last_at));
                 continue;
             }
 
             $users = Users::findByIds($user_ids);
             foreach ($users as $user) {
 
+                if((time() - $room->last_at) > 3600 * 12){
+                    $room->exitRoom($user, true);
+                    info("room_last_at", $room->id, 'user', $user->id, 'last_at', date("YmdH", $room->last_at));
+                    continue;
+                }
+
                 if ($user->isSilent()) {
-                    info("silent_user", $user->id);
                     continue;
                 }
 
                 // 用户已不再房间里或者状态不正常
                 if ($user->current_room_id != $room->id || !$user->isNormal() || (time() - $user->last_at) > 3600 * 12) {
 
-                    $unbind = true;
-                    //用户在新的房间 不解绑
-                    if ($user->current_room_id && $user->current_room_id != $room->id) {
-                        $unbind = false;
-                    }
-
                     $current_room_id = $user->current_room_id;
                     $current_room_seat_id = $user->current_room_seat_id;
                     info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
 
-                    $room->exitRoom($user, $unbind);
-
+                    $room->exitRoom($user, true);
                     if($current_room_id == $room->id){
                         $room->pushExitRoomMessage($user, $current_room_seat_id);
                     }
