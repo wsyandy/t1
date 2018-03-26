@@ -664,7 +664,6 @@
 {
     error_code: 0/-1
     error_reason: 失败原因，默认为空
-    gold: 签到得到的金币
 }
 ```
 
