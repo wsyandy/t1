@@ -13,22 +13,11 @@ class HomeController extends BaseController
             $product_channel = $user->product_channel;
         }
 
-        $ios_apk = \SoftVersions::findFirst([
-                'conditions' => "platform = :platform: and status = :status:",
-                'bind' => ['platform' => 'ios', 'status' => SOFT_VERSION_STATUS_ON]
-            ]
-        );
+        $ios_apk = \SoftVersions::findFirstById(2);
 
-        $android_apk = \SoftVersions::findFirst([
-                'conditions' => "platform = :platform: and status = :status:",
-                'bind' => ['platform' => 'android', 'status' => SOFT_VERSION_STATUS_ON]
-            ]
-        );
-        
+        $android_apk = \SoftVersions::findFirst(1);
         $this->view->ios_url = $ios_apk->ios_down_url;
-
         $this->view->android_url = $android_apk->weixin_url;
-
         $this->view->product_channel = $product_channel;
     }
 
@@ -80,4 +69,19 @@ class HomeController extends BaseController
         return $this->renderJSON($error_code, $error_reason, ['error_url' => '']);
     }
 
+    function simulatorApkAction()
+    {
+
+        if ($this->request->isAjax()) {
+
+            $soft = \SoftVersions::findFirstById(9);
+            $file_url = '';
+
+            if ($soft) {
+                $file_url = $soft->file_url;
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => $file_url]);
+        }
+    }
 }

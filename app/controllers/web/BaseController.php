@@ -110,14 +110,6 @@ class BaseController extends \ApplicationController
             $show_logout = true;
         }
 
-        $soft = \SoftVersions::findFirstById(9);
-        if ($soft) {
-            $file_url = $soft->file_url;
-        } else {
-            $file_url = '#';
-        }
-        $this->view->file_url = $file_url;
-
         $this->view->show_logout = $show_logout;
 
         // 不验证用户登录

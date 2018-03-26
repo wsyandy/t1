@@ -13,6 +13,7 @@
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/vue/2.0.5/vue.min.js"></script>
     <script src="/js/utils.js"></script>
+    <script src="/web/js/common.js"></script>
     {{ block_holder('head') }}
 </head>
 <body>
@@ -28,7 +29,7 @@
                 {% if show_logout %}
                     <li><a href="/web/home/logout" class="get_out">退出 <i></i></a></li>
                 {% endif %}
-                <li><a href="{{ file_url }}">Android模拟器专用版</a></li>
+                <li><a href="#" id="download_simulator_apk">Android模拟器专用版</a></li>
             </ul>
         </div>
     </header>
