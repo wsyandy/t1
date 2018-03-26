@@ -575,7 +575,6 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->province_id = 0;
             $user->city_id = 0;
             $user->ip = '';
-            $user->last_at = time();
             $user->mobile = '';
             $user->device_id = 0;
             $user->push_token = '';
@@ -746,6 +745,12 @@ class UsersTask extends \Phalcon\Cli\Task
             $hi_coins = $gift_order->amount * $user->rateOfDiamondToHiCoin();
             $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
             //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+        }
+
+        $users = Users::findForeach(['conditions' => 'register_at>:register_at: and last_at<:last_at:',
+            'bind' => ['register_at' => beginOfDay(), 'last_at' => beginOfDay()]]);
+        foreach ($users as $user){
+            echoLine($user->id, date('c', $user->created_at), date('c', $user->register_at), date('c', $user->last_at));
         }
     }
 }
