@@ -22,7 +22,8 @@ class UserGifts extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('status') && STATUS_ON == $this->status) {
+        if ($this->hasChanged('status') && STATUS_ON == $this->status && GIFT_TYPE_CAR == $this->gift_type) {
+
             $user_gifts = UserGifts::find(['conditions' => 'status = :status: and id != :id: and gift_type = :gift_type:',
                 'bind' => ['status' => STATUS_ON, 'id' => $this->id, 'gift_type' => GIFT_TYPE_CAR]
             ]);
@@ -112,6 +113,7 @@ class UserGifts extends BaseModel
         $user_gift->gift_type = $gift->type;
 
         if (!$exist_user_gift) {
+            debug($gift_order_id, $gift_order->user_id);
             $user_gift->status = STATUS_ON;
         }
 
