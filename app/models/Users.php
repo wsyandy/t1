@@ -2495,13 +2495,17 @@ class Users extends BaseModel
 
             }
 
-            $product_channel = $user->product_channel;
-            $rate = $product_channel->rateOfDiamondToHiCoin();
-            $hi_coins = $gift_order->amount / $rate;
-            $user->hi_coins = $user->hi_coins + $hi_coins;
-            $user->update();
+            if ($gift_order->isDiamondPayType()) {
 
-            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+                info($gift_order->pay_type, $gift_order->id);
+
+                $product_channel = $user->product_channel;
+                $rate = $product_channel->rateOfDiamondToHiCoin();
+                $hi_coins = $gift_order->amount / $rate;
+                $user->hi_coins = $user->hi_coins + $hi_coins;
+                $user->update();
+                $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+            }
         }
 
         unlock($lock);
@@ -2590,20 +2594,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2678,23 +2685,27 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
-            default: {
-                return 0;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
+            default:
+                {
+                    return 0;
+                }
         }
         return $db->zrrank($key, $this->id) + 1;
     }
@@ -2715,20 +2726,23 @@ class Users extends BaseModel
         }
 
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
             default:
                 return [];
         }

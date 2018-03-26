@@ -200,4 +200,9 @@ class GiftOrders extends BaseModel
         $user = \Users::findFirstById($id);
         return $user;
     }
+
+    function isDiamondPayType()
+    {
+        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
 }
