@@ -43,6 +43,8 @@ class HiCoinHistories extends BaseModel
             $old_balance = $old_hi_coin_history->balance;
         }
 
+        info($old_balance + $change_amount);
+
         $this->balance = $old_balance + $change_amount;
 
         if ($this->balance < 0 && $this->user->isActive()) {
