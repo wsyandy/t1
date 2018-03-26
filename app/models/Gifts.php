@@ -323,9 +323,9 @@ class Gifts extends BaseModel
                 $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
 
                 if ($user_gift) {
-                    $user->buy_status = true;
+                    $gift->buy_status = true;
                 } else {
-                    $user->buy_status = false;
+                    $gift->buy_status = false;
                 }
             }
         }
