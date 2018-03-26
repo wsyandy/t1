@@ -98,6 +98,7 @@ class HiCoinHistories extends BaseModel
             $hi_coin_history->gift_order_id = $gift_order_id;
             $amount = $gift_order->amount;
             $hi_coins = $amount * $user->rateOfDiamondToHiCoin();
+            $hi_coins = intval($hi_coins * 10000) / 10000;
             $hi_coin_history->hi_coins = $hi_coins;
             $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
             $hi_coin_history->remark = "接收礼物总额: $amount 收益:" . $hi_coins;
