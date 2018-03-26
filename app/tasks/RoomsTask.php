@@ -21,7 +21,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
                 $room->status = STATUS_OFF;
-                $room->online_status = STATUS_OFF;
                 $room->save();
                 info('no user', $room->id);
                 continue;
