@@ -329,4 +329,40 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpPost($url, $body);
         echoLine($res);
     }
+
+
+    function addFameRankListAction()
+    {
+        $users = Users::findForeach();
+        $i = 0;
+        foreach ($users as $user) {
+
+            if($i > 30) {
+                break;
+            }
+
+            if ($user->union_id) {
+                continue;
+            }
+
+            $union = new Unions();
+            $union->name = rand(1, 100) . "_xxxx";
+            $union->notice = "xxxx";
+            $union->need_apply = 0;
+            $union->product_channel_id = $user->product_channel_id;
+            $union->user_id = $user->id;
+            $union->auth_status = AUTH_SUCCESS;
+            $union->mobile = $user->mobile;
+            $union->type = UNION_TYPE_PRIVATE;
+            $union->avatar_status = AUTH_SUCCESS;
+            $union->fame_value = mt_rand(1, 100);
+            $union->status = STATUS_ON;
+            $union->avatar = 'chance/unions/avatar/5ab866d1dd1e0.jpg';
+            $union->save();
+
+            $union->updateFameRankList($union->fame_value);
+
+            $i++;
+        }
+    }
 }

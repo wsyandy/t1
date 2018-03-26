@@ -99,11 +99,10 @@ class UnionsController extends BaseController
         $user = $this->currentUser();
 
         if ($recommend) {
-            $unions = \Unions::recommend($page, $per_page);
+            $unions = \Unions::recommend(1, 5);
         } else {
             $unions = \Unions::search($user, $page, $per_page, $opts);
         }
-
 
         $res = [];
 
@@ -151,6 +150,30 @@ class UnionsController extends BaseController
         $this->view->title = "家族排行";
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
+    }
+
+    function fameValueRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week') {
+            debug($list_type);
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $unions = \Unions::findFameValueRankList($list_type, $page, $per_page);
+
+        $unions_json = $unions->toJson('unions', 'toSimpleJson');
+
+        $union = $this->currentUser()->union;
+
+        if (isPresent($union)) {
+            $unions_json['my_rank'] = $union->unionFameRank($list_type);
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $unions_json);
     }
 
     //用户列表
