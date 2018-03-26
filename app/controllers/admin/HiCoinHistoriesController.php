@@ -8,7 +8,7 @@
 
 namespace admin;
 
-class HiCoinHistories extends BaseController
+class HiCoinHistoriesController extends BaseController
 {
     function basicAction()
     {
