@@ -2582,23 +2582,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -2673,27 +2670,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list_";
-                    break;
-                }
-            default:
-                {
-                    return 0;
-                }
+            case 'day': {
+                $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list_";
+                break;
+            }
+            default: {
+                return 0;
+            }
         }
         return $db->zrrank($key, $this->id) + 1;
     }
@@ -2714,23 +2707,20 @@ class Users extends BaseModel
         }
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list_";
-                    break;
-                }
+            case 'day': {
+                $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list_";
+                break;
+            }
             default:
                 return [];
         }
@@ -2813,9 +2803,9 @@ class Users extends BaseModel
         $expire = $db->ttl($key);
         debug($expire);
         $time = 3600 * 24;
-        if (isDevelopmentEnv()) {
-            $time = 60 * 5;
-        }
+//        if (isDevelopmentEnv()) {
+//            $time = 60 * 5;
+//        }
         if ($expire > $time) {
             //已签到
             return 0;
@@ -2855,13 +2845,13 @@ class Users extends BaseModel
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
-        if (isDevelopmentEnv()) {
-            $time = 60 * 5;
-            $current_time = time();
-            $expire = strtotime(date('Y-m-d H:i:59', $current_time)) - $current_time + $time;
-        } else {
-            $expire = endOfDay() - time() + $time;
-        }
+//        if (isDevelopmentEnv()) {
+//            $time = 60 * 5;
+//            $current_time = time();
+//            $expire = strtotime(date('Y-m-d H:i:59', $current_time)) - $current_time + $time;
+//        } else {
+        $expire = endOfDay() - time() + $time;
+//        }
 
         $db->setex($key, $expire, $times);
         return $res;
@@ -2893,9 +2883,9 @@ class Users extends BaseModel
                 $gold = end($golds);
             }
             $time = 3600 * 24;
-            if (isDevelopmentEnv()) {
-                $time = 60 * 5;
-            }
+//            if (isDevelopmentEnv()) {
+//                $time = 60 * 5;
+//            }
             if ($expire > $time) {
                 $day = "明天";
             } else {
