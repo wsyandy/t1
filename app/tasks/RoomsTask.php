@@ -16,11 +16,14 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
+
             $key = $room->getRealUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
+            if (count($user_ids) < 1) {
+                continue;
+            }
 
             $users = Users::findByIds($user_ids);
-
             foreach ($users as $user) {
 
                 if ($user->isSilent()) {
@@ -28,21 +31,35 @@ class RoomsTask extends \Phalcon\Cli\Task
                     continue;
                 }
 
-                if (($user->current_room_id != $room->id || !$user->isNormal() || $user->last_at < time() - 3600)
-                    && STATUS_ON != $room->hot && !$user->isRoomHost($room) && $user->current_room_seat_id > 0) {
+                // 用户已不再房间里或者状态不正常
+                if ($user->current_room_id != $room->id || !$user->isNormal()) {
 
                     info($user->id, $room->id, $user->current_room_id, $user->user_status, $user->last_at, time());
 
                     $unbind = true;
-
                     //用户在新的房间 不解绑
-                    if ($user->current_room_id != $room->id && $user->current_room_id > 0) {
+                    if ($user->current_room_id && $user->current_room_id != $room->id) {
                         $unbind = false;
                     }
 
                     $current_room_seat_id = $user->current_room_seat_id;
+                    info('exit', $user->id, $room->id, 'current_room_id', $user->current_room_id, $current_room_seat_id);
+
                     $room->exitRoom($user, $unbind);
                     $room->pushExitRoomMessage($user, $current_room_seat_id);
+                }
+
+                //检测麦位状态
+                $room_seats = RoomSeats::findByUserId($user->id);
+                foreach ($room_seats as $room_seat) {
+                    // 房间和麦位匹配
+                    if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+                        continue;
+                    }
+
+                    $room_seat->user_id = 0;
+                    $room_seat->save();
+                    info('fix room_seat', $room_seat->id, $user->id, $user->current_room_seat_id);
                 }
             }
         }
