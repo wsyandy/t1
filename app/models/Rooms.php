@@ -1027,17 +1027,17 @@ class Rooms extends BaseModel
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("user_already_close", $user->id, $this->id, $payload);
+                info("user_already_close", $user->id, $user->sid, $this->id, $payload);
                 continue;
             }
 
             $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
-                info($user->id, $this->id, $payload);
+                info($user->id, $user->sid, $this->id, $payload);
                 break;
             } else {
-                info("Exce", $user->id, $this->id, $payload);
+                info("Exce", $user->id, $user->sid, $this->id, $payload);
             }
         }
     }
