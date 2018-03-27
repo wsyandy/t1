@@ -1461,6 +1461,7 @@ class Rooms extends BaseModel
         $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 100]);
 
         foreach ($rooms as $room) {
+            info($room->id);
             $room->pushRoomNoticeMessage($content);
         }
     }

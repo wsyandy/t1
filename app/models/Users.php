@@ -1913,8 +1913,8 @@ class Users extends BaseModel
 
                 $gift_num = mt_rand(1, 15);
 
-                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type:',
-                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga'], 'columns' => 'id']);
+                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type: and type = :type:',
+                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga', 'type' => GIFT_TYPE_COMMON], 'columns' => 'id']);
 
                 $gift_ids = [];
 
