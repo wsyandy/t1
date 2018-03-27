@@ -1,3 +1,16 @@
+<form method="get" action="/admin/rooms/earnings_detail" name="search_form" autocomplete="off">
+    <label for="year">年份</label>
+    <select name="year" id="year">
+        {{ options(year_array,year) }}
+    </select>
+    <label for="month">月份</label>
+    <select name="month" id="month">
+        {{ options(Stats.MONTH,month) }}
+    </select>
+
+    <button class="ui button" type="submit">搜索</button>
+</form>
+
 <table class="table table-striped table-condensed">
     <thead>
     <tr>
