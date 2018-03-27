@@ -196,6 +196,9 @@
                         </li>
                     {% endif %}
 
+                    {% if isAllowed('stats', 'partners') %}
+                        <li><a href="/admin/stats/partners">渠道按天统计</a></li>
+                    {% endif %}
                     {% if isAllowed('wap_visits', 'index') %}
                         <li><a href="/admin/wap_visits">SEM落地页统计</a></li>
                     {% endif %}
