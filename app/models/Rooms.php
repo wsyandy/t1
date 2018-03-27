@@ -1016,7 +1016,7 @@ class Rooms extends BaseModel
         $users = $this->findTotalRealUsers();
 
         if (count($users) < 1) {
-            info("no_users", $this->id);
+            info("no_users", $body, $this->id);
             return;
         }
 
