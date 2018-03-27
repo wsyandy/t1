@@ -160,7 +160,7 @@ class GiftOrders extends BaseModel
 
                     if ($gift_order->sender_id != $gift_order->user_id) {
                         \Users::delay()->updateCharm($gift_order->id);
-                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, $gift_order->id);
+                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
                     }
                 }
 
