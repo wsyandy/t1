@@ -99,7 +99,7 @@ class Users extends BaseModel
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
 
-            if($this->register_at){
+            if ($this->register_at) {
                 $this->registerStat();
                 $this->createEmUser();
             }
@@ -2748,18 +2748,32 @@ class Users extends BaseModel
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
 
-    static function findFieldRankListByKey($key, $field, $page, $per_page)
+    static function findFieldRankListByKey($key, $field, $page, $per_page, $max_entries = 100)
     {
         if (isBlank($key)) {
             return [];
         }
 
-        $db = Users::getUserDb();
-
         $offset = ($page - 1) * $per_page;
 
-        $results = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $stop = $offset + $per_page - 1;
+
+        if ($offset >= $max_entries) {
+            return [];
+        }
+
+        if ($stop >= $max_entries) {
+            $stop = $max_entries - 1;
+        }
+
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, $offset, $stop, 'withscores');
         $total_entries = $db->zcard($key);
+
+        if ($total_entries > $max_entries) {
+            $total_entries = $max_entries;
+        }
 
         $ids = [];
         $fields = [];
