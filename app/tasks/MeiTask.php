@@ -1302,5 +1302,34 @@ class MeiTask extends \Phalcon\Cli\Task
                 echoLine($user->id, $old_hi_coin_history->balance, $user->hi_coins);
             }
         }
+
+        $withdraw_histories = WithdrawHistories::findBy(['status' => WITHDRAW_STATUS_SUCCESS]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+
+            $user = $withdraw_history->user;
+
+            if (!$user) {
+                continue;
+            }
+
+            $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $withdraw_history->user->id, 'withdraw_history_id' => $withdraw_history->id]);
+
+            if (!$hi_coin_history) {
+
+                $hi_coin_history = new HiCoinHistories();
+                $hi_coin_history->user_id = $user->id;
+                $hi_coin_history->withdraw_history_id = $withdraw_history->id;
+                $amount = $withdraw_history->amount;
+                $hi_coin_history->hi_coins = $amount;
+                $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
+                $hi_coin_history->remark = "提现金额:" . $amount;
+                $hi_coin_history->product_channel_id = $user->product_channel_id;
+                $hi_coin_history->union_id = $user->union_id;
+                $hi_coin_history->union_type = $user->union_type;
+                $hi_coin_history->created_at = $withdraw_history->created_at;
+                $hi_coin_history->save();
+            }
+        }
     }
 }

@@ -275,6 +275,8 @@ trait UserWakeup
     function pushMessage($push_message)
     {
 
+        return false;
+
         if ($this->isClientPlatform()) {
             if ($this->pushMessageGetui($push_message)) {
                 return true;
@@ -338,58 +340,6 @@ trait UserWakeup
 
     function pushMessageTemplate($push_message)
     {
-
-        $push_url = $push_message->getPushUrl($this);
-        if (!$push_url) {
-            info('false push_url', $this->id, $push_message->id);
-            return false;
-        }
-
-        // 模板消息
-        $product_channel_material = $push_message->product;
-        if (!$product_channel_material) {
-            info('false template', $this->id, $this->platform, $push_message->id);
-            return false;
-        }
-
-        return false;
-
-        if (is_a($product_channel_material, 'Products')) {
-            $template_short_id = 'OPENTM410241677';
-            $period = $product_channel_material->period_min . '-' . $product_channel_material->period_max . $product_channel_material->period_type_text;
-            $amount = $product_channel_material->amount_min . '-' . $product_channel_material->amount_max;
-            $data = [
-                'first' => ['value' => $push_message->title, 'color' => '#459ae9'],
-                'keyword1' => ['value' => $product_channel_material->name, 'color' => '#459ae9'],
-                'keyword2' => ['value' => date('Y-m-d H:i:s'), 'color' => '#459ae9'],
-                'keyword3' => ['value' => $amount, 'color' => '#459ae9'],
-                'keyword4' => ['value' => $period, 'color' => '#459ae9'],
-                'remark' => ['value' => $push_message->description, 'color' => '#459ae9']
-            ];
-
-        } else {
-            info('Exce false_template', $this->id, $this->platform, $push_message->id, 'class', get_class($product_channel_material));
-            return false;
-        }
-
-        if ($data) {
-            try {
-                $openid = $this->openid;
-                $weixin_event = new WeixinEvents($this->product_channel);
-                $result = $weixin_event->sendTemplateMessage($openid, $template_short_id, $push_url, $data);
-                $result = json_decode($result, true);
-                if (0 == $result['errcode']) {
-                    info($this->id, $this->product_channel->id, $openid, 'template 发送成功', $result, 'city_id_' . $this->city_id, 'geo_city_id_' . $this->geo_city_id);
-                    return true;
-                }
-
-                info($this->id, $this->product_channel->id, $openid, 'template 发送失败', $result);
-
-            } catch (\Exception $e) {
-                info($this->id, $this->product_channel->id, 'template Exception', $e->getMessage());
-            }
-        }
-
         return false;
     }
 
@@ -568,7 +518,7 @@ trait UserWakeup
 
         for ($page = 1; $page <= $total_pages; $page++) {
 
-            $users = $this->friendList($page, $per_page, false);
+            $users = $this->friendList($page, $per_page, 0);
 
             foreach ($users as $user) {
 
