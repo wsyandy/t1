@@ -161,6 +161,9 @@ class RoomsController extends BaseController
             }
         }
 
+        //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
+        $this->currentUser()->pushFriendIntoRoomRemind();
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['id' => $room->id,
             'name' => $room->name, 'channel_name' => $room->channel_name]);
     }

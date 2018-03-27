@@ -544,4 +544,43 @@ trait UserWakeup
 
     }
 
+    function pushFriendIntoRoomRemind()
+    {
+        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        $client_url = "app://rooms/enter?user_id={$this->id}";
+        $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
+
+        $per_page = 200;
+        $friend_num = $this->friendNum();
+
+        if ($friend_num < 1) {
+            info('user_id', $this->id,'friend num is 0');
+            return;
+        }
+
+        $total_pages = ceil($friend_num / $per_page);
+        $user_db = Users::getUserDb();
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->friendList($page, $per_page);
+
+            foreach ($users as $user) {
+
+                $key = 'push_friend_into_room_remind_' . $user->id;
+                if ($user_db->setnx($key, $user->id)) {
+                    $user_db->expire($key, 60 * 60);
+
+                    info('user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    $user->push($opts);
+                }
+
+            }
+        }
+
+        return;
+
+
+    }
+
 }
