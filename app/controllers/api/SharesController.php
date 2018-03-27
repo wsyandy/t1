@@ -46,7 +46,7 @@ class SharesController extends BaseController
 
         $image_small_url = $this->currentProductChannel()->avatar_url;
 
-        if ($this->share_source == 'gold_works') {
+        if ($share_history->share_source == 'gold_works') {
             $image_url = $image_small_url;
         }
 
