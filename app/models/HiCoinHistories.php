@@ -73,7 +73,7 @@ class HiCoinHistories extends BaseModel
             'order' => 'id desc'
         ];
 
-        return \AccountHistories::findPagination($conditions, $page, $per_page);
+        return \HiCoinHistories::findPagination($conditions, $page, $per_page);
     }
 
     static function createHistory($user_id, $gift_order_id)
