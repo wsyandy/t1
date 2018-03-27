@@ -189,7 +189,9 @@ class Unions extends BaseModel
 
     static function recommend($page, $per_page)
     {
-        return self::findFameValueRankList('day', $page, $per_page);
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));
+
+        return self::findFameValueRankListByKey($key, $page, $per_page);
     }
 
     //搜索公会
@@ -662,9 +664,14 @@ class Unions extends BaseModel
 
     static function findFameValueRankList($list_type, $page, $per_page)
     {
-        $db = Users::getUserDb();
-
         $key = self::generateFameValueRankListKey($list_type);
+
+        return self::findFameValueRankListByKey($key, $page, $per_page);
+    }
+
+    static function findFameValueRankListByKey($key, $page, $per_page)
+    {
+        $db = Users::getUserDb();
 
         $offset = ($page - 1) * $per_page;
 
