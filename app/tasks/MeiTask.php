@@ -1254,7 +1254,6 @@ class MeiTask extends \Phalcon\Cli\Task
             }
 
             $hi_coins = $total_amount * $rate;
-            $hi_coins = intval($hi_coins * 10000) / 10000;
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
                 'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS], 'column' => 'amount']);
@@ -1263,7 +1262,9 @@ class MeiTask extends \Phalcon\Cli\Task
                 $hi_coins = $hi_coins - $widthdraw_hi_coins;
             }
 
-            if ($hi_coins - $user->hi_coins >= 0.045) {
+            $hi_coins = intval($hi_coins * 10000) / 10000;
+
+            if ($hi_coins - $user->hi_coins >= 0.001) {
                 echoLine($rate, "总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             } else {
                 continue;
@@ -1297,7 +1298,7 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($users as $user) {
             $old_hi_coin_history = \HiCoinHistories::findUserLast($user->id);
 
-            if (!$old_hi_coin_history || $old_hi_coin_history->balance != $user->hi_coins) {
+            if (!$old_hi_coin_history || abs($old_hi_coin_history->balance - $user->hi_coins) >= 0.001) {
                 echoLine($user->id, $old_hi_coin_history->balance, $user->hi_coins);
             }
         }
