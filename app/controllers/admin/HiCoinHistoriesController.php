@@ -17,7 +17,7 @@ class HiCoinHistoriesController extends BaseController
         $per_page = $this->params('per_page');
 
         $hi_coin_histories = \HiCoinHistories::findPagination(['conditions' => 'user_id = :user_id:',
-            'bind' => ['user_id' => $user_id]], $page, $per_page);
+            'bind' => ['user_id' => $user_id], 'order' => 'id desc'], $page, $per_page);
 
         $this->view->hi_coin_histories = $hi_coin_histories;
     }

@@ -106,6 +106,13 @@ class Chats extends BaseModel
             'content' => $content,
             'content_type' => $content_type
         );
+
+        $user = Users::findFirstById($user_id);
+
+        if ($user) {
+            $user->addUnreadMessagesNum();
+        }
+
         return \Chats::createChat($attrs);
     }
 

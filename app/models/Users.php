@@ -2603,20 +2603,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2716,20 +2719,23 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field)
     {
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
             default:
                 return '';
         }
@@ -2997,5 +3003,25 @@ class Users extends BaseModel
         info($push_data);
 
         \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
+    }
+
+    function unreadMessagesNum()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        return intval($hot_cache->get("unread_messages_num_user_id_" . $this->id));
+    }
+
+    function delUnreadMessages()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $hot_cache->del("unread_messages_num_user_id_" . $this->id);
+    }
+
+    function addUnreadMessagesNum()
+    {
+        $key = "unread_messages_num_user_id_" . $this->id;
+        $hot_cache = Users::getHotWriteCache();
+        $hot_cache->incr($key);
+        $hot_cache->expire($key, 30 * 86400);
     }
 }

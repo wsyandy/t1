@@ -409,7 +409,7 @@ class Stats extends BaseModel
         $num = $stat_db->zcard($key);
         $register_num = fetch($this->data_hash, 'register_num', 0);
         $num = intval($num) + $register_num;
-        
+
         $this->data_hash['active_register_user_num'] = $num;
     }
 
@@ -1159,7 +1159,7 @@ class Stats extends BaseModel
     static function statFields($operator)
     {
         $fields = ['device_active_num', 'subscribe_num', 'register_num', 'register_rate', 'new_payment_success_total',
-            'new_paid_arpu', 'new_arpu'];
+            'new_paid_arpu', 'new_arpu', 'payment_success_total', 'paid_arpu', 'arpu'];
 
         if (in_array($operator->role, ['operat_manager', 'operator'])) {
 
