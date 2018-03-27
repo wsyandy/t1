@@ -34,12 +34,7 @@ class WithdrawHistories extends BaseModel
 
                 if (WITHDRAW_STATUS_SUCCESS == $this->status) {
                     $user = $this->user;
-                    $rate = $user->rateOfHiCoinToMoney();
-                    debug($user->id, $this->amount, $rate);
-                    $user->hi_coins = $user->hi_coins - $this->amount * $rate;
-                    $user->save();
                     $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
-
                     HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $this->id]);
                 }
 
