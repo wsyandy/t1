@@ -1505,7 +1505,7 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
-        $user_type = fetch($opts, 'user_type');
+        $user_type = fetch($opts, 'user_type', USER_TYPE_ACTIVE);
         if ($user_type) {
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
@@ -1591,11 +1591,12 @@ class Users extends BaseModel
 
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
-                $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
-                if ($geo_distance < 0.01) {
-                    $geo_distance = 0.01;
+                if($geo_distance < 1000){
+                    $user->distance = $geo_distance . 'm';
+                }else{
+                    $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
+                    $user->distance = $geo_distance . 'km';
                 }
-                $user->distance = $geo_distance . 'km';
 
                 info('true', $this->id, $user->id, $geo_distance, $user->distance);
             } else {
