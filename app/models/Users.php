@@ -2688,10 +2688,22 @@ class Users extends BaseModel
 
     function myFieldRank($list_type, $field)
     {
-        $db = Users::getUserDb();
-
         $key = self::generateFieldRankListKey($list_type, $field);
 
+        return $this->getRankByKey($key);
+    }
+
+
+    function myLastFieldRank($list_type, $field)
+    {
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
+
+        return $this->getRankByKey($key);
+    }
+
+    function getRankByKey($key)
+    {
+        $db = Users::getUserDb();
         $rank = $db->zrrank($key, $this->id);
 
         if ($rank === null) {
@@ -2700,17 +2712,7 @@ class Users extends BaseModel
                 $rank = $total_entries;
             }
         }
-
         return $rank + 1;
-    }
-
-    function myLastFieldRank($list_type, $field)
-    {
-        $db = Users::getUserDb();
-
-        $key = "last_" . $list_type . "_" . $field . "_rank_list";
-
-        return $db->zrrank($key, $this->id) + 1;
     }
 
     static function generateFieldRankListKey($list_type, $field)
