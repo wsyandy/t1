@@ -2691,8 +2691,13 @@ class Users extends BaseModel
             'client_url' => fetch($opts, 'client_url', 'app://home'),
             'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
         ];
-        info($push_data);
 
-        \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
+        info($push_data);
+        $receiver = $this->getPushReceiverContext();
+        if ($this->client_status){
+            $receiver['push_type'] = 'notification';
+        }
+
+        \Pushers::delay()->push($this->getPushContext(), $receiver, $push_data);
     }
 }
