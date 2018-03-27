@@ -206,6 +206,7 @@ h1,h2,h3,h4{
 	position: absolute;
 	right: 0;
 	top: 15px;
+
 }
 .account_money .selected{
 	background: url(../images/selected.png) no-repeat center center !important;
@@ -214,17 +215,25 @@ h1,h2,h3,h4{
 .account_money .selected_color{
 	color: #F45189;
 }
+
 .account_money ol li span{
 	font-size: 15px;
 	color: #3C3C3C;
+
 }
+
+
 .account_money ol li span:nth-child(1){
 	float: left;
 }
-.account_money ol li span:nth-child(2){
+.account_money ol li span.pris{
 	float: right;
 	padding-right: 7%;
 	color: #888888;
+}
+.account_money ol li span.select_color{
+	display: flex;
+	align-items: center;
 }
 .account_pay{
 	margin-top: 10px;
@@ -323,4 +332,32 @@ h1,h2,h3,h4{
 	text-align: center;
 	line-height: 50px;
 	border-radius: 5px;
+}
+
+.diamond_left{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 30%;
+}
+
+.diamond_icon,.gold_icon {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background-image: url(../images/icon.png);
+	background-repeat: no-repeat;
+	background-size: 24px 24px;
+	background-position: left center;
+}
+.gold_icon{
+	background-image: url(../images/gold.png);
+	/*background-size: 24px 24px;*/
+}
+
+.diamond_box{
+	float: left;
+	width: 35%;
+	height: 100%;
+	/*background-color: #00A6FF;*/
 }
