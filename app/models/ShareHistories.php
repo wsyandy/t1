@@ -50,6 +50,15 @@ class ShareHistories extends BaseModel
         return $root . 'shares?share_history_id=' . $this->id;
     }
 
+    function getShareTitle()
+    {
+        if ($this->share_source == 'gold_works') {
+            return "正在Hi-语音，快来一起嗨吧！";
+        }
+
+        return "正在这个房间玩，快来一起连麦嗨！";
+    }
+
     function result($opts)
     {
         $type = fetch($opts, 'type');

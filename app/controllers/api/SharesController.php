@@ -47,8 +47,10 @@ class SharesController extends BaseController
 
         $url = $share_history->getShareUrl($this->getRoot());
 
+        $title = $share_history->getShareTitle();
+
         $res = [
-            'title' => $user->nickname . "正在这个房间玩，快来一起连麦嗨！",
+            'title' => $user->nickname . $title,
             'image_url' => $image_url,
             'image_small_url' => $image_small_url,
             'description' => $description,
