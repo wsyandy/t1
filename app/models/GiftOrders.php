@@ -152,6 +152,8 @@ class GiftOrders extends BaseModel
                     //统计房间收益
                     if ($gift_order->room) {
                         $gift_order->room->statIncome($gift_order->amount);
+                        //推送全局消息
+                        Rooms::allNoticePush($gift_order);
                     }
 
                     \Users::delay()->updateExperience($gift_order->id);
@@ -159,10 +161,6 @@ class GiftOrders extends BaseModel
                     if ($gift_order->sender_id != $gift_order->user_id) {
                         \Users::delay()->updateCharm($gift_order->id);
                         \HiCoinHistories::delay()->createHistory($gift_order->user_id, $gift_order->id);
-                    }
-
-                    if ($gift_order->amount >= 1000 && isDevelopmentEnv()) {
-                        Rooms::delay()->allNoticePush($gift_order->allNoticePushContent());
                     }
                 }
 
