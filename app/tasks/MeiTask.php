@@ -1190,6 +1190,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_orders = GiftOrders::findForeach();
 
         foreach ($gift_orders as $gift_order) {
+            if ($gift_order->user->isSilent()) {
+                echoLine($gift_order->id, $gift_order->user_id);
+            }
+        }
+
+        foreach ($gift_orders as $gift_order) {
 
             $user = $gift_order->user;
 
@@ -1263,8 +1269,8 @@ class MeiTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $user->hi_coins = $hi_coins;
-            $user->update();
+//            $user->hi_coins = $hi_coins;
+//            $user->update();
         }
 
         echoLine($boracast_num);
@@ -1278,5 +1284,22 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(1);
         echoLine($user->experience);
+
+        $hi_coin_histories = HiCoinHistories::find();
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            $hi_coin_history->delete();
+        }
+
+
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+
+        foreach ($users as $user) {
+            $old_hi_coin_history = \HiCoinHistories::findUserLast($user->id);
+
+            if (!$old_hi_coin_history || $old_hi_coin_history->balance != $user->hi_coins) {
+                echoLine($user->id, $old_hi_coin_history->balance, $user->hi_coins);
+            }
+        }
     }
 }
