@@ -1230,21 +1230,18 @@ class MeiTask extends \Phalcon\Cli\Task
             $i++;
 
             $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
-
-            if ($total_amount > 100000000) {
-                continue;
-            }
-
             //echoLine($total_amount, $user->id, $user->hi_coins);
 
             $rate = $user->rateOfDiamondToHiCoin();
+
+            echoLine($rate);
 
             if ($total_amount < 1) {
                 echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
                 continue;
             }
 
-            $hi_coins = $total_amount / $rate;
+            $hi_coins = $total_amount * $rate;
 
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
@@ -1254,23 +1251,14 @@ class MeiTask extends \Phalcon\Cli\Task
                 $hi_coins = $hi_coins - $widthdraw_hi_coins;
             }
 
-            if ($hi_coins - $user->hi_coins >= 0.04) {
+            if ($hi_coins - $user->hi_coins >= 0.045) {
                 echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             } else {
                 continue;
             }
 
-            $user->hi_coins = $hi_coins;
-            $user->update();
-        }
-
-        $users = Users::find(['conditions' => 'hi_coins > 1000']);
-
-        foreach ($users as $user) {
-            $user->hi_coins = 0;
-            $user->balance = 0;
-            $user->update();
-            echoLine($user->id);
+//            $user->hi_coins = $hi_coins;
+//            $user->update();
         }
     }
 
