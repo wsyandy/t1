@@ -386,6 +386,45 @@
                 </div>
             </div>
         </div>
+
+        <div class="problem-box">
+            <p class="question">
+                <span class="dot"></span>11. 如何在模拟器中玩Hi语音？
+            </p>
+            <div class="answer">
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">01.</div>
+                        <div class="info">在电脑上下载模拟器，安装后，打开（支持天天、多玩、雷电、Mumu等模拟器）</div>
+                    </div>
+                </div>
+
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">02.</div>
+                        <div class="info">打开http://api.momoyuedu.cn/,下载Hi语音模拟器专用版，放到电脑桌面上</div>
+                    </div>
+                    <img class="imge" src="/m/images/11_1.png" alt="">
+                </div>
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">03.</div>
+                        <div class="info">把安装包拖到模拟器中，即可开始安装Hi语音</div>
+                    </div>
+                    <img class="imge" src="/m/images/11_2.png" alt="">
+                </div>
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">04.</div>
+                        <div class="info">打开Hi语音，注册或登录后，即可在模拟器上使用Hi语音</div>
+                    </div>
+                    <img class="imge" src="/m/images/11_3.png" alt="">
+                </div>
+
+            </div>
+        </div>
+
+
     </div>
 </div>
 

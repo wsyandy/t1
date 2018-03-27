@@ -286,11 +286,11 @@ class Rooms extends BaseModel
         $current_room_seat_id = $user->current_room_seat_id;
 
         // 房间相同才清除用户信息
-        if($this->id == $user->current_room_id){
+        if ($this->id == $user->current_room_id) {
 
             // 退出所有麦位
             $room_seats = RoomSeats::findByUserId($user->id);
-            foreach ($room_seats as $room_seat){
+            foreach ($room_seats as $room_seat) {
                 $room_seat->user_id = 0;
                 $room_seat->save();
             }
@@ -889,7 +889,7 @@ class Rooms extends BaseModel
                 info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
                 return false;
             }
-            
+
         }
 
         $room->enterRoom($user);
@@ -1016,7 +1016,12 @@ class Rooms extends BaseModel
         $users = $this->findTotalRealUsers();
 
         if (count($users) < 1) {
-            info("no_users", $this->id);
+
+            if ($this->user) {
+                debug($this->user->sid);
+            }
+
+            info("no_users", $body, $this->id);
             return;
         }
 
@@ -1027,17 +1032,17 @@ class Rooms extends BaseModel
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("user_already_close", $user->id, $this->id, $payload);
+                info("user_already_close", $user->id, $user->sid, $this->id, $payload);
                 continue;
             }
 
             $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
-                info($user->id, $this->id, $payload);
+                info($user->id, $user->sid, $this->id, $payload);
                 break;
             } else {
-                info("Exce", $user->id, $this->id, $payload);
+                info("Exce", $user->id, $user->sid, $this->id, $payload);
             }
         }
     }
@@ -1447,5 +1452,38 @@ class Rooms extends BaseModel
         }
 
         return false;
+    }
+
+    function pushRoomNoticeMessage($content, $client_url = '')
+    {
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
+        info($body);
+        $this->push($body);
+    }
+
+    //全服通知
+    static function asyncAllNoticePush($content, $client_url = '')
+    {
+        $rooms = Rooms::find(['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100]);
+
+        foreach ($rooms as $room) {
+            $room->pushRoomNoticeMessage($content, $client_url);
+        }
+    }
+
+    //全服通知
+    static function allNoticePush($gift_order)
+    {
+        if ($gift_order->amount >= 1000 && isDevelopmentEnv()) {
+
+            $client_url = '';
+
+            if (!$gift_order->room->lock) {
+                $client_url = "app://room/detail?id=" . $gift_order->room_id;
+            }
+
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $client_url);
+        }
     }
 }

@@ -33,9 +33,6 @@ class SharesController extends BaseController
         $share_source = $this->params('share_source');
 
         $user = $this->currentUser();
-        $image_url = $user->avatar_small_url;
-        $image_small_url = $this->currentProductChannel()->avatar_url;
-        $description = "Hi—很好玩的语音直播软件，连麦聊天，组队开黑哦";
 
         $opts = [
             'user_id' => $user->id,
@@ -45,12 +42,21 @@ class SharesController extends BaseController
         ];
         $share_history = \ShareHistories::createShareHistory($opts);
 
-        $url = $share_history->getShareUrl($this->getRoot());
+        $image_url = $user->avatar_small_url;
 
-        $title = $share_history->getShareTitle();
+        $image_small_url = $this->currentProductChannel()->avatar_url;
+
+        if ($share_history->share_source == 'gold_works') {
+            $image_url = $image_small_url;
+        }
+
+        $description = "Hi—很好玩的语音直播软件，连麦聊天，组队开黑哦";
+
+        $url = $share_history->getShareUrl($this->getRoot());
+        $title = $share_history->getShareTitle($user->nickname);
 
         $res = [
-            'title' => $user->nickname . $title,
+            'title' => $title,
             'image_url' => $image_url,
             'image_small_url' => $image_small_url,
             'description' => $description,

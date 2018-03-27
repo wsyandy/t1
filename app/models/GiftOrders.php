@@ -152,6 +152,8 @@ class GiftOrders extends BaseModel
                     //统计房间收益
                     if ($gift_order->room) {
                         $gift_order->room->statIncome($gift_order->amount);
+                        //推送全局消息
+                        Rooms::allNoticePush($gift_order);
                     }
 
                     \Users::delay()->updateExperience($gift_order->id);
@@ -210,5 +212,16 @@ class GiftOrders extends BaseModel
     function isDiamondPayType()
     {
         return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function allNoticePushContent()
+    {
+        $user = $this->user;
+        $sender = $this->sender;
+        $gift_num = $this->gift_num;
+        $name = $this->name;
+        $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>";
+
+        return $content;
     }
 }

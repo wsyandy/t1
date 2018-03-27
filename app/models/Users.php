@@ -1913,8 +1913,8 @@ class Users extends BaseModel
 
                 $gift_num = mt_rand(1, 15);
 
-                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type:',
-                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga'], 'columns' => 'id']);
+                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type: and type = :type:',
+                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga', 'type' => GIFT_TYPE_COMMON], 'columns' => 'id']);
 
                 $gift_ids = [];
 
@@ -2013,11 +2013,11 @@ class Users extends BaseModel
 //                return;
 //            }
             if ($room->getRealUserNum() > 0) {
-                if ($rand_num <= 60) {
+                if ($rand_num <= 40) {
                     Users::delay(mt_rand(1, 10))->sendGift($this->id, $room->id);
-                } elseif ($rand_num > 60 && $rand_num <= 88) {
+                } elseif ($rand_num > 40 && $rand_num <= 70) {
                     Users::delay(mt_rand(1, 10))->upRoomSeat($this->id, $room->id);
-                } elseif ($rand_num > 85 && $rand_num <= 95) {
+                } elseif ($rand_num > 70 && $rand_num <= 95) {
                     Users::delay(mt_rand(1, 10))->sendTopTopicMessage($this->id, $room->id);
                 } else {
                     $room->exitSilentRoom($this);
@@ -2688,10 +2688,22 @@ class Users extends BaseModel
 
     function myFieldRank($list_type, $field)
     {
-        $db = Users::getUserDb();
-
         $key = self::generateFieldRankListKey($list_type, $field);
 
+        return $this->getRankByKey($key);
+    }
+
+
+    function myLastFieldRank($list_type, $field)
+    {
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
+
+        return $this->getRankByKey($key);
+    }
+
+    function getRankByKey($key)
+    {
+        $db = Users::getUserDb();
         $rank = $db->zrrank($key, $this->id);
 
         if ($rank === null) {
@@ -2700,17 +2712,7 @@ class Users extends BaseModel
                 $rank = $total_entries;
             }
         }
-
         return $rank + 1;
-    }
-
-    function myLastFieldRank($list_type, $field)
-    {
-        $db = Users::getUserDb();
-
-        $key = "last_" . $list_type . "_" . $field . "_rank_list";
-
-        return $db->zrrank($key, $this->id) + 1;
     }
 
     static function generateFieldRankListKey($list_type, $field)
