@@ -1599,7 +1599,7 @@ class Users extends BaseModel
                     $user->distance = $geo_distance . 'km';
                 }
 
-                info('true', $this->id, $user->id, $geo_distance, $user->distance);
+                info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             } else {
 
                 $geo_distance = abs($this->id - $user->id) % 1000;
@@ -1609,7 +1609,7 @@ class Users extends BaseModel
                 }
                 $user->distance = $geo_distance . 'km';
 
-                info('false', $this->id, $user->id, $geo_distance, $user->distance);
+                info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
     }
