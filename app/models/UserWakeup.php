@@ -516,6 +516,8 @@ trait UserWakeup
     //只发送一条
     function pushFollowedOnlineRemind()
     {
+        info('user_id', $this->id);
+
         $cur_hour = intval(date('H'));
         if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
             info('0点-8点不推送', date('YmdHis'));
@@ -541,9 +543,11 @@ trait UserWakeup
 
             foreach ($users as $user) {
 
+                info('followed user_id', $user->id);
+
                 //在线不推送
                 if ($user->client_status) {
-                    info('在线用户 user_id', $this->id);
+                    info('在线用户 followed user_id', $this->id);
                     continue;
                 }
 
@@ -551,7 +555,7 @@ trait UserWakeup
                 if ($user_db->setnx($followed_key, $user->id)) {
                     $user_db->expire($followed_key, 10 * 60);
 
-                    info('user_id', $user->id, $opts, 'followed_num', $followed_num);
+                    info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
                     return;
                 }
@@ -567,6 +571,8 @@ trait UserWakeup
     //关注好友 开播提醒 每个人一个小时内只能收到一条
     function pushFriendIntoRoomRemind()
     {
+        info('user_id', $this->id);
+
         if ($this->id != $this->current_room->user_id) {
             info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
             return;
@@ -574,7 +580,7 @@ trait UserWakeup
 
         $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
         if (!$this->current_room_id) {
-            info('user_id', $this->id);
+            info('user_id', $this->id, 'not in room');
             return;
         }
 
@@ -612,9 +618,10 @@ trait UserWakeup
 
             foreach ($users as $user) {
 
+                info('friend user_id', $this->id);
                 //在线不推送
                 if ($user->client_status) {
-                    info('在线用户 user_id', $this->id);
+                    info('在线用户 friend user_id', $this->id);
                     continue;
                 }
 
@@ -623,7 +630,7 @@ trait UserWakeup
                 if ($user_db->setnx($friend_key, $user->id)) {
                     $user_db->expire($friend_key, 10 * 60);
 
-                    info('user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    info('friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
                 }
 
@@ -640,6 +647,7 @@ trait UserWakeup
     //关注好友 开播提醒 每个人一个小时内只能收到一条
     function pushFollowedIntoRoomRemind()
     {
+        info('user_id', $this->id);
 
         if ($this->id != $this->current_room->user_id) {
             info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
@@ -648,7 +656,7 @@ trait UserWakeup
 
         $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
         if (!$this->current_room_id) {
-            info('user_id', $this->id);
+            info('user_id', $this->id, 'not in room');
             return;
         }
 
@@ -659,7 +667,7 @@ trait UserWakeup
         $followed_num = $this->followedNum();
 
         if ($followed_num < 1) {
-            info('user_id', $this->id, 'friend num is 0');
+            info('user_id', $this->id, 'followed num is 0');
             return;
         }
 
@@ -686,9 +694,11 @@ trait UserWakeup
 
             foreach ($users as $user) {
 
+                info('followed user_id', $user->id);
+
                 //在线不推送
                 if ($user->client_status) {
-                    info('在线用户 user_id', $this->id);
+                    info('在线用户 followed user_id', $this->id);
                     continue;
                 }
 
@@ -697,7 +707,7 @@ trait UserWakeup
                 if ($user_db->setnx($followed_key, $user->id)) {
                     $user_db->expire($followed_key, 10 * 60);
 
-                    info('user_id', $user->id, $opts, 'followed_num', $followed_num);
+                    info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
                 }
 
