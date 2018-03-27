@@ -166,7 +166,7 @@ trait UserAttrs
             'current_room_lock' => $this->current_room_lock,
             'user_role' => $this->user_role,
             'monologue' => $this->monologue,
-            'distance' => strval(mt_rand(1, 10) / 10) . 'km', //距离 待开发
+            'distance' => $this->distance,
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
