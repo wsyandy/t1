@@ -347,8 +347,8 @@ class RoomsController extends BaseController
 
             $day = $year . "-" . $month . "-" . $day;
 
-            $start_at = beginOfDay($day);
-            $end_at = endOfDay($day);
+            $start_at = beginOfDay(strtotime($day));
+            $end_at = endOfDay(strtotime($day));
 
             $results[date('Ymd', $start_at)] = $room->getDayAmount($start_at, $end_at);
         }
