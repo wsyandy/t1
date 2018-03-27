@@ -222,10 +222,7 @@ class GiftOrders extends BaseModel
         $sender = $this->sender;
         $gift_num = $this->gift_num;
         $name = $this->name;
-        $content = <<<EOF
-<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到
-</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>
-EOF;
+        $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>";
 
         return $content;
     }
