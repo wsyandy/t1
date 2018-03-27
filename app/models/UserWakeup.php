@@ -608,7 +608,7 @@ trait UserWakeup
             info('room_user_key 房主一个小时内只能发送一次', $this->id);
             return;
         }
-        $user_db->expire($room_user_key, 10 * 60);
+        $user_db->expire($room_user_key, 1 * 6);
 
         $total_pages = ceil($friend_num / $per_page);
 
@@ -628,7 +628,7 @@ trait UserWakeup
                 //关注好友每个人一个小时内只能收到一条
                 $friend_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
                 if ($user_db->setnx($friend_key, $user->id)) {
-                    $user_db->expire($friend_key, 10 * 60);
+                    $user_db->expire($friend_key, 1 * 6);
 
                     info('friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
