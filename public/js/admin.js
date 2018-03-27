@@ -204,6 +204,7 @@ $(function () {
                 } else {
 
                     var tpl = $("#" + model + "_tpl").html();
+                    console.log(tpl, model);
                     if (tpl && resp[model]) {
                         var compiled_tpl = juicer(tpl);
                         var html = compiled_tpl.render(resp);
@@ -213,7 +214,8 @@ $(function () {
                             $("#" + model + "_" + resp[model].id).replaceWith(html);
                         } else {
                             var list = $('#' + model + '_list');
-                            
+
+                            console.log(list);
                             if (list.length < 1){
                                 list = $('#_list');
                             }
