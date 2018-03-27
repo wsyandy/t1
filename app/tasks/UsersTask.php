@@ -549,7 +549,7 @@ class UsersTask extends \Phalcon\Cli\Task
                 $hi_coins = $hi_coins - $widthdraw_hi_coins;
             }
 
-            if ($hi_coins - $user->hi_coins >= 0.04) {
+            if ($hi_coins - $user->hi_coins >= 0.001) {
                 echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             } else {
                 continue;

@@ -1462,10 +1462,20 @@ class Rooms extends BaseModel
     }
 
     //全服通知
-    static function asyncAllNoticePush($content, $client_url = '')
+    static function asyncAllNoticePush($content, $opts = [])
     {
-        $rooms = Rooms::find(['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100]);
+        $client_url = fetch($opts, 'client_url');
+        $hot = fetch($opts, 'hot');
+
+        $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100];
+
+        if ($hot) {
+            $cond['conditions'] .= " and hot = :hot:";
+            $cond['bind']['hot'] = $hot;
+        }
+
+        $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
             $room->pushRoomNoticeMessage($content, $client_url);
@@ -1475,7 +1485,7 @@ class Rooms extends BaseModel
     //全服通知
     static function allNoticePush($gift_order)
     {
-        if ($gift_order->amount >= 1000 && isDevelopmentEnv()) {
+        if (isDevelopmentEnv()) {
 
             $client_url = '';
 
@@ -1483,7 +1493,16 @@ class Rooms extends BaseModel
                 $client_url = "app://room/detail?id=" . $gift_order->room_id;
             }
 
-            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $client_url);
+            $opts = ['client_url' => $client_url];
+
+            if ($gift_order->amount >= 1000) {
+                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+            }
+
+            if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
+                $opts['hot'] = 1;
+                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+            }
         }
     }
 }
