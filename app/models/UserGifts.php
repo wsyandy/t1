@@ -119,11 +119,18 @@ class UserGifts extends BaseModel
             debug($gift_order_id, $gift_order->user_id);
             $user_gift->status = STATUS_ON;
         }
-
-        if ($user_gift->expire_at > time()) {
-            $user_gift->expire_at += $gift->expire_day * 86400;
+        if (isDevelopmentEnv()) {
+            if ($user_gift->expire_at > time()) {
+                $user_gift->expire_at += $gift->expire_day * 60 * 2;
+            } else {
+                $user_gift->expire_at = time() + $gift->expire_day * 60 * 2;
+            }
         } else {
-            $user_gift->expire_at = time() + $gift->expire_day * 86400;
+            if ($user_gift->expire_at > time()) {
+                $user_gift->expire_at += $gift->expire_day * 86400;
+            } else {
+                $user_gift->expire_at = time() + $gift->expire_day * 86400;
+            }
         }
 
         $user_gift->save();
@@ -199,9 +206,9 @@ class UserGifts extends BaseModel
 
         $time = 86400;
 
-//        if (isDevelopmentEnv()) {
-//            $time = 60 * 2;
-//        }
+        if (isDevelopmentEnv()) {
+            $time = 60 * 2;
+        }
 
         $day = ceil($expire_time / $time);
 
