@@ -30,7 +30,7 @@ class BannedWords extends BaseModel
         $search_word = mbStrSplit($banned_word->word);
 
         //临时解决
-        if (count($search_word) == 1) {
+        if (mb_strlen($word) == 1) {
             return [false, $word];
         }
 
