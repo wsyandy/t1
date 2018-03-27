@@ -58,3 +58,19 @@
     ]
 }
 ```
+
+### 3 未读消息个数 
+
+> http-get ```/api/chats/unread_num```
+
+##### 3.1 请求参数说明
+公共参数
+
+##### 3.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: ''
+    unread_num 未读消息个数
+}
+```

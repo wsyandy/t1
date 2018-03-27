@@ -21,6 +21,9 @@ class ChatsController extends BaseController
 
         $chats = \Chats::findChatsList($this->currentUser(), $page, $per_page, $this->params('user_id'));
         $user = \Users::findById($this->params('user_id'));
+
+        $this->currentUser()->delUnreadMessages();
+
         return $this->renderJSON(
             ERROR_CODE_SUCCESS,
             '',
@@ -32,6 +35,6 @@ class ChatsController extends BaseController
 
     function unreadNumAction()
     {
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['system_messages_unread_num' => 1]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['unread_num' => $this->currentUser()->unreadMessagesNum()]);
     }
 }
