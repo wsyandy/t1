@@ -316,15 +316,15 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         //每月天数数组array('d'=>'Y-m-d')
-        $stat_date = $this->params('stat_date');
         $year = $this->params('year', date('Y'));
         $month = $this->params('month', date('m'));
+        $stat_date = strtotime($year . "-" . $month . "-01");
         $end_at = endOfMonth($stat_date);
         $month_max_day = date('d', $end_at);//获取当前月份最大的天数
 
         $year_array = [];
 
-        for ($i = date('Y'); $i >= 2016; $i--) {
+        for ($i = date('Y'); $i >= 2018; $i--) {
             $year_array[$i] = $i;
         }
 
