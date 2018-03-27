@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: maoluanjuan
  * Date: 06/01/2018
  * Time: 17:07
  */
-
 class Payments extends BaseModel
 {
     /**
@@ -124,6 +124,7 @@ class Payments extends BaseModel
             if ($product->product_group->isDiamond()) {
                 $opts = ['order_id' => $order->id, 'remark' => '购买钻石', 'mobile' => $order->mobile];
                 \AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+                \GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
             }
         }
         return false;

@@ -210,6 +210,7 @@ define('WITHDRAW_TYPE_UNION', 2); //家族体现
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
 define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
 define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
+define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
