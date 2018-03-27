@@ -261,7 +261,7 @@
     {
         action: room_notice 房间通知信息
         channel_name 房间频道
-        expire_time 过期时间
+        expire_time 停留时间 单位:秒
         content: string "" 信息内容
     }
 ```   
