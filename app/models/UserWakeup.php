@@ -515,7 +515,7 @@ trait UserWakeup
         $user_db = Users::getUserDb();
         $friend_key = 'friend_list_user_id_' . $this->id;
         $user_ids = $user_db->zrevrange($friend_key, 0, 1, 'withscores');
-        echoLine($user_ids);
+        
         $user = Users::findFirstById($user_ids[0]);
         $user->push($opts);
 
