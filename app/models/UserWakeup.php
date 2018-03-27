@@ -515,10 +515,14 @@ trait UserWakeup
         $user_db = Users::getUserDb();
         $friend_key = 'friend_list_user_id_' . $this->id;
         $user_ids = $user_db->zrevrange($friend_key, 0, 1, 'withscores');
-        
-        $user = Users::findFirstById($user_ids[0]);
-        $user->push($opts);
 
+        if (count($user_ids) > 0) {
+            $user = Users::findFirstById($user_ids[0]);
+
+            if ($user) {
+                $user->push($opts);
+            }
+        }
     }
 
     function pushFollowOnlineRemind()
@@ -530,9 +534,14 @@ trait UserWakeup
         $follow_key = 'followed_list_user_id' . $this->id;
         $user_ids = $user_db->zrevrange($follow_key, 0, 1, 'withscores');
 
-        $user = Users::findFirstById($user_ids[0]);
-        $user->push($opts);
-        
+        if (count($user_ids) > 0) {
+            $user = Users::findFirstById($user_ids[0]);
+
+            if ($user) {
+                $user->push($opts);
+            }
+        }
+
     }
 
 }
