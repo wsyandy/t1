@@ -463,6 +463,8 @@ trait UserWakeup
     //只发送一条
     function pushFriendOnlineRemind()
     {
+        info('user_id', $this->id);
+
         $cur_hour = intval(date('H'));
         if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
             info('0点-8点不推送', date('YmdHis'));
@@ -483,6 +485,8 @@ trait UserWakeup
             $users = $this->friendList($page, $per_page, 0);
             foreach ($users as $user) {
 
+                info('friend user_id', $user->id);
+
                 //在线不推送
                 if ($user->client_status) {
                     info('在线用户 user_id', $this->id);
@@ -493,7 +497,7 @@ trait UserWakeup
                 if ($user_db->setnx($friend_key, $user->id)) {
                     $user_db->expire($friend_key, 10 * 60);
 
-                    info('user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    info('push friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
                     return;
                 }
@@ -527,7 +531,7 @@ trait UserWakeup
 
             $users = $this->followedList($page, $per_page);
 
-            foreach ($users as $user){
+            foreach ($users as $user) {
 
                 //在线不推送
                 if ($user->client_status) {

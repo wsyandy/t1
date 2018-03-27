@@ -80,6 +80,12 @@ class UnionsController extends BaseController
 
     function recommendAction()
     {
+        $union = $this->currentUser()->union;
+        if (isPresent($union)) {
+            $this->view->show_tip = 1;
+        } else {
+            $this->view->show_tip = 0;
+        }
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
         $this->view->title = "推荐家族";
