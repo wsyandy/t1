@@ -38,8 +38,11 @@
                 </div>
             </li>
         </ul>
-        <div class="top_five" v-show="!searchText">
-            昨天家族声望日榜前五名
+        <div class="top_five" v-show="!searchText && show_tip">
+            <P>推荐家族活动：</P>
+            <p>1.家族前一天声望值最高的前五位家族，将获得当天家族推荐位。</p>
+            <p>2.获得家族推荐位的家族，前一天家族声望值越高，当日推荐家族排名越靠前。</p>
+            <p>3.推荐家族排名每天0点更新。</p>
         </div>
     </div>
 </div>
@@ -49,6 +52,7 @@
         data: {
             sid: '{{ sid }}',
             code: '{{ code }}',
+            show_tip: {{ show_tip }},
             unions: [],
             page: 1,
             total_page: 1,
