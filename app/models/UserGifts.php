@@ -190,7 +190,8 @@ class UserGifts extends BaseModel
             'status' => $this->status,
             'expire_time' => $this->gift->expire_time,
             'gift_type' => $this->gift_type,
-            'notice_content' => "<center><span style='color: yellow;font-size: 14px'>" . $this->user_nickname . " 骑着 " . "<b style='color: white'>" . $this->gift_name . "</b> <p style='color: white'>进来了</p> </span></center>"
+            'notice_content' => "<center><span style='color: yellow;font-size: 14px'>" . $this->user_nickname . "骑着 " .
+                "<b style='color: white'>" . $this->gift_name . "</b> <p style='color: white'> 来了 </p> </span></center>"
         ];
     }
 
