@@ -532,8 +532,7 @@ trait UserAttrs
         if (!$hi_coins) {
             return 0;
         } else {
-            $product_channel = $this->product_channel;
-            $rate = $product_channel->rateOfHiCoinToMoney();
+            $rate = $this->rateOfHiCoinToMoney();
             return $hi_coins / $rate;
         }
     }
@@ -610,5 +609,29 @@ trait UserAttrs
         $total_amount = GiftOrders::sum(['conditions' => 'user_id = :user_id: and created_at >= :start_at: and created_at <= :end_at:',
             'bind' => ['user_id' => $this->id, 'start_at' => $start_at, 'end_at' => $end_at], 'column' => 'amount']);
         return intval($total_amount);
+    }
+
+    //分成比例
+    function rateOfDiamondToHiCoin()
+    {
+        if ($this->isIdCardAuth()) {
+
+            $hour = intval(date("H"));
+
+            info($this->sid, $hour);
+            
+            if ($hour >= 0 && $hour <= 9) {
+                return 6 / 100;
+            }
+
+            return 5 / 100;
+        }
+
+        return 4.5 / 100;
+    }
+
+    function rateOfHiCoinToMoney()
+    {
+        return 1;
     }
 }

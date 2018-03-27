@@ -2482,22 +2482,14 @@ class Users extends BaseModel
             $union = $user->union;
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
+
                 $user->union_charm_value += $charm_value;
 
                 //不在同一个工会才更新声望值
                 if ($gift_order->sender->union_id != $union->id) {
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
-
             }
-
-            $product_channel = $user->product_channel;
-            $rate = $product_channel->rateOfDiamondToHiCoin();
-            $hi_coins = $gift_order->amount / $rate;
-            $user->hi_coins = $user->hi_coins + $hi_coins;
-            $user->update();
-
-            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
         }
 
         unlock($lock);
@@ -2663,5 +2655,10 @@ class Users extends BaseModel
 
         $db->setex($key, endOfDay() + 3600 * 24, $times);
         return $res;
+    }
+
+    function isIdCardAuth()
+    {
+        return AUTH_SUCCESS == $this->id_card_auth;
     }
 }
