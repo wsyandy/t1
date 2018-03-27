@@ -9,14 +9,14 @@
                data-action="1">选中通过</a></li>
         <li><a href="#" class="selected_action" data-target="auth_status" data-formid="batch_form"
                data-action="2">选中不通过</a></li>
-        <li><a href="/admin/users/avatar?avatar_auth=1">已审核列表</a></li>
+        <li><a href="/admin/users/avatar?avatar_status=1">已审核列表</a></li>
     {% endif %}
 </ol>
 
 <div>一共{{ users.total_entries }}个</div>
 {{ form('/admin/users/batch_update_avatar', 'method':'post','class':'form-inline','id':'batch_form','accept-charset':'UTF-8') }}
 <div class="row">
-    <input name="avatar_auth" id="avatar_auth" type="hidden" value="">
+    <input name="avatar_status" id="avatar_status" type="hidden" value="">
     <dl class="thumb_list">
         {% for user in users %}
             <dd class="unit object_unit" style="height: 180px; width: 130px;" id="avatar_user_{{ user.id }}">
@@ -30,9 +30,9 @@
                     <input id="user_{{ user.id }}" name="ids[]" type="checkbox" value="{{ user.id }}"
                            autocomplete="off">
                     {{ user.sex ? '男' : '女' }}({{ user.age }})
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=1" class='auth_click'
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_status=1" class='auth_click'
                        data-user_id="{{ user.id }}">过</a>
-                    <a href="/admin/users/auth?id={{ user.id }}&avatar_auth=2" class='auth_click'
+                    <a href="/admin/users/auth?id={{ user.id }}&avatar_status=2" class='auth_click'
                        data-user_id="{{ user.id }}">不过</a>
                 </p>
             </dd>
