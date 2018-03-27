@@ -18,7 +18,7 @@ class GoldHistories extends BaseModel
      */
     private $_operator;
 
-    static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务'];
+    static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务',GOLD_TYPE_BUY_GOLD =>'购买金币'];
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
