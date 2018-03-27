@@ -69,7 +69,7 @@ function mbStrSplit($str)
 function valueToStr($value)
 {
     if ($value < 10000) {
-        $value = round($value);
+        $value = round($value, 2);
         return "$value";
     }
 
