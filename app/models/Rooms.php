@@ -286,11 +286,11 @@ class Rooms extends BaseModel
         $current_room_seat_id = $user->current_room_seat_id;
 
         // 房间相同才清除用户信息
-        if($this->id == $user->current_room_id){
+        if ($this->id == $user->current_room_id) {
 
             // 退出所有麦位
             $room_seats = RoomSeats::findByUserId($user->id);
-            foreach ($room_seats as $room_seat){
+            foreach ($room_seats as $room_seat) {
                 $room_seat->user_id = 0;
                 $room_seat->save();
             }
@@ -889,7 +889,7 @@ class Rooms extends BaseModel
                 info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
                 return false;
             }
-            
+
         }
 
         $room->enterRoom($user);
@@ -1447,5 +1447,21 @@ class Rooms extends BaseModel
         }
 
         return false;
+    }
+
+    function pushRoomNoticeMessage($content)
+    {
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
+        $this->push($body);
+    }
+
+    //全服通知
+    static function allNoticePush($content)
+    {
+        $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 100]);
+
+        foreach ($rooms as $room) {
+            $room->pushRoomNoticeMessage($content);
+        }
     }
 }
