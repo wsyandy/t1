@@ -357,8 +357,9 @@ class RoomsController extends BaseController
         $this->view->room_id = $room_id;
         $this->view->results = $results;
         $this->view->year_array = $year_array;
-        $this->view->month = $month;
-        $this->view->year = $year;
+        $this->view->month = intval($month);
+        $this->view->year = intval($year);
+        $this->view->room_id = $room_id;
     }
 
     function addUserAgreementAction()

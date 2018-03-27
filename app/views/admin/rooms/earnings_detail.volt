@@ -8,6 +8,7 @@
         {{ options(Stats.MONTH,month) }}
     </select>
 
+    <input type="hidden" name="id" value="{{ room_id }}">
     <button class="ui button" type="submit">搜索</button>
 </form>
 
