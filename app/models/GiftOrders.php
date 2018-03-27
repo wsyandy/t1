@@ -49,7 +49,9 @@ class GiftOrders extends BaseModel
             'image_big_url' => $this->gift_image_big_url,
             'created_at_text' => $this->created_at_text,
             'user_id' => $this->user_id,
-            'sender_id' => $this->sender_id
+            'sender_id' => $this->sender_id,
+            'pay_type' => $this->pay_type,
+            'pay_type_text' => $this->getPayTypeText()
         ];
     }
 

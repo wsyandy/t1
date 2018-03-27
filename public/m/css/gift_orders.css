@@ -220,11 +220,29 @@ h1, h2, h3, h4 {
     color: #B8B8B8;
 }
 
-.gift_list .bottom .gift_num p i {
+/*.gift_list .bottom .gift_num p i {*/
+    /*display: inline-block;*/
+    /*width: 15px;*/
+    /*height: 15px;*/
+    /*background: url(../images/zuan.png) no-repeat;*/
+    /*background-size: 100%;*/
+    /*vertical-align: middle;*/
+/*}*/
+
+.diamond {
     display: inline-block;
     width: 15px;
     height: 15px;
     background: url(../images/zuan.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+}
+
+.gold {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background: url(../images/gold.png) no-repeat;
     background-size: 100%;
     vertical-align: middle;
 }
