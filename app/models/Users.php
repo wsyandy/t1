@@ -1592,6 +1592,7 @@ class Users extends BaseModel
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
                 if($geo_distance < 1000){
+                    $geo_distance = intval($geo_distance);
                     $user->distance = $geo_distance . 'm';
                 }else{
                     $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
