@@ -518,7 +518,7 @@ trait UserWakeup
 
         for ($page = 1; $page <= $total_pages; $page++) {
 
-            $users = $this->friendList($page, $per_page, false);
+            $users = $this->friendList($page, $per_page, 0);
 
             foreach ($users as $user) {
 
