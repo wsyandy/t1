@@ -1,0 +1,1 @@
+ALTER TABLE hi_coin_histories add COLUMN withdraw_history_id INTEGER ;
