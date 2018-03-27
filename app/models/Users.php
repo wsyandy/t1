@@ -2693,11 +2693,6 @@ class Users extends BaseModel
         ];
 
         info($push_data);
-        $receiver = $this->getPushReceiverContext();
-        if ($this->client_status){
-            $receiver['push_type'] = 'notification';
-        }
-
-        \Pushers::delay()->push($this->getPushContext(), $receiver, $push_data);
+        \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
     }
 }
