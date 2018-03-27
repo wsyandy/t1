@@ -69,10 +69,11 @@ function mbStrSplit($str)
 function valueToStr($value)
 {
     if ($value < 10000) {
+        $value = round($value);
         return "$value";
     }
 
     $myriabit = intval($value / 10000);
-    $kilobit = intval($value / 1000) - $myriabit;
+    $kilobit = round($value / 1000) - $myriabit * 10;
     return $myriabit . '.' . $kilobit . "w";
 }
