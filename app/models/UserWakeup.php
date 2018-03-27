@@ -515,7 +515,7 @@ trait UserWakeup
         $user_db = Users::getUserDb();
         $friend_key = 'friend_list_user_id_' . $this->id;
         $user_ids = $user_db->zrevrange($friend_key, 0, 1);
-        
+
         if (count($user_ids) > 0) {
             $user = Users::findFirstById($user_ids[0]);
 
@@ -541,6 +541,95 @@ trait UserWakeup
                 $user->push($opts);
             }
         }
+
+    }
+
+    function pushFriendIntoRoomRemind()
+    {
+        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        if (!$this->current_room_id) {
+            info('user_id', $this->id);
+            return;
+        }
+
+        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
+
+        $per_page = 200;
+        $friend_num = $this->friendNum();
+
+        if ($friend_num < 1) {
+            info('user_id', $this->id, 'friend num is 0');
+            return;
+        }
+
+        $total_pages = ceil($friend_num / $per_page);
+        $user_db = Users::getUserDb();
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->friendList($page, $per_page);
+
+            foreach ($users as $user) {
+
+                $key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                if ($user_db->setnx($key, $user->id)) {
+                    $user_db->expire($key, 60 * 60);
+
+                    info('user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    $user->push($opts);
+                }
+
+            }
+        }
+
+        return;
+
+
+    }
+
+
+    function pushFollowedIntoRoomRemind()
+    {
+        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        if (!$this->current_room_id) {
+            info('user_id', $this->id);
+            return;
+        }
+
+        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '关注的人开播提醒', 'body' => $body, 'client_url' => $client_url];
+
+        $per_page = 200;
+        $followed_num = $this->followedNum();
+
+        if ($followed_num < 1) {
+            info('user_id', $this->id, 'friend num is 0');
+            return;
+        }
+
+        $total_pages = ceil($followed_num / $per_page);
+        $user_db = Users::getUserDb();
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->followedList($page, $per_page);
+
+            foreach ($users as $user) {
+
+                $key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                if ($user_db->setnx($key, $user->id)) {
+                    $user_db->expire($key, 60 * 60);
+
+                    info('user_id', $user->id, $opts, 'followed_num', $followed_num);
+                    $user->push($opts);
+                }
+
+            }
+        }
+
+        return;
+
 
     }
 
