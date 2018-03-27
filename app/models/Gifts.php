@@ -193,7 +193,7 @@ class Gifts extends BaseModel
             'svga_image_url' => $this->svga_image_url,
             'expire_day' => $this->expire_day,
             'show_rank' => $this->show_rank,
-            'expire_time' => $this->expire_time
+            'expire_time' => $this->expire_time ? $this->expire_time : 180
         ];
 
         if (isset($this->buy_status)) {
