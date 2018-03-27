@@ -1454,7 +1454,7 @@ class Rooms extends BaseModel
         return false;
     }
 
-    function pushRoomNoticeMessage($content)
+    function pushRoomNoticeMessage($content, $client_url = '')
     {
         $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
         info($body);
@@ -1462,13 +1462,28 @@ class Rooms extends BaseModel
     }
 
     //全服通知
-    static function allNoticePush($content)
+    static function asyncAllNoticePush($content, $client_url = '')
     {
         $rooms = Rooms::find(['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
             'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100]);
 
         foreach ($rooms as $room) {
-            $room->pushRoomNoticeMessage($content);
+            $room->pushRoomNoticeMessage($content, $client_url);
+        }
+    }
+
+    //全服通知
+    static function allNoticePush($gift_order)
+    {
+        if ($gift_order->amount >= 1000 && isDevelopmentEnv()) {
+
+            $client_url = '';
+
+            if (!$gift_order->room->lock) {
+                $client_url = "app://room/detail?id=" . $gift_order->room_id;
+            }
+
+            Rooms::delay()->allNoticePush($gift_order->allNoticePushContent(), $client_url);
         }
     }
 }
