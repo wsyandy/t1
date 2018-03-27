@@ -526,6 +526,10 @@ trait UserWakeup
 
         $per_page = 200;
         $friend_num = $this->friendNum();
+        if ($friend_num < 1) {
+            info('user_id', $this->id, 'friend num is 0');
+            return;
+        }
 
         $total_pages = ceil($friend_num / $per_page);
         $user_db = Users::getUserDb();
@@ -573,6 +577,10 @@ trait UserWakeup
 
         $per_page = 200;
         $followed_num = $this->followedNum();
+        if ($followed_num < 1) {
+            info('user_id', $this->id, 'followed num is 0');
+            return;
+        }
 
         $total_pages = ceil($followed_num / $per_page);
         $user_db = Users::getUserDb();
