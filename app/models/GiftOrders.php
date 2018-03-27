@@ -158,6 +158,10 @@ class GiftOrders extends BaseModel
                         \Users::delay()->updateCharm($gift_order->id);
                         \HiCoinHistories::delay()->createHistory($gift_order->user_id, $gift_order->id);
                     }
+
+                    if ($gift_order->amount >= 1000 && isDevelopmentEnv()) {
+                        Rooms::delay()->allNoticePush($gift_order->allNoticePushContent());
+                    }
                 }
 
             } else {
@@ -208,5 +212,19 @@ class GiftOrders extends BaseModel
     function isDiamondPayType()
     {
         return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function allNoticePushContent()
+    {
+        $user = $this->user;
+        $sender = $this->sender;
+        $gift_num = $this->gift_num;
+        $name = $this->name;
+        $content = <<<EOF
+<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到
+</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>
+EOF;
+
+        return $content;
     }
 }
