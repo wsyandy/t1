@@ -83,6 +83,7 @@ class Users extends BaseModel
 
         if ($this->mobile || $this->third_unionid) {
             $this->register_at = time();
+            $this->last_at = time();
         }
     }
 
@@ -95,6 +96,11 @@ class Users extends BaseModel
             }
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
+            }
+
+            if($this->register_at){
+                $this->registerStat();
+                $this->createEmUser();
             }
         }
     }
@@ -135,16 +141,21 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        // 手机注册
-        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
+        if ($this->hasChanged('register_at') && $this->register_at) {
             $this->registerStat();
             $this->createEmUser();
         }
-        // 第三方注册
-        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
-            $this->registerStat();
-            $this->createEmUser();
-        }
+
+//        // 手机注册
+//        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
+//            $this->registerStat();
+//            $this->createEmUser();
+//        }
+//        // 第三方注册
+//        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
+//            $this->registerStat();
+//            $this->createEmUser();
+//        }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
