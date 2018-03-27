@@ -84,6 +84,7 @@ class Users extends BaseModel
         if ($this->mobile || $this->third_unionid) {
             $this->register_at = time();
             $this->last_at = time();
+            info('new_user_register', $this->mobile, $this->third_unionid);
         }
     }
 
