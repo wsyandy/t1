@@ -2013,11 +2013,11 @@ class Users extends BaseModel
 //                return;
 //            }
             if ($room->getRealUserNum() > 0) {
-                if ($rand_num <= 60) {
+                if ($rand_num <= 40) {
                     Users::delay(mt_rand(1, 10))->sendGift($this->id, $room->id);
-                } elseif ($rand_num > 60 && $rand_num <= 88) {
+                } elseif ($rand_num > 40 && $rand_num <= 70) {
                     Users::delay(mt_rand(1, 10))->upRoomSeat($this->id, $room->id);
-                } elseif ($rand_num > 85 && $rand_num <= 95) {
+                } elseif ($rand_num > 70 && $rand_num <= 95) {
                     Users::delay(mt_rand(1, 10))->sendTopTopicMessage($this->id, $room->id);
                 } else {
                     $room->exitSilentRoom($this);
