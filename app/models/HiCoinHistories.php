@@ -25,7 +25,7 @@ class HiCoinHistories extends BaseModel
     private $gift_order;
 
     static $FEE_TYPE = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
-        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励'];
+        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现'];
 
 
     function beforeCreate()
