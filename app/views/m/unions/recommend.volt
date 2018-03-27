@@ -4,7 +4,6 @@
 
 <div class="vueBox" id="app" v-cloak>
     <div class="family-search">
-        {#<input type="text" class="input-search" v-model="searchText" placeholder="请输入家族ID或昵称">#}
         <div class="text-search">
             <input type="number" class="input-search" v-model="searchText" placeholder="请输入家族ID">
             <img v-show="searchText" class="ico-clear" src="/m/images/ico-clear.png" alt="" @click="clearSearch()">
@@ -17,13 +16,9 @@
         <ul>
             <li v-for="item, index in unions" @click.stop="unionDetail(item.id)">
                 <div class="list_left">
-                    <!--<div class="family_order" v-show="searchText == ''">
-                        <img v-show="index<3" :src="index<2?(index<1?ranking_1:ranking_2):ranking_3" alt="">
-                    </div>-->
-                    <div :class="index<3?'list_num list_num'+index:'list_num'">
+                    <div :class="index<3?'list_num list_num'+index:'list_num'" v-show="is_recommend">
                         <span>${index+1}</span>
                     </div>
-
                     <img class="family_avatar" :src="item.avatar_small_url" alt="">
                     <div class="family_info">
                         <span class="family_name"> ${ item.name }</span>
@@ -38,7 +33,7 @@
                 </div>
             </li>
         </ul>
-        <div class="top_five" v-show="!searchText && show_tip">
+        <div class="top_five" v-show="is_recommend && show_tip">
             <P>推荐家族活动：</P>
             <p>1.家族前一天声望值最高的前五位家族，将获得当天家族推荐位。</p>
             <p>2.获得家族推荐位的家族，前一天家族声望值越高，当日推荐家族排名越靠前。</p>
@@ -59,7 +54,8 @@
             searchText: '',
             ranking_1: "/m/images/ranking_1.png",
             ranking_2: "/m/images/ranking_2.png",
-            ranking_3: "/m/images/ranking_3.png"
+            ranking_3: "/m/images/ranking_3.png",
+            is_recommend: true
         },
         created: function () {
             this.list();
@@ -80,8 +76,10 @@
                 if (this.searchText) {
                     data.search_value = this.searchText;
                     data.recommend = 0;
+                    this.is_recommend = false;
                 } else {
                     data.recommend = 1;
+                    this.is_recommend = true;
                 }
                 $.authGet('/m/unions/search', data, function (resp) {
                     vm.total_page = resp.total_page;
