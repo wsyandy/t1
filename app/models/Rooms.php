@@ -1483,7 +1483,7 @@ class Rooms extends BaseModel
                 $client_url = "app://room/detail?id=" . $gift_order->room_id;
             }
 
-            Rooms::delay()->allNoticePush($gift_order->allNoticePushContent(), $client_url);
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $client_url);
         }
     }
 }
