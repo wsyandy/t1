@@ -514,9 +514,9 @@ trait UserWakeup
 
         $user_db = Users::getUserDb();
         $friend_key = 'friend_list_user_id_' . $this->id;
-        $user_id = $user_db->zrevrange($friend_key, 0, 1, 'withscores');
-
-        $user = Users::findFirstById($user_id);
+        $user_ids = $user_db->zrevrange($friend_key, 0, 1, 'withscores');
+        echoLine($user_ids);
+        $user = Users::findFirstById($user_ids[0]);
         $user->push($opts);
 
     }
@@ -528,9 +528,9 @@ trait UserWakeup
 
         $user_db = Users::getUserDb();
         $follow_key = 'followed_list_user_id' . $this->id;
-        $user_id = $user_db->zrevrange($follow_key, 0, 1, 'withscores');
+        $user_ids = $user_db->zrevrange($follow_key, 0, 1, 'withscores');
 
-        $user = Users::findFirstById($user_id);
+        $user = Users::findFirstById($user_ids[0]);
         $user->push($opts);
         
     }
