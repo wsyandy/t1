@@ -36,6 +36,12 @@ class HiCoinHistories extends BaseModel
     function checkBalance()
     {
         $change_amount = abs($this->hi_coins);
+
+        if ($this->isCost()) {
+            $change_amount = -$change_amount;
+            $this->hi_coins = $change_amount;
+        }
+
         $old_hi_coin_history = \HiCoinHistories::findUserLast($this->user_id);
         $old_balance = $this->balance;
 
@@ -73,16 +79,18 @@ class HiCoinHistories extends BaseModel
             'order' => 'id desc'
         ];
 
-        return \AccountHistories::findPagination($conditions, $page, $per_page);
+        return \HiCoinHistories::findPagination($conditions, $page, $per_page);
     }
 
-    static function createHistory($user_id, $gift_order_id)
+    static function createHistory($user_id, $opts = [])
     {
-        $user = Users::findFirstById($user_id);
-        $gift_order = GiftOrders::findFirstById($gift_order_id);
+        $gift_order_id = fetch($opts, 'gift_order_id');
+        $withdraw_history_id = fetch($opts, 'withdraw_history_id');
 
-        if (!$user || ($gift_order_id && !$gift_order)) {
-            info($user_id, $gift_order_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            info($user_id);
             return;
         }
 
@@ -95,6 +103,14 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->user_id = $user_id;
 
         if ($gift_order_id) {
+
+            $gift_order = GiftOrders::findFirstById($gift_order_id);
+
+            if (!$gift_order) {
+                info($gift_order_id);
+                return;
+            }
+
             $hi_coin_history->gift_order_id = $gift_order_id;
             $amount = $gift_order->amount;
             $hi_coins = $amount * $user->rateOfDiamondToHiCoin();
@@ -102,6 +118,22 @@ class HiCoinHistories extends BaseModel
             $hi_coin_history->hi_coins = $hi_coins;
             $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
             $hi_coin_history->remark = "接收礼物总额: $amount 收益:" . $hi_coins;
+        }
+
+        if ($withdraw_history_id) {
+
+            $withdraw_history = WithdrawHistories::findFirstById($withdraw_history_id);
+
+            if (!$withdraw_history) {
+                info($withdraw_history_id);
+                return;
+            }
+
+            $hi_coin_history->withdraw_history_id = $withdraw_history_id;
+            $amount = $withdraw_history->amount;
+            $hi_coin_history->hi_coins = $amount;
+            $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
+            $hi_coin_history->remark = "提现金额:" . $amount;
         }
 
         $hi_coin_history->product_channel_id = $user->product_channel_id;
@@ -112,8 +144,16 @@ class HiCoinHistories extends BaseModel
         $user->hi_coins += $hi_coin_history->hi_coins;
         $user->update();
 
-        $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
+        //有礼物更新hi币榜单
+        if ($gift_order_id) {
+            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
+        }
 
         unlock($lock);
+    }
+
+    function isCost()
+    {
+        return HI_COIN_FEE_TYPE_WITHDRAW == $this->fee_type;
     }
 }

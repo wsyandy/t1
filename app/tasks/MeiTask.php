@@ -1190,6 +1190,12 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_orders = GiftOrders::findForeach();
 
         foreach ($gift_orders as $gift_order) {
+            if ($gift_order->user->isSilent()) {
+                echoLine($gift_order->id, $gift_order->user_id);
+            }
+        }
+
+        foreach ($gift_orders as $gift_order) {
 
             $user = $gift_order->user;
 
@@ -1225,27 +1231,29 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(count($users));
 
         $i = 0;
+        $boracast_num = 0;
+
 
         foreach ($users as $user) {
             $i++;
 
             $total_amount = UserGifts::sum(['conditions' => 'user_id = :user_id:', 'bind' => ['user_id' => $user->id], 'column' => 'total_amount']);
-
-            if ($total_amount > 100000000) {
-                continue;
-            }
-
             //echoLine($total_amount, $user->id, $user->hi_coins);
 
             $rate = $user->rateOfDiamondToHiCoin();
+
+            if ($rate == 0.05) {
+                $boracast_num++;
+            }
+
+            //echoLine($rate);
 
             if ($total_amount < 1) {
                 echoLine("======", $i, $total_amount, $user->id, $user->hi_coins);
                 continue;
             }
 
-            $hi_coins = $total_amount / $rate;
-
+            $hi_coins = $total_amount * $rate;
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
                 'bind' => ['user_id' => $user->id, 'status' => WITHDRAW_STATUS_SUCCESS], 'column' => 'amount']);
@@ -1254,24 +1262,19 @@ class MeiTask extends \Phalcon\Cli\Task
                 $hi_coins = $hi_coins - $widthdraw_hi_coins;
             }
 
-            if ($hi_coins - $user->hi_coins >= 0.04) {
-                echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
+            $hi_coins = intval($hi_coins * 10000) / 10000;
+
+            if ($hi_coins - $user->hi_coins >= 0.001) {
+                echoLine($rate, "总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             } else {
                 continue;
             }
 
-            $user->hi_coins = $hi_coins;
-            $user->update();
+//            $user->hi_coins = $hi_coins;
+//            $user->update();
         }
 
-        $users = Users::find(['conditions' => 'hi_coins > 1000']);
-
-        foreach ($users as $user) {
-            $user->hi_coins = 0;
-            $user->balance = 0;
-            $user->update();
-            echoLine($user->id);
-        }
+        echoLine($boracast_num);
     }
 
     function testDataTypeAction()
@@ -1282,5 +1285,22 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById(1);
         echoLine($user->experience);
+
+        $hi_coin_histories = HiCoinHistories::find();
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            $hi_coin_history->delete();
+        }
+
+
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+
+        foreach ($users as $user) {
+            $old_hi_coin_history = \HiCoinHistories::findUserLast($user->id);
+
+            if (!$old_hi_coin_history || abs($old_hi_coin_history->balance - $user->hi_coins) >= 0.001) {
+                echoLine($user->id, $old_hi_coin_history->balance, $user->hi_coins);
+            }
+        }
     }
 }
