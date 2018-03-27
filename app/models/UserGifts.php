@@ -121,17 +121,9 @@ class UserGifts extends BaseModel
         }
 
         if ($user_gift->expire_at > time()) {
-//            if (isDevelopmentEnv()) {
-//                $user_gift->expire_at += $gift->expire_day * 60 * 2;
-//            } else {
             $user_gift->expire_at += $gift->expire_day * 86400;
-//            }
         } else {
-//            if (isDevelopmentEnv()) {
-//                $user_gift->expire_at = time() + $gift->expire_day * 60 * 2;
-//            } else {
             $user_gift->expire_at = time() + $gift->expire_day * 86400;
-//            }
         }
 
         $user_gift->save();
