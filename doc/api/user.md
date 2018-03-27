@@ -696,7 +696,7 @@
             segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
-            hi_coin 贡献的hi币
+            hi_coin string 贡献的hi币 
         }
         ...
     ]
@@ -730,7 +730,7 @@
             segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
-            charm_value 榜单魅力值
+            charm_value string 榜单魅力值
         }
         ...
     ]
@@ -766,7 +766,7 @@
             segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
-            wealth_value 榜单财富值
+            wealth_value string 榜单财富值
         }
         ...
     ]

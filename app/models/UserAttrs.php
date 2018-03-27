@@ -271,15 +271,15 @@ trait UserAttrs
         ];
 
         if (isset($this->contributing_hi_conins)) {
-            $data['hi_coin'] = $this->contributing_hi_conins;
+            $data['hi_coin'] = valueToStr($this->contributing_hi_conins);
         }
 
         if (isset($this->charm)) {
-            $data['charm_value'] = $this->charm;
+            $data['charm_value'] = valueToStr($this->charm);
         }
 
         if (isset($this->wealth)) {
-            $data['wealth_value'] = $this->wealth;
+            $data['wealth_value'] = valueToStr($this->wealth);
         }
 
         return $data;
@@ -695,7 +695,7 @@ trait UserAttrs
             $hour = intval(date("H"));
 
             info($this->sid, $hour);
-            
+
             if ($hour >= 0 && $hour <= 9) {
                 return 6 / 100;
             }

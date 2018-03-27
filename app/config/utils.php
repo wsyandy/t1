@@ -65,3 +65,14 @@ function mbStrSplit($str)
 {
     return preg_split('/(?<!^)(?!$)/u', $str);
 }
+
+function valueToStr($value)
+{
+    if ($value < 10000) {
+        return "$value";
+    }
+
+    $myriabit = intval($value / 10000);
+    $kilobit = intval($value / 1000) - $myriabit;
+    return $myriabit . '.' . $kilobit . "w";
+}
