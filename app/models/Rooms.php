@@ -1464,10 +1464,10 @@ class Rooms extends BaseModel
     //全服通知
     static function allNoticePush($content)
     {
-        $rooms = Rooms::find(['order' => 'last_at desc', 'limit' => 100]);
+        $rooms = Rooms::find(['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100]);
 
         foreach ($rooms as $room) {
-            info($room->id, $content);
             $room->pushRoomNoticeMessage($content);
         }
     }
