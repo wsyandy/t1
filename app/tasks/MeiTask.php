@@ -1263,5 +1263,24 @@ class MeiTask extends \Phalcon\Cli\Task
             $user->hi_coins = $hi_coins;
             $user->update();
         }
+
+        $users = Users::find(['conditions' => 'hi_coins > 1000']);
+
+        foreach ($users as $user) {
+            $user->hi_coins = 0;
+            $user->balance = 0;
+            $user->update();
+            echoLine($user->id);
+        }
+    }
+
+    function testDataTypeAction()
+    {
+//        $user = Users::findFirstById(1);
+//        $user->experience = 123441;
+//        $user->update();
+
+        $user = Users::findFirstById(1);
+        echoLine($user->experience);
     }
 }
