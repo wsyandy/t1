@@ -126,4 +126,13 @@ class Operators extends BaseModel
 
         return 10 == $this->id;
     }
+
+    function canGiveHiCoins()
+    {
+        if (isDevelopmentEnv()) {
+            return true;
+        }
+
+        return 11 == $this->id;
+    }
 }

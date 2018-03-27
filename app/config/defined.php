@@ -215,3 +215,4 @@ define('HI_COIN_FEE_TYPE_RECEIVE_GIFT', 1); //接收礼物
 define('HI_COIN_FEE_TYPE_HOST_REWARD', 2); //主播奖励
 define('HI_COIN_FEE_TYPE_UNION_HOST_REWARD', 3); //家族长奖励
 define('HI_COIN_FEE_TYPE_WITHDRAW', 4); //提现
+define('HI_COIN_FEE_TYPE_ROOM_REWARD', 5); //房间流水奖励
