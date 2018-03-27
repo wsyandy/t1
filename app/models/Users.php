@@ -1003,6 +1003,7 @@ class Users extends BaseModel
 
     function registerStat()
     {
+        info($this->id, date('YmdHis', $this->register_at), date('YmdHis', $this->last_at));
         \Stats::delay()->record('user', 'register', $this->getStatAttrs());
     }
 
