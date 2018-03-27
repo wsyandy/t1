@@ -5,6 +5,7 @@
  * Date: 17/01/2018
  * Time: 17:11
  */
+
 namespace api;
 
 class ChatsController extends BaseController
@@ -27,5 +28,10 @@ class ChatsController extends BaseController
                 $user->toChatJson(),
                 $chats->toJson('chats', 'toJson'))
         );
+    }
+
+    function unreadNumAction()
+    {
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['system_messages_unread_num' => 1]);
     }
 }
