@@ -324,17 +324,41 @@ class RoomsController extends BaseController
         $room_id = $this->params('id');
         $room = \Rooms::findFirstById($room_id);
 
-        $results = [];
+        //每月天数数组array('d'=>'Y-m-d')
+        $stat_date = $this->params('stat_date');
+        $year = $this->params('year', date('Y'));
+        $month = $this->params('month', date('m'));
+        $end_at = endOfMonth($stat_date);
+        $month_max_day = date('d', $end_at);//获取当前月份最大的天数
 
-        for ($i = 0; $i < 7; $i++) {
-            $start_at = beginOfDay(time() - $i * 60 * 60 * 24);
-            $end_at = endOfDay(time() - $i * 60 * 60 * 24);
+        $year_array = [];
+
+        for ($i = date('Y'); $i >= 2016; $i--) {
+            $year_array[$i] = $i;
+        }
+
+        for ($i = 1; $i <= $month_max_day; $i++) {
+
+            if ($i < 10) {
+                $day = "0" . $i;
+            } else {
+                $day = $i;
+            }
+
+            $day = $year . "-" . $month . "-" . $day;
+
+            $start_at = beginOfDay($day);
+            $end_at = endOfDay($day);
 
             $results[date('Ymd', $start_at)] = $room->getDayAmount($start_at, $end_at);
         }
 
+
         $this->view->room_id = $room_id;
         $this->view->results = $results;
+        $this->view->year_array = $year_array;
+        $this->view->month = $month;
+        $this->view->year = $year;
     }
 
     function addUserAgreementAction()
