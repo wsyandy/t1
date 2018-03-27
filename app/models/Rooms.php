@@ -1468,7 +1468,7 @@ class Rooms extends BaseModel
         $hot = fetch($opts, 'hot');
 
         $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 12 * 86400], 'order' => 'last_at desc', 'limit' => 100];
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
 
         if ($hot) {
             $cond['conditions'] .= " and hot = :hot:";
