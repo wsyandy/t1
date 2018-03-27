@@ -1569,10 +1569,6 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
 
         if ($users->count() < 3) {
-//            $opts['city_id'] = $this->getSearchCityId();
-//            if (!$opts['city_id']) {
-//                $opts['province_id'] = $this->getSearchProvinceId();
-//            }
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
@@ -1592,6 +1588,7 @@ class Users extends BaseModel
         foreach ($users as $key => $user) {
 
             if ($this->latitude && $this->longitude && $user->latitude && $user->longitude) {
+
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
                 $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
@@ -1600,14 +1597,17 @@ class Users extends BaseModel
                 }
                 $user->distance = $geo_distance . 'km';
 
-                debug($this->id, $user->id, $geo_distance, $user->distance);
+                info('true', $this->id, $user->id, $geo_distance, $user->distance);
             } else {
+
                 $geo_distance = abs($this->id - $user->id) % 1000;
                 $geo_distance = $geo_distance / 100;
                 if ($geo_distance < 0.01) {
                     $geo_distance = 0.01;
                 }
                 $user->distance = $geo_distance . 'km';
+
+                info('false', $this->id, $user->id, $geo_distance, $user->distance);
             }
         }
     }
