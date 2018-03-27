@@ -103,9 +103,11 @@ class Users extends BaseModel
     {
         if ($this->hasChanged('mobile') && $this->mobile && $this->register_at < 1) {
             $this->register_at = time();
+            $this->last_at = time();
         }
         if ($this->hasChanged('third_unionid') && $this->third_unionid && $this->register_at < 1) {
             $this->register_at = time();
+            $this->last_at = time();
         }
     }
 
