@@ -1525,7 +1525,7 @@ class Users extends BaseModel
             $cond['bind']['ip_province_id'] = $province_id;
         }
 
-        $user_type = fetch($opts, 'user_type');
+        $user_type = fetch($opts, 'user_type', USER_TYPE_ACTIVE);
         if ($user_type) {
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
@@ -1556,7 +1556,7 @@ class Users extends BaseModel
         $geohash = new \geo\GeoHash();
         $hash = $geohash->encode($latitude, $longitude);
         //取前缀，前缀约长范围越小
-        $prefix = substr($hash, 0, 6);
+        $prefix = substr($hash, 0, 5);
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
@@ -1589,10 +1589,6 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
 
         if ($users->count() < 3) {
-//            $opts['city_id'] = $this->getSearchCityId();
-//            if (!$opts['city_id']) {
-//                $opts['province_id'] = $this->getSearchProvinceId();
-//            }
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
@@ -1612,22 +1608,28 @@ class Users extends BaseModel
         foreach ($users as $key => $user) {
 
             if ($this->latitude && $this->longitude && $user->latitude && $user->longitude) {
+
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
-                $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
-                if ($geo_distance < 0.01) {
-                    $geo_distance = 0.01;
+                if($geo_distance < 1000){
+                    $geo_distance = intval($geo_distance);
+                    $user->distance = $geo_distance . 'm';
+                }else{
+                    $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
+                    $user->distance = $geo_distance . 'km';
                 }
-                $user->distance = $geo_distance . 'km';
 
-                debug($this->id, $user->id, $geo_distance, $user->distance);
+                info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             } else {
+
                 $geo_distance = abs($this->id - $user->id) % 1000;
                 $geo_distance = $geo_distance / 100;
                 if ($geo_distance < 0.01) {
                     $geo_distance = 0.01;
                 }
                 $user->distance = $geo_distance . 'km';
+
+                info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
     }
