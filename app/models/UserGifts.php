@@ -124,13 +124,13 @@ class UserGifts extends BaseModel
 //            if (isDevelopmentEnv()) {
 //                $user_gift->expire_at += $gift->expire_day * 60 * 2;
 //            } else {
-                $user_gift->expire_at += $gift->expire_day * 86400;
+            $user_gift->expire_at += $gift->expire_day * 86400;
 //            }
         } else {
 //            if (isDevelopmentEnv()) {
 //                $user_gift->expire_at = time() + $gift->expire_day * 60 * 2;
 //            } else {
-                $user_gift->expire_at = time() + $gift->expire_day * 86400;
+            $user_gift->expire_at = time() + $gift->expire_day * 86400;
 //            }
         }
 
@@ -190,7 +190,7 @@ class UserGifts extends BaseModel
             'status' => $this->status,
             'expire_time' => $this->gift->expire_time,
             'gift_type' => $this->gift_type,
-            'notice_content' => "<center><span style='color: yellow;font-size: 28px'>" . $this->user_nickname . " 骑着 " . "<b style='color: white'>" . $this->gift_name . "</b> 进来了 </span></center>"
+            'notice_content' => "<center><span style='color: yellow;font-size: 14px'>" . $this->user_nickname . " 骑着 " . "<b style='color: white'>" . $this->gift_name . "</b> <p style='color: white'>进来了</p> </span></center>"
         ];
     }
 
