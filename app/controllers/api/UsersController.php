@@ -213,7 +213,7 @@ class UsersController extends BaseController
 
     function fixLogin($third_name, $form){
 
-        if($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-30'))
+        if($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-29 01:30:00'))
         {
             return null;
         }
