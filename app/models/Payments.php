@@ -108,6 +108,7 @@ class Payments extends BaseModel
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
             $fee = 1 - (double)($this->payment_channel->fee);
             $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+            info($this->id,$this->payment_type, $fee, $this->amount, $this->paid_amount);
         }
     }
 
