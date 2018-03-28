@@ -65,7 +65,7 @@ class Devices extends BaseModel
                 $users = Users::findForeach(['conditions' => 'device_id=:device_id:',
                     'bind' => ['device_id' => $this->id]]);
                 foreach ($users as $user) {
-                    $user->status = USER_STATUS_BLOCKED_DEVICE;
+                    $user->user_status = USER_STATUS_BLOCKED_DEVICE;
                     $user->update();
                 }
             }
