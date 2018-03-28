@@ -46,7 +46,7 @@ class SoftVersionsController extends BaseController
 
         if (!$select_soft_version || version_compare($select_soft_version->version_code, $version_code, '<=')) {
             debug('没有升级');
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '当今已是最新版本', $result);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '当前已是最新版本', $result);
         }
 
         $select_soft_version->increase('updated_num');
