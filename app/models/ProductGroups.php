@@ -19,12 +19,12 @@ class ProductGroups extends BaseModel
 
     static $files = ['icon' => APP_NAME . '/product_groups/icon/%s'];
 
-    static function getCacheEndPoint()
-    {
-        $config = self::di('config');
-        $endpoints = explode(',', $config->cache_endpoint);
-        return $endpoints[0];
-    }
+//    static function getCacheEndPoint()
+//    {
+//        $config = self::di('config');
+//        $endpoints = explode(',', $config->cache_endpoint);
+//        return $endpoints[0];
+//    }
 
     static function findByProductChannelId($product_channel_id)
     {

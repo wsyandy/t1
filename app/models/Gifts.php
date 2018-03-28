@@ -25,13 +25,6 @@ class Gifts extends BaseModel
     static $files = ['image' => APP_NAME . '/gifts/image/%s', 'big_image' => APP_NAME . '/gifts/big_image/%s',
         'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s'];
 
-    static function getCacheEndPoint()
-    {
-        $config = self::di('config');
-        $endpoints = $config->cache_endpoint;
-        return explode(',', $endpoints)[0];
-    }
-
     function isDiamondPayType()
     {
         return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
