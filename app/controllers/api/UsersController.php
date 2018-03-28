@@ -211,6 +211,30 @@ class UsersController extends BaseController
         }
     }
 
+    function fixLogin($third_name, $form){
+
+        if($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-30'))
+        {
+            return null;
+        }
+
+        $third_unionid = fetch($form, 'third_unionid');
+        if(!$third_unionid){
+            return null;
+        }
+
+        $third_id = $form['third_id'];
+        $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_id, $third_name);
+        if($user){
+            info($user->id, $form);
+//            $user->third_unionid = $third_unionid;
+//            $user->save();
+//            return $user;
+        }
+
+        return null;
+    }
+
     //第三方登陆 qq weixin sinaweibo
     //access_token openid app_id(微信不需要此参数)
     function thirdLoginAction()
@@ -252,9 +276,13 @@ class UsersController extends BaseController
             return $this->renderJSON($form['error_code'], $form['error_reason']);
         }
 
-        $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
+        $third_unionid = isset($form['third_unionid']) && $form['third_unionid'] ? $form['third_unionid'] : $form['third_id'];
 
         $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
+        if(!$user){
+            $user = $this->fixLogin($third_name, $form);
+        }
+
         $error_url = '';
 
         if (!$user) {
