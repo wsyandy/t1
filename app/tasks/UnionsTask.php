@@ -32,4 +32,48 @@ class UnionsTask extends \Phalcon\Cli\Task
             $db->zadd($union_recommend_key, $value, $union_id);
         }
     }
+
+    function fixUnionRankListAction()
+    {
+        $unions = Unions::findForeach();
+        $start = beginOfWeek();
+        $end = endOfWeek();
+        $db = Users::getUserDb();
+        $start_at = date("Ymd", strtotime("last sunday next day", time()));
+        $end_at = date("Ymd", strtotime("next monday", time()) - 1);
+        $week_key = "total_union_fame_value_" . $start_at . "_" . $end_at;
+        $union_ids = $db->zrange($week_key, 0, -1);
+        $unions = Unions::findByIds($union_ids);
+
+        foreach ($unions as $union) {
+            if ($union->type == UNION_TYPE_PUBLIC) {
+                $db->zrem($week_key, $union->id);
+            }
+        }
+
+        $db->zclear($week_key);
+        $db->zclear("total_union_fame_value_day_20180328");
+        $db->zclear("total_union_fame_value_day_20180327");
+
+        foreach ($unions as $union) {
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => '(sender_union_id = :union_id: or receiver_union_id = :union_id1:) and created_at >= :start:' .
+                        ' and created_at <= :end:',
+
+                    'bind' => ['union_id' => $union->id, 'union_id1' => $union->id, 'start' => $start, 'end' => $end]
+                ]
+            );
+
+            foreach ($gift_orders as $gift_order) {
+                $day_key = "total_union_fame_value_day_" . date("Ymd", $gift_order->created_at);
+                $db->zincrby($day_key, $gift_order->amount, $union->id);
+                $db->zincrby($week_key, $gift_order->amount, $union->id);
+            }
+        }
+
+        $union = Unions::findFirstById(1040);
+        echoLine($union);
+    }
 }
