@@ -162,7 +162,7 @@ class HiCoinHistories extends BaseModel
         $user->hi_coins += $hi_coin_history->hi_coins;
         $user->update();
 
-        //有礼物更新hi币榜单
+        //有礼物更新hi币榜单 自己给自己送座驾不加hi币贡献榜
         if ($gift_order_id) {
             $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
         }

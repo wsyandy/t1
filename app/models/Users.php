@@ -2601,9 +2601,10 @@ class Users extends BaseModel
             $weeks_key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
             $total_key = "user_hi_coin_rank_list_" . $this->id;
 
-            $db->zincrby($day_key, $hi_coins * 100, $sender_id);
-            $db->zincrby($weeks_key, $hi_coins * 100, $sender_id);
-            $db->zincrby($total_key, $hi_coins * 100, $sender_id);
+            $hi_coins = intval($hi_coins * 100);
+            $db->zincrby($day_key, $hi_coins, $sender_id);
+            $db->zincrby($weeks_key, $hi_coins, $sender_id);
+            $db->zincrby($total_key, $hi_coins, $sender_id);
         }
     }
 
