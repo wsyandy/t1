@@ -191,10 +191,10 @@ class Users extends BaseModel
         $product_channel = $this->product_channel;
 
         if ($this->isIos()) {
-            return $this->version_code > $product_channel->apple_stable_version;
+            return $this->version_code > 11;
         }
 
-        return $this->version_code > $product_channel->android_stable_version;
+        return $this->version_code > 4;
     }
 
     //统计用户在房间时间
