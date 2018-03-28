@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
     <link rel="stylesheet" href="/wap/css/index.css?ts=1">
+    <script src="/js/jquery/1.11.2/jquery.min.js"></script>
 </head>
 <body>
 <img class="bg" src="/wap/images/bg.png" alt="">
@@ -59,10 +60,18 @@
         <img  class="expand_right_3_img" src="/wap/images/expand_right_3.png" alt="">
     </div>
 
-    <div class="btn">
+    <div class="btn" id="download" data-url="{{download_url}}">
         <img class="btn_bg" src="/wap/images/btn_bg.png" alt="">
-        <a href="{{download_url}}"><span class="btn_txt">连麦互聊</span></a>
+        <span class="btn_txt">连麦互聊</span>
     </div>
 </div>
+<script>
+    $(function () {
+       $("#download").click(function (){
+           var url = $(this).data('url');
+           location.href = url;
+       });
+    });
+</script>
 </body>
 </html>
