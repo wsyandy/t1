@@ -1018,7 +1018,7 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function push($body)
+    function push($body, $check_user_version = false)
     {
         $users = $this->findTotalRealUsers();
 
@@ -1033,6 +1033,12 @@ class Rooms extends BaseModel
         }
 
         foreach ($users as $user) {
+
+            //推送校验新版本
+            if ($check_user_version && !$user->isStableVersion()) {
+                info("old_version_user", $user->sid);
+                continue;
+            }
 
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
@@ -1474,7 +1480,7 @@ class Rooms extends BaseModel
 
         info($body, $this->id, $this->user->sid);
 
-        $this->push($body);
+        $this->push($body, true);
     }
 
     //全服通知
