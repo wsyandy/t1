@@ -309,7 +309,7 @@ class Gifts extends BaseModel
 
 
         //临时使用
-        if (!$user->isStableVersion()) {
+        if (!$user->isHignVersion()) {
             $gold_gift_ids = [];
 
             $gold_gifts = Gifts::find(

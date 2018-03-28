@@ -15,7 +15,7 @@
                 {% if (product.id == selected_product.id) %}
                     <div class="diamond_box"><span class="select_color selected_color"><i
                                     class="diamond_icon"></i>{{ product.getShowDiamond(user) }}</span></div>
-                    {% if product.gold and current_user.isStableVersion() %}
+                    {% if product.gold and current_user.isHignVersion() %}
                         <div class="diamond_box"><span class="select_color selected_color"><i
                                         class="gold_icon"></i>{{ product.gold }}</span></div>
                     {% endif %}
@@ -24,7 +24,7 @@
                 {% else %}
                     <div class="diamond_box"><span class="select_color "><i
                                     class="diamond_icon"></i>{{ product.getShowDiamond(user) }}</span></div>
-                    {% if product.gold and current_user.isStableVersion() %}
+                    {% if product.gold and current_user.isHignVersion() %}
                         <div class="diamond_box"><span class="select_color "><i
                                         class="gold_icon"></i>{{ product.gold }}</span></div>
                     {% endif %}
