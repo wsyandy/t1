@@ -71,8 +71,8 @@ class Stats extends BaseModel
 
         'diamond_cost_total' => '消耗钻石总额',
         'diamond_cost_num' => '消耗钻石次数',
-        'diamond_cost_num_average' => '人均消耗钻石次数',
         'diamond_cost_user' => '消耗钻石人数',
+        'diamond_cost_num_average' => '人均消耗钻石次数',
         'diamond_cost_user_average' => '人均消耗钻石数额',
         'diamond_recharge_balance' => '购买钻石余额**',
 
