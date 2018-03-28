@@ -211,21 +211,21 @@ class UsersController extends BaseController
         }
     }
 
-    function fixLogin($third_name, $form){
+    function fixLogin($third_name, $form)
+    {
 
-        if($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-29 01:30:00'))
-        {
+        if ($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-29 01:30:00')) {
             return null;
         }
 
         $third_unionid = fetch($form, 'third_unionid');
-        if(!$third_unionid){
+        if (!$third_unionid) {
             return null;
         }
 
         $third_id = $form['third_id'];
         $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_id, $third_name);
-        if($user){
+        if ($user) {
             info($user->id, $form);
             $user->third_unionid = $third_unionid;
             $user->save();
@@ -279,7 +279,7 @@ class UsersController extends BaseController
         $third_unionid = isset($form['third_unionid']) && $form['third_unionid'] ? $form['third_unionid'] : $form['third_id'];
 
         $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
-        if(!$user){
+        if (!$user) {
             $user = $this->fixLogin($third_name, $form);
         }
 
@@ -646,10 +646,21 @@ class UsersController extends BaseController
 
         $res = $users->toJson('users', 'toRankListJson');
 
-        $user = $this->currentUser();
+        if ($page == 1) {
 
-        $res['current_rank'] = $user->myFieldRank($list_type, 'charm');
-        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'charm') - $res['current_rank'];
+            $user = $this->currentUser();
+            $current_rank = $user->myFieldRank($list_type, 'charm');
+            $last_rank = $user->myLastFieldRank($list_type, 'charm');
+            $changed_rank = 0;
+
+            if ($last_rank) {
+                $changed_rank = $current_rank - $last_rank;
+            }
+
+            $res['current_rank'] = $current_rank;
+            $res['changed_rank'] = $changed_rank;
+            $user->saveLastFieldRankList($list_type, 'charm', $current_rank);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
@@ -668,10 +679,21 @@ class UsersController extends BaseController
 
         $res = $users->toJson('users', 'toRankListJson');
 
-        $user = $this->currentUser();
+        if ($page == 1) {
 
-        $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
-        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'wealth') - $res['current_rank'];
+            $user = $this->currentUser();
+            $current_rank = $user->myFieldRank($list_type, 'wealth');
+            $last_rank = $user->myLastFieldRank($list_type, 'wealth');
+            $changed_rank = 0;
+
+            if ($last_rank) {
+                $changed_rank = $current_rank - $last_rank;
+            }
+
+            $res['current_rank'] = $current_rank;
+            $res['changed_rank'] = $changed_rank;
+            $user->saveLastFieldRankList($list_type, 'wealth', $current_rank);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
