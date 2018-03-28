@@ -43,7 +43,7 @@ class UsersController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
 
-        if (isPresent($this->params('avatar_auth')) && intval($this->params('avatar_auth') == AUTH_SUCCESS)) {
+        if (isPresent($this->params('avatar_status')) && intval($this->params('avatar_status') == AUTH_SUCCESS)) {
             $users = \Users::findAuthedUsers($page, $per_page);
         } else {
             $users = \Users::findWaitAuthUsers($page, $per_page);
@@ -56,7 +56,7 @@ class UsersController extends BaseController
         $user_id = $this->params('id');
         $user = \Users::findById($user_id);
         if ($user) {
-            $user->changeAvatarAuth($this->params('avatar_auth'));
+            $user->changeAvatarAuth($this->params('avatar_status'));
             $user->removeFromWaitAuthList();
         }
         return $this->renderJSON(ERROR_CODE_SUCCESS, '审核成功');
@@ -66,7 +66,7 @@ class UsersController extends BaseController
     {
         $users = \Users::findByIds($this->params('ids'));
         foreach ($users as $user) {
-            $user->changeAvatarAuth($this->params('avatar_auth'));
+            $user->changeAvatarAuth($this->params('avatar_status'));
             $user->removeFromWaitAuthList();
         }
 

@@ -399,8 +399,8 @@ class RoomsController extends BaseController
 
     function autoHotAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
         $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
 
         foreach ($rooms as $room) {
@@ -411,7 +411,9 @@ class RoomsController extends BaseController
             }
         }
 
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->rooms = $rooms;
         $this->view->total_entries = $rooms->total_entries;
+        $this->view->hot = 1;
     }
 }

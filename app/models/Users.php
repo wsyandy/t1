@@ -2217,17 +2217,17 @@ class Users extends BaseModel
         info($a_rate_num, $b_rate_num, $monologue_index);
     }
 
-    function changeAvatarAuth($avatar_auth)
+    function changeAvatarAuth($avatar_status)
     {
-        if (isBlank($avatar_auth) ||
-            !array_key_exists(intval($avatar_auth), \UserEnumerations::$AVATAR_STATUS)
+        if (isBlank($avatar_status) ||
+            !array_key_exists(intval($avatar_status), \UserEnumerations::$AVATAR_STATUS)
         ) {
             return;
         }
-        $this->avatar_auth = $avatar_auth;
+        $this->avatar_status = $avatar_status;
         $this->update();
 
-        if (AUTH_SUCCESS == intval($avatar_auth)) {
+        if (AUTH_SUCCESS == intval($avatar_status)) {
             $this->addAuthedList();
         }
     }
