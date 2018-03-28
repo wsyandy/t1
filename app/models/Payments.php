@@ -147,6 +147,7 @@ class Payments extends BaseModel
             GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
         }
 
+
         return true;
     }
 
@@ -154,7 +155,7 @@ class Payments extends BaseModel
     {
         $fee = 1 - (double)($this->payment_channel->fee);
         $paid_amount = sprintf("%0.2f", ($this->amount * $fee));
-        info($this->id, $fee, $this->amount, $paid_amount);
+        info($this->id,$this->payment_type, $fee, $this->amount, $paid_amount);
 
         return $paid_amount;
     }
