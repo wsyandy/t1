@@ -427,4 +427,75 @@ class YangTask extends \Phalcon\Cli\Task
             $i++;
         }
     }
+
+    function fixCharmRankListAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
+                continue;
+            }
+
+            $user_id = $gift_order->user_id;
+            $charm = $gift_order->amount;
+
+
+            $day_key = "day_charm_rank_list_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "week_charm_rank_list_" . $start . "_" . $end;
+            $total_key = "total_charm_rank_list_";
+
+
+            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
+                $db->zincrby($day_key, $charm, $user_id);
+            }
+
+            if ($gift_order->created_at >= strtotime("last sunday next day", time()) && $gift_order->created_at <= strtotime("next monday", time()) - 1) {
+                $db->zincrby($week_key, $charm, $user_id);
+            }
+
+            $db->zincrby($total_key, $charm, $user_id);
+            echoLine($user_id, $charm);
+        }
+    }
+
+
+    function fixWealthRankListAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
+                continue;
+            }
+
+            $sender_id = $gift_order->sender_id;
+            $wealth = $gift_order->amount;
+
+
+            $day_key = "day_wealth_rank_list_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
+            $total_key = "total_wealth_rank_list_";
+
+
+            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
+                $db->zincrby($day_key, $wealth, $sender_id);
+            }
+
+            if ($gift_order->created_at >= strtotime("last sunday next day", time()) && $gift_order->created_at <= strtotime("next monday", time()) - 1) {
+                $db->zincrby($week_key, $wealth, $sender_id);
+            }
+
+            $db->zincrby($total_key, $wealth, $sender_id);
+            echoLine($sender_id, $wealth);
+        }
+    }
 }
