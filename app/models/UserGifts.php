@@ -200,7 +200,7 @@ class UserGifts extends BaseModel
 
     function getNoticeContent()
     {
-        $text_content = $this->text_content;
+        $text_content = $this->gift->text_content;
 
         if (isBlank($text_content)) {
             return "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname .
