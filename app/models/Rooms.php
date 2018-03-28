@@ -935,10 +935,17 @@ class Rooms extends BaseModel
 
     function pushEnterRoomMessage($user)
     {
+
         $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name,
             'segment' => $user->segment, 'segment_text' => $user->segment_text
         ];
+
+        $user_car_gift = $user->getUserCarGift();
+
+        if ($user_car_gift) {
+            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
 
         $this->push($body);
     }
