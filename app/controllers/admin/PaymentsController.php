@@ -12,9 +12,13 @@ class PaymentsController extends BaseController
 {
     function indexAction()
     {
-        $conds = array('order' => 'id desc');
+        
         $page = 1;
-        $per_page = 30;
+        $per_page = 60;
+        $total_page = 1;
+        $total_entries = $per_page * $total_page;
+
+        $conds = array('order' => 'id desc');
         $cond_vars = array();
         $cond_values = array();
         foreach (['order_id', 'id', 'user_id'] as $item) {
@@ -32,7 +36,7 @@ class PaymentsController extends BaseController
             );
         }
 
-        $payments = \Payments::findPagination($conds, $page, $per_page);
+        $payments = \Payments::findPagination($conds, $page, $per_page, $total_entries);
         $this->view->payments = $payments;
     }
 
