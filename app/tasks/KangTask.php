@@ -511,6 +511,7 @@ class KangTask extends \Phalcon\Cli\Task
     {
         $u = Users::findById($params[0]);
         $u->third_unionid = '';
+        $u->login_name = '';
         $u->save();
     }
 
@@ -521,5 +522,5 @@ class KangTask extends \Phalcon\Cli\Task
         $user = \Users::findFirstByThirdUnionid(ProductChannels::findFirstById(1), $third_unionid, $third_name);
         echoLine($user);
     }
-    
+
 }
