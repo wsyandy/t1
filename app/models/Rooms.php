@@ -1497,7 +1497,7 @@ class Rooms extends BaseModel
             $client_url = '';
 
             if (!$gift_order->room->lock) {
-                $client_url = "app://room/detail?id=" . $gift_order->room_id;
+                $client_url = "app://rooms/detail?id=" . $gift_order->room_id;
             }
 
             $opts = ['client_url' => $client_url];
