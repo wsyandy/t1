@@ -128,10 +128,10 @@ class Users extends BaseModel
             $this->updateLastAt();
 
             //好友上线提醒(每小时选取最新的一个好友上线提醒)
-            $this->pushFriendOnlineRemind();
+//            $this->pushFriendOnlineRemind();
 
             //关注的人上线提醒(每小时选取最新关注的人上线提醒)
-            $this->pushFollowedOnlineRemind();
+//            $this->pushFollowedOnlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -191,10 +191,10 @@ class Users extends BaseModel
         $product_channel = $this->product_channel;
 
         if ($this->isIos()) {
-            return $this->version_code > $product_channel->apple_stable_version;
+            return $this->version_code > 11;
         }
 
-        return $this->version_code > $product_channel->android_stable_version;
+        return $this->version_code > 4;
     }
 
     //统计用户在房间时间

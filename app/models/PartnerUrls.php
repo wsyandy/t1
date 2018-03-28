@@ -22,8 +22,8 @@ class PartnerUrls extends BaseModel
         'ios_uc' => '/sources/uc_click?code=%s&fr=%s&idfa={IDFA_SUM}&os={OS}&click_time={TS}&callback={CALLBACK_URL}',
         'android_momo' => '/sources/mm_click?code=%s&imei=[IMEI]&os=[OS]&ts=[TS]&callback=[CALLBACK]&ua=[UA]&lbs=[LBS]',
         'ios_momo' => '/sources/mm_click?code=%s&fr=%s&idfa=[IDFA]&os=[OS]&ts=[TS]&callback=[CALLBACK]&ua=[UA]&lbs=[LBS]',
-        'android_baidu' => '/sources/baidu_click?code=%s&imei_md5={{IMEI_MD5}}&os={{OS}}&ip={{IP}}&ua={{UA}}&ts={{TS}}&userid={{ USER_ID}}&pid={{PLAN_ID}}&uid={{UNIT_ID}}&aid={{IDEA_ID}}&click_id={{CLICK_ID}}&callback_url ={{CALLBACK_URL}}&sign={{SIGN}}',
-        'ios_baidu' => '/sources/baidu_click?code=%s&fr=%s&idfa={{IDFA}}&os={{OS}}&ip={{IP}}&ua={{UA}}&ts={{TS}}&userid={{USER_ID}}&pid={{PLAN_ID}}&uid={{UNIT_ID}}&aid={{IDEA_ID}}&click_id={{CLICK_ID}}&callback_url={{CALLBA CK_URL}}&sign={{SIGN}}',
+        'android_baidu' => '/sources/baidu_click?code=%s&imei_md5={{IMEI_MD5}}&os={{OS}}&ip={{IP}}&ua={{UA}}&ts={{TS}}&userid={{USER_ID}}&pid={{PLAN_ID}}&uid={{UNIT_ID}}&aid={{IDEA_ID}}&click_id={{CLICK_ID}}&callback_url={{CALLBACK_URL}}&sign={{SIGN}}',
+        'ios_baidu' => '/sources/baidu_click?code=%s&fr=%s&idfa={{IDFA}}&os={{OS}}&ip={{IP}}&ua={{UA}}&ts={{TS}}&userid={{USER_ID}}&pid={{PLAN_ID}}&uid={{UNIT_ID}}&aid={{IDEA_ID}}&click_id={{CLICK_ID}}&callback_url={{CALLBACK_URL}}&sign={{SIGN}}',
     ];
 
     function mergeJson()
