@@ -149,19 +149,7 @@ class GiftOrders extends BaseModel
                 }
 
                 if ($gift->isDiamondPayType()) {
-                    //统计房间收益
-                    if ($gift_order->room) {
-                        $gift_order->room->statIncome($gift_order->amount);
-                        //推送全局消息
-                        Rooms::allNoticePush($gift_order);
-                    }
-
-                    \Users::delay()->updateExperience($gift_order->id);
-
-                    if ($gift_order->sender_id != $gift_order->user_id) {
-                        \Users::delay()->updateCharm($gift_order->id);
-                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
-                    }
+                    $gift_order->updateUserData();
                 }
 
             } else {
@@ -174,6 +162,23 @@ class GiftOrders extends BaseModel
 
         info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
         return false;
+    }
+
+    function updateUserData()
+    {
+        //统计房间收益
+        if ($this->room) {
+            $this->room->statIncome($this->amount);
+            //推送全局消息
+            Rooms::allNoticePush($this);
+        }
+
+        \Users::delay()->updateExperience($this->id);
+
+        if ($this->sender_id != $this->user_id) {
+            \Users::delay()->updateCharm($this->id);
+            \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
+        }
     }
 
     static function findOrderListByUser($user_id, $page, $per_page)
