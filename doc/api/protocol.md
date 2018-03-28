@@ -26,8 +26,10 @@
 1. 注册登录协议 url://m/product_channels/reg_agreement
 
 ## http协议
-1. 打开第三方h5页面 http://www.baidu.com
+1. 内部打开第三方h5页面 http://www.baidu.com
 
+## browser协议
+1. 外部打开第三方h5页面 browser://www.baidu.com
 
 ## h5打开app协议
    进入房间:产品code://enter_room?param1=a&param2=b 例: yuewan://enter_room?room_id=1&user_id=2
