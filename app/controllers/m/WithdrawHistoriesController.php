@@ -63,7 +63,7 @@ class WithdrawHistoriesController extends BaseController
         $user = $this->currentUser();
         if ($this->request->isPost()) {
             if (\WithdrawHistories::hasWaitedHistoryByUser($user)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现');
+                return $this->renderJSON(ERROR_CODE_FAIL, '一周只能提现一次哦');
             } else {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }

@@ -25,7 +25,7 @@
     </ul>
 </div>
 <div class="get_text">
-    <p>每月1-5号提现，3～10个工作日到账</p>
+    <p>扶持期间每周可以提现一次，每周二当日到账</p>
 </div>
 <div class="get_btn">
     <a href="#">提交</a>
