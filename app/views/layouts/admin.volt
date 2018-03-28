@@ -133,6 +133,9 @@
                     {% if isAllowed('orders', 'index') %}
                         <li><a href="/admin/orders">订单列表</a></li>
                     {% endif %}
+                    {% if isAllowed('payments', 'index') %}
+                        <li><a href="/admin/payments">支付流水</a></li>
+                    {% endif %}
                     {% if isAllowed('gift_orders','index') %}
                         <li><a href="/admin/gift_orders">礼物订单列表</a></li>
                     {% endif %}
