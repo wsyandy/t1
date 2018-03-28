@@ -554,6 +554,17 @@ class Unions extends BaseModel
             $db->zclear($this->generateRefusedUsersKey());
             $db->zclear($this->generateUsersKey());
             $db->zclear($this->generateCheckUsersKey());
+
+            //删排行榜中排名
+            $last_day_key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));
+            $day_key = "total_union_fame_value_day_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+            $db->zrem($last_day_key, $this->id);
+            $db->zrem($day_key, $this->id);
+            $db->zrem($week_key, $this->id);
+
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
         return [ERROR_CODE_SUCCESS, ''];
@@ -689,6 +700,10 @@ class Unions extends BaseModel
 
         $rank = $offset + 1;
         foreach ($unions as $union) {
+            if ($union->status != STATUS_ON) {
+                continue;
+            }
+
             $union->fame_value = $fame_values[$union->id];
             $union->rank = $rank;
             $rank += 1;

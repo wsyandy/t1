@@ -2524,6 +2524,8 @@ class Users extends BaseModel
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
             }
+
+            $user->update();
         }
 
         unlock($lock);
