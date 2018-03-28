@@ -1032,17 +1032,17 @@ class Rooms extends BaseModel
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("user_already_close", $user->id, $user->sid, $this->id, $payload);
+                info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 continue;
             }
 
             $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
-                info($user->id, $user->sid, $this->id, $payload);
+                info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 break;
             } else {
-                info("Exce", $user->id, $user->sid, $this->id, $payload);
+                info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
             }
         }
     }
@@ -1463,7 +1463,7 @@ class Rooms extends BaseModel
     function pushRoomNoticeMessage($content, $client_url = '')
     {
         $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
-        info($body, $this->id);
+        info($body, $this->id, $this->user->sid);
         $this->push($body);
     }
 
