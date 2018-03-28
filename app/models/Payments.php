@@ -129,7 +129,7 @@ class Payments extends BaseModel
 
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = round($this->paid_amount);
-            info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount);
+            info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
             \Stats::delay()->record("user", "payment_success", $attrs);
             return;
         }
