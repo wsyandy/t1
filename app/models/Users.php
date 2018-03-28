@@ -1611,10 +1611,10 @@ class Users extends BaseModel
 
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
-                if($geo_distance < 1000){
+                if ($geo_distance < 1000) {
                     $geo_distance = intval($geo_distance);
                     $user->distance = $geo_distance . 'm';
-                }else{
+                } else {
                     $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
                     $user->distance = $geo_distance . 'km';
                 }
@@ -2458,14 +2458,17 @@ class Users extends BaseModel
         $wealth_value = $amount;
 
         if ($sender) {
+
             $sender->experience += $sender_experience;
             $sender_level = $sender->calculateLevel();
             $sender->level = $sender_level;
             $sender->segment = $sender->calculateSegment();
-
             $sender->wealth_value += $wealth_value;
+
             Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+
             $union = $sender->union;
+
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
                 Unions::delay()->updateFameValue($wealth_value, $union->id);
@@ -2504,8 +2507,11 @@ class Users extends BaseModel
         $charm_value = $amount;
 
         if (isPresent($user)) {
+
             $user->charm_value += $charm_value;
+
             Users::updateFiledRankList($user->id, 'charm', $charm_value);
+
             $union = $user->union;
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
@@ -2605,20 +2611,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2720,20 +2729,23 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field)
     {
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list_";
-                break;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list_";
+                    break;
+                }
             default:
                 return '';
         }

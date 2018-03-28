@@ -539,7 +539,7 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $hi_coins = $total_amount / $rate;
+            $hi_coins = intval($total_amount * $rate * 10000)/10000;
 
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
@@ -555,8 +555,9 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $user->hi_coins = $hi_coins;
-            $user->update();
+//            $user->hi_coins = $hi_coins;
+//            $user->update();
+
         }
     }
 
@@ -749,7 +750,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $users = Users::findForeach(['conditions' => 'register_at>:register_at: and last_at<:last_at:',
             'bind' => ['register_at' => beginOfDay(), 'last_at' => beginOfDay()]]);
-        foreach ($users as $user){
+        foreach ($users as $user) {
             echoLine($user->id, date('c', $user->created_at), date('c', $user->register_at), date('c', $user->last_at));
         }
     }
