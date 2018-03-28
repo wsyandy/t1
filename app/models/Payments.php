@@ -153,11 +153,13 @@ class Payments extends BaseModel
 
     function getCnyAmount()
     {
-        $fee = 1 - (double)($this->payment_channel->fee);
-        $paid_amount = sprintf("%0.2f", ($this->amount * $fee));
-        info($this->id,$this->payment_type, $fee, $this->amount, $paid_amount);
+        return $this->amount;
 
-        return $paid_amount;
+//        $fee = 1 - (double)($this->payment_channel->fee);
+//        $paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+//        info($this->id,$this->payment_type, $fee, $this->amount, $paid_amount);
+//
+//        return $paid_amount;
     }
 
 }
