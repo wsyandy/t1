@@ -1456,6 +1456,14 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function isInHotList()
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
+        return $hot_cache->zscore($hot_room_list_key, $this->id) > 0;
+    }
+
     //判断麦位上没有用户
     function checkRoomSeat()
     {
@@ -1488,8 +1496,17 @@ class Rooms extends BaseModel
     {
         $client_url = fetch($opts, 'client_url');
         $hot = fetch($opts, 'hot');
+        $room_id = fetch($opts, 'room_id');
 
         if ($hot) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            //热门房间单独推送
+            if (!$room->isInHotList()) {
+                $room->pushRoomNoticeMessage($content, $client_url);
+            }
+
             $rooms = Rooms::searchHotRooms(1, 100);
         } else {
             $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
@@ -1521,6 +1538,7 @@ class Rooms extends BaseModel
 
             if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
                 $opts['hot'] = 1;
+                $opts['room_id'] = $gift_order->room_id;
                 Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
             }
         }
