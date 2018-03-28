@@ -230,6 +230,7 @@ class UsersController extends BaseController
         }
 
         $context = $this->context();
+
         if ($third_name == 'qq') {
             $context['has_unionid'] = 1;
         }
@@ -284,6 +285,9 @@ class UsersController extends BaseController
 
         $key = $this->currentProductChannel()->getSignalingKey($user->id);
         $app_id = $this->currentProductChannel()->getImAppId();
+
+        //用户对象属性不改变
+        $user = \Users::findFirstById($user->id);
 
         $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
         $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
