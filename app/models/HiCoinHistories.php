@@ -25,12 +25,20 @@ class HiCoinHistories extends BaseModel
     private $gift_order;
 
     static $FEE_TYPE = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
-        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现'];
+        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励'];
 
 
     function beforeCreate()
     {
         return $this->checkBalance();
+    }
+
+    function mergeJson()
+    {
+        return [
+            'fee_type_text' => $this->fee_type_text,
+            'user_nickname' => $this->user->nickname,
+        ];
     }
 
     function checkBalance()
@@ -86,6 +94,9 @@ class HiCoinHistories extends BaseModel
     {
         $gift_order_id = fetch($opts, 'gift_order_id');
         $withdraw_history_id = fetch($opts, 'withdraw_history_id');
+        $operator_id = fetch($opts, 'operator_id');
+        $hi_coins = fetch($opts, 'hi_coins');
+        $remark = fetch($opts, 'remark');
 
         $user = Users::findFirstById($user_id);
 
@@ -136,6 +147,13 @@ class HiCoinHistories extends BaseModel
             $hi_coin_history->remark = "提现金额:" . $amount;
         }
 
+        if ($operator_id) {
+            $hi_coin_history->operator_id = $operator_id;
+            $hi_coin_history->hi_coins = $hi_coins;
+            $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_ROOM_REWARD;
+            $hi_coin_history->remark = $remark;
+        }
+
         $hi_coin_history->product_channel_id = $user->product_channel_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
@@ -150,6 +168,8 @@ class HiCoinHistories extends BaseModel
         }
 
         unlock($lock);
+
+        return $hi_coin_history;
     }
 
     function isCost()
