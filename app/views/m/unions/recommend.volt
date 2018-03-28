@@ -112,9 +112,9 @@
 
     $(function () {
         $(window).scroll(function () {
-            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
-                vm.list();
-            }
+            // if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+            //     vm.list();
+            // }
         });
     });
 </script>
