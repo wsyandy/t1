@@ -77,3 +77,15 @@ function valueToStr($value)
     $kilobit = round($value / 1000) - $myriabit * 10;
     return $myriabit . '.' . $kilobit . "万";
 }
+
+function beginOfWeek()
+{
+    $start = date("Ymd", strtotime("last sunday next day", time()));
+    return beginOfDay($start);
+}
+
+function endOfWeek()
+{
+    $end = date("Ymd", strtotime("next monday", time()) - 1);
+    return endOfDay($end);
+}

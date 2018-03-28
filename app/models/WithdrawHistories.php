@@ -67,6 +67,11 @@ class WithdrawHistories extends BaseModel
     function afterCreate()
     {
         if (WITHDRAW_TYPE_USER == $this->type) {
+
+            $attrs = $this->user->getStatAttrs();
+            $attrs['add_value'] = $this->amount;
+            \Stats::delay()->record("user", "withdraw", $attrs);
+
             Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，预计24小时内到账！');
         }
     }
@@ -80,7 +85,7 @@ class WithdrawHistories extends BaseModel
         $max_amount = $user->withdraw_amount;
 
         if (self::hasWaitedHistoryByUser($user)) {
-            return [ERROR_CODE_FAIL, '您有受理中的提现记录，不能再提现'];
+            return [ERROR_CODE_FAIL, '一周只能提现一次哦'];
         }
 
         if ($amount > $max_amount) {
@@ -155,8 +160,8 @@ class WithdrawHistories extends BaseModel
     {
         $withdraw_history = WithdrawHistories::findFirst(
             [
-                'conditions' => 'status = :status: and user_id = :user_id: and product_channel_id = :product_channel_id: and type = :type:',
-                'bind' => ['status' => WITHDRAW_STATUS_WAIT, 'user_id' => $user->id, 'product_channel_id' => $user->product_channel_id, 'type' => WITHDRAW_TYPE_USER],
+                'conditions' => 'user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => beginOfWeek(), 'end' => endOfWeek()],
                 'order' => 'id desc'
             ]
         );
