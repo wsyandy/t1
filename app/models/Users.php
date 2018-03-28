@@ -2496,7 +2496,7 @@ class Users extends BaseModel
                 }
             }
 
-            $user->update;
+            $user->update();
         }
 
         unlock($lock);

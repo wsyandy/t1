@@ -224,6 +224,10 @@ trait UserAttrs
             $data['apply_status_text'] = $this->apply_status_text;
         }
 
+        if ($data['age'] === 0) {
+            $data['age'] = '';
+        }
+
         return $data;
     }
 
