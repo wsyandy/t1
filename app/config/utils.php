@@ -65,3 +65,15 @@ function mbStrSplit($str)
 {
     return preg_split('/(?<!^)(?!$)/u', $str);
 }
+
+function beginOfWeek()
+{
+    $start = date("Ymd", strtotime("last sunday next day", time()));
+    return beginOfDay(strtotime($start));
+}
+
+function endOfWeek()
+{
+    $end = date("Ymd", strtotime("next monday", time()) - 1);
+    return endOfDay(strtotime($end));
+}

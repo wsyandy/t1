@@ -27,7 +27,8 @@ class Stats extends BaseModel
         'register', 'unsubscribe', // 注册
         'active_user', // 活跃用户
         'create_order', 'create_payment', 'payment_success',
-        'diamond_recharge', 'diamond_recharge_give', 'diamond_cost' //钻石购买和消耗
+        'diamond_recharge', 'diamond_recharge_give', 'diamond_cost', //钻石购买和消耗
+        'withdraw' //提现
     ];
 
     // 单课：要同时记录浏览课程和浏览章节
@@ -59,6 +60,8 @@ class Stats extends BaseModel
         'payment_success_user' => '支付成功人数',
         'payment_success_average' => '人均支付成功次数',
 
+        'withdraw_total' => '申请提现金额',
+
         'diamond_recharge_total' => '购买钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
@@ -68,8 +71,8 @@ class Stats extends BaseModel
 
         'diamond_cost_total' => '消耗钻石总额',
         'diamond_cost_num' => '消耗钻石次数',
-        'diamond_cost_num_average' => '人均消耗钻石次数',
         'diamond_cost_user' => '消耗钻石人数',
+        'diamond_cost_num_average' => '人均消耗钻石次数',
         'diamond_cost_user_average' => '人均消耗钻石数额',
         'diamond_recharge_balance' => '购买钻石余额**',
 
@@ -203,7 +206,7 @@ class Stats extends BaseModel
             }
 
             // 新用户
-            if (in_array($action, ['create_order', 'create_payment', 'payment_success'])) {
+            if (in_array($action, ['create_order', 'create_payment', 'payment_success', 'withdraw'])) {
 
                 // 天新用户
                 if ($created_at > strtotime(date('Ymd 00:00:00', $stat_at))) {
@@ -720,6 +723,15 @@ class Stats extends BaseModel
             $avg = intval($new_create_payment_num * 100 / $new_create_payment_user) / 100;
         }
         $this->data_hash['new_create_payment_average'] = $avg;
+    }
+
+    function withdrawTotal()
+    {
+        $key = $this->statCacheKey("user", "withdraw");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['withdraw_total'] = intval($num);
     }
 
     function paymentSuccessNum()
