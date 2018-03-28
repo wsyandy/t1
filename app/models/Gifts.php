@@ -314,6 +314,24 @@ class Gifts extends BaseModel
         $page = 1;
         $per_page = 100;
 
+
+        //临时使用
+        if (!$user->isStableVersion()) {
+            $gold_gift_ids = [];
+
+            $gold_gifts = Gifts::find(
+                ['conditions' => "pay_type = :pay_type:",
+                    'bind' => ['pay_type' => GIFT_PAY_TYPE_GOLD]]);
+
+            foreach ($gold_gifts as $gold_gift) {
+                $gold_gift_ids[] = $gold_gift->id;
+            }
+
+            if (count($gold_gift_ids) > 0) {
+                $conditions['conditions'] .= " and id not in (" . implode(",", $gold_gift_ids) . ")";
+            }
+        }
+
         $gifts = \Gifts::findPagination($conditions, $page, $per_page);
 
         //待优化次代码
