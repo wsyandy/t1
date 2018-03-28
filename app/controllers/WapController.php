@@ -257,15 +257,17 @@ class WapController extends \ApplicationController
     function semAction()
     {
         $soft_version_id = $this->params('id');
-
+        $pic_id = $this->params('pic_id', 0);
         $soft_version = \SoftVersions::findFirstById($soft_version_id);
         if (!$soft_version) {
             return false;
         }
-
         $this->view->download_url = $this->downloadUrl($soft_version_id);
         $this->view->soft_version = $soft_version;
         $this->view->product_channel = $soft_version->product_channel;
+        if ($pic_id > 0) {
+            $this->pick("wap/sem{$pic_id}");
+        }
     }
 
     function smsSemAction()
