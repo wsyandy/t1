@@ -1412,7 +1412,7 @@ class Rooms extends BaseModel
         return false;
     }
 
-    static function searchHotRooms($user, $page, $per_page)
+    static function searchHotRooms($page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1476,15 +1476,13 @@ class Rooms extends BaseModel
         $client_url = fetch($opts, 'client_url');
         $hot = fetch($opts, 'hot');
 
-        $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
-
         if ($hot) {
-            $cond['conditions'] .= " and hot = :hot:";
-            $cond['bind']['hot'] = $hot;
+            $rooms = Rooms::searchHotRooms(1, 100);
+        } else {
+            $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
+                'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
+            $rooms = Rooms::find($cond);
         }
-
-        $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
             $room->pushRoomNoticeMessage($content, $client_url);
