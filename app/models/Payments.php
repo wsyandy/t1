@@ -83,11 +83,12 @@ class Payments extends BaseModel
         # 订单已经支付完成
         if (!$this->isPaid()) {
             if ('apple' == $this->payment_type) {
-                $user = \Users::findById($this->user_id);
+                $user = \Users::findFirstById($this->user_id);
                 if ($user) {
                     $opts['apple_share_secret'] = $user->product_channel->apple_share_secret;
                 }
             }
+
             if ($gateway->validSign($opts, $body)) {
                 $order = \Orders::findById($this->order_id);
                 if ($order) {
@@ -98,41 +99,64 @@ class Payments extends BaseModel
                 debug("[NOTIFY] 支付验证通知失败");
             }
         }
+
         return $result;
     }
 
-    function beforeUpdate()
+    function afterUpdate()
     {
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
+
+            $lock_key = 'order_update_lock_' . $this->order_id;
+            $hot_cache = self::getHotWriteCache();
+            if (!$hot_cache->set($lock_key, 1, ['NX', 'EX' => 1])) {
+                info('payment_id', $this->id, '支付重复通知，获取锁失败', 'payment_type', $this->payment_type);
+                return;
+            }
+
+            if(!$this->paySuccess()){
+                return;
+            }
+
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = $this->paid_amount;
             \Stats::delay()->record("user", "payment_success", $attrs);
-            return $this->paySuccess();
+            return;
         }
-        return false;
     }
 
     function paySuccess()
     {
-        if (!$this->isPaid()) {
-            return true;
+
+        $order = Orders::findFirstById($this->order_id);
+        if ($order->status == ORDER_STATUS_SUCCESS) {
+            info('payment_id', $this->id, '支付重复通知！', 'payment_type', $this->payment_type);
+            return false;
         }
-        $order = $this->order;
+
+        $order->payment_id = $this->id;
         $order->status = ORDER_STATUS_SUCCESS;
-        if ($order->save()) {
-            $product = $order->product;
-            if ($product->product_group->isDiamond()) {
-                $opts = ['order_id' => $order->id, 'remark' => '购买钻石', 'mobile' => $order->mobile];
-                \AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
-                \GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
-            }
+        if (!$order->save()) {
+            return false;
         }
-        return false;
+
+        $product = $order->product;
+        $opts = ['order_id' => $order->id, 'remark' => '购买'.$product->full_name, 'mobile' => $order->mobile];
+        AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+        if($product->gold){
+            GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
+        }
+
+        return true;
     }
 
     function getCnyAmount()
     {
-        return $this->amount;
+        $fee = 1 - (double)($this->payment_channel->fee);
+        $paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+        info($this->id, $fee, $this->amount, $paid_amount);
+
+        return $paid_amount;
     }
 
 }
