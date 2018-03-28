@@ -1418,10 +1418,16 @@ class Rooms extends BaseModel
             }
         }
 
+        $total_entries = $hot_cache->zcard($hot_room_list_key);
+
         $offset = $per_page * ($page - 1);
+        if($offset > $total_entries - 1){
+            $offset = $total_entries - 1;
+        }
+
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
         $rooms = Rooms::findByIds($room_ids);
-        $total_entries = $hot_cache->zcard($hot_room_list_key);
+
         $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
         $pagination->clazz = 'Rooms';
 
