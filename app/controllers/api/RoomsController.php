@@ -59,7 +59,7 @@ class RoomsController extends BaseController
 //        }
 
         if (STATUS_ON == $hot) {
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            $rooms = \Rooms::searchHotRooms($page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
@@ -136,12 +136,12 @@ class RoomsController extends BaseController
         //如果不是房主
 //        if (!$this->currentUser()->isRoomHost($room)) {
 
-            //房主不在房间且当前用户不在房间
+        //房主不在房间且当前用户不在房间
 //            if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
 //                return $this->renderJSON(ERROR_CODE_FAIL, '房主不在房间');
 //            }
 
-            //房间内没有人
+        //房间内没有人
 //            if ($room->user_num < 1) {
 //                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
 //            }
@@ -208,12 +208,25 @@ class RoomsController extends BaseController
         $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
         $app_id = $this->currentProductChannel()->getImAppId();
 
+        //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
+        $this->currentUser()->pushFriendIntoRoomRemind();
+
+        //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
+        $this->currentUser()->pushFollowedIntoRoomRemind();
+
         $res = $room->toJson();
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
+
+        $user_car_gift = $this->currentUser()->getUserCarGift();
+
+        if ($user_car_gift) {
+            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 

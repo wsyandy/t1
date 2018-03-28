@@ -116,8 +116,7 @@ class Yuanfen
         $user->height = $height;
         $user->birthday = $birthday;
         $user->created_at = time();
-        $user->register_at = time();
-        $user->last_at = time();
+
         if ($avatar_path) {
             $avatar_url = $this->generateCdnUrl($avatar_path);
             info('avatar_url', $avatar_url);

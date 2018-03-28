@@ -142,7 +142,6 @@ class YangTask extends \Phalcon\Cli\Task
         $body = $this->commonBody();
         $id = $params[0];
         $user = \Users::findFirstById($id);
-        $user = \Users::findFirstById($id);
         if (!$user) {
             return echoLine("此用户不存在");
         }
@@ -194,11 +193,8 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $room = $user->room;
-        if (!$room) {
-            return echoLine("此用户的房间不存在");
-        }
-        $body = array_merge($body, ['sid' => $user->sid, 'code' => 'yw', 'room_id' => $room->id, 'share_source' => $share_source]);
+
+        $body = array_merge($body, ['sid' => $user->sid, 'share_source' => $share_source]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
@@ -276,6 +272,17 @@ class YangTask extends \Phalcon\Cli\Task
 //        $time5 = strtotime(date('Y-m-d 05:59:59', $time));
 //        echoLine($time5);
 //        echoLine(date('Y-m-d-h-i-sa', $time5));
+        $start = date("Y-m-d-H-i-s", strtotime("last sunday next day", time()));
+        $end = date("Y-m-d-H-i-s", strtotime("next monday", time()) - 1);
+        echoLine($start);
+        echoLine($end);
+
+        $time_3 = date("Y-m-d-H-i-s", strtotime(date('Y-m-d H:i:59', $time)));
+        $time_4 = date("Y-m-d-H-i-s", strtotime("+10 minute", $time));
+
+
+        echoLine($time_3);
+        echoLine($time_4);
     }
 
     function test10Action()
@@ -302,11 +309,11 @@ class YangTask extends \Phalcon\Cli\Task
     }
 
 
-    function test13Action()
+    function test13Action($params)
     {
         $url = "http://chance.com/api/users/is_sign_in";
         $body = $this->commonBody();
-        $id = 93;
+        $id = $params[0];
         $user = \Users::findFirstById($id);
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
@@ -328,5 +335,96 @@ class YangTask extends \Phalcon\Cli\Task
         $body = array_merge($body, array('sid' => $user->sid));
         $res = httpPost($url, $body);
         echoLine($res);
+    }
+
+    function goldWorksAction($params)
+    {
+        $url = "http://chance.com/api/shares/gold_works";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test16Action($params)
+    {
+        $url = "http://chance.com/api/users/hi_coin_rank_list";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $type = $params[1];
+        $page = $params[2];
+        $per_page = $params[3];
+        if ($params[4]) {
+            $url = "http://ctest.yueyuewo.cn/api/users/hi_coin_rank_list";
+        }
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'list_type' => $type, 'page' => $page, 'per_page' => $per_page));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function test17Action($params)
+    {
+        $body = $this->commonBody();
+        $id = $params[0];
+        $type = $params[1];
+        $field = $params[2];
+        $page = 1;
+        $per_page = 10;
+        if ($params[3]) {
+            $url = "http://ctest.yueyuewo.cn/api/users/" . $field . "_rank_list";
+        } else {
+            $url = "http://chance.com/api/users/" . $field . "_rank_list";
+        }
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'list_type' => $type, 'page' => $page, 'per_page' => $per_page));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function addFameRankListAction()
+    {
+        $users = Users::findForeach();
+        $i = 0;
+        foreach ($users as $user) {
+
+            if ($i > 30) {
+                break;
+            }
+
+            if ($user->union_id) {
+                continue;
+            }
+
+            $union = new Unions();
+            $union->name = rand(1, 100) . "_xxxx";
+            $union->notice = "xxxx";
+            $union->need_apply = 0;
+            $union->product_channel_id = $user->product_channel_id;
+            $union->user_id = $user->id;
+            $union->auth_status = AUTH_SUCCESS;
+            $union->mobile = $user->mobile;
+            $union->type = UNION_TYPE_PRIVATE;
+            $union->avatar_status = AUTH_SUCCESS;
+            $union->fame_value = mt_rand(1, 100);
+            $union->status = STATUS_ON;
+            $union->avatar = 'chance/unions/avatar/5ab866d1dd1e0.jpg';
+            $union->save();
+
+            $union->updateFameRankList($union->fame_value);
+
+            $i++;
+        }
     }
 }

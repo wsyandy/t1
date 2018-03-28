@@ -66,6 +66,18 @@ function mbStrSplit($str)
     return preg_split('/(?<!^)(?!$)/u', $str);
 }
 
+function valueToStr($value)
+{
+    if ($value < 1000) {
+        $value = round($value, 2);
+        return "$value";
+    }
+
+    $myriabit = intval($value / 10000);
+    $kilobit = round($value / 1000) - $myriabit * 10;
+    return $myriabit . '.' . $kilobit . "万";
+}
+
 function beginOfWeek()
 {
     $start = date("Ymd", strtotime("last sunday next day", time()));

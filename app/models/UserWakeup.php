@@ -275,6 +275,8 @@ trait UserWakeup
     function pushMessage($push_message)
     {
 
+        return false;
+
         if ($this->isClientPlatform()) {
             if ($this->pushMessageGetui($push_message)) {
                 return true;
@@ -338,58 +340,6 @@ trait UserWakeup
 
     function pushMessageTemplate($push_message)
     {
-
-        $push_url = $push_message->getPushUrl($this);
-        if (!$push_url) {
-            info('false push_url', $this->id, $push_message->id);
-            return false;
-        }
-
-        // 模板消息
-        $product_channel_material = $push_message->product;
-        if (!$product_channel_material) {
-            info('false template', $this->id, $this->platform, $push_message->id);
-            return false;
-        }
-
-        return false;
-
-        if (is_a($product_channel_material, 'Products')) {
-            $template_short_id = 'OPENTM410241677';
-            $period = $product_channel_material->period_min . '-' . $product_channel_material->period_max . $product_channel_material->period_type_text;
-            $amount = $product_channel_material->amount_min . '-' . $product_channel_material->amount_max;
-            $data = [
-                'first' => ['value' => $push_message->title, 'color' => '#459ae9'],
-                'keyword1' => ['value' => $product_channel_material->name, 'color' => '#459ae9'],
-                'keyword2' => ['value' => date('Y-m-d H:i:s'), 'color' => '#459ae9'],
-                'keyword3' => ['value' => $amount, 'color' => '#459ae9'],
-                'keyword4' => ['value' => $period, 'color' => '#459ae9'],
-                'remark' => ['value' => $push_message->description, 'color' => '#459ae9']
-            ];
-
-        } else {
-            info('Exce false_template', $this->id, $this->platform, $push_message->id, 'class', get_class($product_channel_material));
-            return false;
-        }
-
-        if ($data) {
-            try {
-                $openid = $this->openid;
-                $weixin_event = new WeixinEvents($this->product_channel);
-                $result = $weixin_event->sendTemplateMessage($openid, $template_short_id, $push_url, $data);
-                $result = json_decode($result, true);
-                if (0 == $result['errcode']) {
-                    info($this->id, $this->product_channel->id, $openid, 'template 发送成功', $result, 'city_id_' . $this->city_id, 'geo_city_id_' . $this->geo_city_id);
-                    return true;
-                }
-
-                info($this->id, $this->product_channel->id, $openid, 'template 发送失败', $result);
-
-            } catch (\Exception $e) {
-                info($this->id, $this->product_channel->id, 'template Exception', $e->getMessage());
-            }
-        }
-
         return false;
     }
 
@@ -505,6 +455,268 @@ trait UserWakeup
         }
 
         return true;
+    }
+
+    //好友上线提醒 每小时选取最新的一个好友上线提醒
+    //关注好友 上线提醒 每个人一个小时内只能收到一条
+
+    //只发送一条
+    function pushFriendOnlineRemind()
+    {
+        info('user_id', $this->id);
+
+        $cur_hour = intval(date('H'));
+        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+            info('0点-8点不推送', date('YmdHis'));
+            return;
+        }
+
+        $body = "你的{$this->nickname}好友已上线，赶紧去唠唠！";
+        $opts = ['title' => '好友上线提醒', 'body' => $body];
+
+        $per_page = 200;
+        $friend_num = $this->friendNum();
+        if ($friend_num < 1) {
+            info('user_id', $this->id, 'friend num is 0');
+            return;
+        }
+
+        $total_pages = ceil($friend_num / $per_page);
+        $user_db = Users::getUserDb();
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->friendList($page, $per_page, 0);
+            foreach ($users as $user) {
+
+                info('friend user_id', $user->id);
+
+                //在线不推送
+                if ($user->client_status) {
+                    info('在线用户 user_id', $this->id);
+                    continue;
+                }
+
+                $friend_key = 'push_friend_or_followed_online_remind_' . $user->id;
+                if ($user_db->setnx($friend_key, $user->id)) {
+                    $user_db->expire($friend_key, 10 * 60);
+
+                    info('push friend user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    $user->push($opts);
+                    return;
+                }
+            }
+        }
+
+    }
+
+    //关注上线提醒 每小时选取最新的一个关注的人上线提醒
+    //关注好友 上线提醒 每个人一个小时内只能收到一条
+
+    //只发送一条
+    function pushFollowedOnlineRemind()
+    {
+        info('user_id', $this->id);
+
+        $cur_hour = intval(date('H'));
+        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+            info('0点-8点不推送', date('YmdHis'));
+            return;
+        }
+
+        $body = "你关注{$this->nickname}已上线，赶紧去唠唠！";
+        $opts = ['title' => '关注的人上线提醒', 'body' => $body];
+
+        $per_page = 200;
+        $followed_num = $this->followedNum();
+        if ($followed_num < 1) {
+            info('user_id', $this->id, 'followed num is 0');
+            return;
+        }
+
+        $total_pages = ceil($followed_num / $per_page);
+        $user_db = Users::getUserDb();
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->followedList($page, $per_page);
+
+            foreach ($users as $user) {
+
+                info('followed user_id', $user->id);
+
+                //在线不推送
+                if ($user->client_status) {
+                    info('在线用户 followed user_id', $this->id);
+                    continue;
+                }
+
+                $followed_key = 'push_friend_or_followed_online_remind_' . $user->id;
+                if ($user_db->setnx($followed_key, $user->id)) {
+                    $user_db->expire($followed_key, 10 * 60);
+
+                    info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
+                    $user->push($opts);
+                    return;
+                }
+
+            }
+
+        }
+
+    }
+
+    //好友上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）
+    //每个房主一个小时内只能发送一次 (好友)
+    //关注好友 开播提醒 每个人一个小时内只能收到一条
+    function pushFriendIntoRoomRemind()
+    {
+        info('user_id', $this->id);
+
+        if ($this->id != $this->current_room->user_id) {
+            info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
+            return;
+        }
+
+        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        if (!$this->current_room_id) {
+            info('user_id', $this->id, 'not in room');
+            return;
+        }
+
+        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
+
+        $per_page = 200;
+        $friend_num = $this->friendNum();
+
+        if ($friend_num < 1) {
+            info('user_id', $this->id, 'friend num is 0');
+            return;
+        }
+
+        $cur_hour = intval(date('H'));
+        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+            info('0点-8点不推送', date('YmdHis'));
+            return;
+        }
+
+        //每个房主一个小时内只能发送一次 (好友)
+        $user_db = Users::getUserDb();
+        $room_user_key = 'push_friend_into_room_remind_' . $this->id;
+        if (!$user_db->setnx($room_user_key, $this->id)) {
+            info('room_user_key 房主一个小时内只能发送一次', $this->id);
+            return;
+        }
+        $user_db->expire($room_user_key, 10 * 60);
+
+        $total_pages = ceil($friend_num / $per_page);
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->friendList($page, $per_page, 0);
+
+            foreach ($users as $user) {
+
+                info('friend user_id', $this->id);
+                //在线不推送
+                if ($user->client_status) {
+                    info('在线用户 friend user_id', $this->id);
+                    continue;
+                }
+
+                //关注好友每个人一个小时内只能收到一条
+                $friend_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                if ($user_db->setnx($friend_key, $user->id)) {
+                    $user_db->expire($friend_key, 10 * 60);
+
+                    info('friend user_id', $user->id, $opts, 'friend_num', $friend_num);
+                    $user->push($opts);
+                }
+
+            }
+        }
+
+        return;
+
+
+    }
+
+    //关注上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）
+    //每个房主一个小时内只能发送一次 (关注)
+    //关注好友 开播提醒 每个人一个小时内只能收到一条
+    function pushFollowedIntoRoomRemind()
+    {
+        info('user_id', $this->id);
+
+        if ($this->id != $this->current_room->user_id) {
+            info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
+            return;
+        }
+
+        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        if (!$this->current_room_id) {
+            info('user_id', $this->id, 'not in room');
+            return;
+        }
+
+        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '关注的人开播提醒', 'body' => $body, 'client_url' => $client_url];
+
+        $per_page = 200;
+        $followed_num = $this->followedNum();
+
+        if ($followed_num < 1) {
+            info('user_id', $this->id, 'followed num is 0');
+            return;
+        }
+
+        $cur_hour = intval(date('H'));
+        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+            info('0点-8点不推送', date('YmdHis'));
+            return;
+        }
+
+        //每个房主一个小时内只能发送一次 (关注)
+        $user_db = Users::getUserDb();
+        $room_user_key = 'push_followed_into_room_remind_' . $this->id;
+        if (!$user_db->setnx($room_user_key, $this->id)) {
+            info('room_user_key 房主一个小时内只能发送一次', $this->id);
+            return;
+        }
+        $user_db->expire($room_user_key, 10 * 60);
+
+        $total_pages = ceil($followed_num / $per_page);
+
+        for ($page = 1; $page <= $total_pages; $page++) {
+
+            $users = $this->followedList($page, $per_page);
+
+            foreach ($users as $user) {
+
+                info('followed user_id', $user->id);
+
+                //在线不推送
+                if ($user->client_status) {
+                    info('在线用户 followed user_id', $this->id);
+                    continue;
+                }
+
+                //关注好友每个人一个小时内只能收到一条
+                $followed_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                if ($user_db->setnx($followed_key, $user->id)) {
+                    $user_db->expire($followed_key, 10 * 60);
+
+                    info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
+                    $user->push($opts);
+                }
+
+            }
+        }
+
+        return;
+
+
     }
 
 }

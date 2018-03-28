@@ -215,87 +215,89 @@ class UsersController extends BaseController
     //access_token openid app_id(微信不需要此参数)
     function thirdLoginAction()
     {
-        if ($this->request->isPost()) {
+        if (!$this->request->isPost()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+        }
 
-            $device = $this->currentDevice();
+        $device = $this->currentDevice();
+        if (!$device) {
+            $device = $this->currentUser()->device;
+        }
 
-            if (!$device) {
-                $device = $this->currentUser()->device;
-            }
+        if (!$device) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
+        }
 
-            if (!$device) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
-            }
+        $third_name = $this->params('third_name'); // qq, weixin
+        $third_gateway = \thirdgateway\Base::gateway($third_name);
+        if (!$third_gateway) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
+        }
 
-            $third_name = $this->params('third_name');
+        $context = $this->context();
 
-            $third_gateway = \thirdgateway\Base::gateway($third_name);
+        if ($third_name == 'qq') {
+            $context['has_unionid'] = 1;
+        }
 
-            if (!$third_gateway) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
-            }
+        //登陆认证
+        $form = $third_gateway->auth($context);
+        if (!$form) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
+        }
 
-            $context = $this->context();
+        info($third_name, 'third_login_info=', $form);
 
-            //登陆认证
-            $form = $third_gateway->auth($context);
+        if ($form['error_code'] != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($form['error_code'], $form['error_reason']);
+        }
 
-            if (!$form) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
-            }
+        $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
 
-            info('third_login_info=', $form);
+        $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
+        $error_url = '';
 
-            if ($form['error_code'] != ERROR_CODE_SUCCESS) {
-                return $this->renderJSON($form['error_code'], $form['error_reason']);
-            }
-
-            $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
-
-            $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
-            $error_url = '';
-
-            if (!$user) {
-                list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
-                if ($error_code != ERROR_CODE_SUCCESS) {
-                    return $this->renderJSON($error_code, $error_reason);
-                }
-
-                if (isDevelopmentEnv()) {
-                    //第一次注册 跳转更新资料
-                    //$error_url = 'app://users/update_info';
-                }
-            }
-
-            if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
-            }
-
-            if ($user->isBlocked()) {
-                info("block_user_login", $user->sid);
-                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
-            }
-
-            $context['login_type'] = $third_name;
-
-            list($error_code, $error_reason) = $user->clientLogin($context, $device);
-
+        if (!$user) {
+            list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
             }
 
-            $user->updatePushToken($device);
-
-            $key = $this->currentProductChannel()->getSignalingKey($user->id);
-            $app_id = $this->currentProductChannel()->getImAppId();
-
-            $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
-            $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
-        } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+            if (isDevelopmentEnv()) {
+                //第一次注册 跳转更新资料
+                $error_url = 'app://users/update_info';
+            }
         }
+
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
+        }
+
+        if ($user->isBlocked()) {
+            info("block_user_login", $user->sid);
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+        }
+
+        $context['login_type'] = $third_name;
+
+        list($error_code, $error_reason) = $user->clientLogin($context, $device);
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
+        $user->updatePushToken($device);
+
+        $key = $this->currentProductChannel()->getSignalingKey($user->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+
+        //用户对象属性不改变
+        $user = \Users::findFirstById($user->id);
+
+        $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
+        $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
     }
 
     function logoutAction()
@@ -571,9 +573,9 @@ class UsersController extends BaseController
         $tip = "恭喜您获得" . $gold . "金币";
         $message = "七天以上连续签到可每天获得320金币";
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => 2, 'tip' => $tip, 'message' => $message]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_WAIT, 'tip' => $tip, 'message' => $message]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['sign_in_status' => 1, 'tip' => '', 'message' => '']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['sign_in_status' => USER_SIGN_IN_SUCCESS, 'tip' => '', 'message' => '']);
         }
     }
 
@@ -582,9 +584,69 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $gold = $user->addSignInHistory();
         if ($gold) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold]);
         }
+    }
+
+    function hiCoinRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user = $this->currentUser();
+        $users = $user->findHiCoinRankList($list_type, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
+    }
+
+    function charmRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
+
+        $res = $users->toJson('users', 'toRankListJson');
+
+        $user = $this->currentUser();
+
+        $res['current_rank'] = $user->myFieldRank($list_type, 'charm');
+        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'charm') - $res['current_rank'];
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    function wealthRankListAction()
+    {
+        $list_type = $this->params('list_type');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+
+        $res = $users->toJson('users', 'toRankListJson');
+
+        $user = $this->currentUser();
+
+        $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
+        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'wealth') - $res['current_rank'];
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 }

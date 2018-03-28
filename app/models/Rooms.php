@@ -286,11 +286,11 @@ class Rooms extends BaseModel
         $current_room_seat_id = $user->current_room_seat_id;
 
         // 房间相同才清除用户信息
-        if($this->id == $user->current_room_id){
+        if ($this->id == $user->current_room_id) {
 
             // 退出所有麦位
             $room_seats = RoomSeats::findByUserId($user->id);
-            foreach ($room_seats as $room_seat){
+            foreach ($room_seats as $room_seat) {
                 $room_seat->user_id = 0;
                 $room_seat->save();
             }
@@ -883,9 +883,13 @@ class Rooms extends BaseModel
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
         } elseif ($room->isActive() && ($room->getRealUserNum() < 1 || $room->user_agreement_num < 1)) {
-            Rooms::deleteWaitEnterSilentRoomList($user_id);
-            info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
-            return false;
+
+            if (isProduction()) {
+                Rooms::deleteWaitEnterSilentRoomList($user_id);
+                info("room_no_real_user", $room_id, $user_id, $room->getRealUserNum(), $room->user_agreement_num);
+                return false;
+            }
+
         }
 
         $room->enterRoom($user);
@@ -931,10 +935,17 @@ class Rooms extends BaseModel
 
     function pushEnterRoomMessage($user)
     {
+
         $body = ['action' => 'enter_room', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'channel_name' => $this->channel_name,
             'segment' => $user->segment, 'segment_text' => $user->segment_text
         ];
+
+        $user_car_gift = $user->getUserCarGift();
+
+        if ($user_car_gift) {
+            $body['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
 
         $this->push($body);
     }
@@ -1007,33 +1018,44 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function push($body)
+    function push($body, $check_user_version = false)
     {
         $users = $this->findTotalRealUsers();
 
         if (count($users) < 1) {
-            info("no_users", $this->id);
+
+            if ($this->user) {
+                debug($this->user->sid);
+            }
+
+            info("no_users", $body, $this->id);
             return;
         }
 
         foreach ($users as $user) {
+
+            //推送校验新版本
+            if ($check_user_version && !$user->isHignVersion()) {
+                info("old_version_user", $user->sid);
+                continue;
+            }
 
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             if (!$intranet_ip) {
-                info("user_already_close", $user->id, $this->id, $payload);
+                info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 continue;
             }
 
             $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
 
             if ($res) {
-                info($user->id, $this->id, $payload);
+                info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 break;
             } else {
-                info("Exce", $user->id, $this->id, $payload);
+                info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
             }
         }
     }
@@ -1403,7 +1425,7 @@ class Rooms extends BaseModel
         return false;
     }
 
-    static function searchHotRooms($user, $page, $per_page)
+    static function searchHotRooms($page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1421,7 +1443,7 @@ class Rooms extends BaseModel
         $total_entries = $hot_cache->zcard($hot_room_list_key);
 
         $offset = $per_page * ($page - 1);
-        if($offset > $total_entries - 1){
+        if ($offset > $total_entries - 1) {
             $offset = $total_entries - 1;
         }
 
@@ -1432,6 +1454,14 @@ class Rooms extends BaseModel
         $pagination->clazz = 'Rooms';
 
         return $pagination;
+    }
+
+    function isInHotList()
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_cache = Users::getHotWriteCache();
+
+        return $hot_cache->zscore($hot_room_list_key, $this->id) > 0;
     }
 
     //判断麦位上没有用户
@@ -1449,5 +1479,69 @@ class Rooms extends BaseModel
         }
 
         return false;
+    }
+
+    function pushRoomNoticeMessage($content, $opts = [])
+    {
+        $room_id = fetch($opts, 'room_id');
+        $client_url = '';
+        $room = Rooms::findFirstById($room_id);
+
+        //当前房间不带client_url
+        if ($room_id != $this->id && !$room->lock) {
+            $client_url = 'app://m/rooms/detail?id=' . $room_id;
+        }
+
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content
+            , 'client_url' => $client_url];
+
+        info($body, $this->id, $this->user->sid);
+
+        $this->push($body, true);
+    }
+
+    //全服通知
+    static function asyncAllNoticePush($content, $opts = [])
+    {
+        $hot = fetch($opts, 'hot');
+        $room_id = fetch($opts, 'room_id');
+
+        if ($hot) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            //热门房间单独推送
+            if (!$room->isInHotList()) {
+                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+            }
+
+            $rooms = Rooms::searchHotRooms(1, 100);
+        } else {
+            $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
+                'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
+            $rooms = Rooms::find($cond);
+        }
+
+        foreach ($rooms as $room) {
+            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+        }
+    }
+
+    //全服通知
+    static function allNoticePush($gift_order)
+    {
+        if (isDevelopmentEnv()) {
+
+            $opts = ['room_id' => $gift_order->room_id];
+
+            if ($gift_order->amount >= 1000) {
+                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+            }
+
+            if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
+                $opts['hot'] = 1;
+                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+            }
+        }
     }
 }

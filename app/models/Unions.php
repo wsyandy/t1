@@ -189,24 +189,15 @@ class Unions extends BaseModel
 
     static function recommend($page, $per_page)
     {
-        $union_recommend_key = "union_recommend_list";
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));
 
-        $user_db = Users::getUserDb();
-
-        $offset = $per_page * ($page - 1);
-        $union_ids = $user_db->zrevrange($union_recommend_key, $offset, $offset + $per_page - 1);
-        $unions = Unions::findByIds($union_ids);
-        $total_entries = $user_db->zcard($union_recommend_key);
-        $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
-        $pagination->clazz = 'Unions';
-
-        return $pagination;
+        return self::findFameValueRankListByKey($key, $page, $per_page);
     }
 
     //搜索公会
     static function search($user, $page, $per_page, $opts = [])
     {
-        $recommend = fetch($opts, 'recommend', 0);
+//        $recommend = fetch($opts, 'recommend', 0);
         $type = fetch($opts, 'type', 0);
         $id = fetch($opts, 'id', 0);
         $name = fetch($opts, 'name', 0);
@@ -563,6 +554,17 @@ class Unions extends BaseModel
             $db->zclear($this->generateRefusedUsersKey());
             $db->zclear($this->generateUsersKey());
             $db->zclear($this->generateCheckUsersKey());
+
+            //删排行榜中排名
+            $last_day_key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));
+            $day_key = "total_union_fame_value_day_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+            $db->zrem($last_day_key, $this->id);
+            $db->zrem($day_key, $this->id);
+            $db->zrem($week_key, $this->id);
+
             Unions::delay()->asyncDissolutionUnion($this->id);
         }
         return [ERROR_CODE_SUCCESS, ''];
@@ -612,20 +614,105 @@ class Unions extends BaseModel
         $union = self::findFirstById($id);
         $union->fame_value += $value;
         $union->update();
-        $union->updateDayFameValue($value);
+        $union->updateFameRankList($value);
         unlock($lock);
     }
 
-    function updateDayFameValue($value)
+    function updateFameRankList($value)
     {
         debug($value);
 
         if ($value > 0) {
             $db = Users::getUserDb();
-            $key = "total_union_fame_value_day_" . date("Ymd");
-            $db->zincrby($key, $value, $this->id);
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+            $day_key = "total_union_fame_value_day_" . date("Ymd");
+            $db->zincrby($day_key, $value, $this->id);
+            $db->zincrby($week_key, $value, $this->id);
+        }
+    }
+
+    function unionFameRank($list_type)
+    {
+        $db = Users::getUserDb();
+
+        $key = self::generateFameValueRankListKey($list_type);
+
+        $rank = $db->zrrank($key, $this->id);
+
+        if ($rank === null) {
+
+            $total_entries = $db->zcard($key);
+            if ($total_entries) {
+                $rank = $total_entries;
+            }
+
         }
 
+        return $rank + 1;
+    }
+
+    static function generateFameValueRankListKey($list_type)
+    {
+        switch ($list_type) {
+            case 'day': {
+                $key = "total_union_fame_value_day_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "total_union_fame_value_" . $start . "_" . $end;
+                break;
+            }
+            default:
+                return '';
+        }
+
+        return $key;
+    }
+
+    static function findFameValueRankList($list_type, $page, $per_page)
+    {
+        $key = self::generateFameValueRankListKey($list_type);
+
+        return self::findFameValueRankListByKey($key, $page, $per_page);
+    }
+
+    static function findFameValueRankListByKey($key, $page, $per_page)
+    {
+        $db = Users::getUserDb();
+
+        $offset = ($page - 1) * $per_page;
+
+        $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $total_entries = $db->zcard($key);
+
+        $ids = [];
+        $fame_values = [];
+        foreach ($result as $union_id => $fame_value) {
+            $ids[] = $union_id;
+            $fame_values[$union_id] = $fame_value;
+        }
+
+        $unions = Unions::findByIds($ids);
+
+        $rank = $offset + 1;
+        foreach ($unions as $union) {
+            if ($union->status != STATUS_ON) {
+                continue;
+            }
+
+            $union->fame_value = $fame_values[$union->id];
+            $union->rank = $rank;
+            $rank += 1;
+        }
+
+        $pagination = new PaginationModel($unions, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Unions';
+
+        return $pagination;
     }
 
     function getAvatarUrl()

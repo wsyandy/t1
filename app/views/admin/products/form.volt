@@ -4,6 +4,7 @@
   {{ f.input('full_name', ['label': '全称']) }}
   {{ f.input('amount', ['label': '金额']) }}
   {{ f.input('diamond', ['label': '钻石']) }}
+  {{ f.input('gold',['label':'金币']) }}
   {{ f.input('apple_product_no', ['label': '苹果支付代码']) }}
   {{ f.input('rank', ['label': '排序']) }}
   {{ f.file('icon', ['label': 'icon']) }}

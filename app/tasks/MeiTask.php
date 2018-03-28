@@ -1332,4 +1332,39 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function enterAction()
+    {
+        $user = Users::findFirstById(52);
+        $room = $user->room;
+
+        $users = $room->selectSilentUsers(2);
+
+        foreach ($users as $user) {
+
+            if ($user->isInAnyRoom()) {
+                info("user_in_other_room", $user->id, $user->current_room_id, $room->id);
+                continue;
+            }
+
+            $user_gift = \UserGifts::findFirstOrNew(['user_id' => $user->id, 'gift_id' => 47]);
+            $gift = \Gifts::findFirstById(47);
+
+            $gift_amount = $gift->amount;
+            $gift_num = 1;
+            $user_gift->gift_id = $gift->id;
+            $user_gift->name = $gift->name;
+            $user_gift->amount = $gift_amount;
+            $user_gift->num = $gift_num + intval($user_gift->num);
+            $user_gift->total_amount = $gift_amount * $gift_num + intval($user_gift->total_amount);
+            $user_gift->pay_type = $gift->pay_type;
+            $user_gift->gift_type = $gift->type;
+            $user_gift->status = STATUS_ON;
+            $user_gift->expire_at = time() + 86400 * 365;
+            $user_gift->save();
+
+            Rooms::addWaitEnterSilentRoomList($user->id);
+            Rooms::enterSilentRoom($room->id, $user->id);
+        }
+    }
 }

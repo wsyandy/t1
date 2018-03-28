@@ -178,7 +178,21 @@
                 deadline int 管理员管理时长的截止时间戳 1517319489
             },
             ...
-        ]     		   
+        ]  
+     user_car_gift: {
+        name: ''
+        image_url: ''
+        image_small_url: ''
+        image_big_url: ''
+        dynamic_image_url: ''
+        svga_image_name: svga 对应zip包中的图片名称
+        render_type 渲染类型 gif svga
+        svga_image_url svga 图片
+        show_rank int 礼物展示排序
+        expire_time int 礼物过期时间
+        gift_type 1 普通礼物 2 座驾
+        notice_content 进房间提示文案
+     }      		   
 }
 ```
 
@@ -554,5 +568,23 @@
 {
     error_code: 0/-1
     error_reason: '返回码说明'
+}
+```
+
+### 23 异常退出房间
+
+> http-post ```/api/rooms/offline```
+
+##### 23.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|user_id|离开房间用户的id|int|否|||
+
+##### 23.2 回应参数说明
+```
+{
+    error_code
+    error_reason
 }
 ```

@@ -18,11 +18,12 @@ class GoldHistories extends BaseModel
      */
     private $_operator;
 
-    static $REE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "用户签到"];
+    static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务',GOLD_TYPE_BUY_GOLD =>'购买金币'];
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $user = Users::findFirstById($user_id);
+
         if (isBlank($user)) {
             info($user_id);
             return false;
@@ -58,19 +59,24 @@ class GoldHistories extends BaseModel
     function checkBalance()
     {
         $change_amount = abs($this->amount);
+
         if ($this->isCostGold()) {
             $change_amount = -$change_amount;
             $this->amount = $change_amount;
         }
         $old_gold_history = self::findUserLast($this->user_id);
         $old_balance = intval($this->balance);
+
         if ($old_gold_history) {
             $old_balance = intval($old_gold_history->balance);
         }
+
         $this->balance = $old_balance + $change_amount;
+
         if ($this->balance < 0 && $this->user->isActive()) {
             return true;
         }
+
         return false;
     }
 
@@ -84,15 +90,6 @@ class GoldHistories extends BaseModel
         $user = \Users::findById($this->user_id);
         $user->gold = $this->balance;
         $user->update();
-//        $user_attrs = $user->getStatAttrs();
-//        $user_attrs['add_value'] = abs($this->amount);
-//        $action = "gold_recharge";
-//
-//        if ($this->isCostGold()) {
-//            $action = "gold_cost";
-//        }
-//
-//        \Stats::delay()->record('user', $action, $user_attrs);
     }
 
     static function findUserLast($user_id)

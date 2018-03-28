@@ -182,6 +182,10 @@
     segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
+    next_level_experience 下一级经验值
+    experience 当前经验值
+    union_name 家族名，不存在为空字符
+    id_card_auth 主持认证状态  1已认证 
     albums:[
         {
             id,
@@ -241,6 +245,10 @@
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
     receive_gift_num 接受的礼物个数
+    next_level_experience 下一级经验值
+    experience 当前经验值
+    union_name 家族名，不存在为空字符
+    id_card_auth 主持认证状态  1已认证
     albums:[
         {
             id,
@@ -635,8 +643,8 @@
 ##### 23.2 回应参数说明
 ```
 {
-    error_code: 0/-1
-    error_reason: 失败原因，默认为空
+    error_code
+    error_reason
     sign_in_status: 签到状态 1已签到，2未签到 
     tip: 恭喜您获得xxxx金币
     message: 七天以上连续签到可每天获得320金币
@@ -656,5 +664,113 @@
 {
     error_code: 0/-1
     error_reason: 失败原因，默认为空
+    gold: 签到得到的金币
 }
 ```
+
+
+### 25 hi币贡献榜
+>http-get ```/api/users/hi_coin_rank_list```
+
+##### 25.1 请求参数说明
+
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|list_type|榜单类型|string|否|day是日榜，week是周榜，total是总榜
+
+##### 25.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    users:[
+        {
+            id 用户id
+            nickname 昵称
+            age 年龄
+            sex	性别 0:女 1:男
+            avatar_url 用户头像
+            avatar_small_url 用户小头像
+            rank 排名
+            level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+                (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
+            hi_coin string 贡献的hi币 
+        }
+        ...
+    ]
+}
+```
+
+### 26魅力榜
+>http-get ```/api/users/charm_rank_list```
+
+##### 26.1 请求参数说明
+
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|list_type|榜单类型|string|否|day是日榜，week是周榜，total是总榜
+
+##### 26.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    users:[
+        {
+            id 用户id
+            nickname 昵称
+            age 年龄
+            sex	性别 0:女 1:男
+            avatar_url 用户头像
+            avatar_small_url 用户小头像
+            rank 排名
+            level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+                (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
+            charm_value string 榜单魅力值
+        }
+        ...
+    ]
+    current_rank 当前排名
+    changed_rank 变化的排名
+}
+```
+    
+### 27土豪榜
+>http-get ```/api/users/wealth_rank_list```
+
+##### 27.1 请求参数说明
+
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|list_type|榜单类型|string|否|day是日榜，week是周榜，total是总榜
+
+##### 27.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    users:[
+        {
+            id 用户id
+            nickname 昵称
+            age 年龄
+            sex	性别 0:女 1:男
+            avatar_url 用户头像
+            avatar_small_url 用户小头像
+            rank 排名
+            level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+                (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
+            wealth_value string 榜单财富值
+        }
+        ...
+    ]
+    current_rank 当前排名
+    changed_rank 变化的排名
+}
+```    

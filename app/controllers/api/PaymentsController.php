@@ -16,6 +16,11 @@ class PaymentsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
         $product = \Products::findById($this->params('product_id'));
+
+        if (isBlank($product)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
         $payments = \Payments::findByConditions(
             array(
                 'user_id' => $this->currentUserId(),

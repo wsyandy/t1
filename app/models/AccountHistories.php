@@ -25,15 +25,6 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_CREATE_UNION => '创建公会'
     ];
 
-    /**
-     * @return mixed
-     */
-    static function getCacheEndPoint()
-    {
-        $config = self::di('config');
-        $endpoints = explode(',', $config->user_db_endpoints);
-        return $endpoints[0];
-    }
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
@@ -134,6 +125,7 @@ class AccountHistories extends BaseModel
             'bind' => ['user_id' => $user_id],
             'order' => 'id desc'
         ];
+
         return \AccountHistories::findPagination($conditions, $page, $per_page);
     }
 }

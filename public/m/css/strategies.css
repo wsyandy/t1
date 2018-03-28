@@ -191,11 +191,30 @@ table { border-collapse:collapse; }
 	background-size: 100%;
 }
 
+.answer_list{
+	width: 100%;
+	margin-bottom: 20px;
+}
+.text_center{
+	display: flex;
+	margin-bottom:15px;
 
-
-
-
-
+}
+.answer_list .number{
+	width: 40px;
+	font-family: Impact;
+	font-size: 20px;
+	color: #F45189;
+	font-weight: bold;
+}
+.answer_list  .info{
+	width: 244px;
+	font-size: 14px;
+	color: #323232;
+}
+.answer_list .imge{
+	width: 100%;
+}
 
 
 

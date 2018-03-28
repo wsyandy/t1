@@ -81,8 +81,10 @@ class Users extends BaseModel
             $this->user_type = USER_TYPE_ACTIVE;
         }
 
-        if ($this->mobile) {
+        if ($this->mobile || $this->third_unionid) {
             $this->register_at = time();
+            $this->last_at = time();
+            info('new_user_register', $this->mobile, $this->third_unionid);
         }
     }
 
@@ -96,6 +98,11 @@ class Users extends BaseModel
             if ($this->latitude && $this->longitude) {
                 self::delay(1)->asyncUpdateGeoLocation($this->id);
             }
+
+            if ($this->register_at) {
+                $this->registerStat();
+                $this->createEmUser();
+            }
         }
     }
 
@@ -103,6 +110,11 @@ class Users extends BaseModel
     {
         if ($this->hasChanged('mobile') && $this->mobile && $this->register_at < 1) {
             $this->register_at = time();
+            $this->last_at = time();
+        }
+        if ($this->hasChanged('third_unionid') && $this->third_unionid && $this->register_at < 1) {
+            $this->register_at = time();
+            $this->last_at = time();
         }
     }
 
@@ -114,6 +126,12 @@ class Users extends BaseModel
 
         if ($this->hasChanged('last_at')) {
             $this->updateLastAt();
+
+            //好友上线提醒(每小时选取最新的一个好友上线提醒)
+            $this->pushFriendOnlineRemind();
+
+            //关注的人上线提醒(每小时选取最新关注的人上线提醒)
+            $this->pushFollowedOnlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -124,15 +142,21 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
+        if ($this->hasChanged('register_at') && $this->register_at) {
             $this->registerStat();
             $this->createEmUser();
         }
 
-        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
-            $this->registerStat();
-            $this->createEmUser();
-        }
+//        // 手机注册
+//        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
+//            $this->registerStat();
+//            $this->createEmUser();
+//        }
+//        // 第三方注册
+//        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
+//            $this->registerStat();
+//            $this->createEmUser();
+//        }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
@@ -160,6 +184,17 @@ class Users extends BaseModel
         if ($this->union_id) {
             UnionHistories::delay()->createRecord($this->id, $this->union_id);
         }
+    }
+
+    function isHignVersion()
+    {
+        $product_channel = $this->product_channel;
+
+        if ($this->isIos()) {
+            return $this->version_code > $product_channel->apple_stable_version;
+        }
+
+        return $this->version_code > $product_channel->android_stable_version;
     }
 
     //统计用户在房间时间
@@ -270,7 +305,7 @@ class Users extends BaseModel
 
     function isBlocked()
     {
-        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status;
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status || USER_STATUS_BLOCKED_DEVICE == $this->user_status;
     }
 
     function isNormal()
@@ -488,10 +523,9 @@ class Users extends BaseModel
             }
         }
 
-
+        $this->user_status = USER_STATUS_ON;
         $this->sid = $this->generateSid('s');
         $this->device_id = $device->id;
-        $this->user_status = USER_STATUS_ON;
         $this->device_no = $device->device_no;
         $this->push_token = $device->push_token;
         $this->update();
@@ -638,7 +672,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = randStr(20) . '@touch.com';
         $user->platform = 'touch_unknow';
         foreach ($opts as $k => $v) {
@@ -677,7 +710,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = randStr(20) . '@web.com';
         $user->platform = 'web';
         foreach ($opts as $k => $v) {
@@ -774,7 +806,6 @@ class Users extends BaseModel
         $user->password = uniqid();
         $user->product_channel_id = $product_channel->id;
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->user_status = USER_STATUS_ON;
         $user->login_name = $login_name;
         $user->province_id = $province_id;
         $user->city_id = $city_id;
@@ -1591,15 +1622,13 @@ class Users extends BaseModel
 
                 $geo_distance = \geo\GeoHash::calDistance($this->latitude / 10000, $this->longitude / 10000,
                     $user->latitude / 10000, $user->longitude / 10000);
-                if($geo_distance < 1000){
+                if ($geo_distance < 1000) {
                     $geo_distance = intval($geo_distance);
                     $user->distance = $geo_distance . 'm';
-                    if($geo_distance < 200){
+                } else {
+                    if ($geo_distance < 200) {
                         $user->distance = '附近';
                     }
-                }else{
-                    $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
-                    $user->distance = $geo_distance . 'km';
                 }
 
                 info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
@@ -1898,8 +1927,8 @@ class Users extends BaseModel
 
                 $gift_num = mt_rand(1, 15);
 
-                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type:',
-                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga'], 'columns' => 'id']);
+                $gifts = Gifts::find(['conditions' => 'status = :status: and render_type = :render_type: and type = :type:',
+                    'bind' => ['status' => STATUS_ON, 'render_type' => 'svga', 'type' => GIFT_TYPE_COMMON], 'columns' => 'id']);
 
                 $gift_ids = [];
 
@@ -1993,18 +2022,21 @@ class Users extends BaseModel
 //                return;
 //            }
 
-            if ($room->getRealUserNum() < 1) {
-                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
-                return;
-            }
-
-            if ($rand_num <= 90) {
-                if ($room->getRealUserNum() > 0) {
-                    Users::delay(mt_rand(1, 50))->sendGift($this->id, $room->id);
+//            if ($room->getRealUserNum() < 1) {
+//                Rooms::delay(mt_rand(1, 10))->asyncExitSilentRoom($room->id, $this->id);
+//                return;
+//            }
+            if ($room->getRealUserNum() > 0) {
+                if ($rand_num <= 40) {
+                    Users::delay(mt_rand(1, 10))->sendGift($this->id, $room->id);
+                } elseif ($rand_num > 40 && $rand_num <= 70) {
+                    Users::delay(mt_rand(1, 10))->upRoomSeat($this->id, $room->id);
+                } elseif ($rand_num > 70 && $rand_num <= 95) {
+                    Users::delay(mt_rand(1, 10))->sendTopTopicMessage($this->id, $room->id);
+                } else {
+                    $room->exitSilentRoom($this);
+                    return;
                 }
-            } else {
-                $room->exitSilentRoom($this);
-                return;
             }
         }
     }
@@ -2152,7 +2184,6 @@ class Users extends BaseModel
 
             $new_birthday = $birthday . $month . $day;
             $user->birthday = strtotime($new_birthday);
-            $user->user_status = USER_STATUS_ON;
             $user->user_type = USER_TYPE_SILENT;
             $user->product_channel_id = 1;
             $user->monologue = $monologue;
@@ -2283,7 +2314,7 @@ class Users extends BaseModel
                 return [ERROR_CODE_FAIL, '登录失败', $user];
             }
 
-            $user->register_at = time();
+            //$user->register_at = time();
         }
 
         $third_auth->user_id = $user->id;
@@ -2439,13 +2470,17 @@ class Users extends BaseModel
         $wealth_value = $amount;
 
         if ($sender) {
+
             $sender->experience += $sender_experience;
             $sender_level = $sender->calculateLevel();
             $sender->level = $sender_level;
             $sender->segment = $sender->calculateSegment();
-
             $sender->wealth_value += $wealth_value;
+
+            Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+
             $union = $sender->union;
+
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
                 Unions::delay()->updateFameValue($wealth_value, $union->id);
@@ -2484,7 +2519,11 @@ class Users extends BaseModel
         $charm_value = $amount;
 
         if (isPresent($user)) {
+
             $user->charm_value += $charm_value;
+
+            Users::updateFiledRankList($user->id, 'charm', $charm_value);
+
             $union = $user->union;
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
@@ -2496,6 +2535,8 @@ class Users extends BaseModel
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
             }
+
+            $user->update();
         }
 
         unlock($lock);
@@ -2573,11 +2614,214 @@ class Users extends BaseModel
             $weeks_key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
             $total_key = "user_hi_coin_rank_list_" . $this->id;
 
-            $db->zincrby($day_key, $hi_coins * 100, $sender_id);
-            $db->zincrby($weeks_key, $hi_coins * 100, $sender_id);
-            $db->zincrby($total_key, $hi_coins * 100, $sender_id);
+            $hi_coins = intval($hi_coins * 100);
+            $db->zincrby($day_key, $hi_coins, $sender_id);
+            $db->zincrby($weeks_key, $hi_coins, $sender_id);
+            $db->zincrby($total_key, $hi_coins, $sender_id);
         }
     }
+
+    function findHiCoinRankList($list_type, $page, $per_page)
+    {
+        $db = Users::getUserDb();
+
+        switch ($list_type) {
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
+            default:
+                return [];
+        }
+
+        $offset = ($page - 1) * $per_page;
+
+        $result = $db->zrevrange($key, $offset, $offset + $per_page - 1, 'withscores');
+        $total_entries = $db->zcard($key);
+
+        $ids = [];
+        $hi_coins = [];
+        foreach ($result as $user_id => $hi_coin) {
+            $ids[] = $user_id;
+            $hi_coins[$user_id] = $hi_coin;
+        }
+
+        $users = Users::findByIds($ids);
+
+        $rank = $offset + 1;
+        foreach ($users as $user) {
+            $user->contributing_hi_conins = $hi_coins[$user->id] / 100;
+            $user->rank = $rank;
+            $rank += 1;
+        }
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
+    }
+
+    static function updateFiledRankList($user_id, $field, $value)
+    {
+        if ($field != 'wealth' && $field != 'charm') {
+            return '';
+        }
+
+        if ($value > 0) {
+            $db = Users::getUserDb();
+
+            self::saveLastFieldRankList($user_id, $field);
+
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
+            $start = date("Ymd", strtotime("last sunday next day", time()));
+            $end = date("Ymd", strtotime("next monday", time()) - 1);
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+            $total_key = "total_" . $field . "_rank_list_";
+
+            $db->zincrby($day_key, $value, $user_id);
+            $db->zincrby($week_key, $value, $user_id);
+            $db->zincrby($total_key, $value, $user_id);
+        }
+    }
+
+    static function saveLastFieldRankList($user_id, $field)
+    {
+        $db = Users::getUserDb();
+
+        $user = Users::findFirstById($user_id);
+
+        $day_rank = $user->myFieldRank('day', $field);
+        $week_rank = $user->myFieldRank("week", $field);
+        $total_rank = $user->myfieldRank('total', $field);
+
+        $db->zadd("last_day_" . $field . "_rank_list", $day_rank, $user_id);
+        $db->zadd("last_weeK_" . $field . "_rank_list", $week_rank, $user_id);
+        $db->zadd("last_total_" . $field . "_rank_list", $total_rank, $user_id);
+    }
+
+    function myFieldRank($list_type, $field)
+    {
+        $key = self::generateFieldRankListKey($list_type, $field);
+
+        return $this->getRankByKey($key);
+    }
+
+
+    function myLastFieldRank($list_type, $field)
+    {
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
+
+        return $this->getRankByKey($key);
+    }
+
+    function getRankByKey($key)
+    {
+        $db = Users::getUserDb();
+        $rank = $db->zrrank($key, $this->id);
+
+        if ($rank === null) {
+            $total_entries = $db->zcard($key);
+            if ($total_entries) {
+                $rank = $total_entries;
+            }
+        }
+        return $rank + 1;
+    }
+
+    static function generateFieldRankListKey($list_type, $field)
+    {
+        switch ($list_type) {
+            case 'day': {
+                $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list_";
+                break;
+            }
+            default:
+                return '';
+        }
+
+        return $key;
+    }
+
+    static function findFieldRankList($list_type, $field, $page, $per_page)
+    {
+        if ($field != 'wealth' && $field != 'charm') {
+            return [];
+        }
+
+        $key = self::generateFieldRankListKey($list_type, $field);
+
+        return Users::findFieldRankListByKey($key, $field, $page, $per_page);
+    }
+
+    static function findFieldRankListByKey($key, $field, $page, $per_page, $max_entries = 100)
+    {
+        if (isBlank($key)) {
+            return [];
+        }
+
+        $offset = ($page - 1) * $per_page;
+
+        $stop = $offset + $per_page - 1;
+
+        if ($offset >= $max_entries) {
+            return [];
+        }
+
+        if ($stop >= $max_entries) {
+            $stop = $max_entries - 1;
+        }
+
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, $offset, $stop, 'withscores');
+        $total_entries = $db->zcard($key);
+
+        if ($total_entries > $max_entries) {
+            $total_entries = $max_entries;
+        }
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $user_id => $result) {
+            $ids[] = $user_id;
+            $fields[$user_id] = $result;
+        }
+
+        $users = Users::findByIds($ids);
+
+        $rank = $offset + 1;
+        foreach ($users as $user) {
+            $user->$field = $fields[$user->id];
+            $user->rank = $rank;
+            $rank += 1;
+        }
+
+        $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        return $pagination;
+    }
+
 
     static function ipLocation($ip)
     {
@@ -2617,17 +2861,19 @@ class Users extends BaseModel
         $times = $db->get($key);
 
         $expire = $db->ttl($key);
-        debug($expire);
-
-        if ($expire > time() + 3600 * 24) {
+        $time = 3600 * 24;
+//        if (isDevelopmentEnv()) {
+//            $time = 60 * 5;
+//        }
+        if ($expire > $time) {
             //已签到
             return 0;
-        } else if ($expire > time()) {
+        } else if ($expire > 0) {
             //连续签到
-            if ($times < 6) {
+            if ($times < count($golds)) {
                 return $golds[$times];
             } else {
-                return $golds[6];
+                return end($golds);
             }
         } else {
             //非连续签到
@@ -2655,16 +2901,145 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
-        $this->update();
 
-        $db->setex($key, endOfDay() + 3600 * 24, $times);
+        $time = 3600 * 24;
+//        if (isDevelopmentEnv()) {
+//            $time = 60 * 5;
+//            $current_time = time();
+//            $expire = strtotime(date('Y-m-d H:i:59', $current_time)) - $current_time + $time;
+//        } else {
+        $expire = endOfDay() - time() + $time;
+//        }
+
+        $db->setex($key, $expire, $times);
         return $res;
+    }
+
+    function signInStatus()
+    {
+        if ($this->signInGold()) {
+            return USER_SIGN_IN_WAIT;
+        }
+
+        return USER_SIGN_IN_SUCCESS;
+    }
+
+    function signInMessage()
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateSignInHistoryKey();
+        $times = $db->get($key);
+
+        $golds = [30, 50, 80, 120, 180, 250, 320];
+
+        $expire = $db->ttl($key);
+
+        if ($expire > 0) {
+            if ($times < count($golds)) {
+                $gold = $golds[$times];
+            } else {
+                $gold = end($golds);
+            }
+            $time = 3600 * 24;
+//            if (isDevelopmentEnv()) {
+//                $time = 60 * 5;
+//            }
+            if ($expire > $time) {
+                $day = "明天";
+            } else {
+                $day = "今天";
+            }
+        } else {
+            //非连续签到
+            $gold = $golds[0];
+            $times = 0;
+            $day = "今天";
+        }
+
+        return "连续签到{$times}天，{$day}签到可获得{$gold}金币";
+    }
+
+    function generateShareTask($share_task_type)
+    {
+        return 'share_task_user_' . $this->id . "share_task_type_" . $share_task_type;
+    }
+
+    function shareTaskGold()
+    {
+        return 50;
+    }
+
+    function shareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+        if ($db->get($key)) {
+            //分享任务已完成
+            return STATUS_YES;
+        } else {
+            //分享任务未完成
+            return STATUS_NO;
+        }
+    }
+
+    function changeShareTaskStatus($share_task_type)
+    {
+        $db = Users::getUserDb();
+        $key = $this->generateShareTask($share_task_type);
+
+        if ($db->get($key)) {
+            return false;
+        }
+
+        $gold = $this->shareTaskGold();
+
+        $share_des = ShareHistories::$TYPE[$share_task_type];
+
+        $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
+
+        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+
+        $db->setex($key, endOfDay() - time(), time());
     }
 
     function isIdCardAuth()
     {
         return AUTH_SUCCESS == $this->id_card_auth;
+    }
+
+    function push($opts = [])
+    {
+        $push_data = [
+            'title' => fetch($opts, 'title', $this->product_channel->name),
+            'body' => fetch($opts, 'body', ''),
+            'badge' => fetch($opts, 'badge', null),
+            'offline' => fetch($opts, 'offline', true),
+            'client_url' => fetch($opts, 'client_url', 'app://home'),
+            'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
+        ];
+
+        info($push_data);
+        \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
+    }
+
+    function unreadMessagesNum()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        return intval($hot_cache->get("unread_messages_num_user_id_" . $this->id));
+    }
+
+    function delUnreadMessages()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $hot_cache->del("unread_messages_num_user_id_" . $this->id);
+    }
+
+    function addUnreadMessagesNum()
+    {
+        $key = "unread_messages_num_user_id_" . $this->id;
+        $hot_cache = Users::getHotWriteCache();
+        $hot_cache->incr($key);
+        $hot_cache->expire($key, 30 * 86400);
     }
 }

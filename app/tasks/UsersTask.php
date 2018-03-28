@@ -539,7 +539,7 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $hi_coins = $total_amount / $rate;
+            $hi_coins = intval($total_amount * $rate * 10000)/10000;
 
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
@@ -549,14 +549,15 @@ class UsersTask extends \Phalcon\Cli\Task
                 $hi_coins = $hi_coins - $widthdraw_hi_coins;
             }
 
-            if ($hi_coins - $user->hi_coins >= 0.04) {
+            if ($hi_coins - $user->hi_coins >= 0.001) {
                 echoLine("总金额", $total_amount, "用户id", $user->id, "用户hicoins", $user->hi_coins, "hicoins", $hi_coins, "已提现", $widthdraw_hi_coins);
             } else {
                 continue;
             }
 
-            $user->hi_coins = $hi_coins;
-            $user->update();
+//            $user->hi_coins = $hi_coins;
+//            $user->update();
+
         }
     }
 
@@ -575,7 +576,6 @@ class UsersTask extends \Phalcon\Cli\Task
             $user->province_id = 0;
             $user->city_id = 0;
             $user->ip = '';
-            $user->last_at = time();
             $user->mobile = '';
             $user->device_id = 0;
             $user->push_token = '';
@@ -746,6 +746,12 @@ class UsersTask extends \Phalcon\Cli\Task
             $hi_coins = $gift_order->amount * $user->rateOfDiamondToHiCoin();
             $db->zincrby($total_key, $hi_coins * 100, $gift_order->sender_id);
             //$user->updateHiCoinRankList($gift_order->sender_id, $hi_coins);
+        }
+
+        $users = Users::findForeach(['conditions' => 'register_at>:register_at: and last_at<:last_at:',
+            'bind' => ['register_at' => beginOfDay(), 'last_at' => beginOfDay()]]);
+        foreach ($users as $user) {
+            echoLine($user->id, date('c', $user->created_at), date('c', $user->register_at), date('c', $user->last_at));
         }
     }
 }

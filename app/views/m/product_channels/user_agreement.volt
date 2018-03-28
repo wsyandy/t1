@@ -1,6 +1,9 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/privacy_agreement.css') }}
 {{ block_end() }}
+{% if isDevelopmentEnv() %}
+    <a href="weixin://">微信</a>
+{% endif %}
 <div class="agreement_box">
     <h2>{{ product_channel.name }}许可及服务协议</h2>
     <h4>1. 前言</h4>

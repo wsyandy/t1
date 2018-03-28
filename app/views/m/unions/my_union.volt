@@ -44,7 +44,11 @@
                 <div class="member_name">
                     <div class="name">
                         <span> ${president.nickname}</span>
-                        <span :class="[president.sex?'male':'female']">${president.age}</span>
+                        <span :class="[president.sex?'male':'female']">
+                        {% if president.age %}
+                            {{ president.age }}
+                        {% endif %}
+                        </span>
                         <span class="president">会长</span>
                     </div>
                     <div class="slogan">

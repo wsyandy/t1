@@ -59,6 +59,7 @@ class Products extends BaseModel
             'status_text' => $this->status_text,
             'amount' => $this->amount,
             'diamond' => $this->diamond,
+            'gold' => $this->gold,
             'product_group_name' => $this->product_group_name,
             'apple_product_no' => $this->apple_product_no
         ];

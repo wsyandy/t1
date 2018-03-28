@@ -19,9 +19,17 @@
 8. 其他用户详情页面：app://users/other_detail?user_id=xxx
 9. 新的好友列表：app://friends/new?new=1
 10. 好友列表：app://friends
+11. 消息列表页面 app://messages
+12. 聊天页面 app://messages/show?user_id=xxx&nickname=xxx&avatar_url=xxxx
 
 ## m协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
+
+## http协议
+1. 内部打开第三方h5页面 http://www.baidu.com
+
+## browser协议
+1. 外部打开第三方h5页面 browser://www.baidu.com
 
 ## h5打开app协议
    进入房间:产品code://enter_room?param1=a&param2=b 例: yuewan://enter_room?room_id=1&user_id=2

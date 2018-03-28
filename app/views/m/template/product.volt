@@ -13,12 +13,22 @@
         {% for product in products %}
             <li data-product_id="{{ product.id }}">
                 {% if (product.id == selected_product.id) %}
-                    <span class="select_color selected_color">钻石{{ product.getShowDiamond(user) }}</span>
-                    <span>¥{{ product.amount }}</span>
+                    <div class="diamond_box"><span class="select_color selected_color"><i
+                                    class="diamond_icon"></i>{{ product.getShowDiamond(user) }}</span></div>
+                    {% if product.gold and current_user.isHignVersion() %}
+                        <div class="diamond_box"><span class="select_color selected_color"><i
+                                        class="gold_icon"></i>{{ product.gold }}</span></div>
+                    {% endif %}
+                    <span class="pris">¥{{ product.amount }}</span>
                     <b class="select selected"></b>
                 {% else %}
-                    <span class="select_color">钻石{{ product.getShowDiamond(user) }}</span>
-                    <span>¥{{ product.amount }}</span>
+                    <div class="diamond_box"><span class="select_color "><i
+                                    class="diamond_icon"></i>{{ product.getShowDiamond(user) }}</span></div>
+                    {% if product.gold and current_user.isHignVersion() %}
+                        <div class="diamond_box"><span class="select_color "><i
+                                        class="gold_icon"></i>{{ product.gold }}</span></div>
+                    {% endif %}
+                    <span class="pris">¥{{ product.amount }}</span>
                     <b class="select"></b>
                 {% endif %}
             </li>

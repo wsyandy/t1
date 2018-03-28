@@ -49,7 +49,9 @@ class GiftOrders extends BaseModel
             'image_big_url' => $this->gift_image_big_url,
             'created_at_text' => $this->created_at_text,
             'user_id' => $this->user_id,
-            'sender_id' => $this->sender_id
+            'sender_id' => $this->sender_id,
+            'pay_type' => $this->pay_type,
+            'pay_type_text' => $this->getPayTypeText()
         ];
     }
 
@@ -105,7 +107,7 @@ class GiftOrders extends BaseModel
         $gift_order->gift_id = $gift->id;
         $gift_order->amount = $gift->amount * $gift_num;
         $gift_order->name = $gift->name;
-        $gift_order->pay_type = 'diamond';
+        $gift_order->pay_type = $gift->pay_type;
         $gift_order->gift_type = $gift->type;
         $gift_order->status = GIFT_ORDER_STATUS_WAIT;
         $gift_order->gift_num = $gift_num;
@@ -126,21 +128,34 @@ class GiftOrders extends BaseModel
         if ($gift_order->create()) {
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
-            $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+
+            //扣除钻石
+            if ($gift->isDiamondPayType()) {
+                $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+            } else {
+                //扣除金币
+                $result = \GoldHistories::changeBalance($gift_order->sender_id, GOLD_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+            }
 
             if ($result) {
-                //统计房间收益
-                if ($gift_order->room) {
-                    $gift_order->room->statIncome($gift_order->amount);
-                }
 
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 $gift_order->update();
 
-                \UserGifts::delay()->updateGiftNum($gift_order->id);
-                \Users::delay()->updateExperience($gift_order->id);
-                \Users::delay()->updateCharm($gift_order->id);
-                \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
+                if ($gift->isCar()) {
+                    \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
+                } else {
+                    \UserGifts::delay()->updateGiftNum($gift_order->id);
+
+                    if ($gift->isDiamondPayType()) {
+                        //座驾不增加hi币
+                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
+                    }
+                }
+
+                if ($gift->isDiamondPayType()) {
+                    $gift_order->updateUserData();
+                }
 
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
@@ -152,6 +167,19 @@ class GiftOrders extends BaseModel
 
         info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
         return false;
+    }
+
+    function updateUserData()
+    {
+        //统计房间收益
+        if ($this->room) {
+            $this->room->statIncome($this->amount);
+            //推送全局消息
+            Rooms::allNoticePush($this);
+        }
+
+        \Users::delay()->updateExperience($this->id);
+        \Users::delay()->updateCharm($this->id);
     }
 
     static function findOrderListByUser($user_id, $page, $per_page)
@@ -185,5 +213,21 @@ class GiftOrders extends BaseModel
     {
         $user = \Users::findFirstById($id);
         return $user;
+    }
+
+    function isDiamondPayType()
+    {
+        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function allNoticePushContent()
+    {
+        $user = $this->user;
+        $sender = $this->sender;
+        $gift_num = $this->gift_num;
+        $name = $this->name;
+        $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>";
+
+        return $content;
     }
 }

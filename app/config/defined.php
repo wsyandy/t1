@@ -209,6 +209,19 @@ define('WITHDRAW_TYPE_UNION', 2); //家族体现
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
 define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
+define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
+define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
+
+//礼物付费类型
+define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
+define('GIFT_PAY_TYPE_GOLD', 'gold');
+
+//礼物类型
+define('GIFT_TYPE_COMMON', 1);
+define('GIFT_TYPE_CAR', 2);
+
+define('USER_SIGN_IN_SUCCESS', 1); //已签到
+define("USER_SIGN_IN_WAIT", 2); //未签到
 
 //hi币记录
 define('HI_COIN_FEE_TYPE_RECEIVE_GIFT', 1); //接收礼物

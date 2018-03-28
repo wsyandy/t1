@@ -219,6 +219,15 @@ class RoomsController extends BaseController
                 $body = ['action' => $action, 'channel_name' => $room->channel_name, 'room_seat' => $room_seat->toSimpleJson()];
             }
 
+            if ($action == 'room_notice') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                $body = ['action' => $action, 'channel_name' => $room->channel_name, 'content' => $content];
+            }
+
             if ($action == 'hang_up') {
 
                 if (!$sender->isCalling()) {
@@ -244,7 +253,7 @@ class RoomsController extends BaseController
         }
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
-            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话'
+            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知'
         ];
         $this->view->room = $room;
     }
@@ -390,9 +399,9 @@ class RoomsController extends BaseController
 
     function autoHotAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page');
-        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+        $rooms = \Rooms::searchHotRooms($page, $per_page);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
@@ -402,7 +411,9 @@ class RoomsController extends BaseController
             }
         }
 
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->rooms = $rooms;
         $this->view->total_entries = $rooms->total_entries;
+        $this->view->hot = 1;
     }
 }

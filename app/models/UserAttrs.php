@@ -11,7 +11,7 @@ trait UserAttrs
 
     function toDetailJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
             'sex' => $this->sex,
             'province_name' => $this->province_name,
@@ -39,8 +39,24 @@ trait UserAttrs
             'im_password' => $this->im_password,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'next_level_experience' => $this->next_level_experience,
+            'id_card_auth' => $this->id_card_auth
         ];
+
+        if (isPresent($this->union)) {
+            $data['union_name'] = $this->union->name;
+        } else {
+            $data['union_name'] = '';
+        }
+
+        if (isPresent($this->experience)) {
+            $data['experience'] = $this->experience;
+        } else {
+            $data['experience'] = 0;
+        }
+
+        return $data;
     }
 
     function mergeJson()
@@ -224,6 +240,10 @@ trait UserAttrs
             $data['apply_status_text'] = $this->apply_status_text;
         }
 
+        if ($data['age'] === 0) {
+            $data['age'] = '';
+        }
+
         return $data;
     }
 
@@ -237,6 +257,36 @@ trait UserAttrs
         ];
 
         return array_merge($this->toBasicJson(), $json);
+    }
+
+    function toRankListJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'age' => $this->age,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'rank' => $this->rank,
+            'level' => $this->level,
+            'segment' => $this->segment,
+            'segment_text' => $this->segment_text
+        ];
+
+        if (isset($this->contributing_hi_conins)) {
+            $data['hi_coin'] = valueToStr($this->contributing_hi_conins);
+        }
+
+        if (isset($this->charm)) {
+            $data['charm_value'] = valueToStr($this->charm);
+        }
+
+        if (isset($this->wealth)) {
+            $data['wealth_value'] = valueToStr($this->wealth);
+        }
+
+        return $data;
     }
 
     public function isWebPlatform()
@@ -344,7 +394,7 @@ trait UserAttrs
         $birthday = $this->birthday;
 
         if (!$birthday) {
-            return '';
+            return 0;
         }
 
         $age = date("Y") - date("Y", $birthday);
@@ -611,13 +661,43 @@ trait UserAttrs
         return intval($total_amount);
     }
 
+    function getNextLevelExperience()
+    {
+        $level = $this->level;
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000,
+            10000, 11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000, 136000, 186000, 236000, 286000,
+            336000, 386000];
+
+        if ($level >= count($level_ranges) - 1) {
+            return 0;
+        }
+
+        $next_level_experience = $level_ranges[$level + 1];
+
+        return $next_level_experience;
+    }
+
+    //用户的座驾
+    function getUserCarGift()
+    {
+        $exist_user_gift = \UserGifts::findFirst(
+            ['conditions' => 'user_id = :user_id: and gift_type = :gift_type:
+         and status = :status: and expire_at > :expire_at:',
+                'bind' => ['user_id' => $this->id, 'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON, 'expire_at' => time()],
+                'order' => 'id desc'
+            ]);
+
+        return $exist_user_gift;
+    }
+
     //分成比例
     function rateOfDiamondToHiCoin()
     {
         if ($this->isIdCardAuth()) {
 
             $hour = intval(date("H"));
-            
+
             if ($hour >= 0 && $hour <= 7) {
                 return 6 / 100;
             }

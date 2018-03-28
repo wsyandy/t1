@@ -10,10 +10,10 @@ class Gifts extends BaseModel
 {
 
     //礼物支付类型
-    static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
+    static $PAY_TYPE = [GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_DIAMOND => '钻石'];
 
     //礼物类型 暂定
-    static $TYPE = [1 => '普通礼物', 2 => '座驾'];
+    static $TYPE = [GIFT_TYPE_COMMON => '普通礼物', GIFT_TYPE_CAR => '座驾'];
 
     //礼物状态
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -25,11 +25,19 @@ class Gifts extends BaseModel
     static $files = ['image' => APP_NAME . '/gifts/image/%s', 'big_image' => APP_NAME . '/gifts/big_image/%s',
         'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s'];
 
-    static function getCacheEndPoint()
+    function isDiamondPayType()
     {
-        $config = self::di('config');
-        $endpoints = $config->cache_endpoint;
-        return explode(',', $endpoints)[0];
+        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function isGoldPayType()
+    {
+        return GIFT_PAY_TYPE_GOLD == $this->pay_type;
+    }
+
+    function isCar()
+    {
+        return GIFT_TYPE_CAR == $this->type;
     }
 
     function beforeCreate()
@@ -163,7 +171,7 @@ class Gifts extends BaseModel
 
     function toSimpleJson()
     {
-        return [
+        $opts = [
             'id' => $this->id,
             'image_url' => $this->image_url,
             'image_small_url' => $this->image_small_url,
@@ -171,11 +179,21 @@ class Gifts extends BaseModel
             'name' => $this->name,
             'amount' => $this->amount,
             'pay_type' => $this->pay_type,
+            'gift_type' => $this->type,
             'dynamic_image_url' => $this->dynamic_image_url,
             'svga_image_name' => $this->svga_image_name,
             'render_type' => $this->render_type,
-            'svga_image_url' => $this->svga_image_url
+            'svga_image_url' => $this->svga_image_url,
+            'expire_day' => $this->expire_day,
+            'show_rank' => $this->show_rank,
+            'expire_time' => $this->expire_time ? $this->expire_time : 180
         ];
+
+        if (isset($this->buy_status)) {
+            $opts['buy_status'] = $this->buy_status;
+        }
+
+        return $opts;
     }
 
     function toJson()
@@ -194,7 +212,8 @@ class Gifts extends BaseModel
             'render_type' => $this->render_type,
             'svga_image_name' => $this->svga_image_name,
             'render_type_text' => $this->render_type_text,
-            'svga_image_url' => $this->svga_image_url
+            'svga_image_url' => $this->svga_image_url,
+            'show_rank' => $this->show_rank
         ];
     }
 
@@ -269,18 +288,60 @@ class Gifts extends BaseModel
      * 获取所有的有效礼物，这里先做一个限制，最多100个
      * @return PaginationModel
      */
-    static function findValidList()
+    static function findValidList($user, $opts = [])
     {
+        $gift_type = fetch($opts, 'gift_type');
+
         $conditions = [
             'conditions' => "status = :status:",
             'bind' => [
                 'status' => GIFT_STATUS_ON
             ],
             'order' => 'rank desc, amount asc'];
+
+        if ($gift_type) {
+            $conditions['conditions'] .= ' and type = :gift_type:';
+            $conditions['bind']['gift_type'] = $gift_type;
+        }
+
         $page = 1;
         $per_page = 100;
 
-        return \Gifts::findPagination($conditions, $page, $per_page);
+
+        //临时使用
+        if (!$user->isHignVersion()) {
+            $gold_gift_ids = [];
+
+            $gold_gifts = Gifts::find(
+                ['conditions' => "pay_type = :pay_type:",
+                    'bind' => ['pay_type' => GIFT_PAY_TYPE_GOLD]]);
+
+            foreach ($gold_gifts as $gold_gift) {
+                $gold_gift_ids[] = $gold_gift->id;
+            }
+
+            if (count($gold_gift_ids) > 0) {
+                $conditions['conditions'] .= " and id not in (" . implode(",", $gold_gift_ids) . ")";
+            }
+        }
+
+        $gifts = \Gifts::findPagination($conditions, $page, $per_page);
+
+        //待优化次代码
+        if (GIFT_TYPE_CAR == $gift_type) {
+
+            foreach ($gifts as $gift) {
+                $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift->id]);
+
+                if ($user_gift) {
+                    $gift->buy_status = true;
+                } else {
+                    $gift->buy_status = false;
+                }
+            }
+        }
+
+        return $gifts;
     }
 
     static function generateNotifyData($opts)
@@ -290,6 +351,7 @@ class Gifts extends BaseModel
         $user = \Users::findById($opts['user_id']);
         $sender = fetch($opts, 'sender');
         $data = [];
+
         if ($gift) {
             $data = array_merge($data, $gift->toSimpleJson());
             $data['num'] = $gift_num;
@@ -300,5 +362,10 @@ class Gifts extends BaseModel
         }
         return $data;
 
+    }
+
+    function expireAt()
+    {
+        return time() + $this->expire_time * 60;
     }
 }

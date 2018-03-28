@@ -29,7 +29,8 @@
                 </div>
                 <div class="gift_num">
                     <p><span>礼物：</span> ${gift_order.name}x${ gift_order.gift_num }</p>
-                    <p><span>价格：</span> <i></i> ${ gift_order.amount }钻石</p>
+                    <p><span>价格：</span> <i :class="[gift_order.pay_type == 'diamond'? 'diamond':'gold']"></i> ${
+                        gift_order.amount }${gift_order.pay_type_text}</p>
                 </div>
             </div>
         </div>
@@ -50,7 +51,8 @@
                 </div>
                 <div class="gift_num">
                     <p><span>礼物：</span> ${gift_order.name}x${ gift_order.gift_num }</p>
-                    <p><span>价格：</span> <i></i> ${ gift_order.amount }钻石</p>
+                    <p><span>价格：</span> <i :class="[gift_order.pay_type == 'diamond'? 'diamond':'gold']"></i> ${
+                        gift_order.amount }${gift_order.pay_type_text}</p>
                 </div>
             </div>
         </div>
