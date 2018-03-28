@@ -81,7 +81,7 @@
     {% if isAllowed('users','getui') %}
         <a href="/admin/users/getui?receiver_id={{ user.id }}" class="modal_action">发送个推消息</a><br/>
     {% endif %}
-    {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+    {% if isAllowed('users','unbind_third_account') %}
         <a href="/admin/users/unbind_third_account?id={{ user.id }}" id="unbind_third_account">解绑第三方账号</a><br/>
     {% endif %}
 {% endmacro %}
@@ -139,7 +139,7 @@
             {% if isAllowed('users','getui') %}
                 <a href="/admin/users/getui?receiver_id=${ user.id }" class="modal_action">发送个推消息</a><br/>
             {% endif %}
-            {% if isAllowed('users','unbind_third_account') and isDevelopmentEnv() %}
+            {% if isAllowed('users','unbind_third_account') %}
                 <a href="/admin/users/unbind_third_account?id=${ user.id }" id="unbind_third_account">解绑第三方账号</a><br/>
             {% endif %}
         </td>

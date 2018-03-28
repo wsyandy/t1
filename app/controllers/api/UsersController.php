@@ -263,10 +263,8 @@ class UsersController extends BaseController
                 return $this->renderJSON($error_code, $error_reason);
             }
 
-            if (isDevelopmentEnv()) {
-                //第一次注册 跳转更新资料
-                $error_url = 'app://users/update_info';
-            }
+            //第一次注册 跳转更新资料
+            $error_url = 'app://users/update_info';
         }
 
         if (!$user) {
@@ -309,7 +307,7 @@ class UsersController extends BaseController
 
         $user = $this->currentUser();
         $user->sid = $user->generateSid('d.');
-        if(!$user->isBlocked()){
+        if (!$user->isBlocked()) {
             $user->user_status = USER_STATUS_LOGOUT;
         }
         $user->update();
