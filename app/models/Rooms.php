@@ -1530,18 +1530,16 @@ class Rooms extends BaseModel
     //全服通知
     static function allNoticePush($gift_order)
     {
-        if (isDevelopmentEnv()) {
 
-            $opts = ['room_id' => $gift_order->room_id];
+        $opts = ['room_id' => $gift_order->room_id];
 
-            if ($gift_order->amount >= 1000) {
-                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
-            }
+        if ($gift_order->amount >= 1000) {
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        }
 
-            if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
-                $opts['hot'] = 1;
-                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
-            }
+        if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
+            $opts['hot'] = 1;
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
         }
     }
 }
