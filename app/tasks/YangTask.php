@@ -470,20 +470,26 @@ class YangTask extends \Phalcon\Cli\Task
 
         $db = Users::getUserDb();
 
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+
+        $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
+        $total_key = "total_wealth_rank_list";
+
+        $start_at = beginOfDay($start);
+        $end_at = endOfDay($end);
+
+        $db->zclear($week_key);
+        $db->zclear("total_wealth_rank_list_");
+
         foreach ($gift_orders as $gift_order) {
+
             if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
                 continue;
             }
 
             $sender_id = $gift_order->sender_id;
             $wealth = $gift_order->amount;
-
-
-            $day_key = "day_wealth_rank_list_" . date("Ymd");
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
-            $total_key = "total_wealth_rank_list_";
 
 
             if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {

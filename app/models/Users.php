@@ -2689,7 +2689,7 @@ class Users extends BaseModel
             $start = date("Ymd", strtotime("last sunday next day", time()));
             $end = date("Ymd", strtotime("next monday", time()) - 1);
             $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-            $total_key = "total_" . $field . "_rank_list_";
+            $total_key = "total_" . $field . "_rank_list";
 
             $db->zincrby($day_key, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
@@ -2708,7 +2708,7 @@ class Users extends BaseModel
         $total_rank = $user->myfieldRank('total', $field);
 
         $db->zadd("last_day_" . $field . "_rank_list", $day_rank, $user_id);
-        $db->zadd("last_weeK_" . $field . "_rank_list", $week_rank, $user_id);
+        $db->zadd("last_week_" . $field . "_rank_list", $week_rank, $user_id);
         $db->zadd("last_total_" . $field . "_rank_list", $total_rank, $user_id);
     }
 
@@ -2755,7 +2755,7 @@ class Users extends BaseModel
                 break;
             }
             case 'total': {
-                $key = "total_" . $field . "_rank_list_";
+                $key = "total_" . $field . "_rank_list";
                 break;
             }
             default:
