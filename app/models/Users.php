@@ -186,6 +186,17 @@ class Users extends BaseModel
         }
     }
 
+    function isStableVersion()
+    {
+        $product_channel = $this->product_channel;
+
+        if ($this->isIos()) {
+            return $this->version_code >= $product_channel->apple_stable_version;
+        }
+
+        return $this->version_code >= $product_channel->android_stable_version;
+    }
+
     //统计用户在房间时间
     function statRoomTime()
     {
@@ -2524,6 +2535,8 @@ class Users extends BaseModel
                     Unions::delay()->updateFameValue($charm_value, $union->id);
                 }
             }
+
+            $user->update();
         }
 
         unlock($lock);
