@@ -1360,6 +1360,7 @@ class MeiTask extends \Phalcon\Cli\Task
             $user_gift->pay_type = $gift->pay_type;
             $user_gift->gift_type = $gift->type;
             $user_gift->status = STATUS_ON;
+            $user_gift->expire_at = time() + 86400 * 365;
             $user_gift->save();
 
             Rooms::addWaitEnterSilentRoomList($user->id);
