@@ -180,6 +180,20 @@
         segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
         (例:星耀1 starshine1;星耀王者2 king2)
         segment_text 段位文本 星耀1
+        user_car_gift: {
+            name: ''
+            image_url: ''
+            image_small_url: ''
+            image_big_url: ''
+            dynamic_image_url: ''
+            svga_image_name: svga 对应zip包中的图片名称
+            render_type 渲染类型 gif svga
+            svga_image_url svga 图片
+            show_rank int 礼物展示排序
+            expire_time int 礼物过期时间
+            gift_type 1 普通礼物 2 座驾
+            notice_content 进房间提示文案
+        }
     }
 ```  
   
