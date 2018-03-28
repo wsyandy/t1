@@ -108,7 +108,7 @@ class Payments extends BaseModel
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
             $fee = 1 - (double)($this->payment_channel->fee);
             $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
-            info($this->id,$this->payment_type, $fee, $this->amount, $this->paid_amount);
+            info($this->id, $this->payment_type, $fee, $this->amount, $this->paid_amount);
         }
     }
 
@@ -129,6 +129,7 @@ class Payments extends BaseModel
 
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = $this->paid_amount;
+            info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount);
             \Stats::delay()->record("user", "payment_success", $attrs);
             return;
         }
