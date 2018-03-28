@@ -128,10 +128,10 @@ class Users extends BaseModel
             $this->updateLastAt();
 
             //好友上线提醒(每小时选取最新的一个好友上线提醒)
-            $this->pushFriendOnlineRemind();
+//            $this->pushFriendOnlineRemind();
 
             //关注的人上线提醒(每小时选取最新关注的人上线提醒)
-            $this->pushFollowedOnlineRemind();
+//            $this->pushFollowedOnlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
