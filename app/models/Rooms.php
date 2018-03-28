@@ -1457,7 +1457,7 @@ class Rooms extends BaseModel
     function pushRoomNoticeMessage($content, $client_url = '')
     {
         $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
-        info($body);
+        info($body, $this->id);
         $this->push($body);
     }
 
