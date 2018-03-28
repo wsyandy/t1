@@ -1625,10 +1625,12 @@ class Users extends BaseModel
                 if ($geo_distance < 1000) {
                     $geo_distance = intval($geo_distance);
                     $user->distance = $geo_distance . 'm';
-                } else {
                     if ($geo_distance < 200) {
                         $user->distance = '附近';
                     }
+                }else{
+                    $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
+                    $user->distance = $geo_distance . 'km';
                 }
 
                 info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
@@ -1639,6 +1641,7 @@ class Users extends BaseModel
                 if ($geo_distance < 0.01) {
                     $geo_distance = 0.01;
                 }
+
                 $user->distance = $geo_distance . 'km';
 
                 info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
