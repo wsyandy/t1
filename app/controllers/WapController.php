@@ -257,31 +257,15 @@ class WapController extends \ApplicationController
     function semAction()
     {
         $soft_version_id = $this->params('id');
-        $pic_id = $this->params('pic_id', 0);
 
         $soft_version = \SoftVersions::findFirstById($soft_version_id);
         if (!$soft_version) {
             return false;
         }
-        $fr = $this->params('fr');
-        if (!$fr) {
-            $fr = $soft_version->built_in_fr;
-        }
 
-        $product_channel_name = $soft_version->product_channel->name;
-        if ($soft_version_id == 426) {
-            $product_channel_name = '极速借款';
-        }
-
-        $this->view->fr = $fr;
         $this->view->download_url = $this->downloadUrl($soft_version_id);
-        $this->view->pic_id = $pic_id;
         $this->view->soft_version = $soft_version;
         $this->view->product_channel = $soft_version->product_channel;
-        $this->view->product_channel_name = $product_channel_name;
-        if ($pic_id > 4) {
-            $this->pick("wap/sem{$pic_id}");
-        }
     }
 
     function smsSemAction()

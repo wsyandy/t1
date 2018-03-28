@@ -1,0 +1,223 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    font-size: calc(100vw / 10.8);
+    background-color: #febcc8;
+
+}
+body {
+    color: #333;
+    font-family: HYe2gj;
+    width: 100%;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+/*****指引******/
+
+
+
+.bg{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+}
+.expand_hi{
+    width: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+    background-image: url("../images/bg.png");
+    background-position: center center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+}
+.expand_head{
+    position: relative;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    width: 100%;
+    padding:  0.4rem;
+
+}
+.expand_logo{
+    width: 0.82rem;
+    height: 0.82rem;
+}
+.expand_head_text{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-justify-content: center;
+    justify-content: center;
+    padding-left: 0.1rem;
+}
+.expand_head_tit{
+    padding: 0;
+    font-size: 0.5rem;
+    line-height: 0.5rem;
+    color: #1F0D57;
+    font-weight: 900;
+}
+.expand_head_txt{
+    padding:0;
+    font-size: 0.26rem;
+    color: #1F0D57;
+    overflow: hidden;
+}
+
+
+.expand_list{
+    width:100%;
+    height: 5rem;
+    position: relative;
+    margin:0 auto;
+}
+/*娱乐房间*/
+.expand_left_1{
+    position: absolute;
+    width: 6.52rem;
+    height: 3.76rem;
+    top:0;
+    left: 0.68rem;
+}
+.expand_left_1_img{
+    width: 6.52rem;
+    height: 3.76rem;
+    position: absolute;
+    top:1.5rem;
+    left: 0;
+}
+.expand_left_1_txt{
+    position: absolute;
+    top:3rem;
+    left: 0.42rem;
+    font-size: 0.44rem;
+    color: #333333;
+    letter-spacing: 2px;
+}
+
+.expand_right_1{
+    width: 3.8rem;
+    height: 4.76rem;
+    position: absolute;
+    right:0;
+    top: 0;
+}
+.expand_right_1_img{
+    width: 3.8rem;
+    height: 4.76rem;
+    position: absolute;
+    right:0.68rem;
+    top: 0;
+}
+/*开黑语音*/
+.expand_left_2_img{
+    width: 4.96rem;
+    height: 5.6rem;
+    position: absolute;
+    left:0;
+    top: 0;
+}
+.expand_right_2_img{
+    width: 4.92rem;
+    height: 3.64rem;
+    position: absolute;
+    right:0;
+    top: 0.76rem;
+}
+.expand_left_2{
+    position: absolute;
+    right:0;
+    top:0;
+    width: 4.89rem;
+    height: 3.63rem;
+}
+.expand_left_2_txt{
+    position: absolute;
+    top:2.4rem;
+    left: 0;
+    font-size: 0.44rem;
+    color: #333333;
+    letter-spacing: 2px;
+}
+
+/*女神直播*/
+.expand_right_3_img{
+    width: 5.38rem;
+    height: 6.5rem;
+    position: absolute;
+    right:0.68rem;
+    top: -0.76rem;
+}
+.ico_circle{
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    left:0.3rem;
+    top: 4.5rem;
+}
+.btn{
+    width: 8.06rem;
+    height: 1.5rem;
+    position: relative;
+    margin:0.6rem auto ;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    align-items: center;
+
+}
+.btn_bg{
+    width: 8.06rem;
+    height: 1.5rem;
+    position: absolute;
+    left:0;
+    top: 0;
+}
+.btn_txt{
+    position: relative;
+    font-family: PingFangSC-Regular;
+    font-size: 0.5rem;
+    color: #FFFFFF;
+    letter-spacing: 2px;
+}
