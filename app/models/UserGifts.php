@@ -138,6 +138,11 @@ class UserGifts extends BaseModel
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
+        if ($gift_order->sender_id != $gift_order->user_id) {
+            $content = $gift_order->sender->nickname . "送您了一个炫酷的" . $gift_order->name . "座驾给你快去车库查看,君临各大房间吧~ ";
+            Chats::sendTextSystemMessage($gift_order->user_id, $content);
+        }
+
         unlock($lock);
         return $user_gift;
     }
