@@ -194,10 +194,27 @@ class UserGifts extends BaseModel
             'status' => $this->status,
             'expire_time' => $this->gift->expire_time,
             'gift_type' => $this->gift_type,
-            'notice_content' => "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname .
-                "</span><span style = 'color: white' >" . "骑着" . "</span ><b style = 'color: white' >" . $this->gift_name .
-                "</b ><span style = 'color: white' > 进来了</span ></p >"
+            'notice_content' => $this->notice_content
         ];
+    }
+
+    function getNoticeContent()
+    {
+        $text_content = $this->text_content;
+
+        if (isBlank($text_content)) {
+            return "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname .
+            "</span><span style = 'color: white' >" . "骑着" . "</span ><b style = 'color: white' >" . $this->gift_name .
+            "</b ><span style = 'color: white' > 进来了</span ></p >";
+        }
+
+        $user_name = "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname . "</span><span style = 'color: white' >";
+
+        $gift_name = "</b ><span style = 'color: white' >" . $this->gift_name . "</b ><span style = 'color: white' >";
+
+        $data = str_replace(['%user_name%', '%gift_name%'], [$user_name, $gift_name,], $text_content);
+
+        return $data . "</span ></p >";
     }
 
     function expireDay()

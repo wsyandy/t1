@@ -1,5 +1,5 @@
 {% set f = simple_form(['admin', gift],['method':'post', 'class':'ajax_model_form', 'model': 'gift',
-    'enctype': 'multipart/form-data']) %}
+'enctype': 'multipart/form-data']) %}
 
 {{ f.input('name',['label': '名称', 'width':'50%']) }}
 {{ f.input('amount',['label': '金额',  'width':'50%']) }}
@@ -15,6 +15,7 @@
 {{ f.file('big_image', ['label': '大图',  'width':'50%']) }}
 {{ f.file('dynamic_image', ['label': 'gif动态图', 'width':'50%']) }}
 {{ f.file('svga_image', ['label': 'svga动态图', 'width':'50%']) }}
+{{ f.textarea('text_content',['label': '文本内容(昵称:%user_name%;礼物:%gift_name%)'|e ]) }}
 
 {{ f.submit('保存') }}
 
