@@ -227,9 +227,9 @@ class UsersController extends BaseController
         $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_id, $third_name);
         if($user){
             info($user->id, $form);
-            $user->third_unionid = $third_unionid;
-            $user->save();
-            return $user;
+//            $user->third_unionid = $third_unionid;
+//            $user->save();
+//            return $user;
         }
 
         return null;
