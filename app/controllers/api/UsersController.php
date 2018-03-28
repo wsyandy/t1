@@ -74,6 +74,11 @@ class UsersController extends BaseController
             return $this->renderJSON($error_code, $error_reason);
         }
 
+        if ($user->isBlocked()) {
+            info("block_user_login", $user->sid);
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+        }
+
         list($error_code, $error_reason) = $user->clientLogin($context, $device);
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
@@ -302,7 +307,9 @@ class UsersController extends BaseController
 
         $user = $this->currentUser();
         $user->sid = $user->generateSid('d.');
-        $user->user_status = USER_STATUS_LOGOUT;
+        if(!$user->isBlocked()){
+            $user->user_status = USER_STATUS_LOGOUT;
+        }
         $user->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $user->sid]);
