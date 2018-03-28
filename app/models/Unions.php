@@ -700,10 +700,6 @@ class Unions extends BaseModel
 
         $rank = $offset + 1;
         foreach ($unions as $union) {
-            if ($union->status != STATUS_ON) {
-                continue;
-            }
-
             $union->fame_value = $fame_values[$union->id];
             $union->rank = $rank;
             $rank += 1;
