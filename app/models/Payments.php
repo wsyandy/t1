@@ -103,6 +103,14 @@ class Payments extends BaseModel
         return $result;
     }
 
+    function beforeUpdate()
+    {
+        if ($this->hasChanged('pay_status') && $this->isPaid()) {
+            $fee = 1 - (double)($this->payment_channel->fee);
+            $this->paid_amount = sprintf("%0.2f", ($this->amount * $fee));
+        }
+    }
+
     function afterUpdate()
     {
         if ($this->hasChanged('pay_status') && $this->isPaid()) {
@@ -114,7 +122,7 @@ class Payments extends BaseModel
                 return;
             }
 
-            if(!$this->paySuccess()){
+            if (!$this->paySuccess()) {
                 return;
             }
 
@@ -141,9 +149,9 @@ class Payments extends BaseModel
         }
 
         $product = $order->product;
-        $opts = ['order_id' => $order->id, 'remark' => '购买'.$product->full_name, 'mobile' => $order->mobile];
+        $opts = ['order_id' => $order->id, 'remark' => '购买' . $product->full_name, 'mobile' => $order->mobile];
         AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
-        if($product->gold){
+        if ($product->gold) {
             GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
         }
 
@@ -154,12 +162,6 @@ class Payments extends BaseModel
     function getCnyAmount()
     {
         return $this->amount;
-
-//        $fee = 1 - (double)($this->payment_channel->fee);
-//        $paid_amount = sprintf("%0.2f", ($this->amount * $fee));
-//        info($this->id,$this->payment_type, $fee, $this->amount, $paid_amount);
-//
-//        return $paid_amount;
     }
 
 }
