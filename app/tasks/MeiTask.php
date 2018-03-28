@@ -1335,7 +1335,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function enterAction()
     {
-        $user = Users::findFirstById(196);
+        $user = Users::findFirstById(52);
         $room = $user->room;
 
         $users = $room->selectSilentUsers(2);

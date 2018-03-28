@@ -1481,8 +1481,16 @@ class Rooms extends BaseModel
         return false;
     }
 
-    function pushRoomNoticeMessage($content, $client_url = '')
+    function pushRoomNoticeMessage($content, $opts = [])
     {
+        $room_id = fetch($opts, 'room_id');
+        $client_url = '';
+
+        //当前房间不带client_url
+        if ($room_id != $this->id) {
+            $client_url = 'app://m/rooms/detail?id=' . $room_id;
+        }
+
         $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content
             , 'client_url' => $client_url];
 
@@ -1494,7 +1502,6 @@ class Rooms extends BaseModel
     //全服通知
     static function asyncAllNoticePush($content, $opts = [])
     {
-        $client_url = fetch($opts, 'client_url');
         $hot = fetch($opts, 'hot');
         $room_id = fetch($opts, 'room_id');
 
@@ -1504,7 +1511,7 @@ class Rooms extends BaseModel
 
             //热门房间单独推送
             if (!$room->isInHotList()) {
-                $room->pushRoomNoticeMessage($content, $client_url);
+                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
             }
 
             $rooms = Rooms::searchHotRooms(1, 100);
@@ -1515,7 +1522,7 @@ class Rooms extends BaseModel
         }
 
         foreach ($rooms as $room) {
-            $room->pushRoomNoticeMessage($content, $client_url);
+            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
         }
     }
 
@@ -1524,13 +1531,7 @@ class Rooms extends BaseModel
     {
         if (isDevelopmentEnv()) {
 
-            $client_url = '';
-
-            if (!$gift_order->room->lock) {
-                $client_url = "app://rooms/detail?id=" . $gift_order->room_id;
-            }
-
-            $opts = ['client_url' => $client_url];
+            $opts = ['room_id' => $gift_order->room_id];
 
             if ($gift_order->amount >= 1000) {
                 Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
@@ -1538,7 +1539,6 @@ class Rooms extends BaseModel
 
             if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
                 $opts['hot'] = 1;
-                $opts['room_id'] = $gift_order->room_id;
                 Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
             }
         }
