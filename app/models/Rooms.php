@@ -944,7 +944,7 @@ class Rooms extends BaseModel
         $user_car_gift = $user->getUserCarGift();
 
         if ($user_car_gift) {
-            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+            $body['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
 
         $this->push($body);
