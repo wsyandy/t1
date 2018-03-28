@@ -69,11 +69,11 @@ function mbStrSplit($str)
 function beginOfWeek()
 {
     $start = date("Ymd", strtotime("last sunday next day", time()));
-    return beginOfDay($start);
+    return beginOfDay(strtotime($start));
 }
 
 function endOfWeek()
 {
     $end = date("Ymd", strtotime("next monday", time()) - 1);
-    return endOfDay($end);
+    return endOfDay(strtotime($end));
 }
