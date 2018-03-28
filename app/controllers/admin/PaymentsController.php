@@ -55,7 +55,6 @@ class PaymentsController extends BaseController
         $payment = \Payments::findById($this->params('id'));
         if ($payment) {
             $this->assign($payment, 'payment');
-            $payment->paid_amount = $payment->getCnyAmount();
             \OperatingRecords::logBeforeUpdate($this->currentOperator(), $payment);
             if ($payment->update()) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('payment' => $payment->toJson()));
