@@ -7,11 +7,21 @@
         <div class="img">
             <img src="{{ user.avatar_small_url }}">
         </div>
-        {% if user.sex %}
-            <h3>{{ user.nickname }} <span class="men">{{ user.age }}</span></h3>
-        {% else %}
-            <h3>{{ user.nickname }} <span class="women">{{ user.age }}</span></h3>
-        {% endif %}
+        <h3>{{ user.nickname }}
+            {% if user.sex %}
+                <span class="men">
+                    {% if user.age %}
+                        {{ user.age }}
+                    {% endif %}
+                </span>
+            {% else %}
+                <span class="women">
+                    {% if user.age %}
+                        {{ user.age }}
+                    {% endif %}
+                </span>
+            {% endif %}
+        </h3>
         <div class="love_wealth">
             <span>魅力值：{{ user.charm_value }}</span>
             <span>财富值：{{ user.wealth_value }}</span>
