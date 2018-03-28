@@ -146,8 +146,11 @@ class GiftOrders extends BaseModel
                     \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
                 } else {
                     \UserGifts::delay()->updateGiftNum($gift_order->id);
-                    //座驾不增加hi币
-                    \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
+
+                    if ($gift->isDiamondPayType()) {
+                        //座驾不增加hi币
+                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
+                    }
                 }
 
                 if ($gift->isDiamondPayType()) {
