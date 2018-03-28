@@ -1430,7 +1430,7 @@ class Rooms extends BaseModel
         $total_entries = $hot_cache->zcard($hot_room_list_key);
 
         $offset = $per_page * ($page - 1);
-        if($offset > $total_entries - 1){
+        if ($offset > $total_entries - 1) {
             $offset = $total_entries - 1;
         }
 
@@ -1462,8 +1462,11 @@ class Rooms extends BaseModel
 
     function pushRoomNoticeMessage($content, $client_url = '')
     {
-        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content];
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content
+            , 'client_url' => $client_url];
+
         info($body, $this->id, $this->user->sid);
+
         $this->push($body);
     }
 
