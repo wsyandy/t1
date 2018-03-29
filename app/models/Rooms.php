@@ -1543,19 +1543,24 @@ class Rooms extends BaseModel
             $min_amount = 500;
         }
 
+        $push = false;
+
         if ($gift_order->amount >= $max_amount) {
             $expire_time = 10;
+            $push = true;
         }
 
         if ($gift_order->amount >= $min_amount && $gift_order->amount < $max_amount) {
             $opts['hot'] = 1;
             $expire_time = 6;
+            $push = true;
         }
 
         $opts['expire_time'] = $expire_time;
 
-        info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount);
-
-        //Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        if ($push) {
+            info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount, $opts);
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        }
     }
 }
