@@ -181,9 +181,13 @@ class Partners extends BaseModel
             // 重新优化配置
             $akey_xianjinzhijia = 'MjM5NDUxMjE=';
             $akey_money = 'MjM4MzQ5OTg=';
+            $akey_yuewan = 'MjUzNDA4Mzk=';
+
             $code = fetch($data, 'code');
             if ($code == 'money') {
                 $akey = $akey_money;
+            } elseif ($code == 'yuewan') {
+                $akey = $akey_yuewan;
             } else {
                 $akey = $akey_xianjinzhijia;
             }

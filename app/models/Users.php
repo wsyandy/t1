@@ -142,9 +142,11 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('register_at') && $this->register_at) {
+        if ($this->hasChanged('register_at') && $this->register_at
+            && ($this->hasChanged('mobile') || $this->hasChanged('third_unionid'))) {
             $this->registerStat();
             $this->createEmUser();
+            info('user_register', $this->id, $this->register_at, $this->mobile, $this->third_unionid);
         }
 
 //        // 手机注册
