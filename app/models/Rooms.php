@@ -1554,6 +1554,8 @@ class Rooms extends BaseModel
 
         $opts['expire_time'] = $expire_time;
 
+        info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount);
+
         Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
     }
 }
