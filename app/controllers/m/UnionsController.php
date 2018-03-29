@@ -123,8 +123,16 @@ class UnionsController extends BaseController
     function myUnionAction()
     {
         $union_id = $this->params('union_id');
+        $sid = $this->params('sid');
+        $code = $this->params('code');
+
         $union = \Unions::findFirstById($union_id);
         $president = $union->user;
+
+        if ($union->id != $this->currentUser()->union_id) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
         $user = $this->currentUser();
         if ($union && $union->user_id == $user->id) {
             $is_president = 1;
@@ -140,8 +148,8 @@ class UnionsController extends BaseController
         } else {
             $this->view->title = $union->name;
         }
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
     //其他家族
