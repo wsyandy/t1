@@ -244,6 +244,23 @@ table { border-collapse:collapse; }
   font-size: 18px;
   color: #FFFFFF;
 }
+.get_hi_coin_btn{
+  margin-top: 30px;
+  padding:10px 15px;
+  text-align: center;
+}
+.get_hi_coin_btn a{
+  display: block;
+  height: 44px;
+  line-height: 44px;
+  text-align: center;
+  background: #ffffff;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  border-radius: 50px;
+  font-size: 18px;
+  color: #554C83;
+}
 .money_btn{
   margin-top: 16px;
   text-align: center;
