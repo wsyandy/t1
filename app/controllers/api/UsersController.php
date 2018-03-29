@@ -654,7 +654,7 @@ class UsersController extends BaseController
             $changed_rank = 0;
 
             if ($last_rank) {
-                $changed_rank = $current_rank - $last_rank;
+                $changed_rank = $last_rank - $current_rank;
             }
 
             $res['current_rank'] = $current_rank;
@@ -690,7 +690,7 @@ class UsersController extends BaseController
             $changed_rank = 0;
 
             if ($last_rank) {
-                $changed_rank = $current_rank - $last_rank;
+                $changed_rank = $last_rank - $current_rank;
             }
 
             $res['current_rank'] = $current_rank;
