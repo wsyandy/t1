@@ -48,7 +48,7 @@ class SwooleServices extends \BaseModel
                 'reactor_num' => self::config('websocket_reactor_num'),
                 'heartbeat_check_interval' => 10, //10秒检测一次
                 'task_worker_num' => self::config('websocket_task_worker_num'),
-                'heartbeat_idle_time' => 40, //20秒未向服务器发送任何数据包,此链接强制关闭
+                'heartbeat_idle_time' => 50, //50秒未向服务器发送任何数据包,此链接强制关闭
                 //'task_worker_num' => 8
             ]
         );
