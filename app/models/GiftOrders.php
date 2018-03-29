@@ -126,7 +126,7 @@ class GiftOrders extends BaseModel
         }
 
         if ($gift_order->create()) {
-            $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费钻石' . $gift_order->amount;
+            $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费' . $gift_order->pay_type_text . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
 
             //扣除钻石
@@ -173,7 +173,7 @@ class GiftOrders extends BaseModel
     {
         //统计房间收益
         if ($this->room) {
-            
+
             if (!$this->gift->isCar()) {
                 $this->room->statIncome($this->amount);
             }
