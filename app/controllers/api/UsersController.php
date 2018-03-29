@@ -214,7 +214,7 @@ class UsersController extends BaseController
     function fixLogin($third_name, $form)
     {
 
-        if ($third_name != 'qq' || $this->currentUser()->created_at > strtotime('2018-03-29 01:30:00')) {
+        if ($third_name != 'qq') {
             return null;
         }
 
@@ -661,7 +661,7 @@ class UsersController extends BaseController
             $res['changed_rank'] = $changed_rank;
 
             debug($current_rank, $last_rank);
-            
+
             $user->saveLastFieldRankList($list_type, 'charm', $current_rank);
         }
 
