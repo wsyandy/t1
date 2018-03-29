@@ -2725,7 +2725,7 @@ class Users extends BaseModel
         $rank = $db->zrrank($key, $this->id);
 
         if ($is_last == true && is_null($rank)) {
-            return $rank;
+            return intval($rank);
         }
 
         if (is_null($rank)) {
