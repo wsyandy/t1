@@ -44,7 +44,7 @@ i,em
     font-style: normal;
 }
 h1,h2,h3,h4{
-	font-weight: normal;
+    font-weight: normal;
 }
 .get_out_btn {
     margin-top: 20px;
@@ -53,6 +53,8 @@ h1,h2,h3,h4{
 .get_out_btn a {
     display: block;
     background: #FFFFFF;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
     border-radius: 25px;
     height: 49px;
     line-height: 49px;
@@ -66,19 +68,19 @@ h1,h2,h3,h4{
 }
 /*举报*/
 .jubao_top{
-	font-size: 14px;
-	color: #767676;
-	padding:12px 15px;
+    font-size: 14px;
+    color: #767676;
+    padding:12px 15px;
 }
 .jubao_list{
-	background: #fff;
-	padding-left: 15px;
+    background: #fff;
+    padding-left: 15px;
 }
 .jubao_list ul li{
-	padding:16px 0;
-	font-size: 15px;
-	color: #464646;
-	border-bottom: 1px solid #F3F3F3;
+    padding:16px 0;
+    font-size: 15px;
+    color: #464646;
+    border-bottom: 1px solid #F3F3F3;
     overflow:hidden;
 }
 .jubao_list ul li span{
@@ -91,19 +93,24 @@ h1,h2,h3,h4{
     float: right;
     margin-right: 15px;
     background: url(../images/select.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
 }
 .jubao_list ul li:last-child{
     border:0;
 }
 .jb_selected{
-	background: url(../images/selected.png) no-repeat !important;
+    background: url(../images/selected.png) no-repeat !important;
+    -webkit-background-size: 100% 100% !important;
+    -moz-background-size: 100% !important;
+    -o-background-size: 100% !important;
     background-size: 100% !important;
 }
 .jubao_btn{
-	margin-top: 60px;
+    margin-top: 60px;
 }
-
 
 
 

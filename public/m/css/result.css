@@ -44,25 +44,25 @@ i,em
     font-style: normal;
 }
 h1,h2,h3,h4{
-	font-weight: normal;
+    font-weight: normal;
 }
 /*客服中心css*/
 .pay_state{
-	margin:40% 3.2% 0 3.2%;
-	text-align: center;
+    margin:40% 3.2% 0 3.2%;
+    text-align: center;
 }
 .pay_state img{
-	display: block;
-	width: 80%;
-	margin:0 auto;
+    display: block;
+    width: 80%;
+    margin:0 auto;
 }
 .pay_state h3{
-	font-size: 15px;
-	color: #505050;
-	margin-top: 20px;
+    font-size: 15px;
+    color: #505050;
+    margin-top: 20px;
 }
 .pay_state p{
-	font-size: 13px;
-	color: #969696;
-	margin-top: 10px;
+    font-size: 13px;
+    color: #969696;
+    margin-top: 10px;
 }

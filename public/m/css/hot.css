@@ -11,7 +11,15 @@
 
 .hot_box ul li {
     padding: 0.3rem 0.3rem 0.3rem 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     border-bottom: 1px solid #E7E7E7;
 }
@@ -28,6 +36,10 @@
 }
 
 .hot_box ul li input {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
     font-size: 0.3rem;
     /*color: #C6C6C6;*/
@@ -45,9 +57,23 @@
     width: 6.9rem;
     height: 0.88rem;
     background-color: #FDC8DA;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -93,6 +119,10 @@
 }
 
 .hot_time_box .time_list {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
 }
 
@@ -117,13 +147,25 @@
 }
 
 .hot_time_box .time_list .time_min {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
     height: 4.56rem;
     overflow-y: scroll;
 }
 
 .hot_time_box .time_list .time_min li {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     height: 0.76rem;
     border-bottom: 1px solid #E9E9E9;
@@ -146,6 +188,9 @@
     width: 0.25rem;
     height: 0.22rem;
     background: url(../images/time_min_selected.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
     margin-left: 0.71rem;
     left: 2rem;
@@ -156,7 +201,6 @@
     -webkit-transform: translateY(-50%);
     -o-transform: translateY(-50%);
 }
-
 
 
 

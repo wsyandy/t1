@@ -2,7 +2,7 @@
 body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td { margin:0; padding:0; }
 html {height:100%;width:100%;}
 body { background:#f6f6f6;color:#000; font-family:PingFangSC-Regular,"微软雅黑";width:100%;
-height: 100%;}
+  height: 100%;}
 td,th,caption { font-size:12px; }
 h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
 address, caption, cite, code, dfn, em, strong, th, var { font-style:normal; font-weight:normal;}
@@ -16,6 +16,7 @@ table { border-collapse:collapse; }
 /* 单行文字超长隐藏 */
 .line_hide{
   overflow: hidden;
+  -o-text-overflow:ellipsis;
   text-overflow:ellipsis;
   white-space: nowrap;
 }
@@ -55,15 +56,41 @@ table { border-collapse:collapse; }
 .get_details_ul li{
   height: 65px;
   padding:0 15px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -moz-box-orient: vertical;
+  -moz-box-direction: normal;
+  -ms-flex-direction: column;
   flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
   background-color: #fff;
   border-bottom: 1px solid #f3f3f3;
 }
 .get_details_ul .top,.get_details_ul .bottom{
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
 }
 .get_details_ul .top p{
@@ -105,7 +132,15 @@ table { border-collapse:collapse; }
 }
 .get_money_wrap .money_num{
   border-bottom: 1px solid #F3F3F3;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   padding: 12px 0;
 }
@@ -114,6 +149,10 @@ table { border-collapse:collapse; }
   color: #333333;
 }
 .get_money_wrap .money_num input{
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -moz-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   font-size: 24px;
   color: #333333;
@@ -127,7 +166,15 @@ table { border-collapse:collapse; }
 }
 .get_money_input ul li{
   height: 50px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   padding-right: 15px;
   border-bottom: 1px solid #F3F3F3;
@@ -142,6 +189,10 @@ table { border-collapse:collapse; }
   border:0;
 }
 .get_money_input ul li input{
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -moz-box-flex: 1;
+  -ms-flex: 1;
   flex: 1;
   min-width: 144px;
   font-size: 15px;
@@ -164,6 +215,9 @@ table { border-collapse:collapse; }
   width: 15px;
   height: 15px;
   background: url(../images/warn.png) no-repeat;
+  -webkit-background-size: 100% 100%;
+  -moz-background-size: 100%;
+  -o-background-size: 100%;
   background-size: 100%;
   left: 0;
   top: 50%;
@@ -184,6 +238,8 @@ table { border-collapse:collapse; }
   line-height: 44px;
   text-align: center;
   background: #F45189;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
   border-radius: 50px;
   font-size: 18px;
   color: #FFFFFF;
@@ -233,30 +289,3 @@ table { border-collapse:collapse; }
   width:25px;
   height:25px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
