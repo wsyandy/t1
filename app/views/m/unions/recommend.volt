@@ -28,8 +28,8 @@
                     </div>
                 </div>
                 <div class="list_right">
-                    <span class="family_number">${ item.user_num } </span>
-                    <span class="family_member">成员 </span>
+                    <p class="family_number">${ item.user_num } </p>
+                    <p class="family_member">成员 </p>
                 </div>
             </li>
         </ul>
@@ -112,9 +112,9 @@
 
     $(function () {
         $(window).scroll(function () {
-            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
-                vm.list();
-            }
+            // if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+            //     vm.list();
+            // }
         });
     });
 </script>

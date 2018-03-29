@@ -53,6 +53,8 @@ h1,h2,h3,h4{
 .get_out_btn a {
   display: block;
   background: #FFFFFF;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
   border-radius: 25px;
   height: 49px;
   line-height: 49px;
@@ -90,7 +92,6 @@ h1,h2,h3,h4{
 .jubao_btn{
   margin-top: 60px;
 }
-
 
 
 

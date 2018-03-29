@@ -89,3 +89,20 @@ function endOfWeek()
     $end = date("Ymd", strtotime("next monday", time()) - 1);
     return endOfDay(strtotime($end));
 }
+
+function paramsToStr($params)
+{
+
+    $kv = [];
+    foreach ($params as $k => $v) {
+        if (in_array($k, ['_url', 'h', 'file'])) {
+            continue;
+        }
+        $kv[] = $k . '=' . $v;
+    }
+
+    sort($kv);
+    $source = implode('&', $kv);
+
+    return $source;
+}

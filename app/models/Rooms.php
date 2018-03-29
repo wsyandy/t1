@@ -950,7 +950,7 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function pushExitRoomMessage($user, $current_room_seat_id = '')
+    function pushExitRoomMessage($user, $current_room_seat_id = '', $to_self = false)
     {
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
@@ -962,7 +962,12 @@ class Rooms extends BaseModel
             }
         }
 
-        $this->push($body);
+        //指定用户
+        if ($to_self) {
+            $this->pushToUser($user, $body);
+        } else {
+            $this->push($body);
+        }
     }
 
     function pushTopTopicMessage($user, $content = "")
@@ -1040,24 +1045,36 @@ class Rooms extends BaseModel
                 continue;
             }
 
-            $intranet_ip = $user->getIntranetIp();
-            $receiver_fd = $user->getUserFd();
-            $payload = ['body' => $body, 'fd' => $receiver_fd];
-
-            if (!$intranet_ip) {
-                info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
-                continue;
-            }
-
-            $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
+            $res = $this->pushToUser($user, $body);
 
             if ($res) {
-                info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 break;
-            } else {
-                info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
             }
         }
+    }
+
+    //指定用户推送消息
+    function pushToUser($user, $body)
+    {
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
+
+        if (!$intranet_ip) {
+            info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            return false;
+        }
+
+        $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
+
+        if ($res) {
+            info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            return true;
+        }
+
+        info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+
+        return false;
     }
 
     function findRealUser()
@@ -1484,6 +1501,7 @@ class Rooms extends BaseModel
     function pushRoomNoticeMessage($content, $opts = [])
     {
         $room_id = fetch($opts, 'room_id');
+        $expire_time = fetch($opts, 'expire_time');
         $client_url = '';
         $room = Rooms::findFirstById($room_id);
 
@@ -1492,7 +1510,7 @@ class Rooms extends BaseModel
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
-        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time, 'content' => $content
             , 'client_url' => $client_url];
 
         info($body, $this->id, $this->user->sid);
@@ -1505,6 +1523,7 @@ class Rooms extends BaseModel
     {
         $hot = fetch($opts, 'hot');
         $room_id = fetch($opts, 'room_id');
+        $expire_time = fetch($opts, 'expire_time');
 
         if ($hot) {
 
@@ -1512,7 +1531,7 @@ class Rooms extends BaseModel
 
             //热门房间单独推送
             if (!$room->isInHotList()) {
-                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
             }
 
             $rooms = Rooms::searchHotRooms(1, 100);
@@ -1523,25 +1542,42 @@ class Rooms extends BaseModel
         }
 
         foreach ($rooms as $room) {
-            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
         }
     }
 
     //全服通知
     static function allNoticePush($gift_order)
     {
+
+        $opts = ['room_id' => $gift_order->room_id];
+
+        $max_amount = 131400;
+        $min_amount = 52000;
+
         if (isDevelopmentEnv()) {
+            $max_amount = 1000;
+            $min_amount = 500;
+        }
 
-            $opts = ['room_id' => $gift_order->room_id];
+        $push = false;
+        $expire_time = 5;
 
-            if ($gift_order->amount >= 1000) {
-                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
-            }
+        if ($gift_order->amount >= $max_amount) {
+            $expire_time = 10;
+            $push = true;
+        }
 
-            if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
-                $opts['hot'] = 1;
-                Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
-            }
+        if ($gift_order->amount >= $min_amount && $gift_order->amount < $max_amount) {
+            $opts['hot'] = 1;
+            $expire_time = 6;
+            $push = true;
+        }
+
+        if ($push) {
+            $opts['expire_time'] = $expire_time;
+            info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount, $opts);
+            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
         }
     }
 }

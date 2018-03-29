@@ -482,7 +482,8 @@ class KangTask extends \Phalcon\Cli\Task
         }
     }
 
-    function callAction(){
+    function callAction()
+    {
 
         $hot = Users::getHotWriteCache();
         $hot->set("key1", 1);
@@ -494,13 +495,32 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine($keys);
     }
 
-    function call2Action(){
+    function call2Action()
+    {
 
         $name = 'aaa:';
         $m = ['aaa:11', 'aaa:12', 'aaa:13', 'aaa:14'];
-        $m2 = array_map(function ($a) use ($name){ return str_replace($name, '', $a);}, $m);
+        $m2 = array_map(function ($a) use ($name) {
+            return str_replace($name, '', $a);
+        }, $m);
 
         echoLine($m2);
+    }
+
+    function fixUserAction($params)
+    {
+        $u = Users::findById($params[0]);
+        $u->third_unionid = '';
+        $u->login_name = '';
+        $u->save();
+    }
+
+    function findUserAction($params)
+    {
+        $third_unionid = $params[0];
+        $third_name = 'qq';
+        $user = \Users::findFirstByThirdUnionid(ProductChannels::findFirstById(1), $third_unionid, $third_name);
+        echoLine($user);
     }
 
 }

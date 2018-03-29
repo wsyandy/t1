@@ -59,13 +59,9 @@ class BaseController extends \ApplicationController
             return $user;
         }
 
-
         if (!isset($this->_current_user) && $user_id) {
             $user = \Users::findFirstById($user_id);
             $this->_current_user = $user;
-//            if ($user && $this->params('sid') == $user->sid) {
-//                $this->_current_user = $user;
-//            }
         }
 
         return $this->_current_user;
@@ -157,14 +153,14 @@ class BaseController extends \ApplicationController
     {
         $code = $this->context('code');
 
-        debug($code);
-
         if (!isset($this->_current_product_channel) && $code) {
             $this->_current_product_channel = \ProductChannels::findFirstByCodeHotCache($code);
         }
+
         if (!isset($this->_current_product_channel) && isPresent($this->currentUser())) {
             $this->_current_product_channel = $this->currentUser()->product_channel;
         }
+
         return $this->_current_product_channel;
     }
 
@@ -178,6 +174,11 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
+
+        if (!$this->currentProductChannel()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道非法');
+        }
+
         $controller_name = $dispatcher->getControllerName();
         $action_name = $dispatcher->getActionName();
         $controller_name = \Phalcon\Text::uncamelize($controller_name);
@@ -195,25 +196,26 @@ class BaseController extends \ApplicationController
             $is_foreign_ip = false;
         }
 
+        $this->view->is_ios = $this->isIos();
+        $this->view->title = $this->currentProductChannel()->name;
+        $this->view->code = $this->currentProductChannel()->code;
+        $this->view->is_foreign_ip = $is_foreign_ip;
+
+        if ($this->currentUser() && $this->currentUser()->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户被封');
+        }
+
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
         }
+
         if (!$this->authorize()) {
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
         }
-        if ($this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
-        }
-        $is_ios = $this->isIos();
 
-        $this->view->is_ios = $is_ios;
-
-        $this->view->title = $this->currentProductChannel()->name;
         $this->view->sid = $this->currentUser()->sid;
-        $this->view->code = $this->currentProductChannel()->code;
         $this->view->current_user = $this->currentUser();
-        $this->view->is_foreign_ip = $is_foreign_ip;
     }
 
 

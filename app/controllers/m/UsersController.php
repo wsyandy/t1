@@ -33,6 +33,33 @@ class UsersController extends BaseController
 
     function levelIntroduceAction()
     {
-        $this->view->title = '等级';
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+        $this->response->redirect('/m/users/level_detail?sid=' . $sid . "&code=" . $code);
+
+        $this->view->title = '荣耀等级';
+
+        $current_user = $this->currentUser();
+
+        $level = $current_user->level;
+
+        $segment = $current_user->segment;
+
+        $segment_text = $current_user->segment_text;
+
+        $need_experience = $current_user->next_level_experience - $current_user->experience;
+
+        $this->view->code = $code;
+        $this->view->sid = $sid;
+
+        $this->view->level = $level;
+        $this->view->segment = $segment;
+        $this->view->segment_text = $segment_text;
+        $this->view->need_experience = $need_experience;
+    }
+
+    function levelDetailAction()
+    {
+        $this->view->title = 'Hi荣耀等级介绍';
     }
 }

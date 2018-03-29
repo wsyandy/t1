@@ -123,8 +123,17 @@ class UnionsController extends BaseController
     function myUnionAction()
     {
         $union_id = $this->params('union_id');
+        $sid = $this->params('sid');
+        $code = $this->params('code');
+        $click_from = $this->params('click_from');
+
         $union = \Unions::findFirstById($union_id);
         $president = $union->user;
+
+        if ($union->id != $this->currentUser()->union_id && 'my_union' == $click_from) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
         $user = $this->currentUser();
         if ($union && $union->user_id == $user->id) {
             $is_president = 1;
@@ -140,8 +149,8 @@ class UnionsController extends BaseController
         } else {
             $this->view->title = $union->name;
         }
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
     //其他家族
@@ -380,16 +389,6 @@ class UnionsController extends BaseController
         $time = time();
         $days = [];
         $hours = [];
-//        $hours = [8, 10, 12, 14, 16, 20];
-//        for ($i = 0; $i < 6; $i++) {
-//            $day = beginOfDay($time + $i * 60 * 60 * 24);
-//            $times = [];
-//            foreach ($hours as $hour) {
-//                $time_at = $day + $hour * 60 * 60;
-//                $times[date('H-i', $time_at)] = $time_at;
-//            }
-//            $days[date("m月d日", $day)] = $times;
-//        }
         for ($i = 1; $i < 8; $i++) {
             $day = beginOfDay($time + $i * 60 * 60 * 24);
             $days[date("m月d日", $day)] = $day;

@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1001306;
+        $user_id = 1000957;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
     }
 
     function createUnionAction()
@@ -1366,5 +1366,119 @@ class MeiTask extends \Phalcon\Cli\Task
             Rooms::addWaitEnterSilentRoomList($user->id);
             Rooms::enterSilentRoom($room->id, $user->id);
         }
+    }
+
+    function fixRankListAction()
+    {
+        $db = Users::getUserDb();
+
+        $fields = ['charm', 'wealth'];
+        $list_types = ['day', 'week', 'total'];
+
+        foreach ($fields as $field) {
+            foreach ($list_types as $list_type) {
+                $db->zclear("last_" . $list_type . "_" . $field . "_rank_list");
+            }
+        }
+    }
+
+    function fixUserDataAction()
+    {
+        $user = Users::findFirstById(1052005);
+        $user->third_unionid = '';
+        $user->update();
+
+        $new_user = Users::findFirstById(1063103);
+
+        $orders = Orders::findBy(['user_id' => $user->id]);
+        $payments = Payments::findBy(['user_id' => $user->id]);
+        $gift_orders = GiftOrders::findBy(['user_id' => $user->id]);
+        $send_gift_orders = GiftOrders::findBy(['sender_id' => $user->id]);
+        $user_gifts = UserGifts::findBy(['user_id' => $user->id]);
+        $union_histories = UnionHistories::findBy(['user_id' => $user->id]);
+        $hi_coins_histories = UnionHistories::findBy(['user_id' => $user->id]);
+        $account_histories = AccountHistories::findBy(['user_id' => $user->id], 'id desc');
+
+        foreach ($orders as $order) {
+            $order->user_id = $new_user->id;
+            $order->update();
+        }
+
+        foreach ($payments as $payment) {
+            $payment->user_id = $new_user->id;
+            $payment->update();
+        }
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->user_id = $new_user->id;
+            $gift_order->update();
+        }
+
+        foreach ($send_gift_orders as $send_gift_order) {
+            $send_gift_order->sender_id = $new_user->id;
+            $send_gift_order->update();
+        }
+
+        foreach ($user_gifts as $user_gift) {
+            $user_gift->user_id = $new_user->id;
+            $user_gift->update();
+        }
+
+        foreach ($union_histories as $union_history) {
+            $new_union_history = new UnionHistories();
+            $new_union_history->user_id = $new_user->id;
+            $new_union_history->status = $union_history->status;
+            $new_union_history->union_id = $union_history->union_id;
+            $new_union_history->join_at = $union_history->join_at;
+            $new_union_history->exit_at = $union_history->exit_at;
+            $new_union_history->created_at = $union_history->created_at;
+            $new_union_history->updated_at = $union_history->updated_at;
+            $new_union_history->union_type = $union_history->union_type;
+            $new_union_history->save();
+        }
+
+        foreach ($hi_coins_histories as $hi_coins_history) {
+            $new_hi_coins_history = new HiCoinHistories();
+            $new_hi_coins_history->user_id = $new_user->id;
+            $new_hi_coins_history->product_channel_id = $new_user->product_channel_id;
+            $new_hi_coins_history->gift_order_id = $hi_coins_history->gift_order_id;
+            $new_hi_coins_history->remark = $hi_coins_history->remark;
+            $new_hi_coins_history->hi_coins = $hi_coins_history->hi_coins;
+            $new_hi_coins_history->fee_type = $hi_coins_history->fee_type;
+            $new_hi_coins_history->union_type = $hi_coins_history->union_type;
+            $new_hi_coins_history->union_id = $hi_coins_history->union_id;
+            $new_hi_coins_history->reward_at = $hi_coins_history->reward_at;
+            $new_hi_coins_history->withdraw_history_id = $hi_coins_history->withdraw_history_id;
+            $new_hi_coins_history->operator_id = $hi_coins_history->operator_id;
+            $new_hi_coins_history->save();
+        }
+
+        foreach ($account_histories as $account_history) {
+            $new_account_history = new AccountHistories();
+            $new_account_history->user_id = $new_user->id;
+            $new_account_history->amount = $account_history->amount;
+            $new_account_history->order_id = $account_history->order_id;
+            $new_account_history->gift_order_id = $account_history->gift_order_id;
+            $new_account_history->fee_type = $account_history->fee_type;
+            $new_account_history->remark = $account_history->remark;
+            $new_account_history->operator_id = $account_history->operator_id;
+            $new_account_history->mobile = $account_history->mobile;
+            $new_account_history->union_id = $account_history->union_id;
+            $new_account_history->union_type = $account_history->union_type;
+            $new_account_history->save();
+        }
+
+        $new_user->experience += $user->experience;
+        $new_user->hi_coins += $user->hi_coins;
+        $new_user->diamond += $user->hi_coins;
+        $new_user->pay_amount += $user->pay_amount;
+        $new_user->union_id = $user->union_id;
+        $new_user->union_type = $user->union_type;
+        $new_user->id_card_auth = $user->id_card_auth;
+        $new_user->charm_value += $user->charm_value;
+        $new_user->wealth_value += $user->wealth_value;
+        $new_user->union_charm_value += $user->union_charm_value;
+        $new_user->union_wealth_value += $user->union_wealth_value;
+        $new_user->update();
     }
 }

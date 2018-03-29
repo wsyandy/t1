@@ -211,6 +211,30 @@ class UsersController extends BaseController
         }
     }
 
+    function fixLogin($third_name, $form)
+    {
+
+        if ($third_name != 'qq') {
+            return null;
+        }
+
+        $third_unionid = fetch($form, 'third_unionid');
+        if (!$third_unionid) {
+            return null;
+        }
+
+        $third_id = $form['third_id'];
+        $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_id, $third_name);
+        if ($user) {
+            info($user->id, $form);
+            $user->third_unionid = $third_unionid;
+            $user->save();
+            return $user;
+        }
+
+        return null;
+    }
+
     //第三方登陆 qq weixin sinaweibo
     //access_token openid app_id(微信不需要此参数)
     function thirdLoginAction()
@@ -252,21 +276,22 @@ class UsersController extends BaseController
             return $this->renderJSON($form['error_code'], $form['error_reason']);
         }
 
-        $third_unionid = isset($form['third_unionid']) ? $form['third_unionid'] : $form['third_id'];
-
+        $third_unionid = isset($form['third_unionid']) && $form['third_unionid'] ? $form['third_unionid'] : $form['third_id'];
         $user = \Users::findFirstByThirdUnionid($this->currentProductChannel(), $third_unionid, $third_name);
-        $error_url = '';
-
         if (!$user) {
+            $user = $this->fixLogin($third_name, $form);
+        }
+
+        $error_url = '';
+        if (!$user) {
+
             list($error_code, $error_reason, $user) = \Users::thirdLogin($this->currentUser(), $device, $form, $context);
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON($error_code, $error_reason);
             }
 
-            if (isDevelopmentEnv()) {
-                //第一次注册 跳转更新资料
-                $error_url = 'app://users/update_info';
-            }
+            //第一次注册 跳转更新资料
+            $error_url = 'app://users/update_info';
         }
 
         if (!$user) {
@@ -309,7 +334,7 @@ class UsersController extends BaseController
 
         $user = $this->currentUser();
         $user->sid = $user->generateSid('d.');
-        if(!$user->isBlocked()){
+        if (!$user->isBlocked()) {
             $user->user_status = USER_STATUS_LOGOUT;
         }
         $user->update();
@@ -620,10 +645,24 @@ class UsersController extends BaseController
 
         $res = $users->toJson('users', 'toRankListJson');
 
-        $user = $this->currentUser();
+        if ($page == 1) {
 
-        $res['current_rank'] = $user->myFieldRank($list_type, 'charm');
-        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'charm') - $res['current_rank'];
+            $user = $this->currentUser();
+            $current_rank = $user->myFieldRank($list_type, 'charm');
+            $last_rank = $user->myLastFieldRank($list_type, 'charm');
+            $changed_rank = 0;
+
+            if ($last_rank) {
+                $changed_rank = $last_rank - $current_rank;
+            }
+
+            $res['current_rank'] = $current_rank;
+            $res['changed_rank'] = $changed_rank;
+
+            debug($current_rank, $last_rank);
+
+            $user->saveLastFieldRankList($list_type, 'charm', $current_rank);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
@@ -642,10 +681,24 @@ class UsersController extends BaseController
 
         $res = $users->toJson('users', 'toRankListJson');
 
-        $user = $this->currentUser();
+        if ($page == 1) {
 
-        $res['current_rank'] = $user->myFieldRank($list_type, 'wealth');
-        $res['changed_rank'] = $user->myLastFieldRank($list_type, 'wealth') - $res['current_rank'];
+            $user = $this->currentUser();
+            $current_rank = $user->myFieldRank($list_type, 'wealth');
+            $last_rank = $user->myLastFieldRank($list_type, 'wealth');
+            $changed_rank = 0;
+
+            if ($last_rank) {
+                $changed_rank = $last_rank - $current_rank;
+            }
+
+            $res['current_rank'] = $current_rank;
+            $res['changed_rank'] = $changed_rank;
+
+            debug($current_rank, $last_rank);
+
+            $user->saveLastFieldRankList($list_type, 'wealth', $current_rank);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
