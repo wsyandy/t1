@@ -116,7 +116,7 @@
                     icon: "/m/images/level_11.png",
                     name: "黄金Ⅰ ",
                     value: 2200,
-                    reward: "送7位靓号或者6位号一个"
+                    reward: "送7位靓号或者6位普通号一个"
                 },
                 {
                     level: 12,
@@ -178,7 +178,7 @@
                     icon: "/m/images/level_21.png",
                     name: "钻石Ⅰ ",
                     value: 10000,
-                    reward: "送6位靓号或者7位高级靓号一个"
+                    reward: "送5位高级靓号或者4位靓号一个"
                 },
                 {
                     level: 22,
@@ -209,7 +209,7 @@
                     icon: "/m/images/level_26.png",
                     name: "王者Ⅰ ",
                     value: 20000,
-                    reward: "送5位靓号或者5位靓号一个"
+                    reward: "送5位高级靓号或者4位靓号一个"
                 },
                 {
                     level: 27,
@@ -240,7 +240,7 @@
                     icon: "/m/images/level_31.png",
                     name: "星耀Ⅰ ",
                     value: 0,
-                    reward: "送4位靓号或者3位靓号一个"
+                    reward: "送4位高级靓号或者3位普通号一个"
                 },
                 {
                     level: 32,

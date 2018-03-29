@@ -466,36 +466,78 @@ class YangTask extends \Phalcon\Cli\Task
 
     function fixWealthRankListAction()
     {
-        $gift_orders = GiftOrders::findForeach();
-
         $db = Users::getUserDb();
 
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+
+        $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
+        $total_key = "total_wealth_rank_list";
+
+        $charm_week_key = "week_charm_rank_list_" . $start . "_" . $end;
+        $charm_total_key = "total_charm_rank_list";
+
+        $start_at = beginOfDay(strtotime($start));
+        $end_at = endOfDay(strtotime($end));
+
+        echoLine($week_key, $charm_week_key);
+
+        $gift_orders = GiftOrders::find(
+            [
+                'conditions' => "created_at >= :start: and created_at <= :end_at:",
+                'bind' => ['start' => $start_at, 'end_at' => $end_at]
+            ]
+        );
+
+        $db->zclear($week_key);
+        $db->zclear($charm_week_key);
+        $db->zclear("total_wealth_rank_list_");
+        $db->zclear("total_wealth_rank_list");
+        $db->zclear("total_charm_rank_list_");
+        $db->zclear("total_charm_rank_list");
+
+        echoLine("sssss", count($gift_orders));
         foreach ($gift_orders as $gift_order) {
-            if ($gift_order != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
+
+            if ($gift_order->status != GIFT_ORDER_STATUS_SUCCESS || !$gift_order->gift->isDiamondPayType()) {
                 continue;
             }
 
             $sender_id = $gift_order->sender_id;
-            $wealth = $gift_order->amount;
+            $amount = $gift_order->amount;
 
+            echoLine($gift_order->user_id, $sender_id, $amount, $week_key, $charm_week_key);
 
-            $day_key = "day_wealth_rank_list_" . date("Ymd");
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
-            $total_key = "total_wealth_rank_list_";
+            if ($gift_order->created_at >= $start_at && $gift_order->created_at <= $end_at) {
+                $db->zincrby($week_key, $amount, $sender_id);
+                $db->zincrby($charm_week_key, $amount, $gift_order->user_id);
+            }
+        }
+    }
 
+    function fixTotalUserRankAction()
+    {
+        $users = Users::find(['conditions' => 'charm_value > 0 or wealth_value > 0']);
 
-            if ($gift_order->created_at >= beginOfDay() && $gift_order->created_at <= endOfDay()) {
-                $db->zincrby($day_key, $wealth, $sender_id);
+        $db = Users::getUserDb();
+        $total_key = "total_wealth_rank_list";
+        $charm_total_key = "total_charm_rank_list";
+        $db->zclear($total_key);
+        $db->zclear($charm_total_key);
+
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+
+            echoLine($user->id, $user->charm_value, $user->wealth_value);
+
+            if ($user->charm_value > 0) {
+                $db->zincrby($charm_total_key, $user->charm_value, $user->id);
             }
 
-            if ($gift_order->created_at >= strtotime("last sunday next day", time()) && $gift_order->created_at <= strtotime("next monday", time()) - 1) {
-                $db->zincrby($week_key, $wealth, $sender_id);
+            if ($user->wealth_value > 0) {
+                $db->zincrby($total_key, $user->wealth_value, $user->id);
             }
-
-            $db->zincrby($total_key, $wealth, $sender_id);
-            echoLine($sender_id, $wealth);
         }
     }
 }
