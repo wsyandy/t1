@@ -106,7 +106,7 @@ class Products extends BaseModel
 
         $selected_products = [];
         foreach ($products as $product) {
-            if ($product->match($user) || $fee_type == PRODUCT_GROUP_FEE_TYPE_HI_COIN) {
+            if ($product->match($user) || $fee_type == PRODUCT_GROUP_FEE_TYPE_HI_COINS) {
 
                 debug("match_product: " . strval($product->id));
                 if (isPresent($format) && $product->isResponseTo($format)) {

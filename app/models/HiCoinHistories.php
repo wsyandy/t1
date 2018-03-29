@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/3/26
  * Time: 下午3:25
  */
-
 class HiCoinHistories extends BaseModel
 {
     /**
@@ -25,7 +25,8 @@ class HiCoinHistories extends BaseModel
     private $gift_order;
 
     static $FEE_TYPE = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
-        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励'];
+        HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励',
+        HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'];
 
 
     function beforeCreate()
@@ -174,6 +175,62 @@ class HiCoinHistories extends BaseModel
 
     function isCost()
     {
-        return HI_COIN_FEE_TYPE_WITHDRAW == $this->fee_type;
+        return in_array($this->fee_type, [HI_COIN_FEE_TYPE_WITHDRAW, HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
+    }
+
+    //Hi币转钻石记录
+    static function hiCoinExchangeDiamondHiCoinHistory($user_id, $opts = [])
+    {
+
+        $product_id = fetch($opts, 'product_id');
+        $gold = fetch($opts, 'gold');
+        $diamond = fetch($opts, 'diamond');
+        $hi_coins = fetch($opts, 'hi_coins');
+
+        info('user_id', $user_id, 'gold', $gold, 'diamond', $diamond, 'hi_coins', $hi_coins);
+        $user = Users::findFirstById($user_id);
+
+        if (!$user) {
+            info($user_id);
+            return;
+        }
+
+        $remark = "Hi币兑钻石 Hi币: {$hi_coins} 钻石:{$diamond} 金币:{$gold}";
+        $lock_key = "update_user_hi_coins_lock_" . $user_id;
+        $lock = tryLock($lock_key);
+
+        $hi_coin_history = new HiCoinHistories();
+        $hi_coin_history->user_id = $user_id;
+
+        $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND;
+        $hi_coin_history->remark = $remark;
+        $hi_coin_history->hi_coins = $hi_coins;
+        $hi_coin_history->diamond = $diamond;
+        $hi_coin_history->gold = $gold;
+        $hi_coin_history->product_id = $product_id;
+
+
+        $hi_coin_history->product_channel_id = $user->product_channel_id;
+        $hi_coin_history->union_id = $user->union_id;
+        $hi_coin_history->union_type = $user->union_type;
+        $hi_coin_history->save();
+
+        $opts = ['remark' => $remark];
+        if ($hi_coin_history->gold > 0){
+            \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
+        }
+
+        if ($hi_coin_history->diamond > 0){
+            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
+        }
+
+        $user->hi_coins += $hi_coin_history->hi_coins;
+        $user->update();
+
+        info($user->id);
+        unlock($lock);
+
+        return $hi_coin_history;
+
     }
 }

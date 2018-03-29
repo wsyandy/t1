@@ -130,6 +130,9 @@ define('ACCOUNT_TYPE_BUY_DIAMOND', 1); //购买钻石
 define('ACCOUNT_TYPE_BUY_GIFT', 2); //购买礼物
 define('ACCOUNT_TYPE_GIVE', 3); //系统赠送
 define('ACCOUNT_TYPE_CREATE_UNION', 4); //创建公会
+define('ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石
+
+define('HI_COIN_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
 
 define('ERROR_CODE_NEED_PAY', -2);//需要付费
 
@@ -212,6 +215,7 @@ define('GOLD_TYPE_SIGN_IN', 1); //用户签到
 define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
 define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
 define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
+define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');

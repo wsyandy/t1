@@ -1,0 +1,1 @@
+ALTER table products ADD COLUMN hi_coins integer;

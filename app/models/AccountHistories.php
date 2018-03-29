@@ -22,7 +22,8 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送',
-        ACCOUNT_TYPE_CREATE_UNION => '创建公会'
+        ACCOUNT_TYPE_CREATE_UNION => '创建公会',
+        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND=>'Hi币兑钻石'
     ];
 
 
