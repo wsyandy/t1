@@ -380,16 +380,6 @@ class UnionsController extends BaseController
         $time = time();
         $days = [];
         $hours = [];
-//        $hours = [8, 10, 12, 14, 16, 20];
-//        for ($i = 0; $i < 6; $i++) {
-//            $day = beginOfDay($time + $i * 60 * 60 * 24);
-//            $times = [];
-//            foreach ($hours as $hour) {
-//                $time_at = $day + $hour * 60 * 60;
-//                $times[date('H-i', $time_at)] = $time_at;
-//            }
-//            $days[date("m月d日", $day)] = $times;
-//        }
         for ($i = 1; $i < 8; $i++) {
             $day = beginOfDay($time + $i * 60 * 60 * 24);
             $days[date("m月d日", $day)] = $day;
