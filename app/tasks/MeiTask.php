@@ -1367,4 +1367,18 @@ class MeiTask extends \Phalcon\Cli\Task
             Rooms::enterSilentRoom($room->id, $user->id);
         }
     }
+
+    function fixRankListAction()
+    {
+        $db = Users::getUserDb();
+
+        $fields = ['charm', 'wealth'];
+        $list_types = ['day', 'week', 'total'];
+
+        foreach ($fields as $field) {
+            foreach ($list_types as $list_type) {
+                $db->zclear("last_" . $list_type . "_" . $field . "_rank_list");
+            }
+        }
+    }
 }

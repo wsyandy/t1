@@ -142,11 +142,9 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('register_at') && $this->register_at
-            && ($this->hasChanged('mobile') || $this->hasChanged('third_unionid'))) {
+        if ($this->hasChanged('register_at') && $this->register_at) {
             $this->registerStat();
             $this->createEmUser();
-            info('user_register', $this->id, $this->register_at, $this->mobile, $this->third_unionid);
         }
 
 //        // 手机注册
@@ -1631,7 +1629,7 @@ class Users extends BaseModel
                     if ($geo_distance < 200) {
                         $user->distance = '附近';
                     }
-                }else{
+                } else {
                     $geo_distance = sprintf("%0.2f", $geo_distance / 1000);
                     $user->distance = $geo_distance . 'km';
                 }
@@ -2632,20 +2630,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2686,7 +2687,7 @@ class Users extends BaseModel
         if ($value > 0) {
             $db = Users::getUserDb();
 
-            self::saveLastFieldRankList($user_id, $field);
+            //self::saveLastFieldRankList($user_id, $field);
 
             $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
             $start = date("Ymd", strtotime("last sunday next day", time()));
@@ -2700,19 +2701,14 @@ class Users extends BaseModel
         }
     }
 
-    static function saveLastFieldRankList($user_id, $field)
+    function saveLastFieldRankList($list_type, $field, $rank)
     {
         $db = Users::getUserDb();
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
 
-        $user = Users::findFirstById($user_id);
+        debug($key, $field, $rank, $this->id);
 
-        $day_rank = $user->myFieldRank('day', $field);
-        $week_rank = $user->myFieldRank("week", $field);
-        $total_rank = $user->myfieldRank('total', $field);
-
-        $db->zadd("last_day_" . $field . "_rank_list", $day_rank, $user_id);
-        $db->zadd("last_week_" . $field . "_rank_list", $week_rank, $user_id);
-        $db->zadd("last_total_" . $field . "_rank_list", $total_rank, $user_id);
+        $db->zadd($key, $rank, $this->id);
     }
 
     function myFieldRank($list_type, $field)
@@ -2727,7 +2723,14 @@ class Users extends BaseModel
     {
         $key = "last_" . $list_type . "_" . $field . "_rank_list";
 
-        return $this->getRankByKey($key);
+        return $this->getLastRankByKey($key);
+    }
+
+    function getLastRankByKey($key)
+    {
+        $db = Users::getUserDb();
+        $rank = $db->zscore($key, $this->id);
+        return $rank;
     }
 
     function getRankByKey($key)
@@ -2735,32 +2738,36 @@ class Users extends BaseModel
         $db = Users::getUserDb();
         $rank = $db->zrrank($key, $this->id);
 
-        if ($rank === null) {
+        if (is_null($rank)) {
             $total_entries = $db->zcard($key);
             if ($total_entries) {
                 $rank = $total_entries;
             }
         }
+
         return $rank + 1;
     }
 
     static function generateFieldRankListKey($list_type, $field)
     {
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $key = "day_" . $field . "_rank_list_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
