@@ -22,7 +22,7 @@
             <tr>
                 <td width="30%">标志</td>
                 <td width="30%">等级名称</td>
-                <td>等级勋章</td>
+                <td>等级特权</td>
             </tr>
             <tr v-for="(glory,i) in gloryList">
                 <td><img class="glory_icon" :src="glory.icon" alt=""></td>
