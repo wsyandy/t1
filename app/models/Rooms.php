@@ -1556,6 +1556,6 @@ class Rooms extends BaseModel
 
         info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount);
 
-        Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        //Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
     }
 }
