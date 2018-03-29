@@ -950,7 +950,7 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function pushExitRoomMessage($user, $current_room_seat_id = '')
+    function pushExitRoomMessage($user, $current_room_seat_id = '', $to_self = false)
     {
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
@@ -962,7 +962,12 @@ class Rooms extends BaseModel
             }
         }
 
-        $this->push($body);
+        //指定用户
+        if ($to_self) {
+            $this->pushToUser($user, $body);
+        } else {
+            $this->push($body);
+        }
     }
 
     function pushTopTopicMessage($user, $content = "")
@@ -1040,24 +1045,36 @@ class Rooms extends BaseModel
                 continue;
             }
 
-            $intranet_ip = $user->getIntranetIp();
-            $receiver_fd = $user->getUserFd();
-            $payload = ['body' => $body, 'fd' => $receiver_fd];
-
-            if (!$intranet_ip) {
-                info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
-                continue;
-            }
-
-            $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
+            $res = $this->pushToUser($user, $body);
 
             if ($res) {
-                info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
                 break;
-            } else {
-                info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
             }
         }
+    }
+
+    //指定用户推送消息
+    function pushToUser($user, $body)
+    {
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
+        $payload = ['body' => $body, 'fd' => $receiver_fd];
+
+        if (!$intranet_ip) {
+            info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            return false;
+        }
+
+        $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
+
+        if ($res) {
+            info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            return true;
+        }
+
+        info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+
+        return false;
     }
 
     function findRealUser()
