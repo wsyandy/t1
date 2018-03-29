@@ -125,11 +125,12 @@ class UnionsController extends BaseController
         $union_id = $this->params('union_id');
         $sid = $this->params('sid');
         $code = $this->params('code');
+        $click_from = $this->params('click_from');
 
         $union = \Unions::findFirstById($union_id);
         $president = $union->user;
 
-        if ($union->id != $this->currentUser()->union_id) {
+        if ($union->id != $this->currentUser()->union_id && 'my_union' == $click_from) {
             return $this->response->redirect("/m/unions?sid=$sid&code=$code");
         }
 

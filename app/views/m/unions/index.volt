@@ -79,7 +79,7 @@
         created: function () {
             if (this.union) {
 
-                this.family[0].url = "/m/unions/my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
+                this.family[0].url = "/m/unions/my_union?click_from=my_union&sid=" + '{{ sid }}' + "&code=" + '{{ code }}' + '&union_id=' + this.union.id;
                 this.family[0].ico = "{{ avatar_small_url }}";
                 if (this.union.type == 1) {
                     this.family[0].name = this.union.name;
