@@ -4,7 +4,7 @@
 
 <div class="application_details_box">
     <div class="applicat_wrap">
-        <div class="img">
+        <div class="application_wrap_img">
             <img src="{{ user.avatar_small_url }}">
         </div>
         <h3>{{ user.nickname }}
