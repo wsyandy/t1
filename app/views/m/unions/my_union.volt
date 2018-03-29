@@ -251,13 +251,14 @@
                 $('.pop_bottom_bg').show();
             },
             userDetail: function () {
+                var url = '';
                 if (this.selected_user.id == this.user.id) {
                     url = "app://users/detail";
                 } else {
                     url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }
                 console.log(url);
-                location.href = "app://users/other_detail?user_id=" + this.selected_user.id;
+                location.href = url;
             },
             roomDetail: function (id) {
                 var url = "/m/unions/is_need_password";
