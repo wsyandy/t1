@@ -424,6 +424,29 @@
             </div>
         </div>
 
+        <div class="problem-box">
+            <p class="question">
+                <span class="dot"></span>12. 如何触发礼物全服通知？
+            </p>
+            <div class="answer">
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">01.</div>
+                        <div class="info_12">在Hi语音中送礼物或座驾至少52000钻石，会触发热门房间的礼物全服通知</div>
+                    </div>
+                </div>
+
+                <div class="answer_list">
+                    <div class="text_center">
+                        <div class="number">02.</div>
+                        <div class="info_12">在Hi语音中送礼物或座驾至少131400钻石，会触发所有房间的礼物全服通知</div>
+                    </div>
+                    <div class="imge_tit">爱Ta,让全世界见证！</div>
+                    <img class="imge" src="/m/images/12_1.png" alt="">
+                </div>
+
+            </div>
+        </div>
 
     </div>
 </div>
