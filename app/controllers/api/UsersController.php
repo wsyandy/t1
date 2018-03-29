@@ -659,6 +659,9 @@ class UsersController extends BaseController
 
             $res['current_rank'] = $current_rank;
             $res['changed_rank'] = $changed_rank;
+
+            debug($current_rank, $last_rank);
+            
             $user->saveLastFieldRankList($list_type, 'charm', $current_rank);
         }
 
@@ -692,6 +695,9 @@ class UsersController extends BaseController
 
             $res['current_rank'] = $current_rank;
             $res['changed_rank'] = $changed_rank;
+
+            debug($current_rank, $last_rank);
+
             $user->saveLastFieldRankList($list_type, 'wealth', $current_rank);
         }
 
