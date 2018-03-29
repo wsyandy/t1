@@ -1,6 +1,8 @@
 .ico-img-update {
     width: 1.7rem;
     height: 1.7rem;
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
     border-radius: 0.2rem;
 }
 
@@ -9,12 +11,26 @@
     width: 100%;
     height: 3.3rem;
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     -webkit-flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     -webkit-justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -24,25 +40,24 @@
     padding-top: 0.2rem;
 }
 
-.family-edit {
 
-}
 
 .family-edit ul li {
     position: relative;
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     font-size: .3rem;
     color: #404040;
     border-bottom: 1px solid #E7E7E7;
     width: 100%;
-    /*height: 1rem;*/
     padding: 0.3rem;
     background-color: #fff;
 }
 
 .family-edit ul li span {
-    /*width: 1.4rem;*/
     padding-right: 0.6rem;
 }
 
@@ -78,6 +93,9 @@
 .select_area {
     width: 5rem;
     background-image: url("../images/arrow-down.png");
+    -webkit-background-size: 0.26rem 0.26rem;
+    -moz-background-size: 0.26rem 0.26rem;
+    -o-background-size: 0.26rem 0.26rem;
     background-size: 0.26rem 0.26rem;
     background-repeat: no-repeat;
     background-position: right center;
@@ -85,12 +103,23 @@
 
 .agree_div {
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     padding-left: .16rem;
     height: .9rem;
     -webkit-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -moz-box-orient: horizontal;
+    -moz-box-direction: normal;
+    -ms-flex-direction: row;
     flex-direction: row;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
@@ -112,11 +141,23 @@
     width: 6.9rem;
     height: 0.88rem;
     background-color: #FDC8DA;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -131,6 +172,8 @@
     left: 0;
     width: 100%;
     height: 100%;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     opacity: 0;
 }
@@ -138,6 +181,8 @@
 .img_update {
     width: 1.7rem;
     height: 1.7rem;
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
     border-radius: 0.2rem;
     position: absolute;
     top: 50%;
@@ -155,10 +200,19 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     -webkit-justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -166,14 +220,30 @@
     width: 5.5rem;
     height: 4.52rem;
     background-color: #FFFFFF;
+    -webkit-border-radius: 0.2rem;
+    -moz-border-radius: 0.2rem;
     border-radius: 0.2rem;
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     -webkit-flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     -webkit-justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     padding: 0.37rem;
 }
@@ -193,10 +263,19 @@
 
 .popup_btn {
     display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
     -webkit-align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     -webkit-justify-content: center;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
@@ -210,6 +289,8 @@
     font-size: .3rem;
     color: #969696;
     border: 1px solid #DCDCDC;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     background-color: #fff;
     line-height: 0.76rem;
@@ -227,6 +308,8 @@
     font-size: .3rem;
     color: #fff;
     border: 1px solid #F45189;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     background-color: #F45189;
     line-height: 0.76rem;
@@ -246,18 +329,25 @@
     left: 0;
     right: 0;
     width: 100%;
+    -webkit-transition: 0.5s;
+    -o-transition: 0.5s;
+    -moz-transition: 0.5s;
     transition: 0.5s;
 }
 
 .popup_cover.fixed {
-    /*transform: scale3d(0,0,0);*/
-    /*transition: 0s;*/
+    -webkit-transition-delay: 0.5s;
+    -moz-transition-delay: 0.5s;
+    -o-transition-delay: 0.5s;
     transition-delay: 0.5s;
     top: 100%;
 }
 
 .pop_bottom.fixed {
     bottom: -100%;
+    -webkit-transition: 0.5s;
+    -o-transition: 0.5s;
+    -moz-transition: 0.5s;
     transition: 0.5s;
 }
 

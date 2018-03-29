@@ -18,7 +18,7 @@
 {%- endmacro %}
 
 {{ simple_table(gold_histories, [
-    'ID': 'id', '用户': 'user_link', '类型': 'fee_type_text', '金额(钻石)': 'amount',
-    '账户余额(钻石)': 'balance', '订单':'order_link', '礼物订单': 'gift_order_link',
+    'ID': 'id', '用户': 'user_link', '类型': 'fee_type_text', '金额(金币)': 'amount',
+    '账户余额(金币)': 'balance', '订单':'order_link', '礼物订单': 'gift_order_link',
     '备注': 'remark', '时间': 'created_at_text'
 ]) }}

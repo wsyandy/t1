@@ -83,6 +83,17 @@ class UsersController extends BaseController
     {
         $user = \Users::findFirstById($this->params('id'));
         $this->assign($user, 'user');
+        $current_room = $user->current_room;
+        $current_room_seat_id = $user->current_room_seat_id;
+
+        if ($user->hasChanged('user_status')
+            && ($user->user_status == USER_STATUS_BLOCKED_ACCOUNT || $user->user_status == USER_STATUS_BLOCKED_DEVICE) && $current_room
+        ) {
+
+            $current_room->exitRoom($user, true);
+            $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+        }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
         $user->update();
         $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['user' => $user->toJson()]);

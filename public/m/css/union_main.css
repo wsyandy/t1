@@ -43,8 +43,104 @@ ol, ul, li {
     list-style: none;
 }
 
-html {
-    font-size: calc(100vw / 7.5);
+/*html {*/
+/*font-size: calc(100vw / 7.5);*/
+/*}*/
+
+@media only screen and (max-width: 1920px), only screen and (max-device-width: 1920px) {
+    html, body {
+        font-size: 256px;
+    }
+}
+
+@media only screen and (max-width: 1080px), only screen and (max-device-width: 1080px) {
+    html, body {
+        font-size: 144px;
+    }
+}
+
+@media only screen and (max-width: 960px), only screen and (max-device-width: 960px) {
+    html, body {
+        font-size: 128px;
+    }
+}
+
+@media only screen and (max-width: 800px), only screen and (max-device-width: 800px) {
+    html, body {
+        font-size: 106.666667px;
+    }
+}
+
+@media only screen and (max-width: 750px), only screen and (max-device-width: 750px) {
+    html, body {
+        font-size: 100px;
+    }
+}
+
+@media only screen and (max-width: 640px), only screen and (max-device-width: 640px) {
+    html, body {
+        font-size: 85.333333px;
+    }
+}
+
+@media only screen and (max-width: 600px), only screen and (max-device-width: 600px) {
+    html, body {
+        font-size: 80px;
+    }
+}
+
+@media only screen and (max-width: 540px), only screen and (max-device-width: 540px) {
+    html, body {
+        font-size: 72px;
+    }
+}
+
+@media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    html, body {
+        font-size: 64px;
+    }
+}
+
+@media only screen and (max-width: 414px), only screen and (max-device-width: 414px) {
+    html, body {
+        font-size: 55.2px;
+    }
+}
+
+@media only screen and (max-width: 412px), only screen and (max-device-width: 412px) {
+    html, body {
+        font-size: 54.8px;
+    }
+}
+
+@media only screen and (max-width: 400px), only screen and (max-device-width: 400px) {
+    html, body {
+        font-size: 53.33333333px;
+    }
+}
+
+@media only screen and (max-width: 375px), only screen and (max-device-width: 375px) {
+    html, body {
+        font-size: 50px;
+    }
+}
+
+@media only screen and (max-width: 360px), only screen and (max-device-width: 360px) {
+    html, body {
+        font-size: 47.8px;
+    }
+}
+
+@media only screen and (max-width: 320px), only screen and (max-device-width: 320px) {
+    html, body {
+        font-size: 42.4px;
+    }
+}
+
+@media only screen and (max-width: 240px), only screen and (max-device-width: 240px) {
+    html, body {
+        font-size: 32px;
+    }
 }
 
 /* placeholder 字体颜色*/
@@ -66,11 +162,16 @@ html {
 
 .women {
     background-color: #F99AD3;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
     background-image: url("../images/flag-female.png");
+    -webkit-background-size: 0.18rem 0.18rem;
+    -moz-background-size: 0.18rem;
+    -o-background-size: 0.18rem;
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;
@@ -78,11 +179,16 @@ html {
 
 .men {
     background-color: #4e91f9;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
     background-image: url("../images/male.png");
+    -webkit-background-size: 0.18rem 0.18rem;
+    -moz-background-size: 0.18rem;
+    -o-background-size: 0.18rem;
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;

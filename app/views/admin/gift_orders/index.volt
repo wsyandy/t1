@@ -2,6 +2,16 @@
     <label for="id_eq">ID</label>
     <input name="gift_order[id_eq]" type="text" id="id_eq"/>
 
+    <label for="gift_type_eq">礼物类型</label>
+    <select name="gift_order[gift_type_eq]" id="gift_type_eq">
+        {{ options(Gifts.TYPE, gift_type) }}
+    </select>
+
+    <label for="pay_type_eq">支付类型</label>
+    <select name="gift_order[pay_type_eq]" id="pay_type_eq">
+        {{ options(Gifts.PAY_TYPE, pay_type) }}
+    </select>
+
     <label for="sender_id_eq">发送方ID</label>
     <input name="gift_order[sender_id_eq]" type="text" id="sender_id_eq"/>
 

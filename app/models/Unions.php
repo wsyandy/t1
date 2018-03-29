@@ -495,7 +495,7 @@ class Unions extends BaseModel
             $expire_at = time() - 60;
         }
 
-        if ($union_history->join_at > $expire_at) {
+        if (!$kicking && $union_history->join_at > $expire_at) {
             return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
         }
 

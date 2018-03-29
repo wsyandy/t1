@@ -22,7 +22,7 @@ class IdCardAuthsController extends BaseController
             $cond['conditions'] = "auth_status !=" . AUTH_FAIL;
         }
 
-        $cond['order'] = 'auth_status desc';
+        $cond['order'] = 'auth_status desc, id desc';
         $id_card_auths = \IdCardAuths::findPagination($cond, $page, $per_page);
 
         $this->view->id_card_auths = $id_card_auths;

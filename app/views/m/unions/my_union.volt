@@ -303,7 +303,6 @@
                 var url = "/m/unions/kicking";
                 var data = {user_id: this.selected_user.id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
-                    alert(resp.error_reason);
                     if (resp.error_code == 0) {
                         location.reload();
                     }

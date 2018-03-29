@@ -395,7 +395,7 @@
                 <div class="answer_list">
                     <div class="text_center">
                         <div class="number">01.</div>
-                        <div class="info">在电脑上下载模拟器，安装后，打开（支持天天、多玩、雷电、Mumu等模拟器）</div>
+                        <div class="info">在电脑上下载模拟器，安装后，打开（支持天天、雷电、Mumu等模拟器）</div>
                     </div>
                 </div>
 

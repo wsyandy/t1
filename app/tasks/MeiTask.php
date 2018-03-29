@@ -1381,4 +1381,23 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixUserDataAction()
+    {
+        $user = Users::findFirstById(1052005);
+        $new_user = Users::findFirstById(1063103);
+
+        $orders = Orders::findBy(['user_id' => $user->id]);
+        $payments = Payments::findBy(['user_id' => $user->id]);
+        $gift_orders = GiftOrders::finfBy(['user_id' => $user->id]);
+        $send_gift_orders = GiftOrders::finfBy(['sender_id' => $user->id]);
+        $user_gifts = UserGifts::findBy(['user_id' => $user->id]);
+        $union_histories = UnionHistories::findBy(['user_id' => $user->id]);
+        $hi_coins_histories = UnionHistories::findBy(['user_id' => $user->id]);
+        $account_history = AccountHistories::findFirstBy(['user_id' => $user->id], 'id desc');
+
+        $new_user->experience += $user->experience;
+        $new_user->hi_coins += $user->hi_coins;
+        $new_user->diamond += $user->hi_coins;
+    }
 }
