@@ -38,6 +38,12 @@
         <td>自述城市信息: {{ user.province_name }}, {{ user.city_name }}</td>
         <td>个性签名: {{ user.monologue }}</td>
     </tr>
+    <tr>
+        <td>魅力值:{{ user.charm_value }}</td>
+        <td>财富值:{{ user.wealth_value }}</td>
+        <td>家族魅力值:{{ user.union_charm_value }}</td>
+        <td>家族财富值:{{ user.union_wealth_value }}</td>
+    </tr>
 </table>
 
 <table class="table  table-condensed table-hover">
