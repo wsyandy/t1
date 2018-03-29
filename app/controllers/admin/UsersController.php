@@ -91,7 +91,7 @@ class UsersController extends BaseController
         ) {
 
             $current_room->exitRoom($user, true);
-            $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+            $current_room->pushExitRoomMessage($user, $current_room_seat_id, true);
         }
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
