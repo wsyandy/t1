@@ -25,7 +25,7 @@ class GamesController extends BaseController
 
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
         info($url);
-        
+
         $this->response->redirect($url);
     }
 
