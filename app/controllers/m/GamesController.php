@@ -20,13 +20,21 @@ class GamesController extends BaseController
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $body['nonce_str'] = randStr(20);
+        $body['return_url'] = $this->getRoot().'m/games?code='.$this->currentProductChannel()->code.'&sid='.$this->currentUser()->sid;
+
 
         $str = paramsToStr($body);
 
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
         info($url);
 
-        $this->response->redirect($url);
+        $this->view->url = $url;
     }
+
+    function enterAction()
+    {
+        //$this->response->redirect($url);
+    }
+
 
 }
