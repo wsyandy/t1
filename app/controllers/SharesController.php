@@ -74,9 +74,9 @@ class SharesController extends ApplicationController
         }
 
         $soft_version = \SoftVersions::findFirst([
-            'conditions' => 'product_channel_id=:product_channel_id: and platform=:platform: and channel_package = 0',
-            'bind' => ['product_channel_id' => $user->product_channel_id, 'platform' => $platform],
-            'order' => 'id desc'
+            'conditions' => 'product_channel_id=:product_channel_id: and platform=:platform: and channel_package = 0 and status = :status:',
+            'bind' => ['product_channel_id' => $user->product_channel_id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
+            'order' => 'id asc'
         ]);
 
         $soft_version_id = 0;

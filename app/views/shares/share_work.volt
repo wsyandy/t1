@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/shares/css/share_work.css">
 </head>
 <body>
-<img class="share_bg" src="images/share_work_bg.png" alt="">
-<img src="images/right.png" class="share_tips none" alt="" id="open_in_browser_tip">
+<img class="share_bg" src="/shares/images/share_work_bg.png" alt="">
+<img src="/shares/images/right.png" class="share_tips none" alt="" id="open_in_browser_tip">
 
 <div class="share_box">
     <div class="share_main">
@@ -24,21 +24,21 @@
             老铁，Hi语音确实是一个非常好玩的语音
             直播软件，推荐给你玩一玩，里面可以连
             麦聊天，组队开黑
-            <img class="quotes_left" src="images/quotes_left.png" alt="">
-            <img class="quotes_right" src="images/quotes_right.png" alt="">
+            <img class="quotes_left" src="/shares/images/quotes_left.png" alt="">
+            <img class="quotes_right" src="/shares/images/quotes_right.png" alt="">
         </div>
         <span class="line_left"></span>
         <span class="line_right"></span>
     </div>
     <div class="pro_info">
-        <img class="logo_hi" src="images/logo_hi.png" alt="">
+        <img class="logo_hi" src="/shares/images/logo_hi.png" alt="">
         <div class="pro_text">
             Hi_很好玩的语音直播软件
         </div>
     </div>
 
     <div class="btn_download">
-        <img class="btn_pink" src="images/btn_pink.png" alt="">
+        <img class="btn_pink" src="/shares/images/btn_pink.png" alt="">
         <span>立即下载</span>
     </div>
 

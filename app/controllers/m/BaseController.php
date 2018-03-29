@@ -202,7 +202,7 @@ class BaseController extends \ApplicationController
         $this->view->is_foreign_ip = $is_foreign_ip;
 
         if ($this->currentUser() && $this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户被封');
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户被封');
         }
 
         // 不验证用户登录
