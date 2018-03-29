@@ -6,8 +6,8 @@
 </head>
 
 <body>
-<div>组团玩游戏</div>
-<div>需要先进入同一个房间，再点击进入游戏</div>
+<div>组团玩跳一跳小游戏</div>
+<div>参与游戏的用户先进入同一个房间，再点击进入游戏</div>
 <a href="{{ url }}" style="text-align:center">进入游戏</a>
 
 </body>
