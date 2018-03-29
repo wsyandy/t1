@@ -26,6 +26,22 @@ class PaymentsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
 
+        $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
+
+        if ($payment_channel->isApple()) {
+
+            $apple_pay_total_amount = $this->currentDevice()->getTodayApplePayAmount();
+
+            if ($apple_pay_total_amount >= 500) {
+                info($this->currentUser()->sid, $this->currentDevice()->id, $apple_pay_total_amount);
+                return $this->renderJSON(ERROR_CODE_FAIL, '苹果支付异常');
+            }
+
+            if ($apple_pay_total_amount >= 300) {
+                info("apple_pay_total_amount_300", $this->currentUser()->sid, $this->currentDevice()->id, $apple_pay_total_amount);
+            }
+        }
+
         $product = \Products::findById($this->params('product_id'));
 
         list($error_code, $error_reason, $order) = \Orders::createOrder($this->currentUser(), $product);
@@ -38,7 +54,6 @@ class PaymentsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '订单创建失败');
         }
 
-        $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
         $payment = \Payments::createPayment($this->currentUser(), $order, $payment_channel);
         if (!$payment) {
             return $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
