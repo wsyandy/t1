@@ -1544,6 +1544,7 @@ class Rooms extends BaseModel
         }
 
         $push = false;
+        $expire_time = 5;
 
         if ($gift_order->amount >= $max_amount) {
             $expire_time = 10;
@@ -1556,9 +1557,8 @@ class Rooms extends BaseModel
             $push = true;
         }
 
-        $opts['expire_time'] = $expire_time;
-
         if ($push) {
+            $opts['expire_time'] = $expire_time;
             info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount, $opts);
             Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
         }
