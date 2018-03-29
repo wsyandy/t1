@@ -122,6 +122,8 @@ body { background:#fff;}
 
 }
 .compere_avatar,.compere_arrow{
+    position: relative;
+    height: 0.9rem;
     display: -webkit-flex;
     display: -webkit-box;
     display: -moz-box;
@@ -138,7 +140,6 @@ body { background:#fff;}
     height: 0.5rem;
 }
 .ico_compere_arrow{
-    position: relative;
     width: 0.26rem;
     height: 0.26rem;
 }

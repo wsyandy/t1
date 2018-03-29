@@ -165,6 +165,7 @@ body {
 }
 
 .list_left {
+    height: 1.4rem;
     display: -webkit-flex;
     display: -webkit-box;
     display: -moz-box;
@@ -207,16 +208,8 @@ body {
     padding: 0.02rem 0.1rem;
 }
 
-/*.family_prestige {*/
-/*font-size: 0.24rem;*/
-/*color: #FFFFFF;*/
-/*background-color: #F45189;*/
-/*border-radius: 0.04rem;*/
-/*padding: 0.02rem 0.1rem;*/
-/*width: 80px;*/
-/*}*/
-
 .family_info {
+    height: 0.98rem;
     display: -webkit-flex;
     display: -webkit-box;
     display: -moz-box;
@@ -229,7 +222,6 @@ body {
     -moz-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-
     -webkit-justify-content: center;
     -webkit-box-pack: center;
     -moz-box-pack: center;
@@ -239,6 +231,7 @@ body {
 }
 
 .list_right {
+    height: 1.4rem;
     display: -webkit-flex;
     display: -webkit-box;
     display: -moz-box;
