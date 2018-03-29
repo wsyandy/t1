@@ -16,12 +16,11 @@ class GamesController extends BaseController
         $body['user_id'] = $this->currentUser()->id;
         $body['source'] = $this->currentProductChannel()->code;
         $body['nickname'] = $this->currentUser()->nickname;
-        $body['avatar_url'] = $this->currentUser()->avatar_url;
+        $body['avatar_url'] = urlencode($this->currentUser()->avatar_url);
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $body['nonce_str'] = randStr(20);
-        $body['return_url'] = $this->getRoot().'m/games?code='.$this->currentProductChannel()->code.'&sid='.$this->currentUser()->sid;
-
+        $body['return_url'] = urlencode($this->getRoot().'m/games?code='.$this->currentProductChannel()->code.'&sid='.$this->currentUser()->sid);
 
         $str = paramsToStr($body);
 
