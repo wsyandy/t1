@@ -539,7 +539,7 @@ class UsersTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            $hi_coins = intval($total_amount * $rate * 10000)/10000;
+            $hi_coins = intval($total_amount * $rate * 10000) / 10000;
 
 
             $widthdraw_hi_coins = WithdrawHistories::sum(['conditions' => 'user_id = :user_id: and status = :status:',
@@ -644,15 +644,13 @@ class UsersTask extends \Phalcon\Cli\Task
     //上线需修复资料
     function fixCharmAndWealthAction()
     {
-        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
-
-        echoLine(count($users));
+        $users = Users::findForeach(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
 
         foreach ($users as $user) {
 
             $gift_orders = GiftOrders::find([
-                'conditions' => "sender_id = :user_id: or user_id = :user_id: and status = :status:",
-                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+                'conditions' => "sender_id = :user_id: or user_id = :user_id: and status = :status: and pay_type = :pay_type:",
+                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
             ]);
 
             $charm = 0;
@@ -672,10 +670,14 @@ class UsersTask extends \Phalcon\Cli\Task
                 }
             }
 
-            $user->charm = $charm;
-            $user->wealth = $wealth;
+            if ($user->charm != $charm) {
 
-            echoLine($user->id, "charm：" . $user->charm, "wealth：" . $user->wealth);
+            }
+
+            $user->charm_value = $charm;
+            $user->wealth_value = $wealth;
+
+            echoLine($user->id, "charm：" . $user->charm_value, "wealth：" . $user->wealth_value);
             $user->update();
         }
     }

@@ -520,10 +520,8 @@ class YangTask extends \Phalcon\Cli\Task
         $users = Users::find(['conditions' => 'charm_value > 0 or wealth_value > 0']);
 
         $db = Users::getUserDb();
-        $total_key = "total_wealth_rank_list";
-        $charm_total_key = "total_charm_rank_list";
+        $total_key = "total_charm_rank_list";
         $db->zclear($total_key);
-        $db->zclear($charm_total_key);
 
         echoLine(count($users));
 
@@ -532,11 +530,7 @@ class YangTask extends \Phalcon\Cli\Task
             echoLine($user->id, $user->charm_value, $user->wealth_value);
 
             if ($user->charm_value > 0) {
-                $db->zincrby($charm_total_key, $user->charm_value, $user->id);
-            }
-
-            if ($user->wealth_value > 0) {
-                $db->zincrby($total_key, $user->wealth_value, $user->id);
+                $db->zincrby($total_key, $user->charm_value, $user->id);
             }
         }
     }
