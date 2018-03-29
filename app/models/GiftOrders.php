@@ -174,8 +174,11 @@ class GiftOrders extends BaseModel
         //统计房间收益
         if ($this->room) {
             $this->room->statIncome($this->amount);
-            //推送全局消息
-            Rooms::allNoticePush($this);
+
+            if ($this->sender_id != $this->user_id) {
+                //推送全局消息
+                Rooms::allNoticePush($this);
+            }
         }
 
         \Users::delay()->updateExperience($this->id);
