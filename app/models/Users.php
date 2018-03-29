@@ -307,7 +307,8 @@ class Users extends BaseModel
 
     function isBlocked()
     {
-        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status || USER_STATUS_BLOCKED_DEVICE == $this->user_status;
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
+            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
     }
 
     function isNormal()
