@@ -203,7 +203,7 @@ class BaseController extends \ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
         }
         if ($this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
+            return $this->renderJSON(ERROR_CODE_FAIL, '账户被封！');
         }
         $is_ios = $this->isIos();
 
