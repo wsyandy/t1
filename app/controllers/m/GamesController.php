@@ -20,7 +20,7 @@ class GamesController extends BaseController
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $body['nonce_str'] = randStr(20);
-        $body['return_url'] = $this->getRoot() . 'm/games?code=' . $this->currentProductChannel()->code . '&sid=' . $this->currentUser()->sid;
+        $body['return_url'] = '\''.$this->getRoot() . 'm/games?code=' . $this->currentProductChannel()->code . '&sid=' . $this->currentUser()->sid.'\'';
 
         $str = paramsToStr($body);
 
