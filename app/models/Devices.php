@@ -483,4 +483,10 @@ class Devices extends BaseModel
         return $hot_cache->zscore($key, $this->device_no) > 0;
     }
 
+    function getTodayApplePayAmount()
+    {
+        $hot_cache = Payments::getHotWriteCache();
+        $key = "stat_apple_day_total_pay_amount_list_" . date("Ymd");
+        return intval($hot_cache->zscore($key, $this->id));
+    }
 }

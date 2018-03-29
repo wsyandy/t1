@@ -1481,4 +1481,13 @@ class MeiTask extends \Phalcon\Cli\Task
         $new_user->union_wealth_value += $user->union_wealth_value;
         $new_user->update();
     }
+
+    function testAction()
+    {
+        $hot_cache = Payments::getHotWriteCache();
+        $key = "test_w";
+//        $hot_cache->zadd($key, time(), 1);
+        $hot_cache->expire($key, 5);
+        info($hot_cache->zscore($key, 1));
+    }
 }
