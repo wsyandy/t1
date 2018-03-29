@@ -81,12 +81,12 @@ class Products extends BaseModel
         return $this->product_group->name;
     }
 
-    static function findDiamondListByUser($user, $format = null)
+    static function findDiamondListByUser($user, $format = null, $fee_type = PRODUCT_GROUP_FEE_TYPE_DIAMOND)
     {
-        $fee_type = 'diamond';
+
         $product_group = \ProductGroups::findFirst(
             [
-                'conditions' => 'product_group_id=:product_group_id: and fee_type=:fee_type: and status=:status:',
+                'conditions' => 'product_channel_id=:product_channel_id: and fee_type=:fee_type: and status=:status:',
                 'bind' => ['product_channel_id' => $user->product_channel_id,
                     'fee_type' => $fee_type, 'status' => STATUS_ON]
             ]
@@ -106,7 +106,7 @@ class Products extends BaseModel
 
         $selected_products = [];
         foreach ($products as $product) {
-            if ($product->match($user)) {
+            if ($product->match($user) || $fee_type == PRODUCT_GROUP_FEE_TYPE_HI_COIN) {
 
                 debug("match_product: " . strval($product->id));
                 if (isPresent($format) && $product->isResponseTo($format)) {

@@ -138,6 +138,7 @@ define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
 define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败
 
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
+define('PRODUCT_GROUP_FEE_TYPE_HI_COINS', 'hi_coins'); //Hi币
 
 define('ORDER_STATUS_WAIT', 0);
 define('ORDER_STATUS_SUCCESS', 1);
@@ -229,3 +230,4 @@ define('HI_COIN_FEE_TYPE_HOST_REWARD', 2); //主播奖励
 define('HI_COIN_FEE_TYPE_UNION_HOST_REWARD', 3); //家族长奖励
 define('HI_COIN_FEE_TYPE_WITHDRAW', 4); //提现
 define('HI_COIN_FEE_TYPE_ROOM_REWARD', 5); //房间流水奖励
+define('HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND', 6); //Hi币兑钻石
