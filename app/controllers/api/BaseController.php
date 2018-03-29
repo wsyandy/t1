@@ -270,7 +270,7 @@ class BaseController extends ApplicationController
         }
 
         if ($this->currentUser() && $this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户状态不可用');
+            return $this->renderJSON(ERROR_CODE_FAIL, '账号被封!');
         }
 
         // 更新设备或用户状态
