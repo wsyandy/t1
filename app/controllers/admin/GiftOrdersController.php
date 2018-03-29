@@ -68,6 +68,9 @@ class GiftOrdersController extends BaseController
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
         $this->view->total_amount = $total_amount;
+        $this->view->gift_type = intval($this->params('gift_order[gift_type_eq]'));
+        $this->view->pay_type = $this->params('gift_order[pay_type_eq]');
+        $this->view->total_amount = $total_amount;
         $this->view->user_id = $user_id ? intval($user_id) : '';
     }
 
