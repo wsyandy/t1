@@ -115,6 +115,9 @@ h1,h2,h3,h4{
     width: 12px;
     height: 22px;
     background:url(../images/jiantou.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
 }
 .about_us_list ul li a{
@@ -145,6 +148,8 @@ h1,h2,h3,h4{
 .get_out_btn a{
     display: block;
     background: #FFFFFF;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
     border-radius: 25px;
     height: 49px;
     line-height: 49px;
@@ -173,6 +178,9 @@ h1,h2,h3,h4{
     width: 22px;
     height: 22px;
     background:url(../images/icon.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
 }
 .account_top p span{

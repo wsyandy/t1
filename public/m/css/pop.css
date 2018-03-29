@@ -10,6 +10,8 @@ a{text-decoration: none;color: #000;}
     height: 275px;
     position: fixed;
     z-index: 999999;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
     border-radius: 10px;
     background: #fff;
 }
@@ -40,6 +42,9 @@ a{text-decoration: none;color: #000;}
     width: 13px;
     height: 13px;
     background: url(../images/money_icon.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
     left: 0;
     top: 50%;
@@ -55,6 +60,9 @@ a{text-decoration: none;color: #000;}
     width: 13px;
     height: 13px;
     background: url(../images/money_icon.png) no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
     background-size: 100%;
     right: 0;
     top: 50%;
@@ -98,12 +106,13 @@ a{text-decoration: none;color: #000;}
     line-height: 45px;
     margin:0 auto;
     border: 2px solid #F45189;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
     border-radius: 50px;
     text-align: center;
     color:  #F45189;
     margin-top: 20px;
     font-size: 15px;
 }
-
 
 

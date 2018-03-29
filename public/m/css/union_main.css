@@ -162,11 +162,16 @@ ol, ul, li {
 
 .women {
     background-color: #F99AD3;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
     background-image: url("../images/flag-female.png");
+    -webkit-background-size: 0.18rem 0.18rem;
+    -moz-background-size: 0.18rem;
+    -o-background-size: 0.18rem;
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;
@@ -174,11 +179,16 @@ ol, ul, li {
 
 .men {
     background-color: #4e91f9;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
     border-radius: 1rem;
     font-size: 0.2rem;
     color: #FFFFFF;
     padding: 0 0.1rem 0 0.38rem;
     background-image: url("../images/male.png");
+    -webkit-background-size: 0.18rem 0.18rem;
+    -moz-background-size: 0.18rem;
+    -o-background-size: 0.18rem;
     background-size: 0.18rem;
     background-repeat: no-repeat;
     background-position: 0.1rem center;
