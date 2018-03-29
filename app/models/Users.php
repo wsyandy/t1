@@ -2702,7 +2702,6 @@ class Users extends BaseModel
 
     function saveLastFieldRankList($list_type, $field, $rank)
     {
-
         $db = Users::getUserDb();
         $key = "last_" . $list_type . "_" . $field . "_rank_list";
 
@@ -2723,19 +2722,20 @@ class Users extends BaseModel
     {
         $key = "last_" . $list_type . "_" . $field . "_rank_list";
 
-        return $this->getRankByKey($key, true);
+        return $this->getLastRankByKey($key);
     }
 
-    function getRankByKey($key, $is_last = false)
+    function getLastRankByKey($key)
+    {
+        $db = Users::getUserDb();
+        $rank = $db->zscore($key, $this->id);
+        return $rank;
+    }
+
+    function getRankByKey($key)
     {
         $db = Users::getUserDb();
         $rank = $db->zrrank($key, $this->id);
-
-        debug($rank);
-
-        if ($is_last && is_null($rank)) {
-            return intval($rank);
-        }
 
         if (is_null($rank)) {
             $total_entries = $db->zcard($key);
