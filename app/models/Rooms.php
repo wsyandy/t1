@@ -1484,6 +1484,7 @@ class Rooms extends BaseModel
     function pushRoomNoticeMessage($content, $opts = [])
     {
         $room_id = fetch($opts, 'room_id');
+        $expire_time = fetch($opts, 'expire_time');
         $client_url = '';
         $room = Rooms::findFirstById($room_id);
 
@@ -1492,7 +1493,7 @@ class Rooms extends BaseModel
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
-        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => mt_rand(5, 10), 'content' => $content
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time, 'content' => $content
             , 'client_url' => $client_url];
 
         info($body, $this->id, $this->user->sid);
@@ -1505,6 +1506,7 @@ class Rooms extends BaseModel
     {
         $hot = fetch($opts, 'hot');
         $room_id = fetch($opts, 'room_id');
+        $expire_time = fetch($opts, 'expire_time');
 
         if ($hot) {
 
@@ -1512,7 +1514,7 @@ class Rooms extends BaseModel
 
             //热门房间单独推送
             if (!$room->isInHotList()) {
-                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
             }
 
             $rooms = Rooms::searchHotRooms(1, 100);
@@ -1523,7 +1525,7 @@ class Rooms extends BaseModel
         }
 
         foreach ($rooms as $room) {
-            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id]);
+            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
         }
     }
 
@@ -1533,13 +1535,27 @@ class Rooms extends BaseModel
 
         $opts = ['room_id' => $gift_order->room_id];
 
-        if ($gift_order->amount >= 1000) {
-            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        $max_amount = 131400;
+        $min_amount = 52000;
+
+        if (isDevelopmentEnv()) {
+            $max_amount = 1000;
+            $min_amount = 500;
         }
 
-        if ($gift_order->amount >= 500 && $gift_order->amount < 1000) {
-            $opts['hot'] = 1;
-            Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
+        if ($gift_order->amount >= $max_amount) {
+            $expire_time = 10;
         }
+
+        if ($gift_order->amount >= $min_amount && $gift_order->amount < $max_amount) {
+            $opts['hot'] = 1;
+            $expire_time = 6;
+        }
+
+        $opts['expire_time'] = $expire_time;
+
+        info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount);
+
+        Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
     }
 }
