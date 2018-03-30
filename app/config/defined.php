@@ -216,6 +216,7 @@ define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
 define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
 define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
 define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
+define('GOLD_TYPE_GIVE', 6); //赠送金币
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
