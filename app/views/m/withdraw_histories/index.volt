@@ -37,8 +37,8 @@
 <div class="get_btn">
     <a href="/m/withdraw_histories/get_money?sid={{ sid }}&code={{ code }}">我要提现</a>
 </div>
-{% if !is_hight_version %}
-<div class="get_btn">
+{% if !is_height_version %}
+<div class="get_btn" style="margin-top: 2px;">
     <a href="/m/hi_coin_histories/exchange?sid={{ sid }}&code={{ code }}">Hi币兑钻</a>
 </div>
 {% endif %}

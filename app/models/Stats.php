@@ -62,6 +62,12 @@ class Stats extends BaseModel
 
         'withdraw_total' => '申请提现金额',
 
+        'gold_obtain_total' => '金币赠送总额',
+        'gold_obtain_num' => '金币赠送次数',
+        'gold_obtain_user' => '金币赠送人数',
+        'gold_obtain_num_average' => '人均获得金币次数',
+        'gold_obtain_user_average' => '人均获得金币数额',
+
         'diamond_recharge_total' => '购买钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
@@ -923,6 +929,75 @@ class Stats extends BaseModel
             $rate = sprintf("%0.2f", $new_payment_success_user * 100 / $new_create_payment_user);
         }
         $this->data_hash['new_payment_success_rate'] = $rate;
+    }
+
+
+    /**
+     * 金币赠送总额
+     */
+    function goldObtainTotal()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_obtain_total'] = intval($num);
+    }
+
+    /**
+     * 金币赠送次数
+     */
+    function goldObtainNum()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_obtain_num'] = intval($num);
+    }
+
+    /**
+     * 金币赠送人数
+     */
+    function goldObtainUser()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['gold_obtain_user'] = intval($num);
+    }
+
+    /**
+     * 人均获得金币次数
+     */
+    function goldObtainNumAverage()
+    {
+        $gold_obtain_num = $this->data_hash['gold_obtain_num'];
+        $gold_obtain_user = $this->data_hash['gold_obtain_user'];
+        $avg = 0;
+
+        if ($gold_obtain_user > 0) {
+            $avg = intval($gold_obtain_num * 100 / $gold_obtain_user) / 100;
+        }
+
+        $this->data_hash['gold_obtain_num_average'] = $avg;
+    }
+
+    /**
+     * 人均获得金币数额
+     */
+    function goldObtainUserAverage()
+    {
+        $gold_obtain_total = $this->data_hash['gold_obtain_total'];
+        $gold_obtain_user = $this->data_hash['gold_obtain_user'];
+
+        $avg = 0;
+
+        if ($gold_obtain_user > 0) {
+            $avg = intval($gold_obtain_total * 100 / $gold_obtain_user) / 100;
+        }
+
+        $this->data_hash['gold_obtain_user_average'] = $avg;
     }
 
     /**

@@ -252,6 +252,18 @@ table { border-collapse:collapse; }
 	width: 100%;
 }
 
+.imge_tit{
+	font-size: 16px;
+	color: #F45189;
+	padding: 17px;
+	text-align: center;
+}
+
+.answer_list  .info_12{
+	width: 300px;
+	font-size: 14px;
+	color: #323232;
+}
 
 
 

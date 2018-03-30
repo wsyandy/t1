@@ -87,10 +87,14 @@
 
             </div>
 
+            <div class="less_50_hi_coin" v-show="less_50_hi_coin">
+                至少50Hi币才能兑换钻石
+            </div>
+
             <div class="pupop_btn">
-                <span class="btn_cancel" @click="exchangeDiamondsAction(false)">取消</span>
+                <span class="btn_cancel" @click="cancelAction()">取消</span>
                 <span :class="[no_hi_coin?'btn_sure':'btn_ensure']"
-                      @click="exchangeDiamondsAction(!no_hi_coin)">兑换</span>
+                      @click="exchangeDiamondsAction()">兑换</span>
             </div>
 
         </div>
@@ -118,7 +122,8 @@
             is_pup: false,
             is_tips: false,
             no_hi_coin: false,
-            is_custom: false
+            is_custom: false,
+            less_50_hi_coin:false
         },
         methods: {
             choiceHiCoinAction: function (product_id, hi_coin, diamond, gold) {
@@ -144,50 +149,55 @@
             customChangeAction: function () {
                 this.cur_diamond = this.cur_hi_coin * this.hi_coin_diamond_rate;
                 this.no_hi_coin = this.cur_hi_coin < 50;
+                this.less_50_hi_coin = this.cur_hi_coin < 50;
             },
-            exchangeDiamondsAction: function (bool) {
+            cancelAction: function () {
+                this.product_id = null;
+                this.cur_hi_coin = 0;
+                this.is_pup = false;
+                this.is_tips = false;
+                this.cur_diamond = 0;
+                this.cur_gold = 0;
+                this.no_hi_coin = false;
+                this.is_custom = false;
+                this.less_50_hi_coin =false;
+            },
+            exchangeDiamondsAction: function () {
+
                 clearTimeout(isTipsTimer);
-                if (bool) {
+                var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
 
-                    var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
-
-                    $.post('/m/hi_coin_histories/create', post_data, function (resp) {
-
-                        //兑换失败
-                        if (resp.error_code != 0) {
-                            vm.product_id=null;
-                            vm.is_tips = true;
-                            vm.no_hi_coin = false;
-                            $('.tips_txt').html(resp.error_reason);
-                        } else {
-                            //兑换成功
-                            vm.product_id=null;
-                            vm.is_pup = false;
-                            vm.is_tips = true;
-                            vm.no_hi_coin = true;
-                            vm.hi_coins = resp.hi_coins;
-                        }
-
-                        isTipsTimer = setTimeout(function () {
-                            location.reload();
-                        }, 1000);
-                        return;
-
-                    });
-
-
-
-                } else {
-
-                    this.product_id = null;
-                    this.cur_hi_coin = 0;
-                    this.is_pup = false;
-                    this.is_tips = false;
-                    this.cur_diamond = 0;
-                    this.cur_gold = 0;
-                    this.no_hi_coin = false;
-                    this.is_custom = false;
+                //自定义兑换不能小于50
+                if (post_data.product_id == null && post_data.hi_coins<50) {
+                    this.less_50_hi_coin =true;
+                    return;
                 }
+
+                $.post('/m/hi_coin_histories/create', post_data, function (resp) {
+
+                    //兑换失败
+                    if (resp.error_code != 0) {
+                        vm.product_id = null;
+                        vm.is_tips = true;
+                        vm.no_hi_coin = false;
+                        $('.tips_txt').html(resp.error_reason);
+                    } else {
+                        //兑换成功
+                        vm.product_id = null;
+                        vm.is_pup = false;
+                        vm.is_tips = true;
+                        vm.no_hi_coin = true;
+                        vm.hi_coins = resp.hi_coins;
+                    }
+
+                    isTipsTimer = setTimeout(function () {
+                        location.reload();
+                    }, 1000);
+                    return;
+
+                });
+
+
             }
         }
     };
