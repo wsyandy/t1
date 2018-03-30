@@ -1502,17 +1502,25 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function fixUserRegisterAtAction()
     {
-        $cond = ['conditions' => '(third_unionid = "" or third_unionid is not null) and register_at is null'];
-
+        $cond = ['conditions' => '(third_unionid is not null) and register_at is null'];
+        echoLine(Users::count($cond));
         $users = Users::findForeach($cond);
 
         $i = 0;
 
         foreach ($users as $user) {
-            echoLine($user->login_type_text, $user->created_at_text, $user->register_at_text);
+            echoLine($user->id, $user->login_type_text, $user->third_unionid, $user->register_at_text);
+            ///$user->register_at = $user->created_at;
+            //$user->update();
             $i++;
         }
 
         echoLine($i);
+
+        $user = Users::findFirstById(1011505);
+        echoLine($user->register_at);
+        $user->register_at = $user->created_at;
+        $user->update();
+        echoLine($user->register_at);
     }
 }
