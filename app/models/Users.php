@@ -3077,10 +3077,10 @@ class Users extends BaseModel
     {
         $user = \Users::findFirstById($user_id);
         if (!$this->isWhiteListUser()) {
-            if ($this->isCompanyUser() && $user_id != $this->currentUserId() && $user->organisation == PERSONAGE) {
+            if ($this->isCompanyUser() && $user_id != $this->id && $user->organisation == PERSONAGE) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
-                $send_number = $hot_cache->zscore($key, $this->currentUserId());
+                $send_number = $hot_cache->zscore($key, $this->id);
                 $plan_number = $gift_amount + $send_number;
                 if ($plan_number > 100) {
                     return false;
