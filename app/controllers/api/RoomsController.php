@@ -209,10 +209,10 @@ class RoomsController extends BaseController
         $app_id = $this->currentProductChannel()->getImAppId();
 
         //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
-//        $this->currentUser()->pushFriendIntoRoomRemind();
+        $this->currentUser()->pushFriendIntoRoomRemind();
 
         //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
-//        $this->currentUser()->pushFollowedIntoRoomRemind();
+        $this->currentUser()->pushFollowedIntoRoomRemind();
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
