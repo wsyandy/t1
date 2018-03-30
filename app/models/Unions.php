@@ -481,6 +481,10 @@ class Unions extends BaseModel
         $exit = fetch($opts, 'exit');
         $kicking = fetch($opts, 'kicking');
 
+        if ($user->isUnionHost($this)) {
+            return [ERROR_CODE_FAIL, '家族长不能单独退出家族'];
+        }
+
         if ($kicking && !$union_host->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
