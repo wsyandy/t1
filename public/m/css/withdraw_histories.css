@@ -245,7 +245,7 @@ table { border-collapse:collapse; }
   color: #FFFFFF;
 }
 .get_hi_coin_btn{
-  margin-top: 30px;
+  margin-top: 2px;
   padding:10px 15px;
   text-align: center;
 }
@@ -254,12 +254,12 @@ table { border-collapse:collapse; }
   height: 44px;
   line-height: 44px;
   text-align: center;
-  background: #ffffff;
+  background: #F45189;
   -webkit-border-radius: 50px;
   -moz-border-radius: 50px;
   border-radius: 50px;
   font-size: 18px;
-  color: #554C83;
+  color: #FFFFFF;
 }
 .money_btn{
   margin-top: 16px;

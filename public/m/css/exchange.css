@@ -527,6 +527,9 @@ ol, ul, li {
     width: 40%;
     right: 0;
     color: #F45189;
+    top:0;
+    height: 0.68rem;
+    line-height:0.68rem;
 }
 .custom_equal{
     padding: 0 0.1rem;

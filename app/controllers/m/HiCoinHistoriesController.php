@@ -12,13 +12,8 @@ class HiCoinHistoriesController extends BaseController
 
     function exchangeAction()
     {
-        if ($this->request->isPost()) {
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-        }
 
         $products = \Products::findDiamondListByUser($this->currentUser(), '', PRODUCT_GROUP_FEE_TYPE_HI_COINS);
-
         $this->view->products = $products;
         $this->view->hi_coin_diamond_rate = HI_COIN_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
