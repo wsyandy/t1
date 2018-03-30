@@ -70,8 +70,8 @@ class WithdrawHistoriesController extends BaseController
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->withdraw_histories = $withdraw_histories;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
-        $this->view->start_at = date("Y-m-d", $start_at);
-        $this->view->end_at = date("Y-m-d", $end_at);
+        $this->view->start_at = $start_at ? date("Y-m-d", $start_at) : '';
+        $this->view->end_at = $end_at ? date("Y-m-d", $end_at) : '';
         $this->view->user_name = $this->params('withdraw_history[user_name_eq]');
         $this->view->id = $this->params('withdraw_history[id_eq]');
         $this->view->status = $status;
