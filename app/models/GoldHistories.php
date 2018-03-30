@@ -44,7 +44,13 @@ class GoldHistories extends BaseModel
             }
         }
 
+
+
+
         if ($gold_history->save()) {
+            $stat_attrs = array_merge($user->getStatAttrs(), ['add_value' => $amount]);
+            //金币统计
+            \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
             return true;
         }
 

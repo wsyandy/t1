@@ -2910,11 +2910,6 @@ class Users extends BaseModel
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
 
-        $stat_attrs = array_merge($this->getStatAttrs(), ['add_value' => $res]);
-
-        //金币统计
-        \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
-
         $time = 3600 * 24;
 //        if (isDevelopmentEnv()) {
 //            $time = 60 * 5;
