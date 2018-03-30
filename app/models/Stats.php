@@ -63,24 +63,24 @@ class Stats extends BaseModel
         'withdraw_total' => '申请提现金额',
 
         //用户签到  分享任务 购买金币  Hi币兑钻石获金币 系统赠送
-        'gold_obtain_total' => '获得金币总额',
-        'gold_obtain_num' => '获得金币次数',
-        'gold_obtain_user' => '获得金币人数',
-        'gold_obtain_num_average' => '人均获得金币次数',
-        'gold_obtain_user_average' => '人均获得金币数额',
-
-        'gold_cost_total' => '消耗金币总额',
-        'gold_cost_num' => '消耗金币次数',
-        'gold_cost_user' => '消耗金币人数',
-        'gold_cost_num_average' => '人均消耗金币次数',
-        'gold_cost_user_average' => '人均消耗金币数额',
-        'gold_cost_balance' => '消耗金币余额',
-
-        'gold_give_total' => '系统赠送金币总额',
-        'gold_give_num' => '系统赠送金币次数',
-        'gold_give_user' => '系统赠送金币人数',
-        'gold_give_num_average' => '人均系统赠送金币次数',
-        'gold_give_user_average' => '人均系统赠送金币数额',
+//        'gold_obtain_total' => '获得金币总额',
+//        'gold_obtain_num' => '获得金币次数',
+//        'gold_obtain_user' => '获得金币人数',
+//        'gold_obtain_num_average' => '人均获得金币次数',
+//        'gold_obtain_user_average' => '人均获得金币数额',
+//
+//        'gold_cost_total' => '消耗金币总额',
+//        'gold_cost_num' => '消耗金币次数',
+//        'gold_cost_user' => '消耗金币人数',
+//        'gold_cost_num_average' => '人均消耗金币次数',
+//        'gold_cost_user_average' => '人均消耗金币数额',
+//        'gold_cost_balance' => '消耗金币余额',
+//
+//        'gold_give_total' => '系统赠送金币总额',
+//        'gold_give_num' => '系统赠送金币次数',
+//        'gold_give_user' => '系统赠送金币人数',
+//        'gold_give_num_average' => '人均系统赠送金币次数',
+//        'gold_give_user_average' => '人均系统赠送金币数额',
 
         'diamond_recharge_total' => '购买钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
