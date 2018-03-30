@@ -656,7 +656,8 @@ class UsersController extends BaseController
                 $changed_rank = $last_rank - $current_rank;
             }
 
-            $res['current_rank'] = $current_rank;
+            $res['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000; //大于100加1000
+            $res['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
             $res['changed_rank'] = $changed_rank;
 
             debug($current_rank, $last_rank);
@@ -692,8 +693,9 @@ class UsersController extends BaseController
                 $changed_rank = $last_rank - $current_rank;
             }
 
-            $res['current_rank'] = $current_rank;
+            $res['current_rank'] = $current_rank <= 100 ? $current_rank : $current_rank + 1000; //大于100加1000
             $res['changed_rank'] = $changed_rank;
+            $res['current_rank_text'] = $current_rank <= 100 ? $current_rank : '100+';
 
             debug($current_rank, $last_rank);
 

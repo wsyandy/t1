@@ -42,6 +42,7 @@
 {
     error_code:   0/-1  
     error_reason: '返回码说明'    
+    gold: 用户当前的金币数量
 }
 ```
 

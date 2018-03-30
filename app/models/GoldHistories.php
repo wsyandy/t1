@@ -49,7 +49,19 @@ class GoldHistories extends BaseModel
 
         if ($gold_history->save()) {
             $stat_attrs = array_merge($user->getStatAttrs(), ['add_value' => $amount]);
-            //金币统计
+
+            //消耗金币统计
+            if($gold_history->isCostGold()){
+                \Stats::delay()->record('user', 'gold_cost', $stat_attrs);
+                return true;
+            }
+
+            //系统赠送金币统计
+            if($gold_history->isSystemGive()){
+                \Stats::delay()->record('user', 'gold_give', $stat_attrs);
+            }
+
+            //获取金币统计
             \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
             return true;
         }
@@ -87,9 +99,19 @@ class GoldHistories extends BaseModel
         return false;
     }
 
+    /**
+     * 用户消耗
+     */
     function isCostGold()
     {
         return $this->fee_type == GOLD_TYPE_BUY_GIFT;
+    }
+
+    /**
+     * 系统赠送
+     */
+    function isSystemGive(){
+        return $this->fee_type == GOLD_TYPE_GIVE;
     }
 
     function afterCreate()
