@@ -30,7 +30,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $users = Users::findByIds($user_ids);
             foreach ($users as $user) {
 
-                if((time() - $room->last_at) > 3600 * 12){
+                if ((time() - $room->last_at) > 3600 * 12) {
                     $room->exitRoom($user, true);
                     info("room_last_at", $room->id, 'user', $user->id, 'last_at', date("YmdH", $room->last_at));
                     continue;
@@ -48,7 +48,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     info('fix room', $room->id, 'user', $user->id, 'current_room_id', $user->current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
 
                     $room->exitRoom($user, true);
-                    if($current_room_id == $room->id){
+                    if ($current_room_id == $room->id) {
                         $room->pushExitRoomMessage($user, $current_room_seat_id);
                     }
                 }
@@ -289,7 +289,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $manual_hot_room_num = 10;
             $total_num = 20;
             $least_num = 8;
-            $least_user_num = 5;
+            $least_user_num = 3;
             $last = time() - 10 * 60;
         }
 
@@ -503,13 +503,17 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($total_room_ids as $room_id) {
 
-            $cond = [
-                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
-                'column' => 'amount'
-            ];
+            if (in_array($room_id, $has_income_room_ids)) {
+                $income = $has_income_room_ids[$room_id];
+            } else {
+                $cond = [
+                    'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
+                    'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room_id],
+                    'column' => 'amount'
+                ];
 
-            $income = GiftOrders::sum($cond);
+                $income = GiftOrders::sum($cond);
+            }
 
             info($income);
 
@@ -569,7 +573,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $start = time() - 61 * 60;
         $end = time() - 60;
-        $least_user_num = 3;
+        $least_user_num = 2;
 
         if (isDevelopmentEnv()) {
             $least_user_num = 1;
