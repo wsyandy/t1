@@ -142,7 +142,7 @@ class Users extends BaseModel
             self::delay(1)->asyncUpdateGeoLocation($this->id);
         }
 
-        if ($this->hasChanged('register_at') && $this->register_at && $this->register_at >= time() - 10) {
+        if ($this->hasChanged('register_at') && $this->register_at) {
             $this->registerStat();
             $this->createEmUser();
         }
