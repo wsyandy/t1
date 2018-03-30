@@ -103,7 +103,7 @@
 
 <script>
 
-    var isTipsTimer;
+//    var isTipsTimer;
 
     var opts = {
         data: {
@@ -139,14 +139,14 @@
                 return;
             },
             focusAction: function () {
-                this.cur_hi_coin = 0;
+                this.cur_hi_coin = '';
             },
             customChangeAction: function () {
                 this.cur_diamond = this.cur_hi_coin * this.hi_coin_diamond_rate;
                 this.no_hi_coin = this.cur_hi_coin < 50;
             },
             exchangeDiamondsAction: function (bool) {
-                clearTimeout(isTipsTimer);
+//                clearTimeout(isTipsTimer);
                 if (bool) {
 
                     var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
@@ -168,10 +168,12 @@
                             vm.hi_coins = resp.hi_coins;
                         }
 
-                        isTipsTimer = setTimeout(function () {
-                            vm.is_pup = false;
-                            vm.is_tips = false;
-                        }, 600);
+                        location.reload();
+
+//                        isTipsTimer = setTimeout(function () {
+//                            vm.is_pup = false;
+//                            vm.is_tips = false;
+//                        }, 600);
                         return;
 
                     });
