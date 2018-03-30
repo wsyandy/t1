@@ -18,7 +18,14 @@ class WithdrawHistoriesController extends BaseController
         $this->view->rate = $rate;
         $this->view->hi_coins = $user->withdraw_amount;
         $this->view->amount = $user->withdraw_amount;
-        $this->view->is_hight_version = $this->isHightVersion();
+
+        $is_height_version = false;
+        if ($user->isIos()){
+            $is_height_version = $user->version_code > $user->product_channel->apple_stable_version;
+        }
+        info($is_height_version);
+        $this->view->is_height_version = $is_height_version;
+
         $this->view->user = $user;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
