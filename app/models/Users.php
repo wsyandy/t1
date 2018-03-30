@@ -424,7 +424,7 @@ class Users extends BaseModel
         // 重复激活
         // dno重复，存在bug
         $user = $device->user;
-        if (!$user || $is_force) {
+        if (!$user || $is_force || $user->isSilent()) {
 
             $fields = ['product_channel_id', 'platform', 'platform_version', 'version_code', 'version_name',
                 'api_version', 'device_no', 'fr', 'partner_id', 'manufacturer', 'ip', 'latitude', 'longitude',

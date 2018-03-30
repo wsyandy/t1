@@ -592,6 +592,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             if (!$hot_room->checkRoomSeat()) {
+                $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
             }
