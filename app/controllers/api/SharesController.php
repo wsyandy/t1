@@ -46,7 +46,7 @@ class SharesController extends BaseController
 
         $image_small_url = $this->currentProductChannel()->avatar_url;
 
-        if ($share_history->share_source == 'gold_works') {
+        if ($share_history->isGoldWorks()) {
             $image_url = $image_small_url;
         }
 
@@ -69,6 +69,7 @@ class SharesController extends BaseController
     function resultAction()
     {
         $share_history = \ShareHistories::findFirstById($this->params('share_history_id', 0));
+
         if (!$share_history) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
@@ -77,6 +78,10 @@ class SharesController extends BaseController
         $status = intval($this->params('status', 0));
 
         $opts = ['type' => $type, 'status' => $status];
+
+        if ($share_history->isGoldWorks()) {
+            $opts['gold'] = $this->currentUser(true)->gold;
+        }
 
         list($error_code, $error_reason) = $share_history->result($opts);
         return $this->renderJSON($error_code, $error_reason);

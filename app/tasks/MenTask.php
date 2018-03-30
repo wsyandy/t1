@@ -10,6 +10,9 @@ class MenTask extends \Phalcon\Cli\Task
 
     function testAction()
     {
-        
+        $user = Users::findFirstById(240);
+        $user->version_code = 14;
+        $user->save();
+        echoLine($user->id);
     }
 }

@@ -62,6 +62,26 @@ class Stats extends BaseModel
 
         'withdraw_total' => '申请提现金额',
 
+        //用户签到  分享任务 购买金币  Hi币兑钻石获金币 系统赠送
+        'gold_obtain_total' => '获得金币总额',
+        'gold_obtain_num' => '获得金币次数',
+        'gold_obtain_user' => '获得金币人数',
+        'gold_obtain_num_average' => '人均获得金币次数',
+        'gold_obtain_user_average' => '人均获得金币数额',
+
+        'gold_cost_total' => '消耗金币总额',
+        'gold_cost_num' => '消耗金币次数',
+        'gold_cost_user' => '消耗金币人数',
+        'gold_cost_num_average' => '人均消耗金币次数',
+        'gold_cost_user_average' => '人均消耗金币数额',
+        'gold_cost_balance' => '消耗金币余额',
+
+        'gold_give_total' => '系统赠送金币总额',
+        'gold_give_num' => '系统赠送金币次数',
+        'gold_give_user' => '系统赠送金币人数',
+        'gold_give_num_average' => '人均系统赠送金币次数',
+        'gold_give_user_average' => '人均系统赠送金币数额',
+
         'diamond_recharge_total' => '购买钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
@@ -923,6 +943,220 @@ class Stats extends BaseModel
             $rate = sprintf("%0.2f", $new_payment_success_user * 100 / $new_create_payment_user);
         }
         $this->data_hash['new_payment_success_rate'] = $rate;
+    }
+
+
+    /**
+     * 金币赠送总额
+     */
+    function goldObtainTotal()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_obtain_total'] = intval($num);
+    }
+
+    /**
+     * 金币赠送次数
+     */
+    function goldObtainNum()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_obtain_num'] = intval($num);
+    }
+
+    /**
+     * 金币赠送人数
+     */
+    function goldObtainUser()
+    {
+        $key = $this->statCacheKey("user", "gold_obtain");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['gold_obtain_user'] = intval($num);
+    }
+
+    /**
+     * 人均获得金币次数
+     */
+    function goldObtainNumAverage()
+    {
+        $gold_obtain_num = $this->data_hash['gold_obtain_num'];
+        $gold_obtain_user = $this->data_hash['gold_obtain_user'];
+        $avg = 0;
+
+        if ($gold_obtain_user > 0) {
+            $avg = intval($gold_obtain_num * 100 / $gold_obtain_user) / 100;
+        }
+
+        $this->data_hash['gold_obtain_num_average'] = $avg;
+    }
+
+    /**
+     * 人均获得金币数额
+     */
+    function goldObtainUserAverage()
+    {
+        $gold_obtain_total = $this->data_hash['gold_obtain_total'];
+        $gold_obtain_user = $this->data_hash['gold_obtain_user'];
+
+        $avg = 0;
+
+        if ($gold_obtain_user > 0) {
+            $avg = intval($gold_obtain_total * 100 / $gold_obtain_user) / 100;
+        }
+
+        $this->data_hash['gold_obtain_user_average'] = $avg;
+    }
+
+    /**
+     * 消耗金币总额
+     */
+    function goldCostTotal()
+    {
+        $key = $this->statCacheKey("user", "gold_cost");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_cost_total'] = intval($num);
+    }
+
+    /**
+     * 金币赠送次数
+     */
+    function goldCostNum()
+    {
+        $key = $this->statCacheKey("user", "gold_cost");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_cost_num'] = intval($num);
+    }
+
+    /**
+     * 金币赠送人数
+     */
+    function goldCostUser()
+    {
+        $key = $this->statCacheKey("user", "gold_cost");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['gold_cost_user'] = intval($num);
+    }
+
+    /**
+     * 人均获得金币次数
+     */
+    function goldCostNumAverage()
+    {
+        $gold_cost_num = $this->data_hash['gold_cost_num'];
+        $ggold_cost_user = $this->data_hash['gold_cost_user'];
+        $avg = 0;
+
+        if ($ggold_cost_user > 0) {
+            $avg = intval($gold_cost_num * 100 / $ggold_cost_user) / 100;
+        }
+
+        $this->data_hash['gold_cost_num_average'] = $avg;
+    }
+
+    /**
+     * 人均获得金币数额
+     */
+    function goldCostUserAverage()
+    {
+        $gold_cost_total = $this->data_hash['gold_cost_total'];
+        $gold_cost_user = $this->data_hash['gold_cost_user'];
+
+        $avg = 0;
+
+        if ($gold_cost_user > 0) {
+            $avg = intval($gold_cost_total * 100 / $gold_cost_user) / 100;
+        }
+
+        $this->data_hash['gold_cost_user_average'] = $avg;
+    }
+
+    //消耗金币余额
+    function goldCostBalance()
+    {
+        $gold_obtain_total = $this->data_hash['gold_obtain_total'];
+        $gold_cost_total = $this->data_hash['gold_cost_total'];
+
+        return intval($gold_obtain_total - $gold_cost_total);
+    }
+
+    /**
+     * 金币赠送总额
+     */
+    function goldGiveTotal()
+    {
+        $key = $this->statCacheKey("user", "gold_give");
+        $stat_db = Stats::getStatDb();
+        $key .= '_total';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_give_total'] = intval($num);
+    }
+
+    /**
+     * 金币赠送次数
+     */
+    function goldGiveNum()
+    {
+        $key = $this->statCacheKey("user", "gold_give");
+        $stat_db = Stats::getStatDb();
+        $key .= '_num';
+        $num = $stat_db->get($key);
+        $this->data_hash['gold_give_num'] = intval($num);
+    }
+
+    /**
+     * 金币赠送人数
+     */
+    function goldGiveUser()
+    {
+        $key = $this->statCacheKey("user", "gold_give");
+        $stat_db = Stats::getStatDb();
+        $num = $stat_db->zcard($key);
+        $this->data_hash['gold_give_user'] = intval($num);
+    }
+
+    /**
+     * 人均获得金币次数
+     */
+    function goldGiveNumAverage()
+    {
+        $gold_give_num = $this->data_hash['gold_give_num'];
+        $gold_give_user = $this->data_hash['gold_give_user'];
+        $avg = 0;
+
+        if ($gold_give_user > 0) {
+            $avg = intval($gold_give_num * 100 / $gold_give_user) / 100;
+        }
+
+        $this->data_hash['gold_give_num_average'] = $avg;
+    }
+
+    /**
+     * 人均获得金币数额
+     */
+    function goldGiveUserAverage()
+    {
+        $gold_give_total = $this->data_hash['gold_give_total'];
+        $gold_give_user = $this->data_hash['gold_give_user'];
+
+        $avg = 0;
+
+        if ($gold_give_user > 0) {
+            $avg = intval($gold_give_total * 100 / $gold_give_user) / 100;
+        }
+
+        $this->data_hash['gold_give_user_average'] = $avg;
     }
 
     /**

@@ -12,13 +12,8 @@ class HiCoinHistoriesController extends BaseController
 
     function exchangeAction()
     {
-        if ($this->request->isPost()) {
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-        }
 
         $products = \Products::findDiamondListByUser($this->currentUser(), '', PRODUCT_GROUP_FEE_TYPE_HI_COINS);
-
         $this->view->products = $products;
         $this->view->hi_coin_diamond_rate = HI_COIN_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
@@ -50,6 +45,10 @@ class HiCoinHistoriesController extends BaseController
             $user = $this->currentUser();
             if ($user->hi_coins < $hi_coins) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
+            }
+
+            if ($hi_coins < 0){
+                return $this->renderJSON(ERROR_CODE_FAIL, 'Hi币不能为0！');
             }
 
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];

@@ -19,7 +19,7 @@ class GoldHistories extends BaseModel
     private $_operator;
 
     static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务',
-        GOLD_TYPE_BUY_GOLD =>'购买金币',GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND =>'Hi币兑钻石获金币'];
+        GOLD_TYPE_BUY_GOLD => '购买金币', GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石获金币', GOLD_TYPE_GIVE => '系统赠送'];
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
@@ -44,7 +44,25 @@ class GoldHistories extends BaseModel
             }
         }
 
+
+
+
         if ($gold_history->save()) {
+            $stat_attrs = array_merge($user->getStatAttrs(), ['add_value' => $amount]);
+
+            //消耗金币统计
+            if($gold_history->isCostGold()){
+                \Stats::delay()->record('user', 'gold_cost', $stat_attrs);
+                return true;
+            }
+
+            //系统赠送金币统计
+            if($gold_history->isSystemGive()){
+                \Stats::delay()->record('user', 'gold_give', $stat_attrs);
+            }
+
+            //获取金币统计
+            \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
             return true;
         }
 
@@ -81,9 +99,19 @@ class GoldHistories extends BaseModel
         return false;
     }
 
+    /**
+     * 用户消耗
+     */
     function isCostGold()
     {
         return $this->fee_type == GOLD_TYPE_BUY_GIFT;
+    }
+
+    /**
+     * 系统赠送
+     */
+    function isSystemGive(){
+        return $this->fee_type == GOLD_TYPE_GIVE;
     }
 
     function afterCreate()

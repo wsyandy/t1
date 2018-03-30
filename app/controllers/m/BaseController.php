@@ -16,7 +16,8 @@ class BaseController extends \ApplicationController
     public $remote_ip;
 
     static $SKIP_ACTIONS = [
-        'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies', 'active'],
+        'activities' => '*',
+        'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies'],
         'payments' => ['index']
     ];
 
@@ -263,12 +264,12 @@ class BaseController extends \ApplicationController
             return false;
         }
 
-//        if ($this->isAndroid()) {
-//            if ($this->context('version_code') > $this->currentProductChannel()->android_stable_version) {
-//                return true;
-//            }
-//            return false;
-//        }
+        if ($this->isAndroid()) {
+            if ($this->context('version_code') > $this->currentProductChannel()->android_stable_version) {
+                return true;
+            }
+            return false;
+        }
         return false;
     }
 }

@@ -583,7 +583,9 @@ trait UserAttrs
             return 0;
         } else {
             $rate = $this->rateOfHiCoinToMoney();
-            return $hi_coins / $rate;
+            $hi_coins = $hi_coins / $rate;
+
+            return intval($hi_coins * 100) / 100;
         }
     }
 
@@ -639,7 +641,7 @@ trait UserAttrs
     {
         $num = UserGifts::sum(['conditions' => 'user_id = :user_id: and gift_type = :gift_type:',
             'bind' => ['user_id' => $this->id, 'gift_type' => GIFT_TYPE_COMMON], 'column' => 'num']);
-        
+
         return $num;
     }
 
