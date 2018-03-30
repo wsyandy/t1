@@ -51,10 +51,4 @@ class ProductChannelsController extends BaseController
     {
         $this->view->title = '玩转Hi';
     }
-
-
-    function activeAction()
-    {
-        $this->view->title = "周榜专属奖励";
-    }
 }

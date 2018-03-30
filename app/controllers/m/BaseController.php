@@ -16,7 +16,8 @@ class BaseController extends \ApplicationController
     public $remote_ip;
 
     static $SKIP_ACTIONS = [
-        'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies', 'active'],
+        'activities' => '*',
+        'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies'],
         'payments' => ['index']
     ];
 
