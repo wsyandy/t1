@@ -103,9 +103,7 @@ class Stats extends BaseModel
     // 渠道统计
     static $STAT_PARTNER_FIELDS = [
         'device_active_num' => '设备激活数',
-        'subscribe_num' => '微信关注数',
         'touch_active_num' => 'H5激活数',
-        'unsubscribe_num' => '微信取消关注数',
         'register_num' => "注册数",
         'register_rate' => '注册率%'
     ];

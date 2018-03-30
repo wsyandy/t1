@@ -126,11 +126,25 @@ class Payments extends BaseModel
                 return;
             }
 
+            if ($this->isApple()) {
+                $this->statDayPayAmount();
+            }
+
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = round($this->paid_amount);
             info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
             \Stats::delay()->record("user", "payment_success", $attrs);
             return;
+        }
+    }
+
+    function statDayPayAmount()
+    {
+        if ($this->user->device) {
+            $hot_cache = Payments::getHotWriteCache();
+            $key = "stat_apple_day_total_pay_amount_list_" . date("Ymd");
+            $hot_cache->zincrby($key, $this->amount, $this->user->device_id);
+            $hot_cache->expire($key, endOfDay() - time());
         }
     }
 
@@ -165,4 +179,8 @@ class Payments extends BaseModel
         return $this->amount;
     }
 
+    function isApple()
+    {
+        return 'apple' == $this->payment_type;
+    }
 }

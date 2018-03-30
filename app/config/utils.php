@@ -69,13 +69,15 @@ function mbStrSplit($str)
 function valueToStr($value)
 {
     if ($value < 1000) {
-        $value = round($value, 2);
+        $value = intval($value * 100) / 100;
         return "$value";
     }
 
     $myriabit = intval($value / 10000);
-    $kilobit = round($value / 1000) - $myriabit * 10;
-    return $myriabit . '.' . $kilobit . "万";
+    $kilobit = intval($value * 1000) / 1000 - $myriabit * 10;
+    $res = $myriabit . '.' . $kilobit;
+    $str = intval($res * 100) / 100;
+    return $str . "万";
 }
 
 function beginOfWeek()

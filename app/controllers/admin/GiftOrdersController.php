@@ -39,6 +39,10 @@ class GiftOrdersController extends BaseController
             $cond['bind']['end_at'] = $end_at;
         }
 
+        if ($end_at - $start_at > 86400 * 7) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '时间跨度最大7天');
+        }
+
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
 
@@ -62,7 +66,17 @@ class GiftOrdersController extends BaseController
 
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $cond['column'] = 'amount';
+        $cond['conditions'] .= ' and pay_type = :pay_type';
+        $cond['bind']['bind'] = GIFT_PAY_TYPE_DIAMOND;
         $total_amount = \GiftOrders::sum($cond);
+
+        $gift_order = $this->params('gift_order');
+        debug($gift_order);
+
+        $this->view->id = $gift_order['id_eq'];
+        $this->view->sender_id = $gift_order['sender_id_eq'];
+        $this->view->gift_id = $gift_order['gift_id_eq'];
+        $this->view->room_id = $gift_order['room_id_eq'];
 
         $this->view->gift_orders = $gift_orders;
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
