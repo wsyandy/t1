@@ -15,15 +15,19 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->isWxPlatform() && !$this->isSubscribe()) {
-            return false;
-        }
+//        if ($this->isWxPlatform() && !$this->isSubscribe()) {
+//            return false;
+//        }
 
         if (!$this->isOfflineTaskRunning()) {
             return false;
         }
 
         if ($this->user_status != USER_STATUS_ON) {
+            return false;
+        }
+
+        if (!$this->isClientPlatform()) {
             return false;
         }
 
@@ -151,9 +155,9 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
-        if ($receiver->isWxPlatform()) {
-            $wake_minutes = [60, 24 * 60];
-        }
+//        if ($receiver->isWxPlatform()) {
+//            $wake_minutes = [60, 24 * 60];
+//        }
 
         foreach ($wake_minutes as $minute) {
             // 小于循环时间的一半
@@ -499,11 +503,10 @@ trait UserWakeup
 
                 $friend_key = 'push_friend_or_followed_online_remind_' . $user->id;
                 if ($user_db->setnx($friend_key, $user->id)) {
-                    $user_db->expire($friend_key, 60 * 60);
+                    $user_db->expire($friend_key, 10 * 60);
 
                     info('push friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
-                    return;
                 }
             }
         }
@@ -553,11 +556,10 @@ trait UserWakeup
 
                 $followed_key = 'push_friend_or_followed_online_remind_' . $user->id;
                 if ($user_db->setnx($followed_key, $user->id)) {
-                    $user_db->expire($followed_key, 60 * 60);
+                    $user_db->expire($followed_key, 10 * 60);
 
                     info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
-                    return;
                 }
 
             }
@@ -578,7 +580,13 @@ trait UserWakeup
             return;
         }
 
-        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        $data = [
+            "{$this->nickname}开播啦，精彩瞬间别错过！",
+            "{$this->nickname}开播就想你，不打开看看吗？"
+        ];
+
+        $body = $data[mt_rand(0, 1)];
+
         if (!$this->current_room_id) {
             info('user_id', $this->id, 'not in room');
             return;
@@ -603,12 +611,12 @@ trait UserWakeup
 
         //每个房主一个小时内只能发送一次 (好友)
         $user_db = Users::getUserDb();
-        $room_user_key = 'push_friend_into_room_remind_' . $this->id;
-        if (!$user_db->setnx($room_user_key, $this->id)) {
-            info('room_user_key 房主一个小时内只能发送一次', $this->id);
-            return;
-        }
-        $user_db->expire($room_user_key, 60 * 60);
+//        $room_user_key = 'push_friend_into_room_remind_' . $this->id;
+//        if (!$user_db->setnx($room_user_key, $this->id)) {
+//            info('room_user_key 房主一个小时内只能发送一次', $this->id);
+//            return;
+//        }
+//        $user_db->expire($room_user_key, 10 * 60);
 
         $total_pages = ceil($friend_num / $per_page);
 
@@ -628,7 +636,7 @@ trait UserWakeup
                 //关注好友每个人一个小时内只能收到一条
                 $friend_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
                 if ($user_db->setnx($friend_key, $user->id)) {
-                    $user_db->expire($friend_key, 60 * 60);
+                    $user_db->expire($friend_key, 10 * 60);
 
                     info('friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
@@ -654,7 +662,13 @@ trait UserWakeup
             return;
         }
 
-        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        $data = [
+            "{$this->nickname}开播啦，精彩瞬间别错过！",
+            "{$this->nickname}开播就想你，不打开看看吗？"
+        ];
+
+        $body = $data[mt_rand(0, 1)];
+
         if (!$this->current_room_id) {
             info('user_id', $this->id, 'not in room');
             return;
@@ -679,12 +693,12 @@ trait UserWakeup
 
         //每个房主一个小时内只能发送一次 (关注)
         $user_db = Users::getUserDb();
-        $room_user_key = 'push_followed_into_room_remind_' . $this->id;
-        if (!$user_db->setnx($room_user_key, $this->id)) {
-            info('room_user_key 房主一个小时内只能发送一次', $this->id);
-            return;
-        }
-        $user_db->expire($room_user_key, 60 * 60);
+//        $room_user_key = 'push_followed_into_room_remind_' . $this->id;
+//        if (!$user_db->setnx($room_user_key, $this->id)) {
+//            info('room_user_key 房主一个小时内只能发送一次', $this->id);
+//            return;
+//        }
+//        $user_db->expire($room_user_key, 10 * 60);
 
         $total_pages = ceil($followed_num / $per_page);
 
@@ -705,7 +719,7 @@ trait UserWakeup
                 //关注好友每个人一个小时内只能收到一条
                 $followed_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
                 if ($user_db->setnx($followed_key, $user->id)) {
-                    $user_db->expire($followed_key, 60 * 60);
+                    $user_db->expire($followed_key, 10 * 60);
 
                     info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
