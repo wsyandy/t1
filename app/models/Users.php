@@ -130,10 +130,10 @@ class Users extends BaseModel
             $this->updateLastAt();
 
             //好友上线提醒(每小时选取最新的一个好友上线提醒)
-//            $this->pushFriendOnlineRemind();
+            $this->pushFriendOnlineRemind();
 
             //关注的人上线提醒(每小时选取最新关注的人上线提醒)
-//            $this->pushFollowedOnlineRemind();
+            $this->pushFollowedOnlineRemind();
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -3063,10 +3063,16 @@ class Users extends BaseModel
         return $this->organisation == COMPANY ? COMPANY : PERSONAGE;
     }
 
-    function addCompanyUserSendNumber($total_diamond)
+    function addCompanyUserSendNumber($send_diamond)
     {
         $cache = \Users::getHotWriteCache();
         $current_day_company_user_send_diamond_to_personage_num = 'current_day_company_user_' . date('Y-m-d', time());
+        $send_number_over = $cache->zscore($current_day_company_user_send_diamond_to_personage_num, $this->id);
+        $total_diamond = $send_diamond;
+        if ($send_number_over) {
+            $total_diamond = $send_diamond + $send_number_over;
+        }
+        
         $cache->zadd($current_day_company_user_send_diamond_to_personage_num, $total_diamond, $this->id);
 
         $past_at = endOfDay(time()) - time();

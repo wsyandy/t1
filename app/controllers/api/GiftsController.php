@@ -64,10 +64,9 @@ class GiftsController extends BaseController
             }
         }
 
-        if($gift->isDiamondPayType())
-        {
+        if ($gift->isDiamondPayType()) {
             $gift_amount = $gift_num * $gift->amount;
-            $check_result = $this->currentUser()->canSendToUser($user_id,$gift_amount);
+            $check_result = $this->currentUser()->canSendToUser($user_id, $gift_amount);
             if (!$check_result) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '非常抱歉，您已经超过今日对外送出的额度');
             }
