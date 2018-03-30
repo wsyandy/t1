@@ -103,7 +103,7 @@
 
 <script>
 
-//    var isTipsTimer;
+    var isTipsTimer;
 
     var opts = {
         data: {
@@ -146,7 +146,7 @@
                 this.no_hi_coin = this.cur_hi_coin < 50;
             },
             exchangeDiamondsAction: function (bool) {
-//                clearTimeout(isTipsTimer);
+                clearTimeout(isTipsTimer);
                 if (bool) {
 
                     var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
@@ -168,12 +168,9 @@
                             vm.hi_coins = resp.hi_coins;
                         }
 
-                        location.reload();
-
-//                        isTipsTimer = setTimeout(function () {
-//                            vm.is_pup = false;
-//                            vm.is_tips = false;
-//                        }, 600);
+                        isTipsTimer = setTimeout(function () {
+                            location.reload();
+                        }, 1000);
                         return;
 
                     });
