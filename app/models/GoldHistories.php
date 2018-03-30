@@ -36,7 +36,7 @@ class GoldHistories extends BaseModel
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
 
-        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id'] as $column) {
             $value = fetch($opts, $column);
 
             if ($value) {
