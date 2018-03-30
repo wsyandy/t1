@@ -1490,4 +1490,13 @@ class MeiTask extends \Phalcon\Cli\Task
         $hot_cache->expire($key, 5);
         info($hot_cache->zscore($key, 1));
     }
+
+    function giveGoldAction()
+    {
+        $user_id = 1001315;
+        $user = Users::findFirstById(1001315);
+        $amount = 10000;
+        $opts = ['mobile' => $user->mobile, 'operator_id' => 1, 'remark' => "系统赠送金币" . $amount . "个" ];
+        $gold_histories = GoldHistories::changeBalance($user_id, GOLD_TYPE_GIVE, $amount, $opts);
+    }
 }
