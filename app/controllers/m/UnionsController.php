@@ -130,7 +130,9 @@ class UnionsController extends BaseController
         $union = \Unions::findFirstById($union_id);
         $president = $union->user;
 
-        if ($union->id != $this->currentUser()->union_id && 'my_union' == $click_from) {
+        if ($union->status != STATUS_ON || $union->type != UNION_TYPE_PRIVATE ||
+            ($union->id != $this->currentUser()->union_id && 'my_union' == $click_from)
+        ) {
             return $this->response->redirect("/m/unions?sid=$sid&code=$code");
         }
 
@@ -174,7 +176,6 @@ class UnionsController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         if ($list_type != 'day' && $list_type != 'week') {
-            debug($list_type);
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
@@ -226,10 +227,17 @@ class UnionsController extends BaseController
     //新用户
     function newUsersAction()
     {
+        $current_user = $this->currentUser();
+        $union = $current_user->union;
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+
+        if (!$current_user->isUnionHost($union)) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
         $this->view->title = "新的成员";
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
-        $union = $this->currentUser()->union;
+        $this->view->sid = $sid;
+        $this->view->code = $code;
         $union->clearNewApplyNum();
     }
 
@@ -253,19 +261,34 @@ class UnionsController extends BaseController
     //申请详情
     function applicationDetailAction()
     {
+        $current_user = $this->currentUser();
+        $union = $current_user->union;
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+
+        if (!$current_user->isUnionHost($union)) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
         $user = \Users::findFirstById($this->params('user_id'));
-        $union = $this->currentUser()->union;
         $user->apply_status = $union->applicationStatus($user->id);
         $this->view->user = $user;
         $this->view->title = "申请详情";
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
     function editAction()
     {
-        $user = $this->currentUser();
-        $union = $user->union;
+        $current_user = $this->currentUser();
+        $union = $current_user->union;
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+
+        if (!$current_user->isUnionHost($union)) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
         $this->view->sid = $this->params('sid');
         $this->view->code = $this->params('code');
         $this->view->union = $union;
@@ -337,7 +360,6 @@ class UnionsController extends BaseController
     {
         $user = \Users::findFirstById($this->params('user_id'));
         $status = $this->params('status');
-        debug($status);
         $current_user = $this->currentUser();
         $union = $current_user->union;
         if ($status == 1) {
@@ -376,10 +398,6 @@ class UnionsController extends BaseController
 
             $user = \Users::findFirstById($this->params('user_id'));
 
-            if ($user->id == $this->currentUser()->id) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '自己不能提出自己');
-            }
-
             $opts = ['kicking' => "kicking"];
 
             list($error_code, $error_reason) = $union->exitUnion($user, $opts, $current_user);
@@ -390,6 +408,15 @@ class UnionsController extends BaseController
     //申请上热门
     function applyGoHotAction()
     {
+        $current_user = $this->currentUser();
+        $union = $current_user->union;
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+
+        if (!$current_user->isUnionHost($union)) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
         $time = time();
         $days = [];
         $hours = [];
@@ -407,11 +434,11 @@ class UnionsController extends BaseController
 
         $this->view->days = $days;
         $this->view->hours = $hours;
-        $this->view->user = $this->currentUser();
-        $this->view->union = $this->currentUser()->union;
+        $this->view->user = $current_user;
+        $this->view->union = $union;
         $this->view->title = "申请上热门";
-        $this->view->sid = $this->params('sid');
-        $this->view->code = $this->params('code');
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
     function hotRoomHistoryAction()
