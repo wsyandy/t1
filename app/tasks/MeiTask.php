@@ -1510,6 +1510,11 @@ class MeiTask extends \Phalcon\Cli\Task
     function testAction()
     {
         info(valueToStr(1032442333444333));
+
+        $user = Users::findById(117);
+        $user->organisation = 0;
+        $user->update();
+
     }
 
     function giveGoldAction()
