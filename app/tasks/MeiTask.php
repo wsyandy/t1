@@ -1496,7 +1496,23 @@ class MeiTask extends \Phalcon\Cli\Task
         $user_id = 31654;
         $user = Users::findFirstById(31654);
         $amount = 2334;
-        $opts = ['mobile' => $user->mobile, 'operator_id' => 1, 'remark' => "系统赠送金币" . $amount . "个" ];
+        $opts = ['mobile' => $user->mobile, 'operator_id' => 1, 'remark' => "系统赠送金币" . $amount . "个"];
         $gold_histories = GoldHistories::changeBalance($user_id, GOLD_TYPE_GIVE, $amount, $opts);
+    }
+
+    function fixUserRegisterAtAction()
+    {
+        $cond = ['conditions' => '(third_unionid = "" or third_unionid is not null) and register_at is null'];
+
+        $users = Users::findForeach($cond);
+
+        $i = 0;
+
+        foreach ($users as $user) {
+            echoLine($user->login_type_text, $user->created_at_text, $user->register_at_text);
+            $i++;
+        }
+
+        echoLine($i);
     }
 }
