@@ -135,6 +135,7 @@
             customHiCoinAction: function () {
                 this.is_pup = true;
                 this.is_custom = true;
+                this.no_hi_coin = true;
                 return;
             },
             focusAction: function () {

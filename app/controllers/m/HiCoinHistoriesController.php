@@ -52,6 +52,10 @@ class HiCoinHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 
+            if ($hi_coins < 0){
+                return $this->renderJSON(ERROR_CODE_FAIL, 'Hi币不能为0！');
+            }
+
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];
             info('user_id', $user->id, $opts);
 
