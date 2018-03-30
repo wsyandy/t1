@@ -15,15 +15,19 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->isWxPlatform() && !$this->isSubscribe()) {
-            return false;
-        }
+//        if ($this->isWxPlatform() && !$this->isSubscribe()) {
+//            return false;
+//        }
 
         if (!$this->isOfflineTaskRunning()) {
             return false;
         }
 
         if ($this->user_status != USER_STATUS_ON) {
+            return false;
+        }
+
+        if (!$this->isClientPlatform()) {
             return false;
         }
 
@@ -151,9 +155,9 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
-        if ($receiver->isWxPlatform()) {
-            $wake_minutes = [60, 24 * 60];
-        }
+//        if ($receiver->isWxPlatform()) {
+//            $wake_minutes = [60, 24 * 60];
+//        }
 
         foreach ($wake_minutes as $minute) {
             // 小于循环时间的一半
@@ -576,7 +580,13 @@ trait UserWakeup
             return;
         }
 
-        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        $data = [
+            "{$this->nickname}开播啦，精彩瞬间别错过！",
+            "{$this->nickname}开播就想你，不打开看看吗？"
+        ];
+
+        $body = $data[mt_rand(0, 1)];
+
         if (!$this->current_room_id) {
             info('user_id', $this->id, 'not in room');
             return;
@@ -652,7 +662,13 @@ trait UserWakeup
             return;
         }
 
-        $body = "{$this->nickname}开播啦，精彩瞬间别错过！{$this->nickname}开播就想你，不打开看看吗？";
+        $data = [
+            "{$this->nickname}开播啦，精彩瞬间别错过！",
+            "{$this->nickname}开播就想你，不打开看看吗？"
+        ];
+
+        $body = $data[mt_rand(0, 1)];
+
         if (!$this->current_room_id) {
             info('user_id', $this->id, 'not in room');
             return;
