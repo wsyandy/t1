@@ -16,7 +16,7 @@ class WithdrawHistoriesController extends BaseController
         $rate = $user->rateOfHiCoinToMoney();
         $hi_coins = $user->hi_coins;
         $this->view->rate = $rate;
-        $this->view->hi_coins = $hi_coins;
+        $this->view->hi_coins = $user->withdraw_amount;
         $this->view->amount = $user->withdraw_amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
