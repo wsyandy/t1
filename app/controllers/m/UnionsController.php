@@ -376,6 +376,10 @@ class UnionsController extends BaseController
 
             $user = \Users::findFirstById($this->params('user_id'));
 
+            if ($user->id == $this->currentUser()->id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '自己不能提出自己');
+            }
+
             $opts = ['kicking' => "kicking"];
 
             list($error_code, $error_reason) = $union->exitUnion($user, $opts, $current_user);
