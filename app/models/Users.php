@@ -74,6 +74,8 @@ class Users extends BaseModel
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
 
+    static $ORGANISATION = [PERSONAGE => '个人', COMPANY => '公司'];
+
     function beforeCreate()
     {
         $this->user_status = USER_STATUS_ON;
@@ -2481,7 +2483,10 @@ class Users extends BaseModel
             $sender->segment = $sender->calculateSegment();
             $sender->wealth_value += $wealth_value;
 
-            Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+            if (!$sender->isCompanyUser()) {
+                Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+            }
+
 
             $union = $sender->union;
 
@@ -2526,7 +2531,10 @@ class Users extends BaseModel
 
             $user->charm_value += $charm_value;
 
-            Users::updateFiledRankList($user->id, 'charm', $charm_value);
+            if (!$user->isCompanyUser()) {
+                Users::updateFiledRankList($user->id, 'charm', $charm_value);
+            }
+
 
             $union = $user->union;
 
@@ -3049,4 +3057,46 @@ class Users extends BaseModel
         $hot_cache->incr($key);
         $hot_cache->expire($key, 30 * 86400);
     }
+
+    function isCompanyUser()
+    {
+        return $this->organisation == COMPANY ? COMPANY : PERSONAGE;
+    }
+
+    function addCompanyUserSendNumber($total_diamond)
+    {
+        $cache = \Users::getHotWriteCache();
+        $current_day_company_user_send_diamond_to_personage_num = 'current_day_company_user_' . date('Y-m-d', time());
+        $cache->zadd($current_day_company_user_send_diamond_to_personage_num, $total_diamond, $this->id);
+
+        $past_at = endOfDay(time()) - time();
+        $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
+    }
+
+    function canSendToUser($user_id, $gift_amount)
+    {
+        $user = \Users::findFirstById($user_id);
+        if (!$this->isWhiteListUser()) {
+            if ($this->isCompanyUser() && $user_id != $this->currentUserId() && $user->organisation == PERSONAGE) {
+                $hot_cache = \Users::getHotWriteCache();
+                $key = 'current_day_company_user_' . date('Y-m-d', time());
+                $send_number = $hot_cache->zscore($key, $this->currentUserId());
+                $plan_number = $gift_amount + $send_number;
+                if ($plan_number > 100) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function isWhiteListUser()
+    {
+        $white_list = [];
+        if (in_array($this->id, $white_list)) {
+            return true;
+        }
+        return false;
+    }
+
 }

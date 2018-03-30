@@ -52,6 +52,11 @@ class AccountHistories extends BaseModel
         }
 
         if ($account_history->save()) {
+            if( $account_history->fee_type == ACCOUNT_TYPE_GIVE){
+                $user->organisation = COMPANY;
+                $user->update();
+            }
+
             return true;
         }
 
