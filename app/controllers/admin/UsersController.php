@@ -331,4 +331,55 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '解绑成功');
     }
+
+    function joinCompanyAction()
+    {
+        $id = $this->params('id');
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        $user->organisation = 1;
+        $user->update();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS,'加入成功');
+
+
+    }
+
+    function companyUserAction()
+    {
+        $cond = $this->getConditions('company_user');
+        $page = 1;
+        $per_page = 30;
+        $total_page = 1;
+        $total_entries = $per_page * $total_page;
+
+        $user_id = $this->params("company_user[id_eq]");
+        $mobile = $this->params("company_user[mobile_eq]");
+        $user_type = $this->params("company_user[user_type_eq]");
+
+        if (!$user_id && !$mobile && !$user_type) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
+            } else {
+                $cond['conditions'] = "user_type = " . USER_TYPE_ACTIVE;
+            }
+        }
+        $cond['order'] = 'id desc';
+
+        $id = $this->params('id');
+
+        if ($id) {
+            $cond['conditions'] = ' id = ' . $id;
+        }
+
+        $cond['conditions'] .= ' and organisation = ' . COMPANY;
+
+        $company_users = \Users::findPagination($cond, $page, $per_page, $total_entries);
+        $this->view->users = $company_users;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->user_types = \UserEnumerations::$USER_TYPE;
+    }
 }

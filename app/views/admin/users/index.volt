@@ -38,7 +38,8 @@
     注册时间: {{ user.register_at_text }}<br/>
     最后活跃时间: {{ user.last_at_text }}<br/>
     登录方式: {{ user.login_type_text }}<br/>
-    用户等级: {{ user.level }}
+    用户等级: {{ user.level }}<br/>
+    用户所属组织：{{ user.organisation_text }}
 {% endmacro %}
 
 {% macro product_channel_view(user) %}
@@ -83,6 +84,9 @@
     {% endif %}
     {% if isAllowed('users','unbind_third_account') %}
         <a href="/admin/users/unbind_third_account?id={{ user.id }}" id="unbind_third_account">解绑第三方账号</a><br/>
+    {% endif %}
+    {% if isAllowed('users','join_company') %}
+        <a href="/admin/users/join_company?id={{ user.id }} " id="join_company">加入公司内部成员</a><br/>
     {% endif %}
 {% endmacro %}
 
@@ -142,6 +146,9 @@
             {% if isAllowed('users','unbind_third_account') %}
                 <a href="/admin/users/unbind_third_account?id=${ user.id }" id="unbind_third_account">解绑第三方账号</a><br/>
             {% endif %}
+            {% if isAllowed('users','join_company') %}
+                <a href="/admin/users/join_company?id=${ user.id }" id="join_company">加入公司内部成员</a><br/>
+            {% endif %}
         </td>
 
     </tr>
@@ -178,6 +185,15 @@
                 if (resp.error_code == 0) {
                     location.href = resp.error_url;
                 }
+            });
+        }
+    });
+    $('body').on('click', '#join_company', function (e) {
+        e.preventDefault();
+        if (confirm('确认加入？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
             });
         }
     });

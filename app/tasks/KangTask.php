@@ -509,10 +509,18 @@ class KangTask extends \Phalcon\Cli\Task
 
     function fixUserAction($params)
     {
-        $u = Users::findById($params[0]);
-        $u->third_unionid = '';
-        $u->login_name = '';
-        $u->save();
+        $user = Users::findFirstById($params[0]);
+        if (isset($params[1])) {
+            $user->third_unionid = $params[1];
+            $user->save();
+        } else {
+            $user->third_unionid = '';
+            $user->login_name = '';
+        }
+
+        $user->save();
+
+        echoLine($user);
     }
 
     function findUserAction($params)

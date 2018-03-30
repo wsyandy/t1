@@ -132,6 +132,12 @@ class GiftOrders extends BaseModel
             //扣除钻石
             if ($gift->isDiamondPayType()) {
                 $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+                if ($result) {
+                    //如果赠送者是公司人员，并且接受者不是公司人员，则将其赠送的钻石金额加入到缓存中
+                    if ($sender->isCompanyUser() && !$receiver->isCompanyUser()) {
+                        $sender->addCompanyUserSendNumber($gift_order->amount);
+                    }
+                }
             } else {
                 //扣除金币
                 $result = \GoldHistories::changeBalance($gift_order->sender_id, GOLD_TYPE_BUY_GIFT, $gift_order->amount, $opts);
