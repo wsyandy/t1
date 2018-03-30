@@ -583,7 +583,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if ($hot_room->getUserNum() < $least_user_num) {
+            if ($hot_room->getUserNum() <= $least_user_num) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
                 info("room_seat_is_null", $hot_room->id);
                 continue;
