@@ -138,6 +138,7 @@ define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
 define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败
 
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
+define('PRODUCT_GROUP_FEE_TYPE_HI_COINS', 'hi_coins'); //Hi币
 
 define('ORDER_STATUS_WAIT', 0);
 define('ORDER_STATUS_SUCCESS', 1);
