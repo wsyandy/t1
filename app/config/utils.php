@@ -74,9 +74,11 @@ function valueToStr($value)
     }
 
     $myriabit = intval($value / 10000);
-    $kilobit = intval($value * 1000) / 1000 - $myriabit * 10;
+    $kilobit = intval($value) / 1000 - $myriabit * 10;
+    $kilobit = intval($kilobit);
     $res = $myriabit . '.' . $kilobit;
-    $str = intval($res * 100) / 100;
+    $res = intval($res * 100) / 100;
+    $str = $res;
     return $str . "万";
 }
 
