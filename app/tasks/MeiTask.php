@@ -1493,9 +1493,9 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveGoldAction()
     {
-        $user_id = 1001315;
-        $user = Users::findFirstById(1001315);
-        $amount = 10000;
+        $user_id = 31654;
+        $user = Users::findFirstById(31654);
+        $amount = 2334;
         $opts = ['mobile' => $user->mobile, 'operator_id' => 1, 'remark' => "系统赠送金币" . $amount . "个" ];
         $gold_histories = GoldHistories::changeBalance($user_id, GOLD_TYPE_GIVE, $amount, $opts);
     }
