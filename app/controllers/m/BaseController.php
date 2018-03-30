@@ -263,12 +263,12 @@ class BaseController extends \ApplicationController
             return false;
         }
 
-        if ($this->isAndroid()) {
-            if ($this->context('version_code') > $this->currentProductChannel()->android_stable_version) {
-                return true;
-            }
-            return false;
-        }
+//        if ($this->isAndroid()) {
+//            if ($this->context('version_code') > $this->currentProductChannel()->android_stable_version) {
+//                return true;
+//            }
+//            return false;
+//        }
         return false;
     }
 }

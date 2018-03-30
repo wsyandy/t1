@@ -11,6 +11,8 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, tex
 html {
     height: 100%;
     width: 100%;
+    font-size: calc(100vw / 7.5);
+    background-color: #F6F6F6;
 }
 
 body {
@@ -282,7 +284,7 @@ ol, ul, li {
 }
 
 .exchange_footer{
-    position: relative;
+    position: fixed;
     width: 100%;
     display: -webkit-flex;
     display: -webkit-box;
@@ -299,8 +301,7 @@ ol, ul, li {
     -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    margin-top: 3rem;
-    margin-bottom: 1rem;
+     bottom: 0.5rem;
 }
 .ico_tips{
     width: 0.24rem;
@@ -424,6 +425,7 @@ ol, ul, li {
     -ms-flex-align: center;
     align-items: center;
     text-align: center;
+    overflow: hidden;
 }
 .btn_cancel{
     width:  50%;
@@ -517,6 +519,7 @@ ol, ul, li {
     width: 40%;
     background-color: transparent;
     text-align: right;
+    outline: none;
 }
 
 .custom_diamond{

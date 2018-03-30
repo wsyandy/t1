@@ -44,7 +44,7 @@
     </div>
 
     <div class="exchange_footer">
-        <img class="ico_tips" src="/m/images/ico_gold.png" alt="">
+        <img class="ico_tips" src="/m/images/ico_tips.png" alt="">
         <span class="exchange_foot_text">温馨提示：至少50Hi币才能兑换钻石</span>
     </div>
 
@@ -73,7 +73,7 @@
 
                 <input class="custom_input" placeholder="请输入兑换的" @focus="focusAction($event)"
                        v-on:input="customChangeAction"
-                       v-model.number="cur_hi_coin" type="text" onkeyup="value=value.replace(/[^\d]/g,'') "
+                       v-model.number="cur_hi_coin" type="number" onkeyup="value=value.replace(/[^\d]/g,'')"
                        onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))">
 
                 <div class="custom_equal">
@@ -152,18 +152,19 @@
 
                     $.post('/m/hi_coin_histories/create', post_data, function (resp) {
 
+                        //兑换失败
                         if (resp.error_code != 0) {
-
+                            vm.product_id=null;
                             vm.is_tips = true;
                             vm.no_hi_coin = false;
                             $('.tips_txt').html(resp.error_reason);
-
                         } else {
-
+                            //兑换成功
+                            vm.product_id=null;
                             vm.is_pup = false;
                             vm.is_tips = true;
                             vm.no_hi_coin = true;
-
+                            vm.hi_coins = resp.hi_coins;
                         }
 
                         isTipsTimer = setTimeout(function () {
@@ -173,6 +174,8 @@
                         return;
 
                     });
+
+
 
                 } else {
 

@@ -31,7 +31,7 @@ class HiCoinHistoriesController extends BaseController
         if ($this->request->isAjax()) {
 
             $product_id = $this->params('product_id');
-            $hi_coins = $this->params('hi_coins');
+            $hi_coins = intval($this->params('hi_coins'));
 
             info('product_id', $product_id, 'hi_coins', $hi_coins);
             $product = \Products::findFirstById($product_id);
@@ -48,7 +48,7 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $user = $this->currentUser();
-            if ($user->hi_coins < intval(strval($hi_coins))) {
+            if ($user->hi_coins < $hi_coins) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 
@@ -58,7 +58,7 @@ class HiCoinHistoriesController extends BaseController
             $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user->id, $opts);
 
             info('hi_coin_history', $hi_coin_history->id);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->hi_coins]);
         }
 
     }
