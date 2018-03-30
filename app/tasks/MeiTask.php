@@ -1484,7 +1484,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function testAction()
     {
-      info(valueToStr(1032442333444333));
+        info(valueToStr(1032442333444333));
     }
 
     function giveGoldAction()
@@ -1498,6 +1498,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function fixUserRegisterAtAction()
     {
+        $num = Users::count(['conditions' => 'register_at = created_at and id > 31361 and id < 1030412']);
+        echoLine($num);
         $cond = ['conditions' => '(third_unionid is not null) and register_at is null'];
         echoLine(Users::count($cond));
         $users = Users::findForeach($cond);
@@ -1505,7 +1507,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $i = 0;
 
         foreach ($users as $user) {
-            echoLine($user->id, $user->login_type_text, $user->third_unionid, $user->register_at_text);
+            echoLine($user->id, $user->login_type_text, $user->third_unionid, $user->created_at_text, $user->register_at_text);
             ///$user->register_at = $user->created_at;
             //$user->update();
             $i++;
@@ -1513,10 +1515,26 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine($i);
 
-        $user = Users::findFirstById(1011505);
+        $user = Users::findFirstById(1062410);
         echoLine($user->register_at);
         $user->register_at = $user->created_at;
         $user->update();
         echoLine($user->register_at);
+
+        $stat_db = Stats::getStatDb();
+        $all_stat_key = 'stats_keys_' . date('Ymd', (time() - 1800));
+        $total = $stat_db->zcard($all_stat_key);
+        info($all_stat_key, 'total', $total);
+
+        $stat_keys = $stat_db->zrevrange($all_stat_key, 0, -1);
+        $day = "stats_" . date('Ymd', time());
+        $fields = Stats::$STAT_FIELDS;
+
+        foreach ($stat_keys as $stat_key) {
+            $date_key = $day . "_user_" . $stat_key . "_register_num";
+            if ($stat_db->get($date_key)) {
+                echoLine($date_key, $stat_db->get($date_key));
+            }
+        }
     }
 }
