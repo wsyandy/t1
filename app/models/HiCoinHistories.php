@@ -215,19 +215,21 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->union_type = $user->union_type;
         $hi_coin_history->save();
 
-        $opts = ['remark' => $remark];
-        if ($hi_coin_history->gold > 0){
+        $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id];
+        info('user_id', $user->id, $opts);
+
+        if ($hi_coin_history->gold > 0) {
             \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
         }
 
-        if ($hi_coin_history->diamond > 0){
+        if ($hi_coin_history->diamond > 0) {
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
         }
 
         $user->hi_coins += $hi_coin_history->hi_coins;
         $user->update();
 
-        info($user->id);
+
         unlock($lock);
 
         return $hi_coin_history;

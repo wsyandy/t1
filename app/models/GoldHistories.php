@@ -18,6 +18,11 @@ class GoldHistories extends BaseModel
      */
     private $_operator;
 
+    /**
+     * @type HiCoinHistories
+     */
+    private $_hi_coin_history;
+
     static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务',
         GOLD_TYPE_BUY_GOLD => '购买金币', GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石获金币', GOLD_TYPE_GIVE => '系统赠送'];
 
@@ -36,15 +41,13 @@ class GoldHistories extends BaseModel
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
 
-        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $value = fetch($opts, $column);
 
             if ($value) {
                 $gold_history->$column = $value;
             }
         }
-
-
 
 
         if ($gold_history->save()) {
@@ -110,7 +113,8 @@ class GoldHistories extends BaseModel
     /**
      * 系统赠送
      */
-    function isSystemGive(){
+    function isSystemGive()
+    {
         return $this->fee_type == GOLD_TYPE_GIVE;
     }
 

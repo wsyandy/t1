@@ -19,8 +19,14 @@
     {% endif %}
 {%- endmacro %}
 
+{%- macro hi_coin_link(object) %}
+    {% if object.hi_coin_history_id %}
+        <a href="/admin/hi_coin_histories/show/{{ object.hi_coin_history_id }}">Hi币</a>
+    {% endif %}
+{%- endmacro %}
+
 {{ simple_table(account_histories, [
     'ID': 'id', '用户': 'user_link', '类型': 'fee_type_text', '金额(钻石)': 'amount',
     '账户余额(钻石)': 'balance', '订单':'order_link', '礼物订单': 'gift_order_link',
-    '备注': 'remark', '时间': 'created_at_text'
+    'Hi币': 'hi_coin_link','备注': 'remark', '时间': 'created_at_text'
 ]) }}

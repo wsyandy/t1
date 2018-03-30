@@ -53,4 +53,11 @@ class HiCoinHistoriesController extends BaseController
         $this->view->hi_coin_history = new \HiCoinHistories();
         $this->view->user_id = $user_id;
     }
+
+    function showAction()
+    {
+        $hi_coin_histories = \HiCoinHistories::findByIds($this->params('id'));
+        $this->view->hi_coin_histories = $hi_coin_histories;
+    }
+
 }

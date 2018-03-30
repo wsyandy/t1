@@ -18,12 +18,17 @@ class AccountHistories extends BaseModel
      */
     private $_operator;
 
+    /**
+     * @type HiCoinHistories
+     */
+    private $_hi_coin_history;
+
     static $FEE_TYPE = [
         ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送',
         ACCOUNT_TYPE_CREATE_UNION => '创建公会',
-        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND=>'Hi币兑钻石'
+        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'
     ];
 
 
@@ -43,7 +48,7 @@ class AccountHistories extends BaseModel
         $account_history->union_id = $user->union_id;
         $account_history->union_type = $user->union_type;
 
-        foreach (['order_id', 'gift_order_id', 'remark', 'operator_id', 'mobile'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $value = fetch($opts, $column);
 
             if ($value) {
@@ -52,7 +57,7 @@ class AccountHistories extends BaseModel
         }
 
         if ($account_history->save()) {
-            if( $account_history->fee_type == ACCOUNT_TYPE_GIVE){
+            if ($account_history->fee_type == ACCOUNT_TYPE_GIVE) {
                 $user->organisation = COMPANY;
                 $user->update();
             }
@@ -102,7 +107,7 @@ class AccountHistories extends BaseModel
         $user_attrs = $user->getStatAttrs();
         $user_attrs['add_value'] = abs($this->amount);
         $action = "diamond_recharge";
-        if($this->fee_type == ACCOUNT_TYPE_GIVE){
+        if ($this->fee_type == ACCOUNT_TYPE_GIVE) {
             $action = "diamond_recharge_give";
         }
 
