@@ -160,6 +160,7 @@
                 this.cur_gold = 0;
                 this.no_hi_coin = false;
                 this.is_custom = false;
+                this.less_50_hi_coin =false;
             },
             exchangeDiamondsAction: function () {
 
