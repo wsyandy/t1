@@ -34,7 +34,7 @@ class GoldHistories extends BaseModel
 
     function afterCreate()
     {
-        $user = \Users::findById($this->user_id);
+        $user = $this->user;
         $user->gold = $this->balance;
         $user->update();
     }

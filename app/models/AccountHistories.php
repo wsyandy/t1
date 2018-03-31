@@ -38,7 +38,7 @@ class AccountHistories extends BaseModel
 
     function afterCreate()
     {
-        $user = \Users::findById($this->user_id);
+        $user = $this->user;
         $user->diamond = $this->balance;
         $user->update();
 
