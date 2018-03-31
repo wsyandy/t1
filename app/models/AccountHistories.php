@@ -28,7 +28,9 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送',
         ACCOUNT_TYPE_CREATE_UNION => '创建公会',
-        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'
+        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
+        ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
+        ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出'
     ];
 
     function beforeCreate()
@@ -40,6 +42,10 @@ class AccountHistories extends BaseModel
     {
         $user = $this->user;
         $user->diamond = $this->balance;
+        // 系统赠送
+        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
+            $user->organisation = USER_ORGANISATION_COMPANY;
+        }
         $user->update();
 
         $user_attrs = $user->getStatAttrs();
@@ -66,18 +72,12 @@ class AccountHistories extends BaseModel
 
         foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $value = fetch($opts, $column);
-
             if ($value) {
                 $account_history->$column = $value;
             }
         }
 
         if ($account_history->save()) {
-            if ($account_history->fee_type == ACCOUNT_TYPE_GIVE) {
-                $user->organisation = COMPANY;
-                $user->update();
-            }
-
             return true;
         }
 
@@ -109,9 +109,13 @@ class AccountHistories extends BaseModel
         return false;
     }
 
+    /**
+     * 用户消耗
+     */
     function isCostDiamond()
     {
-        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION;
+        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
+            || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES;
     }
 
     function getStatActon()

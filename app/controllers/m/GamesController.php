@@ -63,11 +63,11 @@ class GamesController extends BaseController
         }
 
 
-        if ($pay_type == 'diamond' && $current_user->diamond < $amount) {
+        if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
         }
 
-        if ($pay_type == 'gold' && $current_user->gold < $amount) {
+        if ($pay_type == PAY_TYPE_GOLD && $current_user->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
@@ -125,7 +125,21 @@ class GamesController extends BaseController
 
         //扣除入场费
         if($can_enter){
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
+                $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+                if(!$result){
+                    return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+                }
+            }
 
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
+                $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+                if(!$result){
+                    return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+                }
+            }
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
@@ -141,7 +155,23 @@ class GamesController extends BaseController
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
         //扣除入场费
+        if ($pay_type == PAY_TYPE_DIAMOND) {
+            $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+            if(!$result){
+                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+            }
+        }
 
+        if ($pay_type == PAY_TYPE_GOLD) {
+            $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+            if(!$result){
+                return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+            }
+        }
+
+        // 进入游戏
         $hot_cache->hset($room_info_key, 'can_enter', 1);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');

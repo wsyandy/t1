@@ -340,7 +340,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
 
-        $user->organisation = COMPANY;
+        $user->organisation = USER_ORGANISATION_COMPANY;
         $user->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
@@ -375,7 +375,7 @@ class UsersController extends BaseController
             $cond['conditions'] = ' id = ' . $id;
         }
 
-        $cond['conditions'] .= ' and organisation = ' . COMPANY;
+        $cond['conditions'] .= ' and organisation = ' . USER_ORGANISATION_COMPANY;
 
         $company_users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $company_users;
@@ -386,17 +386,19 @@ class UsersController extends BaseController
     //转换身份，公司员工转换为个人，仅测试环境可供使用
     function clearCompanyUserAction()
     {
-        if (isDevelopmentEnv()) {
-            $id = $this->params('id');
-            $user = \Users::findFirstById($id);
-            if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-            }
-
-            $user->organisation = PERSONAGE;
-            $user->update();
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+        if (isProduction()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '正式环境不支持');
         }
+
+        $id = $this->params('id');
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        $user->organisation = USER_ORGANISATION_PERSONAGE;
+        $user->update();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
 }

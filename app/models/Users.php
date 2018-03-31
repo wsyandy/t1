@@ -74,7 +74,7 @@ class Users extends BaseModel
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
 
-    static $ORGANISATION = [PERSONAGE => '个人', COMPANY => '公司'];
+    static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
 
     function beforeCreate()
     {
@@ -3176,7 +3176,7 @@ class Users extends BaseModel
 
     function isCompanyUser()
     {
-        return $this->organisation == COMPANY;
+        return $this->organisation == USER_ORGANISATION_COMPANY;
     }
 
     function addCompanyUserSendNumber($send_diamond)

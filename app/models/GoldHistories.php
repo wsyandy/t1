@@ -23,8 +23,15 @@ class GoldHistories extends BaseModel
      */
     private $_hi_coin_history;
 
-    static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到', GOLD_TYPE_BUY_GIFT => "购买礼物", GOLD_TYPE_SHARE_WORK => '分享任务',
-        GOLD_TYPE_BUY_GOLD => '购买金币', GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石获金币', GOLD_TYPE_GIVE => '系统赠送'];
+    static $FEE_TYPE = [GOLD_TYPE_SIGN_IN => '用户签到',
+        GOLD_TYPE_BUY_GIFT => "购买礼物",
+        GOLD_TYPE_SHARE_WORK => '分享任务',
+        GOLD_TYPE_BUY_GOLD => '购买金币',
+        GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石获金币',
+        GOLD_TYPE_GIVE => '系统赠送',
+        GOLD_TYPE_GAME_INCOME => '游戏收入',
+        GOLD_TYPE_GAME_EXPENSES => '游戏支出'
+    ];
 
 
     function beforeCreate()
@@ -121,7 +128,7 @@ class GoldHistories extends BaseModel
      */
     function isCostGold()
     {
-        return $this->fee_type == GOLD_TYPE_BUY_GIFT;
+        return $this->fee_type == GOLD_TYPE_BUY_GIFT || $this->fee_type == GOLD_TYPE_GAME_EXPENSES;
     }
 
     /**
