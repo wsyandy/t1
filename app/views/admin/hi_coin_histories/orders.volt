@@ -1,4 +1,4 @@
-<form action="/admin/orders/hi_coin_histories" method="get" class="search_form" autocomplete="off" id="search_form">
+<form action="/admin/hi_coin_histories/orders" method="get" class="search_form" autocomplete="off" id="search_form">
 
     <label for="user_id_eq">用户ID</label>
     <input name="user_id" type="text" id="user_id_eq"/>
@@ -18,6 +18,10 @@
     手机号码:{{ object.user.mobile }}<br/>
 {% endmacro %}
 
+{% macro hi_coin_info(object) %}
+    {{ abs(object.hi_coins) }}
+{% endmacro %}
+
 {{ simple_table(hi_coin_histories, [
-    "ID": 'id', '用户头像': 'user_link','用户信息':'user_info','产品': 'product_name','Hi币': 'hi_coins','时间': 'created_at_text'
+    "ID": 'id', '用户头像': 'user_link','用户信息':'user_info','产品': 'product_name','Hi币': 'hi_coin_info','时间': 'created_at_text'
 ]) }}
