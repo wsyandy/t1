@@ -404,7 +404,9 @@ class BaseController extends ApplicationController
         ];
 
         $this->currentUser()->onlineFresh($fresh_attrs);
-        //$this->currentUser()->startOfflineTask();
+        if (isDevelopmentEnv()) {
+            $this->currentUser()->startOfflineTask();
+        }
     }
 
     function validSign()

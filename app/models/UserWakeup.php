@@ -414,10 +414,10 @@ trait UserWakeup
         return false;
     }
 
-    static function asyncSendOfflineMessage($device_ids)
+    static function asyncSendOfflineMessage($user_ids)
     {
 
-        $users = Users::findByIds($device_ids);
+        $users = Users::findByIds($user_ids);
         foreach ($users as $user) {
 
             debug($user->id, 'last_at', $user->last_at);

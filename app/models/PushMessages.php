@@ -17,9 +17,9 @@ class PushMessages extends BaseModel
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $OFFLINE_TIME = [0 => '不限', 5 => '离线5分钟', 60 => '离线1小时', 5 * 60 => '离线5小时', 12 * 60 => '离线12小时', 24 * 60 => '离线24小时',
-        36 * 60 => '离线36小时', 44 * 60 => '离线44小时', 72 * 60 => '离线72小时', 7 * 24 * 60 => '离线1周',
-        14 * 24 * 60 => '离线2周', 21 * 24 * 60 => '离线3周', 30 * 24 * 60 => '离线1月', 45 * 24 * 60 => '离线45天', 60 * 24 * 60 => '离线60天'];
+    static $OFFLINE_TIME = [0 => '不限', 60 => '离线1小时', 5 * 60 => '离线5小时', 12 * 60 => '离线12小时', 24 * 60 => '离线24小时',
+        3 * 24 * 60 => '离线3天', 7 * 24 * 60 => '离线7天', 15 * 24 * 60 => '离线15天', 20 * 24 * 60 => '离线20天', 30 * 24 * 60 => '离线1月',
+        45 * 24 * 60 => '离线45天', 60 * 24 * 60 => '离线60天'];
 
     static $PLATFORMS = ['' => '不限', 'client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
         'weixin_android' => '微信安卓'];
@@ -151,7 +151,7 @@ class PushMessages extends BaseModel
                 } else {
 
                     $hot_cache->zadd($push_key, time(), $push_message->id);
-                    $hot_cache->expire($push_key, 30 * 24 * 60 * 60);
+                    $hot_cache->expire($push_key, 60 * 24 * 60 * 60);
                     debug('match message', $clazz, $receiver->id, $push_message->id);
                     $receiver->pushMessage($push_message);
                     return;
@@ -165,7 +165,7 @@ class PushMessages extends BaseModel
             foreach ($repeat_push_messages as $key => $repeat_push_message) {
                 if ($repeat_push_message->canSend($receiver)) {
                     $hot_cache->zadd($push_key, time(), $repeat_push_message->id);
-                    $hot_cache->expire($push_key, 30 * 24 * 60 * 60);
+                    $hot_cache->expire($push_key, 60 * 24 * 60 * 60);
                     $receiver->pushMessage($repeat_push_message);
                     return;
                 }
