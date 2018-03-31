@@ -64,6 +64,33 @@ class WithdrawHistories extends BaseModel
         }
     }
 
+    function beforeUpdate()
+    {
+
+        if (WITHDRAW_TYPE_USER == $this->type) {
+
+            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+
+                if ($this->user->hi_coins < $this->amount) {
+                    $this->error_reason = '余额不足';
+                    return true;
+                }
+            }
+        }
+
+        if (WITHDRAW_TYPE_UNION == $this->type) {
+
+            $union = $this->union;
+
+            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+                if ($union->amount < $this->amount) {
+                    return true;
+                }
+            }
+        }
+
+    }
+
     function afterCreate()
     {
         if (WITHDRAW_TYPE_USER == $this->type) {
@@ -216,7 +243,7 @@ class WithdrawHistories extends BaseModel
             'bind' => ['user_id' => $user_id, 'status' => WITHDRAW_STATUS_WAIT],
             'order' => 'id desc'
         ];
-        
+
         return WithdrawHistories::findFirst($conditions);
     }
 

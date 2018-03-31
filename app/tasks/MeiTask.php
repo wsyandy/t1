@@ -1601,4 +1601,20 @@ class MeiTask extends \Phalcon\Cli\Task
             $db->zrem($total_key, $user->id);
         }
     }
+
+    function check()
+    {
+        $with_draw_histories = WithdrawHistories::find(['conditions' => 'status = ' . WITHDRAW_STATUS_WAIT]);
+
+        foreach ($with_draw_histories as $draw_history) {
+            $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $draw_history->user_id, 'fee_type' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
+
+            if ($hi_coin_history) {
+                if ($draw_history->user->hi_coins < $draw_history->amount) {
+                    echoLine($draw_history->user_id);
+                }
+            }
+        }
+
+    }
 }
