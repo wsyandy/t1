@@ -73,10 +73,10 @@ class GiftOrdersController extends BaseController
         $gift_order = $this->params('gift_order');
         debug($gift_order);
 
-        $this->view->id = $gift_order['id_eq'];
-        $this->view->sender_id = $gift_order['sender_id_eq'];
-        $this->view->gift_id = $gift_order['gift_id_eq'];
-        $this->view->room_id = $gift_order['room_id_eq'];
+        $this->view->id = isset($gift_order['id_eq']) ? $gift_order['id_eq'] : '';
+        $this->view->sender_id = isset($gift_order['sender_id_eq']) ? $gift_order['sender_id_eq'] : '';
+        $this->view->gift_id = isset($gift_order['gift_id_eq']) ? $gift_order['gift_id_eq'] : '';
+        $this->view->room_id = isset($gift_order['room_id_eq']) ? $gift_order['room_id_eq'] : '';
 
         $this->view->gift_orders = $gift_orders;
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
