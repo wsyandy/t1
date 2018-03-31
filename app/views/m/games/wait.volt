@@ -81,8 +81,6 @@
                     clearInterval(interval_time);
                     location.href = vm.url;
                 }
-            } else {
-                alert(resp.error_reason);
             }
         });
     }
