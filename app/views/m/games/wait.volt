@@ -57,7 +57,8 @@
                 };
                 $.authPost('/m/games/exit', data, function (resp) {
                     if (!resp.error_code) {
-                        location.href = '/m/games?code=' + vm.code + '&sid=' + vm.sid;
+//                        location.href = '/m/games?code=' + vm.code + '&sid=' + vm.sid;
+                        window.location.href = document.referrer;
                     } else {
                         alert(resp.error_reason);
                     }
