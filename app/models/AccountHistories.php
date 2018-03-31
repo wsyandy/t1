@@ -81,7 +81,12 @@ class AccountHistories extends BaseModel
             $change_amount = -$change_amount;
             $this->amount = $change_amount;
         }
-        $old_account_history = \AccountHistories::findUserLast($this->user_id);
+
+        $old_account_history = \AccountHistories::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $this->user_id],
+            'order' => 'id desc']);
+
         $old_balance = intval($this->balance);
         if ($old_account_history) {
             $old_balance = intval($old_account_history->balance);
@@ -123,25 +128,4 @@ class AccountHistories extends BaseModel
         return "diamond_recharge";
     }
 
-    static function findUserLast($user_id)
-    {
-        $account_histories = \AccountHistories::findAccountList($user_id, 1, 1);
-
-        if (count($account_histories) > 0) {
-            return $account_histories[0];
-        }
-
-        return null;
-    }
-
-    static function findAccountList($user_id, $page, $per_page)
-    {
-        $conditions = [
-            'conditions' => 'user_id = :user_id:',
-            'bind' => ['user_id' => $user_id],
-            'order' => 'id desc'
-        ];
-
-        return \AccountHistories::findPagination($conditions, $page, $per_page);
-    }
 }
