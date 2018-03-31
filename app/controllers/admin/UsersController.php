@@ -340,10 +340,10 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
 
-        $user->organisation = 1;
+        $user->organisation = COMPANY;
         $user->update();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS,'加入成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
 
 
     }
@@ -381,5 +381,22 @@ class UsersController extends BaseController
         $this->view->users = $company_users;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->user_types = \UserEnumerations::$USER_TYPE;
+    }
+
+    //转换身份，公司员工转换为个人，仅测试环境可供使用
+    function clearCompanyUserAction()
+    {
+        if (isDevelopmentEnv()) {
+            $id = $this->params('id');
+            $user = \Users::findFirstById($id);
+            if (!$user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+            }
+
+            $user->organisation = PERSONAGE;
+            $user->update();
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+        }
     }
 }

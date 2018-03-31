@@ -194,6 +194,7 @@
             var href = $(this).attr('href');
             $.post(href, '', function (resp) {
                 alert(resp.error_reason);
+                location.reload(true)
             });
         }
     });
