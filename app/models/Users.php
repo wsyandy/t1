@@ -93,7 +93,6 @@ class Users extends BaseModel
     function afterCreate()
     {
         if ($this->isActive()) {
-            $this->addActiveList();
             if ($this->ip) {
                 self::delay(1)->asyncUpdateIpLocation($this->id);
             }
@@ -291,6 +290,7 @@ class Users extends BaseModel
             $attrs['third_unionid'] = $this->third_unionid;
             \Stats::delay()->record('user', 'active_user', $attrs);
         }
+
         // 重置任务
         if (date('Ymd', $last_at) != date('Ymd', $this->last_at)) {
             $this->deleteExecutedOfflineTaskIds();
