@@ -87,12 +87,18 @@ class UnionsTask extends \Phalcon\Cli\Task
     function authHostIncomeStatAction()
     {
         beginOfMonth();
+    }
 
+    function checkUserHiCoins()
+    {
         $users = Users::find(['conditions' => 'hi_coins > 0']);
 
         foreach ($users as $user) {
 
-            if($user->isC)
+            if ($user->isCompanyUser()) {
+                continue;
+            }
+
             $hi_coin_history = HiCoinHistories::findUserLast($user->id);
             $value = 0;
 
