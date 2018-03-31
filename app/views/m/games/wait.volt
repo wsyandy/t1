@@ -60,7 +60,6 @@
                         alert(resp.error_reason);
                     }
                 });
-                clearInterval(interval_time);
             }
         }
     };
@@ -76,6 +75,7 @@
                 vm.users = resp.users;
                 vm.can_enter = resp.can_enter;
                 if (resp.can_enter == 1) {
+                    clearInterval(interval_time);
                     location.href = vm.url;
                 }
             } else {
