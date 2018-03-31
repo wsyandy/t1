@@ -34,7 +34,7 @@
             </li>
         </ul>
         <div class="select_game_button">
-            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>费用为：${game_amount }${pay_type_text}</span></p>
+            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>费用为：${amount }${pay_type_text}</span></p>
             <button @click="go_game()">参与游戏 GO</button>
         </div>
     </div>
@@ -45,7 +45,7 @@
                 pay_type_text: '免费',
                 diamond_game_amount: '',
                 gold_game_amount: '',
-                game_amount: 0,
+                amount: 0,
                 pay_type: 'free',
                 room_host_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
@@ -54,12 +54,12 @@
             watch: {
                 diamond_game_amount: function (val) {
                     if (vm.selectGameType == 2) {
-                        vm.game_amount = val;
+                        vm.amount = val;
                     }
                 },
                 gold_game_amount: function (val) {
                     if (vm.selectGameType == 1) {
-                        vm.game_amount = val;
+                        vm.amount = val;
                     }
                 }
             },
@@ -70,17 +70,17 @@
                         case 0:
                             vm.pay_type = 'free';
                             vm.pay_type_text = '免费';
-                            vm.game_amount = 0;
+                            vm.amount = 0;
                             break;
                         case 1:
                             vm.pay_type = 'gold';
                             vm.pay_type_text = '金币';
-                            vm.game_amount = vm.gold_game_amount;
+                            vm.amount = vm.gold_game_amount;
                             break;
                         case 2:
                             vm.pay_type = 'diamond';
                             vm.pay_type_text = '钻石';
-                            vm.game_amount = vm.diamond_game_amount;
+                            vm.amount = vm.diamond_game_amount;
                             break;
                     }
                 },
@@ -89,7 +89,7 @@
                     var data = {
                         'user_id': vm.room_host_id,
                         'pay_type': vm.pay_type,
-                        'amount': vm.game_amount,
+                        'amount': vm.amount,
                         'code': vm.code,
                         'sid': "{{ current_user.sid }}"
                     };
