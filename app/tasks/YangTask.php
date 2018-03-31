@@ -534,4 +534,44 @@ class YangTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function test18Action()
+    {
+        $users = Users::findForeach(['conditions' => 'user_type = :user_type: and manufacturer like :manufacturer:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'manufacturer' => '%' . 'wei' . '%']]);
+
+        $model = [];
+
+        $manufacturer = [];
+
+        foreach ($users as $user) {
+            if (!in_array($user->device_model, $model)) {
+                $model[] = $user->device_model;
+            }
+
+
+            if (!in_array($user->manufacturer, $manufacturer)) {
+                $manufacturer[] = $user->manufacturer;
+            }
+        }
+
+        echoLine($model);
+        echoLine($manufacturer);
+
+    }
+
+
+    function test19Action()
+    {
+        $arr1 = [1, 2, 3];
+        $arr2 = [2, 3, 4];
+
+        $arr3 = array_merge($arr1, $arr2);
+        echoLine($arr3);
+        $arr4 = array_unique($arr3);
+
+        echoLine(implode(',', $arr4));
+
+    }
+
 }

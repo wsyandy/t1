@@ -310,7 +310,7 @@ class Users extends BaseModel
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
     }
 
     function isNormal()
@@ -1554,6 +1554,115 @@ class Users extends BaseModel
 
         $users = Users::findPagination($cond, $page, $per_page);
 
+        return $users;
+    }
+
+
+    function getTags()
+    {
+        $tag_man_1 = ['color' => '#A0CDFF', 'text' => '正太'];
+        $tag_man_2 = ['color' => '#83A5FF', 'text' => '95后小哥哥'];
+        $tag_man_3 = ['color' => '#6197FF', 'text' => '小哥哥'];
+
+        $tag_woman_1 = ['color' => '#FE9BDF', 'text' => '萝莉'];
+        $tag_woman_2 = ['color' => '#FF8BB6', 'text' => '95后小姐姐'];
+        $tag_woman_3 = ['color' => '#FF8694', 'text' => '小姐姐'];
+
+        $tag_active = ['color' => '##FFAD36', 'text' => '活跃'];
+
+        $tag_money_1 = ['color' => '#AD7DFA', 'text' => '土豪'];
+        $tag_money_2 = ['color' => '#AD7DFA', 'text' => '潜力股'];
+
+
+        $tag_woman_money = ['color' => '#F86BD4', 'text' => '白富美'];
+        $tag_man_money = ['color' => '#83A5FF', 'text' => '高富帅'];
+
+        $birth_year = date('Y', $this->birthday);
+
+        $tags = [];
+
+        if ($this->sex) {
+
+            if ($birth_year >= 2000) {
+                $tags['man'] = $tag_man_1;
+            } else if ($birth_year >= 1995) {
+                $tags['man'] = $tag_man_2;
+            } else {
+                $tags['man'] = $tag_man_3;
+            }
+        } else {
+            if ($birth_year >= 2000) {
+                $tags['woman'] = $tag_woman_1;
+            } else if ($birth_year >= 1995) {
+                $tags['woman'] = $tag_woman_2;
+            } else {
+                $tags['woman'] = $tag_woman_3;
+            }
+        }
+
+        if ($this->wealth_value > 10000) {
+            $tags['money'] = $tag_money_1;
+        } else if ($this->wealth_value > 3000) {
+            $tags['money'] = $tag_money_2;
+        }
+
+        if ($this->charm_value > 10000) {
+            if (array_key_exists('money', $tags)) {
+                unset($tags['money']);
+                if (array_key_exists('woman', $tags)) {
+                    unset($tags['woman']);
+                    $tags['woman_money'] = $tag_woman_money;
+                } else if (array_key_exists('man', $tags)) {
+                    unset($tags['man']);
+                    $tags['man_money'] = $tag_man_money;
+                }
+            }
+        }
+
+        if ($this->mobile == '15655961171') {
+            if (array_key_exists('man', $tags)) {
+                unset($tags['man']);
+            }
+            $tags[] = ['color' => '#83A5FF', 'text' => '那个男人'];
+        }
+
+        if (count($tags) < 2) {
+            $tags[] = $tag_active;
+        }
+
+        return array_values($tags);
+    }
+
+    static function recommend($current_user, $page, $per_page)
+    {
+        $db = Users::getUserDb();
+        $friends_key = 'friend_list_user_id_' . $current_user->id;
+        $followed_key = 'followed_list_user_id' . $current_user->id;
+
+        $friend_ids = $db->zrange($friends_key, 0, -1);
+        $followed_ids = $db->zrange($followed_key, 0, -1);
+
+        $merge_ids = array_merge($friend_ids, $followed_ids, [SYSTEM_ID]);
+
+        $unique_ids = array_unique($merge_ids);
+
+        $filter_ids = implode(',', $unique_ids);
+
+        $cond = [
+            'conditions' => "id not in ({$filter_ids})"
+        ];
+
+        debug($cond);
+
+        $cond['conditions'] .= " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
+            ' or user_status = ' . USER_STATUS_LOGOUT . ')';
+
+
+        $cond['order'] = 'last_at desc,id desc';
+
+        $users = Users::findPagination($cond, $page, $per_page);
+
+//        $current_user->calDistance($users);
         return $users;
     }
 
@@ -2879,9 +2988,7 @@ class Users extends BaseModel
 
         $expire = $db->ttl($key);
         $time = 3600 * 24;
-//        if (isDevelopmentEnv()) {
-//            $time = 60 * 5;
-//        }
+
         if ($expire > $time) {
             //已签到
             return 0;
@@ -2921,13 +3028,7 @@ class Users extends BaseModel
         GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
-//        if (isDevelopmentEnv()) {
-//            $time = 60 * 5;
-//            $current_time = time();
-//            $expire = strtotime(date('Y-m-d H:i:59', $current_time)) - $current_time + $time;
-//        } else {
         $expire = endOfDay() - time() + $time;
-//        }
 
         $db->setex($key, $expire, $times);
         return $res;
@@ -2959,9 +3060,7 @@ class Users extends BaseModel
                 $gold = end($golds);
             }
             $time = 3600 * 24;
-//            if (isDevelopmentEnv()) {
-//                $time = 60 * 5;
-//            }
+
             if ($expire > $time) {
                 $day = "明天";
             } else {
@@ -3070,6 +3169,14 @@ class Users extends BaseModel
         $cache = \Users::getHotWriteCache();
         $current_day_company_user_send_diamond_to_personage_num = 'current_day_company_user_' . date('Y-m-d', time());
         $cache->zincrby($current_day_company_user_send_diamond_to_personage_num, $send_diamond, $this->id);
+
+        $send_number_over = $cache->zscore($current_day_company_user_send_diamond_to_personage_num, $this->id);
+        $total_diamond = $send_diamond;
+        if ($send_number_over) {
+            $total_diamond = $send_diamond + $send_number_over;
+        }
+
+        $cache->zadd($current_day_company_user_send_diamond_to_personage_num, $total_diamond, $this->id);
 
         $past_at = endOfDay(time()) - time();
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
