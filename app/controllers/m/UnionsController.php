@@ -481,6 +481,7 @@ class UnionsController extends BaseController
     function checkPasswordAction()
     {
         $password = $this->params('password');
+        debug($password);
         $room_id = $this->params('room_id');
         $room = \Rooms::findFirstById($room_id);
         $user_id = $this->currentUserId();

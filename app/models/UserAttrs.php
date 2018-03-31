@@ -176,6 +176,7 @@ trait UserAttrs
         return $data;
     }
 
+
     function toExportJson()
     {
         return [
@@ -243,6 +244,23 @@ trait UserAttrs
         if ($data['age'] === 0) {
             $data['age'] = '';
         }
+
+        return $data;
+    }
+
+    function toRecommendJson()
+    {
+        $data = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'age' => $this->age,
+            'sex' => $this->sex,
+            'avatar_url' => $this->avatar_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'monologue' => $this->monologue,
+            'current_room_id' => $this->current_room_id,
+            'tags' => $this->tags
+        ];
 
         return $data;
     }
