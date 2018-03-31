@@ -86,7 +86,13 @@ class UnionsTask extends \Phalcon\Cli\Task
     //认证主播奖励
     function authHostIncomeStatAction()
     {
-        beginOfMonth();
+        $current_day = intval(date('d'));
+        $time = time() - $current_day * 86400 - 3600;
+        $start = beginOfMonth($time);
+        $end = endOfMonth($time);
+
+        echoLine(date("Ymd", $start));
+        echoLine(date("Ymd", $end));
     }
 
     function checkUserHiCoins()
