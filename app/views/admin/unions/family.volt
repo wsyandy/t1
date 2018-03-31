@@ -1,3 +1,20 @@
+<form action="/admin/unions/family" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="id">ID</label>
+    <input name="id" type="number" id="id">
+
+    <label for="user_id">用户ID</label>
+    <input name="user_id" type="number" id="user_id">
+
+    <label for="status">状态</label>
+    <select name="status" type="text" id="status">
+        {{ options(Unions.STATUS,'','') }}
+    </select>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
+<a href="/admin/unions/rank_list" class="ui button" >日榜</a>
+
 {% macro oper_link(union) %}
     {% if isAllowed('users','index') %}
         <a href="/admin/users/index?user[union_id_eq]={{ union.id }}">家族成员</a><br/>
