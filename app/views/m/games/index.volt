@@ -34,7 +34,7 @@
             </li>
         </ul>
         <div class="select_game_button">
-            <p>当前游戏模式：<span>${ game }游戏</span><span>费用为：${game_amount }${game}</span></p>
+            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>费用为：${game_amount }${pay_type_text}</span></p>
             <button @click="go_game()">参与游戏 GO</button>
         </div>
     </div>
@@ -42,11 +42,11 @@
         var opts = {
             data: {
                 selectGameType: 0,
-                game: '免费',
+                pay_type_text: '免费',
                 diamond_game_amount: '',
                 gold_game_amount: '',
                 game_amount: 0,
-                game_type: 'free',
+                pay_type: 'free',
                 room_host_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 code: 'yuewan'
@@ -68,18 +68,18 @@
                     vm.selectGameType = index;
                     switch (index) {
                         case 0:
-                            vm.game_type = 'free';
-                            vm.game = '免费';
+                            vm.pay_type = 'free';
+                            vm.pay_type_text = '免费';
                             vm.game_amount = 0;
                             break;
                         case 1:
-                            vm.game_type = 'gold';
-                            vm.game = '金币';
+                            vm.pay_type = 'gold';
+                            vm.pay_type_text = '金币';
                             vm.game_amount = vm.gold_game_amount;
                             break;
                         case 2:
-                            vm.game_type = 'diamond';
-                            vm.game = '钻石';
+                            vm.pay_type = 'diamond';
+                            vm.pay_type_text = '钻石';
                             vm.game_amount = vm.diamond_game_amount;
                             break;
                     }
@@ -88,7 +88,7 @@
                 go_game: function () {
                     var data = {
                         'user_id': vm.room_host_id,
-                        'pay_type': vm.game_type,
+                        'pay_type': vm.pay_type,
                         'amount': vm.game_amount,
                         'code': vm.code,
                         'sid': "{{ current_user.sid }}"
@@ -120,8 +120,9 @@
         </div>
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
-            <span>发起者已设定</span>
-            <p>${pay_type}游戏，${ pay_amount }${pay_type}</p>
+            <span v-if="!pay_type">发起者已设定</span>
+            <span v-else>暂无游戏发起者</span>
+            <p>${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
         </div>
         <div class="select_game_button">
             <button @click="go_game()">参与游戏 GO</button>
@@ -132,18 +133,19 @@
     <script>
         var opts = {
             data: {
-                pay_type: "",
+                pay_type: "{{ pay_type }}",
+                pay_type_text: "",
                 pay_amount: "{{ amount }}",
                 game_user_id: "{{ current_user.id }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                sid:"{{ current_user.sid }}"
+                sid: "{{ current_user.sid }}",
             },
             watch: {},
             methods: {
                 go_game: function () {
-                    if(!vm.pay_type){
-                        alert('网络堵车，请刷新！！！');
+                    if (!vm.pay_type) {
+                        alert('暂无游戏发起者，请刷新！');
                         return;
                     }
                     var data = {
@@ -167,16 +169,16 @@
         };
 
         $(function () {
-            var pay_type = "{{ pay_type }}";
-            switch (pay_type) {
+
+            switch (vm.pay_type) {
                 case 'free':
-                    vm.pay_type = '免费';
+                    vm.pay_type_text = '免费';
                     break;
                 case 'gold':
-                    vm.pay_type = '金币';
+                    vm.pay_type_text = '金币';
                     break;
                 case 'diamond':
-                    vm.pay_type = '钻石';
+                    vm.pay_type_text = '钻石';
                     break;
             }
         });
