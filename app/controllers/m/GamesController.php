@@ -19,7 +19,7 @@ class GamesController extends BaseController
         $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
         $num = $hot_cache->zcard($room_key);
         $room_host_id = $this->currentUser()->id;
-        $pay_type = '';
+        $pay_type = 'free';
         $amount = 0;
         if ($num == 1) {
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
