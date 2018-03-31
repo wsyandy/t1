@@ -23,6 +23,8 @@ class GamesController extends BaseController
         $amount = 0;
         if ($num == 1) {
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
+            $hot_cache->expire($room_info_key, 600);
+            $hot_cache->expire($room_key, 600);
         } else {
             $info = $hot_cache->hmget($room_info_key);
             $room_host_id = fetch($info, 'room_host_id');
@@ -130,7 +132,7 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
         $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
-        if($can_enter){
+        if ($can_enter) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已开始游戏');
         }
 

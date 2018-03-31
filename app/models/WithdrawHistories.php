@@ -209,4 +209,16 @@ class WithdrawHistories extends BaseModel
         }
     }
 
+    static function findLastWaitWithDrawHistory($user_id)
+    {
+        $conditions = [
+            'conditions' => 'user_id = :user_id: and status = :status:',
+            'bind' => ['user_id' => $user_id, 'status' => WITHDRAW_STATUS_WAIT],
+            'order' => 'id desc'
+        ];
+        
+        return WithdrawHistories::findFirst($conditions);
+    }
+
+
 }
