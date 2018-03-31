@@ -1,47 +1,47 @@
 @charset "utf-8";
 body, p, input, h1, h2, h3, h4,ol, ul, li, dl, dt, dd, form {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    vertical-align: middle;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	vertical-align: middle;
 }
 body {
-    font-family: '微软雅黑', 'Arial';
-    -webkit-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -ms-text-size-adjust: none;
-    -o-text-size-adjust: none;
+	font-family: '微软雅黑', 'Arial';
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
 }
 html, body {
-    width: 100%;
-    margin: 0 auto;
-    color: #999999;
-    font-size: 14px;
-    background: #F3F3F3;
-    min-width: 320px;
-    max-width: 640px;
+	width: 100%;
+	margin: 0 auto;
+	color: #999999;
+	font-size: 14px;
+	background: #F3F3F3;
+	min-width: 320px;
+	max-width: 640px;
 }
 input,textarea,select{
-    font-family:inherit;
-    font-size:inherit;
-    font-weight:inherit;
-    appearance:none;
-    -moz-appearance:none;
-    -webkit-appearance:none;
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:inherit;
+	appearance:none;
+	-moz-appearance:none;
+	-webkit-appearance:none;
 }
 button,input
 {
-    border:none;
-    outline:none;
-    background:none;
+	border:none;
+	outline:none;
+	background:none;
 }
 a {
-    text-decoration: none;
-    color: #999;
+	text-decoration: none;
+	color: #999;
 }
 i,em
 {
-    font-style: normal;
+	font-style: normal;
 }
 h1,h2,h3,h4{
 	font-weight: normal;
@@ -72,17 +72,17 @@ h1,h2,h3,h4{
 	height: 35px;
 	border-radius: 5px;
 }
-input:-moz-placeholder{   
-    color: #B6B6B6;   
-}   
-  
-input:-ms-input-placeholder{   
-    color: #B6B6B6; 
-}   
-  
-input::-webkit-input-placeholder{   
-    color: #B6B6B6;  
-}  
+input:-moz-placeholder{
+	color: #B6B6B6;
+}
+
+input:-ms-input-placeholder{
+	color: #B6B6B6;
+}
+
+input::-webkit-input-placeholder{
+	color: #B6B6B6;
+}
 .weixin_chongzhi_top .name{
 	height: 24px;
 	line-height: 24px;
@@ -100,58 +100,65 @@ input::-webkit-input-placeholder{
 .weixin_cz_list{
 	background: #fff;
 	padding: 0 15px;
-}
-.weixin_cz_list ul{
 	display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    flex-wrap: wrap;
+	justify-content: space-between;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
-.weixin_cz_list ul li{
+
+.weixin_cz_list li{
 	width: 31%;
 	border: 1px solid #F45189;
-	border-radius: 5px;
+	border-radius: 7px;
 	height: 50px;
-	line-height: 50px;
 	margin-bottom: 10px;
 	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
-.weixin_cz_list ul li i{
-	display: inline-block;
-	height: 20px;
-	width: 20px;
-	background: url(../images/zuan.png) no-repeat;
-	background-size: 100%;
+.weixin_cz_list li.cur{
+	background:url(../images/selected_icon.png) #FFEAF1 right bottom no-repeat;
+	background-size: 25px;
+}
+.weixin_cz_list li .preferential{
 	position: absolute;
-	left: 6px;
-	top:50%;
-	-webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
-    transform: translateY(-50%);
-}
-.weixin_cz_list ul li span{
-	font-size: 15px;
-	color: #F45189;
-	margin-left: 30px;
-}
-.weixin_cz_list ul li b{
-	display: inline-block;
+	right: -4px;
+	top: -4px;
 	width: 28px;
 	height: 13px;
 	background: url(../images/youhui.png) no-repeat;
 	background-size: 100%;
-	position: absolute;
-	right: -4px;
-	top:-6px;
 }
-.weixin_cz_selected{
-	background: #F45189;
-	border: 1px solid #F5538A;
+.weixin_cz_masonry,.weixin_cz_gold{
+	display: flex;
+	align-items: center;
+	padding-left: 10px;
 }
-.weixin_cz_selected span{
-	color: #fff !important; 
+.weixin_cz_gold{
+	margin-top: 2px;
+}
+.weixin_cz_masonry i{
+	height: 20px;
+	width: 20px;
+	background: url(../images/masonry_icon.png) no-repeat;
+	background-size: 100%;
+}
+.weixin_cz_masonry span{
+	margin-left: 4px;
+	font-size: 15px;
+	color: #F45189;
+}
+.weixin_cz_gold i{
+	width: 16px;
+	height: 16px;
+	background: url(../images/gold_icon.png) no-repeat;
+	background-size: 16px;
+}
+.weixin_cz_gold span{
+	margin-left: 6px;
+	font-size: 12px;
+	color: #656565;
 }
 .money_box{
 	background: #fff;
@@ -196,10 +203,10 @@ input::-webkit-input-placeholder{
 	top: 50%;
 	right: 15px;
 	-webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
-    transform: translateY(-50%);
+	-moz-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
 }
 .money_pay_list .zhifubao{
 	background: url(../images/zhifubao.png) no-repeat;
@@ -260,7 +267,7 @@ input::-webkit-input-placeholder{
 	font-size: 15px;
 	color: #FFFFFF;
 	top: 82px;
-	right: 115px;
+	right: 90px;
 }
 .zhifubao_pay_t .share_box .share{
 	position: absolute;
@@ -270,8 +277,8 @@ input::-webkit-input-placeholder{
 }
 .share_text{
 	position: absolute;
-    top: 107px;
-    right: 98px;
+	top: 107px;
+	right: 98px;
 }
 .share_text p{
 	font-size: 14px;
