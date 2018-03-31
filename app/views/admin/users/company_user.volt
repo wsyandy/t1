@@ -51,17 +51,21 @@
     api协议版本: {{ user.api_version }}<br/>
 {% endmacro %}
 
-{% if isDevelopmentEnv() %}
-    {% macro profile_link(user) %}
-        {% if isAllowed('users','clear_company_user') %}
-            <a href="/admin/users/clear_company_user?id={{ user.id }} " id="clear_company_user">删除</a><br/>
-        {% endif %}
-    {% endmacro %}
-{% endif %}
+{% macro profile_link(user) %}
+    {% if isAllowed('users','clear_company_user') %}
+        <a href="/admin/users/clear_company_user?id={{ user.id }} " id="clear_company_user">删除</a><br/>
+    {% endif %}
+{% endmacro %}
 
+{% if isDevelopmentEnv() %}
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
 '状态':'user_status_info', '操作':'profile_link'
 ]) }}
+{% else %}
+{{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
+'状态':'user_status_info'
+]) }}
+{% endif %}
 <script>
     $('body').on('click', '#clear_company_user', function (e) {
         e.preventDefault();
