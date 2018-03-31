@@ -26,7 +26,7 @@ class GamesController extends BaseController
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
         } else {
-            $info = $hot_cache->hmget($room_info_key);
+            $info = $hot_cache->hgetall($room_info_key);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
@@ -43,15 +43,16 @@ class GamesController extends BaseController
     {
 
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-
+        info('全部参数',$this->params());
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
-        $info = $hot_cache->hmget($room_info_key);
+        $info = $hot_cache->hgetall($room_info_key);
         $room_host_id = fetch($info, 'room_host_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
 
-        if ($room_host_id == $this->currentUser()->id) {
+        $current_user = $this->currentUser();
+        if ($room_host_id == $current_user->id) {
             // free diamond gold
             $pay_type = $this->params('pay_type', '');
             $amount = $this->params('amount', 0);
@@ -63,12 +64,19 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        if ($pay_type == 'diamond' && $this->currentUser()->diamond < $amount) {
+
+        if ($pay_type == 'diamond' && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+        }else{
+            $current_user->diamond -=$amount;
+            $current_user->update();
         }
 
-        if ($pay_type == 'gold' && $this->currentUser()->gold < $amount) {
+        if ($pay_type == 'gold' && $current_user->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+        }else{
+            $current_user->gold -=$amount;
+            $current_user->update();
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
@@ -76,13 +84,19 @@ class GamesController extends BaseController
 
     function waitAction()
     {
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $hot_cache = \Rooms::getHotWriteCache();
+        $info = $hot_cache->hgetall($room_info_key);
+        $room_host_id = fetch($info, 'room_host_id');
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
         $body['source'] = $this->currentProductChannel()->code;
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $body['room_id'] = $room_id;
         $body['nonce_str'] = randStr(20);
 
         $str = paramsToStr($body);
@@ -90,7 +104,10 @@ class GamesController extends BaseController
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
         info($url);
 
+        $user = $this->currentUser();
         $this->view->url = $url;
+        $this->view->current_user = $user;
+        $this->view->room_host_id = $room_host_id;
     }
 
     function enterAction()
