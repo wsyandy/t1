@@ -1584,4 +1584,21 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine($i);
     }
+
+    function clearRankInfo()
+    {
+        $db = Users::getUserDb();
+
+        //self::saveLastFieldRankList($user_id, $field);
+        $total_key = "total_wealth_rank_list";
+
+        $cond['conditions'] = 'organisation = ' . COMPANY;
+
+        $company_users = \Users::find($cond);
+        echoLine(count($company_users));
+
+        foreach ($company_users as $user) {
+            $db->zrem($total_key, $user->id);
+        }
+    }
 }
