@@ -71,7 +71,7 @@
             {% if user.union.type == 1 %}
                 <a href="/admin/unions?union_id={{ user.union_id }}">工会</a>
             {% else %}
-                <a href="/admin/unions/family?union_id={{ user.union_id }}">家族</a>
+                <a href="/admin/unions/family?id={{ user.union_id }}">家族</a>
             {% endif %}
             <br/>
         {% endif %}
