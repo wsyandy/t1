@@ -468,6 +468,14 @@ trait UserWakeup
     function pushFriendOnlineRemind()
     {
         info('user_id', $this->id);
+        //登陆就删除自己的接受消息数量
+        $user_db = Users::getUserDb();
+        $push_online_remind_num_key = 'push_online_remind_num_' . $this->id;
+        $user_db->del($push_online_remind_num_key);
+
+        $push_into_room_remind_num_key = 'push_into_room_remind_num_' . $this->id;
+        $user_db->del($push_into_room_remind_num_key);
+
 
         $cur_hour = intval(date('H'));
         if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
@@ -486,7 +494,7 @@ trait UserWakeup
         }
 
         $total_pages = ceil($friend_num / $per_page);
-        $user_db = Users::getUserDb();
+
 
         for ($page = 1; $page <= $total_pages; $page++) {
 
@@ -495,15 +503,26 @@ trait UserWakeup
 
                 info('friend user_id', $user->id);
 
-                //在线不推送
-                if ($user->client_status) {
+                //没登陆就推送(离线状态客户端没上报)
+                if (!$user->isLogin()) {
                     info('在线用户 user_id', $this->id);
                     continue;
                 }
 
                 $friend_key = 'push_friend_or_followed_online_remind_' . $user->id;
+                $push_online_remind_num_key = 'push_online_remind_num_' . $user->id;
+                $push_online_remind_num = $user_db->get($push_online_remind_num_key);
+                if ($push_online_remind_num > 2) {
+                    info('push_online_remind_num user_id', $user->id, 'num', $push_online_remind_num);
+                    continue;
+                }
+
                 if ($user_db->setnx($friend_key, $user->id)) {
                     $user_db->expire($friend_key, 10 * 60);
+
+                    //记录消息发送数量
+                    $user_db->incr($push_online_remind_num);
+                    $user_db->expire($push_online_remind_num, 30 * 24 * 60 * 60);
 
                     info('push friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
@@ -548,15 +567,26 @@ trait UserWakeup
 
                 info('followed user_id', $user->id);
 
-                //在线不推送
-                if ($user->client_status) {
+                //没登陆就推送
+                if (!$user->isLogin()) {
                     info('在线用户 followed user_id', $this->id);
                     continue;
                 }
 
                 $followed_key = 'push_friend_or_followed_online_remind_' . $user->id;
+                $push_online_remind_num_key = 'push_online_remind_num_' . $user->id;
+                $push_online_remind_num = $user_db->get($push_online_remind_num_key);
+                if ($push_online_remind_num > 2) {
+                    info('push_online_remind_num user_id', $user->id, 'num', $push_online_remind_num);
+                    continue;
+                }
+
                 if ($user_db->setnx($followed_key, $user->id)) {
                     $user_db->expire($followed_key, 10 * 60);
+
+                    //记录消息发送数量
+                    $user_db->incr($push_online_remind_num_key);
+                    $user_db->expire($push_online_remind_num_key, 30 * 24 * 60 * 60);
 
                     info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
@@ -627,16 +657,27 @@ trait UserWakeup
             foreach ($users as $user) {
 
                 info('friend user_id', $this->id);
-                //在线不推送
-                if ($user->client_status) {
+                //没登陆就推送
+                if (!$user->isLogin()) {
                     info('在线用户 friend user_id', $this->id);
                     continue;
                 }
 
                 //关注好友每个人一个小时内只能收到一条
                 $friend_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                $push_into_room_remind_num_key = 'push_into_room_remind_num_' . $user->id;
+                $push_into_room_remind_num = $user_db->get($push_into_room_remind_num_key);
+                if ($push_into_room_remind_num > 2) {
+                    info('push_online_remind_num user_id', $user->id, 'num', $push_into_room_remind_num);
+                    continue;
+                }
+
                 if ($user_db->setnx($friend_key, $user->id)) {
                     $user_db->expire($friend_key, 10 * 60);
+
+                    //记录消息发送数量
+                    $user_db->incr($push_into_room_remind_num_key);
+                    $user_db->expire($push_into_room_remind_num_key, 30 * 24 * 60 * 60);
 
                     info('friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                     $user->push($opts);
@@ -710,16 +751,27 @@ trait UserWakeup
 
                 info('followed user_id', $user->id);
 
-                //在线不推送
-                if ($user->client_status) {
+                //没登陆就推送
+                if (!$user->isLogin()) {
                     info('在线用户 followed user_id', $this->id);
                     continue;
                 }
 
                 //关注好友每个人一个小时内只能收到一条
                 $followed_key = 'push_friend_or_followed_into_room_remind_' . $user->id;
+                $push_into_room_remind_num_key = 'push_into_room_remind_num_' . $user->id;
+                $push_into_room_remind_num = $user_db->get($push_into_room_remind_num_key);
+                if ($push_into_room_remind_num > 2) {
+                    info('push_online_remind_num user_id', $user->id, 'num', $push_into_room_remind_num);
+                    continue;
+                }
+
                 if ($user_db->setnx($followed_key, $user->id)) {
                     $user_db->expire($followed_key, 10 * 60);
+
+                    //记录消息发送数量
+                    $user_db->incr($push_into_room_remind_num_key);
+                    $user_db->expire($push_into_room_remind_num_key, 30 * 24 * 60 * 60);
 
                     info('followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                     $user->push($opts);
