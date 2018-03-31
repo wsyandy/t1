@@ -53,7 +53,7 @@ class GamesController extends BaseController
             // free diamond gold
             $pay_type = $this->params('pay_type', '');
             $amount = $this->params('amount', 0);
-            if(!$pay_type || $pay_type == 'free' && $amount != 0 || $pay_type != 'free' && $amount == 0){
+            if (!$pay_type || $pay_type == 'free' && $amount != 0 || $pay_type != 'free' && $amount == 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
@@ -61,11 +61,11 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        if($pay_type == 'diamond' && $this->currentUser()->diamond < $amount){
+        if ($pay_type == 'diamond' && $this->currentUser()->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
         }
 
-        if($pay_type == 'gold' && $this->currentUser()->gold < $amount){
+        if ($pay_type == 'gold' && $this->currentUser()->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
@@ -97,8 +97,11 @@ class GamesController extends BaseController
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $user_ids = $hot_cache->zrange($room_key, 0, -1);
-        $users = \Users::findByIds($user_ids);
+        if (count($user_ids) < 1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已解散');
+        }
 
+        $users = \Users::findByIds($user_ids);
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
@@ -119,11 +122,20 @@ class GamesController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    function exitAction(){
+    function exitAction()
+    {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
-        $hot_cache->zrem($room_key, $this->currentUser()->id);
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        if ($room_host_id == $this->currentUser()->id) {
+            // 解散
+            $hot_cache->del($room_key);
+            $hot_cache->del($room_info_key);
+        } else {
+            $hot_cache->zrem($room_key, $this->currentUser()->id);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
