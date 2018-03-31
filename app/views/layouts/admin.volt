@@ -78,7 +78,7 @@
                     {% if isAllowed('access_tokens','index') and is_development %}
                         <li><a href="/admin/access_tokens">授权登录记录</a></li>
                     {% endif %}
-                    {% if isAllowed('users','company_user') and is_development %}
+                    {% if isAllowed('users','company_user') %}
                         <li><a href="/admin/users/company_user">公司内部用户</a></li>
                     {% endif %}
                 </ul>
