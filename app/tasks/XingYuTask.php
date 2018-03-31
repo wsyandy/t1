@@ -1,6 +1,6 @@
 <?php
 
-class YuTask extends \Phalcon\Cli\Task
+class XingYuTask extends \Phalcon\Cli\Task
 {
     function companyIpAction()
     {
