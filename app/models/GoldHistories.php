@@ -77,7 +77,7 @@ class GoldHistories extends BaseModel
 
     function beforeCreate()
     {
-        $this->checkBalance();
+        return $this->checkBalance();
     }
 
     function checkBalance()
