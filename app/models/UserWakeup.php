@@ -569,7 +569,7 @@ trait UserWakeup
 
                 //没登陆就推送
                 if (!$user->isLogin()) {
-                    info('在线用户 followed user_id', $this->id);
+                    info('在线用户 followed user_id', $user->id);
                     continue;
                 }
 
