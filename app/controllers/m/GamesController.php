@@ -21,7 +21,7 @@ class GamesController extends BaseController
         $num = $hot_cache->zcard($room_key);
         $room_host_id = $this->currentUser()->id;
         // 发起者必须是主播
-        if ($num == 1 && ($this->currentUser()->current_room_seat_id || $room->user_id == $this->currentUser()->id)) {
+        if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
