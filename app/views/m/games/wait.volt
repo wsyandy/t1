@@ -42,7 +42,9 @@
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/start', data, function (resp) {
-                        if (resp.error_code) {
+                        if (!resp.error_code) {
+                            location.href = vm.url;
+                        } else {
                             alert(resp.error_reason);
                         }
                     });
