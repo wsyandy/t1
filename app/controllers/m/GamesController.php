@@ -19,9 +19,9 @@ class GamesController extends BaseController
         $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
         $num = $hot_cache->zcard($room_key);
         $room_host_id = $this->currentUser()->id;
-        $pay_type = 'free';
-        $amount = 0;
         if ($num == 1) {
+            $pay_type = 'free';
+            $amount = 0;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
@@ -43,7 +43,7 @@ class GamesController extends BaseController
     {
 
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-        info('全部参数',$this->params());
+        info('全部参数', $this->params());
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
@@ -67,15 +67,15 @@ class GamesController extends BaseController
 
         if ($pay_type == 'diamond' && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
-        }else{
-            $current_user->diamond -=$amount;
+        } else {
+            $current_user->diamond -= $amount;
             $current_user->update();
         }
 
         if ($pay_type == 'gold' && $current_user->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
-        }else{
-            $current_user->gold -=$amount;
+        } else {
+            $current_user->gold -= $amount;
             $current_user->update();
         }
 

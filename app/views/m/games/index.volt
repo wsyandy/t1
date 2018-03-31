@@ -120,8 +120,7 @@
         </div>
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
-            <span v-if="!pay_type">发起者已设定</span>
-            <span v-else>暂无游戏发起者</span>
+            <span>${game_status_text}</span>
             <p>${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
         </div>
         <div class="select_game_button">
@@ -140,6 +139,7 @@
                 can_game: false,
                 error_reason: '钻石不足',
                 sid: "{{ current_user.sid }}",
+                game_status_text: '发起者已设定'
             },
             watch: {},
             methods: {
@@ -169,6 +169,9 @@
         };
 
         $(function () {
+            if (!vm.pay_type) {
+                vm.game_status_text = '暂无游戏发起者，请稍后！';
+            }
 
             switch (vm.pay_type) {
                 case 'free':
