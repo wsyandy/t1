@@ -31,6 +31,22 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'
     ];
 
+    function beforeCreate()
+    {
+        return $this->checkBalance();
+    }
+
+    function afterCreate()
+    {
+        $user = \Users::findById($this->user_id);
+        $user->diamond = $this->balance;
+        $user->update();
+
+        $user_attrs = $user->getStatAttrs();
+        $user_attrs['add_value'] = abs($this->amount);
+        $action = $this->getStatActon();
+        \Stats::delay()->record('user', $action, $user_attrs);
+    }
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
@@ -69,11 +85,6 @@ class AccountHistories extends BaseModel
         return false;
     }
 
-    function beforeCreate()
-    {
-        return $this->checkBalance();
-    }
-
     function checkBalance()
     {
         $change_amount = abs($this->amount);
@@ -82,7 +93,7 @@ class AccountHistories extends BaseModel
             $this->amount = $change_amount;
         }
 
-        $old_account_history = \AccountHistories::findFirst([
+        $old_account_history = self::findFirst([
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $this->user_id],
             'order' => 'id desc']);
@@ -101,18 +112,6 @@ class AccountHistories extends BaseModel
     function isCostDiamond()
     {
         return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION;
-    }
-
-    function afterCreate()
-    {
-        $user = \Users::findById($this->user_id);
-        $user->diamond = $this->balance;
-        $user->update();
-
-        $user_attrs = $user->getStatAttrs();
-        $user_attrs['add_value'] = abs($this->amount);
-        $action = $this->getStatActon();
-        \Stats::delay()->record('user', $action, $user_attrs);
     }
 
     function getStatActon()
