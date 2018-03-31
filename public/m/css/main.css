@@ -1,0 +1,197 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+
+
+/* 选择游戏 */
+.select_game{
+  padding: 15px;
+  flex-direction: column;
+}
+.select_game_instructions{
+  height: 157px;
+  background:url(../images/instructions_bg.png) center no-repeat;
+  background-size: cover;
+  border-radius:20px;
+  flex-direction: column;
+}
+.select_game_instructions p{
+  margin-bottom:6px;
+  padding:0 12px;
+  font-size: 12px;
+  color: #5C5C5C;
+}
+.instructions_title{
+ justify-content: center;
+ align-items: center;
+}
+.instructions_title h3{
+  font-size: 16px;
+  color: #424242;
+  margin:15px;
+}
+.instructions_title .wire{
+  width: 32px;
+  border-top: 1px solid #B6B6B6;
+}
+.select_game_select{
+  margin-top: 40px;
+  padding-left: 15px;
+  flex-direction: column;
+}
+.select_game_select li {
+  align-items: center;
+  margin-bottom: 24px;
+}
+.select_game_select li .radio{
+  width: 20px;
+  height: 20px;
+  background: url(../images/radio_icon.png) center no-repeat;
+  background-size: cover;
+}
+.select_game_select li .radio_select{
+  background: url(../images/radio_icon_select.png) center no-repeat;
+  background-size: cover;
+}
+.select_game_select li .text{
+  margin-left: 15px;
+  font-size: 14px;
+  color: #424242;
+}
+.select_game_select li input{
+  margin-left: 20px;
+  margin-right: 10px;
+  width: 108px;
+  height: 34px;
+  border: 1px solid #CACACA;
+  border-radius: 8px;
+  padding-left: 7px;
+  font-size: 14px;
+  color: #F45189;
+}
+.select_game_select li .gold{
+  width: 20px;
+  height: 20px;
+  background: url(../images/gold_icon.png) center no-repeat;
+  background-size: cover;
+}
+.select_game_select li .masonry{
+  width: 20px;
+  height: 20px;
+  background: url(../images/masonry_icon.png) center no-repeat;
+  background-size: cover;
+}
+.select_game_button{
+  margin-top: 30px;
+  flex-direction: column;
+}
+.select_game_button p{
+  font-size: 14px;
+  color: #969696;
+  text-align: center;
+}
+.select_game_button p span{
+  color: #5B5B5B;
+}
+.select_game_button button{
+  margin: 0 34px;
+  margin-top: 14px;
+  height: 44px;
+  background-color: #F45189;
+  border-radius: 22px;
+  font-size: 17px;
+  color: #FFFFFF;
+  padding: 0;
+  border: none;
+}
+/* 开启游戏 */
+.start_game{
+  margin-top: 60px;
+  flex-direction: column;
+  align-items: center;
+}
+.start_game span{
+  font-size: 16px;
+  color: #9F9F9F;
+  margin-bottom: 30px;
+}
+.start_game p{
+  font-size: 18px;
+  color: #585858;
+  margin-bottom: 10px;
+}
+.prompt_toast{
+  position: fixed;
+  left: 50%;
+  bottom: 55px;
+  margin-left: -90px;
+  width: 180px;
+  height: 35px;
+  line-height: 35px;
+  color: white;
+  font-size: 14px;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.5);
+}
+/* 等待玩家 */
+.await_player_ul{
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+.await_player_ul li{
+  width: 25%;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom:24px;
+}
+.await_player_ul li img{
+  width: 60px;
+  height: 60px;
+  background: #DEDEDE;
+  border: 2px solid #F5F5F5;
+  border-radius: 30px;
+}
+.await_player_ul li span{
+  margin-top: 6px;
+  font-size: 14px;
+  color: #424242;
+}
+.game_quit{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: flex-end;
+}
+.game_quit_button{
+  margin-top: 2px;
+  margin-right: 6px;
+  width: 114px;
+  height: 54px;
+  padding-top: 8px;
+  border-radius: 8px;
+  background: url(../images/quit_box_bg.png) center no-repeat;
+  background-size: cover;
+  align-items: center;
+  font-size: 15px;
+  /*color: #565656;*/
+}
+.game_quit_button .quit{
+  width: 19px;
+  height: 19px;
+  margin-left: 15px;
+  margin-right: 10px;
+  background: url(../images/quit_iocn.png) center no-repeat;
+  background-size: cover;
+}
