@@ -60,4 +60,27 @@ class HiCoinHistoriesController extends BaseController
         $this->view->hi_coin_histories = $hi_coin_histories;
     }
 
+    function ordersAction()
+    {
+
+        $page = 1;
+        $per_page = 30;
+        $total_page = 1;
+        $total_entries = $per_page * $total_page;
+        $cond = ['conditions' => "fee_type = " . HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND];
+
+        $cond['order'] = 'id desc';
+
+        $user_id = $this->params('user_id');
+
+        if ($user_id) {
+            $cond['conditions'] .= " and user_id = " . $user_id;
+        }
+
+        $hi_coin_histories = \HiCoinHistories::findPagination($cond, $page, $per_page, $total_entries);
+        $this->view->hi_coin_histories = $hi_coin_histories;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+    }
+
+
 }

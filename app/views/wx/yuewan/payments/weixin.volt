@@ -22,6 +22,12 @@
                     <i></i>
                     <span>+{{ product.diamond }}</span>
                 </div>
+                {% if product.gold %}
+                <div class="gold">
+                    <i></i>
+                    <span>{{ product.gold }}</span>
+                </div>
+                {% endif %}
                 <div class="money">￥{{ product.amount }}元</div>
             </li>
         {% endfor %}

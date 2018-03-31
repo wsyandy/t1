@@ -22,28 +22,36 @@
     </div>
 </div>
 <div class="weixin_chongzhi_top">
-    <input required="required" id="user_id"  type="number" class="name_input" value="{{ pay_user_id }}" placeholder="请输入您的Hi~ID" />
+    <input required="required" id="user_id" type="number" class="name_input" value="{{ pay_user_id }}"
+           placeholder="请输入您的Hi~ID"/>
     <i class="close_btn"></i>
     <p class="name"></p>
 </div>
 <div class="weixin_title">选择充值金额</div>
-<div class="weixin_cz_list">
-    <ul>
-        {% for index,product in products %}
+<ul class="weixin_cz_list">
+    {% for index,product in products %}
 
-            <li class="" id="" data-amount="{{ product.amount }}" data-product_id="{{ product.id }}">
+        <li class="" id="" data-amount="{{ product.amount }}" data-product_id="{{ product.id }}">
+
+            <div class="weixin_cz_masonry">
                 <i></i>
                 <span>{{ product.diamond }}</span>
-            </li>
-
-        {% endfor %}
-    </ul>
-</div>
+            </div>
+            {% if product.gold %}
+                <div class="weixin_cz_gold">
+                    <i></i>
+                    <span>{{ product.gold }}</span>
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
 <div class="money_box">套餐金额：<span>￥<span class="amount">0</span></span></div>
 <div class="money_pay_list">
     <ul>
         {% for payment_channel in payment_channels %}
-            <li @click="rechargeAction({{ payment_channel.id }})" class="zhifubao_pay_li recharge" data-payment_channel_id="{{ payment_channel.id }}"
+            <li @click="rechargeAction({{ payment_channel.id }})" class="zhifubao_pay_li recharge"
+                data-payment_channel_id="{{ payment_channel.id }}"
                 data-payment_type="{{ payment_channel.payment_type }}"
                 id="payment_type_{{ payment_channel.payment_type }}">
                 {% if payment_channel.payment_type == 'weixin_h5' or payment_channel.payment_type == 'weixin' or  payment_channel.payment_type == 'weixin_js' %}
@@ -71,24 +79,24 @@
 
 <script src="/pay/js/jquery.min.js"></script>
 <script type="text/javascript">
-    $(function(){
+    $(function () {
         if (isWeiXin()) {
             $('.zhifubao_pay_t').show();
         }
 
         $('.money_pay_list').addClass('selected_pay');
 
-        var amount = $('.weixin_cz_selected').data('amount');
+        var amount = $('.cur').data('amount');
         $(".amount").text(amount);
 
-        var product_id = $('.weixin_cz_selected').data('product_id');
+        var product_id = $('.cur').data('product_id');
         $("#product_id").val(product_id);
 
-        $('.weixin_cz_list ul li').each(function(){
+        $('.weixin_cz_list li').each(function(){
             $(this).click(function(){
                 //查找用户
                 var user_id = $('#user_id').val();
-                if(user_id < 1){
+                if (user_id < 1) {
                     alert('请先输入Hi~ID');
                     return;
                 }
@@ -96,7 +104,7 @@
                     $(".name").text(resp.nickname);
                 });
 
-                $(this).addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
+                $(this).addClass('cur').siblings().removeClass('cur');
                 var amount = $(this).data('amount');
                 $(".amount").text(amount);
                 var product_id = $(this).data('product_id');
@@ -146,7 +154,7 @@
             });
         });
 
-        $('.close_btn').click(function(){
+        $('.close_btn').click(function () {
             $('.name_input').val('');
         });
 

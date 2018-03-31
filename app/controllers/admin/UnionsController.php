@@ -143,19 +143,33 @@ class UnionsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page');
-        $union_id = $this->params('union_id');
+        $user_id = $this->params('user_id');
+        $id = $this->params('id');
+        $status = $this->params('status', STATUS_ON);
 
-        $cond = $this->getConditions('union');
+        $cond = [];
+
         $cond['order'] = "id desc";
 
-        if (isset($cond['conditions'])) {
-            $cond['conditions'] .= "and type = " . UNION_TYPE_PRIVATE;
-        } else {
-            $cond['conditions'] = "type = " . UNION_TYPE_PRIVATE;
+        $cond['conditions'] = " type = " . UNION_TYPE_PRIVATE;
+
+
+        if ($id) {
+            $cond['conditions'] .= " and id = " . $id;
         }
 
-        if ($union_id) {
-            $cond = ['conditions' => 'id = ' . $union_id];
+        if ($user_id) {
+            $user = \Users::findFirstById($user_id);
+            $union_id = $user->union_id;
+            if (!$id && $union_id) {
+                $cond['conditions'] .= " and (id = $union_id  or  user_id = $user_id) ";
+            } else {
+                $cond['conditions'] .= " and user_id = $user_id ";
+            }
+        }
+
+        if (!$id && !$user_id) {
+            $cond['conditions'] .= " and status = " . $status;
         }
 
         debug($cond);
@@ -184,5 +198,23 @@ class UnionsController extends BaseController
         $this->view->union = $union;
         $this->view->amount = $union->amount;
         $this->view->union_id = $id;
+    }
+
+    function RankListAction()
+    {
+        $start_at = $this->params('start_at', date('Y-m-d', beginOfDay()));
+
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime($start_at));
+
+        $page = $this->params('page', 1);
+
+        $per_page = $this->params('per_page', 20);
+
+        $unions = \Unions::findFameValueRankListByKey($key, $page, $per_page);
+
+        $this->view->unions = $unions;
+
+        $this->view->start_at = $start_at;
+
     }
 }

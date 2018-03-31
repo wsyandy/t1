@@ -186,5 +186,12 @@
 
         $("#diamond_recharge_balance .total").html(Math.ceil(diamond_recharge_total - diamond_cost_total));
 
+        var hi_coin_cost_total = parseFloat($("#hi_coin_cost_total .total").eq(1).html());
+        var hi_coin_cost_user = parseFloat($("#hi_coin_cost_user .total").eq(1).html());
+
+        if (hi_coin_cost_user > 0) {
+            $("#hi_coin_cost_user_average .total").html(Math.ceil(hi_coin_cost_total * 100 / hi_coin_cost_user) / 100);
+        }
+
     });
 </script>

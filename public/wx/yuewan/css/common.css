@@ -143,6 +143,21 @@ input::-webkit-input-placeholder{
 .weixin_cz_list .num span{
 	margin-left: 15px;
 }
+.weixin_cz_list .gold{
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+.weixin_cz_list .gold i{
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background: url(../images/weixin_gold.png) no-repeat;
+	background-size: 100%;
+}
+.weixin_cz_list .gold span{
+	margin-left: 15px;
+}
 .weixin_cz_list .money{
 	width: 66px;
 	height: 24px;
