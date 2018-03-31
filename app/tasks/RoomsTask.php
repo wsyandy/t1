@@ -391,8 +391,8 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             $cond = [
-                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id],
+                'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end: and pay_type = :pay_type:',
+                'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
                 'column' => 'amount'
             ];
 
