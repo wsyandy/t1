@@ -43,7 +43,6 @@
                     <span>{{ product.gold }}</span>
                 </div>
             {% endif %}
-            <span class="preferential"></span>
         </li>
     {% endfor %}
 </ul>
@@ -87,14 +86,14 @@
 
         $('.money_pay_list').addClass('selected_pay');
 
-        var amount = $('.weixin_cz_selected').data('amount');
+        var amount = $('.cur').data('amount');
         $(".amount").text(amount);
 
-        var product_id = $('.weixin_cz_selected').data('product_id');
+        var product_id = $('.cur').data('product_id');
         $("#product_id").val(product_id);
 
-        $('.weixin_cz_list ul li').each(function () {
-            $(this).click(function () {
+        $('.weixin_cz_list li').each(function(){
+            $(this).click(function(){
                 //查找用户
                 var user_id = $('#user_id').val();
                 if (user_id < 1) {
@@ -105,7 +104,7 @@
                     $(".name").text(resp.nickname);
                 });
 
-                $(this).addClass('weixin_cz_selected').siblings().removeClass('weixin_cz_selected');
+                $(this).addClass('cur').siblings().removeClass('cur');
                 var amount = $(this).data('amount');
                 $(".amount").text(amount);
                 var product_id = $(this).data('product_id');
