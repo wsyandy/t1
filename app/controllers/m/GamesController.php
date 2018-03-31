@@ -61,15 +61,18 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        if($pay_type == 'diamond' && $this->currentUser()->diamond < $amount){
+            return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+        }
+
+        if($pay_type == 'gold' && $this->currentUser()->gold < $amount){
+            return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function waitAction()
-    {
-
-    }
-
-    function enterAction()
     {
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
@@ -85,8 +88,35 @@ class GamesController extends BaseController
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
         info($url);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '', ['url' => $url]);
+        $this->view->url = $url;
     }
 
+    function enterAction()
+    {
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_key = "game_room_" . $room_id;
+        $user_ids = $hot_cache->zrange($room_key, 0, -1);
+        $users = \Users::findByIds($user_ids);
+
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $hot_cache = \Rooms::getHotWriteCache();
+        $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
+        $data = $users->toJson('users', 'toSimpleJson');
+        $data['can_enter'] = intval($can_enter);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
+    }
+
+    function startAction()
+    {
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $hot_cache = \Rooms::getHotWriteCache();
+        $hot_cache->hset($room_info_key, 'can_enter', 1);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
 
 }
