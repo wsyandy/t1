@@ -82,14 +82,15 @@ class Stats extends BaseModel
 //        'gold_give_num_average' => '人均系统赠送金币次数',
 //        'gold_give_user_average' => '人均系统赠送金币数额',
 
-        'diamond_recharge_total' => '购买钻石总额',
         'diamond_hi_coin_recharge_total' => 'Hi币兑换钻石总额',
+        'diamond_hi_coin_recharge_user' => 'Hi币兑换钻石人数',
+        'diamond_hi_coin_recharge_user_average' => '人均Hi币兑换钻石数额',
+
+        'diamond_recharge_total' => '购买钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
-        'diamond_hi_coin_recharge_user' => 'Hi币兑换钻石人数',
         'diamond_recharge_give_user' => '赠送钻石人数',
         'diamond_recharge_user_average' => '人均购买钻石数额',
-        'diamond_hi_coin_recharge_user_average' => '人均Hi币兑换钻石数额',
         'diamond_recharge_give_user_average' => '人均赠送钻石数额',
 
         'diamond_cost_total' => '消耗钻石总额',
