@@ -74,7 +74,7 @@ class HiCoinHistoriesController extends BaseController
         $user_id = $this->params('user_id');
 
         if ($user_id) {
-            $cond['conditions'] .= "user_id = " . $user_id;
+            $cond['conditions'] .= " and user_id = " . $user_id;
         }
 
         $hi_coin_histories = \HiCoinHistories::findPagination($cond, $page, $per_page, $total_entries);
