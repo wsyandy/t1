@@ -137,7 +137,7 @@
                 game_user_id: "{{ current_user.id }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                sid:{{ current_user.sid }}
+                sid:"{{ current_user.sid }}"
             },
             watch: {},
             methods: {
@@ -153,7 +153,6 @@
                         'code': 'yuewan',
                         'sid': vm.sid
                     };
-                    alert(JSON.stringify(data));
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (!resp.error_code) {
                             vm.redirectAction('/m/games/wait?code=yuewan&sid=' + vm.sid);
