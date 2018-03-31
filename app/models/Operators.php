@@ -124,7 +124,11 @@ class Operators extends BaseModel
             return true;
         }
 
-        return 10 == $this->id;
+        if (in_array($this->id, [2, 11])) {
+            return true;
+        }
+
+        return false;
     }
 
     function canGiveHiCoins()

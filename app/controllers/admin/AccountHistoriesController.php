@@ -35,7 +35,7 @@ class AccountHistoriesController extends BaseController
             $amount = intval($this->params('diamond'));
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => $this->currentOperator()->id];
 
-            if ($amount > 100 && isProduction()) {
+            if ($amount > 10000 && isProduction()) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '赠送数量超过限制');
             }
 

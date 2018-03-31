@@ -27,7 +27,7 @@ class Stats extends BaseModel
         'register', 'unsubscribe', // 注册
         'active_user', // 活跃用户
         'create_order', 'create_payment', 'payment_success',
-        'diamond_recharge', 'diamond_recharge_give', 'diamond_cost', 'diamond_hi_coin_recharge', //钻石购买和消耗
+        'diamond_recharge', 'diamond_recharge_give', 'diamond_cost', 'hi_coin_cost', //钻石购买和消耗
         'withdraw' //提现
     ];
 
@@ -82,14 +82,15 @@ class Stats extends BaseModel
 //        'gold_give_num_average' => '人均系统赠送金币次数',
 //        'gold_give_user_average' => '人均系统赠送金币数额',
 
+        'hi_coin_cost_total' => 'Hi币兑换钻石金额',
+        'hi_coin_cost_user' => 'Hi币兑换钻石人数',
+        'hi_coin_cost_user_average' => '人均Hi币兑换钻石金额',
+
         'diamond_recharge_total' => '购买钻石总额',
-        'diamond_hi_coin_recharge_total' => 'Hi币兑换钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
-        'diamond_hi_coin_recharge_user' => 'Hi币兑换钻石人数',
         'diamond_recharge_give_user' => '赠送钻石人数',
         'diamond_recharge_user_average' => '人均购买钻石数额',
-        'diamond_hi_coin_recharge_user_average' => '人均Hi币兑换钻石数额',
         'diamond_recharge_give_user_average' => '人均赠送钻石数额',
 
         'diamond_cost_total' => '消耗钻石总额',
@@ -1231,43 +1232,43 @@ class Stats extends BaseModel
     }
 
     /**
-     * Hi兑换钻石总额
+     * Hi兑换总额
      */
-    function diamondHiCoinRechargeTotal()
+    function hiCoinCostTotal()
     {
-        $key = $this->statCacheKey("user", "diamond_hi_coin_recharge");
+        $key = $this->statCacheKey("user", "hi_coin_cost");
         $stat_db = Stats::getStatDb();
         $key .= '_total';
         $num = $stat_db->get($key);
-        $this->data_hash['diamond_hi_coin_recharge_total'] = intval($num);
+        $this->data_hash['hi_coin_cost_total'] = intval($num);
     }
 
     /**
-     * Hi兑换钻石人数
+     * Hi兑换人数
      */
-    function diamondHiCoinRechargeUser()
+    function hiCoinCostUser()
     {
-        $key = $this->statCacheKey("user", "diamond_hi_coin_recharge");
+        $key = $this->statCacheKey("user", "hi_coin_cost");
         $stat_db = Stats::getStatDb();
         $num = $stat_db->zcard($key);
-        $this->data_hash['diamond_hi_coin_recharge_user'] = intval($num);
+        $this->data_hash['hi_coin_cost_user'] = intval($num);
     }
 
     /**
-     * 人均Hi币兑换钻石数额
+     * 人均Hi币兑换数额
      */
-    function diamondHiCoinRechargeUserAverage()
+    function hiCoinCostUserAverage()
     {
-        $diamond_hi_coin_recharge_total = $this->data_hash['diamond_hi_coin_recharge_total'];
-        $diamond_hi_coin_recharge_user = $this->data_hash['diamond_hi_coin_recharge_user'];
+        $hi_coin_cost_total = $this->data_hash['hi_coin_cost_total'];
+        $hi_coin_cost_user = $this->data_hash['hi_coin_cost_user'];
 
         $avg = 0;
 
-        if ($diamond_hi_coin_recharge_user > 0) {
-            $avg = intval($diamond_hi_coin_recharge_total * 100 / $diamond_hi_coin_recharge_user) / 100;
+        if ($hi_coin_cost_user > 0) {
+            $avg = intval($hi_coin_cost_total * 100 / $hi_coin_cost_user) / 100;
         }
 
-        $this->data_hash['diamond_hi_coin_recharge_user_average'] = $avg;
+        $this->data_hash['hi_coin_cost_user_average'] = $avg;
     }
 
 
@@ -1386,8 +1387,7 @@ class Stats extends BaseModel
     {
         $diamond_cost_total = $this->data_hash['diamond_cost_total'];
         $diamond_recharge_total = $this->data_hash['diamond_recharge_total']; //购买钻石数额
-        $diamond_hi_coin_recharge_total = $this->data_hash['diamond_hi_coin_recharge_total']; //hi币兑换钻石数额
-        $avg = $diamond_recharge_total - $diamond_cost_total - $diamond_hi_coin_recharge_total;
+        $avg = $diamond_recharge_total - $diamond_cost_total;
 
         $this->data_hash['diamond_recharge_balance'] = $avg;
     }

@@ -120,10 +120,6 @@ class AccountHistories extends BaseModel
             return "diamond_cost";
         }
 
-        if ($this->fee_type == ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND) {
-            return "diamond_hi_coin_recharge";
-        }
-
         return "diamond_recharge";
     }
 
