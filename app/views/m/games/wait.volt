@@ -12,12 +12,12 @@
         <button @click="start_game()">${ button_text }</button>
     </div>
     {% if current_user.id != room_host_id %}
-    <div class="game_quit">
-        <div class="game_quit_button" @click="exit_game()">
-            <span class="quit"></span>
-            <span>退出</span>
+        <div class="game_quit">
+            <div class="game_quit_button" @click="exit_game()">
+                <span class="quit"></span>
+                <span>退出</span>
+            </div>
         </div>
-    </div>
     {% endif %}
 </div>
 <script>
@@ -56,7 +56,9 @@
                     'sid': vm.sid
                 };
                 $.authPost('/m/games/exit', data, function (resp) {
-                    if (resp.error_code) {
+                    if (!resp.error_code) {
+                        location.href = '/m/games?code=' + vm.code + '&sid=' + vm.sid;
+                    } else {
                         alert(resp.error_reason);
                     }
                 });
@@ -85,7 +87,7 @@
     }
 
     $(function () {
-        if(vm.current_user_id != vm.room_host_id){
+        if (vm.current_user_id != vm.room_host_id) {
             vm.button_text = '请稍后。。。。。';
         }
         interval_time = setInterval(function () {
