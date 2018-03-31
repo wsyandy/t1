@@ -119,4 +119,13 @@ class GamesController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
+    function exitAction(){
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_key = "game_room_" . $room_id;
+        $hot_cache->zrem($room_key, $this->currentUser()->id);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
 }
