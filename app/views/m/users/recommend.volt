@@ -6,7 +6,7 @@
 <div class="vueBox" id="app" v-cloak>
     <div class="interest-list">
         <ul>
-            <li v-for="(item,index) in user_list">
+            <li v-for="(item,index) in user_list" >
                 <div class="list_left">
                     <img class="interest_avatar" :src="item.avatar_url" alt="" @click.stop="userDetail(item.id)"/>
                     <div class="interest_info">
@@ -70,7 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="fudong_bg"></div>
+    <div class="fudong_bg" ></div>
 
 </div>
 
@@ -93,7 +93,7 @@
             userList: function () {
                 var data = {
                     page: this.page,
-                    per_page: 7
+                    per_page: 6
                 };
                 console.log(this.page);
                 $.authGet('/m/users/user_list?sid={{ sid }}&code={{ code }}', data, function (resp) {

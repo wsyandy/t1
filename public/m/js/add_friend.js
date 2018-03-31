@@ -59,4 +59,8 @@ $(function () {
         close_fd();
     });
 
+    $(".fudong_bg").click(function () {
+        close_fd();
+    })
+
 });
