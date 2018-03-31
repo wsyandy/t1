@@ -106,16 +106,25 @@ class AccountHistories extends BaseModel
 
         $user_attrs = $user->getStatAttrs();
         $user_attrs['add_value'] = abs($this->amount);
-        $action = "diamond_recharge";
+        $action = $this->getStatActon();
+        \Stats::delay()->record('user', $action, $user_attrs);
+    }
+
+    function getStatActon()
+    {
         if ($this->fee_type == ACCOUNT_TYPE_GIVE) {
-            $action = "diamond_recharge_give";
+            return "diamond_recharge_give";
         }
 
         if ($this->isCostDiamond()) {
-            $action = "diamond_cost";
+            return "diamond_cost";
         }
 
-        \Stats::delay()->record('user', $action, $user_attrs);
+        if ($this->fee_type == ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND) {
+            return "diamond_hi_coin_recharge";
+        }
+
+        return "diamond_recharge";
     }
 
     static function findUserLast($user_id)

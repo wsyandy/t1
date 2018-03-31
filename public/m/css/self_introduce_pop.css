@@ -1,0 +1,78 @@
+@charset "utf-8";
+body,p,input,h1,h2,h3,h4,ul,li,dl,dt,dd,form { margin: 0;padding: 0;list-style: none;vertical-align: middle;
+}
+body{ font-family: 'Arial Normal', 'Arial';font-size: 14px;min-width: 320px;}
+html,body { height: 100%;width: 100%;margin:0 auto;}
+img{border: 0;}
+a{text-decoration: none;color: #000;}
+.fudong{
+	width: 260px;
+	height: 220px;
+	position: fixed;
+	z-index: 999999;
+	border-radius: 10px;
+	background: #fff;
+}
+.fudong_bg{
+	width: 100%;
+	background: rgba(0,0,0,0.50);
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 10000;
+}
+.ask_box{
+	padding:10px 15px;
+}
+.ask_box h1{
+	font-size: 16px;
+	color: #F45189;
+	text-align: center;
+	padding:6px 0 16px 0;
+}
+.ask_text{
+	background: #F7F7F7;
+	border: 1px solid #DBDBDB;
+	position: relative;
+	border-radius: 4px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+}
+.ask_text textarea{
+	width: 100%;
+	padding:10px 3%;
+	background: #F7F7F7;
+	height: 70px;
+	font-size: 15px;
+	color: #3C3C3C;
+	border:none;
+}
+.weui_textarea_counter{
+	font-size: 13px;
+	color: #888888;
+	position: absolute;
+	bottom: 10px;
+	right: 15px;
+}
+.ask_btn{
+	width: 100%;
+	height: 38px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	background: #F45189;
+	border-radius: 50px;
+	margin-top: 25px;
+}
+.ask_btn span{
+	width: 100%;
+	text-align: center;
+	font-size: 18px;
+	color: #FFFFFF;
+}
