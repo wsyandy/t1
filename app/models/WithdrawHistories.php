@@ -72,7 +72,7 @@ class WithdrawHistories extends BaseModel
             $attrs['add_value'] = $this->amount;
             \Stats::delay()->record("user", "withdraw", $attrs);
 
-            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，预计24小时内到账！');
+            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，每周二当日到账！');
         }
     }
 

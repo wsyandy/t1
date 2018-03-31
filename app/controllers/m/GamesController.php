@@ -129,8 +129,13 @@ class GamesController extends BaseController
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
+        if($can_enter){
+            return $this->renderJSON(ERROR_CODE_FAIL, '已开始游戏');
+        }
+
         if ($room_host_id == $this->currentUser()->id) {
-            // 解散
+            // 解散比赛
             $hot_cache->del($room_key);
             $hot_cache->del($room_info_key);
         } else {
