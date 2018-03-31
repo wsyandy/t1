@@ -384,6 +384,12 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            //公司内部成员的房间不上热门
+            if ($room->user->isCompanyUser()) {
+                info($room->id);
+                continue;
+            }
+
             $cond = [
                 'conditions' => 'room_id = :room_id: and created_at >= :start: and created_at <= :end:',
                 'bind' => ['start' => $start, 'end' => $end, 'room_id' => $room->id],

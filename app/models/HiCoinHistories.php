@@ -39,6 +39,16 @@ class HiCoinHistories extends BaseModel
         return $this->checkBalance();
     }
 
+    function afterCreate()
+    {
+        if ($this->isExchange()) {
+            $user = \Users::findFirstById($this->user_id);
+            $user_attrs = $user->getStatAttrs();
+            $user_attrs['add_value'] = abs($this->hi_coins);
+            \Stats::delay()->record('user', 'hi_coin_cost', $user_attrs);
+        }
+    }
+
     function mergeJson()
     {
         return [
@@ -181,6 +191,11 @@ class HiCoinHistories extends BaseModel
     function isCost()
     {
         return in_array($this->fee_type, [HI_COIN_FEE_TYPE_WITHDRAW, HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
+    }
+
+    function isExchange()
+    {
+        return in_array($this->fee_type, [HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
     }
 
     //Hi币转钻石记录

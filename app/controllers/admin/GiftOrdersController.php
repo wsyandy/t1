@@ -12,7 +12,7 @@ class GiftOrdersController extends BaseController
 {
     function indexAction()
     {
-        $user_id = $this->params('user_id');
+        $room_user_id = $this->params('room_user_id');
         $cond = $this->getConditions('gift_order');
         $cond['order'] = 'id desc';
 
@@ -46,9 +46,9 @@ class GiftOrdersController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
 
-        if ($user_id) {
+        if ($room_user_id) {
 
-            $room_user = \Users::findFirstById($user_id);
+            $room_user = \Users::findFirstById($room_user_id);
 
             if ($room_user->room_id) {
 
@@ -73,11 +73,11 @@ class GiftOrdersController extends BaseController
         $gift_order = $this->params('gift_order');
         debug($gift_order);
 
-        $this->view->id = $gift_order['id_eq'];
-        $this->view->sender_id = $gift_order['sender_id_eq'];
-        $this->view->gift_id = $gift_order['gift_id_eq'];
-        $this->view->room_id = $gift_order['room_id_eq'];
-
+        $this->view->id = isset($gift_order['id_eq']) ? $gift_order['id_eq'] : '';
+        $this->view->sender_id = isset($gift_order['sender_id_eq']) ? $gift_order['sender_id_eq'] : '';
+        $this->view->gift_id = isset($gift_order['gift_id_eq']) ? $gift_order['gift_id_eq'] : '';
+        $this->view->room_id = isset($gift_order['room_id_eq']) ? $gift_order['room_id_eq'] : '';
+        $this->view->user_id = isset($gift_order['user_id_eq']) ? $gift_order['user_id_eq'] : '';
         $this->view->gift_orders = $gift_orders;
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
@@ -85,7 +85,7 @@ class GiftOrdersController extends BaseController
         $this->view->gift_type = intval($this->params('gift_order[gift_type_eq]'));
         $this->view->pay_type = $this->params('gift_order[pay_type_eq]');
         $this->view->total_amount = $total_amount;
-        $this->view->user_id = $user_id ? intval($user_id) : '';
+        $this->view->room_user_id = $room_user_id ? intval($room_user_id) : '';
     }
 
     function detailAction()
