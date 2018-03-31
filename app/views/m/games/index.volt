@@ -139,7 +139,7 @@
                 can_game: false,
                 error_reason: '钻石不足',
                 sid: "{{ current_user.sid }}",
-                game_status_text: '发起者已设定'
+                game_status_text: '主播已发起者游戏'
             },
             watch: {},
             methods: {
@@ -170,7 +170,7 @@
 
         $(function () {
             if (!vm.pay_type) {
-                vm.game_status_text = '暂无游戏发起者，请稍后！';
+                vm.game_status_text = '您不是主播,不能发起游戏';
             }
 
             switch (vm.pay_type) {
