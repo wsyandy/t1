@@ -16,10 +16,10 @@ class RoomsController extends BaseController
         $cond = $this->getConditions('room');
         $name = $this->params('name');
         $hot = $this->params('hot', 0);
-        $status = $this->params('room[status_eq]');
+        $status = $this->params('room[status_eq]', '');
         $product_channel_id = $this->params('room[product_channel_id_eq]');
         $user_type = $this->params('room[user_type_eq]');
-        $theme_type = $this->params('room[theme_type_eq]');
+        $theme_type = $this->params('room[theme_type_eq]', '');
         $id = $this->params('room[id_eq]');
         $union_id = $this->params('union_id', 0);
         $user_id = $this->params('user_id', 0);
@@ -56,10 +56,10 @@ class RoomsController extends BaseController
         $this->view->hot = $hot;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->total_entries = \Rooms::count($cond);
-        $this->view->status = $status !== '' ? intval($status) : '';
+        $this->view->status = $status != '' ? intval($status) : '';
         $this->view->product_channel_id = $product_channel_id ? intval($product_channel_id) : '';
         $this->view->user_type = $user_type ? intval($user_type) : '';
-        $this->view->theme_type = $theme_type !== '' ? intval($theme_type) : '';
+        $this->view->theme_type = $theme_type != '' ? intval($theme_type) : '';
         $this->view->id = $id ? intval($id) : '';
         $this->view->union_id = $union_id ? intval($union_id) : '';
         $this->view->name = $name;
