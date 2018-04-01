@@ -16,7 +16,13 @@ class AccountHistoriesController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
 
-        $account_histories = \AccountHistories::findAccountList($user_id, $page, $per_page);
+        $conditions = [
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user_id],
+            'order' => 'id desc'
+        ];
+
+        $account_histories = \AccountHistories::findPagination($conditions, $page, $per_page);
         $this->view->account_histories = $account_histories;
         $this->view->user_id = $user_id;
     }

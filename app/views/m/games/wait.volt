@@ -5,7 +5,7 @@
 {#用户对应的头像和昵称#}
 <div id="app" class="select_game">
     <ul class="await_player_ul" v-for="user in users">
-        <li><img src="${user.avatar_url}" alt=""/><span>${user.nickname}</span></li>
+        <li><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span></li>
     </ul>
     {#这里要判断是否是房主，是由房主可以点击开始#}
     <div class="select_game_button">
@@ -42,7 +42,9 @@
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/start', data, function (resp) {
-                        if (resp.error_code) {
+                        if (!resp.error_code) {
+                            location.href = vm.url;
+                        } else {
                             alert(resp.error_reason);
                         }
                     });
