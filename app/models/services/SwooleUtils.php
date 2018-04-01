@@ -174,7 +174,7 @@ class SwooleUtils extends \BaseModel
         try {
             $client = new SwooleClient($ip, $port, 1);
             if (!$client->connect()) {
-                info("Exce connect fail", $ip, $port);
+                info("Exce connect fail", $ip, $port, $payload);
                 return false;
             }
             $payload = ['action' => $action, 'payload' => $payload];
