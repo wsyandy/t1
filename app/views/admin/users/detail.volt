@@ -44,6 +44,9 @@
     {% if isAllowed('hi_coin_histories','basic') %}
         <li role="presentation"><a href="/admin/hi_coin_histories/basic?user_id={{ user.id }}">hi币消费记录</a></li>
     {% endif %}
+    {% if isAllowed('withdraw_histories','basic') %}
+        <li role="presentation"><a href="/admin/withdraw_histories/basic?user_id={{ user.id }}">提现记录</a></li>
+    {% endif %}
 </ul>
 
 

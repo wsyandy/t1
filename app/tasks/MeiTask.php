@@ -1616,5 +1616,6 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
 
+        $orders = Orders::find(['conditions' => 'created_at >= ' . beginOfDay()]);
     }
 }
