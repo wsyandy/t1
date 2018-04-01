@@ -90,6 +90,7 @@ class GamesController extends BaseController
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $room_id;
+        $body['host'] = $this->currentUser()->id == $room_host_id;
         $body['nonce_str'] = randStr(20);
 
         $str = paramsToStr($body);
