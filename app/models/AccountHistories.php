@@ -28,9 +28,31 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
         ACCOUNT_TYPE_GIVE => '系统赠送',
         ACCOUNT_TYPE_CREATE_UNION => '创建公会',
-        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'
+        ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
+        ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
+        ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出'
     ];
 
+    function beforeCreate()
+    {
+        return $this->checkBalance();
+    }
+
+    function afterCreate()
+    {
+        $user = $this->user;
+        $user->diamond = $this->balance;
+        // 系统赠送
+        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
+            $user->organisation = USER_ORGANISATION_COMPANY;
+        }
+        $user->update();
+
+        $user_attrs = $user->getStatAttrs();
+        $user_attrs['add_value'] = abs($this->amount);
+        $action = $this->getStatActon();
+        \Stats::delay()->record('user', $action, $user_attrs);
+    }
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
@@ -50,28 +72,17 @@ class AccountHistories extends BaseModel
 
         foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $value = fetch($opts, $column);
-
             if ($value) {
                 $account_history->$column = $value;
             }
         }
 
         if ($account_history->save()) {
-            if ($account_history->fee_type == ACCOUNT_TYPE_GIVE) {
-                $user->organisation = COMPANY;
-                $user->update();
-            }
-
             return true;
         }
 
         info($user->sid, $fee_type, $amount, $opts);
         return false;
-    }
-
-    function beforeCreate()
-    {
-        return $this->checkBalance();
     }
 
     function checkBalance()
@@ -81,7 +92,12 @@ class AccountHistories extends BaseModel
             $change_amount = -$change_amount;
             $this->amount = $change_amount;
         }
-        $old_account_history = \AccountHistories::findUserLast($this->user_id);
+
+        $old_account_history = self::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $this->user_id],
+            'order' => 'id desc']);
+
         $old_balance = intval($this->balance);
         if ($old_account_history) {
             $old_balance = intval($old_account_history->balance);
@@ -93,21 +109,13 @@ class AccountHistories extends BaseModel
         return false;
     }
 
+    /**
+     * 用户消耗
+     */
     function isCostDiamond()
     {
-        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION;
-    }
-
-    function afterCreate()
-    {
-        $user = \Users::findById($this->user_id);
-        $user->diamond = $this->balance;
-        $user->update();
-
-        $user_attrs = $user->getStatAttrs();
-        $user_attrs['add_value'] = abs($this->amount);
-        $action = $this->getStatActon();
-        \Stats::delay()->record('user', $action, $user_attrs);
+        return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
+            || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES;
     }
 
     function getStatActon()
@@ -123,25 +131,4 @@ class AccountHistories extends BaseModel
         return "diamond_recharge";
     }
 
-    static function findUserLast($user_id)
-    {
-        $account_histories = \AccountHistories::findAccountList($user_id, 1, 1);
-
-        if (count($account_histories) > 0) {
-            return $account_histories[0];
-        }
-
-        return null;
-    }
-
-    static function findAccountList($user_id, $page, $per_page)
-    {
-        $conditions = [
-            'conditions' => 'user_id = :user_id:',
-            'bind' => ['user_id' => $user_id],
-            'order' => 'id desc'
-        ];
-
-        return \AccountHistories::findPagination($conditions, $page, $per_page);
-    }
 }

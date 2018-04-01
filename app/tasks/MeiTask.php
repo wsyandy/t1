@@ -1592,7 +1592,7 @@ class MeiTask extends \Phalcon\Cli\Task
         //self::saveLastFieldRankList($user_id, $field);
         $total_key = "total_wealth_rank_list";
 
-        $cond['conditions'] = 'organisation = ' . COMPANY;
+        $cond['conditions'] = 'organisation = ' . USER_ORGANISATION_COMPANY;
 
         $company_users = \Users::find($cond);
         echoLine(count($company_users));

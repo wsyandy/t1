@@ -1,39 +1,41 @@
 <form action="/admin/rooms" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="product_channel_id_eq">产品渠道</label>
     <select name="room[product_channel_id_eq]" id="product_channel_id_eq">
-        {{ options(product_channels,'','id','name') }}
+        {{ options(product_channels, product_channel_id,'id','name') }}
     </select>
 
     <label for="status_eq">状态</label>
     <select name="room[status_eq]" id="status_eq">
-        {{ options(Rooms.STATUS) }}
+        {{ options(Rooms.STATUS, status) }}
     </select>
 
     <label for="user_type_eq">房主类型</label>
     <select name="room[user_type_eq]" id="user_type_eq">
-        {{ options(Rooms.USER_TYPE) }}
+        {{ options(Rooms.USER_TYPE, user_type) }}
     </select>
 
     <label for="theme_type_eq">房间主题</label>
     <select name="room[theme_type_eq]" id="theme_type_eq">
-        {{ options(Rooms.THEME_TYPE) }}
+        {{ options(Rooms.THEME_TYPE, theme_type) }}
     </select>
 
     <input type="hidden" name="room[hot]" , value="{{ hot }}">
 
     <label for="id_eq">ID</label>
-    <input name="room[id_eq]" type="text" id="id_eq"/>
+    <input name="room[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
+
     <label for="name">房间名</label>
-    <input name="name" type="text" id="name"/>
+    <input name="name" type="text" id="name" value="{{ name }}"/>
 
     <label for="user_id_eq">房主ID</label>
-    <input name="user_id" type="text" id="user_id_eq"/>
+    <input name="user_id" type="text" id="user_id_eq" value="{{ user_id }}"/>
 
     <button type="submit" class="ui button">搜索</button>
 </form>
 
 <ol class="breadcrumb">
     <li class="active">总个数 {{ total_entries }}</li>
+    <li class="active">房间在线个数 {{ online_room_num }}</li>
 </ol>
 
 {% macro user_info(room) %}

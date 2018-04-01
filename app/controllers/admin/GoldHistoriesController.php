@@ -17,7 +17,13 @@ class GoldHistoriesController extends BaseController
         $per_page = $this->params('per_page');
         debug($user_id,$page,$per_page);
 
-        $gold_histories = \GoldHistories::findGoldList($user_id, $page, $per_page);
+        $conditions = [
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user_id],
+            'order' => 'id desc'
+        ];
+
+        $gold_histories = \GoldHistories::findPagination($conditions, $page, $per_page);
         $this->view->gold_histories = $gold_histories;
         $this->view->user_id = $user_id;
     }
