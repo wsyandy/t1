@@ -200,7 +200,7 @@ class UnionsController extends BaseController
         $this->view->union_id = $id;
     }
 
-    function RankListAction()
+    function rankListAction()
     {
         $start_at = $this->params('start_at', date('Y-m-d', beginOfDay()));
 

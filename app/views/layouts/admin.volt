@@ -220,6 +220,22 @@
                     {% if isAllowed('rooms', 'earnings') %}
                         <li><a href="/admin/rooms/earnings">房间收益统计</a></li>
                     {% endif %}
+                    {% if isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') %}
+                        <li class="dropdown-submenu">
+                            <a href="javascript:;" tabindex="-1">排行榜统计</a>
+                            <ul class="dropdown-menu">
+                                {% if isAllowed('users','day_rank_list') %}
+                                    <li><a href="/admin/users/day_rank_list">日榜统计</a></li>
+                                {% endif %}
+                                {% if isAllowed('users','week_rank_list') %}
+                                    <li><a href="/admin/users/week_rank_list">周榜统计</a></li>
+                                {% endif %}
+                                {% if isAllowed('users','total_rank_list') %}
+                                    <li><a href="/admin/users/total_rank_list">总榜统计</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
