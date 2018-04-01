@@ -30,6 +30,9 @@ class IdCardAuthsController extends BaseController
         $this->view->auth_status = intval($this->params('id_card_auth[auth_status_eq]'));
         $this->view->id = $this->params('id_card_auth[id_eq]');
         $this->view->user_id = $this->params('id_card_auth[user_id_eq]');
+        $this->view->auth_success_num = \IdCardAuths::count(['conditions' => 'auth_status = ' . AUTH_SUCCESS]);
+        $this->view->auth_wait_num = \IdCardAuths::count(['conditions' => 'auth_status = ' . AUTH_WAIT]);
+        $this->view->auth_fail_num = \IdCardAuths::count(['conditions' => 'auth_status = ' . AUTH_FAIL]);
     }
 
     function editAction()
