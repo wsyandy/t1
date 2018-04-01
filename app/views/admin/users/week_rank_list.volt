@@ -17,7 +17,12 @@
 
 {% macro user_info(user) %}
     姓名:{{ user.nickname }}  性别:{{ user.sex_text }} 段位:{{ user.segment_text }}<br/>
-    魅力值:{{ user.charm }} 财富值:{{ user.wealth }}<br/>
+    {% if user.charm %}
+        魅力值:{{ user.charm }}<br/>
+    {% endif %}
+    {% if user.wealth %}
+        财富值:{{ user.wealth }}<br/>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '用户信息':'user_info']) }}
@@ -35,7 +40,7 @@
             todayHighlight: 1,
             startView: 2,
             minView: 2,
-            daysOfWeekDisabled: [0,2,3,4,5,6,7]
+            daysOfWeekDisabled: [0, 2, 3, 4, 5, 6, 7]
         });
     });
 </script>
