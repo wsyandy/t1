@@ -449,6 +449,8 @@ class BaseController extends ApplicationController
             return [false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign client_sign=" . $this->params('h')];
         }
 
+        info('base_valid_sign_signature_error', $this->params(), $sign_str, md5($sign_str), $sign);
+
         return [false, t('base_valid_sign_signature_error')];
     }
 
