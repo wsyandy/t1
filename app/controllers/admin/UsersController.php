@@ -428,7 +428,7 @@ class UsersController extends BaseController
 
         $opts = ['start' => $start, 'end' => $end];
 
-        $users = \Users::findFieldRankList('day', $type, $page, $per_page, $opts);
+        $users = \Users::findFieldRankList('week', $type, $page, $per_page, $opts);
         $this->view->users = $users;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
