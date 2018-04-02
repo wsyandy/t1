@@ -124,11 +124,13 @@ class UnionsTask extends \Phalcon\Cli\Task
 
                 if ($reward > 0) {
 
+
                     $remark = "主播奖励:" . $reward . "元";
 
                     HiCoinHistories::createHistory($user->id, ['fee_type' => HI_COIN_FEE_TYPE_HOST_REWARD, 'remark' => $remark,
                         'hi_coins' => $reward]);
 
+                    Chats::sendTextSystemMessage($user->id, "恭喜您获得2018年3月份主持扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
                     echoLine($user->id, $income, $reward);
                 }
             }
@@ -161,12 +163,8 @@ class UnionsTask extends \Phalcon\Cli\Task
 
             $reward = 0;
 
-            if (1001 == $union->id) {
-                echoLine($income);
-            }
-
             if ($income > 0) {
-                echoLine($union->id, $income);
+
                 switch ($income) {
                     case $income >= 10000 && $income <= 20000:
                         $reward = 600;
@@ -192,6 +190,7 @@ class UnionsTask extends \Phalcon\Cli\Task
                     HiCoinHistories::createHistory($union->user_id, ['fee_type' => HI_COIN_FEE_TYPE_UNION_HOST_REWARD, 'remark' => $remark,
                         'hi_coins' => $reward]);
 
+                    Chats::sendTextSystemMessage($union->user_id, "恭喜您获得2018年3月份家族长扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
                     echoLine($union->id, $income, $reward);
                 }
             }
