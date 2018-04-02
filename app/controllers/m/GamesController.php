@@ -34,7 +34,7 @@ class GamesController extends BaseController
             $amount = fetch($info, 'amount');
         }
 
-        info($this->currentUser()->id, $room_key, 'num', $num, $pay_type, $amount);
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
@@ -66,7 +66,7 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        info($this->currentUser()->id, $room_info_key, $pay_type, $amount);
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $pay_type, $amount);
 
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
