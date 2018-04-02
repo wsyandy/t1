@@ -92,6 +92,8 @@ class GamesController extends BaseController
         $body['room_id'] = $room_id;
         $body['host'] = $this->currentUser()->id == $room_host_id;
         $body['nonce_str'] = randStr(20);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/game?sid=' . $this->currentUser()->sid);
+        $body['notify_url'] = urlencode($this->getRoot() . 'm/game/notify?sid=' . $this->currentUser()->sid);
 
         $str = paramsToStr($body);
 
@@ -208,6 +210,13 @@ class GamesController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function notifyAction()
+    {
+        info($this->params());
+
+        echo 'jsonpcallback({"xxx":"ccc"})';
     }
 
 }
