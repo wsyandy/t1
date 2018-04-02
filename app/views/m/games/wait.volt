@@ -95,5 +95,7 @@
         if (vm.current_user_id != vm.room_host_id) {
             vm.button_text = '等待进入游戏，请稍后...';
         }
+
+        refreshUser();
     });
 </script>
