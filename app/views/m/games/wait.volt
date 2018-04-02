@@ -72,7 +72,7 @@
 
     function refreshUser() {
         console.log('refreshUser');
-        
+
         var data = {
             'code': vm.code,
             'sid': vm.sid
@@ -89,15 +89,11 @@
         });
     }
 
+    interval_time = setInterval(refreshUser, 1000);
+
     $(function () {
         if (vm.current_user_id != vm.room_host_id) {
             vm.button_text = '等待进入游戏，请稍后...';
         }
-
-        interval_time = setInterval(function () {
-            refreshUser()
-        }, 1000);
-
-        refreshUser()
     });
 </script>
