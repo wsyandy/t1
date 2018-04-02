@@ -121,7 +121,7 @@
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
             <span>${game_status_text}</span>
-            <p>${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
+            <p v-if="pay_type_text">${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
         </div>
         <div class="select_game_button">
             <button @click="go_game()">参与游戏 GO</button>
