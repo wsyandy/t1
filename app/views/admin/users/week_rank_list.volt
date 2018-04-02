@@ -40,7 +40,7 @@
             todayHighlight: 1,
             startView: 2,
             minView: 2,
-            daysOfWeekDisabled: [0, 2, 3, 4, 5, 6, 7]
+            daysOfWeekDisabled: [0, 2, 3, 4, 5, 6]
         });
     });
 </script>
