@@ -436,7 +436,7 @@ class BaseController extends ApplicationController
 
                 if (isDevelopmentEnv()) {
                     $encode = mb_detect_encoding($val, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
-                    debug($this->currentUser()->sid, $encode, $val);
+                    debug($this->currentUser()->sid, $encode, $key, $val);
                 }
             }
 
