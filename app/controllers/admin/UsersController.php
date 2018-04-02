@@ -340,7 +340,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
 
-        $user->organisation = COMPANY;
+        $user->organisation = USER_ORGANISATION_COMPANY;
         $user->update();
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '加入成功');
@@ -375,7 +375,7 @@ class UsersController extends BaseController
             $cond['conditions'] = ' id = ' . $id;
         }
 
-        $cond['conditions'] .= ' and organisation = ' . COMPANY;
+        $cond['conditions'] .= ' and organisation = ' . USER_ORGANISATION_COMPANY;
 
         $company_users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $company_users;
@@ -386,17 +386,63 @@ class UsersController extends BaseController
     //转换身份，公司员工转换为个人，仅测试环境可供使用
     function clearCompanyUserAction()
     {
-        if (isDevelopmentEnv()) {
-            $id = $this->params('id');
-            $user = \Users::findFirstById($id);
-            if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-            }
-
-            $user->organisation = PERSONAGE;
-            $user->update();
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+        if (isProduction()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '正式环境不支持');
         }
+
+        $id = $this->params('id');
+        $user = \Users::findFirstById($id);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        $user->organisation = USER_ORGANISATION_PERSONAGE;
+        $user->update();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+    }
+
+    function dayRankListAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 100);
+        $type = $this->params('type', 'wealth');
+        $stat_at = $this->params('stat_at', date("Y-m-d"));
+        $opts = ['date' => date("Ymd", strtotime($stat_at))];
+        $users = \Users::findFieldRankList('day', $type, $page, $per_page, $opts);
+        $this->view->users = $users;
+        $this->view->stat_at = $stat_at;
+        $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
+        $this->view->type = $type;
+    }
+
+    function weekRankListAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 100);
+        $type = $this->params('type', 'wealth');
+        $stat_at = $this->params('stat_at', date("Y-m-d", beginOfWeek()));
+
+        $start = date("Ymd", strtotime($stat_at));
+        $end = date("Ymd", strtotime($start) + 6 * 86400);
+
+        $opts = ['start' => $start, 'end' => $end];
+
+        $users = \Users::findFieldRankList('week', $type, $page, $per_page, $opts);
+        $this->view->users = $users;
+        $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
+        $this->view->type = $type;
+        $this->view->stat_at = $stat_at;
+    }
+
+    function totalRankListAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 100);
+        $type = $this->params('type', 'wealth');
+        $users = \Users::findFieldRankList('total', $type, $page, $per_page);
+        $this->view->users = $users;
+        $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
+        $this->view->type = $type;
     }
 }

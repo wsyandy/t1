@@ -27,7 +27,7 @@
         <table class="table">
             <tr>
                 <td></td>
-                <td>人气榜</td>
+                <td>魅力榜</td>
                 <td>
                     <div class="line"></div>
                     贡献榜

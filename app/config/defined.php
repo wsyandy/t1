@@ -131,6 +131,8 @@ define('ACCOUNT_TYPE_BUY_GIFT', 2); //购买礼物
 define('ACCOUNT_TYPE_GIVE', 3); //系统赠送
 define('ACCOUNT_TYPE_CREATE_UNION', 4); //创建公会
 define('ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石
+define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
+define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 
 define('HI_COIN_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
 
@@ -217,10 +219,18 @@ define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
 define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
 define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
 define('GOLD_TYPE_GIVE', 6); //赠送金币
+define('GOLD_TYPE_GAME_INCOME', 10); //游戏收入
+define('GOLD_TYPE_GAME_EXPENSES', 11); //游戏支出
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
 define('GIFT_PAY_TYPE_GOLD', 'gold');
+
+// 系统内付费类型
+define('PAY_TYPE_DIAMOND', 'diamond'); // 钻石
+define('PAY_TYPE_GOLD', 'gold');// 金币
+define('PAY_TYPE_HI_COIN', 'hi_coin'); // hi币
+define('PAY_TYPE_CNY', 'cny'); // 人民币
 
 //礼物类型
 define('GIFT_TYPE_COMMON', 1);
@@ -238,5 +248,5 @@ define('HI_COIN_FEE_TYPE_ROOM_REWARD', 5); //房间流水奖励
 define('HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND', 6); //Hi币兑钻石
 
 //用户所属组织
-define('PERSONAGE', 0);
-define('COMPANY', 1);
+define('USER_ORGANISATION_PERSONAGE', 0);
+define('USER_ORGANISATION_COMPANY', 1);

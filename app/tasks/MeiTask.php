@@ -1592,7 +1592,7 @@ class MeiTask extends \Phalcon\Cli\Task
         //self::saveLastFieldRankList($user_id, $field);
         $total_key = "total_wealth_rank_list";
 
-        $cond['conditions'] = 'organisation = ' . COMPANY;
+        $cond['conditions'] = 'organisation = ' . USER_ORGANISATION_COMPANY;
 
         $company_users = \Users::find($cond);
         echoLine(count($company_users));
@@ -1600,5 +1600,22 @@ class MeiTask extends \Phalcon\Cli\Task
         foreach ($company_users as $user) {
             $db->zrem($total_key, $user->id);
         }
+    }
+
+    function check()
+    {
+        $with_draw_histories = WithdrawHistories::find(['conditions' => 'status = ' . WITHDRAW_STATUS_WAIT]);
+
+        foreach ($with_draw_histories as $draw_history) {
+            $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $draw_history->user_id, 'fee_type' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
+
+            if ($hi_coin_history) {
+                if ($draw_history->user->hi_coins < $draw_history->amount) {
+                    echoLine($draw_history->user_id);
+                }
+            }
+        }
+
+        $orders = Orders::find(['conditions' => 'created_at >= ' . beginOfDay()]);
     }
 }

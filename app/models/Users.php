@@ -74,7 +74,7 @@ class Users extends BaseModel
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
 
-    static $ORGANISATION = [PERSONAGE => '个人', COMPANY => '公司'];
+    static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
 
     function beforeCreate()
     {
@@ -310,7 +310,7 @@ class Users extends BaseModel
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
     }
 
     function isNormal()
@@ -911,13 +911,13 @@ class Users extends BaseModel
 
         // 实时在线，以十分钟为单位
         $begin_of_hour = beginOfHour();
-        $interval = $begin_of_hour + intval(date('i')/10) * 10 * 60;
-        $online_key = 'online_user_list_'.date('YmdHi', $interval);
+        $interval = $begin_of_hour + intval(date('i') / 10) * 10 * 60;
+        $online_key = 'online_user_list_' . date('YmdHi', $interval);
         $stat_db = Stats::getStatDb();
         $stat_db->zadd($online_key, time(), $this->id);
         $num = $stat_db->zcard($online_key);
         info($online_key, $num);
-        
+
     }
 
     //是否需要更新经纬度
@@ -2758,20 +2758,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2873,23 +2876,27 @@ class Users extends BaseModel
         return $rank + 1;
     }
 
-    static function generateFieldRankListKey($list_type, $field)
+    static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $key = "day_" . $field . "_rank_list_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
@@ -2897,13 +2904,13 @@ class Users extends BaseModel
         return $key;
     }
 
-    static function findFieldRankList($list_type, $field, $page, $per_page)
+    static function findFieldRankList($list_type, $field, $page, $per_page, $opts = [])
     {
         if ($field != 'wealth' && $field != 'charm') {
             return [];
         }
 
-        $key = self::generateFieldRankListKey($list_type, $field);
+        $key = self::generateFieldRankListKey($list_type, $field, $opts);
 
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
@@ -3170,7 +3177,7 @@ class Users extends BaseModel
 
     function isCompanyUser()
     {
-        return $this->organisation == COMPANY;
+        return $this->organisation == USER_ORGANISATION_COMPANY;
     }
 
     function addCompanyUserSendNumber($send_diamond)
@@ -3210,7 +3217,8 @@ class Users extends BaseModel
 
     function isWhiteListUser()
     {
-        $white_list = [];
+        $white_list = [888888, 1001316, 1003380, 8888];
+
         if (in_array($this->id, $white_list)) {
             return true;
         }

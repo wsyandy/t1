@@ -33,7 +33,10 @@
 </form>
 
 <ol class="breadcrumb">
-    <li class="active">总金额 {{ total_amount }}</li>
+    <li class="active">钻石总金额 {{ diamond_total_amount }}</li>
+    <li class="active">座驾钻石总金额 {{ car_total_amount }}</li>
+    <li class="active">普通礼物钻石总金额 {{ diamond_total_amount - car_total_amount }}</li>
+    <li class="active">金币总金额 {{ gold_total_amount }}</li>
 </ol>
 
 {%- macro sender_link(object) %}

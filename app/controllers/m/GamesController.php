@@ -13,18 +13,22 @@ class GamesController extends BaseController
     function indexAction()
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room = \Rooms::findFirstById($room_id);
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
         $num = $hot_cache->zcard($room_key);
         $room_host_id = $this->currentUser()->id;
-        $pay_type = 'free';
-        $amount = 0;
-        if ($num == 1) {
+        // 发起者必须是主播
+        if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
+            $pay_type = 'free';
+            $amount = 0;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
+            $hot_cache->expire($room_info_key, 600);
+            $hot_cache->expire($room_key, 600);
         } else {
-            $info = $hot_cache->hmget($room_info_key);
+            $info = $hot_cache->hgetall($room_info_key);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
@@ -39,17 +43,16 @@ class GamesController extends BaseController
     // 提交入场费
     function feeAction()
     {
-
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
-        $info = $hot_cache->hmget($room_info_key);
+        $info = $hot_cache->hgetall($room_info_key);
         $room_host_id = fetch($info, 'room_host_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
 
-        if ($room_host_id == $this->currentUser()->id) {
+        $current_user = $this->currentUser();
+        if ($room_host_id == $current_user->id) {
             // free diamond gold
             $pay_type = $this->params('pay_type', '');
             $amount = $this->params('amount', 0);
@@ -61,11 +64,12 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        if ($pay_type == 'diamond' && $this->currentUser()->diamond < $amount) {
+
+        if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
         }
 
-        if ($pay_type == 'gold' && $this->currentUser()->gold < $amount) {
+        if ($pay_type == PAY_TYPE_GOLD && $current_user->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
@@ -74,13 +78,19 @@ class GamesController extends BaseController
 
     function waitAction()
     {
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
         $body['source'] = $this->currentProductChannel()->code;
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $body['room_id'] = $room_id;
+        $body['host'] = $this->currentUser()->id == $room_host_id;
         $body['nonce_str'] = randStr(20);
 
         $str = paramsToStr($body);
@@ -88,7 +98,10 @@ class GamesController extends BaseController
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
         info($url);
 
+        $user = $this->currentUser();
         $this->view->url = $url;
+        $this->view->current_user = $user;
+        $this->view->room_host_id = $room_host_id;
     }
 
     function enterAction()
@@ -105,9 +118,38 @@ class GamesController extends BaseController
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
-        $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
+        $info = $hot_cache->hgetall($room_info_key);
+        $room_host_id = fetch($info, 'room_host_id');
+        $pay_type = fetch($info, 'pay_type');
+        $amount = fetch($info, 'amount');
+        $can_enter = fetch($info, 'can_enter');
+        $can_enter_at = fetch($info, 'can_enter_at');
+        if (time() - $can_enter_at > 30) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
+        }
+
+
         $data = $users->toJson('users', 'toSimpleJson');
         $data['can_enter'] = intval($can_enter);
+
+        //扣除入场费
+        if ($can_enter) {
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
+                $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+                if (!$result) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+                }
+            }
+
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
+                $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+                if (!$result) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+                }
+            }
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
     }
@@ -117,7 +159,30 @@ class GamesController extends BaseController
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
+        $info = $hot_cache->hgetall($room_info_key);
+        $room_host_id = fetch($info, 'room_host_id');
+        $pay_type = fetch($info, 'pay_type');
+        $amount = fetch($info, 'amount');
+        //扣除入场费
+        if ($pay_type == PAY_TYPE_DIAMOND) {
+            $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+            if (!$result) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+            }
+        }
+
+        if ($pay_type == PAY_TYPE_GOLD) {
+            $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+            if (!$result) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+            }
+        }
+
+        // 进入游戏
         $hot_cache->hset($room_info_key, 'can_enter', 1);
+        $hot_cache->hset($room_info_key, 'can_enter_at', time());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
@@ -129,8 +194,13 @@ class GamesController extends BaseController
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
+        if ($can_enter) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已开始游戏');
+        }
+
         if ($room_host_id == $this->currentUser()->id) {
-            // 解散
+            // 解散比赛
             $hot_cache->del($room_key);
             $hot_cache->del($room_info_key);
         } else {

@@ -17,6 +17,11 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
+<ol class="breadcrumb">
+    <li class="active">认证成功的人数数:{{ auth_success_num }} </li>
+    <li class="active">等待认证的人数数:{{ auth_wait_num }} </li>
+    <li class="active">认证失败的人数数:{{ auth_fail_num }} </li>
+</ol>
 
 {% macro user_info(id_card_auth) %}
     {% if isAllowed('users','index') %}

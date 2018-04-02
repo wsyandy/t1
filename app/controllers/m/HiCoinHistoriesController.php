@@ -36,6 +36,7 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $gold = '';
+
             if ($product) {
                 $hi_coins = $product->hi_coins;
                 $gold = $product->gold;
@@ -43,11 +44,19 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $user = $this->currentUser();
-            if ($user->hi_coins < $hi_coins) {
+            $can_use_hi_coins = $user->hi_coins;
+            $wait_auth_with_draw_history = \WithdrawHistories::findLastWaitWithDrawHistory($user->id);
+
+            //等待提现的金额
+            if ($wait_auth_with_draw_history) {
+                $can_use_hi_coins -= $wait_auth_with_draw_history->amount;
+            }
+
+            if ($can_use_hi_coins < $hi_coins) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 
-            if ($hi_coins < 0){
+            if ($hi_coins < 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, 'Hi币不能为0！');
             }
 

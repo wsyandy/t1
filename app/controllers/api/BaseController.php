@@ -433,6 +433,11 @@ class BaseController extends ApplicationController
                     continue;
                 }
                 $data[] = $key . '=' . $val;
+
+                if (isDevelopmentEnv()) {
+                    $encode = mb_detect_encoding($val, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
+                    debug($this->currentUser()->sid, $encode, $val);
+                }
             }
 
             sort($data);
@@ -448,6 +453,8 @@ class BaseController extends ApplicationController
             debug('base_valid_sign_signature_error', $sign_str, md5($sign_str), $sign);
             return [false, "Sign error! md5(md5($sign_str) + $ckey) sign=$sign client_sign=" . $this->params('h')];
         }
+
+        info('base_valid_sign_signature_error', $this->params(), $sign_str, md5($sign_str), $sign);
 
         return [false, t('base_valid_sign_signature_error')];
     }

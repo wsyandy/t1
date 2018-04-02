@@ -102,10 +102,10 @@ class WithdrawHistoriesController extends BaseController
         $this->assign($withdraw_history, 'withdraw_history');
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $withdraw_history);
 
-        if ($withdraw_history->save()) {
+        if ($withdraw_history->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功', ['withdraw_history' => $withdraw_history->toJson()]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, $withdraw_history->error_reason);
         }
     }
 
@@ -145,6 +145,17 @@ class WithdrawHistoriesController extends BaseController
         $this->response->redirect('/admin/export_histories/download?id=' . $export_history->id);
 
         $this->view->disable;
+    }
+
+
+    function basicAction()
+    {
+        $user_id = $this->params('user_id');
+        $page = 1;
+        $per_page = 100;
+        $cond = ['conditions' => 'user_id = ' . $user_id];
+        $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page);
+        $this->view->withdraw_histories = $withdraw_histories;
     }
 
 

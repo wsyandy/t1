@@ -8,7 +8,7 @@
 namespace m;
 class ActivitiesController extends BaseController
 {
-    function weekChartActivityAction()
+    function weekRankActivityAction()
     {
         $this->view->title = "周榜专属奖励";
     }

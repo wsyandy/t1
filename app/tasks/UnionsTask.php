@@ -76,4 +76,47 @@ class UnionsTask extends \Phalcon\Cli\Task
         $union = Unions::findFirstById(1040);
         echoLine($union);
     }
+
+    //房主奖励
+    function unionHostIncomeStat()
+    {
+
+    }
+
+    //认证主播奖励
+    function authHostIncomeStatAction()
+    {
+        $current_day = intval(date('d'));
+        $time = time() - $current_day * 86400 - 3600;
+        $start = beginOfMonth($time);
+        $end = endOfMonth($time);
+
+        echoLine(date("Ymd", $start));
+        echoLine(date("Ymd", $end));
+    }
+
+    function checkUserHiCoins()
+    {
+        $users = Users::find(['conditions' => 'hi_coins > 0']);
+
+        foreach ($users as $user) {
+
+            if ($user->isCompanyUser()) {
+                continue;
+            }
+
+            $hi_coin_history = HiCoinHistories::findUserLast($user->id);
+            $value = 0;
+
+            if ($hi_coin_history) {
+                $value = $hi_coin_history->balance;
+            }
+
+            $res = $user->hi_coins - $value;
+
+            if (abs($res) > 0.001) {
+                echoLine($user->id, "hi_coins", $user->hi_coins, 'value', $value);
+            }
+        }
+    }
 }

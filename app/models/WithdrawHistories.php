@@ -64,6 +64,33 @@ class WithdrawHistories extends BaseModel
         }
     }
 
+    function beforeUpdate()
+    {
+
+        if (WITHDRAW_TYPE_USER == $this->type) {
+
+            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+
+                if ($this->user->hi_coins < $this->amount) {
+                    $this->error_reason = '余额不足';
+                    return true;
+                }
+            }
+        }
+
+        if (WITHDRAW_TYPE_UNION == $this->type) {
+
+            $union = $this->union;
+
+            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+                if ($union->amount < $this->amount) {
+                    return true;
+                }
+            }
+        }
+
+    }
+
     function afterCreate()
     {
         if (WITHDRAW_TYPE_USER == $this->type) {
@@ -72,7 +99,7 @@ class WithdrawHistories extends BaseModel
             $attrs['add_value'] = $this->amount;
             \Stats::delay()->record("user", "withdraw", $attrs);
 
-            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，预计24小时内到账！');
+            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，每周二当日到账！');
         }
     }
 
@@ -208,5 +235,17 @@ class WithdrawHistories extends BaseModel
             $export_history->save();
         }
     }
+
+    static function findLastWaitWithDrawHistory($user_id)
+    {
+        $conditions = [
+            'conditions' => 'user_id = :user_id: and status = :status:',
+            'bind' => ['user_id' => $user_id, 'status' => WITHDRAW_STATUS_WAIT],
+            'order' => 'id desc'
+        ];
+
+        return WithdrawHistories::findFirst($conditions);
+    }
+
 
 }

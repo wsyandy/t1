@@ -66,9 +66,15 @@ class GiftOrdersController extends BaseController
 
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
         $cond['column'] = 'amount';
-        $cond['conditions'] .= ' and pay_type = :pay_type';
-        $cond['bind']['bind'] = GIFT_PAY_TYPE_DIAMOND;
-        $total_amount = \GiftOrders::sum($cond);
+        $cond['conditions'] .= ' and pay_type = :pay_type:';
+        $cond['bind']['pay_type'] = GIFT_PAY_TYPE_DIAMOND;
+        $diamond_total_amount = \GiftOrders::sum($cond);
+        $cond['bind']['pay_type'] = GIFT_PAY_TYPE_GOLD;
+        $gold_total_amount = \GiftOrders::sum($cond);
+        $cond['conditions'] .= ' and gift_type = :gift_type:';
+        $cond['bind']['gift_type'] = GIFT_TYPE_CAR;
+        $cond['bind']['pay_type'] = GIFT_PAY_TYPE_DIAMOND;
+        $car_total_amount = \GiftOrders::sum($cond);
 
         $gift_order = $this->params('gift_order');
         debug($gift_order);
@@ -81,11 +87,12 @@ class GiftOrdersController extends BaseController
         $this->view->gift_orders = $gift_orders;
         $this->view->start_at = date("Y-m-d H:i:s", $start_at);
         $this->view->end_at = date("Y-m-d H:i:s", $end_at);
-        $this->view->total_amount = $total_amount;
+        $this->view->diamond_total_amount = $diamond_total_amount;
         $this->view->gift_type = intval($this->params('gift_order[gift_type_eq]'));
         $this->view->pay_type = $this->params('gift_order[pay_type_eq]');
-        $this->view->total_amount = $total_amount;
         $this->view->room_user_id = $room_user_id ? intval($room_user_id) : '';
+        $this->view->gold_total_amount = $gold_total_amount;
+        $this->view->car_total_amount = $car_total_amount;
     }
 
     function detailAction()
