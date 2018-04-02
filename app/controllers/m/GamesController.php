@@ -19,10 +19,9 @@ class GamesController extends BaseController
         $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
         $num = $hot_cache->zcard($room_key);
         $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
-        $room_host_id = $this->currentUser()->id;
 
         // 解散房间
-        if($cache_room_host_id == $room_host_id){
+        if($cache_room_host_id == $this->currentUser()->id){
             $hot_cache->del($room_key);
             $hot_cache->del($room_info_key);
         }
@@ -31,17 +30,19 @@ class GamesController extends BaseController
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
+            $room_host_id = $this->currentUser()->id;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
         } else {
             $info = $hot_cache->hgetall($room_info_key);
+            info($info);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
         }
 
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_key, 'num', $num, $pay_type, $amount);
+        info($this->currentUser()->id, $room_host_id, 'role', $this->currentUser()->user_role, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
