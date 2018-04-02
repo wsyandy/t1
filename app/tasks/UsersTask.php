@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = $params[0];
-        $new_user_id = $params[1];
+        $user_id = 1001316;
+        $new_user_id = 100102;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -147,7 +147,7 @@ class UsersTask extends \Phalcon\Cli\Task
         $user->hi_coins = 0;
         $user->charm_value = 0;
         $user->wealth_value = 0;
-        $user->union_id = 0;
+        //$user->union_id = 0;
         $user->experience = 0;
         $user->level = 0;
         $user->segment = '';
@@ -155,6 +155,12 @@ class UsersTask extends \Phalcon\Cli\Task
         $user->login_type = '';
         $user->third_unionid = '';
         $user->user_role_at = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+        $user->pay_amount = 0;
+        $user->id_card_auth = 0;
+        $user->organisation = 0;
+        $user->union_type = 0;
         $user->sid = $user->generateSid('d.');
         $user->save();
 
@@ -384,6 +390,59 @@ class UsersTask extends \Phalcon\Cli\Task
         }
 
         $user_db->zclear($user_music_key);
+
+        $hi_coins_histories = HiCoinHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($hi_coins_histories as $hi_coins_history) {
+            $hi_coins_history->user_id = $new_user_id;
+            $hi_coins_history->update();
+        }
+
+        $withdraw_histories = WithdrawHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $withdraw_history->user_id = $new_user_id;
+            $withdraw_history->update();
+        }
+
+        $union_histories = UnionHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($union_histories as $union_history) {
+            $union_history->user_id = $new_user_id;
+            $union_history->update();
+        }
+
+        $gold_histories = GoldHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($gold_histories as $gold_history) {
+            $gold_history->user_id = $new_user_id;
+            $gold_history->update();
+        }
+
+        $union = Unions::findFirstByUserId($user_id);
+
+        if ($union) {
+            $union->user_id = $new_user_id;
+            $union->update();
+            $db = Users::getUserDb();
+            $key = $union->generateUsersKey();
+            $db->zrem($key, $user_id);
+            $db->zrem($union->generateRefusedUsersKey(), $user_id);
+            $db->zrem($union->generateNewUsersKey(), $user_id);
+            $db->zrem($union->generateCheckUsersKey(), $user_id);
+
+            $db->zadd($key, time(), $new_user_id);
+            $db->zadd($union->generateRefusedUsersKey(), time(), $new_user_id);
+            $db->zadd($union->generateNewUsersKey(), time(), $new_user_id);
+            $db->zadd($union->generateCheckUsersKey(), time(), $new_user_id);
+        }
+
+        $id_card_auths = IdCardAuths::findBy(['user_id' => $user_id]);
+
+        foreach ($id_card_auths as $id_card_auth) {
+            $id_card_auth->user_id = $new_user_id;
+            $id_card_auth->update();
+        }
     }
 
     function updateSilentUserAvatarAction()
@@ -482,11 +541,11 @@ class UsersTask extends \Phalcon\Cli\Task
     //上线需修复资料
     function fixExperienceAction()
     {
-        $users = Users::find(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
+        $users = Users::findForeach(['conditions' => 'avatar_status = :avatar_status:', 'bind' => ['avatar_status' => AUTH_SUCCESS]]);
 
         foreach ($users as $user) {
 
-            $gift_orders = GiftOrders::findBy(['sender_id' => $user->id]);
+            $gift_orders = GiftOrders::findBy(['sender_id' => $user->id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]);
 
             if (count($gift_orders) < 1) {
                 //echoLine("no gift_order");
@@ -505,11 +564,11 @@ class UsersTask extends \Phalcon\Cli\Task
                 echoLine($user->id, $user->experience, $experience);
             }
 
-            $user->experience = $experience;
-            $user->level = $user->calculateLevel();
-            $user->segment = $user->calculateSegment();
-
-            $user->update();
+//            $user->experience = $experience;
+//            $user->level = $user->calculateLevel();
+//            $user->segment = $user->calculateSegment();
+//
+//            $user->update();
         }
     }
 
@@ -648,37 +707,27 @@ class UsersTask extends \Phalcon\Cli\Task
 
         foreach ($users as $user) {
 
-            $gift_orders = GiftOrders::find([
-                'conditions' => "sender_id = :user_id: or user_id = :user_id: and status = :status: and pay_type = :pay_type:",
-                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
+            $wealth = GiftOrders::sum([
+                'conditions' => "sender_id = :sender_id: and status = :status: and pay_type = :pay_type:",
+                'bind' => ['sender_id' => $user->id, 'user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
             ]);
 
-            $charm = 0;
-            $wealth = 0;
+            $charm = GiftOrders::sum([
+                'conditions' => "user_id = :user_id: and status = :status: and pay_type = :pay_type:",
+                'bind' => ['user_id' => $user->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
+            ]);
 
-            if (count($gift_orders) < 1) {
-                echoLine("no gift_order");
-                continue;
+            if ($user->wealth_value != $wealth) {
+                echoLine($user->id, "user_charm：" . $user->charm_value, "charm" . $charm, "user_wealth：" . $user->wealth_value, 'wealth', $wealth);
             }
+//
+//            $user->charm_value = $charm;
+//            $user->wealth_value = $wealth;
 
-            foreach ($gift_orders as $gift_order) {
-                if ($gift_order->sender_id == $user->id) {
-                    $wealth += $gift_order->amount;
-                }
-                if ($gift_order->user_id == $user->id) {
-                    $charm += $gift_order->amount;
-                }
-            }
-
-            if ($user->charm != $charm) {
-
-            }
-
-            $user->charm_value = $charm;
-            $user->wealth_value = $wealth;
-
-            echoLine($user->id, "charm：" . $user->charm_value, "wealth：" . $user->wealth_value);
-            $user->update();
+            //echoLine($user->id, "charm：" . $user->charm_value, "wealth：" . $user->wealth_value);
+//            $user->update();
         }
     }
 
@@ -727,7 +776,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
-    function fixHiConinRankListAction()
+    function fixHiCoinRankListAction()
     {
         $start = beginOfDay(strtotime('2018-03-19'));
         $end = beginOfDay(strtotime('2018-03-20'));
