@@ -84,8 +84,10 @@ class UserGifts extends BaseModel
         return $user_gift;
     }
 
-    static function updateGiftExpireAt($gift_order_id, $is_new = false)
+    static function updateGiftExpireAt($gift_order_id, $opts = [])
     {
+        $content = fetch($opts,'content');
+
         info($gift_order_id);
 
         $gift_order = \GiftOrders::findById($gift_order_id);
@@ -98,13 +100,7 @@ class UserGifts extends BaseModel
         $lock = tryLock($lock_key);
 
         $exist_user_gift = $gift_order->user->getUserCarGift();
-        if ($is_new) {
-            $user_gift = new UserGifts();
-            $user_gift->user_id = $gift_order->user_id;
-            $user_gift->gift_id = $gift_order->gift_id;
-        } else {
-            $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
-        }
+        $user_gift = \UserGifts::findFirstOrNew(['user_id' => $gift_order->user_id, 'gift_id' => $gift_order->gift_id]);
         $gift = \Gifts::findFirstById($gift_order->gift_id);
 
         $gift_amount = $gift->amount;
@@ -145,7 +141,9 @@ class UserGifts extends BaseModel
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
         if ($gift_order->sender_id != $gift_order->user_id) {
-            $content = $gift_order->sender->nickname . "送您了一个炫酷的" . $gift_order->name . "座驾给你快去车库查看,君临各大房间吧~ ";
+            if (!$content) {
+                $content = $gift_order->sender->nickname . "送您了一个炫酷的" . $gift_order->name . "座驾给你快去车库查看,君临各大房间吧~ ";
+            }
             Chats::sendTextSystemMessage($gift_order->user_id, $content);
         }
 

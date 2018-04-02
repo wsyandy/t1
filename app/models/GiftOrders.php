@@ -208,9 +208,7 @@ class GiftOrders extends BaseModel
         $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
         $gift_order->save();
 
-        \UserGifts::delay()->updateGiftExpireAt($gift_order->id,true);
-
-        Chats::sendTextSystemMessage($receiver_id, $content);
+        \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => $content]);
 
         return true;
     }
