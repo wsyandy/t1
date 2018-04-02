@@ -21,7 +21,7 @@ class GamesController extends BaseController
         $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
 
         // 解散房间
-        if($cache_room_host_id == $this->currentUser()->id){
+        if ($cache_room_host_id == $this->currentUser()->id) {
             $hot_cache->del($room_key);
             $hot_cache->del($room_info_key);
         }
@@ -42,7 +42,7 @@ class GamesController extends BaseController
             $amount = fetch($info, 'amount');
         }
 
-        info($this->currentUser()->id, $room_host_id, 'role', $this->currentUser()->user_role, $room_key, 'num', $num, $pay_type, $amount);
+        info($this->currentUser()->id, $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
@@ -229,7 +229,7 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
 
-        if($room_host_id != $this->currentUser()->id){
+        if ($room_host_id != $this->currentUser()->id) {
             echo 'jsonpcallback({"error_code":-1,"error_reason":"error"})';
             return;
         }
