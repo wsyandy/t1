@@ -99,19 +99,26 @@ class Devices extends BaseModel
 
         if ($device) {
 
-            //临时修复
+            //临时修复,老版安卓
             foreach (['imei', 'imsi', 'idfa'] as $k) {
-
-                if (isset($attributes[$k])) {
+                if (isset($attributes[$k]) && $attributes[$k]) {
                     $device->$k = $attributes[$k];
                 }
             }
 
+            // 测试渠道包fr
             if ($device->inWhiteList()) {
-                info($device->device_no, $attributes);
-                $fr = fetch($attributes, 'fr');
-                if ($fr) {
-                    $device->fr = $fr;
+                info('测试渠道包fr', $device->device_no, $attributes);
+
+                $promote_fr = Partners::getPromoteFr($attributes);
+                if ($promote_fr) {
+                    $device->fr = $promote_fr;
+                }
+                if (isPresent($device->fr)) {
+                    $partner = \Partners::findFirstByFrHotCache($device->fr);
+                    if ($partner) {
+                        $device->partner_id = $partner->id;
+                    }
                 }
             }
 
