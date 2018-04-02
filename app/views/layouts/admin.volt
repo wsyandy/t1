@@ -11,7 +11,8 @@
     '/framework/bootstrap.datepicker/1.5.0/js/bootstrap-datepicker.min.js',
     '/framework/bootstrap.datepicker/1.4.0/js/bootstrap-datetimepicker.min.js',
     '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
-    '/js/juicer/0.6.9/juicer-min.js','/js/echarts/2.2.7/echarts.js','/js/admin.js',
+    '/js/juicer/0.6.9/juicer-min.js','/js/echarts/3.7.2/echarts.js'
+    ,'/js/echarts/3.7.2/chalk.js','/js/echarts/3.7.2/china.js','/js/admin.js',
     '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
 
     {{ css('/framework/bootstrap/3.3.4/css/bootstrap.min.css','/framework/bootstrap.datepicker/1.4.0/css/bootstrap-datetimepicker.min.css',
@@ -245,6 +246,16 @@
                                 {% endif %}
                                 {% if isAllowed('unions','week_rank_list') %}
                                     <li><a href="/admin/unions/week_rank_list">周榜统计</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') %}
+                        <li class="dropdown-submenu">
+                            <a href="javascript:;" tabindex="-1">活跃用户统计</a>
+                            <ul class="dropdown-menu">
+                                {% if isAllowed('active_users','day_rank_list') %}
+                                    <li><a href="/admin/active_users/day_rank_list">日榜统计</a></li>
                                 {% endif %}
                             </ul>
                         </li>

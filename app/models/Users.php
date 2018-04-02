@@ -128,13 +128,12 @@ class Users extends BaseModel
         if ($this->hasChanged('last_at')) {
             $this->updateLastAt();
 
-            if (isDevelopmentEnv()) {
-                //好友上线提醒(每小时选取最新的一个好友上线提醒)
-                $this->pushFriendOnlineRemind();
+            //好友上线提醒(每小时选取最新的一个好友上线提醒)
+            $this->pushFriendOnlineRemind();
 
-                //关注的人上线提醒(每小时选取最新关注的人上线提醒)
-                $this->pushFollowedOnlineRemind();
-            }
+            //关注的人上线提醒(每小时选取最新关注的人上线提醒)
+            $this->pushFollowedOnlineRemind();
+
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -1529,6 +1528,7 @@ class Users extends BaseModel
         $user_id = fetch($opts, 'user_id');
         $province_id = fetch($opts, 'province_id');
         $city_id = fetch($opts, 'city_id');
+        $filter_ids = fetch($opts, 'filter_ids');
 
         if ($user_id) {
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
@@ -1555,6 +1555,10 @@ class Users extends BaseModel
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
 
+        if ($filter_ids) {
+            $cond['conditions'] .= " and id not in ({$filter_ids})";
+        }
+
         $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
             ' or user_status = ' . USER_STATUS_LOGOUT . ')';
         $cond['order'] = 'last_at desc,id desc';
@@ -1564,82 +1568,6 @@ class Users extends BaseModel
         $users = Users::findPagination($cond, $page, $per_page);
 
         return $users;
-    }
-
-
-    function getTags()
-    {
-        $tag_man_1 = ['color' => '#A0CDFF', 'text' => '正太'];
-        $tag_man_2 = ['color' => '#83A5FF', 'text' => '95后小哥哥'];
-        $tag_man_3 = ['color' => '#6197FF', 'text' => '小哥哥'];
-
-        $tag_woman_1 = ['color' => '#FE9BDF', 'text' => '萝莉'];
-        $tag_woman_2 = ['color' => '#FF8BB6', 'text' => '95后小姐姐'];
-        $tag_woman_3 = ['color' => '#FF8694', 'text' => '小姐姐'];
-
-        $tag_active = ['color' => '##FFAD36', 'text' => '活跃'];
-
-        $tag_money_1 = ['color' => '#AD7DFA', 'text' => '土豪'];
-        $tag_money_2 = ['color' => '#AD7DFA', 'text' => '潜力股'];
-
-
-        $tag_woman_money = ['color' => '#F86BD4', 'text' => '白富美'];
-        $tag_man_money = ['color' => '#83A5FF', 'text' => '高富帅'];
-
-        $birth_year = date('Y', $this->birthday);
-
-        $tags = [];
-
-        if ($this->sex) {
-
-            if ($birth_year >= 2000) {
-                $tags['man'] = $tag_man_1;
-            } else if ($birth_year >= 1995) {
-                $tags['man'] = $tag_man_2;
-            } else {
-                $tags['man'] = $tag_man_3;
-            }
-        } else {
-            if ($birth_year >= 2000) {
-                $tags['woman'] = $tag_woman_1;
-            } else if ($birth_year >= 1995) {
-                $tags['woman'] = $tag_woman_2;
-            } else {
-                $tags['woman'] = $tag_woman_3;
-            }
-        }
-
-        if ($this->wealth_value > 10000) {
-            $tags['money'] = $tag_money_1;
-        } else if ($this->wealth_value > 3000) {
-            $tags['money'] = $tag_money_2;
-        }
-
-        if ($this->charm_value > 10000) {
-            if (array_key_exists('money', $tags)) {
-                unset($tags['money']);
-                if (array_key_exists('woman', $tags)) {
-                    unset($tags['woman']);
-                    $tags['woman_money'] = $tag_woman_money;
-                } else if (array_key_exists('man', $tags)) {
-                    unset($tags['man']);
-                    $tags['man_money'] = $tag_man_money;
-                }
-            }
-        }
-
-        if ($this->mobile == '15655961171') {
-            if (array_key_exists('man', $tags)) {
-                unset($tags['man']);
-            }
-            $tags[] = ['color' => '#83A5FF', 'text' => '那个男人'];
-        }
-
-        if (count($tags) < 2) {
-            $tags[] = $tag_active;
-        }
-
-        return array_values($tags);
     }
 
     static function recommend($current_user, $page, $per_page)
@@ -1657,33 +1585,51 @@ class Users extends BaseModel
 
         $filter_ids = implode(',', $unique_ids);
 
-        $cond = [
-            'conditions' => "id not in ({$filter_ids})"
-        ];
+        $users = $current_user->nearby($page, $per_page, ['filter_ids' => $filter_ids]);
 
-        debug($cond);
+        foreach ($users as $user) {
+            $user->recommend_tip = $user->getRecommendTip($current_user);
+        }
 
-        $cond['conditions'] .= " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
-            ' or user_status = ' . USER_STATUS_LOGOUT . ')';
-
-
-        $cond['order'] = 'last_at desc,id desc';
-
-        $users = Users::findPagination($cond, $page, $per_page);
-
-//        $current_user->calDistance($users);
         return $users;
+    }
+
+
+    function getRecommendTip($user)
+    {
+        $created_at = $this->created_at;
+        if (time() - $created_at < 86400) {
+            return "她是Hi新人";
+        }
+
+        if ($this->monologue) {
+            return $this->monologue;
+        }
+
+        if ($this->city_id == $user->city_id) {
+            return "你们在同一个城市";
+        }
+
+        if (isPresent($this->union_id) && isPresent($user->union_id) && $this->union_id == $user->union_id) {
+            if ($this->union->type == UNION_TYPE_PRIVATE) {
+                return "你们在同一家族";
+            }
+            if ($this->union->type == UNION_TYPE_PUBLIC) {
+                return "你们在同一公会";
+            }
+        }
     }
 
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
+        $filter_ids = fetch($opts, 'filter_ids');
 
         $latitude = $this->latitude / 10000;
         $longitude = $this->longitude / 10000;
 
         if (!$latitude || !$longitude) {
-            $users = \Users::search($this, $page, $per_page);
+            $users = \Users::search($this, $page, $per_page, $opts);
             return $users;
         }
 
@@ -1712,6 +1658,11 @@ class Users extends BaseModel
 
         $condition .= ' and id <> :user_id: and id != ' . SYSTEM_ID . ' and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
+
+        if ($filter_ids) {
+            $condition .= " and id not in ({$filter_ids})";
+        }
+
         $bind['user_id'] = $this->id;
 
         $conds['conditions'] = $condition;
@@ -2758,23 +2709,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -2879,24 +2827,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }

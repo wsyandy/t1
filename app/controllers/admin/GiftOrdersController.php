@@ -109,11 +109,34 @@ class GiftOrdersController extends BaseController
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
 
         $this->view->gift_orders = $gift_orders;
+        $this->view->user_id = $user_id;
     }
 
     function showAction()
     {
         $gift_orders = \GiftOrders::findByIds($this->params('id'));
         $this->view->gift_orders = $gift_orders;
+    }
+
+    function giveCarAction()
+    {
+        $user = \Users::findFirstById($this->params('user_id'));
+        $gifts = \Gifts::findValidList($user, ['gift_type' => GIFT_TYPE_CAR]);
+        if ($this->request->isPost()) {
+            $gift = \Gifts::findFirstById($this->params('gift_id'));
+            if (isBlank($gift)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '礼物错误');
+            }
+
+            $content = $this->params('content');
+
+            $operator = $this->currentOperator();
+
+            \GiftOrders::giveCarBySystem($user->id, $operator->id, $gift, $content);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, "赠送成功",['error_url' => '/admin/gift_orders?user_id=' . $user->id]);
+        }
+
+        $this->view->user_id = $user->id;
+        $this->view->gifts = $gifts;
     }
 }

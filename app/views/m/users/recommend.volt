@@ -6,7 +6,7 @@
 <div class="vueBox" id="app" v-cloak>
     <div class="interest-list">
         <ul>
-            <li v-for="(item,index) in user_list" >
+            <li v-for="(item,index) in user_list">
                 <div class="list_left">
                     <img class="interest_avatar" :src="item.avatar_url" alt="" @click.stop="userDetail(item.id)"/>
                     <div class="interest_info">
@@ -14,10 +14,10 @@
                             <span class="interest_name"> ${ item.nickname }</span>
                         </div>
                         <div class="interest_tags">
-                        <span class="interest_tag" v-for="tag in item.tags"
-                              :style="{'backgroundColor':tag.color} ">${ tag.text }</span>
+                            <span class="interest_tag" v-for="tag in item.tags"
+                                  :style="{'backgroundColor':tag.color} ">${ tag.text }</span>
                         </div>
-                        <span class="interest_brief" v-if="item.monologue"> ${ item.monologue }</span>
+                        <span class="interest_brief"> ${ item.recommend_tip }</span>
                     </div>
                 </div>
                 <div class="list_right">
@@ -70,7 +70,7 @@
             </div>
         </div>
     </div>
-    <div class="fudong_bg" ></div>
+    <div class="fudong_bg"></div>
 
 </div>
 

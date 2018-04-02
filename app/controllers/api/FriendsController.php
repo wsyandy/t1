@@ -38,6 +38,10 @@ class FriendsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已添加好友');
         }
 
+        if ($this->currentUserId() == $this->otherUserId()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请勿添加自己为好友');
+        }
+
         $self_introduce = $this->params('self_introduce');
         $opts = [];
 

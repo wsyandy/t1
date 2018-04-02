@@ -259,7 +259,8 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'monologue' => $this->monologue,
             'current_room_id' => $this->current_room_id,
-            'tags' => $this->tags
+            'tags' => $this->tags,
+            'recommend_tip' => $this->recommend_tip
         ];
 
         return $data;
@@ -733,5 +734,80 @@ trait UserAttrs
     function rateOfHiCoinToMoney()
     {
         return 1;
+    }
+
+    function getTags()
+    {
+        $tag_man_1 = ['color' => '#A0CDFF', 'text' => '正太'];
+        $tag_man_2 = ['color' => '#83A5FF', 'text' => '95后小哥哥'];
+        $tag_man_3 = ['color' => '#6197FF', 'text' => '小哥哥'];
+
+        $tag_woman_1 = ['color' => '#FE9BDF', 'text' => '萝莉'];
+        $tag_woman_2 = ['color' => '#FF8BB6', 'text' => '95后小姐姐'];
+        $tag_woman_3 = ['color' => '#FF8694', 'text' => '小姐姐'];
+
+        $tag_active = ['color' => '##FFAD36', 'text' => '活跃'];
+
+        $tag_money_1 = ['color' => '#AD7DFA', 'text' => '土豪'];
+        $tag_money_2 = ['color' => '#AD7DFA', 'text' => '潜力股'];
+
+
+        $tag_woman_money = ['color' => '#F86BD4', 'text' => '白富美'];
+        $tag_man_money = ['color' => '#83A5FF', 'text' => '高富帅'];
+
+        $birth_year = date('Y', $this->birthday);
+
+        $tags = [];
+
+        if ($this->sex) {
+
+            if ($birth_year >= 2000) {
+                $tags['man'] = $tag_man_1;
+            } else if ($birth_year >= 1995) {
+                $tags['man'] = $tag_man_2;
+            } else {
+                $tags['man'] = $tag_man_3;
+            }
+        } else {
+            if ($birth_year >= 2000) {
+                $tags['woman'] = $tag_woman_1;
+            } else if ($birth_year >= 1995) {
+                $tags['woman'] = $tag_woman_2;
+            } else {
+                $tags['woman'] = $tag_woman_3;
+            }
+        }
+
+        if ($this->wealth_value > 10000) {
+            $tags['money'] = $tag_money_1;
+        } else if ($this->wealth_value > 3000) {
+            $tags['money'] = $tag_money_2;
+        }
+
+        if ($this->charm_value > 10000) {
+            if (array_key_exists('money', $tags)) {
+                unset($tags['money']);
+                if (array_key_exists('woman', $tags)) {
+                    unset($tags['woman']);
+                    $tags['woman_money'] = $tag_woman_money;
+                } else if (array_key_exists('man', $tags)) {
+                    unset($tags['man']);
+                    $tags['man_money'] = $tag_man_money;
+                }
+            }
+        }
+
+        if ($this->mobile == '15655961171') {
+            if (array_key_exists('man', $tags)) {
+                unset($tags['man']);
+            }
+            $tags[] = ['color' => '#83A5FF', 'text' => '那个男人'];
+        }
+
+        if (count($tags) < 2) {
+            $tags[] = $tag_active;
+        }
+
+        return array_values($tags);
     }
 }

@@ -175,6 +175,44 @@ class GiftOrders extends BaseModel
         return false;
     }
 
+    static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
+    {
+        $sender_id = SYSTEM_ID;
+
+        $sender = Users::findFirstById($sender_id);
+
+
+        $receiver = Users::findFirstById($receiver_id);
+        if (!$receiver) {
+            return false;
+        }
+
+        $gift_order = new GiftOrders();
+        $gift_order->sender_id = $sender_id;
+        $gift_order->user_id = $receiver_id;
+        $gift_order->gift_id = $gift->id;
+        $gift_order->amount = $gift->amount * $gift_num;
+        $gift_order->name = $gift->name;
+        $gift_order->pay_type = $gift->pay_type;
+        $gift_order->gift_type = $gift->type;
+        $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+        $gift_order->gift_num = $gift_num;
+        $gift_order->receiver_user_type = $receiver->user_type;
+        $gift_order->sender_user_type = $sender->user_type;
+        $gift_order->receiver_union_id = $receiver->union_id;
+        $gift_order->sender_union_id = $sender->union_id;
+        $gift_order->receiver_union_type = $receiver->union_type;
+        $gift_order->sendersave_union_type = $sender->union_type;
+        $gift_order->remark = "系统赠送";
+        $gift_order->operator_id = $operator_id;
+        $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+        $gift_order->save();
+
+        \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => $content]);
+
+        return true;
+    }
+
     function updateUserData()
     {
         //统计房间收益
@@ -230,6 +268,11 @@ class GiftOrders extends BaseModel
     function isDiamondPayType()
     {
         return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function isGoldPayType()
+    {
+        return GIFT_PAY_TYPE_GOLD == $this->pay_type;
     }
 
     function allNoticePushContent()
