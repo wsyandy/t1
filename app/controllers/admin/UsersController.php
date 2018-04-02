@@ -232,19 +232,6 @@ class UsersController extends BaseController
         if ($this->request->isPost()) {
             $content = $this->params('content');
             $content_type = CHAT_CONTENT_TYPE_TEXT;
-            if (isDevelopmentEnv() && isBlank($content)) {
-                $content = "#热门周榜争夺战#
-#四月高级靓号限时送#
-可爱迷人的小妖精们，
-啊不，
-各位老板各位大大
-机会来了
-四月活动开启
-超炫靓号都准备好了
-来吧，come on ≖‿≖✧ 
-详细活动点击
-热门周榜活动查看";
-            }
             $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
             if ($chat) {
                 return $this->renderJSON(
