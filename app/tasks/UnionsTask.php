@@ -80,7 +80,12 @@ class UnionsTask extends \Phalcon\Cli\Task
     //房主奖励
     function unionHostIncomeStat()
     {
+        $income = 1000;
 
+        switch ($income) {
+            case $income >= 1000 && $income <= 2000:
+                break;
+        }
     }
 
     //认证主播奖励
