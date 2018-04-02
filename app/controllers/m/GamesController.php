@@ -136,7 +136,7 @@ class GamesController extends BaseController
         $amount = fetch($info, 'amount');
         $can_enter = fetch($info, 'can_enter');
         $can_enter_at = fetch($info, 'can_enter_at');
-        if (time() - $can_enter_at > 30) {
+        if ($can_enter_at && time() - $can_enter_at > 30) {
             return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
         }
 
