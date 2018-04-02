@@ -411,9 +411,9 @@ class BaseController extends ApplicationController
 
     function validSign()
     {
-//        if(isDevelopmentEnv()) {
-//            return [true, t('base_valid_sign_signature_success')];
-//        }
+        if(isDevelopmentEnv()) {
+            return [true, t('base_valid_sign_signature_success')];
+        }
 
         // 如果debug 并且在开发模式下，不验证签名
         if ($this->isDebug()) {
