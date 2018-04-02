@@ -1,4 +1,4 @@
-<form action="/admin/unions/rank_list" method="get" class="search_form" autocomplete="off" id="search_form">
+<form action="/admin/unions/day_rank_list" method="get" class="search_form" autocomplete="off" id="search_form">
 
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>

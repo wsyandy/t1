@@ -598,6 +598,28 @@ trait UserWakeup
 
     }
 
+
+    function canSendRemindIntoRoom()
+    {
+        $cur_hour = intval(date('H'));
+        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+            info('0点-8点不推送', date('YmdHis'));
+            return false;
+        }
+
+        if ($this->id != $this->current_room->user_id) {
+            info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
+            return false;
+        }
+
+        if (!$this->current_room_id) {
+            info('user_id', $this->id, 'not in room');
+            return false;
+        }
+
+        return true;
+    }
+
     //好友上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）
     //每个房主一个小时内只能发送一次 (好友)
     //关注好友 开播提醒 每个人一个小时内只能收到一条
@@ -605,8 +627,8 @@ trait UserWakeup
     {
         info('user_id', $this->id);
 
-        if ($this->id != $this->current_room->user_id) {
-            info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
+        if ($this->canSendRemindIntoRoom()) {
+            info('user_id can not send', $this->id);
             return;
         }
 
@@ -616,11 +638,6 @@ trait UserWakeup
         ];
 
         $body = $data[mt_rand(0, 1)];
-
-        if (!$this->current_room_id) {
-            info('user_id', $this->id, 'not in room');
-            return;
-        }
 
         $client_url = "app://rooms/detail?id={$this->current_room_id}";
         $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
@@ -633,20 +650,7 @@ trait UserWakeup
             return;
         }
 
-        $cur_hour = intval(date('H'));
-        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            info('0点-8点不推送', date('YmdHis'));
-            return;
-        }
-
-        //每个房主一个小时内只能发送一次 (好友)
         $user_db = Users::getUserDb();
-//        $room_user_key = 'push_friend_into_room_remind_' . $this->id;
-//        if (!$user_db->setnx($room_user_key, $this->id)) {
-//            info('room_user_key 房主一个小时内只能发送一次', $this->id);
-//            return;
-//        }
-//        $user_db->expire($room_user_key, 10 * 60);
 
         $total_pages = ceil($friend_num / $per_page);
 
@@ -698,8 +702,8 @@ trait UserWakeup
     {
         info('user_id', $this->id);
 
-        if ($this->id != $this->current_room->user_id) {
-            info('user_id != current_room user_id 不是房主', $this->id, 'current_room user_id', $this->current_room->user_id);
+        if ($this->canSendRemindIntoRoom()) {
+            info('user_id can not send', $this->id);
             return;
         }
 
@@ -709,11 +713,6 @@ trait UserWakeup
         ];
 
         $body = $data[mt_rand(0, 1)];
-
-        if (!$this->current_room_id) {
-            info('user_id', $this->id, 'not in room');
-            return;
-        }
 
         $client_url = "app://rooms/detail?id={$this->current_room_id}";
         $opts = ['title' => '关注的人开播提醒', 'body' => $body, 'client_url' => $client_url];
@@ -726,20 +725,7 @@ trait UserWakeup
             return;
         }
 
-        $cur_hour = intval(date('H'));
-        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            info('0点-8点不推送', date('YmdHis'));
-            return;
-        }
-
-        //每个房主一个小时内只能发送一次 (关注)
         $user_db = Users::getUserDb();
-//        $room_user_key = 'push_followed_into_room_remind_' . $this->id;
-//        if (!$user_db->setnx($room_user_key, $this->id)) {
-//            info('room_user_key 房主一个小时内只能发送一次', $this->id);
-//            return;
-//        }
-//        $user_db->expire($room_user_key, 10 * 60);
 
         $total_pages = ceil($followed_num / $per_page);
 
