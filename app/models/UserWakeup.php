@@ -539,25 +539,20 @@ trait UserWakeup
 
                 //好友每个人一个小时内只能收到一条
                 $receive_friend_online_remind_hour_key = 'receive_online_remind_hour_' . $user->id;
-                $receive_friend_online_remind_hour = $user_db->get($receive_friend_online_remind_hour_key);
-                info('receive_friend_online_remind_hour', $user->id, 'receive_friend_online_remind_hour', $receive_friend_online_remind_hour);
-                if ($receive_friend_online_remind_hour) {
-                    info('receive_friend_online_remind_hour_ user_id', $user->id, 'receive_friend_online_remind_hour', $receive_friend_online_remind_hour);
+                if ($user_db->get($receive_friend_online_remind_hour_key)) {
+                    info('receive_friend_online_remind_hour_ user_id', $user->id);
                     continue;
                 }
 
                 $receive_friend_online_remind_online_key = 'receive_online_remind_online_' . $user->id;
-                $receive_friend_online_remind_online = $user_db->get($receive_friend_online_remind_online_key);
-
-                info('receive_friend_online_remind_online', $user->id, 'receive_friend_online_remind_online', $receive_friend_online_remind_online);
-                if ($receive_friend_online_remind_online) {
-                    info('receive_friend_online_remind_online_ user_id', $user->id, 'receive_friend_online_remind_online', $receive_friend_online_remind_online);
+                if ($user_db->get($receive_friend_online_remind_online_key)) {
+                    info('receive_friend_online_remind_online_ user_id', $user->id);
                     continue;
                 }
 
                 //记录消息发送数量
-                $user_db->setex($receive_friend_online_remind_hour_key, 10 * 60);
-                $user_db->setex($receive_friend_online_remind_online_key, 30 * 24 * 60 * 60);
+                $user_db->setex($receive_friend_online_remind_hour_key, 10 * 60, $user->id);
+                $user_db->setex($receive_friend_online_remind_online_key, 30 * 24 * 60 * 60, $user->id);
 
                 info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                 $user->push($opts);
@@ -608,24 +603,20 @@ trait UserWakeup
                 }
 
                 $receive_followed_online_remind_hour_key = 'receive_online_remind_hour_' . $user->id;
-                $receive_followed_online_remind_hour = $user_db->get($receive_followed_online_remind_hour_key, $user->id);
-                info('receive_followed_online_remind_hour', $user->id, 'receive_followed_online_remind_hour', $receive_followed_online_remind_hour);
-                if ($receive_followed_online_remind_hour) {
-                    info('receive_followed_online_remind_hour_ user_id', $user->id, 'receive_followed_online_remind_hour', $receive_followed_online_remind_hour);
+                if ($user_db->get($receive_followed_online_remind_hour_key, $user->id)) {
+                    info('receive_followed_online_remind_hour_ user_id', $user->id);
                     continue;
                 }
 
                 $receive_followed_online_remind_online_key = 'receive_online_remind_online_' . $user->id;
-                $receive_followed_online_remind_online = $user_db->get($receive_followed_online_remind_online_key);
-                info('receive_followed_online_remind_online', $user->id, 'receive_followed_online_remind_online', $receive_followed_online_remind_online);
-                if ($receive_followed_online_remind_online) {
-                    info('receive_followed_online_remind_online_ user_id', $user->id, 'receive_followed_online_remind_online', $receive_followed_online_remind_online);
+                if ($user_db->get($receive_followed_online_remind_online_key)) {
+                    info('receive_followed_online_remind_online_ user_id', $user->id);
                     continue;
                 }
 
                 //记录消息发送数量
-                $user_db->setex($receive_followed_online_remind_hour_key, 10 * 60);
-                $user_db->setex($receive_followed_online_remind_online_key, 30 * 24 * 60 * 60);
+                $user_db->setex($receive_followed_online_remind_hour_key, 10 * 60,$user->id);
+                $user_db->setex($receive_followed_online_remind_online_key, 30 * 24 * 60 * 60,$user->id);
 
                 info('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                 $user->push($opts);
@@ -708,20 +699,14 @@ trait UserWakeup
 
                 //关注好友每个人一个小时内只能收到一条
                 $receive_friend_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $user->id;
-                $receive_friend_into_room_remind_hour = $user_db->get($receive_friend_into_room_remind_hour_key);
-                info('receive_friend_into_room_remind_hour', $user->id, 'receive_friend_into_room_remind_hour', $receive_friend_into_room_remind_hour);
-
-                if ($receive_friend_into_room_remind_hour) {
-                    info('receive_friend_into_room_remind_hour user_id', $user->id, 'receive_friend_into_room_remind_hour', $receive_friend_into_room_remind_hour);
+                if ($user_db->get($receive_friend_into_room_remind_hour_key)) {
+                    info('receive_friend_into_room_remind_hour user_id', $user->id);
                     continue;
                 }
 
                 $receive_friend_into_room_remind_on_line_key = 'receive_into_room_remind_on_line_' . $user->id;
-                $receive_friend_into_room_remind_on_line = $user_db->get($receive_friend_into_room_remind_on_line_key);
-                info('receive_friend_into_room_remind_on_line', $user->id, 'receive_friend_into_room_remind_on_line', $receive_friend_into_room_remind_on_line);
-
-                if ($receive_friend_into_room_remind_on_line) {
-                    info('receive_friend_into_room_remind_on_line user_id', $user->id, 'receive_friend_into_room_remind_on_line', $receive_friend_into_room_remind_on_line);
+                if ($user_db->get($receive_friend_into_room_remind_on_line_key)) {
+                    info('receive_friend_into_room_remind_on_line user_id', $user->id);
                     continue;
                 }
 
@@ -792,21 +777,15 @@ trait UserWakeup
 
                 //关注好友每个人一个小时内只能收到一条
                 $receive_followed_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $user->id;
-                $receive_followed_into_room_remind_hour = $user_db->get($receive_followed_into_room_remind_hour_key);
-                info('receive_followed_into_room_remind_hour', $user->id, 'receive_followed_into_room_remind_hour', $receive_followed_into_room_remind_hour);
-
-                if ($receive_followed_into_room_remind_hour) {
-                    info('receive_followed_into_room_remind_hour user_id', $user->id, 'receive_followed_into_room_remind_hour', $receive_followed_into_room_remind_hour);
+                if ($user_db->get($receive_followed_into_room_remind_hour_key)) {
+                    info('receive_followed_into_room_remind_hour user_id', $user->id);
                     continue;
                 }
 
                 //关注的好友,如果没上线就不再接受消息(避免上线时收到很多消息 30天期限)
                 $receive_followed_into_room_remind_on_line_key = 'receive_into_room_remind_on_line_' . $user->id;
-                $receive_followed_into_room_remind_on_line = $user_db->get($receive_followed_into_room_remind_on_line_key);
-                info('receive_followed_into_room_remind', $user->id, 'receive_followed_into_room_remind_on_line', $receive_followed_into_room_remind_on_line);
-
-                if ($receive_followed_into_room_remind_on_line) {
-                    info('receive_followed_into_room_remind user_id', $user->id, 'receive_followed_into_room_remind_on_line', $receive_followed_into_room_remind_on_line);
+                if ($user_db->get($receive_followed_into_room_remind_on_line_key)) {
+                    info('receive_followed_into_room_remind user_id', $user->id);
                     continue;
                 }
 
