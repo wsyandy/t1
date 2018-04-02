@@ -18,8 +18,15 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
         $num = $hot_cache->zcard($room_key);
-
+        $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
         $room_host_id = $this->currentUser()->id;
+
+        // 解散房间
+        if($cache_room_host_id == $room_host_id){
+            $hot_cache->del($room_key);
+            $hot_cache->del($room_info_key);
+        }
+
         // 发起者必须是主播
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
