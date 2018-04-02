@@ -42,7 +42,7 @@ class GamesController extends BaseController
             $amount = fetch($info, 'amount');
         }
 
-        info($this->currentUser()->id, $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
+        info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
