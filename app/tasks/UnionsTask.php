@@ -77,27 +77,125 @@ class UnionsTask extends \Phalcon\Cli\Task
         echoLine($union);
     }
 
-    //房主奖励
-    function unionHostIncomeStat()
-    {
-        $income = 1000;
-
-        switch ($income) {
-            case $income >= 1000 && $income <= 2000:
-                break;
-        }
-    }
-
     //认证主播奖励
-    function authHostIncomeStatAction()
+    function authHostRewardAction()
     {
+        $users = Users::find([
+            'conditions' => 'id_card_auth = :id_card_auth:',
+            'bind' => ['id_card_auth' => AUTH_SUCCESS]]);
+
         $current_day = intval(date('d'));
         $time = time() - $current_day * 86400 - 3600;
         $start = beginOfMonth($time);
         $end = endOfMonth($time);
 
-        echoLine(date("Ymd", $start));
-        echoLine(date("Ymd", $end));
+
+        foreach ($users as $user) {
+
+            $income = HiCoinHistories::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and user_id = :user_id: and fee_type = :fee_type:',
+                    'bind' => ['start' => $start, 'end' => $end, 'user_id' => $user->id, 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+                    'column' => 'hi_coins'
+                ]
+            );
+
+            $reward = 0;
+
+            if ($income > 0) {
+
+                switch ($income) {
+                    case $income >= 1000 && $income <= 2000:
+                        $reward = 100;
+                        break;
+                    case $income > 2000 && $income <= 5000:
+                        $reward = 200;
+                        break;
+                    case $income > 5000 && $income <= 20000:
+                        $reward = 500;
+                        break;
+                    case $income > 20000 && $income <= 50000:
+                        $reward = 800;
+                        break;
+                    case $income > 50000:
+                        $reward = 1000;
+                        break;
+                }
+
+                if ($reward > 0) {
+
+                    $remark = "主播奖励:" . $reward . "元";
+
+                    HiCoinHistories::createHistory($user->id, ['fee_type' => HI_COIN_FEE_TYPE_HOST_REWARD, 'remark' => $remark,
+                        'hi_coins' => $reward]);
+
+                    echoLine($user->id, $income, $reward);
+                }
+            }
+        }
+    }
+
+    //家族长奖励
+    function unionHostRewardAction()
+    {
+        $unions = Unions::find(
+            [
+                'conditions' => 'status = :status: and type = :type:',
+                'bind' => ['status' => STATUS_ON, 'type' => UNION_TYPE_PRIVATE]
+            ]);
+
+        $current_day = intval(date('d'));
+        $time = time() - $current_day * 86400 - 3600;
+        $start = beginOfMonth($time);
+        $end = endOfMonth($time);
+
+        foreach ($unions as $union) {
+
+            $income = HiCoinHistories::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id: and union_type = :union_type:',
+                    'bind' => ['start' => $start, 'end' => $end, 'union_id' => $union->id, 'union_type' => $union->type],
+                    'column' => 'hi_coins'
+                ]
+            );
+
+            $reward = 0;
+
+            if (1001 == $union->id) {
+                echoLine($income);
+            }
+
+            if ($income > 0) {
+                echoLine($union->id, $income);
+                switch ($income) {
+                    case $income >= 10000 && $income <= 20000:
+                        $reward = 600;
+                        break;
+                    case $income > 20000 && $income <= 50000:
+                        $reward = 1600;
+                        break;
+                    case $income > 50000 && $income <= 200000:
+                        $reward = 5000;
+                        break;
+                    case $income > 200000 && $income <= 500000:
+                        $reward = 24000;
+                        break;
+                    case $income > 500000:
+                        $reward = 70000;
+                        break;
+                }
+
+                if ($reward > 0) {
+
+                    $remark = "家族长奖励:" . $reward . "元";
+
+                    HiCoinHistories::createHistory($union->user_id, ['fee_type' => HI_COIN_FEE_TYPE_UNION_HOST_REWARD, 'remark' => $remark,
+                        'hi_coins' => $reward]);
+
+                    echoLine($union->id, $income, $reward);
+                }
+            }
+        }
     }
 
     function checkUserHiCoins()
@@ -121,6 +219,17 @@ class UnionsTask extends \Phalcon\Cli\Task
 
             if (abs($res) > 0.001) {
                 echoLine($user->id, "hi_coins", $user->hi_coins, 'value', $value);
+            }
+        }
+
+        $union = Unions::findFirstById(1026);
+        $users = Users::findBy(['union_id' => 1026]);
+
+        foreach ($users as $user) {
+            $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $union->id]);
+
+            if ($union_history) {
+                echoLine($union_history->join_at_text);
             }
         }
     }

@@ -1636,4 +1636,23 @@ class MeiTask extends \Phalcon\Cli\Task
         $device->device_no = '';
         $device->save();
     }
+
+    function checkGiftOrderToHiCoinsAction()
+    {
+        $gift_orders = GiftOrders::findBy(['receiver_union_id' => 1001, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]);
+        foreach ($gift_orders as $gift_order) {
+            $hi_coin_history = HiCoinHistories::findFirstBy(['gift_order_id' => $gift_order->id]);
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id);
+            }
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id);
+            }
+        }
+
+        $gift_order = GiftOrders::findFirstById(57817);
+        echoLine($gift_order);
+    }
 }
