@@ -202,7 +202,7 @@ class Partners extends BaseModel
         $callback = fetch($data, 'callback');
         if ($callback && $source == 'uc') {
             $res = httpGet($callback);
-            info($callback, $res->body);
+            info($callback, $res->code, $res->body);
         }
     }
 
