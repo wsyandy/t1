@@ -171,6 +171,7 @@ class Partners extends BaseModel
     static function notifyBaidu($data)
     {
 
+        info('data', $data);
         $source = fetch($data, 'source');
         $callback = fetch($data, 'callback_url');
         if ($callback && $source == 'baidu') {
@@ -179,14 +180,7 @@ class Partners extends BaseModel
             $call_url = preg_replace('/&sign={{SIGN}}/', '', $call_url);
 
             // 重新优化配置
-            $akey_xianjinzhijia = 'MjM5NDUxMjE=';
-            $akey_money = 'MjM4MzQ5OTg=';
-            $code = fetch($data, 'code');
-            if ($code == 'money') {
-                $akey = $akey_money;
-            } else {
-                $akey = $akey_xianjinzhijia;
-            }
+            $akey = 'MjUzNDA4Mzk=';
 
             $sign = md5($call_url . $akey);
             $call_url = $call_url . '&sign=' . $sign;
@@ -202,7 +196,7 @@ class Partners extends BaseModel
         $callback = fetch($data, 'callback');
         if ($callback && $source == 'uc') {
             $res = httpGet($callback);
-            info($callback, $res->body);
+            info($callback, $res->code, $res->body);
         }
     }
 

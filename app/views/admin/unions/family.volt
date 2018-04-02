@@ -13,8 +13,6 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-<a href="/admin/unions/rank_list" class="ui button" >日榜</a>
-
 {% macro oper_link(union) %}
     {% if isAllowed('users','index') %}
         <a href="/admin/users/index?user[union_id_eq]={{ union.id }}">家族成员</a><br/>

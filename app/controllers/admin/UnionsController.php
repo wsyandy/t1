@@ -200,11 +200,33 @@ class UnionsController extends BaseController
         $this->view->union_id = $id;
     }
 
-    function rankListAction()
+    function dayRankListAction()
     {
         $start_at = $this->params('start_at', date('Y-m-d', beginOfDay()));
 
         $key = "total_union_fame_value_day_" . date("Ymd", strtotime($start_at));
+
+        $page = $this->params('page', 1);
+
+        $per_page = $this->params('per_page', 20);
+
+        $unions = \Unions::findFameValueRankListByKey($key, $page, $per_page);
+
+        $this->view->unions = $unions;
+
+        $this->view->start_at = $start_at;
+
+    }
+
+    function weekRankListAction()
+    {
+        $start_at = $this->params('start_at',date('Y-m-d',beginOfWeek()));
+
+        $start = date("Ymd", strtotime($start_at));
+
+        $end = date("Ymd", strtotime($start) + 6 * 86400);
+
+        $key = "total_union_fame_value_" . $start . "_" . $end;
 
         $page = $this->params('page', 1);
 

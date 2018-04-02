@@ -1618,4 +1618,22 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $orders = Orders::find(['conditions' => 'created_at >= ' . beginOfDay()]);
     }
+
+    function fixRoomInfoAction()
+    {
+        $room = Rooms::findFirstById(1010149);
+
+        $hot_cache = Rooms::getHotReadCache();
+        $key = $room->getRealUserListKey();
+
+        $user_ids = $hot_cache->zrevrange($key, 0, -1, true);
+
+        foreach ($user_ids as $user_id => $time) {
+            echoLine($user_id, date("Y-m-d H:i:s", $time));
+        }
+
+        $device = Devices::findFirstById(82301);
+        $device->device_no = '';
+        $device->save();
+    }
 }
