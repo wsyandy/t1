@@ -601,7 +601,7 @@ trait UserWakeup
                 }
 
                 $receive_followed_online_remind_hour_key = 'receive_online_remind_hour_' . $user->id;
-                if ($user_db->setnx($receive_followed_online_remind_hour_key, $user->id)) {
+                if ($user_db->get($receive_followed_online_remind_hour_key, $user->id)) {
                     info('receive_followed_online_remind_hour_ user_id', $user->id);
                     continue;
                 }
