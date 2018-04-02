@@ -518,7 +518,7 @@ trait UserWakeup
     {
         $user_db = Users::getUserDb();
         $receive_online_remind_hour_key = 'receive_online_remind_hour_' . $this->id;
-        $user_db->setex($receive_online_remind_hour_key, 10 * 60, $this->id);
+        $user_db->setex($receive_online_remind_hour_key, 60 * 60, $this->id);
     }
 
     function getReceiveOnlineRemindOnline()
@@ -709,7 +709,7 @@ trait UserWakeup
     {
         $user_db = Users::getUserDb();
         $receive_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $this->id;
-        $user_db->setex($receive_into_room_remind_hour_key, 10 * 60, $this->id);
+        $user_db->setex($receive_into_room_remind_hour_key, 60 * 60, $this->id);
     }
 
     function setReceiveIntoRoomRemindOnline()
