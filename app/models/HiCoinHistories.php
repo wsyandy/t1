@@ -113,6 +113,7 @@ class HiCoinHistories extends BaseModel
         $operator_id = fetch($opts, 'operator_id');
         $hi_coins = fetch($opts, 'hi_coins');
         $remark = fetch($opts, 'remark');
+        $fee_type = fetch($opts, 'fee_type');
 
         $user = Users::findFirstById($user_id);
 
@@ -128,6 +129,12 @@ class HiCoinHistories extends BaseModel
 
         $hi_coin_history = new HiCoinHistories();
         $hi_coin_history->user_id = $user_id;
+
+        if ($fee_type) {
+            $hi_coin_history->hi_coins = $hi_coins;
+            $hi_coin_history->fee_type = $fee_type;
+            $hi_coin_history->remark = $remark;
+        }
 
         if ($gift_order_id) {
 
