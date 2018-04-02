@@ -16,7 +16,7 @@ class GamesController extends BaseController
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
+        $hot_cache->zadd($room_key, time(), intval($this->currentUser()->id));
         $num = $hot_cache->zcard($room_key);
         $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
 
