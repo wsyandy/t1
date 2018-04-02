@@ -140,7 +140,6 @@ class GamesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
         }
 
-
         $data = $users->toJson('users', 'toSimpleJson');
         $data['can_enter'] = intval($can_enter);
 
@@ -224,9 +223,23 @@ class GamesController extends BaseController
 
     function notifyAction()
     {
-        info($this->params());
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
 
-        echo 'jsonpcallback({"xxx":"ccc"})';
+        if($room_host_id != $this->currentUser()->id){
+            echo 'jsonpcallback({"error_code":-1,"error_reason":"error"})';
+            return;
+        }
+
+        $rank1 = $this->params('rank1');
+        $rank2 = $this->params('rank2');
+        $rank3 = $this->params('rank3');
+
+        info('rank', $rank1, $rank2, $rank3);
+
+        echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }
 
 }
