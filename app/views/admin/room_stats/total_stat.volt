@@ -25,7 +25,7 @@
 {% endmacro %}
 
 {% macro total_stat_detail(room) %}
-    <a href="/admin/rooms/total_stat_detail?id={{ room.id }}">明细</a><br/>
+    <a href="/admin/room_stats/total_stat_detail?id={{ room.id }}">明细</a><br/>
 {% endmacro %}
 
 {% macro avatar_image(room) %}
