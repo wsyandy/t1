@@ -1795,4 +1795,24 @@ class MeiTask extends \Phalcon\Cli\Task
             $room_db->zadd($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room->id);
         }
     }
+
+    function checkHicoinAction()
+    {
+        $cond = [
+            'conditions' => 'pay_type = :pay_type: and gift_type = :gift_type: and status = :status:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+        ];
+
+
+        $gift_orders = GiftOrders::findForeach($cond);
+
+        foreach ($gift_orders as $gift_order) {
+
+            $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $gift_order->user_id, 'gift_order_id' => $gift_order->id]);
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id, $gift_order->user_id);
+            }
+        }
+    }
 }
