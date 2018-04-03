@@ -264,7 +264,7 @@ class GamesController extends BaseController
         $rank2 = $this->params('rank2');
         $rank3 = $this->params('rank3');
 
-        info('rank', $rank1, $rank2, $rank3);
+        info($this->currentUser()->id, 'room', $room_id, 'rank', $rank1, $rank2, $rank3);
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }
