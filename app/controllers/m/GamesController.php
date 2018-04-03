@@ -354,12 +354,12 @@ class GamesController extends BaseController
 
         info($room_info_key, $info);
 
-        $hot_cache->hset($room_settlement_key, 'user_num', $user_num);
         $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
         $hot_cache->hset($room_settlement_key, 'amount', $amount);
+        $hot_cache->hset($room_settlement_key, 'user_num', $user_num);
 
         if ($pay_type != 'free') {
-            if ($user_num == 1 || $user_num == 2) {
+            if ($user_num == 1) {
                 $rank1_amount = $user_num * $amount;
                 if ($pay_type == PAY_TYPE_DIAMOND) {
                     $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
@@ -372,12 +372,29 @@ class GamesController extends BaseController
                 $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
                 $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
 
+            }elseif ($user_num == 2){
+                $rank1_amount = $user_num * $amount;
+                $rank2_amount = 0;
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
+                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
+                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+
             } elseif ($user_num == 3) {
 
                 $total_amount = $user_num * $amount;
                 $rank1_amount = round($total_amount * 0.8);
                 $rank2_amount = round($total_amount * 0.2);
-
+                $rank3_amount = 0;
                 // rank1
                 if ($pay_type == PAY_TYPE_DIAMOND) {
                     $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
@@ -403,6 +420,9 @@ class GamesController extends BaseController
 
                 $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
                 $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank3', $rank3);
+                $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
             } else {
 
                 $total_amount = ($user_num - 3) * $amount;
