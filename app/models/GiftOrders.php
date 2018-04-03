@@ -36,9 +36,7 @@ class GiftOrders extends BaseModel
 
     function afterCreate()
     {
-        if ($this->room_id) {
-            Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id);
-        }
+
     }
 
     function toDetailJson()
@@ -227,6 +225,7 @@ class GiftOrders extends BaseModel
 
             if (!$this->gift->isCar()) {
                 $this->room->statIncome($this->amount);
+                Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id);
             }
 
             if ($this->sender_id != $this->user_id) {
@@ -280,6 +279,11 @@ class GiftOrders extends BaseModel
     function isGoldPayType()
     {
         return GIFT_PAY_TYPE_GOLD == $this->pay_type;
+    }
+
+    function isCar()
+    {
+        return GIFT_TYPE_CAR == $this->gift_type;
     }
 
     function allNoticePushContent()
