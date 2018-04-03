@@ -803,4 +803,17 @@ trait UserAttrs
 
         return array_values($tags);
     }
+
+    function getCanUseHiCoins()
+    {
+        $can_use_hi_coins = $this->hi_coins;
+        $wait_auth_with_draw_amount = \WithdrawHistories::findWaitWithDrawAmount($this->id);
+
+        //等待提现的金额
+        if ($wait_auth_with_draw_amount > 0) {
+            $can_use_hi_coins -= $wait_auth_with_draw_amount;
+        }
+
+        return intval($can_use_hi_coins * 100) / 100;
+    }
 }
