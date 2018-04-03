@@ -4,8 +4,9 @@
 {{ block_end() }}
 {#用户对应的头像和昵称#}
 <div id="app" class="select_game">
-    <ul class="await_player_ul" v-for="user in users">
-        <li><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span></li>
+    <ul class="await_player_ul">
+        <li v-for="user in users" ><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span>
+        </li>
     </ul>
     {#这里要判断是否是房主，是由房主可以点击开始#}
     <div class="select_game_button">
@@ -25,13 +26,14 @@
     var opts = {
         data: {
             sid: "{{ current_user.sid }}",
-            code: 'yuewan',
+            code: "{{ code }}",
             users: [],
             button_text: '开始游戏',
             can_enter: 0,
             url: "{{ url }}",
             room_host_id: "{{ room_host_id }}",
-            current_user_id: "{{ current_user.id }}"
+            current_user_id: "{{ current_user.id }}",
+            room_id:"{{ room_id }}"
         },
         watch: {},
         methods: {
@@ -39,11 +41,12 @@
                 if (vm.current_user_id == vm.room_host_id) {
                     var data = {
                         'code': vm.code,
-                        'sid': vm.sid
+                        'sid': vm.sid,
+                        'room_id':vm.room_id
                     };
                     $.authPost('/m/games/start', data, function (resp) {
                         if (!resp.error_code) {
-                            location.href = vm.url;
+                            window.location.href = vm.url;
                         } else {
                             alert(resp.error_reason);
                         }
@@ -55,11 +58,11 @@
             exit_game: function () {
                 var data = {
                     'code': vm.code,
-                    'sid': vm.sid
+                    'sid': vm.sid,
+                    'room_id':vm.room_id
                 };
                 $.authPost('/m/games/exit', data, function (resp) {
                     if (!resp.error_code) {
-//                        location.href = '/m/games?code=' + vm.code + '&sid=' + vm.sid;
                         window.location.href = document.referrer;
                     } else {
                         alert(resp.error_reason);
@@ -75,15 +78,17 @@
 
         var data = {
             'code': vm.code,
-            'sid': vm.sid
+            'sid': vm.sid,
+            'room_id':vm.room_id
         };
+
         $.authPost('/m/games/enter', data, function (resp) {
             if (resp.error_code == 0) {
                 vm.users = resp.users;
                 vm.can_enter = resp.can_enter;
                 if (resp.can_enter == 1) {
                     clearInterval(interval_time);
-                    location.href = vm.url;
+                    window.location.href = vm.url;
                 }
             }
         });

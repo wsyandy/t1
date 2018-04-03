@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/week_chart_activity') }}
+{{ theme_css('/m/css/week_rank_activity') }}
 {{ block_end() }}
 
 <div class="voice_box">

@@ -37,16 +37,15 @@
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    {% if is_development %}
+                    {% if is_development and false %}
                         <li>
                             <a href="/admin/users/avatar">头像审核</a>
                         </li>
-                        {% if is_development %}
-                            <li>
-                                <a href="/admin/users/select_avatar">选择头像</a>
-                            </li>
-                        {% endif %}
+                        <li>
+                            <a href="/admin/users/select_avatar">选择头像</a>
+                        </li>
                     {% endif %}
+
                     {% if isAllowed('devices','index') %}
                         <li>
                             <a href="/admin/devices">激活列表</a>

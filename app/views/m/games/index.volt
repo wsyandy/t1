@@ -22,14 +22,14 @@
             <li>
                 <span @click="selectgametype(1)" :class="{ 'radio_select': 1==selectGameType }" class="radio"></span>
                 <span class="text">金币游戏</span>
-                <input type="text" placeholder="请输入数目" v-model="gold_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="gold_game_amount"/>
                 <span class="gold"></span>
             </li>
             <li>
                 <span @click="selectgametype(2)" :class="{ 'radio_select': 2==selectGameType }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
-                <input type="text" placeholder="请输入数目" v-model="diamond_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="diamond_game_amount"/>
                 <span class="masonry"></span>
             </li>
         </ul>
@@ -47,10 +47,10 @@
                 gold_game_amount: 0,
                 amount: 0,
                 pay_type: 'free',
-                room_host_id: "{{ room_host_id}}",
+                room_host_id: "{{ room_host_id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                code: 'yuewan'
+                room_id: "{{ room_id }}"
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -91,12 +91,12 @@
                         'user_id': vm.room_host_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'code': vm.code,
+                        'room_id': vm.room_id,
                         'sid': "{{ current_user.sid }}"
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (!resp.error_code) {
-                            vm.redirectAction('/m/games/wait?code=' + vm.code + '&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
                         } else {
                             alert(resp.error_reason);
                         }
@@ -123,7 +123,8 @@
         <div class="start_game">
             <span>${game_status_text}</span>
             <p></p>
-            <p v-if="pay_type_text">当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span></p>
+            <p v-if="pay_type_text">当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span>
+            </p>
         </div>
         <div class="select_game_button">
             <button @click="go_game()">参与游戏 GO</button>
@@ -137,12 +138,14 @@
                 pay_type: "{{ pay_type }}",
                 pay_type_text: "",
                 amount: "{{ amount }}",
-                room_host_id: "{{ room_host_id}}",
+                room_host_id: "{{ room_host_id }}",
+                'room_id': "{{ room_id }}",
+                room_host_nickname: "{{ room_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                game_status_text: '主播已发起者游戏'
+                game_status_text: ''
             },
             watch: {},
             methods: {
@@ -155,12 +158,12 @@
                         'user_id': vm.current_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'code': 'yuewan',
+                        'room_id': vm.room_id,
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
-                            vm.redirectAction('/m/games/wait?code=yuewan&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
                         } else {
                             vm.can_game = true;
                             vm.error_reason = resp.error_reason;
@@ -174,6 +177,8 @@
         $(function () {
             if (!vm.pay_type) {
                 vm.game_status_text = '您不是主播,不能发起游戏';
+            } else {
+                vm.game_status_text = vm.room_host_nickname + '已发起游戏';
             }
 
             switch (vm.pay_type) {
