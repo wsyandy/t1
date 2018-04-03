@@ -16,8 +16,7 @@ class GamesController extends BaseController
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache->zadd($room_key, time(), intval($this->currentUser()->id));
-        $num = $hot_cache->zcard($room_key);
+        $current_user_id = intval($this->currentUser()->id);
         $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
 
         // 解散房间
@@ -26,6 +25,12 @@ class GamesController extends BaseController
             $hot_cache->del($room_info_key);
         }
 
+        $hot_cache->zadd($room_key, time(), $current_user_id);
+        $user_ids = $hot_cache->zrange($room_key, 0, -1);
+        $num = $hot_cache->zcard($room_key);
+
+        info('cache', $room_key, intval($this->currentUser()->id), $user_ids, $num, $cache_room_host_id);
+        
         // 发起者必须是主播
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
