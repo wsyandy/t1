@@ -1,4 +1,3 @@
-
 <form action="/admin/gifts" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="id_eq">ID</label>
     <input name="gift[id_eq]" type="text" id="id_eq"/>
@@ -42,9 +41,9 @@
 {% endif %}
 
 {{ simple_table(gifts, [
-    "ID": 'id', "名称": 'name', "价格": 'amount', "图片": 'image_link', '大图': 'big_image_link',
-    "动态图": 'dynamic_image_link','渲染类型':'render_type_text',
-    "有效": 'status_text','礼物类型':'type_text','支付类型':'pay_type_text',"排序": 'rank', '编辑': 'edit_link'
+"ID": 'id', "名称": 'name', "价格": 'amount', "图片": 'image_link', '大图': 'big_image_link',
+"动态图": 'dynamic_image_link','渲染类型':'render_type_text',
+"有效": 'status_text','礼物类型':'type_text','支付类型':'pay_type_text',"排序": 'rank', '编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="gift_tpl">
@@ -62,4 +61,17 @@
         <td>${gift.rank}</td>
         <td><a href="/admin/gifts/edit/${gift.id}" class="modal_action">编辑</a></td>
     </tr>
+</script>
+
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for gift in gifts %}
+        {% if gift.status != 1 %}
+        $("#gift_{{ gift.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    })
 </script>
