@@ -276,6 +276,10 @@ class Rooms extends BaseModel
         $this->save();
         $user->save();
 
+        if (!$user->isSilent()) {
+            Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
+        }
+
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
@@ -1257,109 +1261,6 @@ class Rooms extends BaseModel
         return true;
     }
 
-    function getDayGiftAmountBySilentUser()
-    {
-        $hot_cache = self::getHotReadCache();
-        $amount = $hot_cache->get($this->getStatGiftAmountKey());
-        return intval($amount);
-    }
-
-    function getHourGiftAmountBySilentUser()
-    {
-        $hot_cache = self::getHotReadCache();
-        $amount = $hot_cache->get($this->getStatGiftAmountKey(false));
-        return intval($amount);
-    }
-
-    function getDayGiftUserNumBySilentUser()
-    {
-        $hot_cache = self::getHotReadCache();
-        $num = $hot_cache->zcard($this->getStatGiftUserNumKey());
-        return intval($num);
-    }
-
-    function getHourGiftUserNumBySilentUser()
-    {
-        $hot_cache = self::getHotReadCache();
-        $num = $hot_cache->zcard($this->getStatGiftUserNumKey(false));
-        return intval($num);
-    }
-
-    function getStatGiftAmountKey($day = true)
-    {
-        if ($day) {
-            $time = date("Ymd");
-        } else {
-            $time = date("YmdH");
-        }
-
-        return $time . "_silent_user_send_gift_amount_room_id" . $this->id;
-    }
-
-    function getStatGiftUserNumKey($day = true)
-    {
-        if ($day) {
-            $time = date("Ymd");
-        } else {
-            $time = date("YmdH");
-        }
-
-        return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
-    }
-
-
-    function getDayAmount($start_at, $end_at)
-    {
-        $cond = [
-            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at: and pay_type = :pay_type:" .
-                " and gift_type = :gift_type:",
-            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at,
-                'pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON],
-            'column' => 'amount'
-        ];
-
-        $amount = GiftOrders::sum($cond);
-        return $amount;
-    }
-
-    function statIncome($amount)
-    {
-        $db = Users::getUserDb();
-
-        if ($amount) {
-            $db->zincrby("stat_room_income_list", $amount, $this->id);
-        }
-    }
-
-    function getAmount()
-    {
-        $db = Users::getUserDb();
-        return $db->zscore("stat_room_income_list", $this->id);
-    }
-
-    static function roomIncomeList($page, $per_page, $cond)
-    {
-        $db = Users::getUserDb();
-        $key = "stat_room_income_list";
-        $total_entries = $db->zcard($key);
-        $offset = $per_page * ($page - 1);
-        $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
-        $room_ids = implode(',', $room_ids);
-
-        if (isPresent($cond)) {
-            debug($cond);
-            $rooms = self::find($cond);
-        } else {
-            $rooms = self::findByIds($room_ids);
-        }
-
-        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
-
-        $pagination->clazz = 'Rooms';
-
-        return $pagination;
-    }
-
     static function addUserAgreement($room_id)
     {
         $room = Rooms::findFirstById($room_id);
@@ -1579,5 +1480,286 @@ class Rooms extends BaseModel
             info($gift_order->id, $gift_order->sender_id, $gift_order->user_id, $gift_order->amount, $opts);
             Rooms::delay()->asyncAllNoticePush($gift_order->allNoticePushContent(), $opts);
         }
+    }
+
+
+    //沉默用户送礼物按天统计
+    function getDayGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey());
+        return intval($amount);
+    }
+
+    //沉默用户送礼物按小时统计
+    function getHourGiftAmountBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $amount = $hot_cache->get($this->getStatGiftAmountKey(false));
+        return intval($amount);
+    }
+
+    //沉默用户送礼物按天统计
+    function getDayGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey());
+        return intval($num);
+    }
+
+    //沉默用户送礼物按小时统计
+    function getHourGiftUserNumBySilentUser()
+    {
+        $hot_cache = self::getHotReadCache();
+        $num = $hot_cache->zcard($this->getStatGiftUserNumKey(false));
+        return intval($num);
+    }
+
+    //沉默用户送礼物金额
+    function getStatGiftAmountKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_amount_room_id" . $this->id;
+    }
+
+    //沉默用户送礼物金额key
+    function getStatGiftUserNumKey($day = true)
+    {
+        if ($day) {
+            $time = date("Ymd");
+        } else {
+            $time = date("YmdH");
+        }
+
+        return $time . "_silent_user_send_gift_user_num_room_id" . $this->id;
+    }
+
+    //获取指定时间的房间收益 只有支付类型为钻石 礼物类型为普通礼物的才计算为收益
+    function getDayAmount($start_at, $end_at)
+    {
+        $cond = [
+            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at: and pay_type = :pay_type:" .
+                " and gift_type = :gift_type:",
+            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at,
+                'pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON],
+            'column' => 'amount'
+        ];
+
+        $amount = GiftOrders::sum($cond);
+        return $amount;
+    }
+
+    //房间收益统计 总的
+    function statIncome($amount)
+    {
+        $db = Users::getUserDb();
+
+        if ($amount) {
+            $db->zincrby("stat_room_income_list", $amount, $this->id);
+        }
+    }
+
+    //获取房间收益
+    function getAmount()
+    {
+        $db = Users::getUserDb();
+        return $db->zscore("stat_room_income_list", $this->id);
+    }
+
+    //房间收益列表
+    static function roomIncomeList($page, $per_page, $cond)
+    {
+        $db = Users::getUserDb();
+        $key = "stat_room_income_list";
+        $total_entries = $db->zcard($key);
+        $offset = $per_page * ($page - 1);
+        $room_ids = $db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $room_ids = implode(',', $room_ids);
+
+        if (isPresent($cond)) {
+            debug($cond);
+            $rooms = self::find($cond);
+        } else {
+            $rooms = self::findByIds($room_ids);
+        }
+
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
+
+    function generateStatIncomeDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_income_day_" . $stat_at;
+
+        return $key;
+    }
+
+    function generateSendGiftUserDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_send_gift_user_day_" . $stat_at . "_room_id_{$this->id}";
+
+        return $key;
+    }
+
+    function generateSendGiftNumDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_send_gift_num_day_" . $stat_at;
+
+        return $key;
+    }
+
+
+    function generateStatEnterRoomUserDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_enter_room_user_day_" . $stat_at . "_room_id_{$this->id}";
+
+        return $key;
+    }
+
+
+    function generateStatTimeDayKey($action, $stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_{$action}_time_day_" . $stat_at;
+
+        return $key;
+    }
+
+    //按天统计房间收益和送礼物人数,送礼物个数
+    static function statDayIncome($room_id, $income, $sender_id, $gift_num)
+    {
+        if ($income > 0) {
+            info($room_id, $income, $sender_id);
+            $room_db = Rooms::getRoomDb();
+            $room = Rooms::findFirstById($room_id);
+
+            if ($room) {
+                $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
+                $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
+                $room_db->zincrby($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room_id);
+            }
+        }
+    }
+
+    //按天统计房间进入人数
+    static function statDayEnterRoomUser($room_id, $user_id)
+    {
+        info($user_id, $room_id);
+        $room_db = Rooms::getRoomDb();
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room) {
+            $room_db->zadd($room->generateStatEnterRoomUserDayKey(date("Ymd")), time(), $user_id);
+        }
+    }
+
+    //按天统计房间用户活跃时长
+    static function statDayUserTime($action, $room_id, $time)
+    {
+        if ($time > 0) {
+            info($action, $room_id, $time);
+            $room_db = Rooms::getRoomDb();
+            $room = Rooms::findFirstById($room_id);
+
+            if ($room) {
+                $room_db->zincrby($room->generateStatTimeDayKey($action, date("Ymd")), $time, $room_id);
+            }
+        }
+    }
+
+    //按天统计房间收益的id
+    static function dayStatRooms($stat_at = '')
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $room_db = Rooms::getRoomDb();
+        $key = "room_stats_income_day_" . $stat_at;
+        $total_entries = $room_db->zcard($key);
+        $per_page = $total_entries;
+        $page = 1;
+        $offset = $per_page * ($page - 1);
+        $room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+        return $pagination;
+    }
+
+    //按天的流水
+    function getDayIncome($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+    }
+
+    //按天的进入房间人数
+    function getDayEnterRoomUser($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zcard($this->generateStatEnterRoomUserDayKey($stat_at));
+    }
+
+
+    //按天的送礼物人数
+    function getDaySendGiftUser($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
+    }
+
+    //按天的送礼物个数
+    function getDaySendGiftNum($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateSendGiftNumDayKey($stat_at), $this->id);
+    }
+
+
+    //按天的主播时长 action audience broadcaster host_broadcaster
+    function getDayUserTime($action, $stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateStatTimeDayKey($action, $stat_at), $this->id);
+    }
+
+    //平均送礼物个数
+    function daySendGiftAverageNum()
+    {
+        $avg = 0;
+
+        if ($this->day_send_gift_user > 0) {
+            $avg = intval($this->day_send_gift_num * 100 / $this->day_send_gift_user) / 100;
+        }
+
+        return $avg;
     }
 }

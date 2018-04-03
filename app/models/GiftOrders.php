@@ -34,6 +34,11 @@ class GiftOrders extends BaseModel
         GIFT_ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    function afterCreate()
+    {
+
+    }
+
     function toDetailJson()
     {
         return [
@@ -220,6 +225,10 @@ class GiftOrders extends BaseModel
 
             if (!$this->gift->isCar()) {
                 $this->room->statIncome($this->amount);
+
+                if (!$this->sender->isSilent()) {
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num);
+                }
             }
 
             if ($this->sender_id != $this->user_id) {
@@ -273,6 +282,11 @@ class GiftOrders extends BaseModel
     function isGoldPayType()
     {
         return GIFT_PAY_TYPE_GOLD == $this->pay_type;
+    }
+
+    function isCar()
+    {
+        return GIFT_TYPE_CAR == $this->gift_type;
     }
 
     function allNoticePushContent()
