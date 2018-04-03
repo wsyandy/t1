@@ -218,9 +218,20 @@
                     {% if isAllowed('stats', 'stat_room_time') %}
                         <li><a href="/admin/stats/stat_room_time">用户主播时长统计</a></li>
                     {% endif %}
-                    {% if isAllowed('rooms', 'earnings') %}
-                        <li><a href="/admin/rooms/earnings">房间收益统计</a></li>
+                    {% if isAllowed('room_stats','total_stat') or  isAllowed('room_stats','day_stat') %}
+                        <li class="dropdown-submenu">
+                            <a href="javascript:;" tabindex="-1">房间统计</a>
+                            <ul class="dropdown-menu">
+                                {% if isAllowed('room_stats','total_stat') %}
+                                    <li><a href="/admin/room_stats/total_stat">房间收益总的统计</a></li>
+                                {% endif %}
+                                {% if isAllowed('room_stats','day_stat') %}
+                                    <li><a href="/admin/room_stats/day_stat">房间收益按天统计</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
                     {% endif %}
+
                     {% if isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') %}
                         <li class="dropdown-submenu">
                             <a href="javascript:;" tabindex="-1">排行榜统计</a>
