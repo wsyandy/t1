@@ -43,7 +43,7 @@ class GamesController extends BaseController
             $hot_cache->expire($room_wait_key, 600);
         } else {
             $info = $hot_cache->hgetall($room_info_key);
-            info($info);
+            info($room_info_key, $info);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
@@ -300,6 +300,8 @@ class GamesController extends BaseController
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
 
+        info('user_info', $user_datas);
+
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
@@ -336,12 +338,12 @@ class GamesController extends BaseController
         $room_settlement_key = 'game_room_settlement_' . $room_id;
         $hot_cache->del($room_settlement_key);
 
-
         $user_num = $hot_cache->zcard($room_enter_key);
         $info = $hot_cache->hgetall($room_info_key);
-        $room_host_id = fetch($info, 'room_host_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
+
+        info($room_info_key, $info);
 
         $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
         $hot_cache->hset($room_settlement_key, 'amount', $amount);
@@ -441,6 +443,8 @@ class GamesController extends BaseController
             $hot_cache->expire($room_settlement_key, 200);
         }
 
+        $info = $hot_cache->hgetall($room_settlement_key);
+        info('info', $room_settlement_key, $info);
         // 解散比赛
         $hot_cache->del($room_key);
         $hot_cache->del($room_wait_key);
