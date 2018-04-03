@@ -1636,4 +1636,64 @@ class MeiTask extends \Phalcon\Cli\Task
         $device->device_no = '';
         $device->save();
     }
+
+    function checkGiftOrderToHiCoinsAction()
+    {
+        $gift_orders = GiftOrders::findBy(['receiver_union_id' => 1001, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]);
+        foreach ($gift_orders as $gift_order) {
+            $hi_coin_history = HiCoinHistories::findFirstBy(['gift_order_id' => $gift_order->id]);
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id);
+            }
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id);
+            }
+        }
+
+        $gift_order = GiftOrders::findFirstById(57817);
+        echoLine($gift_order);
+
+        $current_day = intval(date('d'));
+        $time = time() - $current_day * 86400 - 3600;
+        $start = beginOfMonth($time);
+        $end = endOfMonth($time);
+
+        $gift_orders = GiftOrders::find(
+            [
+                'conditions' => 'sender_union_id = 1001 and pay_type = "diamond" and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end],
+                'columns' => 'distinct user_id'
+            ]);
+
+        $user_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+            $user_ids[] = $gift_order->user_id;
+        }
+
+
+        echoLine($user_ids);
+        $users = Users::findByIds($user_ids);
+
+        $res = ['用户id', '财富值'];
+        $data = [];
+
+        foreach ($users as $user) {
+            $amount = GiftOrders::sum([
+                'conditions' => 'sender_id = ' . $user->id . ' and sender_union_id = 1001 and pay_type = "diamond" and created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => $start, 'end' => $end],
+                'column' => 'amount'
+            ]);
+
+            if ($amount > 0) {
+                echoLine($user->id, $amount);
+                $data[] = [$user->id, $amount];
+            }
+        }
+
+        $res = writeExcel($res, $data, 'union_income_1001.xls', true);
+        echoLine($res);
+    }
 }

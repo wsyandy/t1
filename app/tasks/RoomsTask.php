@@ -471,6 +471,13 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
+                    //公司内部成员的房间不上热门
+                    if ($user_num_room->user->isCompanyUser()) {
+                        info($room->id);
+                        continue;
+                    }
+
+
                     if (!in_array($user_num_room_id, $total_room_ids)) {
 
                         $total_room_ids[] = $user_num_room_id;

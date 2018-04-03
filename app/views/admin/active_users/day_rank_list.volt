@@ -45,7 +45,7 @@
             },
             title: {
                 left: 'center',
-                text: '大数据量面积图',
+                text: '活跃用户数据统计',
             },
             toolbox: {
                 feature: {

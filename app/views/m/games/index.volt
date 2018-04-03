@@ -34,7 +34,7 @@
             </li>
         </ul>
         <div class="select_game_button">
-            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>费用为：${amount }${pay_type_text}</span></p>
+            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span></p>
             <button @click="go_game()">参与游戏 GO</button>
         </div>
     </div>
@@ -43,11 +43,12 @@
             data: {
                 selectGameType: 0,
                 pay_type_text: '免费',
-                diamond_game_amount: '',
-                gold_game_amount: '',
+                diamond_game_amount: 0,
+                gold_game_amount: 0,
                 amount: 0,
                 pay_type: 'free',
-                room_host_id: "{{ current_user.id }}",
+                room_host_id: "{{ room_host_id}}",
+                current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 code: 'yuewan'
             },
@@ -121,7 +122,8 @@
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
             <span>${game_status_text}</span>
-            <p>${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
+            <p></p>
+            <p v-if="pay_type_text">当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span></p>
         </div>
         <div class="select_game_button">
             <button @click="go_game()">参与游戏 GO</button>
@@ -134,11 +136,12 @@
             data: {
                 pay_type: "{{ pay_type }}",
                 pay_type_text: "",
-                pay_amount: "{{ amount }}",
-                game_user_id: "{{ current_user.id }}",
+                amount: "{{ amount }}",
+                room_host_id: "{{ room_host_id}}",
+                current_user_id: "{{ current_user.id }}",
+                sid: "{{ current_user.sid }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                sid: "{{ current_user.sid }}",
                 game_status_text: '主播已发起者游戏'
             },
             watch: {},
@@ -149,14 +152,14 @@
                         return;
                     }
                     var data = {
-                        'user_id': vm.game_user_id,
+                        'user_id': vm.current_user_id,
                         'pay_type': vm.pay_type,
-                        'amount': vm.pay_amount,
+                        'amount': vm.amount,
                         'code': 'yuewan',
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
-                        if (!resp.error_code) {
+                        if (resp.error_code == 0) {
                             vm.redirectAction('/m/games/wait?code=yuewan&sid=' + vm.sid);
                         } else {
                             vm.can_game = true;

@@ -10,12 +10,12 @@ class ActiveUsersController extends BaseController
         $find_at = strtotime($start_at);
         $stop_at = endOfDay($find_at);
         $active_user_number = [];
-        $hot_cache = \Users::getHotWriteCache();
+        $stat_db = \Stats::getStatDb();
 
-        for ($find_at1 = $find_at; $find_at1 <= $stop_at; $find_at1 += 600) {
-            $key = 'online_user_list_' . date('YmdHi', $find_at1);
-            $portion_active_user_number = $hot_cache->zcard($key);
-            $time = date('Y-m-d H:i:s',$find_at1);
+        for ($find_at_dot = $find_at; $find_at_dot <= $stop_at; $find_at_dot += 600) {
+            $key = 'online_user_list_' . date('YmdHi', $find_at_dot);
+            $portion_active_user_number = $stat_db->zcard($key);
+            $time = date('Y-m-d H:i:s',$find_at_dot);
             $active_user_number[$time] = $portion_active_user_number;
         }
         $this->view->start_at = $start_at;

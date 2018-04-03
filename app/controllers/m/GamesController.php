@@ -13,26 +13,41 @@ class GamesController extends BaseController
     function indexAction()
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-        $room = \Rooms::findFirstById($room_id);
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache->zadd($room_key, time(), $this->currentUser()->id);
+        $current_user_id = intval($this->currentUser()->id);
+        $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+
+        // 解散房间
+        if ($cache_room_host_id == $this->currentUser()->id) {
+            $hot_cache->del($room_key);
+            $hot_cache->del($room_info_key);
+        }
+
+        $hot_cache->zadd($room_key, time(), $current_user_id);
+        $user_ids = $hot_cache->zrange($room_key, 0, -1);
         $num = $hot_cache->zcard($room_key);
-        $room_host_id = $this->currentUser()->id;
+
+        info('cache', $room_key, intval($this->currentUser()->id), $user_ids, $num, $cache_room_host_id);
+        
         // 发起者必须是主播
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
+            $room_host_id = $this->currentUser()->id;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
         } else {
             $info = $hot_cache->hgetall($room_info_key);
+            info($info);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
         }
+
+        info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
@@ -64,6 +79,7 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $pay_type, $amount);
 
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
@@ -90,13 +106,15 @@ class GamesController extends BaseController
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $room_id;
-        $body['host'] = $this->currentUser()->id == $room_host_id;
+        $body['host'] = $this->currentUser()->id == $room_host_id ? 1 : 0;
         $body['nonce_str'] = randStr(20);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/game?sid=' . $this->currentUser()->sid);
+        $body['notify_url'] = urlencode($this->getRoot() . 'm/game/notify?sid=' . $this->currentUser()->sid);
 
         $str = paramsToStr($body);
 
         $url = 'https://tyt.momoyuedu.cn/?' . $str;
-        info($url);
+        info($this->currentUser()->id, 'url', $url);
 
         $user = $this->currentUser();
         $this->view->url = $url;
@@ -124,10 +142,9 @@ class GamesController extends BaseController
         $amount = fetch($info, 'amount');
         $can_enter = fetch($info, 'can_enter');
         $can_enter_at = fetch($info, 'can_enter_at');
-        if (time() - $can_enter_at > 30) {
+        if ($can_enter_at && time() - $can_enter_at > 30) {
             return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
         }
-
 
         $data = $users->toJson('users', 'toSimpleJson');
         $data['can_enter'] = intval($can_enter);
@@ -208,6 +225,27 @@ class GamesController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function notifyAction()
+    {
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+
+        if ($room_host_id != $this->currentUser()->id) {
+            echo 'jsonpcallback({"error_code":-1,"error_reason":"error"})';
+            return;
+        }
+
+        $rank1 = $this->params('rank1');
+        $rank2 = $this->params('rank2');
+        $rank3 = $this->params('rank3');
+
+        info('rank', $rank1, $rank2, $rank3);
+
+        echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }
 
 }
