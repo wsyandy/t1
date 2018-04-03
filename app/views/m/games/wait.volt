@@ -5,7 +5,7 @@
 {#用户对应的头像和昵称#}
 <div id="app" class="select_game">
     <ul class="await_player_ul" v-for="user in users">
-        <li style="display: flex;align-items: center;"><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span>
+        <li><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span>
         </li>
     </ul>
     {#这里要判断是否是房主，是由房主可以点击开始#}
