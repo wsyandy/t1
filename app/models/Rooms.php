@@ -1592,17 +1592,64 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function generateStatIncomeDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_income_day_" . $stat_at;
+
+        return $key;
+    }
+
+    function generateSendGiftUserDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_send_gift_user_day_" . $stat_at . "_room_id_{$this->id}";
+
+        return $key;
+    }
+
+
+    function generateStatEnterRoomUserDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_enter_room_user_day_" . $stat_at . "_room_id_{$this->id}";
+
+        return $key;
+    }
+
+
+    function generateStatTimeDayKey($action, $stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_{$action}_time_day_" . $stat_at;
+
+        return $key;
+    }
+
     //按天统计房间收益和送礼物人数
     static function statDayIncome($room_id, $income, $sender_id)
     {
         if ($income > 0) {
             info($room_id, $income, $sender_id);
             $room_db = Rooms::getRoomDb();
-            $key = "room_stats_income_day_" . date("Ymd");
-            $room_db->zincrby($key, $income, $room_id);
+            $room = Rooms::findFirstById($room_id);
 
-            $stat_user_key = "room_stats_send_gift_user_day_" . date("Ymd") . "_room_id_{$room_id}";
-            $room_db->zadd($stat_user_key, time(), $sender_id);
+            if ($room) {
+                $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
+                $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
+            }
         }
     }
 
@@ -1611,8 +1658,11 @@ class Rooms extends BaseModel
     {
         info($user_id, $room_id);
         $room_db = Rooms::getRoomDb();
-        $key = "room_stats_enter_room_user_day_" . date("Ymd") . "_room_id_{$room_id}";
-        $room_db->zadd($key, time(), $user_id);
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room) {
+            $room_db->zadd($room->generateStatEnterRoomUserDayKey(date("Ymd")), time(), $user_id);
+        }
     }
 
     //按天统计房间用户活跃时长
@@ -1621,8 +1671,61 @@ class Rooms extends BaseModel
         if ($time > 0) {
             info($action, $room_id, $time);
             $room_db = Rooms::getRoomDb();
-            $key = "room_stats_{$action}_time_day_" . date("Ymd");
-            $room_db->zincrby($key, $time, $room_id);
+            $room = Rooms::findFirstById($room_id);
+
+            if ($room) {
+                $room_db->zincrby($room->generateStatTimeDayKey($action, date("Ymd")), $time, $room_id);
+            }
         }
+    }
+
+    //按天统计房间收益的id
+    static function dayStatRooms($stat_at = '')
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $room_db = Rooms::getRoomDb();
+        $key = "room_stats_income_day_" . $stat_at;
+        $total_entries = $room_db->zcard($key);
+        $per_page = $total_entries;
+        $page = 1;
+        $offset = $per_page * ($page - 1);
+        $room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+        return $pagination;
+    }
+
+    //按天的流水
+    function getDayIncome($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+    }
+
+    //按天的进入房间人数
+    function getDayEnterRoomUser($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zcard($this->generateStatEnterRoomUserDayKey($stat_at));
+    }
+
+
+    //按天的送礼物人数
+    function getDaySendGiftUser($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
+    }
+
+
+    //按天的主播时长 action audience broadcaster host_broadcaster
+    function getDayUserTime($action, $stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateStatTimeDayKey($action, $stat_at), $this->id);
     }
 }

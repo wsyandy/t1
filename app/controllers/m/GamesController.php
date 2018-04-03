@@ -30,7 +30,7 @@ class GamesController extends BaseController
         $hot_cache->zadd($room_key, time(), $current_user_id);
         $num = $hot_cache->zcard($room_key);
 
-        info('cache', $room_key, intval($this->currentUser()->id), $num, $cache_room_host_id);
+        info('cache', $room_key, intval($this->currentUser()->id), $num);
 
         // 发起者必须是主播
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
@@ -67,6 +67,11 @@ class GamesController extends BaseController
         $room_host_id = fetch($info, 'room_host_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
+
+        $can_enter_at = fetch($info, 'can_enter_at');
+        if ($can_enter_at && time() - $can_enter_at > 30) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
+        }
 
         $current_user = $this->currentUser();
         if ($room_host_id == $current_user->id) {
@@ -112,7 +117,7 @@ class GamesController extends BaseController
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $room_id;
         $body['nonce_str'] = randStr(20);
-        $body['back_url'] = urlencode($this->getRoot() . 'm/games?sid=' . $this->currentUser()->sid);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid);
 
         $str = paramsToStr($body);
@@ -175,6 +180,11 @@ class GamesController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
                 }
             }
+
+            // 扣款成功
+            $room_enter_key = "game_room_enter_" . $room_id;
+            $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
+            $hot_cache->expire($room_enter_key, 600);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
@@ -208,6 +218,13 @@ class GamesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
             }
         }
+
+        // 扣款成功
+        $room_enter_key = "game_room_enter_" . $room_id;
+        $hot_cache->del($room_enter_key);
+
+        $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
+        $hot_cache->expire($room_enter_key, 200);
 
         // 进入游戏
         $hot_cache->hset($room_info_key, 'can_enter', 1);
@@ -247,23 +264,171 @@ class GamesController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    function notifyAction()
+    function backAction()
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
-
-        if ($room_host_id != $this->currentUser()->id) {
-            echo 'jsonpcallback({"error_code":-1,"error_reason":"error"})';
-            return;
+        $room_settlement_key = 'game_room_settlement_' . $room_id;
+        $info = $hot_cache->hgetall($room_settlement_key);
+        $pay_type = fetch($info, 'pay_type');
+        $amount = fetch($info, 'amount');
+        $user_num = fetch($info, 'user_num');
+        $user_ids = [fetch($info, 'rank1') => fetch($info, 'rank1_amount')];
+        if (fetch($info, 'rank2')) {
+            $user_ids[fetch($info, 'rank2')] = fetch($info, 'rank2_amount');
         }
+        if (fetch($info, 'rank3')) {
+            $user_ids[fetch($info, 'rank3')] = fetch($info, 'rank3_amount');
+        }
+
+        $user_datas = [];
+        foreach ($user_ids as $user_id => $settlement_amount) {
+            $user = \Users::findFirstById($user_id);
+            $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
+        }
+
+        $this->view->current_user = $this->currentUser();
+        $this->view->pay_type = $pay_type;
+        $this->view->amount = $amount;
+        $this->view->total_amount = $amount * $user_num;
+        $this->view->users = $user_datas;
+    }
+
+    function notifyAction()
+    {
 
         $rank1 = $this->params('rank1');
         $rank2 = $this->params('rank2');
         $rank3 = $this->params('rank3');
 
+        if ($rank1 != $this->currentUser()->id) {
+            echo 'jsonpcallback({"error_code":-1,"error_reason":"error"})';
+            return;
+        }
+
+        $rank1_user = \Users::findFirstById($rank1);
+        $rank2_user = \Users::findFirstById($rank2);
+        $rank3_user = \Users::findFirstById($rank3);
+
+        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         info($this->currentUser()->id, 'room', $room_id, 'rank', $rank1, $rank2, $rank3);
+
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_key = "game_room_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $room_id;
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $room_enter_key = "game_room_enter_" . $room_id;
+        $room_settlement_key = 'game_room_settlement_' . $room_id;
+
+        $user_num = $hot_cache->zcard($room_enter_key);
+        $info = $hot_cache->hgetall($room_info_key);
+        $room_host_id = fetch($info, 'room_host_id');
+        $pay_type = fetch($info, 'pay_type');
+        $amount = fetch($info, 'amount');
+
+        $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
+        $hot_cache->hset($room_settlement_key, 'amount', $amount);
+
+        if ($pay_type != 'free') {
+            if ($user_num == 1 || $user_num == 2) {
+                $rank1_amount = $user_num * $amount;
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
+                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
+
+            } elseif ($user_num == 3) {
+
+                $total_amount = $user_num * $amount;
+                $rank1_amount = round($total_amount * 0.8);
+                $rank2_amount = round($total_amount * 0.2);
+
+                // rank1
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+
+                // rank2
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                }
+
+                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
+                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
+                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+            } else {
+
+                $total_amount = ($user_num - 3) * $amount;
+                $rank1_amount = $amount + round($total_amount * 0.7);
+                $rank2_amount = $amount + round($total_amount * 0.2);
+                $rank3_amount = $amount + round($total_amount * 0.1);
+
+                // rank1
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+
+                // rank2
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                }
+
+                // rank3
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
+                }
+
+                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
+                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
+                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank3', $rank3);
+                $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
+            }
+
+            $hot_cache->expire($room_settlement_key, 90);
+        }
+
+        // 解散比赛
+        $hot_cache->del($room_key);
+        $hot_cache->del($room_wait_key);
+        $hot_cache->del($room_enter_key);
+        $hot_cache->del($room_info_key);
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }
