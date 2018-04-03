@@ -177,7 +177,7 @@
             if (!vm.pay_type) {
                 vm.game_status_text = '您不是主播,不能发起游戏';
             } else {
-                vm.game_status_text = '主播' + vm.room_host_nickname + '已发起游戏';
+                vm.game_status_text = vm.room_host_nickname + '已发起游戏';
             }
 
             switch (vm.pay_type) {
