@@ -255,7 +255,9 @@ class Users extends BaseModel
                 $current_room_id = $this->was('current_room_id');
             }
 
-            Rooms::delay()->statDayUserTime($action, $current_room_id, $duration);
+            if (!$this->isSilent()) {
+                Rooms::delay()->statDayUserTime($action, $current_room_id, $duration);
+            }
         }
         info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
     }
