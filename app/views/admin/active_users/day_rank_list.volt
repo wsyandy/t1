@@ -66,7 +66,7 @@
             },
             series: [
                 {
-                    name:'模拟数据',
+                    name:'人数',
                     type:'line',
                     smooth:true,
                     symbol: 'none',
