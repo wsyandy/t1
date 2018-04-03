@@ -32,7 +32,8 @@
             can_enter: 0,
             url: "{{ url }}",
             room_host_id: "{{ room_host_id }}",
-            current_user_id: "{{ current_user.id }}"
+            current_user_id: "{{ current_user.id }}",
+            room_id:"{{ room_id }}"
         },
         watch: {},
         methods: {
@@ -40,7 +41,8 @@
                 if (vm.current_user_id == vm.room_host_id) {
                     var data = {
                         'code': vm.code,
-                        'sid': vm.sid
+                        'sid': vm.sid,
+                        'room_id':vm.room_id
                     };
                     $.authPost('/m/games/start', data, function (resp) {
                         if (!resp.error_code) {
@@ -56,11 +58,11 @@
             exit_game: function () {
                 var data = {
                     'code': vm.code,
-                    'sid': vm.sid
+                    'sid': vm.sid,
+                    'room_id':vm.room_id
                 };
                 $.authPost('/m/games/exit', data, function (resp) {
                     if (!resp.error_code) {
-//                        location.href = '/m/games?code=' + vm.code + '&sid=' + vm.sid;
                         window.location.href = document.referrer;
                     } else {
                         alert(resp.error_reason);
@@ -76,8 +78,10 @@
 
         var data = {
             'code': vm.code,
-            'sid': vm.sid
+            'sid': vm.sid,
+            'room_id':vm.room_id
         };
+
         $.authPost('/m/games/enter', data, function (resp) {
             if (resp.error_code == 0) {
                 vm.users = resp.users;

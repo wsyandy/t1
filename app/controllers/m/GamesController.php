@@ -55,12 +55,13 @@ class GamesController extends BaseController
         $this->view->room_host_id = $room_host_id;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
+        $this->view->room_id = $room_id;
     }
 
     // 提交入场费
     function feeAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
@@ -104,8 +105,8 @@ class GamesController extends BaseController
 
     function waitAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
 
+        $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
@@ -117,8 +118,8 @@ class GamesController extends BaseController
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $room_id;
         $body['nonce_str'] = randStr(20);
-        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid);
-        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
+        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id' . $room_id);
 
         $str = paramsToStr($body);
 
@@ -134,11 +135,12 @@ class GamesController extends BaseController
         $this->view->url = $url;
         $this->view->current_user = $user;
         $this->view->room_host_id = $room_host_id;
+        $this->view->room_id = $room_id;
     }
 
     function enterAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_wait_key = "game_room_wait_" . $room_id;
         $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
@@ -192,7 +194,7 @@ class GamesController extends BaseController
 
     function startAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
@@ -240,7 +242,8 @@ class GamesController extends BaseController
 
     function exitAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
@@ -266,7 +269,7 @@ class GamesController extends BaseController
 
     function backAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_settlement_key = 'game_room_settlement_' . $room_id;
         $info = $hot_cache->hgetall($room_settlement_key);
@@ -288,6 +291,7 @@ class GamesController extends BaseController
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
+
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
@@ -312,7 +316,7 @@ class GamesController extends BaseController
         $rank2_user = \Users::findFirstById($rank2);
         $rank3_user = \Users::findFirstById($rank3);
 
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         info($this->currentUser()->id, 'room', $room_id, 'rank', $rank1, $rank2, $rank3);
 
         $hot_cache = \Rooms::getHotWriteCache();
@@ -321,6 +325,8 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_enter_key = "game_room_enter_" . $room_id;
         $room_settlement_key = 'game_room_settlement_' . $room_id;
+        $hot_cache->del($room_settlement_key);
+
 
         $user_num = $hot_cache->zcard($room_enter_key);
         $info = $hot_cache->hgetall($room_info_key);
@@ -423,7 +429,7 @@ class GamesController extends BaseController
                 $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
             }
 
-            $hot_cache->expire($room_settlement_key, 90);
+            $hot_cache->expire($room_settlement_key, 200);
         }
 
         // 解散比赛

@@ -50,7 +50,7 @@
                 room_host_id: "{{ room_host_id}}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                code: 'yuewan'
+                room_id:"{{ room_id }}"
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -91,12 +91,12 @@
                         'user_id': vm.room_host_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'code': vm.code,
+                        'room_id': vm.room_id,
                         'sid': "{{ current_user.sid }}"
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (!resp.error_code) {
-                            vm.redirectAction('/m/games/wait?code=' + vm.code + '&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
                         } else {
                             alert(resp.error_reason);
                         }
@@ -155,12 +155,12 @@
                         'user_id': vm.current_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'code': 'yuewan',
+                        'room_id': "{{ room_id }}",
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
-                            vm.redirectAction('/m/games/wait?code=yuewan&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?room_id='+vm.room_id+'&sid=' + vm.sid);
                         } else {
                             vm.can_game = true;
                             vm.error_reason = resp.error_reason;
