@@ -1730,6 +1730,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
                 if ($withdraw_history) {
                     echoLine($withdraw_history);
+                    $withdraw_history->status = WITHDRAW_STATUS_SUCCESS;
+                    $withdraw_history->update();
                 }
 
             }
