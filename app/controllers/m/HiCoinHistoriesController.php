@@ -44,15 +44,8 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $user = $this->currentUser();
-            $can_use_hi_coins = $user->hi_coins;
-            $wait_auth_with_draw_amount = \WithdrawHistories::findWaitWithDrawAmount($user->id);
 
-            //等待提现的金额
-            if ($wait_auth_with_draw_amount > 0) {
-                $can_use_hi_coins -= $wait_auth_with_draw_amount;
-            }
-
-            if ($can_use_hi_coins < $hi_coins) {
+            if ($user->getCanUseHiCoins() < $hi_coins) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 

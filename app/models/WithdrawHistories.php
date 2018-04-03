@@ -109,13 +109,11 @@ class WithdrawHistories extends BaseModel
         $user_name = fetch($opts, 'name');
         $alipay_account = fetch($opts, 'account');
 
-        $max_amount = $user->withdraw_amount;
-
         if (self::hasWaitedHistoryByUser($user)) {
             return [ERROR_CODE_FAIL, '一周只能提现一次哦'];
         }
-
-        if ($amount > $max_amount) {
+        
+        if ($user->getCanUseHiCoins() < $amount) {
             return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
         }
 
