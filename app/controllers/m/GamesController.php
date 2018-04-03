@@ -164,7 +164,7 @@ class GamesController extends BaseController
         $data['can_enter'] = intval($can_enter);
 
         //扣除入场费
-        if ($can_enter) {
+        if ($can_enter && $room_host_id != $this->currentUser()->id) {
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
                 $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
@@ -274,6 +274,8 @@ class GamesController extends BaseController
         $amount = fetch($info, 'amount');
         $user_num = fetch($info, 'user_num');
         $user_ids = [fetch($info, 'rank1') => fetch($info, 'rank1_amount')];
+        info($info);
+
         if (fetch($info, 'rank2')) {
             $user_ids[fetch($info, 'rank2')] = fetch($info, 'rank2_amount');
         }
@@ -291,7 +293,7 @@ class GamesController extends BaseController
         $this->view->amount = $amount;
         $this->view->user_num = $user_num;
         $this->view->total_amount = $amount * $user_num;
-        $this->view->users = json_encode($user_datas,JSON_UNESCAPED_UNICODE);
+        $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
 
     function notifyAction()
