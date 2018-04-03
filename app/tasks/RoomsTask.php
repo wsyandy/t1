@@ -612,7 +612,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if ($hot_room->getUserNum() <= $least_user_num) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
-                info("room_seat_is_null", $hot_room->id);
+                info("room_user_is_few_null", $hot_room->id);
                 continue;
             }
 
@@ -668,7 +668,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
         }
-        
+
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
