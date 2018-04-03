@@ -69,7 +69,7 @@ class RoomStatsController extends BaseController
     function dayStatAction()
     {
         $date = $this->params('date', date('Y-m-d'));
-        $room_id = $this->params('id');
+        $room_id = $this->params('room_id');
         $user_id = $this->params('user_id');
         $stat_at = date("Ymd", strtotime($date));
 
