@@ -166,8 +166,14 @@ class HiCoinHistories extends BaseModel
             $hi_coin_history->withdraw_history_id = $withdraw_history_id;
             $amount = $withdraw_history->amount;
             $hi_coin_history->hi_coins = $amount;
-            $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
-            $hi_coin_history->remark = "提现金额:" . $amount;
+
+            if (WITHDRAW_STATUS_FAIL == $withdraw_history->status) {
+                $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW_RETURN; //提现失败返款
+                $hi_coin_history->remark = "提现失败返还金额:" . $amount;
+            } else {
+                $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
+                $hi_coin_history->remark = "提现金额:" . $amount;
+            }
         }
 
         if ($operator_id) {
