@@ -249,10 +249,10 @@ class Users extends BaseModel
             $db->zincrby(Users::generateStatRoomTimeKey($action), $duration, $this->id);
             $db->zincrby(Users::generateStatRoomTimeKey("total"), $duration, $this->id);
 
-            $current_room_id = $this->curent_room_id;
+            $current_room_id = $this->current_room_id;
 
             if ($current_room_id) {
-                $current_room_id = $this->was('curent_room_id');
+                $current_room_id = $this->was('current_room_id');
             }
 
             Rooms::delay()->statDayUserTime($action, $current_room_id, $duration);
