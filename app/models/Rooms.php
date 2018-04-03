@@ -1710,7 +1710,7 @@ class Rooms extends BaseModel
     function getDayEnterRoomUser($stat_at)
     {
         $room_db = Rooms::getRoomDb();
-        return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
+        return $room_db->zcard($this->generateStatEnterRoomUserDayKey($stat_at));
     }
 
 
