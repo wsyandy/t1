@@ -46,7 +46,7 @@ class WithdrawHistories extends BaseModel
                     //HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
                 }
 
-                Chats::sendTextSystemMessage($this->user_id, $content);
+                //Chats::sendTextSystemMessage($this->user_id, $content);
             }
 
             if (WITHDRAW_TYPE_UNION == $this->type) {
