@@ -138,6 +138,7 @@
                 pay_type_text: "",
                 amount: "{{ amount }}",
                 room_host_id: "{{ room_host_id}}",
+                room_host_nickname:"{{ room_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 can_game: false,
