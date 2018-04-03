@@ -608,6 +608,17 @@ trait UserAttrs
         }
     }
 
+    function getHiCoinText()
+    {
+        $hi_coins = $this->hi_coins;
+
+        if (!$hi_coins) {
+            return 0;
+        } else {
+            return intval($hi_coins * 100) / 100;
+        }
+    }
+
     public function lastLoginAt()
     {
         if (!$this->last_at) {
