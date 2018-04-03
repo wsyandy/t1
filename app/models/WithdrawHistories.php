@@ -43,7 +43,7 @@ class WithdrawHistories extends BaseModel
                         $content = $this->error_reason;
                     }
 
-                    HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
+                    //HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
                 }
 
                 Chats::sendTextSystemMessage($this->user_id, $content);
@@ -127,7 +127,7 @@ class WithdrawHistories extends BaseModel
         $history->type = WITHDRAW_TYPE_USER;
         $history->save();
 
-        HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
+        //HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
 
         return [ERROR_CODE_SUCCESS, '受理中'];
     }
