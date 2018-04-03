@@ -61,37 +61,28 @@ class GoldHistories extends BaseModel
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
 
-
         foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id'] as $column) {
 
             $value = fetch($opts, $column);
-
             if ($value) {
                 $gold_history->$column = $value;
             }
         }
 
-
         if ($gold_history->save()) {
-//            $stat_attrs = array_merge($user->getStatAttrs(), ['add_value' => $amount]);
-
+            $stat_attrs = array_merge($user->getStatAttrs(), ['add_value' => $amount]);
             //消耗金币统计
-//            if($gold_history->isCostGold()){
-//                \Stats::delay()->record('user', 'gold_cost', $stat_attrs);
-//                return true;
-//            }
-//
-//            //系统赠送金币统计
-//            if($gold_history->isSystemGive()){
-//                \Stats::delay()->record('user', 'gold_give', $stat_attrs);
-//            }
-//
-//            //获取金币统计
-//            \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
+            if ($gold_history->isCostGold()) {
+                \Stats::delay()->record('user', 'gold_cost', $stat_attrs);
+            } else {
+                //获取金币统计
+                \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
+            }
+
             return true;
         }
 
-        info($user->sid, $fee_type, $amount, $opts);
+        info('Exce', $user->sid, $fee_type, $amount, $opts);
         return false;
     }
 
@@ -109,7 +100,6 @@ class GoldHistories extends BaseModel
             'order' => 'id desc']);
 
         $old_balance = intval($this->balance);
-
         if ($old_gold_history) {
             $old_balance = intval($old_gold_history->balance);
         }
