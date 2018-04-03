@@ -187,8 +187,10 @@ class WithdrawHistories extends BaseModel
     {
         $withdraw_history = WithdrawHistories::findFirst(
             [
-                'conditions' => 'user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end:',
-                'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => beginOfWeek(), 'end' => endOfWeek()],
+                'conditions' => '(user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end:) or '
+                    . ' (status = :status:)',
+                'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => beginOfWeek(), 'end' => endOfWeek(),
+                    'status' => WITHDRAW_STATUS_WAIT],
                 'order' => 'id desc'
             ]
         );
@@ -236,7 +238,7 @@ class WithdrawHistories extends BaseModel
         }
     }
 
-    static function findLastWaitWithDrawHistory($user_id)
+    static function findWaitWithDrawAmount($user_id)
     {
         $conditions = [
             'conditions' => 'user_id = :user_id: and status = :status:',
@@ -244,7 +246,15 @@ class WithdrawHistories extends BaseModel
             'order' => 'id desc'
         ];
 
-        return WithdrawHistories::findFirst($conditions);
+        $amount = 0;
+
+        $withdraw_histories = WithdrawHistories::find($conditions);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $amount += $withdraw_history->amount;
+        }
+
+        return $amount;
     }
 
 

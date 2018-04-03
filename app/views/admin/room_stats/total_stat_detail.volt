@@ -1,4 +1,4 @@
-<form method="get" action="/admin/rooms/earnings_detail" name="search_form" autocomplete="off">
+<form method="get" action="/admin/room_stats/total_stat_detail" name="search_form" autocomplete="off">
     <label for="year">年份</label>
     <select name="year" id="year">
         {{ options(year_array,year) }}
