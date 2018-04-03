@@ -59,7 +59,7 @@ class HiCoinHistoriesController extends BaseController
             $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user->id, $opts);
 
             info('hi_coin_history', $hi_coin_history->id);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->hi_coins]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->getWithdrawAmount()]);
         }
 
     }
