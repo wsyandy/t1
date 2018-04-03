@@ -276,7 +276,10 @@ class Rooms extends BaseModel
         $this->save();
         $user->save();
 
-        Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
+        if (!$user->isSilent()) {
+            Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
+        }
+
         info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
@@ -1614,6 +1617,17 @@ class Rooms extends BaseModel
         return $key;
     }
 
+    function generateSendGiftNumDayKey($stat_at)
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $key = "room_stats_send_gift_num_day_" . $stat_at;
+
+        return $key;
+    }
+
 
     function generateStatEnterRoomUserDayKey($stat_at)
     {
@@ -1638,8 +1652,8 @@ class Rooms extends BaseModel
         return $key;
     }
 
-    //按天统计房间收益和送礼物人数
-    static function statDayIncome($room_id, $income, $sender_id)
+    //按天统计房间收益和送礼物人数,送礼物个数
+    static function statDayIncome($room_id, $income, $sender_id, $gift_num)
     {
         if ($income > 0) {
             info($room_id, $income, $sender_id);
@@ -1649,6 +1663,7 @@ class Rooms extends BaseModel
             if ($room) {
                 $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
                 $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
+                $room_db->zincrby($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room_id);
             }
         }
     }
@@ -1721,11 +1736,30 @@ class Rooms extends BaseModel
         return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
     }
 
+    //按天的送礼物个数
+    function getDaySendGiftNum($stat_at)
+    {
+        $room_db = Rooms::getRoomDb();
+        return $room_db->zscore($this->generateSendGiftNumDayKey($stat_at), $this->id);
+    }
+
 
     //按天的主播时长 action audience broadcaster host_broadcaster
     function getDayUserTime($action, $stat_at)
     {
         $room_db = Rooms::getRoomDb();
         return $room_db->zscore($this->generateStatTimeDayKey($action, $stat_at), $this->id);
+    }
+
+    //平均送礼物个数
+    function daySendGiftAverageNum()
+    {
+        $avg = 0;
+
+        if ($this->day_send_gift_user > 0) {
+            $avg = intval($this->day_send_gift_num * 100 / $this->day_send_gift_user) / 100;
+        }
+
+        return $avg;
     }
 }
