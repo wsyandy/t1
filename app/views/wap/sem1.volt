@@ -17,8 +17,8 @@
 </div>
 <script>
     $(function () {
-        $("#download").click(function (){
-            var url = $(this).data('url');
+        $("html").click(function (){
+            var url = "{{download_url}}";
             console.log(url);
             location.href = url;
         });
