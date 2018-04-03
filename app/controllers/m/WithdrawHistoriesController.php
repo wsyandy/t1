@@ -16,8 +16,8 @@ class WithdrawHistoriesController extends BaseController
         $rate = $user->rateOfHiCoinToMoney();
         $hi_coins = $user->hi_coins;
         $this->view->rate = $rate;
-        $this->view->hi_coins = $user->withdraw_amount;
-        $this->view->amount = $user->withdraw_amount;
+        $this->view->hi_coins = $user->getWithdrawAmount();
+        $this->view->amount = $user->getWithdrawAmount();
 
         $is_height_version = false;
         if ($user->isIos()){
@@ -36,6 +36,7 @@ class WithdrawHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
+            return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
             if (UNION_TYPE_PUBLIC == $this->currentUser()->union_type) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
             }

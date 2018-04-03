@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1000957;
+        $user_id = 1009518;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()
@@ -1700,6 +1700,31 @@ class MeiTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(1010438);
         echoLine($user->union_id);
         echoLine($union);
+
+
+        echoLine(date("Ymd H:i:s", beginOfWeek()));
+        echoLine(date("Ymd H:i:s", endOfWeek()));
+
+        $withdraw_history = WithdrawHistories::findFirstById(71);
+        $withdraw_history->delete();
+
+        $withdraw_histories = WithdrawHistories::find(
+            [
+                'conditions' => 'created_at >= :start: and created_at <= :end:',
+                'bind' => ['start' => beginOfDay(), 'end' => endOfDay()]
+            ]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+
+            if ($withdraw_history) {
+                if ($withdraw_history->amount > $withdraw_history->user->hi_coins) {
+                    echoLine($withdraw_history->id, $withdraw_history->amount, $withdraw_history->user->hi_coins);
+                    $withdraw_history->status = WITHDRAW_STATUS_FAIL;
+                    $withdraw_history->save();
+                }
+            }
+        }
+
 
     }
 
