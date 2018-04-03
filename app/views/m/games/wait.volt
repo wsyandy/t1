@@ -71,12 +71,14 @@
     var vm = new XVue(opts);
 
     function refreshUser() {
+        console.log('refreshUser');
+
         var data = {
             'code': vm.code,
             'sid': vm.sid
         };
         $.authPost('/m/games/enter', data, function (resp) {
-            if (!resp.error_code) {
+            if (resp.error_code == 0) {
                 vm.users = resp.users;
                 vm.can_enter = resp.can_enter;
                 if (resp.can_enter == 1) {
@@ -87,13 +89,13 @@
         });
     }
 
+    interval_time = setInterval(refreshUser, 1000);
+
     $(function () {
         if (vm.current_user_id != vm.room_host_id) {
-            vm.button_text = '请稍后。。。。。';
+            vm.button_text = '等待进入游戏，请稍后...';
         }
-        interval_time = setInterval(function () {
-            refreshUser()
-        }, 1000);
-        refreshUser()
+
+        refreshUser();
     });
 </script>
