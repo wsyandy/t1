@@ -111,7 +111,7 @@
 
     var opts = {
         data: {
-            hi_coins: {{ user.hi_coins }},
+            hi_coins: {{ user.getCanUseHiCoins() }},
             sid: '{{ sid }}',
             code: '{{ code }}',
             hi_coin_diamond_rate:{{ hi_coin_diamond_rate }},
