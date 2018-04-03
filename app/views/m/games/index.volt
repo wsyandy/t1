@@ -139,6 +139,7 @@
                 pay_type_text: "",
                 amount: "{{ amount }}",
                 room_host_id: "{{ room_host_id }}",
+                'room_id': "{{ room_id }}",
                 room_host_nickname: "{{ room_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
@@ -157,7 +158,7 @@
                         'user_id': vm.current_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'room_id': "{{ room_id }}",
+                        'room_id': vm.room_id,
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
