@@ -73,6 +73,7 @@ class GamesController extends BaseController
     // 提交入场费
     function feeAction()
     {
+        info($this->params());
         $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
@@ -117,7 +118,7 @@ class GamesController extends BaseController
 
     function waitAction()
     {
-
+        info($this->params());
         $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
@@ -152,6 +153,7 @@ class GamesController extends BaseController
 
     function enterAction()
     {
+        info($this->params());
         $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_wait_key = "game_room_wait_" . $room_id;
@@ -206,6 +208,7 @@ class GamesController extends BaseController
 
     function startAction()
     {
+        info($this->params());
         $room_id = $this->params('room_id');
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
@@ -254,7 +257,7 @@ class GamesController extends BaseController
 
     function exitAction()
     {
-
+        info($this->params());
         $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
@@ -281,6 +284,7 @@ class GamesController extends BaseController
 
     function backAction()
     {
+        info($this->params());
         $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_settlement_key = 'game_room_settlement_' . $room_id;
@@ -317,7 +321,7 @@ class GamesController extends BaseController
 
     function notifyAction()
     {
-
+        info($this->params());
         $rank1 = $this->params('rank1');
         $rank2 = $this->params('rank2');
         $rank3 = $this->params('rank3');
