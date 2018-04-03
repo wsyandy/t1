@@ -45,7 +45,7 @@
             },
             title: {
                 left: 'center',
-                text: '活跃用户数据统计',
+                text: '在线用户'
             },
             toolbox: {
                 feature: {
@@ -66,7 +66,7 @@
             },
             series: [
                 {
-                    name:'模拟数据',
+                    name:'人数',
                     type:'line',
                     smooth:true,
                     symbol: 'none',
