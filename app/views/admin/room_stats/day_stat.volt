@@ -2,6 +2,12 @@
     <label for="date">时间</label>
     <input type="text" name="date" class="form_datetime" id="date" value="{{ date }}" size="16">
 
+    <label for="user_id">房主ID</label>
+    <input type="text" name="user_id" id="user_id" value="{{ user_id }}">
+
+    <label for="room_id">房间ID</label>
+    <input type="text" name="room_id" id="room_id" value="{{ room_id }}">
+
     <button class="ui button" type="submit">搜索</button>
 </form>
 

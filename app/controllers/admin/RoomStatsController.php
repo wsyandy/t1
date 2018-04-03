@@ -69,9 +69,23 @@ class RoomStatsController extends BaseController
     function dayStatAction()
     {
         $date = $this->params('date', date('Y-m-d'));
-
+        $room_id = $this->params('id');
+        $user_id = $this->params('user_id');
         $stat_at = date("Ymd", strtotime($date));
-        $rooms = \Rooms::dayStatRooms($stat_at);
+
+        if ($user_id) {
+            $user = \Users::findFirstById($user_id);
+
+            if ($user) {
+                $room_id = $user->room_id;
+            }
+        }
+
+        if ($room_id) {
+            $rooms = \Rooms::findPagination(['conditions' => 'id = ' . $room_id], 1, 1);
+        } else {
+            $rooms = \Rooms::dayStatRooms($stat_at);
+        }
 
         foreach ($rooms as $room) {
             $room->day_income = $room->getDayIncome($stat_at);
@@ -86,5 +100,7 @@ class RoomStatsController extends BaseController
 
         $this->view->rooms = $rooms;
         $this->view->date = $date;
+        $this->view->room_id = $room_id;
+        $this->view->user_id = $user_id;
     }
 }
