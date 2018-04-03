@@ -1710,7 +1710,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $withdraw_histories = WithdrawHistories::find(
             [
-                'conditions' => 'status = :start:',
+                'conditions' => 'status = :status:',
                 'bind' => ['status' => WITHDRAW_STATUS_WAIT]
             ]);
 
