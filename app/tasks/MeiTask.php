@@ -1705,6 +1705,9 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine(date("Ymd H:i:s", beginOfWeek()));
         echoLine(date("Ymd H:i:s", endOfWeek()));
 
+        $withdraw_history = WithdrawHistories::findFirstById(70);
+        $withdraw_history->delete();
+
         $withdraw_histories = WithdrawHistories::find(
             [
                 'conditions' => 'created_at >= :start: and created_at <= :end:',
