@@ -1,4 +1,4 @@
-<form action="/admin/rooms/earnings" method="get" class="search_form" autocomplete="off" id="search_form">
+<form action="/admin/room_stats/total_stat_detail" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq"/>
 
