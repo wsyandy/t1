@@ -22,14 +22,14 @@
             <li>
                 <span @click="selectgametype(1)" :class="{ 'radio_select': 1==selectGameType }" class="radio"></span>
                 <span class="text">金币游戏</span>
-                <input type="text" placeholder="请输入数目" v-model="gold_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="gold_game_amount"/>
                 <span class="gold"></span>
             </li>
             <li>
                 <span @click="selectgametype(2)" :class="{ 'radio_select': 2==selectGameType }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
-                <input type="text" placeholder="请输入数目" v-model="diamond_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="diamond_game_amount"/>
                 <span class="masonry"></span>
             </li>
         </ul>
