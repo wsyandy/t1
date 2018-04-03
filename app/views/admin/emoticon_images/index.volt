@@ -33,3 +33,15 @@
         <td><a href="/admin/emoticon_images/edit/${emoticon_image.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for emoticon_image in emoticon_images %}
+        {% if emoticon_image.status != 1 %}
+        $("#emoticon_image_{{ emoticon_image.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
+</script>
