@@ -1695,5 +1695,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $res = writeExcel($res, $data, 'union_income_1001.xls', true);
         echoLine($res);
+
+        $union = Unions::findFirstById(1009);
+        $user = Users::findFirstById(1010438);
+        echoLine($user->union_id);
+        echoLine($union);
+
     }
 }

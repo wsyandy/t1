@@ -1625,4 +1625,24 @@ class Rooms extends BaseModel
             $room_db->zincrby($key, $time, $room_id);
         }
     }
+
+    //按天统计房间收益的id
+    static function dayStatRooms($stat_at = '')
+    {
+        if (!$stat_at) {
+            $stat_at = date('Ymd');
+        }
+
+        $room_db = Rooms::getRoomDb();
+        $key = "room_stats_income_day_" . $stat_at;
+        $total_entries = $room_db->zcard($key);
+        $per_page = $total_entries;
+        $page = 1;
+        $offset = $per_page * ($page - 1);
+        $room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+        return $pagination;
+    }
 }
