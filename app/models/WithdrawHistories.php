@@ -188,9 +188,9 @@ class WithdrawHistories extends BaseModel
         $withdraw_history = WithdrawHistories::findFirst(
             [
                 'conditions' => '(user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end:) or '
-                    . ' (status = :status:)',
+                    . ' (status = :status: and user_id = :user_id1:)',
                 'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => beginOfWeek(), 'end' => endOfWeek(),
-                    'status' => WITHDRAW_STATUS_WAIT],
+                    'status' => WITHDRAW_STATUS_WAIT, 'user_id1' => $user->id],
                 'order' => 'id desc'
             ]
         );
