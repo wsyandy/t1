@@ -68,6 +68,8 @@ class RoomStatsController extends BaseController
 
     function dayStatAction()
     {
-
+        $stat_at = $this->params('stat_at', date('Y-m-d'));
+        $rooms = \Rooms::dayStatRooms($stat_at);
+        $this->view->rooms = $rooms;
     }
 }
