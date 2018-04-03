@@ -138,12 +138,15 @@ class GamesController extends BaseController
         }
 
         info($this->currentUser()->id, 'url', $url);
+        $product_channel = $this->currentProductChannel();
+        $code = $product_channel->code;
 
         $user = $this->currentUser();
         $this->view->url = $url;
         $this->view->current_user = $user;
         $this->view->room_host_id = $room_host_id;
         $this->view->room_id = $room_id;
+        $this->view->code = $code;
     }
 
     function enterAction()
@@ -306,7 +309,7 @@ class GamesController extends BaseController
         $this->view->user_num = $user_num;
         $this->view->total_amount = $amount * $user_num;
         $this->view->back_url = 'app://home';
-        $this->view->users = json_encode($user_datas,JSON_UNESCAPED_UNICODE);
+        $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
 
     function notifyAction()
