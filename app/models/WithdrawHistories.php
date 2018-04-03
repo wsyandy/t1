@@ -236,7 +236,7 @@ class WithdrawHistories extends BaseModel
         }
     }
 
-    static function findLastWaitWithDrawHistory($user_id)
+    static function findWaitWithDrawAmount($user_id)
     {
         $conditions = [
             'conditions' => 'user_id = :user_id: and status = :status:',
@@ -244,7 +244,15 @@ class WithdrawHistories extends BaseModel
             'order' => 'id desc'
         ];
 
-        return WithdrawHistories::findFirst($conditions);
+        $amount = 0;
+
+        $withdraw_histories = WithdrawHistories::find($conditions);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $amount += $withdraw_history->amount;
+        }
+
+        return $amount;
     }
 
 
