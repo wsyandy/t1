@@ -1722,6 +1722,18 @@ class MeiTask extends \Phalcon\Cli\Task
             }
         }
 
+        $hi_coin_histories = HiCoinHistories::find(['conditions' => 'withdraw_history_id > 0']);
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            if ($hi_coin_history->withdraw_history_id) {
+                $withdraw_history = WithdrawHistories::findFirstById($hi_coin_history->withdraw_history_id);
+
+                if ($withdraw_history) {
+                    echoLine($withdraw_history);
+                }
+
+            }
+        }
 
     }
 }
