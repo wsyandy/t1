@@ -251,7 +251,7 @@ class Users extends BaseModel
 
             $current_room_id = $this->current_room_id;
 
-            if ($current_room_id) {
+            if (!$current_room_id) {
                 $current_room_id = $this->was('current_room_id');
             }
 
