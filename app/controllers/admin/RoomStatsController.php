@@ -100,7 +100,7 @@ class RoomStatsController extends BaseController
 
         $this->view->rooms = $rooms;
         $this->view->date = $date;
-        $this->view->room_id = $room_id;
-        $this->view->user_id = $user_id;
+        $this->view->room_id = $room_id ? $room_id : '';
+        $this->view->user_id = $user_id ? $user_id : '';
     }
 }
