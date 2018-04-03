@@ -26,7 +26,7 @@
     var opts = {
         data: {
             sid: "{{ current_user.sid }}",
-            code: 'yuewan',
+            code: "{{ code }}",
             users: [],
             button_text: '开始游戏',
             can_enter: 0,
