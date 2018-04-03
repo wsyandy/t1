@@ -286,12 +286,12 @@ class GamesController extends BaseController
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
-
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
+        $this->view->user_num = $user_num;
         $this->view->total_amount = $amount * $user_num;
-        $this->view->users = $user_datas;
+        $this->view->users = json_encode($user_datas,JSON_UNESCAPED_UNICODE);
     }
 
     function notifyAction()
