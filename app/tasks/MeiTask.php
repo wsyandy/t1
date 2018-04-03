@@ -1710,18 +1710,15 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $withdraw_histories = WithdrawHistories::find(
             [
-                'conditions' => 'created_at >= :start: and created_at <= :end:',
-                'bind' => ['start' => beginOfDay(), 'end' => endOfDay()]
+                'conditions' => 'status = :start:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT]
             ]);
 
         foreach ($withdraw_histories as $withdraw_history) {
 
             if ($withdraw_history) {
-                if ($withdraw_history->amount > $withdraw_history->user->hi_coins) {
-                    echoLine($withdraw_history->id, $withdraw_history->amount, $withdraw_history->user->hi_coins);
-                    $withdraw_history->status = WITHDRAW_STATUS_FAIL;
-                    $withdraw_history->save();
-                }
+                $withdraw_history->status = WITHDRAW_STATUS_FAIL;
+                $withdraw_history->save();
             }
         }
 
