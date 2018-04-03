@@ -45,7 +45,7 @@
             },
             title: {
                 left: 'center',
-                text: '活跃用户数据统计',
+                text: '在线用户'
             },
             toolbox: {
                 feature: {
