@@ -299,7 +299,7 @@ class GamesController extends BaseController
         if(fetch($info, 'rank1')){
             $user_ids[fetch($info, 'rank1')] = fetch($info, 'rank1_amount');
         }
-        
+
         //{"pay_type":"diamond","amount":"1","rank1":"257","rank1_amount":"2","rank2":"6","rank2_amount":"1"}
 
         if (fetch($info, 'rank2')) {
