@@ -28,12 +28,12 @@ class GamesController extends BaseController
         }
 
         $hot_cache->zadd($room_key, time(), $current_user_id);
-        $num = $hot_cache->zcard($room_key);
+        $user_num = $hot_cache->zcard($room_key);
 
-        info('cache', $room_key, intval($this->currentUser()->id), $num);
+        info('cache', $room_key, $this->currentUser()->id, $user_num);
 
         // 发起者必须是主播
-        if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
+        if ($user_num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
             $room_host_id = $this->currentUser()->id;
@@ -47,12 +47,20 @@ class GamesController extends BaseController
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
+            // 修复数据
+            if(!$pay_type && $user_num){
+                $hot_cache->del($room_key);
+                $hot_cache->del($room_wait_key);
+                $hot_cache->del($room_info_key);
+            }
         }
 
+        $room_host_user = \Users::findFirstById($room_host_id);
         info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
+        $this->view->room_host_nickname = $room_host_user->nickname;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
         $this->view->room_id = $room_id;
