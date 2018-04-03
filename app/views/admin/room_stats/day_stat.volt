@@ -6,7 +6,7 @@
 </form>
 
 {% macro user_info(room) %}
-    用户ID: {{ room.user_id }}
+    用户ID: {{ room.user_id }}<br/>
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
     {% endif %}
@@ -14,7 +14,7 @@
 
 {{ simple_table(rooms, [
     '房间ID': 'id', '名称': 'name', '房主信息':"user_info", '流水':'day_income','进入房间人数':'day_enter_room_user','送礼物人数':'day_send_gift_user',
-    '房主时长':'day_host_broadcaster_time','主播时长':'day_broadcaster_time','旁听时长':'day_audience_time'
+    '房主时长':'day_host_broadcaster_time_text','主播时长':'day_broadcaster_time_text','旁听时长':'day_audience_time_text'
 ]) }}
 
 <script type="text/javascript">
