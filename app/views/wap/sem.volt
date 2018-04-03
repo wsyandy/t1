@@ -10,7 +10,7 @@
 </head>
 <body>
 <img class="bg" src="/wap/images/bg.png" alt="">
-<div class="expand_hi">
+<div class="expand_hi" id="download" data-url="{{download_url}}">
     <div class="expand_head">
         <img  class="expand_logo" src="/wap/images/logo.png" alt="">
         <div class="expand_head_text">
@@ -60,17 +60,17 @@
         <img  class="expand_right_3_img" src="/wap/images/expand_right_3.png" alt="">
     </div>
 
-    <div class="btn" id="download" data-url="{{download_url}}">
+    <div class="btn">
         <img class="btn_bg" src="/wap/images/btn_bg.png" alt="">
         <span class="btn_txt">连麦互聊</span>
     </div>
 </div>
 <script>
     $(function () {
-       $("#download").click(function (){
-           var url = $(this).data('url');
-           location.href = url;
-       });
+        $("#download").click(function (){
+            var url = $(this).data('url');
+            location.href = url;
+        });
     });
 </script>
 </body>
