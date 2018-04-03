@@ -33,9 +33,9 @@ class ActivitiesController extends BaseController
             $gift_2 = \Gifts::findFirstById(49);
             $gift_3 = \Gifts::findFirstById(52);
         } else {
-            $gift_1 = \Gifts::findFirstById(1);
-            $gift_2 = \Gifts::findFirstById(2);
-            $gift_3 = \Gifts::findFirstById(3);
+            $gift_1 = \Gifts::findFirstById(33);
+            $gift_2 = \Gifts::findFirstById(32);
+            $gift_3 = \Gifts::findFirstById(31);
         }
 
 
