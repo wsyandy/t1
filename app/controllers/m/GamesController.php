@@ -291,9 +291,15 @@ class GamesController extends BaseController
         $info = $hot_cache->hgetall($room_settlement_key);
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
-        $user_num = fetch($info, 'user_num');
-        $user_ids = [fetch($info, 'rank1') => fetch($info, 'rank1_amount')];
+        $total_user_num = fetch($info, 'user_num');
+
         info($info);
+
+        $user_ids = [];
+        if(fetch($info, 'rank1')){
+            $user_ids[fetch($info, 'rank1')] = fetch($info, 'rank1_amount');
+        }
+        
         //{"pay_type":"diamond","amount":"1","rank1":"257","rank1_amount":"2","rank2":"6","rank2_amount":"1"}
 
         if (fetch($info, 'rank2')) {
@@ -314,8 +320,8 @@ class GamesController extends BaseController
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
-        $this->view->user_num = $user_num;
-        $this->view->total_amount = $amount * $user_num;
+        $this->view->user_num = count($user_datas);
+        $this->view->total_amount = $amount * $total_user_num;
         $this->view->back_url = 'app://home';
         $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
