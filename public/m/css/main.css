@@ -150,7 +150,7 @@ ul,li{
 }
 .await_player_ul li{
   width: 25%;
-  flex-direction: column;
+  display: flex;
   align-items: center;
   margin-bottom:24px;
 }
