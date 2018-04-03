@@ -34,6 +34,13 @@ class GiftOrders extends BaseModel
         GIFT_ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    function afterCreate()
+    {
+        if ($this->room_id) {
+            Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id);
+        }
+    }
+
     function toDetailJson()
     {
         return [
