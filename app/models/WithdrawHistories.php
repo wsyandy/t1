@@ -43,10 +43,10 @@ class WithdrawHistories extends BaseModel
                         $content = $this->error_reason;
                     }
 
-                    //HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
+                    HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
                 }
 
-                //Chats::sendTextSystemMessage($this->user_id, $content);
+                Chats::sendTextSystemMessage($this->user_id, $content);
             }
 
             if (WITHDRAW_TYPE_UNION == $this->type) {
@@ -69,13 +69,13 @@ class WithdrawHistories extends BaseModel
 
         if (WITHDRAW_TYPE_USER == $this->type) {
 
-//            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
-//
-//                if ($this->user->hi_coins < $this->amount) {
-//                    $this->error_reason = '余额不足';
-//                    return true;
-//                }
-//            }
+            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
+
+                if ($this->user->hi_coins < $this->amount) {
+                    $this->error_reason = '余额不足';
+                    return true;
+                }
+            }
         }
 
         if (WITHDRAW_TYPE_UNION == $this->type) {
@@ -127,7 +127,7 @@ class WithdrawHistories extends BaseModel
         $history->type = WITHDRAW_TYPE_USER;
         $history->save();
 
-        //HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
+        HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
 
         return [ERROR_CODE_SUCCESS, '受理中'];
     }
