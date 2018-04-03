@@ -43,7 +43,7 @@
                     };
                     $.authPost('/m/games/start', data, function (resp) {
                         if (!resp.error_code) {
-                            location.href = vm.url;
+                            window.location.href = vm.url;
                         } else {
                             alert(resp.error_reason);
                         }
@@ -83,7 +83,7 @@
                 vm.can_enter = resp.can_enter;
                 if (resp.can_enter == 1) {
                     clearInterval(interval_time);
-                    location.href = vm.url;
+                    window.location.href = vm.url;
                 }
             }
         });

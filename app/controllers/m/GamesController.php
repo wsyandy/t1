@@ -15,6 +15,7 @@ class GamesController extends BaseController
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $current_user_id = intval($this->currentUser()->id);
         $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
@@ -22,15 +23,15 @@ class GamesController extends BaseController
         // 解散房间
         if ($cache_room_host_id == $this->currentUser()->id) {
             $hot_cache->del($room_key);
+            $hot_cache->del($room_wait_key);
             $hot_cache->del($room_info_key);
         }
 
         $hot_cache->zadd($room_key, time(), $current_user_id);
-        $user_ids = $hot_cache->zrange($room_key, 0, -1);
         $num = $hot_cache->zcard($room_key);
 
-        info('cache', $room_key, intval($this->currentUser()->id), $user_ids, $num, $cache_room_host_id);
-        
+        info('cache', $room_key, intval($this->currentUser()->id), $num, $cache_room_host_id);
+
         // 发起者必须是主播
         if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
@@ -39,6 +40,7 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
+            $hot_cache->expire($room_wait_key, 600);
         } else {
             $info = $hot_cache->hgetall($room_info_key);
             info($info);
@@ -89,6 +91,9 @@ class GamesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
+        $room_wait_key = "game_room_wait_" . $room_id;
+        $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
@@ -113,7 +118,12 @@ class GamesController extends BaseController
 
         $str = paramsToStr($body);
 
-        $url = 'https://tyt.momoyuedu.cn/?' . $str;
+        if (isDevelopmentEnv()) {
+            $url = 'http://tyt.momoyuedu.cn/?' . $str;
+        } else {
+            $url = 'https://tyt.momoyuedu.cn/?' . $str;
+        }
+
         info($this->currentUser()->id, 'url', $url);
 
         $user = $this->currentUser();
@@ -126,8 +136,8 @@ class GamesController extends BaseController
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
-        $room_key = "game_room_" . $room_id;
-        $user_ids = $hot_cache->zrange($room_key, 0, -1);
+        $room_wait_key = "game_room_wait_" . $room_id;
+        $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
         if (count($user_ids) < 1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '比赛已解散');
         }
@@ -174,7 +184,10 @@ class GamesController extends BaseController
     function startAction()
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_key = "game_room_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
+
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
         $room_host_id = fetch($info, 'room_host_id');
@@ -201,6 +214,11 @@ class GamesController extends BaseController
         $hot_cache->hset($room_info_key, 'can_enter', 1);
         $hot_cache->hset($room_info_key, 'can_enter_at', time());
 
+        // 游戏时长160秒
+        $hot_cache->expire($room_info_key, 200);
+        $hot_cache->expire($room_key, 200);
+        $hot_cache->expire($room_wait_key, 200);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
@@ -209,6 +227,7 @@ class GamesController extends BaseController
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
         $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
@@ -219,9 +238,11 @@ class GamesController extends BaseController
         if ($room_host_id == $this->currentUser()->id) {
             // 解散比赛
             $hot_cache->del($room_key);
+            $hot_cache->del($room_wait_key);
             $hot_cache->del($room_info_key);
         } else {
             $hot_cache->zrem($room_key, $this->currentUser()->id);
+            $hot_cache->zrem($room_wait_key, $this->currentUser()->id);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
