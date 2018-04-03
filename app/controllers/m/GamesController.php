@@ -294,6 +294,7 @@ class GamesController extends BaseController
         $user_num = fetch($info, 'user_num');
         $user_ids = [fetch($info, 'rank1') => fetch($info, 'rank1_amount')];
         info($info);
+        //{"pay_type":"diamond","amount":"1","rank1":"257","rank1_amount":"2","rank2":"6","rank2_amount":"1"}
 
         if (fetch($info, 'rank2')) {
             $user_ids[fetch($info, 'rank2')] = fetch($info, 'rank2_amount');
@@ -353,6 +354,7 @@ class GamesController extends BaseController
 
         info($room_info_key, $info);
 
+        $hot_cache->hset($room_settlement_key, 'user_num', $user_num);
         $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
         $hot_cache->hset($room_settlement_key, 'amount', $amount);
 
