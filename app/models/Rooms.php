@@ -1645,8 +1645,11 @@ class Rooms extends BaseModel
             info($room_id, $income, $sender_id);
             $room_db = Rooms::getRoomDb();
             $room = Rooms::findFirstById($room_id);
-            $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
-            $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
+
+            if ($room) {
+                $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
+                $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
+            }
         }
     }
 
@@ -1656,7 +1659,10 @@ class Rooms extends BaseModel
         info($user_id, $room_id);
         $room_db = Rooms::getRoomDb();
         $room = Rooms::findFirstById($room_id);
-        $room_db->zadd($room->generateStatEnterRoomUserDayKey(date("Ymd")), time(), $user_id);
+
+        if ($room) {
+            $room_db->zadd($room->generateStatEnterRoomUserDayKey(date("Ymd")), time(), $user_id);
+        }
     }
 
     //按天统计房间用户活跃时长
@@ -1666,7 +1672,10 @@ class Rooms extends BaseModel
             info($action, $room_id, $time);
             $room_db = Rooms::getRoomDb();
             $room = Rooms::findFirstById($room_id);
-            $room_db->zincrby($room->generateStatTimeDayKey($action, date("Ymd")), $time, $room_id);
+
+            if ($room) {
+                $room_db->zincrby($room->generateStatTimeDayKey($action, date("Ymd")), $time, $room_id);
+            }
         }
     }
 
@@ -1701,7 +1710,7 @@ class Rooms extends BaseModel
     function getDayEnterRoomUser($stat_at)
     {
         $room_db = Rooms::getRoomDb();
-        return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
+        return $room_db->zcard($this->generateStatEnterRoomUserDayKey($stat_at));
     }
 
 
