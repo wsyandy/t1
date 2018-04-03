@@ -1311,15 +1311,13 @@ class Rooms extends BaseModel
     function getDayAmount($start_at, $end_at)
     {
         $cond = [
-            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at:",
-            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at]
+            'conditions' => "room_id = :room_id: and status = :status: and created_at >=:start_at: and created_at <=:end_at: and pay_type = :pay_type:",
+            'bind' => ['room_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start_at' => $start_at, 'end_at' => $end_at, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+            'column' => 'amount'
         ];
-        $gift_orders = GiftOrders::find($cond);
-        $diamonds = 0;
-        foreach ($gift_orders as $gift_order) {
-            $diamonds += $gift_order->amount;
-        }
-        return $diamonds;
+
+        $amount = GiftOrders::sum($cond);
+        return $amount;
     }
 
     function statIncome($amount)
