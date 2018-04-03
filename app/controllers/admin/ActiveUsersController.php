@@ -7,16 +7,16 @@ class ActiveUsersController extends BaseController
     function dayRankListAction()
     {
         $start_at = $this->params('start_at', date('Y-m-d', beginOfDay()));
-        $start_at = beginOfDay(strtotime($start_at));
-        $end_at = endOfDay($start_at);
+        $begin_at = beginOfDay(strtotime($start_at));
+        $end_at = endOfDay($begin_at);
         $active_user_number = [];
         $stat_db = \Stats::getStatDb();
 
-        for ($start_at_dot = $start_at; $start_at_dot <= $end_at; $start_at_dot += 600) {
-            $key = 'online_user_list_' . date('YmdHi', $start_at_dot);
+        for ($begin_at_dot = $begin_at; $begin_at_dot <= $end_at; $begin_at_dot += 600) {
+            $key = 'online_user_list_' . date('YmdHi', $begin_at_dot);
             $portion_active_user_number = $stat_db->zcard($key);
             info($key, $portion_active_user_number);
-            $time = date('Y-m-d H:i:s', $start_at_dot);
+            $time = date('Y-m-d H:i:s', $begin_at_dot);
             $active_user_number[$time] = intval($portion_active_user_number);
         }
 
