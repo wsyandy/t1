@@ -1,0 +1,1 @@
+ALTER TABLE rooms add COLUMN top INTEGER ;
