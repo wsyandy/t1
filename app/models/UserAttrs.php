@@ -797,13 +797,6 @@ trait UserAttrs
             }
         }
 
-        if ($this->mobile == '15655961171') {
-            if (array_key_exists('man', $tags)) {
-                unset($tags['man']);
-            }
-            $tags[] = ['color' => '#83A5FF', 'text' => '那个男人'];
-        }
-
         if (count($tags) < 2) {
             $tags[] = $tag_active;
         }

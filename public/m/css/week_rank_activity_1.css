@@ -1,0 +1,435 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+    background-image: url("../images/bg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+/*****指引******/
+
+@media only screen and (max-width: 1920px), only screen and (max-device-width: 1920px) {
+    html, body {
+        font-size: 256px;
+    }
+}
+
+@media only screen and (max-width: 1080px), only screen and (max-device-width: 1080px) {
+    html, body {
+        font-size: 144px;
+    }
+}
+
+@media only screen and (max-width: 960px), only screen and (max-device-width: 960px) {
+    html, body {
+        font-size: 128px;
+    }
+}
+
+@media only screen and (max-width: 800px), only screen and (max-device-width: 800px) {
+    html, body {
+        font-size: 106.666667px;
+    }
+}
+
+@media only screen and (max-width: 750px), only screen and (max-device-width: 750px) {
+    html, body {
+        font-size: 100px;
+    }
+}
+
+@media only screen and (max-width: 640px), only screen and (max-device-width: 640px) {
+    html, body {
+        font-size: 85.333333px;
+    }
+}
+
+@media only screen and (max-width: 600px), only screen and (max-device-width: 600px) {
+    html, body {
+        font-size: 80px;
+    }
+}
+
+@media only screen and (max-width: 540px), only screen and (max-device-width: 540px) {
+    html, body {
+        font-size: 72px;
+    }
+}
+
+@media only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    html, body {
+        font-size: 64px;
+    }
+}
+
+@media only screen and (max-width: 414px), only screen and (max-device-width: 414px) {
+    html, body {
+        font-size: 55.2px;
+    }
+}
+
+@media only screen and (max-width: 412px), only screen and (max-device-width: 412px) {
+    html, body {
+        font-size: 54.8px;
+    }
+}
+
+@media only screen and (max-width: 400px), only screen and (max-device-width: 400px) {
+    html, body {
+        font-size: 53.33333333px;
+    }
+}
+
+@media only screen and (max-width: 384px), only screen and (max-device-width: 384px) {
+    html, body {
+        font-size: 51.2px;
+    }
+}
+
+@media only screen and (max-width: 375px), only screen and (max-device-width: 375px) {
+    html, body {
+        font-size: 50px;
+    }
+}
+
+@media only screen and (max-width: 360px), only screen and (max-device-width: 360px) {
+    html, body {
+        font-size: 47.8px;
+    }
+}
+
+@media only screen and (max-width: 320px), only screen and (max-device-width: 320px) {
+    html, body {
+        font-size: 42.4px;
+    }
+
+    .voice_list ul li {
+        font-family: PingFangSC-Regular;
+        font-size: 0.26rem;
+        color: rgba(255, 255, 255, 0.76);
+        letter-spacing: 0;
+        padding: 0.05rem;
+    }
+
+}
+
+@media only screen and (max-width: 240px), only screen and (max-device-width: 240px) {
+    html, body {
+        font-size: 32px;
+    }
+}
+
+.none {
+    display: none;
+}
+
+.voice_box {
+    width: 100%;
+    padding: 4.2rem 0.3rem 0.3rem 0.3rem;;
+
+}
+
+.voice_list {
+    width: 6.9rem;
+    height: 4.88rem;
+    background-image: url("../images/list_bg.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    margin-bottom: 0.7rem;
+    padding-top: 0.08rem;
+}
+
+.voice_title {
+    width: 3.42rem;
+    height: 0.68rem;
+    line-height: 0.68rem;
+    text-align: center;
+    font-size: 0.32rem;
+    color: #FFFFFF;
+    margin: 0 auto;
+
+}
+
+.voice_list ul {
+    padding: 0.3rem;
+}
+
+.voice_list ul li {
+    font-family: PingFangSC-Regular;
+    font-size: 0.26rem;
+    line-height: 0.42rem;
+    color: rgba(255, 255, 255, 0.76);
+    letter-spacing: 0;
+    padding: 0.1rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.voice_ico {
+    width: 0.28rem;
+    height: 0.36rem;
+}
+
+.table {
+    width: 100%;
+    padding-top: 0.3rem;
+
+}
+
+.table tr td {
+    text-align: center;
+    font-size: 0.34rem;
+    color: rgba(255, 255, 255, 0.80);
+    padding: 0.2rem;
+    position: relative;
+    font-family: PingFangSC-Medium;
+}
+
+.table tr td .line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2px;
+    height: 0.3rem;
+    margin-top: -0.15rem;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.table .title td {
+    color: #FFFFFF;
+}
+
+@media only screen and (max-width: 320px), only screen and (max-device-width: 320px) {
+
+    .voice_list ul li {
+        padding: 0.05rem;
+    }
+
+}
+
+.award_text {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.award_text h3 {
+    font-size: 0.34rem;
+    color: #FFFFFF;
+}
+
+.award_text p {
+    font-size: 0.26rem;
+    color: #FFFFFF;
+    margin-top: 0.15rem;
+    opacity: 0.7;
+}
+
+.last_week_title {
+    margin-top: 1rem;
+}
+
+.last_week_title h3 {
+    width: 3.84rem;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    background: url(../images/last_week_bg.png) no-repeat;
+    background-size: 100%;
+    margin: 0 auto;
+    font-size: 0.42rem;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.last_week_title p {
+    font-size: 0.28rem;
+    color: rgba(255, 255, 255, 0.50);
+    text-align: center;
+    margin-top: 0.2rem;
+}
+
+.week_wrap {
+    margin-top: 0.6rem;
+}
+
+.week_wrap ul {
+    width: 6.9rem;
+    overflow: hidden;
+}
+
+.week_wrap ul li {
+    list-style: none;
+    float: left;
+    cursor: pointer;
+    width: 3.45rem;
+    height: 0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 0.32rem;
+    background: url(../images/week_activity_select.png) no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}
+
+.week_wrap .li_bg {
+    background: url(../images/week_activity_selected.png) no-repeat !important;
+    background-size: 100% !important;
+}
+
+.title_size {
+    font-size: 0.28rem !important;
+}
+
+.week_table {
+    width: 6.9rem;
+    height: 3.8rem;
+    background: url(../images/week_bg.png) no-repeat;
+    background-size: 100%;
+}
+
+.week_table tr td {
+    color: #FFFFFF;
+    font-size: 0.32rem;
+}
+
+.week_table .title_size {
+    color: rgba(255, 255, 255, 0.60);
+}
+
+.week_tr_title {
+    opacity: 0.6;
+    font-size: 0.28rem;
+    color: #FFFFFF;
+}
+
+.top_prize {
+    width: 6.9rem;
+    height: 3rem;
+    margin-top: 0.3rem;
+    background: url(../images/prize_bg.png) no-repeat;
+    background-size: 100%;
+    position: relative;
+}
+
+.top_prize .prize_title {
+    position: absolute;
+    width: 2.4rem;
+    height: 0.64rem;
+    background: url(../images/prize_title.png) no-repeat;
+    background-size: 100%;
+    font-size: 0.34rem;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 0.64rem;
+    top: 0.37rem;
+    left: -0.1rem;
+}
+
+.top_prize .prize_list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.top_prize .prize_list .left {
+    margin: 1rem 0 0 0.4rem;
+}
+
+.top_prize .prize_list .left h3 {
+    font-size: 0.3rem;
+    color: #FFFFFF;
+}
+
+.top_prize .prize_list .left h3 span {
+    font-size: 0.5rem;
+}
+
+.top_prize .prize_list .left p {
+    font-size: 0.3rem;
+    color: #C735F5;
+    margin-top: 0.2rem;
+}
+
+.top_prize .prize_list .right {
+    width: 2.8rem;
+    height: 2.8rem;
+    overflow: hidden;
+    margin-top: 0.1rem;
+}
+
+.top_prize .prize_list .right img {
+    width: 2.8rem;
+}
+
+.one_prize {
+    margin-top: 0.6rem;
+}
+
+.active_text {
+    font-size: 0.26rem;
+    color: rgba(255, 255, 255, 0.50);
+    padding: 0.5rem 0 0.5rem 0;
+    line-height: 0.4rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
