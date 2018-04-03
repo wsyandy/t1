@@ -47,7 +47,8 @@
                 gold_game_amount: '',
                 amount: 0,
                 pay_type: 'free',
-                room_host_id: "{{ current_user.id }}",
+                room_host_id: "{{ room_host_id}}",
+                current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 code: 'yuewan'
             },
@@ -121,7 +122,7 @@
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
             <span>${game_status_text}</span>
-            <p>${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
+            <p v-if="pay_type_text">${pay_type_text}游戏，${ pay_amount }${pay_type_text}</p>
         </div>
         <div class="select_game_button">
             <button @click="go_game()">参与游戏 GO</button>
@@ -135,10 +136,11 @@
                 pay_type: "{{ pay_type }}",
                 pay_type_text: "",
                 pay_amount: "{{ amount }}",
-                game_user_id: "{{ current_user.id }}",
+                room_host_id: "{{ room_host_id}}",
+                current_user_id: "{{ current_user.id }}",
+                sid: "{{ current_user.sid }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                sid: "{{ current_user.sid }}",
                 game_status_text: '主播已发起者游戏'
             },
             watch: {},
@@ -149,7 +151,7 @@
                         return;
                     }
                     var data = {
-                        'user_id': vm.game_user_id,
+                        'user_id': vm.current_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.pay_amount,
                         'code': 'yuewan',
