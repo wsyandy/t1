@@ -538,7 +538,7 @@ class Unions extends BaseModel
         }
 
         if ($union_history->join_at > $expire_at) {
-            return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
+            return [ERROR_CODE_FAIL, '退出家族，需要会长同意，请耐心等待'];
         }
 
         if ($db->zscore($this->generateApplyExitUsersKey(), $user->id)) {
