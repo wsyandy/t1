@@ -75,7 +75,14 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         if ($this->request->isPost()) {
-            if (\WithdrawHistories::hasWaitedHistoryByUser($user)) {
+            $wait_withdraw_history = \WithdrawHistories::waitWithdrawHistory($user);
+
+            if ($wait_withdraw_history) {
+
+                if (WITHDRAW_STATUS_WAIT == $wait_withdraw_history->status) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '您有一笔正在提现的订单,请勿重复提现');
+                }
+
                 return $this->renderJSON(ERROR_CODE_FAIL, '一周只能提现一次哦');
             } else {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
