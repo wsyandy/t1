@@ -33,8 +33,8 @@
         <td>${activity.code}</td>
         <td>${activity.start_at_text}</td>
         <td>${activity.end_at_text}</td>
-        <td><a class="modal_action" href="/admin/activities/product_channel_ids?id=${activity.id}">查看</a></td>
         <td><a class="modal_action" href="/admin/activities/platforms?id=${activity.id}">查看</a></td>
+        <td><a class="modal_action" href="/admin/activities/product_channel_ids?id=${activity.id}">查看</a></td>
         <td><a href="/admin/activities/edit/${activity.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
