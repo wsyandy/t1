@@ -555,11 +555,13 @@ class Unions extends BaseModel
         if (!$db->zscore($this->generateNewUsersKey(), $user->id)) {
             $db->zadd($this->generateNewUsersKey(), time(), $user->id);
         }
+        info($db->zscore($this->generateNewUsersKey(), $user->id));
 
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
 
-        $content = "$user->nickname" . "申请退出家族";
+        $content = "{$user->nickname}申请退出家族";
+        info($content);
         Chats::sendTextSystemMessage($this->user_id, $content);
 
         return [ERROR_CODE_SUCCESS, '操作成功'];
