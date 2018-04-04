@@ -306,3 +306,10 @@ table { border-collapse:collapse; }
   width:25px;
   height:25px;
 }
+
+.top_five {
+  font-size: 0.24rem;
+  color: #A4A4A4;
+  text-align: -webkit-left;
+  padding: 0.3rem;
+}

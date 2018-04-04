@@ -24,13 +24,16 @@
         </li>
     </ul>
 </div>
-<div class="get_text">
+
+<div class="get_btn">
+    <a href="#">提交</a>
+</div>
+
+<div class="top_five">
+    <P>提现说明：</P>
     <p>1.1Hi币=1人民币。</p>
     <p>2.Hi币金额需大于或等于50元才可以提现。</p>
     <p>3.扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。</p>
-</div>
-<div class="get_btn">
-    <a href="#">提交</a>
 </div>
 
 <div class="fudong">
