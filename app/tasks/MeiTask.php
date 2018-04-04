@@ -1850,5 +1850,11 @@ class MeiTask extends \Phalcon\Cli\Task
                 echoLine($gift_order->id, $gift_order->user_id);
             }
         }
+
+        $db = Users::getUserDb();
+        $charm_key = "qing_ming_activity_charm_list_" . 20180405 . "_" . 20180407;
+        $wealth_key = "qing_ming_activity_wealth_list_" . 20180405 . "_" . 20180407;
+        $db->zrem($charm_key, 100102);
+        $db->zrem($wealth_key, 100102);
     }
 }

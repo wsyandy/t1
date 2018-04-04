@@ -108,7 +108,7 @@
                     <tr class="week_tr_title">
                         <td>排名</td>
                         <td style="text-align:left;width:40%;">昵称／ID</td>
-                        <td>魅力值</td>
+                        <td>贡献值</td>
                     </tr>
 
                     {% for index,user in wealth_users %}
