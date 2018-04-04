@@ -1,0 +1,215 @@
+
+.login_bg{
+    /*position: fixed;*/
+    width:100%;
+    height:15.5rem;
+    background:url("../images/login_bg.png") no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+.login_envelope{
+    width:97.4%;
+    margin: 0 auto;
+    padding-bottom: .8rem;
+    background:url("../images/envelope_bg.png") no-repeat top center;
+    background-size: 100% ;
+}
+.login_slogan{
+    color: #FF5E4C;
+    text-align: center;
+    padding-top: .58rem;
+}
+.login_tit{
+    font-size: 0.34rem;
+    line-height: .51rem;
+}
+.login_rmb{
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+}
+.login_process{
+    width: 74.7%;
+    margin: auto;
+}
+.login_process ul {
+    font-size: 0.24rem;
+    display: flex;
+    flex-direction:row;
+    justify-content:  space-between;
+    align-items: center;
+    position: relative;
+}
+.login_process ul:after{
+    content: '';
+    position: absolute;
+    width: 70%;
+    left: 20%;
+    top: 0.5rem;
+    border: 0.02rem  dashed #FF5E4C;
+    z-index: 1;
+}
+.login_process ul li{
+    z-index: 10;
+}
+
+.login_process ul li img{
+    width: .9rem;
+    display: block;
+    margin: .1rem auto .2rem auto;
+    background: #fff;
+}
+
+.login_box {
+    width: 80.3%;
+    margin: 1.52rem auto 0 auto;
+}
+.login_box li{
+    color: #fff;
+    font-size: 0.24rem;
+    display: flex;
+    flex-direction:row;
+    margin-top:0.03rem;
+    justify-content: space-between;
+    align-items: center;
+}
+.login_box li img{
+    width: 0.28rem;
+    height: .44rem;
+    margin-right: 3%;
+}
+.login_box li img.inco_verify{
+    width: 0.29rem;
+    height: .33rem;
+    margin-right: 3%;
+}
+
+.login_box li img.captcha_image{
+    width: 2rem !important;
+    height: 0.70rem;
+    margin-right: 3%;
+}
+
+.login_box li{
+    margin-bottom: 0.34rem;
+}
+.login_box li .input_phone{
+    width: 100%;
+    height: .8rem;
+    font-size: .3rem;
+    border-radius: .1rem;
+    padding-left: .25rem;
+    border: 0;
+
+}
+.login_box li .input_verify{
+    width: 50%;
+    height: .8rem;
+    font-size: .3rem;
+    border-radius: .1rem;
+    padding-left: .25rem;
+    border: 0;
+    margin-right: 2.5%;
+
+}
+.login_box li .get_verify{
+    width: 50%;
+    height: .8rem;
+    line-height: .8rem;
+    font-size: .26rem;
+    border-radius: .1rem;
+    border: 0;
+    background: #B0B0B0;
+    color: #fff;
+    text-align: center;
+}
+.login_box li .wait_verify{
+
+    background: red;
+
+}
+
+.input_submit{
+    width: 80.3%;
+    height: 1.1rem;
+    line-height: 1.1rem;
+    text-align: center;
+    margin: .8rem auto 0 auto;
+    background: #FDC82C;
+    border-radius: .1rem;
+    display: block;
+    border: 0;
+    color: #fff;
+    font-size: .5rem;
+}
+.footer_text{
+    font-size: .23rem;
+    height: .4rem;
+    padding:.6rem 0;
+    color: #999999;
+    text-align: center;
+}
+.pup_apply{
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0; background:rgba(0,0,0,.6);
+    z-index: 9999;
+    display: none;  }
+.pup_code{
+    width:85.1%;
+    position: absolute;
+    top:28%;
+    left:50%;
+    text-align: center;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    color: #666;
+    padding: 10% 0;
+    background: #fff;border-radius: 5px;
+    font-size:14px ;
+    line-height: 1.5em;
+}
+.pup_img{ width: 100%;}
+.pup_img  img{ width:50%;  }
+.pup_text{
+    width: 66.7%;
+    margin: auto;
+    font-size: .36rem;
+    line-height: .54rem;
+    color: #4C4C4C;
+    padding: .2rem;
+}
+
+.pup_btn {
+    width: 80%;
+    height: 1rem;
+    line-height: 1rem;
+    margin:.2rem auto 0 auto;
+    box-sizing: border-box;
+    background: #FDC82C;
+    color: #fff; font-size: .42rem;
+    border-radius: .1rem
+}
+
+#pup_tips .pup_code{
+    top:45%;
+    left:50%;
+    padding: .2rem 0;}
+
+.product_channel_name{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    top: 0.5rem;
+    font-size: 30px;
+    color: #fc5c5d;
+
+}
