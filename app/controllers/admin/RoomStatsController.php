@@ -77,6 +77,10 @@ class RoomStatsController extends BaseController
         $begin = beginOfDay(strtotime($start_date));
         $end = endOfDay(strtotime($end_date));
 
+        if ($end - $begin > 31 * 86400) {
+            echo "时间跨度不能超过一个月";
+            return false;
+        }
 
         $stat_at = date("Ymd", strtotime($start_date));
 
