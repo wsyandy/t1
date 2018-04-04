@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/withdraw_histories1.css', '/m/css/pop.css') }}
+{{ theme_css('/m/css/withdraw_histories.css', '/m/css/pop.css') }}
 {{ block_end() }}
 
 <div class="get_money">
