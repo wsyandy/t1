@@ -550,6 +550,11 @@ class Unions extends BaseModel
             $union_history->save();
         }
 
+        //申请退出记录
+        if (!$db->zscore($this->generateNewUsersKey(), $user->id)) {
+            $db->zadd($this->generateNewUsersKey(), time(), $user->id);
+        }
+
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
 
@@ -581,7 +586,7 @@ class Unions extends BaseModel
         $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateApplyExitUsersKey(), $user->id);
 
-        $content = "$user->nickname" . "您已经退出了家族";
+        $content = "您已经退出了{$this->name}家族";
         Chats::sendTextSystemMessage($user->id, $content);
 
         info('user_id', $user->id, 'union_id', $this->id);
