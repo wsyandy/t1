@@ -240,8 +240,8 @@ class UnionsTask extends \Phalcon\Cli\Task
         $time = 7 * 24 * 60 * 60;
 
         //7天自动退出 测试环境30分钟
-        if (isDevelopmentEnv()){
-            $time =  3 * 60;
+        if (isDevelopmentEnv()) {
+            $time = 3 * 60;
         }
 
         $start_at = time() - 60 * 7 - $time;
@@ -257,7 +257,7 @@ class UnionsTask extends \Phalcon\Cli\Task
 
             $union = $union_history->union;
             $user = $union_history->user;
-            $union->confirmExitUnion($user);
+            $union->confirmExitUnion($user, 'auto');
 
         }
 

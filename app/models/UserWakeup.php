@@ -64,8 +64,13 @@ trait UserWakeup
 
             // 删除执行的任务
             $this->deleteExecutedOfflineTaskIds();
+
             // 启动任务
             $step_time = 300;
+            if (isDevelopmentEnv()) {
+                $step_time = 1;
+            }
+
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
 
             debug("user_id:{$this->id}, {$this->platform}", $start_async_offline_task_key);
