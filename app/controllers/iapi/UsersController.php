@@ -1,6 +1,6 @@
 <?php
 
-namespace api;
+namespace iapi;
 
 class UsersController extends BaseController
 {

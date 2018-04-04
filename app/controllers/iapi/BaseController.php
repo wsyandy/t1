@@ -6,7 +6,7 @@
  * Time: 下午2:34
  */
 
-namespace api;
+namespace iapi;
 
 use ApplicationController;
 
