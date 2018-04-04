@@ -105,7 +105,7 @@ class WithdrawHistories extends BaseModel
 
     static function createWithdrawHistories($user, $opts)
     {
-        $amount = fetch($opts, 'money');
+        $amount = fetch($opts, 'amount');
         $user_name = fetch($opts, 'name');
         $alipay_account = fetch($opts, 'account');
 

@@ -44,15 +44,15 @@ class WithdrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
             }
 
-            $money = $this->params('money');
+            $amount = $this->params('amount');
             $name = $this->params('name', null);
             $account = $this->params('account', null);
 
-            if (isBlank($money) || !preg_match('/^\d+\d$/', $money) || $money < 50) {
+            if (isBlank($amount) || !preg_match('/^\d+\d$/', $amount) || $amount < 50) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
-            $money = intval($money);
+            $amount = intval($amount);
 
             if (!$name) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '姓名不能为空');
@@ -63,7 +63,7 @@ class WithdrawHistoriesController extends BaseController
             }
 
 
-            $opts = ['money' => $money, 'name' => $name, 'account' => $account];
+            $opts = ['amount' => $amount, 'name' => $name, 'account' => $account];
             list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
 
             return $this->renderJSON($error_code, $error_reason);
@@ -81,7 +81,7 @@ class WithdrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
         }
-        $this->view->amount = $user->withdraw_amount;
+        $this->view->amount = $user->getWithdrawAmount();
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
