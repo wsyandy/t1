@@ -1857,4 +1857,9 @@ class MeiTask extends \Phalcon\Cli\Task
         $db->zrem($charm_key, 100102);
         $db->zrem($wealth_key, 100102);
     }
+
+    function test1Action()
+    {
+        echoLine(valueToStr(1310200));
+    }
 }

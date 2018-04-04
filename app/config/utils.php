@@ -73,7 +73,13 @@ function valueToStr($value)
         return "$value";
     }
 
-    $myriabit = intval($value / 10000);
+    $myriabit = $value / 10000;
+
+    if ($value < 10000) {
+        return intval($myriabit * 100) / 100;
+    }
+
+    $myriabit= intval($myriabit);
     $kilobit = intval($value) / 1000 - $myriabit * 10;
     $kilobit = intval($kilobit);
     $res = $myriabit . '.' . $kilobit;
