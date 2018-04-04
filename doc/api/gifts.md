@@ -72,6 +72,7 @@
     error_code: 0/-1/-2
     error_reason: '赠送成功/失败/余额不足'
     diamond: 用户钻石余额
+    gold: 用户金币余额
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'
