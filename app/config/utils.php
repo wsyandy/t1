@@ -76,7 +76,7 @@ function valueToStr($value)
     $myriabit = $value / 10000;
 
     if ($value < 10000) {
-        return intval($myriabit * 100) / 100;
+        return intval($myriabit * 100) / 100 . "万";
     }
 
     $myriabit= intval($myriabit);
