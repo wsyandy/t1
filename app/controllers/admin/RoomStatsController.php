@@ -77,6 +77,10 @@ class RoomStatsController extends BaseController
         $begin = beginOfDay(strtotime($start_date));
         $end = endOfDay(strtotime($end_date));
 
+        if ($end - $begin > 31 * 86400) {
+            echo "时间跨度不能超过一个月";
+            return false;
+        }
 
         $stat_at = date("Ymd", strtotime($start_date));
 
@@ -124,10 +128,27 @@ class RoomStatsController extends BaseController
             $room->total_host_broadcaster_time_text = secondsToText($room->total_host_broadcaster_time);
         }
 
-        $this->view->rooms = $rooms;
+        $total_rooms = [];
+
+        foreach ($rooms as $room) {
+            $total_rooms[] = $room;
+        }
+
+        usort($total_rooms, function ($a, $b) {
+
+            if ($a->total_income == $b->total_income) {
+                return 0;
+            }
+
+            return $a->total_income > $b->total_income ? -1 : 1;
+        });
+
+        $this->view->rooms = $total_rooms;
         $this->view->start_date = $start_date;
         $this->view->end_date = $end_date;
         $this->view->union_id = $union_id;
+        $this->view->stat_fields = ['房间ID', '名称', '房主信息', '家族ID', '进入房间人数', '钻石流水', '送钻石礼物人数', '送钻石礼物个数',
+            '人均送钻石礼物个数', '房主时长', '主播时长', '旁听时长'];
         $this->view->room_id = $room_id ? $room_id : '';
         $this->view->user_id = $user_id ? $user_id : '';
     }

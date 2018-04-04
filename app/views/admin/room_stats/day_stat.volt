@@ -24,11 +24,44 @@
     {% endif %}
 {% endmacro %}
 
-{{ simple_table(rooms, [
-    '房间ID': 'id', '名称': 'name', '房主信息':"user_info",'进入房间人数':'total_enter_room_user','钻石流水':'total_income','送钻石礼物人数':'total_send_gift_user',
-    '送钻石礼物个数':'total_send_gift_num','人均送钻石礼物个数':'total_send_gift_average_num','房主时长':'total_host_broadcaster_time_text',
-    '主播时长':'total_broadcaster_time_text','旁听时长':'total_audience_time_text'
-]) }}
+{#{{ simple_table(rooms, [#}
+    {#'房间ID': 'id', '名称': 'name', '房主信息':"user_info",'进入房间人数':'total_enter_room_user','钻石流水':'total_income','送钻石礼物人数':'total_send_gift_user',#}
+    {#'送钻石礼物个数':'total_send_gift_num','人均送钻石礼物个数':'total_send_gift_average_num','房主时长':'total_host_broadcaster_time_text',#}
+    {#'主播时长':'total_broadcaster_time_text','旁听时长':'total_audience_time_text'#}
+{#]) }}#}
+
+<table class="table table-striped table-condensed">
+    <thead>
+    <tr>
+        {% for key, text in stat_fields %}
+            <th>{{ text }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+
+    <tbody id="stat_list">
+    {% for room in rooms %}
+        <tr id="{{ room.id }}" class="row_line">
+            <td>{{ room.id }}</td>
+            <td>{{ room.name }}</td>
+            <td>
+                用户ID:{{ room.user_id }}<br/>
+                姓名:{{ room.user_nickname }}<br/>
+            </td>
+            <td>{{ room.union_id }}</td>
+            <td>{{ room.total_enter_room_user }}</td>
+            <td>{{ room.total_income }}</td>
+            <td>{{ room.total_send_gift_user }}</td>
+            <td>{{ room.total_send_gift_num }}</td>
+            <td>{{ room.total_send_gift_average_num }}</td>
+            <td>{{ room.total_host_broadcaster_time_text }}</td>
+            <td>{{ room.total_broadcaster_time_text }}</td>
+            <td>{{ room.total_audience_time_text }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 
 <script type="text/javascript">
 

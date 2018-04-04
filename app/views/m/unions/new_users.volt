@@ -12,13 +12,11 @@
                 <div class="name">
                     <h3>${item.nickname}
                         <span :class="[item.sex ? 'men':'women']">${item.age}</span></h3>
-                    <p>申请加入家族</p>
+                    <p v-if="item.is_exit_union">申请 <span class="get_out_family">退出家族</span></p>
+                    <p v-else>申请 <span>加入家族</span></p>
                 </div>
-                <div class="list_agree list_selected" v-show="item.apply_status">
+                <div :class="[item.apply_status?'list_selected':'','list_agree']" @click.stop="applicationDetail(item)">
                     ${item.apply_status_text}
-                </div>
-                <div class="list_agree" v-show="!item.apply_status" @click.stop="applicationDetail(item.id)">
-                    ${item.apply_status_text }
                 </div>
             </div>
         </div>
@@ -53,9 +51,17 @@
                 });
                 this.page++;
             },
-            applicationDetail: function (id) {
-                console.log(id);
-                var url = "/m/unions/application_detail&sid=" + this.sid + "&code=" + this.code + "&user_id=" + id;
+            applicationDetail: function (item) {
+
+                if (item.apply_status) {
+                    return;
+                }
+
+                var url = "/m/unions/application_detail?sid=" + this.sid + "&code=" + this.code + "&user_id=" + item.id;
+                if (item.is_exit_union) {
+                    var url = "/m/unions/apply_exit?sid=" + this.sid + "&code=" + this.code + "&user_id=" + item.id;
+                }
+
                 location.href = url;
             }
         }

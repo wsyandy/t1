@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="new_member" v-if="is_president" @click.stop="applicationList">
-        <div class="new_member_title">新的成员</div>
+        <div class="new_member_title">家族申请</div>
         <div class="new_member_right">
             <span class="new_dot" v-show="{{ union.new_apply_num }}"></span>
             <img class="arrow-right" src="/m/images/arrow-right.png" alt="">
@@ -153,7 +153,7 @@
         <div class="close_btn" id="middle_close_btn"></div>
         <p v-show="!user_operation && is_president">确认解散家族，解散后，不可恢复！</p>
         <p v-show="user_operation && is_president">确认将${selected_user.nickname}踢出家族</p>
-        <p v-show="!is_president">确认退出家族，退出后，您在家族中的魅力值、土豪值将被清零？</p>
+        <p v-show="!is_president">退出家族，需要会长同意，请耐心等待!</p>
         <div class="middle_btn" v-show="!user_operation && is_president" id="dissolution">确认解散</div>
         <div class="middle_btn" v-show="user_operation && is_president" @click.stop="kickUser">确认踢出</div>
         <div class="middle_btn" v-show="!is_president" @click.stop="exitUnion">确认退出</div>

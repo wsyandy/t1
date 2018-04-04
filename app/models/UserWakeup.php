@@ -64,13 +64,8 @@ trait UserWakeup
 
             // 删除执行的任务
             $this->deleteExecutedOfflineTaskIds();
-
             // 启动任务
             $step_time = 300;
-            if (isDevelopmentEnv()) {
-                $step_time = 1;
-            }
-
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
 
             debug("user_id:{$this->id}, {$this->platform}", $start_async_offline_task_key);
@@ -750,8 +745,8 @@ trait UserWakeup
 
         $body = $data[mt_rand(0, 1)];
 
-        $client_url = "app://rooms/detail?id={$this->current_room_id}";
-        $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
+//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '好友上线开播提醒', 'body' => $body];
 
         $per_page = 200;
         $friend_num = $this->friendNum();
@@ -810,8 +805,8 @@ trait UserWakeup
 
         $body = $data[mt_rand(0, 1)];
 
-        $client_url = "app://rooms/detail?id={$this->current_room_id}";
-        $opts = ['title' => '关注的人开播提醒', 'body' => $body, 'client_url' => $client_url];
+//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '关注的人开播提醒', 'body' => $body];
 
         $per_page = 200;
         $followed_num = $this->followedNum();

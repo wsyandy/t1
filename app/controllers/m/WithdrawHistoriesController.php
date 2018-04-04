@@ -36,9 +36,9 @@ class WithdrawHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
-            if (isProduction()) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
-            }
+//            if (isProduction()) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
+//            }
 
             if (UNION_TYPE_PUBLIC == $this->currentUser()->union_type) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
