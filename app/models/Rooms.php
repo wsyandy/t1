@@ -1764,6 +1764,18 @@ class Rooms extends BaseModel
         return $avg;
     }
 
+    //总的平均送礼物个数
+    function totalSendGiftAverageNum()
+    {
+        $avg = 0;
+
+        if ($this->total_send_gift_user > 0) {
+            $avg = intval($this->total_send_gift_num * 100 / $this->total_send_gift_user) / 100;
+        }
+
+        return $avg;
+    }
+
     function isTop()
     {
         return STATUS_ON == $this->top;

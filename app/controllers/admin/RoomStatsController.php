@@ -98,21 +98,30 @@ class RoomStatsController extends BaseController
 
         foreach ($rooms as $room) {
 
+            $room->total_income = 0;
+            $room->total_enter_room_user = 0;
+            $room->total_send_gift_user = 0;
+            $room->total_send_gift_num = 0;
+            $room->total_audience_time = 0;
+            $room->total_broadcaster_time = 0;
+            $room->total_host_broadcaster_time = 0;
+
             for ($date = $begin; $date <= $end; $date += 864000) {
                 $stat_at = date("Ymd", $date);
-                $room->day_income = $room->getDayIncome($stat_at);
-                $room->day_enter_room_user += $room->getDayEnterRoomUser($stat_at);
-                $room->day_send_gift_user += $room->getDaySendGiftUser($stat_at);
-                $room->day_send_gift_num += $room->getDaySendGiftNum($stat_at);
-                $room->day_audience_time += $room->getDayUserTime('audience', $stat_at);
-                $room->day_broadcaster_time += $room->getDayUserTime('broadcaster', $stat_at);
-                $room->day_host_broadcaster_time += $room->getDayUserTime('host_broadcaster', $stat_at);
+                debug($stat_at);
+                $room->total_income += $room->getDayIncome($stat_at);
+                $room->total_enter_room_user += $room->getDayEnterRoomUser($stat_at);
+                $room->total_send_gift_user += $room->getDaySendGiftUser($stat_at);
+                $room->total_send_gift_num += $room->getDaySendGiftNum($stat_at);
+                $room->total_audience_time += $room->getDayUserTime('audience', $stat_at);
+                $room->total_broadcaster_time += $room->getDayUserTime('broadcaster', $stat_at);
+                $room->total_host_broadcaster_time += $room->getDayUserTime('host_broadcaster', $stat_at);
             }
 
-            $room->day_send_gift_average_num = $room->daySendGiftAverageNum();
-            $room->day_audience_time_text = secondsToText($room->day_audience_time);
-            $room->day_broadcaster_time_text = secondsToText($room->day_broadcaster_time);
-            $room->day_host_broadcaster_time_text = secondsToText($room->day_host_broadcaster_time);
+            $room->total_send_gift_average_num = $room->totalSendGiftAverageNum();
+            $room->total_audience_time_text = secondsToText($room->total_audience_time);
+            $room->total_broadcaster_time_text = secondsToText($room->total_broadcaster_time);
+            $room->total_host_broadcaster_time_text = secondsToText($room->total_host_broadcaster_time);
         }
 
         $this->view->rooms = $rooms;
