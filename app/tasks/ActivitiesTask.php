@@ -37,6 +37,8 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         $stat_time_key = 'qing_ming_activity_stat_time';
         $last_stat_time = $hot_cache->get($stat_time_key);
 
+        info($last_stat_time);
+
         if (!$last_stat_time) {
             $hot_cache->set($stat_time_key, $time);
             $last_stat_time = $start;
@@ -49,7 +51,7 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         foreach ($gift_orders as $gift_order) {
             $charm_key = "qing_ming_activity_charm_list_" . date("Ymd", $start) . "_" . date("Ymd", $end);
             $wealth_key = "qing_ming_activity_wealth_list_" . date("Ymd", $end) . "_" . date("Ymd", $end);
-            info($gift_order->id, $gift_order->amount, $charm_key, $wealth_key);
+            info($gift_order->id, $gift_order->user_id, $gift_order->sender_id, $gift_order->amount, $charm_key, $wealth_key);
             $db->zincrby($charm_key, $gift_order->amount, $gift_order->user_id);
             $db->zincrby($wealth_key, $gift_order->amount, $gift_order->sender_id);
         }
