@@ -93,7 +93,7 @@ class Activities extends BaseModel
         $bind = [];
 
         $conditions[] = " (platforms like :platform: or platforms like '*' or platforms = '') ";
-        $bind['platform'] = $platform;
+        $bind['platform'] = "%" . $platform . "%";
 
         $conditions[] = " (product_channel_ids like :product_channel_id: or product_channel_ids = '') ";
         $bind['product_channel_id'] = '%,' . $product_channel_id . ',%';
