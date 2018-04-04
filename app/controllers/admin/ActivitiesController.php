@@ -29,6 +29,12 @@ class ActivitiesController extends BaseController
         $activity = new \Activities();
         $this->assign($activity, 'activity');
         $activity->operator_id = $this->currentOperator()->id;
+
+        list($error_code, $error_reason) = $activity->checkFields();
+        if ($error_code == ERROR_CODE_FAIL) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
         if ($activity->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $activity);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['activity' => $activity->toJson()]);
@@ -48,6 +54,12 @@ class ActivitiesController extends BaseController
         $activity = \Activities::findFirstById($this->params('id'));
         $this->assign($activity, 'activity');
         $activity->operator_id = $this->currentOperator()->id;
+
+        list($error_code, $error_reason) = $activity->checkFields();
+        if ($error_code == ERROR_CODE_FAIL) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $activity);
         if ($activity->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '修改成功', ['activity' => $activity->toJson()]);
