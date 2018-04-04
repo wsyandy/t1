@@ -233,7 +233,8 @@ trait UserAttrs
             'union_charm_value' => $this->union_charm_value,
             'union_wealth_value' => $this->union_wealth_value,
             'monologue' => $this->monologue,
-            'current_room_id' => $this->current_room_id
+            'current_room_id' => $this->current_room_id,
+            'is_exit_union' => $this->is_exit_union
         ];
 
         if (isset($this->apply_status)) {

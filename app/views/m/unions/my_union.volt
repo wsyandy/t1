@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="new_member" v-if="is_president" @click.stop="applicationList">
-        <div class="new_member_title">新的成员</div>
+        <div class="new_member_title">家族申请</div>
         <div class="new_member_right">
             <span class="new_dot" v-show="{{ union.new_apply_num }}"></span>
             <img class="arrow-right" src="/m/images/arrow-right.png" alt="">
