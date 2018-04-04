@@ -1,10 +1,10 @@
 create table countries (
   id serial PRIMARY key not null,
-  code character varying(255),
-  english_name character varying(255),
-  chinese_name character varying(255),
+  code VARCHAR(255),
+  english_name VARCHAR(255),
+  chinese_name VARCHAR(255),
   status INTEGER ,
-  image INTEGER ,
+  image VARCHAR (255),
   rank int
 );
 

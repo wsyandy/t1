@@ -14,6 +14,11 @@ class Countries extends BaseModel
         'ja' => '日语', 'de' => '德语', 'pt' => '葡葡萄牙语', 'vi' => '越南语');
     static $COUNTRY_NAME = array('越南' => 'vn', '中国' => 'cn');
 
+    static $STATUS = [STATUS_ON => '启用', STATUS_OFF => '禁用'];
+
+    static $files = ['image' => APP_NAME . '/countries/image/%s'];
+
+
     static function codeByIp($ip)
     {
         if (isBlank($ip)) {
@@ -31,5 +36,18 @@ class Countries extends BaseModel
         }
 
         return null;
+    }
+
+    function mergeJson()
+    {
+        return [
+            'image_small_url' => $this->image_small_url,
+            'status_text' => $this->status_text
+        ];
+    }
+
+    function imageSmallUrl()
+    {
+        return StoreFile::getUrl($this->image) . '@!small';
     }
 }

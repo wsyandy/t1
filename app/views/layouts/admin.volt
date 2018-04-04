@@ -321,6 +321,9 @@
                     {% if isAllowed('provinces','index') %}
                         <li><a href="/admin/provinces">省市管理</a></li>
                     {% endif %}
+                    {% if isAllowed('countries','index') %}
+                        <li><a href="/admin/countries">国家管理</a></li>
+                    {% endif %}
                     {% if isAllowed('soft_versions','index') %}
                         <li><a href="/admin/soft_versions">软件升级管理</a></li>
                     {% endif %}
