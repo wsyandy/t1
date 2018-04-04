@@ -56,6 +56,7 @@
             <td>{{ room.total_send_gift_average_num }}</td>
             <td>{{ room.total_host_broadcaster_time_text }}</td>
             <td>{{ room.total_broadcaster_time_text }}</td>
+            <td>{{ room.total_audience_time_text }}</td>
         </tr>
     {% endfor %}
     </tbody>
