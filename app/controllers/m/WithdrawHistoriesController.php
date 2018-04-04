@@ -88,10 +88,15 @@ class WithdrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
         }
+
+        $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
+
         $this->view->amount = $user->getWithdrawAmount();
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
+        $this->view->user_name = $last_withdraw_history ? $last_withdraw_history->user_name : '';
+        $this->view->alipay_account = $last_withdraw_history ? $last_withdraw_history->alipay_account : '';
     }
 
     function recordsAction()
