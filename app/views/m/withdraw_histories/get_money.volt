@@ -16,11 +16,11 @@
     <ul>
         <li>
             <span>姓名</span>
-            <input type="text" name="" placeholder="请输入您的姓名" id="name">
+            <input type="text" name="" placeholder="请输入您的姓名" id="name" value="{{ user_name }}">
         </li>
         <li>
             <span>支付宝账号</span>
-            <input type="text" name="" placeholder="请输入您的支付宝账户" id="account">
+            <input type="text" name="" placeholder="请输入您的支付宝账户" id="account" value="{{ alipay_account }}">
         </li>
     </ul>
 </div>

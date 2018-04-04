@@ -258,5 +258,16 @@ class WithdrawHistories extends BaseModel
         return $amount;
     }
 
+    static function findLastWithdrawHistory($user_id)
+    {
+        $conditions = [
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user_id],
+            'order' => 'id desc'
+        ];
 
+        $withdraw_history = WithdrawHistories::findFirst($conditions);
+
+        return $withdraw_history;
+    }
 }
