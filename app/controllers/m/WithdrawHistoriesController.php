@@ -36,9 +36,9 @@ class WithdrawHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
-            if (isProduction()) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
-            }
+//            if (isProduction()) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
+//            }
 
             if (UNION_TYPE_PUBLIC == $this->currentUser()->union_type) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
@@ -75,16 +75,28 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         if ($this->request->isPost()) {
-            if (\WithdrawHistories::hasWaitedHistoryByUser($user)) {
+            $wait_withdraw_history = \WithdrawHistories::waitWithdrawHistory($user);
+
+            if ($wait_withdraw_history) {
+
+                if (WITHDRAW_STATUS_WAIT == $wait_withdraw_history->status) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '您有一笔正在提现的订单,请勿重复提现');
+                }
+
                 return $this->renderJSON(ERROR_CODE_FAIL, '一周只能提现一次哦');
             } else {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
         }
+
+        $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
+
         $this->view->amount = $user->getWithdrawAmount();
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
+        $this->view->user_name = $last_withdraw_history ? $last_withdraw_history->user_name : '';
+        $this->view->alipay_account = $last_withdraw_history ? $last_withdraw_history->alipay_account : '';
     }
 
     function recordsAction()

@@ -114,6 +114,7 @@
     -webkit-border-radius: 1rem;
     -moz-border-radius: 1rem;
     border-radius: 1rem;
+    margin: auto;
 }
 
 .application_btn .refuse {
@@ -122,8 +123,8 @@
 }
 
 .application_btn .agree {
-    background: #F45189;
-    color: #fff;
+    background: #E9E9E9;
+    color: #F45189;
 }
 
 .refuse_selected {
@@ -219,6 +220,4 @@
     color: #898989 !important;
     background: #FFFFFF !important;
 }
-.get_out_family{
-    color: #F45189;
-}
+

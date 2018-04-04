@@ -281,6 +281,15 @@ class Unions extends BaseModel
         $agreed_key = $this->generateUsersKey();
         $refused_key = $this->generateRefusedUsersKey();
 
+        //申请退出
+        $all_apply_exit_key = $this->generateAllApplyExitUsersKey();
+        $apply_exit_key = $this->generateApplyExitUsersKey();
+        if ($user_db->zscore($apply_exit_key, $user_id)) {
+            return 0;
+        } else if ($user_db->zscore($all_apply_exit_key, $user_id)) {
+            return 1;
+        }
+
         if ($user_db->zscore($agreed_key, $user_id)) {
             return 1;
         } else if ($user_db->zscore($refused_key, $user_id)) {
@@ -288,6 +297,18 @@ class Unions extends BaseModel
         }
 
         return 0;
+    }
+
+    function isExitUnion($user_id)
+    {
+        $user_db = Users::getUserDb();
+        $all_apply_exit_key = $this->generateAllApplyExitUsersKey();
+
+        if ($user_db->zscore($all_apply_exit_key, $user_id)) {
+            return true;
+        }
+
+        return false;
     }
 
     //新的公会成员
@@ -305,6 +326,7 @@ class Unions extends BaseModel
 
         foreach ($users as $user) {
             $user->apply_status = $this->applicationStatus($user->id);
+            $user->is_exit_union = $this->isExitUnion($user->id);
         }
 
         $total_entries = $user_db->zcard($new_user_key);
@@ -341,26 +363,43 @@ class Unions extends BaseModel
         return $pagination;
     }
 
+    //显示是否有新申请
     function generateNewApplyNumKey()
     {
         return "new_apply_num_union_id_" . $this->id;
     }
 
+    //所有的申请用户(解散 删除)(申请退出不删除)
     function generateNewUsersKey()
     {
         return "union_total_users_list" . $this->id;
     }
 
+    //监测用户是否已经申请加入家族 (通过,拒绝,解散 删除)
     function generateCheckUsersKey()
     {
         return "union_check_users_list" . $this->id;
     }
 
+    //已拒绝加入的用户
     function generateRefusedUsersKey()
     {
         return "union_refused_users_list" . $this->id;
     }
 
+    //申请退出用户(all)
+    function generateAllApplyExitUsersKey()
+    {
+        return "union_all_apply_exit_users_list" . $this->id;
+    }
+
+    //申请退出用户(申请状态的用户)
+    function generateApplyExitUsersKey()
+    {
+        return "union_apply_exit_users_list" . $this->id;
+    }
+
+    //在家族中所有用户
     function generateUsersKey()
     {
         return "union_users_list" . $this->id;
@@ -391,6 +430,10 @@ class Unions extends BaseModel
         if ($db->zscore($check_key, $user->id)) {
             return [ERROR_CODE_FAIL, '你已经申请该家族'];
         }
+
+        //删除退出的
+        $db->zrem($this->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($this->generateAllApplyExitUsersKey(), $user->id);
 
         $db->zrem($this->generateRefusedUsersKey(), $user->id);
 
@@ -475,6 +518,78 @@ class Unions extends BaseModel
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
 
+    function applyExitUnion($user)
+    {
+        $db = Users::getUserDb();
+
+        if ($user->isUnionHost($this)) {
+            return [ERROR_CODE_FAIL, '家族长不能单独退出家族'];
+        }
+
+        info(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON],
+            'id desc');
+
+        $expire_at = time() - 24 * 60 * 60 * 7;
+
+        if (isDevelopmentEnv()) {
+            $expire_at = time() - 60;
+        }
+
+        if ($union_history->join_at > $expire_at) {
+            return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
+        }
+
+        if ($db->zscore($this->generateApplyExitUsersKey(), $user->id)) {
+            return [ERROR_CODE_FAIL, '你已申请退出,请耐心等待！'];
+        }
+
+        if ($union_history) {
+            $union_history->status = STATUS_PROGRESS;
+            $union_history->apply_exit_at = time();
+            $union_history->save();
+        }
+
+        $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
+        $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
+
+        $content = "$user->nickname" . "申请退出家族";
+        Chats::sendTextSystemMessage($this->user_id, $content);
+
+        return [ERROR_CODE_SUCCESS, '操作成功'];
+
+    }
+
+    function confirmExitUnion($user)
+    {
+
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS],
+            'id desc');
+        if ($union_history) {
+            $union_history->status = STATUS_OFF;
+            $union_history->exit_at = time();
+            $union_history->save();
+        }
+
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+
+
+        $db = Users::getUserDb();
+        $db->zrem($this->generateUsersKey(), $user->id);
+        $db->zrem($this->generateApplyExitUsersKey(), $user->id);
+
+        $content = "$user->nickname" . "您已经退出了家族";
+        Chats::sendTextSystemMessage($user->id, $content);
+
+        info('user_id', $user->id, 'union_id', $this->id);
+        $user->update();
+        return [ERROR_CODE_SUCCESS, '操作成功'];
+
+    }
+
     function exitUnion($user, $opts = [], $union_host = null)
     {
         $db = Users::getUserDb();
@@ -508,6 +623,8 @@ class Unions extends BaseModel
         $db->zrem($this->generateRefusedUsersKey(), $user->id);
         $db->zrem($this->generateNewUsersKey(), $user->id);
         $db->zrem($this->generateCheckUsersKey(), $user->id);
+        $db->zrem($this->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($this->generateAllApplyExitUsersKey(), $user->id);
 
         if ($union_history) {
 
@@ -558,6 +675,8 @@ class Unions extends BaseModel
             $db->zclear($this->generateRefusedUsersKey());
             $db->zclear($this->generateUsersKey());
             $db->zclear($this->generateCheckUsersKey());
+            $db->zclear($this->generateApplyExitUsersKey());
+            $db->zclear($this->generateAllApplyExitUsersKey());
 
             //删排行榜中排名
             $last_day_key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));

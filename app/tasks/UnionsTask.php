@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/3/15
  * Time: 下午5:42
  */
-
 class UnionsTask extends \Phalcon\Cli\Task
 {
     //推荐家族task任务
@@ -231,5 +231,27 @@ class UnionsTask extends \Phalcon\Cli\Task
                 echoLine($union_history->join_at_text);
             }
         }
+    }
+
+    //执行7天自动退出家族 task任务
+    function confirmExitUnionAction()
+    {
+        $start_at = time() - 7 * 24 * 60 * 60 - 60 * 7;
+        $end_at = time() - 7 * 24 * 60 * 60;
+
+        $union_histories = UnionHistories::find([
+            'conditions' => 'status = :status: and apply_exit_at < :end_at: and apply_exit_at > :start_at:',
+            'bind' => ['status' => STATUS_PROGRESS, 'start_at' => $start_at, 'end_at' => $end_at]
+        ]);
+
+        info('union_histories', $union_histories);
+        foreach ($union_histories as $union_history) {
+
+            $union = $union_history->union;
+            $user = $union_history->user;
+            $union->confirmExitUnion($user);
+
+        }
+
     }
 }

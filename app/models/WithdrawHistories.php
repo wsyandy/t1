@@ -66,18 +66,6 @@ class WithdrawHistories extends BaseModel
 
     function beforeUpdate()
     {
-
-        if (WITHDRAW_TYPE_USER == $this->type) {
-
-            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
-
-                if ($this->user->hi_coins < $this->amount) {
-                    $this->error_reason = '余额不足';
-                    return true;
-                }
-            }
-        }
-
         if (WITHDRAW_TYPE_UNION == $this->type) {
 
             $union = $this->union;
@@ -109,7 +97,14 @@ class WithdrawHistories extends BaseModel
         $user_name = fetch($opts, 'name');
         $alipay_account = fetch($opts, 'account');
 
-        if (self::hasWaitedHistoryByUser($user)) {
+        $wait_withdraw_history = WithdrawHistories::waitWithdrawHistory($user);
+
+        if ($wait_withdraw_history) {
+
+            if (WITHDRAW_STATUS_WAIT == $wait_withdraw_history->status) {
+                return [ERROR_CODE_FAIL, '您有一笔正在提现的订单,请勿重复提现'];
+            }
+
             return [ERROR_CODE_FAIL, '一周只能提现一次哦'];
         }
 
@@ -125,11 +120,13 @@ class WithdrawHistories extends BaseModel
         $history->amount = $amount;
         $history->status = WITHDRAW_STATUS_WAIT;
         $history->type = WITHDRAW_TYPE_USER;
-        $history->save();
 
-        HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
+        if ($history->save()) {
+            HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
+            return [ERROR_CODE_SUCCESS, '受理中'];
+        }
 
-        return [ERROR_CODE_SUCCESS, '受理中'];
+        return [ERROR_CODE_FAIL, '提现失败'];
     }
 
     static function createUnionWithdrawHistories($union, $opts)
@@ -183,7 +180,7 @@ class WithdrawHistories extends BaseModel
         ];
     }
 
-    static function hasWaitedHistoryByUser($user)
+    static function waitWithdrawHistory($user)
     {
         $start = beginOfWeek();
         $end = endOfWeek();
@@ -203,11 +200,7 @@ class WithdrawHistories extends BaseModel
             ]
         );
 
-        if ($withdraw_history) {
-            return true;
-        }
-
-        return false;
+        return $withdraw_history;
     }
 
     static function hasWaitedHistoryByUnion($union)
@@ -265,5 +258,16 @@ class WithdrawHistories extends BaseModel
         return $amount;
     }
 
+    static function findLastWithdrawHistory($user_id)
+    {
+        $conditions = [
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user_id],
+            'order' => 'id desc'
+        ];
 
+        $withdraw_history = WithdrawHistories::findFirst($conditions);
+
+        return $withdraw_history;
+    }
 }

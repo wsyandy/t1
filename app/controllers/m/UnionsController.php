@@ -235,7 +235,7 @@ class UnionsController extends BaseController
         if (!$current_user->isUnionHost($union)) {
             return $this->response->redirect("/m/unions?sid=$sid&code=$code");
         }
-        $this->view->title = "新的成员";
+        $this->view->title = "家族申请";
         $this->view->sid = $sid;
         $this->view->code = $code;
         $union->clearNewApplyNum();
@@ -381,9 +381,48 @@ class UnionsController extends BaseController
             $user = $this->currentUser();
             $union = \Unions::findFirstById($this->params('union_id'));
 
-            $opts = ['exit' => "exit"];
+            list($error_code, $error_reason) = $union->applyExitUnion($user);
+            return $this->renderJSON($error_code, $error_reason);
+        }
+    }
 
-            list($error_code, $error_reason) = $union->exitUnion($user, $opts);
+    function confirmApplyExitAction()
+    {
+        $current_user = $this->currentUser();
+        $user_id = $this->params('user_id');
+
+        $union = $current_user->union;
+        $user = \Users::findFirstById($user_id);
+        list($error_code, $error_reason) = $union->confirmExitUnion($user);
+        return $this->renderJSON($error_code, $error_reason);
+
+    }
+
+    function applyExitAction()
+    {
+        $current_user = $this->currentUser();
+
+        $user_id = $this->params('user_id');
+        $user = \Users::findFirstById($user_id);
+        $union = \Unions::findFirstById($user->union_id);
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+
+        if (!$union) {
+            return $this->response->redirect("/m/unions?sid=$sid&code=$code");
+        }
+
+        $this->view->user_id = $user_id;
+        $this->view->user = $current_user;
+        $this->view->title = "家族申请";
+    }
+
+    function clearNewUsersAction()
+    {
+        if ($this->request->isAjax()) {
+            $current_user = $this->currentUser();
+            $union = $current_user->union;
+            list($error_code, $error_reason) = $union->clearNewUsers($current_user);
             return $this->renderJSON($error_code, $error_reason);
         }
     }
