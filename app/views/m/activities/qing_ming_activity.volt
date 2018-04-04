@@ -62,77 +62,80 @@
         </ul>
     </div>
 </div>
-<div class="active_box">
-    <div class="active_book"></div>
-    <div class="week_wrap">
-        <ul>
-            <h1>青团实时榜单</h1>
-            <li class="li_bg">魅力榜</li>
-            <li>贡献榜</li>
-        </ul>
-        <div class="clear"></div>
-        <div class="week_list" style="display: block;"><img src="/m/images/qing_ming_activity_down.png" class="down">
-            <table class="table">
-                <tr class="week_tr_title">
-                    <td>排名</td>
-                    <td style="text-align:left;width:40%;">昵称／ID</td>
-                    <td>魅力值</td>
-                </tr>
-                {% for index,user in charm_users %}
-                    <tr>
-                        <td class="title_size">
-                            {% if index == 0 %}
-                                <img class="voice_ico" src="/m/images/one.png" alt="">
-                            {% elseif index == 1 %}
-                                <img class="voice_ico" src="/m/images/two.png" alt="">
-                            {% elseif index == 2 %}
-                                <img class="voice_ico" src="/m/images/three.png" alt="">
-                            {% else %}
-                                {{ index+1 }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            <h5>{{ user.nickname }}</h5>
-                            <p>{{ user.id }}</p>
-                        </td>
-                        <td><b>{{ user.value }}</b></td>
+{% if wealth_users and  charm_users %}
+    <div class="active_box">
+        <div class="active_book"></div>
+        <div class="week_wrap">
+            <ul>
+                <h1>青团实时榜单</h1>
+                <li class="li_bg">魅力榜</li>
+                <li>贡献榜</li>
+            </ul>
+            <div class="clear"></div>
+            <div class="week_list" style="display: block;"><img src="/m/images/qing_ming_activity_down.png"
+                                                                class="down">
+                <table class="table">
+                    <tr class="week_tr_title">
+                        <td>排名</td>
+                        <td style="text-align:left;width:40%;">昵称／ID</td>
+                        <td>魅力值</td>
                     </tr>
-                {% endfor %}
-            </table>
-        </div>
-        <div class="week_list none">
-            <img src="/m/images/qing_ming_activity_down.png" class="down down_right">
-            <table class="table week_table">
-                <tr class="week_tr_title">
-                    <td>排名</td>
-                    <td style="text-align:left;width:40%;">昵称／ID</td>
-                    <td>魅力值</td>
-                </tr>
+                    {% for index,user in charm_users %}
+                        <tr>
+                            <td class="title_size">
+                                {% if index == 0 %}
+                                    <img class="voice_ico" src="/m/images/one.png" alt="">
+                                {% elseif index == 1 %}
+                                    <img class="voice_ico" src="/m/images/two.png" alt="">
+                                {% elseif index == 2 %}
+                                    <img class="voice_ico" src="/m/images/three.png" alt="">
+                                {% else %}
+                                    {{ index+1 }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <h5>{{ user.nickname }}</h5>
+                                <p>{{ user.id }}</p>
+                            </td>
+                            <td><b>{{ user.value }}</b></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="week_list none">
+                <img src="/m/images/qing_ming_activity_down.png" class="down down_right">
+                <table class="table week_table">
+                    <tr class="week_tr_title">
+                        <td>排名</td>
+                        <td style="text-align:left;width:40%;">昵称／ID</td>
+                        <td>魅力值</td>
+                    </tr>
 
-                {% for index,user in wealth_users %}
-                    <tr>
-                        <td class="title_size">
-                            {% if index == 0 %}
-                                <img class="voice_ico" src="/m/images/one.png" alt="">
-                            {% elseif index == 1 %}
-                                <img class="voice_ico" src="/m/images/two.png" alt="">
-                            {% elseif index == 2 %}
-                                <img class="voice_ico" src="/m/images/three.png" alt="">
-                            {% else %}
-                                {{ index+1 }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            <h5>{{ user.nickname }}</h5>
-                            <p>{{ user.id }}</p>
-                        </td>
-                        <td><b>{{ user.value }}</b></td>
-                    </tr>
-                {% endfor %}
-            </table>
+                    {% for index,user in wealth_users %}
+                        <tr>
+                            <td class="title_size">
+                                {% if index == 0 %}
+                                    <img class="voice_ico" src="/m/images/one.png" alt="">
+                                {% elseif index == 1 %}
+                                    <img class="voice_ico" src="/m/images/two.png" alt="">
+                                {% elseif index == 2 %}
+                                    <img class="voice_ico" src="/m/images/three.png" alt="">
+                                {% else %}
+                                    {{ index+1 }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <h5>{{ user.nickname }}</h5>
+                                <p>{{ user.id }}</p>
+                            </td>
+                            <td><b>{{ user.value }}</b></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
 <div class="award_text">
     活动最终解释权归Hi语音官方团队
 </div>
