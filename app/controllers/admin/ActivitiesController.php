@@ -93,7 +93,7 @@ class ActivitiesController extends BaseController
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
         if (isBlank($activity)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
         }
 
         $product_channel_ids = $this->params('product_channel_ids');
