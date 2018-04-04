@@ -29,6 +29,7 @@ class UnionHistories extends BaseModel
         $union_history->user_id = $user_id;
         $union_history->union_id = $union_id;
         $union_history->union_type = $union->type;
+        $union_history->country_id = $union->country_id;
         $union_history->join_at = time();
         $union_history->save();
     }

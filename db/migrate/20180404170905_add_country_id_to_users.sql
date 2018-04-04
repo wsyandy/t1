@@ -1,0 +1,13 @@
+ALTER TABLE devices add COLUMN country_id INTEGER ;
+ALTER TABLE users add COLUMN country_id INTEGER ;
+ALTER TABLE rooms add COLUMN country_id INTEGER ;
+ALTER TABLE room_seats add COLUMN country_id INTEGER ;
+ALTER TABLE orders add COLUMN country_id INTEGER ;
+ALTER TABLE payments add COLUMN country_id INTEGER ;
+ALTER TABLE gift_orders add COLUMN sender_country_id INTEGER ;
+ALTER TABLE gift_orders add COLUMN receiver_country_id INTEGER ;
+ALTER TABLE gold_histories add COLUMN country_id INTEGER ;
+ALTER TABLE account_histories add COLUMN country_id INTEGER ;
+ALTER TABLE hi_coin_histories add COLUMN country_id INTEGER ;
+ALTER TABLE unions add COLUMN country_id INTEGER ;
+ALTER TABLE union_histories add COLUMN country_id INTEGER ;
