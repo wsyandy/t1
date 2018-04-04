@@ -116,7 +116,7 @@ class ActivitiesController extends BaseController
     function platformsAction()
     {
         $activity = \Activities::findFirstById($this->params('id'));
-        $platforms = \Products::$PLATFORMS;
+        $platforms = \Activities::$PLATFORMS;
         $all_select_platforms = explode(',', $activity->platforms);
         $this->view->activity = $activity;
         $this->view->platforms = $platforms;

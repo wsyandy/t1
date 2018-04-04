@@ -11,11 +11,13 @@ class ActivitiesController extends BaseController
     function indexAction()
     {
         $product_channel_id = $this->currentProductChannelId();
-        $pf = $this->params('pf');
+        $platform = $this->params('pf');
         $sid = $this->params('sid');
         $code = $this->params('code');
 
-        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $pf]);
+        $platform = 'client_' . $platform;
+
+        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
 
         $this->view->sid = $sid;
         $this->view->code = $code;

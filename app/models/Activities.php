@@ -11,6 +11,8 @@ class Activities extends BaseModel
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
     static $files = ['image' => APP_NAME . '/activities/image/%s'];
+    static $PLATFORMS = ['client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
+        'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
 
     function getImageUrl()
     {
@@ -87,6 +89,8 @@ class Activities extends BaseModel
     {
         $platform = fetch($opts, 'platform');
         $product_channel_id = fetch($opts, 'product_channel_id');
+        $conditions = [];
+        $bind = [];
 
         $conditions[] = " (platforms like :platform: or platforms like '*' or platforms = '') ";
         $bind['platform'] = $platform;
