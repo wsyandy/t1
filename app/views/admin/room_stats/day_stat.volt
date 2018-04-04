@@ -1,4 +1,4 @@
-<form method="get" action="/admin/room_stats/day_stat" name="search_form" autocomplete="off">
+<form method="get" action="/admin/room_stats/total_stat" name="search_form" autocomplete="off">
     <label for="start_date">开始时间</label>
     <input type="text" name="start_date" class="form_datetime" id="start_date" value="{{ start_date }}" size="16">
 
@@ -25,9 +25,9 @@
 {% endmacro %}
 
 {{ simple_table(rooms, [
-    '房间ID': 'id', '名称': 'name', '房主信息':"user_info",'进入房间人数':'day_enter_room_user','钻石流水':'day_income','送钻石礼物人数':'day_send_gift_user',
-    '送钻石礼物个数':'day_send_gift_num','人均送钻石礼物个数':'day_send_gift_average_num','房主时长':'day_host_broadcaster_time_text',
-    '主播时长':'day_broadcaster_time_text','旁听时长':'day_audience_time_text'
+    '房间ID': 'id', '名称': 'name', '房主信息':"user_info",'进入房间人数':'total_enter_room_user','钻石流水':'total_income','送钻石礼物人数':'total_send_gift_user',
+    '送钻石礼物个数':'total_send_gift_num','人均送钻石礼物个数':'total_send_gift_average_num','房主时长':'total_host_broadcaster_time_text',
+    '主播时长':'total_broadcaster_time_text','旁听时长':'total_audience_time_text'
 ]) }}
 
 <script type="text/javascript">
