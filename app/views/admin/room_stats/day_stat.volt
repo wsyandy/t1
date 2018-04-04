@@ -1,12 +1,18 @@
 <form method="get" action="/admin/room_stats/day_stat" name="search_form" autocomplete="off">
-    <label for="date">时间</label>
-    <input type="text" name="date" class="form_datetime" id="date" value="{{ date }}" size="16">
+    <label for="start_date">开始时间</label>
+    <input type="text" name="start_date" class="form_datetime" id="start_date" value="{{ start_date }}" size="16">
+
+    <label for="end_date">结束时间</label>
+    <input type="text" name="end_date" class="form_datetime" id="end_date" value="{{ end_date }}" size="16">
 
     <label for="user_id">房主ID</label>
     <input type="text" name="user_id" id="user_id" value="{{ user_id }}">
 
     <label for="room_id">房间ID</label>
     <input type="text" name="room_id" id="room_id" value="{{ room_id }}">
+
+    <label for="union_id">家族ID</label>
+    <input type="text" name="union_id" id="union_id" value="{{ union_id }}">
 
     <button class="ui button" type="submit">搜索</button>
 </form>
