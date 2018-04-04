@@ -91,7 +91,7 @@ class RoomStatsController extends BaseController
         if ($room_id) {
             $rooms = \Rooms::findPagination(['conditions' => 'id = ' . $room_id], 1, 1);
         } elseif ($union_id) {
-            $rooms = \Rooms::findPagination(['conditions' => 'union_id = ' . $union_id], 1, 200);
+            $rooms = \Rooms::findPagination(['conditions' => 'union_id = ' . $union_id], 1, 500);
         } else {
             $rooms = \Rooms::dayStatRooms($stat_at);
         }
