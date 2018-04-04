@@ -26,7 +26,7 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         $end = endOfDay(strtotime($end));
         $time = time();
 
-        if (isProduction() && (time() < $start || $time > $end)) {
+        if (isProduction() && ($time < $start || $time > $end)) {
             info("activity is over");
             return;
         }
