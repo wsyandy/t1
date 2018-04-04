@@ -72,15 +72,13 @@ class ActivitiesController extends BaseController
 
     function qingMingActivityAction()
     {
-        $id = $this->params('id');
-        $activity = \Activities::findFirstById($id);
-        $start_at = $activity->start_at;
-        $end_at = $activity->end_at;
+        $start = 20180405;
+        $end = 20180407;
 
         $db = \Users::getUserDb();
 
-        $charm_key = "qing_ming_activity_charm_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
-        $wealth_key = "qing_ming_activity_wealth_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
+        $charm_key = "qing_ming_activity_charm_list_" . $start . "_" . $end;
+        $wealth_key = "qing_ming_activity_wealth_list_" . $start . "_" . $end;
 
         $charm_rank_list = $db->zrevrange($charm_key, 0, 19, 'withscores');
         $wealth_rank_list = $db->zrevrange($wealth_key, 0, 19, 'withscores');
@@ -97,7 +95,7 @@ class ActivitiesController extends BaseController
         $charm_users = \Users::findByIds($charm_ids);
 
         foreach ($charm_users as $user) {
-            $user->value = $charm_values[$user->id];
+            $user->value = valueToStr($charm_values[$user->id]);
         }
 
         //贡献榜
@@ -112,12 +110,12 @@ class ActivitiesController extends BaseController
         $wealth_users = \Users::findByIds($wealth_ids);
 
         foreach ($wealth_users as $user) {
-            $user->value = $wealth_values[$user->id];
+            $user->value = valueToStr($wealth_values[$user->id]);
         }
 
 
-        $this->view->start_text = date("Y年m月d日H点", $start_at);
-        $this->view->end_text = date("Y年m月d日H点", $end_at);
+        $this->view->start_text = "2018年04月07日00点";
+        $this->view->end_text = "2018年04月08日00";
 
         $this->view->charm_users = $charm_users;
         $this->view->wealth_users = $wealth_users;

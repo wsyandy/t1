@@ -560,6 +560,18 @@ class YangTask extends \Phalcon\Cli\Task
 
     }
 
+    function test20Action()
+    {
+        $start_at = strtotime(201804070000);
+        $end_at = strtotime( 201804080000);
+        echoLine($start_at);
+        echoLine($end_at);
+
+        echoLine(date("Y年m月d日H点", $start_at));
+        echoLine(date("Y年m月d日H点", $end_at));
+
+    }
+
 
     function test19Action()
     {
