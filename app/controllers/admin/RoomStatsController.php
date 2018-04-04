@@ -106,7 +106,7 @@ class RoomStatsController extends BaseController
             $room->total_broadcaster_time = 0;
             $room->total_host_broadcaster_time = 0;
 
-            for ($date = $begin; $date <= $end; $date += 864000) {
+            for ($date = $begin; $date <= $end; $date += 86400) {
                 $stat_at = date("Ymd", $date);
                 debug($stat_at);
                 $room->total_income += $room->getDayIncome($stat_at);
