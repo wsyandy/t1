@@ -319,6 +319,7 @@
                     } else {
                         $(".middle_pop").hide();
                         $(".middle_pop_bg").hide();
+                        alert(resp.error_reason);
                     }
                 });
             },
