@@ -100,6 +100,7 @@ class Unions extends BaseModel
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
+        $union->country_id = $user->country_id;
 
         $dest_filename = APP_NAME . '/unions/avatar/' . uniqid() . '.jpg';
         $res = \StoreFile::upload($avatar_file, $dest_filename);

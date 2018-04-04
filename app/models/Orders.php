@@ -77,6 +77,7 @@ class Orders extends BaseModel
         $order->mobile = $user->mobile;
         $order->union_id = $user->union_id;
         $order->union_type = $user->union_type;
+        $order->country_id = $user->country_id;
 
         if ($order->create()) {
             \Stats::delay()->record('user', 'create_order', $user->getStatAttrs());
