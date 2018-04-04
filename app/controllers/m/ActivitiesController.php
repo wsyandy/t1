@@ -12,10 +12,12 @@ class ActivitiesController extends BaseController
     {
         $product_channel_id = $this->currentProductChannelId();
         $pf = $this->params('pf');
+        $sid = $this->params('sid');
         $code = $this->params('code');
 
         $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $pf]);
 
+        $this->view->sid = $sid;
         $this->view->code = $code;
         $this->view->activities = $activities;
         $this->view->title = "活动";
@@ -25,7 +27,7 @@ class ActivitiesController extends BaseController
     {
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
-        if(isPresent($activity)){
+        if (isPresent($activity)) {
             $start_at = $activity->start_at;
             $end_at = $activity->end_at;
 
@@ -64,7 +66,63 @@ class ActivitiesController extends BaseController
         }
         $this->view->official_id = 100101;
 
-
         $this->view->title = "周榜专属奖励";
+    }
+
+
+    function qingMingActivityAction()
+    {
+        $id = $this->params('id');
+        $activity = \Activities::findFirstById($id);
+        $start_at = $activity->start_at;
+        $end_at = $activity->end_at;
+
+        $db = \Users::getUserDb();
+
+        $charm_key = "qing_ming_activity_charm_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
+        $wealth_key = "qing_ming_activity_wealth_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
+
+        $charm_rank_list = $db->zrevrange($charm_key, 0, 19, 'withscores');
+        $wealth_rank_list = $db->zrevrange($wealth_key, 0, 19, 'withscores');
+
+        //魅力榜
+        $charm_ids = [];
+        $charm_values = [];
+
+        foreach ($charm_rank_list as $user_id => $value) {
+            $charm_ids[] = $user_id;
+            $charm_values[$user_id] = $value;
+        }
+
+        $charm_users = \Users::findByIds($charm_ids);
+
+        foreach ($charm_users as $user) {
+            $user->value = $charm_values[$user->id];
+        }
+
+        //贡献榜
+        $wealth_ids = [];
+        $wealth_values = [];
+
+        foreach ($wealth_rank_list as $user_id => $value) {
+            $wealth_ids[] = $user_id;
+            $wealth_values[$user_id] = $value;
+        }
+
+        $wealth_users = \Users::findByIds($wealth_ids);
+
+        foreach ($wealth_users as $user) {
+            $user->value = $wealth_values[$user->id];
+        }
+
+
+        $this->view->start_text = date("Y年m月d日H点", $start_at);
+        $this->view->end_text = date("Y年m月d日H点", $end_at);
+
+        $this->view->charm_users = $charm_users;
+        $this->view->wealth_users = $wealth_users;
+
+
+        $this->view->title = "清明节活动";
     }
 }
