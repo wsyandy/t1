@@ -101,14 +101,18 @@ class RoomStatsController extends BaseController
             for ($date = $begin; $date <= $end; $date += 864000) {
                 $stat_at = date("Ymd", $date);
                 $room->day_income = $room->getDayIncome($stat_at);
-                $room->day_enter_room_user = $room->getDayEnterRoomUser($stat_at);
-                $room->day_send_gift_user = $room->getDaySendGiftUser($stat_at);
-                $room->day_send_gift_num = $room->getDaySendGiftNum($stat_at);
-                $room->day_send_gift_average_num = $room->daySendGiftAverageNum();
-                $room->day_audience_time_text = secondsToText($room->getDayUserTime('audience', $stat_at));
-                $room->day_broadcaster_time_text = secondsToText($room->getDayUserTime('broadcaster', $stat_at));
-                $room->day_host_broadcaster_time_text = secondsToText($room->getDayUserTime('host_broadcaster', $stat_at));
+                $room->day_enter_room_user += $room->getDayEnterRoomUser($stat_at);
+                $room->day_send_gift_user += $room->getDaySendGiftUser($stat_at);
+                $room->day_send_gift_num += $room->getDaySendGiftNum($stat_at);
+                $room->day_audience_time += $room->getDayUserTime('audience', $stat_at);
+                $room->day_broadcaster_time += $room->getDayUserTime('broadcaster', $stat_at);
+                $room->day_host_broadcaster_time += $room->getDayUserTime('host_broadcaster', $stat_at);
             }
+
+            $room->day_send_gift_average_num = $room->daySendGiftAverageNum();
+            $room->day_audience_time_text = secondsToText($room->day_audience_time);
+            $room->day_broadcaster_time_text = secondsToText($room->day_broadcaster_time);
+            $room->day_host_broadcaster_time_text = secondsToText($room->day_host_broadcaster_time);
         }
 
         $this->view->rooms = $rooms;
