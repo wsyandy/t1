@@ -18,22 +18,22 @@
                 <td class="title_size">
                     <img class="voice_ico" src="/m/images/ico_first.png" alt=""> st
                 </td>
-                <td>6000000</td>
-                <td>8000000</td>
+                <td>靓号:6000000</td>
+                <td>靓号:8000000</td>
             </tr>
             <tr>
                 <td class="title_size">
                     <img class="voice_ico" src="/m/images/ico_second.png" alt=""> nd
                 </td>
-                <td>6000001</td>
-                <td>8000001</td>
+                <td>靓号:6000001</td>
+                <td>靓号:8000001</td>
             </tr>
             <tr>
                 <td class="title_size">
                     <img class="voice_ico" src="/m/images/ico_third.png" alt=""> rd
                 </td>
-                <td>6000002</td>
-                <td>8000002</td>
+                <td>靓号:6000002</td>
+                <td>靓号:8000002</td>
             </tr>
         </table>
     </div>
