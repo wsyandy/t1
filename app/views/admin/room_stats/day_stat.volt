@@ -1,4 +1,4 @@
-<form method="get" action="/admin/room_stats/total_stat" name="search_form" autocomplete="off">
+<form method="get" action="/admin/room_stats/day_stat" name="search_form" autocomplete="off">
     <label for="start_date">开始时间</label>
     <input type="text" name="start_date" class="form_datetime" id="start_date" value="{{ start_date }}" size="16">
 
