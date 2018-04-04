@@ -246,6 +246,7 @@ define('HI_COIN_FEE_TYPE_UNION_HOST_REWARD', 3); //家族长奖励
 define('HI_COIN_FEE_TYPE_WITHDRAW', 4); //提现
 define('HI_COIN_FEE_TYPE_ROOM_REWARD', 5); //房间流水奖励
 define('HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND', 6); //Hi币兑钻石
+define('HI_COIN_FEE_TYPE_WITHDRAW_RETURN', 7); //Hi币兑钻石
 
 //用户所属组织
 define('USER_ORGANISATION_PERSONAGE', 0);

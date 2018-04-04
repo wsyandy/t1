@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1000957;
+        $user_id = 1009518;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 10000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 10000, $opts);
+        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()
@@ -1701,5 +1701,154 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($user->union_id);
         echoLine($union);
 
+
+        echoLine(date("Ymd H:i:s", beginOfWeek()));
+        echoLine(date("Ymd H:i:s", endOfWeek()));
+
+        $withdraw_history = WithdrawHistories::findFirstById(71);
+        $withdraw_history->delete();
+
+        $withdraw_histories = WithdrawHistories::find(
+            [
+                'conditions' => 'status = :status:',
+                'bind' => ['status' => WITHDRAW_STATUS_WAIT]
+            ]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+
+            if ($withdraw_history) {
+                $withdraw_history->status = WITHDRAW_STATUS_FAIL;
+                $withdraw_history->save();
+            }
+        }
+
+        $hi_coin_histories = HiCoinHistories::find(['conditions' => 'withdraw_history_id > 0']);
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            if ($hi_coin_history->withdraw_history_id) {
+                $withdraw_history = WithdrawHistories::findFirstById($hi_coin_history->withdraw_history_id);
+
+                if ($withdraw_history) {
+                    echoLine($withdraw_history);
+                    $withdraw_history->status = WITHDRAW_STATUS_SUCCESS;
+                    $withdraw_history->update();
+                }
+
+            }
+        }
+
+    }
+
+    function fixRoomIncome()
+    {
+        $cond = [
+            'conditions' => 'room_id > 0 and pay_type = :pay_type: and gift_type = :gift_type: and status = :status:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+        ];
+
+        $gift_orders = GiftOrders::findForeach($cond);
+        $room_db = Rooms::getRoomDb();
+
+        foreach ($gift_orders as $gift_order) {
+
+            if ($gift_order->sender->isSilent()) {
+                continue;
+            }
+
+            $amount = $gift_order->amount;
+            $room_id = $gift_order->room_id;
+
+            if ($amount > 0 && $room_id) {
+
+                //info($room_id, $amount);
+
+                $room = Rooms::findFirstById($room_id);
+
+                if ($room) {
+
+                    $created_at = $gift_order->created_at;
+                    $stat_at = date("Ymd", $created_at);
+
+                    echoLine($room->generateStatIncomeDayKey($stat_at), $room->generateSendGiftUserDayKey($stat_at), $room->generateSendGiftNumDayKey($stat_at), $amount, $gift_order->gift_num, $room_id, $gift_order->sender_id);
+
+                    $room_db->zadd($room->generateSendGiftUserDayKey($stat_at), $created_at, $gift_order->sender_id);
+
+                    if ($created_at >= beginOfDay()) {
+                        continue;
+                    }
+
+                    $room_db->zincrby($room->generateStatIncomeDayKey($stat_at), $amount, $room_id);
+                    $room_db->zincrby($room->generateSendGiftNumDayKey($stat_at), $gift_order->gift_num, $room_id);
+                }
+            }
+        }
+    }
+
+    function fixRoomIncomeTodayAction()
+    {
+        $cond = [
+            'conditions' => 'room_id > 0 and pay_type = :pay_type: and gift_type = :gift_type: and status = :status: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start' => beginOfDay(), 'end' => endOfDay()],
+            'columns' => 'distinct room_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        $room_db = Rooms::getRoomDb();
+
+        $room_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+
+            if ($gift_order->room_id) {
+                $room_ids[] = $gift_order->room_id;
+            }
+        }
+
+        $rooms = Rooms::findByIds($room_ids);
+
+        echoLine(count($rooms));
+        foreach ($rooms as $room) {
+            $cond = [
+                'conditions' => 'room_id = :room_id: and pay_type = :pay_type: and gift_type = :gift_type: and status = :status: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'room_id' => $room->id, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start' => beginOfDay(), 'end' => endOfDay()],
+                'column' => 'amount'
+            ];
+
+            $amount = GiftOrders::sum($cond);
+
+            $cond = [
+                'conditions' => 'room_id = :room_id: and pay_type = :pay_type: and gift_type = :gift_type: and status = :status: and created_at >= :start: and created_at <= :end:',
+                'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'room_id' => $room->id, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start' => beginOfDay(), 'end' => endOfDay()],
+                'column' => 'gift_num'
+            ];
+
+            $gift_num = GiftOrders::sum($cond);
+
+            echoLine($room->id, $amount, $gift_num);
+
+            $room_db->zadd($room->generateStatIncomeDayKey(date("Ymd")), $amount, $room->id);
+            $room_db->zadd($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room->id);
+        }
+    }
+
+    function checkHicoinAction()
+    {
+        $cond = [
+            'conditions' => 'pay_type = :pay_type: and gift_type = :gift_type: and status = :status:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'status' => GIFT_ORDER_STATUS_SUCCESS]
+        ];
+
+
+        $gift_orders = GiftOrders::findForeach($cond);
+
+        foreach ($gift_orders as $gift_order) {
+
+            $hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $gift_order->user_id, 'gift_order_id' => $gift_order->id]);
+
+            if (!$hi_coin_history) {
+                echoLine($gift_order->id, $gift_order->user_id);
+            }
+        }
     }
 }

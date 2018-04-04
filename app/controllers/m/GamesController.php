@@ -28,12 +28,12 @@ class GamesController extends BaseController
         }
 
         $hot_cache->zadd($room_key, time(), $current_user_id);
-        $num = $hot_cache->zcard($room_key);
+        $user_num = $hot_cache->zcard($room_key);
 
-        info('cache', $room_key, intval($this->currentUser()->id), $num);
+        info('cache', $room_key, $this->currentUser()->id, $user_num);
 
         // 发起者必须是主播
-        if ($num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
+        if ($user_num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
             $room_host_id = $this->currentUser()->id;
@@ -43,24 +43,38 @@ class GamesController extends BaseController
             $hot_cache->expire($room_wait_key, 600);
         } else {
             $info = $hot_cache->hgetall($room_info_key);
-            info($info);
+            info($room_info_key, $info);
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
+            // 修复数据
+            if(!$pay_type && $user_num){
+                $hot_cache->del($room_key);
+                $hot_cache->del($room_wait_key);
+                $hot_cache->del($room_info_key);
+            }
         }
 
-        info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $num, $pay_type, $amount);
+        $room_host_nickname = '';
+        $room_host_user = \Users::findFirstById($room_host_id);
+        if($room_host_user){
+            $room_host_nickname = $room_host_user->nickname;
+        }
+        info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
 
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
+        $this->view->room_host_nickname = $room_host_nickname;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
+        $this->view->room_id = $room_id;
     }
 
     // 提交入场费
     function feeAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        info($this->params());
+        $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
@@ -104,8 +118,8 @@ class GamesController extends BaseController
 
     function waitAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-
+        info($this->params());
+        $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
@@ -117,8 +131,8 @@ class GamesController extends BaseController
         $body['sex'] = $this->currentUser()->sex;
         $body['room_id'] = $room_id;
         $body['nonce_str'] = randStr(20);
-        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid);
-        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
+        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
 
         $str = paramsToStr($body);
 
@@ -134,11 +148,13 @@ class GamesController extends BaseController
         $this->view->url = $url;
         $this->view->current_user = $user;
         $this->view->room_host_id = $room_host_id;
+        $this->view->room_id = $room_id;
     }
 
     function enterAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        info($this->params());
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_wait_key = "game_room_wait_" . $room_id;
         $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
@@ -164,7 +180,7 @@ class GamesController extends BaseController
         $data['can_enter'] = intval($can_enter);
 
         //扣除入场费
-        if ($can_enter) {
+        if ($can_enter && $room_host_id != $this->currentUser()->id) {
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
                 $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
@@ -192,7 +208,8 @@ class GamesController extends BaseController
 
     function startAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        info($this->params());
+        $room_id = $this->params('room_id');
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
@@ -240,7 +257,8 @@ class GamesController extends BaseController
 
     function exitAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        info($this->params());
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
@@ -266,14 +284,24 @@ class GamesController extends BaseController
 
     function backAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        info($this->params());
+        $room_id = $this->params('room_id');
         $hot_cache = \Rooms::getHotWriteCache();
         $room_settlement_key = 'game_room_settlement_' . $room_id;
         $info = $hot_cache->hgetall($room_settlement_key);
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
-        $user_num = fetch($info, 'user_num');
-        $user_ids = [fetch($info, 'rank1') => fetch($info, 'rank1_amount')];
+        $total_user_num = fetch($info, 'user_num');
+
+        info($info);
+
+        $user_ids = [];
+        if(fetch($info, 'rank1')){
+            $user_ids[fetch($info, 'rank1')] = fetch($info, 'rank1_amount');
+        }
+
+        //{"pay_type":"diamond","amount":"1","rank1":"257","rank1_amount":"2","rank2":"6","rank2_amount":"1"}
+
         if (fetch($info, 'rank2')) {
             $user_ids[fetch($info, 'rank2')] = fetch($info, 'rank2_amount');
         }
@@ -286,17 +314,21 @@ class GamesController extends BaseController
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
+
+        info('user_info', $user_datas);
+
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
-        $this->view->user_num = $user_num;
-        $this->view->total_amount = $amount * $user_num;
-        $this->view->users = json_encode($user_datas,JSON_UNESCAPED_UNICODE);
+        $this->view->user_num = count($user_datas);
+        $this->view->total_amount = $amount * $total_user_num;
+        $this->view->back_url = 'app://home';
+        $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
 
     function notifyAction()
     {
-
+        info($this->params());
         $rank1 = $this->params('rank1');
         $rank2 = $this->params('rank2');
         $rank3 = $this->params('rank3');
@@ -310,7 +342,7 @@ class GamesController extends BaseController
         $rank2_user = \Users::findFirstById($rank2);
         $rank3_user = \Users::findFirstById($rank3);
 
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+        $room_id = $this->params('room_id');
         info($this->currentUser()->id, 'room', $room_id, 'rank', $rank1, $rank2, $rank3);
 
         $hot_cache = \Rooms::getHotWriteCache();
@@ -319,18 +351,21 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $room_enter_key = "game_room_enter_" . $room_id;
         $room_settlement_key = 'game_room_settlement_' . $room_id;
+        $hot_cache->del($room_settlement_key);
 
         $user_num = $hot_cache->zcard($room_enter_key);
         $info = $hot_cache->hgetall($room_info_key);
-        $room_host_id = fetch($info, 'room_host_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
 
+        info($room_info_key, $info);
+
         $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
         $hot_cache->hset($room_settlement_key, 'amount', $amount);
+        $hot_cache->hset($room_settlement_key, 'user_num', $user_num);
 
         if ($pay_type != 'free') {
-            if ($user_num == 1 || $user_num == 2) {
+            if ($user_num == 1) {
                 $rank1_amount = $user_num * $amount;
                 if ($pay_type == PAY_TYPE_DIAMOND) {
                     $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
@@ -343,12 +378,29 @@ class GamesController extends BaseController
                 $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
                 $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
 
+            }elseif ($user_num == 2){
+                $rank1_amount = $user_num * $amount;
+                $rank2_amount = 0;
+                if ($pay_type == PAY_TYPE_DIAMOND) {
+                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                if ($pay_type == PAY_TYPE_GOLD) {
+                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                }
+                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
+                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
+                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+
             } elseif ($user_num == 3) {
 
                 $total_amount = $user_num * $amount;
                 $rank1_amount = round($total_amount * 0.8);
                 $rank2_amount = round($total_amount * 0.2);
-
+                $rank3_amount = 0;
                 // rank1
                 if ($pay_type == PAY_TYPE_DIAMOND) {
                     $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
@@ -374,6 +426,9 @@ class GamesController extends BaseController
 
                 $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
                 $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
+
+                $hot_cache->hset($room_settlement_key, 'rank3', $rank3);
+                $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
             } else {
 
                 $total_amount = ($user_num - 3) * $amount;
@@ -421,9 +476,11 @@ class GamesController extends BaseController
                 $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
             }
 
-            $hot_cache->expire($room_settlement_key, 90);
+            $hot_cache->expire($room_settlement_key, 200);
         }
 
+        $info = $hot_cache->hgetall($room_settlement_key);
+        info('info', $room_settlement_key, $info);
         // 解散比赛
         $hot_cache->del($room_key);
         $hot_cache->del($room_wait_key);
