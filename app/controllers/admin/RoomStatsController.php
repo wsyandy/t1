@@ -143,7 +143,7 @@ class RoomStatsController extends BaseController
         $this->view->start_date = $start_date;
         $this->view->end_date = $end_date;
         $this->view->union_id = $union_id;
-        $this->view->stat_fields = ['房间ID', '名称', '房主信息', '工会ID', '进入房间人数', '钻石流水', '送钻石礼物人数', '送钻石礼物个数',
+        $this->view->stat_fields = ['房间ID', '名称', '房主信息', '家族ID', '进入房间人数', '钻石流水', '送钻石礼物人数', '送钻石礼物个数',
             '人均送钻石礼物个数', '房主时长', '主播时长', '旁听时长'];
         $this->view->room_id = $room_id ? $room_id : '';
         $this->view->user_id = $user_id ? $user_id : '';
