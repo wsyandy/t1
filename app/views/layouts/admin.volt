@@ -335,7 +335,8 @@
         {% endif %}
 
         {% if isAllowed('gifts','index') or isAllowed('emoticon_images','index') or  isAllowed('audios','index')
-        or isAllowed('room_themes','index') or isAllowed('musics','index') or isAllowed('account_banks','index') %}
+        or isAllowed('room_themes','index') or isAllowed('musics','index') or isAllowed('account_banks','index')
+        or isAllowed('activities','index')%}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -359,6 +360,9 @@
                     {% endif %}
                     {% if isAllowed('account_banks','index') %}
                         <li><a href="/admin/account_banks">账户银行配置</a></li>
+                    {% endif %}
+                    {% if isAllowed('activities','index') %}
+                        <li><a href="/admin/activities">活动配置</a></li>
                     {% endif %}
                 </ul>
             </li>
