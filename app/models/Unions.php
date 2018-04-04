@@ -537,7 +537,7 @@ class Unions extends BaseModel
             $expire_at = time() - 60;
         }
 
-        if ($union_history->join_at > $expire_at) {
+        if ($union_history && $union_history->join_at > $expire_at) {
             return [ERROR_CODE_FAIL, '退出家族，需要会长同意，请耐心等待'];
         }
 
