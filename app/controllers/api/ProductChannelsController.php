@@ -30,6 +30,7 @@ class ProductChannelsController extends BaseController
         if(isDevelopmentEnv()){
             $detail_json['menu_config'][] = ['show' => true, 'title' => '跳一跳', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
             $detail_json['menu_config'][] = ['show' => true, 'title' => '推荐', 'url' => '/m/users/recommend', 'icon' => $root . 'images/menu_game.png'];
+            $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_game.png'];
         }else{
             $detail_json['menu_config'][] = ['show' => false, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
         }

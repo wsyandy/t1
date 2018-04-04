@@ -9,23 +9,29 @@
             <tr class="title">
                 <td></td>
                 <td>人气榜</td>
-                <td><div class="line"></div>贡献榜</td>
+                <td>
+                    <div class="line"></div>
+                    贡献榜
+                </td>
             </tr>
             <tr>
                 <td class="title_size">
-                    <img class="voice_ico" src="/m/images/ico_first.png" alt=""> st</td>
+                    <img class="voice_ico" src="/m/images/ico_first.png" alt=""> st
+                </td>
                 <td>6000000</td>
                 <td>8000000</td>
             </tr>
             <tr>
                 <td class="title_size">
-                    <img class="voice_ico" src="/m/images/ico_second.png" alt=""> nd</td>
+                    <img class="voice_ico" src="/m/images/ico_second.png" alt=""> nd
+                </td>
                 <td>6000001</td>
                 <td>8000001</td>
             </tr>
             <tr>
                 <td class="title_size">
-                    <img class="voice_ico" src="/m/images/ico_third.png" alt=""> rd</td>
+                    <img class="voice_ico" src="/m/images/ico_third.png" alt=""> rd
+                </td>
                 <td>6000002</td>
                 <td>8000002</td>
             </tr>
@@ -34,13 +40,14 @@
     <div class="voice_list">
         <div class="voice_title">活动规则</div>
         <ul>
-            <li>
-                <p>1、</p>
-                <p>活动设有魅力榜和贡献榜，用户魅力值越高排名越靠前，贡献值越高排名越靠前。</p>
-            </li>
-            <li><p>2、</p> <p>魅力榜和贡献榜前三名将获得高级靓号奖励。</p></li>
-            <li><p>3、</p> <p>用户在活动期间送出礼物，每送出1个钻石礼物，送出用户贡献值+1，收到礼物用户魅力值+1。</p></li>
-            <li><p>4、</p> <p>活动时间：2018年4月2日0点-2018年4月8日23点</p></li>
+            <li><p>1、</p>
+                <p>活动设有魅力榜和贡献榜，用户魅力值越高排名越靠前，贡献值越高排名越靠前。</p></li>
+            <li><p>2、</p>
+                <p>魅力榜和贡献榜前三名将获得高级靓号奖励。</p></li>
+            <li><p>3、</p>
+                <p>用户在活动期间送出礼物，每送出1个钻石礼物，送出用户贡献值+1，收到礼物用户魅力值+1。</p></li>
+            <li><p>4、</p>
+                <p>活动时间：{{ start_text }}-{{ end_text }}</p></li>
         </ul>
     </div>
     <div class="award_text">
@@ -49,7 +56,7 @@
     </div>
     <div class="last_week_title">
         <h3>上周Hi音榜</h3>
-        <p>{{ start }}-{{ end }}</p>
+        <p>{{ last_start }}-{{ last_end }}</p>
     </div>
     <div class="week_wrap">
         <ul>
@@ -111,44 +118,26 @@
         <h3>大奖Hi翻天</h3>
     </div>
 
+    {% for index,gift in gifts %}
+        <div
+                {% if index == 0 %}
+                    class="top_prize one_prize"
+                {% else %}
+                    class="top_prize"
+                {% endif %}
+        >
+            <div class="prize_list">
+                <div class="left">
+                    <h3>奖励价值 <span>{{ gift.amount }}</span> 钻</h3>
+                    <p>{{ gift.name }}</p>
+                </div>
+                <div class="right">
+                    <img src="{{ gift.image_big_url }}">
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 
-    <div class="top_prize one_prize">
-        <div class="prize_title">第一名</div>
-        <div class="prize_list">
-            <div class="left">
-                <h3>奖励价值 <span>{{ gift_1.amount }}</span> 钻</h3>
-                <p>{{ gift_1.name }}</p>
-            </div>
-            <div class="right">
-                <img src="{{ gift_1.image_big_url }}">
-            </div>
-        </div>
-    </div>
-
-    <div class="top_prize">
-        <div class="prize_title">第二名</div>
-        <div class="prize_list">
-            <div class="left">
-                <h3>奖励价值 <span>{{ gift_2.amount }}</span> 钻</h3>
-                <p>{{ gift_2.name }}</p>
-            </div>
-            <div class="right">
-                <img src="{{ gift_2.image_big_url }}">
-            </div>
-        </div>
-    </div>
-    <div class="top_prize">
-        <div class="prize_title">第三名</div>
-        <div class="prize_list">
-            <div class="left">
-                <h3>奖励价值 <span>{{ gift_3.amount }}</span> 钻</h3>
-                <p>{{ gift_3.name }}</p>
-            </div>
-            <div class="right">
-                <img src="{{ gift_3.image_big_url }}">
-            </div>
-        </div>
-    </div>
     <div class="active_text">注：获得周榜前三的用户，如需推迟座驾使用时间，请及时
         联系官方（ID:{{ official_id }}），如未及时联系官方，奖品将在
         {{ give_time }}之前自动赠送到ID账号里。
