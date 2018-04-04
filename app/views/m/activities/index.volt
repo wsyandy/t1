@@ -12,6 +12,7 @@
                     <div class="activity_content_bottom">
                         <span>{{ activity.start_text }}-{{ activity.end_text }}</span>
                         <span class="arrow" id="{{ activity.id }}"> 了解详情</span>
+                        <input type="hidden" id="code" value="{{ activity.code }}">
                     </div>
                 </div>
             </li>
@@ -24,7 +25,12 @@
         $(this).click(function () {
             $(this).addClass('time_min_selected').siblings().removeClass('time_min_selected');
             var id = $(this).find('.arrow').attr("id");
-            location.href = "/m/activities/week_rank_activity?id=" + id + "&code=" + '{{ code }}';
+            var code = $(this).find('#code').attr("value");
+            if (code) {
+                window.location.href = "/m/activities/" + code + "?id=" + id + "&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
+            } else {
+                window.location.href = "/m/activities/week_rank_activity?id=" + id + "&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
+            }
         })
     });
 

@@ -1,0 +1,361 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+    background: #249D88;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+.none {
+    display: none;
+}
+
+.active_top {
+    width: 10.0rem;
+    height: 11.466667rem;
+    background: url(../images/top_bg.png) no-repeat;
+    background-size: 100%;
+    position: relative;
+}
+
+.active_top .top_text {
+    position: absolute;
+    padding: 0 0.4rem;
+    text-align: center;
+    margin: 0 auto;
+    bottom: 0.4rem;
+}
+
+.active_top .top_text p {
+    font-size: 0.346667rem;
+    color: #FFFFFF;
+    line-height: 0.533333rem;
+}
+
+.active_top .top_text p span {
+    color: #FFF000;
+}
+
+.active_main {
+    width: 10.0rem;
+    height: 13.8rem;
+    background: url(../images/main_bg.png) no-repeat;
+    background-size: 100%;
+    position: relative;
+}
+
+.active_main .left {
+    position: absolute;
+    width: 1.04rem;
+    height: 2.986667rem;
+    left: 0;
+    top: 4.0rem;
+}
+
+.active_main .right {
+    position: absolute;
+    width: 1.506667rem;
+    height: 2.08rem;
+    right: 0;
+    bottom: 0;
+}
+
+.active_jl {
+    margin: 0 0.4rem 0 0.4rem;
+    padding: 0.533333rem 0 0.266667rem 0;
+    background: #FFFFFF;
+    border-radius: 0.266667rem;
+}
+
+.active_title {
+    text-align: center;
+    position: relative;
+}
+
+.active_title h3 {
+    font-size: 0.48rem;
+    color: #299F8B;
+    position: relative;
+    z-index: 99;
+}
+
+.active_title p {
+    position: absolute;
+    width: 3.413333rem;
+    height: 0.16rem;
+    background: rgba(172, 212, 205, 0.65);
+    border-radius: 1.333333rem;
+    top: 0.4rem;
+    left: 50%;
+    z-index: 9;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.active_title .line {
+    width: 2.453333rem !important;
+}
+
+.active_jl ul {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-top: 0.866667rem;
+}
+
+.active_jl ul li {
+    width: 33.3%;
+    text-align: center;
+}
+
+.active_jl ul li h4 {
+    width: 1.893333rem;
+    height: 0.666667rem;
+    background: #249D88;
+    border-radius: 1.333333rem;
+    text-align: center;
+    line-height: 0.666667rem;
+    font-size: 0.373333rem;
+    color: #FFFFFF;
+    margin: 0 auto;
+}
+
+.active_jl ul li img {
+    display: block;
+    width: 1.893333rem;
+    height: 1.893333rem;
+    margin: 0 auto;
+    margin-top: 0.213333rem;
+}
+
+.active_jl ul li p {
+    font-size: 0.346667rem;
+    color: #424242;
+    padding-top: 0.2rem;
+    line-height: 0.506667rem;
+}
+
+.active_gz {
+    margin: 0.533333rem 0.4rem 0 0.4rem;
+    padding: 0.533333rem 0 0.266667rem 0;
+    background: #FFFFFF;
+    border-radius: 0.266667rem;
+}
+
+.active_gz ul {
+    padding: 0.666667rem 0.44rem 0.4rem 0.44rem;
+}
+
+.active_gz ul li {
+    font-family: PingFangSC-Regular;
+    font-size: 0.346667rem;
+    color: #425D59;
+    line-height: 0.533333rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.active_book {
+    width: 9.546667rem;
+    height: 0.746667rem;
+    margin: 0 auto;
+    background: url(../images/book_bg.png) no-repeat;
+    background-size: 100%;
+}
+
+.active_box {
+    padding-top: 0.453333rem;
+    width: 10.0rem;
+    background: url(../images/title_bg.png) no-repeat;
+    background-size: 100%;
+}
+
+.week_wrap ul {
+    width: 9.066667rem;
+    height: 3.2rem;
+    margin: 0 auto;
+    background: url(../images/book_title_bg.png) no-repeat;
+    background-size: 100%;
+    overflow: hidden;
+    margin-top: -0.466667rem;
+}
+
+.week_wrap ul h1 {
+    font-size: 0.533333rem;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 0.493333rem 0 0.573333rem 0;
+}
+
+.week_wrap ul li {
+    list-style: none;
+    float: left;
+    cursor: pointer;
+    width: 3.466667rem;
+    height: 0.853333rem;
+    line-height: 0.853333rem;
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 0.4rem;
+    background-size: 100%;
+    background: #309E88;
+    border-radius: 1.333333rem;
+    margin-left: 0.72rem;
+}
+
+.week_wrap .li_bg {
+    color: #168673 !important;
+    background: url(../images/qing_ming_activity_selected.png) no-repeat !important;
+    background-size: 100% !important;
+}
+
+.week_list {
+    width: 9.066667rem;
+    background: #FFFFFF;
+    margin: 0 auto;
+    position: relative;
+}
+
+.down {
+    position: absolute;
+    width: 0.346667rem;
+    height: 0.16rem;
+    left: 2.284rem;
+    top: -0.16rem;
+}
+
+.down_right {
+    left: 6.5rem !important;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table tr {
+    height: 1.466667rem;
+}
+
+.table tr td {
+    text-align: center;
+    font-family: PingFangSC-Medium;
+    border: none;
+}
+
+.table tr td h5 {
+    font-size: 0.373333rem;
+    color: #333333;
+    text-align: left;
+}
+
+.table tr td p {
+    margin-top: 0.133333rem;
+    font-size: 0.32rem;
+    color: #5E5E5E;
+    text-align: left;
+}
+
+.table tr td b {
+    font-weight: normal;
+    font-size: 0.373333rem;
+    color: #5E5E5E;
+}
+
+.table tr:nth-child(even) td {
+    background: #EFF8F6;
+
+}
+
+.voice_ico {
+    width: 0.826667rem;
+    height: 0.826667rem;
+}
+
+.title_size {
+    font-family: SFUIDisplay-Black !important;
+    font-size: 0.373333rem !important;
+    color: #AFAFAF !important;
+    font-weight: bold;
+}
+
+.week_tr_title {
+    font-size: 0.373333rem;
+    color: #168673;
+}
+
+.award_text {
+    background: #249D88;
+    text-align: center;
+    padding: 0.853333rem 0 0.4rem 0;
+    font-size: 0.373333rem;
+    color: rgba(0, 0, 0, 0.31);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

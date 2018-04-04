@@ -1,6 +1,7 @@
 {% set f = simple_form([ 'admin', activity ], ['enctype': 'multipart/form-data', 'class':'ajax_model_form']) %}
 
-{{ f.input('title', [ 'label':'标题' ]) }}
+{{ f.input('title', [ 'label':'标题','width':'50%' ]) }}
+{{ f.input('code', [ 'label':'code' ,'width':'50%']) }}
 {{ f.file('image', ['label': '图片']) }}
 {{ f.input('start_at',['label':'开始时间','class':'form_datetime','width':'50%']) }}
 {{ f.input('end_at',['label':'结束时间','class':'form_datetime','width':'50%']) }}

@@ -1,0 +1,1 @@
+ALTER TABLE activities ADD COLUMN code VARCHAR (255) ;

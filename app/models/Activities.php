@@ -50,6 +50,39 @@ class Activities extends BaseModel
         return date("m月d日", $end_at);
     }
 
+    function mergeJson()
+    {
+        return [
+            'image_small_url' => $this->image_small_url
+        ];
+    }
+
+    //是否存在 code
+    function checkFields()
+    {
+        $fields = ['code'];
+
+        foreach ($fields as $field) {
+            $val = $this->$field;
+            if (isBlank($val)) {
+                return [ERROR_CODE_FAIL, $field . "不能为空"];
+            }
+
+            if ($this->hasChanged($field)) {
+                $obj = self::findFirst([
+                    'conditions' => "$field  = :$field:",
+                    'bind' => [$field => $val]
+                ]);
+
+                if (isPresent($obj)) {
+                    return [ERROR_CODE_FAIL, $field . "不能重复"];
+                }
+            }
+        }
+        return [ERROR_CODE_SUCCESS, ''];
+    }
+
+
     static function findActivity($opts)
     {
         $platform = fetch($opts, 'platform');
