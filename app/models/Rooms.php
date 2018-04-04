@@ -117,6 +117,7 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
+            'top_text' => $this->top_text
         ];
 
         return array_merge($opts, $this->toJson());
