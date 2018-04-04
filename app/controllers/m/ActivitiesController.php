@@ -73,6 +73,10 @@ class ActivitiesController extends BaseController
     function qingMingActivityAction()
     {
         $start = 20180405;
+        if (isDevelopmentEnv()) {
+            $start = 20180404;
+        }
+
         $end = 20180407;
 
         $db = \Users::getUserDb();
@@ -114,8 +118,8 @@ class ActivitiesController extends BaseController
         }
 
 
-        $this->view->start_text = "2018年04月07日00点";
-        $this->view->end_text = "2018年04月08日00";
+        $this->view->start_text = "2018年4月5日0时";
+        $this->view->end_text = "2018年4月8日0时";
 
         $this->view->charm_users = $charm_users;
         $this->view->wealth_users = $wealth_users;
