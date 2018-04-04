@@ -241,7 +241,7 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         //7天自动退出 测试环境30分钟
         if (isDevelopmentEnv()){
-            $time =  30 * 60;
+            $time =  3 * 60;
         }
 
         $start_at = time() - 60 * 7 - $time;
