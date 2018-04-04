@@ -42,7 +42,7 @@ class ActivitiesController extends BaseController
             if (isDevelopmentEnv()) {
                 $gifts = \Gifts::findByIds([61, 49, 52]);
             } else {
-                $gifts = \Gifts::findByIds([33, 32, 11]);
+                $gifts = \Gifts::findByIds([33, 32, 31]);
             }
 
             $this->view->start_text = date("Y年m月d日H点", $start_at);
