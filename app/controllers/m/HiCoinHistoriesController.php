@@ -45,7 +45,7 @@ class HiCoinHistoriesController extends BaseController
 
             $user = $this->currentUser();
 
-            if ($user->getCanUseHiCoins() < $hi_coins) {
+            if ($user->getHiCoinText() < $hi_coins) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 
@@ -59,7 +59,7 @@ class HiCoinHistoriesController extends BaseController
             $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user->id, $opts);
 
             info('hi_coin_history', $hi_coin_history->id);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->hi_coins]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->getHiCoinText()]);
         }
 
     }

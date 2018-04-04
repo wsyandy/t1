@@ -33,6 +33,7 @@ class Rooms extends BaseModel
     static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台', ROOM_THEME_TYPE_USER_BROADCAST => '个人电台'];
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
+    static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
 
     function beforeCreate()
     {
@@ -1761,5 +1762,10 @@ class Rooms extends BaseModel
         }
 
         return $avg;
+    }
+
+    function isTop()
+    {
+        return STATUS_ON == $this->top;
     }
 }

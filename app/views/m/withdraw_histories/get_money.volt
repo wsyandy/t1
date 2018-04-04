@@ -50,7 +50,7 @@
         })
     });
 
-    var amount = {{ amount }};
+    var withdraw_amount = {{ amount }};
     var skip = false;
 
     function colse_fd() {
@@ -92,11 +92,11 @@
 
     function create() {
 
-        var money = $("#money").val();
+        var amount = $("#money").val();
         var name = $("#name").val();
         var account = $("#account").val();
 
-        if (money > amount || money <= 0) {
+        if (amount > withdraw_amount || amount <= 0) {
             $('.get_btn a').removeClass('changecolor');
             show_fd("请输入正确的提现金额");
             return;
@@ -105,7 +105,7 @@
         var data = {
             sid: "{{ sid }}",
             code: "{{ code }}",
-            money: money,
+            amount: amount,
             name: name,
             account: account
         };

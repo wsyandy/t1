@@ -31,7 +31,7 @@ class HiCoinHistories extends BaseModel
 
     static $FEE_TYPE = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
         HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励',
-        HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石'];
+        HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石', HI_COIN_FEE_TYPE_WITHDRAW_RETURN => '提现失败返还'];
 
 
     function beforeCreate()
@@ -166,8 +166,14 @@ class HiCoinHistories extends BaseModel
             $hi_coin_history->withdraw_history_id = $withdraw_history_id;
             $amount = $withdraw_history->amount;
             $hi_coin_history->hi_coins = $amount;
-            $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
-            $hi_coin_history->remark = "提现金额:" . $amount;
+
+            if (WITHDRAW_STATUS_FAIL == $withdraw_history->status) {
+                $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW_RETURN; //提现失败返款
+                $hi_coin_history->remark = "提现失败返还金额:" . $amount;
+            } else {
+                $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_WITHDRAW;
+                $hi_coin_history->remark = "提现金额:" . $amount;
+            }
         }
 
         if ($operator_id) {

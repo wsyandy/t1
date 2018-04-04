@@ -540,12 +540,21 @@ class RoomsTask extends \Phalcon\Cli\Task
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
 
+        $top_room_ids = [];
+
         foreach ($hot_room_ids as $room_id => $income) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            //置顶房间
+            if ($room->isTop()) {
+                $top_room_ids[] = $room->id;
+                continue;
+            }
 
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
-                $room = Rooms::findFirstById($room_id);
                 $no_amount_room_ids[$room_id] = $room->getUserNum();
             }
         }
@@ -557,6 +566,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache->zclear($hot_room_list_key);
 
         $time = time();
+
+        foreach ($top_room_ids as $top_room_id) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+        }
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
@@ -598,7 +612,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if ($hot_room->getUserNum() <= $least_user_num) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
-                info("room_seat_is_null", $hot_room->id);
+                info("room_user_is_few_null", $hot_room->id);
                 continue;
             }
 
@@ -628,13 +642,20 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
+        $top_room_ids = [];
 
         foreach ($total_room_ids as $room_id => $income) {
+
+            $room = Rooms::findFirstById($room_id);
+
+            if ($room->isTop()) {
+                $top_room_ids[] = $room->id;
+                continue;
+            }
 
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
-                $room = Rooms::findFirstById($room_id);
                 $no_amount_room_ids[$room_id] = $room->getUserNum();
             }
         }
@@ -642,6 +663,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         arsort($no_amount_room_ids);
 
         $time = time();
+
+        foreach ($top_room_ids as $top_room_id) {
+            $time -= 100;
+            $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+        }
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;

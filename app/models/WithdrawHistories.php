@@ -33,9 +33,7 @@ class WithdrawHistories extends BaseModel
             if (WITHDRAW_TYPE_USER == $this->type) {
 
                 if (WITHDRAW_STATUS_SUCCESS == $this->status) {
-                    $user = $this->user;
                     $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
-                    HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $this->id]);
                 }
 
                 if (WITHDRAW_STATUS_FAIL == $this->status) {
@@ -44,6 +42,8 @@ class WithdrawHistories extends BaseModel
                     if ($this->error_reason) {
                         $content = $this->error_reason;
                     }
+
+                    HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
                 }
 
                 Chats::sendTextSystemMessage($this->user_id, $content);
@@ -105,15 +105,15 @@ class WithdrawHistories extends BaseModel
 
     static function createWithdrawHistories($user, $opts)
     {
-        $amount = fetch($opts, 'money');
+        $amount = fetch($opts, 'amount');
         $user_name = fetch($opts, 'name');
         $alipay_account = fetch($opts, 'account');
 
         if (self::hasWaitedHistoryByUser($user)) {
             return [ERROR_CODE_FAIL, '一周只能提现一次哦'];
         }
-        
-        if ($user->getCanUseHiCoins() < $amount) {
+
+        if ($user->getWithdrawAmount() < $amount) {
             return [ERROR_CODE_FAIL, '提现金额超过可提现最大值'];
         }
 
@@ -126,6 +126,8 @@ class WithdrawHistories extends BaseModel
         $history->status = WITHDRAW_STATUS_WAIT;
         $history->type = WITHDRAW_TYPE_USER;
         $history->save();
+
+        HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
 
         return [ERROR_CODE_SUCCESS, '受理中'];
     }
@@ -183,11 +185,19 @@ class WithdrawHistories extends BaseModel
 
     static function hasWaitedHistoryByUser($user)
     {
+        $start = beginOfWeek();
+        $end = endOfWeek();
+
+        if (isDevelopmentEnv()) {
+            $start = time() - 120;
+            $end = time();
+        }
+
         $withdraw_history = WithdrawHistories::findFirst(
             [
                 'conditions' => '(user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end: and ' .
                     'status != :status1:) or (status = :status: and user_id = :user_id1:)',
-                'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => beginOfWeek(), 'end' => endOfWeek(),
+                'bind' => ['user_id' => $user->id, 'type' => WITHDRAW_TYPE_USER, 'start' => $start, 'end' => $end,
                     'status' => WITHDRAW_STATUS_WAIT, 'user_id1' => $user->id, 'status1' => WITHDRAW_STATUS_FAIL],
                 'order' => 'id desc'
             ]
