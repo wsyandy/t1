@@ -393,7 +393,7 @@ class UnionsController extends BaseController
 
         $union = $current_user->union;
         $user = \Users::findFirstById($user_id);
-        list($error_code, $error_reason) = $union->confirmExitUnion($user);
+        list($error_code, $error_reason) = $union->confirmExitUnion($user, 'agree');
         return $this->renderJSON($error_code, $error_reason);
 
     }

@@ -565,7 +565,7 @@ class Unions extends BaseModel
 
     }
 
-    function confirmExitUnion($user)
+    function confirmExitUnion($user, $from)
     {
 
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS],
@@ -586,8 +586,8 @@ class Unions extends BaseModel
         $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateApplyExitUsersKey(), $user->id);
 
-        $content = "您已经退出了{$this->name}家族";
-        Chats::sendTextSystemMessage($user->id, $content);
+        $content = ['auto' => "您的家族会长已同意您的退出家族申请", 'agree' => "您已经退出了{$this->name}家族"];
+        Chats::sendTextSystemMessage($user->id, $content[$from]);
 
         info('user_id', $user->id, 'union_id', $this->id);
         $user->update();
