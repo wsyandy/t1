@@ -18,29 +18,34 @@ class GiftOrdersController extends BaseController
 
         $start_at = $this->params('start_at', date('Y-m-d H:i:s', beginOfDay()));
         $end_at = $this->params('end_at', date('Y-m-d H:i:s', endOfDay()));
+        $gift_order = $this->params('gift_order');
+        $id = fetch($gift_order, 'id_eq');
 
-        if ($start_at) {
-            $start_at = strtotime($start_at);
-            if (isset($cond['conditions'])) {
-                $cond['conditions'] .= ' and created_at >=:start_at:';
-            } else {
-                $cond['conditions'] = ' created_at >=:start_at:';
+        if (!$id) {
+
+            if ($start_at) {
+                $start_at = strtotime($start_at);
+                if (isset($cond['conditions'])) {
+                    $cond['conditions'] .= ' and created_at >=:start_at:';
+                } else {
+                    $cond['conditions'] = ' created_at >=:start_at:';
+                }
+                $cond['bind']['start_at'] = $start_at;
             }
-            $cond['bind']['start_at'] = $start_at;
-        }
 
-        if ($end_at) {
-            $end_at = strtotime($end_at);
-            if (isset($cond['conditions'])) {
-                $cond['conditions'] .= ' and created_at <=:end_at:';
-            } else {
-                $cond['conditions'] = ' created_at <=:end_at:';
+            if ($end_at) {
+                $end_at = strtotime($end_at);
+                if (isset($cond['conditions'])) {
+                    $cond['conditions'] .= ' and created_at <=:end_at:';
+                } else {
+                    $cond['conditions'] = ' created_at <=:end_at:';
+                }
+                $cond['bind']['end_at'] = $end_at;
             }
-            $cond['bind']['end_at'] = $end_at;
-        }
 
-        if ($end_at - $start_at > 86400 * 7) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '时间跨度最大7天');
+            if ($end_at - $start_at > 86400 * 7) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '时间跨度最大7天');
+            }
         }
 
         $page = $this->params('page', 1);
@@ -76,10 +81,7 @@ class GiftOrdersController extends BaseController
         $cond['bind']['pay_type'] = GIFT_PAY_TYPE_DIAMOND;
         $car_total_amount = \GiftOrders::sum($cond);
 
-        $gift_order = $this->params('gift_order');
-        debug($gift_order);
-
-        $this->view->id = isset($gift_order['id_eq']) ? $gift_order['id_eq'] : '';
+        $this->view->id = $id ? $id : '';
         $this->view->sender_id = isset($gift_order['sender_id_eq']) ? $gift_order['sender_id_eq'] : '';
         $this->view->gift_id = isset($gift_order['gift_id_eq']) ? $gift_order['gift_id_eq'] : '';
         $this->view->room_id = isset($gift_order['room_id_eq']) ? $gift_order['room_id_eq'] : '';
@@ -133,7 +135,7 @@ class GiftOrdersController extends BaseController
             $operator = $this->currentOperator();
 
             \GiftOrders::giveCarBySystem($user->id, $operator->id, $gift, $content);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, "赠送成功",['error_url' => '/admin/gift_orders?user_id=' . $user->id]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, "赠送成功", ['error_url' => '/admin/gift_orders?user_id=' . $user->id]);
         }
 
         $this->view->user_id = $user->id;
