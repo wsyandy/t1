@@ -745,8 +745,8 @@ trait UserWakeup
 
         $body = $data[mt_rand(0, 1)];
 
-        $client_url = "app://rooms/detail?id={$this->current_room_id}";
-        $opts = ['title' => '好友上线开播提醒', 'body' => $body, 'client_url' => $client_url];
+//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '好友上线开播提醒', 'body' => $body];
 
         $per_page = 200;
         $friend_num = $this->friendNum();
@@ -805,8 +805,8 @@ trait UserWakeup
 
         $body = $data[mt_rand(0, 1)];
 
-        $client_url = "app://rooms/detail?id={$this->current_room_id}";
-        $opts = ['title' => '关注的人开播提醒', 'body' => $body, 'client_url' => $client_url];
+//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
+        $opts = ['title' => '关注的人开播提醒', 'body' => $body];
 
         $per_page = 200;
         $followed_num = $this->followedNum();
