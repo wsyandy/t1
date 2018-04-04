@@ -41,7 +41,8 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
-            'id_card_auth' => $this->id_card_auth
+            'id_card_auth' => $this->id_card_auth,
+            'diamond' => $this->diamond
         ];
 
         if (isPresent($this->union)) {

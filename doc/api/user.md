@@ -185,7 +185,8 @@
     next_level_experience 下一级经验值
     experience 当前经验值
     union_name 家族名，不存在为空字符
-    id_card_auth 主持认证状态  1已认证 
+    id_card_auth 主持认证状态  1已认证
+    diamond 钻石余额 
     albums:[
         {
             id,
