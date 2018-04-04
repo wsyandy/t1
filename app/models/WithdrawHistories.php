@@ -66,18 +66,6 @@ class WithdrawHistories extends BaseModel
 
     function beforeUpdate()
     {
-
-        if (WITHDRAW_TYPE_USER == $this->type) {
-
-            if (WITHDRAW_STATUS_SUCCESS == $this->status) {
-
-                if ($this->user->hi_coins < $this->amount) {
-                    $this->error_reason = '余额不足';
-                    return true;
-                }
-            }
-        }
-
         if (WITHDRAW_TYPE_UNION == $this->type) {
 
             $union = $this->union;
