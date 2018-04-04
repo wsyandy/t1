@@ -26,9 +26,13 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         $end = endOfDay(strtotime($end));
         $time = time();
 
-        if (isProduction() && ($time < $start || $time > $end)) {
+        if (isProduction() && ($time < $start || $time >= $end + 60)) {
             info("activity is over");
             return;
+        }
+
+        if ($time > $end) {
+            $time = $end;
         }
 
         $hot_cache = Activities::getHotWriteCache();
