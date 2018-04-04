@@ -40,10 +40,11 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         info($last_stat_time);
 
         if (!$last_stat_time) {
-            $hot_cache->set($stat_time_key, $time);
             $last_stat_time = $start;
         }
 
+        $hot_cache->set($stat_time_key, $time);
+        
         $gift_orders = GiftOrders::find(['conditions' => 'gift_id = :gift_id: and created_at >= :start: and created_at < :end:' .
             ' and status = :status:',
             'bind' => ['gift_id' => $gift_id, 'start' => $last_stat_time, 'end' => $time, 'status' => GIFT_ORDER_STATUS_SUCCESS]]);
