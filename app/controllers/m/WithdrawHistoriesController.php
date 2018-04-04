@@ -20,7 +20,7 @@ class WithdrawHistoriesController extends BaseController
         $this->view->amount = $user->getWithdrawAmount();
 
         $is_height_version = false;
-        if ($user->isIos()){
+        if ($user->isIos()) {
             $is_height_version = $user->version_code > $user->product_channel->apple_stable_version;
         }
         info($is_height_version);
@@ -36,7 +36,10 @@ class WithdrawHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
-            return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
+            if (isProduction()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '系统维护中');
+            }
+
             if (UNION_TYPE_PUBLIC == $this->currentUser()->union_type) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '公会成员禁止提现,请联系您的公会长');
             }
