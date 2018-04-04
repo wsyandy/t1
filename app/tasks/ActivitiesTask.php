@@ -20,6 +20,8 @@ class ActivitiesTask extends \Phalcon\Cli\Task
         $start = $opts[1];
         $end = $opts[2];
 
+        info($opts);
+
         $start = beginOfDay(strtotime($start));
         $end = endOfDay(strtotime($end));
         $time = time();
