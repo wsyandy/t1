@@ -8,7 +8,7 @@
             <li>
                 <img src="{{ activity.image_url }}" alt="">
                 <div class=" activity_content">
-                    <p>Hi语音周榜争夺战启动中…</p>
+                    <p>{{ activity.title }}</p>
                     <div class="activity_content_bottom">
                         <span>{{ activity.start_text }}-{{ activity.end_text }}</span>
                         <span class="arrow" id="{{ activity.id }}"> 了解详情</span>
