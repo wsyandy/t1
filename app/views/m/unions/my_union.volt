@@ -317,7 +317,8 @@
                         var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
                         location.href = url;
                     } else {
-                        alert(resp.error_reason);
+                        $(".middle_pop").hide();
+                        $(".middle_pop_bg").hide();
                     }
                 });
             },
