@@ -94,10 +94,10 @@ class Activities extends BaseModel
         $conditions[] = ' (product_channel_ids like :product_channel_id: or product_channel_ids = "") ';
         $bind['product_channel_id'] = '%,' . $product_channel_id . ',%';
 
-        $conditions[] = ' status=:status: ';
+        $conditions[] = ' status = :status: ';
         $bind['status'] = STATUS_ON;
 
-        $cond['condition'] = implode(' and ', $conditions);
+        $cond['conditions'] = implode(' and ', $conditions);
         $cond['bind'] = $bind;
         $cond['order'] = 'rank desc, id desc';
 
