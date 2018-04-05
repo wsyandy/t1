@@ -128,17 +128,21 @@ class GiftsTask extends \Phalcon\Cli\Task
 
             if (SYSTEM_ID == $gift_order->sender_id) {
                 $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
+                $gift_order->update();
                 continue;
             }
 
             if ($gift_order->user_id == $gift_order->sender_id) {
                 $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+                $gift_order->update();
                 continue;
             }
 
-            $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
-
-            $gift_order->update();
+            if ($gift_order->user_id != $gift_order->sender_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+                $gift_order->update();
+                continue;
+            }
         }
     }
 }

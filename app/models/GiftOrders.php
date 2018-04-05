@@ -183,10 +183,10 @@ class GiftOrders extends BaseModel
                 $activity_gift_ids = [25, 13, 14];
 
                 if (isDevelopmentEnv()) {
-                    $activity_gift_id = [44, 15, 19];
+                    $activity_gift_ids = [44, 15, 19];
                 }
 
-                if ($activity_gift_id == $gift->id) {
+                if (in_array($gift->id, $activity_gift_ids)) {
                     Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
                 }
 

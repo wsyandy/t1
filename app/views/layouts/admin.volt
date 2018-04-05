@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>管理后台</title>
     {{ js('/js/jquery/1.11.2/jquery.min.js','/js/vue/2.0.5/vue.min.js','/js/jquery.form/3.51.0/jquery.form.js',
-    '/framework/bootstrap.select/1.11.2/js/bootstrap-select.min.js',
-    '/framework/bootstrap/3.3.4/js/bootstrap.min.js',
-    '/framework/bootstrap.datepicker/1.5.0/js/bootstrap-datepicker.min.js',
-    '/framework/bootstrap.datepicker/1.4.0/js/bootstrap-datetimepicker.min.js',
-    '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
-    '/js/juicer/0.6.9/juicer-min.js','/js/echarts/3.7.2/echarts.js'
-    ,'/js/echarts/3.7.2/chalk.js','/js/echarts/3.7.2/china.js','/js/admin.js',
-    '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
+        '/framework/bootstrap.select/1.11.2/js/bootstrap-select.min.js',
+        '/framework/bootstrap/3.3.4/js/bootstrap.min.js',
+        '/framework/bootstrap.datepicker/1.5.0/js/bootstrap-datepicker.min.js',
+        '/framework/bootstrap.datepicker/1.4.0/js/bootstrap-datetimepicker.min.js',
+        '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
+        '/js/juicer/0.6.9/juicer-min.js','/js/echarts/3.7.2/echarts.js'
+        ,'/js/echarts/3.7.2/chalk.js','/js/echarts/3.7.2/china.js','/js/admin.js',
+        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
 
     {{ css('/framework/bootstrap/3.3.4/css/bootstrap.min.css','/framework/bootstrap.datepicker/1.4.0/css/bootstrap-datetimepicker.min.css',
-    '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
+        '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
 
 </head>
 <body>
@@ -32,8 +32,8 @@
         {% endif %}
 
         {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
-        or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
-        isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') %}
+            or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
+            isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -265,20 +265,25 @@
                             <a href="javascript:;" tabindex="-1">活跃用户统计</a>
                             <ul class="dropdown-menu">
                                 {% if isAllowed('active_users','day_rank_list') %}
-                                    <li><a href="/admin/active_users/day_rank_list">日榜统计</a></li>
+                                    <li><a href="/admin/active_users/day_rank_list">按天统计</a></li>
                                 {% endif %}
                             </ul>
                         </li>
                     {% endif %}
+
+                    {% if isAllowed('activities', 'stat') %}
+                        <li><a href="/admin/activities/stat">活动统计</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}
 
         <!-- 系统 -->
         {% if isAllowed('operators','index') or isAllowed('partners','index') or isAllowed('sms_channels','index')
-        or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
-        or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
-        or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('payment_channels','index') %}
+            or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
+            or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
+            or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('payment_channels','index') %}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     系统<b class="caret"></b>
@@ -338,8 +343,8 @@
         {% endif %}
 
         {% if isAllowed('gifts','index') or isAllowed('emoticon_images','index') or  isAllowed('audios','index')
-        or isAllowed('room_themes','index') or isAllowed('musics','index') or isAllowed('account_banks','index')
-        or isAllowed('activities','index')%}
+            or isAllowed('room_themes','index') or isAllowed('musics','index') or isAllowed('account_banks','index')
+            or isAllowed('activities','index') %}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
                 <ul class="dropdown-menu">

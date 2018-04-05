@@ -1886,5 +1886,8 @@ EOF;
         $db = \Users::getUserDb();
         $res = $db->zincrby('www', 1, 33);
         echoLine($res);
+
+        $gift_order = GiftOrders::findFirstById(50880);
+        echoLine($gift_order);
     }
 }
