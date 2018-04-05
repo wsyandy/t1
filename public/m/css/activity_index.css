@@ -15,7 +15,7 @@ ul,li{
   list-style: none;
 }
 .activity_page{
-  height: 100%;
+  /*height: 100%;*/
   background-color: #232236;
   padding: 15px;
 }

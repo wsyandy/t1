@@ -1901,7 +1901,7 @@ EOF;
             $cache = \Users::getHotReadCache();
             $res = $cache->get($key);
             echoLine($res, $prize_type);
-            $cache->set($key, $num);
+            //$cache->set($key, $num);
         }
     }
 
