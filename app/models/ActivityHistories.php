@@ -44,7 +44,6 @@ class ActivityHistories extends BaseModel
         $activity_history->activity_id = $activity_id;
         $activity_history->user_id = $user_id;
         $activity_history->auth_status = AUTH_SUCCESS;
-        $activity_history->auth_status = AUTH_SUCCESS;
         $activity_history->prize_type = $prize_type;
 
         info($activity_id, $opts);

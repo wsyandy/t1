@@ -213,7 +213,7 @@ class ActivitiesController extends BaseController
             }
 
 
-            $res = \ActivityHistories::createHistory($type);
+            $res = \ActivityHistories::createHistory($activity_id, ['user_id' => $this->currentUser()->id, 'prize_type' => $type]);
 
             $key = 'lucky_draw_num_activity_id_' . $activity_id; //减去用户抽取次数
             $day_user_key = 'lucky_draw_activity_id_' . $activity_id . '_user' . date("Y-m-d"); //记录每天抽奖的人数
