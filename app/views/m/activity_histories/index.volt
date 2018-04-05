@@ -7,7 +7,7 @@
     <ul>
         <li v-for="activity_history in activity_histories">
             <h3><b>${activity_history.user_nickname}</b>获得<span>${activity_history.prize_type_text}</span></h3>
-            <p>${activity_history.created_text}</p>
+            <p>${activity_history.created_at_text}</p>
         </li>
     </ul>
 </div>

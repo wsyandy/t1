@@ -31,7 +31,7 @@ class ActivityHistories extends BaseModel
         return [
             'prize_type_text' => $this->prize_type_text,
             'user_nickname' => $this->user_nickname,
-            'created_text' => $this->created_text
+            'created_at_text' => $this->created_at_text
         ];
     }
 
