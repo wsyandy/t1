@@ -192,6 +192,8 @@ class ActivitiesController extends BaseController
                     break;
             }
 
+            info($this->currentUser()->sid, $random, $type);
+
             //每天五位号，六位号，兰博基尼座驾，小马驹座驾各限定10份 神秘礼物限定100份,金币不限量
             if (in_array($type, [2, 4, 6, 7, 8])) {
 
@@ -203,7 +205,7 @@ class ActivitiesController extends BaseController
                 $num = $cache->get($key);
 
                 if ($num < 1) {
-                    info('prize', $type);
+                    info('prize', $this->currentUser()->sid, $type);
                     $type = array_rand([1, 3, 5]);
                 }
 

@@ -1889,5 +1889,14 @@ EOF;
 
         $gift_order = GiftOrders::findFirstById(50880);
         echoLine($gift_order);
+
+
+        $prize_types = [2 => 10, 4 => 10, 6 => 10, 7 => 10, 8 => 10];
+
+        foreach ($prize_types as $prize_type => $num) {
+            $key = 'lucky_draw_prize_' . $prize_type;
+            $cache = \Users::getHotReadCache();
+            $cache->set($key, $num);
+        }
     }
 }
