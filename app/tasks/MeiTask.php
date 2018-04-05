@@ -1901,7 +1901,7 @@ EOF;
             $cache = \Users::getHotReadCache();
             $res = $cache->get($key);
             echoLine($res, $prize_type);
-            //$cache->set($key, $num);
+//            $cache->set($key, $num);
         }
     }
 
@@ -1938,5 +1938,17 @@ EOF;
                 break;
         }
         echoLine($type);
+
+        $key = 'lucky_draw_num_activity_id_' . 3; //减去用户抽取次数
+        $day_user_key = 'lucky_draw_activity_id_' . 3 . '_user' . date("Y-m-d"); //记录每天抽奖的人数
+        $day_num_key = 'lucky_draw_activity_id_' . 3 . '_num' . date("Y-m-d"); //记录每天抽奖的次数
+
+        $db = \Users::getUserDb();
+
+        echoLine($db->zcard($day_user_key), $db->get($day_num_key));
+
+        $day_user_key = 'obtain_lucky_draw_activity_id_3_user' . date("Y-m-d"); //记录每天获得抽奖的人数
+        $day_num_key = 'obtain_lucky_draw_activity_id_3_num' . date("Y-m-d"); //记录每天获得抽奖的次数
+        echoLine($db->zcard($day_user_key), $db->get($day_num_key));
     }
 }

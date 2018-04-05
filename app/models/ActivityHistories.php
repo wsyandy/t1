@@ -40,6 +40,11 @@ class ActivityHistories extends BaseModel
     {
         $user_id = fetch($opts, 'user_id');
         $prize_type = fetch($opts, 'prize_type');
+
+        if ($user_id || $prize_type) {
+            return false;
+        }
+
         $activity_history = new ActivityHistories();
         $activity_history->activity_id = $activity_id;
         $activity_history->user_id = $user_id;

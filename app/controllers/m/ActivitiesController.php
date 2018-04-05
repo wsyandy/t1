@@ -187,7 +187,7 @@ class ActivitiesController extends BaseController
                 case $random > 89 && $random <= 93: //4%
                     $type = 8;
                     break;
-                case $random > 93  && $random <= 100: //7%
+                case $random > 93 && $random <= 100: //7%
                     $type = 6;
                     break;
             }
@@ -206,7 +206,8 @@ class ActivitiesController extends BaseController
 
                 if ($num < 1) {
                     info('prize', $this->currentUser()->sid, $type);
-                    $type = array_rand([1, 3, 5]);
+                    $new_types = [1, 3, 5];
+                    $type = $new_types[array_rand([1, 3, 5])];
                 } else {
                     $cache->decr($key);
                 }
