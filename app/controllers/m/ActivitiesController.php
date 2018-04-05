@@ -153,7 +153,7 @@ class ActivitiesController extends BaseController
 
             $activity = \Activities::findFirstById($activity_id);
 
-            if ($activity) {
+            if (!$activity) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
