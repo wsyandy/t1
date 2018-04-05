@@ -16,11 +16,11 @@
     <div class="zhuanpan_wrap">
         <div class="banner_bg">
             <img src="/m/images/banner.png" alt="" class="banner">
-            <div class="zhuanpan_txt">
-                <div class="zp_name">
-                    恭喜<span>晓晓</span>获得了<span>10000金币</span>
-                </div>
-            </div>
+            {#<div class="zhuanpan_txt">#}
+                {#<div class="zp_name">#}
+                    {#恭喜<span>晓晓</span>获得了<span>10000金币</span>#}
+                {#</div>#}
+            {#</div>#}
         </div>
         <!-- 转盘开始 -->
         <div class="g-lottery-case">
