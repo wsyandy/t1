@@ -163,21 +163,7 @@ class GiftOrders extends BaseModel
 
                 $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                 $gift_order->update();
-
-                if ($gift->isCar()) {
-                    \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
-                } else {
-                    \UserGifts::delay()->updateGiftNum($gift_order->id);
-
-                    if ($gift->isDiamondPayType()) {
-                        //座驾不增加hi币
-                        \HiCoinHistories::delay()->createHistory($gift_order->user_id, ['gift_order_id' => $gift_order->id]);
-                    }
-                }
-
-                if ($gift->isDiamondPayType()) {
-                    $gift_order->updateUserData();
-                }
+                $gift_order->updateUserGiftData($gift);
 
                 //如果是许愿灯,生日party,梦幻城堡参与抽奖活动
                 $activity_gift_ids = [25, 13, 14];
@@ -200,6 +186,47 @@ class GiftOrders extends BaseModel
 
         info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
         return false;
+    }
+
+    function updateUserGiftData($gift)
+    {
+        if ($gift->isCar()) {
+            \UserGifts::delay()->updateGiftExpireAt($this->id);
+        } else {
+            \UserGifts::delay()->updateGiftNum($this->id);
+
+            if ($gift->isDiamondPayType()) {
+                //座驾不增加hi币
+                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
+            }
+        }
+
+        if ($gift->isDiamondPayType()) {
+            $this->updateUserData();
+        }
+    }
+
+    function updateUserData()
+    {
+        //统计房间收益
+        if ($this->room) {
+
+            if (!$this->gift->isCar()) {
+                $this->room->statIncome($this->amount);
+
+                if (!$this->sender->isSilent()) {
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num);
+                }
+            }
+
+            if ($this->sender_id != $this->user_id) {
+                //推送全局消息
+                Rooms::allNoticePush($this);
+            }
+        }
+
+        \Users::delay()->updateExperience($this->id);
+        \Users::delay()->updateCharm($this->id);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
@@ -241,28 +268,6 @@ class GiftOrders extends BaseModel
         return true;
     }
 
-    function updateUserData()
-    {
-        //统计房间收益
-        if ($this->room) {
-
-            if (!$this->gift->isCar()) {
-                $this->room->statIncome($this->amount);
-
-                if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num);
-                }
-            }
-
-            if ($this->sender_id != $this->user_id) {
-                //推送全局消息
-                Rooms::allNoticePush($this);
-            }
-        }
-
-        \Users::delay()->updateExperience($this->id);
-        \Users::delay()->updateCharm($this->id);
-    }
 
     static function findOrderListByUser($user_id, $page, $per_page)
     {

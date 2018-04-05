@@ -127,11 +127,7 @@ class ActivityHistories extends BaseModel
                     $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
                     $gift_order->save();
 
-                    if ($gift->isCar()) {
-                        \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
-                    } else {
-                        \UserGifts::delay()->updateGiftNum($gift_order->id);
-                    }
+                    $gift_order->updateUserGiftData($gift);
                 }
             }
 
