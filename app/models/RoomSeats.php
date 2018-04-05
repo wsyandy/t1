@@ -305,22 +305,18 @@ class RoomSeats extends BaseModel
                 return [ERROR_CODE_FAIL, '不能抱自己上麦'];
             }
 
-            //当前用户不在房间
-            if (!$other_user->isInRoom($room)) {
-                return [ERROR_CODE_FAIL, '用户不在房间'];
-            }
-
             //当前用户已在麦位
             if ($other_user->current_room_seat_id) {
                 return [ERROR_CODE_FAIL, '用户已在麦位'];
             }
 
-        } else {
-
             //当前用户不在房间
-            if (!$user->isInRoom($room)) {
-                return [ERROR_CODE_FAIL, '用户不在房间'];
+            if (!$other_user->isInRoom($room) && $other_user->current_room) {
+                info("up_room_seat_error", $other_user->id, $room->id, $other_user->current_room->id);
+                $other_user->current_room->exitRoom($other_user);
             }
+
+        } else {
 
             if ($this->isClose()) {
                 return [ERROR_CODE_FAIL, '麦位已被封'];
@@ -329,6 +325,12 @@ class RoomSeats extends BaseModel
             //房主不能上自己的麦位
             if ($room->user_id === $user->id) {
                 return [ERROR_CODE_FAIL, '房主不能上自己的麦位'];
+            }
+
+            //当前用户不在房间
+            if (!$user->isInRoom($room) && $user->current_room) {
+                info("up_room_seat_error", $user->id, $room->id, $user->current_room->id);
+                $user->current_room->exitRoom($user);
             }
         }
 
