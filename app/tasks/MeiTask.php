@@ -1862,4 +1862,29 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         echoLine(valueToStr(1310200));
     }
+
+
+    function pushSystemMessageAction()
+    {
+        $content = <<<EOF
+#四月小青团礼物上线#
+#冠名争夺战#
+假期无聊？
+男神女神陪你撩
+什么？
+还有新礼冠名权
+肯定要了解一下~
+详情戳侧边栏“活动”
+EOF;
+
+        $users = Users::findForeach(['conditions' => 'register_at > 0']);
+
+        foreach ($users as $user) {
+            Chats::sendSystemMessage($user->id, CHAT_CONTENT_TYPE_TEXT, $content);
+        }
+
+        $db = \Users::getUserDb();
+        $res = $db->zincrby('www', 1, 33);
+        echoLine($res);
+    }
 }

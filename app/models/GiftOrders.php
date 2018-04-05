@@ -34,6 +34,9 @@ class GiftOrders extends BaseModel
         GIFT_ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    static $TYPE = [GIFT_ORDER_TYPE_USER_SEND => '用户赠送', GIFT_ORDER_TYPE_USER_BUY => '购买',
+        GIFT_ORDER_TYPE_SYSTEM_SEND => '系统赠送', GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW => '抽奖赠送'];
+
     function afterCreate()
     {
 
@@ -125,6 +128,12 @@ class GiftOrders extends BaseModel
         $gift_order->sender_country_id = $sender->country_id;
         $gift_order->receiver_country_id = $receiver->country_id;
 
+        if ($sender_id == $receiver_id) {
+            $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+        } else {
+            $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+        }
+
         // 在房间里送里面
         if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
             $gift_order->room_id = $sender->current_room_id;
@@ -170,6 +179,17 @@ class GiftOrders extends BaseModel
                     $gift_order->updateUserData();
                 }
 
+                //如果是许愿灯,生日party,梦幻城堡参与抽奖活动
+                $activity_gift_ids = [25, 13, 14];
+
+                if (isDevelopmentEnv()) {
+                    $activity_gift_id = [44, 15, 19];
+                }
+
+                if ($activity_gift_id == $gift->id) {
+                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
+                }
+
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
                 $gift_order->update();
@@ -213,6 +233,7 @@ class GiftOrders extends BaseModel
         $gift_order->remark = "系统赠送";
         $gift_order->operator_id = $operator_id;
         $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+        $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
         $gift_order->save();
 
         \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => $content]);

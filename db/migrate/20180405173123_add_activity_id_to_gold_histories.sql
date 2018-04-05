@@ -1,0 +1,1 @@
+ALTER TABLE gold_histories add COLUMN activity_id INTEGER ;

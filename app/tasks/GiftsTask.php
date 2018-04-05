@@ -119,4 +119,26 @@ class GiftsTask extends \Phalcon\Cli\Task
             $user_gift->update();
         }
     }
+
+    function fixGiftOrderTypeAction()
+    {
+        $gift_orders = GiftOrders::findForeach();
+
+        foreach ($gift_orders as $gift_order) {
+
+            if (SYSTEM_ID == $gift_order->sender_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
+                continue;
+            }
+
+            if ($gift_order->user_id == $gift_order->sender_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+                continue;
+            }
+
+            $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+
+            $gift_order->update();
+        }
+    }
 }

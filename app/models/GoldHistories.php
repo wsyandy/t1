@@ -30,7 +30,8 @@ class GoldHistories extends BaseModel
         GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石获金币',
         GOLD_TYPE_GIVE => '系统赠送',
         GOLD_TYPE_GAME_INCOME => '游戏收入',
-        GOLD_TYPE_GAME_EXPENSES => '游戏支出'
+        GOLD_TYPE_GAME_EXPENSES => '游戏支出',
+        GOLD_TYPE_ACTIVITY_LUCKY_DRAW => '活动抽奖赠送'
     ];
 
 
@@ -62,7 +63,7 @@ class GoldHistories extends BaseModel
         $gold_history->amount = $amount;
         $gold_history->country_id = $user->country_id;
 
-        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id'] as $column) {
 
             $value = fetch($opts, $column);
             if ($value) {
