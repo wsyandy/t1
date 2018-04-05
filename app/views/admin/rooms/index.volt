@@ -62,7 +62,7 @@
     最后活跃时间: {{ room.last_at_text }}<br/>
     公频聊天状态: {{ room.chat_text }}<br/>
     是否加锁: {{ room.lock_text }}<br/>
-    是否热门: {{ room.hot_text }}<br/>
+    是否热门: {{ room.hot_text }}|是否置顶: {{ room.top_text }}<br/>
     协议: {{ intval(room.user_agreement_num) }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
@@ -114,11 +114,11 @@
             手机号码:${ room.user_mobile }<br/>
         </td>
         <td>
-            房间:${ room.status_text }|房主:${ room.online_status_text }|用户:${ room.user_type_text }<br/>
+            房间: ${ room.status_text }|房主:${ room.online_status_text }|用户:${ room.user_type_text }<br/>
             最后活跃时间: ${ room.last_at_text }<br/>
             公频聊天状态: ${ room.chat_text }<br/>
             是否加锁: ${ room.lock_text }<br/>
-            是否热门: ${ room.hot_text }<br/>
+            是否热门: ${ room.hot_text }|是否置顶: ${ room.top_text }<br/>
             协议: ${room.user_agreement_num}<br/>
             {@if room.union_id }
             公会: ${ room.union_name }<br/>

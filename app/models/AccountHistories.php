@@ -69,6 +69,7 @@ class AccountHistories extends BaseModel
         $account_history->amount = $amount;
         $account_history->union_id = $user->union_id;
         $account_history->union_type = $user->union_type;
+        $account_history->country_id = $user->country_id;
 
         foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile'] as $column) {
             $value = fetch($opts, $column);

@@ -236,8 +236,16 @@ class UnionsTask extends \Phalcon\Cli\Task
     //执行7天自动退出家族 task任务
     function confirmExitUnionAction()
     {
-        $start_at = time() - 7 * 24 * 60 * 60 - 60 * 7;
-        $end_at = time() - 7 * 24 * 60 * 60;
+
+        $time = 7 * 24 * 60 * 60;
+
+        //7天自动退出 测试环境30分钟
+        if (isDevelopmentEnv()) {
+            $time = 3 * 60;
+        }
+
+        $start_at = time() - 60 * 7 - $time;
+        $end_at = time() - $time;
 
         $union_histories = UnionHistories::find([
             'conditions' => 'status = :status: and apply_exit_at < :end_at: and apply_exit_at > :start_at:',
@@ -249,7 +257,7 @@ class UnionsTask extends \Phalcon\Cli\Task
 
             $union = $union_history->union;
             $user = $union_history->user;
-            $union->confirmExitUnion($user);
+            $union->confirmExitUnion($user, 'auto');
 
         }
 

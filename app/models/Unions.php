@@ -100,6 +100,7 @@ class Unions extends BaseModel
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
+        $union->country_id = $user->country_id;
 
         $dest_filename = APP_NAME . '/unions/avatar/' . uniqid() . '.jpg';
         $res = \StoreFile::upload($avatar_file, $dest_filename);
@@ -536,8 +537,8 @@ class Unions extends BaseModel
             $expire_at = time() - 60;
         }
 
-        if ($union_history->join_at > $expire_at) {
-            return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
+        if ($union_history && $union_history->join_at > $expire_at) {
+            return [ERROR_CODE_FAIL, '退出家族，需要会长同意，请耐心等待'];
         }
 
         if ($db->zscore($this->generateApplyExitUsersKey(), $user->id)) {
@@ -550,17 +551,24 @@ class Unions extends BaseModel
             $union_history->save();
         }
 
+        //申请退出记录
+        if (!$db->zscore($this->generateNewUsersKey(), $user->id)) {
+            $db->zadd($this->generateNewUsersKey(), time(), $user->id);
+        }
+        info($db->zscore($this->generateNewUsersKey(), $user->id));
+
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
 
-        $content = "$user->nickname" . "申请退出家族";
+        $content = "{$user->nickname}申请退出家族";
+        info($content);
         Chats::sendTextSystemMessage($this->user_id, $content);
 
         return [ERROR_CODE_SUCCESS, '操作成功'];
 
     }
 
-    function confirmExitUnion($user)
+    function confirmExitUnion($user, $from)
     {
 
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS],
@@ -581,8 +589,8 @@ class Unions extends BaseModel
         $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateApplyExitUsersKey(), $user->id);
 
-        $content = "$user->nickname" . "您已经退出了家族";
-        Chats::sendTextSystemMessage($user->id, $content);
+        $content = ['auto' => "您的家族会长已同意您的退出家族申请", 'agree' => "您已经退出了{$this->name}家族"];
+        Chats::sendTextSystemMessage($user->id, $content[$from]);
 
         info('user_id', $user->id, 'union_id', $this->id);
         $user->update();

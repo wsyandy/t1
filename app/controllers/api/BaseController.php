@@ -433,11 +433,6 @@ class BaseController extends ApplicationController
                     continue;
                 }
                 $data[] = $key . '=' . $val;
-
-                if (isDevelopmentEnv()) {
-                    $encode = mb_detect_encoding($val, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5"]);
-                    debug($this->currentUser()->sid, $encode, $key, $val);
-                }
             }
 
             sort($data);

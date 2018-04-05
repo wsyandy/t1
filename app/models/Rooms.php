@@ -117,6 +117,7 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
+            'top_text' => $this->top_text
         ];
 
         return array_merge($opts, $this->toJson());
@@ -138,6 +139,7 @@ class Rooms extends BaseModel
         $room->user_type = $user->user_type;
         $room->union_id = $user->union_id;
         $room->union_type = $user->union_type;
+        $room->country_id = $user->country_id;
         $room->last_at = time();
         $room->save();
 
@@ -150,6 +152,7 @@ class Rooms extends BaseModel
             $room_seat->room_id = $room->id;
             $room_seat->status = STATUS_ON;
             $room_seat->rank = $i;
+            $room_seat->country_id = $user->country_id;
             $room_seat->save();
         }
 

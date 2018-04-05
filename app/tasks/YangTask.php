@@ -560,6 +560,18 @@ class YangTask extends \Phalcon\Cli\Task
 
     }
 
+    function test20Action()
+    {
+        $start_at = strtotime(201804070000);
+        $end_at = strtotime( 201804080000);
+        echoLine($start_at);
+        echoLine($end_at);
+
+        echoLine(date("Y年m月d日H点", $start_at));
+        echoLine(date("Y年m月d日H点", $end_at));
+
+    }
+
 
     function test19Action()
     {
@@ -572,6 +584,36 @@ class YangTask extends \Phalcon\Cli\Task
 
         echoLine(implode(',', $arr4));
 
+    }
+
+
+    function qingMingActivityAction($params)
+    {
+        $gift_id = $params[0];
+        $start_at = $params[1];
+        $end_at = $params[2];
+
+        $db = Users::getUserDb();
+
+        $charm_key = "qing_ming_activity_charm_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
+        $wealth_key = "qing_ming_activity_wealth_list_" . date("Ymd", $start_at) . "_" . date("Ymd", $end_at);
+
+
+        $gift_orders = GiftOrders::find(
+            [
+                'conditions' => " gift_id = :gift_id: and status = :status:" . " and created_at >= :start: and created_at <= :end_at:",
+                'bind' => ['gift_id' => $gift_id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'start' => $start_at, 'end_at' => $end_at],
+            ]
+        );
+
+        foreach ($gift_orders as $gift_order) {
+            $sender_id = $gift_order->sender_id;
+            $user_id = $gift_order->user_id;
+            $amount = $gift_order->amount;
+
+            $db->zincrby($charm_key, $amount, $user_id);
+            $db->zincrby($wealth_key, $amount, $sender_id);
+        }
     }
 
 }

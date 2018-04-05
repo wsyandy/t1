@@ -56,7 +56,7 @@
     </div>
     <div class="last_week_title">
         <h3>上周Hi音榜</h3>
-        <p>{{ last_start }}-{{ last_end }}</p>
+        <p>{{ last_start_text }}-{{ last_end_text }}</p>
     </div>
     <div class="week_wrap">
         <ul>

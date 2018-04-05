@@ -74,8 +74,6 @@ class Users extends BaseModel
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
 
-    static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
-
     function beforeCreate()
     {
         $this->user_status = USER_STATUS_ON;

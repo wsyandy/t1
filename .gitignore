@@ -5,6 +5,8 @@ log
 db/ssdb
 db/redis
 public/_book
+public/iapi/_book
 doc/api/_book
+doc/iapi/_book
 temp
 update.log

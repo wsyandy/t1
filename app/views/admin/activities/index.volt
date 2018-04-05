@@ -20,20 +20,21 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-{{ simple_table(activities, ['id': 'id','标题': 'title','图片': 'image_link','状态':'status_text', '排序':'rank',
+{{ simple_table(activities, ['id': 'id','标题': 'title','图片': 'image_link','状态':'status_text', '排序':'rank','code':'code',
 '开始时间':'start_at_text','结束时间':'end_at_text','支持的平台':'platforms_link','产品渠道':'product_channel_link','编辑': 'edit_link']) }}
 
 <script type="text/template" id="activity_tpl">
     <tr id="activity_${activity.id}">
         <td>${activity.id}</td>
         <td>${activity.title}</td>
-        <td><img src="${activity.image_small_url}" alt="" height="80"></td>
+        <td><img src="${activity.image_small_url}" alt="" height="50"></td>
         <td>${activity.status_text}</td>
         <td>${activity.rank}</td>
-        <td>${activity.today_click_pv}/${activity.today_click_uv}</td>
-        <td>${activity.operator_username}</td>
-        <td>${activity.created_at_text}</td>
-        <td><a class="modal_action" href="/admin/activities/platforms/${activity.id}" class="modal_action">查看</a></td>
+        <td>${activity.code}</td>
+        <td>${activity.start_at_text}</td>
+        <td>${activity.end_at_text}</td>
+        <td><a class="modal_action" href="/admin/activities/platforms?id=${activity.id}">查看</a></td>
+        <td><a class="modal_action" href="/admin/activities/product_channel_ids?id=${activity.id}">查看</a></td>
         <td><a href="/admin/activities/edit/${activity.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
