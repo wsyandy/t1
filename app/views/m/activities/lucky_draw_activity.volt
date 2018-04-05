@@ -88,7 +88,7 @@
                 rotateFunc(2, 45, '5位数幸运号');
                 break;
             case 3:
-                rotateFunc(3, 90, '10000');
+                rotateFunc(3, 90, '1000');
                 break;
             case 4:
                 rotateFunc(4, 135, '6位数幸运号!');
