@@ -47,6 +47,9 @@
     {% if isAllowed('withdraw_histories','basic') %}
         <li role="presentation"><a href="/admin/withdraw_histories/basic?user_id={{ user.id }}">提现记录</a></li>
     {% endif %}
+    {% if isAllowed('activity_histories','basic') %}
+        <li role="presentation"><a href="/admin/activity_histories/basic?user_id={{ user.id }}">活动奖励记录</a></li>
+    {% endif %}
 </ul>
 
 
