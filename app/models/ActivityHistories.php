@@ -64,7 +64,7 @@ class ActivityHistories extends BaseModel
                         $gold = 1000;
                         break;
                     case $prize_type == 5:
-                        $gold = 1000;
+                        $gold = 100;
                         break;
                 }
 
