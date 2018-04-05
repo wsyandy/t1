@@ -207,9 +207,9 @@ class ActivitiesController extends BaseController
                 if ($num < 1) {
                     info('prize', $this->currentUser()->sid, $type);
                     $type = array_rand([1, 3, 5]);
+                } else {
+                    $cache->decr($key);
                 }
-
-                $cache->decr($key);
 
                 unlock($lock);
             }

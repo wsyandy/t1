@@ -1891,14 +1891,14 @@ EOF;
         echoLine($gift_order);
 
 
-        $prize_types = [2 => 10, 4 => 10, 6 => 10, 7 => 10, 8 => 10];
+        $prize_types = [2 => 10, 4 => 10, 6 => 10, 7 => 100, 8 => 10];
 
         foreach ($prize_types as $prize_type => $num) {
             $key = 'lucky_draw_prize_' . $prize_type;
             $cache = \Users::getHotReadCache();
             $res = $cache->get($key);
             echoLine($res, $prize_type);
-//            $cache->set($key, $num);
+            $cache->set($key, $num);
         }
     }
 }
