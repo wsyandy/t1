@@ -25,7 +25,7 @@ class ActivityHistoriesController extends BaseController
             $cond = [
                 'conditions' => 'user_id = :user_id: and activity_id = :activity_id:',
                 'bind' => ['user_id' => $this->currentUser()->id, 'activity_id' => $activity_id],
-                'id' => 'id desc'
+                'order' => 'id desc'
             ];
             $activity_histories = \ActivityHistories::findPagination($cond, $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
