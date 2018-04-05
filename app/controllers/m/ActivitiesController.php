@@ -220,9 +220,9 @@ class ActivitiesController extends BaseController
             $day_num_key = 'lucky_draw_activity_id_' . $activity_id . '_num' . date("Y-m-d"); //记录每天抽奖的次数
 
             $db = \Users::getUserDb();
-            $db->zincrby($key, -1, $this->currentUser()->id);
+            $lucky_draw_num = $db->zincrby($key, -1, $this->currentUser()->id);
             $db->zadd($day_user_key, time(), $this->currentUser()->id);
-            $lucky_draw_num = $db->incrby($day_num_key, 1);
+            $db->incrby($day_num_key, 1);
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['lucky_draw_num' => $lucky_draw_num, 'type' => $type]);
         }
