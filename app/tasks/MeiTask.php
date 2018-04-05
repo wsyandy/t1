@@ -1891,6 +1891,9 @@ EOF;
         echoLine($gift_order);
 
 
+        $activity = ActivityHistories::findFirstById(181);
+        echoLine($activity);
+
         $prize_types = [2 => 10, 4 => 10, 6 => 10, 7 => 100, 8 => 10];
 
         foreach ($prize_types as $prize_type => $num) {

@@ -166,29 +166,29 @@ class ActivitiesController extends BaseController
 
             switch ($random) {
 
-                case $random == 1: //1%
-                    $type = 2;
+                case 1 <= $random && $random <= 40: //40%
+                    $type = 5;
                     break;
-                case $random > 1 && $random <= 4: //3%
-                    $type = 4;
-                    break;
-                case $random > 4 && $random <= 8: //4%
-                    $type = 8;
-                    break;
-                case $random < 8 && $random <= 15: //7%
-                    $type = 6;
-                    break;
-                case $random < 16 && $random <= 26: //10%
-                    $type = 7;
-                    break;
-                case $random < 26 && $random <= 36: //10%
-                    $type = 1;
-                    break;
-                case $random < 36 && $random <= 61: //25%
+                case $random > 40 && $random <= 65: //25%
                     $type = 3;
                     break;
-                case $random > 61 && $random <= 100: //40%
-                    $type = 5;
+                case $random > 65 && $random <= 75: //10%
+                    $type = 1;
+                    break;
+                case $random < 75 && $random <= 85: //10%
+                    $type = 7;
+                    break;
+                case $random < 85 && $random <= 86: //1%
+                    $type = 2;
+                    break;
+                case $random < 86 && $random <= 89: //3%
+                    $type = 4;
+                    break;
+                case $random < 89 && $random <= 93: //4%
+                    $type = 8;
+                    break;
+                case $random > 93  && $random <= 100: //7%
+                    $type = 6;
                     break;
             }
 
