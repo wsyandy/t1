@@ -68,7 +68,7 @@ class ActivityHistories extends BaseModel
                         break;
                 }
 
-                GoldHistories::changeBalance($user_id, GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW, $gold, [
+                GoldHistories::changeBalance($user_id, GOLD_TYPE_ACTIVITY_LUCKY_DRAW, $gold, [
                     'remark' => "活动" . $activity_history->activity->title . "奖励" . $gold . "金币", 'activity_id' => $activity_id]);
                 $activity_history->gold = $gold;
                 $activity_history->update();
