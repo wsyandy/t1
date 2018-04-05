@@ -207,18 +207,13 @@ class ActivitiesController extends BaseController
                     $type = array_rand([1, 3, 5]);
                 }
 
-                $res = \ActivityHistories::createHistory($type);
-
-                if (!$res) {
-                    unlock($lock);
-                    return $this->renderJSON(ERROR_CODE_FAIL, '抽奖失败');
-                }
-
                 $cache->decr($key);
 
                 unlock($lock);
             }
 
+
+            $res = \ActivityHistories::createHistory($type);
 
             $key = 'lucky_draw_num_activity_id_' . $activity_id; //减去用户抽取次数
             $day_user_key = 'lucky_draw_activity_id_' . $activity_id . '_user' . date("Y-m-d"); //记录每天抽奖的人数
