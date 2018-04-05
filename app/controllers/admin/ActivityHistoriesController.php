@@ -10,7 +10,7 @@ namespace admin;
 
 class ActivityHistoriesController extends BaseController
 {
-    function basciAction()
+    function basicAction()
     {
         $user_id = $this->params('user_id');
         $page = $this->params('page');
