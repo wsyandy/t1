@@ -47,6 +47,8 @@ class ActivityHistories extends BaseModel
         $activity_history->auth_status = AUTH_SUCCESS;
         $activity_history->prize_type = $prize_type;
 
+        info($activity_id, $opts);
+
         if ($activity_history->save()) {
 
             //靓号奖励需要人功审核
