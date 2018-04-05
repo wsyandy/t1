@@ -176,6 +176,9 @@ class Activities extends BaseModel
         info($user_id, $opts, $num);
 
         if ($num > 0) {
+
+            $content = "恭喜您获得{$num}次抽奖机会，点侧边栏-活动-幸运大转盘即可抽奖，100%中奖赶紧去试试手气吧！";
+            Chats::sendTextSystemMessage($user_id, $content);
             $db = Users::getUserDb();
             $db->zincrby($key, $num, $user_id);
             $db->zadd($day_user_key, time(), $user_id);

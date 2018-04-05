@@ -123,7 +123,7 @@ class ActivityHistories extends BaseModel
                     $gift_order->save();
 
                     if ($gift->isCar()) {
-                        \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => '恭喜']);
+                        \UserGifts::delay()->updateGiftExpireAt($gift_order->id);
                     } else {
                         \UserGifts::delay()->updateGiftNum($gift_order->id);
                     }

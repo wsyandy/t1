@@ -1896,7 +1896,9 @@ EOF;
         foreach ($prize_types as $prize_type => $num) {
             $key = 'lucky_draw_prize_' . $prize_type;
             $cache = \Users::getHotReadCache();
-            $cache->set($key, $num);
+            $res = $cache->get($key);
+            echoLine($res, $prize_type);
+//            $cache->set($key, $num);
         }
     }
 }
