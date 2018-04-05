@@ -41,7 +41,7 @@ class ActivityHistories extends BaseModel
         $user_id = fetch($opts, 'user_id');
         $prize_type = fetch($opts, 'prize_type');
 
-        if ($user_id || $prize_type) {
+        if (!$user_id || !$prize_type) {
             return false;
         }
 
