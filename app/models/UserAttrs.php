@@ -177,7 +177,6 @@ trait UserAttrs
         return $data;
     }
 
-
     function toExportJson()
     {
         return [
@@ -308,6 +307,31 @@ trait UserAttrs
         }
 
         return $data;
+    }
+
+    function isSilent()
+    {
+        return USER_TYPE_SILENT == $this->user_type;
+    }
+
+    function isActive()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
+    }
+
+    function isBlocked()
+    {
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
+        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+    }
+
+    function isNormal()
+    {
+        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
+            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
+        }
+
+        return USER_STATUS_ON === $this->user_status;
     }
 
     public function isWebPlatform()

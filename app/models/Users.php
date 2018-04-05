@@ -74,6 +74,10 @@ class Users extends BaseModel
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
 
+    // 经纬度距离
+    public $distance;
+
+
     function beforeCreate()
     {
         $this->user_status = USER_STATUS_ON;
@@ -171,6 +175,46 @@ class Users extends BaseModel
         }
     }
 
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
+
+    function getPushContext()
+    {
+        return $this->product_channel->getPushContext($this->platform);
+    }
+
+    function getPushReceiverContext()
+    {
+        return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
+    }
+
+    /**
+     * 产生 SID
+     * @return string
+     */
+    function generateSid($seg)
+    {
+        $src = $this->id . uniqid(mt_rand()) . microtime();
+
+        $src = $this->id . $seg . md5($src);
+        $src .= calculateSum($src);
+
+        return $src;
+    }
+
+    // 是否登录
+    function isLogin()
+    {
+        if ($this->isClientPlatform()) {
+            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+        }
+
+        return !!$this->mobile;
+    }
+    
     function bindRoomUnionId()
     {
         $room = $this->room;
@@ -302,47 +346,6 @@ class Users extends BaseModel
         if (date('Ymd', $last_at) != date('Ymd', $this->last_at)) {
             $this->deleteExecutedOfflineTaskIds();
         }
-    }
-
-    function isSilent()
-    {
-        return USER_TYPE_SILENT == $this->user_type;
-    }
-
-    function isActive()
-    {
-        return USER_TYPE_ACTIVE == $this->user_type;
-    }
-
-    function isBlocked()
-    {
-        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
-    }
-
-    function isNormal()
-    {
-        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
-            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
-        }
-
-        return USER_STATUS_ON === $this->user_status;
-    }
-
-    static function getUserDb()
-    {
-        $endpoint = self::config('user_db_endpoints');
-        return XRedis::getInstance($endpoint);
-    }
-
-    function getPushContext()
-    {
-        return $this->product_channel->getPushContext($this->platform);
-    }
-
-    function getPushReceiverContext()
-    {
-        return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
     }
 
     static function registerForClientByMobile($current_user, $device, $mobile, $context = [])
@@ -567,30 +570,6 @@ class Users extends BaseModel
                 info("Exce", $e->getMessage());
             }
         }
-    }
-
-    /**
-     * 产生 SID
-     * @return string
-     */
-    function generateSid($seg)
-    {
-        $src = $this->id . uniqid(mt_rand()) . microtime();
-
-        $src = $this->id . $seg . md5($src);
-        $src .= calculateSum($src);
-
-        return $src;
-    }
-
-    // 是否登录
-    function isLogin()
-    {
-        if ($this->isClientPlatform()) {
-            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
-        }
-
-        return !!$this->mobile;
     }
 
     /**
