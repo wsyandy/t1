@@ -138,6 +138,7 @@ class ActivitiesController extends BaseController
         $this->view->lucky_draw_num = $this->currentUser()->getLuckyDrawNum($activity_id);
         $this->view->activity_id = $activity_id;
         $this->view->sid = $this->currentUser()->sid;
+        $this->view->title = "转盘活动";
     }
 
     //抽奖
