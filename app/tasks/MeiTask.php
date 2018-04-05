@@ -1901,7 +1901,42 @@ EOF;
             $cache = \Users::getHotReadCache();
             $res = $cache->get($key);
             echoLine($res, $prize_type);
-            $cache->set($key, $num);
+            //$cache->set($key, $num);
         }
+    }
+
+    function testRandomAction()
+    {
+        $random = 76;
+        $type = 5;
+
+        switch ($random) {
+
+            case 1 <= $random && $random <= 40: //40%
+                $type = 5;
+                break;
+            case $random > 40 && $random <= 65: //25%
+                $type = 3;
+                break;
+            case $random > 65 && $random <= 75: //10%
+                $type = 1;
+                break;
+            case $random > 75 && $random <= 85: //10%
+                $type = 7;
+                break;
+            case $random > 85 && $random <= 86: //1%
+                $type = 2;
+                break;
+            case $random < 86 && $random <= 89: //3%
+                $type = 4;
+                break;
+            case $random < 89 && $random <= 93: //4%
+                $type = 8;
+                break;
+            case $random > 93  && $random <= 100: //7%
+                $type = 6;
+                break;
+        }
+        echoLine($type);
     }
 }
