@@ -175,7 +175,7 @@
                     activity_id: vm.activity_id
                 }, function (resp) {
                     vm.lucky_draw = false;
-                    if (0 == resp.code) {
+                    if (0 == resp.error_code) {
                         vm.lucky_draw_num = resp.lucky_draw_num;
                         start(resp.type);
                         return;
