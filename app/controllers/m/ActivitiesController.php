@@ -147,7 +147,7 @@ class ActivitiesController extends BaseController
 
             $activity_id = $this->params('activity_id');
 
-            if ($activity_id) {
+            if (!$activity_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
