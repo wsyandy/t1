@@ -185,4 +185,33 @@ class Activities extends BaseModel
             $db->incrby($day_num_key, $num);
         }
     }
+
+    function getObtainLuckyDrawActivityUser($day)
+    {
+        $db = Users::getUserDb();
+        $obtain_day_user_key = 'obtain_lucky_draw_activity_id_' . $this->id . '_user' . $day; //记录每天获得抽奖的人数
+        return $db->zcard($obtain_day_user_key);
+    }
+
+
+    function getObtainLuckyDrawActivityNum($day)
+    {
+        $db = Users::getUserDb();
+        $obtain_day_num_key = 'obtain_lucky_draw_activity_id_' . $this->id . '_num' . $day; //记录每天获得抽奖的次数
+        return $db->get($obtain_day_num_key);
+    }
+
+    function getLuckyDrawActivityUser($day)
+    {
+        $db = Users::getUserDb();
+        $day_user_key = 'lucky_draw_activity_id_' . $this->id . '_user' . $day; //记录每天抽奖的人数
+        return $db->zcard($day_user_key);
+    }
+
+    function getLuckyDrawActivityNum($day)
+    {
+        $db = Users::getUserDb();
+        $day_num_key = 'lucky_draw_activity_id_' . $this->id . '_num' . $day; //记录每天抽奖的次数
+        return $db->get($day_num_key);
+    }
 }
