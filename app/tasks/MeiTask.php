@@ -1933,7 +1933,7 @@ EOF;
             case $random < 89 && $random <= 93: //4%
                 $type = 8;
                 break;
-            case $random > 93  && $random <= 100: //7%
+            case $random > 93 && $random <= 100: //7%
                 $type = 6;
                 break;
         }
@@ -1950,5 +1950,13 @@ EOF;
         $day_user_key = 'obtain_lucky_draw_activity_id_3_user' . date("Y-m-d"); //记录每天获得抽奖的人数
         $day_num_key = 'obtain_lucky_draw_activity_id_3_num' . date("Y-m-d"); //记录每天获得抽奖的次数
         echoLine($db->zcard($day_user_key), $db->get($day_num_key));
+    }
+
+    function uploadSystemAvatarAction()
+    {
+        $file = APP_ROOT . "/public/images/system_avatar.png";
+        $user = Users::findFirstById(1);
+
+        $user->updateAvatar($file);
     }
 }
