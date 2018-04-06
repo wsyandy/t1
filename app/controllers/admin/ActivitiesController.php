@@ -202,4 +202,5 @@ class ActivitiesController extends BaseController
         $this->view->lucky_draw_prize_7_num = intval($cache->get('lucky_draw_prize_7'));
         $this->view->lucky_draw_prize_8_num = intval($cache->get('lucky_draw_prize_8'));
     }
+
 }
