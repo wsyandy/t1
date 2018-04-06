@@ -202,4 +202,13 @@ class ActivitiesController extends BaseController
         $this->view->lucky_draw_prize_7_num = intval($cache->get('lucky_draw_prize_7'));
         $this->view->lucky_draw_prize_8_num = intval($cache->get('lucky_draw_prize_8'));
     }
+
+    function luckyDrawActivityRecordsAction()
+    {
+        $stat_at = $this->params('stat_at', date('Y-m-d'));
+        $activity_id = $this->params('id');
+        $activity = \Activities::findFirstById($activity_id);
+        $ond = [];
+        $activity_histories = \ActivityHistories::findPagination();
+    }
 }

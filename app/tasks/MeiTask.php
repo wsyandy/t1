@@ -1867,16 +1867,8 @@ class MeiTask extends \Phalcon\Cli\Task
     function pushSystemMessageAction()
     {
         $content = <<<EOF
-#四月小青团礼物上线#
-#冠名争夺战#
-假期无聊？
-男神女神陪你撩
-什么？
-还有新礼冠名权
-肯定要了解一下~
-详情戳侧边栏“活动”
+幸运大转盘活动今日正式上线，5位幸运ID、6位幸运ID、豪华座驾、神秘礼物、金币狂欢送，查看活动详情请点击侧边栏-活动-幸运大转盘即可参与！
 EOF;
-
         $users = Users::findForeach(['conditions' => 'register_at > 0']);
 
         foreach ($users as $user) {
