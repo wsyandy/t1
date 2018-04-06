@@ -3,7 +3,7 @@
 {% endmacro %}
 
 {%- macro stat_detail_link(activity) %}
-    <a class="modal_action" href="/admin/activities/{{ activity.code }}?id={{ activity.id }}">查看</a>
+    <a class="modal_action" href="/admin/activities/{{ activity.code }}_stat?id={{ activity.id }}">查看</a>
 {%- endmacro %}
 
 <form name="search_form" action="/admin/activities/stat" method="get" autocomplete="off" id="search_form">
