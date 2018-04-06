@@ -192,14 +192,14 @@ class ActivitiesController extends BaseController
         $this->view->activity_id = $activity_id;
         $this->view->results = $results;
         $this->view->year_array = $year_array;
-        $this->view->month = $month;
+        $this->view->month = intval($month);
         $this->view->year = intval($year);
 
-        $db = \Users::getUserDb();
-        $this->view->lucky_draw_prize_2_num = intval($db->get('lucky_draw_prize_2'));
-        $this->view->lucky_draw_prize_4_num = intval($db->get('lucky_draw_prize_4'));
-        $this->view->lucky_draw_prize_6_num = intval($db->get('lucky_draw_prize_6'));
-        $this->view->lucky_draw_prize_7_num = intval($db->get('lucky_draw_prize_7'));
-        $this->view->lucky_draw_prize_8_num = intval($db->get('lucky_draw_prize_8'));
+        $cache = \Users::getHotReadCache();
+        $this->view->lucky_draw_prize_2_num = intval($cache->get('lucky_draw_prize_2'));
+        $this->view->lucky_draw_prize_4_num = intval($cache->get('lucky_draw_prize_4'));
+        $this->view->lucky_draw_prize_6_num = intval($cache->get('lucky_draw_prize_6'));
+        $this->view->lucky_draw_prize_7_num = intval($cache->get('lucky_draw_prize_7'));
+        $this->view->lucky_draw_prize_8_num = intval($cache->get('lucky_draw_prize_8'));
     }
 }
