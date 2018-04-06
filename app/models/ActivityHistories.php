@@ -58,6 +58,7 @@ class ActivityHistories extends BaseModel
             //靓号奖励需要人功审核
             if (in_array($prize_type, [2, 4])) {
                 $activity_history->auth_status = AUTH_WAIT;
+                $activity_history->update();
             } elseif (in_array($prize_type, [1, 3, 5])) {
 
                 //金币奖励
