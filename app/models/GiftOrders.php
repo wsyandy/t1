@@ -256,7 +256,7 @@ class GiftOrders extends BaseModel
         $gift_order->receiver_union_id = $receiver->union_id;
         $gift_order->sender_union_id = $sender->union_id;
         $gift_order->receiver_union_type = $receiver->union_type;
-        $gift_order->sendersave_union_type = $sender->union_type;
+        $gift_order->sender_union_type = $sender->union_type;
         $gift_order->remark = "系统赠送";
         $gift_order->operator_id = $operator_id;
         $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;

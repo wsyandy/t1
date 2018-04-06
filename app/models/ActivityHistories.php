@@ -122,7 +122,7 @@ class ActivityHistories extends BaseModel
                     $gift_order->receiver_union_id = $receiver->union_id;
                     $gift_order->sender_union_id = $sender->union_id;
                     $gift_order->receiver_union_type = $receiver->union_type;
-                    $gift_order->sendersave_union_type = $sender->union_type;
+                    $gift_order->sender_union_type = $sender->union_type;
                     $gift_order->remark = "活动" . $activity_history->activity->title . "赠送" . $gift->name;
                     $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                     $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
