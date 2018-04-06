@@ -12,6 +12,14 @@
     <button class="ui button" type="submit">搜索</button>
 </form>
 
+<ol class="breadcrumb">
+    <li class="active">5位幸运号剩余个数 {{ lucky_draw_prize_2_num }}</li>
+    <li class="active">6位幸运号剩余个数 {{ lucky_draw_prize_4_num }}</li>
+    <li class="active">小马驹座驾剩余个数 {{ lucky_draw_prize_6_num }}</li>
+    <li class="active">神秘礼物剩余个数 {{ lucky_draw_prize_7_num }}</li>
+    <li class="active">兰博基尼座驾剩余个数 {{ lucky_draw_prize_8_num }}</li>
+</ol>
+
 <table class="table table-striped table-condensed">
     <thead>
     <tr>

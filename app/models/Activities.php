@@ -198,7 +198,7 @@ class Activities extends BaseModel
     {
         $db = Users::getUserDb();
         $obtain_day_num_key = 'obtain_lucky_draw_activity_id_' . $this->id . '_num' . $day; //记录每天获得抽奖的次数
-        return $db->get($obtain_day_num_key);
+        return intval($db->get($obtain_day_num_key));
     }
 
     function getLuckyDrawActivityUser($day)
@@ -212,6 +212,6 @@ class Activities extends BaseModel
     {
         $db = Users::getUserDb();
         $day_num_key = 'lucky_draw_activity_id_' . $this->id . '_num' . $day; //记录每天抽奖的次数
-        return $db->get($day_num_key);
+        return intval($db->get($day_num_key));
     }
 }

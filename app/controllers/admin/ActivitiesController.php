@@ -160,6 +160,12 @@ class ActivitiesController extends BaseController
         $end_at = endOfMonth($stat_date);
         $month_max_day = date('d', $end_at);//获取当前月份最大的天数
 
+        $month = intval($month);
+
+        if ($month < 10) {
+            $month = "0" . $month;
+        }
+
         $year_array = [];
 
         for ($i = date('Y'); $i >= 2018; $i--) {
@@ -186,7 +192,14 @@ class ActivitiesController extends BaseController
         $this->view->activity_id = $activity_id;
         $this->view->results = $results;
         $this->view->year_array = $year_array;
-        $this->view->month = intval($month);
+        $this->view->month = $month;
         $this->view->year = intval($year);
+
+        $db = \Users::getUserDb();
+        $this->view->lucky_draw_prize_2_num = intval($db->get('lucky_draw_prize_2'));
+        $this->view->lucky_draw_prize_4_num = intval($db->get('lucky_draw_prize_4'));
+        $this->view->lucky_draw_prize_6_num = intval($db->get('lucky_draw_prize_6'));
+        $this->view->lucky_draw_prize_7_num = intval($db->get('lucky_draw_prize_7'));
+        $this->view->lucky_draw_prize_8_num = intval($db->get('lucky_draw_prize_8'));
     }
 }
