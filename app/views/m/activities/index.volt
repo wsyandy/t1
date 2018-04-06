@@ -10,9 +10,11 @@
                 <div class=" activity_content">
                     <p>{{ activity.title }}</p>
                     <div class="activity_content_bottom">
+                       <span>
                         {% if activity.start_at %}
-                            <span>{{ activity.start_text }}-{{ activity.end_text }}</span>
+                            {{ activity.start_text }}-{{ activity.end_text }}
                         {% endif %}
+                       </span>
                         <span class="arrow" id="{{ activity.id }}"> 了解详情</span>
                         <input type="hidden" id="code" value="{{ activity.code }}">
                     </div>
