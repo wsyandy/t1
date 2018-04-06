@@ -5,6 +5,7 @@
  * Date: 2018/4/3
  * Time: 下午8:20
  */
+
 namespace admin;
 class ActivitiesController extends BaseController
 {
@@ -136,5 +137,14 @@ class ActivitiesController extends BaseController
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $activity);
         $activity->update();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/activities']);
+    }
+
+    function statAction()
+    {
+        $cond = $this->getConditions('activity');
+        $cond['order'] = 'rank desc, id desc';
+        $page = $this->params('page');
+        $activities = \Activities::findPagination($cond, $page);
+        $this->view->activities = $activities;
     }
 }
