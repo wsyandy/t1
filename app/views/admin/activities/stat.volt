@@ -7,7 +7,7 @@
 {%- endmacro %}
 
 {%- macro activity_record_link(activity) %}
-    <a href="/admin/activities/{{ activity.code }}_records?id={{ activity.id }}">活动记录</a>
+    <a href="/admin/activity_histories?activity_id={{ activity.id }}">活动记录</a>
 {%- endmacro %}
 
 <form name="search_form" action="/admin/activities/stat" method="get" autocomplete="off" id="search_form">
