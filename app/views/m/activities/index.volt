@@ -9,7 +9,7 @@
                 <li style="background-color:grey">
             {% else %}
                 <li>
-            {% endif %}%
+            {% endif %}
             <img src="{{ activity.image_url }}" alt="">
             <div class=" activity_content">
                 <p>{{ activity.title }}</p>
