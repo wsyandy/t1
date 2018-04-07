@@ -534,7 +534,7 @@ class KangTask extends \Phalcon\Cli\Task
     function newUserAction(){
 
         $device = Devices::findFirstById(1);
-        $user = \Users::registerForClientByDevice($device);
+        $user = \Users::registerForClientByDevice($device, true);
         echoLine($user);
     }
 }
