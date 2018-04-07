@@ -43,7 +43,7 @@ class Activities extends BaseModel
         if (isBlank($start_at)) {
             return '';
         }
-        return date("Y年m月d日H点", $start_at);
+        return date("m月d日H点", $start_at);
     }
 
     function getEndText()
@@ -52,7 +52,7 @@ class Activities extends BaseModel
         if (isBlank($end_at)) {
             return '';
         }
-        return date("Y年m月d日H点", $end_at);
+        return date("m月d日H点", $end_at);
     }
 
     function mergeJson()
