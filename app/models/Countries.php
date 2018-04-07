@@ -50,7 +50,8 @@ class Countries extends BaseModel
     {
         return [
             'id' => $this->id,
-            'name' => $this->english_name
+            'name' => $this->english_name,
+            'image_small_url' => $this->image_small_url,
         ];
     }
 

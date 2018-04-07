@@ -19,6 +19,7 @@
         {
             id int 国家id
             name string 国家名称
+            image_small_url string 国家图片 
         }
         ...
     ]
