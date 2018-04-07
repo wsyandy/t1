@@ -603,7 +603,7 @@ class KangTask extends \Phalcon\Cli\Task
             return true;
         }
 
-        if (preg_match("/^(520|1314)/", $num)) {
+        if (preg_match("/^(520|1314|2018)/", $num)) {
             //echoLine('good 开头520|1314', $num);
             return true;
         }
