@@ -841,16 +841,11 @@ trait UserAttrs
         return array_values($tags);
     }
 
-    function getCanUseHiCoins()
+    //活动剩余抽奖次数
+    function getLuckyDrawNum($activity_id)
     {
-        $can_use_hi_coins = $this->hi_coins;
-        $wait_auth_with_draw_amount = \WithdrawHistories::findWaitWithDrawAmount($this->id);
-
-        //等待提现的金额
-        if ($wait_auth_with_draw_amount > 0) {
-            $can_use_hi_coins -= $wait_auth_with_draw_amount;
-        }
-
-        return intval($can_use_hi_coins * 100) / 100;
+        $db = Users::getUserDb();
+        $key = 'lucky_draw_num_activity_id_' . $activity_id; //记录每个用户可以抽多少次
+        return intval($db->zscore($key, $this->id));
     }
 }

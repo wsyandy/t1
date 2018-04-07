@@ -104,6 +104,14 @@ class Products extends BaseModel
             'order' => 'amount asc'
         ));
 
+        if (isDevelopmentEnv()) {
+            $products = \Products::find(array(
+                'conditions' => 'product_group_id = :product_group_id: and status = :status:',
+                'bind' => array('product_group_id' => $product_group->id, 'status' => STATUS_ON),
+                'order' => 'amount asc'
+            ));
+        }
+
         $selected_products = [];
         foreach ($products as $product) {
             if ($product->match($user) || $fee_type == PRODUCT_GROUP_FEE_TYPE_HI_COINS) {

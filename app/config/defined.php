@@ -142,6 +142,11 @@ define('GIFT_ORDER_STATUS_WAIT', 0); //等待支付
 define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
 define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败
 
+define('GIFT_ORDER_TYPE_USER_SEND', 1); //用户赠送
+define('GIFT_ORDER_TYPE_USER_BUY', 2); //用户购买
+define('GIFT_ORDER_TYPE_SYSTEM_SEND', 3); //系统赠送
+define('GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW', 4); //活动抽奖
+
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
 define('PRODUCT_GROUP_FEE_TYPE_HI_COINS', 'hi_coins'); //Hi币
 
@@ -221,6 +226,7 @@ define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
 define('GOLD_TYPE_GIVE', 6); //赠送金币
 define('GOLD_TYPE_GAME_INCOME', 10); //游戏收入
 define('GOLD_TYPE_GAME_EXPENSES', 11); //游戏支出
+define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');

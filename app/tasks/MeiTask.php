@@ -1862,4 +1862,93 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         echoLine(valueToStr(1310200));
     }
+
+
+    function pushSystemMessageAction()
+    {
+        $content = <<<EOF
+幸运大转盘活动今日正式上线，5位幸运ID、6位幸运ID、豪华座驾、神秘礼物、金币狂欢送，查看活动详情请点击侧边栏-活动-幸运大转盘即可参与！
+EOF;
+        $users = Users::findForeach(['conditions' => 'register_at > 0']);
+
+        foreach ($users as $user) {
+            Chats::sendSystemMessage($user->id, CHAT_CONTENT_TYPE_TEXT, $content);
+        }
+
+        $db = \Users::getUserDb();
+        $res = $db->zincrby('www', 1, 33);
+        echoLine($res);
+
+        $gift_order = GiftOrders::findFirstById(50880);
+        echoLine($gift_order);
+
+
+        $activity = ActivityHistories::findFirstById(181);
+        echoLine($activity);
+
+        $prize_types = [2 => 10, 4 => 10, 6 => 10, 7 => 100, 8 => 10];
+
+        foreach ($prize_types as $prize_type => $num) {
+            $key = 'lucky_draw_prize_' . $prize_type;
+            $cache = \Users::getHotReadCache();
+            $res = $cache->get($key);
+            echoLine($res, $prize_type);
+            $cache->set($key, $num);
+        }
+    }
+
+    function testRandomAction()
+    {
+        $random = 76;
+        $type = 5;
+
+        switch ($random) {
+
+            case 1 <= $random && $random <= 40: //40%
+                $type = 5;
+                break;
+            case $random > 40 && $random <= 65: //25%
+                $type = 3;
+                break;
+            case $random > 65 && $random <= 75: //10%
+                $type = 1;
+                break;
+            case $random > 75 && $random <= 85: //10%
+                $type = 7;
+                break;
+            case $random > 85 && $random <= 86: //1%
+                $type = 2;
+                break;
+            case $random < 86 && $random <= 89: //3%
+                $type = 4;
+                break;
+            case $random < 89 && $random <= 93: //4%
+                $type = 8;
+                break;
+            case $random > 93 && $random <= 100: //7%
+                $type = 6;
+                break;
+        }
+        echoLine($type);
+
+        $key = 'lucky_draw_num_activity_id_' . 3; //减去用户抽取次数
+        $day_user_key = 'lucky_draw_activity_id_' . 3 . '_user' . date("Y-m-d"); //记录每天抽奖的人数
+        $day_num_key = 'lucky_draw_activity_id_' . 3 . '_num' . date("Y-m-d"); //记录每天抽奖的次数
+
+        $db = \Users::getUserDb();
+
+        echoLine($db->zcard($day_user_key), $db->get($day_num_key));
+
+        $day_user_key = 'obtain_lucky_draw_activity_id_3_user' . date("Y-m-d"); //记录每天获得抽奖的人数
+        $day_num_key = 'obtain_lucky_draw_activity_id_3_num' . date("Y-m-d"); //记录每天获得抽奖的次数
+        echoLine($db->zcard($day_user_key), $db->get($day_num_key));
+    }
+
+    function uploadSystemAvatarAction()
+    {
+        $file = APP_ROOT . "/public/images/system_avatar.png";
+        $user = Users::findFirstById(1);
+
+        $user->updateAvatar($file);
+    }
 }

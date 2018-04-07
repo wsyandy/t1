@@ -5,6 +5,7 @@
  * Date: 2018/4/3
  * Time: 下午8:20
  */
+
 namespace admin;
 class ActivitiesController extends BaseController
 {
@@ -137,4 +138,69 @@ class ActivitiesController extends BaseController
         $activity->update();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/activities']);
     }
+
+    function statAction()
+    {
+        $cond = $this->getConditions('activity');
+        $cond['order'] = 'rank desc, id desc';
+        $page = $this->params('page');
+        $activities = \Activities::findPagination($cond, $page);
+        $this->view->activities = $activities;
+    }
+
+    function luckyDrawActivityStatAction()
+    {
+        $activity_id = $this->params('id');
+        $activity = \Activities::findFirstById($activity_id);
+
+        //每月天数数组array('d'=>'Y-m-d')
+        $year = $this->params('year', date('Y'));
+        $month = $this->params('month', date('m'));
+        $stat_date = strtotime($year . "-" . $month . "-01");
+        $end_at = endOfMonth($stat_date);
+        $month_max_day = date('d', $end_at);//获取当前月份最大的天数
+
+        $month = intval($month);
+
+        if ($month < 10) {
+            $month = "0" . $month;
+        }
+
+        $year_array = [];
+
+        for ($i = date('Y'); $i >= 2018; $i--) {
+            $year_array[$i] = $i;
+        }
+
+        for ($i = 1; $i <= $month_max_day; $i++) {
+
+            if ($i < 10) {
+                $day = "0" . $i;
+            } else {
+                $day = $i;
+            }
+
+            $day = $year . "-" . $month . "-" . $day;
+
+            $results[$day]['obtain_day_user'] = $activity->getObtainLuckyDrawActivityUser($day);
+            $results[$day]['obtain_day_num'] = $activity->getObtainLuckyDrawActivityNum($day);
+            $results[$day]['day_user'] = $activity->getLuckyDrawActivityUser($day);
+            $results[$day]['day_num'] = $activity->getLuckyDrawActivityNum($day);
+        }
+
+
+        $this->view->activity_id = $activity_id;
+        $this->view->results = $results;
+        $this->view->year_array = $year_array;
+        $this->view->month = intval($month);
+        $this->view->year = intval($year);
+
+        $cache = \Users::getHotReadCache();
+        $this->view->lucky_draw_prize_2_num = intval($cache->get('lucky_draw_prize_2'));
+        $this->view->lucky_draw_prize_4_num = intval($cache->get('lucky_draw_prize_4'));
+        $this->view->lucky_draw_prize_6_num = intval($cache->get('lucky_draw_prize_6'));
+        $this->view->lucky_draw_prize_7_num = intval($cache->get('lucky_draw_prize_7'));
+        $this->view->lucky_draw_prize_8_num = intval($cache->get('lucky_draw_prize_8'));
+    }
+
 }

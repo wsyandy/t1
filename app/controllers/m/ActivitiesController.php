@@ -5,6 +5,7 @@
  * Date: 2018/3/30
  * Time: 上午11:46
  */
+
 namespace m;
 class ActivitiesController extends BaseController
 {
@@ -71,7 +72,7 @@ class ActivitiesController extends BaseController
         $this->view->title = "周榜专属奖励";
     }
 
-
+    //清明节活动
     function qingMingActivityAction()
     {
         $start = 20180405;
@@ -128,5 +129,108 @@ class ActivitiesController extends BaseController
 
 
         $this->view->title = "清明节活动";
+    }
+
+    //抽奖活动
+    function luckyDrawActivityAction()
+    {
+        $activity_id = $this->params('id');
+        $activity = \Activities::findFirstById($activity_id);
+        $this->view->lucky_draw_num = $this->currentUser()->getLuckyDrawNum($activity_id);
+        $this->view->activity_id = $activity_id;
+        $this->view->activity = $activity;
+        $this->view->sid = $this->currentUser()->sid;
+        $this->view->title = "转盘活动";
+    }
+
+    //抽奖
+    function luckyDrawAction()
+    {
+        if ($this->request->isAjax()) {
+
+            $activity_id = $this->params('activity_id');
+
+            if (!$activity_id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            $activity = \Activities::findFirstById($activity_id);
+
+            if (!$activity) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            if ($this->currentUser()->getLuckyDrawNum($activity_id) < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您的抽奖次数已使用完');
+            }
+
+            $random = mt_rand(1, 100);
+            $type = 5;
+
+            switch ($random) {
+
+                case 1 <= $random && $random <= 40: //40%
+                    $type = 5;
+                    break;
+                case $random > 40 && $random <= 65: //25%
+                    $type = 3;
+                    break;
+                case $random > 65 && $random <= 75: //10%
+                    $type = 1;
+                    break;
+                case $random > 75 && $random <= 85: //10%
+                    $type = 7;
+                    break;
+                case $random > 85 && $random <= 86: //1%
+                    $type = 2;
+                    break;
+                case $random > 86 && $random <= 89: //3%
+                    $type = 4;
+                    break;
+                case $random > 89 && $random <= 93: //4%
+                    $type = 8;
+                    break;
+                case $random > 93 && $random <= 100: //7%
+                    $type = 6;
+                    break;
+            }
+
+            info($this->currentUser()->sid, $random, $type);
+
+            //每天五位号，六位号，兰博基尼座驾，小马驹座驾各限定10份 神秘礼物限定100份,金币不限量
+            if (in_array($type, [2, 4, 6, 7, 8])) {
+
+                $cache = \Users::getHotReadCache();
+
+                $key = "lucky_draw_prize_" . $type;
+                //奖品加锁
+                $lock = tryLock($key);
+                $num = $cache->get($key);
+
+                if ($num < 1) {
+                    info('prize', $this->currentUser()->sid, $type);
+                    $new_types = [1, 3, 5];
+                    $type = $new_types[array_rand($new_types)];
+                } else {
+                    $cache->decr($key);
+                }
+
+                unlock($lock);
+            }
+
+
+            $res = \ActivityHistories::createHistory($activity_id, ['user_id' => $this->currentUser()->id, 'prize_type' => $type]);
+
+            $key = 'lucky_draw_num_activity_id_' . $activity_id; //减去用户抽取次数
+            $day_user_key = 'lucky_draw_activity_id_' . $activity_id . '_user' . date("Y-m-d"); //记录每天抽奖的人数
+            $day_num_key = 'lucky_draw_activity_id_' . $activity_id . '_num' . date("Y-m-d"); //记录每天抽奖的次数
+
+            $db = \Users::getUserDb();
+            $lucky_draw_num = $db->zincrby($key, -1, $this->currentUser()->id);
+            $db->zadd($day_user_key, time(), $this->currentUser()->id);
+            $db->incrby($day_num_key, 1);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['lucky_draw_num' => $lucky_draw_num, 'type' => $type]);
+        }
     }
 }

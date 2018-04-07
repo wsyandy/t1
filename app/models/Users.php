@@ -3163,4 +3163,8 @@ class Users extends BaseModel
         return false;
     }
 
+    function isSystemUser()
+    {
+        return SYSTEM_ID == $this->id;
+    }
 }

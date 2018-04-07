@@ -131,6 +131,11 @@ class Payments extends BaseModel
                 $this->statDayPayAmount();
             }
 
+            //支付998 2888 5888 参与抽奖活动
+            if (in_array($this->amount, [998, 2888, 5888])) {
+                Activities::delay()->addLuckyDrawActivity($this->user_id, ['amount' => $this->amount]);
+            }
+
             $attrs = $this->user->getStatAttrs();
             $attrs['add_value'] = round($this->paid_amount);
             info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
