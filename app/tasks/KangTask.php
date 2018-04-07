@@ -560,12 +560,12 @@ class KangTask extends \Phalcon\Cli\Task
             echoLine('good 3', $num);
             return true;
         }
-        if (preg_grep("/^(520|1314)/", $num)) {
+        if (preg_match("/^(520|1314)/", $num)) {
             echoLine('good 开头520|1314', $num);
             return true;
         }
 
-        if (preg_grep("/(1314)$/", $num)) {
+        if (preg_match("/(1314)$/", $num)) {
             echoLine('good 结尾1314', $num);
             return true;
         }
