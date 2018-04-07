@@ -7,7 +7,7 @@ class UsersController extends BaseController
 
     function registerAction()
     {
-        $mobile = $this->params('mobile');
+        $mobile = $this->params('login_name');
         $auth_code = $this->params('auth_code');
         $sms_token = $this->params('sms_token');
         $password = $this->params('password');
@@ -54,21 +54,6 @@ class UsersController extends BaseController
 
         $db = \Users::getUserDb();
         $good_num_list_key = 'good_num_list';
-
-        if ($db->zscore($good_num_list_key, $user->id)) {
-            info("good_num", $user->id);
-            $user->user_type = USER_TYPE_SILENT;
-            $user->user_status = USER_STATUS_OFF;
-            $user->mobile = '';
-            $user->device_id = 0;
-            $user->password = '';
-            $user->update();
-
-            $device->user_id = 0;
-            $device->update();
-
-            list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
-        }
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
