@@ -82,7 +82,8 @@ trait UserAttrs
             'login_type_text' => $this->login_type_text,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'country_chinese_name' => $this->country->chinese_name
         ];
     }
 
