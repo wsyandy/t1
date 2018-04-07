@@ -57,6 +57,10 @@ class Countries extends BaseModel
 
     function imageSmallUrl()
     {
-        return StoreFile::getUrl($this->image) . '@!small';
+        if ($this->image) {
+            return StoreFile::getUrl($this->image) . '@!small';
+        }
+
+        return '';
     }
 }
