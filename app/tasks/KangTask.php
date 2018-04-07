@@ -542,13 +542,91 @@ class KangTask extends \Phalcon\Cli\Task
     function fixUidAction($params)
     {
 
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0],'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $users = Users::findForeach($cond);
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->uid = $user->id;
             $user->save();
         }
 
+    }
+
+    function isGoodNum($num)
+    {
+        // 由3个以内数字组成的号码
+        $num_array = array_unique(str_split($num));
+        if (count($num_array) <= 3) {
+            //echoLine('good 3', $num);
+            return true;
+        }
+
+        //匹配6位以上递增
+        if (preg_match('/(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}\\d/', $num)) {
+            //echoLine('匹配6位以上递增', $num);
+            return true;
+        }
+        // 匹配6位以上递降
+        if (preg_match('/(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){5}\\d/', $num)) {
+            //echoLine('匹配6位以上递降', $num);
+            return true;
+        }
+
+        // 匹配4-9位连续的数字
+        if (preg_match('/(?:(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){3,}|(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){3,})\\d/', $num)) {
+            //echoLine('匹配4-9位连续的数字', $num);
+            return true;
+        }
+
+        //匹配3位以上的重复数字
+        if (preg_match("/([\\d])\\1{2,}/", $num)) {
+            //echoLine('匹配3位以上的重复数字', $num);
+            return true;
+        }
+
+        //AABB
+        if(preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)){
+            //echoLine('AABB ',$num);
+            return true;
+        }
+
+        // AAABBB
+        if (preg_match('/^\\d{0,3}(\\d)\\1\\1(\\d)\\2\\2\\d{0,3}$/', $num)) {
+            //echoLine('AAABBB', $num);
+            return true;
+        }
+
+        // ABCABC
+        if (preg_match('/^\\d{0,3}(\\d)(\\d)(\\d)\\1\\2\\3\\d{0,3}$/', $num)) {
+            //echoLine('ABCABC', $num);
+            return true;
+        }
+
+        if (preg_match("/^(520|1314|2018)/", $num)) {
+            //echoLine('good 开头520|1314', $num);
+            return true;
+        }
+
+        if (preg_match("/(1314)$/", $num)) {
+            //echoLine('good 结尾1314', $num);
+            return true;
+        }
+
+        return false;
+    }
+
+    function noAction()
+    {
+
+        $count = 0;
+        for ($i = 1000000; $i < 100000000; $i++) {
+            if ($this->isGoodNum($i)) {
+                $count++;
+            } else {
+                //echoLine('not good', $i);
+            }
+        }
+
+        echoLine('count', $count);
     }
 }
