@@ -35,7 +35,7 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 |login_name|登录邮箱|string|否||
-|password|密码|string|否|||
+|password|密码|string|否||
 |country_id|国家id|int|否|||
 
 ###### 回应参数说明
