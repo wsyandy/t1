@@ -29,9 +29,9 @@
 
         $(this).click(function () {
 
-            if (this.data('status') == -1) {
+            if ($(this).data('status') == -1) {
 
-                if (this.data('id') == 3) {
+                if ($(this).data('id') == 3) {
                     alert('活动内测已结束');
                     return;
                 }
