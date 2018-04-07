@@ -585,19 +585,19 @@ class KangTask extends \Phalcon\Cli\Task
         }
 
         //AABB
-        if(preg_match('/^\\d{0,2}(\\d)\\1(\\d)\\2\\d{0,2}$/', $num)){
+        if(preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)){
             echoLine('AABB ',$num);
             return true;
         }
 
         // AAABBB
-        if (preg_match('/^\\d{0,2}(\\d)\\1\\1(\\d)\\2\\2\\d{0,2}$/', $num)) {
+        if (preg_match('/^\\d{0,3}(\\d)\\1\\1(\\d)\\2\\2\\d{0,3}$/', $num)) {
             echoLine('AAABBB', $num);
             return true;
         }
 
         // ABCABC
-        if (preg_match('/^\\d{0,2}(\\d)(\\d)(\\d)\\1\\2\\3\\d{0,2}$/', $num)) {
+        if (preg_match('/^\\d{0,3}(\\d)(\\d)(\\d)\\1\\2\\3\\d{0,3}$/', $num)) {
             echoLine('ABCABC', $num);
             return true;
         }
