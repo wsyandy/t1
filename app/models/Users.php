@@ -107,6 +107,11 @@ class Users extends BaseModel
                 $this->createEmUser();
             }
         }
+
+        if(!$this->uid){
+            $this->uid = $this->generateUid();
+            $this->update();
+        }
     }
 
     function beforeUpdate()
@@ -429,7 +434,7 @@ class Users extends BaseModel
     static function registerForClientByDevice($device, $is_force = false)
     {
         if ($device->isBlocked()) {
-            info("block_device_active", $device->id, $device->dno);
+            info("block_device_active", $device->id, $device->device_no);
             return null;
         }
 
