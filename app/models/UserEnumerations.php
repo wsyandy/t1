@@ -37,7 +37,7 @@ trait UserEnumerations
         USER_PLATFORM_WEIXIN_IOS => '微信苹果端', USER_PLATFORM_WEIXIN_ANDROID => '微信安卓端'];
 
     static $LOGIN_TYPE = [USER_LOGIN_TYPE_MOBILE => '手机', USER_LOGIN_TYPE_WEIXIN => '微信', USER_LOGIN_TYPE_QQ => 'QQ',
-        USER_LOGIN_TYPE_SINAWEIBO => '新浪微博', USER_LOGIN_TYPE_OTHER => '其他'];
+        USER_LOGIN_TYPE_SINAWEIBO => '新浪微博', USER_LOGIN_TYPE_EMAIL => '邮箱登录', USER_LOGIN_TYPE_OTHER => '其他'];
 
     static $PROVINCE = [1 => "北京", 2 => "上海", 3 => "天津", 4 => "重庆",
         5 => "河北", 6 => "山西", 7 => "河南", 8 => "辽宁",

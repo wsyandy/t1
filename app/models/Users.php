@@ -586,7 +586,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type', 'country_id'] as $key) {
 
             $val = fetch($context, $key);
 
