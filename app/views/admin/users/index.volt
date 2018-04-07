@@ -29,7 +29,9 @@
     设备ID:<a href="/admin/devices?device[id_eq]={{ user.device_id }}">{{ user.device_id }}</a><br/>
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
     IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
-    自述城市信息: {{ user.province_name }}, {{ user.city_name }}
+    自述城市信息: {{ user.province_name }}, {{ user.city_name }}<br/>
+    国家:{{ user.country.chinese_name }}<br/>
+    邮箱:{{ user.login_name }}
 {% endmacro %}
 
 {% macro user_status_info(user) %}
@@ -91,7 +93,7 @@
 {% endmacro %}
 
 {{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
-'状态':'user_status_info', '操作':'profile_link'
+    '状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
@@ -115,6 +117,7 @@
             经纬度定位: ${ user.geo_province_name }, ${ user.geo_city_name }<br/>
             IP定位: ${ user.ip_province_name }, ${ user.ip_city_name }<br/>
             自述城市信息: ${ user.province_name }, ${ user.city_name }
+            国家: ${ user.country_chinese_name }
         </td>
         <td>
             ${ user.user_type_text } | ${ user.user_status_text }<br/>

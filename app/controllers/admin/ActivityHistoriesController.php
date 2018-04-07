@@ -47,7 +47,7 @@ class ActivityHistoriesController extends BaseController
         $this->view->activity_histories = $activity_histories;
         $this->view->stat_at = $stat_at;
         $this->view->activity_id = $activity_id;
-        $this->view->prize_type = $prize_type;
+        $this->view->prize_type = intval($prize_type);
         $this->view->activity_prize_types = \Activities::$ACTIVITY_PRIZE_TYPE;
         $this->view->total_num = $activity_histories->total_entries;
     }

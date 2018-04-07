@@ -34,10 +34,9 @@
 ###### 参数
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|sms_token|短信验证|string|是| (忘记密码登录时提供)|
-|auth_code|验证码|string|是|(忘记密码登录时提供)|
-|mobile|手机号码|string|否||
-|password|密码|string|否|||
+|login_name|登录邮箱|string|否||
+|password|密码|string|否||
+|country_id|国家id|int|否|||
 
 ###### 回应参数说明
 ```
