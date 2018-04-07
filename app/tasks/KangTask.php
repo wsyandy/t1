@@ -586,19 +586,19 @@ class KangTask extends \Phalcon\Cli\Task
 
         //AABB
         if(preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)){
-            echoLine('AABB ',$num);
+            //echoLine('AABB ',$num);
             return true;
         }
 
         // AAABBB
         if (preg_match('/^\\d{0,3}(\\d)\\1\\1(\\d)\\2\\2\\d{0,3}$/', $num)) {
-            echoLine('AAABBB', $num);
+            //echoLine('AAABBB', $num);
             return true;
         }
 
         // ABCABC
         if (preg_match('/^\\d{0,3}(\\d)(\\d)(\\d)\\1\\2\\3\\d{0,3}$/', $num)) {
-            echoLine('ABCABC', $num);
+            //echoLine('ABCABC', $num);
             return true;
         }
 
@@ -619,7 +619,7 @@ class KangTask extends \Phalcon\Cli\Task
     {
 
         $count = 0;
-        for ($i = 1000000; $i < 10000000; $i++) {
+        for ($i = 1000000; $i < 100000000; $i++) {
             if ($this->isGoodNum($i)) {
                 $count++;
             } else {
