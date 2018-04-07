@@ -554,22 +554,6 @@ class KangTask extends \Phalcon\Cli\Task
 
     function isGoodNum($num)
     {
-        // 由3个以内数字组成的号码
-        $num_array = array_unique(str_split($num));
-        if (count($num_array) <= 3) {
-            //echoLine('good 3', $num);
-            return true;
-        }
-        if (preg_match("/^(520|1314)/", $num)) {
-            //echoLine('good 开头520|1314', $num);
-            return true;
-        }
-
-        if (preg_match("/(1314)$/", $num)) {
-            //echoLine('good 结尾1314', $num);
-            return true;
-        }
-
         //匹配6位以上递增
         if(preg_match('/(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}\\d/', $num)){
             //echoLine('匹配6位以上递增', $num);
@@ -610,6 +594,22 @@ class KangTask extends \Phalcon\Cli\Task
             return true;
         }
 
+        // 由3个以内数字组成的号码
+        $num_array = array_unique(str_split($num));
+        if (count($num_array) <= 3) {
+            //echoLine('good 3', $num);
+            return true;
+        }
+        if (preg_match("/^(520|1314)/", $num)) {
+            //echoLine('good 开头520|1314', $num);
+            return true;
+        }
+
+        if (preg_match("/(1314)$/", $num)) {
+            //echoLine('good 结尾1314', $num);
+            return true;
+        }
+        
         return false;
     }
 
