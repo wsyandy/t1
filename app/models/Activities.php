@@ -8,8 +8,7 @@
  */
 class Activities extends BaseModel
 {
-    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
-
+    static $STATUS = [STATUS_ON => '上架', STATUS_OFF => '下架', STATUS_FORBIDDEN => '禁用'];
     static $files = ['image' => APP_NAME . '/activities/image/%s'];
     static $PLATFORMS = ['client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
         'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
@@ -102,8 +101,8 @@ class Activities extends BaseModel
         $conditions[] = " (product_channel_ids like :product_channel_id: or product_channel_ids = '' or product_channel_ids is null) ";
         $bind['product_channel_id'] = '%,' . $product_channel_id . ',%';
 
-        $conditions[] = ' status = :status: ';
-        $bind['status'] = STATUS_ON;
+        $conditions[] = ' status != :status: ';
+        $bind['status'] = STATUS_OFF;
 
         $cond['conditions'] = implode(' and ', $conditions);
         $cond['bind'] = $bind;
@@ -119,6 +118,12 @@ class Activities extends BaseModel
     //添加抽奖活动
     static function addLuckyDrawActivity($user_id, $opts = [])
     {
+        //2018-0407 17点结束
+        if (time() >= strtotime('2018-04-07 17:00:00')) {
+            info($user_id, $opts);
+            return;
+        }
+
         $amount = fetch($opts, 'amount');
         $gift_order_id = fetch($opts, 'gift_order_id');
         $key = 'lucky_draw_num_activity_id_3'; //记录每个用户可以抽多少次
@@ -213,5 +218,10 @@ class Activities extends BaseModel
         $db = Users::getUserDb();
         $day_num_key = 'lucky_draw_activity_id_' . $this->id . '_num' . $day; //记录每天抽奖的次数
         return intval($db->get($day_num_key));
+    }
+
+    function isForbidden()
+    {
+        return STATUS_FORBIDDEN == $this->status;
     }
 }
