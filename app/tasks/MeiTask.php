@@ -1867,7 +1867,9 @@ class MeiTask extends \Phalcon\Cli\Task
     function pushSystemMessageAction()
     {
         $content = <<<EOF
-幸运大转盘活动今日正式上线，5位幸运ID、6位幸运ID、豪华座驾、神秘礼物、金币狂欢送，查看活动详情请点击侧边栏-活动-幸运大转盘即可参与！
+Hi语音官方提示
+幸运大转盘活动将与2018年4月7日17点00分内测结束，获得抽奖次数还未使用的用户，系统将会保留抽奖次数，抽奖次数保留时间为一周。感谢大家的参与！
+注：本次内测获得幸运号的用户，请先添加官方ID：100101好友，正式上班后官方会通过Hi语音好友联系获得幸运号的用户，下发幸运号。
 EOF;
         $users = Users::findForeach(['conditions' => 'register_at > 0']);
 
@@ -1950,5 +1952,63 @@ EOF;
         $user = Users::findFirstById(1);
 
         $user->updateAvatar($file);
+    }
+
+    function orderAgesAction()
+    {
+        $payments = Payments::findForeach(['conditions' => 'pay_status = :pay_status:', 'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS]]);
+
+        $age_user_num = ['total' => 0];
+        $age_amount_num = ['total' => 0];
+        $user_ids = [];
+
+        foreach ($payments as $payment) {
+
+            $age = $payment->user->age;
+
+            if (!$age) {
+                echoLine($payment->user->id, "年龄为空");
+                continue;
+            }
+
+            $age_amount_num['total'] += $payment->paid_amount;
+
+            if (isset($age_user_num[$age])) {
+                $age_amount_num[$age] += $payment->paid_amount;
+            } else {
+                $age_amount_num[$age] = $payment->paid_amount;
+            }
+
+            if (in_array($payment->user_id, $user_ids)) {
+                continue;
+            }
+
+            $user_ids[] = $payment->user_id;
+
+            $age_user_num['total'] += 1;
+
+            if (isset($age_user_num[$age])) {
+                $age_user_num[$age] += 1;
+            } else {
+                $age_user_num[$age] = 1;
+            }
+        }
+
+        echoLine("付费总人数:{$age_user_num['total']}", "付费总金额:{$age_amount_num['total']}");
+
+        $total = $age_user_num['total'];
+        $total_amount = $age_amount_num['total'];
+
+        foreach ($age_user_num as $age => $num) {
+
+            if ('total' == $age) {
+                echoLine($age, $num);
+                continue;
+            }
+
+            $rate = sprintf("%0.2f", $num * 100 / $total);
+            $avg = sprintf("%0.2f", $age_amount_num[$age] / $age_user_num[$age]);
+            echoLine($age . "岁付费人数:{$age_user_num[$age]},占比{$rate}%, 付费总额:{$age_amount_num[$age]},人均{$avg}");
+        }
     }
 }
