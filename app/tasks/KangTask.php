@@ -594,10 +594,10 @@ class KangTask extends \Phalcon\Cli\Task
         }
 
         //AABB
-        if(preg_match('/^\\d*(\\d)\\1(\\d)\\2\\d*$/', $num)){
-            echoLine('AABB ',$num);
-            return true;
-        }
+//        if(preg_match('/^\\d*(\\d)\\1(\\d)\\2\\d*$/', $num)){
+//            echoLine('AABB ',$num);
+//            return true;
+//        }
 
         // AAABBB
         if(preg_match('/^\\d*(\\d)\\1\\1(\\d)\\2\\2\\d*$/', $num)){
