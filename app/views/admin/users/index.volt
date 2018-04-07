@@ -90,13 +90,14 @@
     {% endif %}
 {% endmacro %}
 
-{{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
+{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
 '状态':'user_status_info', '操作':'profile_link'
 ]) }}
 
 <script type="text/template" id="user_tpl">
     <tr id="user_${user.id}">
         <td>${user.id}</td>
+        <td>${user.uid}</td>
         <td><img src="${ user.avatar_small_url }" height="50"/></td>
         <td>
             产品渠道:${ user.product_channel_name }<br/>
