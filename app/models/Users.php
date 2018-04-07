@@ -62,6 +62,11 @@ class Users extends BaseModel
      */
     private $_union;
 
+    /**
+     * @type Countries
+     */
+    private $_country;
+
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
 
@@ -73,6 +78,10 @@ class Users extends BaseModel
 
     //申请状态 1已同意,-1拒绝，0等待,
     public $apply_status;
+
+    // 经纬度距离
+    public $distance;
+
 
     function beforeCreate()
     {
@@ -102,6 +111,11 @@ class Users extends BaseModel
                 $this->registerStat();
                 $this->createEmUser();
             }
+        }
+
+        if (!$this->uid) {
+            $this->uid = $this->generateUid();
+            $this->update();
         }
     }
 
@@ -147,17 +161,6 @@ class Users extends BaseModel
             $this->createEmUser();
         }
 
-//        // 手机注册
-//        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
-//            $this->registerStat();
-//            $this->createEmUser();
-//        }
-//        // 第三方注册
-//        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
-//            $this->registerStat();
-//            $this->createEmUser();
-//        }
-
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
         }
@@ -169,6 +172,55 @@ class Users extends BaseModel
         if ($this->hasChanged('union_id') || $this->hasChanged('union_type')) {
             $this->bindRoomUnionId();
         }
+    }
+
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
+
+    function getPushContext()
+    {
+        return $this->product_channel->getPushContext($this->platform);
+    }
+
+    function getPushReceiverContext()
+    {
+        return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
+    }
+
+    /**
+     * 产生 UID
+     * @return int
+     */
+    function generateUid()
+    {
+        return $this->id;
+    }
+
+    /**
+     * 产生 SID
+     * @return string
+     */
+    function generateSid($seg)
+    {
+        $src = $this->id . uniqid(mt_rand()) . microtime();
+
+        $src = $this->id . $seg . md5($src);
+        $src .= calculateSum($src);
+
+        return $src;
+    }
+
+    // 是否登录
+    function isLogin()
+    {
+        if ($this->isClientPlatform()) {
+            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+        }
+
+        return !!$this->mobile;
     }
 
     function bindRoomUnionId()
@@ -304,47 +356,6 @@ class Users extends BaseModel
         }
     }
 
-    function isSilent()
-    {
-        return USER_TYPE_SILENT == $this->user_type;
-    }
-
-    function isActive()
-    {
-        return USER_TYPE_ACTIVE == $this->user_type;
-    }
-
-    function isBlocked()
-    {
-        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
-    }
-
-    function isNormal()
-    {
-        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
-            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
-        }
-
-        return USER_STATUS_ON === $this->user_status;
-    }
-
-    static function getUserDb()
-    {
-        $endpoint = self::config('user_db_endpoints');
-        return XRedis::getInstance($endpoint);
-    }
-
-    function getPushContext()
-    {
-        return $this->product_channel->getPushContext($this->platform);
-    }
-
-    function getPushReceiverContext()
-    {
-        return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
-    }
-
     static function registerForClientByMobile($current_user, $device, $mobile, $context = [])
     {
 
@@ -428,7 +439,7 @@ class Users extends BaseModel
     static function registerForClientByDevice($device, $is_force = false)
     {
         if ($device->isBlocked()) {
-            info("block_device_active", $device->id, $device->dno);
+            info("block_device_active", $device->id, $device->device_no);
             return null;
         }
 
@@ -474,6 +485,96 @@ class Users extends BaseModel
         return $user;
     }
 
+    static function registerForClientByLoginName($current_user, $device, $login_name, $context = [])
+    {
+
+        if (isBlank($login_name)) {
+            return [ERROR_CODE_FAIL, '请输入注册邮箱', null];
+        }
+
+        if (!filter_var($login_name, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE)) {
+            return [ERROR_CODE_FAIL, '邮箱格式错误', null];
+        }
+
+        info('false_device', $device->id, 'can_register', $device->can_register);
+        if (!$device || (!$device->can_register && isProduction())) {
+            info('false_device', $current_user->product_channel->code, $login_name, $context);
+            return [ERROR_CODE_FAIL, '设备错误!!', null];
+        }
+
+        $product_channel = $current_user->product_channel;
+        $exist_user = \Users::findFirstByLoginName($product_channel, $login_name);
+
+        if ($exist_user) {
+            return [ERROR_CODE_FAIL, '用户已注册', null];
+        }
+
+        $user = $current_user;
+        //换个手机号注册，重新生成用户 其他注册方式校验login_name
+        if ($current_user->login_name && $current_user->login_name != $login_name || $current_user->third_unionid || $current_user->mobile) {
+            $user = Users::registerForClientByDevice($device, true);
+            info('换个手机号注册', $user->id, $user->mobile, $user->login_name, $user->third_unionid, $context);
+        }
+
+        if (!$user) {
+            return [ERROR_CODE_FAIL, '注册失败!', null];
+        }
+
+        $fr = $device->fr;
+
+        if (!$fr) {
+            $fr = fetch($context, 'fr');
+            $user->fr = $fr;
+            $device->fr = $fr;
+        }
+
+        $partner = \Partners::findFirstByFrHotCache($fr);
+
+        if ($partner) {
+            $user->partner_id = $partner->id;
+            $device->partner_id = $partner->id;
+        }
+
+        $device->user_id = $user->id;
+        $device->save();
+
+        $user->manufacturer = $device->manufacturer;
+        $user->platform = $device->platform;
+        $user->device_id = $device->id;
+        $user->device = $device;
+        $user->device_no = $device->device_no;
+        $user->login_name = $login_name;
+
+        $password = fetch($context, 'password');
+        $country_id = fetch($context, 'country_id');
+
+        if ($password) {
+            $user->password = md5($password);
+        }
+
+        if (isBlank($user->login_name)) {
+            $user->login_name = md5(uuid()) . '@app.com';
+        }
+
+        if (isBlank($user->nickname)) {
+            $user->nickname = $user->login_name;
+        }
+
+        $user->country_id = $country_id;
+        $user->user_type = USER_TYPE_ACTIVE;
+        $user->login_type = USER_LOGIN_TYPE_MOBILE;
+        $user->save();
+
+        if ($login_name) {
+            $user->sid = $user->generateSid('s');
+            $user->update();
+        }
+
+        info($user->id, $user->login_name, $user->fr, $user->partner_id, date('Ymd H:i:s', $user->created_at), date('Ymd H:i:s', $user->register_at));
+
+        return [ERROR_CODE_SUCCESS, '', $user];
+    }
+
     // 多设备登录
     function clientLogin($context, $device = null)
     {
@@ -490,7 +591,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type', 'country_id'] as $key) {
 
             $val = fetch($context, $key);
 
@@ -567,30 +668,6 @@ class Users extends BaseModel
                 info("Exce", $e->getMessage());
             }
         }
-    }
-
-    /**
-     * 产生 SID
-     * @return string
-     */
-    function generateSid($seg)
-    {
-        $src = $this->id . uniqid(mt_rand()) . microtime();
-
-        $src = $this->id . $seg . md5($src);
-        $src .= calculateSum($src);
-
-        return $src;
-    }
-
-    // 是否登录
-    function isLogin()
-    {
-        if ($this->isClientPlatform()) {
-            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
-        }
-
-        return !!$this->mobile;
     }
 
     /**
@@ -671,6 +748,17 @@ class Users extends BaseModel
         $user = \Users::findFirst([
             'conditions' => 'product_channel_id = :product_channel_id: and mobile=:mobile:',
             'bind' => ['product_channel_id' => $product_channel->id, 'mobile' => $mobile],
+            'order' => 'id desc'
+        ]);
+
+        return $user;
+    }
+
+    static function findFirstByLoginName($product_channel, $login_name)
+    {
+        $user = \Users::findFirst([
+            'conditions' => 'product_channel_id = :product_channel_id: and login_name=:login_name:',
+            'bind' => ['product_channel_id' => $product_channel->id, 'login_name' => $login_name],
             'order' => 'id desc'
         ]);
 
@@ -2227,7 +2315,7 @@ class Users extends BaseModel
                 $user->$column = $data[$column];
             }
 
-            $old_user = \Users::findFirstByLoginName($user->login_name);
+            $old_user = \Users::findFirstByLoginName($user->product_channel, $user->login_name);
             if (isPresent($old_user)) {
                 info('old user', $user->login_name);
                 continue;

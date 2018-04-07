@@ -2,6 +2,17 @@
     <img src="{{ country.image_small_url }}" height="50"/>
 {% endmacro %}
 
+<form name="search_form" action="/admin/countries" method="get" autocomplete="off" id="search_form">
+    <label for="id">ID</label>
+    <input name="id" type="text" id="id" value="{{ id }}"/>
+
+    <label for="chinese_name">国家名称</label>
+    <input name="chinese_name" type="text" id="chinese_name" value="{{ chinese_name }}"/>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
+
 {{ simple_table(countries, [
     'ID': 'id', 'CODE':'code', '国旗':'country_image', '英文名称': 'english_name',
     '中文名称': 'chinese_name','排序':'rank','状态': 'status_text', '编辑':'edit_link'

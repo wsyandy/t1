@@ -7,14 +7,8 @@ class UsersController extends BaseController
 
     function registerAction()
     {
-        $mobile = $this->params('mobile');
-        $auth_code = $this->params('auth_code');
-        $sms_token = $this->params('sms_token');
+        $login_name = $this->params('login_name');
         $password = $this->params('password');
-
-        if (!isMobile($mobile)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
-        }
 
         if (isBlank($password)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '请设置密码');
@@ -24,51 +18,11 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '请设置6~16位的密码');
         }
 
-        // 测试白名单
-        $is_white_mobile = false;
-        if ($mobile && in_array($mobile, ['13912345678'])
-        ) {
-            $is_white_mobile = true;
-        }
-
         $context = $this->context();
-
-        $context['is_white_mobile'] = $is_white_mobile;
-        list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile, $auth_code, $sms_token, $context);
-
-        if ($error_code != ERROR_CODE_SUCCESS) {
-            return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
-        }
-
-        // 存在更换设备登录
-        $device = $this->currentDevice();
-        $product_channel = $this->currentProductChannel();
-
-        if (!$device) {
-            $device = $this->currentUser()->device;
-        }
-
         $current_user = $this->currentUser();
-        $current_user->product_channel = $product_channel;
-        list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
+        $device = $this->currentDevice();
 
-        $db = \Users::getUserDb();
-        $good_num_list_key = 'good_num_list';
-
-        if ($db->zscore($good_num_list_key, $user->id)) {
-            info("good_num", $user->id);
-            $user->user_type = USER_TYPE_SILENT;
-            $user->user_status = USER_STATUS_OFF;
-            $user->mobile = '';
-            $user->device_id = 0;
-            $user->password = '';
-            $user->update();
-
-            $device->user_id = 0;
-            $device->update();
-
-            list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
-        }
+        list($error_code, $error_reason, $user) = \Users::registerForClientByLoginName($current_user, $device, $login_name, $context);
 
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
@@ -80,6 +34,7 @@ class UsersController extends BaseController
         }
 
         list($error_code, $error_reason) = $user->clientLogin($context, $device);
+
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
@@ -94,34 +49,6 @@ class UsersController extends BaseController
         return $this->renderJSON($error_code, $error_reason, $opts);
     }
 
-
-    function sendAuthAction()
-    {
-        $mobile = $this->params('mobile');
-        $sms_type = $this->params('sms_type');
-        $context = $this->context();
-        $context['user_id'] = $this->currentUser()->id;
-        $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
-
-        if (!$sms_type) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-
-        if ('login' == $sms_type && !$user) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
-        }
-
-        if ('register' == $sms_type && $user) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户已注册');
-        }
-
-        list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
-            $mobile, 'login', $context);
-
-        return $this->renderJSON($error_code, $error_reason, ['sms_token' => $sms_token]);
-    }
-
-
     //设备号：不唯一
     //设备号：注册和登录接口已sid或device_no为准获取device
     //设备号：其他接口，使用device都以user->device为准
@@ -129,15 +56,14 @@ class UsersController extends BaseController
     {
         if ($this->request->isPost()) {
 
-            $mobile = $this->params('mobile');
-            $auth_code = $this->params('auth_code');
-            $sms_token = $this->params('sms_token');
+            $login_name = $this->params('login_name');
             $password = $this->params('password');
+            $country_id = $this->params('country_id');
 
             $device = $this->currentDevice();
 
-            if (!isMobile($mobile)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
+            if (!filter_var($login_name, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '邮箱格式错误');
             }
 
             if (mb_strlen($password) < 6 || mb_strlen($password) > 16) {
@@ -148,9 +74,10 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
             }
 
-            $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
+            $user = \Users::findFirstByLoginName($this->currentProductChannel(), $login_name);
+
             if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+                return $this->renderJSON(ERROR_CODE_FAIL, '邮箱未注册');
             }
 
             if ($user->isBlocked()) {
@@ -158,32 +85,14 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
             }
 
-            // 测试白名单
-            $is_white_mobile = false;
-            if ($mobile && in_array($mobile, ['13912345678'])
-            ) {
-                $is_white_mobile = true;
-            }
-
             $context = $this->context();
 
-            if ($auth_code) {
-
-                $context['is_white_mobile'] = $is_white_mobile;
-                list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
-                    $mobile, $auth_code, $sms_token, $context);
-
-                if ($error_code != ERROR_CODE_SUCCESS) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
-                }
-
-            } else {
-                if (!$user || $user->password != md5($password)) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '手机号码或密码不正确');
-                }
+            if (!$user || $user->password != md5($password)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码或密码不正确');
             }
 
-            $context['login_type'] = USER_LOGIN_TYPE_MOBILE;
+            $context['login_type'] = USER_LOGIN_TYPE_EMAIL;
+            $context['country_id'] = $country_id;
 
             list($error_code, $error_reason) = $user->clientLogin($context, $device);
 
@@ -192,17 +101,9 @@ class UsersController extends BaseController
             }
 
             $user->updatePushToken($device);
-
-            $error_url = '';
-
-            if ($user->needUpdateInfo()) {
-                $error_url = 'app://users/update_info';
-            }
-
             $key = $this->currentProductChannel()->getSignalingKey($user->id);
             $app_id = $this->currentProductChannel()->getImAppId();
-
-            $opts = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
+            $opts = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key];
             $opts = array_merge($opts, $user->toBasicJson());
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);

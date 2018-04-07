@@ -135,8 +135,10 @@ class ActivitiesController extends BaseController
     function luckyDrawActivityAction()
     {
         $activity_id = $this->params('id');
+        $activity = \Activities::findFirstById($activity_id);
         $this->view->lucky_draw_num = $this->currentUser()->getLuckyDrawNum($activity_id);
         $this->view->activity_id = $activity_id;
+        $this->view->activity = $activity;
         $this->view->sid = $this->currentUser()->sid;
         $this->view->title = "转盘活动";
     }
