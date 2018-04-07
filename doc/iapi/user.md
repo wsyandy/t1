@@ -1,23 +1,5 @@
 # 用户接口
 
-### 获取短信验证码接口
-
-> http-post ```/iapi/users/send_auth```
-
-##### 请求参数说明
-|参数|名称|值类型|是否可空|备注
-|---|---|---|---|---|
-| mobile |手机|string|否||
-| sms_type |短信类型|string|否|登录login 注册register|
-##### 回应参数说明
-```
-{
-    error_code     0成功 -1失败
-    error_reason  失败原因，默认为空  没账号登录返回"此手机号未注册" 有账号注册返回"此手机号已注册"
-    sms_token 验证token
-}
-```
-
 ### 注册接口
 
 > http-post ```/iapi/users/register```
@@ -27,7 +9,7 @@
 |---|---|---|---|---|
 |login_name|注册邮箱|string|否||
 |password|密码|string|否||
-|country_id|国家id|int|否||
+|country_id|国家id|int|否|||
 
 ##### 回应参数说明
 ```
