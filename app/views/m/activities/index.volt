@@ -5,24 +5,20 @@
 <div class="activity_page">
     <ul class="activity_ul">
         {% for activity in activities %}
-            {% if activity.id == 3 %}
-                <li style="background-color:grey">
-            {% else %}
-                <li>
-            {% endif %}
-            <img src="{{ activity.image_url }}" alt="">
-            <div class=" activity_content">
-                <p>{{ activity.title }}</p>
-                <div class="activity_content_bottom">
+            <li {% if activity.id == 3 %}style="background-color:grey"{% endif %}>
+                <img src="{{ activity.image_url }}" alt="">
+                <div class=" activity_content">
+                    <p>{{ activity.title }}</p>
+                    <div class="activity_content_bottom">
                        <span>
                         {% if activity.start_at %}
                             {{ activity.start_text }}-{{ activity.end_text }}
                         {% endif %}
                        </span>
-                    <span class="arrow" id="{{ activity.id }}"> 了解详情</span>
-                    <input type="hidden" id="code" value="{{ activity.code }}">
+                        <span class="arrow" id="{{ activity.id }}"> 了解详情</span>
+                        <input type="hidden" id="code" value="{{ activity.code }}">
+                    </div>
                 </div>
-            </div>
             </li>
         {% endfor %}
     </ul>
