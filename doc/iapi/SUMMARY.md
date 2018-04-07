@@ -7,6 +7,7 @@
 * [设备](device.md)
 * [软件升级](soft_version.md)
 * [用户](user.md)
+* [国家](countries.md)
 ;* [相册](albums.md)
 ;* [关注](followers.md)
 ;* [拉黑](blacks.md)
