@@ -1950,5 +1950,11 @@ EOF;
         $user = Users::findFirstById(1);
 
         $user->updateAvatar($file);
+
+        $client = new \services\SwooleClient('172.16.253.39', 9508, 1);
+        if (!$client->connect()) {
+            info("Exce connect fail");
+            return false;
+        }
     }
 }

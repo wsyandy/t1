@@ -172,10 +172,13 @@ class SwooleUtils extends \BaseModel
         info($port, $ip, $action, $payload);
 
         try {
-            $client = new SwooleClient($ip, $port, 1);
+            $client = new SwooleClient($ip, $port, 3);
             if (!$client->connect()) {
                 info("Exce connect fail", $ip, $port, $payload);
-                return false;
+
+                if (isProduction()) {
+                    return false;
+                }
             }
             $payload = ['action' => $action, 'payload' => $payload];
             $payload['sign'] = SwooleUtils::generateSign($payload);
