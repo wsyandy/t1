@@ -5,7 +5,7 @@
 <div class="activity_page">
     <ul class="activity_ul">
         {% for activity in activities %}
-            <li {% if activity.isForbidden() %}style="background-color:grey"{% endif %}>
+            <li data-id="{{ activity.id }}" {% if activity.isForbidden() %} data-status="-1" style="background-color:grey"{% endif %}>
                 <img src="{{ activity.image_url }}" alt="">
                 <div class=" activity_content">
                     <p>{{ activity.title }}</p>
@@ -26,7 +26,21 @@
 
 <script>
     $('.activity_page ul li').each(function () {
+
         $(this).click(function () {
+
+            if (this.data('status') == -1) {
+
+                if (this.data('id') == 3) {
+                    alert('活动内测已结束');
+                    return;
+                }
+
+                alert('活动已结束');
+
+                return;
+            }
+
             $(this).addClass('time_min_selected').siblings().removeClass('time_min_selected');
             var id = $(this).find('.arrow').attr("id");
             var code = $(this).find('#code').attr("value");
