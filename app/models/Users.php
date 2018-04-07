@@ -151,17 +151,6 @@ class Users extends BaseModel
             $this->createEmUser();
         }
 
-//        // 手机注册
-//        if ($this->hasChanged('mobile') && $this->mobile && !$this->third_unionid) {
-//            $this->registerStat();
-//            $this->createEmUser();
-//        }
-//        // 第三方注册
-//        if ($this->hasChanged('third_unionid') && $this->third_unionid && !$this->mobile) {
-//            $this->registerStat();
-//            $this->createEmUser();
-//        }
-
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
             $this->current_room->exitRoom($this);
         }
@@ -189,6 +178,15 @@ class Users extends BaseModel
     function getPushReceiverContext()
     {
         return ['id' => $this->id, 'platform' => $this->platform, 'push_token' => $this->push_token, 'push_type' => $this->push_type];
+    }
+
+    /**
+     * 产生 UID
+     * @return int
+     */
+    function generateUid()
+    {
+        return $this->id;
     }
 
     /**
