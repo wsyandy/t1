@@ -67,6 +67,10 @@
                     <p>2、</p>
                     <p>抽中五位号和六位号的用户请联系客服（ID：100101）获取号码，其他抽中的礼物将会直接放入您的账户。</p>
                 </li>
+                <li style="margin-top:5px;">
+                    <p>3、</p>
+                    <p>结束时间：{{ activity.end_at_text }}</p>
+                </li>
             </ul>
         </div>
     </div>

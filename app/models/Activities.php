@@ -224,4 +224,14 @@ class Activities extends BaseModel
     {
         return STATUS_FORBIDDEN == $this->status;
     }
+
+    //已经结束
+    function isOver()
+    {
+        if ($this->end_at && $this->end_at <= time()) {
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -11,7 +11,9 @@
                     <p>{{ activity.title }}</p>
                     <div class="activity_content_bottom">
                        <span>
-                        {% if activity.start_at %}
+                        {% if activity.isOver() %}
+                            已结束
+                        {% elseif activity.start_at %}
                             {{ activity.start_text }}-{{ activity.end_text }}
                         {% endif %}
                        </span>
@@ -28,18 +30,6 @@
     $('.activity_page ul li').each(function () {
 
         $(this).click(function () {
-
-            if ($(this).data('status') == -1) {
-
-                if ($(this).data('id') == 3) {
-                    alert('活动内测已结束');
-                    return;
-                }
-
-                alert('活动已结束');
-
-                return;
-            }
 
             $(this).addClass('time_min_selected').siblings().removeClass('time_min_selected');
             var id = $(this).find('.arrow').attr("id");
