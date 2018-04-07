@@ -12,14 +12,15 @@
     </div>
     <div class="hongbao_bg"></div>
     <!-- 获得红包弹框结束 -->
-    <a href="/m/activity_histories?sid={{ sid }}&code={{ code }}&activity_id={{ activity_id }}"><img src="/m/images/jilu.png" class="jilu"></a>
+    <a href="/m/activity_histories?sid={{ sid }}&code={{ code }}&activity_id={{ activity_id }}"><img
+                src="/m/images/jilu.png" class="jilu"></a>
     <div class="zhuanpan_wrap">
         <div class="banner_bg">
             <img src="/m/images/banner.png" alt="" class="banner">
             {#<div class="zhuanpan_txt">#}
-                {#<div class="zp_name">#}
-                    {#恭喜<span>晓晓</span>获得了<span>10000金币</span>#}
-                {#</div>#}
+            {#<div class="zp_name">#}
+            {#恭喜<span>晓晓</span>获得了<span>10000金币</span>#}
+            {#</div>#}
             {#</div>#}
         </div>
         <!-- 转盘开始 -->
@@ -67,10 +68,12 @@
                     <p>2、</p>
                     <p>抽中五位号和六位号的用户请联系客服（ID：100101）获取号码，其他抽中的礼物将会直接放入您的账户。</p>
                 </li>
-                <li style="margin-top:5px;">
-                    <p>3、</p>
-                    <p>结束时间：{{ activity.end_at_text }}</p>
-                </li>
+                {% if activity.end_at %}
+                    <li style="margin-top:5px;">
+                        <p>3、</p>
+                        <p>结束时间：{{ activity.end_at_text }}</p>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

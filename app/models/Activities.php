@@ -43,7 +43,7 @@ class Activities extends BaseModel
         if (isBlank($start_at)) {
             return '';
         }
-        return date("m月d日", $start_at);
+        return date("Y年m月d日H点", $start_at);
     }
 
     function getEndText()
@@ -52,7 +52,7 @@ class Activities extends BaseModel
         if (isBlank($end_at)) {
             return '';
         }
-        return date("m月d日", $end_at);
+        return date("Y年m月d日H点", $end_at);
     }
 
     function mergeJson()
@@ -118,17 +118,21 @@ class Activities extends BaseModel
     //添加抽奖活动
     static function addLuckyDrawActivity($user_id, $opts = [])
     {
+        $activity_id = 3;
+
+        $activity = Activities::findFirstById($activity_id);
+
         //2018-0407 17点结束
-        if (time() >= strtotime('2018-04-07 17:00:00')) {
+        if (time() >= $activity->end_at) {
             info($user_id, $opts);
             return;
         }
 
         $amount = fetch($opts, 'amount');
         $gift_order_id = fetch($opts, 'gift_order_id');
-        $key = 'lucky_draw_num_activity_id_3'; //记录每个用户可以抽多少次
-        $day_user_key = 'obtain_lucky_draw_activity_id_3_user' . date("Y-m-d"); //记录每天获得抽奖的人数
-        $day_num_key = 'obtain_lucky_draw_activity_id_3_num' . date("Y-m-d"); //记录每天获得抽奖的次数
+        $key = 'lucky_draw_num_activity_id_' . $activity_id; //记录每个用户可以抽多少次
+        $day_user_key = 'obtain_lucky_draw_activity_id_' . $activity_id . '_user' . date("Y-m-d"); //记录每天获得抽奖的人数
+        $day_num_key = 'obtain_lucky_draw_activity_id_' . $activity_id . '_num' . date("Y-m-d"); //记录每天获得抽奖的次数
 
         $num = 0;
 
