@@ -5,7 +5,7 @@
 <div class="activity_page">
     <ul class="activity_ul">
         {% for activity in activities %}
-            <li {% if activity.id == 3 %}style="background-color:grey"{% endif %}>
+            <li {% if activity.isForbidden() %}style="background-color:grey"{% endif %}>
                 <img src="{{ activity.image_url }}" alt="">
                 <div class=" activity_content">
                     <p>{{ activity.title }}</p>
