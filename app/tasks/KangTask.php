@@ -572,24 +572,24 @@ class KangTask extends \Phalcon\Cli\Task
 
         //匹配6位以上递增
         if(preg_match('/(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}\\d/', $num)){
-            echoLine(' 匹配6位以上递增', $num);
+            //echoLine('匹配6位以上递增', $num);
             return true;
         }
         // 匹配6位以上递降
         if(preg_match('/(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){5}\\d/', $num)){
-            echoLine(' 匹配6位以上递降', $num);
+            //echoLine('匹配6位以上递降', $num);
             return true;
         }
 
         // 匹配4-9位连续的数字
         if(preg_match('/(?:(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){3,}|(?:9(?=8)|8(?=7)|7(?=6)|6(?=5)|5(?=4)|4(?=3)|3(?=2)|2(?=1)|1(?=0)){3,})\\d/', $num)){
-            echoLine(' 匹配4-9位连续的数字', $num);
+            //echoLine('匹配4-9位连续的数字', $num);
             return true;
         }
 
         //匹配3位以上的重复数字
         if (preg_match("/([\\d])\\1{2,}/", $num)) {
-            echoLine('匹配3位以上的重复数字', $num);
+            //echoLine('匹配3位以上的重复数字', $num);
             return true;
         }
 
@@ -603,6 +603,8 @@ class KangTask extends \Phalcon\Cli\Task
         for ($i = 1000000; $i < 2000000; $i++) {
             if ($this->isGoodNum($i)) {
                 $count++;
+            }else{
+                echoLine('not good', $i);
             }
         }
 
