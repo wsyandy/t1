@@ -554,6 +554,17 @@ class KangTask extends \Phalcon\Cli\Task
 
     function isGoodNum($num)
     {
+        // AAABBB
+        if(preg_match('/^\\d*(\\d)\\1\\1(\\d)\\2\\2\\d*$/', $num)){
+            echoLine('AAABBB',$num);
+            return true;
+        }
+        // ABCABC
+        if(preg_match('/^(\\d)(\\d)(\\d)\\1\\2\\3$/', $num)){
+            echoLine('ABCABC',$num);
+            return true;
+        }
+        
         //匹配6位以上递增
         if(preg_match('/(?:0(?=1)|1(?=2)|2(?=3)|3(?=4)|4(?=5)|5(?=6)|6(?=7)|7(?=8)|8(?=9)){5}\\d/', $num)){
             //echoLine('匹配6位以上递增', $num);
@@ -583,17 +594,6 @@ class KangTask extends \Phalcon\Cli\Task
 //            return true;
 //        }
 
-        // AAABBB
-        if(preg_match('/^\\d*(\\d)\\1\\1(\\d)\\2\\2\\d*$/', $num)){
-            echoLine('AAABBB',$num);
-            return true;
-        }
-        // ABCABC
-        if(preg_match('/^(\\d)(\\d)(\\d)\\1\\2\\3$/', $num)){
-            echoLine('ABCABC',$num);
-            return true;
-        }
-
         // 由3个以内数字组成的号码
         $num_array = array_unique(str_split($num));
         if (count($num_array) <= 3) {
@@ -609,7 +609,7 @@ class KangTask extends \Phalcon\Cli\Task
             //echoLine('good 结尾1314', $num);
             return true;
         }
-        
+
         return false;
     }
 
