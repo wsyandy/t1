@@ -557,9 +557,18 @@ class KangTask extends \Phalcon\Cli\Task
         // 由3个以内数字组成的号码
         $num_array = array_unique(str_split($num));
         if (count($num_array) <= 3) {
+            echoLine('good 3', $num);
+            return true;
+        }
+        if (preg_grep("/^(520|1314)/", $num)) {
+            echoLine('good 开头520|1314', $num);
             return true;
         }
 
+        if (preg_grep("/(1314)$/", $num)) {
+            echoLine('good 结尾1314', $num);
+            return true;
+        }
 
         return false;
     }
@@ -570,7 +579,6 @@ class KangTask extends \Phalcon\Cli\Task
         $count = 0;
         for ($i = 1000000; $i < 2000000; $i++) {
             if ($this->isGoodNum($i)) {
-                echoLine('good', $i);
                 $count++;
             }
         }
