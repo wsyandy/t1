@@ -542,13 +542,39 @@ class KangTask extends \Phalcon\Cli\Task
     function fixUidAction($params)
     {
 
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0],'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $users = Users::findForeach($cond);
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->uid = $user->id;
             $user->save();
         }
 
+    }
+
+    function isGoodNum($num)
+    {
+        // 由3个以内数字组成的号码
+        $num_array = array_unique(str_split($num));
+        if (count($num_array) <= 3) {
+            return true;
+        }
+
+
+        return false;
+    }
+
+    function noAction()
+    {
+
+        $count = 0;
+        for ($i = 1000000; $i < 2000000; $i++) {
+            if ($this->isGoodNum($i)) {
+                echoLine('good', $i);
+                $count++;
+            }
+        }
+
+        echoLine('count', $count);
     }
 }
