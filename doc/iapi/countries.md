@@ -15,12 +15,12 @@
 {
     error_code:   0/-1  
     error_reason: '返回码说明'    
-    countries :{
-        [
+    countries :[
+        {
             id int 国家id
             name string 国家名称
-        ]
+        }
         ...
-    }
+    ]
 }
 ```
