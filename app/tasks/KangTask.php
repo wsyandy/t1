@@ -593,13 +593,20 @@ class KangTask extends \Phalcon\Cli\Task
             return true;
         }
 
-        //重复号码，镜子号码
-        if(preg_match('/^(<a>\\d)(\\d)(\\d)\\1\\2\\3$/', $num)){
-            echoLine('重复号码，镜子号码 ',$num);
+        //AABB
+        if(preg_match('/^\\d*(\\d)\\1(\\d)\\2\\d*$/', $num)){
+            echoLine('AABB ',$num);
             return true;
         }
-        if(preg_match('/^(\\d)(\\d)(\\d)\\3\\2\\1$/', $num)){
-            echoLine('重复号码，镜子号码 ',$num);
+
+        // AAABBB
+        if(preg_match('/^\\d*(\\d)\\1\\1(\\d)\\2\\2\\d*$/', $num)){
+            echoLine('AAABBB',$num);
+            return true;
+        }
+        // ABCABC
+        if(preg_match('/^(\\d)(\\d)(\\d)\\1\\2\\3$/', $num)){
+            echoLine('ABCABC',$num);
             return true;
         }
 
