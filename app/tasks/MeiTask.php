@@ -1956,5 +1956,10 @@ EOF;
             info("Exce connect fail");
             return false;
         }
+
+        $device = Devices::findFirstById(7);
+        if ($device->inWhiteList()) {
+            echoLine("ssss");
+        }
     }
 }
