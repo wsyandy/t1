@@ -45,7 +45,7 @@ class GoldHistoriesController extends BaseController
 
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'operator_id' => $this->currentOperator()->id];
 
-            if ($amount > 10000 && isProduction()) {
+            if ($amount > 100000 && isProduction()) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '赠送数量超过限制');
             }
 
