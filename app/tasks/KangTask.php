@@ -546,7 +546,7 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine($cond);
         $users = Users::findForeach($cond);
         foreach ($users as $user) {
-            $user->uid = $user->id;
+            $user->uid = $user->id + 1000000;
             $user->save();
         }
 
