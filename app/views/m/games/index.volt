@@ -127,7 +127,7 @@
         <div class="start_game">
             <span>${game_status_text}</span>
             <p></p>
-            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'">当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span>
+            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'"><span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
             </p>
         </div>
         <div class="select_game_button">
