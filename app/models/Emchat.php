@@ -27,7 +27,7 @@ class Emchat extends BaseModel
     {
         $emchat = new \Emchat();
         if (!is_a($user, 'Users')) {
-            $user = \Users::findById(intval($user));
+            $user = \Users::findFirstById(intval($user));
         }
         $create_result = $emchat->createUser($user->id, $user->im_password);
         if (!$create_result) {
@@ -157,7 +157,6 @@ class Emchat extends BaseModel
         $body = json_encode($users_info, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        //debug(var_dump($result));
         debug($result->code);
         return $this->reqSuccess($result->code);
     }
@@ -179,7 +178,7 @@ class Emchat extends BaseModel
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        //var_dump($result);
+
         return $this->reqSuccess($result->code);
     }
 
@@ -198,6 +197,7 @@ class Emchat extends BaseModel
             $result_data = $this->parseResult($result);
             return $result_data['entities'];
         }
+
         return [];
     }
 
