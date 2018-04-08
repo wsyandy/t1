@@ -1783,4 +1783,47 @@ class Rooms extends BaseModel
     {
         return STATUS_ON == $this->top;
     }
+
+    //是否能上热门
+    function canToHot($least_user_num)
+    {
+        $user = $this->user;
+
+        if (!$user->isIdCardAuth() && $user->pay_amount < 1) {
+            info("user_no_pay_amount", $user->id, $user->pay_amount, $this->id);
+            return false;
+        }
+
+        if (!$this->checkRoomSeat()) {
+            info("room_seat_is_null", $this->id);
+            return false;
+        }
+
+        if ($this->getUserNum() < $least_user_num) {
+            info("room_no_user", $this->id);
+            return false;
+        }
+
+        if ($this->lock) {
+            info("room_seat_is_lock", $this->id);
+            return false;
+        }
+
+        if ($this->isForbiddenHot()) {
+            info("isForbiddenHot", $this->id);
+            return false;
+        }
+
+        if ($this->isBlocked()) {
+            info("isBlocked", $this->id);
+            return false;
+        }
+
+        if ($user->isCompanyUser()) {
+            info("isCompanyUser", $this->id);
+            return false;
+        }
+
+        return true;
+    }
 }

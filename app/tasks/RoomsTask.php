@@ -309,18 +309,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($manual_hot_rooms as $manual_hot_room) {
 
-            if (!$manual_hot_room->checkRoomSeat()) {
-                info("room_seat_is_null", $manual_hot_room->id);
-                continue;
-            }
-
-            if ($manual_hot_room->getUserNum() < $least_user_num) {
-                info("room_no_user", $manual_hot_room->id);
-                continue;
-            }
-
-            if ($manual_hot_room->lock) {
-                info("room_seat_is_lock", $manual_hot_room->id);
+            if (!$manual_hot_room->canToHot($least_user_num)) {
                 continue;
             }
 
@@ -356,23 +345,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            if (!$room->checkRoomSeat()) {
-                info("room_seat_is_null", $room->id);
-                continue;
-            }
-
-            if ($room->isForbiddenHot()) {
-                info("isForbiddenHot", $room->id);
-                continue;
-            }
-
-            if ($room->getUserNum() < $least_user_num) {
-                info("room_no_user", $room->id);
-                continue;
-            }
-
-            if ($room->lock) {
-                info("room_seat_is_lock", $room->id);
+            if (!$room->canToHot($least_user_num)) {
                 continue;
             }
 
@@ -381,12 +354,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             if ($room->isHot()) {
-                continue;
-            }
-
-            //公司内部成员的房间不上热门
-            if ($room->user->isCompanyUser()) {
-                info($room->id);
                 continue;
             }
 
@@ -447,36 +414,13 @@ class RoomsTask extends \Phalcon\Cli\Task
                         continue;
                     }
 
-                    if (!$user_num_room->checkRoomSeat()) {
-                        info("room_seat_is_null", $user_num_room->id);
-                        continue;
-                    }
-
                     if ($user_num_room->isHot()) {
                         continue;
                     }
 
-                    if ($user_num_room->isForbiddenHot()) {
-                        info("isForbiddenHot", $user_num_room_id);
+                    if (!$user_num_room->canToHot($least_user_num)) {
                         continue;
                     }
-
-                    if ($user_num_room->getUserNum() < $least_user_num) {
-                        info("room_no_user", $user_num_room->id);
-                        continue;
-                    }
-
-                    if ($user_num_room->lock) {
-                        info("room_seat_is_lock", $user_num_room->id);
-                        continue;
-                    }
-
-                    //公司内部成员的房间不上热门
-                    if ($user_num_room->user->isCompanyUser()) {
-                        info($room->id);
-                        continue;
-                    }
-
 
                     if (!in_array($user_num_room_id, $total_room_ids)) {
 
@@ -610,21 +554,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $hot_room = Rooms::findFirstById($hot_room_id);
 
-            if ($hot_room->getUserNum() <= $least_user_num) {
+            if (!$hot_room->canToHot($least_user_num)) {
                 $hot_cache->zrem($hot_room_list_key, $hot_room_id);
-                info("room_user_is_few_null", $hot_room->id);
-                continue;
-            }
-
-            if ($hot_room->lock || $hot_room->isBlocked() || $hot_room->isForbiddenHot()) {
-                info("lock", $hot_room->lock, "blocked", $hot_room->isBlocked(), "isForbiddenHot", $hot_room->isForbiddenHot());
-                $hot_cache->zrem($hot_room_list_key, $hot_room_id);
-                continue;
-            }
-
-            if (!$hot_room->checkRoomSeat()) {
-                $hot_cache->zrem($hot_room_list_key, $hot_room_id);
-                info("room_seat_is_null", $hot_room->id);
                 continue;
             }
 

@@ -47,7 +47,7 @@ trait UserAttrs
         ];
 
         if(isDevelopmentEnv()){
-            $data['id'] = $this->uid;
+        //    $data['id'] = $this->uid;
         }
 
         if (isPresent($this->union)) {
@@ -119,7 +119,7 @@ trait UserAttrs
         ];
 
         if(isDevelopmentEnv()){
-            $data['id'] = $this->uid;
+         //   $data['id'] = $this->uid;
         }
 
         return $data;
