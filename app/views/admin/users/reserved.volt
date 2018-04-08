@@ -8,6 +8,10 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
+{% macro avatar_image(user) %}
+    <img src="{{ user.avatar_small_url }}" height="50"/>
+{% endmacro %}
+
 {% macro product_channel_view(user) %}
     产品渠道:{{ user.product_channel_name }}<br/>
     FR:{{ user.fr }}<br/>
@@ -17,7 +21,7 @@
     api协议版本: {{ user.api_version }}<br/>
 {% endmacro %}
 
-{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_small_url','类型':'user_type_text', '状态':"user_status_text"]) }}
+{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image','类型':'user_type_text', '状态':"user_status_text"]) }}
 
 <script type="text/template" id="user_tpl">
     <tr id="user_${user.id}">
