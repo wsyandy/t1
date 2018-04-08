@@ -454,9 +454,9 @@ class UsersController extends BaseController
 
         $cond['order'] = 'id desc';
         if(isset($cond['conditions'])){
-            $cond['conditions'] .= ' and id <1000000 and (device_id < 1 or device_id is null)';
+            $cond['conditions'] .= ' and id<1000000 and (device_id < 1 or device_id is null)';
         }else{
-            $cond['conditions'] .= 'id <1000000 and device_id < 1 or device_id is null';
+            $cond['conditions'] = 'id <1000000 and device_id < 1 or device_id is null';
         }
 
         info($cond);
