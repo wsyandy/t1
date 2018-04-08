@@ -67,7 +67,7 @@
         <div class="active_book"></div>
         <div class="week_wrap">
             <ul>
-                <h1>青团实时榜单</h1>
+                <h1>青团实力控</h1>
                 <li class="li_bg">魅力榜</li>
                 <li>贡献榜</li>
             </ul>
