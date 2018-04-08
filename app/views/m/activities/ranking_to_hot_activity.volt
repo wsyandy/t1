@@ -35,7 +35,7 @@
         <div class="activity_rules">
             <p><span>1、</span><span>用户在活动期间送出礼物，每送出1个钻石礼物，送出用户贡献值+1，收到礼物用户魅力值+1;</span></p>
             <p><span>2、</span><span>周榜魅力值第一的用户获得新礼物一周的冠名权，周榜贡献值第一的用户获得一周热门活动推荐位；每日贡献排行第一的用户获得一天热门活动推荐位；</span></p>
-            <p><span>3、</span><span>活动时间为2018年4月9日0时0分——2018年4月16日0时0分;</span></p>
+            <p><span>3、</span><span>活动时间为{{ activity.start_text }}——{{ activity.end_text }};</span></p>
             <p><span>4、</span><span>获奖用户请联系官方客服QQ：3407150190领取奖励。</span></p>
         </div>
         <p class="activity_bottom_text">活动最终解释权归Hi语音官方团队</p>
