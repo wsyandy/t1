@@ -7,6 +7,9 @@
     <label for="id_eq">ID</label>
     <input name="user[id_eq]" type="text" id="id_eq"/>
 
+    <label for="uid_eq">UID</label>
+    <input name="user[uid_eq]" type="text" id="uid_eq"/>
+
     <label for="mobile">手机号</label>
     <input name="user[mobile_eq]" type="text" id="mobile"/>
 
