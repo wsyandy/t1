@@ -139,13 +139,6 @@ class Users extends BaseModel
 
         if ($this->hasChanged('last_at')) {
             $this->updateLastAt();
-
-            //好友上线提醒(每小时选取最新的一个好友上线提醒)
-            $this->pushFriendOnlineRemind();
-
-            //关注的人上线提醒(每小时选取最新关注的人上线提醒)
-            $this->pushFollowedOnlineRemind();
-
         }
 
         if ($this->hasChanged('ip') && $this->ip) {
@@ -1003,6 +996,9 @@ class Users extends BaseModel
             $fresh_attrs['last_at'] = time();
             // 记录活跃时间
             $this->addActiveList();
+
+            // 线上提醒
+            self::delay()->pushOnlineRemind($this->id);
         }
 
         debug($this->id, $fresh_attrs);
