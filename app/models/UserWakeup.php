@@ -112,7 +112,7 @@ trait UserWakeup
 
         $time = 15 * 60;
         if (isDevelopmentEnv()) {
-            $time = 60;
+            $time = 2 * 60;
         }
 
         return $time;
