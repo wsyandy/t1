@@ -13,6 +13,7 @@ trait UserAttrs
     {
         $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
@@ -44,6 +45,10 @@ trait UserAttrs
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond
         ];
+
+        if(isDevelopmentEnv()){
+            $data['id'] = $this->uid;
+        }
 
         if (isPresent($this->union)) {
             $data['union_name'] = $this->union->name;
@@ -89,8 +94,9 @@ trait UserAttrs
 
     function toBasicJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
@@ -111,6 +117,12 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text
         ];
+
+        if(isDevelopmentEnv()){
+            $data['id'] = $this->uid;
+        }
+
+        return $data;
     }
 
     function toRelationJson()
