@@ -68,7 +68,7 @@ trait UserWakeup
             // 启动任务
             $step_time = 300;
             if (isDevelopmentEnv()) {
-                $step_time = 1;
+                $step_time = 60;
             }
 
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
@@ -192,7 +192,7 @@ trait UserWakeup
             info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
                 info('push', $receiver->id);
-                PushMessages::sendMessage($receiver);
+                PushMessages::delay(1)->sendMessage($receiver);
             }
 
         } else {
