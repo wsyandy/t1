@@ -21,7 +21,7 @@
 ;* [设置](set.md)
 ;* [语音通话](voice_calls.md)
 ;* [系统消息](chats.md)
-;* [Websocket](websocket.md)
+* [Websocket](websocket.md)
 ;* [支付上报](payment.md)
 ;* [表情](emoticon_images.md)
 ;* [电台音频](audio_chapters.md)
