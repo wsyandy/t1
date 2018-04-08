@@ -615,15 +615,30 @@ class KangTask extends \Phalcon\Cli\Task
         return false;
     }
 
-    function noAction()
+    function goodNoAction($params)
     {
 
+        $min_id = $params[0];
+        $min_max = $params[1];
+
+        $user = Users::findLast();
+        if($min_id < $user->id + 10000){
+            $min_id = $user->id + 10000;
+        }
+
+        echoLine($min_id, $min_max, 'user', $user->id);
+
+        $user_db = Users::getUserDb();
+        $good_no_uid = 'good_no_uid_list';
+        $not_good_no_uid = 'not_good_no_uid_list';
+
         $count = 0;
-        for ($i = 1000000; $i < 100000000; $i++) {
+        for ($i = $min_id; $i < $min_max; $i++) {
             if ($this->isGoodNum($i)) {
                 $count++;
+                $user_db->zadd($good_no_uid, $i, $i);
             } else {
-                //echoLine('not good', $i);
+                $user_db->zadd($not_good_no_uid, $i, $i);
             }
         }
 

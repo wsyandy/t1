@@ -192,9 +192,13 @@ class Users extends BaseModel
 
     /**
      * 产生 UID
-     * @return int
      */
     function generateUid()
+    {
+        return $this->id;
+    }
+
+    function generateUid2()
     {
         return $this->id;
     }
