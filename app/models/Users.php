@@ -225,9 +225,11 @@ class Users extends BaseModel
         $offset = mt_rand(0, 200000);
         $uid = $user_db->zrange($not_good_no_uid, $offset, $offset);
         $uid = current($uid);
-        $user_db->zrem($not_good_no_uid, $uid);
-        info('uid', $uid);
+        if(!$user_db->zrem($not_good_no_uid, $uid)){
+            $user_db->zrem($not_good_no_uid, $uid);
+        }
 
+        info('uid', $uid);
         return $uid;
     }
 
