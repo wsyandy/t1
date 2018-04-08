@@ -135,6 +135,7 @@ class PushMessages extends BaseModel
     static function sendMessage($receiver)
     {
 
+        info('receiver', $receiver->id);
         $clazz = get_class($receiver);
         $push_key = 'send_push_messages_' . strtolower($clazz) . '_' . $receiver->id;
         $hot_cache = PushMessages::getHotWriteCache();
