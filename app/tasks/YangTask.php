@@ -563,7 +563,7 @@ class YangTask extends \Phalcon\Cli\Task
     function test20Action()
     {
         $start_at = strtotime(201804070000);
-        $end_at = strtotime( 201804080000);
+        $end_at = strtotime(201804080000);
         echoLine($start_at);
         echoLine($end_at);
 
@@ -614,6 +614,20 @@ class YangTask extends \Phalcon\Cli\Task
             $db->zincrby($charm_key, $amount, $user_id);
             $db->zincrby($wealth_key, $amount, $sender_id);
         }
+    }
+
+    function test21Action()
+    {
+        $url = "http://chance.com/iapi/rooms/index";
+        $body = $this->commonBody();
+        $id = 97;
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, ['sid' => $user->sid,'hot'=>1]);
+        $res = httpGet($url, $body);
+        echoLine($res);
     }
 
 }

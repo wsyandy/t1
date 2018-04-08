@@ -34,6 +34,7 @@ class Rooms extends BaseModel
     static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
+    static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
 
     function beforeCreate()
     {
@@ -1825,5 +1826,32 @@ class Rooms extends BaseModel
         }
 
         return true;
+    }
+
+    static function searchRooms($opts, $page, $per_page)
+    {
+        $product_channel_id = fetch($opts, 'product_channel_id');
+        $new = fetch($opts, 'new');
+        $hot = fetch($opts, 'hot');
+
+        //限制搜索条件
+        $cond = [
+            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . ' and product_channel_id = :product_channel_id:',
+            'bind' => ['product_channel_id' => $product_channel_id],
+            'order' => 'last_at desc, user_type asc'
+        ];
+
+        if ($new == STATUS_ON) {
+            $cond['conditions'] .= " and new = " . STATUS_ON;
+        }
+
+        if ($hot == STATUS_ON) {
+            $cond['conditions'] .= " and hot = " . STATUS_ON;
+        }
+        debug($cond);
+
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+
+        return $rooms;
     }
 }
