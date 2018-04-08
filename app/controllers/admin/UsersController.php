@@ -445,4 +445,18 @@ class UsersController extends BaseController
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
     }
+
+    function reservedAction()
+    {
+        $cond = $this->getConditions('user');
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 30);
+
+        $cond['order'] = 'id desc';
+        $cond['conditions'] .= ' and device_id < 1';
+
+        $users = \Users::findPagination($cond, $page, $per_page);
+        $this->view->users = $users;
+    }
+
 }

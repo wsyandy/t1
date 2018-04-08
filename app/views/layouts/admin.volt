@@ -81,6 +81,9 @@
                     {% if isAllowed('users','company_user') %}
                         <li><a href="/admin/users/company_user">公司内部用户</a></li>
                     {% endif %}
+                    {% if isAllowed('users','reserved') %}
+                        <li><a href="/admin/users/reserved">预留靓号</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
