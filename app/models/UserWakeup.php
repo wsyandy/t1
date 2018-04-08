@@ -68,7 +68,7 @@ trait UserWakeup
             // 启动任务
             $step_time = 300;
             if (isDevelopmentEnv()) {
-                $step_time = 1;
+                $step_time = 60;
             }
 
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
