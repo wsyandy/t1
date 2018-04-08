@@ -251,7 +251,7 @@ class Users extends BaseModel
     function isLogin()
     {
         if ($this->isClientPlatform()) {
-            return ($this->third_unionid || $this->mobile) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+            return ($this->third_unionid || $this->mobile || $this->login_name) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
         }
 
         return !!$this->mobile;
