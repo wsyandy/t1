@@ -1,12 +1,12 @@
-<form action="/admin/users/reserved" method="get" class="search_form" autocomplete="off" id="search_form">
-    <label for="id_eq">ID</label>
-    <input name="user[id_eq]" type="text" id="id_eq"/>
+{#<form action="/admin/users/reserved" method="get" class="search_form" autocomplete="off" id="search_form">#}
+    {#<label for="id_eq">ID</label>#}
+    {#<input name="user[id_eq]" type="text" id="id_eq"/>#}
 
-    <label for="uid_eq">UID</label>
-    <input name="user[uid_eq]" type="text" id="uid_eq"/>
+    {#<label for="uid_eq">UID</label>#}
+    {#<input name="user[uid_eq]" type="text" id="uid_eq"/>#}
 
-    <button type="submit" class="ui button">搜索</button>
-</form>
+    {#<button type="submit" class="ui button">搜索</button>#}
+{#</form>#}
 
 {% macro avatar_image(user) %}
     <img src="{{ user.avatar_small_url }}" height="50"/>
