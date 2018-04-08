@@ -9,24 +9,28 @@
             <h3>说明</h3>
             <span class="wire"></span>
         </div>
-        <p>1. 游戏发起人，可以设定游戏类型，参与需要支付等数量游戏币即可参与</p>
-        <p>2. 参与游戏币模式游戏，最终胜利者将有意外收获哦～</p>
-        <p>3. 未开始游戏，退出则不扣游戏币</p>
+        <p>1. 参与人数越多，胜利者奖励越高；未排名玩家消耗的游戏币总和，将按照比例分给胜利者</p>
+        <p>2. 中途退出游戏的玩家不论分值均不计入排名</p>
     </div>
     {% if user_num %}
-        <div class="select_game_button">
-            <p>当前游戏模式：<span>${pay_type_text}游戏，</span><span>${pay_type_text}奖金共{{ total_amount }}</span></p>
+        <div class="current_game">
+            <p>当前游戏模式：<span>${pay_type_text}模式</span></p>
+            <p>奖金池共计：<span :class="pay_type == 'diamond'?'masonry':'gold'">${pay_type_text}奖金共{{ total_amount }}</span></p>
+        </div>
+        <div class="settlement_wire_box" >
+            <span class="line"></span>
+            <span class="point"></span>
+            <span class="line"></span>
         </div>
         <ul class="settlement_box">
             <li v-for="user,index in users">
-                <span :class="index>1?copper_class:(index==0?golden_class:silver_class)">第${index+1}名：</span>
-                <span class="text">${user.nickname}</span>
-                <span :class="pay_type == 'diamond'?diamond_class:gold_class">+${user.settlement_amount}</span>
+                <span :class="index>1?'text copper':(index==0?'text golden':'text silver')">${user.nickname}</span>
+                <span :class="pay_type == 'diamond'?'masonry':'gold'">+${user.settlement_amount}</span>
             </li>
         </ul>
     {% endif %}
-    <div class="select_game_button">
-        <button @click="go_back()">返回大厅</button>
+    <div class="settlement_back_btn">
+        <span @click="go_back()">返回大厅</span>
     </div>
 </div>
 <script>
@@ -35,12 +39,6 @@
             pay_type_text: '',
             pay_type: "{{ pay_type }}",
             users: {{ users }},
-            rank_class: 'golden',
-            golden_class: 'golden',
-            silver_class: 'silver',
-            copper_class: 'copper',
-            gold_class: 'gold',
-            diamond_class: 'diamond',
             current_user_sid: "{{ current_user.sid }}",
             back_url:"{{ back_url }}"
         },
