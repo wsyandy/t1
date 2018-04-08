@@ -560,9 +560,12 @@ class Unions extends BaseModel
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
 
-        $content = "如果家族会长同意可立即退出家族，如果家族长未审批，7天后自动退出家族";
-        info($content);
-        Chats::sendTextSystemMessage($this->user_id, $content);
+
+        $user_system_content = "如果家族会长同意可立即退出家族，如果家族长未审批，7天后自动退出家族";
+        Chats::sendTextSystemMessage($user->id, $user_system_content);
+
+        $union_system_content = "{$user->nickname}申请退出家族";
+        Chats::sendTextSystemMessage($this->user_id, $union_system_content);
 
         return [ERROR_CODE_SUCCESS, '退出家族，需要会长同意，请耐心等待。如会长不同意，7天之后自动退出!'];
 
