@@ -2,6 +2,7 @@ html,body,p,div,ul,li{
   padding: 0;
   margin: 0;
   font-size: 12px;
+  font-family: "PingFangSC-Regular";
 }
 div,ul,li{
   display: flex;
@@ -10,25 +11,31 @@ div,ul,li{
 ul,li{
   list-style: none;
 }
-
-
+html,body{
+  width: 100%;
+  height: 100%;
+}
+::-webkit-input-placeholder { color: rgba(255,255,255,0.60);}
+::-moz-placeholder { color: rgba(255,255,255,0.60); } /* firefox 19+ */
+:-ms-input-placeholder { color: rgba(255,255,255,0.60);} /* ie */
+input:-moz-placeholder { color: rgba(255,255,255,0.60);}
 /* 选择游戏 */
 .select_game{
-  padding: 15px;
+  height: 100%;
   flex-direction: column;
+  background-color: #754FCA;
 }
 .select_game_instructions{
-  height: 157px;
-  background:url(../images/instructions_bg.png) center no-repeat;
+  height: 220px;
+  background: url(../images/instructions_banner.png) center no-repeat;
   background-size: cover;
-  border-radius:20px;
   flex-direction: column;
 }
 .select_game_instructions p{
   margin-bottom:6px;
   padding:0 12px;
   font-size: 12px;
-  color: #5C5C5C;
+  color: rgba(255,255,255,0.80);
 }
 .instructions_title{
   justify-content: center;
@@ -36,16 +43,16 @@ ul,li{
 }
 .instructions_title h3{
   font-size: 16px;
-  color: #424242;
+  color: #FFFFFF;
   margin:15px;
 }
 .instructions_title .wire{
   width: 32px;
-  border-top: 1px solid #B6B6B6;
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
 }
 .select_game_select{
   margin-top: 40px;
-  padding-left: 15px;
+  padding-left: 30px;
   flex-direction: column;
 }
 .select_game_select li {
@@ -64,54 +71,78 @@ ul,li{
 }
 .select_game_select li .text{
   margin-left: 15px;
-  font-size: 14px;
-  color: #424242;
+  font-size: 15px;
+  color: #FFFFFF;
 }
 .select_game_select li input{
   margin-left: 20px;
   margin-right: 10px;
-  width: 108px;
+  width: 145px;
   height: 34px;
-  border: 1px solid #CACACA;
-  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.71);
+  border-radius: 4px;
   padding-left: 7px;
   font-size: 14px;
-  color: #F45189;
+  color: #FFDA00;
+  background-color: transparent;
 }
-.select_game_select li .gold{
-  width: 20px;
-  height: 20px;
-  background: url(../images/gold_icon.png) center no-repeat;
-  background-size: cover;
+.select_game_select li input.gold{
+  background: url(../images/gold_icon.png) 120px center no-repeat;
+  background-size: 22px;
 }
-.select_game_select li .masonry{
-  width: 20px;
-  height: 20px;
-  background: url(../images/masonry_icon.png) center no-repeat;
-  background-size: cover;
+.select_game_select li input.masonry{
+  background: url(../images/masonry_icon.png) 120px center no-repeat;
+  background-size: 22px;
+}
+.start_game .gold,.current_game p span.gold{
+  padding-right: 24px;
+  background: url(../images/gold_icon.png) right center no-repeat;
+  background-size: 20px;
+}
+.start_game .masonry,.current_game p span.masonry{
+  padding-right: 24px;
+  background: url(../images/masonry_icon.png) right center no-repeat;
+  background-size: 20px;
 }
 .select_game_button{
   margin-top: 30px;
   flex-direction: column;
 }
-.select_game_button p{
+.current_game{
+  margin: 65px auto 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.current_game p{
+  margin-bottom: 15px;
+}
+.select_game_button p,.current_game p{
   font-size: 14px;
-  color: #969696;
+  color: rgba(255,255,255,0.40);
   text-align: center;
 }
-.select_game_button p span{
-  color: #5B5B5B;
+.select_game_button p span,.current_game p span{
+  color: #FFFFFF;
 }
+
 .select_game_button button{
   margin: 0 34px;
   margin-top: 14px;
   height: 44px;
-  background-color: #F45189;
+  background: #FFFFFF;
+  box-shadow: 0 10px 12px 0 rgba(0,0,0,0.08);
   border-radius: 22px;
   font-size: 17px;
-  color: #FFFFFF;
+  color: #333333;
   padding: 0;
   border: none;
+}
+.select_game_button button.play{
+  background: url(../images/button_play.png) white 112px center no-repeat;
+  background-size: 15px;
+}
+.select_game_button button.countdown{
+  color: #F45189;
 }
 /* 开启游戏 */
 .start_game{
@@ -121,12 +152,12 @@ ul,li{
 }
 .start_game span{
   font-size: 16px;
-  color: #9F9F9F;
+  color: rgba(255,255,255,0.70);
   margin-bottom: 30px;
 }
 .start_game p{
   font-size: 18px;
-  color: #585858;
+  color: #FFFFFF;
   margin-bottom: 10px;
 }
 .prompt_toast{
@@ -141,27 +172,27 @@ ul,li{
   font-size: 14px;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.2);
 }
 /* 等待玩家 */
 .await_player_ul{
-  width: 100%;
   flex-wrap: wrap;
   margin-top: 30px;
 }
 .await_player_ul li{
+  position: relative;
+  left: 0;
+  top: 0;
   width: 25%;
-  display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   margin-bottom:24px;
 }
 .await_player_ul li img{
   width: 60px;
   height: 60px;
-  background: #DEDEDE;
-  border: 2px solid #F5F5F5;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
   border-radius: 30px;
 }
 .await_player_ul li span{
@@ -169,13 +200,24 @@ ul,li{
   font-size: 14px;
   color: #424242;
 }
+.await_player_ul li span.initiate{
+  position: absolute;
+  top: -10px;
+  width: 40px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  font-size: 12px;
+  border-radius: 2px;
+  color: rgba(255,255,255,0.90);
+  background-color: #35B877;
+}
 .game_quit{
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.5);
   justify-content: flex-end;
 }
 .game_quit_button{
@@ -205,41 +247,120 @@ ul,li{
   flex-direction: column;
 }
 .settlement_box li{
+  margin: 0 45px;
   height: 60px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-size: 14px;
   color: #424242;
 }
 .settlement_box li .text{
-  width: 136px;
+  width: 166px;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
 }
 .settlement_box li .golden{
-  font-size: 20px;
-  color: #f7dc46;
+  padding-left: 38px;
+  background: url(../images/golden_icon.png) left center no-repeat;
+  background-size: 16px;
+  font-size: 14px;
+  color: #FFFFFF;
 }
 .settlement_box li .silver{
-  font-size: 20px;
-  color: #c0c0c0;
+  padding-left: 38px;
+  background: url(../images/silver_icon.png) left center no-repeat;
+  background-size: 16px;
+  font-size: 14px;
+  color: #FFFFFF;
 }
 .settlement_box li .copper{
-  font-size: 20px;
-  color: #B87333;
+  padding-left: 38px;
+  background: url(../images/copper_icon.png) left center no-repeat;
+  background-size: 16px;
+  font-size: 14px;
+  color: #FFFFFF;
 }
 .settlement_box li .gold{
-  margin-left: 20px;
-  padding-right: 22px;
-  color: #333;
+  padding-right: 24px;
+  font-size: 18px;
+  color: #fff;
   background: url(../images/gold_icon.png) right center no-repeat;
   background-size: 20px;
 }
-.settlement_box li .diamond{
-  margin-left: 20px;
-  padding-right: 22px;
-  color: #333;
-  background: url(../images/ico_diamond.png) right center no-repeat;
+.settlement_box li .masonry{
+  padding-right: 24px;
+  font-size: 18px;
+  color: #fff;
+  background: url(../images/masonry_icon.png) right center no-repeat;
   background-size: 20px;
+}
+.settlement_wire_box{
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.settlement_wire_box .line{
+  width: 145px;
+  height: 1px;
+  background-color: rgba(255,255,255,0.20);
+}
+.settlement_wire_box .point{
+  width: 4px;
+  height: 4px;
+  margin-left: 2px;
+  margin-right: 2px;
+  background-color: rgba(255,255,255,0.20);
+  border-radius: 2px;
+}
+.settlement_back_btn{
+  margin:20px auto 0;
+  width: 95px;
+  height: 31px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.20);
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+/*  */
+.select_game_list{
+  background-color: #fff;
+}
+.game_list_ul{
+  padding: 10px;
+  width: 100%;
+}
+.game_list_ul li{
+  position: relative;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 104px;
+  border-radius: 10px;
+}
+.game_list_ul li img{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 104px;
+}
+.game_list_ul li span{
+  position: relative;
+  left: 0;
+  top: 0;
+  font-size: 18px;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 104px;
+  text-align: center;
+  line-height: 104px;
 }

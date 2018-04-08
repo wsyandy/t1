@@ -72,6 +72,7 @@ class Products extends BaseModel
             'name' => $this->name,
             'amount' => $this->amount,
             'diamond' => $this->diamond,
+            'gold' => $this->gold,
             'apple_product_no' => $this->apple_product_no
         ];
     }

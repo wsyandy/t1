@@ -241,15 +241,15 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         //7天自动退出 测试环境30分钟
         if (isDevelopmentEnv()) {
-            $time = 3 * 60;
+            $time = 5 * 60;
         }
 
-        $start_at = time() - 60 * 7 - $time;
+        $start_at = time() - 60 * 30 - $time;
         $end_at = time() - $time;
 
-        $union_histories = UnionHistories::find([
-            'conditions' => 'status = :status: and apply_exit_at < :end_at: and apply_exit_at > :start_at:',
-            'bind' => ['status' => STATUS_PROGRESS, 'start_at' => $start_at, 'end_at' => $end_at]
+        $union_histories = \UnionHistories::find([
+            'conditions' => 'status = :status: and (:exit_start_at: < apply_exit_at and apply_exit_at < :exit_end_at:)',
+            'bind' => ['status' => STATUS_PROGRESS, 'exit_start_at' => $start_at, 'exit_end_at' => $end_at]
         ]);
 
         info('union_histories', $union_histories);
