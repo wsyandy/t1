@@ -189,7 +189,7 @@ trait UserWakeup
 
             // 保存任务
             $receiver->saveExecutedOfflineTaskId($task_id);
-
+            info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
                 info('push', $receiver->id);
                 PushMessages::sendMessage($receiver);
@@ -219,13 +219,12 @@ trait UserWakeup
             }
         }
 
-        // 一天只执行一次
-        $part_match = '/(_2_minute_|_5_minute_|_10_minute_|_20_minute_|_60_minute_|_300_minute_|_720_minute_)/';
         if (isDevelopmentEnv()) {
-            $part_match = '/(_1_minute_)/';
+            return false;
         }
 
-        if (preg_match($part_match, $task_id)) {
+        // 一天只执行一次
+        if (preg_match('/(_60_minute_|_300_minute_|_720_minute_)/', $task_id)) {
             $new_key = $key . '_' . date('Ymd');
             $task_ids = $hot_cache->get($new_key);
             if ($task_ids) {
@@ -260,13 +259,11 @@ trait UserWakeup
         $hot_cache->setex($key, MAX_OFFLINE_TASK_HANG_UP_TIME, json_encode($task_ids, JSON_UNESCAPED_UNICODE));
 
         // 一天只发一次
-
-        $part_match = '/(_2_minute_|_5_minute_|_10_minute_|_20_minute_|_60_minute_|_300_minute_|_720_minute_)/';
         if (isDevelopmentEnv()) {
-            $part_match = '/(_1_minute_)/';
+            return false;
         }
 
-        if (preg_match($part_match, $task_id)) {
+        if (preg_match('/(_60_minute_|_300_minute_|_720_minute_)/', $task_id)) {
             $key .= '_' . date('Ymd');
             $today_task_ids = $hot_cache->get($key);
             if ($today_task_ids) {
@@ -302,6 +299,7 @@ trait UserWakeup
     {
 
         if ($this->isClientPlatform()) {
+            info('push_client', $this->id, $this->getPushContext());
             if ($this->pushMessageGetui($push_message)) {
                 return true;
             }
