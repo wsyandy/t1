@@ -644,4 +644,11 @@ class KangTask extends \Phalcon\Cli\Task
 
         echoLine('count', $count);
     }
+
+    function testUidAction(){
+
+        $user = Users::findFirstById(1);
+        $user->generateUid2();
+    }
+
 }

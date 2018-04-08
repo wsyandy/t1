@@ -200,7 +200,35 @@ class Users extends BaseModel
 
     function generateUid2()
     {
+
+        for ($i = 0; $i < 10; $i++){
+            $uid = $this->randUid();
+            $lock_key = 'lock_generate_uid_' . $uid;
+            $hot_cache = self::getHotWriteCache();
+            if (!$hot_cache->setnx($lock_key, $uid)) {
+                info('加锁失败', $lock_key);
+                continue;
+            }
+            $hot_cache->expire($lock_key, 3);
+            info('加锁成功', $lock_key);
+
+            return $uid;
+        }
+
         return $this->id;
+    }
+
+    function randUid(){
+
+        $user_db = Users::getUserDb();
+        $not_good_no_uid = 'not_good_no_uid_list';
+        $offset = mt_rand(0, 200000);
+        $uid = $user_db->zrange($not_good_no_uid, $offset, $offset);
+        $uid = current($uid);
+        $user_db->zrem($not_good_no_uid, $uid);
+        info('uid', $uid);
+
+        return $uid;
     }
 
     /**

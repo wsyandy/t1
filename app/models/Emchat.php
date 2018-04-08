@@ -192,9 +192,8 @@ class Emchat extends BaseModel
     {
         $url = $this->url . 'users/' . $username;
         $header = $this->headers;
-        var_dump($header);
         $result = httpGet($url, null, $header);
-        info($result->body, $result->code, $username);
+        info($username, $result->code, $result->body);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return $result_data['entities'];
@@ -271,7 +270,6 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpGet($url, null, $header);
-        //var_dump($result);
         if ($this->reqSuccess($result->code)) {
             $hash = $this->parseResult($result);
             $online_data = fetch($hash, 'data');
@@ -291,7 +289,6 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpGet($url, null, $header);
-        var_dump($result);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return intval(fetch($result_data['data'], $username));
@@ -342,8 +339,6 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpPost($url, null, $header);
-        //var_dump($result);
-        //var_dump($result->code);
         return $this->reqSuccess($result->code);
     }
 
@@ -401,7 +396,7 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpDelete($url, '', $header);
-        var_dump($result);
+        info($result);
         return $this->reqSuccess($result->code);
     }
 
@@ -415,7 +410,7 @@ class Emchat extends BaseModel
         $url = $this->url . 'users/' . $username . '/contacts/users';
         $header = $this->headers;
         $result = httpGet($url, null, $header);
-        var_dump($result);
+        info($result);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return $result_data['data'];
@@ -434,7 +429,7 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpGet($url, null, $header);
-        var_dump($result);
+        info($result);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return $result_data['data'];
@@ -465,8 +460,6 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpPost($url, $body, $header);
-        var_dump($result);
-        var_dump($result->code);
         return $this->reqSuccess($result->code);
     }
 
@@ -674,7 +667,7 @@ class Emchat extends BaseModel
 
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        var_dump($result);
+        info($result);
         return $this->sendResult($result, $target);
     }
 
