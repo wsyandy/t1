@@ -33,6 +33,7 @@
                 second -= 1;
                 countdown(second)
             } else {
+                location.href = "app://back";
                 clearTimeout(timer)
             }
         }, 1000);
@@ -42,10 +43,10 @@
      * 封装函数使1位数变2位数
      */
     function toTwo(n) {
-        n = n < 10 ? "0" + n : n;
+        n = n < 3 ? "0" + n : n;
         return n
     }
-    var second = 10;
+    var second = 3;
     countdown(second);
 
 
