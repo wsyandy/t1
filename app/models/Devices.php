@@ -108,18 +108,23 @@ class Devices extends BaseModel
 
             // 测试渠道包fr
             if ($device->inWhiteList()) {
-                info('测试渠道包fr', $device->device_no, $attributes);
 
                 $promote_fr = Partners::getPromoteFr($attributes);
+
                 if ($promote_fr) {
                     $device->fr = $promote_fr;
+                } else {
+                    $device->fr = fetch($attributes, 'fr');
                 }
+
                 if (isPresent($device->fr)) {
                     $partner = \Partners::findFirstByFrHotCache($device->fr);
                     if ($partner) {
                         $device->partner_id = $partner->id;
                     }
                 }
+
+                info('测试渠道包fr', $device->device_no, $promote_fr, $device->fr, $attributes);
             }
 
             $device->update();

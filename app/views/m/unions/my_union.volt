@@ -313,14 +313,14 @@
                 var url = "/m/unions/exit_union";
                 var data = {union_id: this.union.id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
-                    if (resp.error_code == 0) {
-                        var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
-                        location.href = url;
-                    } else {
+//                    if (resp.error_code == 0) {
+//                        var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
+//                        location.href = url;
+//                    } else {
                         $(".middle_pop").hide();
                         $(".middle_pop_bg").hide();
                         alert(resp.error_reason);
-                    }
+//                    }
                 });
             },
             edit: function () {
