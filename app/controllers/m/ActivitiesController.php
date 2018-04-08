@@ -87,8 +87,8 @@ class ActivitiesController extends BaseController
         $charm_key = "qing_ming_activity_charm_list_" . $start . "_" . $end;
         $wealth_key = "qing_ming_activity_wealth_list_" . $start . "_" . $end;
 
-        $charm_rank_list = $db->zrevrange($charm_key, 0, 19, 'withscores');
-        $wealth_rank_list = $db->zrevrange($wealth_key, 0, 19, 'withscores');
+        $charm_rank_list = $db->zrevrange($charm_key, 0, 2, 'withscores');
+        $wealth_rank_list = $db->zrevrange($wealth_key, 0, 2, 'withscores');
 
         //魅力榜
         $charm_ids = [];
