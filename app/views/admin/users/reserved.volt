@@ -8,16 +8,6 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-{% macro user_status_info(user) %}
-    {{ user.user_type_text }} | {{ user.user_status_text }}<br/>
-    激活时间: {{ user.created_at_text }}<br/>
-    注册时间: {{ user.register_at_text }}<br/>
-    最后活跃时间: {{ user.last_at_text }}<br/>
-    登录方式: {{ user.login_type_text }}<br/>
-    用户等级: {{ user.level }}<br/>
-    用户所属组织：{{ user.organisation_text }}
-{% endmacro %}
-
 {% macro product_channel_view(user) %}
     产品渠道:{{ user.product_channel_name }}<br/>
     FR:{{ user.fr }}<br/>
@@ -27,22 +17,15 @@
     api协议版本: {{ user.api_version }}<br/>
 {% endmacro %}
 
-{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image','状态':'user_status_info']) }}
+{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image','类型':'user_type_text', '状态':"user_status_text"]) }}
 
 <script type="text/template" id="user_tpl">
     <tr id="user_${user.id}">
         <td>${user.id}</td>
         <td>${user.uid}</td>
         <td><img src="${ user.avatar_small_url }" height="50"/></td>
-
-        <td>
-            ${ user.user_type_text } | ${ user.user_status_text }<br/>
-            激活时间: ${ user.created_at_text }<br/>
-            注册时间: ${ user.register_at_text }<br/>
-            最后活跃时间: ${ user.last_at_text }<br/>
-            登录方式: ${ user.login_type_text }<br/>
-            用户等级: ${ user.level }
-        </td>
+        <td>${user.user_type_text}</td>
+        <td>${user.user_status_text}</td>
     </tr>
 </script>
 
