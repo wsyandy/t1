@@ -560,7 +560,7 @@ class Unions extends BaseModel
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
 
-        $content = "{$user->nickname}申请退出家族";
+        $content = "如果家族会长同意可立即退出家族，如果家族长未审批，7天后自动退出家族";
         info($content);
         Chats::sendTextSystemMessage($this->user_id, $content);
 
@@ -589,7 +589,7 @@ class Unions extends BaseModel
         $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateApplyExitUsersKey(), $user->id);
 
-        $content = ['auto' => "您的家族会长已同意您的退出家族申请", 'agree' => "您已经退出了{$this->name}家族"];
+        $content = ['agree' => "您的家族会长已同意您的退出家族申请", 'auto' => "您已经退出了{$this->name}家族"];
         Chats::sendTextSystemMessage($user->id, $content[$from]);
 
         info('user_id', $user->id, 'union_id', $this->id);
