@@ -1,0 +1,1 @@
+ALTER TABLE rooms ADD COLUMN types VARCHAR(255);
