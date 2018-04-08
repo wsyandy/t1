@@ -6,6 +6,7 @@ html,body,p,div,ul,li{
 html,body{
   width: 100%;
   height: 100%;
+  background-color: #232236;
 }
 div,ul,li{
   display: flex;
