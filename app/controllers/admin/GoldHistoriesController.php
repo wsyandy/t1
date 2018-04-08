@@ -41,6 +41,8 @@ class GoldHistoriesController extends BaseController
             $user = \Users::findFirstById($user_id);
 
             $amount = intval($this->params('gold'));
+            $content = $this->params('content');
+
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'operator_id' => $this->currentOperator()->id];
 
             if ($amount > 10000 && isProduction()) {
@@ -49,6 +51,12 @@ class GoldHistoriesController extends BaseController
 
             if ($amount > 0) {
                 \GoldHistories::changeBalance($user_id, GOLD_TYPE_GIVE, $amount, $opts);
+
+                if (isBlank($content)) {
+                    $content = '系统小助手送你' . $amount . '金币，感谢你的支持！';
+                }
+
+                \Chats::sendTextSystemMessage($user_id, $content);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/gold_histories?user_id=' . $user_id]);
