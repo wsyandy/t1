@@ -109,13 +109,13 @@ class PushMessages extends BaseModel
         }
 
         $offline_minute = self::calOfflineTime($receiver);
-        $conditions[] = ' offline_time=:offline_time: or offline_time=0 ';
+        $conditions[] = ' (offline_time=:offline_time: or offline_time=0 or offline_time is null) ';
         $bind['offline_time'] = $offline_minute;
 
-        $conditions[] = " (platforms like :platform: or platforms like '') ";
+        $conditions[] = " (platforms like :platform: or platforms like '' or platforms is null) ";
         $bind['platform'] = $platform;
 
-        $conditions[] = ' (product_channel_ids like :product_channel_id: or product_channel_ids = "") ';
+        $conditions[] = ' (product_channel_ids like :product_channel_id: or product_channel_ids = "" or product_channel_ids is null) ';
         $bind['product_channel_id'] = '%,' . $receiver->product_channel_id . ',%';
 
         $conditions[] = ' status=:status: ';
