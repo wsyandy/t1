@@ -165,9 +165,6 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
-        if (isDevelopmentEnv()) {
-            $wake_minutes = [2, 5, 10, 20];
-        }
 //        if ($receiver->isWxPlatform()) {
 //            $wake_minutes = [60, 24 * 60];
 //        }
