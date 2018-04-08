@@ -36,7 +36,7 @@
             </li>
         </ul>
         <div class="select_game_button">
-            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span></p>
+            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>${amount }${pay_type_text}</span></p>
             <button @click="go_game()">参与游戏 GO</button>
         </div>
     </div>
