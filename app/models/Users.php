@@ -3176,7 +3176,7 @@ class Users extends BaseModel
 
     function isWhiteListUser()
     {
-        $white_list = [100101, 100102, 1003380, 8888, 1009518];
+        $white_list = [100101, 100102, 1003380, 8888, 1009518, 1106650];
 
         if (in_array($this->id, $white_list)) {
             return true;
