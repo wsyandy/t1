@@ -84,6 +84,9 @@
     {% if isAllowed('rooms','edit') %}
         <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a></br>
     {% endif %}
+    {% if isAllowed('rooms','types') %}
+        <a href="/admin/rooms/types?id={{ room.id }}" class="modal_action">类型配置</a>
+    {% endif %}
 {% endmacro %}
 
 {% macro avatar_image(room) %}
@@ -137,6 +140,9 @@
             {% endif %}
             {% if isAllowed('rooms','edit') %}
                 <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','types') %}
+                <a href="/admin/rooms/types?id=${ room.id }" class="modal_action">类型配置</a>
             {% endif %}
         </td>
     </tr>

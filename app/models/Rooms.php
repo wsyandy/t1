@@ -35,6 +35,7 @@ class Rooms extends BaseModel
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
+    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌'];
 
     function beforeCreate()
     {

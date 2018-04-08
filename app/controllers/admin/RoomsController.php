@@ -370,4 +370,37 @@ class RoomsController extends BaseController
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
     }
+
+    function typesAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+        $types = \Rooms::$TYPES;
+        $all_select_types = explode(',', $room->types);
+        $this->view->id = $id;
+        $this->view->types = $types;
+        $this->view->all_select_types = $all_select_types;
+    }
+
+    function updateTypesAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+        $types = $this->params('types');
+        debug("---",$id);
+
+
+        if ($types) {
+            $room->types = implode(',', $types);
+        } else {
+            $room->types = '';
+        }
+
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
+        if ($room->update()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms']);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
+        }
+    }
 }
