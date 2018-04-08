@@ -219,9 +219,9 @@ trait UserWakeup
         }
 
         // 一天只执行一次
-        $part_match = '/(_60_minute_|_300_minute_|_720_minute_)/';
+        $part_match = '/(_2_minute_|_5_minute_|_10_minute_|_20_minute_|_60_minute_|_300_minute_|_720_minute_)/';
         if (isDevelopmentEnv()) {
-            $part_match = '/(_20_minute_|_10_minute_|_5_minute_|_2_minute_)/';
+            $part_match = '/(_1_minute_)/';
         }
 
         if (preg_match($part_match, $task_id)) {
@@ -260,9 +260,9 @@ trait UserWakeup
 
         // 一天只发一次
 
-        $part_match = '/(_60_minute_|_300_minute_|_720_minute_)/';
+        $part_match = '/(_2_minute_|_5_minute_|_10_minute_|_20_minute_|_60_minute_|_300_minute_|_720_minute_)/';
         if (isDevelopmentEnv()) {
-            $part_match = '/(_20_minute_|_10_minute_|_5_minute_|_2_minute_)/';
+            $part_match = '/(_1_minute_)/';
         }
 
         if (preg_match($part_match, $task_id)) {
