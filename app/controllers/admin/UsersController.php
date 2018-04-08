@@ -451,7 +451,7 @@ class UsersController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 30);
 
-        $cond = ['conditions' => 'id<:max_id: and device_id < 1 or device_id is null', 'bind' => ['max_id' => 1000000]];
+        $cond = ['conditions' => 'id<:max_id: and (device_id < 1 or device_id is null)', 'bind' => ['max_id' => 1000000]];
         $cond['order'] = 'id desc';
 
         info($cond);
