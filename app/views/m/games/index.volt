@@ -10,41 +10,43 @@
                 <h3>说明</h3>
                 <span class="wire"></span>
             </div>
-            <p>1. 游戏发起人，可以设定游戏类型，参与需要支付等数量游戏币即可参与</p>
-            <p>2. 参与游戏币模式游戏，最终胜利者将有意外收获哦～</p>
+            <p>1. 房主和玩家均可发起并设定游戏类型，参与者需支付等额游戏币即可参与</p>
+            <p>2. 在限定时间内，可以多次跳一跳，以最后一次成绩计入结算</p>
             <p>3. 未开始游戏，退出则不扣游戏币</p>
+            <p>4. 如果提前退出本局游戏，则扣除游戏币，且不计入排行榜</p>
+            <p>5. 游戏币模式，结算将根据排名及玩家参与数获得不同奖励</p>
         </div>
         <ul class="select_game_select">
             <li>
-                <span @click="selectgametype(0)" :class="{ 'radio_select': 0==selectGameType }" class="radio"></span>
+                <span @click="selectgametype(0)" :class="{ 'radio_select': 0==select_game_type }" class="radio"></span>
                 <span class="text">免费游戏</span>
             </li>
             <li>
-                <span @click="selectgametype(1)" :class="{ 'radio_select': 1==selectGameType }" class="radio"></span>
+                <span @click="selectgametype(1)" :class="{ 'radio_select': 1==select_game_type }" class="radio"></span>
                 <span class="text">金币游戏</span>
-                <input type="number" placeholder="请输入数目" v-model="gold_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="gold_game_amount" class="gold"/>
                 <span class="gold"></span>
             </li>
             <li>
-                <span @click="selectgametype(2)" :class="{ 'radio_select': 2==selectGameType }" class="radio"
+                <span @click="selectgametype(2)" :class="{ 'radio_select': 2==select_game_type }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
-                <input type="number" placeholder="请输入数目" v-model="diamond_game_amount"/>
+                <input type="number" placeholder="请输入数目" v-model="diamond_game_amount" class="masonry"/>
                 <span class="masonry"></span>
             </li>
         </ul>
         <div class="select_game_button">
-            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span></p>
+            <p>当前游戏模式：<span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span></p>
             <button @click="go_game()">参与游戏 GO</button>
         </div>
     </div>
     <script>
         var opts = {
             data: {
-                selectGameType: 0,
+                select_game_type: 0,
                 pay_type_text: '免费',
-                diamond_game_amount: 0,
-                gold_game_amount: 0,
+                diamond_game_amount: '请输入数目',
+                gold_game_amount: '请输入数目',
                 amount: 0,
                 pay_type: 'free',
                 room_host_id: "{{ room_host_id }}",
@@ -54,19 +56,19 @@
             },
             watch: {
                 diamond_game_amount: function (val) {
-                    if (vm.selectGameType == 2) {
+                    if (vm.select_game_type == 2) {
                         vm.amount = val;
                     }
                 },
                 gold_game_amount: function (val) {
-                    if (vm.selectGameType == 1) {
+                    if (vm.select_game_type == 1) {
                         vm.amount = val;
                     }
                 }
             },
             methods: {
                 selectgametype: function (index) {
-                    vm.selectGameType = index;
+                    vm.select_game_type = index;
                     switch (index) {
                         case 0:
                             vm.pay_type = 'free';
@@ -115,15 +117,17 @@
                 <h3>说明</h3>
                 <span class="wire"></span>
             </div>
-            <p>1. 游戏发起人，可以设定游戏类型，参与需要支付等数量游戏币即可参与</p>
-            <p>2. 参与游戏币模式游戏，最终胜利者将有意外收获哦～</p>
+            <p>1. 房主和玩家均可发起并设定游戏类型，参与者需支付等额游戏币即可参与</p>
+            <p>2. 在限定时间内，可以多次跳一跳，以最后一次成绩计入结算</p>
             <p>3. 未开始游戏，退出则不扣游戏币</p>
+            <p>4. 如果提前退出本局游戏，则扣除游戏币，且不计入排行榜</p>
+            <p>5. 游戏币模式，结算将根据排名及玩家参与数获得不同奖励</p>
         </div>
         {#这里是房主的游戏，显示其设定的入场费#}
         <div class="start_game">
             <span>${game_status_text}</span>
             <p></p>
-            <p v-if="pay_type_text">当前游戏模式：<span>${ pay_type_text }游戏</span><span>,费用：${amount }${pay_type_text}</span>
+            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'"><span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
             </p>
         </div>
         <div class="select_game_button">
@@ -139,7 +143,7 @@
                 pay_type_text: "",
                 amount: "{{ amount }}",
                 room_host_id: "{{ room_host_id }}",
-                'room_id': "{{ room_id }}",
+                room_id: "{{ room_id }}",
                 room_host_nickname: "{{ room_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",

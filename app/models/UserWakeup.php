@@ -67,9 +67,6 @@ trait UserWakeup
 
             // 启动任务
             $step_time = 300;
-            if (isDevelopmentEnv()) {
-                $step_time = 1;
-            }
 
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
 
@@ -110,10 +107,7 @@ trait UserWakeup
             return 60 * 60;
         }
 
-        $time = 15 * 60;
-        if (isDevelopmentEnv()) {
-            $time = 60;
-        }
+        $time = 5 * 60;
 
         return $time;
     }
@@ -153,10 +147,12 @@ trait UserWakeup
         debug($receiver->id, $offline_minute, 'step', $step_time);
 
         // 离线推送 22:30 - 08:00 不推送
-        $cur_hour = intval(date('H'));
-        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
-            return;
+        if (isProduction()){
+            $cur_hour = intval(date('H'));
+            if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+                self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
+                return;
+            }
         }
 
 
@@ -192,7 +188,7 @@ trait UserWakeup
             info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
                 info('push', $receiver->id);
-                PushMessages::sendMessage($receiver);
+                PushMessages::delay(1)->sendMessage($receiver);
             }
 
         } else {

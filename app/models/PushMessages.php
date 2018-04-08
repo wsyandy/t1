@@ -17,7 +17,7 @@ class PushMessages extends BaseModel
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
-    static $OFFLINE_TIME = [0 => '不限', 2 => '离线2分钟', 5 => '离线5分钟', 10 => '离线10分钟', 20 => '离线20分钟', 60 => '离线1小时', 5 * 60 => '离线5小时', 12 * 60 => '离线12小时', 24 * 60 => '离线24小时',
+    static $OFFLINE_TIME = [0 => '不限', 5 => '离线5分钟', 15 => '离线15分钟', 30 => '离线30分钟', 60 => '离线1小时', 5 * 60 => '离线5小时', 12 * 60 => '离线12小时', 24 * 60 => '离线24小时',
         3 * 24 * 60 => '离线3天', 7 * 24 * 60 => '离线7天', 15 * 24 * 60 => '离线15天', 20 * 24 * 60 => '离线20天', 30 * 24 * 60 => '离线1月',
         45 * 24 * 60 => '离线45天', 60 * 24 * 60 => '离线60天'];
 
@@ -109,13 +109,13 @@ class PushMessages extends BaseModel
         }
 
         $offline_minute = self::calOfflineTime($receiver);
-        $conditions[] = ' offline_time=:offline_time: or offline_time=0 ';
+        $conditions[] = ' (offline_time=:offline_time: or offline_time=0 or offline_time is null) ';
         $bind['offline_time'] = $offline_minute;
 
-        $conditions[] = " (platforms like :platform: or platforms like '') ";
+        $conditions[] = " (platforms like :platform: or platforms like '' or platforms is null) ";
         $bind['platform'] = $platform;
 
-        $conditions[] = ' (product_channel_ids like :product_channel_id: or product_channel_ids = "") ';
+        $conditions[] = ' (product_channel_ids like :product_channel_id: or product_channel_ids = "" or product_channel_ids is null) ';
         $bind['product_channel_id'] = '%,' . $receiver->product_channel_id . ',%';
 
         $conditions[] = ' status=:status: ';
@@ -135,12 +135,13 @@ class PushMessages extends BaseModel
     static function sendMessage($receiver)
     {
 
+        info('receiver', $receiver->id);
         $clazz = get_class($receiver);
         $push_key = 'send_push_messages_' . strtolower($clazz) . '_' . $receiver->id;
         $hot_cache = PushMessages::getHotWriteCache();
 
         $push_messages = self::findMessages($receiver);
-
+        info('push_messages',$push_messages);
         $repeat_push_messages = [];
         foreach ($push_messages as $push_message) {
             // 微信客服接口可能发送多条

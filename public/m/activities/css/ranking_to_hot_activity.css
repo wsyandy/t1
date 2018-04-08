@@ -1,0 +1,107 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: "PingFangSC-Light";
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+}
+/* pages */
+.activity_ranking{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* height: 100%; */
+  background: url(../images/activity_ranking_bg.png) center -60px no-repeat;
+  background-size: 100% 1406px;
+}
+.activity_ranking_top{
+  margin: 0 auto;
+  width: 340px;
+  height: 193px;
+  background: url(../images/activity_ranking_top.png) center no-repeat;
+  background-size: cover;
+}
+.activity_reward{
+  margin: 44px auto 24px;
+  width: 256px;
+  height: 145px;
+  background: url(../images/activity_reward.png) center no-repeat;
+  background-size: cover;
+}
+.ranking_list_title{
+  margin: 0 auto;
+  width: 202px;
+  height: 42px;
+  padding-top: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #A85103;
+  background: url(../images/ranking_list_title.png) center no-repeat;
+  background-size: cover;
+}
+.module_list{
+  margin-top: 30px;
+  margin-bottom: 15px;
+  padding: 0 30px;
+  flex-direction: column;
+}
+.module_list li{  
+  margin-bottom: 14px;
+  width: 100%;
+  height: 85px;
+  background: url(../images/module_list_bg.png) center no-repeat;
+  background-size: 100% 85px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.module_list li .title{
+  margin-top: 12px;
+  font-size: 17px;
+  color: #FFFEFD;
+}
+.module_list_box{
+  margin-top: 12px;
+  font-size: 15px;
+  color: #FFFEFD;
+}
+.module_list_box span{
+  margin-right:60px;
+}
+.module_list_box i{
+  font-style: normal;
+}
+.activity_rules{
+  margin: 40px 30px 0;
+  padding: 15px 25px;
+  /*height: 290px;*/
+  background: #3F1698;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+}
+.activity_rules p{
+  margin-bottom: 6px;
+  display: flex;
+  font-size: 14px;
+  line-height: 24px;
+  color: #FFFFFF;
+}
+.activity_bottom_text{
+  font-size: 12px;
+  text-align: center;
+  color: #FFFFFF;
+  margin: 20px 0;
+}
