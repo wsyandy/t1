@@ -191,6 +191,7 @@ trait UserWakeup
             $receiver->saveExecutedOfflineTaskId($task_id);
 
             if ($receiver->canPush()) {
+                info('push', $receiver->id);
                 PushMessages::sendMessage($receiver);
             }
 
