@@ -36,6 +36,8 @@ class Rooms extends BaseModel
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌'];
+    static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
+    static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
     function beforeCreate()
     {
@@ -1324,6 +1326,18 @@ class Rooms extends BaseModel
     static function generateHotRoomListKey()
     {
         return "hot_room_list";
+    }
+
+    //新手热门房间列表
+    static function generateNoviceHotRoomListKey()
+    {
+        return "novice_hot_room_list";
+    }
+
+    //绿色热门房间列表
+    static function generateGreenHotRoomListKey()
+    {
+        return "green_hot_room_list";
     }
 
     function generateFilterUserKey($user_id)
