@@ -601,4 +601,20 @@ class RoomsController extends BaseController
         $room->save();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
+
+    function typesAction()
+    {
+        $types = [
+            ['name' => '热门', 'type' => 'hot', 'value' => 1],
+            ['name' => '最新', 'type' => 'new', 'value' => 1],
+            ['name' => '开黑', 'type' => 'gang_up', 'value' => 1],
+            ['name' => '交友', 'type' => 'friend', 'value' => 1],
+            ['name' => '娱乐', 'type' => 'amuse', 'value' => 1],
+            ['name' => '唱歌', 'type' => 'sing', 'value' => 1],
+            ['name' => '电台', 'type' => 'broadcast', 'value' => 1],
+            ['name' => '关注', 'type' => 'follow', 'value' => 1],
+        ];
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
+    }
 }

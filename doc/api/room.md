@@ -588,3 +588,29 @@
     error_reason
 }
 ```
+
+### 24 房间类型列表  
+
+> http-get ```/api/rooms/types```
+
+##### 24.1 请求参数说明
+
+```
+公共参数
+```
+
+
+##### 24.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    types:[
+        {
+            name string 热门
+            type string hot  请求房间列表是传此参数
+            value string 1   请求房间列表时type的值
+        }
+    ]
+}
+```
