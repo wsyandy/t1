@@ -651,4 +651,24 @@ class KangTask extends \Phalcon\Cli\Task
         $user->generateUid2();
     }
 
+    function noAction($params)
+    {
+
+        $min_id = $params[0];
+        $min_max = $params[1];
+
+        echoLine($min_id, $min_max);
+
+        $count = 0;
+        for ($i = $min_id; $i < $min_max; $i++) {
+            if ($this->isGoodNum($i)) {
+                $count++;
+            } else {
+                echoLine('not good', $i);
+            }
+        }
+
+        echoLine('count', $count);
+    }
+
 }

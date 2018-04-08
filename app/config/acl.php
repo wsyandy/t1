@@ -35,5 +35,8 @@ return [
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*'
     ],
 
-    'product_operator_assistant' => ['dashboard' => '*']
+    'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
+        'push_messages' => '*', 'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'banned_words' => ' *',
+        'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*', 'activities' => '*'
+    ]
 ];

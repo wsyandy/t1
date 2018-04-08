@@ -448,16 +448,11 @@ class UsersController extends BaseController
 
     function reservedAction()
     {
-        $cond = $this->getConditions('user');
         $page = $this->params('page');
         $per_page = $this->params('per_page', 30);
 
+        $cond = ['conditions' => 'id<:max_id: and (device_id < 1 or device_id is null)', 'bind' => ['max_id' => 1000000]];
         $cond['order'] = 'id desc';
-        if(isset($cond['conditions'])){
-            $cond['conditions'] .= ' and device_id < 1';
-        }else{
-            $cond['conditions'] .= 'device_id < 1';
-        }
 
         info($cond);
 
