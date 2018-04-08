@@ -205,3 +205,42 @@
     status  使用状态 0未使用 1 使用中
 }
 ````
+
+## 6 我的礼物明细
+
+> http-get ```/api/gift_orders```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|---|---|---|---|---|---|
+|page|页码|integer|否||
+|per_page|每页|integer|可空|空表示数量20|
+|type|展示类型|string|可空|空默认为receive收到的礼物，send送出的礼物|
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1
+    error_reason: ''
+    hi_coins：总Hi币数（只有在第一页时推送）
+    gift_orders：[
+        {
+            'name' :string 礼物名称,
+            'user_name' :string 接收礼物者名称,
+            'sender_name' : string 送出礼物者名称,
+            'user_avatar_small_url' :'',
+            'sender_avatar_small_url' :'',
+            'amount' : 0,
+            'gift_num' : int 礼物个数,
+            'image_url' :'',
+            'image_small_url' :'',
+            'image_big_url':'',
+            'created_at_text' :string 创建时间,
+            'user_id' ： 1,
+            'sender_id' ： 2,
+            'pay_type'  :'diamond/gold' diamond钻石  gold金币,
+            'pay_type_text' :'钻石/金币'
+        }
+    ]
+}
+````
