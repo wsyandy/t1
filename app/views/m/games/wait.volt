@@ -29,7 +29,7 @@
             sid: "{{ current_user.sid }}",
             code: "{{ code }}",
             users: [],
-            button_text: '开始游戏',
+            button_text: '开始',
             can_enter: 0,
             url: "{{ url }}",
             room_host_id: "{{ room_host_id }}",
