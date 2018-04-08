@@ -453,10 +453,14 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 30);
 
         $cond['order'] = 'id desc';
-        $cond['conditions'] .= ' and device_id < 1';
+        if(isset($cond['conditions'])){
+            $cond['conditions'] .= ' and device_id < 1';
+        }else{
+            $cond['conditions'] .= 'device_id < 1';
+        }
 
         info($cond);
-        
+
         $users = \Users::findPagination($cond, $page, $per_page);
         $this->view->users = $users;
     }
