@@ -15,9 +15,9 @@ trait UserWakeup
             return false;
         }
 
-//        if ($this->isWxPlatform() && !$this->isSubscribe()) {
-//            return false;
-//        }
+        if ($this->isWxPlatform() && !$this->isSubscribe()) {
+            return false;
+        }
 
         if (!$this->isOfflineTaskRunning()) {
             return false;
@@ -66,7 +66,7 @@ trait UserWakeup
             $this->deleteExecutedOfflineTaskIds();
 
             // 启动任务
-            $step_time = 300;
+            $step_time = 60;
 
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
 
@@ -147,7 +147,7 @@ trait UserWakeup
         debug($receiver->id, $offline_minute, 'step', $step_time);
 
         // 离线推送 22:30 - 08:00 不推送
-        if (isProduction()){
+        if (isProduction()) {
             $cur_hour = intval(date('H'));
             if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
                 self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
