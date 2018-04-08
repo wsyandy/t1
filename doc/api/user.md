@@ -119,6 +119,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
     province_name 省名
     city_name 城市
@@ -153,6 +154,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
     province_name 省名
     city_name 城市
@@ -214,6 +216,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
     province_name 省名
     city_name 城市
@@ -366,6 +369,7 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 |user_id|用户id|int|是||
+|uid|用户uid|int|是||
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 

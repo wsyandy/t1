@@ -110,7 +110,12 @@ trait UserWakeup
             return 60 * 60;
         }
 
-        return 15 * 60;
+        $time = 15 * 60;
+        if (isDevelopmentEnv()) {
+            $time = 60;
+        }
+
+        return $time;
     }
 
     static function asyncLoopOfflineTask($receiver_id)
@@ -160,6 +165,9 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
+        if (isDevelopmentEnv()) {
+            $wake_minutes = [2, 5, 10, 20];
+        }
 //        if ($receiver->isWxPlatform()) {
 //            $wake_minutes = [60, 24 * 60];
 //        }
@@ -214,7 +222,12 @@ trait UserWakeup
         }
 
         // 一天只执行一次
-        if (preg_match('/(_60_minute_|_5_minute_)/', $task_id)) {
+        $part_match = '/(_60_minute_|_300_minute_|_720_minute_)/';
+        if (isDevelopmentEnv()) {
+            $part_match = '/(_20_minute_|_10_minute_|_5_minute_|_2_minute_)/';
+        }
+
+        if (preg_match($part_match, $task_id)) {
             $new_key = $key . '_' . date('Ymd');
             $task_ids = $hot_cache->get($new_key);
             if ($task_ids) {
@@ -249,7 +262,13 @@ trait UserWakeup
         $hot_cache->setex($key, MAX_OFFLINE_TASK_HANG_UP_TIME, json_encode($task_ids, JSON_UNESCAPED_UNICODE));
 
         // 一天只发一次
-        if (preg_match('/(_60_minute_|_5_minute_)/', $task_id)) {
+
+        $part_match = '/(_60_minute_|_300_minute_|_720_minute_)/';
+        if (isDevelopmentEnv()) {
+            $part_match = '/(_20_minute_|_10_minute_|_5_minute_|_2_minute_)/';
+        }
+
+        if (preg_match($part_match, $task_id)) {
             $key .= '_' . date('Ymd');
             $today_task_ids = $hot_cache->get($key);
             if ($today_task_ids) {

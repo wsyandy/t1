@@ -10,9 +10,9 @@ class Countries extends BaseModel
 {
     static $FIXED = array(0 => '否', 1 => '是');
 
-    static $LANGUAGE = array('en' => '英文', 'zh-CN' => '中文', 'zh-TW' => '繁体', 'fr' => '法语', 'ru' => '俄语', 'es' => '西班牙语',
-        'ja' => '日语', 'de' => '德语', 'pt' => '葡葡萄牙语', 'vi' => '越南语');
-    static $COUNTRY_NAME = array('越南' => 'vn', '中国' => 'cn');
+    static $LANGUAGE = ['en' => '英文', 'zh-CN' => '中文', 'zh-TW' => '繁体', 'fr' => '法语', 'ru' => '俄语', 'es' => '西班牙语',
+        'ja' => '日语', 'de' => '德语', 'pt' => '葡葡萄牙语', 'vi' => '越南语'];
+    static $COUNTRY_NAME = ['越南' => 'vn', '中国' => 'cn'];
 
     static $STATUS = [STATUS_ON => '启用', STATUS_OFF => '禁用'];
 
@@ -46,8 +46,21 @@ class Countries extends BaseModel
         ];
     }
 
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->english_name,
+            'image_small_url' => $this->image_small_url,
+        ];
+    }
+
     function imageSmallUrl()
     {
-        return StoreFile::getUrl($this->image) . '@!small';
+        if ($this->image) {
+            return StoreFile::getUrl($this->image) . '@!small';
+        }
+
+        return '';
     }
 }

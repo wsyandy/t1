@@ -1867,7 +1867,9 @@ class MeiTask extends \Phalcon\Cli\Task
     function pushSystemMessageAction()
     {
         $content = <<<EOF
-幸运大转盘活动今日正式上线，5位幸运ID、6位幸运ID、豪华座驾、神秘礼物、金币狂欢送，查看活动详情请点击侧边栏-活动-幸运大转盘即可参与！
+Hi语音官方提示
+幸运大转盘活动将与2018年4月7日17点00分内测结束，获得抽奖次数还未使用的用户，系统将会保留抽奖次数，抽奖次数保留时间为一周。感谢大家的参与！
+注：本次内测获得幸运号的用户，请先添加官方ID：100101好友，正式上班后官方会通过Hi语音好友联系获得幸运号的用户，下发幸运号。
 EOF;
         $users = Users::findForeach(['conditions' => 'register_at > 0']);
 
@@ -1961,5 +1963,176 @@ EOF;
         if ($device->inWhiteList()) {
             echoLine("ssss");
         }
+    }
+
+    function orderAgesAction()
+    {
+        $payments = Payments::findForeach(['conditions' => 'pay_status = :pay_status:', 'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS]]);
+
+        $age_user_num = ['total' => 0];
+        $age_amount_num = ['total' => 0];
+        $user_ids = [];
+
+        foreach ($payments as $payment) {
+
+            $age = $payment->user->age;
+
+            if (!$age) {
+                echoLine($payment->user->id, "年龄为空");
+                continue;
+            }
+
+            $age_amount_num['total'] += $payment->paid_amount;
+
+            if (isset($age_user_num[$age])) {
+                $age_amount_num[$age] += $payment->paid_amount;
+            } else {
+                $age_amount_num[$age] = $payment->paid_amount;
+            }
+
+            if (in_array($payment->user_id, $user_ids)) {
+                continue;
+            }
+
+            $user_ids[] = $payment->user_id;
+
+            $age_user_num['total'] += 1;
+
+            if (isset($age_user_num[$age])) {
+                $age_user_num[$age] += 1;
+            } else {
+                $age_user_num[$age] = 1;
+            }
+        }
+
+        echoLine("付费总人数:{$age_user_num['total']}", "付费总金额:{$age_amount_num['total']}");
+
+        $total = $age_user_num['total'];
+        $total_amount = $age_amount_num['total'];
+
+        foreach ($age_user_num as $age => $num) {
+
+            if ('total' == $age) {
+                echoLine($age, $num);
+                continue;
+            }
+
+            $rate = sprintf("%0.2f", $num * 100 / $total);
+            $avg = sprintf("%0.2f", $age_amount_num[$age] / $age_user_num[$age]);
+            echoLine($age . "岁付费人数:{$age_user_num[$age]},占比{$rate}%, 付费总额:{$age_amount_num[$age]},人均{$avg}");
+        }
+    }
+
+
+    function idcardAuthIncomeAction()
+    {
+        $payments = Payments::findForeach(['conditions' => 'pay_status = :pay_status:', 'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS]]);
+        $recharge_amount = 0;
+        $hi_coins = 0;
+        $withdraw_hi_coins = 0;
+        $exchange_hi_coins = 0;
+
+        foreach ($payments as $payment) {
+            $user = $payment->user;
+
+            if ($user->isIdCardAuth() && !$user->isCompanyUser()) {
+                $recharge_amount += $payment->amount;
+                echoLine($user->id, $payment->amount);
+            }
+        }
+
+        $hi_coin_histories = HiCoinHistories::findForeach(
+            [
+                'conditions' => 'fee_type != :fee_type1: and fee_type != :fee_type2: and fee_type != :fee_type3:',
+                'bind' => ['fee_type1' => HI_COIN_FEE_TYPE_WITHDRAW, 'fee_type2' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'fee_type3' => HI_COIN_FEE_TYPE_WITHDRAW_RETURN]
+            ]);
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            $user = $hi_coin_history->user;
+
+            if ($user->isIdCardAuth() && !$user->isCompanyUser()) {
+                $hi_coins += $hi_coin_history->hi_coins;
+                echoLine("hi_coins", $hi_coin_history->hi_coins);
+            }
+        }
+
+        $hi_coin_histories = HiCoinHistories::findForeach(
+            [
+                'conditions' => 'fee_type = :fee_type1:',
+                'bind' => ['fee_type1' => HI_COIN_FEE_TYPE_WITHDRAW]
+            ]);
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            $user = $hi_coin_history->user;
+
+            if ($user->isIdCardAuth() && !$user->isCompanyUser()) {
+                $withdraw_hi_coins += abs($hi_coin_history->hi_coins);
+                echoLine("withdraw_hi_coins", $hi_coin_history->hi_coins);
+            }
+        }
+
+        $hi_coin_histories = HiCoinHistories::findForeach(
+            [
+                'conditions' => 'fee_type = :fee_type1:',
+                'bind' => ['fee_type1' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]
+            ]);
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+            $user = $hi_coin_history->user;
+
+            if ($user->isIdCardAuth() && !$user->isCompanyUser()) {
+                $exchange_hi_coins += abs($hi_coin_history->hi_coins);
+                echoLine("exchange_hi_coins", $hi_coin_history->hi_coins);
+            }
+        }
+
+        echoLine("充值：{$recharge_amount} 总收益：{$hi_coins} 提现：{$withdraw_hi_coins} 兑换：{$exchange_hi_coins}");
+    }
+
+    function idcardAuthUserIncomeAction()
+    {
+        $users = Users::findForeach([
+            'conditions' => 'id_card_auth = :id_card_auth: and organisation = 0',
+            'bind' => ['id_card_auth' => AUTH_SUCCESS]]);
+        $gain_user_num = 0;
+        $loss_user_num = 0;
+
+        foreach ($users as $user) {
+            $recharge_amount = Payments::sum(
+                [
+                    'conditions' => 'user_id = :user_id: and pay_status = :pay_status:',
+                    'bind' => ['user_id' => $user->id, 'pay_status' => PAYMENT_PAY_STATUS_SUCCESS],
+                    'column' => 'amount'
+                ]);
+
+
+            if ($recharge_amount < 1) {
+                continue;
+            }
+
+            $hi_coins = HiCoinHistories::sum([
+                'conditions' => 'user_id = :user_id: and fee_type != :fee_type1: and fee_type != :fee_type2: and fee_type != :fee_type3:',
+                'bind' => ['user_id' => $user->id, 'fee_type1' => HI_COIN_FEE_TYPE_WITHDRAW, 'fee_type2' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'fee_type3' => HI_COIN_FEE_TYPE_WITHDRAW_RETURN],
+                'column' => 'hi_coins'
+            ]);
+
+            $exchange_hi_coins = HiCoinHistories::sum(
+                [
+                    'conditions' => 'user_id = :user_id: and fee_type = :fee_type1:',
+                    'bind' => ['user_id' => $user->id, 'fee_type1' => HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND],
+                    'column' => 'hi_coins'
+                ]);
+
+
+            if (($hi_coins - abs($exchange_hi_coins) - $recharge_amount) > 0) {
+                $gain_user_num++;
+            } else {
+                $loss_user_num++;
+            }
+
+            echoLine($recharge_amount, $hi_coins, $exchange_hi_coins, $user->id);
+        }
+
+        echoLine("盈利人数{$gain_user_num}, 亏损人数{$loss_user_num}");
     }
 }

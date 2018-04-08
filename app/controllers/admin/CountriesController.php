@@ -13,9 +13,26 @@ class CountriesController extends BaseController
     function indexAction()
     {
         $page = $this->params('page');
-        $countries = \Countries::findPagination(['order' => 'id asc'], $page, 20);
+        $id = $this->params('id');
+        $chinese_name = $this->params('chinese_name');
+
+        $cond = ['conditions' => 'id > 0', 'order' => 'id asc'];
+
+        if ($id) {
+            $cond['conditions'] .= " and id = :id:";
+            $cond['bind']['id'] = $id;
+        }
+
+        if ($chinese_name) {
+            $cond['conditions'] .= " and chinese_name like :chinese_name:";
+            $cond['bind']['chinese_name'] = '%' . $chinese_name . '%';
+        }
+
+        $countries = \Countries::findPagination($cond, $page, 20);
 
         $this->view->countries = $countries;
+        $this->view->id = $id;
+        $this->view->chinese_name = $chinese_name;
     }
 
     function editAction()

@@ -344,7 +344,18 @@ ol, ul, li {
     color: rgba(0, 0, 0, 0.31);
 }
 
+.award_declare {
+    padding: 0.5rem 0.4rem;
+    margin: 0 auto;
+    bottom: 0.4rem;
+}
 
+.award_declare p {
+    font-size: 0.346667rem;
+    color: #FFFFFF;
+    line-height: 0.533333rem;
+    padding: 0.1rem 0.4rem;
+}
 
 
 

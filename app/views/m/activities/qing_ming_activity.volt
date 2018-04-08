@@ -67,7 +67,7 @@
         <div class="active_book"></div>
         <div class="week_wrap">
             <ul>
-                <h1>青团实时榜单</h1>
+                <h1>青团实力控</h1>
                 <li class="li_bg">魅力榜</li>
                 <li>贡献榜</li>
             </ul>
@@ -136,6 +136,12 @@
         </div>
     </div>
 {% endif %}
+
+<div class="award_declare">
+    <p>1. 获得魅力榜，贡献榜第一名的用户，请及时联系官方客服（ID：100101 ）获得新礼物冠名权；</p>
+    <p>2. “青团实力控”榜单第二名与第三名的用户，所获得的神秘座驾或金币会于4月9日0点之前，直接放入您的账户，请注意签收哦~</p>
+</div>
+
 <div class="award_text">
     活动最终解释权归Hi语音官方团队
 </div>

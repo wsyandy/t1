@@ -13,6 +13,7 @@ trait UserAttrs
     {
         $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
@@ -44,6 +45,10 @@ trait UserAttrs
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond
         ];
+
+        if(isDevelopmentEnv()){
+        //    $data['id'] = $this->uid;
+        }
 
         if (isPresent($this->union)) {
             $data['union_name'] = $this->union->name;
@@ -82,14 +87,16 @@ trait UserAttrs
             'login_type_text' => $this->login_type_text,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'country_chinese_name' => $this->country->chinese_name
         ];
     }
 
     function toBasicJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
@@ -110,6 +117,12 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text
         ];
+
+        if(isDevelopmentEnv()){
+         //   $data['id'] = $this->uid;
+        }
+
+        return $data;
     }
 
     function toRelationJson()
@@ -176,7 +189,6 @@ trait UserAttrs
 
         return $data;
     }
-
 
     function toExportJson()
     {
@@ -308,6 +320,31 @@ trait UserAttrs
         }
 
         return $data;
+    }
+
+    function isSilent()
+    {
+        return USER_TYPE_SILENT == $this->user_type;
+    }
+
+    function isActive()
+    {
+        return USER_TYPE_ACTIVE == $this->user_type;
+    }
+
+    function isBlocked()
+    {
+        return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
+        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+    }
+
+    function isNormal()
+    {
+        if ($this->isWxPlatform() || $this->isTouchPlatform()) {
+            return USER_STATUS_ON === $this->user_status || USER_STATUS_LOGOUT == $this->user_status;
+        }
+
+        return USER_STATUS_ON === $this->user_status;
     }
 
     public function isWebPlatform()
