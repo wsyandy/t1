@@ -233,4 +233,10 @@ class ActivitiesController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['lucky_draw_num' => $lucky_draw_num, 'type' => $type]);
         }
     }
+
+    //冲榜抢热门
+    function rankingToHotActivityAction()
+    {
+        $this->view->title = "活动奖励";
+    }
 }
