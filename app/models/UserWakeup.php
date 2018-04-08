@@ -147,10 +147,12 @@ trait UserWakeup
         debug($receiver->id, $offline_minute, 'step', $step_time);
 
         // 离线推送 22:30 - 08:00 不推送
-        $cur_hour = intval(date('H'));
-        if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
-            return;
+        if (isProduction()){
+            $cur_hour = intval(date('H'));
+            if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
+                self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
+                return;
+            }
         }
 
 
