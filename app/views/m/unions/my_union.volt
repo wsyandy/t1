@@ -313,15 +313,14 @@
                 var url = "/m/unions/exit_union";
                 var data = {union_id: this.union.id, sid: this.sid, code: this.code};
                 $.authPost(url, data, function (resp) {
-                    if (resp.error_code == 0) {
-                        alert('退出家族，需要会长同意，请耐心等待。如会长不同意，7天之后自动退出!');
+//                    if (resp.error_code == 0) {
 //                        var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
 //                        location.href = url;
-                    } else {
+//                    } else {
                         $(".middle_pop").hide();
                         $(".middle_pop_bg").hide();
                         alert(resp.error_reason);
-                    }
+//                    }
                 });
             },
             edit: function () {

@@ -564,7 +564,7 @@ class Unions extends BaseModel
         info($content);
         Chats::sendTextSystemMessage($this->user_id, $content);
 
-        return [ERROR_CODE_SUCCESS, '操作成功'];
+        return [ERROR_CODE_SUCCESS, '退出家族，需要会长同意，请耐心等待。如会长不同意，7天之后自动退出!'];
 
     }
 
