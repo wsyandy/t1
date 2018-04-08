@@ -1867,14 +1867,16 @@ class MeiTask extends \Phalcon\Cli\Task
     function pushSystemMessageAction()
     {
         $content = <<<EOF
-Hi语音官方提示
-幸运大转盘活动将与2018年4月7日17点00分内测结束，获得抽奖次数还未使用的用户，系统将会保留抽奖次数，抽奖次数保留时间为一周。感谢大家的参与！
-注：本次内测获得幸运号的用户，请先添加官方ID：100101好友，正式上班后官方会通过Hi语音好友联系获得幸运号的用户，下发幸运号。
+#幸运号码#恭喜您抽中幸运号码，请联系客服QQ：3407150190获得幸运号，Hi语音感谢您的支持。Hi语音官方客服
 EOF;
-        $users = Users::findForeach(['conditions' => 'register_at > 0']);
 
-        foreach ($users as $user) {
-            Chats::sendSystemMessage($user->id, CHAT_CONTENT_TYPE_TEXT, $content);
+        $user_ids = [1028930, 1000842, 1087735, 1004867, 1039689
+            , 1059364, 1051860, 1088331, 1053196, 1067607, 1007017, 1057113
+        ];
+        //$users = Users::findForeach(['conditions' => 'register_at > 0']);
+
+        foreach ($user_ids as $user_id) {
+            Chats::sendSystemMessage($user_id, CHAT_CONTENT_TYPE_TEXT, $content);
         }
 
         $db = \Users::getUserDb();
