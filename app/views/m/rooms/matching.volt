@@ -58,7 +58,7 @@
 
         $.post("/m/rooms/find_room", data, function (resp) {
             if (resp.error_url) {
-                location.href = resp.error_url;
+                window.location.href = resp.error_url;
                 clearInterval(timer);
             }
         })
