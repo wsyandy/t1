@@ -303,8 +303,6 @@ trait UserWakeup
     function pushMessage($push_message)
     {
 
-        return false;
-
         if ($this->isClientPlatform()) {
             if ($this->pushMessageGetui($push_message)) {
                 return true;
