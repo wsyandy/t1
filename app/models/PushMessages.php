@@ -141,7 +141,7 @@ class PushMessages extends BaseModel
         $hot_cache = PushMessages::getHotWriteCache();
 
         $push_messages = self::findMessages($receiver);
-
+        info('push_messages',$push_messages);
         $repeat_push_messages = [];
         foreach ($push_messages as $push_message) {
             // 微信客服接口可能发送多条
