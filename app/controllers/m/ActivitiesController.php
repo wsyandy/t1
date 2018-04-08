@@ -237,6 +237,9 @@ class ActivitiesController extends BaseController
     //冲榜抢热门
     function rankingToHotActivityAction()
     {
+        $id = $this->params('id');
+        $activity = \Activities::findFirstById($id);
+        $this->view->activity = $activity;
         $this->view->title = "活动奖励";
     }
 }
