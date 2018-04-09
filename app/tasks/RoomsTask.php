@@ -504,13 +504,11 @@ class RoomsTask extends \Phalcon\Cli\Task
             //绿色房间
             if ($room->isGreenRoom()) {
                 $green_room_ids[] = $room->id;
-                continue;
             }
 
             //新手房间
             if ($room->isNoviceRoom()) {
                 $novice_room_ids[] = $room->id;
-                continue;
             }
 
             if ($income > 0) {
