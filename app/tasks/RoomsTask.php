@@ -572,6 +572,8 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
+        info($hot_cache->zrevrange($novice_room_list_key, 0, -1, true));
+        info($hot_cache->zrevrange($green_room_list_key, 0, -1, true));
 
         unlock($lock);
     }
