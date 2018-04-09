@@ -643,7 +643,35 @@ class RoomsTask extends \Phalcon\Cli\Task
             $total_room_ids[$hot_room_id] = $income;
         }
 
-        arsort($total_room_ids);
+        info($total_room_ids);
+
+        uksort($total_room_ids, function ($a, $b) use ($total_room_ids) {
+
+            if ($total_room_ids[$a] == $total_room_ids[$b]) {
+                $rooma = Rooms::findFirstById($a);
+                $roomb = Rooms::findFirstById($b);
+                $rooma_user_num = $rooma->getUserNum();
+                $roomb_user_num = $roomb->getUserNum();
+
+                if ($rooma_user_num == $roomb_user_num) {
+                    return 0;
+                }
+
+                if ($rooma_user_num > $roomb_user_num) {
+                    return -1;
+                }
+
+                return 1;
+            }
+
+            if ($total_room_ids[$a] > $total_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        info($total_room_ids);
 
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
