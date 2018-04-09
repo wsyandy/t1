@@ -887,6 +887,7 @@ class Unions extends BaseModel
     {
         return [
             'id' => $this->id,
+            'uid' => $this->uid,
             'name' => $this->name,
             'fame_value' => $this->fame_value,
             'user_num' => $this->user_num,

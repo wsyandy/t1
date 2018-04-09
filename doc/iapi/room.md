@@ -31,6 +31,7 @@
     rooms:[
         {
             id: int 房间id,
+            uid: int 房间uid,
             name: string 房间名称
             topic: string 房间话题
             chat: 公屏聊天状态, false/true
@@ -70,6 +71,7 @@
     error_code
     error_reason  
     id: int 房间id,
+    uid: int 房间uid,
     name: string 房间名称
     channel_name: string 房间唯一标识, 频道名称      
 }
