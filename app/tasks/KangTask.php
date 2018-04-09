@@ -549,9 +549,31 @@ class KangTask extends \Phalcon\Cli\Task
             $user->uid = $user->id;
             $user->save();
         }
-
     }
 
+    function fixRUidAction($params)
+    {
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        echoLine($cond);
+        $rooms = Rooms::findForeach($cond);
+        foreach ($rooms as $room) {
+            $room->uid = $room->id;
+            $room->save();
+        }
+    }
+
+    function fixUUidAction($params)
+    {
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        echoLine($cond);
+        $unions = Unions::findForeach($cond);
+        foreach ($unions as $union) {
+            $union->uid = $union->id;
+            $union->save();
+        }
+    }
+
+    
     function isGoodNum($num)
     {
         // 由3个以内数字组成的号码

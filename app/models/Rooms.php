@@ -46,7 +46,10 @@ class Rooms extends BaseModel
 
     function afterCreate()
     {
-
+        if (!$this->uid) {
+            $this->uid = $this->generateUid();
+            $this->update();
+        }
     }
 
     function beforeUpdate()
@@ -57,6 +60,18 @@ class Rooms extends BaseModel
     function afterUpdate()
     {
 
+    }
+
+    /**
+     * 产生 UID
+     */
+    function generateUid()
+    {
+        if (isDevelopmentEnv()) {
+            return $this->id + 100000;
+        }
+
+        return $this->id;
     }
 
     function isHot()

@@ -17,7 +17,7 @@
 
 {{ simple_table(unions, [
     'ID': 'id',
-
+    'uid': 'uid',
     '公会名称': 'name',
     '会长': 'user_link',
     '真实姓名': 'id_name',
