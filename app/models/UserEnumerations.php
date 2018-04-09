@@ -13,7 +13,7 @@ trait UserEnumerations
         'avatar' => '头像',
         'ip' => 'ip',
         'sex' => '性别',
-        'country_id'=>'国家',
+        'country_id' => '国家',
         'province_id' => '省份',
         'city_id' => '城市',
         'province_name' => '省份',
@@ -75,4 +75,5 @@ trait UserEnumerations
 
     static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
     static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
+    static $USER_TEST = [USER_TEST_BUG => '测试swoole'];
 }

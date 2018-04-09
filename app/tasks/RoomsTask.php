@@ -133,6 +133,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($rooms as $room) {
             $user = $room->user;
 
+            if (!$user) {
+                continue;
+            }
+
             if ($user->isInAnyRoom()) {
                 info($user->id, $user->current_room_id, $room->id);
                 continue;
@@ -372,7 +376,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($has_income_room_ids);
-        
+
         arsort($has_income_room_ids);
 
         info($has_income_room_ids);

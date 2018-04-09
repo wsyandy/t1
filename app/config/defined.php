@@ -258,3 +258,5 @@ define('HI_COIN_FEE_TYPE_WITHDRAW_RETURN', 7); //Hi币兑钻石
 //用户所属组织
 define('USER_ORGANISATION_PERSONAGE', 0);
 define('USER_ORGANISATION_COMPANY', 1);
+
+define('USER_TEST_BUG', 1);
