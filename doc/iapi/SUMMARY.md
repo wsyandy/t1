@@ -13,7 +13,7 @@
 ;* [拉黑](blacks.md)
 ;* [好友](friends.md)
 * [房间](room.md)
-;* [麦位](room_seat.md)
+* [麦位](room_seat.md)
 ;* [声网信令](signaling.md)
 ;* [环信接口](emchat.md)
 ;* [礼物](gifts.md)
