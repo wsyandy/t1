@@ -495,12 +495,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $room = Rooms::findFirstById($room_id);
 
-            //置顶房间
-            if ($room->isTop()) {
-                $top_room_ids[] = $room->id;
-                continue;
-            }
-
             //绿色房间
             if ($room->isGreenRoom()) {
                 $green_room_ids[] = $room->id;
@@ -511,6 +505,12 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $novice_room_ids[] = $room->id;
             }
 
+            //置顶房间
+            if ($room->isTop()) {
+                $top_room_ids[] = $room->id;
+                continue;
+            }
+            
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
@@ -629,11 +629,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $room = Rooms::findFirstById($room_id);
 
-            if ($room->isTop()) {
-                $top_room_ids[] = $room->id;
-                continue;
-            }
-
             //绿色房间
             if ($room->isGreenRoom()) {
                 $green_room_ids[] = $room->id;
@@ -642,6 +637,11 @@ class RoomsTask extends \Phalcon\Cli\Task
             //新手房间
             if ($room->isNoviceRoom()) {
                 $novice_room_ids[] = $room->id;
+            }
+
+            if ($room->isTop()) {
+                $top_room_ids[] = $room->id;
+                continue;
             }
 
             if ($income > 0) {
