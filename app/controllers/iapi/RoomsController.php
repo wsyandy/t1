@@ -24,4 +24,38 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
+
+    //创建房间
+    function createAction()
+    {
+        $name = $this->params('name');
+        if (isBlank($name)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstByUserId($this->currentUser()->id);
+        if (isBlank($room)) {
+            $room = \Rooms::createRoom($this->currentUser(), $name);
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $room->toBasicJson());
+    }
+
+    //更新房间信息
+    function updateAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $room->updateRoom($this->params());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+    }
+
 }
