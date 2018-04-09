@@ -96,3 +96,39 @@
     error_reason	    
 }
 ```
+
+### Signaling Key用于登录(信令系统)
+
+> http-get ```/iapi/rooms/signaling_key```
+
+##### 请求参数说明
+无
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason
+    app_id string 应用id
+    signaling_key string token
+}
+```
+
+### Channel Key 用于加入频道(直播系统)
+
+> http-get ```/iapi/rooms/channel_key```
+
+##### 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason
+    app_id string 应用id
+    channel_key string token
+}
+```
