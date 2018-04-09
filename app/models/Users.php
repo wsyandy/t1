@@ -1657,6 +1657,7 @@ class Users extends BaseModel
     static function search($user, $page, $per_page, $opts = [])
     {
         $user_id = fetch($opts, 'user_id');
+        $uid = fetch($opts, 'uid');
         $province_id = fetch($opts, 'province_id');
         $city_id = fetch($opts, 'city_id');
         $filter_ids = fetch($opts, 'filter_ids');
@@ -1665,6 +1666,10 @@ class Users extends BaseModel
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         } else {
             $cond = ['conditions' => 'id <> ' . $user->id];
+        }
+
+        if ($uid) {
+            $cond = ['conditions' => 'uid = :uid:', 'bind' => ['uid' => $uid]];
         }
 
         if ($city_id) {
