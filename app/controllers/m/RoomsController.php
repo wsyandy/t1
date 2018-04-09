@@ -45,7 +45,7 @@ class RoomsController extends BaseController
 
         $url = "app://rooms/detail?id=" . $room->id;
         $this->response->redirect($url);
-        return;
+        return false;
 
         $this->view->code = $code;
         $this->view->sid = $sid;
