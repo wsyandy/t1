@@ -9,7 +9,7 @@ class PushMessagesController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
 
-        $conds['order'] = 'status desc,rank desc';
+        $conds['order'] = 'offline_time desc, rank desc';
         $push_messages = \PushMessages::findPagination($conds, $page, $per_page);
         $this->view->push_messages = $push_messages;
     }
