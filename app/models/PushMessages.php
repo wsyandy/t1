@@ -123,7 +123,7 @@ class PushMessages extends BaseModel
 
         $conds['conditions'] = implode(' and ', $conditions);
         $conds['bind'] = $bind;
-        $conds['order'] = 'offline_time desc, rank desc';
+        $conds['order'] = 'offline_time desc, rank desc, id desc';
 
         debug($receiver->id, get_class($receiver), $conds);
         // rank 倒序, 剔重，循环

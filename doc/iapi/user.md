@@ -61,6 +61,9 @@
     speaker 扬声器状态 false/true 默认为true
     app_id string 信令应用id
     signaling_key string 信令token
+    country_id  国家id
+    country_english_name 国家英文名称
+    country_chinese_name 国家中文名称
 }
 
 ```
@@ -92,7 +95,11 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
+    country_id  国家id
+    country_english_name 国家英文名称
+    country_chinese_name 国家中文名称
     province_name 省名
     city_name 城市
     avatar_url 用户头像
@@ -126,7 +133,11 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
+    country_id  国家id
+    country_english_name 国家英文名称
+    country_chinese_name 国家中文名称
     province_name 省名
     city_name 城市
     avatar_url 用户头像
@@ -187,7 +198,11 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
+    uid 用户uid
     sex	性别 0:女 1:男
+    country_id  国家id
+    country_english_name 国家英文名称
+    country_chinese_name 国家中文名称
     province_name 省名
     city_name 城市
     avatar_url 用户头像
@@ -260,6 +275,9 @@
     error_reason  失败原因，默认为空
     id 用户id
     sex	性别 0:女 1:男
+    country_id  国家id
+    country_english_name 国家英文名称
+    country_chinese_name 国家中文名称
     province_name 省名
     city_name 城市
     avatar_url 用户头像
@@ -340,6 +358,7 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 |user_id|用户id|int|是||
+|uid|用户uid|int|是||
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 

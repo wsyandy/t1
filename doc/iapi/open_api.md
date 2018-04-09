@@ -33,6 +33,7 @@ net|	string|	否|	net 网络制式 2g 3g 4g wifi
 ckey|	string|	是|	客户端指纹，可为空
 lat|	double|	是|	纬度latitude
 lon|	double|	是|	经度longitude
+lang|	string|	是|	本地语言
 
 ### 2.3 响应公共参数
 
