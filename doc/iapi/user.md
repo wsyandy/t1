@@ -357,7 +357,7 @@
 ##### 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|keywords|用户uid|int|是||
+|keywords|搜索词|int或string|否|id搜素是int型,其他搜索是string|
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 
