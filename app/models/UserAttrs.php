@@ -50,7 +50,7 @@ trait UserAttrs
         if ($this->country_id) {
             $data['country_english_name'] = $this->country_english_name;
             $data['country_chinese_name'] = $this->country_chinese_name;
-        }else{
+        } else {
             $data['country_english_name'] = '';
             $data['country_chinese_name'] = '';
         }
@@ -131,7 +131,7 @@ trait UserAttrs
         if ($this->country_id) {
             $data['country_english_name'] = $this->country_english_name;
             $data['country_chinese_name'] = $this->country_chinese_name;
-        }else{
+        } else {
             $data['country_english_name'] = '';
             $data['country_chinese_name'] = '';
         }
@@ -878,5 +878,20 @@ trait UserAttrs
         $db = Users::getUserDb();
         $key = 'lucky_draw_num_activity_id_' . $activity_id; //记录每个用户可以抽多少次
         return intval($db->zscore($key, $this->id));
+    }
+
+    function isMobileLogin()
+    {
+        return $this->login_type == USER_LOGIN_TYPE_MOBILE;
+    }
+
+    function isThirdLogin()
+    {
+        return in_array($this->login_type, [USER_LOGIN_TYPE_WEIXIN, USER_LOGIN_TYPE_QQ, USER_LOGIN_TYPE_SINAWEIBO]);
+    }
+
+    function isEmailLogin()
+    {
+        return $this->login_type == USER_LOGIN_TYPE_EMAIL;
     }
 }
