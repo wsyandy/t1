@@ -93,11 +93,12 @@
     <img src="{{ room.user_avatar_url }}" height="50" width="50"/>
 {% endmacro %}
 
-{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"操作":"operate_link"]) }}
+{{ simple_table(rooms,['id': 'id','uid': 'uid','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info",'房间状态':'room_status_info',"操作":"operate_link"]) }}
 
 <script type="text/template" id="room_tpl">
     <tr id="room_${room.id}">
         <td>${room.id}</td>
+        <td>${room.uid}</td>
         <td><img src="${room.avatar_small_url}" height="50" width="50"/></td>
         <td>
             房间名称: ${ room.name }<br/>
