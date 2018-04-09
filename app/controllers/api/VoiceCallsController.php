@@ -76,4 +76,13 @@ class VoiceCallsController extends BaseController
         $voice_call->changeStatus($call_status);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
     }
+
+    function clearAction()
+    {
+        $cache = \Users::getUserDb();
+        $key = 'clear_voice_calls_user_' . $this->currentUserId();
+        $cache->set($key, time());
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+    }
 }
