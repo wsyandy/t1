@@ -207,8 +207,10 @@ class SwooleUtils extends \BaseModel
         return $sign;
     }
 
-    static function pushMessage($socket, $push_data)
+    static function pushMessage($push_data)
     {
+        debug($push_data);
+        return;
         $receiver_fd = fetch($push_data, 'fd');
         $body = fetch($push_data, 'body');
 

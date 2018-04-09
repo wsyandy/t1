@@ -135,7 +135,7 @@ object(Swoole\WebSocket\Frame)#60 (4) {
     public function pushMessage($push_data)
     {
         debug($push_data);
-        SwooleUtils::delay()->pushMessage($this->_socket, $push_data);
+        SwooleUtils::delay()->pushMessage($push_data);
 
 //        $receiver_fd = fetch($push_data, 'fd');
 //        $body = fetch($push_data, 'body');
