@@ -29,7 +29,7 @@ return [
 
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'product_channels' => '*', 'products' => '*', 'push_messages' => '*', 'export_histories' => ['download'],
-        'orders' => '*', 'channel_soft_versions' => '*', 'stats' => ['days'], 'wap_visits' => '*',
+        'orders' => '*', 'channel_soft_versions' => '*', 'wap_visits' => '*',
         'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'partners' => '*',
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*'
