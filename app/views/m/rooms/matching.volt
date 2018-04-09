@@ -38,6 +38,7 @@
         }, 1000);
         time.innerHTML = second
     }
+
     /**
      * 封装函数使1位数变2位数
      */
@@ -45,6 +46,7 @@
         n = n < 3 ? "0" + n : n;
         return n
     }
+
     var second = 3;
     countdown(second);
 
@@ -55,19 +57,19 @@
             code: '{{ code }}'
         };
 
-        $.post("/m/rooms/find_room", data, function (resp) {
+        $.post("/m/rooms/matching", data, function (resp) {
             if (resp.error_url) {
                 window.location.href = resp.error_url;
                 clearInterval(timer);
             }
         })
     }
+
     var timer = setInterval(refresh, 1000);
 
 
     $(".matching_btn").click(function () {
-        console.log("back");
-        location.href = "app://back";
+        location.href = "app://home";
     });
 
 </script>

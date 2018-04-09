@@ -59,7 +59,7 @@ class RoomsController extends BaseController
 //        }
 
         if (STATUS_ON == $hot) {
-            $rooms = \Rooms::searchHotRooms($page, $per_page);
+            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 

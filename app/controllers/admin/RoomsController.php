@@ -357,7 +357,7 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
-        $rooms = \Rooms::searchHotRooms($page, $per_page);
+        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
@@ -389,7 +389,7 @@ class RoomsController extends BaseController
         $id = $this->params('id');
         $room = \Rooms::findFirstById($id);
         $types = $this->params('types');
-        debug("---",$id);
+        debug("---", $id);
 
 
         if ($types) {
