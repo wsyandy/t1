@@ -524,7 +524,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $lock = tryLock($hot_room_list_key, 1000);
 
-        $hot_cache->pipeline();
         $hot_cache->zclear($hot_room_list_key);
         $hot_cache->zclear($novice_room_list_key);
         $hot_cache->zclear($green_room_list_key);
@@ -575,8 +574,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
-
-        $hot_cache->exec();
 
         unlock($lock);
     }
@@ -661,7 +658,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         arsort($no_amount_room_ids);
 
         $time = time();
-        $hot_cache->pipeline();
 
         foreach ($top_room_ids as $top_room_id) {
             $time -= 100;
@@ -706,8 +702,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $hot_cache->zadd($green_room_list_key, $time, $green_room_id);
             }
         }
-        
-        $hot_cache->exec();
+
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
 
         unlock($lock);
