@@ -487,6 +487,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $green_room_ids = [];
         $novice_room_ids = [];
 
+        info($hot_room_ids);
         uksort($hot_room_ids, function ($a, $b) use ($hot_room_ids) {
 
             if ($hot_room_ids[$a] == $hot_room_ids[$b]) {
