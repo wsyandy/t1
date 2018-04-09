@@ -24,6 +24,9 @@
     <label for="id_eq">ID</label>
     <input name="room[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
 
+    <label for="uid_eq">UID</label>
+    <input name="room[uid_eq]" type="text" id="uid_eq" value="{{ uid }}"/>
+
     <label for="name">房间名</label>
     <input name="name" type="text" id="name" value="{{ name }}"/>
 

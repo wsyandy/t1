@@ -1,6 +1,8 @@
 <form action="/admin/unions/family" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="id">ID</label>
     <input name="id" type="number" id="id">
+    <label for="uid">UID</label>
+    <input name="uid" type="number" id="uid">
 
     <label for="user_id">用户ID</label>
     <input name="user_id" type="number" id="user_id">
@@ -38,6 +40,6 @@
     公告：{{ union.notice }}<br/>
 {% endmacro %}
 
-{{ simple_table(unions, ['ID': 'id',"头像":"avatar_img",'家族名称': 'name','族长': 'user_link','家族信息':'family_info',
+{{ simple_table(unions, ['ID': 'id','uid': 'uid',"头像":"avatar_img",'家族名称': 'name','族长': 'user_link','家族信息':'family_info',
 '状态': 'status_text','操作' :'oper_link'
 ]) }}
