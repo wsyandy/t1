@@ -10,7 +10,22 @@ namespace m;
 
 class GamesController extends BaseController
 {
+
     function indexAction()
+    {
+        if ($this->request->isAJax()) {
+            $page = $this->params('page');
+            $per_page = $this->params('per_page', 8);
+
+            $conds = ['conditions' => 'status = ' . STATUS_ON];
+            $conds['order'] = 'id desc';
+
+            $games = \Games::findPagination($conds, $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games','toSimpleJson'));
+        }
+    }
+
+    function tytAction()
     {
         $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
         $hot_cache = \Rooms::getHotWriteCache();
@@ -48,7 +63,7 @@ class GamesController extends BaseController
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
             // 修复数据
-            if(!$pay_type && $user_num){
+            if (!$pay_type && $user_num) {
                 $hot_cache->del($room_key);
                 $hot_cache->del($room_wait_key);
                 $hot_cache->del($room_info_key);
@@ -57,7 +72,7 @@ class GamesController extends BaseController
 
         $room_host_nickname = '';
         $room_host_user = \Users::findFirstById($room_host_id);
-        if($room_host_user){
+        if ($room_host_user) {
             $room_host_nickname = $room_host_user->nickname;
         }
         info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
@@ -296,7 +311,7 @@ class GamesController extends BaseController
         info($info);
 
         $user_ids = [];
-        if(fetch($info, 'rank1')){
+        if (fetch($info, 'rank1')) {
             $user_ids[fetch($info, 'rank1')] = fetch($info, 'rank1_amount');
         }
 
@@ -378,7 +393,7 @@ class GamesController extends BaseController
                 $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
                 $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
 
-            }elseif ($user_num == 2){
+            } elseif ($user_num == 2) {
                 $rank1_amount = $user_num * $amount;
                 $rank2_amount = 0;
                 if ($pay_type == PAY_TYPE_DIAMOND) {
