@@ -375,6 +375,9 @@
                     {% if isAllowed('activities','index') %}
                         <li><a href="/admin/activities">活动配置</a></li>
                     {% endif %}
+                    {% if isAllowed('games','index') %}
+                        <li><a href="/admin/games">游戏配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
