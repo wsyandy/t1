@@ -21,6 +21,7 @@ class RoomsController extends BaseController
         $user_type = $this->params('room[user_type_eq]');
         $theme_type = $this->params('room[theme_type_eq]', '');
         $id = $this->params('room[id_eq]');
+        $uid = $this->params('room[uid_eq]');
         $union_id = $this->params('union_id', 0);
         $user_id = $this->params('user_id', 0);
 
@@ -61,6 +62,7 @@ class RoomsController extends BaseController
         $this->view->user_type = $user_type ? intval($user_type) : '';
         $this->view->theme_type = $theme_type != '' ? intval($theme_type) : '';
         $this->view->id = $id ? intval($id) : '';
+        $this->view->uid = $uid ? intval($uid) : '';
         $this->view->union_id = $union_id ? intval($union_id) : '';
         $this->view->name = $name;
         $this->view->user_id = $user_id ? $user_id : '';
