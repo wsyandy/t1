@@ -1347,6 +1347,12 @@ class Rooms extends BaseModel
         }
     }
 
+    //总的房间列表
+    static function generateTotalRoomListKey()
+    {
+        return "total_room_list";
+    }
+
     //总的热门房间列表
     static function generateHotRoomListKey()
     {
