@@ -79,6 +79,10 @@ class VoiceCallsController extends BaseController
 
     function clearAction()
     {
+        if (!$this->request->isPost()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '错误请求');
+        }
+        
         $cache = \Users::getUserDb();
         $key = 'clear_voice_calls_user_' . $this->currentUserId();
         $cache->set($key, time());
