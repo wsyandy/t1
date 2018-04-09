@@ -1379,23 +1379,26 @@ class Rooms extends BaseModel
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
-        $register_time = time() - $user->register_at;
-        $start_at = 300;
-        $end_at = 600;
 
-        if (isProduction()) {
-            $start_at = 3600;
-            $end_at = 86400;
+        if (isPresent($user)) {
+
+            $register_time = time() - $user->register_at;
+            $start_at = 300;
+            $end_at = 600;
+
+            if (isProduction()) {
+                $start_at = 3600;
+                $end_at = 86400;
+            }
+
+            if ($register_time <= $start_at) {
+                $hot_room_list_key = $green_hot_room_list_key;
+            } elseif ($register_time > $start_at && $register_time <= $end_at) {
+                $hot_room_list_key = $novice_hot_room_list_key;
+            }
         }
 
-        if ($register_time <= $start_at) {
-            $total_room_ids = $hot_cache->zrange($green_hot_room_list_key, 0, -1);
-        } elseif ($register_time > $start_at && $register_time <= $end_at) {
-            $total_room_ids = $hot_cache->zrange($novice_hot_room_list_key, 0, -1);
-        } else {
-            $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
-        }
-
+        $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_user_num_key = Rooms::getTotalRoomUserNumListKey();
 
         foreach ($total_room_ids as $room_id) {
