@@ -553,7 +553,7 @@ class KangTask extends \Phalcon\Cli\Task
 
     function fixRUidAction($params)
     {
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and user_id > 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $rooms = Rooms::findForeach($cond);
         foreach ($rooms as $room) {
