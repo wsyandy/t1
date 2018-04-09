@@ -480,10 +480,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             $hot_room_ids[$room_id] = $income;
         }
 
-        arsort($hot_room_ids);
-
-        info($hot_room_ids);
-
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
 
@@ -491,6 +487,33 @@ class RoomsTask extends \Phalcon\Cli\Task
         $green_room_ids = [];
         $novice_room_ids = [];
 
+        uksort($hot_room_ids, function ($a, $b) use ($hot_room_ids) {
+
+            if ($hot_room_ids[$a] == $hot_room_ids[$b]) {
+                $rooma = Rooms::findFirstById($a);
+                $roomb = Rooms::findFirstById($b);
+                $rooma_user_num = $rooma->getUserNum();
+                $roomb_user_num = $roomb->getUserNum();
+
+                if ($rooma_user_num == $roomb_user_num) {
+                    return 0;
+                }
+
+                if ($rooma_user_num > $roomb_user_num) {
+                    return -1;
+                }
+
+                return 1;
+            }
+
+            if ($hot_room_ids[$a] > $hot_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        info($hot_room_ids);
         foreach ($hot_room_ids as $room_id => $income) {
 
             $room = Rooms::findFirstById($room_id);
@@ -510,7 +533,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $top_room_ids[] = $room->id;
                 continue;
             }
-            
+
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
