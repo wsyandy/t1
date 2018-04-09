@@ -114,29 +114,29 @@
         </div>
         <!-- 生日结束 -->
     </div>
-    <div class="last_week_title">
-        <h3>大奖Hi翻天</h3>
-    </div>
+    {#<div class="last_week_title">#}
+        {#<h3>大奖Hi翻天</h3>#}
+    {#</div>#}
 
-    {% for index,gift in gifts %}
-        <div
-                {% if index == 0 %}
-                    class="top_prize one_prize"
-                {% else %}
-                    class="top_prize"
-                {% endif %}
-        >
-            <div class="prize_list">
-                <div class="left">
-                    <h3>奖励价值 <span>{{ gift.amount }}</span> 钻</h3>
-                    <p>{{ gift.name }}</p>
-                </div>
-                <div class="right">
-                    <img src="{{ gift.image_big_url }}">
-                </div>
-            </div>
-        </div>
-    {% endfor %}
+    {#{% for index,gift in gifts %}#}
+        {#<div#}
+                {#{% if index == 0 %}#}
+                    {#class="top_prize one_prize"#}
+                {#{% else %}#}
+                    {#class="top_prize"#}
+                {#{% endif %}#}
+        {#>#}
+            {#<div class="prize_list">#}
+                {#<div class="left">#}
+                    {#<h3>奖励价值 <span>{{ gift.amount }}</span> 钻</h3>#}
+                    {#<p>{{ gift.name }}</p>#}
+                {#</div>#}
+                {#<div class="right">#}
+                    {#<img src="{{ gift.image_big_url }}">#}
+                {#</div>#}
+            {#</div>#}
+        {#</div>#}
+    {#{% endfor %}#}
 
     <div class="active_text">注：获得周榜前三的用户，如需推迟座驾使用时间，请及时
         联系官方（ID:{{ official_id }}），如未及时联系官方，奖品将在
