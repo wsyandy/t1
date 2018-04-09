@@ -19,8 +19,12 @@
     <li class="active">总个数 {{ total_num }}</li>
 </ol>
 
+{% macro edit_link(object) %}
+    <a href="/admin/activity_histories/edit?id={{ object.id }}" class="modal_action">编辑</a>
+{% endmacro %}
+
 {{ simple_table(activity_histories, [
-    "ID": 'id', "用户ID": 'user_id', '奖励类型':'prize_type_text', '状态':'auth_status_text','日期': 'created_at_text'
+"ID": 'id', "用户ID": 'user_id', '奖励类型':'prize_type_text', '状态':'auth_status_text','日期': 'created_at_text','靓号':'good_number','编辑':'edit_link'
 ]) }}
 
 
