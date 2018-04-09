@@ -10,6 +10,30 @@ namespace iapi;
 
 class RoomsController extends BaseController
 {
+    // Signaling Key 用于登录信令系统;
+    function signalingKeyAction()
+    {
+        $key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['app_id' => $app_id, 'signaling_key' => $key]);
+    }
+
+    //Channel Key 用于加入频道;
+    function channelKeyAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $app_id = $this->currentProductChannel()->getImAppId();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['app_id' => $app_id, 'channel_key' => $key]);
+    }
+
     function indexAction()
     {
         $page = $this->params('page', 1);
