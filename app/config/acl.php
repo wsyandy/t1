@@ -12,9 +12,9 @@ return [
         'account_histories' => '*'
     ],
 
-    'operator' => ['dashboard' => '*', 'stats' => ['hours', 'days'], 'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
+    'operator' => ['dashboard' => '*', 'stats' => ['hours', 'days', 'partners'], 'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*'],
 
-    'operat_manager' => ['dashboard' => '*', 'stats' => ['hours', 'days'], 'partners' => '*',
+    'operat_manager' => ['dashboard' => '*', 'stats' => ['hours', 'days', 'partners'], 'partners' => '*',
         'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*',
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*',
         'partner_urls' => '*'],

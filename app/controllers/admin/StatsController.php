@@ -229,7 +229,7 @@ class StatsController extends BaseController
 
             $cond = [
                 'conditions' => 'version_code=:version_code: and sex=:sex: and province_id=:province_id: and product_channel_id=:product_channel_id: ' .
-                'and platform=:platform: and partner_id = :partner_id: and time_type = :time_type: and stat_at >= :start_at: and stat_at <= :end_at:',
+                    'and platform=:platform: and partner_id = :partner_id: and time_type = :time_type: and stat_at >= :start_at: and stat_at <= :end_at:',
                 'bind' => ['version_code' => -1, 'sex' => -1, 'province_id' => -1, 'product_channel_id' => $product_channel_id, 'platform' => -1,
                     'partner_id' => $partner->id, 'time_type' => STAT_DAY, 'start_at' => $start_at, 'end_at' => $end_at]];
 
@@ -303,7 +303,7 @@ class StatsController extends BaseController
                 $export_history->download_num = 0;
                 $export_history->file = $uri;
                 $export_history->save();
-                \OperatingRecords::logAfterCreate($this->currentOperator(),$export_history);
+                \OperatingRecords::logAfterCreate($this->currentOperator(), $export_history);
                 $this->response->redirect('/admin/export_histories/download?id=' . $export_history->id);
             }
 
@@ -326,7 +326,7 @@ class StatsController extends BaseController
         $this->view->start_stat_at = $start_stat_at;
         $this->view->end_stat_at = $end_stat_at;
         $this->view->partners = $new_partners;
-        $this->view->stat_fields = \Stats::$STAT_PARTNER_FIELDS;
+        $this->view->stat_fields = \Stats::statPartnerFields($this->currentOperator());
         $this->view->export_status = [STATUS_OFF => '否', STATUS_ON => '是'];
         $this->view->export = $export;
         $this->view->product_channel_id = intval($product_channel_id);
