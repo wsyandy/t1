@@ -43,11 +43,20 @@ trait UserAttrs
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
-            'diamond' => $this->diamond
+            'diamond' => $this->diamond,
+            'country_id' => $this->country_id
         ];
 
-        if(isDevelopmentEnv()){
-        //    $data['id'] = $this->uid;
+        if ($this->country_id) {
+            $data['country_english_name'] = $this->country_english_name;
+            $data['country_chinese_name'] = $this->country_chinese_name;
+        }else{
+            $data['country_english_name'] = '';
+            $data['country_chinese_name'] = '';
+        }
+
+        if (isDevelopmentEnv()) {
+            //    $data['id'] = $this->uid;
         }
 
         if (isPresent($this->union)) {
@@ -115,11 +124,20 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'country_id' => $this->country_id
         ];
 
-        if(isDevelopmentEnv()){
-         //   $data['id'] = $this->uid;
+        if ($this->country_id) {
+            $data['country_english_name'] = $this->country_english_name;
+            $data['country_chinese_name'] = $this->country_chinese_name;
+        }else{
+            $data['country_english_name'] = '';
+            $data['country_chinese_name'] = '';
+        }
+
+        if (isDevelopmentEnv()) {
+            //   $data['id'] = $this->uid;
         }
 
         return $data;
@@ -335,7 +353,7 @@ trait UserAttrs
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
     }
 
     function isNormal()
