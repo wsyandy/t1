@@ -1383,8 +1383,8 @@ class Rooms extends BaseModel
         if (isPresent($user)) {
 
             $register_time = time() - $user->register_at;
-            $start_at = 300;
-            $end_at = 600;
+            $start_at = 60 * 15;
+            $end_at = 60 * 20;
 
             if (isProduction()) {
                 $start_at = 3600;
