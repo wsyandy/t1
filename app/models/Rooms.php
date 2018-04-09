@@ -1891,6 +1891,8 @@ class Rooms extends BaseModel
     static function searchRooms($opts, $page, $per_page)
     {
         $product_channel_id = fetch($opts, 'product_channel_id');
+        $id = fetch($opts, 'id');
+        $name = fetch($opts, 'name');
         $new = fetch($opts, 'new');
         $hot = fetch($opts, 'hot');
 
@@ -1908,6 +1910,17 @@ class Rooms extends BaseModel
         if ($hot == STATUS_ON) {
             $cond['conditions'] .= " and hot = " . STATUS_ON;
         }
+
+        if ($id) {
+            $cond['conditions'] .= " and (id = :id:) ";
+            $cond['bind']['id'] = $id;
+        }
+
+        if ($name) {
+            $cond['conditions'] .= " and (name like :name:) ";
+            $cond['bind']['name'] = "%{$name}%";
+        }
+
         debug($cond);
 
         $rooms = Rooms::findPagination($cond, $page, $per_page);
