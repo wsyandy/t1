@@ -95,7 +95,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
-    uid 用户uid
+    uid 用户uid 展示用户唯一标识
     sex	性别 0:女 1:男
     country_id  国家id
     country_english_name 国家英文名称
@@ -133,7 +133,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
-    uid 用户uid
+    uid 用户uid 展示用户唯一标识
     sex	性别 0:女 1:男
     country_id  国家id
     country_english_name 国家英文名称
@@ -198,7 +198,7 @@
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
     id 用户id
-    uid 用户uid
+    uid 用户uid 展示用户唯一标识
     sex	性别 0:女 1:男
     country_id  国家id
     country_english_name 国家英文名称
@@ -352,13 +352,12 @@
 
 ### 用户搜索接口
 
-> http-post ```/iapi/users/search```
+> http-get ```/iapi/users/search```
 
 ##### 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|user_id|用户id|int|是||
-|uid|用户uid|int|是||
+|keywords|搜索词|int或string|否|id搜素是int型,其他搜索是string|
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 
@@ -387,9 +386,67 @@
             (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
         }
+    ],
+    rooms:[
+        {
+            id: int 房间id,
+            uid: int 房间uid,
+            name: string 房间名称
+            topic: string 房间话题
+            chat: 公屏聊天状态, false/true
+            user_id 房主用户id
+            sex	性别 0:女 1:男
+            avatar_small_url 房主小头像
+            avatar_url 房主头像原图
+            avatar_big_url 房主头像大图
+            nickname 房主昵称
+            age int 年龄
+            monologue 个性签名
+            online_status 0离线，1在线
+            channel_name: string 房间唯一标识, 频道名称
+            lock boole加锁状态, true是加锁
+            created_at int 创建时间戳
+            last_at int 最后活跃时间
+            user_num 在线人数
+        }
     ]
 }
 ```
+
+### 判断用户是否存在
+
+> http-get ```/iapi/users/search_by_uid```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|uid|用户uid|int|否|
+
+##### 回应参数说明
+```
+{
+    error_code: 0成功，非0失败
+    error_reason  失败原因，默认为空
+    id 用户id
+    sex	性别 0:女 1:男
+    province_name 省名
+    city_name 城市
+    avatar_url 用户头像
+    avatar_small_url 用户小头像
+    nickname 昵称
+    room_id 用户创建房间id，无房间为0 
+    current_room_id 用户当前所在房间id,不在房间为0
+    current_room_seat_id 用户当前所在麦位id
+    current_channel_name 当前所在房间频道名称 
+    mobile 手机号
+    monologue 个性签名
+    level 用户等级
+   segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+   (例:星耀1 starshine1;星耀王者2 king2)
+   segment_text 段位文本 星耀1
+}
+```
+
 ### 附近的人
 
 > http-get ```/iapi/users/nearby```

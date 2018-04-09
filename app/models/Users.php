@@ -90,7 +90,7 @@ class Users extends BaseModel
             $this->user_type = USER_TYPE_ACTIVE;
         }
 
-        if ($this->mobile || $this->third_unionid) {
+        if (($this->mobile && $this->isMobileLogin()) || ($this->third_unionid && $this->isThirdLogin()) || ($this->login_name && $this->isEmailLogin())) {
             $this->register_at = time();
             $this->last_at = time();
             info('new_user_register', $this->mobile, $this->third_unionid);
@@ -121,11 +121,17 @@ class Users extends BaseModel
 
     function beforeUpdate()
     {
-        if ($this->hasChanged('mobile') && $this->mobile && $this->register_at < 1) {
+        if ($this->hasChanged('mobile') && $this->mobile && $this->isMobileLogin() && $this->register_at < 1) {
             $this->register_at = time();
             $this->last_at = time();
         }
-        if ($this->hasChanged('third_unionid') && $this->third_unionid && $this->register_at < 1) {
+
+        if ($this->hasChanged('third_unionid') && $this->third_unionid && $this->isThirdLogin() && $this->register_at < 1) {
+            $this->register_at = time();
+            $this->last_at = time();
+        }
+
+        if ($this->hasChanged('login_name') && $this->login_name && $this->isEmailLogin() && $this->register_at < 1) {
             $this->register_at = time();
             $this->last_at = time();
         }
@@ -1657,6 +1663,8 @@ class Users extends BaseModel
     static function search($user, $page, $per_page, $opts = [])
     {
         $user_id = fetch($opts, 'user_id');
+        $nickname = fetch($opts, 'nickname');
+        $uid = fetch($opts, 'uid');
         $province_id = fetch($opts, 'province_id');
         $city_id = fetch($opts, 'city_id');
         $filter_ids = fetch($opts, 'filter_ids');
@@ -1665,6 +1673,15 @@ class Users extends BaseModel
             $cond = ['conditions' => 'id = :user_id:', 'bind' => ['user_id' => $user_id]];
         } else {
             $cond = ['conditions' => 'id <> ' . $user->id];
+        }
+
+        if ($uid) {
+            $cond = ['conditions' => 'uid = :uid:', 'bind' => ['uid' => $uid]];
+        }
+
+        if ($nickname) {
+            $cond['conditions'] .= ' and (nickname like :nickname:) ';
+            $cond['bind']['nickname'] = "%{$nickname}%";
         }
 
         if ($city_id) {

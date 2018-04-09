@@ -68,3 +68,17 @@
     ]
 }
 ```
+
+### 4 清除通话记录
+> http-post ```/api/voice_calls/clear```
+
+#### 4.1 公共参数
+
+#### 4.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: ''
+    error_url: ''
+}
+```

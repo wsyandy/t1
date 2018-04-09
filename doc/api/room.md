@@ -27,6 +27,7 @@
     error_code
     error_reason  
     id: int 房间id,
+    uid: int 房间uid,
     name: string 房间名称
     channel_name: string 房间唯一标识, 频道名称      
 }
@@ -106,6 +107,7 @@
     error_code,0成功,-1参数错误,-400密码错误
     error_reason
     id: int 房间id,
+    uid: int 房间uid,
     name: string 房间名称
     channel_name: string 房间唯一标识, 频道名称
 }
@@ -126,6 +128,7 @@
     error_code,
     error_reason：,
     id: int 房间id,
+    uid: int 房间uid,
     name: string 房间名称
     topic: string 房间话题
     chat: 房间公屏聊天状态, false/true
@@ -343,6 +346,7 @@
     rooms:[
         {
             id: int 房间id,
+            uid: int 房间uid,展示的唯一标识
             name: string 房间名称
             topic: string 房间话题
             chat: 公屏聊天状态, false/true

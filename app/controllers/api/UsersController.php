@@ -500,14 +500,21 @@ class UsersController extends BaseController
     function searchAction()
     {
 
-        $cond = [];
-        $user_id = intval($this->params('user_id'));
-        if ($user_id) {
-            $cond = ['user_id' => intval($user_id)];
-        }
-
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
+
+        $cond = [];
+        if($this->currentUser()->product_channel_id == 1){
+            $user_id = intval($this->params('user_id'));
+            if ($user_id) {
+                $cond = ['user_id' => intval($user_id)];
+            }
+        }
+
+        $uid = intval($this->params('uid'));
+        if ($uid) {
+            $cond = ['uid' => intval($uid)];
+        }
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
         if (count($users)) {
@@ -515,6 +522,17 @@ class UsersController extends BaseController
         }
 
         info($this->params());
+        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+    }
+
+    function searchByUidAction()
+    {
+        $uid = intval($this->params('uid'));
+        $user = \Users::findFirstByUid($uid);
+        if ($user) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
+        }
+
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 

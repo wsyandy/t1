@@ -2137,4 +2137,20 @@ EOF;
 
         echoLine("盈利人数{$gain_user_num}, 亏损人数{$loss_user_num}");
     }
+
+    function test2Action()
+    {
+        $array = [2 => 4, 3 => 5, 6 => 1];
+
+        uksort($array, function ($a, $b) use ($array) {
+
+            echoLine($a, $b);
+            if ($array[$a] == $array[$b]) {
+                return 0;
+            }
+            return $array[$a] > $array[$b] ? 1 : -1;
+        });
+
+        print_r($array);
+    }
 }

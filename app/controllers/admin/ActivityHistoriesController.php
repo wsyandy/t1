@@ -51,4 +51,23 @@ class ActivityHistoriesController extends BaseController
         $this->view->activity_prize_types = \Activities::$ACTIVITY_PRIZE_TYPE;
         $this->view->total_num = $activity_histories->total_entries;
     }
+
+    function editAction()
+    {
+        $activity_history = \ActivityHistories::findFirstById($this->params('id'));
+        debug($activity_history);
+        $this->view->activity_history = $activity_history;
+    }
+
+    function updateAction()
+    {
+        $activity_history = \ActivityHistories::findFirstById($this->params('id'));
+        $this->assign($activity_history, 'activity_history');
+        \OperatingRecords::logBeforeUpdate($this->currentOperator(), $activity_history);
+        if ($activity_history->update()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['activity_history' => $activity_history->toJson()]);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
+        }
+    }
 }
