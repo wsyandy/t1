@@ -127,9 +127,23 @@ class Stats extends BaseModel
     // 渠道统计
     static $STAT_PARTNER_FIELDS = [
         'device_active_num' => '设备激活数',
-        'touch_active_num' => 'H5激活数',
         'register_num' => "注册数",
-        'register_rate' => '注册率%'
+        'register_rate' => '注册率%',
+
+        'active_user_num' => '活跃用户数',
+        'active_register_user_num' => '活跃注册用户数',
+
+        'order_payment_rate' => '订单转化率%',
+        'payment_success_rate' => '支付成功率%',
+        'payment_success_total' => '支付总额',
+        'paid_arpu' => '人均客单价',
+        'arpu' => '人均arpu',
+
+        'new_order_payment_rate' => '新用户订单转化率%',
+        'new_payment_success_rate' => '新用户支付成功率%',
+        'new_payment_success_total' => '新用户支付总额',
+        'new_paid_arpu' => '新用户人均客单价',
+        'new_arpu' => '新用户人均arpu'
     ];
 
     static function record($field, $action, $attrs)
@@ -1447,22 +1461,28 @@ class Stats extends BaseModel
     //'operat_manager' => '推广运营经理', 'operator' => '推广运营专员'
     static function statFields($operator)
     {
-        $fields = ['device_active_num', 'total_active_num', 'register_num', 'register_rate', 'new_payment_success_total',
-            'new_paid_arpu', 'new_arpu'];
+        $fields = ['device_active_num' => '设备激活数', 'total_active_num' => '总激活数', 'register_num' => '注册数',
+            'register_rate' => '注册率%', 'new_payment_success_total' => '新用户支付总额',
+            'new_paid_arpu' => '新用户人均客单价', 'new_arpu' => '新用户人均arpu'];
 
         if (in_array($operator->role, ['operat_manager', 'operator'])) {
-
-            $res = [];
-
-            foreach (self::$STAT_FIELDS as $filed => $value) {
-                if (in_array($filed, $fields)) {
-                    $res[$filed] = $value;
-                }
-            }
-
-            return $res;
+            return $fields;
         }
 
         return self::$STAT_FIELDS;
+    }
+
+    static function statPartnerFields($operator)
+    {
+        $fields = ['device_active_num' => '设备激活数', 'total_active_num' => '总激活数', 'register_num' => '注册数',
+            'register_rate' => '注册率%', 'new_payment_success_total' => '新用户支付总额',
+            'new_paid_arpu' => '新用户人均客单价', 'new_arpu' => '新用户人均arpu'];
+
+
+        if (in_array($operator->role, ['operat_manager', 'operator'])) {
+            return $fields;
+        }
+
+        return self::$STAT_PARTNER_FIELDS;
     }
 }

@@ -36,6 +36,8 @@ class Rooms extends BaseModel
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌'];
+    static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
+    static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
     function beforeCreate()
     {
@@ -85,6 +87,16 @@ class Rooms extends BaseModel
     function isBlocked()
     {
         return $this->status == STATUS_BLOCKED;
+    }
+
+    function isNoviceRoom()
+    {
+        return STATUS_ON == $this->novice;
+    }
+
+    function isGreenRoom()
+    {
+        return STATUS_ON == $this->green;
     }
 
     function toSimpleJson()
@@ -1335,10 +1347,28 @@ class Rooms extends BaseModel
         }
     }
 
+    //总的房间列表
+    static function generateTotalRoomListKey()
+    {
+        return "total_room_list";
+    }
+
     //总的热门房间列表
     static function generateHotRoomListKey()
     {
         return "hot_room_list";
+    }
+
+    //新手热门房间列表
+    static function generateNoviceHotRoomListKey()
+    {
+        return "novice_hot_room_list";
+    }
+
+    //绿色热门房间列表
+    static function generateGreenHotRoomListKey()
+    {
+        return "green_hot_room_list";
     }
 
     function generateFilterUserKey($user_id)
@@ -1364,10 +1394,30 @@ class Rooms extends BaseModel
         return false;
     }
 
-    static function searchHotRooms($page, $per_page)
+    static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
+        $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
+
+        if (isPresent($user)) {
+
+            $register_time = time() - $user->register_at;
+            $start_at = 60 * 15;
+            $end_at = 60 * 20;
+
+            if (isProduction()) {
+                $start_at = 3600;
+                $end_at = 86400;
+            }
+
+            if ($register_time <= $start_at) {
+                $hot_room_list_key = $green_hot_room_list_key;
+            } elseif ($register_time > $start_at && $register_time <= $end_at) {
+                $hot_room_list_key = $novice_hot_room_list_key;
+            }
+        }
 
         $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_user_num_key = Rooms::getTotalRoomUserNumListKey();
@@ -1456,7 +1506,7 @@ class Rooms extends BaseModel
                 $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
             }
 
-            $rooms = Rooms::searchHotRooms(1, 100);
+            $rooms = Rooms::searchHotRooms(null, 1, 100);
         } else {
             $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
                 'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
@@ -1806,7 +1856,7 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        if (!$user->isIdCardAuth() && $user->pay_amount < 1) {
+        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
             info("user_no_pay_amount", $user->id, $user->pay_amount, $this->id);
             return false;
         }
