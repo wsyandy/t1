@@ -12,17 +12,18 @@ class GiftOrdersController extends BaseController
         $per_page = $this->params('per_page', 20);
         $opts = [];
 
-        $conds = ['conditions' => 'status=' . GIFT_ORDER_STATUS_SUCCESS . ' and gift_type = ' . GIFT_TYPE_COMMON
-            , 'order' => 'created_at desc'];
         if ($type == 'receive') {
-            $conds['conditions'] .= ' and user_id = ' . $this->currentUserId();
+            $conds['conditions'] = 'user_id = ' . $this->currentUserId();
             if ($page == 1) {
                 $opts['hi_coins'] = $this->currentUser()->getHiCoinText();
             }
 
         } else {
-            $conds['conditions'] .= ' and sender_id = ' . $this->currentUserId();
+            $conds['conditions'] = 'sender_id = ' . $this->currentUserId();
         }
+
+        $conds['conditions'] .= ' and status=' . GIFT_ORDER_STATUS_SUCCESS . ' and gift_type = ' . GIFT_TYPE_COMMON;
+        $conds['order'] = 'created_at desc';
 
         $gift_orders = \GiftOrders::findPagination($conds, $page, $per_page);
 
