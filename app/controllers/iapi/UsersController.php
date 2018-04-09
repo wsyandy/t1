@@ -418,6 +418,17 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 
+    function searchByUidAction()
+    {
+        $uid = intval($this->params('uid'));
+        $user = \Users::findFirstByUid($uid);
+        if ($user) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+    }
+
     // 附近的人
     function nearbyAction()
     {
