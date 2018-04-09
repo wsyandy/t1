@@ -4,8 +4,8 @@
 {{ f.select('new',['label':'是否最新','collection':Rooms.NEW, 'width':'50%']) }}
 {{ f.select('status',['label':'状态','collection':Rooms.STATUS, 'width':'50%']) }}
 {{ f.select('theme_type',['label':'电台主题','collection':Rooms.THEME_TYPE, 'width':'50%']) }}
-{{ f.select('top',['label':'新人房间','collection':Rooms.TOP, 'width':'50%']) }}
-{{ f.select('top',['label':'绿色房间','collection':Rooms.TOP, 'width':'50%']) }}
+{{ f.select('novice',['label':'新人房间','collection':Rooms.NOVICE, 'width':'50%']) }}
+{{ f.select('green',['label':'绿色房间','collection':Rooms.GREEN, 'width':'50%']) }}
 
 <div class="error_reason" style="color: red;"></div>
 {{ f.submit('保存') }}
