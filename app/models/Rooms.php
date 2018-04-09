@@ -1832,7 +1832,7 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        if (!$user->isIdCardAuth() && $user->pay_amount < 1) {
+        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
             info("user_no_pay_amount", $user->id, $user->pay_amount, $this->id);
             return false;
         }
