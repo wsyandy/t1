@@ -386,6 +386,29 @@
             (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
         }
+    ],
+    rooms:[
+        {
+            id: int 房间id,
+            uid: int 房间uid,
+            name: string 房间名称
+            topic: string 房间话题
+            chat: 公屏聊天状态, false/true
+            user_id 房主用户id
+            sex	性别 0:女 1:男
+            avatar_small_url 房主小头像
+            avatar_url 房主头像原图
+            avatar_big_url 房主头像大图
+            nickname 房主昵称
+            age int 年龄
+            monologue 个性签名
+            online_status 0离线，1在线
+            channel_name: string 房间唯一标识, 频道名称
+            lock boole加锁状态, true是加锁
+            created_at int 创建时间戳
+            last_at int 最后活跃时间
+            user_num 在线人数
+        }
     ]
 }
 ```
