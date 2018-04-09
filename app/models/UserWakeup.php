@@ -15,9 +15,9 @@ trait UserWakeup
             return false;
         }
 
-//        if ($this->isWxPlatform() && !$this->isSubscribe()) {
-//            return false;
-//        }
+        if ($this->isWxPlatform() && !$this->isSubscribe()) {
+            return false;
+        }
 
         if (!$this->isOfflineTaskRunning()) {
             return false;
@@ -66,7 +66,7 @@ trait UserWakeup
             $this->deleteExecutedOfflineTaskIds();
 
             // 启动任务
-            $step_time = 300;
+            $step_time = 60;
 
             Users::delay($step_time)->asyncLoopOfflineTask($this->id);
 
@@ -147,7 +147,7 @@ trait UserWakeup
         debug($receiver->id, $offline_minute, 'step', $step_time);
 
         // 离线推送 22:30 - 08:00 不推送
-        if (isProduction()){
+        if (isProduction()) {
             $cur_hour = intval(date('H'));
             if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
                 self::delay($step_time)->asyncLoopOfflineTask($receiver_id);
@@ -556,10 +556,17 @@ trait UserWakeup
         $user_db->del($receive_friend_online_remind_online_key);
     }
 
+    static function pushOnlineRemind($user_id){
+
+        $user = Users::findFirstById($user_id);
+        //好友上线提醒(每小时选取最新的一个好友上线提醒)
+        $user->pushFriendOnlineRemind();
+
+        //关注的人上线提醒(每小时选取最新关注的人上线提醒)
+        $user->pushFollowedOnlineRemind();
+    }
 
     //好友上线提醒 每小时选取最新的一个好友上线提醒
-    //关注好友 上线提醒 每个人一个小时内只能收到一条
-
     //只发送一条
     function pushFriendOnlineRemind()
     {
@@ -608,9 +615,7 @@ trait UserWakeup
 
     }
 
-    //关注上线提醒 每小时选取最新的一个关注的人上线提醒
     //关注好友 上线提醒 每个人一个小时内只能收到一条
-
     //只发送一条
     function pushFollowedOnlineRemind()
     {

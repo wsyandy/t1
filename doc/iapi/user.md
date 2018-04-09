@@ -243,6 +243,7 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 |avatar_file|头像|file|||
+|country_id|国家id|int|||
 |nickname|昵称|string|||
 |sex|性别|int||0:女 1:男|
 |province_name|省份名称|string|||

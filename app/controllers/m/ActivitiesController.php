@@ -34,7 +34,8 @@ class ActivitiesController extends BaseController
             $start_at = $activity->start_at;
             $end_at = $activity->end_at;
 
-            $last_stat_at = strtotime("last monday", $start_at);
+            //上周排行榜开始时间
+            $last_stat_at = strtotime("last monday", time() - 86400 * 6);
             $last_end_at = $last_stat_at + 86400 * 6;
 
             $lats_start = date("Ymd", $last_stat_at);

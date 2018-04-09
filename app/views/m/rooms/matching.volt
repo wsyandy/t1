@@ -33,7 +33,6 @@
                 second -= 1;
                 countdown(second)
             } else {
-                location.href = "app://back";
                 clearTimeout(timer)
             }
         }, 1000);

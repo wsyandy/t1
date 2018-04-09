@@ -13,6 +13,7 @@ trait UserEnumerations
         'avatar' => '头像',
         'ip' => 'ip',
         'sex' => '性别',
+        'country_id'=>'国家',
         'province_id' => '省份',
         'city_id' => '城市',
         'province_name' => '省份',
