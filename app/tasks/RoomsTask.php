@@ -552,9 +552,9 @@ class RoomsTask extends \Phalcon\Cli\Task
         $time = time() + 2000;
 
         if (count($novice_room_ids) > 0) {
-            $time -= 10;
 
             foreach ($novice_room_ids as $novice_room_id) {
+                $time -= 10;
                 $hot_cache->zadd($novice_room_list_key, $time, $novice_room_id);
                 $hot_cache->zadd($green_room_list_key, $time, $novice_room_id);
             }
@@ -564,9 +564,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         if (count($green_room_ids) > 0) {
 
-            $time -= 10;
-
             foreach ($green_room_ids as $green_room_id) {
+                $time -= 10;
                 $hot_cache->zadd($green_room_list_key, $time, $green_room_id);
             }
         }
@@ -682,9 +681,9 @@ class RoomsTask extends \Phalcon\Cli\Task
         $time = time() + 2000;
 
         if (count($novice_room_ids) > 0) {
-            $time -= 10;
 
             foreach ($novice_room_ids as $novice_room_id) {
+                $time -= 10;
                 $hot_cache->zadd($novice_room_list_key, $time, $novice_room_id);
                 $hot_cache->zadd($green_room_list_key, $time, $novice_room_id);
             }
@@ -694,9 +693,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         if (count($green_room_ids) > 0) {
 
-            $time -= 10;
-
             foreach ($green_room_ids as $green_room_id) {
+                $time -= 10;
                 $hot_cache->zadd($green_room_list_key, $time, $green_room_id);
             }
         }
