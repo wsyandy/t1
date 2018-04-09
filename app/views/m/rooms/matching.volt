@@ -34,7 +34,6 @@
                 countdown(second)
             } else {
                 clearTimeout(timer)
-                location.href = "app://home";
             }
         }, 1000);
         time.innerHTML = second
