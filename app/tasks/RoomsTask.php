@@ -480,9 +480,9 @@ class RoomsTask extends \Phalcon\Cli\Task
             $hot_room_ids[$room_id] = $income;
         }
 
-        info($hot_room_ids);
-
         arsort($hot_room_ids);
+
+        info($hot_room_ids);
 
         $has_amount_room_ids = [];
         $no_amount_room_ids = [];
