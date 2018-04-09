@@ -352,12 +352,12 @@
 
 ### 用户搜索接口
 
-> http-post ```/iapi/users/search```
+> http-get ```/iapi/users/search```
 
 ##### 请求参数说明
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|uid|用户uid|int|是||
+|keywords|用户uid|int|是||
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 
