@@ -53,3 +53,44 @@
     ]
 }
 ```
+
+
+### 创建房间(创建后默认进入房间)
+
+> http-post ```/iapi/rooms/create```
+
+##### 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---|
+|name|房间名称|string|否|||
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason  
+    id: int 房间id,
+    name: string 房间名称
+    channel_name: string 房间唯一标识, 频道名称      
+}
+```
+
+
+### 更新房间信息
+
+> http-post ```/iapi/rooms/update```
+
+##### 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|name|房间名称|string|是||
+|topic|房间话题|string|是|||
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason	    
+}
+```
