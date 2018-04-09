@@ -128,7 +128,7 @@ class Partners extends BaseModel
             return;
         }
 
-        // gdt
+        // gdt 多个app 重复激活
         $source = fetch($data, 'source');
 //        if (preg_match('/gdt/', $source) && preg_match('/(market_vivo_01|market_oppo_01)/', $fr)) {
 //            info('gdt_market', $fr, $data);
@@ -174,7 +174,7 @@ class Partners extends BaseModel
         info('data', $data);
         $source = fetch($data, 'source');
         $callback = fetch($data, 'callback_url');
-        if ($callback && $source == 'baidu') {
+        if ($callback && preg_match('/{{ATYPE}}/', $callback) && $source == 'baidu') {
             $call_url = preg_replace('/{{ATYPE}}/', 'activate', $callback);
             $call_url = preg_replace('/{{AVALUE}}/', 0, $call_url);
             $call_url = preg_replace('/&sign={{SIGN}}/', '', $call_url);
