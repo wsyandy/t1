@@ -333,10 +333,13 @@ input:-moz-placeholder { color: rgba(255,255,255,0.60);}
   background-color: #fff;
 }
 .game_list_ul{
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   width: 100%;
 }
 .game_list_ul li{
+  margin-bottom: 10px;
   position: relative;
   left: 0;
   top: 0;

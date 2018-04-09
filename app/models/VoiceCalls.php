@@ -121,6 +121,13 @@ class VoiceCalls extends BaseModel
             'order' => 'id desc'
         );
 
+        $cache = \Users::getUserDb();
+        $key = 'clear_voice_calls_user_' . $reader->id;
+        $clear_time = $cache->get($key);
+        if ($clear_time) {
+            $conds['conditions'] .= ' and updated_at >' . $clear_time;
+        }
+
         $voice_calls = \VoiceCalls::findPagination($conds, $page, $per_page);
         \VoiceCalls::assignUser($voice_calls, $reader);
         return $voice_calls;

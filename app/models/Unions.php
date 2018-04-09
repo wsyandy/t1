@@ -24,6 +24,14 @@ class Unions extends BaseModel
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
     static $NEED_APPLY = [STATUS_ON => '申请能加入', STATUS_OFF => '所有人可加入'];
 
+    function afterCreate()
+    {
+        if (!$this->uid) {
+            $this->uid = $this->generateUid();
+            $this->update();
+        }
+    }
+
     function afterUpdate()
     {
         if ($this->hasChanged('auth_status') && AUTH_FAIL == $this->auth_status && UNION_TYPE_PUBLIC == $this->type) {
@@ -31,6 +39,18 @@ class Unions extends BaseModel
             $this->user->union_type = 0;
             $this->user->update();
         }
+    }
+
+    /**
+     * 产生 UID
+     */
+    function generateUid()
+    {
+        if (isDevelopmentEnv()) {
+            return $this->id + 100000;
+        }
+
+        return $this->id;
     }
 
     //创建家族
@@ -867,6 +887,7 @@ class Unions extends BaseModel
     {
         return [
             'id' => $this->id,
+            'uid' => $this->uid,
             'name' => $this->name,
             'fame_value' => $this->fame_value,
             'user_num' => $this->user_num,

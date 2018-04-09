@@ -145,17 +145,19 @@ class UnionsController extends BaseController
         $per_page = $this->params('per_page');
         $user_id = $this->params('user_id');
         $id = $this->params('id');
+        $uid = $this->params('uid');
         $status = $this->params('status', STATUS_ON);
 
         $cond = [];
-
         $cond['order'] = "id desc";
-
         $cond['conditions'] = " type = " . UNION_TYPE_PRIVATE;
-
 
         if ($id) {
             $cond['conditions'] .= " and id = " . $id;
+        }
+
+        if ($uid) {
+            $cond['conditions'] .= " and uid = " . $uid;
         }
 
         if ($user_id) {
@@ -168,7 +170,7 @@ class UnionsController extends BaseController
             }
         }
 
-        if (!$id && !$user_id) {
+        if (!$id && !$user_id && !$uid) {
             $cond['conditions'] .= " and status = " . $status;
         }
 

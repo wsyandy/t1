@@ -1,0 +1,1 @@
+{% include "/admin/games/form.volt" %}

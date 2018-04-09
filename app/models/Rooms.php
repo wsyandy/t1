@@ -44,7 +44,10 @@ class Rooms extends BaseModel
 
     function afterCreate()
     {
-
+        if (!$this->uid) {
+            $this->uid = $this->generateUid();
+            $this->update();
+        }
     }
 
     function beforeUpdate()
@@ -55,6 +58,18 @@ class Rooms extends BaseModel
     function afterUpdate()
     {
 
+    }
+
+    /**
+     * 产生 UID
+     */
+    function generateUid()
+    {
+        if (isDevelopmentEnv()) {
+            return $this->id + 100000;
+        }
+
+        return $this->id;
     }
 
     function isHot()
@@ -76,7 +91,7 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        return ['id' => $this->id, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
+        return ['id' => $this->id, 'uid' => $this->uid, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
@@ -127,7 +142,7 @@ class Rooms extends BaseModel
 
     function toBasicJson()
     {
-        return ['id' => $this->id, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
+        return ['id' => $this->id, 'uid' => $this->uid, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
     }
 
     static function createRoom($user, $name)
