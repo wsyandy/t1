@@ -206,4 +206,22 @@ class SwooleUtils extends \BaseModel
 
         return $sign;
     }
+
+    static function pushMessage($socket, $push_data)
+    {
+        $receiver_fd = fetch($push_data, 'fd');
+        $body = fetch($push_data, 'body');
+
+        info($receiver_fd, $push_data);
+
+        if ($receiver_fd) {
+
+            if (!$socket->exist($receiver_fd)) {
+                info($receiver_fd, $push_data, "Exce fd not exist");
+                return;
+            }
+
+            $socket->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+        }
+    }
 }

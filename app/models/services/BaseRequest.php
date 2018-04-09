@@ -134,20 +134,22 @@ object(Swoole\WebSocket\Frame)#60 (4) {
     // 推送消息
     public function pushMessage($push_data)
     {
-        $receiver_fd = fetch($push_data, 'fd');
-        $body = fetch($push_data, 'body');
+        SwooleUtils::delay()->pushMessage($this->_socket, $push_data);
 
-        info($receiver_fd, $push_data);
-
-        if ($receiver_fd) {
-
-            if (!$this->_socket->exist($receiver_fd)) {
-                info($receiver_fd, $push_data, "Exce fd not exist");
-                return;
-            }
-
-            $this->_socket->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
-        }
+//        $receiver_fd = fetch($push_data, 'fd');
+//        $body = fetch($push_data, 'body');
+//
+//        info($receiver_fd, $push_data);
+//
+//        if ($receiver_fd) {
+//
+//            if (!$this->_socket->exist($receiver_fd)) {
+//                info($receiver_fd, $push_data, "Exce fd not exist");
+//                return;
+//            }
+//
+//            $this->_socket->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
+//        }
     }
 
 }
