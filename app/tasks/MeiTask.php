@@ -2169,4 +2169,19 @@ EOF;
 
         echoLine($id);
     }
+
+    function fixUnionAction()
+    {
+        $unions = Unions::findFirstById(1201);
+        echoLine($unions->created_at_text);
+        $unions = Unions::findBy(['status' => STATUS_OFF]);
+
+        foreach ($unions as $union) {
+            if ($union->userNum() > 0) {
+                $union->status = STATUS_ON;
+                $union->update();
+                echoLine($union->id, $union->created_at_text);
+            }
+        }
+    }
 }
