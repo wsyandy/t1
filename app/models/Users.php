@@ -448,6 +448,7 @@ class Users extends BaseModel
         $user->device = $device;
         $user->device_no = $device->device_no;
         $user->mobile = $mobile;
+        $user->login_type = USER_LOGIN_TYPE_MOBILE;
 
         $password = fetch($context, 'password');
         if ($password) {
@@ -460,7 +461,6 @@ class Users extends BaseModel
             $user->nickname = $user->getMaskedMobile();
         }
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->login_type = USER_LOGIN_TYPE_MOBILE;
         $user->save();
 
         if ($mobile) {
@@ -632,13 +632,10 @@ class Users extends BaseModel
         foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type', 'country_id'] as $key) {
 
             $val = fetch($context, $key);
-
             if ($val) {
-
                 if ('password' == $key) {
                     $val = md5($val);
                 }
-
                 $this->$key = $val;
             }
         }
@@ -2573,13 +2570,13 @@ class Users extends BaseModel
         }
 
         $user->third_unionid = $third_unionid;
+        $user->login_type = $third_name;
         $user->third_name = $third_name;
         $user->device_id = $device->id;
         $user->login_name = $params['login_name'];
         $user->nickname = $params['nickname'];
         $user->sex = $params['sex'];
         $user->user_type = USER_TYPE_ACTIVE;
-        $user->login_type = $third_name;
         $user->sid = $user->generateSid('s');
         $user->update();
 
