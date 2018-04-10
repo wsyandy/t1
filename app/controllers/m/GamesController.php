@@ -67,7 +67,7 @@ class GamesController extends BaseController
                 $hot_cache->del($room_key);
                 $hot_cache->del($room_wait_key);
                 $hot_cache->del($room_info_key);
-                
+
                 info('解散房间', $room_key, $this->currentUser()->id, $user_num);
             }
         }
@@ -117,7 +117,7 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $pay_type, $amount);
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
 
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
