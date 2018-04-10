@@ -2579,6 +2579,7 @@ class Users extends BaseModel
         $user->nickname = $params['nickname'];
         $user->sex = $params['sex'];
         $user->user_type = USER_TYPE_ACTIVE;
+        $user->login_type = $third_name;
         $user->sid = $user->generateSid('s');
         $user->update();
 
