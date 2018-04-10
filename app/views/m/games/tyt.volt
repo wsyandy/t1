@@ -134,7 +134,7 @@
             <button @click="go_game()">参与游戏 GO</button>
         </div>
         {#这里回头要加判断，判断用户用户的钻石数是否大于等于入场费#}
-        <div class="prompt_toast" v-if="can_game"><span>您当前的${error_reason}</span></div>
+        <div class="prompt_toast" v-if="can_game"><span>${error_reason}</span></div>
     </div>
     <script>
         var opts = {
