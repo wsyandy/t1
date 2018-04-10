@@ -15,6 +15,12 @@ class BannedWords extends BaseModel
      */
     static function checkWord($word)
     {
+        
+        //临时解决
+        if (mb_strlen($word) == 1) {
+            return [false, $word];
+        }
+
         $conditions = [
             'conditions' => "word like :word:",
             'bind' => ['word' => '%' . $word . '%'],
@@ -22,18 +28,11 @@ class BannedWords extends BaseModel
         ];
 
         $banned_word = self::findFirst($conditions);
-
         if (!$banned_word) {
             return [false, $word];
         }
 
         $search_word = mbStrSplit($banned_word->word);
-
-        //临时解决
-        if (mb_strlen($word) == 1) {
-            return [false, $word];
-        }
-
         $new_word = str_replace($search_word, '*', $word);
 
         return [true, $new_word];
