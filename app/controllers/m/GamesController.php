@@ -53,6 +53,7 @@ class GamesController extends BaseController
             $amount = 0;
             $room_host_id = $this->currentUser()->id;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
+            $hot_cache->hset($room_info_key, 'room_create_at', time());
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
             $hot_cache->expire($room_wait_key, 600);
@@ -62,8 +63,9 @@ class GamesController extends BaseController
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
+            $room_create_at = fetch($info, 'room_create_at');
             // 修复数据
-            if (!$pay_type && $user_num) {
+            if (!$pay_type && $user_num && $room_create_at < time() - 180) {
                 $hot_cache->del($room_key);
                 $hot_cache->del($room_wait_key);
                 $hot_cache->del($room_info_key);
