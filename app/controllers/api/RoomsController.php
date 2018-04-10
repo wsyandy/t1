@@ -187,7 +187,6 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
-
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -195,11 +194,8 @@ class RoomsController extends BaseController
 
         //如果进入其他房间时 用户身上有房间 先退出房间
         $current_room = $this->currentUser()->current_room;
-
-        info($this->currentUser()->sid, $this->currentUser()->current_room_id, $room_id);
-
         if ($current_room && $current_room->id != $room_id) {
-            info($this->currentUser()->sid, $current_room->id, $room_id);
+            info('Exce exit',$this->currentUser()->id, $current_room->id, $room_id);
             $current_room->exitRoom($this->currentUser());
         }
 
@@ -209,10 +205,10 @@ class RoomsController extends BaseController
         $app_id = $this->currentProductChannel()->getImAppId();
 
         //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
-        $this->currentUser()->pushFriendIntoRoomRemind();
+        //$this->currentUser()->pushFriendIntoRoomRemind();
 
         //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
-        $this->currentUser()->pushFollowedIntoRoomRemind();
+        //$this->currentUser()->pushFollowedIntoRoomRemind();
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
@@ -222,7 +218,6 @@ class RoomsController extends BaseController
         $res['user_role'] = $this->currentUser()->user_role;
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
-
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
