@@ -124,6 +124,12 @@ class Devices extends BaseModel
                     }
                 }
 
+                $muid = $device->imei;
+                if ($device->idfa) {
+                    $muid = $device->idfa;
+                }
+                $device->setMarketingStartAppMuid($muid);
+
                 info('测试渠道包fr', $device->device_no, $promote_fr, $device->fr, $attributes);
             }
 
@@ -167,10 +173,31 @@ class Devices extends BaseModel
         $device->sid = $device->generateSid();
         $device->update();
 
+        $muid = $device->imei;
+        if ($device->idfa) {
+            $muid = $device->idfa;
+        }
+        $device->setMarketingStartAppMuid($muid);
+
         $attrs = $device->getStatAttrs();
         \Stats::delay()->record('user', 'device_active', $attrs);
 
         return $device;
+    }
+
+    function setMarketingStartAppMuid($muid)
+    {
+        $user_db = \Users::getUserDb();
+        $marketing_start_app_key = 'marketing_api_start_app_muid';
+        $user_db->zadd($marketing_start_app_key, time(), md5($muid));
+        $user_db->expire($marketing_start_app_key, 2 * 24 * 60 * 60);
+    }
+
+    static function getMarketingStartAppMuid($muid)
+    {
+        $user_db = \Users::getUserDb();
+        $marketing_start_app_key = 'marketing_api_start_app_muid';
+        return $user_db->zscore($marketing_start_app_key, $muid);
     }
 
     private function generateSid()

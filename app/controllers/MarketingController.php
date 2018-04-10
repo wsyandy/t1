@@ -93,4 +93,58 @@ class MarketingController extends ApplicationController
         $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
+    //次日留存
+    function startAppAction()
+    {
+
+        $muid = $this->params('muid');//设备id，由IMEI（Android应用）md5生成，或是由IDFA（iOS应用）md5生成；
+        $click_time = $this->params('click_time');//点击发生的时间，由腾讯社交广告系统生成，取值为标准时间戳，秒级别
+        $click_id = $this->params('click_id');//腾讯社交广告后台生成的点击id，腾讯社交广告系统中标识用户每次点击生成的唯一标识
+        $app_type = $this->params('app_type'); //app类型；取值为 android或ios（联盟Android为unionandroid）；注意是小写；根据广告主在腾讯社交广告（e.qq.com）创建转化时提交的基本信息关联；
+        $appid = $this->params('appid');//Android应用为应用宝移动应用的id，或者iOS应用在Apple App Store的id；创建转化时，需填入此appid
+        $advertiser_id = $this->params('advertiser_id');//广告主在腾讯社交广告（e.qq.com）的账户id
+
+        $marketing_config = \MarketingConfigs::findFirstByGdtAccountId($advertiser_id);
+        if (!$marketing_config) {
+            info('false no marketing_config', $this->params());
+            return;
+        }
+
+        if (!Devices::getMarketingStartAppMuid($muid)) {
+            info('false muid no has', $muid, 'app_type', $app_type);
+            return;
+        }
+
+
+        $access_token = $marketing_config->getToken();
+        $timestamp = time();
+        $nonce = randStr(20);
+        $url = "https://api.e.qq.com/v1.0/user_actions/add?access_token={$access_token}&timestamp={$timestamp}&nonce={$nonce}";
+
+
+        if ($app_type == 'ios') {
+            $user_action_set_id = $marketing_config->ios_user_action_set_id;
+            $user_data = ['hash_idfa' => $muid];
+        } else {
+            $user_action_set_id = $marketing_config->android_user_action_set_id;
+            $user_data = ['hash_imei' => $muid];
+        }
+
+        $body = [
+            'account_id' => $marketing_config->gdt_account_id,
+            'user_action_set_id' => $user_action_set_id,
+            'actions' => [
+                'action_time' => time(),
+                'user_id' => $user_data,
+                'action_type' => 'START_APP',
+                'trace' => ['click_id' => $click_id]
+            ]
+        ];
+
+        $response = httpPost($url, $body);
+        info($body, $response->raw_body);
+
+        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
 }
