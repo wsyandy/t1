@@ -138,19 +138,20 @@ class SwooleEvents extends \BaseModel
                 if ($intranet_ip) {
 
                     if ($current_room) {
+                        \Rooms::delay(3)->exitRoomByServer($user_id, $current_room->id, $current_room_seat->id);
                         //并发退出房间
-                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
-                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
-                        $current_room_seat_id = '';
-
-                        if ($current_room_seat) {
-                            $current_room_seat_id = $current_room_seat->id;
-                            $current_room_seat->down($user);
-                        }
-
-                        $current_room->exitRoom($user);
-                        $current_room->pushExitRoomMessage($user, $current_room_seat_id);
-                        unlock($exce_exit_room_lock);
+//                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
+//                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
+//                        $current_room_seat_id = '';
+//
+//                        if ($current_room_seat) {
+//                            $current_room_seat_id = $current_room_seat->id;
+//                            $current_room_seat->down($user);
+//                        }
+//
+//                        $current_room->exitRoom($user);
+//                        $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+//                        unlock($exce_exit_room_lock);
                     } else {
                         info("room not exists", $user->sid, $online_token);
                     }
