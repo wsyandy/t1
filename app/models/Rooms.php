@@ -1947,6 +1947,11 @@ class Rooms extends BaseModel
             return;
         }
 
+        if (!$user->current_room_id) {
+            info("user_not_in_room", $user_id, $room_id, $room_seat_id);
+            return;
+        }
+
         $room_seat = RoomSeats::findFirstById($room_seat_id);
 
         //用户重连不踢出用户
