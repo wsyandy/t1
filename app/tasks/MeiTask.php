@@ -2162,6 +2162,7 @@ EOF;
         $id = 0;
 
         foreach ($users as $user) {
+            $id++;
             $user->register_at = $user->created_at;
             $user->update();
         }
