@@ -2156,6 +2156,16 @@ EOF;
 
     function test3Action()
     {
-        $users = Users::find(['conditions' => '']);
+        $users = Users::findForeach(['conditions' => '(login_type != "" or login_type is not null) and register_at < 1 
+         and created_at <= ' . beginOfDay()]);
+
+        $id = 0;
+
+        foreach ($users as $user) {
+            $user->register_at = $user->created_at;
+            $user->update();
+        }
+
+        echoLine($id);
     }
 }
