@@ -2153,4 +2153,9 @@ EOF;
 
         print_r($array);
     }
+
+    function test3Action()
+    {
+        $users = Users::find(['conditions' => '']);
+    }
 }
