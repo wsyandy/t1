@@ -2481,9 +2481,9 @@ class Users extends BaseModel
     //第三方登录
     static function findFirstByThirdUnionid($product_channel, $third_unionid, $third_name)
     {
-        if (USER_LOGIN_TYPE_SINAWEIBO == $third_name) {
-            $third_name = 'sina';
-        }
+//        if (USER_LOGIN_TYPE_SINAWEIBO == $third_name) {
+//            $third_name = 'sina';
+//        }
 
         $cond['conditions'] = 'third_unionid = :third_unionid: and product_channel_id = :product_channel_id: and user_status != :user_status:' .
             ' and third_name = :third_name:';

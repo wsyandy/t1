@@ -693,4 +693,34 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
+    function fixThirdNameAction(){
+
+        $third_name = 'sina';
+        $new_third_name = 'sinaweibo';
+
+        $cond['conditions'] = 'third_name = :third_name:';
+        $cond['bind'] = ['third_name' => $third_name];
+        $cond['order'] = 'id desc';
+
+        $users = Users::findForeach($cond);
+
+        foreach ($users as $user){
+            $user->third_name = $new_third_name;
+            $user->save();
+            echoLine($user->id, $user->third_name);
+        }
+
+        $cond['conditions'] = 'third_name = :third_name:';
+        $cond['bind'] = ['third_name' => $third_name];
+        $cond['order'] = 'id desc';
+        $third_auths = ThirdAuths::findForeach($cond);
+
+        foreach ($third_auths as $third_auth){
+            $third_auth->third_name = $new_third_name;
+            $third_auth->save();
+            echoLine($third_auth->id, $third_auth->third_name);
+        }
+
+    }
+
 }
