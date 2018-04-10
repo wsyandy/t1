@@ -109,60 +109,32 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1001316;
-        $new_user_id = 100102;
+        $user_id = 1067623;
+        $new_user_id = 153731;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
 
-//        if ($new_user->user_type != USER_TYPE_SILENT) {
-//            echoLine("非法操作 用户不是沉默用户");
-//            return;
-//        }
+        if ($new_user->user_type != USER_TYPE_SILENT) {
+            echoLine("非法操作 用户不是沉默用户");
+            return;
+        }
 
         $data = $user->toData();
         echoLine($data);
 
         foreach ($data as $k => $v) {
-            if ('id' == $k) {
+            if ('id' == $k || 'uid' == $k) {
                 continue;
             }
             $new_user->$k = $v;
         }
 
+        $new_user->uid = 153731;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
         $new_user->save();
-
-        $user->mobile = '1';
-        $user->user_status = USER_STATUS_OFF;
-        $user->avatar_status = AUTH_FAIL;
-        $user->room_id = 0;
-        $user->current_room_id = 0;
-        $user->current_room_seat_id = 0;
-        $user->user_role = 0;
-        $user->gold = 0;
-        $user->diamond = 0;
-        $user->hi_coins = 0;
-        $user->charm_value = 0;
-        $user->wealth_value = 0;
-        //$user->union_id = 0;
-        $user->experience = 0;
-        $user->level = 0;
-        $user->segment = '';
-        $user->third_name = '';
-        $user->login_type = '';
-        $user->third_unionid = '';
-        $user->user_role_at = 0;
-        $user->union_charm_value = 0;
-        $user->union_wealth_value = 0;
-        $user->pay_amount = 0;
-        $user->id_card_auth = 0;
-        $user->organisation = 0;
-        $user->union_type = 0;
-        $user->sid = $user->generateSid('d.');
-        $user->save();
 
         //用户订单
         $gift_orders = GiftOrders::findBy(['user_id' => $user_id]);
@@ -348,7 +320,6 @@ class UsersTask extends \Phalcon\Cli\Task
             }
         }
 
-
         if (count($blacked_user_ids) > 0) {
             $blacked_users = Users::findByIds($blacked_user_ids);
 
@@ -443,6 +414,48 @@ class UsersTask extends \Phalcon\Cli\Task
             $id_card_auth->user_id = $new_user_id;
             $id_card_auth->update();
         }
+
+        $activity_histories = ActivityHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($activity_histories as $activity_history) {
+            $activity_history->user_id = $new_user_id;
+            $activity_history->update();
+        }
+    }
+
+    function resetUserAction()
+    {
+        $user_id = 1067623;
+        $user = Users::findFirstById($user_id);
+        $user->mobile = '1';
+        $user->user_status = USER_STATUS_OFF;
+        $user->avatar_status = AUTH_FAIL;
+        $user->room_id = 0;
+        $user->current_room_id = 0;
+        $user->current_room_seat_id = 0;
+        $user->user_role = 0;
+        $user->gold = 0;
+        $user->diamond = 0;
+        $user->hi_coins = 0;
+        $user->charm_value = 0;
+        $user->wealth_value = 0;
+        $user->union_id = 0;
+        $user->experience = 0;
+        $user->level = 0;
+        $user->segment = '';
+        $user->third_name = '';
+        $user->login_type = '';
+        $user->third_unionid = '';
+        $user->user_role_at = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+        $user->pay_amount = 0;
+        $user->id_card_auth = 0;
+        $user->organisation = 0;
+        $user->union_type = 0;
+        $user->device_id = 0;
+        $user->sid = $user->generateSid('d.');
+        $user->save();
     }
 
     function updateSilentUserAvatarAction()
@@ -804,6 +817,13 @@ class UsersTask extends \Phalcon\Cli\Task
         foreach ($users as $user) {
             echoLine($user->id, date('c', $user->created_at), date('c', $user->register_at), date('c', $user->last_at));
         }
+
+        $activities = ActivityHistories::find();
+
+        foreach ($activities as $activity) {
+            echoLine($activity->created_at_text);
+        }
+        echoLine(count($activities));
     }
 }
 

@@ -28,6 +28,10 @@ class HiCoinHistoriesController extends BaseController
             $product_id = $this->params('product_id');
             $hi_coins = intval($this->params('hi_coins'));
 
+            if ($hi_coins < 30) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '至少30Hi币才能兑换钻石');
+            }
+
             info('product_id', $product_id, 'hi_coins', $hi_coins);
             $product = \Products::findFirstById($product_id);
 

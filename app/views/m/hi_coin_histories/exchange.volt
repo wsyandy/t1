@@ -45,7 +45,7 @@
 
     <div class="exchange_footer">
         <img class="ico_tips" src="/m/images/ico_tips.png" alt="">
-        <span class="exchange_foot_text">温馨提示：至少50Hi币才能兑换钻石</span>
+        <span class="exchange_foot_text">温馨提示：至少30Hi币才能兑换钻石</span>
     </div>
 
 
@@ -87,8 +87,8 @@
 
             </div>
 
-            <div class="less_50_hi_coin" v-show="less_50_hi_coin">
-                至少50Hi币才能兑换钻石
+            <div class="less_30_hi_coin" v-show="less_30_hi_coin">
+                至少30Hi币才能兑换钻石
             </div>
 
             <div class="pupop_btn">
@@ -123,7 +123,7 @@
             is_tips: false,
             no_hi_coin: false,
             is_custom: false,
-            less_50_hi_coin:false
+            less_30_hi_coin: false
         },
         methods: {
             choiceHiCoinAction: function (product_id, hi_coin, diamond, gold) {
@@ -148,8 +148,8 @@
             },
             customChangeAction: function () {
                 this.cur_diamond = this.cur_hi_coin * this.hi_coin_diamond_rate;
-                this.no_hi_coin = this.cur_hi_coin < 50;
-                this.less_50_hi_coin = this.cur_hi_coin < 50;
+                this.no_hi_coin = this.cur_hi_coin < 30;
+                this.less_30_hi_coin = this.cur_hi_coin < 30;
             },
             cancelAction: function () {
                 this.product_id = null;
@@ -160,16 +160,16 @@
                 this.cur_gold = 0;
                 this.no_hi_coin = false;
                 this.is_custom = false;
-                this.less_50_hi_coin =false;
+                this.less_30_hi_coin = false;
             },
             exchangeDiamondsAction: function () {
 
                 clearTimeout(isTipsTimer);
                 var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
 
-                //自定义兑换不能小于50
-                if (post_data.product_id == null && post_data.hi_coins<50) {
-                    this.less_50_hi_coin =true;
+                //自定义兑换不能小于30
+                if (post_data.product_id == null && post_data.hi_coins < 30) {
+                    this.less_30_hi_coin = true;
                     return;
                 }
 
