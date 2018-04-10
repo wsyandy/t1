@@ -55,7 +55,7 @@ define('USER_UNSUBSCRIBE', 0); // 取消关注
 #第三方登陆
 define('THIRD_AUTH_THIRD_NAME_WEIXIN', 'weixin');//微信登陆
 define('THIRD_AUTH_THIRD_NAME_QQ', 'qq');//微信登陆
-define('THIRD_AUTH_THIRD_NAME_SINAWEIBO', 'sina');//微博登陆
+define('THIRD_AUTH_THIRD_NAME_SINAWEIBO', 'sinaweibo');//微博登陆
 
 //指定平台禁用该客户端主题
 define('VERSION_CODE_FORBIDDEN', -1);

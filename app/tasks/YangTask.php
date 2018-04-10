@@ -625,9 +625,22 @@ class YangTask extends \Phalcon\Cli\Task
         if ($user->needUpdateInfo()) {
             $user = $this->updateUserInfo($user);
         }
-        $body = array_merge($body, ['sid' => $user->sid,'hot'=>1]);
+        $body = array_merge($body, ['sid' => $user->sid, 'hot' => 1]);
         $res = httpGet($url, $body);
         echoLine($res);
     }
 
+    function fixGiftOrdersAction()
+    {
+        $gift_orders = GiftOrders::findForeach([
+            'conditions' => 'product_channel_id is null'
+        ]);
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->product_channel_id = $gift_order->user->product_channel_id;
+            debug($gift_order->id, $gift_order->user->product_channel_id);
+            $gift_order->save();
+        }
+
+    }
 }

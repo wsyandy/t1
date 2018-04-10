@@ -58,6 +58,7 @@ input:-moz-placeholder { color: rgba(255,255,255,0.60);}
 .select_game_select li {
   align-items: center;
   margin-bottom: 24px;
+  height: 34px;
 }
 .select_game_select li .radio{
   width: 20px;
@@ -164,8 +165,8 @@ input:-moz-placeholder { color: rgba(255,255,255,0.60);}
   position: fixed;
   left: 50%;
   bottom: 55px;
-  margin-left: -90px;
-  width: 180px;
+  margin-left: -127px;
+  width: 255px;
   height: 35px;
   line-height: 35px;
   color: white;
