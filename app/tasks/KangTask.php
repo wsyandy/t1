@@ -542,7 +542,7 @@ class KangTask extends \Phalcon\Cli\Task
     function fixUidAction($params)
     {
 
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and uid < 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $users = Users::findForeach($cond);
         foreach ($users as $user) {
@@ -553,7 +553,7 @@ class KangTask extends \Phalcon\Cli\Task
 
     function fixRUidAction($params)
     {
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and user_id > 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and user_id > 0 and uid < 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $rooms = Rooms::findForeach($cond);
         foreach ($rooms as $room) {
@@ -564,7 +564,7 @@ class KangTask extends \Phalcon\Cli\Task
 
     function fixUUidAction($params)
     {
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and uid < 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $unions = Unions::findForeach($cond);
         foreach ($unions as $union) {
