@@ -1226,29 +1226,28 @@ class Users extends BaseModel
                 continue;
             }
 
+            if($this->$k == $v){
+                info('未修改', $this->id, $k, $this->$k, $v);
+                continue;
+            }
+
             if ('nickname' == $k) {
-
                 list($res, $v) = BannedWords::checkWord($v);
-
                 if ($res) {
                     Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
                 }
 
                 $this->nickname = $v;
-
                 continue;
             }
 
             if ('monologue' == $k) {
-
                 list($res, $v) = BannedWords::checkWord($v);
-
                 if ($res) {
                     Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
                 }
 
                 $this->monologue = $v;
-
                 continue;
             }
 
@@ -1263,17 +1262,12 @@ class Users extends BaseModel
 
             if ('city_name' == $k) {
                 $city = Cities::findFirstByName($v);
-
-                debug($v);
-
                 if ($city) {
-
-                    debug($city->id);
-
                     $this->province_id = $city->province_id;
                     $this->city_id = $city->id;
                 }
 
+                debug($this->id, $k, $v, $this->city_id);
                 continue;
             }
 
@@ -1289,9 +1283,7 @@ class Users extends BaseModel
 
             if ('birthday' == $k) {
                 $time = strtotime($v);
-
                 $birthday = '';
-
                 if (date("Y") - date("Y", $time) < 18) {
                     $birthday = date("Y") - 18;
                 }
