@@ -773,8 +773,7 @@ trait UserAttrs
     function getUserCarGift()
     {
         $exist_user_gift = \UserGifts::findFirst(
-            ['conditions' => 'user_id = :user_id: and gift_type = :gift_type:
-         and status = :status: and expire_at > :expire_at:',
+            ['conditions' => 'user_id = :user_id: and gift_type = :gift_type: and status = :status: and expire_at > :expire_at:',
                 'bind' => ['user_id' => $this->id, 'gift_type' => GIFT_TYPE_CAR, 'status' => STATUS_ON, 'expire_at' => time()],
                 'order' => 'id desc'
             ]);

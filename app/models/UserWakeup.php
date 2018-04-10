@@ -864,4 +864,13 @@ trait UserWakeup
 
     }
 
+    static function pushIntoRoomRemind($user_id){
+
+        $user = Users::findFirstById($user_id);
+        //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
+        $user->pushFriendIntoRoomRemind();
+
+        //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
+        $user->pushFollowedIntoRoomRemind();
+    }
 }
