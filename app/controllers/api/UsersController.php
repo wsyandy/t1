@@ -252,14 +252,13 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
         }
 
-        $third_name = $this->params('third_name'); // qq, weixin
+        $third_name = $this->params('third_name'); // qq, weixin sinaweibo
         $third_gateway = \thirdgateway\Base::gateway($third_name);
         if (!$third_gateway) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
         }
 
         $context = $this->context();
-
         if ($third_name == 'qq') {
             $context['has_unionid'] = 1;
         }

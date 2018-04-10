@@ -500,8 +500,8 @@ trait UserWakeup
 
     function canReceiveRemindOnline()
     {
-        //没登陆就推送(离线状态客户端没上报)
-        if (!$this->isLogin()) {
+        //离线状态客户端没上报(活跃时间超过10分钟没更新默认为离线)
+        if (time() - $this->lastLoginAt() < 10 * 60) {
             info('user_id', $this->id);
             return false;
         }
@@ -688,8 +688,8 @@ trait UserWakeup
 
     function canReceiveRemindIntoRoom()
     {
-        //没登陆就推送
-        if (!$this->isLogin()) {
+        //离线状态客户端没上报(活跃时间超过10分钟没更新默认为离线)
+        if (time() - $this->lastLoginAt() < 10 * 60) {
             info('user_id', $this->id);
             return false;
         }

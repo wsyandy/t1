@@ -55,7 +55,7 @@ define('USER_UNSUBSCRIBE', 0); // 取消关注
 #第三方登陆
 define('THIRD_AUTH_THIRD_NAME_WEIXIN', 'weixin');//微信登陆
 define('THIRD_AUTH_THIRD_NAME_QQ', 'qq');//微信登陆
-define('THIRD_AUTH_THIRD_NAME_SINAWEIBO', 'sina');//微博登陆
+define('THIRD_AUTH_THIRD_NAME_SINAWEIBO', 'sinaweibo');//微博登陆
 
 //指定平台禁用该客户端主题
 define('VERSION_CODE_FORBIDDEN', -1);
@@ -258,3 +258,5 @@ define('HI_COIN_FEE_TYPE_WITHDRAW_RETURN', 7); //Hi币兑钻石
 //用户所属组织
 define('USER_ORGANISATION_PERSONAGE', 0);
 define('USER_ORGANISATION_COMPANY', 1);
+
+define('USER_TEST_BUG', 1);

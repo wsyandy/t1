@@ -278,6 +278,10 @@
                         <li><a href="/admin/activities/stat">活动统计</a></li>
                     {% endif %}
 
+                    {% if isAllowed('gift_stats', 'days') %}
+                        <li><a href="/admin/gift_stats/days">礼物统计</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}

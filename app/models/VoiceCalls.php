@@ -112,14 +112,14 @@ class VoiceCalls extends BaseModel
 
     static function findListByUser($reader, $page, $per_page)
     {
-        $conds = array(
-            'conditions' => 'sender_id = :sender_id: or receiver_id = :receiver_id:',
-            'bind' => array(
+        $conds = [
+            'conditions' => '(sender_id = :sender_id: or receiver_id = :receiver_id:)',
+            'bind' => [
                 'sender_id' => $reader->id,
                 'receiver_id' => $reader->id
-            ),
+            ],
             'order' => 'id desc'
-        );
+        ];
 
         $cache = \Users::getUserDb();
         $key = 'clear_voice_calls_user_' . $reader->id;

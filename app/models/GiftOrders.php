@@ -127,6 +127,7 @@ class GiftOrders extends BaseModel
         $gift_order->sender_union_type = $sender->union_type;
         $gift_order->sender_country_id = $sender->country_id;
         $gift_order->receiver_country_id = $receiver->country_id;
+        $gift_order->product_channel_id = $receiver->product_channel_id;
 
         if ($sender_id == $receiver_id) {
             $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;

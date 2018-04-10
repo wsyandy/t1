@@ -23,7 +23,7 @@ class WithdrawHistories extends BaseModel
      */
     private $_union;
 
-    static $TYPE = [WITHDRAW_TYPE_USER => '用户体体现', WITHDRAW_TYPE_UNION => '公会体现'];
+    static $TYPE = [WITHDRAW_TYPE_USER => '用户体提现', WITHDRAW_TYPE_UNION => '公会提现'];
     static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
 
     function afterUpdate()

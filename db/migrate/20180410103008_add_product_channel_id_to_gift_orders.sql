@@ -1,0 +1,1 @@
+ALTER TABLE gift_orders ADD COLUMN product_channel_id INTEGER ;
