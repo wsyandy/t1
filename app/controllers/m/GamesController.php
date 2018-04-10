@@ -67,6 +67,8 @@ class GamesController extends BaseController
                 $hot_cache->del($room_key);
                 $hot_cache->del($room_wait_key);
                 $hot_cache->del($room_info_key);
+                
+                info('解散房间', $room_key, $this->currentUser()->id, $user_num);
             }
         }
 
