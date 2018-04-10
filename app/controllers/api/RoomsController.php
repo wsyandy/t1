@@ -207,7 +207,7 @@ class RoomsController extends BaseController
         $hot_cache = \Users::getHotWriteCache();
         $cache_key = 'push_into_room_remind_'.$this->currentUser()->id;
         if(!$hot_cache->get($cache_key)){
-            $hot_cache->setex($cache_key, 180, time());
+            $hot_cache->setex($cache_key, 300, time());
             \Users::delay()->pushIntoRoomRemind($this->currentUser()->id);
         }
 

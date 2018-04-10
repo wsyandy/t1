@@ -14,7 +14,7 @@ class AlbumsController extends BaseController
 
     function indexAction()
     {
-        $page = $this->params('page');
+        $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 9);
         $user = $this->currentUser();
         //AUTH_SUCCESS
