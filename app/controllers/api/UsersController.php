@@ -304,7 +304,6 @@ class UsersController extends BaseController
         }
 
         $context['login_type'] = $third_name;
-
         list($error_code, $error_reason) = $user->clientLogin($context, $device);
 
         if ($error_code != ERROR_CODE_SUCCESS) {
