@@ -227,7 +227,12 @@ class WithdrawHistories extends BaseModel
         $titles = ['日期', '用户id', '姓名', '支付宝账号', '提现金额'];
         $data = [];
         foreach ($withdraw_histories as $withdraw_history) {
-            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $withdraw_history->user_name, $withdraw_history->alipay_account, $withdraw_history->amount];
+
+            if (mb_strlen($withdraw_history->user_name) < 2) {
+                $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, '', $withdraw_history->alipay_account, $withdraw_history->amount];
+            } else {
+                $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $withdraw_history->user_name, $withdraw_history->alipay_account, $withdraw_history->amount];
+            }
         }
         $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
