@@ -1589,8 +1589,41 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         $db = Users::getUserDb();
 
-        //self::saveLastFieldRankList($user_id, $field);
+        $user = Users::findFirstById(1072375);
+        $current_rank = $user->myFieldRank('total', 'wealth');
+        echoLine($current_rank);
+
         $total_key = "total_wealth_rank_list";
+        echoLine($db->zrrank($total_key, 1072375));
+
+//        //self::saveLastFieldRankList($user_id, $field);
+//        $total_key = "total_wealth_rank_list";
+//        $score = $db->zscore($total_key, 1088331);
+//        $db->zadd($total_key, $score, 153690);
+//        $db->zrem($total_key, 1088331);
+//        echoLine($score);
+
+        //self::saveLastFieldRankList($user_id, $field);
+
+        $day_key = "day_wealth_rank_list_" . date("Ymd");
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $week_key = "week_wealth_rank_list_" . $start . "_" . $end;
+        $total_key = "total_wealth_rank_list";
+
+//        $score = $db->zscore($total_key, 1004867);
+//        $db->zadd($total_key, $score, 153700);
+//        $db->zrem($total_key, 1004867);
+
+        $score = $db->zscore($day_key, 1004867);
+        $db->zadd($day_key, $score, 153700);
+        $db->zrem($day_key, 1004867);
+
+        $score = $db->zscore($week_key, 1004867);
+        $db->zadd($week_key, $score, 153700);
+        $db->zrem($week_key, 1004867);
+
+        echoLine($score);
 
         $cond['conditions'] = 'organisation = ' . USER_ORGANISATION_COMPANY;
 
