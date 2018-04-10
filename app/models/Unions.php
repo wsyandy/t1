@@ -150,6 +150,7 @@ class Unions extends BaseModel
             $union->need_apply = $need_apply;
             $union->product_channel_id = $user->product_channel_id;
             $union->user_id = $user->id;
+            $union->status = STATUS_ON;
             $union->auth_status = AUTH_SUCCESS;
             $union->mobile = $user->mobile;
             $union->type = UNION_TYPE_PRIVATE;
