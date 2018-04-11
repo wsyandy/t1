@@ -99,8 +99,10 @@ class EmoticonImages extends BaseModel
      * 获取有效的表情
      * @return PaginationModel
      */
-    static function findValidList($page, $per_page = 10)
+    static function findValidList($user, $page, $per_page = 10)
     {
+        $platform = $user->platform;
+        $product_channel_id = $user->product_channel_id;
         $cond = [
             'conditions' => 'status = :status:',
             'bind' => [
@@ -108,6 +110,13 @@ class EmoticonImages extends BaseModel
             ],
             'order' => 'rank desc'
         ];
+
+        $cond['conditions'] .= " and ( platforms like '*' or platforms like :platforms: or platforms = '')";
+        $cond['bind']['platforms'] = "%" . $platform . "%";
+
+        $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+        $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+
         return self::findPagination($cond, $page, $per_page);
     }
 }
