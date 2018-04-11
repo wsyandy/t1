@@ -47,11 +47,13 @@ class MenTask extends \Phalcon\Cli\Task
     function insertUserAction()
     {
 
-        $user = Users::findFirstById(31430);
-        $user->product_channel_id = 2;
-        $user->save();
+        $users = Users::findByIds([31429, 31399, 31346, 31310]);
+        foreach ($users as $user) {
+            $user->product_channel_id = 2;
+            $user->save();
+        }
 
-        $device = Devices::findFirstById(250);
+        $device = Devices::findFirstById(211);
         $device->product_channel_id = 2;
         $device->save();
     }

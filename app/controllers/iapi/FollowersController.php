@@ -34,7 +34,12 @@ class FollowersController extends BaseController
         $users = $this->currentUser()->followedList($page, $per_page);
 
         if (count($users)) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
+
+            foreach ($users as $user){
+                $user->isFollow($this->currentUser());
+            }
+            
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$users->toJson('users', 'toRelationJson'));
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');

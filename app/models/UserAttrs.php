@@ -160,7 +160,8 @@ trait UserAttrs
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'followed'=>$this->followed
         ];
 
         if (isset($this->friend_status)) {
