@@ -632,14 +632,16 @@ class YangTask extends \Phalcon\Cli\Task
 
     function fixGiftOrdersAction()
     {
-        $gift_orders = GiftOrders::findForeach([
-            'conditions' => 'product_channel_id is null'
+        $gift_orders = \GiftOrders::find([
+            'conditions' => 'product_channel_id is null',
+            'order' => 'id desc'
         ]);
 
         foreach ($gift_orders as $gift_order) {
             $gift_order->product_channel_id = $gift_order->user->product_channel_id;
-            debug($gift_order->id, $gift_order->user->product_channel_id);
-            $gift_order->update();
+            if (!$gift_order->update()) {
+                debug('update gift_order false', $gift_order->id, $gift_order->user->product_channel_id);
+            }
         }
     }
 }
