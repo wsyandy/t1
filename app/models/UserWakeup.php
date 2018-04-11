@@ -178,7 +178,6 @@ trait UserWakeup
 
             // 保存任务
             $receiver->saveExecutedOfflineTaskId($task_id);
-            info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
                 info('can push', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
                 PushMessages::delay(1)->sendMessage($receiver);
