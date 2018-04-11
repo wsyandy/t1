@@ -123,7 +123,7 @@ class Rooms extends BaseModel
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
             'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
-            'theme_image_url' => $this->theme_image_url
+            'theme_image_url' => $this->theme_image_url, 'uid'=>$this->uid
         ];
     }
 
