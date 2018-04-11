@@ -5,6 +5,7 @@
  * Date: 2018/2/24
  * Time: 下午4:05
  */
+
 namespace iapi;
 
 class RoomThemesController extends BaseController
@@ -13,7 +14,7 @@ class RoomThemesController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 100);
-        $room_themes = \RoomThemes::findValidList($page, $per_page);
+        $room_themes = \RoomThemes::findValidList($this->currentUser(), $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_themes->toJson('room_themes', 'toSimpleJson'));
     }
 }
