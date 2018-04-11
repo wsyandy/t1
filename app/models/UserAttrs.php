@@ -202,7 +202,8 @@ trait UserAttrs
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'followed_num' => $this->followed_num
         ];
 
         return $data;
