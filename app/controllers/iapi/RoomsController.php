@@ -40,9 +40,10 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
         $new = intval($this->params('new', 0));
+        $country_id = intval($this->params('country_id', 0));
         $product_channel_id = $this->currentProductChannelId();
 
-        $opts = ['product_channel_id' => $product_channel_id, 'hot' => $hot, 'new' => $new];
+        $opts = ['country_id' => $country_id, 'product_channel_id' => $product_channel_id, 'hot' => $hot, 'new' => $new];
 
         $rooms = \Rooms::searchRooms($opts, $page, $per_page);
 
