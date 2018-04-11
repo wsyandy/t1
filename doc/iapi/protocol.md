@@ -29,6 +29,7 @@
 4. 用户使用条款 url://im/product_channels/user_agreement
 5. 我的礼物(h5)  url://im/gift_orders
 6. 用户等级说明  url://im/users/level_introduce
+7. 举报  url://m/complaints
 
 ## http协议
 1. 内部打开第三方h5页面 http://www.baidu.com
