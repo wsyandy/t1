@@ -188,16 +188,15 @@ class Devices extends BaseModel
     function setMarketingStartAppMuid($muid)
     {
         $user_db = \Users::getUserDb();
-        $marketing_start_app_key = 'marketing_api_start_app_muid';
-        $user_db->zadd($marketing_start_app_key, time(), md5($muid));
-        $user_db->expire($marketing_start_app_key, 2 * 24 * 60 * 60);
+        $marketing_start_app_key = 'marketing_api_start_app_muid_' . md5($muid);
+        $user_db->setex($marketing_start_app_key, md5($muid), 2 * 24 * 60 * 60);
     }
 
     static function getMarketingStartAppMuid($muid)
     {
         $user_db = \Users::getUserDb();
-        $marketing_start_app_key = 'marketing_api_start_app_muid';
-        return $user_db->zscore($marketing_start_app_key, $muid);
+        $marketing_start_app_key = 'marketing_api_start_app_muid_' . $muid;
+        return $user_db->get($marketing_start_app_key);
     }
 
     private function generateSid()
