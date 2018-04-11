@@ -400,8 +400,8 @@ class UsersController extends BaseController
 
     function searchAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page', 10);
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 3);
 
         $keywords = $this->params('keywords');
         if (!$keywords) {
@@ -409,9 +409,10 @@ class UsersController extends BaseController
         }
 
         info('$keywords', 'is_int', is_integer($keywords), 'is_string', is_string($keywords), $keywords);
-        if (is_int($keywords)) {
-            $user_cond = ['uid' => intval($keywords)];
-            $room_cond = ['id' => intval($keywords), 'product_channel_id' => $this->currentProductChannel()->id];
+        //搜索
+        if (preg_match('/^[0-9]*$/', $keywords)) {
+            $user_cond = ['uid' => intval($keywords), 'nickname' => $keywords];
+            $room_cond = ['id' => intval($keywords), 'name' => $keywords, 'product_channel_id' => $this->currentProductChannel()->id];
         } else {
             $user_cond = ['nickname' => $keywords];
             $room_cond = ['name' => $keywords, 'product_channel_id' => $this->currentProductChannel()->id];
@@ -630,7 +631,7 @@ class UsersController extends BaseController
 
         $user_cond = ['user_type' => USER_TYPE_ACTIVE];
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 5);
+        $per_page = $this->params('per_page', 2);
         $users = \Users::search($this->currentUser(), $page, $per_page, $user_cond);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));

@@ -566,7 +566,7 @@ class RoomsController extends BaseController
 
         $room_cond = ['hot' => STATUS_ON];
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 5);
+        $per_page = $this->params('per_page', 2);
 
         $rooms = \Rooms::searchRooms($room_cond, $page, $per_page);
 

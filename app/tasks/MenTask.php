@@ -11,14 +11,14 @@ class MenTask extends \Phalcon\Cli\Task
 
     function testAction()
     {
-        $user = Users::findFirstById(31421);
+//        $user = Users::findFirstById(31421);
 //        $user->union_id = 0;
 //        $user->union_type = 0;
-        $user->sid = $user->generateSid('s');
-        $user->mobile = 13212345671;
-        $user->user_status = USER_STATUS_ON;
-        $user->save();
-        echoLine($user->id);
+//        $user->sid = $user->generateSid('s');
+//        $user->mobile = 13212345671;
+//        $user->user_status = USER_STATUS_ON;
+//        $user->save();
+//        echoLine($user->id);
 //
 
 //        $union = Unions::findFirstById(3);
@@ -41,21 +41,23 @@ class MenTask extends \Phalcon\Cli\Task
 //            $db->zadd($union->generateUsersKey(), time(), $a);
 //        }
 
-
+        $keywords = '13a2';
+        $rs = preg_match('/^[0-9]*$/', $keywords);
+        echoLine($rs);
     }
 
     function insertUserAction()
     {
 
-        $users = Users::findByIds([31429, 31399, 31346, 31310]);
-        foreach ($users as $user) {
-            $user->product_channel_id = 2;
-            $user->save();
-        }
-
-        $device = Devices::findFirstById(211);
-        $device->product_channel_id = 2;
-        $device->save();
+//        $users = Users::findByIds([31429, 31399, 31346, 31310]);
+//        foreach ($users as $user) {
+//            $user->product_channel_id = 2;
+//            $user->save();
+//        }
+//
+//        $device = Devices::findFirstById(211);
+//        $device->product_channel_id = 2;
+//        $device->save();
     }
 
 
