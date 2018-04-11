@@ -1226,7 +1226,7 @@ class Users extends BaseModel
                 continue;
             }
 
-            if($this->$k == $v){
+            if ($this->$k == $v) {
                 info('未修改', $this->id, $k, $this->$k, $v);
                 continue;
             }
@@ -1598,6 +1598,34 @@ class Users extends BaseModel
             $user_db->zrem($added_key, $other_user->id);
             $user_db->zadd($friend_list_key, $time, $other_user->id);
         }
+    }
+
+    function refuseAddFriend($other_user)
+    {
+        $add_key = 'add_friend_list_user_id_' . $other_user->id;
+        $added_key = 'added_friend_list_user_id_' . $this->id;
+
+        $add_total_key = 'friend_total_list_user_id_' . $this->id;
+        $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
+
+        $user_db = Users::getUserDb();
+
+        if ($user_db->zscore($add_key, $this->id)) {
+            $user_db->zrem($add_key, $this->id);
+        }
+
+        if ($user_db->zscore($added_key, $other_user->id)) {
+            $user_db->zrem($added_key, $other_user->id);
+        }
+
+        if ($user_db->zscore($add_total_key, $other_user->id)) {
+            $user_db->zrem($add_total_key, $other_user->id);
+        }
+
+        if ($user_db->zscore($other_total_key, $this->id)) {
+            $user_db->zrem($other_total_key, $this->id);
+        }
+
     }
 
     //清空添加好友信息
