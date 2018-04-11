@@ -115,12 +115,8 @@ trait UserWakeup
     static function asyncLoopOfflineTask($receiver_id)
     {
 
-        info($receiver_id);
-
         $receiver = Users::findFirstById($receiver_id);
-
         if (!$receiver) {
-            info($receiver_id);
             return;
         }
 
@@ -147,9 +143,6 @@ trait UserWakeup
 
         // 进入下个15分钟循环
         $step_time = $receiver->offlineTaskStepTime();
-
-        info($receiver->id, $offline_minute, 'step', $step_time);
-
         // 离线推送 22:30 - 08:00 不推送
         if (isProduction()) {
             $cur_hour = intval(date('H'));
@@ -165,10 +158,6 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
-//        if ($receiver->isWxPlatform()) {
-//            $wake_minutes = [60, 24 * 60];
-//        }
-
         foreach ($wake_minutes as $minute) {
             // 小于循环时间的一半
             if ($minute && abs($offline_minute - $minute) * 2 * 60 < $step_time) {
@@ -178,25 +167,25 @@ trait UserWakeup
         }
 
         if (empty($task_id)) {
-            info('no task', $receiver->id, $offline_time);
+            info('no task', $receiver->id, 'min', $offline_minute, 'step', $step_time);
             return;
         }
 
         $is_executed = $receiver->isExecutedOfflineTask($task_id);
         if (!$is_executed) {
 
-            info('running task', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute);
+            info('running task', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
 
             // 保存任务
             $receiver->saveExecutedOfflineTaskId($task_id);
             info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
-                info('push', $receiver->id);
+                info('can push', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
                 PushMessages::delay(1)->sendMessage($receiver);
             }
 
         } else {
-            info('executed', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute);
+            info('executed', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
         }
     }
 
