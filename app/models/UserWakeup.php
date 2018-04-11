@@ -23,7 +23,7 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->user_status != USER_STATUS_ON) {
+        if ($this->isBlocked()) {
             return false;
         }
 
