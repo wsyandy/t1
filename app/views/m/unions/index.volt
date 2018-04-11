@@ -33,7 +33,7 @@
         <div class="family_introduce">
             <div class="family_introduce_title">【 家族说明 】</div>
             <ul>
-                <li v-for="(item,i) in family_introduce">
+                <li v-for="(item,i) in family_introduce" :class="{font_weight_bold:i==6}">
                     ${ i+1 }. ${ item }
                 </li>
             </ul>
@@ -74,7 +74,8 @@
                 "每个用户只能加入一个家族，不能重复加入。",
                 '退出家族时，如果家族会长同意可立即退出家族，如果家族会长未审批，7天后自动退出家族。',
                 "会长可以设置新成员加入方式，所有人都可以加入或者需要申请才能加入。",
-                "上热门申请通过后，在申请时间内，用户不开房间，家族会长和该用户会受到一定处罚哦。"
+                "上热门申请通过后，在申请时间内，用户不开房间，家族会长和该用户会受到一定处罚哦。",
+                "官方专属客服：微信：afair3  QQ：327041264"
             ]
         },
         created: function () {
