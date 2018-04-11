@@ -39,21 +39,20 @@ trait BannerInternational
             'conditions' => "id in ({$product_channel_banner_ids}) and status=:status: and " .
                 "(platforms like '*' or platforms = '' or platforms like :platforms:)",
             'bind' => ['status' => STATUS_ON, 'platforms' => '%' . $platform . '%'],
-            'order' => 'rank desc,id desc'];
-
-        info($basic_cond);
+            'order' => 'rank desc,id desc'
+        ];
 
 
         foreach ($fields as $key => $value) {
             if ($value) {
-                $banner_cond = $basic_cond;
-                $banner_cond['conditions'] .= "and $key = :$key:";
-                $banner_cond['bind'][$key] = $value;
-                debug($banner_cond);
+                $basic_cond['conditions'] .= "and $key = :$key:";
+                $basic_cond['bind'][$key] = $value;
             }
         }
 
-        $banners = self::find($banner_cond);
+        info($basic_cond);
+
+        $banners = self::find($basic_cond);
 
         return $banners;
 
