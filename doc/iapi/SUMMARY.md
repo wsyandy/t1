@@ -16,7 +16,7 @@
 * [麦位](room_seat.md)
 ;* [声网信令](signaling.md)
 ;* [环信接口](emchat.md)
-;* [礼物](gifts.md)
+* [礼物](gifts.md)
 ;* [设置](set.md)
 ;* [语音通话](voice_calls.md)
 ;* [系统消息](chats.md)
