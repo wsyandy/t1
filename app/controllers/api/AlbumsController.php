@@ -14,7 +14,7 @@ class AlbumsController extends BaseController
 
     function indexAction()
     {
-        $page = $this->params('page');
+        $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 9);
         $user = $this->currentUser();
         //AUTH_SUCCESS
@@ -33,17 +33,15 @@ class AlbumsController extends BaseController
         $user = $this->currentUser();
 
         $image_files = [];
-
         for ($i = 0; $i < 27; $i++) {
             $image_file = $this->file('image_file' . $i);
-
-            if ($image_file) {
-                $image_files[] = $image_file;
+            if (!$image_file) {
+                break;
             }
+            $image_files[] = $image_file;
         }
 
         $res = \Albums::uploadImage($user, $image_files);
-
         if ($res) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
         }

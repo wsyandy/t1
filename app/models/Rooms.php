@@ -1933,4 +1933,54 @@ class Rooms extends BaseModel
 
         return $rooms;
     }
+
+    //服务端控制用户退出房间
+    static function exitRoomByServer($user_id, $room_id, $room_seat_id)
+    {
+        info($user_id, $room_id, $room_seat_id);
+
+        $room = Rooms::findFirstById($room_id);
+        $user = Users::findFirstById($user_id);
+
+        if (!$room || !$user) {
+            info("param error");
+            return;
+        }
+
+        if (!$user->current_room_id) {
+            info("user_not_in_room", $user_id, $room_id, $room_seat_id);
+            return;
+        }
+
+        $room_seat = RoomSeats::findFirstById($room_seat_id);
+
+        //用户重连不踢出用户
+        if ($user->getUserFd()) {
+
+            //如果用户已经连接并且不在被踢的房间 则只清楚房间信息 不发踢人websocket
+            if ($room_id && $user->current_room_id != $room_id) {
+                $room->exitRoom($user);
+            }
+
+            if ($room_seat_id && $user->current_room_seat_id != $room_seat_id) {
+                $room_seat->down($user);
+            }
+
+            info("user_re_connect", $user_id);
+            return;
+        }
+
+        $exce_exit_room_key = "exce_exit_room_id{$room->id}";
+        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
+        $current_room_seat_id = '';
+
+        if ($room_seat) {
+            $current_room_seat_id = $room_seat->id;
+            $room_seat->down($user);
+        }
+
+        $room->exitRoom($user);
+        $room->pushExitRoomMessage($user, $current_room_seat_id);
+        unlock($exce_exit_room_lock);
+    }
 }

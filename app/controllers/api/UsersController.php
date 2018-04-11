@@ -345,7 +345,6 @@ class UsersController extends BaseController
         $user = $this->currentUser();
 
         $avatar_file = $this->file('avatar_file');
-
         if ($avatar_file) {
             $user->updateAvatar($avatar_file);
         }
@@ -353,7 +352,6 @@ class UsersController extends BaseController
         $params = $this->params();
         $monologue = fetch($params, 'monologue');
         $birthday = fetch($params, 'birthday');
-
         if ($monologue && mb_strlen($monologue) > 250) {
             return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
         }

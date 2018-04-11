@@ -194,6 +194,17 @@
                         <li><a href="/admin/stats/days">按天统计</a></li>
                     {% endif %}
 
+                    {% if isAllowed('active_users','day_rank_list') or isAllowed('active_users','month_rank_list') %}
+                        <li class="dropdown-submenu">
+                            <a href="javascript:;" tabindex="-1">在线用户统计</a>
+                            <ul class="dropdown-menu">
+                                {% if isAllowed('active_users','day_rank_list') %}
+                                    <li><a href="/admin/active_users/day_rank_list">按天统计</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {% if isAllowed('sms_histories','push_stat') %}
                         <li class="dropdown-submenu">
                             <a href="javascript:;" tabindex="-1">短信下发统计</a>
@@ -263,16 +274,6 @@
                             </ul>
                         </li>
                     {% endif %}
-                    {% if isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') %}
-                        <li class="dropdown-submenu">
-                            <a href="javascript:;" tabindex="-1">活跃用户统计</a>
-                            <ul class="dropdown-menu">
-                                {% if isAllowed('active_users','day_rank_list') %}
-                                    <li><a href="/admin/active_users/day_rank_list">按天统计</a></li>
-                                {% endif %}
-                            </ul>
-                        </li>
-                    {% endif %}
 
                     {% if isAllowed('activities', 'stat') %}
                         <li><a href="/admin/activities/stat">活动统计</a></li>
@@ -327,8 +328,14 @@
                     {% if isAllowed('marketing_configs', 'index') %}
                         <li><a href="/admin/marketing_configs">腾讯marketing配置</a></li>
                     {% endif %}
+                    {% if isAllowed('soft_versions','index') %}
+                        <li><a href="/admin/soft_versions">软件升级管理</a></li>
+                    {% endif %}
                     {% if isAllowed('sms_channels','index') %}
                         <li><a href="/admin/sms_channels">短信渠道</a></li>
+                    {% endif %}
+                    {% if isAllowed('payment_channels', 'index') %}
+                        <li><a href="/admin/payment_channels">支付配置</a></li>
                     {% endif %}
                     {% if isAllowed('provinces','index') %}
                         <li><a href="/admin/provinces">省市管理</a></li>
@@ -336,14 +343,8 @@
                     {% if isAllowed('countries','index') %}
                         <li><a href="/admin/countries">国家管理</a></li>
                     {% endif %}
-                    {% if isAllowed('soft_versions','index') %}
-                        <li><a href="/admin/soft_versions">软件升级管理</a></li>
-                    {% endif %}
                     {% if isAllowed('export_histories','index') %}
                         <li><a href="/admin/export_histories">导出记录</a></li>
-                    {% endif %}
-                    {% if isAllowed('payment_channels', 'index') %}
-                        <li><a href="/admin/payment_channels">支付配置</a></li>
                     {% endif %}
                 </ul>
             </li>

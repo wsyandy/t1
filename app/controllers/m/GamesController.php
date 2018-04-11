@@ -53,6 +53,7 @@ class GamesController extends BaseController
             $amount = 0;
             $room_host_id = $this->currentUser()->id;
             $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
+            $hot_cache->hset($room_info_key, 'room_create_at', time());
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
             $hot_cache->expire($room_wait_key, 600);
@@ -62,11 +63,14 @@ class GamesController extends BaseController
             $room_host_id = fetch($info, 'room_host_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
+            $room_create_at = fetch($info, 'room_create_at');
             // 修复数据
-            if (!$pay_type && $user_num) {
+            if (!$pay_type && $user_num && $room_create_at < time() - 180) {
                 $hot_cache->del($room_key);
                 $hot_cache->del($room_wait_key);
                 $hot_cache->del($room_info_key);
+
+                info('解散房间', $room_key, $this->currentUser()->id, $user_num);
             }
         }
 
@@ -99,7 +103,7 @@ class GamesController extends BaseController
 
         $can_enter_at = fetch($info, 'can_enter_at');
         if ($can_enter_at && time() - $can_enter_at > 30) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
+            return $this->renderJSON(ERROR_CODE_FAIL, '本次比赛已开始,您暂时无法进入');
         }
 
         $current_user = $this->currentUser();
@@ -115,7 +119,7 @@ class GamesController extends BaseController
             $hot_cache->hset($room_info_key, 'amount', $amount);
         }
 
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $pay_type, $amount);
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
 
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
@@ -144,7 +148,7 @@ class GamesController extends BaseController
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $room_id.'_'.$body['user_id'];
+        $body['room_id'] = $room_id;
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
@@ -188,7 +192,7 @@ class GamesController extends BaseController
         $can_enter = fetch($info, 'can_enter');
         $can_enter_at = fetch($info, 'can_enter_at');
         if ($can_enter_at && time() - $can_enter_at > 30) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已开始,暂无法进入');
+            return $this->renderJSON(ERROR_CODE_FAIL, '本次比赛已开始,您暂时无法进入');
         }
 
         $data = $users->toJson('users', 'toSimpleJson');
@@ -281,7 +285,7 @@ class GamesController extends BaseController
         $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
         $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
         if ($can_enter) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已开始游戏');
+            return $this->renderJSON(ERROR_CODE_FAIL, '游戏已开始');
         }
 
         if ($room_host_id == $this->currentUser()->id) {

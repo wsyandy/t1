@@ -87,7 +87,7 @@
 
             </div>
 
-            <div class="less_30_hi_coin" v-show="less_30_hi_coin">
+            <div class="less_hi_coin" v-show="less_hi_coin">
                 至少30Hi币才能兑换钻石
             </div>
 
@@ -123,7 +123,7 @@
             is_tips: false,
             no_hi_coin: false,
             is_custom: false,
-            less_30_hi_coin: false
+            less_hi_coin: false
         },
         methods: {
             choiceHiCoinAction: function (product_id, hi_coin, diamond, gold) {
@@ -149,7 +149,7 @@
             customChangeAction: function () {
                 this.cur_diamond = this.cur_hi_coin * this.hi_coin_diamond_rate;
                 this.no_hi_coin = this.cur_hi_coin < 30;
-                this.less_30_hi_coin = this.cur_hi_coin < 30;
+                this.less_hi_coin = this.cur_hi_coin < 30;
             },
             cancelAction: function () {
                 this.product_id = null;
@@ -160,7 +160,7 @@
                 this.cur_gold = 0;
                 this.no_hi_coin = false;
                 this.is_custom = false;
-                this.less_30_hi_coin = false;
+                this.less_hi_coin = false;
             },
             exchangeDiamondsAction: function () {
 
@@ -169,7 +169,7 @@
 
                 //自定义兑换不能小于30
                 if (post_data.product_id == null && post_data.hi_coins < 30) {
-                    this.less_30_hi_coin = true;
+                    this.less_hi_coin = true;
                     return;
                 }
 

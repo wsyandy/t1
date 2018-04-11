@@ -48,16 +48,6 @@ class RoomsController extends BaseController
             'order' => 'last_at desc, user_type asc'
         ];
 
-//        $ip = $this->remoteIp();
-//        $ip_list = "permit_ip_list";
-//        $hot_cache = \Users::getHotWriteCache();
-//        $ips = $hot_cache->zrange($ip_list, 0, -1);
-
-//        if (count($ips) > 0) {
-//            if (in_array($ip, $ips)) {
-//            }
-//        }
-
         if (STATUS_ON == $hot) {
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
@@ -187,7 +177,6 @@ class RoomsController extends BaseController
     {
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
-
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -195,11 +184,8 @@ class RoomsController extends BaseController
 
         //如果进入其他房间时 用户身上有房间 先退出房间
         $current_room = $this->currentUser()->current_room;
-
-        info($this->currentUser()->sid, $this->currentUser()->current_room_id, $room_id);
-
         if ($current_room && $current_room->id != $room_id) {
-            info($this->currentUser()->sid, $current_room->id, $room_id);
+            info('Exce exit',$this->currentUser()->id, $current_room->id, $room_id);
             $current_room->exitRoom($this->currentUser());
         }
 
@@ -208,11 +194,12 @@ class RoomsController extends BaseController
         $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
         $app_id = $this->currentProductChannel()->getImAppId();
 
-        //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
-        $this->currentUser()->pushFriendIntoRoomRemind();
-
-        //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
-        $this->currentUser()->pushFollowedIntoRoomRemind();
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'push_into_room_remind_'.$this->currentUser()->id;
+        if(!$hot_cache->get($cache_key)){
+            $hot_cache->setex($cache_key, 300, time());
+            \Users::delay()->pushIntoRoomRemind($this->currentUser()->id);
+        }
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
@@ -222,7 +209,6 @@ class RoomsController extends BaseController
         $res['user_role'] = $this->currentUser()->user_role;
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
-
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
