@@ -180,7 +180,12 @@
         {% endif %}
 
         <!-- 统计 -->
-        {% if isAllowed('stats','hours') or isAllowed('stats','days') %}
+        {% if isAllowed('stats','hours') or isAllowed('stats','days') or isAllowed('active_users','day_rank_list') or
+            isAllowed('active_users','month_rank_list') or isAllowed('sms_histories','push_stat') or isAllowed('stats','partners')
+            or isAllowed('wap_visits','index') or isAllowed('word_visits','days') or isAllowed('stats', 'stat_room_time') or
+            isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') or
+            isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') or isAllowed('activities', 'stat') or
+            isAllowed('gift_stats', 'days') %}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
