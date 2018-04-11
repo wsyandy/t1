@@ -10,80 +10,49 @@
         礼物
     </label>
     <select name="gift_id" id="gift_id" class="selectpicker" data-live-search="true">
-        {{ options(gift_ids, gift_id, 'id', 'name') }}
+        {{ options(gifts, gift_id, 'id', 'name') }}
     </select>
 
-
-    <label for="year">年份</label>
-    <select name="year" id="year">
-        {{ options(year_array,year) }}
-    </select>
-    <label for="month">月份</label>
-    <select name="month" id="month">
-        {{ options(Stats.MONTH,month) }}
-    </select>
-
+    <label for="stat_at">时间</label>
+    <input name="stat_at" type="text" id="stat_at" class="form_datetime" value="{{ stat_at }}"/>
 
     <button class="ui button" type="submit">搜索</button>
 </form>
 
-<table class="table table-striped table-condensed">
-    <thead>
-    <tr>
-        <th>项目/日期</th>
-        <th>累计</th>
-        {% for index,day in day_array %}
-            <th>{{ index }}</th>
-        {% endfor %}
-        <th>累计</th>
-        <th>项目/日期</th>
-    </tr>
-    </thead>
-    <tbody id="stat_list">
+{%- macro gift_num_link(gift_stat) %}
+    <div id="gift_num_{{ gift_stat.id }}"></div>
+{%- endmacro %}
+{%- macro gift_user_link(gift_stat) %}
+    <div id="gift_user_{{ gift_stat.id }}"></div>
+{%- endmacro %}
+{%- macro gift_total_link(gift_stat) %}
+    <div id="gift_total_{{ gift_stat.id }}"></div>
+{%- endmacro %}
 
-    {% for index, text in data_array %}
-        <tr id="{{ index }}" class="row_line">
-            <td>{{ text }}</td>
-            <td class="total"></td>
-            {% for day in day_array %}
-                <td id="{{ index }}_{{ day }}"></td>
-            {% endfor %}
-            <td class="total"></td>
-            <td>{{ text }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
+{{ simple_table(gift_stats,['礼物':'gift_name','礼物赠送总次数':'gift_num_link','礼物赠送总人数':'gift_user_link','礼物赠送总个数':'gift_total_link']) }}
 
 <script type="text/javascript">
 
     $(function () {
-
         $('.selectpicker').selectpicker();
-
         {% for gift_stat in gift_stats %}
         {% for index, value in gift_stat.data | json_decode %}
-        $("#{{ index }}_{{ gift_stat.stat_at_date }}").html({{ value }});
+        $("#{{ index }}_{{ gift_stat.id }}").html({{ value }});
         {% endfor %}
         {% endfor %}
+    });
 
-        $(".row_line").each(function () {
-            var total = 0;
-            $(this).find("td[id]").each(function (index, element) {
-                var value = $(this).html();
-                if ("" !== value) {
-                    total += parseFloat(value);
-                }
-            });
-            var text = $(this).find("td:eq(0)").html();
+</script>
 
-            if (text.indexOf("%") < 0) {
-                total = Math.ceil(total);
-                $(this).find(".total").html(total);
-            }
+<script type="text/javascript">
 
-        });
-
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2
     });
 </script>
