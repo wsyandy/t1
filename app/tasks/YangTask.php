@@ -639,8 +639,7 @@ class YangTask extends \Phalcon\Cli\Task
         foreach ($gift_orders as $gift_order) {
             $gift_order->product_channel_id = $gift_order->user->product_channel_id;
             debug($gift_order->id, $gift_order->user->product_channel_id);
-            $gift_order->save();
+            $gift_order->update();
         }
-
     }
 }

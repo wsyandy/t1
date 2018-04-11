@@ -8,30 +8,29 @@
  */
 class GiftStatsTask extends \Phalcon\Cli\Task
 {
+
     function dayAction()
     {
         $time = time() - 1800;
 
         $stat_at = beginOfDay($time); // 零点
-
         $end_at = endOfDay($time);
 
         $basic_gift_cond = ['conditions' => 'created_at >= :start: and created_at < :end:' . ' and status = :status:',
             'bind' => ['start' => $stat_at, 'end' => $end_at, 'status' => GIFT_ORDER_STATUS_SUCCESS]];
 
-        $gift_orders = GiftOrders::find($basic_gift_cond);
-
+        //-1代表全部
         $product_channel_ids = [-1];
-        $gift_ids = [-1];
+        $gift_ids = [];
 
-        foreach ($gift_orders as $gift_order) {
-            if (!in_array($gift_order->product_channel_id, $product_channel_ids)) {
-                $product_channel_ids[] = $gift_order->product_channel_id;
-            }
+        $product_channels = \ProductChannels::find(['order' => ' id desc', 'column' => 'id']);
+        foreach ($product_channels as $product_channel) {
+            $product_channel_ids[] = $product_channel->id;
+        }
 
-            if (!in_array($gift_order->gift_id, $gift_ids)) {
-                $gift_ids[] = $gift_order->gift_id;
-            }
+        $gifts = \Gifts::find(['order' => ' id desc', 'column' => 'id']);
+        foreach ($gifts as $gift) {
+            $gift_ids[] = $gift->id;
         }
 
         $fields = GiftStats::$STAT_FIELDS;
@@ -39,7 +38,6 @@ class GiftStatsTask extends \Phalcon\Cli\Task
         foreach ($product_channel_ids as $product_channel_id) {
 
             foreach ($gift_ids as $gift_id) {
-                echoLine($product_channel_id . '--' . $gift_id);
 
                 $day_conds = ['stat_at' => $stat_at, 'product_channel_id' => $product_channel_id, 'gift_id' => $gift_id];
 
@@ -75,7 +73,7 @@ class GiftStatsTask extends \Phalcon\Cli\Task
 
 
                 if (!$stat->needSave()) {
-                    debug('false needSave continue', $day_conds, $stat->data_hash);
+                    debug('false needSave continue', $gift_cond, $stat->data_hash);
                     continue;
                 }
 
