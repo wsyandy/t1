@@ -115,8 +115,12 @@ trait UserWakeup
     static function asyncLoopOfflineTask($receiver_id)
     {
 
+        info($receiver_id);
+        
         $receiver = Users::findFirstById($receiver_id);
+
         if (!$receiver) {
+            info($receiver_id);
             return;
         }
 
