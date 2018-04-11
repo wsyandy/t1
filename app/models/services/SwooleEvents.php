@@ -145,7 +145,7 @@ class SwooleEvents extends \BaseModel
                             $current_room_seat_id = $current_room_seat->id;
                         }
 
-                        \Rooms::delay(10)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
+                        \Rooms::delay(5)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
                         //并发退出房间
 //                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
 //                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);

@@ -148,7 +148,7 @@ class GamesController extends BaseController
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $room_id;
+        $body['room_id'] = $room_id.$room_host_id;
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);

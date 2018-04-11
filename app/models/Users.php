@@ -1226,7 +1226,7 @@ class Users extends BaseModel
                 continue;
             }
 
-            if($this->$k == $v){
+            if ($this->$k == $v) {
                 info('未修改', $this->id, $k, $this->$k, $v);
                 continue;
             }
@@ -1601,6 +1601,34 @@ class Users extends BaseModel
         }
     }
 
+    function refuseAddFriend($other_user)
+    {
+        $add_key = 'add_friend_list_user_id_' . $other_user->id;
+        $added_key = 'added_friend_list_user_id_' . $this->id;
+
+        $add_total_key = 'friend_total_list_user_id_' . $this->id;
+        $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
+
+        $user_db = Users::getUserDb();
+
+        if ($user_db->zscore($add_key, $this->id)) {
+            $user_db->zrem($add_key, $this->id);
+        }
+
+        if ($user_db->zscore($added_key, $other_user->id)) {
+            $user_db->zrem($added_key, $other_user->id);
+        }
+
+        if ($user_db->zscore($add_total_key, $other_user->id)) {
+            $user_db->zrem($add_total_key, $other_user->id);
+        }
+
+        if ($user_db->zscore($other_total_key, $this->id)) {
+            $user_db->zrem($other_total_key, $this->id);
+        }
+
+    }
+
     //清空添加好友信息
     function clearAddFriendInfo()
     {
@@ -1763,23 +1791,19 @@ class Users extends BaseModel
     {
         $filter_ids = fetch($opts, 'filter_ids');
 
-        $latitude = $this->latitude / 10000;
-        $longitude = $this->longitude / 10000;
-
-        if (!$latitude || !$longitude) {
+        if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
             return $users;
         }
 
         $geohash = new \geo\GeoHash();
-        $hash = $geohash->encode($latitude, $longitude);
+        //$hash = $geohash->encode($latitude, $longitude);
+        $hash = $this->geo_hash;
         //取前缀，前缀约长范围越小
-        $prefix = substr($hash, 0, 5);
+        $prefix = substr($this->geo_hash, 0, 5);
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
-
-        debug($this->id, $neighbors);
 
         $condition = "(";
         $bind = [];
@@ -1794,22 +1818,20 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id <> :user_id: and id != ' . SYSTEM_ID . ' and avatar_status = ' . AUTH_SUCCESS;
-        $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
-
         if ($filter_ids) {
             $condition .= " and id not in ({$filter_ids})";
         }
 
+        $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
+        $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $bind['user_id'] = $this->id;
-
+        
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
         $conds['order'] = 'last_at desc,id desc';
 
-        info($this->id, $hash, $conds);
-
         $users = Users::findPagination($conds, $page, $per_page);
+        info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
 
         if ($users->count() < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);

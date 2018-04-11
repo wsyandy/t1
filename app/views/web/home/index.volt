@@ -85,6 +85,8 @@
     <div class="right">
         <p>电话：{{ product_channel.service_phone }}</p>
         <p>姓名：郑帅</p>
+        <p>商务微信：afair3</p>
+        <p> 商务qq：327041264</p>
         <p>地址:上海市宝山区新二路999弄148号2层103室</p>
     </div>
 </div>
