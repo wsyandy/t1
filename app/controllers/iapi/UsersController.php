@@ -624,4 +624,15 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
+
+    function interestAction()
+    {
+
+        $user_cond = ['user_type' => USER_TYPE_ACTIVE];
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 5);
+        $users = \Users::search($this->currentUser(), $page, $per_page, $user_cond);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
+    }
 }

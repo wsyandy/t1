@@ -561,4 +561,17 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
 
+    function interestAction()
+    {
+
+        $room_cond = ['hot' => STATUS_ON];
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 5);
+
+        $rooms = \Rooms::searchRooms($room_cond, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+    }
+
+
 }

@@ -56,6 +56,49 @@
 }
 ```
 
+###  感兴趣的房间列表
+
+> http-get ```/iapi/rooms/interest```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|page|当前页|int|是||
+|per_page|每页个数|int|是|默认5条||
+
+#####  回应参数说明
+```
+{
+    error_code
+    error_reason
+    rooms:[
+        {
+            id: int 房间id,
+            uid: int 房间uid,
+            name: string 房间名称
+            topic: string 房间话题
+            chat: 公屏聊天状态, false/true
+            user_id 房主用户id
+            sex	性别 0:女 1:男
+            avatar_small_url 房主小头像
+            avatar_url 房主头像原图
+            avatar_big_url 房主头像大图
+            nickname 房主昵称
+            age int 年龄
+            monologue 个性签名
+            online_status 0离线，1在线
+            channel_name: string 房间唯一标识, 频道名称
+            lock boole加锁状态, true是加锁
+            created_at int 创建时间戳
+            last_at int 最后活跃时间
+            user_num 在线人数
+        }
+         ....
+    ]
+}
+```
+
+
 
 ### 创建房间(创建后默认进入房间)
 
