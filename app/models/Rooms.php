@@ -2007,13 +2007,13 @@ class Rooms extends BaseModel
 
     static function addUserIdInExitRoomByServerList($user_id)
     {
-        $hot_cache = Rooms::getHotReadCache();
+        $hot_cache = Rooms::getHotWriteCache();
         $hot_cache->zadd(self::generateExitRoomByServerListKey(), time(), $user_id);
     }
 
     static function delUserIdInExitRoomByServerList($user_id)
     {
-        $hot_cache = Rooms::getHotReadCache();
+        $hot_cache = Rooms::getHotWriteCache();
         $hot_cache->zrem(self::generateExitRoomByServerListKey(), $user_id);
     }
 }
