@@ -262,6 +262,7 @@ class GiftOrders extends BaseModel
         $gift_order->operator_id = $operator_id;
         $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
         $gift_order->type = GIFT_ORDER_TYPE_SYSTEM_SEND;
+        $gift_order->product_channel_id = $receiver->product_channel_id;
         $gift_order->save();
 
         \UserGifts::delay()->updateGiftExpireAt($gift_order->id, ['content' => $content]);
