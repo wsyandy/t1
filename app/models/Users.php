@@ -1793,15 +1793,14 @@ class Users extends BaseModel
             }
         }
 
-        $condition .= ' and id <> :user_id: and id != ' . SYSTEM_ID . ' and avatar_status = ' . AUTH_SUCCESS;
-        $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
-
         if ($filter_ids) {
             $condition .= " and id not in ({$filter_ids})";
         }
 
+        $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
+        $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $bind['user_id'] = $this->id;
-
+        
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
         $conds['order'] = 'last_at desc,id desc';
