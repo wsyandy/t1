@@ -29,7 +29,7 @@ return new \Phalcon\Config([
     'agora_app_certificate' => env('agora_app_certificate', '773c59982b3e4a5a968efbe0c9b15c5c'),
     'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http'),
 
-    'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.yueyuewo.cn"),
+    'websocket_client_endpoint' => env('websocket_client_endpoint', "wstest.momoyuedu.cn"),
 
     'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"), //废弃
     'websocket_listen_client_port' => env('websocket_listen_client_port', 9509), //废弃
