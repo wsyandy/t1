@@ -2219,6 +2219,7 @@ EOF;
 
         $hot_cache = Users::getHotReadCache();
         $start_async_offline_task_key = "start_async_offline_task_" . 1001303;
+        echoLine($hot_cache->ttl($start_async_offline_task_key) / 3600);
         $last_execute_time = $hot_cache->get($start_async_offline_task_key);
         echoLine($last_execute_time);
 

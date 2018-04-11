@@ -116,7 +116,7 @@ trait UserWakeup
     {
 
         info($receiver_id);
-        
+
         $receiver = Users::findFirstById($receiver_id);
 
         if (!$receiver) {
@@ -127,7 +127,7 @@ trait UserWakeup
         // 不再关注 或者 无任务执行状态
         if (!$receiver->checkOfflineTaskStatus()) {
             // 退出任务
-            debug("start_async_offline_task_quit, id:" . $receiver->id);
+            info("start_async_offline_task_quit, id:" . $receiver->id);
             $receiver->quitOfflineTask();
             return;
         }
@@ -140,7 +140,7 @@ trait UserWakeup
 
         // 清除历史任务
         if ($offline_hour >= 48) {
-            debug('quit offline task > 48 hour', $receiver->id, 'hour:', $offline_hour);
+            info('quit offline task > 48 hour', $receiver->id, 'hour:', $offline_hour);
             $receiver->quitOfflineTask();
             return;
         }
@@ -148,7 +148,7 @@ trait UserWakeup
         // 进入下个15分钟循环
         $step_time = $receiver->offlineTaskStepTime();
 
-        debug($receiver->id, $offline_minute, 'step', $step_time);
+        info($receiver->id, $offline_minute, 'step', $step_time);
 
         // 离线推送 22:30 - 08:00 不推送
         if (isProduction()) {
@@ -178,7 +178,7 @@ trait UserWakeup
         }
 
         if (empty($task_id)) {
-            debug('no task', $receiver->id, $offline_time);
+            info('no task', $receiver->id, $offline_time);
             return;
         }
 
@@ -560,7 +560,8 @@ trait UserWakeup
         $user_db->del($receive_friend_online_remind_online_key);
     }
 
-    static function pushOnlineRemind($user_id){
+    static function pushOnlineRemind($user_id)
+    {
 
         $user = Users::findFirstById($user_id);
         //好友上线提醒(每小时选取最新的一个好友上线提醒)
@@ -868,7 +869,8 @@ trait UserWakeup
 
     }
 
-    static function pushIntoRoomRemind($user_id){
+    static function pushIntoRoomRemind($user_id)
+    {
 
         $user = Users::findFirstById($user_id);
         //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
