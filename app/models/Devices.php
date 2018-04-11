@@ -124,12 +124,6 @@ class Devices extends BaseModel
                     }
                 }
 
-                $muid = $device->imei;
-                if ($device->idfa) {
-                    $muid = $device->idfa;
-                }
-                $device->setMarketingStartAppMuid($muid);
-
                 info('测试渠道包fr', $device->device_no, $promote_fr, $device->fr, $attributes);
             }
 
@@ -173,28 +167,22 @@ class Devices extends BaseModel
         $device->sid = $device->generateSid();
         $device->update();
 
-        $muid = $device->imei;
-        if ($device->idfa) {
-            $muid = $device->idfa;
-        }
-        $device->setMarketingStartAppMuid($muid);
-
         $attrs = $device->getStatAttrs();
         \Stats::delay()->record('user', 'device_active', $attrs);
 
         return $device;
     }
 
-    function setMarketingStartAppMuid($muid)
+    static function setMarketingStartAppMuid($muid)
     {
-        $user_db = \Users::getUserDb();
-        $marketing_start_app_key = 'marketing_api_start_app_muid_' . md5($muid);
-        $user_db->setex($marketing_start_app_key, md5($muid), 2 * 24 * 60 * 60);
+        $user_db = Devices::getHotWriteCache();
+        $marketing_start_app_key = 'marketing_api_start_app_muid_' . $muid;
+        $user_db->setex($marketing_start_app_key, 2 * 24 * 60 * 60, $muid);
     }
 
     static function getMarketingStartAppMuid($muid)
     {
-        $user_db = \Users::getUserDb();
+        $user_db = Devices::getHotWriteCache();
         $marketing_start_app_key = 'marketing_api_start_app_muid_' . $muid;
         return $user_db->get($marketing_start_app_key);
     }
