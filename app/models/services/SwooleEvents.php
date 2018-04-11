@@ -145,7 +145,14 @@ class SwooleEvents extends \BaseModel
                             $current_room_seat_id = $current_room_seat->id;
                         }
 
-                        \Rooms::delay(5)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
+                        if (\Rooms::isInExitRoomByServerList($user_id)) {
+                            info("user_id_is_exiting_room", $user_id);
+                        } else {
+                            debug($user_id, $current_room->id);
+                            \Rooms::addUserIdInExitRoomByServerList($user_id);
+                            \Rooms::delay(15)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
+                        }
+
                         //并发退出房间
 //                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
 //                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
@@ -172,9 +179,9 @@ class SwooleEvents extends \BaseModel
             }
 
             //如果有电话进行中
-            if ($user->isCalling()) {
-                \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
-            }
+//            if ($user->isCalling()) {
+//                \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
+//            }
         }
 
         $user->deleteFdInfo($fd, $online_token);
