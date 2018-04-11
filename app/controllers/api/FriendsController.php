@@ -68,7 +68,7 @@ class FriendsController extends BaseController
     function refuseAction()
     {
         $this->currentUser()->refuseAddFriend($this->otherUserId());
-        return $this->renderJSON(ERROR_CODE_FAIL, '拒绝成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '拒绝成功');
     }
 
     //清空新的朋友信息
