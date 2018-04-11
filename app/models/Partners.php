@@ -69,6 +69,9 @@ class Partners extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $muid = self::generateMuid($attributes);
 
+        // 次日留存
+        Devices::setMarketingStartAppMuid($muid);
+
         info($attributes['code'], $attributes['platform'], $attributes['fr'], $muid);
 
         $click_key = 'new_click_ad_event_' . $attributes['code'] . '_muid_' . $muid;
@@ -90,6 +93,7 @@ class Partners extends BaseModel
             // 清除cache
             $hot_cache->del($click_key);
         } else {
+
             $active_fr = fetch($attributes, 'fr');
             if ($active_fr) {
                 self::delay(600)->asyncCheckCallback($active_fr, $click_key);
