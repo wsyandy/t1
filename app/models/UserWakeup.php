@@ -57,7 +57,7 @@ trait UserWakeup
         $start_val = $machine_name . '|' . time();
 
         $last_execute_time = $this->isOfflineTaskRunning();
-        debug($start_async_offline_task_key, $last_execute_time);
+        info($start_async_offline_task_key, $last_execute_time);
 
         // 任务超时没进程运行
         if (!$last_execute_time) {
