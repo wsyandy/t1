@@ -150,7 +150,7 @@ class SwooleEvents extends \BaseModel
                         } else {
                             debug($user_id, $current_room->id);
                             \Rooms::addUserIdInExitRoomByServerList($user_id);
-                            \Rooms::delay(5)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
+                            \Rooms::delay(15)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
                         }
 
                         //并发退出房间
