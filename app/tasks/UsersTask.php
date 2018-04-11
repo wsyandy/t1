@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1067623;
-        $new_user_id = 153731;
+        $user_id = 1134554;
+        $new_user_id = 153730;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -130,7 +130,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 153731;
+        $new_user->uid = 153730;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
@@ -425,7 +425,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function resetUserAction()
     {
-        $user_id = 1067623;
+        $user_id = 1134554;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
         $user->user_status = USER_STATUS_OFF;
