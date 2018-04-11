@@ -1967,11 +1967,12 @@ class Rooms extends BaseModel
 
             //如果用户已经连接并且不在被踢的房间 则只清楚房间信息 不发踢人websocket
             if ($room_id && $user->current_room_id != $room_id) {
-                $room->exitRoom($user);
+                $room->exitRoom($user, false);
             }
 
-            if ($room_seat_id && $user->current_room_seat_id != $room_seat_id) {
-                $room_seat->down($user);
+            if ($room_seat && $user->current_room_seat_id != $room_seat_id && $room_seat->user_id == $user_id) {
+                $room_seat->user_id = 0;
+                $room_seat->update();
             }
 
             Rooms::delUserIdInExitRoomByServerList($user_id);
