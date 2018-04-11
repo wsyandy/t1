@@ -1762,23 +1762,19 @@ class Users extends BaseModel
     {
         $filter_ids = fetch($opts, 'filter_ids');
 
-        $latitude = $this->latitude / 10000;
-        $longitude = $this->longitude / 10000;
-
-        if (!$latitude || !$longitude) {
+        if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
             return $users;
         }
 
         $geohash = new \geo\GeoHash();
-        $hash = $geohash->encode($latitude, $longitude);
+        //$hash = $geohash->encode($latitude, $longitude);
+        $hash = $this->geo_hash;
         //取前缀，前缀约长范围越小
-        $prefix = substr($hash, 0, 5);
+        $prefix = substr($this->geo_hash, 0, 5);
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
-
-        debug($this->id, $neighbors);
 
         $condition = "(";
         $bind = [];
@@ -1805,9 +1801,8 @@ class Users extends BaseModel
         $conds['bind'] = $bind;
         $conds['order'] = 'last_at desc,id desc';
 
-        info($this->id, $hash, $conds);
-
         $users = Users::findPagination($conds, $page, $per_page);
+        info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
 
         if ($users->count() < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
