@@ -8,6 +8,8 @@
  */
 class Banners extends BaseModel
 {
+    use BannerInternational;
+
     static $STATUS = [STATUS_ON => '启用', STATUS_OFF => '禁用'];
 
     static $HOT = [STATUS_ON => '是', STATUS_OFF => '否'];
