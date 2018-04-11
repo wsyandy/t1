@@ -16,7 +16,7 @@ class GiftStatsController extends BaseController
         $end_at = endOfDay(strtotime($stat_at));
 
         $gift_id = $this->params('gift_id');
-        $product_channel_id = $this->params('product_channel_id', '-1');
+        $product_channel_id = $this->params('product_channel_id', 1);
 
         $cond = ['conditions' => ' product_channel_id  = :product_channel_id: ' . 'and stat_at >= :start_at: and stat_at <= :end_at:',
             'bind' => ['product_channel_id' => $product_channel_id, 'start_at' => $start_at, 'end_at' => $end_at], 'order' => 'gift_id desc'];

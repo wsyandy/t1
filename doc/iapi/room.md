@@ -578,6 +578,7 @@
     managers:[
         {
             user_id int 用户的ID
+            uid 用户uid 展示用户唯一标识
             sex int 性别  0:女 1:男
             avatar_url string 正常图像
             avatar_small_url string 小尺寸图像
