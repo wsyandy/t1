@@ -1949,11 +1949,13 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         if (!$room || !$user) {
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("param error");
             return;
         }
 
         if (!$user->current_room_id) {
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("user_not_in_room", $user_id, $room_id, $room_seat_id);
             return;
         }
@@ -1972,6 +1974,7 @@ class Rooms extends BaseModel
                 $room_seat->down($user);
             }
 
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("user_re_connect", $user_id);
             return;
         }
@@ -1987,6 +1990,30 @@ class Rooms extends BaseModel
 
         $room->exitRoom($user);
         $room->pushExitRoomMessage($user, $current_room_seat_id);
+        Rooms::delUserIdInExitRoomByServerList($user_id);
         unlock($exce_exit_room_lock);
+    }
+
+    static function generateExitRoomByServerListKey()
+    {
+        return "exit_room_by_server_by_server_list";
+    }
+
+    static function isInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore(self::generateExitRoomByServerListKey(), $user_id) > 0;
+    }
+
+    static function addUserIdInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        $hot_cache->zadd(self::generateExitRoomByServerListKey(), time(), $user_id);
+    }
+
+    static function delUserIdInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        $hot_cache->zrem(self::generateExitRoomByServerListKey(), $user_id);
     }
 }
