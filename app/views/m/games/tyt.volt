@@ -151,7 +151,9 @@
                 sid: "{{ current_user.sid }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                game_status_text: ''
+                game_status_text: '',
+                current_user:{{ current_user }},
+                can_create_game: "{{ can_create_game }}"
             },
             watch: {},
             methods: {
@@ -182,7 +184,11 @@
 
         $(function () {
             if (!vm.pay_type) {
-                vm.game_status_text = '您不是主播,不能发起游戏';
+                if (vm.can_create_game) {
+                    vm.game_status_text =  vm.room_host_nickname + '正在发起游戏中，请稍后！';
+                }else{
+                    vm.game_status_text = '您不是主播,不能发起游戏';
+                }
             } else {
                 vm.game_status_text = vm.room_host_nickname + '已发起游戏';
             }

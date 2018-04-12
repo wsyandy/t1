@@ -5,6 +5,7 @@
  * Date: 2018/4/10
  * Time: 上午10:13
  */
+
 namespace admin;
 class GiftStatsController extends BaseController
 {
@@ -28,17 +29,42 @@ class GiftStatsController extends BaseController
 
         $gift_stats = \GiftStats::find($cond);
 
+        $new_gift_stats = [];
+
+        foreach ($gift_stats as $gift_stat) {
+
+            $rank = 0;
+            $data = $gift_stat->data;
+
+            if ($data) {
+                $data = json_decode($data, true);
+                $rank = fetch($data, 'gift_total', 0);
+            }
+
+            $gift_stat->rank = $rank;
+            $new_gift_stats[] = $gift_stat;
+        }
+
+        usort($new_gift_stats, function ($a, $b) {
+
+            if ($a->rank == $b->rank) {
+                return 0;
+            }
+
+            return $a->rank > $b->rank ? -1 : 1;
+        });
+
         $stat_fields = \GiftStats::statFields($this->currentOperator());
 
         debug($product_channel_id, $gift_id);
 
-        $this->view->gift_stats = $gift_stats;
+        $this->view->gift_stats = $new_gift_stats;
         $this->view->stat_at = $stat_at;
         $this->view->product_channel_id = intval($product_channel_id);
         $this->view->product_channels = \ProductChannels::find(['order' => ' id desc', 'columns' => 'id,name']);
         $this->view->gifts = \Gifts::find(['order' => ' id desc', 'columns' => 'id,name']);
         $this->view->gift_id = $gift_id;
-        $this->view->data_array = $stat_fields;
+        $this->view->stat_fields = $stat_fields;
     }
 
 }

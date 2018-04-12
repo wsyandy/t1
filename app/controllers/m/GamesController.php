@@ -21,7 +21,7 @@ class GamesController extends BaseController
             $conds['order'] = 'id desc';
 
             $games = \Games::findPagination($conds, $page, $per_page);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games','toSimpleJson'));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
         }
     }
 
@@ -81,12 +81,19 @@ class GamesController extends BaseController
         }
         info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
 
+        $can_create_game = false;
+        if ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE) {
+            $can_create_game = true;
+        }
+
+
         $this->view->current_user = $this->currentUser();
         $this->view->room_host_id = $room_host_id;
         $this->view->room_host_nickname = $room_host_nickname;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
         $this->view->room_id = $room_id;
+        $this->view->can_create_game = $can_create_game;
     }
 
     // 提交入场费
@@ -148,7 +155,7 @@ class GamesController extends BaseController
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $room_id.$room_host_id;
+        $body['room_id'] = $room_id . $room_host_id;
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
