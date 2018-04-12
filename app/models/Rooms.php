@@ -294,7 +294,7 @@ class Rooms extends BaseModel
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->set("room_token_" . $online_token, $this->id);
+            $hot_cache->setex("room_token_" . $online_token,7*24*3600, $this->id);
         }
     }
 

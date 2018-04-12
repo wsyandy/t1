@@ -11,8 +11,8 @@ namespace services;
 class SwooleUtils extends \BaseModel
 {
     static $_only_cache = true;
-    private static $intranet_ip_key = "intranet_ip";
-    private static $connection_list = 'websocket_connection_list';
+    private static $intranet_ip_key = "intranet_ip"; // 本地ip
+    private static $connection_list = 'websocket_connection_list'; // 本地ip的连接数
 
     static function remoteIp($request)
     {
@@ -68,6 +68,7 @@ class SwooleUtils extends \BaseModel
         return $cache;
     }
 
+    // 本机ip
     static function getIntranetIp()
     {
         $cache = SwooleUtils::getJobQueueCache();
@@ -96,19 +97,19 @@ class SwooleUtils extends \BaseModel
     static function saveIntranetIp($ip)
     {
         $cache = SwooleUtils::getJobQueueCache();
-        $cache->set(SwooleUtils::$intranet_ip_key, $ip);
+        $cache->setex(SwooleUtils::$intranet_ip_key, 24 * 3600 * 7, $ip);
     }
 
     static function increaseConnectNum($num, $ip)
     {
-        info($num, $ip);
-
         if (!$ip) {
             return;
         }
 
         $hot_cache = SwooleUtils::getHotWriteCache();
-        $hot_cache->zincrby(SwooleUtils::$connection_list, $num, $ip);
+        $total_num = $hot_cache->zincrby(SwooleUtils::$connection_list, $num, $ip);
+
+        info($ip, 'total_num', $total_num, 'num', $num);
     }
 
     static function clearConnectionNum()

@@ -1505,6 +1505,8 @@ class Users extends BaseModel
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
         $add_total_key = 'friend_total_list_user_id_' . $this->id;
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
 
         if ($user_db->zscore($friend_list_key, $other_user->id)) {
             $user_db->zrem($friend_list_key, $other_user->id);
@@ -1521,6 +1523,9 @@ class Users extends BaseModel
         if ($user_db->zscore($other_total_key, $this->id)) {
             $user_db->zrem($other_total_key, $this->id);
         }
+
+        $user_db->zrem($user_introduce_key, $other_user->id);
+        $user_db->zrem($other_user_introduce_key, $other_user->id);
     }
 
     //是否为好友
@@ -1595,6 +1600,8 @@ class Users extends BaseModel
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
         $add_key = 'add_friend_list_user_id_' . $other_user->id;
         $added_key = 'added_friend_list_user_id_' . $this->id;
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
         $user_db = Users::getUserDb();
 
         $time = time();
@@ -1602,12 +1609,15 @@ class Users extends BaseModel
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
             $user_db->zadd($other_friend_list_key, $time, $this->id);
+            $user_db->hdel($user_introduce_key, $other_user->id);
         }
 
         if ($user_db->zscore($added_key, $other_user->id)) {
             $user_db->zrem($added_key, $other_user->id);
             $user_db->zadd($friend_list_key, $time, $other_user->id);
+            $user_db->hdel($other_user_introduce_key, $this->id);
         }
+
     }
 
     function refuseAddFriend($other_user)
@@ -2805,14 +2815,14 @@ class Users extends BaseModel
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
 
         $hot_cache->pipeline();
-        $hot_cache->set($online_key, $online_token);
-        $hot_cache->set($fd_key, $fd);
-        $hot_cache->set($user_online_key, $online_token);
-        $hot_cache->set($fd_user_id_key, $this->id);
+        $hot_cache->setex($online_key, 7*24*3600,$online_token);
+        $hot_cache->setex($fd_key, 7*24*3600, $fd);
+        $hot_cache->setex($user_online_key, 7*24*3600, $online_token);
+        $hot_cache->setex($fd_user_id_key, 7*24*3600, $this->id);
 
         if ($ip) {
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-            $hot_cache->set($fd_intranet_ip_key, $ip);
+            $hot_cache->setex($fd_intranet_ip_key, 7*24*3600, $ip);
         }
 
         $hot_cache->exec();
@@ -3288,7 +3298,7 @@ class Users extends BaseModel
         $key = "unread_messages_num_user_id_" . $this->id;
         $hot_cache = Users::getHotWriteCache();
         $hot_cache->incr($key);
-        $hot_cache->expire($key, 30 * 86400);
+        $hot_cache->expire($key, 30 * 24*3600);
     }
 
     function isCompanyUser()

@@ -1,0 +1,66 @@
+.ver_box{
+    width:100%;
+}
+.ver_tips{
+    width:100%;
+    height:0.78rem;
+    line-height: 0.78rem;
+    text-align: center;
+    font-size: 0.26rem;
+    color: #FF8451;
+    background: #FFF7E7;
+}
+.ver_list{
+    margin-left: 0.3rem;
+    width: 7.2rem;
+    height:1rem;
+    border-bottom: 1px solid #E7E7E7;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+}
+.ver_card{
+    padding-right: 0.4rem;
+    font-size: 0.3rem;
+    color: #404040;
+}
+.ver_tel{
+    width: 5rem;
+    height: 100%;
+    line-height: 100%;
+    font-size: 0.3rem;
+    color: #6B6B6B;
+    outline: none;
+}
+.ver_code{
+    width: 5rem;
+    height: 100%;
+    line-height: 100%;
+    font-size: 0.3rem;
+    color: #6B6B6B;
+    outline: none;
+}
+.get_code{
+    width: 1.66rem;
+    height: 0.54rem;
+    line-height: 0.54rem;
+    border: 1px solid #B6B6B6;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
+    border-radius: 1rem;
+    font-size: 0.26rem;
+    color: #B6B6B6;
+    text-align: center;
+}
+.cur{
+    border: 1px solid #F45189;
+    color: #F45189;
+}

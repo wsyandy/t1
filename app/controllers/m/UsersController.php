@@ -34,33 +34,35 @@ class UsersController extends BaseController
     function levelIntroduceAction()
     {
         $code = $this->params('code');
-        $sid = $this->params('sid');
-        $this->response->redirect('/m/users/level_detail?sid=' . $sid . "&code=" . $code);
+        $file_name = $code . '_level_introduce';
+        $file_path = APP_ROOT . 'app/views/m/users/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/users/' . $file_name);
+            return;
+        }
 
-        $this->view->title = '荣耀等级';
-
-        $current_user = $this->currentUser();
-
-        $level = $current_user->level;
-
-        $segment = $current_user->segment;
-
-        $segment_text = $current_user->segment_text;
-
-        $need_experience = $current_user->next_level_experience - $current_user->experience;
-
-        $this->view->code = $code;
-        $this->view->sid = $sid;
-
-        $this->view->level = $level;
-        $this->view->segment = $segment;
-        $this->view->segment_text = $segment_text;
-        $this->view->need_experience = $need_experience;
+        $this->view->title = 'Hi荣耀等级介绍';
     }
 
-    function levelDetailAction()
+    function levelInfoAction()
     {
-        $this->view->title = 'Hi荣耀等级介绍';
+        $user_id = $this->params('user_id');
+        $current_user = $this->currentUser();
+        $show_upgrade_official = true;
+        if ($user_id && $user_id != $this->currentUserId()) {
+            $show_upgrade_official = false;
+        }
+
+        $level = $current_user->level;
+        $segment_text = $current_user->segment_text;
+        $need_experience = $current_user->next_level_experience - $current_user->experience;
+        $skip_url = '/m/users/ruanyuyin_level_introduce';
+
+        $this->view->level = $level;
+        $this->view->segment_text = $segment_text;
+        $this->view->need_experience = round($need_experience);
+        $this->view->show_upgrade_official = $show_upgrade_official;
+        $this->view->skip_url = $skip_url;
     }
 
 
@@ -73,6 +75,11 @@ class UsersController extends BaseController
 
         $this->view->sid = $sid;
         $this->view->code = $code;
+    }
+
+    function ruanyuyinLevelIntroduceAction()
+    {
+        $this->view->title = '荣耀等级介绍';
     }
 
     function userListAction()
