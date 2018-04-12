@@ -29,7 +29,7 @@
             current_level: {{ level }},
             segment_text: "{{ segment_text }}",
             need_experience: "{{ need_experience }}",
-            show_upgrade_official: {{ show_upgrade_official }},
+            show_upgrade_official: "{{ show_upgrade_official }}",
             skip_url: "{{ skip_url }}",
             glory_list: [
                 {
@@ -228,12 +228,4 @@
         }
     };
     vm = XVue(opts);
-    $(function () {
-        console.log('当前等级', vm.current_level);
-        console.log('段位：', vm.segment_text);
-        console.log('升级需要的经验：', vm.need_experience);
-        console.log('是否展示文案：', vm.show_upgrade_official);
-        console.log('当前段位图标', vm.glory_list[vm.current_level]);
-    })
-
 </script>
