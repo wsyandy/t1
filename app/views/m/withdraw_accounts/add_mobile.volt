@@ -6,7 +6,8 @@
     <div class="ver_tips">为了您的账号安全，请先完成短信验证绑定</div>
     <ul class="ver_box">
         <li class="ver_list">
-            <input class="ver_tel" type="number" v-model="ver_tel" type="text" placeholder="请先输入手机号码" @input="verTel" maxlength="11">
+            <input class="ver_tel" type="number" v-model="ver_tel" type="text" placeholder="请先输入手机号码" @input="verTel"
+                   oninput="if(value.length>11)value=value.slice(0,11)">
         </li>
         <li class="ver_list">
             <input class="ver_code" v-model="ver_code" type="text" placeholder="请输入验证码" :readonly="readonly"
@@ -14,7 +15,6 @@
             <div :class="['get_code',{'cur':isFull}]" @click="getCode">
                 <span v-text="auth_text"></span>
             </div>
-
         </li>
     </ul>
 
@@ -22,6 +22,11 @@
 </div>
 
 <script>
+    var time = 60;
+    {% if isDevelopmentEnv() %}
+    time = 3;
+    {% endif %}
+
     var opts = {
         data: {
             ico_clear: "images/ico_clear.png",
@@ -46,7 +51,7 @@
                     return false;
                 }
 
-                this.auth_time = 3;
+                this.auth_time = time;
                 this.readonly = false;
 
                 var data = {

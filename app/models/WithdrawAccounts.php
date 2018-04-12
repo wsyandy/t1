@@ -44,9 +44,9 @@ class WithdrawAccounts extends BaseModel
     function mergeJson()
     {
         $data = [];
-        if($this->account){
-            $account_text = substr_replace($this->account,'*',0,-3,$this->account);
-            $data = ['account_text'=>$account_text];
+        if ($this->account) {
+            $account_text = substr($this->account, -4);
+            $data = ['account_text' => "**** **** **** " . $account_text];
         }
         return $data;
     }

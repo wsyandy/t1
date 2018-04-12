@@ -21,9 +21,7 @@ class WithdrawAccountsController extends BaseController
 
         $withdraw_accounts_json = [];
         foreach ($withdraw_accounts as $withdraw_account) {
-            if ($withdraw_account->status == STATUS_ON) {
-                $withdraw_accounts_json[] = $withdraw_account->toJson();
-            }
+            $withdraw_accounts_json[] = $withdraw_account->toJson();
         }
 
         $this->view->withdraw_accounts = json_encode($withdraw_accounts_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

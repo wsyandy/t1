@@ -8,16 +8,15 @@
         <span class="unbind" @click.stop="unbind" v-if="selected_withdraw_account">解除绑定</span>
     </div>
     <div class="card_list">
-        <div class="card_add" @click="addCard">
+        <div class="card_add" @click="addCard" v-if="!cardList.length">
             <img :src="ico_add" class="ico_add" alt="">
             <span>添加储蓄卡</span>
         </div>
-
     </div>
 
     <ul class="card_list" v-if="cardList.length">
         <li v-for="item in cardList" @click.stop="selectWithdrawAccount(item)">
-            <span>${ item.account }</span>
+            <span>${ item.account_text }</span>
         </li>
     </ul>
 </div>
