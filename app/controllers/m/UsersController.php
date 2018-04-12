@@ -49,7 +49,7 @@ class UsersController extends BaseController
         $user_id = $this->params('user_id');
         $current_user = $this->currentUser();
         $show_upgrade_official = true;
-        if ($user_id) {
+        if ($user_id && $user_id != $this->currentUserId()) {
             $show_upgrade_official = false;
         }
 
