@@ -2214,7 +2214,7 @@ EOF;
         $account_histories = AccountHistories::sum(['conditions' => 'fee_type = :fee_type: and (hi_coin_history_id = 0 or hi_coin_history_id is null) and user_id = 1017233',
             'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND],
             'column' => 'amount'
-            ]);
+        ]);
 
         echoLine($account_histories);
 
@@ -2244,6 +2244,38 @@ EOF;
 
             if ($i >= 10) {
                 break;
+            }
+        }
+    }
+
+    function test()
+    {
+        $ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+        foreach ($ids as $id) {
+            $withdraw_history = WithdrawHistories::findFirstBy(['user_id' => $id, 'status' => WITHDRAW_STATUS_WAIT]);
+
+            if ($withdraw_history) {
+                echoLine($withdraw_history);
+            }
+        }
+
+
+        $ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+
+        foreach ($ids as $id) {
+
+        }
+        $account_histories = AccountHistories::findBy(['user_id' => 1017233, 'fee_type' => ACCOUNT_TYPE_BUY_GIFT]);
+
+        foreach ($account_histories as $account_history) {
+            $gift_order = GiftOrders::findFirstById($account_history->gift_order_id);
+
+            $withdraw_history = WithdrawHistories::findFirstBy(['user_id' => $gift_order->user_id, 'status' => WITHDRAW_STATUS_WAIT]);
+
+            if ($withdraw_history) {
+                echoLine($withdraw_history);
             }
         }
     }
