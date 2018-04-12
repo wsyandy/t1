@@ -234,7 +234,7 @@
     theme_image_url string 房间主题背景图
     room_theme_id int 房间主题id
     user_info:{
-        id:int 房主用户id
+        id:int 房主id
         uid:int 用户uid,
         nickname 昵称
         avatar_small_url 用户小头像

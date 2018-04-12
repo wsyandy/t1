@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2017/12/26
  * Time: 下午3:21
  */
-
 trait UserEnumerations
 {
     static $UPDATE_FIELDS = [
@@ -22,7 +22,8 @@ trait UserEnumerations
         'interests' => '兴趣爱好',
         'height' => '身高',
         'age' => '年龄',
-        'birthday' => '生日'
+        'birthday' => '生日',
+        'lang' => '语言'
     ];
 
     // 用户状态
@@ -76,4 +77,8 @@ trait UserEnumerations
     static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
     static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
     static $USER_TEST = [USER_TEST_BUG => '测试swoole'];
+    static $LANG = [LANG_ZH => '简体中文', LANG_ZH_TW => '繁体中文', LANG_EN => '英语', LANG_VI => '越南语',
+        LANG_RU => '俄语', LANG_PT => '葡萄牙语', LANG_KO => '韩语', LANG_JA => '日语', LANG_FR => '法语', LANG_ES => '西班牙语',
+        LANG_DE => '德语', LANG_AR => '阿拉伯语'
+    ];
 }

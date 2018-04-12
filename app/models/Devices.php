@@ -135,7 +135,7 @@ class Devices extends BaseModel
         $device = new Devices();
         foreach (['platform', 'platform_version', 'device_no', 'fr', 'ua', 'imei', 'imsi',
                      'manufacturer', 'model', 'version_code', 'version_name', 'ip', 'idfa', 'phone_number',
-                     'net', 'local_mac', 'gateway_mac'] as $k) {
+                     'lang', 'net', 'local_mac', 'gateway_mac'] as $k) {
 
             if (isset($attributes[$k])) {
                 $device->$k = $attributes[$k];

@@ -267,6 +267,7 @@
 |age|年龄|int|||
 |height|身高|int|||
 |birthday|生日|string||||
+|lang|语言|string|zh 简体中文, zh-TW 繁体中文,en 英语,vi 越南语,ru 俄语,pt 葡萄牙语,ko 韩语,日语 ja,法语 fr,西班牙语 es,德语 de,ar 阿拉伯语|||
 
 ##### 回应参数说明
 ```
@@ -300,6 +301,7 @@
     birthday 生日
     constellation 星座
     level 用户等级
+    lang 语言
     segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1

@@ -44,6 +44,7 @@ trait UserAttrs
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond,
+            'lang' => $this->lang,
             'country_id' => $this->country_id
         ];
 
@@ -161,7 +162,7 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'followed'=>$this->followed
+            'followed' => $this->followed
         ];
 
         if (isset($this->friend_status)) {

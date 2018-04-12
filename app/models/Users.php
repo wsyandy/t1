@@ -489,7 +489,7 @@ class Users extends BaseModel
 
             $fields = ['product_channel_id', 'platform', 'platform_version', 'version_code', 'version_name',
                 'api_version', 'device_no', 'fr', 'partner_id', 'manufacturer', 'ip', 'latitude', 'longitude',
-                'push_token'];
+                'lang', 'push_token'];
 
             $user = new \Users();
             $user->login_name = md5(uuid()) . '@app.com';
