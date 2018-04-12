@@ -2219,5 +2219,15 @@ EOF;
 
         $room = Rooms::findFirstById(136800);
         echoLine($room->product_channel_id);
+
+
+        $account_histories = AccountHistories::find(['conditions' => 'fee_type = :fee_type: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+            'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND]]);
+
+        echoLine(count($account_histories));
+
+        foreach ($account_histories as $account_history) {
+            echoLine($account_history->id, $account_history->user_id);
+        }
     }
 }
