@@ -123,7 +123,7 @@ class Rooms extends BaseModel
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
             'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
-            'theme_image_url' => $this->theme_image_url, 'uid'=>$this->uid
+            'theme_image_url' => $this->theme_image_url, 'uid' => $this->uid
         ];
     }
 
@@ -1898,6 +1898,7 @@ class Rooms extends BaseModel
     {
         $country_id = fetch($opts, 'country_id');
         $product_channel_id = fetch($opts, 'product_channel_id');
+        $uid = fetch($opts, 'uid');
         $id = fetch($opts, 'id');
         $name = fetch($opts, 'name');
         $new = fetch($opts, 'new');
@@ -1921,6 +1922,11 @@ class Rooms extends BaseModel
 
         if ($hot == STATUS_ON) {
             $cond['conditions'] .= " and hot = " . STATUS_ON;
+        }
+
+        if ($uid) {
+            $cond['conditions'] .= " and (uid = :uid:) ";
+            $cond['bind']['uid'] = $uid;
         }
 
         if ($id) {

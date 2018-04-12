@@ -1702,7 +1702,8 @@ class Users extends BaseModel
         }
 
         if ($uid) {
-            $cond = ['conditions' => 'uid = :uid:', 'bind' => ['uid' => $uid]];
+            $cond['conditions'] .= ' and (uid = :uid:) ';
+            $cond['bind']['uid'] = $uid;
         }
 
         if ($nickname) {
@@ -1833,7 +1834,7 @@ class Users extends BaseModel
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $bind['user_id'] = $this->id;
-        
+
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
         $conds['order'] = 'last_at desc,id desc';
