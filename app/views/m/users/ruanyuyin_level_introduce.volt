@@ -1,36 +1,37 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/ruanyuyin/css/level_introduce.css') }}
+{{ theme_js('/m/ruanyuyin/js/font_rem.js') }}
 {{ block_end() }}
 <div class="dengji_text" id="app">
     <h3>${title}</h3>
     <p>荣耀等级是您在软语音上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，送靓号，快来体验吧~</p>
     <p>送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！</p>
 
-<div class="dengji_list">以下是软语音荣耀等级对应的名称和特权：</div>
-<div class="week_list" style="display: block;">
-    <table class="table">
-        <tr class="week_tr_title">
-            <td style="width:20%;">标志</td>
-            <td style="width:30%;">等级名称</td>
-            <td style="width:50%;">等级特权</td>
-        </tr>
-        <tr v-for="glory in glory_list">
-            <td><img :src="glory.icon" alt=""></td>
-            <td>
-                <h5 :class="glory.rank_class?glory.rank_class:''">${ glory.name }</h5>
-            </td>
-            <td :class="glory.reward_class?glory.reward_class:''">
-                <b :class="glory.rank_class?glory.rank_class:''">${ glory.reward?glory.reward:''}</b>
-                <span>${ glory.name }荣耀勋章</span>
-            </td>
-        </tr>
-    </table>
-</div>
+    <div class="dengji_list">以下是软语音荣耀等级对应的名称和特权：</div>
+    <div class="week_list" style="display: block;">
+        <table class="table">
+            <tr class="week_tr_title">
+                <td style="width:20%;">标志</td>
+                <td style="width:30%;">等级名称</td>
+                <td style="width:50%;">等级特权</td>
+            </tr>
+            <tr v-for="glory in glory_list">
+                <td><img :src="glory.icon" alt=""></td>
+                <td>
+                    <h5 :class="glory.rank_class?glory.rank_class:''">${ glory.name }</h5>
+                </td>
+                <td :class="glory.reward_class?glory.reward_class:''">
+                    <b :class="glory.rank_class?glory.rank_class:''">${ glory.reward?glory.reward:''}</b>
+                    <span>${ glory.name }荣耀勋章</span>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 <script>
     var opts = {
         data: {
-            title:"{{ title }}",
+            title: "{{ title }}",
             glory_list: [
                 {
                     icon: "/m/ruanyuyin/images/t_1.png",
@@ -87,7 +88,7 @@
                     name: "黄金Ⅰ ",
                     rank_class: 'h_color',
                     reward: "送7位靓号或者6位普通号一个",
-                    reward_class:'huangjin'
+                    reward_class: 'huangjin'
 
                 },
                 {
@@ -115,7 +116,7 @@
                     name: "铂金Ⅰ ",
                     rank_class: 'b_color',
                     reward: "送7位靓号或者6位高级靓号一个",
-                    reward_class:'bojin'
+                    reward_class: 'bojin'
                 },
                 {
                     icon: "/m/ruanyuyin/images/b_2.png",
@@ -142,7 +143,7 @@
                     name: "钻石Ⅰ ",
                     rank_class: 'z_color',
                     reward: "送6位高级靓号或者5位靓号一个",
-                    reward_class:'zuanshi'
+                    reward_class: 'zuanshi'
                 },
                 {
                     icon: "/m/ruanyuyin/images/z_2.png",
@@ -169,7 +170,7 @@
                     name: "王者Ⅰ ",
                     rank_class: 'w_color',
                     reward: "送高级靓号或者4位靓号一个",
-                    reward_class:'wangzhe'
+                    reward_class: 'wangzhe'
                 },
                 {
                     icon: "/m/ruanyuyin/images/w_2.png",
@@ -196,7 +197,7 @@
                     name: "星耀Ⅰ ",
                     rank_class: 'x_color',
                     reward: "送4位高级靓号或者3位普通号一个",
-                    reward_class:'xingyao'
+                    reward_class: 'xingyao'
                 },
                 {
                     icon: "/m/ruanyuyin/images/x_2.png",

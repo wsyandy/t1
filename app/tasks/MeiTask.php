@@ -2220,4 +2220,12 @@ EOF;
         $room = Rooms::findFirstById(136800);
         echoLine($room->product_channel_id);
     }
+
+    function testWebSoketAction()
+    {
+        $user = Users::findFirstById(117);
+
+        \services\SwooleUtils::send('push', $user->getIntranetIp(), 9508, ['test' => 117]);
+        echoLine($user->online_token, $user->getIntranetIp());
+    }
 }
