@@ -42,6 +42,8 @@ class HiCoinHistoriesController extends BaseController
 
             $gold = '';
 
+            $amount = \HiCoinHistories::rateOfHiCoinToCny() * $hi_coins;
+
             if ($product) {
                 $amount = $product->amount;
                 $hi_coins = \HiCoinHistories::rateOfCnyToHiCoin() * $amount;
