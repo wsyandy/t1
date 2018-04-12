@@ -2192,6 +2192,40 @@ EOF;
 
         $room = Rooms::findFirstById(136800);
         echoLine($room->product_channel_id);
+
+
+        $account_histories = AccountHistories::find(['conditions' => 'fee_type = :fee_type: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+            'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND]]);
+
+        echoLine(count($account_histories));
+
+        $amount = 0;
+
+        foreach ($account_histories as $account_history) {
+            $amount += $account_history->amount;
+            echoLine($account_history->id, $account_history->user_id);
+        }
+
+        echoLine($amount);
+
+        //1083050 1001315 1017233 1058027
+        $ids = [];
+
+        $account_histories = AccountHistories::sum(['conditions' => 'fee_type = :fee_type: and (hi_coin_history_id = 0 or hi_coin_history_id is null) and user_id = 1017233',
+            'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND],
+            'column' => 'amount'
+            ]);
+
+        echoLine($account_histories);
+
+        foreach ($ids as $id) {
+
+        }
+
+        //{"1058027":196978790,"1060201":11010270,"1017233":141520,"1060180":116360,"1001315":30000,"1083050":330}
+
+        $opts = ['remark' => '系统扣除'];
+        AccountHistories::changeBalance(1060201, ACCOUNT_TYPE_DEDUCT, 11010270, $opts);
     }
 
     function testWebSoketAction()
