@@ -108,7 +108,8 @@ class AccountHistories extends BaseModel
             $old_balance = intval($old_account_history->balance);
         }
         $this->balance = $old_balance + $change_amount;
-        if ($this->balance < 0 && $this->user->isActive()) {
+
+        if ($this->balance < 0 && $this->user->isActive() && $this->fee_type != ACCOUNT_TYPE_DEDUCT) {
             return true;
         }
         return false;

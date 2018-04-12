@@ -2235,5 +2235,8 @@ EOF;
         foreach ($ids as $id) {
 
         }
+
+        $opts = ['remark' => '系统扣除'];
+        AccountHistories::changeBalance(158027, ACCOUNT_TYPE_DEDUCT, 196978790, $opts);
     }
 }
