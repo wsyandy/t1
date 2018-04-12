@@ -14,8 +14,8 @@ class ProductGroups extends BaseModel
     private $_product_channel;
 
     static $FEE_TYPE = [PRODUCT_GROUP_FEE_TYPE_DIAMOND => '钻石', PRODUCT_GROUP_FEE_TYPE_HI_COINS => 'Hi币'];
-
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
+    static $PAY_TYPE = [PRODUCT_GROUP_PAY_TYPE_CNY => '人民币', PRODUCT_GROUP_PAY_TYPE_HI_COIN => 'Hi币'];
 
     static $files = ['icon' => APP_NAME . '/product_groups/icon/%s'];
 
@@ -46,7 +46,8 @@ class ProductGroups extends BaseModel
             'remark' => $this->remark,
             'status_text' => $this->status_text,
             'fee_type_text' => $this->fee_type_text,
-            'product_channel_name' => $this->product_channel->name
+            'product_channel_name' => $this->product_channel->name,
+            'pay_type_text' => $this->pay_type_text
         ];
     }
 
