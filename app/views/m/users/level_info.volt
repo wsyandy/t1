@@ -1,5 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/ruanyuyin/css/level_introduce.css') }}
+{{ theme_js('/m/ruanyuyin/js/font_rem.js') }}
 {{ block_end() }}
 <div class="wo_dengji" id="app">
     <div>

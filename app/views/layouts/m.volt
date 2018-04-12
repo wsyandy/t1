@@ -8,7 +8,6 @@
     <script src="/js/jquery/1.11.2/jquery.min.js"></script>
     <script src="/js/vue/2.0.5/vue.min.js"></script>
     <script src="/js/utils.js"></script>
-    <script src="/js/font_rem.js"></script>
     {{ block_holder('head') }}
 </head>
 <body>
