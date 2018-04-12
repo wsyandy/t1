@@ -1,4 +1,5 @@
 <?php
+
 namespace admin;
 
 class BannedWordsController extends BaseController
@@ -7,6 +8,7 @@ class BannedWordsController extends BaseController
     function indexAction()
     {
 
+        $conds = $this->getConditions('banned_word');
         $conds['order'] = 'id desc';
         $page = $this->params('page');
         $banned_words = \BannedWords::findPagination($conds, $page);
@@ -42,6 +44,14 @@ class BannedWordsController extends BaseController
         $banned_word->save();
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '修改成功', ['banned_word' => $banned_word->toJson()]);
+    }
+
+    function deleteAction()
+    {
+        $banned_word = \BannedWords::findFirstById($this->params('id'));
+        $banned_word->delete();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
 
 }
