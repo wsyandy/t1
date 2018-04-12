@@ -52,6 +52,9 @@ class AccountHistories extends BaseModel
         $user_attrs['add_value'] = abs($this->amount);
         $action = $this->getStatActon();
         \Stats::delay()->record('user', $action, $user_attrs);
+
+        //钻石消费记录
+        \DataCollection::syncData('account_history', 'change_balance', ['account_history' => $this->toJson()]);
     }
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])

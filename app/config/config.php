@@ -44,4 +44,6 @@ return new \Phalcon\Config([
     'websocket_max_request' => env('websocket_max_request', 10000),
     'websocket_task_worker_num' => env('websocket_task_worker_num', 3),
     'websocket_reactor_num' => env('websocket_reactor_num', 2),
+
+    'data_collection_endpoints' => env('data_collection_endpoints', 'http://120.55.51.33:7200/hi/rest/data'),
 ]);

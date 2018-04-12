@@ -29,6 +29,11 @@ class Payments extends BaseModel
         PAYMENT_PAY_STATUS_FAIL => '支付失败'
     ];
 
+    function toPushDataJson()
+    {
+        return array_merge(['product_diamond_number' => $this->order->product->diamond], $this->toJson());
+    }
+
     function toJson()
     {
         return [
@@ -140,6 +145,9 @@ class Payments extends BaseModel
             $attrs['add_value'] = round($this->paid_amount);
             info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
             \Stats::delay()->record("user", "payment_success", $attrs);
+
+            //当支付成功后，推送消息
+            \DataCollection::syncData('payment', 'pay_success', ['payment' => $this->toPushDataJson()]);
             return;
         }
     }
