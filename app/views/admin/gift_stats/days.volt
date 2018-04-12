@@ -19,17 +19,30 @@
     <button class="ui button" type="submit">搜索</button>
 </form>
 
-{%- macro gift_num_link(gift_stat) %}
-    <div id="gift_num_{{ gift_stat.id }}"></div>
-{%- endmacro %}
-{%- macro gift_user_link(gift_stat) %}
-    <div id="gift_user_{{ gift_stat.id }}"></div>
-{%- endmacro %}
-{%- macro gift_total_link(gift_stat) %}
-    <div id="gift_total_{{ gift_stat.id }}"></div>
-{%- endmacro %}
 
-{{ simple_table(gift_stats,['礼物':'gift_name','礼物赠送总次数':'gift_num_link','礼物赠送总人数':'gift_user_link','礼物赠送总个数':'gift_total_link']) }}
+<table class="table table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>渠道</th>
+        <th>fr</th>
+        {% for key, text in stat_fields %}
+            <th>{{ text }}</th>
+        {% endfor %}
+        <th>渠道</th>
+    </tr>
+    </thead>
+
+    <tbody id="stat_list">
+    {% for gift_stat in gift_stats %}
+        <tr id="{{ gift_stat.id }}" class="row_line">
+            {% for stat_field, text  in stat_fields %}
+                <td id="{{ gift_stat.id }}_{{ stat_field }}"></td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 
 <script type="text/javascript">
 
@@ -42,10 +55,6 @@
         {% endfor %}
     });
 
-</script>
-
-<script type="text/javascript">
-
     $(".form_datetime").datetimepicker({
         language: "zh-CN",
         format: 'yyyy-mm-dd',
@@ -55,4 +64,5 @@
         startView: 2,
         minView: 2
     });
+
 </script>
