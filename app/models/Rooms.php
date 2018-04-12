@@ -3,6 +3,7 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
+    use RoomInternational;
 
     /**
      * @type ProductChannels
@@ -1899,7 +1900,6 @@ class Rooms extends BaseModel
         $country_id = fetch($opts, 'country_id');
         $product_channel_id = fetch($opts, 'product_channel_id');
         $uid = fetch($opts, 'uid');
-        $id = fetch($opts, 'id');
         $name = fetch($opts, 'name');
         $new = fetch($opts, 'new');
         $hot = fetch($opts, 'hot');
@@ -1927,11 +1927,6 @@ class Rooms extends BaseModel
         if ($uid) {
             $cond['conditions'] .= " and (uid = :uid:) ";
             $cond['bind']['uid'] = $uid;
-        }
-
-        if ($id) {
-            $cond['conditions'] .= " and (id = :id:) ";
-            $cond['bind']['id'] = $id;
         }
 
         if ($name) {

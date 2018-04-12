@@ -408,7 +408,6 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
         }
 
-        info('keywords', $keywords);
         //搜索
         if (preg_match('/^[0-9]*$/', $keywords)) {
             $user_cond = ['uid' => intval($keywords), 'nickname' => $keywords];
@@ -419,12 +418,11 @@ class UsersController extends BaseController
         }
 
         info('user_cond', $user_cond, 'room_cond', $room_cond);
-        $users = \Users::search($this->currentUser(), $page, $per_page, $user_cond);
-        $rooms = \Rooms::searchRooms($room_cond, $page, $per_page);
+        $users = \Users::searchByInternational($this->currentUser(), $page, $per_page, $user_cond);
+        $rooms = \Rooms::searchRoomsByInternational($room_cond, $page, $per_page);
 
         $rooms_json = $rooms->toJson('rooms', 'toSimpleJson');
         $users_json = $users->toJson('users', 'toSimpleJson');
-        info('rooms_json', $rooms_json, 'users_json', $users_json);
 
         $rest = array_merge($rooms_json, $users_json);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rest);
