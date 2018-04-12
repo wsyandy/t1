@@ -48,6 +48,23 @@
         }
     };
 
+    $(function () {
+        pushHistory();
+    });
+
+    function pushHistory() {
+        window.addEventListener("popstate", function (e) {
+          alert("后退");
+            self.location.reload();
+        }, false);
+        var state = {
+            title: "",
+            url: "#"
+        };
+        window.history.replaceState(state, "", "#");
+    }
+
+
     vm = XVue(opts)
 </script>
 
