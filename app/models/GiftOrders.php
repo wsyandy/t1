@@ -173,9 +173,9 @@ class GiftOrders extends BaseModel
                     $activity_gift_ids = [44, 15, 19];
                 }
 
-                if (in_array($gift->id, $activity_gift_ids)) {
-                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
-                }
+//                if (in_array($gift->id, $activity_gift_ids)) {
+//                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
+//                }
 
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;
