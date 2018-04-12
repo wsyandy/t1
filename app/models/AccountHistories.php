@@ -30,7 +30,8 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_CREATE_UNION => '创建公会',
         ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
         ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
-        ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出'
+        ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出',
+        ACCOUNT_TYPE_DEDUCT => '系统扣除'
     ];
 
     function beforeCreate()
@@ -119,7 +120,7 @@ class AccountHistories extends BaseModel
     function isCostDiamond()
     {
         return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
-            || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES;
+            || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES || $this->fee_type == ACCOUNT_TYPE_DEDUCT;
     }
 
     function getStatActon()
