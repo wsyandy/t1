@@ -23,12 +23,9 @@
 <table class="table table-striped table-condensed">
     <thead>
     <tr>
-        <th>渠道</th>
-        <th>fr</th>
         {% for key, text in stat_fields %}
             <th>{{ text }}</th>
         {% endfor %}
-        <th>渠道</th>
     </tr>
     </thead>
 
@@ -36,7 +33,7 @@
     {% for gift_stat in gift_stats %}
         <tr id="{{ gift_stat.id }}" class="row_line">
             {% for stat_field, text  in stat_fields %}
-                <td id="{{ gift_stat.id }}_{{ stat_field }}"></td>
+                <td id="{{ stat_field }}_{{ gift_stat.id }}"></td>
             {% endfor %}
         </tr>
     {% endfor %}
