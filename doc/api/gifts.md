@@ -244,3 +244,32 @@
     ]
 }
 ````
+
+## 7 取消我的座驾礼物
+
+> http-post ```/api/gifts/cancel_car_gift```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|---|---|---|---|---|
+|gift_id|礼物ID|integer|否|礼物id
+
+##### 返回参数说明
+````
+{ 
+    error_code: 0/-1
+    error_reason: ''
+    error_url: "",
+    now_at: 1515508744
+    name: ''
+    image_url: ''
+    image_small_url: ''
+    image_big_url: ''
+    dynamic_image_url: ''
+    svga_image_name: svga 对应zip包中的图片名称
+    render_type 渲染类型 gif svga
+    svga_image_url svga 图片
+    show_rank int 礼物展示排序
+    status  使用状态 0未使用 1 使用中
+}
+````
