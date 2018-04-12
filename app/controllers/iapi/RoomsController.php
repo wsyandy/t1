@@ -160,7 +160,7 @@ class RoomsController extends BaseController
         //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
 //        $this->currentUser()->pushFollowedIntoRoomRemind();
 
-        $res = $room->toJson();
+        $res = $room->toInternationalDetailJson();
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
@@ -560,5 +560,18 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
+
+    function interestAction()
+    {
+
+        $room_cond = ['hot' => STATUS_ON];
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 2);
+
+        $rooms = \Rooms::searchRooms($room_cond, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+    }
+
 
 }

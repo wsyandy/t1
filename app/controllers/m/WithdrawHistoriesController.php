@@ -13,7 +13,7 @@ class WithdrawHistoriesController extends BaseController
     function indexAction()
     {
         $user = $this->currentUser();
-        $rate = $user->rateOfHiCoinToMoney();
+        $rate = \HiCoinHistories::rateOfHiCoinToCny();
         $this->view->rate = $rate;
         $this->view->hi_coins = $user->getHiCoinText();
         $this->view->amount = $user->getWithdrawAmount();

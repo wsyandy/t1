@@ -137,7 +137,7 @@
         <ul>
             <li v-show="!user_operation && is_president" @click.stop="edit">修改家族资料</li>
             <li v-show="!user_operation " @click.stop="rankUnion">家族排行</li>
-            <li v-show="!user_operation && is_president" @click.stop="applyGoHot">上热门</li>
+            {#<li v-show="!user_operation && is_president" @click.stop="applyGoHot">上热门</li>#}
             <li v-show="!user_operation && is_president" @click.stop="confirmPop">解散家族</li>
             <li v-show="user_operation " @click.stop="userDetail">查看资料</li>
             <li v-show="user_operation && selected_user.id != union.user_id && is_president" @click.stop="confirmPop">

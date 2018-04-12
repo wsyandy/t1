@@ -7,18 +7,17 @@
  */
 
 namespace m;
+
 class HiCoinHistoriesController extends BaseController
 {
 
     function exchangeAction()
     {
-
-        $products = \Products::findDiamondListByUser($this->currentUser(), '', PRODUCT_GROUP_FEE_TYPE_HI_COINS);
+        $products = \Products::findHiCoinDiamondListByUser($this->currentUser());
         $this->view->products = $products;
         $this->view->hi_coin_diamond_rate = HI_COIN_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
         $this->view->title = 'Hi币兑钻';
-
     }
 
     function createAction()
@@ -42,14 +41,16 @@ class HiCoinHistoriesController extends BaseController
             $gold = '';
 
             if ($product) {
-                $hi_coins = $product->hi_coins;
+                $amount = $product->amount;
+                $hi_coins = \HiCoinHistories::rateOfCnyToHiCoin() * $amount;
                 $gold = $product->gold;
                 $diamond = $product->diamond;
             }
 
             $user = $this->currentUser();
 
-            if ($user->getHiCoinText() < $hi_coins) {
+            //所有以扣除人民币为准
+            if ($user->getWithdrawAmount() < $amount) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 

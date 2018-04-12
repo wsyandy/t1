@@ -267,4 +267,14 @@ class HiCoinHistories extends BaseModel
         return $hi_coin_history;
 
     }
+
+    static function rateOfHiCoinToCny()
+    {
+        return 1;
+    }
+
+    static function rateOfCnyToHiCoin()
+    {
+        return 1;
+    }
 }

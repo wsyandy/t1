@@ -3,6 +3,7 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
+    use RoomInternational;
 
     /**
      * @type ProductChannels
@@ -123,7 +124,7 @@ class Rooms extends BaseModel
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
             'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
-            'theme_image_url' => $this->theme_image_url
+            'theme_image_url' => $this->theme_image_url, 'uid' => $this->uid
         ];
     }
 
@@ -155,6 +156,59 @@ class Rooms extends BaseModel
     function toBasicJson()
     {
         return ['id' => $this->id, 'uid' => $this->uid, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
+    }
+
+    function toInternationalDetailJson()
+    {
+
+        return [
+            'id' => $this->id,
+            'uid' => $this->uid,
+            'name' => $this->name,
+            'topic' => $this->topic,
+            'chat' => $this->chat,
+            'online_status' => $this->online_status,
+            'channel_name' => $this->channel_name,
+            'lock' => $this->lock,
+            'created_at' => $this->created_at,
+            'last_at' => $this->last_at,
+            'user_num' => $this->user_num,
+            'theme_type' => $this->theme_type,
+            'audio_id' => $this->audio_id,
+            'theme_image_url' => $this->theme_image_url,
+            'room_theme_id' => $this->room_theme_id,
+            'user_info' => $this->userInfo(),
+            'room_seats' => $this->roomSeats(),
+            'managers' => $this->findManagers()
+        ];
+    }
+
+    function userInfo()
+    {
+
+        $user = $this->user;
+
+        return [
+            'id' => $user->id,
+            'uid' => $user->uid,
+            'nickname' => $user->nickname,
+            'avatar_small_url' => $user->avatar_small_url,
+            'sex' => $user->sex,
+            'age' => $user->age,
+            'monologue' => $user->monologue
+        ];
+    }
+
+    function roomSeats()
+    {
+        $room_seats = RoomSeats::find([
+            'conditions' => 'room_id=:room_id:',
+            'bind' => ['room_id' => $this->id],
+            'order' => 'rank asc'
+        ]);
+
+        $data = $room_seats->toJson('room_seats', 'toJson');
+        return $data['room_seats'];
     }
 
     static function createRoom($user, $name)
@@ -1898,7 +1952,7 @@ class Rooms extends BaseModel
     {
         $country_id = fetch($opts, 'country_id');
         $product_channel_id = fetch($opts, 'product_channel_id');
-        $id = fetch($opts, 'id');
+        $uid = fetch($opts, 'uid');
         $name = fetch($opts, 'name');
         $new = fetch($opts, 'new');
         $hot = fetch($opts, 'hot');
@@ -1923,9 +1977,9 @@ class Rooms extends BaseModel
             $cond['conditions'] .= " and hot = " . STATUS_ON;
         }
 
-        if ($id) {
-            $cond['conditions'] .= " and (id = :id:) ";
-            $cond['bind']['id'] = $id;
+        if ($uid) {
+            $cond['conditions'] .= " and (uid = :uid:) ";
+            $cond['bind']['uid'] = $uid;
         }
 
         if ($name) {
@@ -1949,11 +2003,13 @@ class Rooms extends BaseModel
         $user = Users::findFirstById($user_id);
 
         if (!$room || !$user) {
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("param error");
             return;
         }
 
         if (!$user->current_room_id) {
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("user_not_in_room", $user_id, $room_id, $room_seat_id);
             return;
         }
@@ -1965,13 +2021,15 @@ class Rooms extends BaseModel
 
             //如果用户已经连接并且不在被踢的房间 则只清楚房间信息 不发踢人websocket
             if ($room_id && $user->current_room_id != $room_id) {
-                $room->exitRoom($user);
+                $room->exitRoom($user, false);
             }
 
-            if ($room_seat_id && $user->current_room_seat_id != $room_seat_id) {
-                $room_seat->down($user);
+            if ($room_seat && $user->current_room_seat_id != $room_seat_id && $room_seat->user_id == $user_id) {
+                $room_seat->user_id = 0;
+                $room_seat->update();
             }
 
+            Rooms::delUserIdInExitRoomByServerList($user_id);
             info("user_re_connect", $user_id);
             return;
         }
@@ -1986,7 +2044,31 @@ class Rooms extends BaseModel
         }
 
         $room->exitRoom($user);
-        $room->pushExitRoomMessage($user, $current_room_seat_id);
+        //$room->pushExitRoomMessage($user, $current_room_seat_id);
+        Rooms::delUserIdInExitRoomByServerList($user_id);
         unlock($exce_exit_room_lock);
+    }
+
+    static function generateExitRoomByServerListKey()
+    {
+        return "exit_room_by_server_by_server_list";
+    }
+
+    static function isInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore(self::generateExitRoomByServerListKey(), $user_id) > 0;
+    }
+
+    static function addUserIdInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $hot_cache->zadd(self::generateExitRoomByServerListKey(), time(), $user_id);
+    }
+
+    static function delUserIdInExitRoomByServerList($user_id)
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        $hot_cache->zrem(self::generateExitRoomByServerListKey(), $user_id);
     }
 }

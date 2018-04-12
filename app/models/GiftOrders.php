@@ -42,6 +42,15 @@ class GiftOrders extends BaseModel
 
     }
 
+    function afterUpdate()
+    {
+        if ($this->hasChanged('status') && $this->status == GIFT_ORDER_STATUS_SUCCESS && $this->pay_type == GIFT_PAY_TYPE_DIAMOND) {
+
+            //当礼物订单状态为支付成功，并且礼物订单类型为钻石支付的时候，才进行推送
+            \DataCollection::syncData('gift_order', 'give_to_success', ['gift_order' => $this->toPushDataJson()]);
+        }
+    }
+
     function toDetailJson()
     {
         return [
@@ -55,6 +64,23 @@ class GiftOrders extends BaseModel
             'image_url' => $this->gift_image_url,
             'image_small_url' => $this->gift_image_small_url,
             'image_big_url' => $this->gift_image_big_url,
+            'created_at_text' => $this->created_at_text,
+            'user_id' => $this->user_id,
+            'sender_id' => $this->sender_id,
+            'pay_type' => $this->pay_type,
+            'pay_type_text' => $this->getPayTypeText()
+        ];
+    }
+
+    function toPushDataJson()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'user_name' => $this->getGiftUser($this->user_id)->nickname,
+            'sender_name' => $this->getGiftUser($this->sender_id)->nickname,
+            'amount' => $this->amount,
+            'gift_num' => $this->gift_num,
             'created_at_text' => $this->created_at_text,
             'user_id' => $this->user_id,
             'sender_id' => $this->sender_id,
@@ -173,9 +199,9 @@ class GiftOrders extends BaseModel
                     $activity_gift_ids = [44, 15, 19];
                 }
 
-                if (in_array($gift->id, $activity_gift_ids)) {
-                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
-                }
+//                if (in_array($gift->id, $activity_gift_ids)) {
+//                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
+//                }
 
             } else {
                 $gift_order->status = GIFT_ORDER_STATUS_WAIT;

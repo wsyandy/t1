@@ -44,6 +44,7 @@ trait UserAttrs
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond,
+            'lang' => $this->lang,
             'country_id' => $this->country_id
         ];
 
@@ -160,7 +161,8 @@ trait UserAttrs
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'followed' => $this->followed
         ];
 
         if (isset($this->friend_status)) {
@@ -242,12 +244,13 @@ trait UserAttrs
     {
         $data = [
             'user_id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'is_permanent' => $this->is_permanent, //是否为永久管理员
-            'deadline' => $this->deadline //管理员有效期截止时间
+            'deadline' => $this->deadline //管理员有效期截止时间,
         ];
 
         return $data;
@@ -659,7 +662,7 @@ trait UserAttrs
         if (!$hi_coins) {
             return 0;
         } else {
-            $rate = $this->rateOfHiCoinToMoney();
+            $rate = \HiCoinHistories::rateOfHiCoinToCny();
             $hi_coins = $hi_coins / $rate;
 
             return intval($hi_coins * 100) / 100;
@@ -797,11 +800,6 @@ trait UserAttrs
         }
 
         return 4.5 / 100;
-    }
-
-    function rateOfHiCoinToMoney()
-    {
-        return 1;
     }
 
     function getTags()

@@ -290,6 +290,9 @@ class Gifts extends BaseModel
      */
     static function findValidList($user, $opts = [])
     {
+        $platform = $user->platform;
+        $product_channel_id = $user->product_channel_id;
+
         $gift_type = fetch($opts, 'gift_type');
 
         $conditions = [
@@ -297,7 +300,14 @@ class Gifts extends BaseModel
             'bind' => [
                 'status' => GIFT_STATUS_ON
             ],
-            'order' => 'rank desc, amount asc'];
+            'order' => 'rank desc, amount asc'
+        ];
+
+        $conditions['conditions'] .= " and ( platforms like '*' or platforms like :platforms: or platforms = '')";
+        $conditions['bind']['platforms'] = "%" . $platform . "%";
+
+        $conditions['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
 
         if ($gift_type) {
             $conditions['conditions'] .= ' and type = :gift_type:';
@@ -325,6 +335,8 @@ class Gifts extends BaseModel
                 $conditions['conditions'] .= " and id not in (" . implode(",", $gold_gift_ids) . ")";
             }
         }
+
+        debug($conditions);
 
         $gifts = \Gifts::findPagination($conditions, $page, $per_page);
 

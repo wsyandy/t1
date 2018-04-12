@@ -44,7 +44,8 @@ class RoomsController extends BaseController
 
         //限制搜索条件
         $cond = [
-            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
+            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . " and product_channel_id = :product_channel_id:",
+            'bind' => ['product_channel_id' => $this->currentProductChannel()->id],
             'order' => 'last_at desc, user_type asc'
         ];
 
@@ -185,7 +186,7 @@ class RoomsController extends BaseController
         //如果进入其他房间时 用户身上有房间 先退出房间
         $current_room = $this->currentUser()->current_room;
         if ($current_room && $current_room->id != $room_id) {
-            info('Exce exit',$this->currentUser()->id, $current_room->id, $room_id);
+            info('Exce exit', $this->currentUser()->id, $current_room->id, $room_id);
             $current_room->exitRoom($this->currentUser());
         }
 
@@ -195,8 +196,8 @@ class RoomsController extends BaseController
         $app_id = $this->currentProductChannel()->getImAppId();
 
         $hot_cache = \Users::getHotWriteCache();
-        $cache_key = 'push_into_room_remind_'.$this->currentUser()->id;
-        if(!$hot_cache->get($cache_key)){
+        $cache_key = 'push_into_room_remind_' . $this->currentUser()->id;
+        if (!$hot_cache->get($cache_key)) {
             $hot_cache->setex($cache_key, 300, time());
             \Users::delay()->pushIntoRoomRemind($this->currentUser()->id);
         }

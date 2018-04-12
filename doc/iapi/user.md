@@ -266,7 +266,14 @@
 |monologue|个性签名|string||客户端需限制字数长度|
 |age|年龄|int|||
 |height|身高|int|||
-|birthday|生日|string||||
+|birthday|生日|string|||
+|lang|语言|string||(备注1)||
+
+##### (备注1)
+```
+zh 简体中文, zh-TW 繁体中文,en 英语,vi 越南语,ru 俄语,pt 葡萄牙语,
+ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
+```
 
 ##### 回应参数说明
 ```
@@ -300,6 +307,7 @@
     birthday 生日
     constellation 星座
     level 用户等级
+    lang 语言
     segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
     segment_text 段位文本 星耀1
@@ -355,9 +363,10 @@
 > http-get ```/iapi/users/search```
 
 ##### 请求参数说明
+
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
-|keywords|搜索词|int或string|否|id搜素是int型,其他搜索是string|
+|keywords|搜索词|string|否||
 |page|当前页|int|是||
 |per_page|每页个数|int|是|||
 
@@ -413,6 +422,47 @@
     ]
 }
 ```
+
+### 感兴趣的用户接口
+
+> http-get ```/iapi/users/interest```
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|page|当前页|int|是||
+|per_page|每页个数|int|是|默认2条||
+
+##### 回应参数说明
+```
+{
+    error_code: 0成功，非0失败
+    error_reason  失败原因，默认为空
+    users:[
+        {
+             id 用户id
+             sex	性别 0:女 1:男
+             province_name 省名
+             city_name 城市
+             avatar_url 用户头像
+             avatar_small_url 用户小头像
+             nickname 昵称
+             room_id 用户创建房间id，无房间为0 
+             current_room_id 用户当前所在房间id,不在房间为0
+             current_room_seat_id 用户当前所在麦位id
+             current_channel_name 当前所在房间频道名称 
+             mobile 手机号
+             monologue 个性签名
+             level 用户等级
+            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            (例:星耀1 starshine1;星耀王者2 king2)
+            segment_text 段位文本 星耀1
+            followed_num 关注人数
+        }
+    ]
+}
+```
+
 
 ### 判断用户是否存在
 
@@ -632,6 +682,43 @@
     ]
 }
 ```
+
+### 判断是否签到
+> http-get ```/iapi/users/is_sign_in```
+
+#####  请求参数说明
+```
+公共参数
+```
+
+#####  回应参数说明
+```
+{
+    error_code
+    error_reason
+    sign_in_status: 签到状态 1已签到，2未签到 
+    tip: 恭喜您获得xxxx金币
+    message: 七天以上连续签到可每天获得320金币
+}
+```
+
+### 签到
+> http-post ```/iapi/users/sign_in```
+
+#####  请求参数说明
+```
+公共参数
+```
+
+##### 回应参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: 失败原因，默认为空
+    gold: 签到得到的金币
+}
+```
+
 
 ### hi币贡献榜
 >http-get ```/iapi/users/hi_coin_rank_list```

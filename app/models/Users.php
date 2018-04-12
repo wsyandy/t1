@@ -7,6 +7,7 @@ class Users extends BaseModel
     use UserAttrs;
     use UserAbilities;
     use UserWakeup;
+    use UserInternational;
 
     /**
      * @type ProductChannels
@@ -488,7 +489,7 @@ class Users extends BaseModel
 
             $fields = ['product_channel_id', 'platform', 'platform_version', 'version_code', 'version_name',
                 'api_version', 'device_no', 'fr', 'partner_id', 'manufacturer', 'ip', 'latitude', 'longitude',
-                'push_token'];
+                'lang', 'push_token'];
 
             $user = new \Users();
             $user->login_name = md5(uuid()) . '@app.com';
@@ -1385,6 +1386,15 @@ class Users extends BaseModel
         return $user_db->zscore($follow_key, $other_user->id) > 0;
     }
 
+    //是否已被关注
+    function isFollowed($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $follow_key = 'followed_list_user_id' . $this->id;
+        $this->followed = $user_db->zscore($follow_key, $other_user->id) > 0;
+        return $this->followed;
+    }
+
     //关注
     function follow($other_user, $opts = [])
     {
@@ -1703,7 +1713,8 @@ class Users extends BaseModel
         }
 
         if ($uid) {
-            $cond = ['conditions' => 'uid = :uid:', 'bind' => ['uid' => $uid]];
+            $cond['conditions'] .= ' and (uid = :uid:) ';
+            $cond['bind']['uid'] = $uid;
         }
 
         if ($nickname) {

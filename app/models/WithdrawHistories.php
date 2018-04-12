@@ -39,6 +39,9 @@ class WithdrawHistories extends BaseModel
 
                 if (WITHDRAW_STATUS_SUCCESS == $this->status) {
                     $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
+
+                    //推送提现数据，只要有提现动作就推送，此时为提现到账成功推送
+                    \DataCollection::syncData('withdraw_history', 'update_status_success', ['withdraw_history' => $this->toPushDataJson()]);
                 }
 
                 if (WITHDRAW_STATUS_FAIL == $this->status) {
@@ -93,6 +96,9 @@ class WithdrawHistories extends BaseModel
             \Stats::delay()->record("user", "withdraw", $attrs);
 
             Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，每周二当日到账！');
+
+            //推送提现数据，目前暂时只做用户提现,只要有提现动作就推送
+            \DataCollection::syncData('withdraw_history', 'create', ['withdraw_history' => $this->toPushDataJson()]);
         }
     }
 
@@ -189,6 +195,22 @@ class WithdrawHistories extends BaseModel
             'status_text' => $this->status_text,
             'created_at_date' => $this->created_at_date,
             'created_at_text' => $this->created_at_text,
+        ];
+    }
+
+    function toPushDataJson()
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'user_name' => $this->user_nickname,
+            'alipay_account' => $this->alipay_account,
+            'product_channel_id' => $this->product_channel_id,
+            'product_channel_name' => $this->product_channel_name,
+            'amount' => $this->amount,
+            'type' => $this->type_text,
+            'status' => $this->status_text,
+            'created_at' => $this->created_at
         ];
     }
 

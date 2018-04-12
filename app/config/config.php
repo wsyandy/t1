@@ -4,10 +4,10 @@ return new \Phalcon\Config([
     'alioss' => [
         'crypt_key' => env('crypt_key', md5(APP_NAME . '_' . APP_ENV)),
         'host' => env('alioss_host', 'http://oss-cn-hangzhou.aliyuncs.com'),
-        'access_key' => env('alioss_access_key', 'qCIEyToynSzy3Zw7'),
-        'secret_key' => env('alioss_secret_key', 'nm1pIUeSRyk8llxbMx5FaGWLQ9E1iF'),
-        'bucket' => env('alioss_bucket', 'yiyuan-development'),
-        'domain' => env('alioss_domain', 'yiyuan-development.img-cn-hangzhou.aliyuncs.com')
+        'access_key' => env('alioss_access_key', 'LTAIEcaQFRJz6qai'),
+        'secret_key' => env('alioss_secret_key', 'iFWLfYotm6TWpjkGBY4DICRYjTbVsm'),
+        'bucket' => env('alioss_bucket', 'mt-development'),
+        'domain' => env('alioss_domain', 'mt-development.img-cn-hangzhou.aliyuncs.com')
     ],
 
     'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
@@ -29,7 +29,7 @@ return new \Phalcon\Config([
     'agora_app_certificate' => env('agora_app_certificate', '773c59982b3e4a5a968efbe0c9b15c5c'),
     'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http'),
 
-    'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.yueyuewo.cn"),
+    'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.momoyuedu.cn"),
 
     'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"), //废弃
     'websocket_listen_client_port' => env('websocket_listen_client_port', 9509), //废弃
@@ -44,4 +44,6 @@ return new \Phalcon\Config([
     'websocket_max_request' => env('websocket_max_request', 10000),
     'websocket_task_worker_num' => env('websocket_task_worker_num', 3),
     'websocket_reactor_num' => env('websocket_reactor_num', 2),
+
+    'data_collection_endpoints' => env('data_collection_endpoints', 'http://120.55.51.33:7200/hi/rest/data'),
 ]);

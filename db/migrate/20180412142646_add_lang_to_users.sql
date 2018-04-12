@@ -1,0 +1,2 @@
+ALTER TABLE devices add COLUMN lang VARCHAR ;
+ALTER TABLE users add COLUMN lang VARCHAR ;

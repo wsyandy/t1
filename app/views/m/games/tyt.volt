@@ -27,7 +27,7 @@
                 <input type="number" placeholder="请输入数目" v-model="gold_game_amount" class="gold"/>
                 <span class="gold"></span>
             </li>
-            <li>
+            <li v-if="current_user.level >= 6">
                 <span @click="selectgametype(2)" :class="{ 'radio_select': 2==select_game_type }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
@@ -52,7 +52,8 @@
                 room_host_id: "{{ room_host_id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                room_id: "{{ room_id }}"
+                room_id: "{{ room_id }}",
+                current_user:{{ current_user }}
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -127,7 +128,8 @@
         <div class="start_game">
             <span>${game_status_text}</span>
             <p></p>
-            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'"><span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
+            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'">
+                <span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
             </p>
         </div>
         <div class="select_game_button">
@@ -149,7 +151,9 @@
                 sid: "{{ current_user.sid }}",
                 can_game: false,
                 error_reason: '钻石不足',
-                game_status_text: ''
+                game_status_text: '',
+                current_user:{{ current_user }},
+                can_create_game: "{{ can_create_game }}"
             },
             watch: {},
             methods: {
@@ -180,7 +184,11 @@
 
         $(function () {
             if (!vm.pay_type) {
-                vm.game_status_text = '您不是主播,不能发起游戏';
+                if (vm.can_create_game) {
+                    vm.game_status_text =  vm.room_host_nickname + '正在发起游戏中，请稍后！';
+                }else{
+                    vm.game_status_text = '您不是主播,不能发起游戏';
+                }
             } else {
                 vm.game_status_text = vm.room_host_nickname + '已发起游戏';
             }

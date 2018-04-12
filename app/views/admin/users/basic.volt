@@ -44,6 +44,12 @@
         <td>家族魅力值:{{ user.union_charm_value }}</td>
         <td>家族财富值:{{ user.union_wealth_value }}</td>
     </tr>
+    <tr>
+        <td>语言:{{ user.lang_text }}</td>
+        <td>国家:{% if user.country %}{{ user.country.chinese_name }}{% endif %}</td>
+        <td></td>
+        <td></td>
+    </tr>
 </table>
 
 <table class="table  table-condensed table-hover">
