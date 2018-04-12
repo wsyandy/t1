@@ -14,7 +14,6 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $rate = $user->rateOfHiCoinToMoney();
-        $hi_coins = $user->hi_coins;
         $this->view->rate = $rate;
         $this->view->hi_coins = $user->getHiCoinText();
         $this->view->amount = $user->getWithdrawAmount();
@@ -45,32 +44,27 @@ class WithdrawHistoriesController extends BaseController
             }
 
             $amount = $this->params('amount');
-            $name = $this->params('name', null);
-            $account = $this->params('account', null);
+            $withdraw_account_id = $this->params('withdraw_account_id');
 
             if (isBlank($amount) || !preg_match('/^\d+\d$/', $amount) || $amount < 50) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
+            if (isBlank($withdraw_account_id)) {
+                return "账户不能为空";
+            }
+
             $amount = intval($amount);
 
-            if (!$name) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '姓名不能为空');
-            }
-
-            if (!$account) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '账户不能为空');
-            }
-
-
-            $opts = ['amount' => $amount, 'name' => $name, 'account' => $account];
-            list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistories($this->currentUser(), $opts);
+            $opts = ['amount' => $amount, 'withdraw_account_id' => $withdraw_account_id];
+            list($error_code, $error_reason) = \WithdrawHistories::createWithdrawHistory($this->currentUser(), $opts);
 
             return $this->renderJSON($error_code, $error_reason);
         }
 
     }
 
+    //已废弃
     function getMoneyAction()
     {
         $user = $this->currentUser();
@@ -97,6 +91,34 @@ class WithdrawHistoriesController extends BaseController
         $this->view->title = '我要提现';
         $this->view->user_name = $last_withdraw_history ? $last_withdraw_history->user_name : '';
         $this->view->alipay_account = $last_withdraw_history ? $last_withdraw_history->alipay_account : '';
+    }
+
+    function withdrawAction()
+    {
+        $user = $this->currentUser();
+        $amount = $user->getWithdrawAmount();
+        if ($this->request->isPost()) {
+            if ($amount <= 0) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您还没有hi币哟');
+            }
+            $wait_withdraw_history = \WithdrawHistories::waitWithdrawHistory($user);
+
+            if ($wait_withdraw_history) {
+
+                if (WITHDRAW_STATUS_WAIT == $wait_withdraw_history->status) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '您有一笔正在提现的订单,请勿重复提现');
+                }
+                return $this->renderJSON(ERROR_CODE_FAIL, '一周只能提现一次哦');
+            } else {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+        }
+
+        $this->view->amount = $amount;
+        $this->view->code = $this->params('code');
+        $this->view->sid = $this->params('sid');
+        $this->view->title = '我要提现';
+        $this->view->withdraw_account = \WithdrawAccounts::getDefaultWithdrawAccount($user);
     }
 
     function recordsAction()

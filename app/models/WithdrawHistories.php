@@ -23,6 +23,11 @@ class WithdrawHistories extends BaseModel
      */
     private $_union;
 
+    /**
+     * @type WithdrawAccounts
+     */
+    private $_withdraw_account;
+
     static $TYPE = [WITHDRAW_TYPE_USER => '用户体提现', WITHDRAW_TYPE_UNION => '公会提现'];
     static $STATUS = [WITHDRAW_STATUS_WAIT => '提现中', WITHDRAW_STATUS_SUCCESS => '提现成功', WITHDRAW_STATUS_FAIL => '提现失败'];
 
@@ -91,11 +96,15 @@ class WithdrawHistories extends BaseModel
         }
     }
 
-    static function createWithdrawHistories($user, $opts)
+    static function createWithdrawHistory($user, $opts)
     {
         $amount = fetch($opts, 'amount');
-        $user_name = fetch($opts, 'name');
-        $alipay_account = fetch($opts, 'account');
+        $withdraw_account_id = fetch($opts, 'withdraw_account_id');
+
+        $withdraw_account = WithdrawAccounts::findFirstById($withdraw_account_id);
+        if (isBlank($withdraw_account) || $withdraw_account->status != STATUS_ON) {
+            return [ERROR_CODE_FAIL, '收款账户错误，请重新选择'];
+        }
 
         $wait_withdraw_history = WithdrawHistories::waitWithdrawHistory($user);
 
@@ -114,12 +123,15 @@ class WithdrawHistories extends BaseModel
 
         $history = new WithdrawHistories();
         $history->user_id = $user->id;
-        $history->user_name = $user_name;
-        $history->alipay_account = $alipay_account;
+        $history->user_name = $user->nickname;
         $history->product_channel_id = $user->product_channel_id;
         $history->amount = $amount;
         $history->status = WITHDRAW_STATUS_WAIT;
         $history->type = WITHDRAW_TYPE_USER;
+        $history->withdraw_account_id = $withdraw_account_id;
+        $history->withdraw_account_type = $withdraw_account->type;
+        $history->account = $withdraw_account->account;
+        $history->mobile = $withdraw_account->mobile;
 
         if ($history->save()) {
             HiCoinHistories::createHistory($user->id, ['withdraw_history_id' => $history->id]);
@@ -274,5 +286,10 @@ class WithdrawHistories extends BaseModel
         $withdraw_history = WithdrawHistories::findFirst($conditions);
 
         return $withdraw_history;
+    }
+
+    function getWithdrawAccountTypeText()
+    {
+        return fetch(WithdrawAccounts::$TYPE, $this->withdraw_account_type);
     }
 }

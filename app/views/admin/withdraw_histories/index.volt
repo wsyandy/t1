@@ -51,8 +51,17 @@
         <a href="/admin/withdraw_histories/edit/{{ withdraw_histories.id }}" class="modal_action">编辑</a>
     {% endif %}
 {%- endmacro %}
+
+{%- macro account_link(withdraw_histories) %}
+    {% if(withdraw_histories.account ) %}
+        {{ withdraw_histories.account }}
+    {% else %}
+        {{ withdraw_histories.alipay_account }}
+    {% endif %}
+{%- endmacro %}
+
 {{ simple_table(withdraw_histories, [
-'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "支付宝账号": 'alipay_account','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
+'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "账号": 'account_link','类型':'withdraw_account_type_text','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
 ]) }}
 
 <script type="text/template" id="withdraw_history_tpl">
@@ -60,7 +69,8 @@
         <td>${withdraw_history.created_at_text}</td>
         <td>${withdraw_history.id}</td>
         <td>${withdraw_history.user_id}</td>
-        <td>${withdraw_history.alipay_account}</td>
+        <td>${withdraw_history.account}</td>
+        <td>${withdraw_history.withdraw_type_text}</td>
         <td>${withdraw_history.user_name}</td>
         <td>${withdraw_history.amount}</td>
         <td>${withdraw_history.status_text}</td>
