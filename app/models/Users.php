@@ -7,6 +7,7 @@ class Users extends BaseModel
     use UserAttrs;
     use UserAbilities;
     use UserWakeup;
+    use UserInternational;
 
     /**
      * @type ProductChannels
