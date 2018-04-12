@@ -133,9 +133,10 @@ class Products extends BaseModel
     //查询hi币兑换套餐
     static function findHiCoinDiamondListByUser($user)
     {
+        $user = Users::findFirstById(117);
         $product_group = \ProductGroups::findFirst(
             [
-                'conditions' => 'product_channel_id=:product_channel_id: and fee_type=:fee_type: and status=:status:',
+                'conditions' => 'product_channel_id=:product_channel_id: and pay_type=:pay_type: and status=:status:',
                 'bind' => ['product_channel_id' => $user->product_channel_id,
                     'pay_type' => PRODUCT_GROUP_PAY_TYPE_HI_COIN, 'status' => STATUS_ON]
             ]
