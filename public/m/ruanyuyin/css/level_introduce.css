@@ -1,0 +1,250 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+    background: #f5f5f5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+.wo_dengji{
+    background: #FFFFFF;
+    text-align: center;
+    padding:1.2rem 0 0.533333rem 0;
+}
+.wo_dengji img{
+    display: block;
+    width: 1.946667rem;
+    margin:0 auto;
+}
+.wo_dengji h3{
+    font-size: 0.426667rem;
+    color: #333333;
+    margin-top: 0.4rem;
+}
+.wo_dengji p{
+    font-size: 0.346667rem;
+    color: #333333;
+    margin-top: 0.4rem;
+}
+.wo_dengji p span{
+    font-weight: bold;
+}
+.wo_box{
+
+}
+.wo_box .box_list{
+    background: #FFFFFF;
+    padding:0.333333rem 0.4rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 0.266667rem;
+    position: relative;
+}
+.wo_box .box_list i{
+    display: inline-block;
+    margin-right: 0.266667rem;
+}
+.wo_box .box_list .icon_01{
+    width: 0.426667rem;
+    height: 0.586667rem;
+    background: url(../images/icon_01.png) no-repeat;
+    background-size: 100%;
+}
+.wo_box .box_list .icon_02{
+    width: 0.533333rem;
+    height: 0.533333rem;
+    background: url(../images/icon_02.png) no-repeat;
+    background-size: 100%;
+}
+.wo_box .box_list p{
+    font-size: 0.346667rem;
+    color: #333333;
+}
+.wo_box .box_list p b{
+    font-weight: bold;
+}
+.wo_box .box_list span{
+    position: absolute;
+    display: block;
+    width: 0.173333rem;
+    height: 0.293333rem;
+    background: url(../images/more.png) no-repeat;
+    background-size: 100%;
+    top: 50%;
+    right: 0.4rem;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.dengji_text{
+    padding:0.426667rem 0.4rem;
+    background: #f5f5f5;
+}
+.dengji_text h3{
+    font-size: 0.426667rem;
+    color: #333333;
+    padding-bottom: 0.066667rem;
+}
+.dengji_text p{
+    font-size: 0.346667rem;
+    color: #999999;
+    line-height: 0.453333rem;
+}
+.dengji_list{
+    font-size: 0.426667rem;
+    color: #333333;
+    padding:0.133333rem 0.4rem;
+}
+.week_list{
+    background: #FFFFFF;
+}
+.down_right{
+    left: 6.5rem !important;
+}
+.table{
+    width: 100%;
+    border-collapse:collapse;
+}
+.table tr{
+    height: 1.333333rem;
+}
+.table tr td{
+    text-align: center;
+    font-family: PingFangSC-Medium;
+    border:none;
+}
+.table tr td h5{
+    font-size: 0.4rem;
+    color: #A57952;
+}
+.table tr td b{
+    font-weight: normal;
+    font-size: 0.346667rem;
+    color: #666666;
+    display: block;
+}
+.table tr td span{
+    display: block;
+    font-size: 0.293333rem;
+    margin-top: 0.066667rem;
+}
+.table tr:nth-child(even) td  {
+    background: #FAFAFA;
+}
+.table tr td img{
+    width: 0.6rem;
+}
+.week_tr_title{
+    width: 100%;
+    height: 1.2rem !important;
+    line-height: 1.2rem;
+    font-size: 0.426667rem;
+    color: #FFFFFF;
+    background: url(../images/title_bg.png) no-repeat;
+    background-size: 100%;
+}
+.y_color{
+    color: #2B5E82 !important;
+}
+.h_color{
+    color: #E9B71C !important;
+}
+.huangjin b{
+    color: #E9B71C !important;
+}
+.huangjin span{
+    color: #E9B71C;
+}
+.b_color{
+    color: #38DAEF !important;
+}
+.bojin b{
+    color: #38DAEF !important;
+}
+.bojin span{
+    color: #38DAEF;
+}
+.z_color{
+    color: #E11D63 !important;
+}
+.zuanshi b{
+    color: #E11D63 !important;
+}
+.zuanshi span{
+    color: #E11D63;
+}
+.w_color{
+    color: #ED4E1B !important;
+}
+.wangzhe b{
+    color: #ED4E1B !important;
+}
+.wangzhe span{
+    color: #ED4E1B;
+}
+.x_color{
+    color: #BA47E0 !important;
+}
+.xingyao b{
+    color: #BA47E0 !important;
+}
+.xingyao span{
+    color: #BA47E0;
+}
+
+
+
+
+
+
+
+
+
+
+
+

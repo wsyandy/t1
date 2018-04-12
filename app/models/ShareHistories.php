@@ -39,9 +39,6 @@ class ShareHistories extends BaseModel
 
     function getShareUrl($root)
     {
-        if (isDevelopmentEnv()) {
-            $root = "https://ctest2.yueyuewo.cn/";
-        }
 
         if ($this->isGoldWorks()) {
             return $root . 'shares/share_work?share_history_id=' . $this->id;
