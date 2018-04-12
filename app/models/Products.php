@@ -148,7 +148,7 @@ class Products extends BaseModel
         debug("product_group: " . strval($product_group->id));
 
         $products = \Products::find([
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount < 3000',
+            'conditions' => 'product_group_id = :product_group_id: and status = :status:',
             'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
             'order' => 'amount asc'
         ]);
