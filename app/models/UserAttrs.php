@@ -661,7 +661,7 @@ trait UserAttrs
         if (!$hi_coins) {
             return 0;
         } else {
-            $rate = $this->rateOfHiCoinToMoney();
+            $rate = \HiCoinHistories::rateOfHiCoinToCny();
             $hi_coins = $hi_coins / $rate;
 
             return intval($hi_coins * 100) / 100;
@@ -799,11 +799,6 @@ trait UserAttrs
         }
 
         return 4.5 / 100;
-    }
-
-    function rateOfHiCoinToMoney()
-    {
-        return 1;
     }
 
     function getTags()
