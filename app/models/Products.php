@@ -87,7 +87,7 @@ class Products extends BaseModel
 
         $product_group = \ProductGroups::findFirst(
             [
-                'conditions' => 'product_channel_id=:product_channel_id: and fee_type=:fee_type: and status=:status:',
+                'conditions' => 'product_channel_id=:product_channel_id: and pay_type=:pay_type: and status=:status:',
                 'bind' => ['product_channel_id' => $user->product_channel_id,
                     'pay_type' => PRODUCT_GROUP_PAY_TYPE_CNY, 'status' => STATUS_ON]
             ]
