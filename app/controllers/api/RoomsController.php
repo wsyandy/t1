@@ -45,7 +45,7 @@ class RoomsController extends BaseController
         //限制搜索条件
         $cond = [
             'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . " and product_channel_id = :product_channel_id:",
-            'bid' => ['product_channel_id' => $this->currentProductChannel()->id],
+            'bind' => ['product_channel_id' => $this->currentProductChannel()->id],
             'order' => 'last_at desc, user_type asc'
         ];
 
