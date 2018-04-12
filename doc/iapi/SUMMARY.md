@@ -4,6 +4,7 @@
 * [更新日志](update_log.md)
 * [接口简介](open_api.md)
 * [协议详情](protocol.md)
+* [举报](complaints.md)
 * [设备](device.md)
 * [软件升级](soft_version.md)
 * [用户](user.md)
