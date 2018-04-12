@@ -42,6 +42,7 @@ class GiftStatsController extends BaseController
             }
 
             $gift_stat->rank = $rank;
+            $new_gift_stats[] = $gift_stat;
         }
 
         usort($new_gift_stats, function ($a, $b) {
