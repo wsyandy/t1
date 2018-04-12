@@ -44,9 +44,8 @@ class SwooleEvents extends \BaseModel
         }
 
         $server_port = SwooleUtils::getServerPort($server, $fd);
-
         if ($swoole_service->local_server_port == $server_port) {
-            info($fd, "server_to_server onOpen");
+            info($fd, "server_to_server onOpen", $server_port);
             return;
         }
 
@@ -57,11 +56,10 @@ class SwooleEvents extends \BaseModel
 
         info($sid, $fd, $online_token, $ip);
 
-        $user_id = intval($sid);
-        $user = \Users::findFirstById($user_id);
-
         SwooleUtils::increaseConnectNum(1, $ip);
 
+        $user_id = intval($sid);
+        $user = \Users::findFirstById($user_id);
         if (!$user) {
             $data = ['online_token' => $online_token, 'action' => 'create_token', 'error_code' => ERROR_CODE_FAIL, 'error_reason' => '用户不存在'];
             $server->push($request->fd, json_encode($data, JSON_UNESCAPED_UNICODE));

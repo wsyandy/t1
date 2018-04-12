@@ -2805,14 +2805,14 @@ class Users extends BaseModel
         $fd_user_id_key = "socket_fd_user_id" . $online_token;
 
         $hot_cache->pipeline();
-        $hot_cache->set($online_key, $online_token);
-        $hot_cache->set($fd_key, $fd);
-        $hot_cache->set($user_online_key, $online_token);
-        $hot_cache->set($fd_user_id_key, $this->id);
+        $hot_cache->setex($online_key, 7*24*3600,$online_token);
+        $hot_cache->setex($fd_key, 7*24*3600, $fd);
+        $hot_cache->setex($user_online_key, 7*24*3600, $online_token);
+        $hot_cache->setex($fd_user_id_key, 7*24*3600, $this->id);
 
         if ($ip) {
             $fd_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-            $hot_cache->set($fd_intranet_ip_key, $ip);
+            $hot_cache->setex($fd_intranet_ip_key, 7*24*3600, $ip);
         }
 
         $hot_cache->exec();
@@ -3288,7 +3288,7 @@ class Users extends BaseModel
         $key = "unread_messages_num_user_id_" . $this->id;
         $hot_cache = Users::getHotWriteCache();
         $hot_cache->incr($key);
-        $hot_cache->expire($key, 30 * 86400);
+        $hot_cache->expire($key, 30 * 24*3600);
     }
 
     function isCompanyUser()
