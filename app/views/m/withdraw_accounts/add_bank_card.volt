@@ -5,8 +5,7 @@
 <div class="vueBox" id="app" v-cloak>
     <div class="bank_list">
         <span class="bank_card">银行卡</span>
-        <input class="bank_input" type="number" v-model="account" type="text" placeholder="请先输入银行卡号" @input="bankInput"
-               oninput="if(value.length>25)value=value.slice(0,25)">
+        <input class="bank_input" type="number" v-model="account" type="text" placeholder="请先输入银行卡号" @input="bankInput">
         <img :src="ico_clear" v-show="isClear" alt="" class="ico_clear" @click="clearBankInput">
     </div>
 
