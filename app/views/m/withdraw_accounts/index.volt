@@ -16,7 +16,7 @@
 
     <ul class="card_list" v-if="cardList.length">
         <li v-for="item in cardList" @click.stop="selectWithdrawAccount(item)">
-            <span>${ item.account }</span>
+            <span>${ item.account_text }</span>
         </li>
     </ul>
 </div>

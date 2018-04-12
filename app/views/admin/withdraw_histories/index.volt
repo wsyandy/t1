@@ -54,7 +54,7 @@
 
 {%- macro account_link(withdraw_histories) %}
     {% if(withdraw_histories.account ) %}
-        {{ withdraw_histories.account }}
+        {{ withdraw_histories.account_text }}
     {% else %}
         {{ withdraw_histories.alipay_account }}
     {% endif %}

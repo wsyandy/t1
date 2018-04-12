@@ -314,4 +314,14 @@ class WithdrawHistories extends BaseModel
     {
         return fetch(WithdrawAccounts::$TYPE, $this->withdraw_account_type);
     }
+
+    function getAccountText()
+    {
+        if (!$this->account) {
+            return '';
+        }
+        $arr = str_split($this->account, 4);
+        $str = implode(' ', $arr);
+        return $str;
+    }
 }

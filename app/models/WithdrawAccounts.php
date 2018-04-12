@@ -43,12 +43,18 @@ class WithdrawAccounts extends BaseModel
 
     function mergeJson()
     {
-        $data = [];
-        if ($this->account) {
-            $account_text = substr($this->account, -4);
-            $data = ['account_text' => "**** **** **** " . $account_text];
-        }
+        $data = ['account_text' => $this->account_text];
         return $data;
+    }
+
+    function getAccountText()
+    {
+        if (!$this->account) {
+            return '';
+        }
+        $arr = str_split($this->account, 4);
+        $str = implode(' ', $arr);
+        return $str;
     }
 
     //解除绑定
