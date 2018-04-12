@@ -217,6 +217,8 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift)
     {
+        info($this->user->id, $gift->id);
+
         if ($gift->isCar()) {
             \UserGifts::delay()->updateGiftExpireAt($this->id);
         } else {
