@@ -82,14 +82,14 @@ class Products extends BaseModel
         return $this->product_group->name;
     }
 
-    static function findDiamondListByUser($user, $format = null, $fee_type = PRODUCT_GROUP_FEE_TYPE_DIAMOND)
+    static function findDiamondListByUser($user, $format = null)
     {
 
         $product_group = \ProductGroups::findFirst(
             [
                 'conditions' => 'product_channel_id=:product_channel_id: and fee_type=:fee_type: and status=:status:',
                 'bind' => ['product_channel_id' => $user->product_channel_id,
-                    'fee_type' => $fee_type, 'status' => STATUS_ON]
+                    'pay_type' => PRODUCT_GROUP_PAY_TYPE_CNY, 'status' => STATUS_ON]
             ]
         );
 
@@ -99,24 +99,25 @@ class Products extends BaseModel
 
         debug("product_group: " . strval($product_group->id));
 
-        $products = \Products::find(array(
-            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount<3000',
-            'bind' => array('product_group_id' => $product_group->id, 'status' => STATUS_ON),
+        $products = \Products::find([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount < 3000',
+            'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
             'order' => 'amount asc'
-        ));
+        ]);
 
         if (isDevelopmentEnv()) {
-            $products = \Products::find(array(
+            $products = \Products::find([
                 'conditions' => 'product_group_id = :product_group_id: and status = :status:',
-                'bind' => array('product_group_id' => $product_group->id, 'status' => STATUS_ON),
+                'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
                 'order' => 'amount asc'
-            ));
+            ]);
         }
 
         $selected_products = [];
-        foreach ($products as $product) {
-            if ($product->match($user) || $fee_type == PRODUCT_GROUP_FEE_TYPE_HI_COINS) {
 
+        foreach ($products as $product) {
+
+            if ($product->match($user)) {
                 debug("match_product: " . strval($product->id));
                 if (isPresent($format) && $product->isResponseTo($format)) {
                     $selected_products[] = $product->$format();
@@ -127,6 +128,32 @@ class Products extends BaseModel
         }
 
         return $selected_products;
+    }
+
+    //查询hi币兑换套餐
+    static function findHiCoinDiamondListByUser($user)
+    {
+        $product_group = \ProductGroups::findFirst(
+            [
+                'conditions' => 'product_channel_id=:product_channel_id: and fee_type=:fee_type: and status=:status:',
+                'bind' => ['product_channel_id' => $user->product_channel_id,
+                    'pay_type' => PRODUCT_GROUP_PAY_TYPE_HI_COIN, 'status' => STATUS_ON]
+            ]
+        );
+
+        if (isBlank($product_group)) {
+            return false;
+        }
+
+        debug("product_group: " . strval($product_group->id));
+
+        $products = \Products::find([
+            'conditions' => 'product_group_id = :product_group_id: and status = :status: and amount < 3000',
+            'bind' => ['product_group_id' => $product_group->id, 'status' => STATUS_ON],
+            'order' => 'amount asc'
+        ]);
+
+        return $products;
     }
 
     function supportApplePay()
