@@ -151,7 +151,7 @@ define('GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW', 4); //活动抽奖
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
 define('PRODUCT_GROUP_FEE_TYPE_HI_COINS', 'hi_coins'); //Hi币
 
-define('PRODUCT_GROUP_PAY_TYPE_CNY', 1); //钻石
+define('PRODUCT_GROUP_PAY_TYPE_CASH', 1); //钻石
 define('PRODUCT_GROUP_PAY_TYPE_HI_COIN', 2); //Hi币
 
 define('ORDER_STATUS_WAIT', 0);
