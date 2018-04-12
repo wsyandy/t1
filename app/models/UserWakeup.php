@@ -23,7 +23,7 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->user_status != USER_STATUS_ON) {
+        if ($this->isBlocked()) {
             return false;
         }
 
@@ -57,7 +57,7 @@ trait UserWakeup
         $start_val = $machine_name . '|' . time();
 
         $last_execute_time = $this->isOfflineTaskRunning();
-        debug($start_async_offline_task_key, $last_execute_time);
+        info($start_async_offline_task_key, $last_execute_time);
 
         // 任务超时没进程运行
         if (!$last_execute_time) {
@@ -123,7 +123,7 @@ trait UserWakeup
         // 不再关注 或者 无任务执行状态
         if (!$receiver->checkOfflineTaskStatus()) {
             // 退出任务
-            debug("start_async_offline_task_quit, id:" . $receiver->id);
+            info("start_async_offline_task_quit, id:" . $receiver->id);
             $receiver->quitOfflineTask();
             return;
         }
@@ -136,16 +136,13 @@ trait UserWakeup
 
         // 清除历史任务
         if ($offline_hour >= 48) {
-            debug('quit offline task > 48 hour', $receiver->id, 'hour:', $offline_hour);
+            info('quit offline task > 48 hour', $receiver->id, 'hour:', $offline_hour);
             $receiver->quitOfflineTask();
             return;
         }
 
         // 进入下个15分钟循环
         $step_time = $receiver->offlineTaskStepTime();
-
-        debug($receiver->id, $offline_minute, 'step', $step_time);
-
         // 离线推送 22:30 - 08:00 不推送
         if (isProduction()) {
             $cur_hour = intval(date('H'));
@@ -161,10 +158,6 @@ trait UserWakeup
         // 生成任务id
         $task_id = '';
         $wake_minutes = array_keys(PushMessages::$OFFLINE_TIME);
-//        if ($receiver->isWxPlatform()) {
-//            $wake_minutes = [60, 24 * 60];
-//        }
-
         foreach ($wake_minutes as $minute) {
             // 小于循环时间的一半
             if ($minute && abs($offline_minute - $minute) * 2 * 60 < $step_time) {
@@ -174,25 +167,24 @@ trait UserWakeup
         }
 
         if (empty($task_id)) {
-            debug('no task', $receiver->id, $offline_time);
+            info('no task', $receiver->id, 'min', $offline_minute, 'step', $step_time);
             return;
         }
 
         $is_executed = $receiver->isExecutedOfflineTask($task_id);
         if (!$is_executed) {
 
-            info('running task', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute);
+            info('running task', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
 
             // 保存任务
             $receiver->saveExecutedOfflineTaskId($task_id);
-            info('saveExecutedOfflineTaskId', $task_id);
             if ($receiver->canPush()) {
-                info('push', $receiver->id);
+                info('can push', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
                 PushMessages::delay(1)->sendMessage($receiver);
             }
 
         } else {
-            info('executed', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute);
+            info('executed', $receiver->id, ',task_id:', $task_id, ",min:", $offline_minute, 'step', $step_time);
         }
     }
 
@@ -556,7 +548,8 @@ trait UserWakeup
         $user_db->del($receive_friend_online_remind_online_key);
     }
 
-    static function pushOnlineRemind($user_id){
+    static function pushOnlineRemind($user_id)
+    {
 
         $user = Users::findFirstById($user_id);
         //好友上线提醒(每小时选取最新的一个好友上线提醒)
@@ -864,7 +857,8 @@ trait UserWakeup
 
     }
 
-    static function pushIntoRoomRemind($user_id){
+    static function pushIntoRoomRemind($user_id)
+    {
 
         $user = Users::findFirstById($user_id);
         //好友上线开播提醒(同一个用户一个小时之内只提醒一次)
