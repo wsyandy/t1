@@ -49,7 +49,8 @@ class HiCoinHistoriesController extends BaseController
 
             $user = $this->currentUser();
 
-            if ($user->getHiCoinText() < $hi_coins) {
+            //所有以扣除人民币为准
+            if ($user->getWithdrawAmount() < $amount) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
             }
 
