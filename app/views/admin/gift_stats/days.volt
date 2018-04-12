@@ -33,8 +33,8 @@
     <tbody id="stat_list">
     {% for gift_stat in gift_stats %}
         <tr id="{{ gift_stat.id }}" class="row_line">
+            <td>{{ gift_stat.gift.name }}</td>
             {% for stat_field, text  in stat_fields %}
-                <td>{{ gift_stat.gift.name }}</td>
                 <td id="{{ stat_field }}_{{ gift_stat.id }}"></td>
             {% endfor %}
         </tr>
