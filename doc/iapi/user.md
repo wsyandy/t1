@@ -266,8 +266,14 @@
 |monologue|个性签名|string||客户端需限制字数长度|
 |age|年龄|int|||
 |height|身高|int|||
-|birthday|生日|string||||
-|lang|语言|string|zh 简体中文, zh-TW 繁体中文,en 英语,vi 越南语,ru 俄语,pt 葡萄牙语,ko 韩语,日语 ja,法语 fr,西班牙语 es,德语 de,ar 阿拉伯语|||
+|birthday|生日|string|||
+|lang|语言|string||(备注1)||
+
+##### (备注1)
+```
+zh 简体中文, zh-TW 繁体中文,en 英语,vi 越南语,ru 俄语,pt 葡萄牙语,
+ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
+```
 
 ##### 回应参数说明
 ```
