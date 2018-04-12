@@ -52,15 +52,15 @@ class WithdrawAccountsController extends BaseController
 
     function sendAuthAction()
     {
-//        $mobile = $this->params('mobile');
-//        $context = $this->context();
-//        $context['user_id'] = $this->currentUser()->id;
-//
-//        list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
-//            $mobile, 'login', $context);
-        $error_code = ERROR_CODE_SUCCESS;
-        $error_reason = '';
-        $sms_token = '';
+        $mobile = $this->params('mobile');
+        $context = $this->context();
+        $context['user_id'] = $this->currentUser()->id;
+
+        list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
+            $mobile, 'login', $context);
+//        $error_code = ERROR_CODE_SUCCESS;
+//        $error_reason = '';
+//        $sms_token = '';
 
         return $this->renderJSON($error_code, $error_reason, ['sms_token' => $sms_token]);
     }
@@ -74,30 +74,30 @@ class WithdrawAccountsController extends BaseController
         $sid = $this->params('sid');
         $code = $this->params('code');
 
-//        // 测试白名单
-//        $is_white_mobile = false;
-//        if ($mobile && in_array($mobile, ['13912345678'])
-//        ) {
-//            $is_white_mobile = true;
-//        }
-//        $context = $this->context();
-//
-//        if ($auth_code) {
-//            $context['is_white_mobile'] = $is_white_mobile;
-//
-//            list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile,
-//                $auth_code, $sms_token, $context);
-//
-//        } else {
-//            return $this->renderJSON(ERROR_CODE_FAIL, '验证码错误');
-//        }
-//
-//        if ($error_code != ERROR_CODE_SUCCESS) {
-//            return $this->renderJSON($error_code, $error_reason);
-//        }
+        // 测试白名单
+        $is_white_mobile = false;
+        if ($mobile && in_array($mobile, ['13912345678'])
+        ) {
+            $is_white_mobile = true;
+        }
+        $context = $this->context();
 
-        $error_code = ERROR_CODE_SUCCESS;
-        $error_reason = '';
+        if ($auth_code) {
+            $context['is_white_mobile'] = $is_white_mobile;
+
+            list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile,
+                $auth_code, $sms_token, $context);
+
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '验证码错误');
+        }
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
+//        $error_code = ERROR_CODE_SUCCESS;
+//        $error_reason = '';
 
 
         $withdraw_account = \WithdrawAccounts::createWithdrawAccount($this->currentUser(), $mobile);
