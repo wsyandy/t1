@@ -2,7 +2,7 @@
 
 ## 1. 举报用户或房间,音乐
 
-> http-get ```/m/complaints```
+> http-get ```/im/complaints```
 
 ##### 1.1 请求参数说明
 
