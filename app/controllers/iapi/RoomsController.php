@@ -160,7 +160,7 @@ class RoomsController extends BaseController
         //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
 //        $this->currentUser()->pushFollowedIntoRoomRemind();
 
-        $res = $room->toJson();
+        $res = $room->toInternationalDetailJson();
         $res['channel_key'] = $key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);

@@ -158,6 +158,59 @@ class Rooms extends BaseModel
         return ['id' => $this->id, 'uid' => $this->uid, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
     }
 
+    function toInternationalDetailJson()
+    {
+
+        return [
+            'id' => $this->id,
+            'uid' => $this->uid,
+            'name' => $this->name,
+            'topic' => $this->topic,
+            'chat' => $this->chat,
+            'online_status' => $this->online_status,
+            'channel_name' => $this->channel_name,
+            'lock' => $this->lock,
+            'created_at' => $this->created_at,
+            'last_at' => $this->last_at,
+            'user_num' => $this->user_num,
+            'theme_type' => $this->theme_type,
+            'audio_id' => $this->audio_id,
+            'theme_image_url' => $this->theme_image_url,
+            'room_theme_id' => $this->room_theme_id,
+            'user_info' => $this->userInfo(),
+            'room_seats' => $this->roomSeats(),
+            'managers' => $this->findManagers()
+        ];
+    }
+
+    function userInfo()
+    {
+
+        $user = $this->user;
+
+        return [
+            'id' => $user->id,
+            'uid' => $user->uid,
+            'nickname' => $user->nickname,
+            'avatar_small_url' => $user->avatar_small_url,
+            'sex' => $user->sex,
+            'age' => $user->age,
+            'monologue' => $user->monologue
+        ];
+    }
+
+    function roomSeats()
+    {
+        $room_seats = RoomSeats::find([
+            'conditions' => 'room_id=:room_id:',
+            'bind' => ['room_id' => $this->id],
+            'order' => 'rank asc'
+        ]);
+
+        $data = $room_seats->toJson('room_seats', 'toJson');
+        return $data['room_seats'];
+    }
+
     static function createRoom($user, $name)
     {
         $room = new Rooms();

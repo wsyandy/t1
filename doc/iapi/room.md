@@ -219,10 +219,6 @@
     name: string 房间名称
     topic: string 房间话题
     chat: 房间公屏聊天状态, false/true
-    user_id 房主用户id
-    sex	性别 0:女 1:男
-    avatar_small_url 用户小头像
-    nickname 昵称
     online_status 0离线，1在线
     channel_name: string 房间唯一标识, 频道名称
     lock boole加锁状态, true是加锁
@@ -237,6 +233,14 @@
     audio_id 房间音频id 拉取音频资源时使用
     theme_image_url string 房间主题背景图
     room_theme_id int 房间主题id
+    user_info:{
+        id:int 房主用户id
+        uid:int 用户uid,
+        nickname 昵称
+        avatar_small_url 用户小头像
+        sex	性别 0:女 1:男 
+        monologue 个性签名
+    }
     system_tips:[
         '内容1',
         '内容2',
