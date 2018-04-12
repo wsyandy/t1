@@ -35,11 +35,11 @@ class FollowersController extends BaseController
 
         if (count($users)) {
 
-            foreach ($users as $user){
-                $user->isFollow($this->currentUser());
+            foreach ($users as $user) {
+                $user->isFollowed($this->currentUser());
             }
-            
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$users->toJson('users', 'toRelationJson'));
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');

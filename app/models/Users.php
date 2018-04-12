@@ -1382,6 +1382,14 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $follow_key = 'follow_list_user_id' . $this->id;
+        return $user_db->zscore($follow_key, $other_user->id) > 0;
+    }
+
+    //是否已被关注
+    function isFollowed($other_user, $opts = [])
+    {
+        $user_db = Users::getUserDb();
+        $follow_key = 'followed_list_user_id' . $this->id;
         $this->followed = $user_db->zscore($follow_key, $other_user->id) > 0;
         return $this->followed;
     }
