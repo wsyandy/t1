@@ -1,0 +1,217 @@
+.recharge_top{
+    width: 100%;
+    padding-top: 0.6rem;
+    background-image: -webkit-gradient(linear, left top, right top, from(#4C8DFC), to(#006BFF));
+    background-image: -webkit-linear-gradient(left, #4C8DFC 0%, #006BFF 100%);
+    background-image: -moz-linear-gradient(left, #4C8DFC 0%, #006BFF 100%);
+    background-image: -o-linear-gradient(left, #4C8DFC 0%, #006BFF 100%);
+    background-image: linear-gradient(90deg, #4C8DFC 0%, #006BFF 100%);
+}
+.recharge_head{
+    width: 5.59rem;
+    height: 3.44rem;
+    background-image: url("../images/recharge_head_bg.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    margin: 0 auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.recharge_head_title{
+    width: 100%;
+    font-size: 0.24rem;
+    color: #FFFFFF;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.icon_diamonds{
+    width: 0.28rem;
+    height: 0.22rem;
+    margin-right: 0.05rem;
+}
+.recharge_head_num{
+    padding-top: 0.1rem;
+    font-size: 0.86rem;
+    color: #FFFFFF;
+}
+.recharge{
+    position: fixed;
+    top:3rem;
+    margin-top: 0.2rem;
+    width: 100%;
+    height: 9.6rem;
+    background-image: url("../images/recharge_bg.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100%;
+    -o-background-size: 100%;
+    background-size: 100%;
+    background-position: top center;
+    padding-top: 1.12rem;
+}
+.recharge ul{
+    width: 100%;
+    padding: 0 0.24rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+
+}
+.recharge ul li{
+    position: relative;
+    width: 2.2rem;
+    height: 1.5rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid #C6C6C6;
+    -webkit-border-radius: 0.12rem;
+    -moz-border-radius: 0.12rem;
+    border-radius: 0.12rem;
+    margin-right: 0.2rem;
+    margin-bottom: 0.2rem;
+}
+.recharge ul li:nth-child(3n){
+    margin-right: 0;
+}
+.recharge ul li.select{
+    border: 1px solid #FD8018;
+}
+
+.diamonds{
+    font-size: 0.32rem;
+    color: #333;
+    padding-bottom: 0.1rem;
+}
+.dollar{
+    font-size: 0.24rem;
+    color: #999;
+}
+.select .diamonds ,.select .dollar{
+    color: #FD8018;
+}
+.icon_select {
+    position: absolute;
+    bottom:0;
+    right: 0;
+    width: 0.37rem;
+    height: 0.36rem;
+}
+.payment{
+    width: 100%;
+    padding: 0 0.24rem;
+    font-size: 0.24rem;
+    color: #999;
+}
+.recharge_btn{
+    margin:  0.8rem  auto;
+    width: 4.9rem;
+    height: 0.9rem;
+    line-height: 0.9rem;
+    background-color: #FF9439;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
+    border-radius: 1rem;
+    font-size: .32rem;
+    color: #FFFFFF;
+    text-align: center;
+    letter-spacing: 1px;
+    -webkit-box-shadow: 0 4px 12px 0 rgba(235,101,21,0.50);
+    -moz-box-shadow: 0 4px 12px 0 rgba(235,101,21,0.50);
+    box-shadow: 0 4px 12px 0 rgba(235,101,21,0.50);
+}
+.recharge_select{
+    background-image: -webkit-gradient(linear, left top, right top, from(#FF9439), to(#FF6409));
+    background-image: -webkit-linear-gradient(left, #FF9439 0%, #FF6409 100%);
+    background-image: -moz-linear-gradient(left, #FF9439 0%, #FF6409 100%);
+    background-image: -o-linear-gradient(left, #FF9439 0%, #FF6409 100%);
+    background-image: linear-gradient(90deg, #FF9439 0%, #FF6409 100%);
+}
+
+.tips_popup{
+    position: fixed;
+    bottom:-1.2rem;
+    left: 50%;
+    margin-left: -0.92rem;
+    width: 1.84rem;
+    height: 0.82rem;
+    line-height: 0.82rem;
+    text-align: center;
+    -webkit-border-radius: 0.16rem;
+    -moz-border-radius: 0.16rem;
+    border-radius: 0.16rem;
+    background-color: rgba(72,72,74,0.7);
+    font-size: 0.24rem;
+    color: #FFFFFF;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s;
+    -o-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+
+}
+.tips_transition{
+    opacity: 1;
+    bottom:1.2rem;
+}

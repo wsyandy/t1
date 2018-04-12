@@ -1,0 +1,1 @@
+ALTER TABLE products ALTER COLUMN amount type DECIMAL (10, 2);
