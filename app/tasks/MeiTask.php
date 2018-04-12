@@ -2216,5 +2216,8 @@ EOF;
                 echoLine($union->id, $union->created_at_text);
             }
         }
+
+        $room = Rooms::findFirstById(136800);
+        echoLine($room->product_channel_id);
     }
 }

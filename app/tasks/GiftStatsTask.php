@@ -16,19 +16,21 @@ class GiftStatsTask extends \Phalcon\Cli\Task
         $stat_at = beginOfDay($time); // 零点
         $end_at = endOfDay($time);
 
-        $basic_gift_cond = ['conditions' => 'created_at >= :start: and created_at < :end:' . ' and status = :status:',
+        $basic_gift_cond = ['conditions' => 'created_at >= :start: and created_at < :end: and status = :status:',
             'bind' => ['start' => $stat_at, 'end' => $end_at, 'status' => GIFT_ORDER_STATUS_SUCCESS]];
 
         //-1代表全部
-        $product_channel_ids = [-1];
+        $product_channel_ids = [];
         $gift_ids = [];
 
         $product_channels = \ProductChannels::find(['order' => ' id desc', 'column' => 'id']);
+
         foreach ($product_channels as $product_channel) {
             $product_channel_ids[] = $product_channel->id;
         }
 
         $gifts = \Gifts::find(['order' => ' id desc', 'column' => 'id']);
+
         foreach ($gifts as $gift) {
             $gift_ids[] = $gift->id;
         }

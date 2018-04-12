@@ -10,7 +10,7 @@ class GiftStatsController extends BaseController
 {
     function daysAction()
     {
-        $stat_at = $this->params('stat_at', date('Y-m-d H:i:s'));
+        $stat_at = $this->params('stat_at', date('Y-m-d'));
 
         $start_at = beginOfDay(strtotime($stat_at));
         $end_at = endOfDay(strtotime($stat_at));
