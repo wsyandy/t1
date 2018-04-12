@@ -2,55 +2,49 @@
 {{ theme_css('/m/css/glory.css') }}
 {{ block_end() }}
 <div class="vueBox" id="app" v-cloak="">
-    <div class="glory_head">
-        <img class="glory_bg" :src="gloryBg" alt="">
-        <div class="glory_my">
-            <img class="glory_icon" :src="gloryList[level].icon" alt="">
-            <span class="glory_name">${ gloryList[level].name }</span>
-            <div class="glory_tips" v-show="level < 35">
-                <span>还需</span>
-                <span class="glory_val">${ need_experience }</span>
-                <span class="glory_val">荣耀值</span>
-                <span>升级为${gloryList[level+1].name}</span>
-            </div>
-
+    <div class="glory_top">
+        <div class="glory_top_title">
+            <img class="glory_tit_img" src="/m/images/glory_tit_left.png" alt="">
+            <span>等级说明</span>
+            <img class="glory_tit_img" src="/m/images/glory_tit_right.png" alt="">
+        </div>
+        <div class="glory_top_info">
+            荣耀等级是您在Hi上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，送靓号，快来体验吧～
+        </div>
+        <div class="glory_top_info">
+            送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！
         </div>
     </div>
+    <div class="glory_privilege">以下是Hi荣耀等级对应的名称和特权：</div>
 
-    <div class="glory_next" v-show="level < 35">
-        <div class="glory_next_title">
-            <span class="line_vertical"></span>
-            <span>下一等级特权</span>
-        </div>
-        <div class="glory_next_info">
-            <img class="glory_icon" :src="gloryList[level+1].icon" alt="">
-            <span class="glory_name">${gloryList[level+1].name}</span>
-        </div>
+    <div class="glory_table">
+        <table cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="30%">标志</td>
+                <td width="30%">等级名称</td>
+                <td>等级特权</td>
+            </tr>
+            <tr v-for="(glory,i) in gloryList">
+                <td><img class="glory_icon" :src="glory.icon" alt=""></td>
+                <td>${ glory.name }</td>
+                <td>
+                    <p>${ glory.name }荣耀勋章</p>
+                    <p class="glory_reward">${ glory.reward?glory.reward:''}</p>
+                </td>
+            </tr>
+        </table>
+
     </div>
-    <a class="glory_details" href="/m/users/level_detail?sid={{ sid }}&code={{ code }}">
-        <div class="glory_details_title">
-            <span class="line_vertical"></span>
-            <span>Hi荣耀等级介绍</span>
-        </div>
-        <img class="arrow_right" :src="arrowRight" alt="">
-    </a>
+
 </div>
 
 
 <script>
     var opts = {
         data: {
-            level: {{ level }},
-            need_experience: {{ need_experience }},
             gloryBg: "/m/images/glory_bg.png",
             arrowRight: "/m/images/arrow_right.png",
             gloryList: [
-                {
-                    level: 0,
-                    icon: "/m/images/glory_no.png",
-                    name: "无荣耀 ",
-                    value: 100
-                },
                 {
                     level: 1,
                     icon: "/m/images/level_1.png",
