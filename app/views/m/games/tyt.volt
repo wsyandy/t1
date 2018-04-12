@@ -27,7 +27,7 @@
                 <input type="number" placeholder="请输入数目" v-model="gold_game_amount" class="gold"/>
                 <span class="gold"></span>
             </li>
-            <li>
+            <li v-if="current_user.level >= 6">
                 <span @click="selectgametype(2)" :class="{ 'radio_select': 2==select_game_type }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
@@ -52,7 +52,8 @@
                 room_host_id: "{{ room_host_id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                room_id: "{{ room_id }}"
+                room_id: "{{ room_id }}",
+                current_user:{{ current_user }}
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -127,7 +128,8 @@
         <div class="start_game">
             <span>${game_status_text}</span>
             <p></p>
-            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'"><span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
+            <p v-if="pay_type_text" :class="pay_type == 'diamond'?'masonry':'gold'">
+                <span>${ pay_type_text }游戏</span><span> ${amount}${pay_type_text}</span>
             </p>
         </div>
         <div class="select_game_button">
