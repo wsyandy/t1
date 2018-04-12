@@ -5,7 +5,8 @@
  * Date: 2018/1/30
  * Time: 下午7:42
  */
-namespace api;
+
+namespace iapi;
 
 class EmoticonImagesController extends BaseController
 {

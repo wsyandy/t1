@@ -49,15 +49,19 @@ class MenTask extends \Phalcon\Cli\Task
     function insertUserAction()
     {
 
-//        $users = Users::findByIds([31429, 31399, 31346, 31310]);
-//        foreach ($users as $user) {
+        $users = Users::findByIds([31429, 31399, 31346, 31310]);
+        foreach ($users as $user) {
 //            $user->product_channel_id = 2;
-//            $user->save();
-//        }
-//
+//            $user->sid = $user->generateSid('s');
+            $user->user_status = USER_STATUS_ON;
+            $user->save();
+        }
+
 //        $device = Devices::findFirstById(211);
 //        $device->product_channel_id = 2;
 //        $device->save();
+
+
     }
 
 

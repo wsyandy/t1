@@ -5,7 +5,8 @@
  * Date: 2018/2/24
  * Time: 下午4:05
  */
-namespace api;
+
+namespace iapi;
 
 class RoomThemesController extends BaseController
 {
