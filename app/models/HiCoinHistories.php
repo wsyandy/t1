@@ -122,7 +122,7 @@ class HiCoinHistories extends BaseModel
             return;
         }
 
-        info($user_id, $gift_order_id);
+        info($user_id, $gift_order_id, $opts);
 
         $lock_key = "update_user_hi_coins_lock_" . $user_id;
         $lock = tryLock($lock_key);
