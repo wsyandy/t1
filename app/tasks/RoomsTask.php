@@ -199,7 +199,6 @@ class RoomsTask extends \Phalcon\Cli\Task
     //沉默用户活跃房间
     function activeSilentRoomAction()
     {
-        return;
         $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
          (status = :status: and user_type = :user_type1:)',
             'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
