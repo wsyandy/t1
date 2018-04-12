@@ -45,11 +45,9 @@ class WeixinMenus extends BaseModel
 
         $domain = $product_channel->weixin_domain;
 
-        $protocol = "http://";
-
-        if (isProduction()) {
-            $protocol = "https://";
-        }
+        $di = \Phalcon\Di::getDefault();
+        $config = $di->get('config');
+        $protocol = $config->request_protocol;
 
         $domain = $protocol . $domain;
 
