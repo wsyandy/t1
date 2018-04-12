@@ -23,6 +23,7 @@
 <table class="table table-striped table-condensed">
     <thead>
     <tr>
+        <th>礼物名称</th>
         {% for key, text in stat_fields %}
             <th>{{ text }}</th>
         {% endfor %}
@@ -32,6 +33,7 @@
     <tbody id="stat_list">
     {% for gift_stat in gift_stats %}
         <tr id="{{ gift_stat.id }}" class="row_line">
+            {{ gift_stat.gift.name }}
             {% for stat_field, text  in stat_fields %}
                 <td id="{{ stat_field }}_{{ gift_stat.id }}"></td>
             {% endfor %}
