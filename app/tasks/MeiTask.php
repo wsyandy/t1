@@ -2666,4 +2666,42 @@ EOF;
             }
         }
     }
+
+
+    //统计房间流水
+    function clearGiftOrderAction()
+    {
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+        foreach ($user_ids as $user_id) {
+
+
+            $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $user_id],
+                'order' => 'id asc'
+            ]);
+
+            $start = $account_history->created_at;
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => 'gift_type = :gift_type: and created_at >= :start: and sender_id = :sender_id: and pay_type = :pay_type:',
+                    'bind' => ['gift_type' => GIFT_TYPE_COMMON, 'start' => $start, 'sender_id' => $user_id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
+                ]);
+
+            foreach ($gift_orders as $gift_order) {
+                $user = $gift_order->user;
+                $gift_num = $gift_order->gift_num;
+                $gift_id = $gift_order->gift_id;
+
+                $user_gift = UserGifts::findFirstBy([
+                    'gift_id' => $gift_id,
+                    'user_id' => $gift_num,
+
+                ]);
+            }
+        }
+    }
+
+
 }
