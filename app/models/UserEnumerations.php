@@ -76,7 +76,8 @@ trait UserEnumerations
     ];
 
     //国际段位
-    static $I_SEGMENT = [];
+    static $I_SEGMENT = ['VIP' => 'VIP', 'millionaire' => '百万富翁', 'stars' => '明星', 'professional' => '专家',
+        'talented' => '人才', 'newcomer' => '新人'];
 
     static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
     static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
