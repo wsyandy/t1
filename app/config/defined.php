@@ -143,6 +143,7 @@ define('ERROR_CODE_NEED_PAY', -2);//需要付费
 define('GIFT_ORDER_STATUS_WAIT', 0); //等待支付
 define('GIFT_ORDER_STATUS_SUCCESS', 1); //支付成功
 define('GIFT_ORDER_STATUS_FAIL', 2); //支付失败
+define('GIFT_ORDER_STATUS_FREEZE', 3); //冻结
 
 define('GIFT_ORDER_TYPE_USER_SEND', 1); //用户赠送
 define('GIFT_ORDER_TYPE_USER_BUY', 2); //用户购买
