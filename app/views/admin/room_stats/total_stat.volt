@@ -13,7 +13,7 @@
 
 {% macro user_info_link(room) %}
     {% if isAllowed('users','index') %}
-        姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_id }}</a><br/>
+        房主ID:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_id }}</a><br/>
     {% endif %}
 
 {% endmacro %}
