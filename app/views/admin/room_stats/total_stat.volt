@@ -11,7 +11,7 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-{% macro user_info(room) %}
+{% macro user_info_link(room) %}
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_id }}</a><br/>
     {% endif %}
@@ -31,4 +31,4 @@
     <img src="{{ room.user_avatar_url }}" height="50" width="50"/>
 {% endmacro %}
 
-{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info","房主收益(钻石)":"amount","明细":"total_stat_detail"]) }}
+{{ simple_table(rooms,['id': 'id','头像':'avatar_image','房间信息':'room_info','房主信息':"user_info_link","房主收益(钻石)":"amount","明细":"total_stat_detail"]) }}
