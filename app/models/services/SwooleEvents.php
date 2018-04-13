@@ -127,14 +127,13 @@ class SwooleEvents extends \BaseModel
 
             info($user->sid, $fd, "connect close");
 
-            $current_room = \Rooms::findRoomByOnlineToken($online_token);
-            $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
-
             //用户有新的连接 老的连接不推送
             if ($user->online_token == $online_token) {
 
                 if ($intranet_ip) {
 
+                    $current_room = \Rooms::findRoomByOnlineToken($online_token);
+                    $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
                     if ($current_room) {
 
                         $current_room_seat_id = 0;
