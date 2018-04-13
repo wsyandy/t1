@@ -95,23 +95,23 @@
                     }
                 })
             }
-        },
+        }
     };
 
     vm = XVue(opts);
 
-    $(function() {
+    $(function () {
         pushHistory();
     });
+
     function pushHistory() {
-        window.addEventListener("popstate", function(e) {
-            alert("后退");
+        window.addEventListener("popstate", function (e) {
             self.location.reload();
         }, false);
         var state = {
-            title : "",
-            url : "#"
+            title: "",
+            url: "#"
         };
         window.history.replaceState(state, "", "#");
-    };
+    }
 </script>

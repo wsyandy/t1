@@ -113,3 +113,8 @@ body{
     color: #FFFFFF;
     margin-bottom: 0.3rem;
 }
+
+.bind{
+    padding-left: 0.2rem;
+    font-size: 0.3rem;
+}

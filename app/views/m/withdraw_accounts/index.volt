@@ -5,7 +5,7 @@
 <div class="vueBox" id="app" v-cloak>
     <div class="card_head">
         <span class="card_title">银行卡</span>
-        <span class="unbind" @click.stop="unbind" v-if="selected_withdraw_account">解除绑定</span>
+        <span class="unbind" @click.stop="unbind" v-if="cardList.length">解除绑定</span>
     </div>
     <div class="card_list">
         <div class="card_add" @click="addCard" v-if="!cardList.length">
@@ -16,7 +16,7 @@
 
     <ul class="card_list" v-if="cardList.length">
         <li v-for="item in cardList" @click.stop="selectWithdrawAccount(item)">
-            <span>${ item.account_text }</span>
+            <span>${ item.account_text }</span><span class="bind">绑定成功</span>
         </li>
     </ul>
 </div>
@@ -39,26 +39,21 @@
                     return;
                 }
                 this.selected_withdraw_account = withdraw_account;
-
-                var data = {
-                    sid: '{{ sid }}',
-                    code: '{{ code }}',
-                    id: withdraw_account.id
-                };
-
-                $.authPost('/m/withdraw_accounts/index', data, function (resp) {
-                })
             },
             unbind: function () {
-                if (!this.selected_withdraw_account) {
+                var id = this.selected_withdraw_account.id ? this.selected_withdraw_account.id : this.cardList[0].id;
+
+                if (!id) {
                     return;
                 }
 
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
-                    id: this.selected_withdraw_account.id
+                    id: id
                 };
+
+                console.log(data);
 
                 $.authPost('/m/withdraw_accounts/unbind', data, function (resp) {
                     if (resp.error_code == 0) {
@@ -71,20 +66,21 @@
         }
     };
 
-    vm = XVue(opts)
+    vm = XVue(opts);
 
-    $(function() {
+    $(function () {
         pushHistory();
     });
+
+    //解决ios后退无法刷新
     function pushHistory() {
-        window.addEventListener("popstate", function(e) {
-          alert("后退");
+        window.addEventListener("popstate", function (e) {
             self.location.reload();
         }, false);
         var state = {
-            title : "",
-            url : "#"
+            title: "",
+            url: "#"
         };
         window.history.replaceState(state, "", "#");
-    };
+    }
 </script>

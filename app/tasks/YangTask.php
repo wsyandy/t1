@@ -644,4 +644,18 @@ class YangTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function fixWithdrawHistoriesAction()
+    {
+        $withdraw_histories = \WithdrawHistories::find([
+            'conditions' => 'withdraw_account_type is null and withdraw_account_id is null',
+            'order' => 'id desc'
+        ]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $withdraw_history->withdraw_account_type = 1;
+            $withdraw_history->update();
+            echoLine($withdraw_history->id);
+        }
+    }
 }
