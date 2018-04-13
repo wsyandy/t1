@@ -15,8 +15,7 @@
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
     {% endif %}
-    性别:{{ room.user.sex_text }}<br/>
-    手机号码:{{ room.user.mobile }}<br/>
+    
 {% endmacro %}
 
 {% macro room_info(room) %}
