@@ -21,6 +21,10 @@ trait UserAbilities
             return intval($this->gold) >= $total_amount;
         }
 
+        if ($gift->isIGoldPayType()){
+            return intval($this->i_gold) >= $total_amount;
+        }
+
         return false;
     }
 

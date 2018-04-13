@@ -8,6 +8,9 @@
  */
 class GiftOrders extends BaseModel
 {
+
+    use GiftOrderInternational;
+
     /**
      * @type Users
      */

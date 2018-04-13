@@ -63,32 +63,16 @@ class GiftsController extends BaseController
             }
         }
 
-        if ($gift->isDiamondPayType()) {
-            $gift_amount = $gift_num * $gift->amount;
-            $check_result = $this->currentUser()->canSendToUser($user_id, $gift_amount);
-            if (!$check_result) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '非常抱歉，您已经超过今日对外送出的额度');
-            }
-        }
-
         if ($this->currentUser()->canGiveGift($gift, $gift_num)) {
-            $give_result = \GiftOrders::giveTo($this->currentUserId(), $user_id, $gift, $gift_num);
+            $give_result = \GiftOrders::giveToByInternational($this->currentUserId(), $user_id, $gift, $gift_num);
 
             if ($give_result) {
-                $notify_data = \ImNotify::generateNotifyData(
-                    'gifts',
-                    'give',
-                    $notify_type,
-                    [
-                        'gift' => $gift,
-                        'gift_num' => $gift_num,
-                        'sender' => $this->currentUser(),
-                        'user_id' => $user_id
-                    ]
-                );
+
+                $opts = ['gift' => $gift, 'gift_num' => $gift_num, 'sender' => $this->currentUser(), 'user_id' => $user_id];
+                $notify_data = \ImNotify::generateNotifyData('gifts', 'give', $notify_type, $opts);
 
                 $current_user = $this->currentUser(true);
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold]);
+                $res = array_merge($notify_data, ['i_gold' => $current_user->i_gold]);
 
                 $error_reason = "购买成功";
 

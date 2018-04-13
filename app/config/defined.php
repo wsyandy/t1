@@ -237,6 +237,7 @@ define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
 define('GIFT_PAY_TYPE_GOLD', 'gold');
+define('GIFT_PAY_TYPE_I_GOLD', 'i_gold');
 
 // 系统内付费类型
 define('PAY_TYPE_DIAMOND', 'diamond'); // 钻石
