@@ -285,3 +285,4 @@ define('LANG_AR', 'ar');//阿拉伯语
 //国际金币消费
 define('I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD', 1); //购买金币
 define('I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT', 2); //购买礼物
+define('I_GOLD_HISTORY_FEE_TYPE_GIVE', 3); //系统赠送
