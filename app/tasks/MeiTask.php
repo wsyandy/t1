@@ -2367,7 +2367,53 @@ EOF;
         $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
 
         foreach ($user_ids as $user_id) {
-            HiCoinHistories::createHistory($user_id, ['fee_type' => ]);
+            $hi_coin_history = HiCoinHistories::findUserLast($user_id);
+
+            if ($hi_coin_history) {
+                HiCoinHistories::createHistory($user_id, ['hi_coins' => $hi_coin_history->balance, 'fee_type' => HI_COIN_FEE_TYPE_DEDUCT, 'remark' => '系统扣除']);
+            }
+        }
+
+
+    }
+
+    function userInfo1Action()
+    {
+        $array = [
+            1060417 => 99990, 1001061 => 88010, 800000 => 10181, 1057113 => 10099, 1133256 => 9999, 1065466 => 5727,
+            15385 => 2737, 1123218 => 2686, 1015602 => 2628, 1109473 => 2150, 1035515 => 2020, 1088683 => 2010,
+            1033519 => 2000, 1082051 => 1354, 1003062 => 1324, 1092719 => 1314, 1014008 => 1314, 1071355 => 1314, 1140747 => 1314, 1013703 => 1314,
+            1133128 => 1314, 1106044 => 1314, 1122732 => 1314, 1131616 => 1314,
+            1012820 => 1314, 1088531 => 1000, 1125188 => 1000, 1057537 => 1000, 1057532 => 1000,
+            1066765 => 1000, 1057582 => 1000, 1065736 => 1000, 1074121 => 323, 1108632 => 307,
+            1110827 => 299, 1057538 => 149, 153717 => 133, 1133777 => 99, 1017179 => 80, 1098596 => 50, 1026983 => 40,
+            1100617 => 40, 1124029 => 25, 1089028 => 25, 1129304 => 25, 1115596 => 10, 1121799 => 5,
+            1128551 => 5, 1071467 => 5, 1040859 => 5, 1142400 => 5];
+
+        foreach ($array as $user_id => $amount) {
+            $user = Users::findFirstById($user_id);
+
+            $register_day = (time() - $user->register_at) / 86400;
+
+            echoLine("注册时间", date("Y-m-d H:i:s", $user->register_at), "接收礼物用户id:" . $user_id, "金额:", $amount, "所属家族:", $user->union->name, "段位:", $user->segment_text, '支付金额:', $user->pay_amount);
         }
     }
+
+    function fixWithDrawInfoAction()
+    {
+        $withdraw_histories = WithdrawHistories::find(
+            [
+                'conditions' => 'created_at >= :created_at:',
+                'bind' => ['created_at' => strtotime("2018-04-12 12:00:00")]
+            ]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $withdraw_history->status = WITHDRAW_STATUS_FAIL;
+            $withdraw_history->update();
+        }
+
+        echoLine(count($withdraw_histories));
+    }
+
+
 }
