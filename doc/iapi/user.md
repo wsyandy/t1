@@ -170,7 +170,7 @@
     experience 当前经验值
     union_name 家族名，不存在为空字符
     id_card_auth 主持认证状态  1已认证
-    diamond 钻石余额 
+    i_gold 金币余额 
     albums:[
         {
             id,
@@ -591,7 +591,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
 {
     error: 0/-1
     error_reason: ''
-    diamond: 100,
+    i_gold: 100,
     products: [
         {
             id: 1

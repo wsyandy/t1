@@ -44,6 +44,7 @@ trait UserAttrs
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond,
+            'i_gold' => $this->i_gold,
             'lang' => $this->lang,
             'country_id' => $this->country_id
         ];

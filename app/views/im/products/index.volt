@@ -10,7 +10,7 @@
         <div class="recharge_head">
             <div class="recharge_head_title">
                 <img class="icon_diamonds" src="/im/images/icon_diamonds.png" alt="">
-                <span>我的钻石</span>
+                <span>我的金币</span>
             </div>
             <div class="recharge_head_num">251</div>
         </div>
@@ -20,13 +20,13 @@
             {% for product in products %}
                 {% if (product.id == selected_product.id) %}
                     <li data-product_id="{{ product.id }}" class="option select">
-                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>钻石</div>
+                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>金币</div>
                         <div class="dollar"><span>{{ product.amount }}</span>$</div>
                         <img class="icon_select" src="/im/images/icon_selected.png" alt="">
                     </li>
                 {% else %}
                     <li data-product_id="{{ product.id }}" class="option">
-                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>钻石</div>
+                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>金币</div>
                         <div class="dollar"><span>{{ product.amount }}</span>$</div>
                         <img class="icon_select" src="/im/images/icon_selected.png" alt="" style="display: none;">
                     </li>

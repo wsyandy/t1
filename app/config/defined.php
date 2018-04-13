@@ -149,7 +149,7 @@ define('GIFT_ORDER_TYPE_SYSTEM_SEND', 3); //系统赠送
 define('GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW', 4); //活动抽奖
 
 define('PRODUCT_GROUP_FEE_TYPE_DIAMOND', 'diamond'); //钻石
-define('PRODUCT_GROUP_FEE_TYPE_HI_COINS', 'hi_coins'); //Hi币
+define('PRODUCT_GROUP_FEE_TYPE_I_GOLD', 'i_gold'); //国际版金币
 
 define('PRODUCT_GROUP_PAY_TYPE_CNY', 1); //钻石
 define('PRODUCT_GROUP_PAY_TYPE_HI_COIN', 2); //Hi币
@@ -277,3 +277,8 @@ define('LANG_FR', 'fr');//法语
 define('LANG_ES', 'es');//西班牙语
 define('LANG_DE', 'de');//德语
 define('LANG_AR', 'ar');//阿拉伯语
+
+
+//国际金币消费
+define('I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD', 1); //购买金币
+define('I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT', 2); //购买礼物

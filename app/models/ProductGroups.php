@@ -13,7 +13,7 @@ class ProductGroups extends BaseModel
      */
     private $_product_channel;
 
-    static $FEE_TYPE = [PRODUCT_GROUP_FEE_TYPE_DIAMOND => '钻石'];
+    static $FEE_TYPE = [PRODUCT_GROUP_FEE_TYPE_DIAMOND => '钻石', PRODUCT_GROUP_FEE_TYPE_I_GOLD => '国际版金币'];
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
     static $PAY_TYPE = [PRODUCT_GROUP_PAY_TYPE_CNY => '人民币', PRODUCT_GROUP_PAY_TYPE_HI_COIN => 'Hi币'];
 

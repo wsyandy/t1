@@ -462,7 +462,7 @@ class UsersController extends BaseController
     {
         $products = \Products::findDiamondListByUser($this->currentUser(), 'toApiJson');
 
-        $resp = array('diamond' => $this->currentUser()->diamond);
+        $resp = array('i_gold' => $this->currentUser()->i_gold);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge($resp, array(
             'products' => $products
         )));
