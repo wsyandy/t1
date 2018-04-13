@@ -203,7 +203,7 @@ class HiCoinHistories extends BaseModel
 
     function isCost()
     {
-        return in_array($this->fee_type, [HI_COIN_FEE_TYPE_WITHDRAW, HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND]);
+        return in_array($this->fee_type, [HI_COIN_FEE_TYPE_WITHDRAW, HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND, HI_COIN_FEE_TYPE_DEDUCT]);
     }
 
     function isExchange()
