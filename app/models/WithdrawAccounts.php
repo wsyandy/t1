@@ -95,6 +95,11 @@ class WithdrawAccounts extends BaseModel
                 return $last_withdraw_account;
             }
 
+            $first_withdraw_account = self::findFirstWithdrawAccount($user);
+            if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
+                return $first_withdraw_account;
+            }
+
         } else {
             return $selected_withdraw_account;
         }
