@@ -177,8 +177,7 @@
         avatar_url 进入房间的用户的头像
         avatar_small_url 进入房间的用户头像小图
         channel_name 房间频道
-        i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
-        i_segment_text 段位文本
+        i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
         user_car_gift: {
             name: ''
             image_url: ''

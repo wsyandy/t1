@@ -434,8 +434,7 @@
             monologue 个性签名
             age 年龄  
             level 用户等级
-           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
-           i_segment_text 段位文本
+           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
         },
         ...
     ]

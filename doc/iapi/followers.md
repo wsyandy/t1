@@ -32,8 +32,7 @@
             current_room_seat_id 用户当前所在麦位id 
             monologue 个性签名
             level 用户等级
-           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
-           i_segment_text 段位文本
+           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
         } 
     ]
 }
@@ -71,8 +70,7 @@
             current_room_seat_id 用户当前所在麦位id
             monologue 个性签名
             level 用户等级
-           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
-           i_segment_text 段位文本
+           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
             followed 是否已关注 true:已关注,false:未关注
         } 
     ]

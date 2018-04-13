@@ -36,8 +36,7 @@
             friend_status_text string 好友状态名称
             self_introduce 自我介绍
             level 用户等级
-           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
-           i_segment_text 段位文本
+           i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
         }
     ] 
     friend_num 好友人数
