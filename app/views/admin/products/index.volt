@@ -11,7 +11,7 @@
 
 {{ simple_table(products, [
     'ID': 'id', '产品组': 'product_group_name', '名称': 'name', 'icon': 'icon_link', '金额(元)': 'amount',
-    '钻石': 'diamond', '金币':'gold','Hi币':'hi_coins','苹果支付代码': 'apple_product_no', '排序': 'rank', '状态': 'status_text', '编辑': 'edit_link'
+    '国际版金币':'i_gold','钻石': 'diamond', '金币':'gold','Hi币':'hi_coins','苹果支付代码': 'apple_product_no', '排序': 'rank', '状态': 'status_text', '编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="product_tpl">
@@ -21,6 +21,7 @@
       <td>${product.name}</td>
       <td><img src="${product.icon_url}" width="40"></td>
       <td>${product.amount}</td>
+      <td>${product.i_gold}</td>
       <td>${product.diamond}</td>
       <td>${product.gold}</td>
       <td>${product.hi_coins}</td>

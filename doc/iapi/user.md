@@ -598,7 +598,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             id: 1
             name: ''
             amount: 10
-            diamond: 100
+            i_gold: 100
             apple_product_no: ''
         }
         ...
