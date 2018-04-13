@@ -48,13 +48,15 @@
         }
     };
 
+    vm = XVue(opts);
+
     $(function () {
         pushHistory();
     });
 
+    //解决ios后退无法刷新
     function pushHistory() {
         window.addEventListener("popstate", function (e) {
-          alert("后退");
             self.location.reload();
         }, false);
         var state = {
@@ -63,8 +65,5 @@
         };
         window.history.replaceState(state, "", "#");
     }
-
-
-    vm = XVue(opts)
 </script>
 
