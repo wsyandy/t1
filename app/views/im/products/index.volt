@@ -20,13 +20,13 @@
             {% for product in products %}
                 {% if (product.id == selected_product.id) %}
                     <li data-product_id="{{ product.id }}" class="option select">
-                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>金币</div>
+                        <div class="diamonds"><span>{{ product.getShowIGold(user) }}</span>金币</div>
                         <div class="dollar"><span>{{ product.amount }}</span>$</div>
                         <img class="icon_select" src="/im/images/icon_selected.png" alt="">
                     </li>
                 {% else %}
                     <li data-product_id="{{ product.id }}" class="option">
-                        <div class="diamonds"><span>{{ product.getShowDiamond(user) }}</span>金币</div>
+                        <div class="diamonds"><span>{{ product.getShowIGold(user) }}</span>金币</div>
                         <div class="dollar"><span>{{ product.amount }}</span>$</div>
                         <img class="icon_select" src="/im/images/icon_selected.png" alt="" style="display: none;">
                     </li>

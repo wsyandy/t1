@@ -16,7 +16,7 @@
 {
     error_code:   0/-1  
     error_reason: '返回码说明'  
-    diamond: 100
+    i_gold: 100
     gold: 金币
     pay_url: 'url://im/products'
     total_page: 10
@@ -45,7 +45,7 @@
             id: 1
             name: ''
             amount: 10
-            diamond: 100
+            i_gold: 100
             apple_product_no: ''
         }
         ...
@@ -71,8 +71,7 @@
 { 
     error_code: 0/-1/-2
     error_reason: '赠送成功/失败/余额不足'
-    diamond: 用户钻石余额
-    gold: 用户金币余额
+    i_gold: 用户钻石余额
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'
