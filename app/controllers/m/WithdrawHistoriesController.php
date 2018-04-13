@@ -27,7 +27,7 @@ class WithdrawHistoriesController extends BaseController
         $ip = $this->remoteIp();
         $show_exchange = false;
 
-        if ('101.81.109.114' == $ip) {
+        if (in_array($ip, ['101.81.109.114', '139.227.253.40', '116.226.119.13'])) {
             $show_exchange = true;
         }
 
