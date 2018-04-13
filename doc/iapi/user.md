@@ -418,6 +418,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            image_small_url 国旗
         }
     ]
 }
