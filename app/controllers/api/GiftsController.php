@@ -64,6 +64,10 @@ class GiftsController extends BaseController
             }
         }
 
+        if (in_array($this->currentUser()->id, [1060201, 1058027, 1060180, 1017233, 1001315, 1083050])) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+
         if ($gift->isDiamondPayType()) {
             $gift_amount = $gift_num * $gift->amount;
             $check_result = $this->currentUser()->canSendToUser($user_id, $gift_amount);

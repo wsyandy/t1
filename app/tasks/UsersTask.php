@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1134554;
-        $new_user_id = 153730;
+        $user_id = 1057791;
+        $new_user_id = 153717;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -130,7 +130,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 153730;
+        $new_user->uid = 153717;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
@@ -425,7 +425,315 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function resetUserAction()
     {
-        $user_id = 1134554;
+        $user_id = 10800;
+        $new_user_id = 153717;
+
+        $user = Users::findFirstById($user_id);
+        $new_user = new Users();
+
+        $data = $user->toData();
+        echoLine($data);
+
+        foreach ($data as $k => $v) {
+            if ('id' == $k || 'uid' == $k) {
+                continue;
+            }
+            $new_user->$k = $v;
+        }
+
+        $new_user->save();
+
+        $new_user->sid = $new_user->generateSid('d.');
+        $new_user->save();
+
+        //用户订单
+        $gift_orders = GiftOrders::findBy(['user_id' => $user_id]);
+        echoLine(count($gift_orders));
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->user_id = $new_user_id;
+            $gift_order->save();
+        }
+
+        $gift_orders = GiftOrders::findBy(['sender_id' => $user_id]);
+        echoLine(count($gift_orders));
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order->sender_id = $new_user_id;
+            $gift_order->save();
+        }
+
+        //用户礼物
+        $user_gifts = UserGifts::findBy(['user_id' => $user_id]);
+        echoLine(count($user_gifts));
+
+        foreach ($user_gifts as $user_gift) {
+            $user_gift->user_id = $new_user_id;
+            $user_gift->save();
+        }
+
+        //订单
+        $orders = Orders::findBy(['user_id' => $user_id]);
+        echoLine(count($orders));
+
+        foreach ($orders as $order) {
+            $order->user_id = $new_user_id;
+            $order->save();
+        }
+
+        //支付
+        $payments = Payments::findBy(['user_id' => $user_id]);
+
+        foreach ($payments as $payment) {
+            $payment->user_id = $new_user_id;
+            $payment->save();
+        }
+
+        //账户
+        $account_histories = AccountHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($account_histories as $account_history) {
+            $account_history->user_id = $new_user_id;
+            $account_history->save();
+        }
+
+        //相册
+        $albums = Albums::findBy(['user_id' => $user_id]);
+
+        foreach ($albums as $album) {
+            $album->user_id = $new_user_id;
+            $album->save();
+        }
+
+        //房间信息
+        $room = Rooms::findFirstByUserId($user_id);
+
+        if ($room) {
+            $room->user_id = $new_user_id;
+            $room->save();
+        }
+
+        $room_seat = RoomSeats::findFirstByUserId($user_id);
+
+        if ($room_seat) {
+            $room_seat->user_id = $new_user_id;
+            $room_seat->save();
+        }
+
+        //通话记录
+        $voice_calls = VoiceCalls::findBy(['sender_id' => $user_id]);
+
+        foreach ($voice_calls as $voice_call) {
+            $voice_call->sender_id = $new_user_id;
+            $voice_call->save();
+        }
+
+        $voice_calls = VoiceCalls::findBy(['receiver_id' => $user_id]);
+        foreach ($voice_calls as $voice_call) {
+            $voice_call->receiver_id = $new_user_id;
+            $voice_call->save();
+        }
+
+        //关注关系
+        $user_db = Users::getUserDb();
+        $follow_user_ids = $user_db->zrange('follow_list_user_id' . $user_id, 0, -1);
+        $followed_user_ids = $user_db->zrange('followed_list_user_id' . $user_id, 0, -1);
+
+        if (count($follow_user_ids) > 0) {
+            $follow_users = Users::findByIds($follow_user_ids);
+
+            foreach ($follow_users as $follow_user) {
+                $user->unFollow($follow_user);
+                $new_user->follow($follow_user);
+            }
+        }
+
+        if (count($followed_user_ids) > 0) {
+            $followed_users = Users::findByIds($followed_user_ids);
+
+            foreach ($followed_users as $followed_user) {
+                $followed_user->unFollow($user);
+                $followed_user->follow($new_user);
+            }
+        }
+
+        //好友关系
+        $add_key = 'add_friend_list_user_id_' . $user_id;
+        $new_add_key = 'add_friend_list_user_id_' . $new_user_id;
+        $add_user_ids = $user_db->zrange($add_key, 0, -1, true);
+
+        foreach ($add_user_ids as $add_user_id => $time) {
+            $user_db->zadd($new_add_key, $time, $add_user_id);
+            $user_db->zrem('added_friend_list_user_id_' . $add_user_id, $user_id);
+            $user_db->zadd('added_friend_list_user_id_' . $add_user_id, $time, $new_user_id);
+        }
+
+        $user_db->zclear($add_key);
+
+        $added_key = 'added_friend_list_user_id_' . $user_id;
+        $new_added_key = 'added_friend_list_user_id_' . $new_user_id;
+        $added_user_ids = $user_db->zrange($added_key, 0, -1, true);
+
+        foreach ($added_user_ids as $added_user_id => $time) {
+            $user_db->zadd($new_added_key, $time, $added_user_id);
+            $user_db->zrem('add_friend_list_user_id_' . $added_user_id, $user_id);
+            $user_db->zadd('add_friend_list_user_id_' . $added_user_id, $time, $new_user_id);
+        }
+
+        $user_db->zclear($added_key);
+
+        $add_total_key = 'friend_total_list_user_id_' . $user_id;
+        $new_add_total_key = 'friend_total_list_user_id_' . $new_user_id;
+        $add_total_user_ids = $user_db->zrange($add_total_key, 0, -1, true);
+
+        foreach ($add_total_user_ids as $add_total_user_id => $time) {
+            $user_db->zadd($new_add_total_key, $time, $add_total_user_id);
+            $user_db->zrem('friend_total_list_user_id_' . $add_total_user_id, $user_id);
+            $user_db->zadd('friend_total_list_user_id_' . $add_total_user_id, $time, $new_user_id);
+        }
+
+        $user_db->zclear($add_total_key);
+
+
+        $user_introduce_key = "add_friend_introduce_user_id" . $user_id;
+        $new_user_introduce_key = "add_friend_introduce_user_id" . $new_user_id;
+        $user_introduces = $user_db->hgetall($user_introduce_key);
+
+        foreach ($user_introduces as $id => $introduce) {
+            $user_db->hset($new_user_introduce_key, $id, $introduce);
+        }
+
+        $user_db->hclear($user_introduce_key);
+
+        $friend_list_key = 'friend_list_user_id_' . $user_id;
+        $new_friend_list_key = 'friend_list_user_id_' . $new_user_id;
+        $friend_list_user_ids = $user_db->zrange($friend_list_key, 0, -1, true);
+
+        foreach ($friend_list_user_ids as $friend_list_user_id => $time) {
+            $user_db->zadd($new_friend_list_key, $time, $friend_list_user_id);
+            $user_db->zrem('friend_list_user_id_' . $friend_list_user_id, $user_id);
+            $user_db->zadd('friend_list_user_id_' . $friend_list_user_id, $time, $new_user_id);
+        }
+
+        $user_db->zclear($friend_list_key);
+
+        //黑名单
+        $black_user_ids = $user_db->zrange('black_list_user_id' . $user_id, 0, -1);
+        $blacked_user_ids = $user_db->zrange('black_list_user_id' . $user_id, 0, -1);
+
+        if (count($black_user_ids) > 0) {
+            $black_users = Users::findByIds($black_user_ids);
+
+            foreach ($black_users as $black_user) {
+                $user->black($black_user);
+                $new_user->unBlack($black_user);
+            }
+        }
+
+        if (count($blacked_user_ids) > 0) {
+            $blacked_users = Users::findByIds($blacked_user_ids);
+
+            foreach ($blacked_users as $blacked_user) {
+                $blacked_user->unBlack($user);
+                $blacked_user->black($new_user);
+            }
+        }
+
+        //举报
+        $complaints = Complaints::findBy(['complainer_id' => $user_id]);
+
+        foreach ($complaints as $complaint) {
+            $complaint->complainer_id = $new_user_id;
+            $complaint->save();
+        }
+
+        $complaints = Complaints::findBy(['respondent_id' => $user_id]);
+
+        foreach ($complaints as $complaint) {
+            $complaint->respondent_id = $new_user_id;
+            $complaint->save();
+        }
+
+        $user_music_key = "user_musics_id" . $user_id;
+        $new_user_music_key = "user_musics_id" . $new_user_id;
+
+        $musics = Musics::findBy(['user_id' => $user_id]);
+
+        foreach ($musics as $music) {
+            $music->user_id = $new_user_id;
+            $music->update();
+        }
+
+        $music_ids = $user_db->zrange($user_music_key, 0, -1, true);
+
+        foreach ($music_ids as $music_id => $time) {
+            $user_db->zadd($new_user_music_key, $time, $music_id);
+        }
+
+        $user_db->zclear($user_music_key);
+
+        $hi_coins_histories = HiCoinHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($hi_coins_histories as $hi_coins_history) {
+            $hi_coins_history->user_id = $new_user_id;
+            $hi_coins_history->update();
+        }
+
+        $withdraw_histories = WithdrawHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+            $withdraw_history->user_id = $new_user_id;
+            $withdraw_history->update();
+        }
+
+        $union_histories = UnionHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($union_histories as $union_history) {
+            $union_history->user_id = $new_user_id;
+            $union_history->update();
+        }
+
+        $gold_histories = GoldHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($gold_histories as $gold_history) {
+            $gold_history->user_id = $new_user_id;
+            $gold_history->update();
+        }
+
+        $union = Unions::findFirstByUserId($user_id);
+
+        if ($union) {
+            $union->user_id = $new_user_id;
+            $union->update();
+            $db = Users::getUserDb();
+            $key = $union->generateUsersKey();
+            $db->zrem($key, $user_id);
+            $db->zrem($union->generateRefusedUsersKey(), $user_id);
+            $db->zrem($union->generateNewUsersKey(), $user_id);
+            $db->zrem($union->generateCheckUsersKey(), $user_id);
+
+            $db->zadd($key, time(), $new_user_id);
+            $db->zadd($union->generateRefusedUsersKey(), time(), $new_user_id);
+            $db->zadd($union->generateNewUsersKey(), time(), $new_user_id);
+            $db->zadd($union->generateCheckUsersKey(), time(), $new_user_id);
+        }
+
+        $id_card_auths = IdCardAuths::findBy(['user_id' => $user_id]);
+
+        foreach ($id_card_auths as $id_card_auth) {
+            $id_card_auth->user_id = $new_user_id;
+            $id_card_auth->update();
+        }
+
+        $activity_histories = ActivityHistories::findBy(['user_id' => $user_id]);
+
+        foreach ($activity_histories as $activity_history) {
+            $activity_history->user_id = $new_user_id;
+            $activity_history->update();
+        }
+
+
+        $user_id = 1057791;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
         $user->user_status = USER_STATUS_OFF;

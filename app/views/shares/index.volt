@@ -59,7 +59,7 @@
         if ($.isWeixinClient() || $.isWeiboClient()) {
             $("#open_in_browser_tip").removeClass('none');
         } else if ($.isQqClient()) {
-            $("#jump_room").attr('href', '{{ user.product_channel.code }}://enter_room?room_id={{ room_id }}');
+            $("#jump_room").attr('href', '{{ user.product_channel.code }}://enter_room?room_id={{ room_id }}&user_id={{ user.id }}');
             $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
         } else {
 
@@ -78,8 +78,11 @@
                 var room_id = $("#room_id").val();
 
                 if (room_id) {
-                    app_url += '?room_id=' + room_id;
+                    app_url += '?room_id=' + room_id + "&user_id=" + {{ user.id }};
                 }
+
+                console.log(app_url);
+
 
                 window.location = app_url;
 
@@ -111,10 +114,10 @@
         $(".close_right").click(function () {
             Download()
         })
-    })
+    });
 
     function Download() {
-        window.location = "/soft_versions/index?id=" + {{  soft_version_id }};
+        window.location = "/soft_versions/index?id=" + {{ soft_version_id }};
     }
 </script>
 

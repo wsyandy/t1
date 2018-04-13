@@ -1,0 +1,73 @@
+body{
+    background-color: #f5f5f5;
+}
+.tip_offs{
+    margin-top: 0.2rem;
+
+    background-color: #fff;
+}
+.tip_offs ul li{
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .3rem;
+    color: #333;
+    border-bottom: 1px solid #f6f6f6;
+    width: 7.2rem;
+    margin-left: 0.3rem;
+    height: 0.93rem;
+    padding-right: 0.3rem;
+}
+.ico_select {
+    width: 0.29rem;
+    height: 0.22rem;
+}
+
+.tip_btn{
+    margin:  0.8rem  auto;
+    width: 5.44rem;
+    height: 0.82rem;
+    line-height: 0.82rem;
+    background-color: #4c93ff;
+    border-radius: 1rem;
+    font-size: .28rem;
+    color: #FFFFFF;
+    text-align: center;
+    letter-spacing: 1px;
+}
+.tip_select{
+   background-color: #006BFF;
+}
+
+.tip_popup{
+    position: fixed;
+    bottom:-1.2rem;
+    left: 50%;
+    margin-left: -0.92rem;
+    width: 1.84rem;
+    height: 0.82rem;
+    line-height: 0.82rem;
+    text-align: center;
+    border-radius: 0.16rem;
+    background-color: rgba(72,72,74,0.7);
+    font-size: 0.24rem;
+    color: #FFFFFF;
+    opacity: 0;
+    transition: opacity 0.5s;
+
+}
+.tip_transition{
+    opacity: 1;
+    bottom:1.2rem;
+}
+
+.jb_selected{
+    width: 0.29rem;
+    height: 0.22rem;
+    background: url(../images/ico_selected.png) no-repeat !important;
+    -webkit-background-size: 100% 100% !important;
+    -moz-background-size: 100% !important;
+    -o-background-size: 100% !important;
+    background-size: 100% !important;
+}
