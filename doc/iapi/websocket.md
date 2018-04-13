@@ -177,9 +177,8 @@
         avatar_url 进入房间的用户的头像
         avatar_small_url 进入房间的用户头像小图
         channel_name 房间频道
-        segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-        (例:星耀1 starshine1;星耀王者2 king2)
-        segment_text 段位文本 星耀1
+        i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） VIP（VIP）
+        i_segment_text 段位文本
         user_car_gift: {
             name: ''
             image_url: ''
