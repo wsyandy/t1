@@ -26,16 +26,6 @@ class WithdrawAccountsController extends BaseController
 
         $this->view->withdraw_accounts = json_encode($withdraw_accounts_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
-        if ($this->request->isPost()) {
-            //设置选中的账户
-            $id = $this->params('id');
-            $user_db = \Users::getUserDb();
-            $key = 'selected_withdraw_account_' . $current_user->id;
-            $expire = 5 * 60;
-            $user_db->setex($key, $expire, $id);
-            return;
-        }
-
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = "银行卡管理";
@@ -56,9 +46,6 @@ class WithdrawAccountsController extends BaseController
 
         list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
             $mobile, 'login', $context);
-//        $error_code = ERROR_CODE_SUCCESS;
-//        $error_reason = '';
-//        $sms_token = '';
 
         return $this->renderJSON($error_code, $error_reason, ['sms_token' => $sms_token]);
     }
@@ -93,9 +80,6 @@ class WithdrawAccountsController extends BaseController
         if ($error_code != ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
-
-//        $error_code = ERROR_CODE_SUCCESS;
-//        $error_reason = '';
 
 
         $withdraw_account = \WithdrawAccounts::createWithdrawAccount($this->currentUser(), $mobile);

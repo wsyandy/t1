@@ -39,15 +39,6 @@
                     return;
                 }
                 this.selected_withdraw_account = withdraw_account;
-
-                var data = {
-                    sid: '{{ sid }}',
-                    code: '{{ code }}',
-                    id: withdraw_account.id
-                };
-
-                $.authPost('/m/withdraw_accounts/index', data, function (resp) {
-                })
             },
             unbind: function () {
                 var id = this.selected_withdraw_account.id ? this.selected_withdraw_account.id : this.cardList[0].id;

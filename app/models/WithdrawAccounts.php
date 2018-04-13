@@ -81,27 +81,15 @@ class WithdrawAccounts extends BaseModel
 
     static function getDefaultWithdrawAccount($user)
     {
-        $user_db = \Users::getUserDb();
-        $key = 'selected_withdraw_account_' . $user->id;
-        $withdraw_account_id = $user_db->get($key);
+        $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
+        $last_withdraw_account = $last_withdraw_history->withdraw_account;
+        if (isPresent($last_withdraw_account) && $last_withdraw_account->status == STATUS_ON) {
+            return $last_withdraw_account;
+        }
 
-        $selected_withdraw_account = \WithdrawAccounts::findFirstById($withdraw_account_id);
-
-        if (isBlank($selected_withdraw_account) || $selected_withdraw_account->status != STATUS_ON) {
-
-            $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
-            $last_withdraw_account = $last_withdraw_history->withdraw_account;
-            if (isPresent($last_withdraw_account) && $last_withdraw_account->status == STATUS_ON) {
-                return $last_withdraw_account;
-            }
-
-            $first_withdraw_account = self::findFirstWithdrawAccount($user);
-            if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
-                return $first_withdraw_account;
-            }
-
-        } else {
-            return $selected_withdraw_account;
+        $first_withdraw_account = self::findFirstWithdrawAccount($user);
+        if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
+            return $first_withdraw_account;
         }
 
         return 0;
