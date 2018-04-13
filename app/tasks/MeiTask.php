@@ -2700,14 +2700,20 @@ EOF;
                 ]);
 
                 if ($user_gift) {
+                    echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
                     $user_gift_num = $user_gift->num;
-                    //echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
-
-                    if ($user_gift_num == $gift_num) {
-                        $user_gift->delete();
-                        echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
-                    }
+                    $new_num = $user_gift_num - $gift_num;
+                    $user_gift->num = $new_num;
+                    $user_gift->total_amount = $new_num * $user_gift->amount;
+                    $user_gift->update();
                 }
+            }
+
+            $gift_orders = GiftOrders::findBy(['user_id' => 117]);
+
+            foreach ($gift_orders as $gift_order) {
+                $gift_order->status = GIFT_ORDER_STATUS_FREEZE;
+                $gift_order->update();
             }
         }
     }
