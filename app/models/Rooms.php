@@ -29,6 +29,11 @@ class Rooms extends BaseModel
      */
     private $_union;
 
+    /**
+     * @type Countries
+     */
+    private $_country;
+
     static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
     static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
     static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台', ROOM_THEME_TYPE_USER_BROADCAST => '个人电台'];
@@ -108,7 +113,8 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
+            'image_small_url' => $this->country->image_small_url
         ];
     }
 
