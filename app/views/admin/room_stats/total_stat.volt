@@ -13,9 +13,9 @@
 
 {% macro user_info(room) %}
     {% if isAllowed('users','index') %}
-        姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
+        姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_id }}</a><br/>
     {% endif %}
-    
+
 {% endmacro %}
 
 {% macro room_info(room) %}
