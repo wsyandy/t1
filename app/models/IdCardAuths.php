@@ -66,6 +66,7 @@ class IdCardAuths extends BaseModel
         $id_no = fetch($opts, 'id_no');
         $id_name = fetch($opts, 'id_name');
         $mobile = fetch($opts, 'mobile');
+        $bank_account = fetch($opts, 'bank_account');
 
         $id_card_auth = IdCardAuths::findFirstByUserId($user->id);
 
@@ -78,6 +79,7 @@ class IdCardAuths extends BaseModel
         $id_card_auth->id_name = $id_name;
         $id_card_auth->mobile = $mobile;
         $id_card_auth->id_no = $id_no;
+        $id_card_auth->bank_account = $bank_account;
         $id_card_auth->auth_status = AUTH_WAIT;
 
         if ($id_card_auth->save()) {
@@ -86,4 +88,35 @@ class IdCardAuths extends BaseModel
 
         return [ERROR_CODE_FAIL, '认证失败'];
     }
+
+    static function checkBankAccount($bank_account)
+    {
+        $card_number_array = str_split($bank_account);
+        $last_n = $card_number_array[count($card_number_array) - 1];
+        krsort($card_number_array);
+        $i = 1;
+        $total = 0;
+        foreach ($card_number_array as $n) {
+            if ($i % 2 == 0) {
+                $ix = $n * 2;
+                if ($ix >= 10) {
+                    $nx = 1 + ($ix % 10);
+                    $total += $nx;
+                } else {
+                    $total += $ix;
+                }
+            } else {
+                $total += $n;
+            }
+            $i++;
+        }
+        $total -= $last_n;
+        $x = 10 - ($total % 10);
+        if ($x == $last_n) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

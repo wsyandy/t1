@@ -115,9 +115,9 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     level 用户等级
-    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
-    segment_text 段位文本 星耀1
+    i_segment_text 段位文本 星耀1
 }
 ```
 
@@ -163,14 +163,14 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
-    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
-    segment_text 段位文本 星耀1
+    i_segment_text 段位文本 星耀1
     next_level_experience 下一级经验值
     experience 当前经验值
     union_name 家族名，不存在为空字符
     id_card_auth 主持认证状态  1已认证
-    diamond 钻石余额 
+    i_gold 金币余额 
     albums:[
         {
             id,
@@ -230,9 +230,9 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
-    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
-    segment_text 段位文本 星耀1
+    i_segment_text 段位文本 星耀1
     receive_gift_num 接受的礼物个数
     next_level_experience 下一级经验值
     experience 当前经验值
@@ -266,7 +266,7 @@
 |monologue|个性签名|string||客户端需限制字数长度|
 |age|年龄|int|||
 |height|身高|int|||
-|birthday|生日|string|||
+|i_birthday|生日|int|||
 |lang|语言|string||(备注1)||
 
 ##### (备注1)
@@ -308,9 +308,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
     constellation 星座
     level 用户等级
     lang 语言
-    segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
     (例:星耀1 starshine1;星耀王者2 king2)
-    segment_text 段位文本 星耀1
+    i_segment_text 段位文本 星耀1
     albums:[
         {
             id,
@@ -391,9 +391,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              mobile 手机号
              monologue 个性签名
              level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
             followed_num 关注人数
         }
     ],
@@ -418,6 +418,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            country_image_url 国旗
         }
     ]
 }
@@ -454,9 +455,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              mobile 手机号
              monologue 个性签名
              level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
             followed_num 关注人数
         }
     ]
@@ -492,9 +493,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
     mobile 手机号
     monologue 个性签名
     level 用户等级
-   segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+   i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
    (例:星耀1 starshine1;星耀王者2 king2)
-   segment_text 段位文本 星耀1
+   i_segment_text 段位文本 星耀1
 }
 ```
 
@@ -533,9 +534,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              distance string 距离,例如 0.5km
              age 年龄
              level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
         }
     ]               
 }
@@ -591,7 +592,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
 {
     error: 0/-1
     error_reason: ''
-    diamond: 100,
+    i_gold: 100,
     products: [
         {
             id: 1
@@ -744,9 +745,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             avatar_small_url 用户小头像
             rank 排名
             level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
             hi_coin string 贡献的hi币 
         }
         ...
@@ -778,9 +779,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             avatar_small_url 用户小头像
             rank 排名
             level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
             charm_value string 榜单魅力值
         }
         ...
@@ -815,9 +816,9 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             avatar_small_url 用户小头像
             rank 排名
             level 用户等级
-            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
+            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
                 (例:星耀1 starshine1;星耀王者2 king2)
-            segment_text 段位文本 星耀1
+            i_segment_text 段位文本 星耀1
             wealth_value string 榜单财富值
         }
         ...

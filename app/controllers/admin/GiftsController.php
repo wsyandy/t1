@@ -16,9 +16,22 @@ class GiftsController extends BaseController
         $per_page = 30;
 
         $cond = $this->getConditions('gift');
+        $product_channel_id = $this->params('product_channel_id');
+        if ($product_channel_id) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            } else {
+                $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            }
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        }
+
         $cond['order'] = 'status desc, rank asc';
         $gifts = \Gifts::findPagination($cond, $page, $per_page);
         $this->view->gifts = $gifts;
+        $this->view->product_channels = \ProductChannels::find(['order' => ' id desc', 'columns' => 'id,name']);
+        $this->view->product_channel_id = $product_channel_id;
+
         $this->view->type = intval($this->params('gift[type_eq]'));
         $this->view->pay_type = $this->params('gift[pay_type_eq]');
         $this->view->id = $this->params('gift[id_eq]');

@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN i_segment VARCHAR (255);

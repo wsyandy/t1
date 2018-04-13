@@ -50,6 +50,7 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            country_image_url 国旗
         }
          ....
     ]

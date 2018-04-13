@@ -1,5 +1,15 @@
 <a href="/admin/emoticon_images/new" class="modal_action">新增</a>
 
+<form action="/admin/emoticon_images" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="product_channel_id_eq">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
+
 {%- macro image_link(emoticon_image) %}
     <img src="{{ emoticon_image.image_url }}" width="50"/>
 {%- endmacro %}

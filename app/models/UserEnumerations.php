@@ -23,6 +23,7 @@ trait UserEnumerations
         'height' => '身高',
         'age' => '年龄',
         'birthday' => '生日',
+        'i_birthday'=>'国际版生日',
         'lang' => '语言'
     ];
 
@@ -73,6 +74,9 @@ trait UserEnumerations
         'silver2' => '白银Ⅱ', 'silver3' => '白银Ⅲ', 'silver4' => '白银Ⅳ', 'silver5' => '白银Ⅴ', 'bronze1' => '青铜Ⅰ', 'bronze2' => '青铜Ⅱ',
         'bronze3' => '青铜Ⅲ', 'bronze4' => '青铜Ⅳ', 'bronze5' => '青铜Ⅴ',
     ];
+
+    //国际段位
+    static $I_SEGMENT = [];
 
     static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
     static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];
