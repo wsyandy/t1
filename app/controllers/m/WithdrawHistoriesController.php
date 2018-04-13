@@ -30,7 +30,7 @@ class WithdrawHistoriesController extends BaseController
             $show_exchange = true;
         }
 
-        info($is_height_version);
+        info($is_height_version, $ip);
         $this->view->is_height_version = $is_height_version;
 
         $this->view->user = $user;
