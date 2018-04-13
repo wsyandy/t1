@@ -23,7 +23,7 @@ class HiCoinHistoriesController extends BaseController
     function createAction()
     {
         if ($this->request->isAjax()) {
-            
+
             $product_id = $this->params('product_id');
             $hi_coins = intval($this->params('hi_coins'));
 
