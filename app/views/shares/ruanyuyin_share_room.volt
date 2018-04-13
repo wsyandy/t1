@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HI语音直播</title>
+    <title>软语音直播</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
     <link rel="stylesheet" href="/shares/css/ruanyuyin_share_room_apple.css">
@@ -33,7 +33,7 @@
 
 <!-- 弹框 开始-->
 <div class="fudong">
-    <h3>您还未安装 <b>Hi语音 </b>，无法直接进入Ta的房间，请先去下载</h3>
+    <h3>您还未安装 <b>软语音语音 </b>，无法直接进入Ta的房间，请先去下载</h3>
     <div class="btn_list">
         <span class="close_btn">取消</span>
         <span class="close_right">去下载</span>
