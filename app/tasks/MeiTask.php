@@ -2261,22 +2261,109 @@ EOF;
         }
 
 
-        $ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
 
+        $withdraw_user_ids = [];
 
-        foreach ($ids as $id) {
+        foreach ($user_ids as $user_id) {
 
-        }
-        $account_histories = AccountHistories::findBy(['user_id' => 1017233, 'fee_type' => ACCOUNT_TYPE_BUY_GIFT]);
+            $account_histories = AccountHistories::findBy(['user_id' => $user_id, 'fee_type' => ACCOUNT_TYPE_BUY_GIFT]);
 
-        foreach ($account_histories as $account_history) {
-            $gift_order = GiftOrders::findFirstById($account_history->gift_order_id);
+            foreach ($account_histories as $account_history) {
+                $gift_order = GiftOrders::findFirstById($account_history->gift_order_id);
 
-            $withdraw_history = WithdrawHistories::findFirstBy(['user_id' => $gift_order->user_id, 'status' => WITHDRAW_STATUS_WAIT]);
+                $withdraw_history = WithdrawHistories::findFirst([
+                    'conditions' => 'user_id = :user_id: and status = :status: and created_at >= :start:',
+                    'bind' => ['user_id' => $gift_order->user_id, 'status' => WITHDRAW_STATUS_WAIT, 'start' => strtotime('2018-04-12 12:00:00')]
+                ]);
 
-            if ($withdraw_history) {
-                echoLine($withdraw_history);
+                if ($withdraw_history) {
+                    $withdraw_user_ids[] = $withdraw_history->user_id;
+                    echoLine($withdraw_history);
+                }
             }
         }
+
+        $withdraw_user_ids = array_unique($withdraw_user_ids);
+
+        $res = [];
+
+        foreach ($withdraw_user_ids as $id) {
+            $res[] = $id;
+        }
+
+        echoLine($res);
+    }
+
+    function withdrawUsersAction()
+    {
+        $user_ids = [1122732, 1133128, 1106044, 1001061, 1133256, 1060417, 1017179, 1000439, 1032237, 1128048, 1000555];
+    }
+
+    function sendGiftAction()
+    {
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+        $gift_order_user_ids = [];
+        $times = [];
+
+        foreach ($user_ids as $sender_id) {
+
+            $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $sender_id],
+                'order' => 'id asc'
+            ]);
+
+            $start = $account_history->created_at;
+
+            $times[$sender_id] = $start;
+
+            $sender = Users::findFirstById($sender_id);
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => "created_at >= :start: and sender_id = :sender_id:",
+                    'bind' => ['start' => $start, 'sender_id' => $sender_id]
+                ]);
+
+            foreach ($gift_orders as $gift_order) {
+                $gift_order_user_ids[$sender->id][] = $gift_order->user_id;
+            }
+        }
+
+
+        echoLine($gift_order_user_ids);
+
+        foreach ($gift_order_user_ids as $sender_id => $user_ids) {
+
+            $user_ids = array_unique($user_ids);
+
+            $start = $times[$sender_id];
+
+            echoLine($sender_id, date("Ymd H:i:s", $start), count($user_ids));
+
+            $send_amount = [];
+
+            foreach ($user_ids as $user_id) {
+
+                $amount = GiftOrders::sum(['conditions' => 'sender_id = :sender_id: and user_id = :user_id: and created_at >= :created_at:',
+                    'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'created_at' => $start, 'sender_id' => $sender_id, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+                $send_amount[$user_id] = $amount;
+            }
+
+            arsort($send_amount);
+
+            foreach ($send_amount as $user_id => $amount) {
+                $user = Users::findFirstById($user_id);
+                echoLine("发送礼物用户id:", $sender_id, "接收礼物用户id:" . $user_id, "金额:", $amount, "所属家族:", $user->union->name);
+            }
+        }
+    }
+
+    function resetHiCoinAction()
+    {
+        
     }
 }
