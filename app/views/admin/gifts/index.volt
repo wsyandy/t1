@@ -1,4 +1,9 @@
 <form action="/admin/gifts" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="product_channel_id_eq">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
+
     <label for="id_eq">ID</label>
     <input name="gift[id_eq]" type="text" id="id_eq"/>
 

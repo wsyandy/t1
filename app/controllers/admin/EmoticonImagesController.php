@@ -13,7 +13,23 @@ class EmoticonImagesController extends BaseController
     {
         $page = $this->params('page');
         $per_page = 30;
-        $emoticon_images = \EmoticonImages::findPagination(['order' => 'status desc,id desc'], $page, $per_page);
+        $cond = $this->getConditions('emoticon_image');
+        $cond['order'] = 'status desc, id asc';
+
+        $product_channel_id = $this->params('product_channel_id');
+        if ($product_channel_id) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            } else {
+                $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            }
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        }
+
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = $product_channel_id;
+
+        $emoticon_images = \EmoticonImages::findPagination($cond, $page, $per_page);
         $this->view->emoticon_images = $emoticon_images;
     }
 

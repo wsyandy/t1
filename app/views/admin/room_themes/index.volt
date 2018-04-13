@@ -1,5 +1,17 @@
 <a href="/admin/room_themes/new" class="modal_action">新增</a>
 
+<form action="/admin/room_themes" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="product_channel_id_eq">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
+
+    <label for="id_eq">ID</label>
+    <input name="room_theme[id_eq]" type="text" id="id_eq"/>
+
+    <button type="submit" class="ui button">搜索</button>
+</form>
+
 {%- macro theme_image_link(room_theme) %}
     <img src="{{ room_theme.theme_image_url }}" width="50"/>
 {%- endmacro %}

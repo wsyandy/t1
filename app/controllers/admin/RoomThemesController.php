@@ -14,7 +14,23 @@ class RoomThemesController extends BaseController
     {
         $page = $this->params('page');
         $per_page = 30;
-        $room_themes = \RoomThemes::findPagination(['order' => 'id desc'], $page, $per_page);
+        $cond = $this->getConditions('room_theme');
+        $cond['order'] = 'status desc, id asc';
+
+        $product_channel_id = $this->params('product_channel_id');
+        if ($product_channel_id) {
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            } else {
+                $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
+            }
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        }
+
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = $product_channel_id;
+
+        $room_themes = \RoomThemes::findPagination($cond, $page, $per_page);
         $this->view->room_themes = $room_themes;
     }
 
