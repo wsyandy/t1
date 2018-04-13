@@ -721,40 +721,6 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
 ```
 
 
-### hi币贡献榜
->http-get ```/iapi/users/hi_coin_rank_list```
-
-##### 请求参数说明
-
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|list_type|榜单类型|string|否|day是日榜，week是周榜，total是总榜
-
-##### 回应参数说明
-```
-{
-    error_code
-    error_reason
-    users:[
-        {
-            id 用户id
-            nickname 昵称
-            age 年龄
-            sex	性别 0:女 1:男
-            avatar_url 用户头像
-            avatar_small_url 用户小头像
-            rank 排名
-            level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-                (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
-            hi_coin string 贡献的hi币 
-        }
-        ...
-    ]
-}
-```
-
 ### 魅力榜
 >http-get ```/iapi/users/charm_rank_list```
 
