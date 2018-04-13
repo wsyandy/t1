@@ -2367,7 +2367,7 @@ EOF;
         $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
 
         foreach ($user_ids as $user_id) {
-            HiCoinHistories::createHistory($user_id, );
+            HiCoinHistories::createHistory($user_id, ['fee_type' => ]);
         }
     }
 }
