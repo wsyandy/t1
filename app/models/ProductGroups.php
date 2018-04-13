@@ -63,4 +63,9 @@ class ProductGroups extends BaseModel
     {
         return 'diamond' == $this->fee_type;
     }
+
+    function isIGold()
+    {
+        return PRODUCT_GROUP_FEE_TYPE_I_GOLD == $this->fee_type;
+    }
 }

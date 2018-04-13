@@ -33,6 +33,7 @@ class SharesController extends BaseController
         $share_source = $this->params('share_source');
 
         $user = $this->currentUser();
+        $code = $this->currentProductChannel()->code;
 
         $opts = [
             'user_id' => $user->id,
@@ -52,7 +53,7 @@ class SharesController extends BaseController
 
         $description = "Hi—很好玩的语音直播软件，连麦聊天，组队开黑哦";
 
-        $url = $share_history->getShareUrl($this->getRoot());
+        $url = $share_history->getShareUrl($this->getRoot(), $code);
         $title = $share_history->getShareTitle($user->nickname);
 
         $res = [

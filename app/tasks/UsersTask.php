@@ -425,9 +425,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function resetUserAction()
     {
-        $user_id = 10800;
-        $new_user_id = 153717;
-
+        $user_id = 8888;
         $user = Users::findFirstById($user_id);
         $new_user = new Users();
 
@@ -445,6 +443,8 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $new_user->sid = $new_user->generateSid('d.');
         $new_user->save();
+
+        $new_user_id = $new_user->id;
 
         //用户订单
         $gift_orders = GiftOrders::findBy(['user_id' => $user_id]);
@@ -733,12 +733,12 @@ class UsersTask extends \Phalcon\Cli\Task
         }
 
 
-        $user_id = 1057791;
+        $user_id = 8888;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
-        $user->user_status = USER_STATUS_OFF;
         $user->avatar_status = AUTH_FAIL;
         $user->room_id = 0;
+        $user->user_type = USER_TYPE_SILENT;
         $user->current_room_id = 0;
         $user->current_room_seat_id = 0;
         $user->user_role = 0;

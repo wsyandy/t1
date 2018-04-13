@@ -30,7 +30,8 @@ class IGoldHistories extends BaseModel
 
     static $FEE_TYPE = [
         I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD => '购买金币',
-        I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT => '购买礼物'
+        I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT => '购买礼物',
+        I_GOLD_HISTORY_FEE_TYPE_GIVE=>'系统赠送'
     ];
 
     function beforeCreate()
