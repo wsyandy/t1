@@ -20,7 +20,7 @@
 
     <label for="user_status">状态</label>
     <select name="user[user_status_eq]" id="user_status_eq">
-        {{ options(user_status, user_status) }}
+        {{ options(Users.USER_STATUS, user_status) }}
     </select>
 
     <button type="submit" class="ui button">搜索</button>

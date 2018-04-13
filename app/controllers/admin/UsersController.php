@@ -24,9 +24,8 @@ class UsersController extends BaseController
         $this->view->users = $users;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->user_types = \UserEnumerations::$USER_TYPE;
-        $this->view->user_status = \UserEnumerations::$USER_STATUS;
         $this->view->user_type = intval($user_type);
-        $this->view->user_status = intval($user_status);
+        $this->view->user_status = $user_status == '' ? '' : intval($user_status);
         $this->view->mobile = $mobile;
         $this->view->user_id = $user_id;
         $this->view->product_channel_id = intval($product_channel_id);
