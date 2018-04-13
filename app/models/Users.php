@@ -2819,12 +2819,14 @@ class Users extends BaseModel
     {
         $hot_cache = self::getHotWriteCache();
         $fd_token_key = "socket_push_online_token_" . $fd;
+        $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
         $token_fd_key = "socket_push_fd_" . $online_token;
         $user_id_token_key = "socket_user_online_user_id" . $this->id;
         $token_user_id_key = "socket_fd_user_id" . $online_token;
 
         $hot_cache->pipeline();
         $hot_cache->setex($fd_token_key, 7 * 24 * 3600, $online_token);
+        $hot_cache->setex($fd_ip_token_key, 7 * 24 * 3600, $online_token);
         $hot_cache->setex($token_fd_key, 7 * 24 * 3600, $fd);
         $hot_cache->setex($user_id_token_key, 7 * 24 * 3600, $online_token);
         $hot_cache->setex($token_user_id_key, 7 * 24 * 3600, $this->id);
@@ -2847,12 +2849,17 @@ class Users extends BaseModel
         $token_fd_key = "socket_push_fd_" . $online_token;
         $token_user_id_key = "socket_fd_user_id" . $online_token;
         $token_intranet_ip_key = "socket_fd_intranet_ip_" . $online_token;
-
         $token_room_id_key = "room_token_" . $online_token;
         $token_room_seat_id_key = "room_seat_token_" . $online_token;
 
+        $ip = $hot_cache->get($token_intranet_ip_key);
+
         $hot_cache->pipeline();
         $hot_cache->del($fd_token_key);
+        if($ip){
+            $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
+            $hot_cache->del($fd_ip_token_key);
+        }
         $hot_cache->del($token_fd_key);
         $hot_cache->del($token_user_id_key);
         $hot_cache->del($token_intranet_ip_key);
@@ -2861,7 +2868,6 @@ class Users extends BaseModel
         $hot_cache->exec();
 
         if ($this && $this->online_token == $online_token) {
-
             $user_id_token_key = "socket_user_online_user_id" . $this->id;
             $hot_cache->del($user_id_token_key);
         }

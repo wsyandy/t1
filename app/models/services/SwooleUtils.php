@@ -116,9 +116,17 @@ class SwooleUtils extends \BaseModel
     static function getOnlineTokenByFd($fd)
     {
         $hot_cache = SwooleUtils::getHotWriteCache();
-        $online_key = "socket_push_online_token_" . $fd;
+        $ip = SwooleUtils::getIntranetIp();
+        $fd_token_key = "socket_push_online_token_" . $fd;
+        $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
+        $token = $hot_cache->get($fd_ip_token_key);
+        if($token){
+            return $token;
+        }
 
-        return $hot_cache->get($online_key);
+        info('not get token', $fd_ip_token_key);
+
+        return $hot_cache->get($fd_token_key);
     }
 
     static function getUserIdByOnlineToken($online_token)
