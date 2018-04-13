@@ -24,21 +24,12 @@ class WithdrawHistoriesController extends BaseController
             $is_height_version = $user->version_code > $user->product_channel->apple_stable_version;
         }
 
-        $ip = $this->remoteIp();
-        $show_exchange = false;
-
-        if (in_array($ip, ['101.81.109.114', '139.227.253.40', '116.226.119.13'])) {
-            $show_exchange = true;
-        }
-
-        info($is_height_version, $ip);
         $this->view->is_height_version = $is_height_version;
-
         $this->view->user = $user;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = '我的收益';
-        $this->view->show_exchange = $show_exchange;
+        $this->view->show_exchange = true;
     }
 
     function createAction()
