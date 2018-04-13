@@ -1,0 +1,47 @@
+@media only screen and (max-width:1920px),only screen and (max-device-width:1920px){body,html{font-size:256px}
+}
+@media only screen and (max-width:1080px),only screen and (max-device-width:1080px){body,html{font-size:144px}
+}
+@media only screen and (max-width:960px),only screen and (max-device-width:960px){body,html{font-size:128px}
+}
+@media only screen and (max-width:800px),only screen and (max-device-width:800px){body,html{font-size:106.67px}
+}
+@media only screen and (max-width:750px),only screen and (max-device-width:750px){body,html{font-size:100px}
+}
+@media only screen and (max-width:640px),only screen and (max-device-width:640px){body,html{font-size:85.33px}
+}
+@media only screen and (max-width:600px),only screen and (max-device-width:600px){body,html{font-size:80px}
+}
+@media only screen and (max-width:540px),only screen and (max-device-width:540px){body,html{font-size:72px}
+}
+@media only screen and (max-width:480px),only screen and (max-device-width:480px){body,html{font-size:64px}
+}
+@media only screen and (max-width:414px),only screen and (max-device-width:414px){body,html{font-size:55.2px}
+}
+@media only screen and (max-width:412px),only screen and (max-device-width:412px){body,html{font-size:54.8px}
+}
+@media only screen and (max-width:400px),only screen and (max-device-width:400px){body,html{font-size:53.33px}
+}
+@media only screen and (max-width:384px),only screen and (max-device-width:384px){body,html{font-size:51.2px}
+}
+@media only screen and (max-width:375px),only screen and (max-device-width:375px){body,html{font-size:50px}
+}
+@media only screen and (max-width:360px),only screen and (max-device-width:360px){body,html{font-size:47.8px}
+}
+@media only screen and (max-width:320px),only screen and (max-device-width:320px){body,html{font-size:42.4px}
+}
+@media only screen and (max-width:240px),only screen and (max-device-width:240px){body,html{font-size:32px}
+}
+a,blockquote,body,button,dd,div,dl,dt,h1,h2,h3,h4,h5,h6,input,li,ol,p,td,textarea,th,ul{margin:0;padding:0;border:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
+html{height:100%;width:100%}
+body{color:#333;font-family:"微软雅黑";width:100%}
+h1,h2,h3,h4,h5,h6{font-weight:400;font-size:100%}
+a{color:#555;text-decoration:none}
+a:hover{text-decoration:none}
+img{border:none}
+li,ol,ul{list-style:none}
+::-webkit-input-placeholder{color:#999999}
+:-moz-placeholder{color:#999999}
+::-moz-placeholder{color:#999999}
+:-ms-input-placeholder{color:#999999}
+.vueBox{width:100%}

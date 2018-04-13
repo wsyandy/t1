@@ -28,6 +28,13 @@ class IdCardAuthsController extends BaseController
         }
 
         $this->view->banks = json_encode($banks_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        $file_name = $this->params('code') . '_compere_auth';
+        $file_path = APP_ROOT . 'app/views/m/id_card_auths/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/id_card_auths/' . $file_name);
+            return;
+        }
     }
 
     function createAction()
@@ -35,6 +42,7 @@ class IdCardAuthsController extends BaseController
         $id_name = $this->params('id_name');
         $id_no = $this->params('id_no');
         $mobile = $this->params('mobile');
+        $bank_account = $this->params('bank_account');
 
         if (!$id_no || !$id_name || !$mobile) {
             return $this->renderJSON(ERROR_CODE_FAIL, '请填写正确的信息');
@@ -44,11 +52,15 @@ class IdCardAuthsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '身份证号码错误');
         }
 
-        if(!isMobile($mobile)){
-            return $this->renderJSON(ERROR_CODE_FAIL,"手机号错误");
+        if (!isMobile($mobile)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, "手机号错误");
         }
 
-        $opts = ['id_name' => $id_name, 'id_no' => $id_no, 'mobile' => $mobile];
+        if (!\IdCardAuths::checkBankAccount($bank_account)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '银行卡错误');
+        }
+
+        $opts = ['id_name' => $id_name, 'id_no' => $id_no, 'mobile' => $mobile, 'bank_account' => $bank_account];
         list($error_code, $error_reason) = \IdCardAuths::createIdCardAuth($this->currentUser(), $opts);
 
         return $this->renderJSON($error_code, $error_reason);
