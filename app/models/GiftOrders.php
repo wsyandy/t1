@@ -31,7 +31,8 @@ class GiftOrders extends BaseModel
     static $STATUS = [
         GIFT_ORDER_STATUS_WAIT => '等待支付',
         GIFT_ORDER_STATUS_SUCCESS => '支付成功',
-        GIFT_ORDER_STATUS_FAIL => '支付失败'
+        GIFT_ORDER_STATUS_FAIL => '支付失败',
+        GIFT_ORDER_STATUS_FREEZE => '冻结'
     ];
 
     static $TYPE = [GIFT_ORDER_TYPE_USER_SEND => '用户赠送', GIFT_ORDER_TYPE_USER_BUY => '购买',

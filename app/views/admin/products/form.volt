@@ -3,6 +3,7 @@
   {{ f.input('name', ['label': '产品名称']) }}
   {{ f.input('full_name', ['label': '全称']) }}
   {{ f.input('amount', ['label': '金额']) }}
+  {{ f.input('i_gold', ['label': '国际版金币']) }}
   {{ f.input('diamond', ['label': '钻石']) }}
   {{ f.input('gold',['label':'金币']) }}
   {{ f.input('hi_coins',['label':'Hi币']) }}
