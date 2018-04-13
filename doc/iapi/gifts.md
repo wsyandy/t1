@@ -17,7 +17,6 @@
     error_code:   0/-1  
     error_reason: '返回码说明'  
     i_gold: 100
-    gold: 金币
     pay_url: 'url://im/products'
     total_page: 10
     current_page: 1
@@ -31,7 +30,6 @@
             image_big_url: 'https://gifts/big'
             dynamic_image_url: 'https://gifts/dynamic'
             amount: 100
-            pay_type: 'diamond/gold' 钻石 diamond gold金币
             gift_type: 1 普通礼物 2 座驾
             svga_image_name: svga 对应zip包中的图片名称
             render_type 渲染类型 gif svga
@@ -71,7 +69,7 @@
 { 
     error_code: 0/-1/-2
     error_reason: '赠送成功/失败/余额不足'
-    i_gold: 用户钻石余额
+    i_gold: 用户金币余额
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'
@@ -123,7 +121,6 @@
             gift_id: 1
             name: ''
             amount: 10
-            pay_type 'gold/diamond'
             image_url: ''
             image_small_url: ''
             image_big_url: ''
@@ -138,7 +135,6 @@
             gift_id: 1
             name: ''
             amount: 10
-            pay_type 'gold/diamond'
             image_url: ''
             image_small_url: ''
             image_big_url: ''
@@ -221,7 +217,6 @@
 { 
     error_code: 0/-1
     error_reason: ''
-    hi_coins：总Hi币数（只有在第一页时推送）
     gift_orders：[
         {
             'name' :string 礼物名称,
@@ -237,8 +232,6 @@
             'created_at_text' :string 创建时间,
             'user_id' ： 1,
             'sender_id' ： 2,
-            'pay_type'  :'diamond/gold' diamond钻石  gold金币,
-            'pay_type_text' :'钻石/金币'
         }
     ]
 }
