@@ -375,9 +375,12 @@ class Gifts extends BaseModel
             $data['num'] = $gift_num;
             $data['user_id'] = $user->id;
             $data['user_nickname'] = $user->nickname;
+            $data['user_avatar_small_url'] = $user->avatar_small_url;
             $data['sender_id'] = $sender->id;
             $data['sender_nickname'] = $sender->nickname;
+            $data['sender_avatar_small_url'] = $sender->avatar_small_url;
         }
+
         return $data;
 
     }

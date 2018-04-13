@@ -11,6 +11,7 @@ class SharesController extends ApplicationController
     function indexAction()
     {
         $share_history = \ShareHistories::findFirstById($this->params('share_history_id', 0));
+        $code = $this->params('code');
 
         if (!$share_history) {
             echo "参数错误";
@@ -51,11 +52,19 @@ class SharesController extends ApplicationController
         $this->view->user = $user;
         $this->view->room_id = $room_id;
         $this->view->soft_version_id = $soft_version_id;
+
+        $file_name = $code . '_share_room';
+        $file_path = APP_ROOT . 'app/views/shares/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('shares/' . $file_name);
+            return;
+        }
     }
 
     function shareWorkAction()
     {
         $share_history = \ShareHistories::findFirstById($this->params('share_history_id', 0));
+        $code = $this->params('code');
 
         if (!$share_history) {
             echo "参数错误";
@@ -96,5 +105,13 @@ class SharesController extends ApplicationController
         $this->view->user = $user;
         $this->view->room_id = $room_id;
         $this->view->soft_version_id = $soft_version_id;
+
+        $file_name = $code . '_share_work';
+        $file_path = APP_ROOT . 'app/views/shares/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('shares/' . $file_name);
+            return;
+        }
+
     }
 }

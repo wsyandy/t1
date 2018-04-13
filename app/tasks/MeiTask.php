@@ -2666,4 +2666,57 @@ EOF;
             }
         }
     }
+
+
+    //统计房间流水
+    function clearGiftOrderAction()
+    {
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+        foreach ($user_ids as $user_id) {
+
+
+            $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $user_id],
+                'order' => 'id asc'
+            ]);
+
+            $start = $account_history->created_at;
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => 'gift_type = :gift_type: and created_at >= :start: and sender_id = :sender_id: and pay_type = :pay_type:',
+                    'bind' => ['gift_type' => GIFT_TYPE_COMMON, 'start' => $start, 'sender_id' => $user_id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
+                ]);
+
+            foreach ($gift_orders as $gift_order) {
+                $user = $gift_order->user;
+                $gift_num = $gift_order->gift_num;
+                $gift_id = $gift_order->gift_id;
+
+                $user_gift = UserGifts::findFirstBy([
+                    'gift_id' => $gift_id,
+                    'user_id' => $user->id,
+                ]);
+
+                if ($user_gift) {
+                    echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
+                    $user_gift_num = $user_gift->num;
+                    $new_num = $user_gift_num - $gift_num;
+                    $user_gift->num = $new_num;
+                    $user_gift->total_amount = $new_num * $user_gift->amount;
+                    $user_gift->update();
+                }
+            }
+
+            $gift_orders = GiftOrders::findBy(['user_id' => 117]);
+
+            foreach ($gift_orders as $gift_order) {
+                $gift_order->status = GIFT_ORDER_STATUS_FREEZE;
+                $gift_order->update();
+            }
+        }
+    }
+
+
 }

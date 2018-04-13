@@ -66,7 +66,6 @@
                         vm.auth_time = 0;
                     } else {
                         vm.sms_token = resp.sms_token;
-                        console.log(vm.sms_token);
                         vm.timeChange();
                     }
                 })
@@ -113,18 +112,19 @@
 
     vm = XVue(opts);
 
-    $(function() {
+    $(function () {
         pushHistory();
     });
+
+    //解决ios后退无法刷新
     function pushHistory() {
-        window.addEventListener("popstate", function(e) {
-          alert("后退");
+        window.addEventListener("popstate", function (e) {
             self.location.reload();
         }, false);
         var state = {
-            title : "",
-            url : "#"
+            title: "",
+            url: "#"
         };
         window.history.replaceState(state, "", "#");
-    };
+    }
 </script>

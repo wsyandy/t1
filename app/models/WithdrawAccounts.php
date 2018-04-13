@@ -24,6 +24,12 @@ class WithdrawAccounts extends BaseModel
 
     static function createWithdrawAccount($user, $mobile)
     {
+        //暂时只支持添加一张银行卡
+        $old_withdraw_account = self::findFirstWithdrawAccount($user);
+        if (isPresent($old_withdraw_account)) {
+            return $old_withdraw_account->id;
+        }
+
         $withdraw_account = \WithdrawAccounts::findFirstOrNew(['user_id' => $user->id, 'mobile' => $mobile, 'status' => STATUS_PROGRESS]);
         $withdraw_account->save();
         return $withdraw_account->id;
@@ -75,24 +81,28 @@ class WithdrawAccounts extends BaseModel
 
     static function getDefaultWithdrawAccount($user)
     {
-        $user_db = \Users::getUserDb();
-        $key = 'selected_withdraw_account_' . $user->id;
-        $withdraw_account_id = $user_db->get($key);
+        $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
+        $last_withdraw_account = $last_withdraw_history->withdraw_account;
+        if (isPresent($last_withdraw_account) && $last_withdraw_account->status == STATUS_ON) {
+            return $last_withdraw_account;
+        }
 
-        $selected_withdraw_account = \WithdrawAccounts::findFirstById($withdraw_account_id);
-
-        if (isBlank($selected_withdraw_account) || $selected_withdraw_account->status != STATUS_ON) {
-
-            $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
-            $last_withdraw_account = $last_withdraw_history->withdraw_account;
-            if (isPresent($last_withdraw_account) && $last_withdraw_account->status == STATUS_ON) {
-                return $last_withdraw_account;
-            }
-
-        } else {
-            return $selected_withdraw_account;
+        $first_withdraw_account = self::findFirstWithdrawAccount($user);
+        if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
+            return $first_withdraw_account;
         }
 
         return 0;
+    }
+
+    static function findFirstWithdrawAccount($user)
+    {
+        $withdraw_account = WithdrawAccounts::findFirst(
+            [
+                'conditions' => "status = " . STATUS_ON . " and user_id = $user->id"
+            ]
+        );
+
+        return $withdraw_account;
     }
 }

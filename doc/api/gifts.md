@@ -86,8 +86,10 @@
         dynamic_image_url: 'http://dynamic_image_url',
         user_id: 1
         user_nickname: '接收方昵称'
+        user_avatar_small_url 接收方头像
         sender_id: 2
         sender_nickname: '发送方昵称'
+        sender_avatar_small_url 发送方头像
         amount 礼物金额
         show_rank int 礼物展示排序
         expire_time int 礼物过期时间
