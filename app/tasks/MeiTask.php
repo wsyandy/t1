@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1009518;
+        $user_id = 1001315;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        $opts = ['remark' => '系统赠送' . 1822 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 1822, $opts);
     }
 
     function createUnionAction()
@@ -2508,12 +2508,13 @@ EOF;
         }
     }
 
-    //修复厅流水 家族流水
+    //魅力值 家族声望值
     function fixGiftOrdersAction()
     {
         $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
 
         foreach ($user_ids as $user_id) {
+
 
             $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
                 'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $user_id],
@@ -2524,12 +2525,144 @@ EOF;
 
             $gift_orders = GiftOrders::find(
                 [
-                    'conditions' => 'created_at >= :start: and sender_id = :user_id:',
-                    'bind' => ['start' => $start, 'sender_id' => $user_id]
+                    'conditions' => 'created_at >= :start: and sender_id = :sender_id: and pay_type = :pay_type:',
+                    'bind' => ['start' => $start, 'sender_id' => $user_id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
                 ]);
 
             foreach ($gift_orders as $gift_order) {
+
+                $db = Users::getUserDb();
+
+                $sender_union_id = $gift_order->sender_union_id;
+                $receiver_union_id = $gift_order->receiver_union_id;
+                $amount = $gift_order->amount;
+                $sender = $gift_order->sender;
+                $receiver = $gift_order->user;
+
+                if ($sender_union_id) {
+                    $sender_union = Unions::findFirstById($sender_union_id);
+                    $sender_union->fame_value -= $amount;
+                    $sender_union->update();
+
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $week_key = "total_union_fame_value_" . $start . "_" . $end;
+                    $day_key = "total_union_fame_value_day_" . date("Ymd");
+                    $db->zincrby($day_key, -$amount, $sender_union->id);
+                    $db->zincrby($week_key, -$amount, $sender_union->id);
+
+                    if ($db->zscore($day_key, $sender_union->id) < 1) {
+                        $db->zrem($day_key, $sender_union->id);
+                    }
+
+                    if ($db->zscore($week_key, $sender_union->id) < 1) {
+                        $db->zrem($week_key, $sender_union->id);
+                    }
+
+                    $sender->union_wealth_value -= $amount;
+
+                    echoLine($sender_union_id, $sender->id, $amount);
+                }
+
+                $sender_experience = $amount * 0.02;
+                $sender->experience -= $sender_experience;
+                $sender_level = $sender->calculateLevel();
+                $sender->level = $sender_level;
+                $sender->segment = $sender->calculateSegment();
+                $sender->wealth_value -= $amount;
+                $sender->update();
+
+                if ($receiver_union_id) {
+
+                    if ($receiver_union_id != $sender_union_id) {
+                        $receiver_union = Unions::findFirstById($receiver_union_id);
+                        $receiver_union->fame_value -= $amount;
+                        $receiver_union->update();
+
+                        $start = date("Ymd", strtotime("last sunday next day", time()));
+                        $end = date("Ymd", strtotime("next monday", time()) - 1);
+                        $week_key = "total_union_fame_value_" . $start . "_" . $end;
+                        $day_key = "total_union_fame_value_day_" . date("Ymd");
+                        $db->zincrby($day_key, -$amount, $receiver_union_id->id);
+                        $db->zincrby($week_key, -$amount, $receiver_union_id->id);
+
+                        if ($db->zscore($day_key, $receiver_union->id) < 1) {
+                            $db->zrem($day_key, $receiver_union->id);
+                        }
+
+                        if ($db->zscore($week_key, $receiver_union->id) < 1) {
+                            $db->zrem($week_key, $receiver_union->id);
+                        }
+                    }
+
+                    echoLine($receiver_union->id, $receiver->id, $amount);
+
+                    $receiver->union_charm_value -= $amount;
+                }
+
+                $receiver->charm_value -= $amount;
+                $receiver->update();
+
                 echoLine($gift_order->created_at_text, $gift_order->room_id, $gift_order->sender_union_id, $gift_order->receiver_union_id);
+            }
+        }
+    }
+
+    //统计房间流水
+    function fixRoomIncomeAction()
+    {
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+        $db = Users::getUserDb();
+
+        foreach ($user_ids as $user_id) {
+
+
+            $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $user_id],
+                'order' => 'id asc'
+            ]);
+
+            $start = $account_history->created_at;
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => 'gift_type = :gift_type: and created_at >= :start: and sender_id = :sender_id: and pay_type = :pay_type:',
+                    'bind' => ['gift_type' => GIFT_TYPE_COMMON, 'start' => $start, 'sender_id' => $user_id, 'pay_type' => GIFT_PAY_TYPE_DIAMOND]
+                ]);
+
+            foreach ($gift_orders as $gift_order) {
+                $room_id = $gift_order->room_id;
+                $amount = $gift_order->amount;
+
+                if ($room_id && $db->zscore("stat_room_income_list", $room_id)) {
+
+                    $db->zincrby('stat_room_income_list', -$amount, $room_id);
+
+                    if ($db->zscore("stat_room_income_list", $room_id) < 1) {
+                        $db->zrem("stat_room_income_list", $room_id);
+                    }
+                }
+
+                $room = Rooms::findFirstById($room_id);
+
+                $stat_at = date("Ymd", $gift_order->created_at);
+                echoLine($stat_at, $amount, $room_id);
+
+                $send_gift_user_key = $room->generateSendGiftUserDayKey($stat_at);
+                $send_gift_num_key = $room->generateSendGiftNumDayKey($stat_at);
+                $gift_income_key = $room->generateStatIncomeDayKey($stat_at);
+
+                $db->zrem($send_gift_user_key, $gift_order->sender_id);
+                $db->zincrby($send_gift_num_key, -1, $room_id);
+                $db->zincrby($gift_income_key, -$amount, $room_id);
+
+                if ($db->zscore($gift_income_key, $room_id) < 1) {
+                    $db->zrem($gift_income_key, $room_id);
+                }
+
+                if ($db->zscore($send_gift_num_key, $room_id) < 1) {
+                    $db->zrem($send_gift_num_key, $room_id);
+                }
             }
         }
     }
