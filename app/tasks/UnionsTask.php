@@ -252,9 +252,9 @@ class UnionsTask extends \Phalcon\Cli\Task
             'bind' => ['status' => STATUS_PROGRESS, 'exit_start_at' => $start_at, 'exit_end_at' => $end_at]
         ]);
 
-        info('union_histories', $union_histories);
         foreach ($union_histories as $union_history) {
 
+            info($union_history->id, $union_history->status, $union_history->exit_start_at);
             $union = $union_history->union;
             $user = $union_history->user;
             $union->confirmExitUnion($user, 'auto');
