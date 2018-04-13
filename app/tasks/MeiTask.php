@@ -2696,9 +2696,18 @@ EOF;
 
                 $user_gift = UserGifts::findFirstBy([
                     'gift_id' => $gift_id,
-                    'user_id' => $gift_num,
-
+                    'user_id' => $user->id,
                 ]);
+
+                if ($user_gift) {
+                    $user_gift_num = $user_gift->num;
+                    //echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
+
+                    if ($user_gift_num == $gift_num) {
+                        $user_gift->delete();
+                        echoLine($user_gift->id, $user->id, $user_gift->num, $gift_num);
+                    }
+                }
             }
         }
     }
