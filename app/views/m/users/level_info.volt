@@ -6,11 +6,11 @@
     <div>
         <img :src="glory_list[current_level].icon">
         <h3>${segment_text}</h3>
-        <p v-if="show_upgrade_official" v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
+        <p v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
         </p>
     </div>
     <div class="wo_box" id>
-        <div v-if="show_upgrade_official">
+        <div>
             <div class="box_list">
                 <i class="icon_01"></i>
                 <p>下一等级特权：<b>${ glory_list[current_level+1].name }等级勋章</b></p>
@@ -30,7 +30,6 @@
             current_level: {{ level }},
             segment_text: "{{ segment_text }}",
             need_experience: "{{ need_experience }}",
-            show_upgrade_official: "{{ show_upgrade_official }}",
             skip_url: "{{ skip_url }}",
             glory_list: [
                 {

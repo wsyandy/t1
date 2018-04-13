@@ -46,12 +46,7 @@ class UsersController extends BaseController
 
     function levelInfoAction()
     {
-        $user_id = $this->params('user_id');
         $current_user = $this->currentUser();
-        $show_upgrade_official = true;
-        if ($user_id && $user_id != $this->currentUserId()) {
-            $show_upgrade_official = false;
-        }
 
         $level = $current_user->level;
         $segment_text = $current_user->segment_text;
@@ -61,7 +56,6 @@ class UsersController extends BaseController
         $this->view->level = $level;
         $this->view->segment_text = $segment_text;
         $this->view->need_experience = round($need_experience);
-        $this->view->show_upgrade_official = $show_upgrade_official;
         $this->view->skip_url = $skip_url;
     }
 
@@ -72,6 +66,13 @@ class UsersController extends BaseController
 
         $code = $this->params('code');
         $sid = $this->params('sid');
+
+        $file_name = $code . '_recommend';
+        $file_path = APP_ROOT . 'app/views/m/users/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/users/' . $file_name);
+            return;
+        }
 
         $this->view->sid = $sid;
         $this->view->code = $code;
