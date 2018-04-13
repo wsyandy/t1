@@ -2377,8 +2377,10 @@ EOF;
 
     }
 
+    //修复资料
     function userInfo1Action()
     {
+        // 1060417 => 99990, 1001061 => 88010,
         $array = [
             1060417 => 99990, 1001061 => 88010, 800000 => 10181, 1057113 => 10099, 1133256 => 9999, 1065466 => 5727,
             15385 => 2737, 1123218 => 2686, 1015602 => 2628, 1109473 => 2150, 1035515 => 2020, 1088683 => 2010,
@@ -2391,9 +2393,39 @@ EOF;
             1128551 => 5, 1071467 => 5, 1040859 => 5, 1142400 => 5];
 
         foreach ($array as $user_id => $amount) {
-            $user = Users::findFirstById($user_id);
 
-            $register_day = (time() - $user->register_at) / 86400;
+            $user = Users::findFirstById($user_id);
+            $amount = 0;
+
+            $send_user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+            foreach ($send_user_ids as $send_user_id) {
+
+                $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                    'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $send_user_id],
+                    'order' => 'id asc'
+                ]);
+
+                $start = $account_history->created_at;
+
+                $send_amount = GiftOrders::sum(['conditions' => 'pay_type = :pay_type: and gift_type = :gift_type: and sender_id = :sender_id: and user_id = :user_id: and created_at >= :created_at:',
+                    'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'created_at' => $start, 'sender_id' => $send_user_id, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+                $amount += $send_amount;
+            }
+
+            if ($user->isIdCardAuth()) {
+                $rate = 6 / 100;
+            } else {
+                $rate = 4.5 / 100;
+            }
+
+            $hi_coins = $amount * $rate;
+
+            echoLine($amount, $hi_coins);
+            HiCoinHistories::createHistory($user_id, ['hi_coins' => $hi_coins, 'fee_type' => HI_COIN_FEE_TYPE_DEDUCT, 'remark' => '系统扣除']);
 
             echoLine("注册时间", date("Y-m-d H:i:s", $user->register_at), "接收礼物用户id:" . $user_id, "金额:", $amount, "所属家族:", $user->union->name, "段位:", $user->segment_text, '支付金额:', $user->pay_amount);
         }
@@ -2413,7 +2445,92 @@ EOF;
         }
 
         echoLine(count($withdraw_histories));
+
     }
 
 
+    function clearRank()
+    {
+        $db = Users::getUserDb();
+
+
+        $day_key = "day_charm_rank_list_" . date("Ymd");
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $week_key = "week_charm_rank_list_" . $start . "_" . $end;
+        $total_key = "total_charm_rank_list";
+
+
+        $array = [
+            1060417 => 99990, 1001061 => 88010, 800000 => 10181, 1057113 => 10099, 1133256 => 9999, 1065466 => 5727,
+            15385 => 2737, 1123218 => 2686, 1015602 => 2628, 1109473 => 2150, 1035515 => 2020, 1088683 => 2010,
+            1033519 => 2000, 1082051 => 1354, 1003062 => 1324, 1092719 => 1314, 1014008 => 1314, 1071355 => 1314, 1140747 => 1314, 1013703 => 1314,
+            1133128 => 1314, 1106044 => 1314, 1122732 => 1314, 1131616 => 1314,
+            1012820 => 1314, 1088531 => 1000, 1125188 => 1000, 1057537 => 1000, 1057532 => 1000,
+            1066765 => 1000, 1057582 => 1000, 1065736 => 1000, 1074121 => 323, 1108632 => 307,
+            1110827 => 299, 1057538 => 149, 153717 => 133, 1133777 => 99, 1017179 => 80, 1098596 => 50, 1026983 => 40,
+            1100617 => 40, 1124029 => 25, 1089028 => 25, 1129304 => 25, 1115596 => 10, 1121799 => 5,
+            1128551 => 5, 1071467 => 5, 1040859 => 5, 1142400 => 5];
+
+        foreach ($array as $user_id => $amount) {
+
+            $send_user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+            $amount = 0;
+
+            foreach ($send_user_ids as $send_user_id) {
+
+                $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                    'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $send_user_id],
+                    'order' => 'id asc'
+                ]);
+
+                $start = $account_history->created_at;
+
+                $send_amount = GiftOrders::sum(['conditions' => 'pay_type = :pay_type: and gift_type = :gift_type: and sender_id = :sender_id: and user_id = :user_id: and created_at >= :created_at:',
+                    'bind' => ['pay_type' => GIFT_PAY_TYPE_DIAMOND, 'gift_type' => GIFT_TYPE_COMMON, 'created_at' => $start, 'sender_id' => $send_user_id, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+                $amount += $send_amount;
+            }
+
+
+            if ($amount > 0 && $db->zscore($total_key, $user_id) > 0) {
+
+                echoLine($amount, $db->zscore($total_key, $user_id), $db->zscore($day_key, $user_id));
+
+                $db->zincrby($day_key, -$amount, $user_id);
+                $db->zincrby($week_key, -$amount, $user_id);
+                $db->zincrby($total_key, -$amount, $user_id);
+
+                echoLine($amount, $db->zscore($total_key, $user_id), $db->zscore($day_key, $user_id));
+            }
+        }
+    }
+
+    //修复厅流水 家族流水
+    function fixGiftOrdersAction()
+    {
+        $user_ids = [1060201, 1058027, 1060180, 1017233, 1001315, 1083050];
+
+        foreach ($user_ids as $user_id) {
+
+            $account_history = AccountHistories::findFirst(['conditions' => 'fee_type = :fee_type: and user_id = :user_id: and (hi_coin_history_id = 0 or hi_coin_history_id is null)',
+                'bind' => ['fee_type' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, 'user_id' => $user_id],
+                'order' => 'id asc'
+            ]);
+
+            $start = $account_history->created_at;
+
+            $gift_orders = GiftOrders::find(
+                [
+                    'conditions' => 'created_at >= :start: and sender_id = :user_id:',
+                    'bind' => ['start' => $start, 'sender_id' => $user_id]
+                ]);
+
+            foreach ($gift_orders as $gift_order) {
+                echoLine($gift_order->created_at_text, $gift_order->room_id, $gift_order->sender_union_id, $gift_order->receiver_union_id);
+            }
+        }
+    }
 }
