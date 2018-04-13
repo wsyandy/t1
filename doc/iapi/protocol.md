@@ -32,6 +32,7 @@
 7. 客服中心     url://im/product_channels/service
 8. 关于我们     url://im/product_channels/about
 9. 玩法说明     url://im/product_channels/strategies
+10. 充值       url://im/products
 
 ## http协议
 1. 内部打开第三方h5页面 http://www.baidu.com

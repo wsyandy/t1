@@ -20,8 +20,7 @@ class GiftsController extends BaseController
         $gifts = \Gifts::findValidList($this->currentUser(), $opts);
 
         $user_diamond_info = array(
-            'diamond' => intval($this->currentUser()->diamond),
-            'gold' => intval($this->currentUser()->gold),
+            'i_gold' => intval($this->currentUser()->i_gold),
             'pay_url' => 'url://im/products'
         );
 

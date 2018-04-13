@@ -18,7 +18,7 @@
     error_reason: '返回码说明'  
     diamond: 100
     gold: 金币
-    pay_url: 'url://m/products'
+    pay_url: 'url://im/products'
     total_page: 10
     current_page: 1
     total_entries: 100   
