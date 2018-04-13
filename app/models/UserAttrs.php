@@ -41,6 +41,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond,
@@ -99,6 +101,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
             'country_chinese_name' => $this->country->chinese_name
         ];
     }
@@ -127,6 +131,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
             'country_id' => $this->country_id
         ];
 
@@ -163,6 +169,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
             'followed' => $this->followed
         ];
 
@@ -206,6 +214,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
             'followed_num' => $this->followed_num
         ];
 
@@ -327,7 +337,9 @@ trait UserAttrs
             'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text
+            'segment_text' => $this->segment_text,
+            'i_segment' => $this->i_segment,
+            'i_segment_text' => $this->i_segment_text,
         ];
 
         if (isset($this->contributing_hi_conins)) {
