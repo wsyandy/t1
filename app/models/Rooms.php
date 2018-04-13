@@ -114,7 +114,7 @@ class Rooms extends BaseModel
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
-            'image_small_url' => $this->country->image_small_url
+            'country_image_url' => $this->country->image_small_url
         ];
     }
 
