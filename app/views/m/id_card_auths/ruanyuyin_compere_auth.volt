@@ -9,22 +9,22 @@
             <li>
                 <span>真实姓名 </span>
                 <input v-model="user_info.id_name" id="id_name" class="input_text" type="text"
-                       placeholder="请输入您的真实姓名" :readonly="readonly">
+                       placeholder="请输入您的真实姓名"  :readonly="readonly?true:false">
             </li>
             <li>
                 <span>手机号码 </span>
                 <input v-model="user_info.mobile" id="mobile" class="input_text" type="number"
-                       placeholder="请输入您的手机号码" :readonly="readonly" maxlength="11">
+                       placeholder="请输入您的手机号码"  :readonly="readonly?true:false" maxlength="11">
             </li>
             <li>
                 <span>身份证号 </span>
                 <input v-model="user_info.id_no" id="id_no" class="input_text" type="text" placeholder="请输入您的身份证号"
-                       :readonly="readonly" maxlength="18">
+                       :readonly="readonly?true:false" maxlength="18">
             </li>
             <li>
                 <span>银行卡号 </span>
                 <input v-model="user_info.bank_account" id="bank_account" class="input_text" type="text"
-                       placeholder="请输入您的银行卡号" :readonly="readonly">
+                       placeholder="请输入您的银行卡号" :readonly="readonly?true:false"  >
             </li>
 
             <li class="select" v-if="options.length">
@@ -86,7 +86,6 @@
             total_page: 1,
             loading: false,
             receive: true,
-            isEdit: '{{ current_user.id_card_auth == 1 or current_user.id_card_auth == 3 }}',
             user_info: {
                 id_name: '{{ id_auth_auth ? id_auth_auth.id_name : '' }}',
                 mobile: '{{ id_auth_auth ? id_auth_auth.mobile : '' }}',
