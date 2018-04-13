@@ -127,6 +127,10 @@ class WithdrawAccountsController extends BaseController
 
         //校验银行卡
 
+        if (!preg_match('/^\d+\d$/', $account) && $type == 2) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '银行卡号必须是数字');
+        }
+
         $opts = ['account' => $account, 'account_withdraw_account_id' => $account_withdraw_account_id, 'type' => $type];
 
         $withdraw_account->updateProfile($opts);

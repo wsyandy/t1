@@ -61,7 +61,7 @@
 {%- endmacro %}
 
 {{ simple_table(withdraw_histories, [
-'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "账号": 'account_link','类型':'withdraw_account_type_text','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
+'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "账户": 'account_link','账户类型':'withdraw_account_type_text','用户昵称': 'user_name','提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
 ]) }}
 
 <script type="text/template" id="withdraw_history_tpl">
