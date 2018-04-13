@@ -37,14 +37,14 @@ class ShareHistories extends BaseModel
         return $share_history;
     }
 
-    function getShareUrl($root)
+    function getShareUrl($root, $code)
     {
 
         if ($this->isGoldWorks()) {
-            return $root . 'shares/share_work?share_history_id=' . $this->id;
+            return $root . 'shares/share_work?share_history_id=' . $this->id . '&code=' . $code;
         }
 
-        return $root . 'shares?share_history_id=' . $this->id;
+        return $root . 'shares?share_history_id=' . $this->id . '&code=' . $code;
     }
 
     function getShareTitle($nickname)
