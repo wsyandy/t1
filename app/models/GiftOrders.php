@@ -217,12 +217,14 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift)
     {
+
         if ($gift->isCar()) {
             \UserGifts::delay()->updateGiftExpireAt($this->id);
         } else {
             \UserGifts::delay()->updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
+                info($this->user->id, $gift->id);
                 //座驾不增加hi币
                 \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
             }

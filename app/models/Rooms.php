@@ -1222,7 +1222,6 @@ class Rooms extends BaseModel
     static function activeRoom($room_id)
     {
         $room = Rooms::findFirstById($room_id);
-
         if (!$room) {
             return;
         }

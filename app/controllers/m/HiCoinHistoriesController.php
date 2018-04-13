@@ -24,6 +24,10 @@ class HiCoinHistoriesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
+            if (isProduction()) {
+                return;
+            }
+
             $product_id = $this->params('product_id');
             $hi_coins = intval($this->params('hi_coins'));
 
@@ -39,6 +43,8 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $gold = '';
+
+            $amount = \HiCoinHistories::rateOfHiCoinToCny() * $hi_coins;
 
             if ($product) {
                 $amount = $product->amount;

@@ -44,6 +44,9 @@ class MonitorController extends BaseController
             //延时任务
             $delay_task = $cache->zcount($key, time() + 1, '+inf');
 
+            info(array('name' => $name, 'total_task' => $total_task, 'delay_task' => $delay_task,
+                'ready_task' => $ready_task, 'overtime_task' => $overtime_task, 'tube_name' => $tube_name));
+            
             $task_result[] = array('name' => $name, 'total_task' => $total_task, 'delay_task' => $delay_task,
                 'ready_task' => $ready_task, 'overtime_task' => $overtime_task, 'tube_name' => $tube_name);
         }
