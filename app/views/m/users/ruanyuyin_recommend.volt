@@ -17,7 +17,7 @@
         </div>
 
         <div class="btn_list">
-            <span  @click.stop="enterRoom(item.current_room_id)" v-show="item.current_room_id"><i class="room"></i>添加</span>
+            <span  @click.stop="enterRoom(item.current_room_id)" v-show="item.current_room_id"><i class="room"></i>房间</span>
             <span  @click="addFriend(item)" :class="{'interest_add':true,'interest_add_to':!item.is_added}"><i class="friend"></i>${ item.is_added? "已添加":"添加" } </span>
         </div>
         <div class="line_bottom"></div>
