@@ -8,7 +8,7 @@
  */
 class WithdrawAccounts extends BaseModel
 {
-    static $TYPE = [1 => "支付宝", 2 => "银行卡"];
+    static $TYPE = [WITHDRAW_ACCOUNT_TYPE_ALIPAY => "支付宝", WITHDRAW_ACCOUNT_TYPE_BANK => "银行卡"];
 
     static $STATUS = [STATUS_PROGRESS => "创建中", STATUS_ON => "正常", STATUS_OFF => "关闭"];
 
