@@ -175,6 +175,12 @@ class Gifts extends BaseModel
     function mergeJson()
     {
         return [
+            'image_url' => $this->image_url,
+            'image_small_url' => $this->image_small_url,
+            'image_big_url' => $this->image_big_url,
+            'dynamic_image_url' => $this->dynamic_image_url,
+            'svga_image_name' => $this->svga_image_name,
+            'svga_image_url' => $this->svga_image_url,
             'platform_num' => $this->platform_num,
             'product_channel_num' => $this->product_channel_num
         ];
@@ -205,27 +211,6 @@ class Gifts extends BaseModel
         }
 
         return $opts;
-    }
-
-    function toJson()
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'amount' => $this->amount,
-            'rank' => $this->rank,
-            'status_text' => $this->status_text,
-            'type_text' => $this->type_text,
-            'pay_type_text' => $this->pay_type_text,
-            'image_small_url' => $this->image_small_url,
-            'image_big_url' => $this->image_big_url,
-            'dynamic_image_url' => $this->dynamic_image_url,
-            'render_type' => $this->render_type,
-            'svga_image_name' => $this->svga_image_name,
-            'render_type_text' => $this->render_type_text,
-            'svga_image_url' => $this->svga_image_url,
-            'show_rank' => $this->show_rank
-        ];
     }
 
     function getDynamicImageUrl()
@@ -411,10 +396,9 @@ class Gifts extends BaseModel
     function platformNum()
     {
         $platforms = $this->platforms;
+        $num = 'all';
 
-        if ('*' == $platforms) {
-            $num = 0;
-        } elseif ($platforms) {
+        if ($platforms && '*' != $platforms) {
             $platforms = array_filter(explode(',', $platforms));
             $num = count($platforms);
         }
