@@ -34,13 +34,9 @@ class HiCoinHistoriesController extends BaseController
             info('product_id', $product_id, 'hi_coins', $hi_coins);
             $product = \Products::findFirstById($product_id);
 
-            if ($hi_coins) {
-                $diamond = HI_COIN_DIAMOND_RATE * $hi_coins;
-            }
-
-            $gold = '';
-
+            $gold = 0;
             $amount = \HiCoinHistories::rateOfHiCoinToCny() * $hi_coins;
+            $diamond = HI_COIN_DIAMOND_RATE * $hi_coins;
 
             if ($product) {
                 $amount = $product->amount;
