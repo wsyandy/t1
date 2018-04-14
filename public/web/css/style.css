@@ -18,25 +18,6 @@ header .wrapper ul li a {
     color: #321877;
 }
 
-.nav_selected {
-    border-bottom: 2px solid #281060;
-    padding-bottom: 5px;
-    font-size: 18px !important;
-}
-
-.get_out {
-    font-size: 18px !important;
-}
-
-.get_out i {
-    display: inline-block;
-    width: 15px;
-    height: 18px;
-    background: url(../images/get_out_icon.png) no-repeat;
-    background-size: 100%;
-    vertical-align: middle;
-}
-
 /*扫码登录*/
 .qrcode_login {
     width: 564px;

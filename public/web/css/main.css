@@ -289,6 +289,25 @@ header .wrapper h2{
 	margin-left: 10px;
 }
 
+.nav_selected {
+	border-bottom: 2px solid #281060;
+	padding-bottom: 5px;
+	font-size: 18px !important;
+}
+
+.get_out {
+	font-size: 18px !important;
+}
+
+.get_out i {
+	display: inline-block;
+	width: 15px;
+	height: 18px;
+	background: url(../images/get_out_icon.png) no-repeat;
+	background-size: 100%;
+	vertical-align: middle;
+}
+
 main .one {
 	position: relative;
 	width: 100%;
@@ -938,4 +957,9 @@ footer p{
 
 [v-cloak] {
 	display: none !important;
+}
+
+.vueBox{
+	width: 100%;
+	height: 100%;
 }

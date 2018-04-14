@@ -290,3 +290,7 @@ define('LANG_AR', 'ar');//阿拉伯语
 define('I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD', 1); //购买金币
 define('I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT', 2); //购买礼物
 define('I_GOLD_HISTORY_FEE_TYPE_GIVE', 3); //系统赠送
+
+//提现账户类型
+define('WITHDRAW_ACCOUNT_TYPE_ALIPAY', 1); //支付宝
+define('WITHDRAW_ACCOUNT_TYPE_BANK', 2); //银行卡

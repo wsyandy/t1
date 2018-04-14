@@ -107,12 +107,11 @@ class WithdrawAccountsController extends BaseController
 
         $account = $this->params('account');
         $account_withdraw_account_id = intval($this->params('account_withdraw_account_id'));
-        $type = intval($this->params('type', 2));
+        $type = intval($this->params('type', WITHDRAW_ACCOUNT_TYPE_BANK));
 
         //校验银行卡
-
-        if (!preg_match('/^\d+\d$/', $account) && $type == 2) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '银行卡号必须是数字');
+        if (!\IdCardAuths::checkBankAccount($account) && $type == WITHDRAW_ACCOUNT_TYPE_BANK) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '银行卡错误');
         }
 
         $opts = ['account' => $account, 'account_withdraw_account_id' => $account_withdraw_account_id, 'type' => $type];

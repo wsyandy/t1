@@ -48,6 +48,8 @@
         <td><img src="${emoticon_image.dynamic_image_url}" width="30"></td>
         <td>${emoticon_image.status_text}</td>
         <td>${emoticon_image.rank}</td>
+        <td> <a href="/admin/emoticon_images/product_channel_ids?id=${ emoticon_image.id }" class="modal_action">渠道配置(${ emoticon_image.product_channel_num })</a></td>
+        <td><a href="/admin/emoticon_images/platforms?id=${ emoticon_image.id }" class="modal_action">平台配置(${ emoticon_image.platform_num })</a></td>
         <td><a href="/admin/emoticon_images/edit/${emoticon_image.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>

@@ -290,7 +290,7 @@ class RoomSeatsController extends BaseController
 
         $room_seat->can_play_music = true;
         $room_seat->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '',$room_seat->toSimpleJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
 
     }
 
@@ -308,6 +308,18 @@ class RoomSeatsController extends BaseController
 
         $room_seat->can_play_music = false;
         $room_seat->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '',$room_seat->toSimpleJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
+    }
+
+    function detailAction()
+    {
+        $id = intval($this->params('id'));
+        $room_seat = \RoomSeats::findFirstById($id);
+        if (!$room_seat) {
+            return renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toJson());
+
     }
 }
