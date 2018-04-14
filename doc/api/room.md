@@ -618,3 +618,22 @@
     ]
 }
 ```
+### 25 发公屏送消息 
+
+> http-post ```/api/rooms/send_message```
+
+##### 25.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|room_id|房间id|int|否||
+|content|消息内容|string|否||
+|content_type|消息类型|string|否|文本类型:text|
+
+##### 25.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: ''
+   
+}
+```
