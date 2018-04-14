@@ -188,7 +188,26 @@
     background-image: -o-linear-gradient(left, #FF9439 0%, #FF6409 100%);
     background-image: linear-gradient(90deg, #FF9439 0%, #FF6409 100%);
 }
-
+.account_money_select{
+    display: flex;
+    margin: 0.3rem .94rem 0;
+    justify-content: space-between;
+    font-size: .24rem;
+    color: #333333;
+}
+.account_money_select span{
+    width: 2.20rem;
+    height:.62rem;
+    text-align: center;
+    line-height:.62rem;
+    border: 1px solid #909090;
+    border-radius: .12rem;
+}
+.account_money_select span.cur {
+    border-color: #FD8018;
+    background: url("../images/icon_selected.png") bottom right no-repeat;
+    background-size:.37rem .36rem;
+}
 .tips_popup{
     position: fixed;
     bottom:-1.2rem;

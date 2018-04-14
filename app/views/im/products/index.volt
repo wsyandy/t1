@@ -36,7 +36,19 @@
         <div class="payment">
             <span class="">支付方式</span>
         </div>
+        <div class="account_money_select">
+            {% for payment_channel in payment_channels %}
+                {% if (payment_channel.id == selected_payment_channel.id) %}
+                    <span class="cur" data-payment_channel_id="{{ payment_channel.id }}"
+                          data-payment_type="{{ payment_channel.payment_type }}"
+                          id="payment_type_{{ payment_channel.payment_type }}">{{ payment_channel.name }}</span>
+                {% else %}
+                    <span data-payment_channel_id="{{ payment_channel.id }}"
+                          data-payment_type="{{ payment_channel.payment_type }}">{{ payment_channel.name }}</span>
+                {% endif %}
+            {% endfor %}
 
+        </div>
 
         <div class="recharge_btn" data-href="/im/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}">
             确认充值
@@ -48,7 +60,7 @@
 <script type="text/javascript">
     function generatePayUrl() {
         var product_id = $(".select").data('product_id');
-        var payment_channel = $(".selected_pay").parent();
+        var payment_channel = $(".cur");
         var payment_channel_id = payment_channel.data('payment_channel_id');
         var payment_type = payment_channel.data('payment_type');
         var url = "/im/payments/create?sid={{ user.sid }}&payment_channel_id=" + payment_channel_id + "&payment_type=" + payment_type + "&product_id=" + product_id + "&code={{ product_channel.code }}";
@@ -65,7 +77,7 @@
             $("#payment_type_apple").hide();
         }
 
-        // 钻石选择
+        // 国际版金币选择
         $('#account_money li').each(function () {
 
             $(this).click(function () {
@@ -81,11 +93,11 @@
         });
 
         // 支付方式选择
-        $('.account_pay ul li').each(function () {
+        $('.account_money_select span').each(function () {
             $(this).click(function () {
 
-                $(this).find('.select_pay').addClass('selected_pay');
-                $(this).siblings().find('.select_pay').removeClass('selected_pay');
+                $(this).addClass('cur');
+                $(this).siblings().removeClass('cur');
 
                 var url = generatePayUrl();
                 $(".recharge_btn").data('href', url);
