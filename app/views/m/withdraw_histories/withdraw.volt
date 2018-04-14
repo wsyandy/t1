@@ -11,7 +11,7 @@
     <ul class="withdrawals_box">
         <li class="withdrawals_list" @click="bankSelect">
             <span class="list_title">收款帐户</span>
-            <input class="list_input" value="{{ withdraw_account.mobile }}" type="text" placeholder="请先输入银行卡号"
+            <input class="list_input" value="{{ withdraw_account.account_text }}" type="text" placeholder="请先输入银行卡号"
                    readonly="readonly">
             <img :src="arrow_right" class="arrow_right" alt="">
         </li>

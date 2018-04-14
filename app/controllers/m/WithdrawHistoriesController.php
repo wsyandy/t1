@@ -76,6 +76,7 @@ class WithdrawHistoriesController extends BaseController
     //已废弃
     function getMoneyAction()
     {
+        return;
         $user = $this->currentUser();
         if ($this->request->isPost()) {
             $wait_withdraw_history = \WithdrawHistories::waitWithdrawHistory($user);
