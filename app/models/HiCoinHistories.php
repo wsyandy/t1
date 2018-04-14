@@ -60,7 +60,6 @@ class HiCoinHistories extends BaseModel
     function checkBalance()
     {
         $change_amount = abs($this->hi_coins);
-
         if ($this->isCost()) {
             $change_amount = -$change_amount;
             $this->hi_coins = $change_amount;
@@ -76,10 +75,7 @@ class HiCoinHistories extends BaseModel
             $old_balance = $old_hi_coin_history->balance;
         }
 
-        info($old_balance + $change_amount);
-
         $this->balance = $old_balance + $change_amount;
-
         if ($this->balance < 0 && $this->user->isActive()) {
             return true;
         }

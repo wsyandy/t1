@@ -14,7 +14,7 @@
             </li>
             <li>
                 <span>手机号码 </span>
-                <div class="family_name" v-show="isEdit"> ${ user_info.moile }</div>
+                <div class="family_name" v-show="isEdit"> ${ user_info.mobile }</div>
                 <input v-show="!isEdit" id="mobile" class="input_text" type="number"
                        placeholder="请输入您的手机号码">
             </li>

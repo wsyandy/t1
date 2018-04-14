@@ -14,10 +14,18 @@ class HiCoinHistoriesController extends BaseController
     function exchangeAction()
     {
         $products = \Products::findHiCoinDiamondListByUser($this->currentUser());
+        $code = $this->params('code');
         $this->view->products = $products;
         $this->view->hi_coin_diamond_rate = HI_COIN_TO_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
         $this->view->title = 'Hi币兑钻';
+
+        $file_name = $code . '_exchange';
+        $file_path = APP_ROOT . 'app/views/m/hi_coin_histories/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/hi_coin_histories/' . $file_name);
+            return;
+        }
     }
 
     function createAction()
