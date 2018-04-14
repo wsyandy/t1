@@ -186,14 +186,16 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->product_channel_id = $user->product_channel_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
-        $hi_coin_history->save();
 
-        $user->hi_coins = $hi_coin_history->balance;
-        $user->update();
+        if ($hi_coin_history->save()) {
 
-        //有礼物更新hi币榜单 自己给自己送座驾不加hi币贡献榜
-        if ($gift_order_id) {
-            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
+            $user->hi_coins = $hi_coin_history->balance;
+            $user->update();
+
+            //有礼物更新hi币榜单 自己给自己送座驾不加hi币贡献榜
+            if ($gift_order_id) {
+                $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
+            }
         }
 
         unlock($lock);

@@ -26,6 +26,7 @@ class WithdrawAccounts extends BaseModel
     {
         //暂时只支持添加一张银行卡
         $old_withdraw_account = self::findFirstWithdrawAccount($user);
+
         if (isPresent($old_withdraw_account)) {
             return $old_withdraw_account->id;
         }
@@ -83,11 +84,13 @@ class WithdrawAccounts extends BaseModel
     {
         $last_withdraw_history = \WithdrawHistories::findLastWithdrawHistory($user->id);
         $last_withdraw_account = $last_withdraw_history->withdraw_account;
+
         if (isPresent($last_withdraw_account) && $last_withdraw_account->status == STATUS_ON) {
             return $last_withdraw_account;
         }
 
         $first_withdraw_account = self::findFirstWithdrawAccount($user);
+
         if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
             return $first_withdraw_account;
         }
