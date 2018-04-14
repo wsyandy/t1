@@ -58,7 +58,7 @@ trait GiftOrderInternational
             $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费' . $gift_order->pay_type_text . $gift_order->amount;
             $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark];
 
-            //扣除钻石
+            //扣除国际版金币
             if ($gift->isIGoldPayType()) {
                 $result = \IGoldHistories::changeBalance($gift_order->sender_id, I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT, $gift_order->amount, $opts);
                 if ($result) {

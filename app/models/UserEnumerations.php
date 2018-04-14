@@ -23,7 +23,7 @@ trait UserEnumerations
         'height' => '身高',
         'age' => '年龄',
         'birthday' => '生日',
-        'i_birthday'=>'国际版生日',
+        'i_birthday' => '国际版生日',
         'lang' => '语言'
     ];
 
@@ -76,8 +76,8 @@ trait UserEnumerations
     ];
 
     //国际段位
-    static $I_SEGMENT = ['vip' => 'vip', 'millionaire' => '百万富翁', 'stars' => '明星', 'professional' => '专家',
-        'talented' => '人才', 'newcomer' => '新人'];
+    static $I_SEGMENT = ['newcomer' => '新人', 'talented' => '人才', 'professional' => '专家',
+        'stars' => '明星', 'millionaire' => '百万富翁', 'vip' => 'vip'];
 
     static $ID_CARD_AUTH = [AUTH_NONE => '', AUTH_SUCCESS => '已认证', AUTH_FAIL => '未通过', AUTH_WAIT => '认证中'];
     static $ORGANISATION = [USER_ORGANISATION_PERSONAGE => '个人', USER_ORGANISATION_COMPANY => '公司'];

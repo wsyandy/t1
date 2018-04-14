@@ -41,9 +41,14 @@ class MenTask extends \Phalcon\Cli\Task
 //            $db->zadd($union->generateUsersKey(), time(), $a);
 //        }
 
-        $keywords = '13a2';
-        $rs = preg_match('/^[0-9]*$/', $keywords);
-        echoLine($rs);
+//        $keywords = '13a2';
+//        $rs = preg_match('/^[0-9]*$/', $keywords);
+//        echoLine($rs);
+        $fee_type = I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD;
+        if (!in_array($fee_type, array_keys(IGoldHistories::$FEE_TYPE))) {
+            echoLine('fee_type is false', $fee_type);
+        }
+
     }
 
     function insertUserAction()

@@ -68,4 +68,102 @@ trait UserInternational
 
         return $users;
     }
+
+    function calculateLevelByInternational()
+    {
+        $level = $this->level;
+        $experience = $this->experience;
+
+        if ($experience < 1) {
+            return 0;
+        } elseif ($experience >= 116000) {
+            return 30;
+        }
+
+        $level_ranges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900,
+            1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000,
+            11000, 16000, 21000, 26000, 31000, 36000, 56000, 76000, 96000, 116000
+        ];
+
+        foreach ($level_ranges as $index => $level_range) {
+
+            if (isset($level_ranges[$index + 1]) && $experience >= $level_range &&
+                $experience < $level_ranges[$index + 1]
+            ) {
+                $level = $index;
+                break;
+            }
+
+        }
+
+        return $level;
+    }
+
+    //国际版段位
+    function calculateSegmentByInternational()
+    {
+        $levels = [1, 6, 11, 16, 21, 26, 31];
+        $user_level = $this->level;
+
+        $i_segment_enum = array_keys(self::$I_SEGMENT);
+
+        if ($user_level < 1) {
+            return '';
+        } elseif ($user_level >= 30) {
+            return 'vip';
+        }
+
+        $i_segment = '';
+
+        foreach ($levels as $index => $level) {
+
+            if (isset($levels[$index + 1]) && $user_level >= $level && $user_level < $levels[$index + 1]) {
+                $i_segment = $i_segment_enum[$index];
+            }
+        }
+
+        return $i_segment;
+    }
+
+    //更新用户等级/经验/财富值
+    static function updateExperienceByInternational($gift_order_id)
+    {
+        $gift_order = \GiftOrders::findById($gift_order_id);
+
+        if (isBlank($gift_order) || !$gift_order->isSuccess()) {
+            return false;
+        }
+
+        $lock_key = "update_user_level_lock_" . $gift_order->sender_id;
+        $lock = tryLock($lock_key);
+
+        $sender = $gift_order->sender;
+        $amount = $gift_order->amount;
+        $sender_experience = 0.02 * $amount;
+        $wealth_value = $amount;
+
+        if ($sender) {
+
+            $sender->experience += $sender_experience;
+            $sender->level = $sender->calculateLevelByInternational();
+            $sender->i_segment = $sender->calculateSegmentByInternational();
+            $sender->wealth_value += $wealth_value;
+
+            if (!$sender->isCompanyUser()) {
+                Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+            }
+
+            $union = $sender->union;
+
+            if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
+                $sender->union_wealth_value += $wealth_value;
+                Unions::delay()->updateFameValue($wealth_value, $union->id);
+            }
+
+            $sender->update();
+        }
+
+        unlock($lock);
+    }
+
 }
