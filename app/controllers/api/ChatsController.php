@@ -46,9 +46,9 @@ class ChatsController extends BaseController
         $file = $this->params('file');
 
         if (!$this->currentUser()->isFriend($this->otherUser())) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '');
+            return $this->renderJSON(ERROR_CODE_FAIL, '对方不是您的好友');
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 }

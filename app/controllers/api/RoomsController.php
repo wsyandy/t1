@@ -610,6 +610,6 @@ class RoomsController extends BaseController
     {
         $content = $this->params('content');
         $content_type = $this->params('content_type');
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 }
