@@ -186,8 +186,11 @@ class Payments extends BaseModel
 
         }else {
 
-            $opts = ['order_id' => $order->id, 'remark' => '购买' . $product->full_name, 'mobile' => $order->mobile];
-            AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+            if($product->diamond){
+                $opts = ['order_id' => $order->id, 'remark' => '购买' . $product->full_name, 'mobile' => $order->mobile];
+                AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+            }
+
             if ($product->gold) {
                 GoldHistories::changeBalance($this->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, ['order_id' => $order->id, 'remark' => '购买金币']);
             }

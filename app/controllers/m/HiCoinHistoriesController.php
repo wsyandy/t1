@@ -59,7 +59,7 @@ class HiCoinHistoriesController extends BaseController
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];
             info('user_id', $user->id, $opts);
 
-            $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user->id, $opts);
+            $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user, $opts);
 
             info('hi_coin_history', $hi_coin_history->id);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->getHiCoinText()]);

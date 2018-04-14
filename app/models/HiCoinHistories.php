@@ -212,7 +212,7 @@ class HiCoinHistories extends BaseModel
     }
 
     //Hi币转钻石记录
-    static function hiCoinExchangeDiamondHiCoinHistory($user_id, $opts = [])
+    static function hiCoinExchangeDiamondHiCoinHistory($user, $opts = [])
     {
 
         $product_id = fetch($opts, 'product_id');
@@ -220,20 +220,19 @@ class HiCoinHistories extends BaseModel
         $diamond = fetch($opts, 'diamond');
         $hi_coins = fetch($opts, 'hi_coins');
 
-        info('user_id', $user_id, 'gold', $gold, 'diamond', $diamond, 'hi_coins', $hi_coins);
-        $user = Users::findFirstById($user_id);
+        info('user_id', $user->id, 'gold', $gold, 'diamond', $diamond, 'hi_coins', $hi_coins);
 
-        if (!$user) {
-            info($user_id);
-            return;
+        if ($diamond > HI_COIN_DIAMOND_RATE * $hi_coins * 2) {
+            info('Exce hi币兑换钻石', $user->id, $opts);
+            return false;
         }
 
         $remark = "Hi币兑钻石 Hi币: {$hi_coins} 钻石:{$diamond} 金币:{$gold}";
-        $lock_key = "update_user_hi_coins_lock_" . $user_id;
+        $lock_key = "update_user_hi_coins_lock_" . $user->id;
         $lock = tryLock($lock_key);
 
         $hi_coin_history = new HiCoinHistories();
-        $hi_coin_history->user_id = $user_id;
+        $hi_coin_history->user_id = $user->id;
 
         $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND;
         $hi_coin_history->remark = $remark;
@@ -249,8 +248,6 @@ class HiCoinHistories extends BaseModel
         if ($hi_coin_history->save()) {
 
             $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id];
-            info('user_id', $user->id, $opts);
-
             if ($hi_coin_history->gold > 0) {
                 \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
             }
