@@ -78,7 +78,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             fclose($f);
 
-            $hot_cache->zclear("albums_auth_type_{$auth_type}_list_user_id_1");
+            //$hot_cache->zclear("albums_auth_type_{$auth_type}_list_user_id_1");
         }
     }
 
