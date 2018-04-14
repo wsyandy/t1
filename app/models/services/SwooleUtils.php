@@ -58,15 +58,7 @@ class SwooleUtils extends \BaseModel
 
         return $val;
     }
-
-    static function getJobQueueCache()
-    {
-        $job_queue = SwooleUtils::config('job_queue');
-        $endpoint = $job_queue->endpoint;
-        $cache = \XRedis::getInstance($endpoint);
-        return $cache;
-    }
-
+    
     // 本机ip
     static function getIntranetIp()
     {
