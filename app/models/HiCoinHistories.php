@@ -66,9 +66,12 @@ class HiCoinHistories extends BaseModel
             $this->hi_coins = $change_amount;
         }
 
-        $old_hi_coin_history = \HiCoinHistories::findUserLast($this->user_id);
-        $old_balance = $this->balance;
+        $old_hi_coin_history = self::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $this->user_id],
+            'order' => 'id desc']);
 
+        $old_balance = $this->balance;
         if ($old_hi_coin_history) {
             $old_balance = $old_hi_coin_history->balance;
         }
@@ -86,24 +89,12 @@ class HiCoinHistories extends BaseModel
 
     static function findUserLast($user_id)
     {
-        $hi_coin_histories = \HiCoinHistories::findHiCoinHistoryList($user_id, 1, 1);
-
-        if (count($hi_coin_histories) > 0) {
-            return $hi_coin_histories[0];
-        }
-
-        return null;
-    }
-
-    static function findHiCoinHistoryList($user_id, $page, $per_page)
-    {
-        $conditions = [
+        $history = self::findFirst([
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $user_id],
-            'order' => 'id desc'
-        ];
+            'order' => 'id desc']);
 
-        return \HiCoinHistories::findPagination($conditions, $page, $per_page);
+        return $history;
     }
 
     static function createHistory($user_id, $opts = [])
@@ -186,7 +177,11 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->product_channel_id = $user->product_channel_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
-        $hi_coin_history->save();
+        if (!$hi_coin_history->save()) {
+            unlock($lock);
+            info('Exce', $user_id, $opts);
+            return null;
+        }
 
         $user->hi_coins = $hi_coin_history->balance;
         $user->update();
@@ -197,7 +192,6 @@ class HiCoinHistories extends BaseModel
         }
 
         unlock($lock);
-
         return $hi_coin_history;
     }
 
@@ -248,6 +242,9 @@ class HiCoinHistories extends BaseModel
 
         if ($hi_coin_history->save()) {
 
+            $user->hi_coins = $hi_coin_history->balance;
+            $user->update();
+
             $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id];
             if ($hi_coin_history->gold > 0) {
                 \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
@@ -256,9 +253,6 @@ class HiCoinHistories extends BaseModel
             if ($hi_coin_history->diamond > 0) {
                 \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
             }
-
-            $user->hi_coins = $hi_coin_history->balance;
-            $user->update();
         }
 
         unlock($lock);
