@@ -222,7 +222,8 @@ class HiCoinHistories extends BaseModel
 
         info('user_id', $user->id, 'gold', $gold, 'diamond', $diamond, 'hi_coins', $hi_coins);
 
-        if ($diamond > HI_COIN_DIAMOND_RATE * $hi_coins * 2) {
+        // 目前不能超过1:2
+        if ($diamond > HI_COIN_TO_DIAMOND_RATE * $hi_coins * 2) {
             info('Exce hi币兑换钻石', $user->id, $opts);
             return false;
         }
@@ -268,11 +269,11 @@ class HiCoinHistories extends BaseModel
 
     static function rateOfHiCoinToCny()
     {
-        return 1;
+        return HI_COIN_TO_CNY_RATE;
     }
 
     static function rateOfCnyToHiCoin()
     {
-        return 1;
+        return CNY_TO_HI_COIN_RATE;
     }
 }

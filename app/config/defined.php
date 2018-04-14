@@ -136,7 +136,10 @@ define('ACCOUNT_TYPE_DEDUCT', 6); //系统扣除
 define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 
-define('HI_COIN_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
+// 兑换比例
+define('HI_COIN_TO_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
+define('HI_COIN_TO_CNY_RATE', 1); //Hi币 兑换 人民币 比例
+define('CNY_TO_HI_COIN_RATE', 1); //人民币 兑换 Hi币 比例
 
 define('ERROR_CODE_NEED_PAY', -2);//需要付费
 

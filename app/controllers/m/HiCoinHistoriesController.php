@@ -15,7 +15,7 @@ class HiCoinHistoriesController extends BaseController
     {
         $products = \Products::findHiCoinDiamondListByUser($this->currentUser());
         $this->view->products = $products;
-        $this->view->hi_coin_diamond_rate = HI_COIN_DIAMOND_RATE;
+        $this->view->hi_coin_diamond_rate = HI_COIN_TO_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
         $this->view->title = 'Hi币兑钻';
     }
@@ -36,7 +36,7 @@ class HiCoinHistoriesController extends BaseController
 
             $gold = 0;
             $amount = \HiCoinHistories::rateOfHiCoinToCny() * $hi_coins;
-            $diamond = HI_COIN_DIAMOND_RATE * $hi_coins;
+            $diamond = HI_COIN_TO_DIAMOND_RATE * $hi_coins;
 
             if ($product) {
                 $amount = $product->amount;
