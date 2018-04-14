@@ -241,3 +241,30 @@
     can_play_music 能否播放音乐 true/false 默认为false
 }
 ```
+
+### 11 麦位详情
+
+> http-get ```/api/room_seats/detail```
+
+##### 11.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|麦位id|int|否|||
+
+##### 11.2 回应参数说明
+```
+{
+    error_code,
+    error_reason：,
+    id: int 麦位id,
+    user_id 麦位主播id，无主播为0
+    sex	性别 0:女 1:男
+    avatar_small_url 用户小头像
+    nickname 昵称
+    room_id 房间id
+    status: int 麦位状态，0 麦为被封，1 麦位正常
+    microphone 麦克风状态 false/true 默认为true,
+    rank 麦位排序, 1-8, 8个麦位
+    can_play_music 能否播放音乐 true/false 默认为false
+}
+```
