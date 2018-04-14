@@ -32,4 +32,43 @@ class OrdersTask extends \Phalcon\Cli\Task
 
         echoLine($str);
     }
+
+    function mobileRechargeAction()
+    {
+        $orders = Orders::findBy(['partner_id' => 14, 'status' => ORDER_STATUS_SUCCESS]);
+
+        $amounts = [];
+
+        foreach ($orders as $order) {
+
+            $user = $order->user;
+
+            if ($user->isCompanyUser()) {
+                echoLine($user->id);
+                continue;
+            }
+
+            $device = $user->device;
+            $model = $device->model;
+
+            if (isset($amounts[$model])) {
+                $amounts[$model] += $order->amount;
+            } else {
+                $amounts[$model] = $order->amount;
+            }
+        }
+
+
+        arsort($amounts);
+
+        $f = fopen(APP_ROOT . "public/mobile_type_amount.txt", 'w');
+
+        foreach ($amounts as $type => $amount) {
+            $text = "手机型号:" . $type . "充值总额:" . $amount;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+    }
 }
