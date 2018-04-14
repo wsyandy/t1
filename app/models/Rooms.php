@@ -108,7 +108,7 @@ class Rooms extends BaseModel
     function toSimpleJson()
     {
         $user = $this->user;
-        $opts = ['id' => $this->id, 'uid' => $this->uid, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
+        $data = ['id' => $this->id, 'uid' => $this->uid, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
@@ -116,10 +116,10 @@ class Rooms extends BaseModel
         ];
 
         if ($this->country) {
-            $opts[] = ['country_image_url' => $this->country->image_small_url];
+            $data['country_image_url'] = $this->country->image_small_url;
         }
-
-        return $opts;
+        
+        return $data;
     }
 
     function mergeJson()
