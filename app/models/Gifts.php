@@ -10,7 +10,7 @@ class Gifts extends BaseModel
 {
 
     //礼物支付类型
-    static $PAY_TYPE = [GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_I_GOLD => '国际版金币'];
+    static $PAY_TYPE = [GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_I_GOLD => '国际版金币'];
 
     //礼物类型 暂定
     static $TYPE = [GIFT_TYPE_COMMON => '普通礼物', GIFT_TYPE_CAR => '座驾'];
