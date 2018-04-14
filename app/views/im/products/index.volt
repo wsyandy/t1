@@ -12,7 +12,7 @@
                 <img class="icon_diamonds" src="/im/images/icon_diamonds.png" alt="">
                 <span>我的金币</span>
             </div>
-            <div class="recharge_head_num">251</div>
+            <div class="recharge_head_num">{{ user.i_gold }}</div>
         </div>
     </div>
     <div class="recharge">
