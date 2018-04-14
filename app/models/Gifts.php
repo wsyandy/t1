@@ -47,13 +47,7 @@ class Gifts extends BaseModel
 
     function beforeCreate()
     {
-        if (isBlank($this->pay_type)) {
-            $this->pay_type = 'diamond';
-        }
-
-        if ($this->hasChanged('status')) {
-            $this->status = STATUS_OFF;
-        }
+        $this->status = STATUS_OFF;
     }
 
 
