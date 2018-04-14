@@ -8,6 +8,7 @@
   {{ f.input('gold',['label':'金币']) }}
   {{ f.input('hi_coins',['label':'Hi币']) }}
   {{ f.input('apple_product_no', ['label': '苹果支付代码']) }}
+  {{ f.input('google_product_no', ['label': '谷歌支付代码']) }}
   {{ f.input('rank', ['label': '排序']) }}
   {{ f.file('icon', ['label': 'icon']) }}
   {{ f.select('status', ['label': '状态', 'collection': Products.STATUS]) }}

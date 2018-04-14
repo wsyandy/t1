@@ -47,6 +47,10 @@ object(Swoole\WebSocket\Frame)#60 (4) {
         $this->_json_arr = json_decode($frame->data, true);
     }
 
+    public function getFrameData()
+    {
+        return $this->_json_arr;
+    }
 
     public function getAction()
     {
@@ -134,7 +138,6 @@ object(Swoole\WebSocket\Frame)#60 (4) {
     // 推送消息
     public function pushMessage($push_data)
     {
-        //SwooleUtils::delay()->pushMessage($push_data);
 
         $receiver_fd = fetch($push_data, 'fd');
         $body = fetch($push_data, 'body');

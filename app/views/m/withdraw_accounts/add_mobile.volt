@@ -23,15 +23,16 @@
 
 <script>
     var time = 60;
+    var is_dev = false;
     {% if isDevelopmentEnv() %}
-    time = 3;
+    is_dev = true;
     {% endif %}
 
     var opts = {
         data: {
             ico_clear: "images/ico_clear.png",
             isFull: false,
-            readonly: true,
+            readonly: !is_dev,
             disabled: true,
             ver_tel: '',
             ver_code: '',

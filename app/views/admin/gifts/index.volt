@@ -46,11 +46,11 @@
 {% endif %}
 
 {%- macro product_channel_link(object) %}
-    <a href="/admin/gifts/product_channel_ids?id={{ object.id }}" class="modal_action">渠道配置</a>
+    <a href="/admin/gifts/product_channel_ids?id={{ object.id }}" class="modal_action">渠道配置({{ object.product_channel_num }})</a>
 {% endmacro %}
 
 {%- macro platforms_link(object) %}
-    <a href="/admin/gifts/platforms?id={{ object.id }}" class="modal_action">平台配置</a>
+    <a href="/admin/gifts/platforms?id={{ object.id }}" class="modal_action">平台配置({{ object.platform_num }})</a>
 {% endmacro %}
 
 {{ simple_table(gifts, [
@@ -72,6 +72,8 @@
         <td>${gift.type_text}</td>
         <td>${gift.pay_type_text}</td>
         <td>${gift.rank}</td>
+        <td><a href="/admin/gifts/product_channel_ids?id=${ gift.id }" class="modal_action">渠道配置(${ gift.product_channel_num })</a></td>
+        <td><a href="/admin/gifts/platforms?id=${ gift.id }" class="modal_action">平台配置(${ gift.platform_num })</a></td>
         <td><a href="/admin/gifts/edit/${gift.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>

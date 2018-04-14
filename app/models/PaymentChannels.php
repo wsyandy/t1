@@ -12,7 +12,7 @@ class PaymentChannels extends BaseModel
     static $PAYMENT_TYPE = [
         'weixin' => 'weixin', 'weixin_h5' => 'weixin_h5',
         'alipay_sdk' => 'alipay_sdk', 'alipay_h5' => 'alipay_h5',
-        'apple' => 'apple', 'weixin_js' => 'weixin_js'
+        'apple' => 'apple', 'weixin_js' => 'weixin_js', 'google' => 'google'
     ];
 
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
@@ -142,7 +142,7 @@ class PaymentChannels extends BaseModel
                 }
             }
         }
-        
+
         return $selected;
     }
 

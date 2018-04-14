@@ -115,9 +115,7 @@
     followed_num 粉丝人数
     follow_num 关注人数,
     level 用户等级
-    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-    (例:星耀1 starshine1;星耀王者2 king2)
-    i_segment_text 段位文本 星耀1
+    i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
 }
 ```
 
@@ -163,9 +161,7 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
-    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-    (例:星耀1 starshine1;星耀王者2 king2)
-    i_segment_text 段位文本 星耀1
+    i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
     next_level_experience 下一级经验值
     experience 当前经验值
     union_name 家族名，不存在为空字符
@@ -230,9 +226,7 @@
     mobile 手机号
     speaker 扬声器状态 false/true 默认为true
     level 用户等级
-    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-    (例:星耀1 starshine1;星耀王者2 king2)
-    i_segment_text 段位文本 星耀1
+    i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire）vip（vip）
     receive_gift_num 接受的礼物个数
     next_level_experience 下一级经验值
     experience 当前经验值
@@ -308,9 +302,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
     constellation 星座
     level 用户等级
     lang 语言
-    i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-    (例:星耀1 starshine1;星耀王者2 king2)
-    i_segment_text 段位文本 星耀1
+    i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
     albums:[
         {
             id,
@@ -391,9 +383,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              mobile 手机号
              monologue 个性签名
              level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-            (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
+            i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
             followed_num 关注人数
         }
     ],
@@ -455,9 +445,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              mobile 手机号
              monologue 个性签名
              level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-            (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
+            i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
             followed_num 关注人数
         }
     ]
@@ -493,9 +481,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
     mobile 手机号
     monologue 个性签名
     level 用户等级
-   i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-   (例:星耀1 starshine1;星耀王者2 king2)
-   i_segment_text 段位文本 星耀1
+   i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
 }
 ```
 
@@ -534,9 +520,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
              distance string 距离,例如 0.5km
              age 年龄
              level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-            (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
+            i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire）vip（vip）
         }
     ]               
 }
@@ -721,40 +705,6 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
 ```
 
 
-### hi币贡献榜
->http-get ```/iapi/users/hi_coin_rank_list```
-
-##### 请求参数说明
-
-|参数|参数名称|类型|是否可空|备注
-|---|---|---|---|---
-|list_type|榜单类型|string|否|day是日榜，week是周榜，total是总榜
-
-##### 回应参数说明
-```
-{
-    error_code
-    error_reason
-    users:[
-        {
-            id 用户id
-            nickname 昵称
-            age 年龄
-            sex	性别 0:女 1:男
-            avatar_url 用户头像
-            avatar_small_url 用户小头像
-            rank 排名
-            level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-                (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
-            hi_coin string 贡献的hi币 
-        }
-        ...
-    ]
-}
-```
-
 ### 魅力榜
 >http-get ```/iapi/users/charm_rank_list```
 
@@ -779,9 +729,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             avatar_small_url 用户小头像
             rank 排名
             level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-                (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
+            i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire） vip（vip）
             charm_value string 榜单魅力值
         }
         ...
@@ -816,9 +764,7 @@ ko 韩语,ja 日语,fr 法语,es 西班牙语,de 德语,ar 阿拉伯语
             avatar_small_url 用户小头像
             rank 排名
             level 用户等级
-            i_segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
-                (例:星耀1 starshine1;星耀王者2 king2)
-            i_segment_text 段位文本 星耀1
+            i_segment 段位 新人（newcomer）人才（talented）专家（professional）明星（stars）百万富翁（millionaire）vip（vip）
             wealth_value string 榜单财富值
         }
         ...

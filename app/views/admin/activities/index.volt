@@ -6,11 +6,11 @@
 
 {%- macro platforms_link(activity) %}
     <a class="modal_action"
-       href="/admin/activities/platforms/{{ activity.id }}">查看</a>
+       href="/admin/activities/platforms/{{ activity.id }}">查看({{ activity.platform_num }})</a>
 {%- endmacro %}
 
 {%- macro product_channel_link(activity) %}
-    <a class="modal_action" href="/admin/activities/product_channel_ids?id={{ activity.id }}">查看</a>
+    <a class="modal_action" href="/admin/activities/product_channel_ids?id={{ activity.id }}">查看({{ activity.product_channel_num }})</a>
 {%- endmacro %}
 
 <form name="search_form" action="/admin/activities" method="get" autocomplete="off" id="search_form">

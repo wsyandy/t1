@@ -31,7 +31,7 @@ class IGoldHistories extends BaseModel
     static $FEE_TYPE = [
         I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD => '购买金币',
         I_GOLD_HISTORY_FEE_TYPE_BUY_GIFT => '购买礼物',
-        I_GOLD_HISTORY_FEE_TYPE_GIVE=>'系统赠送'
+        I_GOLD_HISTORY_FEE_TYPE_GIVE => '系统赠送'
     ];
 
     function beforeCreate()
@@ -60,6 +60,16 @@ class IGoldHistories extends BaseModel
 
         if (!$user) {
             info($user_id);
+            return false;
+        }
+
+        if (!in_array($fee_type, array_keys(self::$FEE_TYPE))) {
+            info($user_id, 'fee_type is false', $fee_type);
+            return false;
+        }
+
+        if ($amount <= 0) {
+            info($user_id, 'amount is false', $amount);
             return false;
         }
 

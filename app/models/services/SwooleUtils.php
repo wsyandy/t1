@@ -11,7 +11,6 @@ namespace services;
 class SwooleUtils extends \BaseModel
 {
     static $_only_cache = true;
-    private static $intranet_ip_key = "intranet_ip"; // 本地ip
     private static $connection_list = 'websocket_connection_list'; // 本地ip的连接数
 
     static function remoteIp($request)
@@ -59,45 +58,21 @@ class SwooleUtils extends \BaseModel
 
         return $val;
     }
-
-    static function getJobQueueCache()
-    {
-        $job_queue = SwooleUtils::config('job_queue');
-        $endpoint = $job_queue->endpoint;
-        $cache = \XRedis::getInstance($endpoint);
-        return $cache;
-    }
-
+    
     // 本机ip
     static function getIntranetIp()
     {
-        $cache = SwooleUtils::getJobQueueCache();
-        $ip = $cache->get(SwooleUtils::$intranet_ip_key);
-
-        if ($ip) {
-            debug($ip);
-            return $ip;
-        }
-
         $ips = swoole_get_local_ip();
+        info($ips);
+        
         $ips = array_values($ips);
-
-        debug($ips);
-
         if (count($ips) < 1) {
             info("intranet ip is null");
             return '';
         }
 
         $ip = $ips[0];
-        self::saveIntranetIp($ip);
         return $ip;
-    }
-
-    static function saveIntranetIp($ip)
-    {
-        $cache = SwooleUtils::getJobQueueCache();
-        $cache->setex(SwooleUtils::$intranet_ip_key, 24 * 3600 * 7, $ip);
     }
 
     static function increaseConnectNum($num, $ip)
@@ -133,9 +108,15 @@ class SwooleUtils extends \BaseModel
     static function getOnlineTokenByFd($fd)
     {
         $hot_cache = SwooleUtils::getHotWriteCache();
-        $online_key = "socket_push_online_token_" . $fd;
+        $ip = SwooleUtils::getIntranetIp();
+        $fd_token_key = "socket_push_online_token_" . $fd;
+        $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
+        $token = $hot_cache->get($fd_ip_token_key);
+        if($token){
+            return $token;
+        }
 
-        return $hot_cache->get($online_key);
+        return $hot_cache->get($fd_token_key);
     }
 
     static function getUserIdByOnlineToken($online_token)
@@ -207,24 +188,5 @@ class SwooleUtils extends \BaseModel
 
         return $sign;
     }
-
-    static function pushMessage($push_data)
-    {
-        debug($push_data);
-        return;
-        $receiver_fd = fetch($push_data, 'fd');
-        $body = fetch($push_data, 'body');
-
-        info($receiver_fd, $push_data);
-
-        if ($receiver_fd) {
-
-            if (!$socket->exist($receiver_fd)) {
-                info($receiver_fd, $push_data, "Exce fd not exist");
-                return;
-            }
-
-            $socket->push($receiver_fd, json_encode($body, JSON_UNESCAPED_UNICODE));
-        }
-    }
+    
 }

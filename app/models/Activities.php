@@ -37,6 +37,8 @@ class Activities extends BaseModel
         return StoreFile::getUrl($image) . '@!small';
     }
 
+
+
     function getStartText()
     {
         $start_at = $this->start_at;
@@ -58,7 +60,9 @@ class Activities extends BaseModel
     function mergeJson()
     {
         return [
-            'image_small_url' => $this->image_small_url
+            'image_small_url' => $this->image_small_url,
+            'platform_num' => $this->platform_num,
+            'product_channel_num' => $this->product_channel_num
         ];
     }
 
@@ -237,5 +241,30 @@ class Activities extends BaseModel
         }
 
         return false;
+    }
+
+    function productChannelNum()
+    {
+        $num = 0;
+        $product_channel_ids = [];
+        if ($this->product_channel_ids) {
+            $product_channel_ids = explode(',', $this->product_channel_ids);
+            $num = count($product_channel_ids) - 2;
+        }
+        return $num;
+    }
+
+    function platformNum()
+    {
+        $platforms = $this->platforms;
+
+        if ('*' == $platforms) {
+            $num = 0;
+        } elseif ($platforms) {
+            $platforms = array_filter(explode(',', $platforms));
+            $num = count($platforms);
+        }
+
+        return $num;
     }
 }

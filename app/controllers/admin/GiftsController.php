@@ -40,6 +40,7 @@ class GiftsController extends BaseController
     function newAction()
     {
         $gift = new \Gifts();
+        $gift->status = STATUS_OFF;
         $this->view->gift = $gift;
     }
 
@@ -73,6 +74,10 @@ class GiftsController extends BaseController
 
         $gift = \Gifts::findById($this->params('id'));
         $this->assign($gift, 'gift');
+        if($gift->status == STATUS_ON && !$gift->product_channel_ids){
+            return $this->renderJSON(ERROR_CODE_FAIL, '先选择支持的产品渠道');
+        }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $gift);
         if ($gift->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('gift' => $gift->toJson()));

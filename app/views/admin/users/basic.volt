@@ -31,7 +31,10 @@
     <tr>
         <td>用户等级:{{ user.level }}</td>
         <td>用户经验:{{ user.experience }}</td>
-        <td>段位:{{ user.segment_text }}</td>
+        <td>
+            国际版段位:{{ user.i_segment_text }}
+            段位:{{ user.segment_text }}
+        </td>
         <td>充值金额:{{ user.pay_amount }}</td>
     </tr>
     <tr>
