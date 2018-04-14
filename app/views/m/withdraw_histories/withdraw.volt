@@ -45,10 +45,7 @@
             bank_number: '',
             bank_amount: '',
             can_withdraw: true,
-            explain: [],
-            code :"{{ code }}",
-            coin_types:{{ coin_types }},
-            coin_text:''
+            explain: ["1Hi币＝1人民币", "Hi币金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"]
         },
         created: function () {
         },
@@ -94,7 +91,7 @@
                 $.authPost("/m/withdraw_histories/create", data, function (resp) {
                     alert(resp.error_reason);
                     if (resp.error_code == 0) {
-                        window.history.go(-1);
+                        location.href = '/m/withdraw_histories/index?sid={{ sid }}&code={{ code }}';
                     }
                 })
             }
@@ -103,11 +100,8 @@
 
     vm = XVue(opts);
 
-
     $(function () {
         pushHistory();
-        vm.coin_text =vm.coin_types[vm.code];
-        vm.explain = ["1"+vm.coin_text+"＝1人名币", vm.coin_text+"金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"];
     });
 
     function pushHistory() {
