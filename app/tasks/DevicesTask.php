@@ -52,4 +52,37 @@ class DevicesTask extends \Phaclcon\Cli\Task
             echoLine($temp_file);
         }
     }
+
+    function mobileTypeActiveAction()
+    {
+        $devices = Devices::findBy(['partner_id' => 14]);
+
+        echoLine(count($devices));
+
+        $res = [];
+
+        foreach ($devices as $device) {
+
+            $model = $device->model;
+
+            if (isset($res[$model])) {
+                $res[$model] += 1;
+            } else {
+                $res[$model] = 1;
+            }
+        }
+
+
+        arsort($res);
+
+        $f = fopen(APP_ROOT . "public/mobile_type_device_active.txt", 'w');
+
+        foreach ($res as $type => $num) {
+            $text = "手机型号:" . $type . "激活数量:" . $num;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+    }
 }
