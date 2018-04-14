@@ -1154,7 +1154,7 @@ class UsersTask extends \Phalcon\Cli\Task
             'conditions' => 'product_channel_id = 1 and (pay_amount < 1 or pay_amount is null) and register_at > 0
              and last_at <= :last_at: and user_type = :user_type:',
 
-            'bind' => ['last_at' => time() - 60 * 3, 'user_type' => ]
+            'bind' => ['last_at' => time() - 60 * 3, 'user_type' => USER_TYPE_ACTIVE]
         ]);
 
         $num = 0;
