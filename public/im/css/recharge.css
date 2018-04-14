@@ -140,6 +140,7 @@
 .diamonds{
     font-size: 0.32rem;
     color: #333;
+    text-align: center;
     padding-bottom: 0.1rem;
 }
 .dollar{
