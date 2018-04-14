@@ -105,11 +105,11 @@ class SwooleEvents extends \BaseModel
         $request_start_at = microtime(true);
         $online_token = SwooleUtils::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
-
         $server_port = fetch($connect_info, 'server_port');
 
+        // 服务器间通信
         if ($swoole_service->local_server_port == $server_port) {
-            info($fd, "server_to_server onClose");
+            info($fd, "server_to_server onClose, port", $server_port);
             return;
         }
 
@@ -125,16 +125,15 @@ class SwooleEvents extends \BaseModel
 
         if ($user) {
 
-            info($user->sid, $fd, "connect close");
-
-            $current_room = \Rooms::findRoomByOnlineToken($online_token);
-            $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
+            info('user',$user->sid, 'fd', $fd, "connect close, ip", $intranet_ip);
 
             //用户有新的连接 老的连接不推送
             if ($user->online_token == $online_token) {
 
                 if ($intranet_ip) {
 
+                    $current_room = \Rooms::findRoomByOnlineToken($online_token);
+                    $current_room_seat = \RoomSeats::findRoomSeatByOnlineToken($online_token);
                     if ($current_room) {
 
                         $current_room_seat_id = 0;
@@ -180,9 +179,9 @@ class SwooleEvents extends \BaseModel
 //            if ($user->isCalling()) {
 //                \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
 //            }
-        }
 
-        $user->deleteFdInfo($fd, $online_token);
+            $user->deleteFdInfo($fd, $online_token);
+        }
 
         $execute_time = sprintf('%0.3f', microtime(true) - $request_start_at);
         $visit_info = 'VISIT ' . ' Completed ' . $execute_time . 's Parameters: fd ' . $fd . ' from_id ' . $from_id;

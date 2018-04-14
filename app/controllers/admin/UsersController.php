@@ -15,27 +15,20 @@ class UsersController extends BaseController
         $user_id = $this->params("user[id_eq]");
         $mobile = $this->params("user[mobile_eq]");
         $user_type = $this->params("user[user_type_eq]");
+        $user_status = $this->params("user[user_status_eq]");
+        $product_channel_id = $this->params("user[product_channel_id_eq]");
 
-        if (!$user_id && !$mobile && !$user_type) {
-            if (isset($cond['conditions'])) {
-                $cond['conditions'] .= " and user_type = " . USER_TYPE_ACTIVE;
-            } else {
-                $cond['conditions'] = "user_type = " . USER_TYPE_ACTIVE;
-            }
-        }
-
-        $cond['order'] = 'id desc';
-
-        $id = $this->params('id');
-
-        if ($id) {
-            $cond['conditions'] = ' id = ' . $id;
-        }
+        $cond = $this->getConditions('user');
 
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->user_types = \UserEnumerations::$USER_TYPE;
+        $this->view->user_type = intval($user_type);
+        $this->view->user_status = $user_status == '' ? '' : intval($user_status);
+        $this->view->mobile = $mobile;
+        $this->view->user_id = $user_id;
+        $this->view->product_channel_id = intval($product_channel_id);
     }
 
     function avatarAction()

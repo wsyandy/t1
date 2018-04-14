@@ -62,7 +62,6 @@ class WebsocketTask extends Phalcon\CLI\Task
 
     function reloadAction()
     {
-        //PushSever::send('reload', '127.0.0.1', '9508');
 
         $log_dir = $this->config->application->log;
 
