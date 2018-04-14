@@ -8,7 +8,7 @@
 
 namespace admin;
 
-class GiftsController extends BaseController
+class IGiftsController extends BaseController
 {
     function indexAction()
     {
@@ -27,9 +27,9 @@ class GiftsController extends BaseController
         }
 
         if (isset($cond['conditions'])) {
-            $cond['conditions'] .= " and abroad != 1";
+            $cond['conditions'] .= " and abroad = 1";
         } else {
-            $cond['conditions'] = "abroad != 1";
+            $cond['conditions'] = "abroad = 1";
         }
 
         $cond['order'] = 'status desc, rank asc';

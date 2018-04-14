@@ -73,13 +73,27 @@ class MenTask extends \Phalcon\Cli\Task
     function fixUserLevelAction()
     {
         $gift_orders = GiftOrders::find([
-            'conditions'=>'product_channel_id = :product_channel_id:',
-            'bind'=>['product_channel_id'=>3]
+            'conditions' => 'product_channel_id = :product_channel_id:',
+            'bind' => ['product_channel_id' => 3]
         ]);
 
         foreach ($gift_orders as $gift_order) {
             echoLine($gift_order->id, $gift_order->user_id, $gift_order->sender_id);
             Users::updateExperienceByInternational($gift_order->id);
+        }
+    }
+
+    function fixGiftAction()
+    {
+        $gifts = Gifts::find([
+            'conditions' => 'pay_type = :pay_type:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_I_GOLD]
+        ]);
+
+        foreach ($gifts as $gift) {
+            $gift->abroad = 1;
+            $gift->save();
+            echoLine('id', $gift->id);
         }
     }
 

@@ -361,6 +361,9 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    {% if isAllowed('i_gifts', 'index') %}
+                        <li><a href="/admin/i_gifts">礼物配置(国际版)</a></li>
+                    {% endif %}
                     {% if isAllowed('gifts', 'index') %}
                         <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}
