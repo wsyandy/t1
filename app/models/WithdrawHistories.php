@@ -108,6 +108,7 @@ class WithdrawHistories extends BaseModel
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
 
         $withdraw_account = WithdrawAccounts::findFirstById($withdraw_account_id);
+
         if (isBlank($withdraw_account) || $withdraw_account->status != STATUS_ON) {
             return [ERROR_CODE_FAIL, '收款账户错误，请重新选择'];
         }

@@ -1,21 +1,26 @@
 <form action="/admin/users" method="get" class="search_form" autocomplete="off" id="search_form">
     <label for="product_channel_id_eq">产品渠道</label>
     <select name="user[product_channel_id_eq]" id="product_channel_id_eq">
-        {{ options(product_channels,'','id','name') }}
+        {{ options(product_channels,product_channel_id,'id','name') }}
     </select>
 
     <label for="id_eq">ID</label>
-    <input name="user[id_eq]" type="text" id="id_eq"/>
+    <input name="user[id_eq]" type="text" id="id_eq" value="{{ user_id }}"/>
 
     <label for="uid_eq">UID</label>
     <input name="user[uid_eq]" type="text" id="uid_eq"/>
 
     <label for="mobile">手机号</label>
-    <input name="user[mobile_eq]" type="text" id="mobile"/>
+    <input name="user[mobile_eq]" type="text" id="mobile" value="{{ mobile }}"/>
 
     <label for="user_type">类型</label>
     <select name="user[user_type_eq]" id="user_type_eq">
-        {{ options(user_types, '') }}
+        {{ options(user_types, user_type) }}
+    </select>
+
+    <label for="user_status">状态</label>
+    <select name="user[user_status_eq]" id="user_status_eq">
+        {{ options(Users.USER_STATUS, user_status) }}
     </select>
 
     <button type="submit" class="ui button">搜索</button>

@@ -326,15 +326,14 @@ class Rooms extends BaseModel
     {
         $hot_cache = Rooms::getHotWriteCache();
         $room_id = $hot_cache->get("room_token_" . $token);
-
         if (!$room_id) {
-            info($token);
+            info('no room_id, token', $token);
             return null;
         }
 
-        info($room_id);
-        $room = Rooms::findFirstById($room_id);
+        info('room_id', $room_id, 'token', $token);
 
+        $room = Rooms::findFirstById($room_id);
         return $room;
     }
 
@@ -1164,7 +1163,6 @@ class Rooms extends BaseModel
         }
 
         $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
-
         if ($res) {
             info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
             return true;

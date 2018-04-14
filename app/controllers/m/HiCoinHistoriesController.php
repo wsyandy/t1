@@ -15,7 +15,7 @@ class HiCoinHistoriesController extends BaseController
     {
         $products = \Products::findHiCoinDiamondListByUser($this->currentUser());
         $this->view->products = $products;
-        $this->view->hi_coin_diamond_rate = HI_COIN_DIAMOND_RATE;
+        $this->view->hi_coin_diamond_rate = HI_COIN_TO_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
         $this->view->title = 'Hi币兑钻';
     }
@@ -34,13 +34,9 @@ class HiCoinHistoriesController extends BaseController
             info('product_id', $product_id, 'hi_coins', $hi_coins);
             $product = \Products::findFirstById($product_id);
 
-            if ($hi_coins) {
-                $diamond = HI_COIN_DIAMOND_RATE * $hi_coins;
-            }
-
-            $gold = '';
-
+            $gold = 0;
             $amount = \HiCoinHistories::rateOfHiCoinToCny() * $hi_coins;
+            $diamond = HI_COIN_TO_DIAMOND_RATE * $hi_coins;
 
             if ($product) {
                 $amount = $product->amount;
@@ -63,7 +59,7 @@ class HiCoinHistoriesController extends BaseController
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];
             info('user_id', $user->id, $opts);
 
-            $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user->id, $opts);
+            $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user, $opts);
 
             info('hi_coin_history', $hi_coin_history->id);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->getHiCoinText()]);
