@@ -33,7 +33,7 @@ return [
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*', 'id_card_auths' => '*',
         'unions' => ['day_rank_list', 'week_rank_list'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
-        'activities' => '*'
+        'activities' => '*', 'rooms' => ['index', 'auto_hot']
     ],
 
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
