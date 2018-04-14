@@ -15,6 +15,7 @@
     </div>
 </div>
 
+<div class="error_reason" style="color: red;"></div>
 {{ f.submit('保存') }}
 {{ f.end }}
 

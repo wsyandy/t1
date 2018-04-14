@@ -153,7 +153,7 @@ class GiftsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $gift);
         if ($gift->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gift' => $gift->toJson]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/gifts']);
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }
