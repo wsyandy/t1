@@ -1133,5 +1133,41 @@ class UsersTask extends \Phalcon\Cli\Task
         }
         echoLine(count($activities));
     }
+
+    function wakeupUsersAction()
+    {
+        $users = Users::findForeach(['conditions' => 'pay_amount < 1 and register_at > 0 and last_at <= :last_at:', 'bind' => ['last_at' => time() - 86400 * 2]]);
+
+        $num = 0;
+
+        foreach ($users as $user) {
+            $num++;
+        }
+
+        echoLine($num);
+
+        $users = Users::findForeach(['conditions' => 'register_at > 0']);
+
+        $num = 0;
+
+        foreach ($users as $user) {
+            $num++;
+        }
+
+        echoLine($num);
+
+        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
+
+        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
+
+        if (count($filter_user_ids) > 0) {
+            info($filter_user_ids);
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
+        }
+
+        $users = Users::find($cond);
+        echoLine(count($users));
+    }
 }
 
