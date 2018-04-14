@@ -10,7 +10,7 @@ class Gifts extends BaseModel
 {
 
     //礼物支付类型
-    static $PAY_TYPE = [GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_I_GOLD => '国际版金币'];
+    static $PAY_TYPE = [GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_I_GOLD => '国际版金币'];
 
     //礼物类型 暂定
     static $TYPE = [GIFT_TYPE_COMMON => '普通礼物', GIFT_TYPE_CAR => '座驾'];
@@ -47,13 +47,7 @@ class Gifts extends BaseModel
 
     function beforeCreate()
     {
-        if (isBlank($this->pay_type)) {
-            $this->pay_type = 'diamond';
-        }
-
-        if ($this->hasChanged('status')) {
-            $this->status = STATUS_OFF;
-        }
+        $this->status = STATUS_OFF;
     }
 
 
@@ -405,11 +399,12 @@ class Gifts extends BaseModel
     function productChannelNum()
     {
         $num = 0;
-        $product_channel_ids = [];
         if ($this->product_channel_ids) {
             $product_channel_ids = explode(',', $this->product_channel_ids);
-            $num = count($product_channel_ids) - 2;
+            $product_channel_ids = array_filter(array_unique($product_channel_ids));
+            $num = count($product_channel_ids);
         }
+
         return $num;
     }
 
