@@ -1136,7 +1136,10 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function wakeupUsersAction()
     {
-        $users = Users::findForeach(['conditions' => 'pay_amount < 1 and register_at > 0 and last_at <= :last_at:', 'bind' => ['last_at' => time() - 86400 * 2]]);
+        $users = Users::findForeach(
+            [
+                'conditions' => 'pay_amount < 1 and register_at > 0 and last_at <= :last_at:',
+                'bind' => ['last_at' => time() - 86400 * 2]]);
 
         $num = 0;
 
@@ -1146,28 +1149,57 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine($num);
 
-        $users = Users::findForeach(['conditions' => 'register_at > 0']);
+
+        $users = Users::findForeach([
+            'conditions' => 'product_channel_id = 1 and (pay_amount < 1 or pay_amount is null) and register_at > 0
+             and last_at <= :last_at: and user_type = :user_type:',
+
+            'bind' => ['last_at' => time() - 60 * 3, 'user_type' => ]
+        ]);
 
         $num = 0;
 
-        foreach ($users as $user) {
-            $num++;
-        }
 
-        echoLine($num);
-
-        $cond['conditions'] = "(current_room_id = 0 or current_room_id is null) and user_type = :user_type: and avatar_status = :avatar_status:";
+        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
 
-        $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
+        $silent_users = Users::find($cond);
+        $silent_user_ids = [];
 
-        if (count($filter_user_ids) > 0) {
-            info($filter_user_ids);
-            $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
+        foreach ($silent_users as $silent_user) {
+            $silent_user_ids[] = $silent_user->id;
         }
 
-        $users = Users::find($cond);
-        echoLine(count($users));
+        $gift_ids = [73, 12, 101];
+        $send_user_ids_key = "wake_up_user_send_gift_key";
+        $hot_cache = Users::getHotWriteCache();
+
+        $hot_cache->zclear($send_user_ids_key);
+        //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
+        //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
+        foreach ($users as $user) {
+
+            $gift_id = $gift_ids[array_rand($gift_ids)];
+            $gift = Gifts::findFirstById($gift_id);
+            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
+            $send_user = Users::findFirstById($send_user_id);
+            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+            echoLine($user->id, $content);
+
+            $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
+
+            if ($give_result) {
+                $hot_cache->zadd($send_user_ids_key, time(), $user->id);
+            }
+
+            Chats::sendTextSystemMessage($user->id, $content);
+
+            $push_data = ['title' => $content, 'body' => ''];
+            \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+            $num++;
+        }
+
+        echoLine($num);
     }
 }
 

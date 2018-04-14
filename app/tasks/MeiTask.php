@@ -2725,6 +2725,10 @@ EOF;
         $db->zincrby($total_key, -$amount, $user_id);
 
         echoLine($amount, $db->zscore($total_key, $user_id), $db->zscore($day_key, $user_id));
+
+        $send_user_ids_key = "wake_up_user_send_gift_key";
+        $hot_cache = Users::getHotWriteCache();
+        echoLine($hot_cache->zrange($send_user_ids_key, 0,  -1));
     }
 
 
