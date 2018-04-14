@@ -500,7 +500,7 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         $cond = [];
-        if($this->currentUser()->product_channel_id == 1){
+        if ($this->currentUser()->product_channel_id == 1) {
             $user_id = intval($this->params('user_id'));
             if ($user_id) {
                 $cond = ['user_id' => intval($user_id)];
@@ -525,7 +525,7 @@ class UsersController extends BaseController
     {
         $uid = intval($this->params('uid'));
         $user = \Users::findFirstByUid($uid);
-        if ($user) {
+        if ($user && $user->id != SYSTEM_ID) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
         }
 

@@ -21,10 +21,6 @@ class HomeController extends BaseController
         $this->view->product_channel = $product_channel;
     }
 
-    public function errorAction()
-    {
-    }
-
     public function logoutAction()
     {
         $this->session->set("user_id", null);
