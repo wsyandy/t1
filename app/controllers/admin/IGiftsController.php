@@ -57,6 +57,7 @@ class IGiftsController extends BaseController
         }
 
         $gift = new \Gifts();
+        $gift->abroad = 1;
         $this->assign($gift, 'gift');
         if ($gift->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $gift);
