@@ -14,6 +14,7 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $rate = \HiCoinHistories::rateOfHiCoinToCny();
+        $code = $this->currentProductChannel()->code;
         $this->view->rate = $rate;
         $this->view->hi_coins = $user->getHiCoinText();
         $this->view->amount = $user->getWithdrawAmount();
@@ -29,6 +30,14 @@ class WithdrawHistoriesController extends BaseController
         $this->view->sid = $this->params('sid');
         $this->view->title = '我的收益';
         $this->view->show_exchange = true;
+
+        $file_name = $code . '_index';
+        $file_path = APP_ROOT . 'app/views/m/withdraw_histories/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/withdraw_histories/' . $file_name);
+            return;
+        }
+
     }
 
     function createAction()
@@ -51,7 +60,7 @@ class WithdrawHistoriesController extends BaseController
             }
 
             if (isBlank($withdraw_account_id)) {
-                return "账户不能为空";
+                return $this->renderJSON(ERROR_CODE_FAIL, '账户不能为空');
             }
 
             $amount = intval($amount);
@@ -97,6 +106,7 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $amount = $user->getWithdrawAmount();
+        $code = $this->params('code');
         if ($this->request->isPost()) {
             if ($amount <= 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您还没有hi币哟');
@@ -119,11 +129,19 @@ class WithdrawHistoriesController extends BaseController
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
         $this->view->withdraw_account = \WithdrawAccounts::getDefaultWithdrawAccount($user);
+
+        $file_name = $code . '_withdraw';
+        $file_path = APP_ROOT . 'app/views/m/withdraw_histories/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/withdraw_histories/' . $file_name);
+            return;
+        }
     }
 
     function recordsAction()
     {
-        $this->view->code = $this->params('code');
+        $code = $this->params('code');
+        $this->view->code = $code;
         $this->view->sid = $this->params('sid');
 
         $user = $this->currentUser();
@@ -139,6 +157,13 @@ class WithdrawHistoriesController extends BaseController
 
         $this->view->total_money = $total_money;
         $this->view->title = '领取记录';
+
+        $file_name = $code . '_records';
+        $file_path = APP_ROOT . 'app/views/m/withdraw_histories/' . $file_name . '.volt';
+        if (file_exists($file_path)) {
+            $this->pick('m/withdraw_histories/' . $file_name);
+            return;
+        }
     }
 
     function listAction()
