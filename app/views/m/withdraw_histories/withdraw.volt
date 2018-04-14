@@ -94,7 +94,7 @@
                 $.authPost("/m/withdraw_histories/create", data, function (resp) {
                     alert(resp.error_reason);
                     if (resp.error_code == 0) {
-                        location.href = '/m/withdraw_histories/index?sid={{ sid }}&code={{ code }}';
+                        window.history.go(-1);
                     }
                 })
             }
