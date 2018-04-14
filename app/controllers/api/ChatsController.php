@@ -37,4 +37,18 @@ class ChatsController extends BaseController
     {
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['unread_num' => $this->currentUser()->unreadMessagesNum()]);
     }
+
+    function createAction()
+    {
+        $user_id = $this->params('user_id');
+        $content = $this->params('content');
+        $content_type = $this->params('content_type'); // text image voice
+        $file = $this->params('file');
+
+        if (!$this->currentUser()->isFriend($this->otherUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
 }

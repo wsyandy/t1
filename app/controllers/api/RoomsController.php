@@ -604,4 +604,12 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
+
+    //发公屏消息上报
+    function sendMessageAction()
+    {
+        $content = $this->params('content');
+        $content_type = $this->params('content_type');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
 }
