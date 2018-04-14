@@ -70,4 +70,18 @@ class MenTask extends \Phalcon\Cli\Task
     }
 
 
+    function fixUserLevelAction()
+    {
+        $gift_orders = GiftOrders::find([
+            'conditions'=>'product_channel_id = :product_channel_id:',
+            'bind'=>['product_channel_id'=>3]
+        ]);
+
+        foreach ($gift_orders as $gift_order) {
+            echoLine($gift_order->id, $gift_order->user_id, $gift_order->sender_id);
+            Users::updateExperienceByInternational($gift_order->id);
+        }
+    }
+
+
 }
