@@ -62,7 +62,7 @@ class RequestDispatcher
                 //解析数据
                 $online_token = SwooleUtils::getOnlineTokenByFd($request->getFd());
                 $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
-                debug($intranet_ip, $online_token);
+                debug('fd', $request->getFd(), $intranet_ip, 'token', $online_token);
                 $payload = ['body' => $request->_json_arr, 'fd' => $request->getFd()];
                 SwooleUtils::delay()->send('push', $intranet_ip, $swoole_service->local_server_port, $payload);
             }

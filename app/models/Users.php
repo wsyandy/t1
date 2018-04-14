@@ -2838,13 +2838,12 @@ class Users extends BaseModel
 
         $hot_cache->exec();
 
-        info($fd, $online_token, $this->sid, $ip);
+        info($this->id, 'fd',$fd, $online_token, $ip);
     }
 
     function deleteFdInfo($fd, $online_token)
     {
         $hot_cache = Users::getHotWriteCache();
-
         $fd_token_key = "socket_push_online_token_" . $fd;
         $token_fd_key = "socket_push_fd_" . $online_token;
         $token_user_id_key = "socket_fd_user_id" . $online_token;
@@ -2854,6 +2853,8 @@ class Users extends BaseModel
 
         $ip = $hot_cache->get($token_intranet_ip_key);
 
+        info($this->id, 'fd',$fd, $online_token, $ip);
+        
         $hot_cache->pipeline();
         $hot_cache->del($fd_token_key);
         if($ip){

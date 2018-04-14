@@ -179,9 +179,9 @@ class SwooleEvents extends \BaseModel
 //            if ($user->isCalling()) {
 //                \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
 //            }
-        }
 
-        $user->deleteFdInfo($fd, $online_token);
+            $user->deleteFdInfo($fd, $online_token);
+        }
 
         $execute_time = sprintf('%0.3f', microtime(true) - $request_start_at);
         $visit_info = 'VISIT ' . ' Completed ' . $execute_time . 's Parameters: fd ' . $fd . ' from_id ' . $from_id;
