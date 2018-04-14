@@ -85,7 +85,7 @@
 |user_id|接收用户id|int|否||
 |content|消息内容|string|否||
 |content_type|消息类型|string|否|文本类型:text图片类型:image语音类型:voice|
-|file|消息文件|file|否||
+|file|消息文件|file|否|||
 
 ##### 4.2 返回参数说明
 ```
