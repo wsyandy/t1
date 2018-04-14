@@ -87,7 +87,7 @@
 }
 .recharge ul{
     width: 100%;
-    padding: 0 0.24rem;
+    padding-left: 0.24rem;
     display: -webkit-box;
     display: -webkit-flex;
     display: -moz-box;
@@ -129,12 +129,10 @@
     -webkit-border-radius: 0.12rem;
     -moz-border-radius: 0.12rem;
     border-radius: 0.12rem;
-    margin-right: 0.2rem;
     margin-bottom: 0.2rem;
+    margin-right: 0.20rem;
 }
-.recharge ul li:nth-child(3n){
-    margin-right: 0;
-}
+
 .recharge ul li.select{
     border: 1px solid #FD8018;
 }
@@ -142,6 +140,7 @@
 .diamonds{
     font-size: 0.32rem;
     color: #333;
+    text-align: center;
     padding-bottom: 0.1rem;
 }
 .dollar{
@@ -190,12 +189,14 @@
 }
 .account_money_select{
     display: flex;
+    flex-wrap: wrap;
     margin: 0.3rem .94rem 0;
     justify-content: space-between;
     font-size: .24rem;
     color: #333333;
 }
 .account_money_select span{
+    margin-bottom: .2rem;
     width: 2.20rem;
     height:.62rem;
     text-align: center;
