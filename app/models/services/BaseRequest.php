@@ -47,6 +47,10 @@ object(Swoole\WebSocket\Frame)#60 (4) {
         $this->_json_arr = json_decode($frame->data, true);
     }
 
+    public function getFrameData()
+    {
+        return $this->_json_arr;
+    }
 
     public function getAction()
     {

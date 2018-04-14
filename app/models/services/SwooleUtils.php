@@ -116,8 +116,6 @@ class SwooleUtils extends \BaseModel
             return $token;
         }
 
-        info('not get token', $fd_ip_token_key);
-
         return $hot_cache->get($fd_token_key);
     }
 
