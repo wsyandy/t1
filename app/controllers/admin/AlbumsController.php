@@ -13,7 +13,7 @@ class AlbumsController extends BaseController
     function detailAction()
     {
         $page = $this->params('page');
-        $per_page = $this->params('per_page', 30);
+        $per_page = $this->params('per_page', 60);
         $user_id = $this->params('user_id');
         $auth_status = $this->params('auth_status');
         $auth_type = $this->params('auth_type');
