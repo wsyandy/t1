@@ -107,10 +107,9 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $amount = $user->getWithdrawAmount();
-        $code = $this->params('code');
         if ($this->request->isPost()) {
             if ($amount <= 0) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '您还没有hi币哟');
+                return $this->renderJSON(ERROR_CODE_FAIL, '您还没有可提现的额度哟');
             }
             $wait_withdraw_history = \WithdrawHistories::waitWithdrawHistory($user);
 
@@ -125,18 +124,14 @@ class WithdrawHistoriesController extends BaseController
             }
         }
 
+        $coin_types = ['yuewan' => 'Hi币', 'ruanyuyin' => 'R币'];
+
         $this->view->amount = $amount;
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
         $this->view->withdraw_account = \WithdrawAccounts::getDefaultWithdrawAccount($user);
-
-        $file_name = $code . '_withdraw';
-        $file_path = APP_ROOT . 'app/views/m/withdraw_histories/' . $file_name . '.volt';
-        if (file_exists($file_path)) {
-            $this->pick('m/withdraw_histories/' . $file_name);
-            return;
-        }
+        $this->view->coin_types = json_encode($coin_types, JSON_UNESCAPED_UNICODE);
     }
 
     function recordsAction()

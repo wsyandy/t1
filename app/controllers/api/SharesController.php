@@ -50,11 +50,12 @@ class SharesController extends BaseController
         if ($share_history->isGoldWorks()) {
             $image_url = $image_small_url;
         }
+        $product_channel_name = $this->currentProductChannel()->name;
 
-        $description = "Hi—很好玩的语音直播软件，连麦聊天，组队开黑哦";
+        $description = $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
 
         $url = $share_history->getShareUrl($this->getRoot(), $code);
-        $title = $share_history->getShareTitle($user->nickname);
+        $title = $share_history->getShareTitle($user->nickname, $product_channel_name);
 
         $res = [
             'title' => $title,
