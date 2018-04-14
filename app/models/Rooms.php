@@ -171,6 +171,18 @@ class Rooms extends BaseModel
     function toInternationalDetailJson()
     {
 
+        $user = $this->user;
+
+        $user_info =  [
+            'id' => $user->id,
+            'uid' => $user->uid,
+            'nickname' => $user->nickname,
+            'avatar_small_url' => $user->avatar_small_url,
+            'sex' => $user->sex,
+            'age' => $user->age,
+            'monologue' => $user->monologue
+        ];
+
         return [
             'id' => $this->id,
             'uid' => $this->uid,
@@ -187,25 +199,9 @@ class Rooms extends BaseModel
             'audio_id' => $this->audio_id,
             'theme_image_url' => $this->theme_image_url,
             'room_theme_id' => $this->room_theme_id,
-            'user_info' => $this->userInfo(),
+            'user_info' => $user_info,
             'room_seats' => $this->roomSeats(),
             'managers' => $this->findManagers()
-        ];
-    }
-
-    function userInfo()
-    {
-
-        $user = $this->user;
-
-        return [
-            'id' => $user->id,
-            'uid' => $user->uid,
-            'nickname' => $user->nickname,
-            'avatar_small_url' => $user->avatar_small_url,
-            'sex' => $user->sex,
-            'age' => $user->age,
-            'monologue' => $user->monologue
         ];
     }
 
