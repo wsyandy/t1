@@ -87,6 +87,15 @@ class WithdrawHistories extends BaseModel
 
     }
 
+    function mergeJson()
+    {
+        $data = [
+            'withdraw_account_type_text' => $this->withdraw_account_type_text,
+            'account_text' => $this->account_text
+        ];
+        return $data;
+    }
+
     function afterCreate()
     {
         if (WITHDRAW_TYPE_USER == $this->type) {

@@ -153,7 +153,7 @@ class WithdrawHistoriesController extends BaseController
         $user_id = $this->params('user_id');
         $page = 1;
         $per_page = 100;
-        $cond = ['conditions' => 'user_id = ' . $user_id];
+        $cond = ['conditions' => 'user_id = ' . $user_id, 'order' => 'id desc'];
         $withdraw_histories = \WithdrawHistories::findPagination($cond, $page, $per_page);
         $this->view->withdraw_histories = $withdraw_histories;
     }
