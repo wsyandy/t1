@@ -94,7 +94,7 @@ class PaymentChannels extends BaseModel
                 return false;
             }
 
-            if (in_array($this->payment_type, ['weixin', 'alipay_sdk'])) {
+            if (in_array($this->payment_type, ['weixin', 'alipay_sdk', 'google'])) {
                 return true;
             }
 
