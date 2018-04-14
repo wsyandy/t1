@@ -168,11 +168,11 @@ class SwooleEvents extends \BaseModel
                     }
 
                 } else {
-                    info("intranet_ip is null", $user->sid, $online_token);
+                    info("Exce intranet_ip is null", $user->sid, $online_token);
                 }
 
             } else {
-                info("online_token change", $user->sid, $online_token, $user->online_token);
+                info("Exce online_token change", $user->sid, $online_token, $user->online_token);
             }
 
             //如果有电话进行中

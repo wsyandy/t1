@@ -26,7 +26,7 @@ class RequestDispatcher
     // 请求处理
     public function logicHandler(\services\SwooleServices $swoole_service, \services\BaseRequest $request)
     {
-        info("Action:", $request->getAction(), 'fd', $request->getFd(), 'sid', $request->getSid());
+        info("Action:", $request->getAction(), 'fd', $request->getFd(), 'sid', $request->getSid(), 'data', $request->getFrameData());
 
         if (!$request->checkSign()) {
             return $this->requestError('sign error1');
@@ -54,18 +54,14 @@ class RequestDispatcher
             return 'success';
         }
 
-        if (isDevelopmentEnv()) {
-
-            $action = fetch($request->_json_arr, 'action');
-
-            if ('ping' == $action) {
-                //解析数据
-                $online_token = SwooleUtils::getOnlineTokenByFd($request->getFd());
-                $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
-                debug('fd', $request->getFd(), $intranet_ip, 'token', $online_token);
-                $payload = ['body' => $request->_json_arr, 'fd' => $request->getFd()];
-                SwooleUtils::delay()->send('push', $intranet_ip, $swoole_service->local_server_port, $payload);
-            }
+        // 测试心跳包
+        if (isDevelopmentEnv() && $request->getAction() == 'ping') {
+            //解析数据
+            $online_token = SwooleUtils::getOnlineTokenByFd($request->getFd());
+            $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
+            debug('fd', $request->getFd(), $intranet_ip, 'token', $online_token);
+            $payload = ['body' => $request->_json_arr, 'fd' => $request->getFd()];
+            SwooleUtils::delay()->send('push', $intranet_ip, $swoole_service->local_server_port, $payload);
         }
 
         return 'success';
