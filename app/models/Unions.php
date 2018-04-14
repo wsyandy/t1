@@ -752,7 +752,14 @@ class Unions extends BaseModel
             $user->update();
         }
 
-        $union_histories = UnionHistories::findBy(['union_id' => $union_id, 'status' => STATUS_ON]);
+        $status = implode(',', [STATUS_ON, STATUS_PROGRESS]);
+
+        $cond = [
+            'conditions' => "union_id = :union_id: and status in ({$status})",
+            'bind' => ['union_id' => $union_id, 'status' => $status]
+        ];
+
+        $union_histories = UnionHistories::find($cond);
 
         debug($union_id, count($users), count($union_histories));
 
