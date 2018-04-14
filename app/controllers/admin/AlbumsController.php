@@ -13,7 +13,7 @@ class AlbumsController extends BaseController
     function detailAction()
     {
         $page = $this->params('page');
-        $per_page = $this->params('per_page', 30);
+        $per_page = $this->params('per_page', 60);
         $user_id = $this->params('user_id');
         $auth_status = $this->params('auth_status');
         $auth_type = $this->params('auth_type');
@@ -30,6 +30,17 @@ class AlbumsController extends BaseController
 
             if (count($ids) > 0) {
                 $cond['conditions'] .= ' and id in (' . implode(',', $ids) . ')';
+            }
+        } else {
+            $ids1 = $hot_cache->zrange("albums_auth_type_1_list_user_id_1", 0, -1);
+            $ids2 = $hot_cache->zrange("albums_auth_type_2_list_user_id_1", 0, -1);
+            $ids3 = $hot_cache->zrange("albums_auth_type_3_list_user_id_1", 0, -1);
+
+            debug($ids1, $ids2, $ids3);
+            $total_ids = array_merge($ids1, $ids2, $ids3);
+
+            if (count($total_ids) > 0) {
+                $cond['conditions'] .= ' and id not in (' . implode(',', $total_ids) . ')';
             }
         }
 
@@ -57,6 +68,7 @@ class AlbumsController extends BaseController
 
             if ($auth_type) {
                 $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
+                $hot_cache->zrem("albums_auth_success_list_user_id" . $album->user_id, $album->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
 
@@ -87,6 +99,7 @@ class AlbumsController extends BaseController
 
                 if ($auth_type) {
                     $hot_cache->zadd("albums_auth_type_{$auth_type}_list_user_id_" . $album->user_id, time(), $album->id);
+                    $hot_cache->zrem("albums_auth_success_list_user_id" . $album->user_id, $album->id);
                     continue;
                 }
 
