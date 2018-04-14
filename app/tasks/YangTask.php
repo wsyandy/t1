@@ -657,5 +657,8 @@ class YangTask extends \Phalcon\Cli\Task
             $withdraw_history->update();
             echoLine($withdraw_history->id);
         }
+
+        $user = Users::findFirstById(1157712);
+        echoLine($user);
     }
 }
