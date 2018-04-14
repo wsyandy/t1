@@ -1,0 +1,13 @@
+CREATE index login_name_on_users on users(login_name);
+CREATE index platform_on_users on users(platform);
+CREATE unique index sid_on_users on users(sid);
+CREATE index openid_on_users on users(openid);
+CREATE index ip_province_id_on_users on users(ip_province_id);
+CREATE index ip_city_id_on_users on users(ip_city_id);
+CREATE index geo_province_id_on_users on users(geo_province_id);
+CREATE index geo_city_id_on_users on users(geo_city_id);
+CREATE index province_id_on_users on users(province_id);
+CREATE index city_id_on_users on users(city_id);
+CREATE index country_id_on_users on users(country_id);
+CREATE index room_id_on_users on users(room_id);
+CREATE index login_type_on_users on users(login_type);
