@@ -1163,7 +1163,6 @@ class Rooms extends BaseModel
         }
 
         $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
-
         if ($res) {
             info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
             return true;

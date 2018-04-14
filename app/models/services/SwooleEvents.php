@@ -105,11 +105,11 @@ class SwooleEvents extends \BaseModel
         $request_start_at = microtime(true);
         $online_token = SwooleUtils::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
-
         $server_port = fetch($connect_info, 'server_port');
 
+        // 服务器间通信
         if ($swoole_service->local_server_port == $server_port) {
-            info($fd, "server_to_server onClose");
+            info($fd, "server_to_server onClose, port", $server_port);
             return;
         }
 
@@ -125,7 +125,7 @@ class SwooleEvents extends \BaseModel
 
         if ($user) {
 
-            info($user->sid, $fd, "connect close");
+            info('user',$user->sid, 'fd', $fd, "connect close, ip", $intranet_ip);
 
             //用户有新的连接 老的连接不推送
             if ($user->online_token == $online_token) {
