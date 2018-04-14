@@ -637,8 +637,8 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
-        $union_history = UnionHistories::findFirstOrNew(
-            ['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS], 'id desc');
+        $union_history = UnionHistories::findFirst(
+            ['user_id' => $user->id, 'union_id' => $this->id], 'id desc');
 
         $expire_at = time() - 86400 * 7;
         //$expire_at = time() - 60;
@@ -752,7 +752,14 @@ class Unions extends BaseModel
             $user->update();
         }
 
-        $union_histories = UnionHistories::findBy(['union_id' => $union_id, 'status' => STATUS_ON]);
+        $status = implode(',', [STATUS_ON, STATUS_PROGRESS]);
+
+        $cond = [
+            'conditions' => "union_id = :union_id: and status in ({$status})",
+            'bind' => ['union_id' => $union_id, 'status' => $status]
+        ];
+
+        $union_histories = UnionHistories::find($cond);
 
         debug($union_id, count($users), count($union_histories));
 

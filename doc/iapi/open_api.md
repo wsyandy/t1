@@ -10,7 +10,7 @@
 
 调用环境|	服务域名
 ---|---
-测试环境|http://ctest.yueyuewo.cn
+测试环境|http://test.momoyuedu.cn
 
 ### 2.2. 接口请求公共参数
 

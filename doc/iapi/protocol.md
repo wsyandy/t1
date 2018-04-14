@@ -68,3 +68,9 @@
  client_url  跳转地址    
  icon_url    图标地址    
  ```
+ 
+ # 4. 支付类型
+ 
+ 参数|类型|说明
+ ---|---|---
+ payment_type| string| 微信SDK weixin  微信H5 weixin_h5  支付宝sdk alipay_sdk  支付宝h5 alipay_h5  苹果支付 apple 谷歌支付 google
