@@ -80,12 +80,9 @@ class SharesController extends BaseController
 
         $opts = ['type' => $type, 'status' => $status];
 
-
         $res = [];
 
-        if ($share_history->isGoldWorks()) {
-            $res['gold'] = $this->currentUser(true)->gold;
-        }
+        $res['gold'] = $this->currentUser(true)->gold;
 
         list($error_code, $error_reason) = $share_history->result($opts);
         return $this->renderJSON($error_code, $error_reason, $res);
