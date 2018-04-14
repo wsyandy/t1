@@ -249,3 +249,4 @@ insert into countries(code, english_name, chinese_name) values ('CD', 'Democrati
 insert into countries(code, english_name, chinese_name) values ('VC', 'St. Vincent and the Grenadines', '圣文森特岛');
 insert into countries(code, english_name, chinese_name) values ('CW', 'Curacao', '库拉索');
 insert into countries(code, english_name, chinese_name) values ('CE', 'Coate d''Ivoire', '科特迪瓦');
+insert into countries(code, english_name, chinese_name) values ('CN', 'China', '中国');
