@@ -25,11 +25,11 @@
 {%- endmacro %}
 
 {%- macro product_channel_link(object) %}
-    <a href="/admin/room_themes/product_channel_ids?id={{ object.id }}" class="modal_action">渠道配置</a>
+    <a href="/admin/room_themes/product_channel_ids?id={{ object.id }}" class="modal_action">渠道配置({{ object.product_channel_num }})</a>
 {% endmacro %}
 
 {%- macro platforms_link(object) %}
-    <a href="/admin/room_themes/platforms?id={{ object.id }}" class="modal_action">平台配置</a>
+    <a href="/admin/room_themes/platforms?id={{ object.id }}" class="modal_action">平台配置({{ object.platform_num }})</a>
 {% endmacro %}
 
 共{{ room_themes.total_entries }}个

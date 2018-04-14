@@ -38,6 +38,14 @@ class RoomThemes extends BaseModel
         return StoreFile::getUrl($this->theme_image) . '@!small';
     }
 
+    function mergeJson()
+    {
+        return [
+            'platform_num' => $this->platform_num,
+            'product_channel_num' => $this->product_channel_num
+        ];
+    }
+
     function toSimpleJson()
     {
         return [
@@ -82,6 +90,31 @@ class RoomThemes extends BaseModel
         $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
         $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
         return self::findPagination($cond, $page, $per_page);
+    }
+
+    function productChannelNum()
+    {
+        $num = 0;
+        $product_channel_ids = [];
+        if ($this->product_channel_ids) {
+            $product_channel_ids = explode(',', $this->product_channel_ids);
+            $num = count($product_channel_ids) - 2;
+        }
+        return $num;
+    }
+
+    function platformNum()
+    {
+        $platforms = $this->platforms;
+
+        if ('*' == $platforms) {
+            $num = 0;
+        } elseif ($platforms) {
+            $platforms = array_filter(explode(',', $platforms));
+            $num = count($platforms);
+        }
+
+        return $num;
     }
 }
 
