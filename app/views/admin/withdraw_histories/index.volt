@@ -69,12 +69,17 @@
         <td>${withdraw_history.created_at_text}</td>
         <td>${withdraw_history.id}</td>
         <td>${withdraw_history.user_id}</td>
-        <td>${withdraw_history.account}</td>
-        <td>${withdraw_history.withdraw_type_text}</td>
+        <td>{@if withdraw_history.account }
+            ${ withdraw_history.account_text }
+            {@else}
+            ${ withdraw_history.alipay_account }
+            {@/if}
+        </td>
+        <td>${withdraw_history.withdraw_account_type_text}</td>
         <td>${withdraw_history.user_name}</td>
         <td>${withdraw_history.amount}</td>
         <td>${withdraw_history.status_text}</td>
-        <td><a href="/admin/withdraw_histories/edit/${withdraw_history.id}">编辑</a></td>
+        <td><a href="/admin/withdraw_histories/edit/${withdraw_history.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
 
