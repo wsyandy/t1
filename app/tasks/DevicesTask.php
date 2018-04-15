@@ -55,72 +55,122 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-        $devices = Devices::findBy(['partner_id' => 27]);
 
-        echoLine(count($devices));
+        $date = ['2018-04-09', '2018-04-10', '2018-04-11', '2018-04-12', '2018-04-13', '2018-04-14', '2018-04-15'];
 
-        $res = [];
+        foreach ($date as $stat_at) {
 
-        foreach ($devices as $device) {
+            $devices = Devices::find(
+                [
+                    'conditions' => 'partner_id = 27 and created_at >= :start: and created_at <= :end:',
+                    'bind' => ['start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                ]);
 
-            $model = $device->model;
+            $total_num = count($devices);
 
-            if (isset($res[$model])) {
-                $res[$model] += 1;
-            } else {
-                $res[$model] = 1;
+            $res = [];
+
+            foreach ($devices as $device) {
+
+                $model = $device->model;
+
+                if (isset($res[$model])) {
+                    $res[$model] += 1;
+                } else {
+                    $res[$model] = 1;
+                }
             }
+
+
+            arsort($res);
+
+            $f = fopen(APP_ROOT . "public/" . $stat_at . "mobile_type_device_active.txt", 'w');
+            fwrite($f, $stat_at . '激活总数量: ' . $total_num . "\r\n");
+            echoLine($total_num);
+            foreach ($res as $type => $num) {
+                $text = "手机型号:" . $type . "激活数量:" . $num;
+                echoLine($text);
+                fwrite($f, $text . "\r\n");
+            }
+
+            fclose($f);
         }
-
-
-        arsort($res);
-
-        $f = fopen(APP_ROOT . "public/mobile_type_device_active.txt", 'w');
-
-        foreach ($res as $type => $num) {
-            $text = "手机型号:" . $type . "激活数量:" . $num;
-            echoLine($text);
-            fwrite($f, $text . "\r\n");
-        }
-
-        fclose($f);
     }
 
     function mobileTypeUserRegisterAction()
     {
+        $date = ['2018-04-09', '2018-04-10', '2018-04-11', '2018-04-12', '2018-04-13', '2018-04-14', '2018-04-15'];
+
+        foreach ($date as $stat_at) {
+
+            $users = Users::find(
+                [
+                    'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
+                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                ]);
+
+            $total_num = count($users);
+
+            $res = [];
+
+            foreach ($users as $user) {
+
+                $device = $user->device;
+                $model = $device->model;
+
+                if (isset($res[$model])) {
+                    $res[$model] += 1;
+                } else {
+                    $res[$model] = 1;
+                }
+            }
+
+
+            arsort($res);
+
+            $f = fopen(APP_ROOT . "public/" . $stat_at . "mobile_type_vivo_user_register.txt", 'w');
+
+            fwrite($f, $stat_at . '注册总数量: ' . $total_num . "\r\n");
+            echoLine($total_num);
+
+            foreach ($res as $type => $num) {
+                $text = "手机型号:" . $type . "注册数量:" . $num;
+                echoLine($text);
+                fwrite($f, $text . "\r\n");
+            }
+
+            fclose($f);
+        }
+
+        $stat_at = '2018-04-09';
+
         $users = Users::find(
             [
-                'conditions' => 'partner_id = :partner_id: and register_at > 0',
-                'bind' => ['partner_id' => 27]
+                'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
+                'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
             ]);
 
-        echoLine(count($users));
+        $qq_num = 0;
+        $auth_num = 0;
+        $num = 0;
 
-        $res = [];
 
         foreach ($users as $user) {
 
-            $device = $user->device;
-            $model = $device->model;
+            if ($user->created_at == $user->register_at) {
+                echoLine($user->id);
+                $num++;
+            }
 
-            if (isset($res[$model])) {
-                $res[$model] += 1;
-            } else {
-                $res[$model] = 1;
+            if (USER_LOGIN_TYPE_QQ == $user->login_type) {
+                $qq_num++;
+            }
+
+            if ($user->isIdCardAuth()) {
+                $auth_num++;
             }
         }
 
-
-        arsort($res);
-
-        $f = fopen(APP_ROOT . "public/mobile_type_vivo_user_register.txt", 'w');
-
-        foreach ($res as $type => $num) {
-            $text = "手机型号:" . $type . "注册数量:" . $num;
-            echoLine($text);
-            fwrite($f, $text . "\r\n");
-        }
-
-        fclose($f);
+        echoLine($qq_num, $auth_num, $num);
     }
 }

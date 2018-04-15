@@ -1204,7 +1204,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             Chats::sendTextSystemMessage($user->id, $content);
 
-            $push_data = ['title' => $content, 'body' => ''];
+            $push_data = ['title' => $content, 'body' => $content];
             \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
             $num++;
         }
@@ -1300,5 +1300,45 @@ class UsersTask extends \Phalcon\Cli\Task
 
     }
 
+    function activitiesMessageAction()
+    {
+        $content = <<<EOF
+Hi语音官方提示
+一大波礼物即将下架咯~把握住机会，再不送送送的话，小心成为永恒的遗憾~
+礼物下架时间：2018年4月15日23:59
+糖葫芦、权杖、幸福摩天轮、爱你一万年
+当然也有会有一批精美的礼物上架哦，2018年4月16日0点准时上线，敬请期待
+EOF;
+
+        $title = "Hi语音官方提示";
+        $body = "一大波礼物即将下架咯~把握住机会噢";
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+        $push_data = ['title' => $title, 'body' => $body, 'client_url' => 'app://messages'];
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                echoLine($num, count($user_ids), $delay);
+                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
+            }
+        }
+    }
 }
 

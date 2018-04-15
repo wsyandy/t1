@@ -2781,6 +2781,12 @@ EOF;
         echoLine($i);
 
         echoLine(count($users));
+
+
+        $user = Users::findFirstById(21);
+        $push_data = ['title' => '测试', 'body' => '测试'];
+        echoLine($user->getPushContext(), $user->getPushReceiverContext());
+        \Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
     }
 
 }
