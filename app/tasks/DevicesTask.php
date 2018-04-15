@@ -103,11 +103,54 @@ class DevicesTask extends \Phaclcon\Cli\Task
                 'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)]
             ]);
 
-            $r_num = Users::count(['conditions' => 'partner_id=:partner_id: and register_at>=:s_at: and register_at<=:e_at: and created_at>=:sc_at: and created_at<=:ec_at:',
+            $r_num = Users::count(['conditions' => 'partner_id=:partner_id: and (login_type!="" or login_type is not null) and register_at>=:s_at: and register_at<=:e_at: and created_at>=:sc_at: and created_at<=:ec_at:',
                 'bind' => ['partner_id' => $partner_id, 's_at' => beginOfDay($stat_at), 'e_at' => endOfDay($stat_at), 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
             ]);
 
             echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num/$a_num));
+        }
+
+
+        $partner_id = 27;
+        for($i = 1; $i < 30; $i++){
+            $stat_at = time() - $i * 24 *3600;
+            $a_num = Devices::count(['conditions' => 'partner_id=:partner_id: and created_at>=:sc_at: and created_at<=:ec_at:',
+                'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)]
+            ]);
+
+            $users = Users::find(['conditions' => 'partner_id=:partner_id: and register_at>=:s_at: and register_at<=:e_at: and created_at>=:sc_at: and created_at<=:ec_at:',
+                'bind' => ['partner_id' => $partner_id, 's_at' => beginOfDay($stat_at), 'e_at' => endOfDay($stat_at),
+                    'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
+                'columns' => 'distinct device_id',
+            ]);
+
+            $r_num = count($users);
+
+            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num/$a_num));
+        }
+
+
+        $partner_id = 27;
+        for($i = 1; $i < 30; $i++){
+            $stat_at = time() - $i * 24 *3600;
+
+            $users = Users::find(['conditions' => 'partner_id=:partner_id: and device_id > 1 and (login_type="" or login_type is null) and created_at>=:sc_at: and created_at<=:ec_at:',
+                'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
+                'columns' => 'id,manufacturer,device_id',
+            ]);
+
+            $data = [];
+            foreach($users as $user){
+                if(isset($data[$user->manufacturer])){
+                    $data[$user->manufacturer] += 1;
+                }else{
+                    $data[$user->manufacturer] = 1;
+                }
+            }
+
+            arsort($data);
+            echoLine(date('Y-m-d', $stat_at));
+            print_r($data);
         }
 
 
