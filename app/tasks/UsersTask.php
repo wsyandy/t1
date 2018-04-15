@@ -1244,6 +1244,11 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $datas = ['send_user' => $send_user, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
         $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
+
+        if (isDevelopmentEnv()) {
+            $user_db->hclear($send_user_stat_key);
+        }
+
         $user_db->hmset($send_user_stat_key, $datas);
     }
 

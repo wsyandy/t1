@@ -2787,6 +2787,17 @@ EOF;
         $push_data = ['title' => '测试', 'body' => '测试'];
         echoLine($user->getPushContext(), $user->getPushReceiverContext());
         \Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+
+        $hot_cache = Users::getHotWriteCache();
+        $online_silent_room = Rooms::findFirstById(136810);
+        $key = $online_silent_room->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $online_silent_room->exitSilentRoom($user);
+        }
     }
 
 }
