@@ -1776,9 +1776,7 @@ class Users extends BaseModel
 
         $merge_ids = array_merge($friend_ids, $followed_ids, [SYSTEM_ID]);
 
-        $unique_ids = array_unique($merge_ids);
-
-        $filter_ids = implode(',', $unique_ids);
+        $filter_ids = array_unique($merge_ids);
 
         $users = $current_user->nearby($page, $per_page, ['filter_ids' => $filter_ids]);
 
@@ -1818,7 +1816,14 @@ class Users extends BaseModel
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
-        $filter_ids = fetch($opts, 'filter_ids');
+        $filter_ids = fetch($opts, 'filter_ids', []);
+
+        if (!is_array($filter_ids)) {
+            $filter_ids = explode(',', $filter_ids);
+        }
+
+        //屏蔽公司内部账号
+        $filter_ids[] = 1159082;
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1847,7 +1852,8 @@ class Users extends BaseModel
             }
         }
 
-        if ($filter_ids) {
+        if (count($filter_ids) > 0) {
+            $filter_ids = implode(',', $filter_ids);
             $condition .= " and id not in ({$filter_ids})";
         }
 
@@ -2816,7 +2822,7 @@ class Users extends BaseModel
     {
         $hot_cache = self::getHotWriteCache();
         $fd_token_key = "socket_push_online_token_" . $fd;
-        $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
+        $fd_ip_token_key = "socket_push_online_token_" . $fd . '_' . $ip;
         $token_fd_key = "socket_push_fd_" . $online_token;
         $user_id_token_key = "socket_user_online_user_id" . $this->id;
         $token_user_id_key = "socket_fd_user_id" . $online_token;
@@ -2835,7 +2841,7 @@ class Users extends BaseModel
 
         $hot_cache->exec();
 
-        info($this->id, 'fd',$fd, $online_token, $ip);
+        info($this->id, 'fd', $fd, $online_token, $ip);
     }
 
     function deleteFdInfo($fd, $online_token)
@@ -2850,12 +2856,12 @@ class Users extends BaseModel
 
         $ip = $hot_cache->get($token_intranet_ip_key);
 
-        info($this->id, 'fd',$fd, $online_token, $ip);
-        
+        info($this->id, 'fd', $fd, $online_token, $ip);
+
         $hot_cache->pipeline();
         $hot_cache->del($fd_token_key);
-        if($ip){
-            $fd_ip_token_key = "socket_push_online_token_" . $fd.'_'.$ip;
+        if ($ip) {
+            $fd_ip_token_key = "socket_push_online_token_" . $fd . '_' . $ip;
             $hot_cache->del($fd_ip_token_key);
         }
         $hot_cache->del($token_fd_key);
@@ -2902,20 +2908,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3020,21 +3029,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
