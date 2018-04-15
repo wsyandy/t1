@@ -1180,7 +1180,10 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_db = Users::getUserDb();
         $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
 
-        $user_db->zclear($send_user_ids_key);
+        if (isDevelopmentEnv()) {
+            $user_db->zclear($send_user_ids_key);
+        }
+
         //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
         //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
         foreach ($users as $user) {
