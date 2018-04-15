@@ -243,4 +243,10 @@ class ActivitiesController extends BaseController
         $this->view->activity = $activity;
         $this->view->title = "活动奖励";
     }
+
+    //梦幻周榜
+    function dreamWeekRankActivityAction()
+    {
+        $this->view->title = "梦幻周榜";
+    }
 }
