@@ -1158,6 +1158,7 @@ class UsersTask extends \Phalcon\Cli\Task
         ]);
 
         $num = 0;
+        $product_channel_id = 1;
 
 
         $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
@@ -1173,8 +1174,8 @@ class UsersTask extends \Phalcon\Cli\Task
         $gift_ids = [13, 15, 16];
 
         $stat_at = date("Ymd");
-        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id1" . $stat_at;
-        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id1";
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
 
         $user_db = Users::getUserDb();
         $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
