@@ -85,4 +85,31 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         fclose($f);
     }
+
+    function registerActiveAction($params)
+    {
+        $partner_id = $params[0];
+        $stat_at = strtotime($params[1]);
+        $stat_at = beginOfDay($stat_at);
+
+        echoLine($partner_id, date('Y-m-d', $stat_at));
+        //'columns' => 'id,device_id,created_at,register_at,login_type'
+
+
+        $partner_id = 27;
+        for($i = 1; $i < 30; $i++){
+            $stat_at = time() - $i * 24 *3600;
+            $a_num = Devices::count(['conditions' => 'partner_id=:partner_id: and created_at>=:sc_at: and created_at<=:ec_at:',
+                'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)]
+            ]);
+
+            $r_num = Users::count(['conditions' => 'partner_id=:partner_id: and register_at>=:s_at: and register_at<=:e_at: and created_at>=:sc_at: and created_at<=:ec_at:',
+                'bind' => ['partner_id' => $partner_id, 's_at' => beginOfDay($stat_at), 'e_at' => endOfDay($stat_at), 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
+            ]);
+
+            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num/$a_num));
+        }
+
+
+    }
 }
