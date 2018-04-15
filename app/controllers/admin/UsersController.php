@@ -6,7 +6,6 @@ class UsersController extends BaseController
 {
     function indexAction()
     {
-        $cond = $this->getConditions('user');
         $page = 1;
         $per_page = 30;
         $total_page = 1;
@@ -19,6 +18,7 @@ class UsersController extends BaseController
         $product_channel_id = $this->params("user[product_channel_id_eq]");
 
         $cond = $this->getConditions('user');
+        $cond['order'] = 'id desc';
 
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
