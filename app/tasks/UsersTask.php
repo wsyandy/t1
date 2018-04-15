@@ -1190,7 +1190,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             $gift_id = $gift_ids[array_rand($gift_ids)];
             $gift = Gifts::findFirstById($gift_id);
-            $send_user_id = 1;
+            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
             $send_user = Users::findFirstById($send_user_id);
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
             echoLine($user->id, $content);
