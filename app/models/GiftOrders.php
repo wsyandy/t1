@@ -232,7 +232,7 @@ class GiftOrders extends BaseModel
                 //座驾不增加hi币
                 \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
                 //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id]);
+                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'async_verify_data' => 1]);
             }
         }
 

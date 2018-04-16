@@ -101,6 +101,7 @@ class HiCoinHistories extends BaseModel
         $hi_coins = fetch($opts, 'hi_coins');
         $remark = fetch($opts, 'remark');
         $fee_type = fetch($opts, 'fee_type');
+        $async_verify_data = fetch($opts, 'async_verify_data', 0);
 
         $user = Users::findFirstById($user_id);
         if (!$user) {
@@ -116,8 +117,12 @@ class HiCoinHistories extends BaseModel
         if ($gift_order_id) {
             $old_hi_coin_history = HiCoinHistories::findFirstByGiftOrderId($gift_order_id);
             if ($old_hi_coin_history) {
-                info("Exce hi_coin_history_already_save", $user_id, $gift_order_id);
+                info("hi_coin_history_already_save", $user_id, $gift_order_id);
                 return;
+            }else{
+                if($async_verify_data){
+                    info("Exce hi_coin_history_save", $user_id, $gift_order_id, $opts);
+                }
             }
         }
 
