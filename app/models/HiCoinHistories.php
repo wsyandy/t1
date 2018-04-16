@@ -114,6 +114,16 @@ class HiCoinHistories extends BaseModel
         $lock_key = "update_user_hi_coins_lock_" . $user_id;
         $lock = tryLock($lock_key);
 
+        if ($gift_order_id) {
+
+            $old_hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $user_id, 'gift_order_id' => $gift_order_id]);
+
+            if ($old_hi_coin_history) {
+                info("hi_coin_history_already_save", $user_id, $gift_order_id);
+                return;
+            }
+        }
+
         $hi_coin_history = new HiCoinHistories();
         $hi_coin_history->user_id = $user_id;
 
@@ -173,7 +183,7 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->product_channel_id = $user->product_channel_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
-        
+
         if (!$hi_coin_history->save()) {
             unlock($lock);
             info('Exce', $user_id, $opts);
