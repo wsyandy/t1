@@ -772,7 +772,7 @@ class YangTask extends \Phalcon\Cli\Task
             $product_channel_id = $union->product_channel_id;
             if ($product_channel_id) {
                 $key_product_channel = "_product_channel_id_" . $product_channel_id;
-
+                echoLine($key_product_channel);
                 $db->zincrby($key . $key_product_channel, $fields[$union->id], $union->id);
             }
         }
