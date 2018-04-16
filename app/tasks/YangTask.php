@@ -753,6 +753,31 @@ class YangTask extends \Phalcon\Cli\Task
         $this->fixRankList($total_key);
     }
 
+    function fixUnionRankList($key)
+    {
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, 1, -1, 'withscores');
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $union_id => $result) {
+            $ids[] = $union_id;
+            $fields[$union_id] = $result;
+        }
+
+        $unions = Unions::findByIds($ids);
+
+        foreach ($unions as $union) {
+            $product_channel_id = $union->product_channel_id;
+            if ($product_channel_id) {
+                $key_product_channel = "_product_channel_id_" . $product_channel_id;
+
+                $db->zincrby($key . $key_product_channel, $fields[$union->id], $union->id);
+            }
+        }
+    }
+
 
     function fixUnionDayRankListAction($params)
     {
@@ -769,7 +794,7 @@ class YangTask extends \Phalcon\Cli\Task
             $day_key = "total_union_fame_value_day_" . date("Ymd", $time - 86400 * $i);
 
             echoLine($day_key);
-            $this->fixRankList($day_key);
+            $this->fixUnionRankList($day_key);
         }
     }
 
@@ -794,7 +819,7 @@ class YangTask extends \Phalcon\Cli\Task
 
             echoLine($week_key);
 
-            $this->fixRankList($week_key);
+            $this->fixUnionRankList($week_key);
         }
     }
 }
