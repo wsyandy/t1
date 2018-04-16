@@ -156,6 +156,7 @@ class XingYuTask extends \Phalcon\Cli\Task
             $user->login_type = '';
             $user->save();
             $user->sid = $user->generateSid('s');
+            $user->user_status = USER_STATUS_OFF;
             $user->update();
             $user->updateAvatar($source_filename);
 
