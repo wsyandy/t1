@@ -112,12 +112,13 @@ class HiCoinHistories extends BaseModel
         info($user_id, $gift_order_id, $opts);
 
         $lock_key = "update_user_hi_coins_lock_" . $user_id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key); // 记得释放锁
 
         if ($gift_order_id) {
             $old_hi_coin_history = HiCoinHistories::findFirstByGiftOrderId($gift_order_id);
             if ($old_hi_coin_history) {
                 info("hi_coin_history_already_save", $user_id, $gift_order_id);
+                unlock($lock);
                 return;
             }else{
                 if($async_verify_data){
@@ -141,6 +142,7 @@ class HiCoinHistories extends BaseModel
 
             if (!$gift_order) {
                 info($gift_order_id);
+                unlock($lock);
                 return;
             }
 
@@ -159,6 +161,7 @@ class HiCoinHistories extends BaseModel
 
             if (!$withdraw_history) {
                 info($withdraw_history_id);
+                unlock($lock);
                 return;
             }
 

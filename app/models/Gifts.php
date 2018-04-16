@@ -310,7 +310,7 @@ class Gifts extends BaseModel
         $conditions['bind']['platforms'] = "%" . $platform . "%";
 
         $conditions['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
-        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
 
         if ($gift_type) {
             $conditions['conditions'] .= ' and type = :gift_type:';

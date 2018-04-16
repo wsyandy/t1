@@ -23,7 +23,7 @@ class GiftsController extends BaseController
             } else {
                 $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
             }
-            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
         }
 
         if (isset($cond['conditions'])) {
