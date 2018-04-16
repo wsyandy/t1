@@ -216,6 +216,7 @@ class RoomsController extends BaseController
 
         $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
         $app_id = $this->currentProductChannel()->getImAppId();
+        $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
 
         $hot_cache = \Users::getHotWriteCache();
         $cache_key = 'push_into_room_remind_' . $this->currentUser()->id;
@@ -226,6 +227,7 @@ class RoomsController extends BaseController
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
+        $res['signaling_key'] = $signaling_key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
