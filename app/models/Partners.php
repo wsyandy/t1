@@ -219,8 +219,8 @@ class Partners extends BaseModel
         }
 
         $params = $convid . $click_id;
-        $sign = '';
-
+        $str = hash_hmac("sha1", $params, $token, true);
+        $sign = urlencode(base64_encode($str));
 
         $url = "http://r.dmp.sina.com.cn/conv/track?fr=ea&conv_id={$convid}&click_id={$click_id}&devid={$devid}&bhv_time={$click_time}&sign={$sign}";
 
