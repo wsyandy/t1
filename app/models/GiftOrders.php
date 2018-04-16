@@ -231,6 +231,8 @@ class GiftOrders extends BaseModel
                 info($this->user->id, $gift->id);
                 //座驾不增加hi币
                 \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
+                //防止异步丢任务
+                \HiCoinHistories::delay(5)->createHistory($this->user_id, ['gift_order_id' => $this->id]);
             }
         }
 
@@ -259,11 +261,11 @@ class GiftOrders extends BaseModel
         }
 
         //国际版钻石
-        if ($this->gift->isIGoldPayType()){
+        if ($this->gift->isIGoldPayType()) {
 
             \Users::delay()->updateExperienceByInternational($this->id);
 
-        }else{
+        } else {
             \Users::delay()->updateExperience($this->id);
             \Users::delay()->updateCharm($this->id);
         }
