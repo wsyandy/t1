@@ -800,7 +800,7 @@ class Unions extends BaseModel
     {
         $db = Users::getUserDb();
 
-        $key = self::generateFameValueRankListKey($list_type);
+        $key = self::generateFameValueRankListKey($list_type,$this->product_channel_id);
 
         $rank = $db->zrrank($key, $this->id);
 
@@ -816,17 +816,25 @@ class Unions extends BaseModel
         return $rank + 1;
     }
 
-    static function generateFameValueRankListKey($list_type)
+    static function generateFameValueRankListKey($list_type, $opts = [])
     {
+        $product_channel_id = fetch($opts, 'product_channel_id');
+
+        if (isBlank($product_channel_id)) {
+            $key_product_channel = '';
+        } else {
+            $key_product_channel = "_product_channel_id_" . $product_channel_id;
+        }
+
         switch ($list_type) {
             case 'day': {
-                $key = "total_union_fame_value_day_" . date("Ymd");
+                $key = "total_union_fame_value_day_" . date("Ymd") . $key_product_channel;
                 break;
             }
             case 'week': {
                 $start = date("Ymd", strtotime("last sunday next day", time()));
                 $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "total_union_fame_value_" . $start . "_" . $end;
+                $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
                 break;
             }
             default:
@@ -836,9 +844,9 @@ class Unions extends BaseModel
         return $key;
     }
 
-    static function findFameValueRankList($list_type, $page, $per_page)
+    static function findFameValueRankList($list_type, $page, $per_page, $opts = [])
     {
-        $key = self::generateFameValueRankListKey($list_type);
+        $key = self::generateFameValueRankListKey($list_type, $opts);
 
         return self::findFameValueRankListByKey($key, $page, $per_page);
     }

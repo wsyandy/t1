@@ -752,4 +752,49 @@ class YangTask extends \Phalcon\Cli\Task
         $total_key = "total_" . $field . "_rank_list";
         $this->fixRankList($total_key);
     }
+
+
+    function fixUnionDayRankListAction($params)
+    {
+        $time = time();
+
+
+        $days = intval($params[0]);
+        if ($days <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $days; $i++) {
+            $day_key = "total_union_fame_value_day_" . date("Ymd", $time - 86400 * $i);
+
+            echoLine($day_key);
+            $this->fixRankList($day_key);
+        }
+    }
+
+    function fixUnionWeekRankListAction($params)
+    {
+        $start_at = strtotime("last sunday next day", time());
+        $end_at = strtotime("next monday", time()) - 1;
+
+
+        $weeks = intval($params[0]);
+        if ($weeks <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $weeks; $i++) {
+
+            $start = date("Ymd", $start_at - 86400 * 7 * $i);
+            $end = date("Ymd", $end_at - 86400 * 7 * $i);
+
+            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+
+            echoLine($week_key);
+
+            $this->fixRankList($week_key);
+        }
+    }
 }
