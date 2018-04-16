@@ -48,7 +48,7 @@ class GiftsController extends BaseController
         $gift = \Gifts::findById($this->params('gift_id'));
 
         if (isBlank($gift) || $gift->isInvalid()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('礼物不存在',$this->currentUser()->lang));
         }
 
         $notify_type = $src == 'room' ? 'bc' : 'ptp';
@@ -59,7 +59,7 @@ class GiftsController extends BaseController
             if ($gift->isCar()) {
                 $user_id = $this->currentUser()->id;
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('用户不存在',$this->currentUser()->lang));
             }
         }
 
@@ -74,28 +74,28 @@ class GiftsController extends BaseController
                 $current_user = $this->currentUser(true);
                 $res = array_merge($notify_data, ['i_gold' => $current_user->i_gold]);
 
-                $error_reason = "购买成功";
+                $error_reason = t('购买成功',$this->currentUser()->lang);
 
                 if ($user_id != $this->currentUser()->id) {
-                    $error_reason = "赠送成功";
+                    $error_reason = t('赠送成功',$this->currentUser()->lang);
                 }
 
                 if ($renew) {
-                    $error_reason = "续费成功";
+                    $error_reason = t('续费成功',$this->currentUser()->lang);
                 }
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason, $res);
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '购买失败');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('购买失败',$this->currentUser()->lang));
             }
         }
-        return $this->renderJSON(ERROR_CODE_NEED_PAY, '余额不足');
+        return $this->renderJSON(ERROR_CODE_NEED_PAY, t('余额不足',$this->currentUser()->lang));
     }
 
     function checkParams()
     {
         if (isBlank($this->params('gift_id'))) {
-            return [false, '礼物错误'];
+            return [false, t('礼物错误',$this->currentUser()->lang)];
         }
 
         return [true, ''];
@@ -108,13 +108,13 @@ class GiftsController extends BaseController
         $gift = \Gifts::findById($this->params('gift_id'));
 
         if (!$gift) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数错误',$this->currentUser()->lang));
         }
 
         $user_gift = \UserGifts::findFirstBy(['gift_id' => $gift_id, 'user_id' => $this->currentUser()->id, 'gift_type' => GIFT_TYPE_CAR]);
 
         if ($user_gift->isExpired()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '座驾已过期');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('座驾已过期',$this->currentUser()->lang));
         }
 
         if (STATUS_ON != $user_gift->status) {
@@ -122,12 +122,12 @@ class GiftsController extends BaseController
             $user_gift->status = STATUS_ON;
 
             if ($user_gift->update()) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功', $user_gift->toSimpleJson());
+                return $this->renderJSON(ERROR_CODE_SUCCESS, t('设置成功',$this->currentUser()->lang), $user_gift->toSimpleJson());
             }
 
-            return $this->renderJSON(ERROR_CODE_FAIL, '设置失败');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('设置失败',$this->currentUser()->lang));
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '设置成功', $user_gift->toSimpleJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('设置成功',$this->currentUser()->lang), $user_gift->toSimpleJson());
     }
 }

@@ -45,10 +45,10 @@ class AlbumsController extends BaseController
         $res = \Albums::uploadImage($user, $image_files);
 
         if ($res) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '上传失败');
+        return $this->renderJSON(ERROR_CODE_FAIL,t('上传失败',$this->currentUser()->lang));
     }
 
     function destroyAction()
@@ -56,10 +56,10 @@ class AlbumsController extends BaseController
         $album = \Albums::findFirstById($this->params('id', 0));
         if ($album) {
             $album->delete();
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, t('删除成功',$this->currentUser()->lang));
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '删除失败');
+        return $this->renderJSON(ERROR_CODE_FAIL, t('删除失败',$this->currentUser()->lang));
     }
 
 }

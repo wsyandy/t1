@@ -49,13 +49,13 @@ class FollowersController extends BaseController
     function createAction()
     {
         $this->currentUser()->follow($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS,t('关注成功',$this->currentUser()->lang));
     }
 
     //取消关注
     function destroyAction()
     {
         $this->currentUser()->unFollow($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '取消关注成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('取消关注成功',$this->currentUser()->lang));
     }
 }

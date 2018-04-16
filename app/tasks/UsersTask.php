@@ -1136,30 +1136,21 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function wakeupUsersAction()
     {
-//        $users = Users::findForeach(
-//            [
-//                'conditions' => 'pay_amount < 1 and register_at > 0 and last_at <= :last_at:',
-//                'bind' => ['last_at' => time() - 86400 * 2]]);
-//
-//        $num = 0;
-//
-//        foreach ($users as $user) {
-//            $num++;
-//        }
-//
-//        echoLine($num);
-//
+        $last_at = time() - 3600 * 48;
+
+        if (isDevelopmentEnv()) {
+            $last_at = time() - 60 * 3;
+        }
 
         $users = Users::findForeach([
-            'conditions' => 'product_channel_id = 1 and (pay_amount < 1 or pay_amount is null) and register_at > 0
-             and last_at <= :last_at: and user_type = :user_type:',
-
-            'bind' => ['last_at' => time() - 60 * 3, 'user_type' => USER_TYPE_ACTIVE]
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
+            'order' => 'last_at desc',
+            'limit' => 1000
         ]);
 
         $num = 0;
         $product_channel_id = 1;
-
 
         $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
@@ -1171,7 +1162,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $silent_user_ids[] = $silent_user->id;
         }
 
-        $gift_ids = [13, 15, 16];
+        $gift_ids = [6, 7, 36];
 
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
@@ -1193,23 +1184,30 @@ class UsersTask extends \Phalcon\Cli\Task
             $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
             $send_user = Users::findFirstById($send_user_id);
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-            echoLine($user->id, $content);
 
             $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
 
-            echoLine($give_result);
+            echoLine($give_result, $content);
+
             if ($give_result) {
                 $user_db->zadd($send_user_ids_key, time(), $user->id);
             }
 
-            Chats::sendTextSystemMessage($user->id, $content);
-
             $push_data = ['title' => $content, 'body' => $content];
             \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
             $num++;
+
+            Chats::sendTextSystemMessage($user->id, $content);
+
+            echoLine($user->id, $send_user_id, $content, $num);
+
+            if ($num >= 1000) {
+                break;
+            }
         }
 
-        echoLine($num);
+        echoLine(count($silent_user_ids));
     }
 
     function wakeupUsersStatAction()
@@ -1249,7 +1247,40 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_db->hclear($send_user_stat_key);
         }
 
-        $user_db->hmset($send_user_stat_key, $datas);
+        echoLine("?????", $datas);
+
+//        $user_db->hmset($send_user_stat_key, $datas);
+
+    }
+
+    function wakeupWithdrawMessageAction()
+    {
+        $product_channel_id = 1;
+        $user_db = \Users::getUserDb();
+        $stat_at = date("Ymd");
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            //亲，你现在有*元待提现，赶紧去提现！
+
+            $hi_conins = $user->getWithdrawAmount();
+
+            if ($hi_conins > 0) {
+                $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
+
+                $push_data = ['title' => $content, 'body' => $content];
+
+                \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+                Chats::sendTextSystemMessage($user->id, $content);
+
+                echoLine($user->id, $content);
+            } else {
+                echoLine($user->id, "no have hi_coins");
+            }
+        }
     }
 
     // 认证主播收益
