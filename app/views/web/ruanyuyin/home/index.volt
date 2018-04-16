@@ -75,8 +75,8 @@
                 </div>
                 <div class="reserved">
                     <span>2011-2018All Rights Reserved</span>
-                    <span>上海棕熊网络科技版权所有</span>
-                    <span>沪ICP备16046218号</span>
+                    <span>{{ product_channel.company_name }}版权所有</span>
+                    <span>{{ product_channel.icp }}</span>
 
                 </div>
 
