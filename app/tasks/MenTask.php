@@ -50,16 +50,13 @@ class MenTask extends \Phalcon\Cli\Task
 //        }
 
         $click_id = "54321";
-        $conv_id = "n855_1_104654";
+        $convid = "n855_1_104654";
         $token = "aa6f20cecdf0cf948ac01b52febf7469";
-        $params = $click_id . $conv_id;
 
+        $params = $convid . $click_id;
         $str = hash_hmac("sha1", $params, $token, true);
-        echoLine('c', $str);
-        $str = base64_encode($str);
-        echoLine('str', $str);
-        $sign = urlencode($str);
-        echoLine('sign', $sign);
+        $sign = urlencode(base64_encode($str));
+        echoLine($sign);
     }
 
     function insertUserAction()
