@@ -117,7 +117,7 @@ class EmoticonImages extends BaseModel
         $cond['bind']['platforms'] = "%" . $platform . "%";
 
         $cond['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
-        $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
 
         return self::findPagination($cond, $page, $per_page);
     }
