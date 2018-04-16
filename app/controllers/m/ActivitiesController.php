@@ -46,7 +46,12 @@ class ActivitiesController extends BaseController
 
             $product_channel_id = $this->currentProductChannelId();
 
-            $opts = ['start' => $lats_start, 'end' => $last_end, 'product_channel_id' => $product_channel_id];
+            if (isDevelopmentEnv()) {
+                $opts = ['start' => $lats_start, 'end' => $last_end, 'product_channel_id' => $product_channel_id];
+            } else {
+                $opts = ['start' => $lats_start, 'end' => $last_end];
+            }
+
             $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 3, $opts);
             $charm_users = \Users::findFieldRankList('week', 'charm', 1, 3, $opts);
 
@@ -254,7 +259,11 @@ class ActivitiesController extends BaseController
 
         $product_channel_id = $this->currentProductChannelId();
 
-        $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
+        if (isDevelopmentEnv()) {
+            $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
+        } else {
+            $opts = ['start' => $start, 'end' => $end];
+        }
 
         $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 1, $opts);
         $charm_users = \Users::findFieldRankList('week', 'charm', 1, 1, $opts);

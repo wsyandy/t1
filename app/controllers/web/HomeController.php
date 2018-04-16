@@ -8,7 +8,7 @@ class HomeController extends BaseController
     {
         $user = $this->currentUser();
         if (!$user) {
-            $product_channel = \ProductChannels::findLast();
+            $product_channel = $this->currentProductChannel();
         } else {
             $product_channel = $user->product_channel;
         }

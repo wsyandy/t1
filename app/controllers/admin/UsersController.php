@@ -401,7 +401,7 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 100);
         $type = $this->params('type', 'wealth');
         $stat_at = $this->params('stat_at', date("Y-m-d"));
-        $product_channel_id = $this->params('product_channel_id', 1);
+        $product_channel_id = $this->params('product_channel_id');
         $opts = ['date' => date("Ymd", strtotime($stat_at)), 'product_channel_id' => $product_channel_id];
 
         $users = \Users::findFieldRankList('day', $type, $page, $per_page, $opts);
@@ -423,7 +423,7 @@ class UsersController extends BaseController
         $start = date("Ymd", strtotime($stat_at));
         $end = date("Ymd", strtotime($start) + 6 * 86400);
 
-        $product_channel_id = $this->params('product_channel_id', 1);
+        $product_channel_id = $this->params('product_channel_id');
 
         $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
 
@@ -442,7 +442,7 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 100);
         $type = $this->params('type', 'wealth');
 
-        $product_channel_id = $this->params('product_channel_id', 1);
+        $product_channel_id = $this->params('product_channel_id');
 
         $opts = ['product_channel_id' => $product_channel_id];
 
