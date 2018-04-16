@@ -56,8 +56,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         } else if ($new == STATUS_ON) {
-            $cond['conditions'] .= ' and new = ' . STATUS_ON;
-
+            $cond['order'] = "created_at desc";
         } else {
 
             $search_type = '';
