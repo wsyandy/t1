@@ -23,7 +23,7 @@ class UserGiftsController extends BaseController
         $user = \Users::findFirstById($user_id);
 
         if (!$user) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '请求错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('请求错误',$this->currentUser()->lang));
         }
 
         $total_gift_num = $user->getReceiveGiftNum();

@@ -230,7 +230,7 @@ class BaseController extends ApplicationController
 
         $code = $this->params('code');
         if (!$code || !$this->currentProductChannel()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道不能为空');
+            return $this->renderJSON(ERROR_CODE_FAIL,t('产品渠道不能为空',$this->currentUser()->lang));
         }
 
         if (isProduction()) {
@@ -238,7 +238,7 @@ class BaseController extends ApplicationController
                 $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android'
             ) {
                 info("Exce 客户端异常", $this->context());
-                return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('illegal invoke 客户端异常',$this->currentUser()->lang));
             }
         }
 
@@ -253,7 +253,7 @@ class BaseController extends ApplicationController
         $fix_user = $this->fixOldUser();
         if ($fix_user) {
             info('fix_user', $fix_user->id, $this->params());
-            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $fix_user->generateSid('d.')]);
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN,t('请登录',$this->currentUser()->lang), ['sid' => $fix_user->generateSid('d.')]);
         }
 
 
@@ -267,11 +267,11 @@ class BaseController extends ApplicationController
         if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
             || $this->otherUserId() && !$this->otherUser()
         ) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL,t('对方用户不存在',$this->currentUser()->lang));
         }
 
         if ($this->currentUser() && $this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账号被封!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('账号被封!',$this->currentUser()->lang));
         }
 
         // 更新设备或用户状态
@@ -289,14 +289,14 @@ class BaseController extends ApplicationController
 
             if (!$this->currentUser()) {
                 info('非法请求 authorize', $this->params());
-                return $this->renderJSON(ERROR_CODE_FAIL, '非法请求');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('非法请求',$this->currentUser()->lang));
             }
 
-            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录', ['sid' => $this->currentUser()->generateSid('d.')]);
+            return $this->renderJSON(ERROR_CODE_NEED_LOGIN, t('请登录',$this->currentUser()->lang), ['sid' => $this->currentUser()->generateSid('d.')]);
         }
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
+            return $this->renderJSON(ERROR_CODE_FAIL,t('需要更新资料',$this->currentUser()->lang), ['error_url' => 'app://users/update_info']);
         }
     }
 
