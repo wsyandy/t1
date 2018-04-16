@@ -99,7 +99,7 @@ class GiftsController extends BaseController
                         'gift' => $gift,
                         'gift_num' => $gift_num,
                         'sender' => $this->currentUser(),
-                        'receiver_ids' => $receiver_ids
+                        'user_id' => $receiver_ids[0]
                     ]
                 );
 

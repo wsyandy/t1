@@ -364,11 +364,8 @@ class Gifts extends BaseModel
     {
         $gift = fetch($opts, 'gift');
         $gift_num = fetch($opts, 'gift_num');
-        $receiver_ids = fetch($opts, 'receiver_ids');
-        $user_id = $receiver_ids[0];
-
-        $user = \Users::findFirstById($user_id);
         $sender = fetch($opts, 'sender');
+        $user = \Users::findById($opts['user_id']);
         $data = [];
 
         if ($gift) {
