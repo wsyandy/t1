@@ -337,6 +337,9 @@
                     {% if isAllowed('marketing_configs', 'index') %}
                         <li><a href="/admin/marketing_configs">腾讯marketing配置</a></li>
                     {% endif %}
+                    {% if isAllowed('sina_ad_configs', 'index') %}
+                        <li><a href="/admin/sina_ad_configs">新浪扶翼配置</a></li>
+                    {% endif %}
                     {% if isAllowed('soft_versions','index') %}
                         <li><a href="/admin/soft_versions">软件升级管理</a></li>
                     {% endif %}

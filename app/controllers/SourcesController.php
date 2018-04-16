@@ -229,6 +229,42 @@ class SourcesController extends \ApplicationController
         return;
     }
 
+    public function sinaClickAction()
+    {
+
+        //http://r.dmp.sina.com.cn/conv/track?fr=ea&conv_id={conv_id}&click_id={click_id}&devid={devid}&bhv_time={bhv_time}&sign={sign}
+        //http://www.a.com?devid={User}&fr=ea&uuid={Uuid}&SET_A={Position}&SET_ B={Adid}&SET_C={Creativeid}&SET_D={Uuid}&SET_E={Groupid}&SET_F=1
+        $attrs = ['source' => 'sina'];
+        foreach (['fr2', 'code', 'uuid', 'devid', 'groupid'] as $key) {
+            if ($key == 'fr2') {
+                $attrs['fr'] = $this->params($key);
+            } else {
+                $attrs[$key] = $this->params($key);
+            }
+        }
+
+        if (!$attrs['devid']) {
+            echo 'ok';
+            return;
+        }
+
+        // 毫秒
+        $attrs['click_time'] = time();
+
+        $muid = strtolower(md5(strtolower($attrs['devid'])));
+        $attrs['muid'] = $muid;
+
+        $hot_cache = \Devices::getHotWriteCache();
+
+        $new_click_key = 'new_click_ad_event_' . $attrs['code'] . '_muid_' . $muid;
+        $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
+        info('set', $new_click_key, $attrs);
+
+        echo 'ok';
+        return;
+
+    }
+
 
 }
 
