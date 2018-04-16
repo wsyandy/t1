@@ -665,7 +665,13 @@ class UsersController extends BaseController
 
         $product_channel_id = $this->currentProductChannelId();
 
-        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page, ['product_channel_id' => $product_channel_id]);
+        if (isDevelopmentEnv()) {
+            $opts = ['product_channel_id' => $product_channel_id];
+        } else {
+            $opts = [];
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page, $opts);
 
         $res = $users->toJson('users', 'toRankListJson');
 
@@ -704,7 +710,13 @@ class UsersController extends BaseController
 
         $product_channel_id = $this->currentProductChannelId();
 
-        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page,['product_channel_id' => $product_channel_id]);
+        if (isDevelopmentEnv()) {
+            $opts = ['product_channel_id' => $product_channel_id];
+        } else {
+            $opts = [];
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page, $opts);
 
         $res = $users->toJson('users', 'toRankListJson');
 
