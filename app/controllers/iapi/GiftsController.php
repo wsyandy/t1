@@ -15,7 +15,7 @@ class GiftsController extends BaseController
     {
         $gift_type = $this->params('gift_type', 1);
 
-        $opts = ['gift_type' => $gift_type];
+        $opts = ['gift_type' => $gift_type, 'abroad' => 1];
 
         $gifts = \Gifts::findValidList($this->currentUser(), $opts);
 

@@ -290,6 +290,7 @@ class Gifts extends BaseModel
         $product_channel_id = $user->product_channel_id;
 
         $gift_type = fetch($opts, 'gift_type');
+        $abroad = fetch($opts, 'abroad');
 
         $conditions = [
             'conditions' => "status = :status:",
@@ -298,6 +299,12 @@ class Gifts extends BaseModel
             ],
             'order' => 'rank desc, amount asc'
         ];
+
+        if ($abroad){
+            $conditions['conditions'] .= " and abroad = 1";
+        }else{
+            $conditions['conditions'] .= " and abroad != 1";
+        }
 
         $conditions['conditions'] .= " and ( platforms like '*' or platforms like :platforms: or platforms = '')";
         $conditions['bind']['platforms'] = "%" . $platform . "%";
