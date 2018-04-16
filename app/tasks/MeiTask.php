@@ -2800,4 +2800,128 @@ EOF;
         }
     }
 
+    function wakeupUsersAction()
+    {
+        $last_at = time() - 3600 * 48;
+
+        if (isDevelopmentEnv()) {
+            $last_at = time() - 60 * 3;
+        }
+
+        $users = Users::findForeach([
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
+            'order' => 'last_at desc',
+            'limit' => 1000
+        ]);
+
+        $num = 0;
+        $product_channel_id = 1;
+
+        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
+
+        $silent_users = Users::find($cond);
+        $silent_user_ids = [];
+
+        foreach ($silent_users as $silent_user) {
+            $silent_user_ids[] = $silent_user->id;
+        }
+
+        $gift_ids = [6, 7, 36];
+
+        $stat_at = date("Ymd");
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
+
+        if (isDevelopmentEnv()) {
+            $user_db->zclear($send_user_ids_key);
+        }
+
+        //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
+        //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
+        foreach ($users as $user) {
+
+            $gift_id = $gift_ids[array_rand($gift_ids)];
+            $gift = Gifts::findFirstById($gift_id);
+            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
+            $send_user = Users::findFirstById($send_user_id);
+            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+
+            $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
+
+            echoLine($give_result, $content);
+
+            if ($give_result) {
+                $user_db->zadd($send_user_ids_key, time(), $user->id);
+            }
+
+            $push_data = ['title' => $content, 'body' => $content];
+            \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+            $num++;
+
+            Chats::sendTextSystemMessage($user->id, $content);
+
+            echoLine($user->id, $send_user_id, $content, $num);
+
+            if ($num >= 1000) {
+                break;
+            }
+        }
+
+        echoLine(count($silent_user_ids));
+    }
+
+    function wakeupUsersStatAction()
+    {
+        $product_channel_id = 1;
+        $user_db = \Users::getUserDb();
+        $stat_at = date("Ymd");
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
+
+        $active_user = 0;
+        $recharge_user = 0;
+        $recharge_amount = 0;
+
+        foreach ($user_ids as $user_id => $send_at) {
+
+            $user = \Users::findFirstById($user_id);
+            $pay_amount = $user->pay_amount;
+            $last_at = $user->last_at;
+
+            if ($last_at > $send_at) {
+                $active_user += 1;
+            }
+
+            if ($pay_amount > 0) {
+                $recharge_user += 1;
+                $recharge_amount += $pay_amount;
+            }
+        }
+
+        $send_user = $user_db->zcard($send_user_ids_key);
+
+        $datas = ['send_user' => $send_user, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
+        $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
+
+        if (isDevelopmentEnv()) {
+            $user_db->hclear($send_user_stat_key);
+        }
+
+        $user_db->hmset($send_user_stat_key, $datas);
+
+        $stat_at = date("Ymd");
+        $product_channel_id = 1;
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
+
+        $user_db = Users::getUserDb();
+
+        echoLine($user_db->zrange($send_user_ids_key, 0, -1));
+    }
 }
