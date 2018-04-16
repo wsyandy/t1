@@ -91,8 +91,8 @@ class XingYuTask extends \Phalcon\Cli\Task
     function initUsers($avatar_file, $nickname_file, $sex)
     {
 
-        $f_avatar = fopen($avatar_file, 'r');
-        $f_nickname = fopen($nickname_file, 'r');
+        $f_avatar = fopen(APP_ROOT . 'doc/words/' . $avatar_file, 'r');
+        $f_nickname = fopen(APP_ROOT . 'doc/words/' . $nickname_file, 'r');
 
         while ($avatar = fgets($f_avatar)) {
             $nickname = fgets($f_nickname);
@@ -131,7 +131,6 @@ class XingYuTask extends \Phalcon\Cli\Task
             $user->geo_city_id = 0;
             $user->ip_province_id = 0;
             $user->ip_city_id = 0;
-            $user->register_at = 0;
             $user->mobile_operator = 0;
             $user->api_version = '';
             $user->monologue = '';
