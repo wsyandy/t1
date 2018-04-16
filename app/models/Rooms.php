@@ -1136,7 +1136,7 @@ class Rooms extends BaseModel
         foreach ($users as $user) {
 
             //推送校验新版本
-            if ($check_user_version && !$user->isHignVersion()) {
+            if ($check_user_version && !$user->canShowGoldGift()) {
                 info("old_version_user", $user->sid);
                 continue;
             }
