@@ -690,30 +690,55 @@ class YangTask extends \Phalcon\Cli\Task
 
     function fixUserDayRankListAction($params)
     {
+        $time = time();
+
         $field = $params[0];
         if ($field != 'charm' && $field != 'wealth') {
             echoLine("参数错误");
             return;
         }
 
-        $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
-        $this->fixRankList($day_key);
+        $days = intval($params[1]);
+        if ($days <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $days; $i++) {
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd", $time - 86400 * $i);
+            echoLine($day_key);
+            $this->fixRankList($day_key);
+        }
     }
 
     function fixUserWeekRankListAction($params)
     {
+        $start_at = strtotime("last sunday next day", time());
+        $end_at = strtotime("next monday", time()) - 1;
+
         $field = $params[0];
         if ($field != 'charm' && $field != 'wealth') {
             echoLine("参数错误");
             return;
         }
 
-        $start = date("Ymd", strtotime("last sunday next day", time()));
-        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $weeks = intval($params[1]);
+        if ($weeks <= 0) {
+            echoLine("参数错误");
+            return;
+        }
 
-        $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+        for ($i = 0; $i < $weeks; $i++) {
 
-        $this->fixRankList($week_key);
+            $start = date("Ymd", $start_at - 86400 * 7 * $i);
+            $end = date("Ymd", $end_at - 86400 * 7 * $i);
+
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+
+            echoLine($week_key);
+
+            $this->fixRankList($week_key);
+        }
     }
 
     function fixUserTotalRankListAction($params)
