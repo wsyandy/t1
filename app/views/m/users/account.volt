@@ -1,1 +1,1 @@
-{% include "m/template/product.volt" %}
+{% include "m/template/" ~ code ~ "_product.volt" %}
