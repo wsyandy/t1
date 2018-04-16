@@ -453,4 +453,27 @@ class UsersController extends BaseController
         $this->view->users = $users;
     }
 
+    //离线24小时用户唤醒统计
+    function wakeupStatAction()
+    {
+        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id1";
+        $user_db = \Users::getUserDb();
+        $wake_up_days = $user_db->zrange($wake_up_user_days_key, 0, -1);
+        $datas = [];
+        $product_channel_id = 1;
+
+        foreach ($wake_up_days as $stat_at) {
+
+            $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
+            $data = $user_db->hgetall($send_user_stat_key);
+
+            if ($data) {
+                $data['stat_at'] = $stat_at;
+                $datas[] = $data;
+            }
+        }
+
+        $this->view->datas = $datas;
+        $this->view->product_channel_id = $product_channel_id;
+    }
 }
