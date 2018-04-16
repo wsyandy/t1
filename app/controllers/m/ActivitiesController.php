@@ -246,10 +246,9 @@ class ActivitiesController extends BaseController
 
 
         $start_at = $activity->start_at;
-        $end_at = $activity->end_at;
 
         $start = date("Ymd", $start_at);
-        $end = date("Ymd", $end_at);
+        $end = date("Ymd", $start_at + 86400 * 6);
 
         $opts = ['start' => $start, 'end' => $end];
         $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 1, $opts);
