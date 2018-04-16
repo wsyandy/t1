@@ -232,8 +232,6 @@ class SourcesController extends \ApplicationController
     public function sinaClickAction()
     {
 
-        //http://r.dmp.sina.com.cn/conv/track?fr=ea&conv_id={conv_id}&click_id={click_id}&devid={devid}&bhv_time={bhv_time}&sign={sign}
-        //http://www.a.com?devid={User}&fr=ea&uuid={Uuid}&SET_A={Position}&SET_ B={Adid}&SET_C={Creativeid}&SET_D={Uuid}&SET_E={Groupid}&SET_F=1
         $attrs = ['source' => 'sina'];
         foreach (['fr2', 'code', 'uuid', 'devid', 'groupid'] as $key) {
             if ($key == 'fr2') {
