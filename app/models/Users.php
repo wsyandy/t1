@@ -1304,15 +1304,6 @@ class Users extends BaseModel
                 continue;
             }
 
-            //国际版
-            if ('i_birthday' == $k) {
-
-                $this->birthday = intval($v);
-                continue;
-
-            }
-
-
             $this->$k = $v;
         }
 

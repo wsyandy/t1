@@ -23,7 +23,6 @@ trait UserEnumerations
         'height' => '身高',
         'age' => '年龄',
         'birthday' => '生日',
-        'i_birthday' => '国际版生日',
         'lang' => '语言'
     ];
 
