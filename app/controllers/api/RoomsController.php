@@ -40,6 +40,7 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
+        $new = intval($this->params('new', 0));
         $user_id = $this->currentUserId();
 
         //限制搜索条件
@@ -49,17 +50,37 @@ class RoomsController extends BaseController
             'order' => 'last_at desc, user_type asc'
         ];
 
-        if (STATUS_ON == $hot) {
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        $search_type = '';
+
+        foreach (\Rooms::$TYPES as $key => $value) {
+            $type_value = $this->params("$key");
+            if ($type_value == STATUS_ON) {
+                $search_type = $key;
+                break;
+            }
         }
 
-        //热门条件
-        if (STATUS_ON == $hot) {
-            $cond['conditions'] .= ' and hot = ' . $hot;
+        if ($search_type) {
+
+            $cond['conditions'] .= " and types like :types:";
+            $cond['bind']['types'] = "%" . $search_type . "%";
+
+        } else if ($new == STATUS_ON) {
+
+
+            $cond['conditions'] .= ' and new = ' . STATUS_ON;
+
+        } else if ($hot == STATUS_ON) {
+            //热门房间从缓存中拉取
+            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+
         } else {
+
             $cond['conditions'] .= ' and user_id <> ' . $user_id;
         }
+
+        debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 

@@ -20,7 +20,7 @@
             <li @click="rechargeAction({{ product.id }})">
                 <div class="num">
                     <i></i>
-                    <span>+{{ product.diamond }}</span>
+                    <span>{{ product.full_name }}</span>
                 </div>
                 {% if product.gold %}
                 <div class="gold">
