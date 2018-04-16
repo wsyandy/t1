@@ -14,7 +14,7 @@ class EmoticonImagesController extends BaseController
         $page = $this->params('page');
         $per_page = 30;
         $cond = $this->getConditions('emoticon_image');
-        $cond['order'] = 'status desc, id asc';
+        $cond['order'] = 'status desc, rank desc';
 
         $product_channel_id = $this->params('product_channel_id');
         if ($product_channel_id) {
@@ -26,7 +26,7 @@ class EmoticonImagesController extends BaseController
             $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
         }
 
-        $this->view->product_channels = \ProductChannels::find(['order' => 'rank desc']);
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->product_channel_id = $product_channel_id;
 
         $emoticon_images = \EmoticonImages::findPagination($cond, $page, $per_page);
