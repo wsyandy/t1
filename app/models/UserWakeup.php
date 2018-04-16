@@ -867,4 +867,30 @@ trait UserWakeup
         //关注的人开播提醒(同一个用户一个小时之内只提醒一次)
         $user->pushFollowedIntoRoomRemind();
     }
+
+    static function asyncPushActivityMessage($user_ids, $opts = [])
+    {
+        $receiver_ids = $user_ids;
+
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(',', $receiver_ids);
+        }
+
+        $title = fetch($opts, 'title');
+        $body = fetch($opts, 'body');
+        $client_url = fetch($opts, 'client_url');
+
+
+        foreach ($receiver_ids as $receiver_id) {
+
+            $receiver = Users::findFirstById($receiver_id);
+
+            if (!$receiver) {
+                continue;
+            }
+
+            $push_data = ['title' => $title, 'body' => $body, 'client_url' => $client_url];
+            \Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
+        }
+    }
 }

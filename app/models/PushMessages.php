@@ -8,10 +8,6 @@
  */
 class PushMessages extends BaseModel
 {
-    /**
-     * @type Products
-     */
-    private $_product;
 
     static $files = ['image' => APP_NAME . '/push_messages/image/%s'];
 
@@ -181,27 +177,6 @@ class PushMessages extends BaseModel
         if ($push_url) {
             return $push_url;
         }
-
-//        $product = Products::findFirstById($this->product_id);
-//        if (!$product) {
-//            info('productl not exists', $this->product_id);
-//            return null;
-//        }
-//
-//        if ($product->filterConditions($receiver)) {
-//            info('continue filter_conditions', $product->id);
-//            return null;
-//        }
-
-//        if ($receiver->isClientPlatform()) {
-//            $push_url = "app://products/detail?id=" . $product->id;
-//        } elseif ($receiver->isWxPlatform()) {
-//            $domain = $receiver->product_channel->weixin_domain;
-//            $push_url = getRequestProtocol() . $domain . '/wx/products/detail?id=' . $product->id;
-//        } elseif ($receiver->isTouchPlatform()) {
-//            $domain = $receiver->product_channel->touch_domain;
-//            $push_url = getRequestProtocol() . $domain . '/touch/products/detail?id=' . $product->id;
-//        }
 
         if (!$push_url) {
             return '';

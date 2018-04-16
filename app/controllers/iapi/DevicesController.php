@@ -32,7 +32,7 @@ class DevicesController extends BaseController
                 $user = \Users::registerForClientByDevice($device);
 
                 if (!$user) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
+                    return $this->renderJSON(ERROR_CODE_FAIL, t('激活失败',$this->currentUser()->lang), ['sid' => ""]);
                 }
 
                 $db = \Users::getUserDb();
@@ -60,12 +60,12 @@ class DevicesController extends BaseController
                     $device->update();
                 }
 
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '激活成功', ['sid' => $user->sid]);
+                return $this->renderJSON(ERROR_CODE_SUCCESS,t('激活成功',$this->currentUser()->lang), ['sid' => $user->sid]);
             } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
+                return $this->renderJSON(ERROR_CODE_FAIL, t('激活失败',$this->currentUser()->lang), ['sid' => ""]);
             }
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '非法调用', ['sid' => ""]);
+            return $this->renderJSON(ERROR_CODE_FAIL, t('非法调用',$this->currentUser()->lang), ['sid' => ""]);
         }
     }
 }

@@ -2718,7 +2718,7 @@ EOF;
 
         $user_id = 1001061;
 
-        $amount = 18888 * 2 +  5888 + 9999;
+        $amount = 18888 * 2 + 5888 + 9999;
 
         $db->zincrby($day_key, -$amount, $user_id);
         $db->zincrby($week_key, -$amount, $user_id);
@@ -2728,8 +2728,75 @@ EOF;
 
         $send_user_ids_key = "wake_up_user_send_gift_key";
         $hot_cache = Users::getHotWriteCache();
-        echoLine($hot_cache->zrange($send_user_ids_key, 0,  -1));
+        echoLine($hot_cache->zrange($send_user_ids_key, 0, -1));
     }
 
+    function findSilentUserAction()
+    {
+        $sex = 1;
+        $type = 1;
+        $file = APP_ROOT . "log/avatar_url_sex_{$type}.log";
+        $content = file_get_contents($file);
+        $content = explode(PHP_EOL, $content);
+        $avatar_urls = array_filter($content);
 
+        $users = Users::findForeach(
+            [
+                'conditions' => 'id > 500000 and user_type = :user_type: and (register_at < 1 or register_at is null) and avatar_status != :avatar_status:',
+                'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS],
+                'limit' => 1351
+            ]);
+
+        $i = 0;
+
+
+        foreach ($users as $user) {
+
+            if (!isset($avatar_urls[$i])) {
+                echoLine("avatar is null", $i);
+                continue;
+            }
+
+            $avatar_url = $avatar_urls[$i];
+            $avatar_url = trim($avatar_url);
+            $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
+
+            if (!httpSave($avatar_url, $source_filename)) {
+                info('get avatar error', $avatar_url);
+                continue;
+            }
+
+            $user->updateAvatar($source_filename);
+            echoLine($user->id);
+
+            if (file_exists($source_filename)) {
+                unlink($source_filename);
+            }
+
+            $user->sex = $sex;
+            $user->update();
+            $i++;
+        }
+
+        echoLine($i);
+
+        echoLine(count($users));
+
+
+        $user = Users::findFirstById(21);
+        $push_data = ['title' => '测试', 'body' => '测试'];
+        echoLine($user->getPushContext(), $user->getPushReceiverContext());
+        \Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+
+        $hot_cache = Users::getHotWriteCache();
+        $online_silent_room = Rooms::findFirstById(136810);
+        $key = $online_silent_room->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $online_silent_room->exitSilentRoom($user);
+        }
+    }
 }

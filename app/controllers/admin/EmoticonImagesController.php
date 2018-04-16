@@ -14,7 +14,7 @@ class EmoticonImagesController extends BaseController
         $page = $this->params('page');
         $per_page = 30;
         $cond = $this->getConditions('emoticon_image');
-        $cond['order'] = 'status desc, id asc';
+        $cond['order'] = 'status desc, rank desc';
 
         $product_channel_id = $this->params('product_channel_id');
         if ($product_channel_id) {
@@ -23,7 +23,7 @@ class EmoticonImagesController extends BaseController
             } else {
                 $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
             }
-            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
         }
 
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);

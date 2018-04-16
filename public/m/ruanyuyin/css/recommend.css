@@ -49,6 +49,7 @@ ol, ul, li {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #EDEDED;
+    flex-wrap: nowrap;
 }
 .int_box .int_list .pic{
     width: 1.226667rem;
@@ -65,7 +66,7 @@ ol, ul, li {
     flex: 1;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; 
 }
 .int_box .int_list .left{
     margin-left: 0.32rem;
@@ -119,7 +120,10 @@ ol, ul, li {
     color: #999999;
 }
 .int_box .btn_list{
-
+flex: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 .int_box .btn_list span{
     display: inline-block;
@@ -131,6 +135,7 @@ ol, ul, li {
     border-radius: 1.333333rem;
     color: #F83F56;
     font-size: 0.32rem;
+    margin-left: 0.1rem;
 }
 .int_box .btn_list span i{
     display: inline-block;
@@ -278,6 +283,7 @@ ol, ul, li {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     display: block;
+    margin-top: 0.4rem;
 }
 .interest_tag {
     font-size: 0.24rem;

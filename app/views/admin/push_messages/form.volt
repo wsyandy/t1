@@ -8,8 +8,7 @@
 {{ f.textarea('description',['label': '描述' ]) }}
 {#{{ f.textarea('text_content',['label': '文本内容(产品金额:%amount%;产品跳转地址:<a href="%product_url%">点我申请</a>;产品渠道名称:%product_channel_name%)'|e ]) }}#}
 {{ f.file('image',['label':'图片']) }}
-{{ f.input('url',['label':'跳转地址(下面产品为空)']) }}
-{{ f.select('product_id', ['label': '产品(上面url为空)', 'collection': products]) }}
+{{ f.input('url',['label':'跳转地址']) }}
 
 <div class="error_reason" style="color: red;"></div>
 {{ f.submit('保存') }}

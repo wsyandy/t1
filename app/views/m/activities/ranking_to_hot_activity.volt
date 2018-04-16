@@ -13,22 +13,22 @@
         <ul class="module_list">
             <li>
                 <p class="title">魅力榜</p>
-                <p class="module_list_box"><span>第一名</span><i>新礼物一周冠名</i></p>
+                <p class="module_list_box"><span>第一名</span><i>{{ first_charm_user.nickname }}</i></p>
             </li>
             <li>
                 <p class="title">贡献榜</p>
-                <p class="module_list_box"><span>第一名</span><i>一周热门活动推荐位</i></p>
+                <p class="module_list_box"><span>第一名</span><i>{{ first_wealth_user.nickname }}</i></p>
             </li>
         </ul>
-        <div class="ranking_list_title">
-            <span>日榜</span>
-        </div>
-        <ul class="module_list">
-            <li>
-                <p class="title">贡献榜</p>
-                <p class="module_list_box"><span>第一名</span><i>一天热门活动推荐位</i></p>
-            </li>
-        </ul>
+        {#<div class="ranking_list_title">#}
+            {#<span>日榜</span>#}
+        {#</div>#}
+        {#<ul class="module_list">#}
+            {#<li>#}
+                {#<p class="title">贡献榜</p>#}
+                {#<p class="module_list_box"><span>第一名</span><i>一天热门活动推荐位</i></p>#}
+            {#</li>#}
+        {#</ul>#}
         <div class="ranking_list_title">
             <span>活动规则</span>
         </div>

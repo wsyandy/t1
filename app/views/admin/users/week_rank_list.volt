@@ -1,4 +1,8 @@
 <form method="get" action="/admin/users/week_rank_list" name="search_form" autocomplete="off">
+    <label for="product_channel_id">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
 
     <label for="stat_at">时间</label>
     <input type="text" name="stat_at" class="form_datetime" id="stat_at" value="{{ stat_at }}" size="16">

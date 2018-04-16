@@ -31,7 +31,7 @@ class MusicsController extends BaseController
             $cond['conditions'] = 'name like :name: or singer_name like :singer_name:';
             $cond['bind'] = ['name' => '%' . $name . "%", 'singer_name' => "%" . $singer_name . "%"];
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数错误',$this->currentUser()->lang));
         }
 
         $cond['order'] = 'rank desc,id desc';
@@ -49,7 +49,7 @@ class MusicsController extends BaseController
         $music = \Musics::findFirstById($id);
 
         if (!$music) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $music->down($this->currentUser()->id);
@@ -64,7 +64,7 @@ class MusicsController extends BaseController
         $music = \Musics::findFirstById($id);
 
         if (!$music) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $music->remove($this->currentUser()->id);

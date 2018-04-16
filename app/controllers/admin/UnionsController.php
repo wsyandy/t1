@@ -206,7 +206,15 @@ class UnionsController extends BaseController
     {
         $start_at = $this->params('start_at', date('Y-m-d', beginOfDay()));
 
-        $key = "total_union_fame_value_day_" . date("Ymd", strtotime($start_at));
+        $product_channel_id = $this->params('product_channel_id');
+
+        if (isBlank($product_channel_id)) {
+            $key_product_channel = '';
+        } else {
+            $key_product_channel = "_product_channel_id_" . $product_channel_id;
+        }
+
+        $key = "total_union_fame_value_day_" . date("Ymd", strtotime($start_at)) . $key_product_channel;
 
         $page = $this->params('page', 1);
 
@@ -217,6 +225,8 @@ class UnionsController extends BaseController
         $this->view->unions = $unions;
 
         $this->view->start_at = $start_at;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = intval($product_channel_id);
 
     }
 
@@ -228,7 +238,15 @@ class UnionsController extends BaseController
 
         $end = date("Ymd", strtotime($start) + 6 * 86400);
 
-        $key = "total_union_fame_value_" . $start . "_" . $end;
+        $product_channel_id = $this->params('product_channel_id');
+
+        if (isBlank($product_channel_id)) {
+            $key_product_channel = '';
+        } else {
+            $key_product_channel = "_product_channel_id_" . $product_channel_id;
+        }
+
+        $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
 
         $page = $this->params('page', 1);
 
@@ -239,6 +257,8 @@ class UnionsController extends BaseController
         $this->view->unions = $unions;
 
         $this->view->start_at = $start_at;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = intval($product_channel_id);
 
     }
 }

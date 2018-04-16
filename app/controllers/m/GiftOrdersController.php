@@ -25,8 +25,17 @@ class GiftOrdersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $gift_orders->toJson('gift_orders', 'toDetailJson'));
         }
 
+        $code = $this->currentProductChannel()->code;
+        $coin_name = '';
+        if ($code == 'yuewan') {
+            $coin_name = 'Hi';
+        } else if ($code == 'ruanyuyin') {
+            $coin_name = 'R';
+        }
+
+        $this->view->coin_name = $coin_name;
         $this->view->sid = $this->currentUser()->sid;
-        $this->view->code = $this->currentProductChannel()->code;
+        $this->view->code = $code;
         $this->view->hi_coins = $this->currentUser()->getHiCoinText();
         $this->view->title = "我的礼物";
     }

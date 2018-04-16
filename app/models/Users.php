@@ -277,17 +277,6 @@ class Users extends BaseModel
         }
     }
 
-    function isHignVersion()
-    {
-        $product_channel = $this->product_channel;
-
-        if ($this->isIos()) {
-            return $this->version_code > 11;
-        }
-
-        return $this->version_code > 4;
-    }
-
     //统计用户在房间时间
     function statRoomTime()
     {
@@ -1304,15 +1293,6 @@ class Users extends BaseModel
                 continue;
             }
 
-            //国际版
-            if ('i_birthday' == $k) {
-
-                $this->birthday = intval($v);
-                continue;
-
-            }
-
-
             $this->$k = $v;
         }
 
@@ -1609,8 +1589,6 @@ class Users extends BaseModel
         $other_friend_list_key = 'friend_list_user_id_' . $other_user->id;
         $add_key = 'add_friend_list_user_id_' . $other_user->id;
         $added_key = 'added_friend_list_user_id_' . $this->id;
-        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
-        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
         $user_db = Users::getUserDb();
 
         $time = time();
@@ -1618,13 +1596,11 @@ class Users extends BaseModel
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
             $user_db->zadd($other_friend_list_key, $time, $this->id);
-            $user_db->hdel($user_introduce_key, $other_user->id);
         }
 
         if ($user_db->zscore($added_key, $other_user->id)) {
             $user_db->zrem($added_key, $other_user->id);
             $user_db->zadd($friend_list_key, $time, $other_user->id);
-            $user_db->hdel($other_user_introduce_key, $this->id);
         }
 
     }
@@ -1637,7 +1613,18 @@ class Users extends BaseModel
         $add_total_key = 'friend_total_list_user_id_' . $this->id;
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
 
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
+
         $user_db = Users::getUserDb();
+
+        if ($user_db->hget($user_introduce_key, $other_user->id)) {
+            $user_db->hdel($other_user_introduce_key, $other_user->id);
+        }
+
+        if ($user_db->hget($other_user_introduce_key, $this->id)) {
+            $user_db->hdel($user_introduce_key, $other_user->id);
+        }
 
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
@@ -1823,7 +1810,9 @@ class Users extends BaseModel
         }
 
         //屏蔽公司内部账号
-        $filter_ids[] = 1159082;
+        $company_filter_ids = [1159082, 102028, 1163191];
+
+        $filter_ids = array_merge($filter_ids, $company_filter_ids);
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -2905,23 +2894,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -2962,13 +2948,19 @@ class Users extends BaseModel
         if ($value > 0) {
             $db = Users::getUserDb();
 
-            //self::saveLastFieldRankList($user_id, $field);
+            $user = Users::findFirstById($user_id);
+            if (isBlank($user) || $user->product_channel_id) {
+                info("user_id is invalid", $user);
+                return;
+            }
 
-            $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
+            $key_product_channel = "_product_channel_id_" . $user->product_channel_id;
+
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd") . $key_product_channel;
             $start = date("Ymd", strtotime("last sunday next day", time()));
             $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-            $total_key = "total_" . $field . "_rank_list";
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+            $total_key = "total_" . $field . "_rank_list" . $key_product_channel;
 
             $db->zincrby($day_key, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
@@ -2988,7 +2980,7 @@ class Users extends BaseModel
 
     function myFieldRank($list_type, $field)
     {
-        $key = self::generateFieldRankListKey($list_type, $field);
+        $key = self::generateFieldRankListKey($list_type, $field, ['product_channel_id' => $this->product_channel_id]);
 
         return $this->getRankByKey($key);
     }
@@ -3025,25 +3017,31 @@ class Users extends BaseModel
 
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
+        $product_channel_id = fetch($opts, 'product_channel_id');
+
+        if (isBlank($product_channel_id)) {
+            $key_product_channel = '';
+        } else {
+            $key_product_channel = "_product_channel_id_" . $product_channel_id;
+        }
+
+
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list" . $key_product_channel;
+                break;
+            }
             default:
                 return '';
         }

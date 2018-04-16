@@ -70,9 +70,9 @@ trait GiftOrderInternational
 
                     $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
                     $gift_order->update();
-                    $gift_order->updateUserGiftData($gift);
+                    $gift_order->updateUserGiftDataByInternational($gift);
 
-                }else{
+                } else {
 
                     $gift_order->status = GIFT_ORDER_STATUS_WAIT;
                     $gift_order->update();
@@ -88,5 +88,40 @@ trait GiftOrderInternational
 
         info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
         return false;
+    }
+
+
+    function updateUserGiftDataByInternational($gift)
+    {
+        if ($gift->isCar()) {
+            \UserGifts::delay()->updateGiftExpireAt($this->id);
+        } else {
+            \UserGifts::delay()->updateGiftNum($this->id);
+        }
+
+        $this->updateUserDataByInternational();
+    }
+
+    function updateUserDataByInternational()
+    {
+        //统计房间收益
+        if ($this->room) {
+
+            if (!$this->gift->isCar()) {
+                $this->room->statIncome($this->amount);
+
+                if (!$this->sender->isSilent()) {
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num);
+                }
+            }
+
+            if ($this->sender_id != $this->user_id) {
+                //推送全局消息
+                Rooms::allNoticePush($this);
+            }
+        }
+
+        //国际版钻石
+        \Users::delay()->updateExperienceByInternational($this->id);
     }
 }

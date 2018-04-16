@@ -101,9 +101,9 @@ class HiCoinHistories extends BaseModel
         $hi_coins = fetch($opts, 'hi_coins');
         $remark = fetch($opts, 'remark');
         $fee_type = fetch($opts, 'fee_type');
+        $async_verify_data = fetch($opts, 'async_verify_data', 0);
 
         $user = Users::findFirstById($user_id);
-
         if (!$user) {
             info($user_id);
             return;
@@ -112,7 +112,20 @@ class HiCoinHistories extends BaseModel
         info($user_id, $gift_order_id, $opts);
 
         $lock_key = "update_user_hi_coins_lock_" . $user_id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key); // 记得释放锁
+
+        if ($gift_order_id) {
+            $old_hi_coin_history = HiCoinHistories::findFirstByGiftOrderId($gift_order_id);
+            if ($old_hi_coin_history) {
+                info("hi_coin_history_already_save", $user_id, $gift_order_id);
+                unlock($lock);
+                return;
+            }else{
+                if($async_verify_data){
+                    info("Exce hi_coin_history_save", $user_id, $gift_order_id, $opts);
+                }
+            }
+        }
 
         $hi_coin_history = new HiCoinHistories();
         $hi_coin_history->user_id = $user_id;
@@ -129,6 +142,7 @@ class HiCoinHistories extends BaseModel
 
             if (!$gift_order) {
                 info($gift_order_id);
+                unlock($lock);
                 return;
             }
 
@@ -147,6 +161,7 @@ class HiCoinHistories extends BaseModel
 
             if (!$withdraw_history) {
                 info($withdraw_history_id);
+                unlock($lock);
                 return;
             }
 
@@ -173,7 +188,7 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->product_channel_id = $user->product_channel_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
-        
+
         if (!$hi_coin_history->save()) {
             unlock($lock);
             info('Exce', $user_id, $opts);

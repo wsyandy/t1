@@ -179,7 +179,13 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $unions = \Unions::findFameValueRankList($list_type, $page, $per_page);
+        if (isDevelopmentEnv()) {
+            $opts = ['product_channel_id' => $this->currentProductChannelId()];
+        } else {
+            $opts = [];
+        }
+
+        $unions = \Unions::findFameValueRankList($list_type, $page, $per_page, $opts);
 
         $unions_json = $unions->toJson('unions', 'toSimpleJson');
 

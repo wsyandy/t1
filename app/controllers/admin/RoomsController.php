@@ -389,8 +389,6 @@ class RoomsController extends BaseController
         $id = $this->params('id');
         $room = \Rooms::findFirstById($id);
         $types = $this->params('types');
-        debug("---", $id);
-
 
         if ($types) {
             $room->types = implode(',', $types);

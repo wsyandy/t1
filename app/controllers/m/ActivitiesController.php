@@ -35,13 +35,23 @@ class ActivitiesController extends BaseController
             $end_at = $activity->end_at;
 
             //上周排行榜开始时间
-            $last_stat_at = strtotime("last monday", time() - 86400 * 6);
-            $last_end_at = $last_stat_at + 86400 * 6;
+            //$last_stat_at = strtotime("last monday", time() - 86400 * 6);
+            //$last_end_at = $last_stat_at + 86400 * 6;
+
+            $last_stat_at = strtotime("2018-04-02");
+            $last_end_at = strtotime("2018-04-08");
 
             $lats_start = date("Ymd", $last_stat_at);
             $last_end = date("Ymd", $last_end_at);
 
-            $opts = ['start' => $lats_start, 'end' => $last_end];
+            $product_channel_id = $this->currentProductChannelId();
+
+            if (isDevelopmentEnv()) {
+                $opts = ['start' => $lats_start, 'end' => $last_end, 'product_channel_id' => $product_channel_id];
+            } else {
+                $opts = ['start' => $lats_start, 'end' => $last_end];
+            }
+
             $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 3, $opts);
             $charm_users = \Users::findFieldRankList('week', 'charm', 1, 3, $opts);
 
@@ -240,7 +250,44 @@ class ActivitiesController extends BaseController
     {
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
+
+
+        $start_at = $activity->start_at;
+
+        $start = date("Ymd", $start_at);
+        $end = date("Ymd", $start_at + 86400 * 6);
+
+        $product_channel_id = $this->currentProductChannelId();
+
+        if (isDevelopmentEnv()) {
+            $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
+        } else {
+            $opts = ['start' => $start, 'end' => $end];
+        }
+
+        $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 1, $opts);
+        $charm_users = \Users::findFieldRankList('week', 'charm', 1, 1, $opts);
+
+        $first_wealth_user = '';
+        $first_charm_user = '';
+
+        if (count($wealth_users)) {
+            $first_wealth_user = $wealth_users[0];
+        }
+
+        if (count($charm_users)) {
+            $first_charm_user = $charm_users[0];
+        }
+
+        $this->view->first_wealth_user = $first_wealth_user;
+        $this->view->first_charm_user = $first_charm_user;
         $this->view->activity = $activity;
         $this->view->title = "活动奖励";
+    }
+
+    //梦幻周榜
+    function dreamWeekRankActivityAction()
+    {
+        $this->view->title = "梦幻周榜";
     }
 }

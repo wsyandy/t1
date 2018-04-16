@@ -1,0 +1,1 @@
+ALTER TABLE emoticon_images ALTER COLUMN duration type DECIMAL (10, 2);

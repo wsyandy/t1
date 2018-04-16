@@ -8,10 +8,11 @@
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>
     </div>
 
-    <div class="gift_money" v-if="receive"
+    {#国际版屏蔽此入口#}
+    <div class="gift_money" v-if="receive && code!='sala'"
          @click.stop="redirectAction('/m/withdraw_histories?sid={{ sid }}&code={{ code }}')">
         <h3>我的收益</h3>
-        <p><span>{{ hi_coins }}</span> R币 <img src="/m/images/gift_icon.png"></p>
+        <p><span>{{ hi_coins }}</span> {{ coin_name }}币 <img src="/m/images/gift_icon.png"></p>
     </div>
 
     <div class="gift_list" v-for="gift_order in gift_orders" v-if="receive">

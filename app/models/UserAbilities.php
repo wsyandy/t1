@@ -21,7 +21,7 @@ trait UserAbilities
             return intval($this->gold) >= $total_amount;
         }
 
-        if ($gift->isIGoldPayType()){
+        if ($gift->isIGoldPayType()) {
             return intval($this->i_gold) >= $total_amount;
         }
 
@@ -55,4 +55,20 @@ trait UserAbilities
     {
         return $this->isAndroid();
     }
+
+    function canShowGoldGift()
+    {
+        $product_channel = $this->product_channel;
+
+        if (1 != $product_channel->id) {
+            return true;
+        }
+
+        if ($this->isIos()) {
+            return $this->version_code > 11;
+        }
+
+        return $this->version_code > 4;
+    }
+
 }

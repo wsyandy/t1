@@ -1,4 +1,8 @@
 <form action="/admin/unions/day_rank_list" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="product_channel_id">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
 
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
