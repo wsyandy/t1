@@ -96,6 +96,7 @@ class XingYuTask extends \Phalcon\Cli\Task
 
         while ($avatar = fgets($f_avatar)) {
             $nickname = fgets($f_nickname);
+            $nickname = censor_words($nickname);
             $avatar = str_replace("\r\n", '', $avatar); //清除换行符
             $avatar_url = trim($avatar);
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
