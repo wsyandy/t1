@@ -1814,7 +1814,7 @@ class Users extends BaseModel
         }
 
         //屏蔽公司内部账号
-        $company_filter_ids = [1159082, 102028];
+        $company_filter_ids = [1159082, 102028, 1163191];
 
         $filter_ids = array_merge($filter_ids, $company_filter_ids);
 
