@@ -186,7 +186,7 @@ ol, ul, li {
     font-size: 0.426667rem;
     color: #FFFFFF;
     background: url(../images/title_bg.png) no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
 }
 .y_color{
     color: #2B5E82 !important;
