@@ -1814,7 +1814,9 @@ class Users extends BaseModel
         }
 
         //屏蔽公司内部账号
-        $filter_ids[] = 1159082;
+        $company_filter_ids = [1159082, 102028];
+
+        $filter_ids = array_merge($filter_ids, $company_filter_ids);
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
