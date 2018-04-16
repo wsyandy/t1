@@ -401,12 +401,16 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 100);
         $type = $this->params('type', 'wealth');
         $stat_at = $this->params('stat_at', date("Y-m-d"));
-        $opts = ['date' => date("Ymd", strtotime($stat_at))];
+        $product_channel_id = $this->params('product_channel_id', 1);
+        $opts = ['date' => date("Ymd", strtotime($stat_at)), 'product_channel_id' => $product_channel_id];
+
         $users = \Users::findFieldRankList('day', $type, $page, $per_page, $opts);
         $this->view->users = $users;
         $this->view->stat_at = $stat_at;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = intval($product_channel_id);
     }
 
     function weekRankListAction()
@@ -419,13 +423,17 @@ class UsersController extends BaseController
         $start = date("Ymd", strtotime($stat_at));
         $end = date("Ymd", strtotime($start) + 6 * 86400);
 
-        $opts = ['start' => $start, 'end' => $end];
+        $product_channel_id = $this->params('product_channel_id', 1);
+
+        $opts = ['start' => $start, 'end' => $end, 'product_channel_id' => $product_channel_id];
 
         $users = \Users::findFieldRankList('week', $type, $page, $per_page, $opts);
         $this->view->users = $users;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
         $this->view->stat_at = $stat_at;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = intval($product_channel_id);
     }
 
     function totalRankListAction()
@@ -433,10 +441,17 @@ class UsersController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 100);
         $type = $this->params('type', 'wealth');
-        $users = \Users::findFieldRankList('total', $type, $page, $per_page);
+
+        $product_channel_id = $this->params('product_channel_id', 1);
+
+        $opts = ['product_channel_id' => $product_channel_id];
+
+        $users = \Users::findFieldRankList('total', $type, $page, $per_page, $opts);
         $this->view->users = $users;
         $this->view->types = ['charm' => '魅力榜', 'wealth' => '财富榜'];
         $this->view->type = $type;
+        $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
+        $this->view->product_channel_id = intval($product_channel_id);
     }
 
     function reservedAction()

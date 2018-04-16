@@ -14,7 +14,7 @@ class EmoticonImagesController extends BaseController
         $page = $this->params('page');
         $per_page = 30;
         $cond = $this->getConditions('emoticon_image');
-        $cond['order'] = 'status desc, id asc';
+        $cond['order'] = 'status desc, rank desc';
 
         $product_channel_id = $this->params('product_channel_id');
         if ($product_channel_id) {

@@ -300,9 +300,9 @@ class Gifts extends BaseModel
             'order' => 'rank desc, amount asc'
         ];
 
-        if ($abroad){
+        if ($abroad) {
             $conditions['conditions'] .= " and abroad = 1";
-        }else{
+        } else {
             $conditions['conditions'] .= " and abroad != 1";
         }
 
@@ -322,7 +322,7 @@ class Gifts extends BaseModel
 
 
         //临时使用
-        if (!$user->isHignVersion()) {
+        if (!$user->canShowGoldGift()) {
 
             $gold_gift_ids = [];
 
@@ -364,8 +364,8 @@ class Gifts extends BaseModel
     {
         $gift = fetch($opts, 'gift');
         $gift_num = fetch($opts, 'gift_num');
-        $user = \Users::findById($opts['user_id']);
         $sender = fetch($opts, 'sender');
+        $user = \Users::findById($opts['user_id']);
         $data = [];
 
         if ($gift) {

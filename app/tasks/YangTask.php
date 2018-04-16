@@ -661,4 +661,70 @@ class YangTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(1157712);
         echoLine($user);
     }
+
+    function fixRankList($key)
+    {
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, 1, -1, 'withscores');
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $user_id => $result) {
+            $ids[] = $user_id;
+            $fields[$user_id] = $result;
+        }
+
+        $users = Users::findByIds($ids);
+
+        foreach ($users as $user) {
+            $product_channel_id = $user->product_channel_id;
+            if ($product_channel_id) {
+                $key_product_channel = "_product_channel_id_" . $product_channel_id;
+
+                $db->zincrby($key . $key_product_channel, $fields[$user->id], $user->id);
+            }
+        }
+    }
+
+
+    function fixUserDayRankListAction($params)
+    {
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
+        $this->fixRankList($day_key);
+    }
+
+    function fixUserWeekRankListAction($params)
+    {
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+
+        $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+
+        $this->fixRankList($week_key);
+    }
+
+    function fixUserTotalRankListAction($params)
+    {
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $total_key = "total_" . $field . "_rank_list";
+        $this->fixRankList($total_key);
+    }
 }

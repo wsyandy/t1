@@ -32,7 +32,7 @@ class GiftsController extends BaseController
             $cond['conditions'] = "abroad != 1";
         }
 
-        $cond['order'] = 'status desc, rank asc';
+        $cond['order'] = 'status desc, rank desc';
         $gifts = \Gifts::findPagination($cond, $page, $per_page);
         $this->view->gifts = $gifts;
         $this->view->product_channels = \ProductChannels::find(['order' => ' id desc', 'columns' => 'id,name']);

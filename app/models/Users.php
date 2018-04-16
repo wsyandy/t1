@@ -277,17 +277,6 @@ class Users extends BaseModel
         }
     }
 
-    function isHignVersion()
-    {
-        $product_channel = $this->product_channel;
-
-        if ($this->isIos()) {
-            return $this->version_code > 11;
-        }
-
-        return $this->version_code > 4;
-    }
-
     //统计用户在房间时间
     function statRoomTime()
     {
@@ -2908,23 +2897,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -2965,13 +2951,19 @@ class Users extends BaseModel
         if ($value > 0) {
             $db = Users::getUserDb();
 
-            //self::saveLastFieldRankList($user_id, $field);
+            $user = Users::findFirstById($user_id);
+            if (isBlank($user) || $user->product_channel_id) {
+                info("user_id is invalid", $user);
+                return;
+            }
 
-            $day_key = "day_" . $field . "_rank_list_" . date("Ymd");
+            $key_product_channel = "_product_channel_id_" . $user->product_channel_id;
+
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd") . $key_product_channel;
             $start = date("Ymd", strtotime("last sunday next day", time()));
             $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-            $total_key = "total_" . $field . "_rank_list";
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+            $total_key = "total_" . $field . "_rank_list" . $key_product_channel;
 
             $db->zincrby($day_key, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
@@ -2991,7 +2983,7 @@ class Users extends BaseModel
 
     function myFieldRank($list_type, $field)
     {
-        $key = self::generateFieldRankListKey($list_type, $field);
+        $key = self::generateFieldRankListKey($list_type, $field, ['product_channel_id' => $this->product_channel_id]);
 
         return $this->getRankByKey($key);
     }
@@ -3028,25 +3020,31 @@ class Users extends BaseModel
 
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
+        $product_channel_id = fetch($opts, 'product_channel_id');
+
+        if (isBlank($product_channel_id)) {
+            return '';
+        }
+
+        $key_product_channel = "_product_channel_id_" . $product_channel_id;
+
+
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list" . $key_product_channel;
+                break;
+            }
             default:
                 return '';
         }

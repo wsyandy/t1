@@ -550,7 +550,9 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page, ['product_channel_id' => $product_channel_id]);
 
         $res = $users->toJson('users', 'toRankListJson');
 
@@ -587,7 +589,9 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page, ['product_channel_id' => $product_channel_id]);
 
         $res = $users->toJson('users', 'toRankListJson');
 
