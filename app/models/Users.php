@@ -1624,7 +1624,18 @@ class Users extends BaseModel
         $add_total_key = 'friend_total_list_user_id_' . $this->id;
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
 
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
+
         $user_db = Users::getUserDb();
+
+        if ($user_db->hget($user_introduce_key, $other_user->id)) {
+            $user_db->hdel($other_user_introduce_key, $other_user->id);
+        }
+
+        if ($user_db->hget($other_user_introduce_key, $this->id)) {
+            $user_db->hdel($user_introduce_key, $other_user->id);
+        }
 
         if ($user_db->zscore($add_key, $this->id)) {
             $user_db->zrem($add_key, $this->id);
