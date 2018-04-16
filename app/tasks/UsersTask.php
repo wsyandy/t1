@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1057791;
-        $new_user_id = 153717;
+        $user_id = 1014295;
+        $new_user_id = 153740;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -130,7 +130,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 153717;
+        $new_user->uid = 153740;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
@@ -733,7 +733,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
 
 
-        $user_id = 8888;
+        $user_id = 1014295;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
         $user->avatar_status = AUTH_FAIL;

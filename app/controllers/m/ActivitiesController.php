@@ -243,6 +243,30 @@ class ActivitiesController extends BaseController
     {
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
+
+
+        $start_at = $activity->start_at;
+
+        $start = date("Ymd", $start_at);
+        $end = date("Ymd", $start_at + 86400 * 6);
+
+        $opts = ['start' => $start, 'end' => $end];
+        $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 1, $opts);
+        $charm_users = \Users::findFieldRankList('week', 'charm', 1, 1, $opts);
+
+        $first_wealth_user = '';
+        $first_charm_user = '';
+
+        if (count($wealth_users)) {
+            $first_wealth_user = $wealth_users[0];
+        }
+
+        if (count($charm_users)) {
+            $first_charm_user = $charm_users[0];
+        }
+
+        $this->view->first_wealth_user = $first_wealth_user;
+        $this->view->first_charm_user = $first_charm_user;
         $this->view->activity = $activity;
         $this->view->title = "活动奖励";
     }
