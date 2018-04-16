@@ -268,15 +268,8 @@ class GiftOrders extends BaseModel
             }
         }
 
-        //国际版钻石
-        if ($this->gift->isIGoldPayType()) {
-
-            \Users::delay()->updateExperienceByInternational($this->id);
-
-        } else {
-            \Users::delay()->updateExperience($this->id);
-            \Users::delay()->updateCharm($this->id);
-        }
+        \Users::delay()->updateExperience($this->id);
+        \Users::delay()->updateCharm($this->id);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

@@ -44,11 +44,22 @@ class MenTask extends \Phalcon\Cli\Task
 //        $keywords = '13a2';
 //        $rs = preg_match('/^[0-9]*$/', $keywords);
 //        echoLine($rs);
-        $fee_type = I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD;
-        if (!in_array($fee_type, array_keys(IGoldHistories::$FEE_TYPE))) {
-            echoLine('fee_type is false', $fee_type);
-        }
+//        $fee_type = I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD;
+//        if (!in_array($fee_type, array_keys(IGoldHistories::$FEE_TYPE))) {
+//            echoLine('fee_type is false', $fee_type);
+//        }
 
+        $click_id = "54321";
+        $conv_id = "n855_1_104654";
+        $token = "aa6f20cecdf0cf948ac01b52febf7469";
+        $params = $click_id . $conv_id;
+
+        $str = hash_hmac("sha1", $params, $token, true);
+        echoLine('c', $str);
+        $str = base64_encode($str);
+        echoLine('str', $str);
+        $sign = urlencode($str);
+        echoLine('sign', $sign);
     }
 
     function insertUserAction()

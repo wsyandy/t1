@@ -661,4 +661,95 @@ class YangTask extends \Phalcon\Cli\Task
         $user = Users::findFirstById(1157712);
         echoLine($user);
     }
+
+    function fixRankList($key)
+    {
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, 1, -1, 'withscores');
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $user_id => $result) {
+            $ids[] = $user_id;
+            $fields[$user_id] = $result;
+        }
+
+        $users = Users::findByIds($ids);
+
+        foreach ($users as $user) {
+            $product_channel_id = $user->product_channel_id;
+            if ($product_channel_id) {
+                $key_product_channel = "_product_channel_id_" . $product_channel_id;
+
+                $db->zincrby($key . $key_product_channel, $fields[$user->id], $user->id);
+            }
+        }
+    }
+
+
+    function fixUserDayRankListAction($params)
+    {
+        $time = time();
+
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $days = intval($params[1]);
+        if ($days <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $days; $i++) {
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd", $time - 86400 * $i);
+            echoLine($day_key);
+            $this->fixRankList($day_key);
+        }
+    }
+
+    function fixUserWeekRankListAction($params)
+    {
+        $start_at = strtotime("last sunday next day", time());
+        $end_at = strtotime("next monday", time()) - 1;
+
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $weeks = intval($params[1]);
+        if ($weeks <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $weeks; $i++) {
+
+            $start = date("Ymd", $start_at - 86400 * 7 * $i);
+            $end = date("Ymd", $end_at - 86400 * 7 * $i);
+
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+
+            echoLine($week_key);
+
+            $this->fixRankList($week_key);
+        }
+    }
+
+    function fixUserTotalRankListAction($params)
+    {
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $total_key = "total_" . $field . "_rank_list";
+        $this->fixRankList($total_key);
+    }
 }
