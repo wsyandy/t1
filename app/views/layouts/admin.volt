@@ -288,6 +288,10 @@
                         <li><a href="/admin/gift_stats/days">礼物统计</a></li>
                     {% endif %}
 
+                    {% if isAllowed('users', 'wakeup_stat') %}
+                        <li><a href="/admin/users/wakeup_stat">唤醒离线24小时用户统计</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}
