@@ -65,7 +65,7 @@ class RoomsController extends BaseController
             $search_type = '';
 
             foreach (\Rooms::$TYPES as $key => $value) {
-                $type_value = $this->params("$key");
+                $type_value = $this->params($key);
                 if ($type_value == STATUS_ON) {
                     $search_type = $key;
                     break;
@@ -75,7 +75,7 @@ class RoomsController extends BaseController
             if ($search_type) {
 
                 $cond['conditions'] .= " and types like :types:";
-                $cond['bind']['types'] = "%," . $search_type . ",%";
+                $cond['bind']['types'] = "%" . $search_type . "%";
 
             } else {
 
