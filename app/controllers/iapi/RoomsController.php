@@ -26,7 +26,7 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
@@ -55,7 +55,7 @@ class RoomsController extends BaseController
     {
         $name = $this->params('name');
         if (isBlank($name)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
@@ -63,7 +63,7 @@ class RoomsController extends BaseController
             $room = \Rooms::createRoom($this->currentUser(), $name);
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $room->toBasicJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('创建成功',$this->currentUser()->lang), $room->toBasicJson());
     }
 
     //更新房间信息
@@ -72,15 +72,15 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $room->updateRoom($this->params());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('更新成功',$this->currentUser()->lang));
     }
 
     //进入房间
@@ -95,7 +95,7 @@ class RoomsController extends BaseController
             $room = \Rooms::findFirstById($room_id);
 
             if (!$room) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
             }
 
         } else {
@@ -103,7 +103,7 @@ class RoomsController extends BaseController
             $user = \Users::findFirstById($user_id);
 
             if (!$user || $user->current_room_id < 1) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('用户已不在房间',$this->currentUser()->lang));
             }
 
             $room = $user->current_room;
@@ -111,7 +111,7 @@ class RoomsController extends BaseController
 
 
         if ($room->isForbidEnter($this->currentUser())) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您被禁止禁入房间,请稍后尝试',$this->currentUser()->lang));
         }
 
         $current_user_id = $this->currentUser()->id;
@@ -120,11 +120,11 @@ class RoomsController extends BaseController
         //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
         if (!$room->checkFilterUser($current_user_id)) {
             if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && $room->password != $password) {
-                return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                return $this->renderJSON(ERROR_CODE_FORM, t('密码错误',$this->currentUser()->lang));
             }
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $room->toBasicJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang), $room->toBasicJson());
 
     }
 
@@ -135,7 +135,7 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
 
@@ -173,7 +173,7 @@ class RoomsController extends BaseController
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang), $res);
     }
 
     //房间基本信息
@@ -182,7 +182,7 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room->toBasicJson());
@@ -195,16 +195,16 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isInRoom($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('用户已不在房间',$this->currentUser()->lang));
         }
 
         $room->exitRoom($this->currentUser());
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
     //房间加锁
@@ -214,22 +214,22 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $password = $this->params('password');
 
         if (!$password) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '密码不能为空');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('密码不能为空',$this->currentUser()->lang));
         }
 
         $room->lock($password);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
     //房间解锁
@@ -239,16 +239,16 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $room->unlock();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
 
@@ -259,17 +259,17 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $room->chat = true;
         $room->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
 
@@ -280,17 +280,17 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $room->chat = false;
         $room->save();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
     //房间用户列表
@@ -303,12 +303,12 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $users = $room->findUsers($page, $per_page);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang), $users->toJson('users', 'toSimpleJson'));
     }
 
 
@@ -318,17 +318,17 @@ class RoomsController extends BaseController
         $room_id = $this->params('id', 0);
 
         if (!$room_id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('房间不存在',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->canKickingUser($room, $this->otherUser())) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $other_user_id = $this->otherUserId();
@@ -349,16 +349,16 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->canManagerRoom($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $this->otherUser()->setChat($room, true);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
     //禁言用户
@@ -369,16 +369,16 @@ class RoomsController extends BaseController
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->canManagerRoom($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $this->otherUser()->setChat($room, false);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
 
@@ -390,29 +390,29 @@ class RoomsController extends BaseController
         $user_id = $this->otherUserId();
 
         if (!$id || !$duration) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstById($id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间信息错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('房间信息错误',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '权限不足');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('权限不足',$this->currentUser()->lang));
         }
 
         if ($this->otherUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '不能设置自己为管理员');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('不能设置自己为管理员',$this->currentUser()->lang));
         }
 
         if ($this->otherUser()->isManager($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户已经是管理员');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('用户已经是管理员',$this->currentUser()->lang));
         }
 
         if ($room->manager_num >= 2) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('管理员已满',$this->currentUser()->lang));
         }
 
         $room->addManager($user_id, $duration);
@@ -430,17 +430,17 @@ class RoomsController extends BaseController
         $id = $this->params('id');
 
         if (!$id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstById($id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间信息错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('房间信息错误',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '权限不足');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('权限不足',$this->currentUser()->lang));
         }
 
         $room->deleteManager($this->otherUserId());
@@ -457,21 +457,21 @@ class RoomsController extends BaseController
         $user_id = $this->otherUserId();
 
         if (!$id || !$duration) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstById($id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间信息错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('房间信息错误',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '权限不足');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('权限不足',$this->currentUser()->lang));
         }
 
         if (!$this->otherUser()->isManager($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户已不是管理员');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('用户已不是管理员',$this->currentUser()->lang));
         }
 
         $room->updateManager($this->otherUserId(), $duration);
@@ -489,13 +489,13 @@ class RoomsController extends BaseController
         $id = $this->params('id');
 
         if (!$id) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数非法',$this->currentUser()->lang));
         }
 
         $room = \Rooms::findFirstById($id);
 
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间信息错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('房间信息错误',$this->currentUser()->lang));
         }
 
         $managers = $room->findManagers();
@@ -508,22 +508,22 @@ class RoomsController extends BaseController
         $room_id = $this->params('id');
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('无效的房间',$this->currentUser()->lang));
         }
 
         $room_theme_id = $this->params('room_theme_id');
         $room_theme = \RoomThemes::findFirstById($room_theme_id);
         if (!$room_theme || $room_theme->status != STATUS_ON) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '无效的主题');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('无效的主题',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang));
         }
 
         $room->room_theme_id = $room_theme_id;
         $room->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', ['theme_image_url' => $room_theme->theme_image_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang), ['theme_image_url' => $room_theme->theme_image_url]);
     }
 
     //关闭主题
@@ -532,16 +532,16 @@ class RoomsController extends BaseController
         $room_id = $this->params('id');
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('无效的房间',$this->currentUser()->lang));
         }
 
         if (!$this->currentUser()->isRoomHost($room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限', '');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('您无此权限',$this->currentUser()->lang), '');
         }
 
         $room->room_theme_id = 0;
         $room->save();
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('成功',$this->currentUser()->lang));
     }
 
 
