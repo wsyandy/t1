@@ -50,34 +50,37 @@ class RoomsController extends BaseController
             'order' => 'last_at desc, user_type asc'
         ];
 
-        $search_type = '';
-
-        foreach (\Rooms::$TYPES as $key => $value) {
-            $type_value = $this->params("$key");
-            if ($type_value == STATUS_ON) {
-                $search_type = $key;
-                break;
-            }
-        }
-
-        if ($search_type) {
-
-            $cond['conditions'] .= " and types like :types:";
-            $cond['bind']['types'] = "%" . $search_type . "%";
+        if ($hot == STATUS_ON) {
+            //热门房间从缓存中拉取
+            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         } else if ($new == STATUS_ON) {
 
 
             $cond['conditions'] .= ' and new = ' . STATUS_ON;
 
-        } else if ($hot == STATUS_ON) {
-            //热门房间从缓存中拉取
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
-
         } else {
 
-            $cond['conditions'] .= ' and user_id <> ' . $user_id;
+            $search_type = '';
+
+            foreach (\Rooms::$TYPES as $key => $value) {
+                $type_value = $this->params("$key");
+                if ($type_value == STATUS_ON) {
+                    $search_type = $key;
+                    break;
+                }
+            }
+
+            if ($search_type) {
+
+                $cond['conditions'] .= " and types like :types:";
+                $cond['bind']['types'] = "%," . $search_type . ",%";
+
+            } else {
+
+                $cond['conditions'] .= ' and user_id <> ' . $user_id;
+            }
         }
 
         debug($cond);
