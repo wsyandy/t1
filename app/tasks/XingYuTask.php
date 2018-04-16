@@ -9,7 +9,7 @@ class XingYuTask extends \Phalcon\Cli\Task
         foreach ($users as $user) {
             $user->organisation = USER_ORGANISATION_COMPANY;
             $user->update();
-            info('id:' . $user->id, '，员工昵称：' . $user->nickname, '，所属组织：', $user->organisation,'ip地址：'.$user->ip);
+            info('id:' . $user->id, '，员工昵称：' . $user->nickname, '，所属组织：', $user->organisation, 'ip地址：' . $user->ip);
         }
     }
 
@@ -68,47 +68,22 @@ class XingYuTask extends \Phalcon\Cli\Task
         return preg_replace($pattern, $replace, $string);
     }
 
-    function avatarAction()
-    {
-        $avatar_file_name = 'avatar_url_sex_1.log';
-        $f = fopen($avatar_file_name, 'r');
-        $avatar = fgets($f);
-        fseek($f, 0);
-        info(fgets($f));
-
-    }
-
     function initUserForSexAction()
     {
-        //头像
-        $avatar_file_name_for_male = 'avatar_url_sex_1.log';
-        $avatar_file_name_for_female = 'avatar_url_sex_2.log';
-        $avatar_file_name_unknow = 'avatar_url_sex_3.log';
+        $file_array = [
+            'avatar_url_sex_1.log' => 'grab_nickname_from_male.log',
+            'avatar_url_sex_2.log' => 'grab_nickname_from_female.log',
+            'avatar_url_sex_3.log' => 'grab_nickname_from_unknow.log',
+        ];
 
-        //昵称
-        $nickname_file_name_for_male = 'grab_nickname_from_male.log';
-        $nickname_file_name_for_female = 'grab_nickname_from_female.log';
-        $nickname_file_name_for_unknow = 'grab_nickname_from_unknow.log';
-
-        //性别
-        //USER_SEX_MALE : USER_SEX_FEMALE
-        $sex_male = USER_SEX_MALE;
-        $sex_female = USER_SEX_FEMALE;
-
-        $this->initUsers($avatar_file_name_for_female, $nickname_file_name_for_female, $sex_female);
-
-//        $file_array = [
-//            'avatar_url_sex_1.log'=>'grab_nickname_from_male.log',
-//            'avatar_url_sex_2.log'=>'grab_nickname_from_female.log',
-//            'avatar_url_sex_3.log'=>'grab_nickname_from_unknow.log',
-//        ];
-//        $sex = USER_SEX_FEMALE;
-//        foreach ($file_array as $avatar_file=>$nickname_file){
-//            if(mb_strstr('1',$avatar_file)){
-//                $sex = USER_SEX_MALE;
-//            }
-//            $this->initUsers($avatar_file, $nickname_file, $sex);
-//        }
+        foreach ($file_array as $avatar_file => $nickname_file) {
+            if (mb_strstr($avatar_file, '1')) {
+                $sex = USER_SEX_MALE;
+            } else {
+                $sex = USER_SEX_FEMALE;
+            }
+            $this->initUsers($avatar_file, $nickname_file, $sex);
+        }
 
     }
 
@@ -116,8 +91,8 @@ class XingYuTask extends \Phalcon\Cli\Task
     function initUsers($avatar_file, $nickname_file, $sex)
     {
 
-        $f_avatar = fopen($avatar_file, 'r');
-        $f_nickname = fopen($nickname_file, 'r');
+        $f_avatar = fopen(APP_ROOT . 'doc/words/' . $avatar_file, 'r');
+        $f_nickname = fopen(APP_ROOT . 'doc/words/' . $nickname_file, 'r');
 
         while ($avatar = fgets($f_avatar)) {
             $nickname = fgets($f_nickname);
@@ -156,7 +131,6 @@ class XingYuTask extends \Phalcon\Cli\Task
             $user->geo_city_id = 0;
             $user->ip_province_id = 0;
             $user->ip_city_id = 0;
-            $user->register_at = 0;
             $user->mobile_operator = 0;
             $user->api_version = '';
             $user->monologue = '';
@@ -188,7 +162,7 @@ class XingYuTask extends \Phalcon\Cli\Task
             if (file_exists($source_filename)) {
                 unlink($source_filename);
             }
-            info($user->id, '用户昵称：' . $user->nickname, '用户头像：' . $user->avatar, '用户的性别：' . $user->sex_text);
+            info($user->id, '用户昵称：' . $user->nickname, '用户头像：' . $user->avatar, '用户的性别：' . $user->sex_text, '头像文件：' . $avatar_file, '昵称文件：' . $nickname_file);
         }
 
         fclose($f_avatar);

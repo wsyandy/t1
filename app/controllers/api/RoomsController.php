@@ -41,6 +41,9 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
         $new = intval($this->params('new', 0));
+        $broadcast = intval($this->params('broadcast', 0));
+        $follow = intval($this->params('follow', 0));
+
         $user_id = $this->currentUserId();
 
         //限制搜索条件
@@ -57,6 +60,26 @@ class RoomsController extends BaseController
 
         } else if ($new == STATUS_ON) {
             $cond['order'] = "created_at desc";
+
+        } else if ($broadcast == STATUS_ON) {
+
+            $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+
+        } else if ($follow == STATUS_ON) {
+
+            $users = $this->currentUser()->followList($page, $per_page);
+
+            $room_ids = [];
+            foreach ($users as $user) {
+                if ($user->room_id) {
+                    $room_ids[] = $user->room_id;
+                }
+            }
+
+            $room_ids = implode(',', $room_ids);
+
+            $cond['conditions'] .= " and id in ($room_ids) ";
+
         } else {
 
             $search_type = '';

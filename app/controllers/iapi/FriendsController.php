@@ -35,11 +35,11 @@ class FriendsController extends BaseController
     function createAction()
     {
         if ($this->currentUser()->isFriend($this->otherUser())) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已添加好友');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('已添加好友',$this->currentUser()->lang));
         }
 
         if ($this->currentUserId() == $this->otherUserId()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '请勿添加自己为好友');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('请勿添加自己为好友',$this->currentUser()->lang));
         }
 
         $self_introduce = $this->params('self_introduce');
@@ -48,27 +48,27 @@ class FriendsController extends BaseController
         $opts['self_introduce'] = $self_introduce;
 
         $this->currentUser()->addFriend($this->otherUser(), $opts);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('添加成功',$this->currentUser()->lang));
     }
 
     //删除好友
     function destroyAction()
     {
         $this->currentUser()->deleteFriend($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('删除成功',$this->currentUser()->lang));
     }
 
     //同意
     function agreeAction()
     {
         $this->currentUser()->agreeAddFriend($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('添加成功',$this->currentUser()->lang));
     }
 
     function refuseAction()
     {
         $this->currentUser()->refuseAddFriend($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '拒绝成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('拒绝成功',$this->currentUser()->lang));
     }
 
     //清空新的朋友信息
