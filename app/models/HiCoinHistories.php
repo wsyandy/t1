@@ -103,7 +103,6 @@ class HiCoinHistories extends BaseModel
         $fee_type = fetch($opts, 'fee_type');
 
         $user = Users::findFirstById($user_id);
-
         if (!$user) {
             info($user_id);
             return;
@@ -115,11 +114,9 @@ class HiCoinHistories extends BaseModel
         $lock = tryLock($lock_key);
 
         if ($gift_order_id) {
-
-            $old_hi_coin_history = HiCoinHistories::findFirstBy(['user_id' => $user_id, 'gift_order_id' => $gift_order_id]);
-
+            $old_hi_coin_history = HiCoinHistories::findFirstByGiftOrderId($gift_order_id);
             if ($old_hi_coin_history) {
-                info("hi_coin_history_already_save", $user_id, $gift_order_id);
+                info("Exce hi_coin_history_already_save", $user_id, $gift_order_id);
                 return;
             }
         }
