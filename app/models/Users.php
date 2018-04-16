@@ -1848,7 +1848,9 @@ class Users extends BaseModel
 
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
+        $condition .= ' and product_channel_id = :product_channel_id:';
         $bind['user_id'] = $this->id;
+        $bind['product_channel_id'] = $this->product_channel_id;
 
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
@@ -2897,20 +2899,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3030,21 +3035,24 @@ class Users extends BaseModel
 
 
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list" . $key_product_channel;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list" . $key_product_channel;
+                    break;
+                }
             default:
                 return '';
         }
