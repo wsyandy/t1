@@ -283,6 +283,7 @@ flex: 0;
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     display: block;
+    margin-top: 0.4rem;
 }
 .interest_tag {
     font-size: 0.24rem;
