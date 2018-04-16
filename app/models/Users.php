@@ -2109,7 +2109,7 @@ class Users extends BaseModel
                 $gift = Gifts::findFirstById($gift_id);
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+                    $give_result = GiftOrders::giveTo($user->id, [$receiver->id], $gift, $gift_num, $gift_num);
                     if ($give_result) {
                         $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
                     }
@@ -2208,7 +2208,7 @@ class Users extends BaseModel
                 $give_result = true;
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num, $gift_num);
                 }
 
                 if ($give_result) {
@@ -3341,20 +3341,29 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canSendToUser($user_id, $gift_amount)
+    function canSendToUser($receiver_ids, $gift_amount)
     {
-        $user = \Users::findFirstById($user_id);
         if (!$this->isWhiteListUser()) {
-            if ($this->isCompanyUser() && $user_id != $this->id && !$user->isCompanyUser()) {
-                $hot_cache = \Users::getHotWriteCache();
-                $key = 'current_day_company_user_' . date('Y-m-d', time());
-                $send_number = $hot_cache->zscore($key, $this->id);
-                $plan_number = $gift_amount + $send_number;
-                if ($plan_number > 100) {
-                    return false;
+
+            if ($this->isCompanyUser()) {
+
+                $receivers = Users::findByIds($receiver_ids);
+
+                foreach ($receivers as $receiver) {
+
+                    if (!$receiver->isCompanyUser()) {
+                        $hot_cache = \Users::getHotWriteCache();
+                        $key = 'current_day_company_user_' . date('Y-m-d', time());
+                        $send_number = $hot_cache->zscore($key, $this->id);
+                        $plan_number = $gift_amount + $send_number;
+                        if ($plan_number > 100) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
+
         return true;
     }
 
