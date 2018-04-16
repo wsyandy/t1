@@ -84,7 +84,7 @@ class RoomsController extends BaseController
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
-        if ($rooms->total_entries < 2) {
+        if (!isDevelopmentEnv() && $rooms->total_entries < 2) {
 
             $cond = [
                 'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
