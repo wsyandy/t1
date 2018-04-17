@@ -2950,7 +2950,7 @@ class Users extends BaseModel
             $db = Users::getUserDb();
 
             $user = Users::findFirstById($user_id);
-            if (isBlank($user) || $user->product_channel_id) {
+            if (isBlank($user) || !$user->product_channel_id) {
                 info("user_id is invalid", $user);
                 return;
             }
@@ -2960,6 +2960,7 @@ class Users extends BaseModel
             $day_key = self::generateFieldRankListKey('day', $field, $opts);
             $week_key = self::generateFieldRankListKey('week', $field, $opts);
             $total_key = self::generateFieldRankListKey('total', $field, $opts);
+
 
             $db->zincrby($day_key, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
@@ -3042,6 +3043,8 @@ class Users extends BaseModel
             default:
                 return '';
         }
+
+        debug($key);
 
         return $key;
     }
