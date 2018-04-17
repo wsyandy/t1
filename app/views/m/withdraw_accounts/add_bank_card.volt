@@ -171,8 +171,8 @@
                 this.isSet = false;
             },
             setSelected: function (index) {
-                this.account_bank_id = this.options[this.selected].value;
                 this.selected = index;
+                this.account_bank_id = this.options[this.selected].value;
                 this.isSet = false;
             },
 
@@ -192,9 +192,8 @@
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
-                    province_id: this.province_id,
+                    province_id: this.province_id
                 };
-                console.log(data);
                 $.authGet('/m/withdraw_accounts/get_cities', data, function (resp) {
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
