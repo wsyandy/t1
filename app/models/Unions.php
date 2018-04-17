@@ -712,11 +712,14 @@ class Unions extends BaseModel
             $db->zclear($this->generateAllApplyExitUsersKey());
 
             //删排行榜中排名
-            $last_day_key = "total_union_fame_value_day_" . date("Ymd", strtotime("last day", time()));
-            $day_key = "total_union_fame_value_day_" . date("Ymd");
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+            $opts = ['product_channel_id' => $this->product_channel_id];
+
+            $week_key = self::generateFameValueRankListKey('week', $opts);
+            $day_key = self::generateFameValueRankListKey('day', $opts);
+
+            $opts['date'] = date('Ymd', strtotime("last day"), time());
+            $last_day_key = self::generateFameValueRankListKey('day', $opts);
+
             $db->zrem($last_day_key, $this->id);
             $db->zrem($day_key, $this->id);
             $db->zrem($week_key, $this->id);
@@ -783,14 +786,12 @@ class Unions extends BaseModel
 
     function updateFameRankList($value)
     {
-        debug($value);
-
         if ($value > 0) {
             $db = Users::getUserDb();
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "total_union_fame_value_" . $start . "_" . $end;
-            $day_key = "total_union_fame_value_day_" . date("Ymd");
+
+            $week_key = self::generateFameValueRankListKey('week', ['product_channel_id' => $this->product_channel_id]);
+            $day_key = self::generateFameValueRankListKey('day', ['product_channel_id' => $this->product_channel_id]);
+
             $db->zincrby($day_key, $value, $this->id);
             $db->zincrby($week_key, $value, $this->id);
         }
@@ -800,7 +801,7 @@ class Unions extends BaseModel
     {
         $db = Users::getUserDb();
 
-        $key = self::generateFameValueRankListKey($list_type,$this->product_channel_id);
+        $key = self::generateFameValueRankListKey($list_type, ['product_channel_id', $this->product_channel_id]);
 
         $rank = $db->zrrank($key, $this->id);
 
@@ -828,12 +829,14 @@ class Unions extends BaseModel
 
         switch ($list_type) {
             case 'day': {
-                $key = "total_union_fame_value_day_" . date("Ymd") . $key_product_channel;
+                $date = fetch($opts, 'date', date('Ymd'));
+
+                $key = "total_union_fame_value_day_" . $date . $key_product_channel;
                 break;
             }
             case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
                 $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
                 break;
             }
@@ -853,6 +856,8 @@ class Unions extends BaseModel
 
     static function findFameValueRankListByKey($key, $page, $per_page)
     {
+        debug($key);
+
         $db = Users::getUserDb();
 
         $offset = ($page - 1) * $per_page;

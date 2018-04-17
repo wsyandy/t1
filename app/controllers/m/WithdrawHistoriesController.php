@@ -107,6 +107,7 @@ class WithdrawHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $amount = $user->getWithdrawAmount();
+        $code = $this->params('code');
         if ($this->request->isPost()) {
             if ($amount <= 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您还没有可提现的额度哟');
@@ -124,14 +125,17 @@ class WithdrawHistoriesController extends BaseController
             }
         }
 
-        $coin_types = ['yuewan' => 'Hi币', 'ruanyuyin' => 'R币'];
+        $coin_type_text = 'Hi币';
+        if ($code == 'ruanyuyin') {
+            $coin_type_text = 'R币';
+        }
 
         $this->view->amount = $amount;
-        $this->view->code = $this->params('code');
+        $this->view->code = $code;
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
         $this->view->withdraw_account = \WithdrawAccounts::getDefaultWithdrawAccount($user);
-        $this->view->coin_types = json_encode($coin_types, JSON_UNESCAPED_UNICODE);
+        $this->view->coin_type_text = $coin_type_text;
     }
 
     function recordsAction()
