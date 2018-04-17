@@ -55,14 +55,13 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-
-        $date = ['2018-04-09', '2018-04-10', '2018-04-11', '2018-04-12', '2018-04-13', '2018-04-14', '2018-04-15'];
+        $date = ['2018-04-14', '2018-04-15', '2018-04-16'];
 
         foreach ($date as $stat_at) {
 
             $devices = Devices::find(
                 [
-                    'conditions' => 'partner_id = 27 and created_at >= :start: and created_at <= :end:',
+                    'conditions' => 'partner_id = 85 and created_at >= :start: and created_at <= :end:',
                     'bind' => ['start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
@@ -84,7 +83,9 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
             arsort($res);
 
-            $f = fopen(APP_ROOT . "public/" . $stat_at . "mobile_type_device_active.txt", 'w');
+            $file = APP_ROOT . "public/" . $stat_at . "mobile_type_device_active.txt";
+            $f = fopen($file, 'w');
+
             fwrite($f, $stat_at . '激活总数量: ' . $total_num . "\r\n");
             echoLine($total_num);
             foreach ($res as $type => $num) {
@@ -94,19 +95,24 @@ class DevicesTask extends \Phaclcon\Cli\Task
             }
 
             fclose($f);
+
+            $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . uniqid() . ".txt");
+            echoLine($res);
+
+            unlink($file);
         }
     }
 
     function mobileTypeUserRegisterAction()
     {
-        $date = ['2018-04-09', '2018-04-10', '2018-04-11', '2018-04-12', '2018-04-13', '2018-04-14', '2018-04-15'];
+        $date = ['2018-04-14', '2018-04-15', '2018-04-16'];
 
         foreach ($date as $stat_at) {
 
             $users = Users::find(
                 [
                     'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
-                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                    'bind' => ['partner_id' => 85, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
             $total_num = count($users);
@@ -128,50 +134,26 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
             arsort($res);
 
-            $f = fopen(APP_ROOT . "public/" . $stat_at . "mobile_type_vivo_user_register.txt", 'w');
+            $file = APP_ROOT . "public/" . $stat_at . "mobile_type_vivo_user_register.txt";
+
+            $f = fopen($file, 'w');
 
             fwrite($f, $stat_at . '注册总数量: ' . $total_num . "\r\n");
             echoLine($total_num);
 
             foreach ($res as $type => $num) {
                 $text = "手机型号:" . $type . "注册数量:" . $num;
-                echoLine($text);
+                //echoLine($text);
                 fwrite($f, $text . "\r\n");
             }
 
             fclose($f);
+
+            $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . $stat_at . "注册.txt");
+            echoLine($res);
+
+            unlink($file);
         }
-
-        $stat_at = '2018-04-09';
-
-        $users = Users::find(
-            [
-                'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
-                'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
-            ]);
-
-        $qq_num = 0;
-        $auth_num = 0;
-        $num = 0;
-
-
-        foreach ($users as $user) {
-
-            if ($user->created_at == $user->register_at) {
-                echoLine($user->id);
-                $num++;
-            }
-
-            if (USER_LOGIN_TYPE_QQ == $user->login_type) {
-                $qq_num++;
-            }
-
-            if ($user->isIdCardAuth()) {
-                $auth_num++;
-            }
-        }
-
-        echoLine($qq_num, $auth_num, $num);
     }
 
     function totalMobileTypeActiveAction()
