@@ -35,9 +35,9 @@
     <div class="bank_list">
         <span class="bank_card">收款地区</span>
         <div class="select_area">
-            <span @click="selectProvince" v-text="province_id ? provinces[selected_province].text : '请选择收款省份'"></span>
+            <span @click="selectProvince" v-text="province_id ? provinces[selected_province].text : '省份'"></span>
             <span class="line-city">-</span>
-            <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '请选择收款城市'"></span>
+            <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '城市'"></span>
         </div>
     </div>
     <a class="btn_submit" @click.stop="updateWithdrawAccount"> 提交 </a>
