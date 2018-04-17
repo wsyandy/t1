@@ -43,25 +43,8 @@
             unbind: function () {
                 var id = this.selected_withdraw_account.id ? this.selected_withdraw_account.id : this.cardList[0].id;
 
-                if (!id) {
-                    return;
-                }
+                location.href = "/m/withdraw_accounts/unbind?sid=" + "{{ sid }}" + "&code=" + "{{ code }}" + "&id=" + id;
 
-                var data = {
-                    sid: '{{ sid }}',
-                    code: '{{ code }}',
-                    id: id
-                };
-
-                console.log(data);
-
-                $.authPost('/m/withdraw_accounts/unbind', data, function (resp) {
-                    if (resp.error_code == 0) {
-                        location.reload();
-                    } else {
-                        alert(resp.error_reason);
-                    }
-                })
             }
         }
     };
