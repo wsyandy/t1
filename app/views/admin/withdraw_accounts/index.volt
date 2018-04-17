@@ -1,5 +1,13 @@
+
+
+{%- macro area(withdraw_account) %}
+        {{ withdraw_account.province_name }},{{ withdraw_account.city_name }}
+{%- endmacro %}
+
+
 {{ simple_table(withdraw_accounts, [
-'日期': 'created_at_text',"ID": 'id',"用户ID":'user_id',"账户": 'account','账户类型':'type_text','手机号': 'mobile','状态': 'status_text'
+'日期': 'created_at_text',"ID": 'id',"用户ID":'user_id','用户昵称': 'user_name',"账户": 'account','账户类型':'type_text','手机号': 'mobile',
+'收款银行':'account_bank_name','收款支行':'bank_account_location','地区':'area','状态': 'status_text'
 ]) }}
 
 <script type="text/template" id="withdraw_account_tpl">

@@ -15,10 +15,15 @@ class HiCoinHistoriesController extends BaseController
     {
         $products = \Products::findHiCoinDiamondListByUser($this->currentUser());
         $code = $this->params('code');
+
+        $coin_type_text = 'Hi币';
+        if ($code == 'ruanyuyin') {
+            $coin_type_text = 'R币';
+        }
         $this->view->products = $products;
         $this->view->hi_coin_diamond_rate = HI_COIN_TO_DIAMOND_RATE;
         $this->view->user = $this->currentUser();
-        $this->view->title = 'Hi币兑钻';
+        $this->view->title = $coin_type_text . '兑钻';
 
         $file_name = $code . '_exchange';
         $file_path = APP_ROOT . 'app/views/m/hi_coin_histories/' . $file_name . '.volt';
@@ -34,9 +39,15 @@ class HiCoinHistoriesController extends BaseController
 
             $product_id = $this->params('product_id');
             $hi_coins = intval($this->params('hi_coins'));
+            $code = $this->params('code');
+
+            $coin_type_text = 'Hi币';
+            if ($code == 'ruanyuyin') {
+                $coin_type_text = 'R币';
+            }
 
             if ($hi_coins < 30) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '至少30Hi币才能兑换钻石');
+                return $this->renderJSON(ERROR_CODE_FAIL, '至少30' . $coin_type_text . '才能兑换钻石');
             }
 
             info('product_id', $product_id, 'hi_coins', $hi_coins);
@@ -57,11 +68,11 @@ class HiCoinHistoriesController extends BaseController
 
             //所有以扣除人民币为准
             if ($user->getWithdrawAmount() < $amount) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '您的Hi币不足！');
+                return $this->renderJSON(ERROR_CODE_FAIL, '您的' . $coin_type_text . '不足！');
             }
 
             if ($hi_coins < 0) {
-                return $this->renderJSON(ERROR_CODE_FAIL, 'Hi币不能为0！');
+                return $this->renderJSON(ERROR_CODE_FAIL, $coin_type_text . '不能为0！');
             }
 
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];

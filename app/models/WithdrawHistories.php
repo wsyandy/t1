@@ -116,6 +116,10 @@ class WithdrawHistories extends BaseModel
         $amount = fetch($opts, 'amount');
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
 
+        if ($amount >= 10000) {
+            return [ERROR_CODE_FAIL, '单次限额10000元'];
+        }
+
         $withdraw_account = WithdrawAccounts::findFirstById($withdraw_account_id);
 
         if (isBlank($withdraw_account) || $withdraw_account->status != STATUS_ON) {
@@ -268,7 +272,7 @@ class WithdrawHistories extends BaseModel
     {
         debug($cond);
         $withdraw_histories = self::find($cond);
-        $titles = ['日期', '用户id', '姓名', '账户', '账户类型', '提现金额'];
+        $titles = ['日期', '用户id', '姓名', '账户', '账户类型', '收款银行', '收款支行', '收款地区', '提现金额'];
         $data = [];
         foreach ($withdraw_histories as $withdraw_history) {
 
@@ -281,9 +285,17 @@ class WithdrawHistories extends BaseModel
 
             $account = $withdraw_history->alipay_account ? $withdraw_history->alipay_account : $withdraw_history->account;
             $account = strval($account);
+            $account_bank_name = '';
+            $bank_account_location = '';
+            $area = '';
+            $withdraw_account = $withdraw_history->withdraw_account;
+            if (isPresent($withdraw_account)) {
+                $account_bank_name = $withdraw_account->account_bank_name;
+                $bank_account_location = $withdraw_account->bank_account_location;
+                $area = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
+            }
             $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name, $account, $withdraw_history->withdraw_account_type_text,
-                $withdraw_history->amount];
-            
+                $account_bank_name, $bank_account_location, $area, $withdraw_history->amount];
         }
         $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
