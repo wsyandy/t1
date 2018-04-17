@@ -5,7 +5,7 @@
 <div id="app">
     <div class="wo_dengji">
         <img :src="current_level<35?glory_list[current_level].icon:glory_list[35].icon">
-        <h3>${segment_text}</h3>
+        <h3 v-text="segment_text ? segment_text : glory_list[current_level].name"></h3>
         <p v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
         </p>
     </div>
