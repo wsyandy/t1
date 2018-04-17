@@ -1214,7 +1214,7 @@ class UsersTask extends \Phalcon\Cli\Task
     {
         $product_channel_id = 1;
         $user_db = \Users::getUserDb();
-        $stat_at = date("Ymd");
+        $stat_at = date("Ymd", strtotime("-1 day"));
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
         $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
 
@@ -1249,7 +1249,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine("?????", $datas);
 
-//        $user_db->hmset($send_user_stat_key, $datas);
+        $user_db->hmset($send_user_stat_key, $datas);
 
     }
 
@@ -1348,6 +1348,52 @@ EOF;
 
         $title = "Hi语音官方提示";
         $body = "一大波礼物即将下架咯~把握住机会噢";
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+        $push_data = ['title' => $title, 'body' => $body, 'client_url' => 'app://messages'];
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                echoLine($num, count($user_ids), $delay);
+                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
+            }
+        }
+    }
+
+    function serviceMessageAction()
+    {
+        $content = <<<EOF
+【爱心提醒】
+为了更好的服务用户，HI语音已经开放官方客服房间（ID：10086）
+如果您想了解怎样玩转HI语音
+如果你想了解什么是主持
+如果你想创建家族……
+等等等等各种问题
+都可以进房间提出问题
+客服的小哥哥小姐姐会积极给您解答的哟~
+
+房间开放时间：每天10:00~24:00
+EOF;
+
+        $title = "Hi，有什么问题吗？";
+        $body = "客服小姐姐在这里等你了";
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',

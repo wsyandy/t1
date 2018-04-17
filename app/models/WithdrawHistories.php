@@ -272,15 +272,18 @@ class WithdrawHistories extends BaseModel
         $data = [];
         foreach ($withdraw_histories as $withdraw_history) {
 
-            $account = $withdraw_history->alipay_account ? $withdraw_history->alipay_account : $withdraw_history->account;
+            $user_name = preg_replace_callback(
+                '/./u',
+                function ($match) {
+                    return strlen($match[0]) >= 4 ? '*' : $match[0];
+                },
+                $withdraw_history->user_name);
 
-            if (mb_strlen($withdraw_history->user_name) < 2) {
-                $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, '', $account, $withdraw_history->withdraw_account_type_text,
-                    $withdraw_history->amount];
-            } else {
-                $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $withdraw_history->user_name, $account, $withdraw_history->withdraw_account_type_text,
-                    $withdraw_history->amount];
-            }
+            $account = $withdraw_history->alipay_account ? $withdraw_history->alipay_account : $withdraw_history->account;
+            $account = strval($account);
+            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name, $account, $withdraw_history->withdraw_account_type_text,
+                $withdraw_history->amount];
+            
         }
         $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);

@@ -34,9 +34,9 @@
         </li>
     </ul>
 </div>
-<div class="get_btn">
-    <a href="/m/withdraw_histories/withdraw?sid={{ sid }}&code={{ code }}">我要提现</a>
-</div>
+{#<div class="get_btn">#}
+    {#<a href="/m/withdraw_histories/withdraw?sid={{ sid }}&code={{ code }}">我要提现</a>#}
+{#</div>#}
 {% if !is_height_version and show_exchange %}
 <div class="get_hi_coin_btn">
     <a href="/m/hi_coin_histories/exchange?sid={{ sid }}&code={{ code }}">Hi币兑钻</a>

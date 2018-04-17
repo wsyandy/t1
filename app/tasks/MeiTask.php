@@ -2798,5 +2798,34 @@ EOF;
         foreach ($users as $user) {
             $online_silent_room->exitSilentRoom($user);
         }
+
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_1.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_2.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_3.log
+
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_female.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_male.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_unknow.log
+
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_female.log", APP_NAME . "/users/grab_nickname_from_female.log");
+        echoLine(StoreFile::getUrl($res));
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_male.log", APP_NAME . "/users/grab_nickname_from_male.log");
+        echoLine(StoreFile::getUrl($res));
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_unknow.log", APP_NAME . "/users/grab_nickname_from_unknow.log");
+        echoLine(StoreFile::getUrl($res));
+    }
+
+    function testEmojiAction()
+    {
+        $str = "五钻扫中2💄3🎤";
+
+        $str = preg_replace_callback(
+            '/./u',
+            function ($match) {
+                return strlen($match[0]) >= 4 ? '*' : $match[0];
+            },
+            $str);
+
+        echoLine($str);
     }
 }

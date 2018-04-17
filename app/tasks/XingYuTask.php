@@ -77,11 +77,13 @@ class XingYuTask extends \Phalcon\Cli\Task
         ];
 
         foreach ($file_array as $avatar_file => $nickname_file) {
+
             if (mb_strstr($avatar_file, '1')) {
                 $sex = USER_SEX_MALE;
             } else {
                 $sex = USER_SEX_FEMALE;
             }
+
             $this->initUsers($avatar_file, $nickname_file, $sex);
         }
 
@@ -91,83 +93,108 @@ class XingYuTask extends \Phalcon\Cli\Task
     function initUsers($avatar_file, $nickname_file, $sex)
     {
 
-        $f_avatar = fopen(APP_ROOT . 'doc/words/' . $avatar_file, 'r');
-        $f_nickname = fopen(APP_ROOT . 'doc/words/' . $nickname_file, 'r');
+        $file_array = [
+            'avatar_url_sex_1.log' => 'grab_nickname_from_male.log',
+            'avatar_url_sex_2.log' => 'grab_nickname_from_female.log',
+            'avatar_url_sex_3.log' => 'grab_nickname_from_unknow.log',
+        ];
 
-        while ($avatar = fgets($f_avatar)) {
-            $nickname = fgets($f_nickname);
-            $nickname = censor_words($nickname);
-            $avatar = str_replace("\r\n", '', $avatar); //清除换行符
-            $avatar_url = trim($avatar);
-            $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
-            if (!httpSave($avatar_url, $source_filename)) {
-                info('get avatar error', $avatar_url);
-                continue;
+        $i = 0;
+        foreach ($file_array as $avatar_file => $nickname_file) {
+
+            if (mb_strstr($avatar_file, '1')) {
+                $sex = USER_SEX_MALE;
+            } else {
+                $sex = USER_SEX_FEMALE;
             }
-            $nickname = str_replace("\r\n", '', $nickname);
-            $user = new \Users();
-            $user->user_type = USER_TYPE_SILENT;
-            $user->user_status = USER_STATUS_OFF;
-            $user->sex = $sex;
-            $user->product_channel_id = 1;
-            $user->login_name = '';
-            $user->nickname = $nickname;
-            $user->platform = '';
-            $user->province_id = 0;
-            $user->city_id = 0;
-            $user->ip = '';
-            $user->mobile = '';
-            $user->device_id = 0;
-            $user->push_token = '';
-            $user->version_code = '';
-            $user->openid = '';
-            $user->password = '';
-            $user->fr = '';
-            $user->partner_id = 0;
-            $user->subscribe = 0;
-            $user->event_at = 0;
-            $user->latitude = 0;
-            $user->longitude = 0;
-            $user->geo_province_id = 0;
-            $user->geo_city_id = 0;
-            $user->ip_province_id = 0;
-            $user->ip_city_id = 0;
-            $user->mobile_operator = 0;
-            $user->api_version = '';
-            $user->monologue = '';
-            $user->room_id = 0;
-            $user->height = 0;
-            $user->interests = '';
-            $user->gold = 0;
-            $user->diamond = 0;
-            $user->birthday = 0;
-            $user->current_room_seat_id = 0;
-            $user->user_role = 0;
-            $user->current_room_id = 0;
-            $user->geo_hash = '';
-            $user->platform_version = '';
-            $user->version_name = '';
-            $user->manufacturer = '';
-            $user->device_no = '';
-            $user->client_status = 0;
-            $user->user_role_at = 0;
-            $user->hi_coins = 0;
-            $user->third_unionid = '';
-            $user->login_type = '';
-            $user->save();
-            $user->sid = $user->generateSid('s');
-            $user->user_status = USER_STATUS_OFF;
-            $user->update();
-            $user->updateAvatar($source_filename);
+
+            $f_avatar = fopen(APP_ROOT . 'temp/' . $avatar_file, 'r');
+            $f_nickname = fopen(APP_ROOT . 'temp/' . $nickname_file, 'r');
 
 
-            if (file_exists($source_filename)) {
-                unlink($source_filename);
+            while ($avatar = fgets($f_avatar)) {
+                $nickname = fgets($f_nickname);
+                $nickname = censor_words($nickname);
+                $avatar = str_replace("\r\n", '', $avatar); //清除换行符
+                $avatar_url = trim($avatar);
+
+                $i++;
+
+                $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
+
+                if (!httpSave($avatar_url, $source_filename)) {
+                    info('get avatar error', $avatar_url);
+                    continue;
+                }
+                $nickname = str_replace("\r\n", '', $nickname);
+                $user = new \Users();
+                $user->user_type = USER_TYPE_SILENT;
+                $user->user_status = USER_STATUS_OFF;
+                $user->sex = $sex;
+                $user->product_channel_id = 1;
+                $user->login_name = '';
+                $user->nickname = $nickname;
+                $user->platform = '';
+                $user->province_id = 0;
+                $user->city_id = 0;
+                $user->ip = '';
+                $user->mobile = '';
+                $user->device_id = 0;
+                $user->push_token = '';
+                $user->version_code = '';
+                $user->openid = '';
+                $user->password = '';
+                $user->fr = '';
+                $user->partner_id = 0;
+                $user->subscribe = 0;
+                $user->event_at = 0;
+                $user->latitude = 0;
+                $user->longitude = 0;
+                $user->geo_province_id = 0;
+                $user->register_at = 0;
+                $user->geo_city_id = 0;
+                $user->ip_province_id = 0;
+                $user->ip_city_id = 0;
+                $user->mobile_operator = 0;
+                $user->api_version = '';
+                $user->monologue = '';
+                $user->room_id = 0;
+                $user->height = 0;
+                $user->interests = '';
+                $user->gold = 0;
+                $user->diamond = 0;
+                $user->birthday = 0;
+                $user->current_room_seat_id = 0;
+                $user->user_role = 0;
+                $user->current_room_id = 0;
+                $user->geo_hash = '';
+                $user->platform_version = '';
+                $user->version_name = '';
+                $user->manufacturer = '';
+                $user->device_no = '';
+                $user->client_status = 0;
+                $user->user_role_at = 0;
+                $user->hi_coins = 0;
+                $user->third_unionid = '';
+                $user->login_type = '';
+                $user->save();
+                $user->sid = $user->generateSid('s');
+                $user->user_status = USER_STATUS_OFF;
+                $user->update();
+                $user->updateAvatar($source_filename);
+
+
+                if (file_exists($source_filename)) {
+                    unlink($source_filename);
+                }
+
+                info($user->id, '用户昵称：' . $user->nickname, '用户头像：' . $user->avatar, '用户的性别：' . $user->sex_text, '头像文件：' . $avatar_file, '昵称文件：' . $nickname_file);
             }
-            info($user->id, '用户昵称：' . $user->nickname, '用户头像：' . $user->avatar, '用户的性别：' . $user->sex_text, '头像文件：' . $avatar_file, '昵称文件：' . $nickname_file);
+
+            fclose($f_avatar);
+            fclose($f_nickname);
         }
 
-        fclose($f_avatar);
-        fclose($f_nickname);
+        echoLine($i);
     }
 }

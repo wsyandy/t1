@@ -1738,6 +1738,7 @@ class Users extends BaseModel
         }
 
         if ($filter_ids) {
+            $filter_ids = implode(',', $filter_ids);
             $cond['conditions'] .= " and id not in ({$filter_ids})";
         }
 
