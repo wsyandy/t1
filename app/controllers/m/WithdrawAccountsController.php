@@ -91,6 +91,15 @@ class WithdrawAccountsController extends BaseController
 
     function addBankCardAction()
     {
+        $banks = \AccountBanks::find(['conditions' => "status = " . STATUS_ON, 'order' => 'rank desc']);
+        $banks_json = [];
+
+        foreach ($banks as $bank) {
+            $banks_json[] = ['text' => $bank->name, 'value' => $bank->id];
+        }
+
+        $this->view->banks = json_encode($banks_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->id = $this->params('id');
