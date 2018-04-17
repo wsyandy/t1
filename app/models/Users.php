@@ -2945,7 +2945,6 @@ class Users extends BaseModel
 
     static function updateFiledRankList($user_id, $field, $value)
     {
-        debug("updateFiledRankList");
         if ($field != 'wealth' && $field != 'charm') {
             return '';
         }
