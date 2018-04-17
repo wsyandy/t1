@@ -34,17 +34,19 @@
              @click="clearBankNameInput()">
     </div>
     <div class="bank_list">
-        <span class="bank_card">收款省份</span>
-        <div class="select_area" @click="selectProvince">
-            <span>${provinces[selected_province].text}</span>
+        <span class="bank_card">收款地区</span>
+        <div class="select_area">
+            <span @click="selectProvince" >${provinces[selected_province].text}</span>
+            <span class="line-city">-</span>
+            <span @click="selectCity">${cities[selected_city].text}</span>
         </div>
     </div>
-    <div class="bank_list">
-        <span class="bank_card">收款城市</span>
-        <div class="select_area" @click="selectCity">
-            <span>${cities[selected_city].text}</span>
-        </div>
-    </div>
+    {#<div class="bank_list">#}
+        {#<span class="bank_card">收款城市</span>#}
+        {#<div class="select_area">#}
+
+        {#</div>#}
+    {#</div>#}
 
     <a class="btn_submit" @click.stop="updateWithdrawAccount"> 提交 </a>
 
