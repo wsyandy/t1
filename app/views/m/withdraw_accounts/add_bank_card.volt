@@ -209,6 +209,8 @@
                     this.isSetCity = true;
                     this.isSet = false;
                     this.isSetProvince = false;
+                }else{
+                    alert('请先选择对应省份');
                 }
             },
             cancelSelectForCity: function () {
