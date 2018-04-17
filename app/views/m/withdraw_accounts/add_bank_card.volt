@@ -28,8 +28,7 @@
 
     <div class="bank_list">
         <span class="bank_card">收款银行支行</span>
-        <input class="bank_input" type="text" v-model="bank_account_location" type="text" placeholder="请先输入收款银行支行"
-               maxlength="10">
+        <input class="bank_input" type="text" v-model="bank_account_location" type="text" placeholder="请先输入收款银行支行">
         <img :src="ico_clear" v-show="bank_account_location" alt="" class="ico_clear"
              @click="clearBankNameInput()">
     </div>
@@ -41,13 +40,6 @@
             <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '请选择收款城市'"></span>
         </div>
     </div>
-    {#<div class="bank_list">#}
-    {#<span class="bank_card">收款城市</span>#}
-    {#<div class="select_area">#}
-
-    {#</div>#}
-    {#</div>#}
-
     <a class="btn_submit" @click.stop="updateWithdrawAccount"> 提交 </a>
 
     <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
@@ -171,22 +163,26 @@
                 });
             },
             setSelect: function () {
-                this.isSet = true
+                this.isSet = true;
+                this.isSetProvince = false;
+                this.isSetCity = false;
             },
             cancelSelect: function () {
-                this.isSet = false
+                this.isSet = false;
             },
             setSelected: function (index) {
                 this.account_bank_id = this.options[this.selected].value;
                 this.selected = index;
-                this.isSet = false
+                this.isSet = false;
             },
 
             selectProvince: function () {
                 this.isSetProvince = true;
+                this.isSet = false;
+                this.isSetCity = false;
             },
             cancelSelectForProvince: function () {
-                this.isSetProvince = false
+                this.isSetProvince = false;
             },
             setSelectedForProvince: function (index) {
                 this.selected_province = index;
@@ -211,6 +207,8 @@
             },
             selectCity: function () {
                 this.isSetCity = true;
+                this.isSet = false;
+                this.isSetProvince = false;
             },
             cancelSelectForCity: function () {
                 this.isSetCity = false
@@ -220,8 +218,8 @@
                 this.city_id = this.cities[this.selected_city].value;
                 this.isSetCity = false
             }
-
         }
+
     };
 
     vm = XVue(opts);
