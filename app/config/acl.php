@@ -4,7 +4,9 @@ return [
 
     'editor' => ['dashboard' => '*', 'weixin_menu_templates' => '*', 'push_messages' => '*', 'weixin_template_messages' => '*'],
 
-    'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar'], 'id_card_auths' => '*'],
+    'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar'], 'id_card_auths' => '*',
+        'withdraw_histories' => ['index']
+        ],
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
         'product_channels' => ['index', 'edit', 'update', 'push'], 'sms_histories' => '*', 'orders' => '*', 'gift_orders' => '*', 'voice_calls' => '*', 'albums' => ['index', 'show'],
@@ -33,7 +35,7 @@ return [
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*', 'id_card_auths' => '*',
         'unions' => ['day_rank_list', 'week_rank_list'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
-        'activities' => '*', 'rooms' => ['index', 'auto_hot']
+        'activities' => '*', 'rooms' => ['index', 'auto_hot'], 'room_themes' => '*'
     ],
 
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',

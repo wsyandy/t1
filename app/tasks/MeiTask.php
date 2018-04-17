@@ -2814,4 +2814,18 @@ EOF;
         $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_unknow.log", APP_NAME . "/users/grab_nickname_from_unknow.log");
         echoLine(StoreFile::getUrl($res));
     }
+
+    function testEmojiAction()
+    {
+        $str = "五钻扫中2💄3🎤";
+
+        $str = preg_replace_callback(
+            '/./u',
+            function ($match) {
+                return strlen($match[0]) >= 4 ? '*' : $match[0];
+            },
+            $str);
+
+        echoLine($str);
+    }
 }
