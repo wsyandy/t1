@@ -2852,4 +2852,18 @@ EOF;
 
         echoLine($user_db->zrange($send_user_ids_key, 0, -1));
     }
+
+    function testEmojiAction()
+    {
+        $str = "五钻扫中2💄3🎤";
+
+        $str = preg_replace_callback(
+            '/./u',
+            function ($match) {
+                return strlen($match[0]) >= 4 ? '*' : $match[0];
+            },
+            $str);
+
+        echoLine($str);
+    }
 }
