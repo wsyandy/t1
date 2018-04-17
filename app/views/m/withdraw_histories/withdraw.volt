@@ -105,9 +105,7 @@
 
                 $.authPost("/m/withdraw_histories/create", data, function (resp) {
                     alert(resp.error_reason);
-                    if (resp.error_code == 0) {
-                        location.href = '/m/withdraw_histories/index?sid={{ sid }}&code={{ code }}';
-                    }
+                    window.history.go(-1);
                 })
             }
         }
@@ -115,18 +113,4 @@
 
     vm = XVue(opts);
 
-    $(function () {
-        pushHistory();
-    });
-
-    function pushHistory() {
-        window.addEventListener("popstate", function (e) {
-            self.location.reload();
-        }, false);
-        var state = {
-            title: "",
-            url: "#"
-        };
-        window.history.replaceState(state, "", "#");
-    }
 </script>

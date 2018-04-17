@@ -22,5 +22,21 @@
         window.frames[0].window.alert(name);
         iframe.parentNode.removeChild(iframe);
     };
+
+    $(function () {
+        pushHistory();
+    });
+
+    //解决ios后退无法刷新
+    function pushHistory() {
+        window.addEventListener("popstate", function (e) {
+            self.location.reload();
+        }, false);
+        var state = {
+            title: "",
+            url: "#"
+        };
+        window.history.replaceState(state, "", "#");
+    }
 </script>
 </html>
