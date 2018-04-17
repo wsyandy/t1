@@ -95,11 +95,13 @@ class XingYuTask extends \Phalcon\Cli\Task
         $f_nickname = fopen(APP_ROOT . 'doc/words/' . $nickname_file, 'r');
 
         while ($avatar = fgets($f_avatar)) {
+
             $nickname = fgets($f_nickname);
             $nickname = censor_words($nickname);
             $avatar = str_replace("\r\n", '', $avatar); //清除换行符
             $avatar_url = trim($avatar);
             $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
+
             if (!httpSave($avatar_url, $source_filename)) {
                 info('get avatar error', $avatar_url);
                 continue;
