@@ -152,7 +152,7 @@ class WithdrawHistories extends BaseModel
 
         $history = new WithdrawHistories();
         $history->user_id = $user->id;
-        $history->user_name = $user->nickname;
+        $history->user_name = $withdraw_account->user_name;
         $history->product_channel_id = $user->product_channel_id;
         $history->amount = $amount;
         $history->status = WITHDRAW_STATUS_WAIT;
