@@ -15,13 +15,17 @@ class WithdrawHistoriesController extends BaseController
         $user = $this->currentUser();
         $rate = \HiCoinHistories::rateOfHiCoinToCny();
         $code = $this->currentProductChannel()->code;
-        $this->view->rate = $rate;
-        $this->view->hi_coins = $user->getHiCoinText();
-        $this->view->amount = $user->getWithdrawAmount();
 
         $is_height_version = false;
         if ($user->isIos()) {
             $is_height_version = $user->version_code > $user->product_channel->apple_stable_version;
+        }
+
+        $show_withdraw = false;
+        $ip = $this->remoteIp();
+
+        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
+            $show_withdraw = true;
         }
 
         $this->view->is_height_version = $is_height_version;
@@ -30,14 +34,19 @@ class WithdrawHistoriesController extends BaseController
         $this->view->sid = $this->params('sid');
         $this->view->title = '我的收益';
         $this->view->show_exchange = true;
+        $this->view->show_withdraw = $show_withdraw;
+        $this->view->rate = $rate;
+        $this->view->hi_coins = $user->getHiCoinText();
+        $this->view->amount = $user->getWithdrawAmount();
 
         $file_name = $code . '_index';
         $file_path = APP_ROOT . 'app/views/m/withdraw_histories/' . $file_name . '.volt';
+
+
         if (file_exists($file_path)) {
             $this->pick('m/withdraw_histories/' . $file_name);
             return;
         }
-
     }
 
     function createAction()
