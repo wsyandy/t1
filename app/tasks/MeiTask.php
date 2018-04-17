@@ -2916,5 +2916,8 @@ EOF;
                 $db->zrem($wealth_total_key, $user->id);
             }
         }
+
+        $users = \Users::findFieldRankList('day', 'wealth', 1, 10);
+        echoLine(count($users));
     }
 }
