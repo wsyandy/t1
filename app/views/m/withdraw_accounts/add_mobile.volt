@@ -41,6 +41,11 @@
             sms_token: ''
         },
         created: function () {
+            var mobile = '{{ mobile }}';
+            this.ver_tel = mobile;
+            if(this.ver_tel){
+                this.isFull = true;
+            }
         },
         methods: {
             verTel: function () {
