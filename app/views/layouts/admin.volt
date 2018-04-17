@@ -198,7 +198,9 @@
                     {% if isAllowed('stats','days') %}
                         <li><a href="/admin/stats/days">按天统计</a></li>
                     {% endif %}
-
+                    {% if isAllowed('payments','day_stat') %}
+                        <li><a href="/admin/payments/day_stat">支付方式统计</a></li>
+                    {% endif %}
                     {% if isAllowed('active_users','day_rank_list') or isAllowed('active_users','month_rank_list') %}
                         <li class="dropdown-submenu">
                             <a href="javascript:;" tabindex="-1">在线用户统计</a>
