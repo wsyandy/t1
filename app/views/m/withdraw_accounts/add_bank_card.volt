@@ -36,16 +36,16 @@
     <div class="bank_list">
         <span class="bank_card">收款地区</span>
         <div class="select_area">
-            <span @click="selectProvince"  v-text="province_id ? provinces[selected_province].text : '请选择收款省份'"></span>
+            <span @click="selectProvince" v-text="province_id ? provinces[selected_province].text : '请选择收款省份'"></span>
             <span class="line-city">-</span>
             <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '请选择收款城市'"></span>
         </div>
     </div>
     {#<div class="bank_list">#}
-        {#<span class="bank_card">收款城市</span>#}
-        {#<div class="select_area">#}
+    {#<span class="bank_card">收款城市</span>#}
+    {#<div class="select_area">#}
 
-        {#</div>#}
+    {#</div>#}
     {#</div>#}
 
     <a class="btn_submit" @click.stop="updateWithdrawAccount"> 提交 </a>
@@ -59,8 +59,8 @@
         </div>
     </div>
 
-    <div :class="[isSetprovince ? '' : 'fixed', 'popup_cover']">
-        <div :class="[isSetprovince ? '' : 'fixed', 'pop_bottom']">
+    <div :class="[isSetProvince ? '' : 'fixed', 'popup_cover']">
+        <div :class="[isSetProvince ? '' : 'fixed', 'pop_bottom']">
             <ul>
                 <li v-for="(province, index) in provinces" @click="setSelectedForProvince(index)"> ${ province.text }
                 </li>
@@ -85,7 +85,7 @@
         data: {
             isPop: false,
             isSet: false,
-            isSetprovince: false,
+            isSetProvince: false,
             isSetCity: false,
             selected: 0,
             selected_province: 0,
@@ -156,8 +156,8 @@
                     account_bank_id: this.account_bank_id,
                     user_name: this.user_name,
                     bank_account_location: this.bank_account_location,
-                    city_id:this.city_id,
-                    province_id:this.province_id
+                    city_id: this.city_id,
+                    province_id: this.province_id
                 };
                 this.can_submit = false;
 
@@ -183,27 +183,29 @@
             },
 
             selectProvince: function () {
-                this.isSetprovince = true;
+                this.isSetProvince = true;
             },
             cancelSelectForProvince: function () {
-                this.isSetprovince = false
+                this.isSetProvince = false
             },
             setSelectedForProvince: function (index) {
                 this.selected_province = index;
                 this.province_id = this.provinces[this.selected_province].value;
-                this.isSetprovince = false
+                this.isSetProvince = false;
 
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
-                    province_id:  this.province_id,
+                    province_id: this.province_id,
                 };
-
+                console.log(data);
                 $.authGet('/m/withdraw_accounts/get_cities', data, function (resp) {
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
                     } else {
                         vm.cities = resp.cities;
+                        vm.selected_city = 0;
+                        vm.city_id = vm.cities[vm.selected_city].value;
                     }
                 });
             },
