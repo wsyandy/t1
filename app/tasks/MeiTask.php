@@ -2874,7 +2874,7 @@ EOF;
         $hot_cache->del($cache_key);
 
 
-        $withdraw_histories = WithdrawHistories::findBy(['withdraw_account_type' => 2]);
+        $withdraw_histories = WithdrawHistories::findBy(['withdraw_account_type' => 2, 'status' => WITHDRAW_STATUS_WAIT]);
 
         foreach ($withdraw_histories as $withdraw_history) {
 
@@ -2886,7 +2886,10 @@ EOF;
 上周提现金额将会在48小时内到账。本周提现金额在下周二到账。
 Hi语音为给您造成的不便表示歉意。
 EOF;
+            $withdraw_history->status = WITHDRAW_STATUS_FAIL;
+            $withdraw_history->save();
 
+            Chats::sendTextSystemMessage($withdraw_history->user_id, $content);
         }
     }
 }
