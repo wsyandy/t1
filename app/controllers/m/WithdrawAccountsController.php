@@ -89,6 +89,47 @@ class WithdrawAccountsController extends BaseController
         return $this->renderJSON($error_code, $error_reason, ['error_url' => $error_url]);
     }
 
+    function unbindWithdrawAccountAction()
+    {
+        $auth_code = $this->params('auth_code');
+        $sms_token = $this->params('sms_token');
+        $mobile = $this->params('mobile');
+
+        // 测试白名单
+        $is_white_mobile = false;
+        if ($mobile && in_array($mobile, ['13912345678'])
+        ) {
+            $is_white_mobile = true;
+        }
+        $context = $this->context();
+
+        if ($auth_code) {
+            $context['is_white_mobile'] = $is_white_mobile;
+
+            list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(), $mobile,
+                $auth_code, $sms_token, $context);
+
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '验证码错误');
+        }
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
+        $id = $this->params('id');
+        $withdraw_account = \WithdrawAccounts::findFirstById($id);
+        if (isBlank($withdraw_account)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if ($withdraw_account->unbind($this->currentUser())) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '解绑成功');
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '解绑失败');
+        }
+    }
+
     function addBankCardAction()
     {
         $banks = \AccountBanks::find(['conditions' => "status = " . STATUS_ON, 'order' => 'rank desc']);
@@ -116,15 +157,37 @@ class WithdrawAccountsController extends BaseController
 
         $account = $this->params('account');
         $account_withdraw_account_id = intval($this->params('account_withdraw_account_id'));
+        $province_id = intval($this->params('province_id'));
+        $city_id = intval($this->params('city_id'));
+        $user_name = $this->params('user_name');
+        $bank_account_location = $this->params('bank_account_location');
+
         $type = intval($this->params('type', 2));
 
         //校验银行卡
-
         if (!preg_match('/^\d+\d$/', $account) && $type == 2) {
             return $this->renderJSON(ERROR_CODE_FAIL, '银行卡号必须是数字');
         }
 
-        $opts = ['account' => $account, 'account_withdraw_account_id' => $account_withdraw_account_id, 'type' => $type];
+        if (isBlank($city_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请选择城市');
+        }
+
+        if (isBlank($province_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请选择省份');
+        }
+
+        if (isBlank($user_name)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请输入收款户名');
+        }
+
+        if (isBlank($bank_account_location)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '请输入收款银行支行');
+        }
+
+        $opts = ['account' => $account, 'account_withdraw_account_id' => $account_withdraw_account_id, 'type' => $type,
+            'province_id' => $province_id, 'city_id' => $city_id, 'user_name' => $user_name, 'bank_account_location' => $bank_account_location
+        ];
 
         $withdraw_account->updateProfile($opts);
 
@@ -135,14 +198,11 @@ class WithdrawAccountsController extends BaseController
     {
         $id = $this->params('id');
         $withdraw_account = \WithdrawAccounts::findFirstById($id);
-        if (isBlank($withdraw_account)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
 
-        if ($withdraw_account->unbind($this->currentUser())) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-        } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '解绑失败');
-        }
+        $this->view->id = $id;
+        $this->view->mobile = $withdraw_account->mobile;
+        $this->view->code = $this->params('code');
+        $this->view->sid = $this->params('sid');
+        $this->view->title = "验证手机号";
     }
 }
