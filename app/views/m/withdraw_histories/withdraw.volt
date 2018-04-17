@@ -108,29 +108,12 @@
 
                 $.authPost("/m/withdraw_histories/create", data, function (resp) {
                     alert(resp.error_reason);
-                    if (resp.error_code == 0) {
-                        location.href = '/m/withdraw_histories/index?sid={{ sid }}&code={{ code }}';
-                    }
+                    window.history.go(-1);
                 })
             }
         }
     };
 
     vm = XVue(opts);
-
-    $(function () {
-        pushHistory();
-        vm.explain = ["1"+vm.coin_type_text+"＝1人名币", vm.coin_type_text+"金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"];
-    });
-
-    function pushHistory() {
-        window.addEventListener("popstate", function (e) {
-            self.location.reload();
-        }, false);
-        var state = {
-            title: "",
-            url: "#"
-        };
-        window.history.replaceState(state, "", "#");
-    }
+    
 </script>

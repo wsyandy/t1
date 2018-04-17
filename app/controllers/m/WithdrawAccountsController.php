@@ -44,6 +44,14 @@ class WithdrawAccountsController extends BaseController
         $context = $this->context();
         $context['user_id'] = $this->currentUser()->id;
 
+        $id = $this->params('id');
+        if (isPresent($id)) {
+            $withdraw_account = \WithdrawAccounts::findFirstById($id);
+            if (isBlank($withdraw_account) || $withdraw_account->mobile != $mobile) {
+                return $this->renderJSON(ERROR_CODE_FAIL, "手机号不合法");
+            }
+        }
+
         list($error_code, $error_reason, $sms_token) = \SmsHistories::sendAuthCode($this->currentProductChannel(),
             $mobile, 'login', $context);
 
@@ -121,6 +129,10 @@ class WithdrawAccountsController extends BaseController
         $withdraw_account = \WithdrawAccounts::findFirstById($id);
         if (isBlank($withdraw_account)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if ( $withdraw_account->mobile != $mobile) {
+            return $this->renderJSON(ERROR_CODE_FAIL, "手机号不合法");
         }
 
         if ($withdraw_account->unbind($this->currentUser())) {
