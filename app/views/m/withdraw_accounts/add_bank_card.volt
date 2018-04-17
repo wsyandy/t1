@@ -205,9 +205,11 @@
                 });
             },
             selectCity: function () {
-                this.isSetCity = true;
-                this.isSet = false;
-                this.isSetProvince = false;
+                if(this.province_id){
+                    this.isSetCity = true;
+                    this.isSet = false;
+                    this.isSetProvince = false;
+                }
             },
             cancelSelectForCity: function () {
                 this.isSetCity = false
