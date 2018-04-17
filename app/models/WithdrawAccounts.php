@@ -22,6 +22,15 @@ class WithdrawAccounts extends BaseModel
      */
     private $_account_bank;
 
+    /**
+     * @type Provinces
+     */
+    private $_province;
+    /**
+     * @type Cities
+     */
+    private $_city;
+
     static function createWithdrawAccount($user, $mobile)
     {
         //暂时只支持添加一张银行卡
