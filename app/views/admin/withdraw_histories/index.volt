@@ -47,7 +47,7 @@
 {% endif %}
 
 {%- macro oper_link(withdraw_histories) %}
-    {% if(withdraw_histories.status == 0) %}
+    {% if withdraw_histories.status == 0 and isAllowed('withdraw_histories', 'edit') %}
         <a href="/admin/withdraw_histories/edit/{{ withdraw_histories.id }}" class="modal_action">编辑</a>
     {% endif %}
 {%- endmacro %}

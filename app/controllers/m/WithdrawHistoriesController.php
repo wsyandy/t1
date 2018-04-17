@@ -21,12 +21,12 @@ class WithdrawHistoriesController extends BaseController
             $is_height_version = $user->version_code > $user->product_channel->apple_stable_version;
         }
 
-        $show_withdraw = false;
+        $show_withdraw = true;
         $ip = $this->remoteIp();
 
-        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
-            $show_withdraw = true;
-        }
+//        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
+//            $show_withdraw = true;
+//        }
 
         $this->view->is_height_version = $is_height_version;
         $this->view->user = $user;
