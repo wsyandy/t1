@@ -36,9 +36,9 @@
     <div class="bank_list">
         <span class="bank_card">收款地区</span>
         <div class="select_area">
-            <span @click="selectProvince" >${provinces[selected_province].text}</span>
+            <span @click="selectProvince"  v-text="province_id ? provinces[selected_province].text : '请选择收款省份'"></span>
             <span class="line-city">-</span>
-            <span @click="selectCity">${cities[selected_city].text}</span>
+            <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '请选择收款城市'"></span>
         </div>
     </div>
     {#<div class="bank_list">#}
@@ -94,13 +94,13 @@
             ico_clear: "images/ico_clear.png",
             account: '',
             account_bank_id: 0,
-            province_id: 1,
-            city_id: 1,
+            province_id: 0,
+            city_id: 0,
             user_name: '',
             bank_account_location: '',
             can_submit: true,
             provinces:{{ provinces }},
-            cities: {{ city }}
+            cities: []
         },
         created: function () {
         },

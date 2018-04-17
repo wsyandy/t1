@@ -145,13 +145,8 @@ class WithdrawAccountsController extends BaseController
             $provinces_json[] = ['text' => $province->name, 'value' => $province->id];
         }
 
-        $init_city_for_province = $provinces_json[0]['value'];
-        $city = \Cities::findFirstBy(["province_id" => $init_city_for_province]);
-        $city_json[] = ['text' => $city->name, 'value' => $city->id];
-
         $this->view->banks = json_encode($banks_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $this->view->provinces = json_encode($provinces_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-        $this->view->city = json_encode($city_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->id = $this->params('id');
