@@ -2882,4 +2882,39 @@ EOF;
         }
         echoLine(count($users));
     }
+
+    function fixCompanyUserAction()
+    {
+        $ips = ['116.226.119.13', '116.226.120.117', '139.227.253.40'];
+        $db = Users::getUserDb();
+
+        $day_key = "day_charm_rank_list_" . date("Ymd");
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $week_key = "week_charm_rank_list_" . $start . "_" . $end;
+        $total_key = "total_charm_rank_list";
+
+        $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $wealth_week_key = "week_wealth_rank_list_" . $start . "_" . $end;
+        $wealth_total_key = "total_wealth_rank_list";
+
+        foreach ($ips as $ip) {
+            $users = Users::findByIp($ip);
+            foreach ($users as $user) {
+                $user->organisation = USER_ORGANISATION_COMPANY;
+                $user->update();
+                echoLine($user->id);
+
+                $db->zrem($day_key, $user->id);
+                $db->zrem($week_key, $user->id);
+                $db->zrem($total_key, $user->id);
+
+                $db->zrem($wealth_day_key, $user->id);
+                $db->zrem($wealth_week_key, $user->id);
+                $db->zrem($wealth_total_key, $user->id);
+            }
+        }
+    }
 }
