@@ -60,6 +60,7 @@
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
+                    id: '{{ id }}',
                     mobile: this.ver_tel
                 };
 
@@ -114,19 +115,4 @@
 
     vm = XVue(opts);
 
-    $(function () {
-        pushHistory();
-    });
-
-    //解决ios后退无法刷新
-    function pushHistory() {
-        window.addEventListener("popstate", function (e) {
-            self.location.reload();
-        }, false);
-        var state = {
-            title: "",
-            url: "#"
-        };
-        window.history.replaceState(state, "", "#");
-    }
 </script>
