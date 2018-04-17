@@ -273,8 +273,8 @@ class SourcesController extends \ApplicationController
         if ($attrs['callback']) {
             $attrs['callback'] = urldecode($attrs['callback']);
         }
-        $muid = $attrs['idfa'];
-        $muid = strtolower($muid);
+
+        $muid = strtolower(md5(strtoupper($attrs['idfa'])));
         $attrs['muid'] = $muid;
 
         $hot_cache = \Devices::getHotWriteCache();
@@ -282,7 +282,7 @@ class SourcesController extends \ApplicationController
         $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
         info('set', $new_click_key, $attrs);
 
-        echo true;
+        echo 'true';
         return;
     }
 
