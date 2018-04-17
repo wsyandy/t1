@@ -67,4 +67,36 @@ class PaymentsController extends BaseController
     {
 
     }
+
+    function dayStatAction()
+    {
+
+        $stat_at = $this->params('stat_at', date('Y-m-d'));
+        $stat_at = strtotime($stat_at);
+        $start_at = beginOfDay($stat_at);
+        $end_at = endOfDay($stat_at);
+
+        $stats = [];
+        $total_amount = 0;
+        $payment_types = \PaymentChannels::$PAYMENT_TYPE;
+        foreach ($payment_types as $payment_type){
+            $amount = \Payments::sum([
+                'conditions' => 'pay_status = :pay_status: and payment_type = :payment_type: and created_at>=:start_at: and created_at<=:end_at:',
+                'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS, 'payment_type' => $payment_type, 'start_at' => $start_at, 'end_at' => $end_at],
+                'column' => 'amount'
+            ]);
+
+            if($amount > 0){
+                $stats[$payment_type] = $amount;
+                $total_amount += $amount;
+            }
+        }
+
+        $stats['total'] = $total_amount;
+
+        $this->view->stats = $stats;
+        $this->view->stat_at = date('Y-m-d', $stat_at);
+        $this->view->payment_types = $payment_types;
+    }
+
 }
