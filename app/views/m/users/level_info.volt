@@ -2,16 +2,16 @@
 {{ theme_css('/m/ruanyuyin/css/level_introduce.css') }}
 {{ theme_js('/m/ruanyuyin/js/font_rem.js') }}
 {{ block_end() }}
-<div class="wo_dengji" id="app">
-    <div>
-        <img :src="glory_list[current_level].icon">
+<div id="app">
+    <div class="wo_dengji">
+        <img :src="current_level<35?glory_list[current_level].icon:glory_list[35].icon">
         <h3>${segment_text}</h3>
-        <p v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
+        <p v-if="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
         </p>
     </div>
-    <div class="wo_box" id>
-        <div>
-            <div class="box_list">
+    <div class="wo_box">
+        <div v-if="current_level < 35">
+            <div class="box_list" >
                 <i class="icon_01"></i>
                 <p>下一等级特权：<b>${ glory_list[current_level+1].name }等级勋章</b></p>
             </div>
@@ -34,7 +34,7 @@
             glory_list: [
                 {
                     level: 0,
-                    icon: "/m/ruanyuyin/images/t_1.png",
+                    icon: "/m/ruanyuyin/images/wu_dengji.png",
                     name: "无荣耀 "
                 },
                 {
@@ -228,4 +228,7 @@
         }
     };
     vm = XVue(opts);
+    $(function () {
+        console.log(vm.current_level);
+    })
 </script>

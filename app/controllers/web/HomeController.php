@@ -8,7 +8,7 @@ class HomeController extends BaseController
     {
         $user = $this->currentUser();
         if (!$user) {
-            $product_channel = \ProductChannels::findLast();
+            $product_channel = $this->currentProductChannel();
         } else {
             $product_channel = $user->product_channel;
         }
@@ -19,10 +19,6 @@ class HomeController extends BaseController
         $this->view->ios_url = $ios_apk->ios_down_url;
         $this->view->android_url = $android_apk->weixin_url;
         $this->view->product_channel = $product_channel;
-    }
-
-    public function errorAction()
-    {
     }
 
     public function logoutAction()

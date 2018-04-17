@@ -78,7 +78,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             fclose($f);
 
-            $hot_cache->zclear("albums_auth_type_{$auth_type}_list_user_id_1");
+            //$hot_cache->zclear("albums_auth_type_{$auth_type}_list_user_id_1");
         }
     }
 
@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1057791;
-        $new_user_id = 153717;
+        $user_id = 1003583;
+        $new_user_id = 10086;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -130,7 +130,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 153717;
+        $new_user->uid = 10086;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
@@ -425,7 +425,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function resetUserAction()
     {
-        $user_id = 8888;
+        $user_id = 10086;
         $user = Users::findFirstById($user_id);
         $new_user = new Users();
 
@@ -733,7 +733,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
 
 
-        $user_id = 8888;
+        $user_id = 1003583;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
         $user->avatar_status = AUTH_FAIL;
@@ -1132,6 +1132,295 @@ class UsersTask extends \Phalcon\Cli\Task
             echoLine($activity->created_at_text);
         }
         echoLine(count($activities));
+    }
+
+    function wakeupUsersAction()
+    {
+        $last_at = time() - 3600 * 48;
+
+        if (isDevelopmentEnv()) {
+            $last_at = time() - 60 * 3;
+        }
+
+        $users = Users::findForeach([
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
+            'order' => 'last_at desc',
+            'limit' => 1000
+        ]);
+
+        $num = 0;
+        $product_channel_id = 1;
+
+        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
+
+        $silent_users = Users::find($cond);
+        $silent_user_ids = [];
+
+        foreach ($silent_users as $silent_user) {
+            $silent_user_ids[] = $silent_user->id;
+        }
+
+        $gift_ids = [6, 7, 36];
+
+        $stat_at = date("Ymd");
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
+
+        if (isDevelopmentEnv()) {
+            $user_db->zclear($send_user_ids_key);
+        }
+
+        //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
+        //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
+        foreach ($users as $user) {
+
+            $gift_id = $gift_ids[array_rand($gift_ids)];
+            $gift = Gifts::findFirstById($gift_id);
+            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
+            $send_user = Users::findFirstById($send_user_id);
+            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+
+            $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
+
+            echoLine($give_result, $content);
+
+            if ($give_result) {
+                $user_db->zadd($send_user_ids_key, time(), $user->id);
+            }
+
+            $push_data = ['title' => $content, 'body' => $content];
+            \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+            $num++;
+
+            Chats::sendTextSystemMessage($user->id, $content);
+
+            echoLine($user->id, $send_user_id, $content, $num);
+
+            if ($num >= 1000) {
+                break;
+            }
+        }
+
+        echoLine(count($silent_user_ids));
+    }
+
+    function wakeupUsersStatAction()
+    {
+        $product_channel_id = 1;
+        $user_db = \Users::getUserDb();
+        $stat_at = date("Ymd", strtotime("-1 day"));
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
+
+        $active_user = 0;
+        $recharge_user = 0;
+        $recharge_amount = 0;
+
+        foreach ($user_ids as $user_id => $send_at) {
+
+            $user = \Users::findFirstById($user_id);
+            $pay_amount = $user->pay_amount;
+            $last_at = $user->last_at;
+
+            if ($last_at > $send_at) {
+                $active_user += 1;
+            }
+
+            if ($pay_amount > 0) {
+                $recharge_user += 1;
+                $recharge_amount += $pay_amount;
+            }
+        }
+
+        $send_user = $user_db->zcard($send_user_ids_key);
+
+        $datas = ['send_user' => $send_user, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
+        $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
+
+        if (isDevelopmentEnv()) {
+            $user_db->hclear($send_user_stat_key);
+        }
+
+        echoLine("?????", $datas);
+
+        $user_db->hmset($send_user_stat_key, $datas);
+
+    }
+
+    function wakeupWithdrawMessageAction()
+    {
+        $product_channel_id = 1;
+        $user_db = \Users::getUserDb();
+        $stat_at = date("Ymd");
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
+        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            //亲，你现在有*元待提现，赶紧去提现！
+
+            $hi_conins = $user->getWithdrawAmount();
+
+            if ($hi_conins > 0) {
+                $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
+
+                $push_data = ['title' => $content, 'body' => $content];
+
+                \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+                Chats::sendTextSystemMessage($user->id, $content);
+
+                echoLine($user->id, $content);
+            } else {
+                echoLine($user->id, "no have hi_coins");
+            }
+        }
+    }
+
+    // 认证主播收益
+    function idcardAuthUserIncomeAction()
+    {
+
+        $users = Users::find([
+            'conditions' => 'id_card_auth = :id_card_auth: and organisation = 0',
+            'bind' => ['id_card_auth' => AUTH_SUCCESS],
+            'order' => 'id asc',
+            'columns' => 'id,pay_amount'
+        ]);
+
+        $gain_user_num = 0;
+        $loss_user_num = 0;
+        $total_user_num = 0;
+
+        $total_hi_coins = 0;
+        $total_recharge_amount = 0;
+        $result_data = [];
+        foreach ($users as $user) {
+
+            $recharge_amount = $user->pay_amount;
+            $total_recharge_amount += $recharge_amount;
+
+            $hi_coins = HiCoinHistories::sum([
+                'conditions' => 'user_id = :user_id: and hi_coins>0',
+                'bind' => ['user_id' => $user->id],
+                'column' => 'hi_coins'
+            ]);
+
+            $total_user_num++;
+            $total_hi_coins += $hi_coins;
+            $get_hi_coins = $hi_coins - $recharge_amount;
+            if ($get_hi_coins > 0) {
+                $gain_user_num++;
+                $result_data[$user->id] = $get_hi_coins;
+            }
+            if ($get_hi_coins < 0) {
+                $loss_user_num++;
+                $result_data[$user->id] = $get_hi_coins;
+            }
+
+            //echoLine($user->id, '获利', $get_hi_coins, '充值人民币', $recharge_amount, '获得hi币', $hi_coins);
+        }
+
+        arsort($result_data);
+        echoLine($result_data);
+
+        echoLine('总用户', $total_user_num, "盈利人数{$gain_user_num}, 亏损人数{$loss_user_num}");
+        echoLine('hi币总额', $total_hi_coins, '主播充值', $total_recharge_amount, '主播收益', $total_hi_coins - $total_recharge_amount);
+
+
+    }
+
+    function activitiesMessageAction()
+    {
+        $content = <<<EOF
+Hi语音官方提示
+一大波礼物即将下架咯~把握住机会，再不送送送的话，小心成为永恒的遗憾~
+礼物下架时间：2018年4月15日23:59
+糖葫芦、权杖、幸福摩天轮、爱你一万年
+当然也有会有一批精美的礼物上架哦，2018年4月16日0点准时上线，敬请期待
+EOF;
+
+        $title = "Hi语音官方提示";
+        $body = "一大波礼物即将下架咯~把握住机会噢";
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+        $push_data = ['title' => $title, 'body' => $body, 'client_url' => 'app://messages'];
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                echoLine($num, count($user_ids), $delay);
+                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
+            }
+        }
+    }
+
+    function serviceMessageAction()
+    {
+        $content = <<<EOF
+【爱心提醒】
+为了更好的服务用户，HI语音已经开放官方客服房间（ID：10086）
+如果您想了解怎样玩转HI语音
+如果你想了解什么是主持
+如果你想创建家族……
+等等等等各种问题
+都可以进房间提出问题
+客服的小哥哥小姐姐会积极给您解答的哟~
+
+房间开放时间：每天10:00~24:00
+EOF;
+
+        $title = "Hi，有什么问题吗？";
+        $body = "客服小姐姐在这里等你了";
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+        $push_data = ['title' => $title, 'body' => $body, 'client_url' => 'app://messages'];
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                echoLine($num, count($user_ids), $delay);
+                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
+            }
+        }
     }
 }
 

@@ -47,6 +47,8 @@
         <td><img src="${room_theme.icon_url}" width="30"></td>
         <td>${room_theme.status_text}</td>
         <td>${room_theme.rank}</td>
+        <td><a href="/admin/room_themes/product_channel_ids?id=${ room_theme.id }" class="modal_action">渠道配置(${ room_theme.product_channel_num })</a></td>
+        <td><a href="/admin/room_themes/platforms?id=${ room_theme.id }" class="modal_action">平台配置(${ room_theme.platform_num })</a></td>
         <td><a href="/admin/room_themes/edit/${room_theme.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>

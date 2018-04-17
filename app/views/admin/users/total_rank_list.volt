@@ -1,4 +1,8 @@
 <form method="get" action="/admin/users/total_rank_list" name="search_form" autocomplete="off">
+    <label for="product_channel_id">产品渠道</label>
+    <select name="product_channel_id" id="product_channel_id">
+        {{ options(product_channels,product_channel_id,'id','name') }}
+    </select>
 
     <label for="year">榜单类型</label>
     <select name="type" id="type">

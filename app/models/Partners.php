@@ -6,7 +6,7 @@ class Partners extends BaseModel
     static $STATUS = [PARTNER_STATUS_NORMAL => '正常', PARTNER_STATUS_BLOCK => '无效'];
 
     static $NOTIFY_CALLBACK = ['' => '不支持', 'notify_gdt' => '广点通回调', 'notify_active' => '头条回调',
-        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调'];
+        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调' ,'notify_jp' => '巨朋回调'];
 
     static $GROUP_TYPE = [PARTNER_GROUP_TYPE_NO => '默认'];
 
@@ -169,6 +169,75 @@ class Partners extends BaseModel
         }
 
         return $muid;
+    }
+
+    // 通知巨朋
+    static function notifyJp($data)
+    {
+        $callback = fetch($data, 'callback');
+        $opts = [
+            'appid'=> fetch($data, 'appid'),
+            'idfa'=> fetch($data, 'idfa')
+        ];
+
+        $res = httpGet('http://wall.jpmob.com/wall/iosAck.jsp?', $opts);
+        info($callback, $res->body);
+    }
+
+    //通知sina
+    static function notifySina($data)
+    {
+        info('data', $data);
+
+        $notify_url = self::generateSinaNotifyUrl($data);
+        if ($notify_url) {
+            $resp = httpGet($notify_url);
+            info("IOS|NOTIFY|{$notify_url}|{$resp->raw_body}", $data);
+            $result = json_decode($resp->raw_body, true);
+            return $result;
+        } else {
+            info("false Exce sina no sign key", $data);
+        }
+
+        return null;
+
+    }
+
+    static function generateSinaNotifyUrl($data)
+    {
+
+        $click_id = fetch($data, 'uuid');
+        $devid = fetch($data, 'devid');
+        $click_time = fetch($data, 'click_time');
+        $group_id = fetch($data, 'groupid');
+        $convid = '';
+        $token = '';
+
+        if (!$group_id) {
+            info('false no group_id', $data);
+            return;
+        }
+
+        $sina_ad_config = SinaAdConfigs::findFirstByGroupId($group_id);
+        if ($sina_ad_config) {
+
+            $convid = $sina_ad_config->convid;
+            $token = $sina_ad_config->token;
+
+            info($group_id, $convid, $token);
+        } else {
+
+            info('Exce false_no_sina_ad_config', $group_id, $data);
+            return '';
+        }
+
+        $params = $convid . $click_id;
+        $str = hash_hmac("sha1", $params, $token, true);
+        $sign = urlencode(base64_encode($str));
+
+        $url = "http://r.dmp.sina.com.cn/conv/track?fr=ea&conv_id={$convid}&click_id={$click_id}&devid={$devid}&bhv_time={$click_time}&sign={$sign}";
+
+        return $url;
     }
 
     // 通知百度

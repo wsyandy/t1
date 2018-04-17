@@ -198,7 +198,9 @@
                     {% if isAllowed('stats','days') %}
                         <li><a href="/admin/stats/days">按天统计</a></li>
                     {% endif %}
-
+                    {% if isAllowed('payments','day_stat') %}
+                        <li><a href="/admin/payments/day_stat">支付方式统计</a></li>
+                    {% endif %}
                     {% if isAllowed('active_users','day_rank_list') or isAllowed('active_users','month_rank_list') %}
                         <li class="dropdown-submenu">
                             <a href="javascript:;" tabindex="-1">在线用户统计</a>
@@ -337,6 +339,9 @@
                     {% if isAllowed('marketing_configs', 'index') %}
                         <li><a href="/admin/marketing_configs">腾讯marketing配置</a></li>
                     {% endif %}
+                    {% if isAllowed('sina_ad_configs', 'index') %}
+                        <li><a href="/admin/sina_ad_configs">新浪扶翼配置</a></li>
+                    {% endif %}
                     {% if isAllowed('soft_versions','index') %}
                         <li><a href="/admin/soft_versions">软件升级管理</a></li>
                     {% endif %}
@@ -365,6 +370,9 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    {% if isAllowed('i_gifts', 'index') %}
+                        <li><a href="/admin/i_gifts">礼物配置(国际版)</a></li>
+                    {% endif %}
                     {% if isAllowed('gifts', 'index') %}
                         <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}

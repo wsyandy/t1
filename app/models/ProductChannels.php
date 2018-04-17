@@ -91,7 +91,7 @@ class ProductChannels extends BaseModel
     static function getWebThemes()
     {
 
-        $web_themes = [];
+        $web_themes = ['yuewan'=>'hi语音','ruanyuyin'=>'软语音'];
         $themes = [];
         foreach (glob(APP_ROOT . 'app/views/web/*') as $filename) {
             $basename = basename($filename);

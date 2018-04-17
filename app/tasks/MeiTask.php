@@ -2725,132 +2725,94 @@ EOF;
         $db->zincrby($total_key, -$amount, $user_id);
 
         echoLine($amount, $db->zscore($total_key, $user_id), $db->zscore($day_key, $user_id));
+
+        $send_user_ids_key = "wake_up_user_send_gift_key";
+        $hot_cache = Users::getHotWriteCache();
+        echoLine($hot_cache->zrange($send_user_ids_key, 0, -1));
     }
 
-
-    function wakeupUsersAction()
+    function findSilentUserAction()
     {
-        $last_at = time() - 3600 * 48;
+        $sex = 1;
+        $type = 1;
+        $file = APP_ROOT . "log/avatar_url_sex_{$type}.log";
+        $content = file_get_contents($file);
+        $content = explode(PHP_EOL, $content);
+        $avatar_urls = array_filter($content);
 
-        if (isDevelopmentEnv()) {
-            $last_at = time() - 60 * 3;
-        }
+        $users = Users::findForeach(
+            [
+                'conditions' => 'id > 500000 and user_type = :user_type: and (register_at < 1 or register_at is null) and avatar_status != :avatar_status:',
+                'bind' => ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS],
+                'limit' => 1351
+            ]);
 
-        $users = Users::findForeach([
-            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
-            'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
-            'order' => 'last_at desc',
-            'limit' => 1000
-        ]);
+        $i = 0;
 
-        $num = 0;
-        $product_channel_id = 1;
 
-        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
-        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
-
-        $silent_users = Users::find($cond);
-        $silent_user_ids = [];
-
-        foreach ($silent_users as $silent_user) {
-            $silent_user_ids[] = $silent_user->id;
-        }
-
-        $gift_ids = [6, 7, 36];
-
-        $stat_at = date("Ymd");
-        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
-
-        $user_db = Users::getUserDb();
-        $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
-
-        if (isDevelopmentEnv()) {
-            $user_db->zclear($send_user_ids_key);
-        }
-
-        //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
-        //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
         foreach ($users as $user) {
 
-            $gift_id = $gift_ids[array_rand($gift_ids)];
-            $gift = Gifts::findFirstById($gift_id);
-            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
-            $send_user = Users::findFirstById($send_user_id);
-            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-
-            $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
-
-            echoLine($give_result, $content);
-
-            if ($give_result) {
-                $user_db->zadd($send_user_ids_key, time(), $user->id);
+            if (!isset($avatar_urls[$i])) {
+                echoLine("avatar is null", $i);
+                continue;
             }
 
-            $push_data = ['title' => $content, 'body' => $content];
-            \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+            $avatar_url = $avatar_urls[$i];
+            $avatar_url = trim($avatar_url);
+            $source_filename = APP_ROOT . 'temp/avatar_' . md5(uniqid(mt_rand())) . '.jpg';
 
-            $num++;
-
-            Chats::sendTextSystemMessage($user->id, $content);
-
-            echoLine($user->id, $send_user_id, $content, $num);
-
-            if ($num >= 1000) {
-                break;
+            if (!httpSave($avatar_url, $source_filename)) {
+                info('get avatar error', $avatar_url);
+                continue;
             }
+
+            $user->updateAvatar($source_filename);
+            echoLine($user->id);
+
+            if (file_exists($source_filename)) {
+                unlink($source_filename);
+            }
+
+            $user->sex = $sex;
+            $user->update();
+            $i++;
         }
 
-        echoLine(count($silent_user_ids));
-    }
+        echoLine($i);
 
-    function wakeupUsersStatAction()
-    {
-        $product_channel_id = 1;
-        $user_db = \Users::getUserDb();
-        $stat_at = date("Ymd");
-        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
+        echoLine(count($users));
 
-        $active_user = 0;
-        $recharge_user = 0;
-        $recharge_amount = 0;
 
-        foreach ($user_ids as $user_id => $send_at) {
+        $user = Users::findFirstById(21);
+        $push_data = ['title' => '测试', 'body' => '测试'];
+        echoLine($user->getPushContext(), $user->getPushReceiverContext());
+        \Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
 
-            $user = \Users::findFirstById($user_id);
-            $pay_amount = $user->pay_amount;
-            $last_at = $user->last_at;
 
-            if ($last_at > $send_at) {
-                $active_user += 1;
-            }
+        $hot_cache = Users::getHotWriteCache();
+        $online_silent_room = Rooms::findFirstById(136810);
+        $key = $online_silent_room->getUserListKey();
+        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $users = Users::findByIds($user_ids);
 
-            if ($pay_amount > 0) {
-                $recharge_user += 1;
-                $recharge_amount += $pay_amount;
-            }
+        foreach ($users as $user) {
+            $online_silent_room->exitSilentRoom($user);
         }
 
-        $send_user = $user_db->zcard($send_user_ids_key);
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_1.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_2.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar_url_sex_3.log
 
-        $datas = ['send_user' => $send_user, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
-        $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_female.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_male.log
+        //http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/grab_nickname_from_unknow.log
 
-        if (isDevelopmentEnv()) {
-            $user_db->hclear($send_user_stat_key);
-        }
-
-        $user_db->hmset($send_user_stat_key, $datas);
-
-        $stat_at = date("Ymd");
-        $product_channel_id = 1;
-        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
-
-        $user_db = Users::getUserDb();
-
-        echoLine($user_db->zrange($send_user_ids_key, 0, -1));
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_female.log", APP_NAME . "/users/grab_nickname_from_female.log");
+        echoLine(StoreFile::getUrl($res));
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_male.log", APP_NAME . "/users/grab_nickname_from_male.log");
+        echoLine(StoreFile::getUrl($res));
+        $res = StoreFile::upload(APP_ROOT . "doc/words/grab_nickname_from_unknow.log", APP_NAME . "/users/grab_nickname_from_unknow.log");
+        echoLine(StoreFile::getUrl($res));
     }
 
     function testEmojiAction()
@@ -2899,5 +2861,25 @@ EOF;
             $withdraw_account->status = STATUS_OFF;
             $withdraw_account->update();
         }
+    }
+
+    function fixUserRoomAction()
+    {
+        $user = Users::findFirstById(9);
+        $room = $user->current_room;
+        $room->exitSilentRoom($user);
+
+        $users = Users::find(
+            [
+                'conditions' => 'id < 1000000 and current_room_id > 0 and avatar_status != :avatar_status:',
+                'bind' => ['avatar_status' => AUTH_SUCCESS]
+            ]);
+
+        foreach ($users as $user) {
+            $room = $user->current_room;
+            $room->exitSilentRoom($user);
+            echoLine($user->id);
+        }
+        echoLine(count($users));
     }
 }

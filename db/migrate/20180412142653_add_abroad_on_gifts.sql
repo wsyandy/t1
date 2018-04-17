@@ -1,0 +1,1 @@
+ALTER TABLE gifts ADD abroad INTEGER DEFAULT 0;

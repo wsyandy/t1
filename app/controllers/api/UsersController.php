@@ -500,7 +500,7 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         $cond = [];
-        if($this->currentUser()->product_channel_id == 1){
+        if ($this->currentUser()->product_channel_id == 1) {
             $user_id = intval($this->params('user_id'));
             if ($user_id) {
                 $cond = ['user_id' => intval($user_id)];
@@ -524,7 +524,15 @@ class UsersController extends BaseController
     function searchByUidAction()
     {
         $uid = intval($this->params('uid'));
-        $user = \Users::findFirstByUid($uid);
+
+
+        $user = \Users::findFirst(
+            [
+                'conditions' => 'uid = :uid: and id != :id: and user_type = :user_type: and (user_status = :user_status1: or user_status = :user_status2:)  and register_at > 0',
+                'bind' => ['uid' => $uid, 'id' => SYSTEM_ID, 'user_type' => USER_TYPE_ACTIVE, 'user_status1' => USER_STATUS_ON, 'user_status2' => USER_STATUS_LOGOUT]
+            ]);
+
+
         if ($user) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
         }
@@ -655,7 +663,15 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        if (isDevelopmentEnv()) {
+            $opts = ['product_channel_id' => $product_channel_id];
+        } else {
+            $opts = [];
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page, $opts);
 
         $res = $users->toJson('users', 'toRankListJson');
 
@@ -692,7 +708,15 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        if (isDevelopmentEnv()) {
+            $opts = ['product_channel_id' => $product_channel_id];
+        } else {
+            $opts = [];
+        }
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page, $opts);
 
         $res = $users->toJson('users', 'toRankListJson');
 

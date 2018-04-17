@@ -11,11 +11,11 @@ class UsersController extends BaseController
         $password = $this->params('password');
 
         if (isBlank($password)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '请设置密码');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('请设置密码',$this->currentUser()->lang));
         }
 
         if (mb_strlen($password) < 6 || mb_strlen($password) > 16) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '请设置6~16位的密码');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('请设置6~16位的密码',$this->currentUser()->lang));
         }
 
         $context = $this->context();
@@ -30,7 +30,7 @@ class UsersController extends BaseController
 
         if ($user->isBlocked()) {
             info("block_user_login", $user->sid);
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('账户异常',$this->currentUser()->lang));
         }
 
         list($error_code, $error_reason) = $user->clientLogin($context, $device);
@@ -63,32 +63,32 @@ class UsersController extends BaseController
             $device = $this->currentDevice();
 
             if (!filter_var($login_name, FILTER_VALIDATE_EMAIL, FILTER_NULL_ON_FAILURE)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '邮箱格式错误');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('邮箱格式错误',$this->currentUser()->lang));
             }
 
             if (mb_strlen($password) < 6 || mb_strlen($password) > 16) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '请输入6~16位的密码');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('请输入6~16位的密码',$this->currentUser()->lang));
             }
 
             if (!$device) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('设备数据错误,请重试',$this->currentUser()->lang));
             }
 
             $user = \Users::findFirstByLoginName($this->currentProductChannel(), $login_name);
 
             if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '邮箱未注册');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('邮箱未注册',$this->currentUser()->lang));
             }
 
             if ($user->isBlocked()) {
                 info("block_user_login", $user->sid);
-                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('账户异常',$this->currentUser()->lang));
             }
 
             $context = $this->context();
 
             if (!$user || $user->password != md5($password)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码或密码不正确');
+                return $this->renderJSON(ERROR_CODE_FAIL, t('手机号码或密码不正确',$this->currentUser()->lang));
             }
 
             $context['login_type'] = USER_LOGIN_TYPE_EMAIL;
@@ -106,9 +106,9 @@ class UsersController extends BaseController
             $opts = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key];
             $opts = array_merge($opts, $user->toBasicJson());
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $opts);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, t('登陆成功',$this->currentUser()->lang), $opts);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('非法访问!',$this->currentUser()->lang));
         }
     }
 
@@ -141,7 +141,7 @@ class UsersController extends BaseController
     function thirdLoginAction()
     {
         if (!$this->request->isPost()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('非法访问!',$this->currentUser()->lang));
         }
 
         $device = $this->currentDevice();
@@ -150,13 +150,13 @@ class UsersController extends BaseController
         }
 
         if (!$device) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '设备数据错误,请重试');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('设备数据错误,请重试',$this->currentUser()->lang));
         }
 
         $third_name = $this->params('third_name'); // qq, weixin
         $third_gateway = \thirdgateway\Base::gateway($third_name);
         if (!$third_gateway) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '不支持该登陆方式!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('不支持该登陆方式!',$this->currentUser()->lang));
         }
 
         $context = $this->context();
@@ -168,7 +168,7 @@ class UsersController extends BaseController
         //登陆认证
         $form = $third_gateway->auth($context);
         if (!$form) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '登陆信息错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('登陆信息错误!',$this->currentUser()->lang));
         }
 
         info($third_name, 'third_login_info=', $form);
@@ -196,12 +196,12 @@ class UsersController extends BaseController
         }
 
         if (!$user) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '登陆失败!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('登陆失败!',$this->currentUser()->lang));
         }
 
         if ($user->isBlocked()) {
             info("block_user_login", $user->sid);
-            return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('账户异常',$this->currentUser()->lang));
         }
 
         $context['login_type'] = $third_name;
@@ -223,14 +223,14 @@ class UsersController extends BaseController
         $user_simple_json = ['sid' => $user->sid, 'app_id' => $app_id, 'signaling_key' => $key, 'error_url' => $error_url];
         $user_simple_json = array_merge($user_simple_json, $user->toBasicJson());
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '登陆成功', $user_simple_json);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('登陆成功',$this->currentUser()->lang), $user_simple_json);
     }
 
     function logoutAction()
     {
 
         if (!$this->currentUser()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '用户未登陆!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('用户未登陆!',$this->currentUser()->lang));
         }
 
         $user = $this->currentUser();
@@ -240,7 +240,7 @@ class UsersController extends BaseController
         }
         $user->update();
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '已退出', ['sid' => $user->sid]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('已退出',$this->currentUser()->lang), ['sid' => $user->sid]);
     }
 
     function updateAction()
@@ -255,19 +255,23 @@ class UsersController extends BaseController
 
         $params = $this->params();
         $monologue = fetch($params, 'monologue');
-        $birthday = fetch($params, 'birthday');
+        $birthday = fetch($params, 'i_birthday');
 
-        if ($monologue && mb_strlen($monologue) > 250) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '个性签名字数过长');
+        if ($birthday) {
+            $params['birthday'] = date('Y-m-d H:i:s', $birthday);
         }
 
-        if ($birthday && (strtotime($birthday) > time() || strtotime($birthday) < strtotime('1935-01-01'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的生日');
+        if ($monologue && mb_strlen($monologue) > 250) {
+            return $this->renderJSON(ERROR_CODE_FAIL, t('个性签名字数过长',$this->currentUser()->lang));
+        }
+
+        if ($birthday && ($birthday > time() || $birthday < strtotime('1935-01-01'))) {
+            return $this->renderJSON(ERROR_CODE_FAIL, t('请输入正确的生日',$this->currentUser()->lang));
         }
 
         $user->updateProfile($params);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功', $user->toDetailJson());
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('更新成功',$this->currentUser()->lang), $user->toDetailJson());
     }
 
     function updateAvatarAction()
@@ -279,7 +283,7 @@ class UsersController extends BaseController
         if ($avatar_file) {
             $user->updateAvatar($avatar_file);
         }
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('更新成功',$this->currentUser()->lang));
 
     }
 
@@ -291,7 +295,7 @@ class UsersController extends BaseController
 
         if (!$push_token) {
             info('Exce push_token', $this->context(), $this->params());
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '数据错误');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, t('数据错误',$this->currentUser()->lang));
         }
 
         $device = $this->currentDevice();
@@ -301,7 +305,7 @@ class UsersController extends BaseController
 
         if (!$device) {
             info('Exce false_device', $this->context(), $this->params());
-            return $this->renderJSON(ERROR_CODE_FAIL, '设备错误!');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('设备错误!',$this->currentUser()->lang));
         }
 
         $device->platform_version = $this->context('platform_version');
@@ -331,7 +335,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '设备不存在');
+        return $this->renderJSON(ERROR_CODE_FAIL, t('设备不存在',$this->currentUser()->lang));
     }
 
     function detailAction()
@@ -388,14 +392,14 @@ class UsersController extends BaseController
     {
         if (\Emchat::createEmUser($this->currentUser())) {
             return $this->renderJSON(
-                ERROR_CODE_SUCCESS, '创建成功',
+                ERROR_CODE_SUCCESS, t('创建成功',$this->currentUser()->lang),
                 [
                     'id' => $this->currentUser()->id,
                     'im_password' => $this->currentUser()->im_password
                 ]
             );
         }
-        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败,请稍后再试');
+        return $this->renderJSON(ERROR_CODE_FAIL, t('创建失败,请稍后再试',$this->currentUser()->lang));
     }
 
     function searchAction()
@@ -405,7 +409,7 @@ class UsersController extends BaseController
 
         $keywords = $this->params('keywords');
         if (!$keywords) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('搜索词不能为空！',$this->currentUser()->lang));
         }
 
         //搜索
@@ -436,7 +440,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        return $this->renderJSON(ERROR_CODE_FAIL, t('用户不存在',$this->currentUser()->lang));
     }
 
     // 附近的人
@@ -451,7 +455,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        return $this->renderJSON(ERROR_CODE_FAIL, t('用户不存在',$this->currentUser()->lang));
     }
 
     /**
@@ -475,13 +479,13 @@ class UsersController extends BaseController
         $access_token = \AccessTokens::validToken($token);
 
         if (!$access_token) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误, token错误或者过期');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数错误, token错误或者过期',$this->currentUser()->lang));
         }
 
         $user = $this->currentUser();
 
         if (!$user || $user->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '没有对应的用户');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('没有对应的用户',$this->currentUser()->lang));
         }
 
         $confirm = $this->params('confirm');
@@ -493,12 +497,12 @@ class UsersController extends BaseController
             $access_token->login_at = time();
             $access_token->save();
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '确认成功');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, t('确认成功',$this->currentUser()->lang));
         }
 
         $auth_url = $this->getRoot() . 'api/users/qrcode_login?token=' . $token . '&confirm=1';
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '确认登录', ['auth_url' => $auth_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, t('确认登录',$this->currentUser()->lang), ['auth_url' => $auth_url]);
     }
 
     //用户音乐列表
@@ -532,7 +536,7 @@ class UsersController extends BaseController
         if ($gold) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['gold' => $gold]);
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已签到', ['gold' => $gold]);
+            return $this->renderJSON(ERROR_CODE_FAIL, t('已签到',$this->currentUser()->lang), ['gold' => $gold]);
         }
     }
 
@@ -543,10 +547,12 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数错误',$this->currentUser()->lang));
         }
 
-        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page, ['product_channel_id' => $product_channel_id]);
 
         $res = $users->toJson('users', 'toRankListJson');
 
@@ -580,10 +586,12 @@ class UsersController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         if ($list_type != 'day' && $list_type != 'week' && $list_type != 'total') {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, t('参数错误',$this->currentUser()->lang));
         }
 
-        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page);
+        $product_channel_id = $this->currentProductChannelId();
+
+        $users = \Users::findFieldRankList($list_type, 'wealth', $page, $per_page, ['product_channel_id' => $product_channel_id]);
 
         $res = $users->toJson('users', 'toRankListJson');
 

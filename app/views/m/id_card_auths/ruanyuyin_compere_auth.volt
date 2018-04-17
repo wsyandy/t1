@@ -21,18 +21,18 @@
                 <input v-model="user_info.id_no" id="id_no" class="input_text" type="text" placeholder="请输入您的身份证号"
                        :readonly="readonly?true:false" maxlength="18">
             </li>
-            <li>
-                <span>银行卡号 </span>
-                <input v-model="user_info.bank_account" id="bank_account" class="input_text" type="text"
-                       placeholder="请输入您的银行卡号" :readonly="readonly?true:false"  >
-            </li>
+            {#<li>#}
+                {#<span>银行卡号 </span>#}
+                {#<input v-model="user_info.bank_account" id="bank_account" class="input_text" type="text"#}
+                       {#placeholder="请输入您的银行卡号" :readonly="readonly?true:false"  >#}
+            {#</li>#}
 
-            <li class="select" v-if="options.length">
-                <span>开户行</span>
-                <div class="select_area" @click="setSelect">
-                    <span>${options[selected].text}</span>
-                </div>
-            </li>
+            {#<li class="select" v-if="options.length">#}
+                {#<span>开户行</span>#}
+                {#<div class="select_area" @click="setSelect">#}
+                    {#<span>${options[selected].text}</span>#}
+                {#</div>#}
+            {#</li>#}
 
         </ul>
         <div class="agree_div" @click="agreeSelect">
@@ -96,7 +96,7 @@
                 tit: "主持认证说明",
                 txt: [
                     "主持认证成功后，主持用户享受钻石礼物分成比例50%和扶持奖励金。",
-                    "请填写真实的姓名、身份证号以及正确的手机号码，如填写错误，Hi语音平台将不予认证通过。 "
+                    "请填写真实的姓名、身份证号以及正确的手机号码，如填写错误，软语音平台将不予认证通过。 "
                 ]
             },
             hasAgree: true,
@@ -136,13 +136,13 @@
                 var id_name = $("#id_name").val();
                 var id_no = $("#id_no").val();
                 var mobile = $("#mobile").val();
-                var bank_account = $("#bank_account").val();
+//                var bank_account = $("#bank_account").val();
 
                 var params = {
                     id_name: id_name,
                     id_no: id_no,
                     mobile: mobile,
-                    bank_account:bank_account,
+//                    bank_account:bank_account,
                     sid: vm.sid,
                     code: vm.code
                 };

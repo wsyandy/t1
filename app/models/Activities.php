@@ -246,21 +246,21 @@ class Activities extends BaseModel
     function productChannelNum()
     {
         $num = 0;
-        $product_channel_ids = [];
         if ($this->product_channel_ids) {
             $product_channel_ids = explode(',', $this->product_channel_ids);
-            $num = count($product_channel_ids) - 2;
+            $product_channel_ids = array_filter(array_unique($product_channel_ids));
+            $num = count($product_channel_ids);
         }
+
         return $num;
     }
 
     function platformNum()
     {
         $platforms = $this->platforms;
+        $num = 'all';
 
-        if ('*' == $platforms) {
-            $num = 0;
-        } elseif ($platforms) {
+        if ($platforms && '*' != $platforms) {
             $platforms = array_filter(explode(',', $platforms));
             $num = count($platforms);
         }

@@ -52,4 +52,201 @@ class DevicesTask extends \Phaclcon\Cli\Task
             echoLine($temp_file);
         }
     }
+
+    function mobileTypeActiveAction()
+    {
+        $date = ['2018-04-17'];
+
+        foreach ($date as $stat_at) {
+
+            $devices = Devices::find(
+                [
+                    'conditions' => 'partner_id = 85 and created_at >= :start: and created_at <= :end:',
+                    'bind' => ['start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                ]);
+
+            $total_num = count($devices);
+
+            $res = [];
+
+            foreach ($devices as $device) {
+
+                $model = $device->model;
+
+                if (isset($res[$model])) {
+                    $res[$model] += 1;
+                } else {
+                    $res[$model] = 1;
+                }
+            }
+
+
+            arsort($res);
+
+            $file = APP_ROOT . "public/" . $stat_at . "mobile_type_device_active.txt";
+            $f = fopen($file, 'w');
+
+            fwrite($f, $stat_at . '激活总数量: ' . $total_num . "\r\n");
+            echoLine($total_num);
+            foreach ($res as $type => $num) {
+                $text = "手机型号:" . $type . "激活数量:" . $num;
+                echoLine($text);
+                fwrite($f, $text . "\r\n");
+            }
+
+            fclose($f);
+
+            $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . uniqid() . ".txt");
+            echoLine(StoreFile::getUrl($res));
+
+            unlink($file);
+        }
+    }
+
+    function mobileTypeUserRegisterAction()
+    {
+        $date = ['2018-04-17'];
+
+        foreach ($date as $stat_at) {
+
+            $users = Users::find(
+                [
+                    'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
+                    'bind' => ['partner_id' => 85, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                ]);
+
+            $total_num = count($users);
+
+            $res = [];
+
+            foreach ($users as $user) {
+
+                $device = $user->device;
+                $model = $device->model;
+
+                if (isset($res[$model])) {
+                    $res[$model] += 1;
+                } else {
+                    $res[$model] = 1;
+                }
+            }
+
+
+            arsort($res);
+
+            $file = APP_ROOT . "public/" . $stat_at . "mobile_type_vivo_user_register.txt";
+
+            $f = fopen($file, 'w');
+
+            fwrite($f, $stat_at . '注册总数量: ' . $total_num . "\r\n");
+            echoLine($total_num);
+
+            foreach ($res as $type => $num) {
+                $text = "手机型号:" . $type . "注册数量:" . $num;
+                //echoLine($text);
+                fwrite($f, $text . "\r\n");
+            }
+
+            fclose($f);
+
+            $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . $stat_at . "注册.txt");
+            echoLine(StoreFile::getUrl($res));
+
+            unlink($file);
+        }
+    }
+
+    function totalMobileTypeActiveAction()
+    {
+        $partner = Partners::findFirstById(85);
+
+        $devices = Devices::find(
+            [
+                'conditions' => 'partner_id = 85',
+            ]);
+
+        $total_num = count($devices);
+
+        echoLine($total_num);
+        $res = [];
+
+        foreach ($devices as $device) {
+
+            $model = $device->model;
+
+            if (isset($res[$model])) {
+                $res[$model] += 1;
+            } else {
+                $res[$model] = 1;
+            }
+        }
+
+
+        arsort($res);
+
+        $file = APP_ROOT . "public/" . $partner->username . "_mobile_type_device_active.txt";
+
+        $f = fopen($file, 'w');
+
+        fwrite($f, '激活总数量: ' . $total_num . "\r\n");
+
+        foreach ($res as $type => $num) {
+            $text = "手机型号:" . $type . "激活数量:" . $num;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+
+        $res = StoreFile::upload($file, APP_NAME . "/devices/" . $partner->username . "_total_mobile_type_device_active.txt");
+        echoLine(StoreFile::getUrl($res));
+    }
+
+    function totalMobileTypeUserRegisterAction()
+    {
+        $partner = Partners::findFirstById(85);
+
+        $users = Users::find(
+            [
+                'conditions' => 'partner_id = :partner_id: and register_at > 0',
+                'bind' => ['partner_id' => $partner->id]
+            ]);
+
+        $total_num = count($users);
+        echoLine($total_num);
+
+        $res = [];
+
+        foreach ($users as $user) {
+
+            $device = $user->device;
+            $model = $device->model;
+
+            if (isset($res[$model])) {
+                $res[$model] += 1;
+            } else {
+                $res[$model] = 1;
+            }
+        }
+
+
+        arsort($res);
+
+        $file = APP_ROOT . "public/" . $partner->username . "_mobile_type_total_user_register.txt";
+
+        $f = fopen($file, 'w');
+
+        fwrite($f, '注册总数量: ' . $total_num . "\r\n");
+
+        foreach ($res as $type => $num) {
+            $text = "手机型号:" . $type . "注册数量:" . $num;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+
+        $res = StoreFile::upload($file, APP_NAME . "/devices/" . $partner->username . "_mobile_type_total_user_register.txt");
+        echoLine(StoreFile::getUrl($res));
+    }
 }

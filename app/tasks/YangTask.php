@@ -648,17 +648,178 @@ class YangTask extends \Phalcon\Cli\Task
     function fixWithdrawHistoriesAction()
     {
         $withdraw_histories = \WithdrawHistories::find([
-            'conditions' => 'withdraw_account_type is null and withdraw_account_id is null',
+            'conditions' => 'withdraw_account_type = 2 and status = ' . WITHDRAW_STATUS_WAIT,
             'order' => 'id desc'
         ]);
 
         foreach ($withdraw_histories as $withdraw_history) {
-            $withdraw_history->withdraw_account_type = 1;
-            $withdraw_history->update();
-            echoLine($withdraw_history->id);
+            $withdraw_account = $withdraw_history->withdraw_account;
+            if (isPresent($withdraw_account) && $withdraw_history->user_name != $withdraw_account->user_name) {
+                $withdraw_history->user_name = $withdraw_account->user_name;
+                $withdraw_history->update();
+                echoLine($withdraw_history->id);
+            }
+        }
+    }
+
+    function fixRankList($key)
+    {
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, 1, -1, 'withscores');
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $user_id => $result) {
+            $ids[] = $user_id;
+            $fields[$user_id] = $result;
         }
 
-        $user = Users::findFirstById(1157712);
-        echoLine($user);
+        $users = Users::findByIds($ids);
+
+        foreach ($users as $user) {
+            $product_channel_id = $user->product_channel_id;
+            if ($product_channel_id) {
+                $key_product_channel = "_product_channel_id_" . $product_channel_id;
+
+                $db->zincrby($key . $key_product_channel, $fields[$user->id], $user->id);
+            }
+        }
+    }
+
+
+    function fixUserDayRankListAction($params)
+    {
+        $time = time();
+
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $days = intval($params[1]);
+        if ($days <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $days; $i++) {
+            $day_key = "day_" . $field . "_rank_list_" . date("Ymd", $time - 86400 * $i);
+            echoLine($day_key);
+            $this->fixRankList($day_key);
+        }
+    }
+
+    function fixUserWeekRankListAction($params)
+    {
+        $start_at = strtotime("last sunday next day", time());
+        $end_at = strtotime("next monday", time()) - 1;
+
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $weeks = intval($params[1]);
+        if ($weeks <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $weeks; $i++) {
+
+            $start = date("Ymd", $start_at - 86400 * 7 * $i);
+            $end = date("Ymd", $end_at - 86400 * 7 * $i);
+
+            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+
+            echoLine($week_key);
+
+            $this->fixRankList($week_key);
+        }
+    }
+
+    function fixUserTotalRankListAction($params)
+    {
+        $field = $params[0];
+        if ($field != 'charm' && $field != 'wealth') {
+            echoLine("参数错误");
+            return;
+        }
+
+        $total_key = "total_" . $field . "_rank_list";
+        $this->fixRankList($total_key);
+    }
+
+    function fixUnionRankList($key)
+    {
+        $db = Users::getUserDb();
+
+        $results = $db->zrevrange($key, 1, -1, 'withscores');
+
+        $ids = [];
+        $fields = [];
+        foreach ($results as $union_id => $result) {
+            $ids[] = $union_id;
+            $fields[$union_id] = $result;
+        }
+
+        $unions = Unions::findByIds($ids);
+
+        foreach ($unions as $union) {
+            $product_channel_id = $union->product_channel_id;
+            if ($product_channel_id) {
+                $key_product_channel = "_product_channel_id_" . $product_channel_id;
+                echoLine($key_product_channel);
+                $db->zincrby($key . $key_product_channel, $fields[$union->id], $union->id);
+            }
+        }
+    }
+
+
+    function fixUnionDayRankListAction($params)
+    {
+        $time = time();
+
+
+        $days = intval($params[0]);
+        if ($days <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $days; $i++) {
+            $day_key = "total_union_fame_value_day_" . date("Ymd", $time - 86400 * $i);
+
+            echoLine($day_key);
+            $this->fixUnionRankList($day_key);
+        }
+    }
+
+    function fixUnionWeekRankListAction($params)
+    {
+        $start_at = strtotime("last sunday next day", time());
+        $end_at = strtotime("next monday", time()) - 1;
+
+
+        $weeks = intval($params[0]);
+        if ($weeks <= 0) {
+            echoLine("参数错误");
+            return;
+        }
+
+        for ($i = 0; $i < $weeks; $i++) {
+
+            $start = date("Ymd", $start_at - 86400 * 7 * $i);
+            $end = date("Ymd", $end_at - 86400 * 7 * $i);
+
+            $week_key = "total_union_fame_value_" . $start . "_" . $end;
+
+            echoLine($week_key);
+
+            $this->fixUnionRankList($week_key);
+        }
     }
 }

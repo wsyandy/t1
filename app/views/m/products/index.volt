@@ -1,1 +1,1 @@
-{% include "m/template/product.volt" %}
+{{ partial("m/template/" ~ code ~ "_product") }}

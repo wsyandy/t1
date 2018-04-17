@@ -15,7 +15,7 @@ class BannedWords extends BaseModel
      */
     static function checkWord($word)
     {
-        
+        return [false, $word];
         //临时解决
         if (mb_strlen($word) == 1) {
             return [false, $word];

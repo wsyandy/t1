@@ -44,11 +44,19 @@ class MenTask extends \Phalcon\Cli\Task
 //        $keywords = '13a2';
 //        $rs = preg_match('/^[0-9]*$/', $keywords);
 //        echoLine($rs);
-        $fee_type = I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD;
-        if (!in_array($fee_type, array_keys(IGoldHistories::$FEE_TYPE))) {
-            echoLine('fee_type is false', $fee_type);
-        }
+//        $fee_type = I_GOLD_HISTORY_FEE_TYPE_BUY_GOLD;
+//        if (!in_array($fee_type, array_keys(IGoldHistories::$FEE_TYPE))) {
+//            echoLine('fee_type is false', $fee_type);
+//        }
 
+        $click_id = "54321";
+        $convid = "n855_1_104654";
+        $token = "aa6f20cecdf0cf948ac01b52febf7469";
+
+        $params = $convid . $click_id;
+        $str = hash_hmac("sha1", $params, $token, true);
+        $sign = urlencode(base64_encode($str));
+        echoLine($sign);
     }
 
     function insertUserAction()
@@ -73,13 +81,27 @@ class MenTask extends \Phalcon\Cli\Task
     function fixUserLevelAction()
     {
         $gift_orders = GiftOrders::find([
-            'conditions'=>'product_channel_id = :product_channel_id:',
-            'bind'=>['product_channel_id'=>3]
+            'conditions' => 'product_channel_id = :product_channel_id:',
+            'bind' => ['product_channel_id' => 3]
         ]);
 
         foreach ($gift_orders as $gift_order) {
             echoLine($gift_order->id, $gift_order->user_id, $gift_order->sender_id);
             Users::updateExperienceByInternational($gift_order->id);
+        }
+    }
+
+    function fixGiftAction()
+    {
+        $gifts = Gifts::find([
+            'conditions' => 'pay_type = :pay_type:',
+            'bind' => ['pay_type' => GIFT_PAY_TYPE_I_GOLD]
+        ]);
+
+        foreach ($gifts as $gift) {
+            $gift->abroad = 1;
+            $gift->save();
+            echoLine('id', $gift->id);
         }
     }
 

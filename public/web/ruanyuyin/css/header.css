@@ -1,0 +1,94 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    background-color: rgba(20, 23, 58, .9);
+    z-index: 9999
+}
+
+.head {
+    height: 100%;
+    width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -moz-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+.logo_box {
+    height: 100%;
+    font-size: 24px;
+    color: #fff
+}
+
+.logo_img {
+    height: 100%
+}
+
+.nav {
+    height: 100%
+}
+
+.nav ul {
+    height: 100%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 18px;
+    color: #FFF
+}
+
+.nav ul li {
+    padding: 0 20px
+}
+
+.nav ul li a {
+    padding: 5px;
+    color: #FFF
+}
+
+.nav ul li.current a {
+    color: #2AD8D7;
+    border-bottom: 2px solid #2AD8D7
+}
+
+
+.get_out {
+    font-size: 18px !important;
+}
+
+.get_out i {
+    display: inline-block;
+    width: 15px;
+    height: 18px;
+    background: url(../images/get_out_icon.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+}

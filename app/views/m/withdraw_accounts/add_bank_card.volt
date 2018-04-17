@@ -226,6 +226,5 @@
     };
 
     vm = XVue(opts);
-
 </script>
 

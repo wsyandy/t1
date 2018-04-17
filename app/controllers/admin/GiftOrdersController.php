@@ -107,6 +107,7 @@ class GiftOrdersController extends BaseController
 
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
+        $cond['order'] = 'id desc';
 
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
 

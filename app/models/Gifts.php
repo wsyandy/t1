@@ -290,6 +290,7 @@ class Gifts extends BaseModel
         $product_channel_id = $user->product_channel_id;
 
         $gift_type = fetch($opts, 'gift_type');
+        $abroad = fetch($opts, 'abroad');
 
         $conditions = [
             'conditions' => "status = :status:",
@@ -299,11 +300,17 @@ class Gifts extends BaseModel
             'order' => 'rank desc, amount asc'
         ];
 
+        if ($abroad) {
+            $conditions['conditions'] .= " and abroad = 1";
+        } else {
+            $conditions['conditions'] .= " and abroad != 1";
+        }
+
         $conditions['conditions'] .= " and ( platforms like '*' or platforms like :platforms: or platforms = '')";
         $conditions['bind']['platforms'] = "%" . $platform . "%";
 
         $conditions['conditions'] .= " and (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
-        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+        $conditions['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
 
         if ($gift_type) {
             $conditions['conditions'] .= ' and type = :gift_type:';
@@ -315,7 +322,7 @@ class Gifts extends BaseModel
 
 
         //临时使用
-        if (!$user->isHignVersion()) {
+        if (!$user->canShowGoldGift()) {
 
             $gold_gift_ids = [];
 
@@ -357,8 +364,8 @@ class Gifts extends BaseModel
     {
         $gift = fetch($opts, 'gift');
         $gift_num = fetch($opts, 'gift_num');
-        $user = \Users::findById($opts['user_id']);
         $sender = fetch($opts, 'sender');
+        $user = \Users::findById($opts['user_id']);
         $data = [];
 
         if ($gift) {

@@ -48,7 +48,7 @@ class FriendsController extends BaseController
         $opts['self_introduce'] = $self_introduce;
 
         $this->currentUser()->addFriend($this->otherUser(), $opts);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '添加成功');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '申请已发送,请耐心等待审核');
     }
 
     //删除好友

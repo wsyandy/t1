@@ -14,6 +14,7 @@
 {{ content() }}
 </body>
 <script>
+    //解决alert弹出网址
     window.alert = function (name) {
         var iframe = document.createElement("IFRAME");
         iframe.style.display = "none";

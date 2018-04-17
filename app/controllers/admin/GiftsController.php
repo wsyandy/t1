@@ -23,7 +23,13 @@ class GiftsController extends BaseController
             } else {
                 $cond['conditions'] = "  (product_channel_ids = '' or product_channel_ids is null or product_channel_ids like :product_channel_ids:)";
             }
-            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . "%,";
+            $cond['bind']['product_channel_ids'] = "%," . $product_channel_id . ",%";
+        }
+
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and abroad != 1";
+        } else {
+            $cond['conditions'] = "abroad != 1";
         }
 
         $cond['order'] = 'status desc, rank desc';
@@ -74,7 +80,7 @@ class GiftsController extends BaseController
 
         $gift = \Gifts::findById($this->params('id'));
         $this->assign($gift, 'gift');
-        if($gift->status == STATUS_ON && !$gift->product_channel_ids){
+        if ($gift->status == STATUS_ON && !$gift->product_channel_ids) {
             return $this->renderJSON(ERROR_CODE_FAIL, '先选择支持的产品渠道');
         }
 

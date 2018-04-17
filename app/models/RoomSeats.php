@@ -101,7 +101,7 @@ class RoomSeats extends BaseModel
 
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->setex("room_seat_token_" . $online_token, 7*24*3600,$this->id);
+            $hot_cache->setex("room_seat_token_" . $online_token, 7 * 24 * 3600, $this->id);
         }
     }
 
@@ -311,9 +311,9 @@ class RoomSeats extends BaseModel
             }
 
             //当前用户不在房间
-            if (!$other_user->isInRoom($room) && $other_user->current_room) {
-                info("up_room_seat_error", $other_user->id, $room->id, $other_user->current_room->id);
-                $other_user->current_room->exitRoom($other_user);
+            if (!$other_user->isInRoom($room)) {
+                info("up_room_seat_error", $other_user->id, $room->id, $other_user->current_room_id);
+                return [ERROR_CODE_FAIL, '当前用户不在房间'];
             }
 
         } else {

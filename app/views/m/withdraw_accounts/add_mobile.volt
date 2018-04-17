@@ -117,5 +117,4 @@
     };
 
     vm = XVue(opts);
-
 </script>

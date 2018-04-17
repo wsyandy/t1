@@ -144,6 +144,7 @@
     user_num 在线人数
     app_id string 应用id
     channel_key string token 用于加入频道(互动直播)
+    signaling_key string token
     user_chat boolean 当前用户是否可以发公屏消息 true可以false不可以
     user_role 当前用户角色 0无角色, 5房主，10管理员, 15主播，20旁听
     theme_type 房间主题类型 0普通房间 1电台房间 如果是电台类型 需要请求接口拉取音频资源
@@ -616,5 +617,24 @@
             value string 1   请求房间列表时type的值
         }
     ]
+}
+```
+### 25 发公屏送消息 
+
+> http-post ```/api/rooms/send_message```
+
+##### 25.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|room_id|房间id|int|否||
+|content|消息内容|string|否||
+|content_type|消息类型|string|否|文本类型:text|
+
+##### 25.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: ''
+   
 }
 ```

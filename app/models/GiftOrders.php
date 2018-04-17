@@ -126,97 +126,105 @@ class GiftOrders extends BaseModel
      * @return bool
      */
 
-    static function giveTo($sender_id, $receiver_id, $gift, $gift_num)
+    static function giveTo($sender_id, $receiver_ids, $gift, $gift_num, $total_gift_num)
     {
 
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(',', $receiver_ids);
+        }
+
         $sender = Users::findFirstById($sender_id);
-        if (!$sender->isSilent() && !$sender->canGiveGift($gift, $gift_num)) {
+
+        if (!$sender->isSilent() && !$sender->canGiveGift($gift, $total_gift_num)) {
             return false;
         }
 
-        $receiver = Users::findFirstById($receiver_id);
-        if (!$receiver) {
-            return false;
-        }
+        $receivers = Users::findByIds($receiver_ids);
+        $error_code = true;
 
-        $gift_order = new GiftOrders();
-        $gift_order->sender_id = $sender_id;
-        $gift_order->user_id = $receiver_id;
-        $gift_order->gift_id = $gift->id;
-        $gift_order->amount = $gift->amount * $gift_num;
-        $gift_order->name = $gift->name;
-        $gift_order->pay_type = $gift->pay_type;
-        $gift_order->gift_type = $gift->type;
-        $gift_order->status = GIFT_ORDER_STATUS_WAIT;
-        $gift_order->gift_num = $gift_num;
-        $gift_order->receiver_user_type = $receiver->user_type;
-        $gift_order->sender_user_type = $sender->user_type;
-        $gift_order->receiver_union_id = $receiver->union_id;
-        $gift_order->sender_union_id = $sender->union_id;
-        $gift_order->receiver_union_type = $receiver->union_type;
-        $gift_order->sender_union_type = $sender->union_type;
-        $gift_order->sender_country_id = $sender->country_id;
-        $gift_order->receiver_country_id = $receiver->country_id;
-        $gift_order->product_channel_id = $receiver->product_channel_id;
+        foreach ($receivers as $receiver) {
 
-        if ($sender_id == $receiver_id) {
-            $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
-        } else {
-            $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
-        }
+            $receiver_id = $receiver->id;
 
-        // 在房间里送里面
-        if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
-            $gift_order->room_id = $sender->current_room_id;
-            $gift_order->room_union_id = $sender->current_room->union_id;
-            $gift_order->room_union_type = $sender->current_room->union_type;
-        }
+            $gift_order = new GiftOrders();
+            $gift_order->sender_id = $sender_id;
+            $gift_order->user_id = $receiver_id;
+            $gift_order->gift_id = $gift->id;
+            $gift_order->amount = $gift->amount * $gift_num;
+            $gift_order->name = $gift->name;
+            $gift_order->pay_type = $gift->pay_type;
+            $gift_order->gift_type = $gift->type;
+            $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+            $gift_order->gift_num = $gift_num;
+            $gift_order->receiver_user_type = $receiver->user_type;
+            $gift_order->sender_user_type = $sender->user_type;
+            $gift_order->receiver_union_id = $receiver->union_id;
+            $gift_order->sender_union_id = $sender->union_id;
+            $gift_order->receiver_union_type = $receiver->union_type;
+            $gift_order->sender_union_type = $sender->union_type;
+            $gift_order->sender_country_id = $sender->country_id;
+            $gift_order->receiver_country_id = $receiver->country_id;
+            $gift_order->product_channel_id = $receiver->product_channel_id;
 
-        if ($gift_order->create()) {
-            $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费' . $gift_order->pay_type_text . $gift_order->amount;
-            $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
+            if ($sender_id == $receiver_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+            } else {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+            }
 
-            //扣除钻石
-            if ($gift->isDiamondPayType()) {
-                $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
-                if ($result) {
-                    //如果赠送者是公司人员，并且接受者不是公司人员，则将其赠送的钻石金额加入到缓存中
-                    if ($sender->isCompanyUser() && !$receiver->isCompanyUser()) {
-                        $sender->addCompanyUserSendNumber($gift_order->amount);
+            // 在房间里送里面
+            if ($sender->current_room_id && $receiver->current_room_id && $sender->current_room_id == $receiver->current_room_id) {
+                $gift_order->room_id = $sender->current_room_id;
+                $gift_order->room_union_id = $sender->current_room->union_id;
+                $gift_order->room_union_type = $sender->current_room->union_type;
+            }
+
+            if ($gift_order->create()) {
+                $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费' . $gift_order->pay_type_text . $gift_order->amount;
+                $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
+
+                //扣除钻石
+                if ($gift->isDiamondPayType()) {
+                    $result = \AccountHistories::changeBalance($gift_order->sender_id, ACCOUNT_TYPE_BUY_GIFT, $gift_order->amount, $opts);
+                    if ($result) {
+                        //如果赠送者是公司人员，并且接受者不是公司人员，则将其赠送的钻石金额加入到缓存中
+                        if ($sender->isCompanyUser() && !$receiver->isCompanyUser()) {
+                            $sender->addCompanyUserSendNumber($gift_order->amount);
+                        }
                     }
-                }
-            } else {
-                //扣除金币
-                $result = \GoldHistories::changeBalance($gift_order->sender_id, GOLD_TYPE_BUY_GIFT, $gift_order->amount, $opts);
-            }
-
-            if ($result) {
-
-                $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
-                $gift_order->update();
-                $gift_order->updateUserGiftData($gift);
-
-                //如果是许愿灯,生日party,梦幻城堡参与抽奖活动
-                $activity_gift_ids = [25, 13, 14];
-
-                if (isDevelopmentEnv()) {
-                    $activity_gift_ids = [44, 15, 19];
+                } else {
+                    //扣除金币
+                    $result = \GoldHistories::changeBalance($gift_order->sender_id, GOLD_TYPE_BUY_GIFT, $gift_order->amount, $opts);
                 }
 
-//                if (in_array($gift->id, $activity_gift_ids)) {
-//                    Activities::delay()->addLuckyDrawActivity($gift_order->sender_id, ['gift_order_id' => $gift_order->id]);
-//                }
+                if ($result) {
+                    $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
 
+                    if ($gift_order->update()) {
+                        $gift_order->updateUserGiftData($gift);
+                    } else {
+                        $error_code = false;
+                        break;
+                    }
+
+                } else {
+                    $gift_order->status = GIFT_ORDER_STATUS_WAIT;
+                    $gift_order->update();
+
+                    $error_code = false;
+                    break;
+                }
             } else {
-                $gift_order->status = GIFT_ORDER_STATUS_WAIT;
-                $gift_order->update();
+                $error_code = false;
+                break;
             }
-
-            return $result;
         }
 
-        info("send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
-        return false;
+        if (!$error_code) {
+            info("Exce send_gift_fail", $sender->sid, $receiver->sid, $sender->diamond, $gift->id, $gift_num);
+        }
+
+        return $error_code;
     }
 
     function updateUserGiftData($gift)
@@ -260,15 +268,8 @@ class GiftOrders extends BaseModel
             }
         }
 
-        //国际版钻石
-        if ($this->gift->isIGoldPayType()) {
-
-            \Users::delay()->updateExperienceByInternational($this->id);
-
-        } else {
-            \Users::delay()->updateExperience($this->id);
-            \Users::delay()->updateCharm($this->id);
-        }
+        \Users::delay()->updateExperience($this->id);
+        \Users::delay()->updateCharm($this->id);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

@@ -112,7 +112,7 @@ class HiCoinHistories extends BaseModel
         info($user_id, $gift_order_id, $opts);
 
         $lock_key = "update_user_hi_coins_lock_" . $user_id;
-        $lock = tryLock($lock_key);
+        $lock = tryLock($lock_key); // 记得释放锁
 
         if ($gift_order_id) {
             $old_hi_coin_history = HiCoinHistories::findFirstByGiftOrderId($gift_order_id);

@@ -62,7 +62,7 @@ ol, ul, li {
     margin-top: 0.4rem;
 }
 .wo_dengji p span{
-    font-weight: bold;
+    color: #F83F56;
 }
 .wo_box{
 
@@ -85,6 +85,7 @@ ol, ul, li {
 .wo_box .box_list i{
     display: inline-block;
     margin-right: 0.266667rem;
+    vertical-align: middle;
 }
 .wo_box .box_list .icon_01{
     width: 0.426667rem;
@@ -103,7 +104,8 @@ ol, ul, li {
     color: #333333;
 }
 .wo_box .box_list p b{
-    font-weight: bold;
+    font-weight: normal;
+    color: #F83F56;
 }
 .wo_box .box_list span{
     position: absolute;

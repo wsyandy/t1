@@ -100,10 +100,16 @@ class BaseController extends \ApplicationController
 
         $current_user = $this->currentUser();
 
+        // 主题
+        $this->view->current_theme = $this->currentProductChannel()->web_theme;
+
         $controller_name = \Phalcon\Text::uncamelize($dispatcher->getControllerName());
         $action_name = \Phalcon\Text::uncamelize($dispatcher->getActionName());
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
+
+        $this->view->controller_name = $controller_name;
+        $this->view->action_name = $action_name;
 
         $show_logout = false;
         if (isPresent($current_user)) {

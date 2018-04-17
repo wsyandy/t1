@@ -20,8 +20,9 @@
             <span  @click.stop="enterRoom(item.current_room_id)" v-show="item.current_room_id"><i class="room"></i>房间</span>
             <span  @click="addFriend(item)" :class="{'interest_add':true,'interest_add_to':!item.is_added}"><i class="friend"></i>${ item.is_added? "已添加":"添加" } </span>
         </div>
-        <div class="line_bottom"></div>
+
     </div>
+    <div style="height: 1.5rem"></div>
     <div class="int_change" @click.stop="changeUsers">
         <span>换一换</span>
     </div>
@@ -33,7 +34,7 @@
             <div class="room_locked">房间已上锁</div>
             <div class="room_lock">
                 <label for="">密码</label>
-                <input class="input_text" maxlength="10" type="number" placeholder="最多输入10个字" id="password" style="
+                <input class="room_input" maxlength="10" type="text" placeholder="最多输入10个字" id="password" style="
     background-color: #F0F0F0;">
             </div>
             <div class="room_btn">

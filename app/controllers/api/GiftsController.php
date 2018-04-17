@@ -64,16 +64,31 @@ class GiftsController extends BaseController
             }
         }
 
+        $receiver_ids = explode(',', $user_id);
+
+        if (count($receiver_ids) < 1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        }
+
+        if (in_array($this->currentUserId(), $receiver_ids) && !$gift->isCar()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不能给自己送礼物');
+        }
+
+        $total_gift_num = count($receiver_ids) * $gift_num;
+
         if ($gift->isDiamondPayType()) {
-            $gift_amount = $gift_num * $gift->amount;
-            $check_result = $this->currentUser()->canSendToUser($user_id, $gift_amount);
+
+            $gift_amount = $total_gift_num * $gift->amount;
+            $check_result = $this->currentUser()->canSendToUser($receiver_ids, $gift_amount);
+
             if (!$check_result) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '非常抱歉，您已经超过今日对外送出的额度');
             }
         }
 
-        if ($this->currentUser()->canGiveGift($gift, $gift_num)) {
-            $give_result = \GiftOrders::giveTo($this->currentUserId(), $user_id, $gift, $gift_num);
+        if ($this->currentUser()->canGiveGift($gift, $total_gift_num)) {
+
+            $give_result = \GiftOrders::giveTo($this->currentUserId(), $receiver_ids, $gift, $gift_num, $total_gift_num);
 
             if ($give_result) {
                 $notify_data = \ImNotify::generateNotifyData(
@@ -84,16 +99,17 @@ class GiftsController extends BaseController
                         'gift' => $gift,
                         'gift_num' => $gift_num,
                         'sender' => $this->currentUser(),
-                        'user_id' => $user_id
+                        'user_id' => $receiver_ids[0]
                     ]
                 );
 
                 $current_user = $this->currentUser(true);
+
                 $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold]);
 
                 $error_reason = "购买成功";
 
-                if ($user_id != $this->currentUser()->id) {
+                if (!in_array($this->currentUser()->id, $receiver_ids)) {
                     $error_reason = "赠送成功";
                 }
 
@@ -106,6 +122,7 @@ class GiftsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '购买失败');
             }
         }
+
         return $this->renderJSON(ERROR_CODE_NEED_PAY, '余额不足');
     }
 

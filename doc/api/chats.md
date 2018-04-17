@@ -74,3 +74,24 @@
     unread_num 未读消息个数
 }
 ```
+
+### 4 发送消息 
+
+> http-post ```/api/chats```
+
+##### 4.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|user_id|接收用户id|int|否||
+|content|消息内容|string|是||
+|content_type|消息类型|string|否|文本类型:text图片类型:image语音类型:voice|
+|file|消息文件|file|是|||
+
+##### 4.2 返回参数说明
+```
+{
+    error_code: 0/-1
+    error_reason: ''
+   
+}
+```

@@ -40,30 +40,74 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
+        $new = intval($this->params('new', 0));
+        $broadcast = intval($this->params('broadcast', 0));
+        $follow = intval($this->params('follow', 0));
+
         $user_id = $this->currentUserId();
 
         //限制搜索条件
         $cond = [
-            'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON . " and product_channel_id = :product_channel_id:",
-            'bind' => ['product_channel_id' => $this->currentProductChannel()->id],
+            'conditions' => 'online_status = :online_status: and status = :status:',
+            'bind' => ['product_channel_id' => $this->currentProductChannel()->id, 'online_status' => STATUS_ON, 'status' => STATUS_ON],
             'order' => 'last_at desc, user_type asc'
         ];
 
-        if (STATUS_ON == $hot) {
+        if ($hot == STATUS_ON) {
+            //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+
+        } else if ($new == STATUS_ON) {
+            $cond['order'] = "created_at desc";
+
+        } else if ($broadcast == STATUS_ON) {
+
+            $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+
+        } else if ($follow == STATUS_ON) {
+
+            $users = $this->currentUser()->followList($page, $per_page);
+
+            $room_ids = [];
+            foreach ($users as $user) {
+                if ($user->room_id) {
+                    $room_ids[] = $user->room_id;
+                }
+            }
+
+            $room_ids = implode(',', $room_ids);
+
+            $cond['conditions'] .= " and id in ($room_ids) ";
+
+        } else {
+
+            $search_type = '';
+
+            foreach (\Rooms::$TYPES as $key => $value) {
+                $type_value = $this->params($key);
+                if ($type_value == STATUS_ON) {
+                    $search_type = $key;
+                    break;
+                }
+            }
+
+            if ($search_type) {
+
+                $cond['conditions'] .= " and types like :types:";
+                $cond['bind']['types'] = "%" . $search_type . "%";
+
+            } else {
+
+                $cond['conditions'] .= ' and user_id <> ' . $user_id;
+            }
         }
 
-        //热门条件
-        if (STATUS_ON == $hot) {
-            $cond['conditions'] .= ' and hot = ' . $hot;
-        } else {
-            $cond['conditions'] .= ' and user_id <> ' . $user_id;
-        }
+        debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
-        if ($rooms->total_entries < 2) {
+        if (!isDevelopmentEnv() && $rooms->total_entries < 2) {
 
             $cond = [
                 'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
@@ -194,6 +238,7 @@ class RoomsController extends BaseController
 
         $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
         $app_id = $this->currentProductChannel()->getImAppId();
+        $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
 
         $hot_cache = \Users::getHotWriteCache();
         $cache_key = 'push_into_room_remind_' . $this->currentUser()->id;
@@ -204,6 +249,7 @@ class RoomsController extends BaseController
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
+        $res['signaling_key'] = $signaling_key;
         $res['app_id'] = $app_id;
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
@@ -603,5 +649,13 @@ class RoomsController extends BaseController
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
+    }
+
+    //发公屏消息上报
+    function sendMessageAction()
+    {
+        $content = $this->params('content');
+        $content_type = $this->params('content_type');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 }

@@ -229,6 +229,75 @@ class SourcesController extends \ApplicationController
         return;
     }
 
+    public function sinaClickAction()
+    {
 
+        $attrs = ['source' => 'sina'];
+        foreach (['fr2', 'code', 'uuid', 'devid', 'groupid'] as $key) {
+            if ($key == 'fr2') {
+                $attrs['fr'] = $this->params($key);
+            } else {
+                $attrs[$key] = $this->params($key);
+            }
+        }
+
+        if (!$attrs['devid']) {
+            echo 'ok';
+            return;
+        }
+
+        // 毫秒
+        $attrs['click_time'] = time();
+
+        $muid = strtolower(md5(strtolower($attrs['devid'])));
+        $attrs['muid'] = $muid;
+
+        $hot_cache = \Devices::getHotWriteCache();
+
+        $new_click_key = 'new_click_ad_event_' . $attrs['code'] . '_muid_' . $muid;
+        $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
+        info('set', $new_click_key, $attrs);
+
+        echo 'ok';
+        return;
+
+    }
+
+    // 巨朋移动广告
+    public function jpClickAction()
+    {
+        $attrs = ['source' => 'jp'];
+        foreach (['fr', 'code', 'appid', 'idfa', 'keywords', 'callback'] as $key) {
+            $attrs[$key] = $this->params($key);
+        }
+        if ($attrs['callback']) {
+            $attrs['callback'] = urldecode($attrs['callback']);
+        }
+
+        $muid = strtolower(md5(strtoupper($attrs['idfa'])));
+        $attrs['muid'] = $muid;
+
+        $hot_cache = \Devices::getHotWriteCache();
+        $new_click_key = 'new_click_ad_event_' . $attrs['code'] . '_muid_' . $muid;
+        $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
+        info('set', $new_click_key, $attrs);
+
+        echo true;
+        return;
+    }
+
+    // 巨朋移动广告 排重
+    public function jpCheckAction()
+    {
+        $idfa = $this->params('idfa');
+        $result = 0;
+        $device = \Devices::findFirstByIdfa($idfa);
+        if ($device) {
+            $result = 1;
+        }
+        info($idfa, $result);
+        echo json_encode([$idfa => $result], JSON_UNESCAPED_UNICODE);
+        return;
+    }
 }
 
