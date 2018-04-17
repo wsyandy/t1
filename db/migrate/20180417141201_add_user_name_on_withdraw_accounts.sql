@@ -1,0 +1,1 @@
+ALTER TABLE withdraw_accounts ADD COLUMN user_name VARCHAR(255);
