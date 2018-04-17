@@ -280,6 +280,7 @@ class WithdrawHistories extends BaseModel
                 $withdraw_history->user_name);
 
             $account = $withdraw_history->alipay_account ? $withdraw_history->alipay_account : $withdraw_history->account;
+            $account = strval($account);
             $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name, $account, $withdraw_history->withdraw_account_type_text,
                 $withdraw_history->amount];
             
