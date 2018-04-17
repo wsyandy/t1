@@ -22,7 +22,7 @@
     <div class="bank_list">
         <span class="bank_card">收款银行</span>
         <div class="select_area" @click="setSelect">
-            <span>${options[selected].text}</span>
+            <span v-text="account_bank_id ? options[selected].text : '请选择收款银行'"></span>
         </div>
     </div>
 
