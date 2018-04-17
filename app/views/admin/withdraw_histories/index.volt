@@ -91,6 +91,9 @@
         </td>
         <td>${withdraw_history.withdraw_account_type_text}</td>
         <td>${withdraw_history.user_name}</td>
+        <td>${withdraw_history.account_bank_name}</td>
+        <td>${withdraw_history.bank_account_location}</td>
+        <td>${withdraw_history.area}</td>
         <td>${withdraw_history.amount}</td>
         <td>${withdraw_history.status_text}</td>
         <td><a href="/admin/withdraw_histories/edit/${withdraw_history.id}" class="modal_action">编辑</a></td>
