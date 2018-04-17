@@ -273,8 +273,8 @@ class SourcesController extends \ApplicationController
         if ($attrs['callback']) {
             $attrs['callback'] = urldecode($attrs['callback']);
         }
-        $muid = $attrs['idfa'];
-        $muid = strtolower($muid);
+
+        $muid = strtolower(md5(strtoupper($attrs['idfa'])));
         $attrs['muid'] = $muid;
 
         $hot_cache = \Devices::getHotWriteCache();
