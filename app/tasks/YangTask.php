@@ -648,17 +648,17 @@ class YangTask extends \Phalcon\Cli\Task
     function fixWithdrawHistoriesAction()
     {
         $withdraw_histories = \WithdrawHistories::find([
-            'conditions' => 'withdraw_account_type is null and withdraw_account_id is null',
+            'conditions' => 'withdraw_account_type = 2 and status = ' . WITHDRAW_STATUS_WAIT,
             'order' => 'id desc'
         ]);
 
         foreach ($withdraw_histories as $withdraw_history) {
-            $withdraw_history->withdraw_account_type = 1;
-            $withdraw_history->update();
-            echoLine($withdraw_history->id);
+            $withdraw_account = $withdraw_history->withdraw_account;
+            if (isPresent($withdraw_account) && $withdraw_history->user_name != $withdraw_account->user_name) {
+                $withdraw_history->user_name = $withdraw_account->user_name;
+                $withdraw_history->update();
+                echoLine($withdraw_history->id);
+            }
         }
-
-        $user = Users::findFirstById(1157712);
-        echoLine($user);
     }
 }
