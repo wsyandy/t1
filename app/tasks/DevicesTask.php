@@ -55,7 +55,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-        $date = ['2018-04-14', '2018-04-15', '2018-04-16'];
+        $date = ['2018-04-17'];
 
         foreach ($date as $stat_at) {
 
@@ -97,7 +97,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
             fclose($f);
 
             $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . uniqid() . ".txt");
-            echoLine($res);
+            echoLine(StoreFile::getUrl($res));
 
             unlink($file);
         }
@@ -105,7 +105,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeUserRegisterAction()
     {
-        $date = ['2018-04-14', '2018-04-15', '2018-04-16'];
+        $date = ['2018-04-17'];
 
         foreach ($date as $stat_at) {
 
@@ -150,7 +150,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
             fclose($f);
 
             $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . $stat_at . "注册.txt");
-            echoLine($res);
+            echoLine(StoreFile::getUrl($res));
 
             unlink($file);
         }
@@ -184,7 +184,9 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         arsort($res);
 
-        $f = fopen(APP_ROOT . "public/" . $partner->username . "_mobile_type_device_active.txt", 'w');
+        $file = APP_ROOT . "public/" . $partner->username . "_mobile_type_device_active.txt";
+
+        $f = fopen($file, 'w');
 
         fwrite($f, '激活总数量: ' . $total_num . "\r\n");
 
@@ -195,6 +197,9 @@ class DevicesTask extends \Phaclcon\Cli\Task
         }
 
         fclose($f);
+
+        $res = StoreFile::upload($file, APP_NAME . "/devices/" . $partner->username . "_total_mobile_type_device_active.txt");
+        echoLine(StoreFile::getUrl($res));
     }
 
     function totalMobileTypeUserRegisterAction()
@@ -203,7 +208,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         $users = Users::find(
             [
-                'conditions' => 'partner_id = :partner_id:',
+                'conditions' => 'partner_id = :partner_id: and register_at > 0',
                 'bind' => ['partner_id' => $partner->id]
             ]);
 
@@ -227,7 +232,9 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         arsort($res);
 
-        $f = fopen(APP_ROOT . "public/" . $partner->username . "_mobile_type_vivo_user_register.txt", 'w');
+        $file = APP_ROOT . "public/" . $partner->username . "_mobile_type_total_user_register.txt";
+
+        $f = fopen($file, 'w');
 
         fwrite($f, '注册总数量: ' . $total_num . "\r\n");
 
@@ -239,5 +246,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         fclose($f);
 
+        $res = StoreFile::upload($file, APP_NAME . "/devices/" . $partner->username . "_mobile_type_total_user_register.txt");
+        echoLine(StoreFile::getUrl($res));
     }
 }
