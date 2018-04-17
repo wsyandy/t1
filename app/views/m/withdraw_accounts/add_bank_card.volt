@@ -100,7 +100,7 @@
             bank_account_location: '',
             can_submit: true,
             provinces:{{ provinces }},
-            cities: {{ cities }}
+            cities: {{ city }}
         },
         created: function () {
         },
