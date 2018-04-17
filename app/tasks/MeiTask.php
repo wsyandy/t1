@@ -2865,5 +2865,28 @@ EOF;
             $str);
 
         echoLine($str);
+
+        $cache_key = 'send_auth_code_user_' . 1001443;
+        $hot_cache = Users::getHotWriteCache();
+        $hot_cache->del($cache_key);
+
+        $cache_key = 'send_auth_code_device_' . 6;
+        $hot_cache->del($cache_key);
+
+
+        $withdraw_histories = WithdrawHistories::findBy(['withdraw_account_type' => 2]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+
+            $content = <<<EOF
+【系统提醒】
+为保障您的资金安全，HI语音进行更完善的安全系统升级
+请您重新绑定自己的银行卡（包括之前提现的用户）
+已经申请提现还未到账的用户请重新提交提现申请
+上周提现金额将会在48小时内到账。本周提现金额在下周二到账。
+Hi语音为给您造成的不便表示歉意。
+EOF;
+
+        }
     }
 }
