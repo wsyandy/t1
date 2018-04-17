@@ -1214,7 +1214,7 @@ class UsersTask extends \Phalcon\Cli\Task
     {
         $product_channel_id = 1;
         $user_db = \Users::getUserDb();
-        $stat_at = date("Ymd");
+        $stat_at = date("Ymd", strtotime("-1 day"));
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
         $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
 
@@ -1249,7 +1249,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine("?????", $datas);
 
-//        $user_db->hmset($send_user_stat_key, $datas);
+        $user_db->hmset($send_user_stat_key, $datas);
 
     }
 
