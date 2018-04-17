@@ -174,18 +174,14 @@ class Partners extends BaseModel
     // 通知巨朋
     static function notifyJp($data)
     {
-        $source = fetch($data, 'source');
         $callback = fetch($data, 'callback');
-
         $opts = [
             'appid'=> fetch($data, 'appid'),
             'idfa'=> fetch($data, 'idfa')
         ];
 
-        if ($callback && $source == 'jp') {
-            $res = httpGet($callback,$opts);
-            info($callback, $res);
-        }
+        $res = httpGet('http://wall.jpmob.com/wall/iosAck.jsp?', $opts);
+        info($callback, $res->body);
     }
 
     //通知sina
