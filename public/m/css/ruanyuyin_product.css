@@ -1,0 +1,223 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+    background: #FFFFFF;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+.wo_chongzhi_bg{
+    width: 10.0rem;
+    height: 6.266667rem;
+    background: url(../images/ruanyuyin_bg.png) no-repeat;
+    background-size: 100%;
+}
+.wo_chongzhi_bg p{
+    text-align: center;
+    font-size: 0.32rem;
+    color: #FFFFFF;
+    padding-top: 2.933333rem;
+}
+.wo_chongzhi_bg p i{
+    display: inline-block;
+    width: 0.373333rem;
+    height: 0.373333rem;
+    background: url(../images/ruanyuyin_zuanshi.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+    margin-right: 0.133333rem;
+}
+.wo_chongzhi_bg h2{
+    font-size: 1.146667rem;
+    color: #FFFFFF;
+    text-align: center;
+    padding-top: 0.266667rem;
+}
+.wo_chongzhi_list{
+    background: #FFFFFF;
+}
+.wo_chongzhi_list ul{
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    /*    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;*/
+    justify-content: flex-start;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.wo_chongzhi_list ul li{
+    width: 2.933333rem;
+    height: 2.0rem;
+    border: 1px solid #C6C6C6;
+    border-radius: 0.16rem;
+    margin-top: 0.533333rem;
+    position: relative;
+    text-align: center;
+    margin-left: 0.32rem;
+}
+.wo_chongzhi_list ul li b{
+    display: block;
+    margin-top: 0.533333rem;
+    font-size: 0.346667rem;
+    color: #333333;
+}
+.wo_chongzhi_list ul li p{
+    margin-top: 0.266667rem;
+    font-size: 0.32rem;
+    color: #999999;
+}
+.money_selected{
+    border: 1px solid #FD8018 !important;
+}
+.money_selected i{
+    width: 0.48rem;
+    height: 0.48rem;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: url(../images/ruanyuyin_select.png) no-repeat;
+    background-size: 100%;
+}
+.wo_chongzhi_list ul li span{
+    display: block;
+    position: absolute;
+    width: 1.813333rem;
+    height: 0.533333rem;
+    line-height: 0.533333rem;
+    text-align: center;
+    background: url(../images/ruanyuyin_title_bg.png) no-repeat;
+    background-size: 100%;
+    top: -0.266667rem;
+    right: -0.133333rem;
+    font-size: 0.266667rem;
+    color: #FFFFFF;
+}
+.pay_money{
+    margin-top: 0.133333rem;
+}
+.pay_money h3{
+    font-size: 0.32rem;
+    color: #999999;
+    padding:0.32rem;
+}
+.pay_money ul{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: space-between;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding:0 1.266667rem;
+    align-items: center;
+}
+.pay_money ul li{
+    border: 1px solid #909090;
+    border-radius: 0.106667rem;
+    width: 2.933333rem;
+    height: 0.8rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+.pay_money ul li span{
+    font-size: 0.32rem;
+    color: #333333;
+}
+.pay_money ul li b{
+    display: inline-block;
+    width: 0.466667rem;
+    height: 0.466667rem;
+    margin-right: 0.133333rem;
+    vertical-align: middle;
+    margin-left: 0.6rem;
+}
+.pay_money .weixin{
+    background: url(../images/ruanyuyin_weixin.png) no-repeat;
+    background-size: 100%;
+}
+.pay_money .zhifubao{
+    background: url(../images/ruanyuyin_zhifubao.png) no-repeat;
+    background-size: 100%;
+}
+.pay_money ul li i{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 0.466667rem;
+    height: 0.466667rem;
+}
+.pay_selected{
+    border: 1px solid #FD8018 !important;
+}
+.pay_selected i{
+    background: url(../images/ruanyuyin_select.png) no-repeat;
+    background-size: 100%;
+}
+.pay_btn{
+    padding:0.4rem 1.733333rem;
+}
+.pay_btn span{
+    display: block;
+    width: 6.533333rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    text-align: center;
+    background-image: linear-gradient(133deg, #FF9439 0%, #FF6409 100%);
+    box-shadow: 0 4px 12px 0 rgba(235,101,21,0.50);
+    border-radius: 1.333333rem;
+    font-size: 0.426667rem;
+    color: #FFFFFF;
+}
+
+
+
+
+
+
+
