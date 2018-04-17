@@ -6,8 +6,8 @@
     <div class="ver_tips">为了您的账号安全，请先完成短信验证绑定</div>
     <ul class="ver_box">
         <li class="ver_list">
-            <input class="ver_tel" type="number" v-model="ver_tel" type="text" placeholder="请先输入手机号码" @input="verTel"
-                   oninput="if(value.length>11)value=value.slice(0,11)">
+            <input class="ver_tel" type="number" v-model="ver_tel" type="text" placeholder="请先输入手机号码"
+                   readonly="readonly">
         </li>
         <li class="ver_list">
             <input class="ver_code" v-model="ver_code" type="text" placeholder="请输入验证码" :readonly="readonly"
@@ -18,7 +18,7 @@
         </li>
     </ul>
 
-    <a :class="['btn_disabled',{'btn_submit': !disabled}]" @click.stop="createWithdrawAccount"> 提交 </a>
+    <a :class="['btn_disabled',{'btn_submit': !disabled}]" @click.stop="unbindWithdrawAccount"> 提交 </a>
 </div>
 
 <script>
@@ -31,7 +31,7 @@
     var opts = {
         data: {
             ico_clear: "images/ico_clear.png",
-            isFull: false,
+            isFull: true,
             readonly: !is_dev,
             disabled: true,
             ver_tel: '',
@@ -41,6 +41,8 @@
             sms_token: ''
         },
         created: function () {
+            var mobile = '{{ mobile }}';
+            this.ver_tel = mobile;
         },
         methods: {
             verTel: function () {
@@ -48,7 +50,7 @@
 
             },
             getCode: function () {
-                if (!this.isFull || this.auth_time != 0) {
+                if (this.auth_time != 0) {
                     return false;
                 }
 
@@ -58,6 +60,7 @@
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
+                    id: '{{ id }}',
                     mobile: this.ver_tel
                 };
 
@@ -88,24 +91,23 @@
                         }.bind(vm), 1000
                 );
             },
-            createWithdrawAccount: function () {
+            unbindWithdrawAccount: function () {
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
+                    id: '{{ id }}',
                     auth_code: this.ver_code,
                     sms_token: this.sms_token,
                     mobile: this.ver_tel
                 };
 
-                console.log(data);
+                $.authPost('/m/withdraw_accounts/unbind_withdraw_account', data, function (resp) {
+                    alert(resp.error_reason);
 
-                $.authPost('/m/withdraw_accounts/create', data, function (resp) {
-                    if (resp.error_code != 0) {
-                        alert(resp.error_reason);
+                    if (resp.error_code == 0) {
+                        window.history.go(-1);
                     }
-                    if (resp.error_url) {
-                        location.href = resp.error_url;
-                    }
+
                 });
             }
         }

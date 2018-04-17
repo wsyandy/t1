@@ -1,0 +1,1 @@
+ALTER TABLE withdraw_accounts ADD COLUMN bank_account_location VARCHAR(255);
