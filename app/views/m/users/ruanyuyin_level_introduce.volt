@@ -2,11 +2,12 @@
 {{ theme_css('/m/ruanyuyin/css/level_introduce.css') }}
 {{ theme_js('/m/ruanyuyin/js/font_rem.js') }}
 {{ block_end() }}
-<div class="dengji_text" id="app">
-    <h3>${title}</h3>
-    <p>荣耀等级是您在软语音上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，送靓号，快来体验吧~</p>
-    <p>送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！</p>
-
+<div id="app">
+    <div class="dengji_text">
+        <h3>${title}</h3>
+        <p>荣耀等级是您在软语音上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，送靓号，快来体验吧~</p>
+        <p>送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！</p>
+    </div>
     <div class="dengji_list">以下是软语音荣耀等级对应的名称和特权：</div>
     <div class="week_list" style="display: block;">
         <table class="table">

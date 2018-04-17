@@ -2,8 +2,8 @@
 {{ theme_css('/m/ruanyuyin/css/level_introduce.css') }}
 {{ theme_js('/m/ruanyuyin/js/font_rem.js') }}
 {{ block_end() }}
-<div class="wo_dengji" id="app">
-    <div>
+<div id="app">
+    <div class="wo_dengji">
         <img :src="glory_list[current_level].icon">
         <h3>${segment_text}</h3>
         <p v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
