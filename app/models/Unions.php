@@ -717,7 +717,9 @@ class Unions extends BaseModel
             $week_key = self::generateFameValueRankListKey('week', $opts);
             $day_key = self::generateFameValueRankListKey('day', $opts);
 
-            $opts['date'] = date('Ymd', strtotime("last day"), time());
+            $opts['date'] = date('Ymd', strtotime("last day"));
+
+
             $last_day_key = self::generateFameValueRankListKey('day', $opts);
 
             $db->zrem($last_day_key, $this->id);
@@ -828,18 +830,20 @@ class Unions extends BaseModel
         }
 
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date('Ymd'));
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date('Ymd'));
 
-                $key = "total_union_fame_value_day_" . $date . $key_product_channel;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
-                break;
-            }
+                    $key = "total_union_fame_value_day_" . $date . $key_product_channel;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
+                    break;
+                }
             default:
                 return '';
         }
