@@ -168,7 +168,7 @@ class WithdrawAccountsController extends BaseController
         }
 
         $account = $this->params('account');
-        $account_withdraw_account_id = intval($this->params('account_withdraw_account_id'));
+        $account_bank_id = intval($this->params('account_bank_id'));
         $province_id = intval($this->params('province_id'));
         $city_id = intval($this->params('city_id'));
         $user_name = $this->params('user_name');
@@ -197,7 +197,7 @@ class WithdrawAccountsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '请输入收款银行支行');
         }
 
-        $opts = ['account' => $account, 'account_withdraw_account_id' => $account_withdraw_account_id, 'type' => $type,
+        $opts = ['account' => $account, 'account_bank_id' => $account_bank_id, 'type' => $type,
             'province_id' => $province_id, 'city_id' => $city_id, 'user_name' => $user_name, 'bank_account_location' => $bank_account_location
         ];
 
