@@ -98,8 +98,20 @@ class WithdrawAccountsController extends BaseController
             $banks_json[] = ['text' => $bank->name, 'value' => $bank->id];
         }
 
-        $this->view->banks = json_encode($banks_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $provinces = \Provinces::find();
+        foreach ($provinces as $province) {
+            $provinces_json[] = ['text' => $province->name, 'value' => $province->id];
+        }
 
+        $cities = \Cities::find();
+        foreach ($cities as $city) {
+            $cities_json[] = ['text' => $city->name, 'value' => $city->id];
+        }
+
+
+        $this->view->banks = json_encode($banks_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $this->view->provinces = json_encode($provinces_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $this->view->cities = json_encode($cities_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->id = $this->params('id');
@@ -144,5 +156,21 @@ class WithdrawAccountsController extends BaseController
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '解绑失败');
         }
+    }
+
+    function getCitiesAction()
+    {
+        $province_id = $this->params('province_id');
+        $cond = ['conditions' => 'province_id=:province_id:',
+            'bind' => ['province_id' => $province_id], 'order' => 'id asc'];
+        $cities = \Cities::find($cond);
+        $cities_json = [];
+        info($cities);
+        foreach ($cities as $city) {
+            $cities_json[] = ['text' => $city->name, 'value' => $city->id];
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['cities' => $cities_json]);
+
     }
 }
