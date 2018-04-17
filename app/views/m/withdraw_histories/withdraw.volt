@@ -105,7 +105,9 @@
 
                 $.authPost("/m/withdraw_histories/create", data, function (resp) {
                     alert(resp.error_reason);
-                    window.history.go(-1);
+                    if (resp.error_code == 0) {
+                        window.history.go(-1);
+                    }
                 })
             }
         }
