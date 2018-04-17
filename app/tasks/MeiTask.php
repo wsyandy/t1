@@ -2828,4 +2828,24 @@ EOF;
 
         echoLine($str);
     }
+
+    function fixUserRoomAction()
+    {
+        $user = Users::findFirstById(9);
+        $room = $user->current_room;
+        $room->exitSilentRoom($user);
+
+        $users = Users::find(
+            [
+                'conditions' => 'id < 1000000 and current_room_id > 0 and avatar_status != :avatar_status:',
+                'bind' => ['avatar_status' => AUTH_SUCCESS]
+            ]);
+
+        foreach ($users as $user) {
+            $room = $user->current_room;
+            $room->exitSilentRoom($user);
+            echoLine($user->id);
+        }
+        echoLine(count($users));
+    }
 }
