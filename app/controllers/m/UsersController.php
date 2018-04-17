@@ -50,6 +50,9 @@ class UsersController extends BaseController
 
         $level = $current_user->level;
         $segment_text = $current_user->segment_text;
+        if (!$segment_text) {
+            $segment_text = '无荣耀';
+        }
         $need_experience = $current_user->next_level_experience - $current_user->experience;
         $skip_url = '/m/users/ruanyuyin_level_introduce';
 

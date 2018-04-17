@@ -5,13 +5,13 @@
 <div id="app">
     <div class="wo_dengji">
         <img :src="current_level<35?glory_list[current_level].icon:glory_list[35].icon">
-        <h3 v-text="segment_text ? segment_text : glory_list[current_level].name"></h3>
-        <p v-show="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
+        <h3>${segment_text}</h3>
+        <p v-if="current_level < 35">还需<span>${ need_experience }荣耀值</span>升级为<span>${ glory_list[current_level+1].name }</span>
         </p>
     </div>
     <div class="wo_box">
-        <div>
-            <div class="box_list">
+        <div v-if="current_level < 35">
+            <div class="box_list" >
                 <i class="icon_01"></i>
                 <p>下一等级特权：<b>${ glory_list[current_level+1].name }等级勋章</b></p>
             </div>
@@ -228,4 +228,7 @@
         }
     };
     vm = XVue(opts);
+    $(function () {
+        console.log(vm.current_level);
+    })
 </script>
