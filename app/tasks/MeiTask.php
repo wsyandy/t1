@@ -1380,6 +1380,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $db->zclear("last_" . $list_type . "_" . $field . "_rank_list");
             }
         }
+
     }
 
     function fixUserDataAction()
@@ -2919,5 +2920,117 @@ EOF;
 
         $users = \Users::findFieldRankList('day', 'wealth', 1, 10);
         echoLine(count($users));
+    }
+
+    function fixUserRankAction()
+    {
+        $day_key = "day_charm_rank_list_" . date("Ymd");
+        $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
+        $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start:", 'bind' => ['start' => beginOfDay()]]);
+        $db = Users::getUserDb();
+        $db->zclear($day_key);
+        $db->zclear($wealth_day_key);
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $sender = $gift_order->sender;
+
+            $value = $gift_order->amount;
+            $db->zincrby($day_key . "_" . $user->product_channel_id, $value, $user->id);
+            $db->zincrby($day_key, $value, $user->id);
+
+            $db->zincrby($wealth_day_key . "_" . $sender->product_channel_id, $value, $sender->id);
+            $db->zincrby($wealth_day_key, $value, $sender->id);
+        }
+
+
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+
+        $db = Users::getUserDb();
+        $key = "week_charm_rank_list_" . $start . "_" . $end;
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and status = :status: and pay_type = :pay_type: and user_id = :user_id:',
+                    'bind' => ['start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $key = "week_wealth_rank_list_" . $start . "_" . $end;
+
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and status = :status: and pay_type = :pay_type: and sender_id = :sender_id:',
+                    'bind' => ['start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'sender_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $key = "total_charm_rank_list";
+        $wealth_key = "total_wealth_rank_list";
+
+        $db = Users::getUserDb();
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'status = :status: and pay_type = :pay_type: and user_id = :user_id:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $db = Users::getUserDb();
+        $wealth_key = "total_wealth_rank_list";
+        $user_ids = $db->zrange($wealth_key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'status = :status: and pay_type = :pay_type: and sender_id = :sender_id:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'sender_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($wealth_key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                //$db->zadd($wealth_key, $amount, $user_id);
+            }
+        }
+
+        echoLine(valueToStr(451496));
     }
 }
