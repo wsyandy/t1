@@ -30,11 +30,14 @@
     </tbody>
 </table>
 
-
 <script type="text/javascript">
-
-    $(function () {
-        $('.selectpicker').selectpicker();
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2
     });
-
 </script>
