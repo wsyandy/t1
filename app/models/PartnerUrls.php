@@ -26,7 +26,7 @@ class PartnerUrls extends BaseModel
         'ios_baidu' => '/sources/baidu_click?code=%s&fr=%s&idfa={{IDFA}}&os={{OS}}&ip={{IP}}&ua={{UA}}&ts={{TS}}&userid={{USER_ID}}&pid={{PLAN_ID}}&uid={{UNIT_ID}}&aid={{IDEA_ID}}&click_id={{CLICK_ID}}&callback_url={{CALLBACK_URL}}&sign={{SIGN}}',
         'android_sina' => '/sources/sina_click?code=%s&uuid={Uuid}&devid={User}&groupid={Groupid}',
         'ios_sina' => '/sources/sina_click?code=%s&fr2=%s&uuid={Uuid}&devid={User}&groupid={Groupid}',
-        'ios_jp' => '/sources/jp_click?code=%s&fr=%s&appid={appid}&idfa={idfa}&keywords={keywords}&callback={callback}'
+        'ios_jp' => '/sources/jp_click?code=%s&fr=%s&source=jp&appid={appid}&idfa={idfa}&keywords={keywords}&callback={callback}'
     ];
 
     function mergeJson()
