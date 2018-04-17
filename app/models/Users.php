@@ -2957,13 +2957,11 @@ class Users extends BaseModel
                 return;
             }
 
-            $key_product_channel = "_product_channel_id_" . $user->product_channel_id;
+            $opts = ['product_channel_id' => $user->product_channel_id];
 
-            $day_key = "day_" . $field . "_rank_list_" . date("Ymd") . $key_product_channel;
-            $start = date("Ymd", strtotime("last sunday next day", time()));
-            $end = date("Ymd", strtotime("next monday", time()) - 1);
-            $week_key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
-            $total_key = "total_" . $field . "_rank_list" . $key_product_channel;
+            $day_key = self::generateFieldRankListKey('day', $field, $opts);
+            $week_key = self::generateFieldRankListKey('week', $field, $opts);
+            $total_key = self::generateFieldRankListKey('total', $field, $opts);
 
             $db->zincrby($day_key, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
@@ -2974,9 +2972,7 @@ class Users extends BaseModel
     function saveLastFieldRankList($list_type, $field, $rank)
     {
         $db = Users::getUserDb();
-        $key = "last_" . $list_type . "_" . $field . "_rank_list";
-
-        debug($key, $field, $rank, $this->id);
+        $key = "last_" . $list_type . "_" . $field . "_rank_list" . "_product_channel_id_" . $this->product_channel_id;
 
         $db->zadd($key, $rank, $this->id);
     }
@@ -2991,7 +2987,7 @@ class Users extends BaseModel
 
     function myLastFieldRank($list_type, $field)
     {
-        $key = "last_" . $list_type . "_" . $field . "_rank_list";
+        $key = "last_" . $list_type . "_" . $field . "_rank_list" . "_product_channel_id_" . $this->product_channel_id;
 
         return $this->getLastRankByKey($key);
     }

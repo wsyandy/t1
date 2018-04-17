@@ -208,19 +208,13 @@ class UnionsController extends BaseController
 
         $product_channel_id = $this->params('product_channel_id');
 
-        if (isBlank($product_channel_id)) {
-            $key_product_channel = '';
-        } else {
-            $key_product_channel = "_product_channel_id_" . $product_channel_id;
-        }
-
-        $key = "total_union_fame_value_day_" . date("Ymd", strtotime($start_at)) . $key_product_channel;
-
         $page = $this->params('page', 1);
 
         $per_page = $this->params('per_page', 20);
 
-        $unions = \Unions::findFameValueRankListByKey($key, $page, $per_page);
+        $opts = ['product_channel_id' => $product_channel_id, 'date' => date("Ymd", strtotime($start_at))];
+
+        $unions = \Unions::findFameValueRankList('day', $page, $per_page, $opts);
 
         $this->view->unions = $unions;
 
@@ -232,7 +226,7 @@ class UnionsController extends BaseController
 
     function weekRankListAction()
     {
-        $start_at = $this->params('start_at',date('Y-m-d',beginOfWeek()));
+        $start_at = $this->params('start_at', date('Y-m-d', beginOfWeek()));
 
         $start = date("Ymd", strtotime($start_at));
 
@@ -240,19 +234,13 @@ class UnionsController extends BaseController
 
         $product_channel_id = $this->params('product_channel_id');
 
-        if (isBlank($product_channel_id)) {
-            $key_product_channel = '';
-        } else {
-            $key_product_channel = "_product_channel_id_" . $product_channel_id;
-        }
-
-        $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
+        $opts = ['product_channel_id' => $product_channel_id, 'start' => $start,'end'=>$end];
 
         $page = $this->params('page', 1);
 
         $per_page = $this->params('per_page', 20);
 
-        $unions = \Unions::findFameValueRankListByKey($key, $page, $per_page);
+        $unions = \Unions::findFameValueRankList('week', $page, $per_page, $opts);
 
         $this->view->unions = $unions;
 
