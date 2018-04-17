@@ -173,4 +173,89 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
         echoLine($qq_num, $auth_num, $num);
     }
+
+    function totalMobileTypeActiveAction()
+    {
+        $partner = Partners::findFirstById(85);
+
+        $devices = Devices::find(
+            [
+                'conditions' => 'partner_id = 85',
+            ]);
+
+        $total_num = count($devices);
+
+        echoLine($total_num);
+        $res = [];
+
+        foreach ($devices as $device) {
+
+            $model = $device->model;
+
+            if (isset($res[$model])) {
+                $res[$model] += 1;
+            } else {
+                $res[$model] = 1;
+            }
+        }
+
+
+        arsort($res);
+
+        $f = fopen(APP_ROOT . "public/" . $partner->username . "_mobile_type_device_active.txt", 'w');
+
+        fwrite($f, '激活总数量: ' . $total_num . "\r\n");
+
+        foreach ($res as $type => $num) {
+            $text = "手机型号:" . $type . "激活数量:" . $num;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+    }
+
+    function totalMobileTypeUserRegisterAction()
+    {
+        $partner = Partners::findFirstById(85);
+
+        $users = Users::find(
+            [
+                'conditions' => 'partner_id = :partner_id:',
+                'bind' => ['partner_id' => $partner->id]
+            ]);
+
+        $total_num = count($users);
+        echoLine($total_num);
+
+        $res = [];
+
+        foreach ($users as $user) {
+
+            $device = $user->device;
+            $model = $device->model;
+
+            if (isset($res[$model])) {
+                $res[$model] += 1;
+            } else {
+                $res[$model] = 1;
+            }
+        }
+
+
+        arsort($res);
+
+        $f = fopen(APP_ROOT . "public/" . $partner->username . "_mobile_type_vivo_user_register.txt", 'w');
+
+        fwrite($f, '注册总数量: ' . $total_num . "\r\n");
+
+        foreach ($res as $type => $num) {
+            $text = "手机型号:" . $type . "注册数量:" . $num;
+            echoLine($text);
+            fwrite($f, $text . "\r\n");
+        }
+
+        fclose($f);
+
+    }
 }
