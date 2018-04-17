@@ -62,23 +62,18 @@ class RoomsController extends BaseController
             $cond['order'] = "created_at desc";
 
         } else if ($broadcast == STATUS_ON) {
-
             $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
-
         } else if ($follow == STATUS_ON) {
 
-            $users = $this->currentUser()->followList($page, $per_page);
+            $user_ids = $this->currentUser()->followUserIds();
 
-            $room_ids = [];
-            foreach ($users as $user) {
-                if ($user->room_id) {
-                    $room_ids[] = $user->room_id;
-                }
+            if (count($user_ids) > 0) {
+                $cond['conditions'] .= " and user_id in (" . implode(',', $user_ids) . ") ";
+                $rooms = \Rooms::findPagination($cond, $page, $per_page);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
             }
 
-            $room_ids = implode(',', $room_ids);
-
-            $cond['conditions'] .= " and id in ($room_ids) ";
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
 
         } else {
 

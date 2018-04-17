@@ -1425,6 +1425,15 @@ class Users extends BaseModel
         return $follow_list;
     }
 
+    //我关注的用户id
+    function followUserIds()
+    {
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zrange($follow_key, 0, -1);
+    }
+
+
     //关注我的列表
     function followedList($page, $per_page)
     {
@@ -2898,20 +2907,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3028,21 +3040,24 @@ class Users extends BaseModel
 
 
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list" . $key_product_channel;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list" . $key_product_channel;
+                    break;
+                }
             default:
                 return '';
         }
