@@ -2874,11 +2874,7 @@ EOF;
         $hot_cache->del($cache_key);
 
 
-        $withdraw_histories = WithdrawHistories::findBy(['withdraw_account_type' => 2, 'status' => WITHDRAW_STATUS_WAIT]);
-
-        foreach ($withdraw_histories as $withdraw_history) {
-
-            $content = <<<EOF
+        $content = <<<EOF
 【系统提醒】
 为保障您的资金安全，HI语音进行更完善的安全系统升级
 请您重新绑定自己的银行卡（包括之前提现的用户）
@@ -2886,10 +2882,24 @@ EOF;
 上周提现金额将会在48小时内到账。本周提现金额在下周二到账。
 Hi语音为给您造成的不便表示歉意。
 EOF;
+
+        StoreFile::delete()
+        $withdraw_histories = WithdrawHistories::findBy(['withdraw_account_type' => 2, 'status' => WITHDRAW_STATUS_WAIT]);
+
+        foreach ($withdraw_histories as $withdraw_history) {
+
+            echoLine($withdraw_history->id);
             $withdraw_history->status = WITHDRAW_STATUS_FAIL;
             $withdraw_history->save();
 
             Chats::sendTextSystemMessage($withdraw_history->user_id, $content);
+        }
+
+        $withdraw_accounts = WithdrawAccounts::findForeach();
+
+        foreach ($withdraw_accounts as $withdraw_account) {
+            $withdraw_account->status = STATUS_OFF;
+            $withdraw_account->update();
         }
     }
 }

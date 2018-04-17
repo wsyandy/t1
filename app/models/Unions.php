@@ -942,7 +942,7 @@ class Unions extends BaseModel
             if ($this->update()) {
                 //  删除老头像
                 if ($old_avatar) {
-                    \StoreFile::delete($old_avatar);
+                    //\StoreFile::delete($old_avatar);
                 }
             }
         }
