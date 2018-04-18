@@ -18,7 +18,7 @@ class GamesController extends BaseController
             $per_page = $this->params('per_page', 8);
 
             $conds = ['conditions' => 'status = ' . STATUS_ON];
-            $conds['order'] = 'id desc';
+            $conds['order'] = 'rank desc,id desc';
 
             $games = \Games::findPagination($conds, $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
@@ -27,16 +27,19 @@ class GamesController extends BaseController
 
     function tytAction()
     {
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
+
+        // 必须在房间才可玩游戏
+        $room_id = $this->currentUser()->current_room_id;
+        
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
-        $current_user_id = intval($this->currentUser()->id);
-        $cache_room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        $current_user_id = $this->currentUser()->id;
+        $cache_game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
 
         // 解散房间
-        if ($cache_room_host_id == $this->currentUser()->id) {
+        if ($cache_game_host_user_id == $this->currentUser()->id) {
             $hot_cache->del($room_key);
             $hot_cache->del($room_wait_key);
             $hot_cache->del($room_info_key);
@@ -51,8 +54,8 @@ class GamesController extends BaseController
         if ($user_num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
             $pay_type = 'free';
             $amount = 0;
-            $room_host_id = $this->currentUser()->id;
-            $hot_cache->hset($room_info_key, 'room_host_id', $room_host_id);
+            $game_host_user_id = $this->currentUser()->id;
+            $hot_cache->hset($room_info_key, 'game_host_user_id', $game_host_user_id);
             $hot_cache->hset($room_info_key, 'room_create_at', time());
             $hot_cache->expire($room_info_key, 600);
             $hot_cache->expire($room_key, 600);
@@ -60,7 +63,7 @@ class GamesController extends BaseController
         } else {
             $info = $hot_cache->hgetall($room_info_key);
             info($room_info_key, $info);
-            $room_host_id = fetch($info, 'room_host_id');
+            $game_host_user_id = fetch($info, 'game_host_user_id');
             $pay_type = fetch($info, 'pay_type');
             $amount = fetch($info, 'amount');
             $room_create_at = fetch($info, 'room_create_at');
@@ -75,11 +78,11 @@ class GamesController extends BaseController
         }
 
         $room_host_nickname = '';
-        $room_host_user = \Users::findFirstById($room_host_id);
+        $room_host_user = \Users::findFirstById($game_host_user_id);
         if ($room_host_user) {
             $room_host_nickname = $room_host_user->nickname;
         }
-        info($this->currentUser()->id, 'host', $room_host_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
+        info($this->currentUser()->id, 'host', $game_host_user_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
 
         $can_create_game = false;
         if ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE) {
@@ -88,7 +91,7 @@ class GamesController extends BaseController
 
 
         $this->view->current_user = $this->currentUser();
-        $this->view->room_host_id = $room_host_id;
+        $this->view->game_host_user_id = $game_host_user_id;
         $this->view->room_host_nickname = $room_host_nickname;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
@@ -104,7 +107,7 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
-        $room_host_id = fetch($info, 'room_host_id');
+        $game_host_user_id = fetch($info, 'game_host_user_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
 
@@ -114,7 +117,7 @@ class GamesController extends BaseController
         }
 
         $current_user = $this->currentUser();
-        if ($room_host_id == $current_user->id) {
+        if ($game_host_user_id == $current_user->id) {
             // free diamond gold
             $pay_type = $this->params('pay_type', '');
             $amount = $this->params('amount', 0);
@@ -124,16 +127,6 @@ class GamesController extends BaseController
 
             $hot_cache->hset($room_info_key, 'pay_type', $pay_type);
             $hot_cache->hset($room_info_key, 'amount', $amount);
-
-            $root = $this->getRoot();
-            $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_launched', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "/m/games"];
-
-            $intranet_ip = $current_user->getIntranetIp();
-            $receiver_fd = $current_user->getUserFd();
-
-            \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-
         }
 
         info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
@@ -145,6 +138,18 @@ class GamesController extends BaseController
         if ($pay_type == PAY_TYPE_GOLD && $current_user->gold < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
+
+        if ($game_host_user_id == $current_user->id) {
+            $root = $this->getRoot();
+            $image_url = $root . 'images/go_game.png';
+            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "url://m/games/tyt"];
+
+            $intranet_ip = $current_user->getIntranetIp();
+            $receiver_fd = $current_user->getUserFd();
+
+            \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+        }
+
 
         $room_wait_key = "game_room_wait_" . $room_id;
         $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
@@ -158,14 +163,14 @@ class GamesController extends BaseController
         $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
-        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        $game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
         $body['source'] = $this->currentProductChannel()->code;
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $room_id . $room_host_id;
+        $body['room_id'] = $room_id . $game_host_user_id;
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
@@ -183,7 +188,7 @@ class GamesController extends BaseController
         $user = $this->currentUser();
         $this->view->url = $url;
         $this->view->current_user = $user;
-        $this->view->room_host_id = $room_host_id;
+        $this->view->game_host_user_id = $game_host_user_id;
         $this->view->room_id = $room_id;
     }
 
@@ -203,7 +208,7 @@ class GamesController extends BaseController
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
-        $room_host_id = fetch($info, 'room_host_id');
+        $game_host_user_id = fetch($info, 'game_host_user_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
         $can_enter = fetch($info, 'can_enter');
@@ -216,7 +221,7 @@ class GamesController extends BaseController
         $data['can_enter'] = intval($can_enter);
 
         //扣除入场费
-        if ($can_enter && $room_host_id != $this->currentUser()->id) {
+        if ($can_enter && $game_host_user_id != $this->currentUser()->id) {
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
                 $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
@@ -252,7 +257,7 @@ class GamesController extends BaseController
 
         $hot_cache = \Rooms::getHotWriteCache();
         $info = $hot_cache->hgetall($room_info_key);
-        $room_host_id = fetch($info, 'room_host_id');
+        $game_host_user_id = fetch($info, 'game_host_user_id');
         $pay_type = fetch($info, 'pay_type');
         $amount = fetch($info, 'amount');
         //扣除入场费
@@ -299,13 +304,13 @@ class GamesController extends BaseController
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
         $room_info_key = "game_room_" . $room_id . '_info';
-        $room_host_id = $hot_cache->hget($room_info_key, 'room_host_id');
+        $game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
         $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
         if ($can_enter) {
             return $this->renderJSON(ERROR_CODE_FAIL, '游戏已开始');
         }
 
-        if ($room_host_id == $this->currentUser()->id) {
+        if ($game_host_user_id == $this->currentUser()->id) {
             // 解散比赛
             $hot_cache->del($room_key);
             $hot_cache->del($room_wait_key);
@@ -350,6 +355,13 @@ class GamesController extends BaseController
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
+        $current_user = $this->currentUser();
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束", ];
+
+        $intranet_ip = $current_user->getIntranetIp();
+        $receiver_fd = $current_user->getUserFd();
+
+        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
         info('user_info', $user_datas);
 
@@ -358,7 +370,7 @@ class GamesController extends BaseController
         $this->view->amount = $amount;
         $this->view->user_num = count($user_datas);
         $this->view->total_amount = $amount * $total_user_num;
-        $this->view->back_url = 'app://home';
+        $this->view->back_url = 'app://back';
         $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
 

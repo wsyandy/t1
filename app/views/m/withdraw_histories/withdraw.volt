@@ -11,28 +11,38 @@
     <ul class="withdrawals_box">
         <li class="withdrawals_list" @click="bankSelect">
             <span class="list_title">收款帐户</span>
-            <input class="list_input" value="{{ withdraw_account.account_text }}" type="text" placeholder="请选择收款账户"
+            <input class="list_input"
+                   value="{{ withdraw_account?withdraw_account.account_text:'' }}"
+                   type="text"
+                   placeholder="请选择收款账户"
                    readonly="readonly">
             <img :src="arrow_right" class="arrow_right" alt="">
         </li>
         <li class="withdrawals_list">
             <span class="list_title">收款户名</span>
-            <input class="list_input" value="{{ withdraw_account.user_name }}" type="text"
+            <input class="list_input"
+                   value="{{ withdraw_account?withdraw_account.user_name:'' }}"
+                   type="text"
                    readonly="readonly">
         </li>
         <li class="withdrawals_list">
             <span class="list_title">收款银行</span>
-            <input class="list_input" value="{{ withdraw_account.account_bank_name }}" type="text"
+            <input class="list_input"
+                   value="{{ withdraw_account?withdraw_account.account_bank_name:'' }}"
+                   type="text"
                    readonly="readonly">
         </li>
         <li class="withdrawals_list">
             <span class="list_title">收款银行支行</span>
-            <input class="list_input" value="{{ withdraw_account.bank_account_location }}" type="text"
+            <input class="list_input"
+                   value="{{ withdraw_account?withdraw_account.bank_account_location:'' }}"
+                   type="text"
                    readonly="readonly">
         </li>
         <li class="withdrawals_list">
             <span class="list_title">收款地区</span>
-            <input class="list_input" value="{{ withdraw_account.province_name }} {{ withdraw_account.city_name }}"
+            <input class="list_input"
+                   value="{{ withdraw_account?withdraw_account.province_name:'' }} {{ withdraw_account?withdraw_account.city_name:'' }}"
                    type="text"
                    readonly="readonly">
         </li>
@@ -61,8 +71,8 @@
             bank_amount: '',
             can_withdraw: true,
             explain: ["1Hi币＝1人民币", "Hi币金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"],
-            code :"{{ code }}",
-            coin_type_text:'{{ coin_type_text }}'
+            code: "{{ code }}",
+            coin_type_text: '{{ coin_type_text }}'
 
         },
         created: function () {
@@ -119,6 +129,6 @@
     vm = XVue(opts);
 
     $(function () {
-        vm.explain = ["1"+vm.coin_type_text+"＝1人民币", vm.coin_type_text+"金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"];
+        vm.explain = ["1" + vm.coin_type_text + "＝1人民币", vm.coin_type_text + "金额需大于或等于50元才可以提现。", "扶持期间提现无手续费，每周可提现一次，当周所提现的金额将在下周二到账。"];
     });
 </script>

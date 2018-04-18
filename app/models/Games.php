@@ -3,8 +3,21 @@
 class Games extends BaseModel
 {
 
-    static $STATUS = [STATUS_OFF => '关闭', STATUS_ON => '正常'];
+    static $STATUS = [STATUS_OFF => '无效', STATUS_ON => '有效'];
     static $files = ['icon' => APP_NAME . '/games/icon/%s'];
+
+    static function getGatewayClasses()
+    {
+        return \gamegateway\Base::getGatewayNames();
+    }
+
+    function gateway()
+    {
+        $clazz = '\gamegateway\\' . $this->clazz;
+        $gateway = new $clazz($this);
+
+        return $gateway;
+    }
 
     function getIconUrl($size = null)
     {
@@ -23,13 +36,21 @@ class Games extends BaseModel
         return $this->getIconUrl('small');
     }
 
+    function mergeJson(){
+        return [
+            'icon_small_url' => $this->icon_small_url,
+        ];
+    }
+
     function toSimpleJson()
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'icon_url' => $this->icon_url,
             'icon_small_url' => $this->icon_small_url,
-            'skip_url' => $this->url
+            'url' => $this->url
         ];
     }
+
 }

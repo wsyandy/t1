@@ -1,0 +1,1 @@
+alter table game_histories add column status INTEGER ;

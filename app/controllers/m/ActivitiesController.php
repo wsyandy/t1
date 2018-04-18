@@ -153,6 +153,8 @@ class ActivitiesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
+            return $this->renderJSON(ERROR_CODE_FAIL, '活动已过期');
+
             $activity_id = $this->params('activity_id');
 
             if (!$activity_id) {
@@ -277,5 +279,10 @@ class ActivitiesController extends BaseController
     function dreamWeekRankActivityAction()
     {
         $this->view->title = "梦幻周榜";
+    }
+
+    function roomIncomeRankActivityAction()
+    {
+        $this->view->title = "hi语音活动";
     }
 }

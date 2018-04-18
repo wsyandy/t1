@@ -284,7 +284,8 @@
    #### 游戏发起通知信息
 ```
     {
-        action: game_launched 房间发起游戏通知信息
+        action: game_notice 房间发起游戏通知信息
+        type: start游戏开始 over游戏结束
         content: string "" 信息内容
         image_url: string "" 游戏提示图片
         client_url string 跳转地址 例app://rooms/detail?id=xxx

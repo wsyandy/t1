@@ -1,0 +1,182 @@
+/* css reset */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    color: #333;
+    font-family: "微软雅黑";
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+a {
+    color: #555;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+.bg_box{
+    width: 10.0rem;
+    height: 47.16rem;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#7000CC), to(#2D184D));
+    background-image: -webkit-linear-gradient(top, #7000CC 0%, #2D184D 100%);
+    background-image: -o-linear-gradient(top, #7000CC 0%, #2D184D 100%);
+    background-image: linear-gradient(180deg, #7000CC 0%, #2D184D 100%);
+
+}
+.top_bg{
+    width: 10.0rem;
+    height: 35.613333rem;
+    background: url(../images/income_rank_activity_top_bg.png) no-repeat;
+    background-size: 100%;
+}
+.active_box{
+    width: 10.0rem;
+    height: 20.293333rem;
+    background: url(../images/active_bg.png) no-repeat;
+    background-size: 100%;
+    margin-top: 1.066667rem;
+}
+.week_list{
+    width: 9.08rem;
+    margin:0 auto;
+    padding-top: 4.8rem;
+}
+.table{
+    width: 100%;
+    border-collapse:collapse;
+}
+.table tr{
+    height: 1.466667rem;
+}
+.table tr td{
+    text-align: center;
+    font-family: PingFangSC-Medium;
+    border:none;
+}
+.table tr td span{
+    font-size: 0.4rem;
+    color: #FFFFFF;
+}
+.table tr td h5{
+    font-size: 0.32rem;
+    color: #F299FF;
+}
+.table tr td b{
+    font-weight: normal;
+    font-size: 0.426667rem;
+    color: #F299FF;
+}
+.table .guanjun{
+    width: 0.626667rem;
+    height: 0.68rem;
+}
+.pic_box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+.pic_box .pic{
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.pic_box .pic img{
+    width: 0.8rem;
+    height: 0.8rem;
+    background: #efefef;
+}
+.pic_box h3{
+    font-size: 0.373333rem;
+    color: #F299FF;
+    margin-left: 0.266667rem;
+}
+.voice_ico{
+    width: 0.8rem;
+    height: 0.8rem;
+}
+.tr_one_title{
+    height: 1.12rem !important;
+    background-color:rgba(254,217,254,0.31);
+}
+.active_gz{
+    width: 10.0rem;
+    height: 9.493333rem;
+    background: url(../images/text_bg.png) no-repeat;
+    background-size: 100%;
+}
+.active_gz ul{
+    padding: 2.4rem 0.853333rem 0 0.853333rem;
+}
+.active_gz ul li{
+    font-family: PingFangSC-Regular;
+    font-size: 0.4rem;
+    color: #FFFFFF;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-top: 0.533333rem;
+}
+.active_gz ul li p span{
+    color: #ffd800;
+    font-size: 0.533333rem;
+}
+.active_gz ul li p:last-child{
+    margin-left: 0.266667rem;
+}
+.award_text{
+    text-align: center;
+    padding:0.626667rem 0 0.4rem 0;
+    font-size: 0.373333rem;
+    color: #FFFFFF;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

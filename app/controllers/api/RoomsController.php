@@ -59,10 +59,13 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         } else if ($new == STATUS_ON) {
+
+            $cond['conditions'] .= ' and user_id <> ' . $user_id;
             $cond['order'] = "created_at desc";
 
         } else if ($broadcast == STATUS_ON) {
-            $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+            $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
+            $cond['conditions'] .= " and theme_type in ($theme_types)";
         } else if ($follow == STATUS_ON) {
 
             $user_ids = $this->currentUser()->followUserIds();
@@ -270,14 +273,17 @@ class RoomsController extends BaseController
 
         if ($activities) {
             foreach ($activities as $key => $activity) {
+                $url = '/m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
                 $activity = $activity->toSimpleJson();
-                $activity['url'] = '/m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
+                $activity['url'] = $url;
                 $res['activities'][] = $activity;
             }
         }
 
-        //游戏，先提供入口
-        $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
+        //游戏，先提供入口，暂时测试环境返回game字段
+       if(isDevelopmentEnv()){
+           $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
+       }
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
