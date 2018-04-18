@@ -254,6 +254,7 @@ class RoomsController extends BaseController
         $root = $this->getRoot();
         if(isDevelopmentEnv()){
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity.png'];
             $res['menu_config'] = $menu_config;
         }
 
