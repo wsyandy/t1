@@ -3124,4 +3124,17 @@ EOF;
         $uri = writeExcel($titles, $data, $temp_file, true);
         echoLine($uri);
     }
+
+    function gameWebsocketMessageAction()
+    {
+        $user = Users::findFirstById(1);
+
+        $image_url = "";
+        $body = ['action' => 'game_launched', 'content' => $user->nickname . "发起了跳一跳游戏", 'client_url' => ""];
+
+        $intranet_ip = $user->getIntranetIp();
+        $receiver_fd = $user->getUserFd();
+
+        \services\SwooleUtils::send('push', $intranet_ip, Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+    }
 }
