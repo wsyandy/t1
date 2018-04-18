@@ -39,6 +39,7 @@ class UnionsController extends BaseController
 
         $this->view->sid = $sid;
         $this->view->code = $code;
+        $this->view->official_room_id = $official_room_id;
         $this->view->current_user = $this->currentUser();
     }
 
