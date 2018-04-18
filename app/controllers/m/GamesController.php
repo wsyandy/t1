@@ -14,6 +14,7 @@ class GamesController extends BaseController
     function indexAction()
     {
         if ($this->request->isAJax()) {
+            $room_id = $this->params('room_id');
             $page = $this->params('page');
             $per_page = $this->params('per_page', 8);
 
@@ -21,6 +22,7 @@ class GamesController extends BaseController
             $conds['order'] = 'rank desc,id desc';
 
             $games = \Games::findPagination($conds, $page, $per_page);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
         }
     }
@@ -371,7 +373,7 @@ class GamesController extends BaseController
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
         $current_user = $this->currentUser();
-        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束", ];
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
 
         $intranet_ip = $current_user->getIntranetIp();
         $receiver_fd = $current_user->getUserFd();

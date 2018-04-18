@@ -6,14 +6,14 @@
 <div id="app" class="select_game">
     <ul class="await_player_ul">
         <li v-for="user in users"><img :src="user.avatar_url" alt=""/><span>${user.nickname}</span>
-            <span v-if="user.id == room_host_id" class="initiate">发起人</span>
+            <span v-if="user.id == game_host_user_id" class="initiate">发起人</span>
         </li>
     </ul>
     {#这里要判断是否是房主，是由房主可以点击开始#}
     <div class="select_game_button">
-        <button @click="start_game()" :class="current_user_id==room_host_id?'play':''">${ button_text }</button>
+        <button @click="start_game()" :class="current_user_id==game_host_user_id?'play':''">${ button_text }</button>
     </div>
-    {% if current_user.id != room_host_id %}
+    {% if current_user.id != game_host_user_id %}
         <div class="game_quit">
             <div class="game_quit_button" @click="exit_game()">
                 <span class="quit"></span>
@@ -32,14 +32,14 @@
             button_text: '开始',
             can_enter: 0,
             url: "{{ url }}",
-            room_host_id: "{{ room_host_id }}",
+            game_host_user_id: "{{ game_host_user_id }}",
             current_user_id: "{{ current_user.id }}",
             room_id: "{{ room_id }}"
         },
         watch: {},
         methods: {
             start_game: function () {
-                if (vm.current_user_id == vm.room_host_id) {
+                if (vm.current_user_id == vm.game_host_user_id) {
                     var data = {
                         'code': vm.code,
                         'sid': vm.sid,
@@ -98,7 +98,7 @@
     interval_time = setInterval(refreshUser, 1000);
 
     $(function () {
-        if (vm.current_user_id != vm.room_host_id) {
+        if (vm.current_user_id != vm.game_host_user_id) {
             vm.button_text = '等待进入游戏，请稍后...';
         }
 

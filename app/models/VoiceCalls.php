@@ -326,23 +326,23 @@ class VoiceCalls extends BaseModel
         \VoiceCalls::freeUser($this->receiver_id);
     }
 
-    static function pushHangupInfo($server, $user, $intranet_ip)
+    static function pushHangupInfo($user_id)
     {
-        $hot_cache = self::getHotReadCache();
-        $user_id = $user->id;
         $voice_call = VoiceCalls::getVoiceCallByUserId($user_id);
 
         if ($voice_call) {
             $call_sender_id = $voice_call->sender_id;
             $call_receiver_id = $voice_call->receiver_id;
             $voice_call->changeStatus(CALL_STATUS_HANG_UP);
-            $receiver_id = $user->id == $call_sender_id ? $call_receiver_id : $call_sender_id;
-            $receiver_fd = intval($hot_cache->get("socket_user_online_user_id" . $receiver_id));
+            $receiver_id = $user_id == $call_sender_id ? $call_receiver_id : $call_sender_id;
+            $user = Users::findFirstById($receiver_id);
+            $receiver_fd = $user->getUserFd();
+            $intranet_ip = $user->getIntranetIp();
+
             $data = ['action' => 'hang_up', 'user_id' => $user_id, 'receiver_id' => $receiver_id, 'channel_name' => $voice_call->call_no];
             info("calling_hang_up_exce", $user->sid, $receiver_id, $receiver_fd, $data, $intranet_ip);
-            //$payload = ['body' => $data, 'fd' => $fd, 'ip' => $intranet_ip];
-            //$this->send('push', $payload);
-            $server->push($receiver_fd, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $payload = ['body' => $data, 'fd' => $receiver_fd];
+            \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
         }
     }
 }

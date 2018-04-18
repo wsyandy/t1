@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/main.css') }}
 {{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
-{% if current_user.id == room_host_id %}
+{% if current_user.id == game_host_user_id %}
     <div id="app" class="select_game">
         <div class="select_game_instructions">
             <div class="instructions_title">
@@ -49,7 +49,7 @@
                 gold_game_amount: '',
                 amount: 0,
                 pay_type: 'free',
-                room_host_id: "{{ room_host_id }}",
+                game_host_user_id: "{{ game_host_user_id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 room_id: "{{ room_id }}",
@@ -91,7 +91,7 @@
 
                 go_game: function () {
                     var data = {
-                        'user_id': vm.room_host_id,
+                        'user_id': vm.game_host_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
                         'room_id': vm.room_id,
@@ -144,7 +144,7 @@
                 pay_type: "{{ pay_type }}",
                 pay_type_text: "",
                 amount: "{{ amount }}",
-                room_host_id: "{{ room_host_id }}",
+                game_host_user_id: "{{ game_host_user_id }}",
                 room_id: "{{ room_id }}",
                 room_host_nickname: "{{ room_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",

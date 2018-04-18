@@ -177,7 +177,7 @@ class SwooleEvents extends \BaseModel
 
             //如果有电话进行中
             if ($user->isCalling()) {
-                \VoiceCalls::pushHangupInfo($server, $user, $intranet_ip);
+                \VoiceCalls::delay()->pushHangupInfo($user->id);
             }
 
             $user->deleteFdInfo($fd, $online_token);

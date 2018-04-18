@@ -82,6 +82,12 @@ class RoomsController extends BaseController
 
         $room_id = $this->params('room_id');
 
+        $user = $this->currentUser();
+
+        if (isBlank($room_id)) {
+            $room_id = $user->current_room_id;
+        }
+
         $room = \Rooms::findFirstById($room_id);
 
         if (isBlank($room)) {
@@ -93,8 +99,6 @@ class RoomsController extends BaseController
         $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
 
         $res = $users->toJson('users', 'toRankListJson');
-
-        $user = $this->currentUser();
 
         $current_rank = $user->myRoomWealthRankByKey($key);
 
