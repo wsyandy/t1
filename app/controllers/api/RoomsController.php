@@ -279,9 +279,13 @@ class RoomsController extends BaseController
             }
         }
 
-        //游戏，先提供入口，暂时测试环境返回game字段
-        if (isDevelopmentEnv()) {
-            $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
+        //游戏，先提供入口，根据游戏开始时间返回game字段
+        $room_info_key = "game_room_" . $room_id . '_info';
+        $hot_cache = \Rooms::getHotWriteCache();
+        $can_enter_at = $hot_cache->hget($room_info_key, 'can_enter_at');
+
+        if (isPresent($can_enter_at)) {
+            $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
         }
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
