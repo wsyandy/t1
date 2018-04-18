@@ -2926,7 +2926,8 @@ EOF;
     {
         $day_key = "day_charm_rank_list_" . date("Ymd");
         $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
-        $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start:", 'bind' => ['start' => beginOfDay()]]);
+        $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
+            'bind' => ['start' => beginOfDay(), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND]]);
         $db = Users::getUserDb();
         $db->zclear($day_key);
         $db->zclear($wealth_day_key);
@@ -3032,5 +3033,61 @@ EOF;
         }
 
         echoLine(valueToStr(451496));
+    }
+
+    function fixUnionRankAction()
+    {
+        $key = "total_union_fame_value_day_" . date('Ymd');
+        $db = Users::getUserDb();
+        $union_ids = $db->zrange($key, 0, -1);
+
+        foreach ($union_ids as $union_id) {
+
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' =>
+                        'status = :status: and pay_type = :pay_type: and (sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) 
+                        and created_at >= :start: and created_at <= :end:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'start' => beginOfDay(), 'end' => endOfDay(),
+                        'sender_union_id' => $union_id, 'receiver_union_id' => $union_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $union_id);
+
+            if ($amount != $value) {
+                $db->zadd($key, $amount, $union_id);
+                echoLine($union_id, $amount, $value);
+            }
+        }
+
+        $db = Users::getUserDb();
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $key = "total_union_fame_value_" . $start . "_" . $end;
+
+        $union_ids = $db->zrange($key, 0, -1);
+
+        foreach ($union_ids as $union_id) {
+
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' =>
+                        'status = :status: and pay_type = :pay_type: and (sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) 
+                        and created_at > :start: and created_at <= :end:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'sender_union_id' => $union_id, 'receiver_union_id' => $union_id],
+                    'column' => 'amount'
+                ]);
+
+
+            $value = $db->zscore($key, $union_id);
+
+            if ($amount != $value) {
+                $db->zadd($key, $amount, $union_id);
+                echoLine($key, $union_id, $amount, $value);
+            }
+        }
+
     }
 }
