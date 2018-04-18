@@ -130,7 +130,6 @@
     vm = XVue(opts);
     $(function () {
         vm.cover_height = window.screen.height+'px';
-        $('.room_cover').show();
     })
 
 
