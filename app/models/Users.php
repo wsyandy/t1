@@ -2993,7 +2993,7 @@ class Users extends BaseModel
     function saveLastFieldRankList($list_type, $field, $rank)
     {
         $db = Users::getUserDb();
-        $key = "last_" . $list_type . "_" . $field . "_rank_list" . "_product_channel_id_" . $this->product_channel_id;
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
 
         $db->zadd($key, $rank, $this->id);
     }
