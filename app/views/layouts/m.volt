@@ -24,20 +24,25 @@
         iframe.parentNode.removeChild(iframe);
     };
 
-//    $(function () {
-//        pushHistory();
-//    });
-//
-//    //解决ios后退无法刷新
-//    function pushHistory() {
-//        window.addEventListener("popstate", function (e) {
-//            self.location.reload();
-//        }, false);
-//        var state = {
-//            title: "",
-//            url: "#"
-//        };
-//        window.history.replaceState(state, "", "#");
-//    }
+    var ua = navigator.userAgent.toLowerCase();//获取浏览器的userAgent,并转化为小写——注：userAgent是用户可以修改的
+    var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
+
+    $(function () {
+        if (isIos) {
+            pushHistory();
+        }
+    });
+
+    //解决ios后退无法刷新
+    function pushHistory() {
+        window.addEventListener("popstate", function (e) {
+            self.location.reload();
+        }, false);
+        var state = {
+            title: "",
+            url: "#"
+        };
+        window.history.replaceState(state, "", "#");
+    }
 </script>
 </html>

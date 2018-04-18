@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/qing_ming_activity') }}
-{{ theme_js('/m/js/font_rem') }}
+{{ theme_js('/js/font_rem') }}
 {{ block_end() }}
 
 <div class="active_top">
