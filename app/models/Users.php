@@ -1787,9 +1787,17 @@ class Users extends BaseModel
 
     function getRecommendTip($user)
     {
-        $created_at = $this->created_at;
-        if (time() - $created_at < 86400) {
-            return "她是Hi新人";
+        $register_at = $this->register_at;
+        if (time() - $register_at < 86400) {
+            $sex_text = '她';
+            if ($user->sex == USER_SEX_MALE) {
+                $sex_text = '他';
+            }
+            $code_text = 'Hi';
+            if ($user->product_channel->code == 'ruanyuyin') {
+                $code_text = 'R';
+            }
+            return $sex_text . "是" . $code_text . "新人";
         }
 
         if ($this->monologue) {
