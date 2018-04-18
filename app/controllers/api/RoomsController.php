@@ -270,7 +270,6 @@ class RoomsController extends BaseController
         $platform = 'client_' . $platform;
 
         $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
-
         if ($activities) {
             foreach ($activities as $key => $activity) {
                 $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
