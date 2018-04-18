@@ -36,6 +36,11 @@ class WithdrawAccountsController extends BaseController
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->title = "添加银行卡";
+
+        $cond = ['conditions' => "user_id = " . $this->currentUserId() . " and mobile is not null"];
+        $withdraw_account = \WithdrawAccounts::findLast($cond);
+
+        $this->view->mobile = $withdraw_account ? $withdraw_account->mobile : '';
     }
 
     function sendAuthAction()
@@ -131,7 +136,7 @@ class WithdrawAccountsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        if ( $withdraw_account->mobile != $mobile) {
+        if ($withdraw_account->mobile != $mobile) {
             return $this->renderJSON(ERROR_CODE_FAIL, "手机号不合法");
         }
 

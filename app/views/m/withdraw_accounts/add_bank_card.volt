@@ -35,9 +35,9 @@
     <div class="bank_list">
         <span class="bank_card">收款地区</span>
         <div class="select_area">
-            <span @click="selectProvince" v-text="province_id ? provinces[selected_province].text : '请选择收款省份'"></span>
+            <span @click="selectProvince" v-text="province_id ? provinces[selected_province].text : '省份'"></span>
             <span class="line-city">-</span>
-            <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '请选择收款城市'"></span>
+            <span @click="selectCity" v-text="city_id ? cities[selected_city].text : '城市'"></span>
         </div>
     </div>
     <a class="btn_submit" @click.stop="updateWithdrawAccount"> 提交 </a>
@@ -171,8 +171,8 @@
                 this.isSet = false;
             },
             setSelected: function (index) {
-                this.account_bank_id = this.options[this.selected].value;
                 this.selected = index;
+                this.account_bank_id = this.options[this.selected].value;
                 this.isSet = false;
             },
 
@@ -192,9 +192,8 @@
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
-                    province_id: this.province_id,
+                    province_id: this.province_id
                 };
-                console.log(data);
                 $.authGet('/m/withdraw_accounts/get_cities', data, function (resp) {
                     if (resp.error_code != 0) {
                         alert(resp.error_reason);
@@ -206,9 +205,13 @@
                 });
             },
             selectCity: function () {
-                this.isSetCity = true;
-                this.isSet = false;
-                this.isSetProvince = false;
+                if(this.province_id){
+                    this.isSetCity = true;
+                    this.isSet = false;
+                    this.isSetProvince = false;
+                }else{
+                    alert('请先选择对应省份');
+                }
             },
             cancelSelectForCity: function () {
                 this.isSetCity = false

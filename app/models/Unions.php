@@ -717,7 +717,9 @@ class Unions extends BaseModel
             $week_key = self::generateFameValueRankListKey('week', $opts);
             $day_key = self::generateFameValueRankListKey('day', $opts);
 
-            $opts['date'] = date('Ymd', strtotime("last day"), time());
+            $opts['date'] = date('Ymd', strtotime("last day"));
+
+
             $last_day_key = self::generateFameValueRankListKey('day', $opts);
 
             $db->zrem($last_day_key, $this->id);
@@ -789,11 +791,13 @@ class Unions extends BaseModel
         if ($value > 0) {
             $db = Users::getUserDb();
 
-            $week_key = self::generateFameValueRankListKey('week', ['product_channel_id' => $this->product_channel_id]);
-            $day_key = self::generateFameValueRankListKey('day', ['product_channel_id' => $this->product_channel_id]);
+            $week_key = self::generateFameValueRankListKey('week');
+            $day_key = self::generateFameValueRankListKey('day');
 
             $db->zincrby($day_key, $value, $this->id);
+            $db->zincrby($day_key . "_" . $this->product_channel_id, $value, $this->id);
             $db->zincrby($week_key, $value, $this->id);
+            $db->zincrby($week_key . "_" . $this->product_channel_id, $value, $this->id);
         }
     }
 
@@ -801,7 +805,7 @@ class Unions extends BaseModel
     {
         $db = Users::getUserDb();
 
-        $key = self::generateFameValueRankListKey($list_type, ['product_channel_id', $this->product_channel_id]);
+        $key = self::generateFameValueRankListKey($list_type);
 
         $rank = $db->zrrank($key, $this->id);
 
@@ -819,27 +823,21 @@ class Unions extends BaseModel
 
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
-        $product_channel_id = fetch($opts, 'product_channel_id');
-
-        if (isBlank($product_channel_id)) {
-            $key_product_channel = '';
-        } else {
-            $key_product_channel = "_product_channel_id_" . $product_channel_id;
-        }
-
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date('Ymd'));
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date('Ymd'));
 
-                $key = "total_union_fame_value_day_" . $date . $key_product_channel;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "total_union_fame_value_" . $start . "_" . $end . $key_product_channel;
-                break;
-            }
+                    $key = "total_union_fame_value_day_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "total_union_fame_value_" . $start . "_" . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -955,7 +953,7 @@ class Unions extends BaseModel
             if ($this->update()) {
                 //  删除老头像
                 if ($old_avatar) {
-                    \StoreFile::delete($old_avatar);
+                    //\StoreFile::delete($old_avatar);
                 }
             }
         }

@@ -83,6 +83,8 @@
                         + "&product_id=" + vm.product_id + "&payment_type=" + vm.payment_type + "&code={{ product_channel.code }}";
 
                     window.location.href = url;
+
+                    return;
                 }
             }
         };

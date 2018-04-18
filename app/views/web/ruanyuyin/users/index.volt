@@ -10,7 +10,7 @@
         </div>
         <div class="name">
             <h3>{{ user.nickname }}</h3>
-            <p>Hi~ID:{{ user.uid }}</p>
+            <p>ID:{{ user.uid }}</p>
         </div>
     </div>
     <div class="person_right">已上传：${total_entries}首</div>

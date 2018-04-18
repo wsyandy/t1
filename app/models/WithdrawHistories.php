@@ -91,8 +91,17 @@ class WithdrawHistories extends BaseModel
     {
         $data = [
             'withdraw_account_type_text' => $this->withdraw_account_type_text,
-            'account_text' => $this->account_text
+            'account_text' => $this->account_text,
+            'bank_account_location' => $this->withdraw_account_bank_account_location,
+            'account_type_text' => $this->withdraw_account_type_text,
         ];
+        $withdraw_account = $this->withdraw_account;
+        if ($withdraw_account) {
+            $data['area'] = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
+            $data['account_bank_name'] = $withdraw_account->account_bank_name;
+
+        }
+
         return $data;
     }
 
@@ -115,6 +124,10 @@ class WithdrawHistories extends BaseModel
     {
         $amount = fetch($opts, 'amount');
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
+
+        if ($amount >= 10000) {
+            return [ERROR_CODE_FAIL, '单次限额10000元'];
+        }
 
         $withdraw_account = WithdrawAccounts::findFirstById($withdraw_account_id);
 
@@ -139,7 +152,7 @@ class WithdrawHistories extends BaseModel
 
         $history = new WithdrawHistories();
         $history->user_id = $user->id;
-        $history->user_name = $user->nickname;
+        $history->user_name = $withdraw_account->user_name;
         $history->product_channel_id = $user->product_channel_id;
         $history->amount = $amount;
         $history->status = WITHDRAW_STATUS_WAIT;

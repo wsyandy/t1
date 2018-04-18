@@ -712,7 +712,7 @@ class Users extends BaseModel
             if ($this->update()) {
                 //  删除老头像
                 if ($old_avatar) {
-                    \StoreFile::delete($old_avatar);
+                    //\StoreFile::delete($old_avatar);
                 }
             }
         }
@@ -1424,6 +1424,15 @@ class Users extends BaseModel
         $follow_list = self::findByRelations($follow_key, $page, $per_page);
         return $follow_list;
     }
+
+    //我关注的用户id
+    function followUserIds()
+    {
+        $follow_key = 'follow_list_user_id' . $this->id;
+        $user_db = Users::getUserDb();
+        return $user_db->zrange($follow_key, 0, -1);
+    }
+
 
     //关注我的列表
     function followedList($page, $per_page)
@@ -2898,20 +2907,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", strtotime("last sunday next day", time()));
-                $end = date("Ymd", strtotime("next monday", time()) - 1);
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", strtotime("last sunday next day", time()));
+                    $end = date("Ymd", strtotime("next monday", time()) - 1);
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -2953,19 +2965,25 @@ class Users extends BaseModel
             $db = Users::getUserDb();
 
             $user = Users::findFirstById($user_id);
-            if (isBlank($user) || $user->product_channel_id) {
+            if (isBlank($user) || !$user->product_channel_id) {
                 info("user_id is invalid", $user);
                 return;
             }
 
             $opts = ['product_channel_id' => $user->product_channel_id];
 
-            $day_key = self::generateFieldRankListKey('day', $field, $opts);
-            $week_key = self::generateFieldRankListKey('week', $field, $opts);
-            $total_key = self::generateFieldRankListKey('total', $field, $opts);
+            $day_key = self::generateFieldRankListKey('day', $field);
+            $week_key = self::generateFieldRankListKey('week', $field);
+            $total_key = self::generateFieldRankListKey('total', $field);
 
+
+            $db->zincrby($day_key . "_" . $user->product_channel_id, $value, $user_id);
             $db->zincrby($day_key, $value, $user_id);
+
+            $db->zincrby($week_key . "_" . $user->product_channel_id, $value, $user_id);
             $db->zincrby($week_key, $value, $user_id);
+
+            $db->zincrby($total_key . "_" . $user->product_channel_id, $value, $user_id);
             $db->zincrby($total_key, $value, $user_id);
         }
     }
@@ -2980,7 +2998,7 @@ class Users extends BaseModel
 
     function myFieldRank($list_type, $field)
     {
-        $key = self::generateFieldRankListKey($list_type, $field, ['product_channel_id' => $this->product_channel_id]);
+        $key = self::generateFieldRankListKey($list_type, $field);
 
         return $this->getRankByKey($key);
     }
@@ -2988,8 +3006,7 @@ class Users extends BaseModel
 
     function myLastFieldRank($list_type, $field)
     {
-        $key = "last_" . $list_type . "_" . $field . "_rank_list" . "_product_channel_id_" . $this->product_channel_id;
-
+        $key = "last_" . $list_type . "_" . $field . "_rank_list";
         return $this->getLastRankByKey($key);
     }
 
@@ -3017,34 +3034,30 @@ class Users extends BaseModel
 
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
-        $product_channel_id = fetch($opts, 'product_channel_id');
-
-        if (isBlank($product_channel_id)) {
-            $key_product_channel = '';
-        } else {
-            $key_product_channel = "_product_channel_id_" . $product_channel_id;
-        }
-
-
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date . $key_product_channel;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end . $key_product_channel;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list" . $key_product_channel;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
+
+        debug($key);
 
         return $key;
     }
