@@ -44,6 +44,5 @@
         };
         window.history.replaceState(state, "", "#");
     }
-
 </script>
 </html>
