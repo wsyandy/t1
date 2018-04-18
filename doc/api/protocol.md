@@ -22,7 +22,7 @@
 11. 消息列表页面 app://messages
 12. 聊天页面 app://messages/show?user_id=xxx&nickname=xxx&avatar_url=xxxx
 
-## m协议
+## url协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
 
 ## http协议
