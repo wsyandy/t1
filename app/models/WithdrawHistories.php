@@ -303,7 +303,8 @@ class WithdrawHistories extends BaseModel
                 $bank_account_location = $withdraw_account->bank_account_location;
                 $area = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
             }
-            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name, $account, $withdraw_history->withdraw_account_type_text,
+            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name,
+                " " . $account . " ", $withdraw_history->withdraw_account_type_text,
                 $account_bank_name, $bank_account_location, $area, $withdraw_history->amount];
         }
         $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
