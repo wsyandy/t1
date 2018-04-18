@@ -273,8 +273,9 @@ class RoomsController extends BaseController
 
         if ($activities) {
             foreach ($activities as $key => $activity) {
+                $url = '/m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
                 $activity = $activity->toSimpleJson();
-                $activity['url'] = '/m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
+                $activity['url'] = $url;
                 $res['activities'][] = $activity;
             }
         }
