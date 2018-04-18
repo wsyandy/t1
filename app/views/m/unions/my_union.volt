@@ -252,11 +252,11 @@
             },
             userDetail: function () {
                 var url = '';
-                if (this.selected_user.id == this.user.id) {
-                    url = "app://users/detail";
-                } else {
+//                if (this.selected_user.id == this.user.id) {
+//                    url = "app://users/detail";
+//                } else {
                     url = "app://users/other_detail?user_id=" + this.selected_user.id;
-                }
+//                }
                 console.log(url);
                 location.href = url;
             },
