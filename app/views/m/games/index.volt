@@ -43,6 +43,10 @@
                 vm.page++;
             },
             select_game: function (url) {
+                if(!url){
+                    alert('url无效');
+                    return;
+                }
                 vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code);
             }
 
