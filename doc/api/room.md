@@ -196,7 +196,16 @@
         expire_time int 礼物过期时间
         gift_type 1 普通礼物 2 座驾
         notice_content 进房间提示文案
-     }      		   
+     },
+      menu_config : [ //房间详情菜单配置
+             {
+                 show boolean 是否展示 true/false
+                 title string 菜单名称
+                 url string 跳转地址
+                 icon string 图片地址
+             },
+             ...
+         ]	   
 }
 ```
 
