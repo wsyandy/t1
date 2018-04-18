@@ -24,8 +24,13 @@
         iframe.parentNode.removeChild(iframe);
     };
 
+    var ua = navigator.userAgent.toLowerCase();//获取浏览器的userAgent,并转化为小写——注：userAgent是用户可以修改的
+    var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
+
     $(function () {
-        pushHistory();
+        if (isIos) {
+            pushHistory();
+        }
     });
 
     //解决ios后退无法刷新
@@ -39,5 +44,6 @@
         };
         window.history.replaceState(state, "", "#");
     }
+
 </script>
 </html>
