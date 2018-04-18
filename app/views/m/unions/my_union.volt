@@ -252,7 +252,7 @@
             userDetail: function () {
                 var url = '';
                 if (this.selected_user.id == this.user.id) {
-                    url = "app://users/detail";
+                    url = "app://users/detail?id=" + this.selected_user.id;
                 } else {
                     url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }

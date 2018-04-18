@@ -407,8 +407,6 @@ class UnionsController extends BaseController
 
     function applyExitAction()
     {
-        $current_user = $this->currentUser();
-
         $user_id = $this->params('user_id');
         $user = \Users::findFirstById($user_id);
         $union = \Unions::findFirstById($user->union_id);
@@ -420,7 +418,7 @@ class UnionsController extends BaseController
         }
 
         $this->view->user_id = $user_id;
-        $this->view->user = $current_user;
+        $this->view->user = $user;
         $this->view->title = "家族申请";
     }
 
