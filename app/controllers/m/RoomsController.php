@@ -15,7 +15,7 @@ class RoomsController extends BaseController
         $sid = $this->params('sid');
 
         if ($this->request->isAjax()) {
-            
+
             $total_room_id_key = \Rooms::getTotalRoomUserNumListKey();
 
             $hot_cache = \Users::getHotWriteCache();
@@ -59,5 +59,10 @@ class RoomsController extends BaseController
     function findRoomAction()
     {
 
+    }
+
+    function wealthRankListAction()
+    {
+        $this->response->redirect("http://www.baidu.com");
     }
 }
