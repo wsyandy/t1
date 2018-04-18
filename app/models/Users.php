@@ -1793,11 +1793,8 @@ class Users extends BaseModel
             if ($user->sex == USER_SEX_MALE) {
                 $sex_text = '他';
             }
-            $code_text = 'Hi';
-            if ($user->product_channel->code == 'ruanyuyin') {
-                $code_text = 'R';
-            }
-            return $sex_text . "是" . $code_text . "新人";
+
+            return $sex_text . "是新人";
         }
 
         if ($this->monologue) {
