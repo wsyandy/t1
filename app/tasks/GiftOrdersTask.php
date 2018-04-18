@@ -49,6 +49,59 @@ class GiftOrdersTask extends \Phalcon\Cli\Task
             349690, 356507, 360032, 187921, 202558, 208721, 171945, 156282, 366499, 367774
         ];
 
+        $gift_orders = GiftOrders::findByIds($gift_order_ids);
+
+        foreach ($gift_orders as $gift_order) {
+
+            $amount = $gift_order->amount;
+            $user = $gift_order->user;
+            $created_at = $gift_order->created_at;
+
+            if ($user->isIdCardAuth()) {
+
+                $id_card_auth = IdCardAuths::findFirstByUserId($user->id);
+
+                if ($id_card_auth->auth_at < $created_at) {
+
+                    $hour = intval(date("H", $created_at));
+
+                    if ($hour >= 0 && $hour <= 7) {
+                        $rate = 6 / 100;
+                    } else {
+                        $rate = 5 / 100;
+                    }
+                }
+
+            } else {
+                $rate = 4.5 / 100;
+            }
+
+
+            $hi_coins = $amount * $rate;
+            $hi_coin_history = new HiCoinHistories();
+            $hi_coin_history->gift_order_id = $gift_order->id;
+            $hi_coins = intval($hi_coins * 10000) / 10000;
+            $hi_coin_history->hi_coins = $hi_coins;
+            $hi_coin_history->user_id = $user->id;
+            $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_RECEIVE_GIFT;
+            $hi_coin_history->remark = "接收礼物总额: $amount 收益:" . $hi_coins;
+            $hi_coin_history->product_channel_id = $user->product_channel_id;
+            $hi_coin_history->union_id = $user->union_id;
+            $hi_coin_history->created_at = $gift_order->created_at;
+            $hi_coin_history->union_type = $user->union_type;
+
+            if (!$hi_coin_history->save()) {
+                info('Exce', $user->id, $gift_order->id);
+                return null;
+            }
+
+            $user->hi_coins = $hi_coin_history->balance;
+            $user->update();
+
+
+            echoLine($user->id, $amount, $rate, $hi_coins);
+        }
+
         foreach ($gift_order_ids as $gift_order_id) {
 
             $gift_order = GiftOrders::findFirstById($gift_order_id);

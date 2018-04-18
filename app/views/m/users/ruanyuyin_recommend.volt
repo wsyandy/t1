@@ -11,14 +11,16 @@
         <div class="text">
             <div class="left interest_tags">
                 <h3> ${ item.nickname }</h3>
-                <p class="int_nv"><span  v-for="tag in item.tags">${ tag.text }</span></p>
+                <p class="int_nv"><span v-for="tag in item.tags">${ tag.text }</span></p>
                 <b class="interest_brief"> ${ item.recommend_tip }</b>
             </div>
         </div>
 
         <div class="btn_list">
-            <span  @click.stop="enterRoom(item.current_room_id)" v-show="item.current_room_id"><i class="room"></i>房间</span>
-            <span  @click="addFriend(item)" :class="{'interest_add':true,'interest_add_to':!item.is_added}"><i class="friend"></i>${ item.is_added? "已添加":"添加" } </span>
+            <span @click.stop="enterRoom(item.current_room_id)" v-show="item.current_room_id"><i
+                        class="room"></i>房间</span>
+            <span @click="addFriend(item)" :class="{'interest_add':true,'interest_add_to':!item.is_added}"><i
+                        class="friend"></i>${ item.is_added? "已添加":"添加" } </span>
         </div>
 
     </div>
@@ -28,7 +30,7 @@
     </div>
 
     {#密码弹框#}
-    <div class="room_cover">
+    <div class="room_cover" :style="{height: cover_height}" >
         <div class="room_pop">
             <img class="room_pop_bg" src="/m/images/room_pop_bg.png" alt="">
             <div class="room_locked">房间已上锁</div>
@@ -68,12 +70,13 @@
 
     var opts = {
         data: {
-            room_hidden:true,
-            friend_hidden:true,
+            room_hidden: true,
+            friend_hidden: true,
             ico_male: "images/ico_male.png",
             ico_female: "images/ico_female.png",
             page: 1,
-            user_list: []
+            user_list: [],
+            cover_height: ''
         },
         created: function () {
             this.userList();
@@ -84,7 +87,7 @@
                     page: this.page,
                     per_page: 6
                 };
-                console.log(this.page);
+
                 $.authGet('/m/users/user_list?sid={{ sid }}&code={{ code }}', data, function (resp) {
                     if (resp.user_list) {
                         vm.user_list = [];
@@ -125,6 +128,9 @@
     };
 
     vm = XVue(opts);
+    $(function () {
+        vm.cover_height = window.screen.height+'px';
+    })
 
 
 </script>

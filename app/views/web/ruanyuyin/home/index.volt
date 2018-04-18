@@ -29,16 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video_box ani ani1-4">
-                <video class="video_demo" autoplay controls width="380" height="360">
-                    <source src="http://www.runoob.com/try/demo_source/movie.mp4" type="video/mp4">
-                    <source src="http://www.runoob.com/try/demo_source/movie.ogg" type="video/ogg">
-                    <source src="http://www.runoob.com/try/demo_source/movie.webm" type="video/webm">
-                    <object data="http://www.runoob.com/try/demo_source/movie.mp4" width="380" height="360">
-                        <embed src="http://www.runoob.com/try/demo_source/movie.swf" width="380" height="360">
-                    </object>
-                </video>
-            </div>
+            <img class="slide1_img  ani ani1-4" src="/web/{{ current_theme }}/images/slide1_img.gif" alt="">
 
         </div>
         <div class="swiper-slide slide2">

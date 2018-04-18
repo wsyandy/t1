@@ -216,6 +216,8 @@ class RoomsController extends BaseController
     function detailAction()
     {
         $room_id = $this->params('id', 0);
+        $sid = $this->params('sid');
+        $code = $this->params('code');
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -249,6 +251,33 @@ class RoomsController extends BaseController
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
+
+        //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
+        $root = $this->getRoot();
+        if (isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/room_menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => '/m/games', 'icon' => $root . 'images/avatar.png'];
+            $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => '/m/games', 'icon' => $root . 'images/avatar.png'];
+            $res['menu_config'] = $menu_config;
+        }
+
+        //活动列表
+        $product_channel_id = $this->currentProductChannelId();
+        $platform = $this->params('pf');
+        $platform = 'client_' . $platform;
+
+        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+
+        if ($activities) {
+            foreach ($activities as $key => $activity) {
+                $activity = $activity->toSimpleJson();
+                $activity['url'] = '/m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
+                $res['activities'][] = $activity;
+            }
+        }
+
+        //游戏，先提供入口
+        $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {

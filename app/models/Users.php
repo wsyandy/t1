@@ -1778,7 +1778,7 @@ class Users extends BaseModel
         $users = $current_user->nearby($page, $per_page, ['filter_ids' => $filter_ids]);
 
         foreach ($users as $user) {
-            $user->recommend_tip = $user->getRecommendTip($current_user);
+            $user->recommend_tip = $user->getRecommendTip($user);
         }
 
         return $users;
@@ -1787,9 +1787,14 @@ class Users extends BaseModel
 
     function getRecommendTip($user)
     {
-        $created_at = $this->created_at;
-        if (time() - $created_at < 86400) {
-            return "她是Hi新人";
+        $register_at = $this->register_at;
+        if (time() - $register_at < 86400) {
+            $sex_text = '她';
+            if ($user->sex == USER_SEX_MALE) {
+                $sex_text = '他';
+            }
+
+            return $sex_text . "是新人";
         }
 
         if ($this->monologue) {
@@ -2904,23 +2909,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -3014,6 +3016,18 @@ class Users extends BaseModel
         return $rank;
     }
 
+    function myRoomWealthRankByKey($key)
+    {
+        $db = Users::getUserDb();
+        $rank = $db->zrrank($key, $this->id);
+
+        if (is_null($rank)) {
+            return 0;
+        }
+
+        return $rank + 1;
+    }
+
     function getRankByKey($key)
     {
         $db = Users::getUserDb();
@@ -3032,24 +3046,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }

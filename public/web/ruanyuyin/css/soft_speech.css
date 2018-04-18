@@ -564,6 +564,20 @@ a {
     height: 100%
 }
 
+.slide1_img{
+    position: absolute;
+    right: 20%;
+    top: 20%;
+    z-index: 1;
+    width: 380px;
+    height: 680px;
+    -webkit-border-radius: 50px;
+    -moz-border-radius: 50px;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+
 .slide2_left {
     position: absolute;
     left: 16%;

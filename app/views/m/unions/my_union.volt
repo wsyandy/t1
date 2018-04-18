@@ -207,7 +207,6 @@
         },
         methods: {
             rankUnion: function () {
-                console.log('aa');
                 var url = "/m/unions/rank&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
                 location.href = url;
             },
@@ -253,11 +252,10 @@
             userDetail: function () {
                 var url = '';
                 if (this.selected_user.id == this.user.id) {
-                    url = "app://users/detail";
+                    url = "app://users/detail?id=" + this.selected_user.id;
                 } else {
                     url = "app://users/other_detail?user_id=" + this.selected_user.id;
                 }
-                console.log(url);
                 location.href = url;
             },
             roomDetail: function (id) {
@@ -317,9 +315,9 @@
 //                        var url = "/m/unions/index&sid=" + vm.sid + "&code=" + vm.code;
 //                        location.href = url;
 //                    } else {
-                        $(".middle_pop").hide();
-                        $(".middle_pop_bg").hide();
-                        alert(resp.error_reason);
+                    $(".middle_pop").hide();
+                    $(".middle_pop_bg").hide();
+                    alert(resp.error_reason);
 //                    }
                 });
             },
@@ -424,7 +422,6 @@
         $(".room_in").on("click", function () {
             var url = "/m/unions/check_password";
             var password = $('#password').val();
-            console.log(password, vm.selected_room_id);
             var data = {sid: vm.sid, code: vm.code, password: password, room_id: vm.selected_room_id};
             $.authPost(url, data, function (resp) {
                 if (resp.error_code == 0) {

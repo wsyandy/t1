@@ -1380,6 +1380,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $db->zclear("last_" . $list_type . "_" . $field . "_rank_list");
             }
         }
+
     }
 
     function fixUserDataAction()
@@ -1511,7 +1512,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         info(valueToStr(1032442333444333));
 
-        $user = Users::findById(117);
+        $user = Users::findById(1030079);
         $user->organisation = 0;
         $user->update();
 
@@ -2919,5 +2920,208 @@ EOF;
 
         $users = \Users::findFieldRankList('day', 'wealth', 1, 10);
         echoLine(count($users));
+    }
+
+    function fixUserRankAction()
+    {
+        $day_key = "day_charm_rank_list_" . date("Ymd");
+        $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
+        $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
+            'bind' => ['start' => beginOfDay(), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND]]);
+        $db = Users::getUserDb();
+        $db->zclear($day_key);
+        $db->zclear($wealth_day_key);
+
+        foreach ($gift_orders as $gift_order) {
+            $user = $gift_order->user;
+            $sender = $gift_order->sender;
+
+            $value = $gift_order->amount;
+            $db->zincrby($day_key . "_" . $user->product_channel_id, $value, $user->id);
+            $db->zincrby($day_key, $value, $user->id);
+
+            $db->zincrby($wealth_day_key . "_" . $sender->product_channel_id, $value, $sender->id);
+            $db->zincrby($wealth_day_key, $value, $sender->id);
+        }
+
+
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+
+        $db = Users::getUserDb();
+        $key = "week_charm_rank_list_" . $start . "_" . $end;
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and status = :status: and pay_type = :pay_type: and user_id = :user_id:',
+                    'bind' => ['start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $key = "week_wealth_rank_list_" . $start . "_" . $end;
+
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and status = :status: and pay_type = :pay_type: and sender_id = :sender_id:',
+                    'bind' => ['start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'sender_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $key = "total_charm_rank_list";
+        $wealth_key = "total_wealth_rank_list";
+
+        $db = Users::getUserDb();
+        $user_ids = $db->zrange($key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'status = :status: and pay_type = :pay_type: and user_id = :user_id:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                $db->zadd($key, $amount, $user_id);
+            }
+        }
+
+        $db = Users::getUserDb();
+        $wealth_key = "total_wealth_rank_list";
+        $user_ids = $db->zrange($wealth_key, 0, -1);
+
+        foreach ($user_ids as $user_id) {
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' => 'status = :status: and pay_type = :pay_type: and sender_id = :sender_id:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'sender_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($wealth_key, $user_id);
+
+            if ($amount != $value) {
+                echoLine($amount, $value);
+                //$db->zadd($wealth_key, $amount, $user_id);
+            }
+        }
+
+        echoLine(valueToStr(451496));
+    }
+
+    function fixUnionRankAction()
+    {
+        $key = "total_union_fame_value_day_" . date('Ymd');
+        $db = Users::getUserDb();
+        $union_ids = $db->zrange($key, 0, -1);
+
+        foreach ($union_ids as $union_id) {
+
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' =>
+                        'status = :status: and pay_type = :pay_type: and (sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) 
+                        and created_at >= :start: and created_at <= :end:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'start' => beginOfDay(), 'end' => endOfDay(),
+                        'sender_union_id' => $union_id, 'receiver_union_id' => $union_id],
+                    'column' => 'amount'
+                ]);
+
+            $value = $db->zscore($key, $union_id);
+
+            if ($amount != $value) {
+                $db->zadd($key, $amount, $union_id);
+                echoLine($union_id, $amount, $value);
+            }
+        }
+
+        $db = Users::getUserDb();
+        $start = date("Ymd", strtotime("last sunday next day", time()));
+        $end = date("Ymd", strtotime("next monday", time()) - 1);
+        $key = "total_union_fame_value_" . $start . "_" . $end;
+
+        $union_ids = $db->zrange($key, 0, -1);
+
+        foreach ($union_ids as $union_id) {
+
+            $amount = GiftOrders::sum(
+                [
+                    'conditions' =>
+                        'status = :status: and pay_type = :pay_type: and (sender_union_id = :sender_union_id: or receiver_union_id = :receiver_union_id:) 
+                        and created_at > :start: and created_at <= :end:',
+                    'bind' => ['status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => PAY_TYPE_DIAMOND, 'start' => beginOfDay(strtotime($start)), 'end' => endOfDay(strtotime($end)),
+                        'sender_union_id' => $union_id, 'receiver_union_id' => $union_id],
+                    'column' => 'amount'
+                ]);
+
+
+            $value = $db->zscore($key, $union_id);
+
+            if ($amount != $value) {
+                $db->zadd($key, $amount, $union_id);
+                echoLine($key, $union_id, $amount, $value);
+            }
+        }
+
+    }
+
+    function exportWithdrawHistoryAction()
+    {
+        $withdraw_histories = WithdrawHistories::findBy(['status' => WITHDRAW_STATUS_WAIT]);
+        $titles = ['日期', '用户id', '姓名', '账户', '收款银行', '收款支行', '收款地区', '提现金额'];
+        $data = [];
+        foreach ($withdraw_histories as $withdraw_history) {
+            $user_id = $withdraw_history->user_id;
+
+            $old_withdraw_history = WithdrawHistories::findFirstBy(['withdraw_account_type' => 2, 'user_id' => $user_id, 'status' => WITHDRAW_STATUS_FAIL]);
+
+            if ($old_withdraw_history) {
+                echoLine($user_id, $old_withdraw_history->id);
+
+                $withdraw_account = $withdraw_history->withdraw_account;
+
+                if (isPresent($withdraw_account)) {
+                    $account_bank_name = $withdraw_account->account_bank_name;
+                    $bank_account_location = $withdraw_account->bank_account_location;
+                    $area = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
+
+                    $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $withdraw_history->user_name,
+                        $withdraw_history->account, $account_bank_name, $bank_account_location, $area, $withdraw_history->amount
+                    ];
+                }
+            }
+        }
+
+        echoLine($data);
+
+        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+        $uri = writeExcel($titles, $data, $temp_file, true);
+        echoLine($uri);
     }
 }

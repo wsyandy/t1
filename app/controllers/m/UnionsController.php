@@ -31,8 +31,15 @@ class UnionsController extends BaseController
             $this->view->union = $union;
         }
 
+        $official_room_id = 1027831;
+
+        if (isDevelopmentEnv()) {
+            $official_room_id = 137;
+        }
+
         $this->view->sid = $sid;
         $this->view->code = $code;
+        $this->view->official_room_id = $official_room_id;
         $this->view->current_user = $this->currentUser();
     }
 
@@ -179,13 +186,7 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        if (isDevelopmentEnv()) {
-            $opts = ['product_channel_id' => $this->currentProductChannelId()];
-        } else {
-            $opts = [];
-        }
-
-        $unions = \Unions::findFameValueRankList($list_type, $page, $per_page, $opts);
+        $unions = \Unions::findFameValueRankList($list_type, $page, $per_page);
 
         $unions_json = $unions->toJson('unions', 'toSimpleJson');
 
@@ -406,8 +407,6 @@ class UnionsController extends BaseController
 
     function applyExitAction()
     {
-        $current_user = $this->currentUser();
-
         $user_id = $this->params('user_id');
         $user = \Users::findFirstById($user_id);
         $union = \Unions::findFirstById($user->union_id);
@@ -419,7 +418,7 @@ class UnionsController extends BaseController
         }
 
         $this->view->user_id = $user_id;
-        $this->view->user = $current_user;
+        $this->view->user = $user;
         $this->view->title = "家族申请";
     }
 

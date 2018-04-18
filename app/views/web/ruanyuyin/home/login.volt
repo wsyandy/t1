@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/style') }}
+{{ theme_css('/web/ruanyuyin/css/style') }}
 {{ block_end() }}
 
 <div class="qrcode_login">
