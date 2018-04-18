@@ -139,7 +139,7 @@ class GamesController extends BaseController
         if ($room_host_id == $current_user->id) {
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_launched', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "/m/games"];
+            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "/m/games"];
 
             $intranet_ip = $current_user->getIntranetIp();
             $receiver_fd = $current_user->getUserFd();
@@ -352,6 +352,13 @@ class GamesController extends BaseController
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
+        $current_user = $this->currentUser();
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束", ];
+
+        $intranet_ip = $current_user->getIntranetIp();
+        $receiver_fd = $current_user->getUserFd();
+
+        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
         info('user_info', $user_datas);
 

@@ -17,7 +17,7 @@
             <div class="exchange_list">
 
                 <div class="exchange_diamond">
-                    <img class="ico_diamond" src="/m/withdraw_histories/images/ico_diamond.png" alt="">
+                    <img class="ico_diamond" src="/m/ruanyuyin/images/ruanyuyin_diamond.png" alt="">
                     <span>{{ product.getShowDiamond(user) }}</span>
                 </div>
 
