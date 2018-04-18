@@ -1512,7 +1512,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         info(valueToStr(1032442333444333));
 
-        $user = Users::findById(117);
+        $user = Users::findById(1030079);
         $user->organisation = 0;
         $user->update();
 
@@ -3089,5 +3089,39 @@ EOF;
             }
         }
 
+    }
+
+    function exportWithdrawHistoryAction()
+    {
+        $withdraw_histories = WithdrawHistories::findBy(['status' => WITHDRAW_STATUS_WAIT]);
+        $titles = ['日期', '用户id', '姓名', '账户', '收款银行', '收款支行', '收款地区', '提现金额'];
+        $data = [];
+        foreach ($withdraw_histories as $withdraw_history) {
+            $user_id = $withdraw_history->user_id;
+
+            $old_withdraw_history = WithdrawHistories::findFirstBy(['withdraw_account_type' => 2, 'user_id' => $user_id, 'status' => WITHDRAW_STATUS_FAIL]);
+
+            if ($old_withdraw_history) {
+                echoLine($user_id, $old_withdraw_history->id);
+
+                $withdraw_account = $withdraw_history->withdraw_account;
+
+                if (isPresent($withdraw_account)) {
+                    $account_bank_name = $withdraw_account->account_bank_name;
+                    $bank_account_location = $withdraw_account->bank_account_location;
+                    $area = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
+
+                    $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $withdraw_history->user_name,
+                        $withdraw_history->account, $account_bank_name, $bank_account_location, $area, $withdraw_history->amount
+                    ];
+                }
+            }
+        }
+
+        echoLine($data);
+
+        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+        $uri = writeExcel($titles, $data, $temp_file, true);
+        echoLine($uri);
     }
 }
