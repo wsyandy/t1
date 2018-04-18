@@ -32,94 +32,58 @@ class GamesController extends BaseController
 
         // 必须在房间才可玩游戏
         $room_id = $this->currentUser()->current_room_id;
-        if(!$room_id){
+        if (!$room_id) {
             return;
         }
 
         $game = \Games::findFirstById($this->params('game_id'));
-        if(!$game){
+        if (!$game) {
             return;
         }
-
-        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
-            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
-        if(!$game_history){
-
-        }
-
-
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_key = "game_room_" . $room_id;
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $current_user_id = $this->currentUser()->id;
-        $cache_game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
-
-        // 解散房间
-        if ($cache_game_host_user_id == $this->currentUser()->id) {
-            $hot_cache->del($room_key);
-            $hot_cache->del($room_wait_key);
-            $hot_cache->del($room_info_key);
-        }
-
-        $hot_cache->zadd($room_key, time(), $current_user_id);
-        $user_num = $hot_cache->zcard($room_key);
-
-        info('cache', $room_key, $this->currentUser()->id, $user_num);
-
-        // 发起者必须是主播
-        if ($user_num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
-            $pay_type = 'free';
-            $amount = 0;
-            $game_host_user_id = $this->currentUser()->id;
-            $hot_cache->hset($room_info_key, 'game_host_user_id', $game_host_user_id);
-            $hot_cache->hset($room_info_key, 'room_create_at', time());
-            $hot_cache->expire($room_info_key, 600);
-            $hot_cache->expire($room_key, 600);
-            $hot_cache->expire($room_wait_key, 600);
-        } else {
-            $info = $hot_cache->hgetall($room_info_key);
-            info($room_info_key, $info);
-            $game_host_user_id = fetch($info, 'game_host_user_id');
-            $pay_type = fetch($info, 'pay_type');
-            $amount = fetch($info, 'amount');
-            $room_create_at = fetch($info, 'room_create_at');
-            // 修复数据
-            if (!$pay_type && $user_num && $room_create_at < time() - 180) {
-                $hot_cache->del($room_key);
-                $hot_cache->del($room_wait_key);
-                $hot_cache->del($room_info_key);
-
-                info('解散房间', $room_key, $this->currentUser()->id, $user_num);
-            }
-        }
-
-        $room_host_nickname = '';
-        $room_host_user = \Users::findFirstById($game_host_user_id);
-        if ($room_host_user) {
-            $room_host_nickname = $room_host_user->nickname;
-        }
-        info($this->currentUser()->id, 'host', $game_host_user_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
 
         $can_create_game = false;
         if ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE) {
             $can_create_game = true;
         }
 
+        $pay_type = '';
+        $amount = 0;
+
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
+            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 180], 'order' => 'id desc']);
+        if ($game_history) {
+            $game_host_user_id = $game_history->user_id;
+            $start_data = json_decode($game_history->start_data, true);
+            $pay_type = fetch($start_data, 'pay_type');
+            $amount = fetch($start_data, 'amount');
+            $game_history_id = $game_history->id;
+        }else{
+            $game_history_id = 0;
+            $game_host_user_id = $this->currentUser()->id;
+        }
+
+        $game_host_user = \Users::findFirstById($game_host_user_id);
 
         $this->view->current_user = $this->currentUser();
-        $this->view->game_host_user_id = $game_host_user_id;
-        $this->view->room_host_nickname = $room_host_nickname;
+        $this->view->game_host_user = $game_host_user;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
-        $this->view->room_id = $room_id;
         $this->view->can_create_game = $can_create_game;
+        $this->view->game_history_id = $game_history_id;
+
     }
 
     // 提交入场费
     function feeAction()
     {
         info($this->params());
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+        if($game_history){
+
+        }
+
+
         $room_id = $this->params('room_id');
         $room_info_key = "game_room_" . $room_id . '_info';
         $hot_cache = \Rooms::getHotWriteCache();
