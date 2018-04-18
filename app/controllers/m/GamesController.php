@@ -23,7 +23,7 @@ class GamesController extends BaseController
 
             $games = \Games::findPagination($conds, $page, $per_page);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', [$games->toJson('games', 'toSimpleJson'), 'room_id' => $room_id]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
         }
     }
 
