@@ -30,7 +30,22 @@ class GamesController extends BaseController
 
         // 必须在房间才可玩游戏
         $room_id = $this->currentUser()->current_room_id;
-        
+        if(!$room_id){
+            return;
+        }
+
+        $game = \Games::findFirstById($this->params('game_id'));
+        if(!$game){
+            return;
+        }
+
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
+            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
+        if(!$game_history){
+
+        }
+
+
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
