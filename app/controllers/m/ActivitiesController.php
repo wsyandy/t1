@@ -280,4 +280,9 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = "梦幻周榜";
     }
+
+    function incomeRankActivityAction()
+    {
+        $this->view->title = "hi语音活动";
+    }
 }
