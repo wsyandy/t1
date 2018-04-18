@@ -114,6 +114,17 @@ class GamesController extends BaseController
         }
 
         $current_user = $this->currentUser();
+        if ($room_host_id == $current_user->id) {
+            // free diamond gold
+            $pay_type = $this->params('pay_type', '');
+            $amount = $this->params('amount', 0);
+            if (!$pay_type || $pay_type == 'free' && $amount != 0 || $pay_type != 'free' && $amount == 0) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            $hot_cache->hset($room_info_key, 'pay_type', $pay_type);
+            $hot_cache->hset($room_info_key, 'amount', $amount);
+        }
 
         info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
 
@@ -126,16 +137,6 @@ class GamesController extends BaseController
         }
 
         if ($room_host_id == $current_user->id) {
-            // free diamond gold
-            $pay_type = $this->params('pay_type', '');
-            $amount = $this->params('amount', 0);
-            if (!$pay_type || $pay_type == 'free' && $amount != 0 || $pay_type != 'free' && $amount == 0) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-            }
-
-            $hot_cache->hset($room_info_key, 'pay_type', $pay_type);
-            $hot_cache->hset($room_info_key, 'amount', $amount);
-
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
             $body = ['action' => 'game_launched', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "/m/games"];
@@ -144,8 +145,8 @@ class GamesController extends BaseController
             $receiver_fd = $current_user->getUserFd();
 
             \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-
         }
+
 
         $room_wait_key = "game_room_wait_" . $room_id;
         $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
