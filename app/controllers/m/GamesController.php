@@ -18,7 +18,7 @@ class GamesController extends BaseController
             $per_page = $this->params('per_page', 8);
 
             $conds = ['conditions' => 'status = ' . STATUS_ON];
-            $conds['order'] = 'id desc';
+            $conds['order'] = 'rank desc,id desc';
 
             $games = \Games::findPagination($conds, $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
@@ -30,7 +30,7 @@ class GamesController extends BaseController
 
         // 必须在房间才可玩游戏
         $room_id = $this->currentUser()->current_room_id;
-
+        
         $hot_cache = \Rooms::getHotWriteCache();
         $room_key = "game_room_" . $room_id;
         $room_wait_key = "game_room_wait_" . $room_id;
