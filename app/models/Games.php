@@ -45,6 +45,7 @@ class Games extends BaseModel
     function toSimpleJson()
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'icon_url' => $this->icon_url,
             'icon_small_url' => $this->icon_small_url,

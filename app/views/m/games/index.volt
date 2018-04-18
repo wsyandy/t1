@@ -4,7 +4,7 @@
 {{ block_end() }}
 <div id="app" class="select_game_list">
     <ul class="game_list_ul">
-        <li v-for="game in game_list" @click="select_game(game.url)">
+        <li v-for="game in game_list" @click="select_game(game)">
             <img :src="game.icon_url" alt="">
             <span>${game.name}</span>
         </li>
@@ -42,8 +42,12 @@
 
                 vm.page++;
             },
-            select_game: function (url) {
-                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code);
+            select_game: function (game) {
+                if(!game.url){
+                    alert('url无效');
+                    return;
+                }
+                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
             }
 
         }

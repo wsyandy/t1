@@ -294,3 +294,7 @@ define('I_GOLD_HISTORY_FEE_TYPE_GIVE', 3); //系统赠送
 //提现账户类型
 define('WITHDRAW_ACCOUNT_TYPE_ALIPAY', 1); //支付宝
 define('WITHDRAW_ACCOUNT_TYPE_BANK', 2); //银行卡
+
+define('GAME_STATUS_WAIT', 0);
+define('GAME_STATUS_PLAYING', 1);
+define('GAME_STATUS_END', 2);
