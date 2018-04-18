@@ -124,6 +124,16 @@ class GamesController extends BaseController
 
             $hot_cache->hset($room_info_key, 'pay_type', $pay_type);
             $hot_cache->hset($room_info_key, 'amount', $amount);
+
+            $root = $this->getRoot();
+            $image_url = $root . 'images/go_game.png';
+            $body = ['action' => 'game_launched', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "/m/games"];
+
+            $intranet_ip = $current_user->getIntranetIp();
+            $receiver_fd = $current_user->getUserFd();
+
+            \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+
         }
 
         info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
