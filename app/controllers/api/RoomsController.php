@@ -59,10 +59,13 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         } else if ($new == STATUS_ON) {
+
+            $cond['conditions'] .= ' and user_id <> ' . $user_id;
             $cond['order'] = "created_at desc";
 
         } else if ($broadcast == STATUS_ON) {
-            $cond['conditions'] .= " and theme_type = " . ROOM_THEME_TYPE_BROADCAST;
+            $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
+            $cond['conditions'] .= " and theme_type in ($theme_types)";
         } else if ($follow == STATUS_ON) {
 
             $user_ids = $this->currentUser()->followUserIds();
