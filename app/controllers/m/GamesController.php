@@ -114,6 +114,17 @@ class GamesController extends BaseController
         }
 
         $current_user = $this->currentUser();
+
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
+
+        if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+        }
+
+        if ($pay_type == PAY_TYPE_GOLD && $current_user->gold < $amount) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+        }
+
         if ($room_host_id == $current_user->id) {
             // free diamond gold
             $pay_type = $this->params('pay_type', '');
@@ -134,16 +145,6 @@ class GamesController extends BaseController
 
             \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
-        }
-
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
-
-        if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
-        }
-
-        if ($pay_type == PAY_TYPE_GOLD && $current_user->gold < $amount) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
         $room_wait_key = "game_room_wait_" . $room_id;
