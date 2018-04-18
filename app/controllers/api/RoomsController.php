@@ -275,7 +275,7 @@ class RoomsController extends BaseController
         }
 
         //游戏，先提供入口
-        $res['sponsored_game'] = ['url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
+        $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
