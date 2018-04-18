@@ -30,12 +30,16 @@ class Emchat extends BaseModel
             $user = \Users::findFirstById(intval($user));
         }
         $create_result = $emchat->createUser($user->id, $user->im_password);
+
+        debug($user->sid, $create_result);
+
         if (!$create_result) {
             $user_info = $emchat->getUser($user->id);
             if (isPresent($user_info)) {
                 return true;
             }
         }
+
         return $create_result;
     }
 
