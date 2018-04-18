@@ -38,7 +38,6 @@ class Activities extends BaseModel
     }
 
 
-
     function getStartText()
     {
         $start_at = $this->start_at;
@@ -63,6 +62,14 @@ class Activities extends BaseModel
             'image_small_url' => $this->image_small_url,
             'platform_num' => $this->platform_num,
             'product_channel_num' => $this->product_channel_num
+        ];
+    }
+
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'image_small_url' => $this->image_small_url
         ];
     }
 
@@ -114,7 +121,7 @@ class Activities extends BaseModel
 
         debug($cond);
 
-        $activities = Activities::find($cond);
+        $activities = Activities::findForeach($cond);
 
         return $activities;
     }
