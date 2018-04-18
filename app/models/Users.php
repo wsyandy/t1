@@ -2907,23 +2907,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", strtotime("last sunday next day", time()));
-                    $end = date("Ymd", strtotime("next monday", time()) - 1);
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", strtotime("last sunday next day", time()));
+                $end = date("Ymd", strtotime("next monday", time()) - 1);
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -3017,6 +3014,18 @@ class Users extends BaseModel
         return $rank;
     }
 
+    function myRoomWealthRankByKey($key)
+    {
+        $db = Users::getUserDb();
+        $rank = $db->zrrank($key, $this->id);
+
+        if (is_null($rank)) {
+            return 0;
+        }
+
+        return $rank + 1;
+    }
+
     function getRankByKey($key)
     {
         $db = Users::getUserDb();
@@ -3035,24 +3044,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }
