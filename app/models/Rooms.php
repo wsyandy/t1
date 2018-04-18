@@ -118,7 +118,7 @@ class Rooms extends BaseModel
         if ($this->country) {
             $data['country_image_url'] = $this->country->image_small_url;
         }
-        
+
         return $data;
     }
 
@@ -173,7 +173,7 @@ class Rooms extends BaseModel
 
         $user = $this->user;
 
-        $user_info =  [
+        $user_info = [
             'id' => $user->id,
             'uid' => $user->uid,
             'nickname' => $user->nickname,
@@ -1723,6 +1723,38 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
+    function findRoomWealthRankList($list_type, $page, $per_page, $opts = [])
+    {
+
+        $key = $this->generateRoomWealthRankListKey($list_type, $opts);
+
+        return Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
+    }
+
+    //房间贡献榜
+    function generateRoomWealthRankListKey($list_type, $opts = [])
+    {
+        switch ($list_type) {
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
+                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                $key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}" . $start . '_' . $end;
+                break;
+            }
+            default:
+                return '';
+        }
+        debug($key);
+
+        return $key;
+    }
+
+
     function generateStatIncomeDayKey($stat_at)
     {
         if (!$stat_at) {
@@ -1792,6 +1824,8 @@ class Rooms extends BaseModel
                 $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
                 $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
                 $room_db->zincrby($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room_id);
+                $room_db->zincrby($room->generateRoomWealthRankListKey('day'), $income, $sender_id);
+                $room_db->zincrby($room->generateRoomWealthRankListKey('week'), $income, $sender_id);
             }
         }
     }
