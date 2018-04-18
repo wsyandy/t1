@@ -1341,13 +1341,13 @@ class UsersTask extends \Phalcon\Cli\Task
         $content = <<<EOF
 Hi语音官方提示
 一大波礼物即将下架咯~把握住机会，再不送送送的话，小心成为永恒的遗憾~
-礼物下架时间：2018年4月15日23:59
-糖葫芦、权杖、幸福摩天轮、爱你一万年
-当然也有会有一批精美的礼物上架哦，2018年4月16日0点准时上线，敬请期待
+礼物下架时间：2018年4月17日23:59
+紫玫瑰、樱花、巧克力、浪漫秋千、么么哒
+当然也有会有一批精美的礼物上架哦，2018年4月18日0点准时上线，敬请期待！
 EOF;
 
         $title = "Hi语音官方提示";
-        $body = "一大波礼物即将下架咯~把握住机会噢";
+        $body = "一大波礼物即将下架咯~把握住机会噢！";
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
