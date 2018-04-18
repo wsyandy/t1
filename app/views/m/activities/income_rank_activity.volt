@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/income_rank_activity') }}
-{{ theme_js('/m/rooms/js/font_rem') }}
+{{ theme_js('/js/font_rem') }}
 {{ block_end() }}
 
 <div class="bg_box">
