@@ -38,6 +38,9 @@
                 </li>
             </ul>
         </div>
+        <div class="banner_tips" @click="redirectAction('app://rooms/detail?id={{ official_room_id }}')">
+            <img :src="banner_tips" alt="">
+        </div>
     </div>
 </div>
 
@@ -50,6 +53,7 @@
             sid: '{{ sid }}',
             code: '{{ code }}',
             slogan_other: "看看其他好玩的家族",
+            banner_tips: "/m/images/union_banner.png",
             arrow_right: "/m/images/ico-arrow-right.png",
             id_card_auth: '{{ current_user.id_card_auth }}',
             family: [
