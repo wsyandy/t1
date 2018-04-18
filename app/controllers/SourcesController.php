@@ -233,7 +233,7 @@ class SourcesController extends \ApplicationController
     {
 
         $attrs = ['source' => 'sina'];
-        foreach (['fr2', 'code', 'uuid', 'devid', 'groupid'] as $key) {
+        foreach (['fr2', 'code', 'uuid', 'devid', 'groupid', 'osversion'] as $key) {
             if ($key == 'fr2') {
                 $attrs['fr'] = $this->params($key);
             } else {
@@ -249,7 +249,12 @@ class SourcesController extends \ApplicationController
         // 毫秒
         $attrs['click_time'] = time();
 
-        $muid = strtolower(md5(strtolower($attrs['devid'])));
+        if (preg_match('/iOS/i', $attrs['osversion'])) {
+            $muid = strtolower(md5(strtoupper($attrs['devid'])));
+        }else{
+            $muid = strtolower(md5(strtolower($attrs['devid'])));
+        }
+
         $attrs['muid'] = $muid;
 
         $hot_cache = \Devices::getHotWriteCache();
