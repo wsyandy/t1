@@ -2129,6 +2129,8 @@ class Rooms extends BaseModel
         }
         if (in_array('broadcast', $current_room_types)) {
             $room->theme_type = ROOM_THEME_TYPE_USER_BROADCAST;
+        } else {
+            $room->theme_type = '';
         }
         $current_room_types = implode(',', $current_room_types);
         $room->types = $current_room_types;
