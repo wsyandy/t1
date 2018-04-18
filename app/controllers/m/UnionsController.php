@@ -31,6 +31,12 @@ class UnionsController extends BaseController
             $this->view->union = $union;
         }
 
+        $official_room_id = 1027831;
+
+        if (isDevelopmentEnv()) {
+            $official_room_id = 137;
+        }
+
         $this->view->sid = $sid;
         $this->view->code = $code;
         $this->view->current_user = $this->currentUser();
