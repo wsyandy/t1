@@ -1778,7 +1778,7 @@ class Users extends BaseModel
         $users = $current_user->nearby($page, $per_page, ['filter_ids' => $filter_ids]);
 
         foreach ($users as $user) {
-            $user->recommend_tip = $user->getRecommendTip($current_user);
+            $user->recommend_tip = $user->getRecommendTip($user);
         }
 
         return $users;
