@@ -129,21 +129,9 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
-            'country_id' => $this->country_id
+            'gold' => $this->gold,
+            'diamond' => $this->diamond
         ];
-
-        if ($this->country_id) {
-            $data['country_english_name'] = $this->country_english_name;
-            $data['country_chinese_name'] = $this->country_chinese_name;
-        } else {
-            $data['country_english_name'] = '';
-            $data['country_chinese_name'] = '';
-        }
-
-        if (isDevelopmentEnv()) {
-            //   $data['id'] = $this->uid;
-        }
 
         return $data;
     }
@@ -166,7 +154,6 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
             'followed' => $this->followed
         ];
 
