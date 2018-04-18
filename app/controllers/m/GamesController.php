@@ -367,7 +367,7 @@ class GamesController extends BaseController
         $this->view->amount = $amount;
         $this->view->user_num = count($user_datas);
         $this->view->total_amount = $amount * $total_user_num;
-        $this->view->back_url = 'app://home';
+        $this->view->back_url = 'app://back';
         $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
     }
 
