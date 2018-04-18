@@ -155,3 +155,9 @@ body { background:#fff;}
 }
 
 .font_weight_bold {font-weight:bold;}
+.banner_tips{
+    width: 100%;
+}
+.banner_tips img{
+    width: 100%;
+}
