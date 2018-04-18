@@ -21,5 +21,6 @@ class GameHistories extends BaseModel
      */
     private $_game;
 
+    static $STATUS = [0 => '等待', 1 => '游戏中', 2 => '结束'];
 
 }
