@@ -258,9 +258,9 @@ class RoomsController extends BaseController
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
         $root = $this->getRoot();
         if (isDevelopmentEnv()) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/room_menu_game.png'];
-            $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => '/m/games', 'icon' => $root . 'images/avatar.png'];
-            $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => '/m/games', 'icon' => $root . 'images/avatar.png'];
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
+            $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
             $res['menu_config'] = $menu_config;
         }
 
@@ -281,9 +281,9 @@ class RoomsController extends BaseController
         }
 
         //游戏，先提供入口，暂时测试环境返回game字段
-       if(isDevelopmentEnv()){
-           $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
-       }
+        if (isDevelopmentEnv()) {
+            $res['game'] = ['url' => '/m/games', 'icon' => $root . 'images/go_game.png'];
+        }
 
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
