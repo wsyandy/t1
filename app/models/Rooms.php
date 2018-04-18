@@ -1728,14 +1728,6 @@ class Rooms extends BaseModel
         return $pagination;
     }
 
-    function findRoomWealthRankList($list_type, $page, $per_page, $opts = [])
-    {
-
-        $key = $this->generateRoomWealthRankListKey($list_type, $opts);
-
-        return Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
-    }
-
     //房间贡献榜
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {

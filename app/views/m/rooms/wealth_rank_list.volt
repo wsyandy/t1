@@ -136,12 +136,14 @@
                     data.per_page = 20;
                 }
                 $.authGet('/m/rooms/find_wealth_rank_list', data, function (resp) {
-                    vm.total_page = resp.total_page;
-                    vm.current_rank = resp.current_rank;
-                    $.each(resp.users, function (index, item) {
-                        item.level_img = "/m/images/level_" + item.level + '.png';
-                        vm.users.push(item);
-                    })
+                    if(resp.error_code == 0){
+                        vm.total_page = resp.total_page;
+                        vm.current_rank = resp.current_rank;
+                        $.each(resp.users, function (index, item) {
+                            item.level_img = "/m/images/level_" + item.level + '.png';
+                            vm.users.push(item);
+                        })
+                    }
                 });
                 this.page++;
             },

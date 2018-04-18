@@ -65,9 +65,9 @@ class RoomsController extends BaseController
     {
         $code = $this->params('code');
         $sid = $this->params('sid');
-        $room_id = $this->params('room_id');
+        $room_id = $this->params('room_id', 0);
 
-        $this->view ->room_id =$room_id;
+        $this->view->room_id = $room_id;
         $this->view->code = $code;
         $this->view->sid = $sid;
         $this->view->title = "贡献榜";
@@ -76,25 +76,21 @@ class RoomsController extends BaseController
 
     function findWealthRankListAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page');
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
         $list_type = $this->params('list_type');
 
         $room_id = $this->params('room_id');
 
         $room = \Rooms::findFirstById($room_id);
 
+        if (isBlank($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
         $key = $room->generateRoomWealthRankListKey($list_type);
 
         $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
-
-//        $users = \Users::find([
-//            'conditions' => 'id > 67'
-//        ]);
-//
-//        foreach ($users as $user) {
-//            $user->wealth = mt_rand(1000, 10000);
-//        }
 
         $res = $users->toJson('users', 'toRankListJson');
 
@@ -104,7 +100,6 @@ class RoomsController extends BaseController
 
         if ($res) {
             $res['current_rank'] = $current_rank;
-//            $res['current_rank'] = 1;
         }
 
 
