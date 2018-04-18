@@ -41,7 +41,7 @@ class Rooms extends BaseModel
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌'];
+    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台'];
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
@@ -56,6 +56,9 @@ class Rooms extends BaseModel
             $this->uid = $this->generateUid();
             $this->update();
         }
+        if ($this->hasChanged('name')) {
+            self::delay()->updateRoomTypes($this->id);
+        }
     }
 
     function beforeUpdate()
@@ -65,7 +68,9 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-
+        if ($this->hasChanged('name')) {
+            self::delay()->updateRoomTypes($this->id);
+        }
     }
 
     /**
@@ -244,7 +249,6 @@ class Rooms extends BaseModel
             $room_seat->country_id = $user->country_id;
             $room_seat->save();
         }
-
         return $room;
     }
 
@@ -272,6 +276,7 @@ class Rooms extends BaseModel
             }
 
             $this->name = $name;
+
         }
 
 
@@ -2107,5 +2112,34 @@ class Rooms extends BaseModel
     {
         $hot_cache = Rooms::getHotWriteCache();
         $hot_cache->zrem(self::generateExitRoomByServerListKey(), $user_id);
+    }
+
+    static function updateRoomTypes($room_id)
+    {
+        $room = \Rooms::findFirstById($room_id);
+        $type_keywords = [
+            'gang_up' => ['开黑', '游戏', '球球', '王者', '吃鸡', '绝地求生', '求带', '刺激战场', '第五人格', '迷雾'],
+            'friend' => ['交友', '处对象', '连麦', '处关系', 'u处', 'u连', 'les', '聊天'],
+            'amuse' => ['麦序', '捕鱼', '打地鼠'],
+            'sing' => ['点歌', '唱歌', '听歌', '点唱', '说唱'],
+            'broadcast' => ['电台', 'FM'],
+        ];
+        $current_room_types = [];
+        foreach ($type_keywords as $type => $keyword) {
+            foreach ($keyword as $word) {
+                $is_have = mb_strstr($room->name, $word);
+                if ($is_have) {
+                    if (!in_array($type, $current_room_types)) {
+                        $current_room_types[] = $type;
+                    }
+                }
+            }
+        }
+        if (in_array('broadcast', $current_room_types)) {
+            $room->theme_type = ROOM_THEME_TYPE_USER_BROADCAST;
+        }
+        $current_room_types = implode(',', $current_room_types);
+        $room->types = $current_room_types;
+        $room->update();
     }
 }
