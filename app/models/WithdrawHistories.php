@@ -38,23 +38,15 @@ class WithdrawHistories extends BaseModel
             if (WITHDRAW_TYPE_USER == $this->type) {
 
                 if (WITHDRAW_STATUS_SUCCESS == $this->status) {
-                    $content = '提现到账成功！如有疑问请联系官方客服中心400-018-7755解决。';
-
+                    $this->sendSuccessMessage();
                     //推送提现数据，只要有提现动作就推送，此时为提现到账成功推送
                     \DataCollection::syncData('withdraw_history', 'update_status_success', ['withdraw_history' => $this->toPushDataJson()]);
                 }
 
                 if (WITHDRAW_STATUS_FAIL == $this->status) {
-                    $content = '提现失败！如有疑问请联系官方客服中心400-018-7755解决。';
-
-                    if ($this->error_reason) {
-                        $content = $this->error_reason;
-                    }
-
+                    $this->sendFailMessage();
                     HiCoinHistories::createHistory($this->user->id, ['withdraw_history_id' => $this->id]);
                 }
-
-                Chats::sendTextSystemMessage($this->user_id, $content);
             }
 
             if (WITHDRAW_TYPE_UNION == $this->type) {
@@ -70,6 +62,30 @@ class WithdrawHistories extends BaseModel
                 $union->save();
             }
         }
+    }
+
+    function sendSuccessMessage()
+    {
+        $account = substr($this->account, -4);
+
+        $content = <<<EOF
+【到账提醒】
+提现成功！
+款项已通过（尾号为{$account}）银行账号汇入您的账户，请注意查收！
+如有疑问请联系官方客服中心400-018-7755解决。
+EOF;
+        Chats::sendTextSystemMessage($this->user_id, $content);
+    }
+
+    function sendFailMessage()
+    {
+        $content = '提现失败！如有疑问请联系官方客服中心400-018-7755解决。';
+
+        if ($this->error_reason) {
+            $content = $this->error_reason;
+        }
+
+        Chats::sendTextSystemMessage($this->user_id, $content);
     }
 
     function beforeUpdate()
