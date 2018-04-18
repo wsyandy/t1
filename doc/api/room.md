@@ -206,6 +206,18 @@
              },
              ...
          ]	   
+     "activities": [
+             {
+                 "id": int 活动ID,
+                 "image_small_url": '',
+                 "url": string 跳转地址
+             }
+             ...
+         ],
+     "game": {
+             "url": string  跳转地址,
+             "icon": string 图片地址
+         },
 }
 ```
 
