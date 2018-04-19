@@ -1735,14 +1735,14 @@ class Rooms extends BaseModel
             case 'day':
                 {
                     $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}_" . $date;
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
                     break;
                 }
             case 'week':
                 {
                     $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
                     $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}_" . $start . '_' . $end;
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
                     break;
                 }
             default:
