@@ -842,6 +842,8 @@ class Unions extends BaseModel
                 return '';
         }
 
+        debug($key);
+
         return $key;
     }
 
