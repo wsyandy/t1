@@ -14,7 +14,7 @@
             </ul>
         </div>
 
-        <div class="one" v-if="users.length">
+        <div class="one" v-if="users.length" @click.stop="userDetail(users[0].id)">
             <div class="one_pic">
                 <div class="pic">
                     <img :src="users[0].avatar_small_url">
@@ -29,7 +29,7 @@
             <p><span>${ users[0].wealth_value }</span>贡献</p>
         </div>
         <table class="table">
-            <tr v-if="users.length >= 2">
+            <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
                     <img class="voice_ico" src="images/two.png" alt="">
                 </td>
@@ -51,7 +51,7 @@
                     <p>${ users[1].wealth_value }贡献</p>
                 </td>
             </tr>
-            <tr v-if="users.length >= 3">
+            <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
                     <img class="voice_ico" src="images/three.png" alt="">
                 </td>
@@ -76,7 +76,7 @@
         </table>
         <div class="line"></div>
         <table class="table table_last">
-            <tr v-for="(user,index) in users.slice(3)">
+            <tr v-for="(user,index) in users.slice(3)" @click.stop="userDetail(user.id)">
                 <td style="width:12%;" v-text="index+4"></td>
                 <td style="width:24%;">
                     <div class="pic">
@@ -107,15 +107,13 @@
             sid: '{{ sid }}',
             code: '{{ code }}',
             room_id: {{ room_id }},
+            user_id: '{{ user_id }}',
             cur_idx: 0,
             ranking_tab: ['日榜', '周榜'],
             page: 1,
             total_page: 1,
             users: [],
-            current_rank: 0,
-            first_user: {},
-            second_user: {},
-            third_user: {}
+            current_rank: 0
         },
         created: function () {
             this.list();
@@ -158,6 +156,13 @@
                 this.page = 1;
                 this.total_page = 1;
                 this.list();
+            },
+            userDetail: function (user_id) {
+                if(this.user_id = user_id){
+                    location.href = "api://users/detail?id=" + user_id;
+                } else {
+                    location.href = "api://users/other_detail?user_id=" + user_id;
+                }
             }
         }
     };

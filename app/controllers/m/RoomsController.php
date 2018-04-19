@@ -67,6 +67,7 @@ class RoomsController extends BaseController
         $sid = $this->params('sid');
         $room_id = $this->params('room_id', 0);
 
+        $this->view->user_id = $this->currentUserId();
         $this->view->room_id = $room_id;
         $this->view->code = $code;
         $this->view->sid = $sid;
