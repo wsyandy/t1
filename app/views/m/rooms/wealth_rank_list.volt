@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/rooms/css/wealth_list_rank') }}
-{{ theme_js('/m/rooms/js/font_rem') }}
+{{ theme_css('/m/css/wealth_list_rank.css') }}
+{{ theme_js('/js/font_rem.js') }}
 {{ block_end() }}
 
 <div class="vueBox" id="app" v-cloak="">
@@ -53,7 +53,7 @@
             </tr>
             <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="/m/images/three.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_wealth_three.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic three_pic">
