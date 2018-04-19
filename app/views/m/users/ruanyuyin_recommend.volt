@@ -129,7 +129,7 @@
 
     vm = XVue(opts);
     $(function () {
-        vm.cover_height = window.screen.height+'px';
+        vm.cover_height = window.screen.height;
     })
 
 
