@@ -3,8 +3,62 @@
 {{ theme_js('/js/font_rem') }}
 {{ block_end() }}
 
-<div class="bg_box">
+<div class="bg_box "
+        {% if rooms %}
+    style="height: 68.16rem"
+        {% endif %}>
     <div class="top_bg"></div>
+
+    {% if rooms %}
+        <div class="active_box">
+            <div class="week_list">
+                <table class="table" style="border:0;" cellpadding="0" cellspacing="0">
+                    {% for index,room in rooms %}
+                        <tr {% if index == 0 %}
+                            class="tr_one_title"
+                        {% endif %}
+                        >
+                            <td>
+                                {% if index == 0 %}
+                                    <img class="voice_ico" src="/m/images/income_rank_activity_one.png" alt="">
+                                {% elseif index == 1 %}
+                                    <img class="voice_ico" src="/m/images/income_rank_activity_two.png" alt="">
+                                {% elseif index == 2 %}
+                                    <img class="voice_ico" src="/m/images/income_rank_activity_three.png" alt="">
+                                {% else %}
+                                    <span>{{ index }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                            <td>
+                                <div class="pic_box">
+                                    <div class="pic">
+                                        <img src="{{ room.user_avatar_url }}">
+                                    </div>
+                                    <h3>{{ room.name }}</h3>
+                                </div>
+                            </td>
+                            <td>
+                                <h5>{% if index == 0 %}
+                                        冠军
+                                    {% else %}
+                                        距前一名差
+                                    {% endif %}
+                                </h5>
+                            </td>
+                            <td>{% if index == 0 %}
+                                    <img src="/m/images/guanjun.png" class="guanjun">
+                                {% else %}
+                                    <b>{{ room.missing_income }}</b>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="active_gz">
         <ul>
             <li>

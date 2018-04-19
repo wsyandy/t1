@@ -32,106 +32,110 @@ class GamesController extends BaseController
 
         // 必须在房间才可玩游戏
         $room_id = $this->currentUser()->current_room_id;
-        
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_key = "game_room_" . $room_id;
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $current_user_id = $this->currentUser()->id;
-        $cache_game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
-
-        // 解散房间
-        if ($cache_game_host_user_id == $this->currentUser()->id) {
-            $hot_cache->del($room_key);
-            $hot_cache->del($room_wait_key);
-            $hot_cache->del($room_info_key);
+        if (!$room_id) {
+            return;
         }
-
-        $hot_cache->zadd($room_key, time(), $current_user_id);
-        $user_num = $hot_cache->zcard($room_key);
-
-        info('cache', $room_key, $this->currentUser()->id, $user_num);
-
-        // 发起者必须是主播
-        if ($user_num == 1 && ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE)) {
-            $pay_type = 'free';
-            $amount = 0;
-            $game_host_user_id = $this->currentUser()->id;
-            $hot_cache->hset($room_info_key, 'game_host_user_id', $game_host_user_id);
-            $hot_cache->hset($room_info_key, 'room_create_at', time());
-            $hot_cache->expire($room_info_key, 600);
-            $hot_cache->expire($room_key, 600);
-            $hot_cache->expire($room_wait_key, 600);
-        } else {
-            $info = $hot_cache->hgetall($room_info_key);
-            info($room_info_key, $info);
-            $game_host_user_id = fetch($info, 'game_host_user_id');
-            $pay_type = fetch($info, 'pay_type');
-            $amount = fetch($info, 'amount');
-            $room_create_at = fetch($info, 'room_create_at');
-            // 修复数据
-            if (!$pay_type && $user_num && $room_create_at < time() - 180) {
-                $hot_cache->del($room_key);
-                $hot_cache->del($room_wait_key);
-                $hot_cache->del($room_info_key);
-
-                info('解散房间', $room_key, $this->currentUser()->id, $user_num);
-            }
+        $game = \Games::findFirstById($this->params('game_id'));
+        if (!$game) {
+            return;
         }
-
-        $room_host_nickname = '';
-        $room_host_user = \Users::findFirstById($game_host_user_id);
-        if ($room_host_user) {
-            $room_host_nickname = $room_host_user->nickname;
-        }
-        info($this->currentUser()->id, 'host', $game_host_user_id, 'role', $this->currentUser()->user_role, $this->currentUser()->current_room_id, $room_key, 'num', $user_num, $pay_type, $amount);
 
         $can_create_game = false;
         if ($this->currentUser()->user_role != USER_ROLE_NO && $this->currentUser()->user_role != USER_ROLE_AUDIENCE) {
             $can_create_game = true;
         }
 
+        $pay_type = '';
+        $amount = 0;
+
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
+            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
+
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $room_id;
+        $total_user_num = $hot_cache->zcard($room_enter_key);
+
+        if ($game_history && $game_history->user_id == $this->currentUser()->id
+            && ($game_history->enter_at && (time() - $game_history->enter_at > 300) || $total_user_num == 1)
+        ) {
+            $game_history->status = GAME_STATUS_END;
+            $game_history->save();
+        }
+
+        if ($game_history && $game_history->status != GAME_STATUS_END) {
+            $game_host_user_id = $game_history->user_id;
+            $start_data = json_decode($game_history->start_data, true);
+            $pay_type = fetch($start_data, 'pay_type');
+            $amount = fetch($start_data, 'amount');
+            $game_history_id = $game_history->id;
+            $can_enter = $game_history->canEnter();
+            if ($game_host_user_id == $this->currentUser()->id && $can_enter) {
+                $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
+                return;
+            }
+            $can_create_game = false;
+        } else {
+            $game_history_id = 0;
+            $game_host_user_id = $this->currentUser()->id;
+        }
+
+        $game_host_user = \Users::findFirstById($game_host_user_id);
 
         $this->view->current_user = $this->currentUser();
-        $this->view->game_host_user_id = $game_host_user_id;
-        $this->view->room_host_nickname = $room_host_nickname;
+        $this->view->game_host_user = $game_host_user;
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
-        $this->view->room_id = $room_id;
         $this->view->can_create_game = $can_create_game;
+        $this->view->game_history_id = $game_history_id;
+        $this->view->game = $game;
+
     }
 
     // 提交入场费
     function feeAction()
     {
         info($this->params());
-        $room_id = $this->params('room_id');
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache = \Rooms::getHotWriteCache();
-        $info = $hot_cache->hgetall($room_info_key);
-        $game_host_user_id = fetch($info, 'game_host_user_id');
-        $pay_type = fetch($info, 'pay_type');
-        $amount = fetch($info, 'amount');
-
-        $can_enter_at = fetch($info, 'can_enter_at');
-        if ($can_enter_at && time() - $can_enter_at > 30) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '本次比赛已开始,您暂时无法进入');
-        }
 
         $current_user = $this->currentUser();
-        if ($game_host_user_id == $current_user->id) {
-            // free diamond gold
+
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+        if ($game_history) {
+
+            if (!$game_history->canEnter()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '本次比赛已开始,您暂时无法进入');
+            }
+
+            $start_data = json_decode($game_history->start_data, true);
+            $amount = fetch($start_data, 'amount');
+            $pay_type = fetch($start_data, 'pay_type');
+        } else {
+
+            $room_id = $current_user->current_room_id;
+            $game = \Games::findFirstById($this->params('game_id'));
+            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
+                'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
+            if ($game_history) {
+                return $this->renderJSON(ERROR_CODE_FAIL, $game_history->user->nickname . '已发起游戏，请刷新');
+            }
+
             $pay_type = $this->params('pay_type', '');
             $amount = $this->params('amount', 0);
             if (!$pay_type || $pay_type == 'free' && $amount != 0 || $pay_type != 'free' && $amount == 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
-            $hot_cache->hset($room_info_key, 'pay_type', $pay_type);
-            $hot_cache->hset($room_info_key, 'amount', $amount);
+            $start_data = ['pay_type' => $pay_type, 'amount' => $amount];
+            $game_history = new \GameHistories();
+            $game_history->game_id = $game->id;
+            $game_history->user_id = $current_user->id;
+            $game_history->room_id = $room_id;
+            $game_history->status = GAME_STATUS_WAIT;
+            $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
         }
 
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $room_info_key, $info, $pay_type, $amount);
+
+        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $game_history->start_data);
 
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
@@ -141,10 +145,15 @@ class GamesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
         }
 
-        if ($game_host_user_id == $current_user->id) {
+        if (!$game_history_id) {
+
+            $game_history->create();
+            //\GameHistories::delay(300)->asyncCloseGame($game_history->id);
+
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "url://m/games/tyt"];
+            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_history->game_id];
 
             $intranet_ip = $current_user->getIntranetIp();
             $receiver_fd = $current_user->getUserFd();
@@ -152,30 +161,30 @@ class GamesController extends BaseController
             \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
         }
 
-
+        // 用户队列
+        $hot_cache = \GameHistories::getHotWriteCache();
         $room_wait_key = "game_room_wait_" . $room_id;
         $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['game_history_id' => $game_history->id]);
     }
 
     function waitAction()
     {
         info($this->params());
-        $room_id = $this->params('room_id');
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache = \Rooms::getHotWriteCache();
-        $game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
         $body['source'] = $this->currentProductChannel()->code;
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['room_id'] = $room_id . $game_host_user_id;
+        $body['room_id'] = $game_history_id;
         $body['nonce_str'] = randStr(20);
-        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
-        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&room_id=' . $room_id);
+        $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
+        $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
 
         $str = paramsToStr($body);
 
@@ -187,43 +196,83 @@ class GamesController extends BaseController
 
         info($this->currentUser()->id, 'url', $url);
 
-        $user = $this->currentUser();
         $this->view->url = $url;
-        $this->view->current_user = $user;
-        $this->view->game_host_user_id = $game_host_user_id;
-        $this->view->room_id = $room_id;
+        $this->view->current_user = $this->currentUser();
+        $this->view->game_host_user_id = $game_history->user_id;
+        $this->view->game_history_id = $game_history_id;
+    }
+
+    function startAction()
+    {
+        info($this->params());
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+        $start_data = json_decode($game_history->start_data, true);
+        $amount = fetch($start_data, 'amount');
+        $pay_type = fetch($start_data, 'pay_type');
+
+        //扣除入场费
+        if ($pay_type == PAY_TYPE_DIAMOND) {
+            $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+            if (!$result) {
+                $game_history->status = GAME_STATUS_END;
+                $game_history->save();
+                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+            }
+        }
+
+        if ($pay_type == PAY_TYPE_GOLD) {
+            $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
+            $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+            if (!$result) {
+                $game_history->status = GAME_STATUS_END;
+                $game_history->save();
+                return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
+            }
+        }
+
+        // 扣款成功
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
+        $hot_cache->expire($room_enter_key, 180);
+
+        $game_history->status = GAME_STATUS_PLAYING;
+        $game_history->enter_at = time();
+        $game_history->save();
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
     function enterAction()
     {
         info($this->params());
-        $room_id = $this->params('room_id');
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
-        if (count($user_ids) < 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '比赛已解散');
-        }
 
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_wait_key = "game_room_wait_" . $game_history->room_id;
+        $user_ids = $hot_cache->zrange($room_wait_key, 0, 1);
         $users = \Users::findByIds($user_ids);
-        $room_id = $this->currentUser()->current_room_id > 0 ? $this->currentUser()->current_room_id : $this->currentUser()->room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache = \Rooms::getHotWriteCache();
-        $info = $hot_cache->hgetall($room_info_key);
-        $game_host_user_id = fetch($info, 'game_host_user_id');
-        $pay_type = fetch($info, 'pay_type');
-        $amount = fetch($info, 'amount');
-        $can_enter = fetch($info, 'can_enter');
-        $can_enter_at = fetch($info, 'can_enter_at');
-        if ($can_enter_at && time() - $can_enter_at > 30) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '本次比赛已开始,您暂时无法进入');
-        }
 
         $data = $users->toJson('users', 'toSimpleJson');
-        $data['can_enter'] = intval($can_enter);
+
+        info($this->currentUser()->id, $game_history, $data);
+
+        if ($game_history->status == GAME_STATUS_WAIT) {
+            $data['can_enter'] = 0;
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
+        }
 
         //扣除入场费
-        if ($can_enter && $game_host_user_id != $this->currentUser()->id) {
+        if ($game_history->user_id != $this->currentUser()->id) {
+
+            $start_data = json_decode($game_history->start_data, true);
+            $amount = fetch($start_data, 'amount');
+            $pay_type = fetch($start_data, 'pay_type');
+
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
                 $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
@@ -241,84 +290,33 @@ class GamesController extends BaseController
             }
 
             // 扣款成功
-            $room_enter_key = "game_room_enter_" . $room_id;
+            $room_enter_key = "game_room_enter_" . $game_history->room_id;
             $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
-            $hot_cache->expire($room_enter_key, 600);
+            $hot_cache->expire($room_enter_key, 200);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
     }
 
-    function startAction()
-    {
-        info($this->params());
-        $room_id = $this->params('room_id');
-        $room_key = "game_room_" . $room_id;
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-
-        $hot_cache = \Rooms::getHotWriteCache();
-        $info = $hot_cache->hgetall($room_info_key);
-        $game_host_user_id = fetch($info, 'game_host_user_id');
-        $pay_type = fetch($info, 'pay_type');
-        $amount = fetch($info, 'amount');
-        //扣除入场费
-        if ($pay_type == PAY_TYPE_DIAMOND) {
-            $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
-            $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
-            if (!$result) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
-            }
-        }
-
-        if ($pay_type == PAY_TYPE_GOLD) {
-            $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
-            $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
-            if (!$result) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
-            }
-        }
-
-        // 扣款成功
-        $room_enter_key = "game_room_enter_" . $room_id;
-        $hot_cache->del($room_enter_key);
-
-        $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
-        $hot_cache->expire($room_enter_key, 200);
-
-        // 进入游戏
-        $hot_cache->hset($room_info_key, 'can_enter', 1);
-        $hot_cache->hset($room_info_key, 'can_enter_at', time());
-
-        // 游戏时长160秒
-        $hot_cache->expire($room_info_key, 200);
-        $hot_cache->expire($room_key, 200);
-        $hot_cache->expire($room_wait_key, 200);
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
-    }
-
     function exitAction()
     {
         info($this->params());
-        $room_id = $this->params('room_id');
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_key = "game_room_" . $room_id;
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $game_host_user_id = $hot_cache->hget($room_info_key, 'game_host_user_id');
-        $can_enter = $hot_cache->hget($room_info_key, 'can_enter');
-        if ($can_enter) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '游戏已开始');
+
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+
+        if ($game_history->status != GAME_STATUS_WAIT) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
-        if ($game_host_user_id == $this->currentUser()->id) {
+        $room_id = $game_history->room_id;
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_wait_key = "game_room_wait_" . $room_id;
+
+        if ($game_history->user_id == $this->currentUser()->id) {
             // 解散比赛
-            $hot_cache->del($room_key);
             $hot_cache->del($room_wait_key);
-            $hot_cache->del($room_info_key);
         } else {
-            $hot_cache->zrem($room_key, $this->currentUser()->id);
             $hot_cache->zrem($room_wait_key, $this->currentUser()->id);
         }
 
@@ -328,35 +326,27 @@ class GamesController extends BaseController
     function backAction()
     {
         info($this->params());
-        $room_id = $this->params('room_id');
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_settlement_key = 'game_room_settlement_' . $room_id;
-        $info = $hot_cache->hgetall($room_settlement_key);
-        $pay_type = fetch($info, 'pay_type');
-        $amount = fetch($info, 'amount');
-        $total_user_num = fetch($info, 'user_num');
 
-        info($info);
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
 
-        $user_ids = [];
-        if (fetch($info, 'rank1')) {
-            $user_ids[fetch($info, 'rank1')] = fetch($info, 'rank1_amount');
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $total_user_num = $hot_cache->zcard($room_enter_key);
+        if ($total_user_num == 1) {
+            $game_history->status = GAME_STATUS_END;
+            $game_history->save();
         }
 
-        //{"pay_type":"diamond","amount":"1","rank1":"257","rank1_amount":"2","rank2":"6","rank2_amount":"1"}
-
-        if (fetch($info, 'rank2')) {
-            $user_ids[fetch($info, 'rank2')] = fetch($info, 'rank2_amount');
-        }
-        if (fetch($info, 'rank3')) {
-            $user_ids[fetch($info, 'rank3')] = fetch($info, 'rank3_amount');
-        }
+        $end_data = json_decode($game_history->end_data, true);
+        $rank_data = fetch($end_data, 'rank_data', []);
 
         $user_datas = [];
-        foreach ($user_ids as $user_id => $settlement_amount) {
+        foreach ($rank_data as $user_id => $settlement_amount) {
             $user = \Users::findFirstById($user_id);
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
+
         $current_user = $this->currentUser();
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
 
@@ -365,7 +355,15 @@ class GamesController extends BaseController
 
         \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
-        info('user_info', $user_datas);
+        info($this->currentUser()->id, $game_history->end_data, 'user_info', $user_datas);
+
+        $start_data = json_decode($game_history->start_data, true);
+        $amount = fetch($start_data, 'amount');
+        $pay_type = fetch($start_data, 'pay_type');
+
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $total_user_num = $hot_cache->zcard($room_enter_key);
 
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
@@ -379,6 +377,7 @@ class GamesController extends BaseController
     function notifyAction()
     {
         info($this->params());
+
         $rank1 = $this->params('rank1');
         $rank2 = $this->params('rank2');
         $rank3 = $this->params('rank3');
@@ -388,154 +387,140 @@ class GamesController extends BaseController
             return;
         }
 
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+        if (!$game_history || $game_history->status == GAME_STATUS_END) {
+            echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
+            return;
+        }
+
+        $lock_key = 'game_histories_lock_' . $game_history_id;
+        $hot_cache = \GameHistories::getHotWriteCache();
+        if (!$hot_cache->set($lock_key, 1, ['NX', 'EX' => 2])) {
+            echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
+            return;
+        }
+
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $total_user_num = $hot_cache->zcard($room_enter_key);
+
+        $start_data = json_decode($game_history->start_data, true);
+        $amount = fetch($start_data, 'amount');
+        $pay_type = fetch($start_data, 'pay_type');
+
+        $game_history->status = GAME_STATUS_END;
+        $game_history->save();
+
         $rank1_user = \Users::findFirstById($rank1);
         $rank2_user = \Users::findFirstById($rank2);
         $rank3_user = \Users::findFirstById($rank3);
 
-        $room_id = $this->params('room_id');
-        info($this->currentUser()->id, 'room', $room_id, 'rank', $rank1, $rank2, $rank3);
-
-        $hot_cache = \Rooms::getHotWriteCache();
-        $room_key = "game_room_" . $room_id;
-        $room_wait_key = "game_room_wait_" . $room_id;
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $room_enter_key = "game_room_enter_" . $room_id;
-        $room_settlement_key = 'game_room_settlement_' . $room_id;
-        $hot_cache->del($room_settlement_key);
-
-        $user_num = $hot_cache->zcard($room_enter_key);
-        $info = $hot_cache->hgetall($room_info_key);
-        $pay_type = fetch($info, 'pay_type');
-        $amount = fetch($info, 'amount');
-
-        info($room_info_key, $info);
-
-        $hot_cache->hset($room_settlement_key, 'pay_type', $pay_type);
-        $hot_cache->hset($room_settlement_key, 'amount', $amount);
-        $hot_cache->hset($room_settlement_key, 'user_num', $user_num);
-
-        if ($pay_type != 'free') {
-            if ($user_num == 1) {
-                $rank1_amount = $user_num * $amount;
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
-                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
-
-            } elseif ($user_num == 2) {
-                $rank1_amount = $user_num * $amount;
-                $rank2_amount = 0;
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
-                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
-
-                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
-                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
-
-            } elseif ($user_num == 3) {
-
-                $total_amount = $user_num * $amount;
-                $rank1_amount = round($total_amount * 0.8);
-                $rank2_amount = round($total_amount * 0.2);
-                $rank3_amount = 0;
-                // rank1
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-
-                // rank2
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
-                }
-
-                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
-                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
-
-                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
-                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
-
-                $hot_cache->hset($room_settlement_key, 'rank3', $rank3);
-                $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
-            } else {
-
-                $total_amount = ($user_num - 3) * $amount;
-                $rank1_amount = $amount + round($total_amount * 0.7);
-                $rank2_amount = $amount + round($total_amount * 0.2);
-                $rank3_amount = $amount + round($total_amount * 0.1);
-
-                // rank1
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-                }
-
-                // rank2
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
-                }
-
-                // rank3
-                if ($pay_type == PAY_TYPE_DIAMOND) {
-                    $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                    $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
-                }
-                if ($pay_type == PAY_TYPE_GOLD) {
-                    $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                    $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
-                }
-
-                $hot_cache->hset($room_settlement_key, 'rank1', $rank1);
-                $hot_cache->hset($room_settlement_key, 'rank1_amount', $rank1_amount);
-
-                $hot_cache->hset($room_settlement_key, 'rank2', $rank2);
-                $hot_cache->hset($room_settlement_key, 'rank2_amount', $rank2_amount);
-
-                $hot_cache->hset($room_settlement_key, 'rank3', $rank3);
-                $hot_cache->hset($room_settlement_key, 'rank3_amount', $rank3_amount);
+        $end_data = ['enter_user_num' => $total_user_num];
+        $rank_data = [];
+        if ($total_user_num == 1) {
+            $rank1_amount = $total_user_num * $amount;
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
             }
 
-            $hot_cache->expire($room_settlement_key, 200);
+            $rank_data[] = [$rank1, $rank1_amount];
+
+        } elseif ($total_user_num == 2) {
+            $rank1_amount = $total_user_num * $amount;
+            $rank2_amount = 0;
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+
+            $rank_data[] = [$rank1, $rank1_amount];
+            $rank_data[] = [$rank2, $rank2_amount];
+
+        } elseif ($total_user_num == 3) {
+
+            $total_amount = $total_user_num * $amount;
+            $rank1_amount = round($total_amount * 0.8);
+            $rank2_amount = round($total_amount * 0.2);
+            $rank3_amount = 0;
+            // rank1
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+
+            // rank2
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+
+            $rank_data[] = [$rank1, $rank1_amount];
+            $rank_data[] = [$rank2, $rank2_amount];
+            $rank_data[] = [$rank3, $rank3_amount];
+
+        } else {
+
+            $total_amount = ($total_user_num - 3) * $amount;
+            $rank1_amount = $amount + round($total_amount * 0.7);
+            $rank2_amount = $amount + round($total_amount * 0.2);
+            $rank3_amount = $amount + round($total_amount * 0.1);
+
+            // rank1
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+
+            // rank2
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+
+            // rank3
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
+            }
+
+            $rank_data[] = [$rank1, $rank1_amount];
+            $rank_data[] = [$rank2, $rank2_amount];
+            $rank_data[] = [$rank3, $rank3_amount];
         }
 
-        $info = $hot_cache->hgetall($room_settlement_key);
-        info('info', $room_settlement_key, $info);
-        // 解散比赛
-        $hot_cache->del($room_key);
-        $hot_cache->del($room_wait_key);
-        $hot_cache->del($room_enter_key);
-        $hot_cache->del($room_info_key);
+        $end_data['rank_data'] = $rank_data;
+        $game_history->end_data = json_encode($end_data, JSON_UNESCAPED_UNICODE);
+        $game_history->save();
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }

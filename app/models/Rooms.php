@@ -2147,12 +2147,12 @@ class Rooms extends BaseModel
         $room->update();
     }
 
-    function hasGamePlay()
+    function getGameHistory()
     {
-        $room_wait_key = "game_room_wait_" . $this->id;
-        $hot_cache = \Rooms::getHotWriteCache();
-        $wait_user_number = $hot_cache->zcard($room_wait_key);
-        return $wait_user_number >= 1;
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and created_at>:created_at:',
+            'bind' => ['room_id' => $this->id, 'status' => GAME_STATUS_END, 'created_at' => time() - 300], 'order' => 'id desc']);
+
+        return $game_history;
     }
 
 }

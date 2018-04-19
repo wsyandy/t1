@@ -256,7 +256,7 @@ class Users extends BaseModel
     function isLogin()
     {
         if ($this->isClientPlatform()) {
-            return ($this->third_unionid || $this->mobile || $this->login_name) && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
+            return $this->sid && preg_match('/^\d+s/', $this->sid) && $this->user_status == USER_STATUS_ON;
         }
 
         return !!$this->mobile;
@@ -405,7 +405,7 @@ class Users extends BaseModel
 
         $user = $current_user;
         //换个手机号注册，重新生成用户
-        if ($current_user->mobile && $current_user->mobile != $mobile || $current_user->third_unionid) {
+        if ($current_user->mobile && $current_user->mobile != $mobile || $current_user->login_type && !$current_user->isMobileLogin()) {
             $user = Users::registerForClientByDevice($device, true);
             info('换个手机号注册', $user->id, $user->third_unionid, $context);
         }
@@ -539,7 +539,7 @@ class Users extends BaseModel
 
         $user = $current_user;
         //换个手机号注册，重新生成用户 其他注册方式校验login_name
-        if ($current_user->login_name && $current_user->login_name != $login_name || $current_user->third_unionid || $current_user->mobile) {
+        if ($current_user->login_name && $current_user->login_name != $login_name || $current_user->login_type && !$current_user->isEmailLogin()) {
             $user = Users::registerForClientByDevice($device, true);
             info('换个手机号注册', $user->id, $user->mobile, $user->login_name, $user->third_unionid, $context);
         }
@@ -959,7 +959,7 @@ class Users extends BaseModel
     public function getStatAttrs()
     {
 
-        $stat_keys = ['platform', 'version_code', 'product_channel_id', 'id', 'province_id', 'sex', 'ip', 'partner_id'];
+        $stat_keys = ['platform', 'version_code', 'product_channel_id', 'id', 'province_id', 'sex', 'ip', 'partner_id', 'register_at'];
         $hash = [];
         foreach ($stat_keys as $key) {
             $hash[$key] = $this->$key;
@@ -2581,14 +2581,11 @@ class Users extends BaseModel
         $third_unionid = $third_unionid ? $third_unionid : $third_id;
 
         //其他账户的快捷登陆 重新注册新用户
-        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->mobile) {
+        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->login_type && !$user->isThirdLogin()) {
             $user = Users::registerForClientByDevice($device, true);
-
             if (!$user) {
                 return [ERROR_CODE_FAIL, '登录失败', $user];
             }
-
-            //$user->register_at = time();
         }
 
         $third_auth->user_id = $user->id;

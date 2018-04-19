@@ -286,9 +286,9 @@ class RoomsController extends BaseController
                 }
             }
 
-            $has_game_play = $room->hasGamePlay();
-            if ($has_game_play) {
-                $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
+            $game_history = $room->getGameHistory();
+            if ($game_history) {
+                $res['game'] = ['url' => 'url://m/games/tyt?game_id='.$game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
         }
 

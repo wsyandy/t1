@@ -84,6 +84,9 @@
                     {% if isAllowed('users','reserved') %}
                         <li><a href="/admin/users/reserved">预留靓号</a></li>
                     {% endif %}
+                    {% if isAllowed('game_histories','index') %}
+                        <li><a href="/admin/game_histories">游戏记录</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
