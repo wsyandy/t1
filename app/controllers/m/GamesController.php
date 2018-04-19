@@ -135,7 +135,7 @@ class GamesController extends BaseController
 
         if (!$game_history_id) {
 
-            $game_history->save();
+            $game_history->create();
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';

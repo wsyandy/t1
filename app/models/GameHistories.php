@@ -48,4 +48,13 @@ class GameHistories extends BaseModel
         return true;
     }
 
+    static function asyncCloseGame($id)
+    {
+        $game_history = self::findFirstById($id);
+        if ($game_history->status == GAME_STATUS_WAIT) {
+            $game_history->status = GAME_STATUS_END;
+            $game_history->save();
+        }
+    }
+    
 }
