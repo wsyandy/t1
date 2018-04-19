@@ -35,7 +35,6 @@ class GamesController extends BaseController
         if (!$room_id) {
             return;
         }
-
         $game = \Games::findFirstById($this->params('game_id'));
         if (!$game) {
             return;
@@ -49,14 +48,18 @@ class GamesController extends BaseController
         $pay_type = '';
         $amount = 0;
 
-        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
-            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at<:created_at:',
+            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
         if ($game_history) {
             $game_host_user_id = $game_history->user_id;
             $start_data = json_decode($game_history->start_data, true);
             $pay_type = fetch($start_data, 'pay_type');
             $amount = fetch($start_data, 'amount');
             $game_history_id = $game_history->id;
+            if($game_host_user_id == $this->currentUser()->id){
+                $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
+                return;
+            }
         } else {
             $game_history_id = 0;
             $game_host_user_id = $this->currentUser()->id;
@@ -96,8 +99,8 @@ class GamesController extends BaseController
 
             $room_id = $current_user->current_room_id;
             $game = \Games::findFirstById($this->params('game_id'));
-            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
-                'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
+            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at<:created_at:',
+                'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
             if ($game_history) {
                 return $this->renderJSON(ERROR_CODE_FAIL, $game_history->user->nickname . '已发起游戏，请刷新');
             }
@@ -147,7 +150,7 @@ class GamesController extends BaseController
         $room_wait_key = "game_room_wait_" . $room_id;
         $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['game_history_id' => $game_history->id]);
     }
 
     function waitAction()
