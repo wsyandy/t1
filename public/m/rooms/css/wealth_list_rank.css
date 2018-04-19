@@ -134,8 +134,8 @@ ol, ul, li {
 
 /*第一名等级图*/
 .bangdan_box .one h3 img {
-    width: 0.706667rem;
-    height: 0.706667rem;
+    width: 20px;
+    height: 20px;
 }
 
 .one_num {
@@ -242,8 +242,8 @@ ol, ul, li {
 }
 
 .table tr td h5 img {
-    width: 0.706667rem;
-    height: 0.706667rem;
+    width: 20px;
+    height: 20px;
     vertical-align: middle;
     margin-left: 0.133333rem;
 }
