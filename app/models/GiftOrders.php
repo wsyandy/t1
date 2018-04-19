@@ -238,9 +238,9 @@ class GiftOrders extends BaseModel
             if ($gift->isDiamondPayType()) {
                 info($this->user->id, $gift->id);
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id]);
+                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time()]);
                 //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'async_verify_data' => 1]);
+                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time(), 'async_verify_data' => 1]);
             }
         }
 
@@ -251,6 +251,8 @@ class GiftOrders extends BaseModel
 
     function updateUserData()
     {
+        $time = time();
+
         //统计房间收益
         if ($this->room) {
 
@@ -258,7 +260,7 @@ class GiftOrders extends BaseModel
                 $this->room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num);
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, ['time' => $time]);
                 }
             }
 
@@ -268,8 +270,10 @@ class GiftOrders extends BaseModel
             }
         }
 
-        \Users::delay()->updateExperience($this->id);
-        \Users::delay()->updateCharm($this->id);
+        $opts = ['time' => $time];
+
+        \Users::delay()->updateExperience($this->id, $opts);
+        \Users::delay()->updateCharm($this->id, $opts);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

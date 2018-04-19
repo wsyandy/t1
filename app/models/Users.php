@@ -2727,7 +2727,7 @@ class Users extends BaseModel
 
 
     //更新用户等级/经验/财富值
-    static function updateExperience($gift_order_id)
+    static function updateExperience($gift_order_id, $opts = [])
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -2745,6 +2745,9 @@ class Users extends BaseModel
 
         if ($sender) {
 
+            //异步发起时间
+            $time = fetch($opts, 'time', time());
+
             $sender->experience += $sender_experience;
             $sender_level = $sender->calculateLevel();
             $sender->level = $sender_level;
@@ -2752,7 +2755,7 @@ class Users extends BaseModel
             $sender->wealth_value += $wealth_value;
 
             if (!$sender->isCompanyUser()) {
-                Users::updateFiledRankList($sender->id, 'wealth', $wealth_value);
+                Users::updateFiledRankList($sender->id, 'wealth', $wealth_value, ['time' => $time]);
             }
 
 
@@ -2760,7 +2763,7 @@ class Users extends BaseModel
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
-                Unions::delay()->updateFameValue($wealth_value, $union->id);
+                Unions::delay()->updateFameValue($wealth_value, $union->id, ['time' => $time]);
             }
 
             $sender->update();
@@ -2780,7 +2783,7 @@ class Users extends BaseModel
     }
 
     //魅力值
-    static function updateCharm($gift_order_id)
+    static function updateCharm($gift_order_id, $opts = [])
     {
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -2799,10 +2802,12 @@ class Users extends BaseModel
 
             $user->charm_value += $charm_value;
 
-            if (!$user->isCompanyUser()) {
-                Users::updateFiledRankList($user->id, 'charm', $charm_value);
-            }
+            //异步发起时间
+            $time = fetch($opts, 'time', time());
 
+            if (!$user->isCompanyUser()) {
+                Users::updateFiledRankList($user->id, 'charm', $charm_value, ['time' => $time]);
+            }
 
             $union = $user->union;
 
@@ -2812,7 +2817,7 @@ class Users extends BaseModel
 
                 //不在同一个工会才更新声望值
                 if ($gift_order->sender->union_id != $union->id) {
-                    Unions::delay()->updateFameValue($charm_value, $union->id);
+                    Unions::delay()->updateFameValue($charm_value, $union->id, ['time' => $time]);
                 }
             }
 
@@ -2888,15 +2893,16 @@ class Users extends BaseModel
     }
 
     //更新hi币贡献榜
-    function updateHiCoinRankList($sender_id, $hi_coins)
+    function updateHiCoinRankList($sender_id, $hi_coins, $opts = [])
     {
         if ($hi_coins > 0) {
             $db = Users::getUserDb();
+            $time = fetch($opts, 'time', time());
 
-            $day_key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+            $day_key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd", $time);
 
-            $start = date("Ymd", beginOfWeek());
-            $end = date("Ymd", endOfWeek());
+            $start = date("Ymd", beginOfWeek($time));
+            $end = date("Ymd", endOfWeek($time));
             $weeks_key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
             $total_key = "user_hi_coin_rank_list_" . $this->id;
 
@@ -2976,10 +2982,13 @@ class Users extends BaseModel
                 return;
             }
 
-            $opts = ['product_channel_id' => $user->product_channel_id];
+            $time = fetch($opts, 'time', time());
+            $date = date("Ymd", $time);
+            $start = date("Ymd", beginOfWeek($time));
+            $end = date("Ymd", endOfWeek($time));
 
-            $day_key = self::generateFieldRankListKey('day', $field);
-            $week_key = self::generateFieldRankListKey('week', $field);
+            $day_key = self::generateFieldRankListKey('day', $field, ['date' => $date]);
+            $week_key = self::generateFieldRankListKey('week', $field, ['start' => $start, 'end' => $end]);
             $total_key = self::generateFieldRankListKey('total', $field);
 
 

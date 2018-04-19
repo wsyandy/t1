@@ -1813,19 +1813,26 @@ class Rooms extends BaseModel
     }
 
     //按天统计房间收益和送礼物人数,送礼物个数
-    static function statDayIncome($room_id, $income, $sender_id, $gift_num)
+    static function statDayIncome($room_id, $income, $sender_id, $gift_num, $opts = [])
     {
         if ($income > 0) {
+
             info($room_id, $income, $sender_id);
-            $room_db = Rooms::getRoomDb();
+
             $room = Rooms::findFirstById($room_id);
 
             if ($room) {
-                $room_db->zincrby($room->generateStatIncomeDayKey(date("Ymd")), $income, $room_id);
-                $room_db->zadd($room->generateSendGiftUserDayKey(date("Ymd")), time(), $sender_id);
-                $room_db->zincrby($room->generateSendGiftNumDayKey(date("Ymd")), $gift_num, $room_id);
-                $room_db->zincrby($room->generateRoomWealthRankListKey('day'), $income, $sender_id);
-                $room_db->zincrby($room->generateRoomWealthRankListKey('week'), $income, $sender_id);
+                $room_db = Rooms::getRoomDb();
+                $time = fetch($opts, 'time', time());
+                $date = date("Ymd", $time);
+
+                $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room_id);
+                $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
+                $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room_id);
+
+                $room_db->zincrby($room->generateRoomWealthRankListKey('day'), $income, $sender_id, ['date' => $date]);
+                $room_db->zincrby($room->generateRoomWealthRankListKey('week'), $income, $sender_id,
+                    ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]);
             }
         }
     }

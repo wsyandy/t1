@@ -775,24 +775,29 @@ class Unions extends BaseModel
         }
     }
 
-    static function updateFameValue($value, $id)
+    static function updateFameValue($value, $id, $opts = [])
     {
         $lock_key = "update_union_fame_lock_" . $id;
         $lock = tryLock($lock_key);
         $union = self::findFirstById($id);
         $union->fame_value += $value;
         $union->update();
-        $union->updateFameRankList($value);
+        $union->updateFameRankList($value, $opts);
         unlock($lock);
     }
 
-    function updateFameRankList($value)
+    function updateFameRankList($value, $opts = [])
     {
         if ($value > 0) {
-            $db = Users::getUserDb();
 
-            $week_key = self::generateFameValueRankListKey('week');
-            $day_key = self::generateFameValueRankListKey('day');
+            $db = Users::getUserDb();
+            $time = fetch($opts, 'time', time());
+            $date = date("Ymd", $time);
+            $start = date("Ymd", beginOfWeek($time));
+            $end = date("Ymd", endOfWeek($time));
+
+            $week_key = self::generateFameValueRankListKey('week', ['date' => $date]);
+            $day_key = self::generateFameValueRankListKey('day', ['start' => $start, 'end' => $end]);
 
             $db->zincrby($day_key, $value, $this->id);
             $db->zincrby($day_key . "_" . $this->product_channel_id, $value, $this->id);

@@ -120,8 +120,8 @@ class HiCoinHistories extends BaseModel
                 info("hi_coin_history_already_save", $user_id, $gift_order_id);
                 unlock($lock);
                 return;
-            }else{
-                if($async_verify_data){
+            } else {
+                if ($async_verify_data) {
                     info("Exce hi_coin_history_save", $user_id, $gift_order_id, $opts);
                 }
             }
@@ -200,7 +200,8 @@ class HiCoinHistories extends BaseModel
 
         //有礼物更新hi币榜单 自己给自己送座驾不加hi币贡献榜
         if ($gift_order_id) {
-            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins);
+            $time = fetch($opts, 'time', time());
+            $user->updateHiCoinRankList($gift_order->sender_id, $hi_coin_history->hi_coins, ['time' => $time]);
         }
 
         unlock($lock);
