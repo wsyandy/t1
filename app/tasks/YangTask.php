@@ -826,13 +826,12 @@ class YangTask extends \Phalcon\Cli\Task
     function fixWeekRoomWealthRankListAction()
     {
         $time = time();
-        $start_at = beginOfWeek($time);
-        $end_at = endOfWeek($time);
+        $start_at = beginOfWeek();
+        $end_at = endOfWeek();
 
         $cond = [
-            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT
-                . ' and pay_type = ' . GIFT_PAY_TYPE_DIAMOND,
-            'bind' => ['start' => $start_at, 'end' => $end_at],
+            'conditions' => 'created_at >= :start: and created_at <= :end: and room_id > 0 and gift_type = :gift_type: and pay_type = :pay_type:',
+            'bind' => ['start' => $start_at, 'end' => $end_at, 'gift_type' => GIFT_TYPE_COMMON, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
             'order' => 'id desc'
         ];
 
@@ -847,12 +846,13 @@ class YangTask extends \Phalcon\Cli\Task
         foreach ($gift_orders as $gift_order) {
             $room = $gift_order->room;
             if (isPresent($room) && $gift_order->amount) {
+                echoLine($gift_order->created_at_text, $gift_order->amount);
 
-                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
-
-                $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
-
-                echoLine('success', $week_room_wealth_rank_key);
+//                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
+//
+//                $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
+//
+//                echoLine('success', $week_room_wealth_rank_key);
 
             } else {
 
@@ -870,9 +870,8 @@ class YangTask extends \Phalcon\Cli\Task
         $end_at = endOfDay($time);
 
         $cond = [
-            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT
-                . ' and pay_type = ' . GIFT_PAY_TYPE_DIAMOND,
-            'bind' => ['start' => $start_at, 'end' => $end_at],
+            'conditions' => 'created_at >= :start: and created_at <= :end: and room_id > 0 and gift_type = :gift_type: and pay_type = :pay_type:',
+            'bind' => ['start' => $start_at, 'end' => $end_at, 'gift_type' => GIFT_TYPE_COMMON, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
             'order' => 'id desc'
         ];
 
