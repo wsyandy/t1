@@ -289,11 +289,19 @@ class ActivitiesController extends BaseController
             $stat_at = '20180419';
         }
 
+        $date = date('Ymd');
+
+        $max = 9;
+
+        if (intval($date) > intval($stat_at)) {
+            $max = 3;
+        }
+
         $key = "room_stats_income_day_" . $stat_at;
 
         $db = \Rooms::getRoomDb();
 
-        $res = $db->zrevrange($key, 0, 9, 'withscores');
+        $res = $db->zrevrange($key, 0, $max, 'withscores');
 
         $room_ids = [];
         $incomes = [];
@@ -313,11 +321,10 @@ class ActivitiesController extends BaseController
 
             foreach ($rooms as $room) {
                 if ($room != $first_room) {
-                    $room->missing_income = valueToStr($first_room_income - $incomes[$room->id]);
+                    $room->missing_income = $first_room_income - $incomes[$room->id];
                 }
             }
         }
-
 
         $this->view->rooms = $rooms;
 
