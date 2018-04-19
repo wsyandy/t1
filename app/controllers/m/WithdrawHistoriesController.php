@@ -149,7 +149,7 @@ class WithdrawHistoriesController extends BaseController
         $this->view->code = $code;
         $this->view->sid = $this->params('sid');
         $this->view->title = '我要提现';
-        $this->view->withdraw_account = $withdraw_account ? $withdraw_account : '';
+        $this->view->withdraw_account = $withdraw_account ? $withdraw_account : 0;
         $this->view->coin_type_text = $coin_type_text;
     }
 
