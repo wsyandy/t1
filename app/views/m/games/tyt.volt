@@ -99,6 +99,11 @@
                         'sid': vm.sid
                     };
 
+                    if(vm.pay_type == 'free' && vm.amount > 0){
+                        alert('选择游戏类型');
+                        return;
+                    }
+                    
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
                             vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
