@@ -100,16 +100,17 @@
                     return false
                 }
 
-                var withdraw_account = {{ withdraw_account }};
+                var withdraw_account_id = '{{ withdraw_account ? withdraw_account.id : 0 }}';
 
-                if (!withdraw_account) {
+                if (!withdraw_account_id) {
+                    alert("账户不能为空");
                     return false;
                 }
 
                 var data = {
                     sid: "{{ sid }}",
                     code: "{{ code }}",
-                    withdraw_account_id: withdraw_account.id,
+                    withdraw_account_id: withdraw_account_id,
                     amount: this.bank_amount
                 };
 
