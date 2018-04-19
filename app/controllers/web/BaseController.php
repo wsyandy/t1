@@ -87,7 +87,7 @@ class BaseController extends \ApplicationController
 
         foreach ($params as $k => $v) {
 
-            if (preg_match('/.*script.*/', $v) || preg_match('/.*script.*/', $k)) {
+            if ((is_string($v) && preg_match('/.*script.*/', $v)) || (is_string($k) && preg_match('/.*script.*/', $k))) {
                 info("web_attack", $params);
                 return false;
             }

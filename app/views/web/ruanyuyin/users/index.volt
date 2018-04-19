@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/style','/web/css/audio_player','/web/css/iconfont') }}
+{{ theme_css('/web/ruanyuyin/css/style','/web/css/audio_player','/web/css/iconfont') }}
 {{ theme_js('/web/js/vue-resource.min') }}
 {{ block_end() }}
 
@@ -222,7 +222,6 @@
                         if (tag) {
 
                             var leftP = e.clientX - bpgLeft;
-                            console.log(leftP);
                             if (leftP < 0) {
                                 leftP = bpgLeft;
                             } else if (leftP > oProgress.offsetWidth) {
@@ -365,7 +364,6 @@
         $(".fudong_bg").hide();
 
         $(".delete").click(function () {
-            console.log(vm.checked_list);
             if (vm.checked_list.length == 0) {
                 $("#error_text").html("您没有选择文件");
                 $("#close_right").hide();

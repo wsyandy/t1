@@ -158,7 +158,6 @@ class Musics extends BaseModel
 
     static function upload($files, $opts)
     {
-        debug($files);
         if (isBlank($files) || !$files['music']['tmp_name']['file']) {
             return [ERROR_CODE_FAIL, '上传文件非法', ''];
         }
@@ -262,7 +261,6 @@ class Musics extends BaseModel
 
         $encode = mb_detect_encoding($head, ["ASCII", "UTF-8", "GB2312", "GBK", "BIG5", "JIS", "EUC-JP", 'ISO-8859-1']);
 
-        debug($encode, $head);
 
         if ('ISO-8859-1' == $encode) {
 
@@ -275,7 +273,6 @@ class Musics extends BaseModel
         } else {
 
             $head = trim($head);
-            debug($head);
 
             if (strstr($head, 'ID3') !== false) {
                 return true;
