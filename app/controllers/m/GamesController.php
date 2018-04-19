@@ -48,7 +48,7 @@ class GamesController extends BaseController
         $pay_type = '';
         $amount = 0;
 
-        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at<:created_at:',
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
             'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
         if ($game_history) {
             $game_host_user_id = $game_history->user_id;
@@ -99,7 +99,7 @@ class GamesController extends BaseController
 
             $room_id = $current_user->current_room_id;
             $game = \Games::findFirstById($this->params('game_id'));
-            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at<:created_at:',
+            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
                 'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
             if ($game_history) {
                 return $this->renderJSON(ERROR_CODE_FAIL, $game_history->user->nickname . '已发起游戏，请刷新');
