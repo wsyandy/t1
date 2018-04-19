@@ -293,7 +293,7 @@ class ActivitiesController extends BaseController
 
         $max = 9;
 
-        if (intval($date) > intval($stat_at) && !isDevelopmentEnv()) {
+        if (intval($date) > intval($stat_at)) {
             $max = 2;
         }
 
