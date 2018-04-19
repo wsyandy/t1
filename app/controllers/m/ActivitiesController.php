@@ -319,7 +319,7 @@ class ActivitiesController extends BaseController
             foreach ($rooms as $index => $room) {
                 
                 if ($index > 0) {
-                    $last_room = $rooms[$index];
+                    $last_room = $rooms[$index - 1];
                     $last_room_income = $incomes[$last_room->id];
                     $room->missing_income = $last_room_income - $incomes[$room->id];
                 }
