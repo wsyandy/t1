@@ -1830,9 +1830,9 @@ class Rooms extends BaseModel
                 $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
                 $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room_id);
 
-                $room_db->zincrby($room->generateRoomWealthRankListKey('day'), $income, $sender_id, ['date' => $date]);
-                $room_db->zincrby($room->generateRoomWealthRankListKey('week'), $income, $sender_id,
-                    ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]);
+                $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
+                $room_db->zincrby($room->generateRoomWealthRankListKey('week',
+                    ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
             }
         }
     }
