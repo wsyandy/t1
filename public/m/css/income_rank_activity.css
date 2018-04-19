@@ -40,7 +40,8 @@ img {
 ol, ul, li {
     list-style: none;
 }
-.bg_box{
+
+.bg_box {
     width: 10.0rem;
     height: 47.16rem;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#7000CC), to(#2D184D));
@@ -49,54 +50,67 @@ ol, ul, li {
     background-image: linear-gradient(180deg, #7000CC 0%, #2D184D 100%);
 
 }
-.top_bg{
+
+.top_bg {
     width: 10.0rem;
     height: 35.613333rem;
     background: url(../images/income_rank_activity_top_bg.png) no-repeat;
     background-size: 100%;
 }
-.active_box{
+
+.active_box {
     width: 10.0rem;
     height: 20.293333rem;
     background: url(../images/active_bg.png) no-repeat;
     background-size: 100%;
     margin-top: 1.066667rem;
 }
-.week_list{
+
+.week_list {
     width: 9.08rem;
-    margin:0 auto;
+    margin: 0 auto;
     padding-top: 4.8rem;
 }
-.table{
+
+.table {
     width: 100%;
-    border-collapse:collapse;
+    border-collapse: collapse;
 }
-.table tr{
+
+.table tr {
     height: 1.466667rem;
 }
-.table tr td{
+
+.table tr td {
     text-align: center;
     font-family: PingFangSC-Medium;
-    border:none;
+    border: none;
 }
-.table tr td span{
+
+.table tr td span {
+    display: block;
     font-size: 0.4rem;
     color: #FFFFFF;
 }
-.table tr td h5{
+
+.table tr td h5 {
     font-size: 0.32rem;
     color: #F299FF;
 }
-.table tr td b{
+
+.table tr td b {
+    display: block;
     font-weight: normal;
     font-size: 0.426667rem;
     color: #F299FF;
 }
-.table .guanjun{
+
+.table .guanjun {
     width: 0.626667rem;
     height: 0.68rem;
 }
-.pic_box{
+
+.pic_box {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -107,40 +121,49 @@ ol, ul, li {
     -ms-flex-pack: start;
     justify-content: flex-start;
 }
-.pic_box .pic{
+
+.pic_box .pic {
     width: 0.8rem;
     height: 0.8rem;
+    line-height: 0.8rem;
     border-radius: 50%;
     overflow: hidden;
 }
-.pic_box .pic img{
+
+.pic_box .pic img {
     width: 0.8rem;
     height: 0.8rem;
     background: #efefef;
 }
-.pic_box h3{
+
+.pic_box h3 {
     font-size: 0.373333rem;
     color: #F299FF;
     margin-left: 0.266667rem;
 }
-.voice_ico{
+
+.voice_ico {
     width: 0.8rem;
     height: 0.8rem;
 }
-.tr_one_title{
+
+.tr_one_title {
     height: 1.12rem !important;
-    background-color:rgba(254,217,254,0.31);
+    background-color: rgba(254, 217, 254, 0.31);
 }
-.active_gz{
+
+.active_gz {
     width: 10.0rem;
     height: 9.493333rem;
     background: url(../images/text_bg.png) no-repeat;
     background-size: 100%;
 }
-.active_gz ul{
+
+.active_gz ul {
     padding: 2.4rem 0.853333rem 0 0.853333rem;
 }
-.active_gz ul li{
+
+.active_gz ul li {
     font-family: PingFangSC-Regular;
     font-size: 0.4rem;
     color: #FFFFFF;
@@ -151,16 +174,19 @@ ol, ul, li {
     display: flex;
     margin-top: 0.533333rem;
 }
-.active_gz ul li p span{
+
+.active_gz ul li p span {
     color: #ffd800;
     font-size: 0.533333rem;
 }
-.active_gz ul li p:last-child{
+
+.active_gz ul li p:last-child {
     margin-left: 0.266667rem;
 }
-.award_text{
+
+.award_text {
     text-align: center;
-    padding:0.626667rem 0 0.4rem 0;
+    padding: 0.626667rem 0 0.4rem 0;
     font-size: 0.373333rem;
     color: #FFFFFF;
 }

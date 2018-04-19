@@ -283,6 +283,45 @@ class ActivitiesController extends BaseController
 
     function roomIncomeRankActivityAction()
     {
+        $stat_at = '20180420';
+
+        if (isDevelopmentEnv()) {
+            $stat_at = '20180419';
+        }
+
+        $key = "room_stats_income_day_" . $stat_at;
+
+        $db = \Rooms::getRoomDb();
+
+        $res = $db->zrevrange($key, 0, -1, 'withscores');
+
+        $room_ids = [];
+        $incomes = [];
+
+
+        foreach ($res as $k => $value) {
+            $room_ids[] = $k;
+            $incomes[$k] = $value;
+        }
+
+        $rooms = \Rooms::findByIds($room_ids);
+
+        if (count($rooms)) {
+            $first_room = $rooms[0];
+
+            $first_room_income = $incomes[$first_room->id];
+
+            foreach ($rooms as $room) {
+                if ($room != $first_room) {
+                    $room->missing_income = $first_room_income - $incomes[$room->id];
+                }
+            }
+        }
+
+
+
+        $this->view->rooms = $rooms;
+
         $this->view->title = "hi语音活动";
     }
 }
