@@ -158,10 +158,10 @@
                 this.list();
             },
             userDetail: function (user_id) {
-                if(this.user_id = user_id){
-                    location.href = "api://users/detail?id=" + user_id;
+                if(this.user_id == user_id){
+                    location.href = "app://users/detail?id=" + user_id;
                 } else {
-                    location.href = "api://users/other_detail?user_id=" + user_id;
+                    location.href = "app://users/other_detail?user_id=" + user_id;
                 }
             }
         }
