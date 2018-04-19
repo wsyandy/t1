@@ -56,5 +56,5 @@ class GameHistories extends BaseModel
             $game_history->save();
         }
     }
-    
+
 }

@@ -136,6 +136,7 @@ class GamesController extends BaseController
         if (!$game_history_id) {
 
             $game_history->create();
+            \GameHistories::delay(300)->asyncCloseGame($game_history->id);
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
