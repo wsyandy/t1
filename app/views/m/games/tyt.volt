@@ -148,7 +148,7 @@
                 amount: "{{ amount }}",
                 game_host_user_id: "{{ game_host_user.id }}",
                 room_id: "{{ room_id }}",
-                game_host_nickname: "{{ game_host_nickname }}",
+                game_host_nickname: "{{ game_host_user.nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 error_reason: '',
