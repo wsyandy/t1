@@ -61,6 +61,7 @@ class GamesController extends BaseController
                 $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
                 return;
             }
+            $can_create_game = false;
         } else {
             $game_history_id = 0;
             $game_host_user_id = $this->currentUser()->id;
