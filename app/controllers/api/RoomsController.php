@@ -288,7 +288,7 @@ class RoomsController extends BaseController
 
             $game_history = $room->getGameHistory();
             if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
+                $res['game'] = ['url' => 'url://m/games/tyt?game_id='.$game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
         }
 

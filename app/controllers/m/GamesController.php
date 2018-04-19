@@ -146,7 +146,8 @@ class GamesController extends BaseController
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏", 'image_url' => $image_url, 'client_url' => "url://m/games/tyt"];
+            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_history->game_id];
 
             $intranet_ip = $current_user->getIntranetIp();
             $receiver_fd = $current_user->getUserFd();
