@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/main.css') }}
 {{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
-{% if current_user.id == game_host_user.id and  %}
+{% if current_user.id == game_host_user.id and can_create_game %}
     <div id="app" class="select_game">
         <div class="select_game_instructions">
             <div class="instructions_title">
@@ -53,6 +53,7 @@
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 room_id: "{{ room_id }}",
+                game_id:"{{ game.id }}",
                 current_user:{{ current_user }}
             },
             watch: {
@@ -94,12 +95,13 @@
                         'user_id': vm.game_host_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'room_id': vm.room_id,
+                        'game_id':vm.game_id,
                         'sid': vm.sid
                     };
+
                     $.authPost('/m/games/fee', data, function (resp) {
-                        if (!resp.error_code) {
-                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
+                        if (resp.error_code == 0) {
+                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
                         } else {
                             alert(resp.error_reason);
                         }
@@ -152,7 +154,9 @@
                 error_reason: '',
                 game_status_text: '',
                 current_user:{{ current_user }},
-                can_create_game: "{{ can_create_game }}"
+                can_create_game: "{{ can_create_game }}",
+                game_history_id:"{{ game_history_id }}",
+                game_id:"{{ game.id }}"
             },
             watch: {},
             methods: {
@@ -162,15 +166,12 @@
                         return;
                     }
                     var data = {
-                        'user_id': vm.current_user_id,
-                        'pay_type': vm.pay_type,
-                        'amount': vm.amount,
-                        'room_id': vm.room_id,
+                        'game_history_id': vm.game_history_id,
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
-                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
                         } else {
                             vm.error_reason = resp.error_reason;
                         }

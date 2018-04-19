@@ -34,7 +34,7 @@
             url: "{{ url }}",
             game_host_user_id: "{{ game_host_user_id }}",
             current_user_id: "{{ current_user.id }}",
-            room_id: "{{ room_id }}"
+            game_history_id: "{{ game_history_id }}"
         },
         watch: {},
         methods: {
@@ -43,7 +43,7 @@
                     var data = {
                         'code': vm.code,
                         'sid': vm.sid,
-                        'room_id': vm.room_id
+                        'game_history_id': vm.game_history_id
                     };
                     $.authPost('/m/games/start', data, function (resp) {
                         if (!resp.error_code) {
@@ -60,7 +60,7 @@
                 var data = {
                     'code': vm.code,
                     'sid': vm.sid,
-                    'room_id': vm.room_id
+                    'game_history_id': vm.game_history_id
                 };
                 $.authPost('/m/games/exit', data, function (resp) {
                     if (!resp.error_code) {
@@ -75,21 +75,21 @@
     var vm = new XVue(opts);
 
     function refreshUser() {
-        console.log('refreshUser');
 
         var data = {
             'code': vm.code,
             'sid': vm.sid,
-            'room_id': vm.room_id
+            'game_history_id': vm.game_history_id
         };
 
         $.authPost('/m/games/enter', data, function (resp) {
             if (resp.error_code == 0) {
-                vm.users = resp.users;
-                vm.can_enter = resp.can_enter;
                 if (resp.can_enter == 1) {
                     clearInterval(interval_time);
                     window.location.href = vm.url;
+                }else {
+                    vm.users = resp.users;
+                    vm.can_enter = resp.can_enter;
                 }
             }
         });
