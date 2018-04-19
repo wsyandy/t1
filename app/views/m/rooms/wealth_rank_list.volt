@@ -77,7 +77,7 @@
         <div class="line"></div>
         <table class="table table_last">
             <tr v-for="(user,index) in users.slice(3)" @click.stop="userDetail(user.id)">
-                <td style="width:12%;" v-text="index+5"></td>
+                <td style="width:12%;" v-text="index+4"></td>
                 <td style="width:24%;">
                     <div class="pic">
                         <img :src="user.avatar_small_url">
