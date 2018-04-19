@@ -293,7 +293,7 @@ class ActivitiesController extends BaseController
 
         $db = \Rooms::getRoomDb();
 
-        $res = $db->zrevrange($key, 0, -1, 'withscores');
+        $res = $db->zrevrange($key, 0, 9, 'withscores');
 
         $room_ids = [];
         $incomes = [];
@@ -313,11 +313,10 @@ class ActivitiesController extends BaseController
 
             foreach ($rooms as $room) {
                 if ($room != $first_room) {
-                    $room->missing_income = $first_room_income - $incomes[$room->id];
+                    $room->missing_income = valueToStr($first_room_income - $incomes[$room->id]);
                 }
             }
         }
-
 
 
         $this->view->rooms = $rooms;
