@@ -79,7 +79,7 @@ function valueToStr($value)
         return intval($myriabit * 100) / 100 . "万";
     }
 
-    $myriabit= intval($myriabit);
+    $myriabit = intval($myriabit);
     $kilobit = intval($value) / 1000 - $myriabit * 10;
     $kilobit = intval($kilobit);
     $res = $myriabit . '.' . $kilobit;
@@ -88,15 +88,23 @@ function valueToStr($value)
     return $str . "万";
 }
 
-function beginOfWeek()
+function beginOfWeek($time = null)
 {
-    $start = date("Ymd", strtotime("last sunday next day", time()));
+    if (is_null($time)) {
+        $time = time();
+    }
+
+    $start = date("Ymd", strtotime("last sunday next day", $time));
     return beginOfDay(strtotime($start));
 }
 
-function endOfWeek()
+function endOfWeek($time = null)
 {
-    $end = date("Ymd", strtotime("next monday", time()) - 1);
+    if (is_null($time)) {
+        $time = time();
+    }
+
+    $end = date("Ymd", strtotime("next monday", $time) - 1);
     return endOfDay(strtotime($end));
 }
 

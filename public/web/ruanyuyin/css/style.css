@@ -143,22 +143,23 @@ header .wrapper ul li a {
 
 .music_box .music_top .top_right a {
     display: inline-block;
-    width: 128px;
+    width: 108px;
     height: 42px;
-    border: 1px solid #FE5287;
-    border-radius: 100px;
+    /*border: 1px solid #FE5287;*/
+    border-radius: 6px;
     font-size: 18px;
-    color: #FE5287;
     letter-spacing: -0.24px;
     line-height: 42px;
     text-align: center;
+    background: #4C97FF;
+    color: #FFFFFF;
 }
 
 .music_box .music_top .top_right span {
     display: inline-block;
     width: 28px;
     height: 28px;
-    background: url(../images/delete.png) no-repeat;
+    background: url(../../images/delete.png) no-repeat;
     background-size: 100%;
     vertical-align: middle;
     margin-left: 30px;
@@ -226,7 +227,7 @@ header .wrapper ul li a {
     -ms-appearance: none;
     font-size: 14px;
     color: #4C4C4C;
-    background: #ffffff url(../images/selected.png) no-repeat right center;
+    background: #ffffff url(../../images/selected.png) no-repeat right center;
     border: 1px solid #D4D4D4;
 }
 
@@ -320,7 +321,7 @@ select::-ms-expand {
     position: absolute;
     right: 20px;
     top: 20px;
-    background: url(../images/pop_close_btn.png) no-repeat;
+    background: url(../../images/pop_close_btn.png) no-repeat;
     background-size: 100%;
     cursor: pointer;
 }
@@ -331,7 +332,7 @@ select::-ms-expand {
     position: absolute;
     right: 20px;
     top: 20px;
-    background: url(../images/pop_close_btn.png) no-repeat;
+    background: url(../../images/pop_close_btn.png) no-repeat;
     background-size: 100%;
     cursor: pointer;
 }
@@ -433,7 +434,7 @@ select::-ms-expand {
     display: inline-block;
     width: 8px;
     height: 8px;
-    background: url(../images/star.png) no-repeat;
+    background: url(../../images/star.png) no-repeat;
     background-size: 100%;
     vertical-align: middle;
     margin-right: 10px;
@@ -509,7 +510,7 @@ select::-ms-expand {
     -ms-appearance: none;
     font-size: 14px;
     color: #4C4C4C;
-    background: #ffffff url(../images/selected.png) no-repeat right center;
+    background: #ffffff url(../../images/selected.png) no-repeat right center;
     border: 1px solid #D4D4D4;
 }
 

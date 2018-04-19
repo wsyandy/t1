@@ -21,7 +21,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
-            'monologue' => $this->monologue,
+            'monologue' => $this->getMonologueText(),
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'friend_num' => $this->friend_num,
@@ -129,21 +129,9 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
-            'country_id' => $this->country_id
+            'gold' => $this->gold,
+            'diamond' => $this->diamond
         ];
-
-        if ($this->country_id) {
-            $data['country_english_name'] = $this->country_english_name;
-            $data['country_chinese_name'] = $this->country_chinese_name;
-        } else {
-            $data['country_english_name'] = '';
-            $data['country_chinese_name'] = '';
-        }
-
-        if (isDevelopmentEnv()) {
-            //   $data['id'] = $this->uid;
-        }
 
         return $data;
     }
@@ -161,12 +149,11 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
-            'monologue' => $this->monologue,
+            'monologue' => $this->getMonologueText(),
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
             'followed' => $this->followed
         ];
 
@@ -204,7 +191,7 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'current_room_lock' => $this->current_room_lock,
             'user_role' => $this->user_role,
-            'monologue' => $this->monologue,
+            'monologue' => $this->getMonologueText(),
             'distance' => $this->distance,
             'age' => $this->age,
             'level' => $this->level,
@@ -273,7 +260,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'union_charm_value' => $this->union_charm_value,
             'union_wealth_value' => $this->union_wealth_value,
-            'monologue' => $this->monologue,
+            'monologue' => $this->getMonologueText(),
             'current_room_id' => $this->current_room_id,
             'is_exit_union' => $this->is_exit_union
         ];
@@ -299,7 +286,7 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'monologue' => $this->monologue,
+            'monologue' => $this->getMonologueText(),
             'current_room_id' => $this->current_room_id,
             'tags' => $this->tags,
             'recommend_tip' => $this->recommend_tip
@@ -529,6 +516,14 @@ trait UserAttrs
         return '';
     }
 
+    function getMonologueText()
+    {
+        if (isBlank($this->monologue)) {
+            return '';
+        }
+
+        return $this->monologue;
+    }
 
     //按照生日计算星座
     function constellationText()

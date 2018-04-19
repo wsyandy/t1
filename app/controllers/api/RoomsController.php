@@ -257,35 +257,39 @@ class RoomsController extends BaseController
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
         $root = $this->getRoot();
-        if (isDevelopmentEnv()) {
+        $ip = $this->remoteIp();
+        $show_game = false;
+
+        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
+            $show_game = true;
+        }
+
+        if ($show_game) {
+
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
             $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
             $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
             $res['menu_config'] = $menu_config;
-        }
 
-        //活动列表
-        $product_channel_id = $this->currentProductChannelId();
-        $platform = $this->params('pf');
-        $platform = 'client_' . $platform;
+            //活动列表
+            $product_channel_id = $this->currentProductChannelId();
+            $platform = $this->params('pf');
+            $platform = 'client_' . $platform;
 
-        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
-        if ($activities) {
-            foreach ($activities as $key => $activity) {
-                $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
-                $activity = $activity->toSimpleJson();
-                $activity['url'] = $url;
-                $res['activities'][] = $activity;
+            $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+            if ($activities) {
+                foreach ($activities as $key => $activity) {
+                    $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
+                    $activity = $activity->toSimpleJson();
+                    $activity['url'] = $url;
+                    $res['activities'][] = $activity;
+                }
             }
-        }
 
-        //游戏，先提供入口，根据游戏开始时间返回game字段
-        $room_info_key = "game_room_" . $room_id . '_info';
-        $hot_cache = \Rooms::getHotWriteCache();
-        $can_enter_at = $hot_cache->hget($room_info_key, 'can_enter_at');
-
-        if (isPresent($can_enter_at)) {
-            $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
+            $has_game_play = $room->hasGamePlay();
+            if ($has_game_play) {
+                $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
+            }
         }
 
         $user_car_gift = $this->currentUser()->getUserCarGift();

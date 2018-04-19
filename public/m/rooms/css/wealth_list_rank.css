@@ -134,8 +134,8 @@ ol, ul, li {
 
 /*第一名等级图*/
 .bangdan_box .one h3 img {
-    width: 0.706667rem;
-    height: 0.706667rem;
+    width: 20px;
+    height: 20px;
 }
 
 .one_num {
@@ -148,8 +148,8 @@ ol, ul, li {
 
 .women {
     display: inline-block;
-    width: 0.8rem;
     height: 0.4rem;
+    padding-left: 0.42rem;
     line-height: 0.4rem;
     background: #F99AD3;
     border-radius: 1.333333rem;
@@ -160,7 +160,7 @@ ol, ul, li {
     text-align: right;
     font-size: 0.266667rem;
     background-position: 0.106667rem center;
-    padding-right: 0.133333rem;
+    padding-right: 0.2rem;
     font-style: normal;
     margin-left: 0.133333rem;
 }
@@ -168,7 +168,7 @@ ol, ul, li {
 .men {
     background: #9ACCF9;
     display: inline-block;
-    width: 0.8rem;
+    padding-left: 0.42rem;
     height: 0.4rem;
     line-height: 0.4rem;
     border-radius: 1.333333rem;
@@ -179,7 +179,7 @@ ol, ul, li {
     text-align: right;
     font-size: 0.266667rem;
     background-position: 0.106667rem center;
-    padding-right: 0.133333rem;
+    padding-right: 0.2rem;
     font-style: normal;
     margin-left: 0.133333rem
 }
@@ -242,8 +242,8 @@ ol, ul, li {
 }
 
 .table tr td h5 img {
-    width: 0.706667rem;
-    height: 0.706667rem;
+    width: 20px;
+    height: 20px;
     vertical-align: middle;
     margin-left: 0.133333rem;
 }

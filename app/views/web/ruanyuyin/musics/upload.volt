@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/web/css/style','/web/css/jquery.searchableSelect') }}
+{{ theme_css('/web/ruanyuyin/css/style','/web/css/jquery.searchableSelect') }}
 {{ theme_js('/web/js/xieyi_pop','/js/jquery.form/3.51.0/jquery.form','/web/js/jquery.searchableSelect') }}
 {{ block_end() }}
 
@@ -162,7 +162,6 @@
 
             if (browserCfg.other) {
                 var fileSize = $('#file')[0].files[0].size;
-                console.log(fileSize);
                 if (fileSize > 20 * 1024 * 1024) {
                     alert("歌曲不能大于20M");
                     can_upload = true;

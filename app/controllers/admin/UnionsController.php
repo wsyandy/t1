@@ -133,8 +133,13 @@ class UnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, "用户不存在");
         }
 
-        $opts = ['exit' => 'exit'];
-        $union->exitUnion($user, $opts);
+        if (isDevelopmentEnv()) {
+            $opts = ['exit' => 'exit'];
+            $union->exitUnion($user, $opts);
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '线上禁止此操作');
+        }
+
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '删除成功');
     }
@@ -234,7 +239,7 @@ class UnionsController extends BaseController
 
         $product_channel_id = $this->params('product_channel_id');
 
-        $opts = ['product_channel_id' => $product_channel_id, 'start' => $start,'end'=>$end];
+        $opts = ['product_channel_id' => $product_channel_id, 'start' => $start, 'end' => $end];
 
         $page = $this->params('page', 1);
 

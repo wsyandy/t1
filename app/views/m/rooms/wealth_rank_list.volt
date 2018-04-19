@@ -14,7 +14,7 @@
             </ul>
         </div>
 
-        <div class="one" v-if="users.length">
+        <div class="one" v-if="users.length" @click.stop="userDetail(users[0].id)">
             <div class="one_pic">
                 <div class="pic">
                     <img :src="users[0].avatar_small_url">
@@ -24,11 +24,12 @@
             <h3>${ users[0].nickname }
                 <img :src="users[0].level_img" v-if="users[0].level">
                 <span :class="users[0].sex ? 'men' :'women'"
-                      v-text="users[0].age?users[0].age:''"></span></h3>
+                      v-text="users[0].age?users[0].age:''"
+                      :style="users[0].age? 'background-position:0.16rem' : 'background-position:center'"></span></h3>
             <p><span>${ users[0].wealth_value }</span>贡献</p>
         </div>
         <table class="table">
-            <tr v-if="users.length >= 2">
+            <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
                     <img class="voice_ico" src="images/two.png" alt="">
                 </td>
@@ -44,12 +45,13 @@
                     <h5><span class="two_color">${ users[1].nickname }</span>
                         <img :src="users[1].level_img" v-if="users[1].level">
                         <i :class="users[1].sex ? 'men' :'women'"
-                           v-text="users[1].age?users[1].age:''"></i>
+                           v-text="users[1].age?users[1].age:''"
+                           :style="users[1].age? 'background-position:0.16rem' : 'background-position:center'"></i>
                     </h5>
                     <p>${ users[1].wealth_value }贡献</p>
                 </td>
             </tr>
-            <tr v-if="users.length >= 3">
+            <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
                     <img class="voice_ico" src="images/three.png" alt="">
                 </td>
@@ -65,7 +67,8 @@
                     <h5><span class="three_color">${ users[2].nickname }</span>
                         <img :src="users[2].level_img" v-if="users[2].level">
                         <i :class="users[2].sex ? 'men' :'women'"
-                           v-text="users[2].age?users[2].age:''"></i></h5>
+                           v-text="users[2].age?users[2].age:''"
+                           :style="users[2].age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
                     <p>${ users[2].wealth_value }贡献</p>
                 </td>
             </tr>
@@ -73,7 +76,7 @@
         </table>
         <div class="line"></div>
         <table class="table table_last">
-            <tr v-for="(user,index) in users.slice(3)">
+            <tr v-for="(user,index) in users.slice(3)" @click.stop="userDetail(user.id)">
                 <td style="width:12%;" v-text="index+4"></td>
                 <td style="width:24%;">
                     <div class="pic">
@@ -84,7 +87,8 @@
                     <h5>${ user.nickname }
                         <img :src="user.level_img" v-if="user.level">
                         <i :class="user.sex ? 'men' :'women'"
-                           v-text="user.age?user.age:''"></i></h5>
+                           v-text="user.age?user.age:''"
+                           :style="user.age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
                     <p>${user.wealth_value}贡献</p>
                 </td>
             </tr>
@@ -103,15 +107,13 @@
             sid: '{{ sid }}',
             code: '{{ code }}',
             room_id: {{ room_id }},
+            user_id: '{{ user_id }}',
             cur_idx: 0,
             ranking_tab: ['日榜', '周榜'],
             page: 1,
             total_page: 1,
             users: [],
-            current_rank: 0,
-            first_user: {},
-            second_user: {},
-            third_user: {}
+            current_rank: 0
         },
         created: function () {
             this.list();
@@ -136,7 +138,7 @@
                     data.per_page = 20;
                 }
                 $.authGet('/m/rooms/find_wealth_rank_list', data, function (resp) {
-                    if(resp.error_code == 0){
+                    if (resp.error_code == 0) {
                         vm.total_page = resp.total_page;
                         vm.current_rank = resp.current_rank;
                         $.each(resp.users, function (index, item) {
@@ -154,6 +156,13 @@
                 this.page = 1;
                 this.total_page = 1;
                 this.list();
+            },
+            userDetail: function (user_id) {
+                if(this.user_id == user_id){
+                    location.href = "app://users/detail?id=" + user_id;
+                } else {
+                    location.href = "app://users/other_detail?user_id=" + user_id;
+                }
             }
         }
     };

@@ -19,6 +19,8 @@ class UnionHistoriesController extends BaseController
         $cond = ['conditions' => 'user_id = :user_id: and union_type = :union_type:',
             'bind' => ['user_id' => $user_id, 'union_type' => $type]];
 
+        $cond['order'] = 'id desc';
+
         $union_histories = \UnionHistories::findPagination($cond, $page, $per_page);
         $this->view->union_histories = $union_histories;
     }

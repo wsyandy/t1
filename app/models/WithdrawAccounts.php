@@ -34,7 +34,7 @@ class WithdrawAccounts extends BaseModel
     static function createWithdrawAccount($user, $mobile)
     {
         //暂时只支持添加一张银行卡
-        $old_withdraw_account = self::findFirstWithdrawAccount($user);
+        $old_withdraw_account = self::findFirstWithdrawAccount($user->id);
 
         if (isPresent($old_withdraw_account)) {
             return $old_withdraw_account->id;
@@ -99,20 +99,20 @@ class WithdrawAccounts extends BaseModel
             }
         }
 
-        $first_withdraw_account = self::findFirstWithdrawAccount($user);
+        $first_withdraw_account = self::findFirstWithdrawAccount($user->id);
 
-        if (isPresent($first_withdraw_account) && $first_withdraw_account->status == STATUS_ON) {
+        if (isPresent($first_withdraw_account)) {
             return $first_withdraw_account;
         }
 
-        return 0;
+        return null;
     }
 
-    static function findFirstWithdrawAccount($user)
+    static function findFirstWithdrawAccount($user_id)
     {
         $withdraw_account = WithdrawAccounts::findFirst(
             [
-                'conditions' => "status = " . STATUS_ON . " and user_id = $user->id"
+                'conditions' => "status = " . STATUS_ON . " and user_id = " . $user_id
             ]
         );
 

@@ -1732,20 +1732,23 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
-                $key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
+
         debug($key);
 
         return $key;
@@ -2136,4 +2139,13 @@ class Rooms extends BaseModel
         $room->types = $current_room_types;
         $room->update();
     }
+
+    function hasGamePlay()
+    {
+        $room_wait_key = "game_room_wait_" . $this->id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $wait_user_number = $hot_cache->zcard($room_wait_key);
+        return $wait_user_number >= 1;
+    }
+
 }
