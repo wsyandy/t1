@@ -181,8 +181,8 @@
         };
 
         $(function () {
-            if (!vm.pay_type) {
-                if (vm.can_create_game || vm.game_history_id) {
+            if (!vm.pay_type &&  vm.game_history_id) {
+                if (vm.can_create_game) {
                     vm.game_status_text =  vm.game_host_nickname + '正在发起游戏中，请稍后！';
                 }else{
                     vm.game_status_text = '您不是主播,不能发起游戏';
