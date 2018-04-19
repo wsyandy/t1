@@ -830,12 +830,7 @@ class Unions extends BaseModel
         $rank = $db->zrrank($key, $this->id);
 
         if ($rank === null) {
-
-            $total_entries = $db->zcard($key);
-            if ($total_entries) {
-                $rank = $total_entries;
-            }
-
+            return 0;
         }
 
         return $rank + 1;
