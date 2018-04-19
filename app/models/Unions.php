@@ -833,8 +833,8 @@ class Unions extends BaseModel
                 }
             case 'week':
                 {
-                    $start = fetch($opts, 'start', date("Ymd", strtotime("last sunday next day", time())));
-                    $end = fetch($opts, 'end', date("Ymd", strtotime("next monday", time()) - 1));
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
                     $key = "total_union_fame_value_" . $start . "_" . $end;
                     break;
                 }
