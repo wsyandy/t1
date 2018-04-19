@@ -56,7 +56,7 @@ class GamesController extends BaseController
             $game_history->save();
         }
 
-        if ($game_history && $game_history->status == GAME_STATUS_END) {
+        if ($game_history && $game_history->status != GAME_STATUS_END) {
             $game_host_user_id = $game_history->user_id;
             $start_data = json_decode($game_history->start_data, true);
             $pay_type = fetch($start_data, 'pay_type');
