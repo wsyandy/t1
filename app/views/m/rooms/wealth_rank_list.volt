@@ -31,7 +31,7 @@
         <table class="table">
             <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="/m/images/two.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_weath_two.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic">
