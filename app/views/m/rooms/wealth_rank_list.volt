@@ -19,7 +19,7 @@
                 <div class="pic">
                     <img :src="users[0].avatar_small_url">
                 </div>
-                <img src="images/one_num.png" class="one_num">
+                <img src="/m/images/one_num.png" class="one_num">
             </div>
             <h3>${ users[0].nickname }
                 <img :src="users[0].level_img" v-if="users[0].level">
@@ -31,14 +31,14 @@
         <table class="table">
             <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="images/two.png" alt="">
+                    <img class="voice_ico" src="/m/images/two.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic">
                         <div class="pic">
                             <img :src="users[1].avatar_small_url">
                         </div>
-                        <img src="images/two_num.png" class="two_num">
+                        <img src="/m/images/two_num.png" class="two_num">
                     </div>
                 </td>
                 <td>
@@ -53,14 +53,14 @@
             </tr>
             <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="images/three.png" alt="">
+                    <img class="voice_ico" src="/m/images/three.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic three_pic">
                         <div class="pic">
                             <img :src="users[2].avatar_small_url">
                         </div>
-                        <img src="images/three_num.png" class="two_num">
+                        <img src="/m/images/three_num.png" class="two_num">
                     </div>
                 </td>
                 <td>
@@ -77,7 +77,7 @@
         <div class="line"></div>
         <table class="table table_last">
             <tr v-for="(user,index) in users.slice(3)" @click.stop="userDetail(user.id)">
-                <td style="width:12%;" v-text="index+4"></td>
+                <td style="width:12%;" v-text="index+5"></td>
                 <td style="width:24%;">
                     <div class="pic">
                         <img :src="user.avatar_small_url">
