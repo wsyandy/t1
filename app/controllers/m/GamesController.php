@@ -51,7 +51,13 @@ class GamesController extends BaseController
         $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
             'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
 
-        if ($game_history && (time() - $game_history->created_at > 300)) {
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_enter_key = "game_room_enter_" . $room_id;
+        $total_user_num = $hot_cache->zcard($room_enter_key);
+
+        if ($game_history && $game_history->user_id == $this->currentUser()->id
+            && ($game_history->enter_at && (time() - $game_history->enter_at > 300) || $total_user_num == 1)
+        ) {
             $game_history->status = GAME_STATUS_END;
             $game_history->save();
         }
@@ -327,11 +333,11 @@ class GamesController extends BaseController
         $hot_cache = \GameHistories::getHotWriteCache();
         $room_enter_key = "game_room_enter_" . $game_history->room_id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
-        if($total_user_num == 1){
+        if ($total_user_num == 1) {
             $game_history->status = GAME_STATUS_END;
             $game_history->save();
         }
-        
+
         $end_data = json_decode($game_history->end_data, true);
         $rank_data = fetch($end_data, 'rank_data', []);
 
