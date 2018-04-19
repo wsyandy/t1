@@ -293,8 +293,8 @@ class ActivitiesController extends BaseController
 
         $max = 9;
 
-        if (intval($date) > intval($stat_at)) {
-            $max = 3;
+        if (intval($date) > intval($stat_at) && isDevelopmentEnv()) {
+            $max = 2;
         }
 
         $key = "room_stats_income_day_" . $stat_at;
