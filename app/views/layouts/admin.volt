@@ -88,7 +88,7 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('rooms','index') or isAllowed('broadcasts','index') %}
+        {% if isAllowed('rooms','index') or isAllowed('rooms','auto_hot') or isAllowed('broadcasts','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">房间<b class="caret"></b></a>
                 <ul class="dropdown-menu">
