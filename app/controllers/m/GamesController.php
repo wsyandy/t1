@@ -56,7 +56,8 @@ class GamesController extends BaseController
             $pay_type = fetch($start_data, 'pay_type');
             $amount = fetch($start_data, 'amount');
             $game_history_id = $game_history->id;
-            if($game_host_user_id == $this->currentUser()->id){
+            $can_enter = $game_history->canEnter();
+            if($game_host_user_id == $this->currentUser()->id && $can_enter){
                 $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
                 return;
             }
@@ -235,9 +236,6 @@ class GamesController extends BaseController
 
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
-        if (!$game_history || !$game_history->canEnter()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '暂时无法进入');
-        }
 
         $hot_cache = \GameHistories::getHotWriteCache();
         $room_wait_key = "game_room_wait_" . $game_history->room_id;
