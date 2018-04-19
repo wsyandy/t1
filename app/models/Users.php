@@ -1863,8 +1863,9 @@ class Users extends BaseModel
 
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
+        $condition .= " and organisation = :organisation:";
         $bind['user_id'] = $this->id;
-
+        $bind['organisation'] = USER_ORGANISATION_PERSONAGE;
         $conds['conditions'] = $condition;
         $conds['bind'] = $bind;
         $conds['order'] = 'last_at desc,id desc';
