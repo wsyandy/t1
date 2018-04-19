@@ -2149,8 +2149,8 @@ class Rooms extends BaseModel
 
     function getGameHistory()
     {
-        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and created_at>:created_at:',
-            'bind' => ['room_id' => $this->id, 'status' => GAME_STATUS_END, 'created_at' => time() - 300], 'order' => 'id desc']);
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status=:status: and created_at>:created_at:',
+            'bind' => ['room_id' => $this->id, 'status' => GAME_STATUS_PLAYING, 'created_at' => time() - 300], 'order' => 'id desc']);
 
         return $game_history;
     }
