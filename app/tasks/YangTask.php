@@ -832,7 +832,7 @@ class YangTask extends \Phalcon\Cli\Task
         $cond = [
             'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
             'bind' => ['start' => $start, 'end' => $end],
-            'order' => 'id asc'
+            'order' => 'id desc'
         ];
 
         $gift_orders = GiftOrders::find($cond);
@@ -843,7 +843,7 @@ class YangTask extends \Phalcon\Cli\Task
             $room = $gift_order->room;
             if (isPresent($room) && $gift_order->amount) {
 
-                $week_room_wealth_rank_key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}_" . date("Ymd", $start) . '_' . date("Ymd",$end);
+                $week_room_wealth_rank_key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}_" . date("Ymd", $start) . '_' . date("Ymd", $end);
 
                 $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
 
@@ -866,7 +866,8 @@ class YangTask extends \Phalcon\Cli\Task
 
         $cond = [
             'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
-            'bind' => ['start' => $start, 'end' => $end]
+            'bind' => ['start' => $start, 'end' => $end],
+            'order' => 'id desc'
         ];
 
         $gift_orders = GiftOrders::find($cond);
@@ -879,7 +880,7 @@ class YangTask extends \Phalcon\Cli\Task
 
             if (isPresent($room) && $gift_order->amount) {
 
-                $day_room_wealth_rank_key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}_" . date("Ymd",$time);
+                $day_room_wealth_rank_key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}_" . date("Ymd", $time);
 
                 $db->zincrby($day_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
 
