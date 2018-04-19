@@ -826,12 +826,12 @@ class YangTask extends \Phalcon\Cli\Task
     function fixWeekRoomWealthRankListAction()
     {
         $time = time();
-        $start = beginOfWeek($time);
-        $end = endOfWeek($time);
+        $start_at = beginOfWeek($time);
+        $end_at = endOfWeek($time);
 
         $cond = [
             'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
-            'bind' => ['start' => $start, 'end' => $end],
+            'bind' => ['start' => $start_at, 'end' => $end_at],
             'order' => 'id desc'
         ];
 
@@ -839,15 +839,19 @@ class YangTask extends \Phalcon\Cli\Task
 
         $db = Users::getUserDb();
 
+        $start = date("Ymd", $start_at);
+        $end = date("Ymd", $end_at);
+
+
         foreach ($gift_orders as $gift_order) {
             $room = $gift_order->room;
             if (isPresent($room) && $gift_order->amount) {
 
-                $week_room_wealth_rank_key = "room_wealth_rank_List_week_" . "_room_id_{$this->id}_" . date("Ymd", $start) . '_' . date("Ymd", $end);
+                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
 
                 $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
 
-                echoLine('success', $gift_order->id, $gift_order->room_id, $gift_order->amount);
+                echoLine('success', $week_room_wealth_rank_key);
 
             } else {
 
@@ -861,12 +865,12 @@ class YangTask extends \Phalcon\Cli\Task
     {
         $time = time();
 
-        $start = beginOfDay($time);
-        $end = endOfDay($time);
+        $start_at = beginOfDay($time);
+        $end_at = endOfDay($time);
 
         $cond = [
             'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
-            'bind' => ['start' => $start, 'end' => $end],
+            'bind' => ['start' => $start_at, 'end' => $end_at],
             'order' => 'id desc'
         ];
 
@@ -874,17 +878,19 @@ class YangTask extends \Phalcon\Cli\Task
 
         $db = Users::getUserDb();
 
+        $date = date("Ymd", $time);
+
         foreach ($gift_orders as $gift_order) {
 
             $room = $gift_order->room;
 
             if (isPresent($room) && $gift_order->amount) {
 
-                $day_room_wealth_rank_key = "room_wealth_rank_List_day_" . "_room_id_{$this->id}_" . date("Ymd", $time);
+                $day_room_wealth_rank_key = $room->generateRoomWealthRankListKey('day', ['date' => $date]);
 
                 $db->zincrby($day_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
 
-                echoLine('success', $gift_order->id, $gift_order->room_id, $gift_order->amount);
+                echoLine('success', $day_room_wealth_rank_key);
             } else {
                 echoLine('false', $gift_order->id, $gift_order->room_id, $gift_order->amount);
             }
