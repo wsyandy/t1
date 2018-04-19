@@ -246,6 +246,8 @@ class GamesController extends BaseController
 
         $data = $users->toJson('users', 'toSimpleJson');
 
+        info($this->currentUser()->id, $game_history, $data);
+
         if($game_history->status == GAME_STATUS_WAIT){
             $data['can_enter'] = 0;
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
