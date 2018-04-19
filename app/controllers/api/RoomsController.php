@@ -286,12 +286,8 @@ class RoomsController extends BaseController
                 }
             }
 
-            //游戏，先提供入口，根据游戏开始时间返回game字段
-            $room_info_key = "game_room_" . $room_id . '_info';
-            $hot_cache = \Rooms::getHotWriteCache();
-            $can_enter_at = $hot_cache->hget($room_info_key, 'can_enter_at');
-
-            if (isPresent($can_enter_at)) {
+            $has_game_play = $room->hasGamePlay();
+            if ($has_game_play) {
                 $res['game'] = ['url' => 'url://m/games/tyt', 'icon' => $root . 'images/go_game.png'];
             }
         }

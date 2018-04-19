@@ -2139,4 +2139,13 @@ class Rooms extends BaseModel
         $room->types = $current_room_types;
         $room->update();
     }
+
+    function hasGamePlay()
+    {
+        $room_wait_key = "game_room_wait_" . $this->id;
+        $hot_cache = \Rooms::getHotWriteCache();
+        $wait_user_number = $hot_cache->zcard($room_wait_key);
+        return $wait_user_number >= 1;
+    }
+
 }
