@@ -830,7 +830,8 @@ class YangTask extends \Phalcon\Cli\Task
         $end_at = endOfWeek($time);
 
         $cond = [
-            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
+            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT
+                . ' and pay_type = ' . GIFT_PAY_TYPE_DIAMOND,
             'bind' => ['start' => $start_at, 'end' => $end_at],
             'order' => 'id desc'
         ];
@@ -869,7 +870,8 @@ class YangTask extends \Phalcon\Cli\Task
         $end_at = endOfDay($time);
 
         $cond = [
-            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT,
+            'conditions' => 'created_at <= :end: and room_id > 0 and gift_type = ' . GIFT_TYPE_COMMON . ' and sender_user_type != ' . USER_TYPE_SILENT
+                . ' and pay_type = ' . GIFT_PAY_TYPE_DIAMOND,
             'bind' => ['start' => $start_at, 'end' => $end_at],
             'order' => 'id desc'
         ];
