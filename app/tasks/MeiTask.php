@@ -3137,4 +3137,97 @@ EOF;
 
         \services\SwooleUtils::send('push', $intranet_ip, Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
     }
+
+    function fixWeekRoomWealthRankListAction()
+    {
+        $time = time();
+        $start_at = beginOfWeek();
+        $end_at = endOfWeek();
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and room_id > 0 and gift_type = :gift_type: and pay_type = :pay_type:',
+            'bind' => ['start' => $start_at, 'end' => $end_at, 'gift_type' => GIFT_TYPE_COMMON, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+            'columns' => 'distinct room_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        $db = Users::getUserDb();
+
+        $start = date("Ymd", $start_at);
+        $end = date("Ymd", $end_at);
+
+
+        foreach ($gift_orders as $gift_order) {
+
+            $room_id = $gift_order->room_id;
+
+            if (isPresent($room) && $gift_order->amount) {
+                echoLine($gift_order->created_at_text, $gift_order->amount);
+
+                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
+                $db->zclear("room_wealth_rank_List_week__room_id_{$room->id}_20180416_20180422");
+                $db->zclear("room_wealth_rank_List_week__room_id_{$room->id}20180416_20180422");
+                $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
+
+                echoLine('success', $week_room_wealth_rank_key);
+
+            } else {
+
+                echoLine('false', $gift_order->id, $gift_order->room_id, $gift_order->amount);
+
+            }
+        }
+    }
+
+    function fixDayRoomWealthRankListAction()
+    {
+        $time = time();
+
+        $start_at = beginOfDay($time);
+        $end_at = endOfDay($time);
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and room_id > 0 and gift_type = :gift_type: and pay_type = :pay_type:',
+            'bind' => ['start' => $start_at, 'end' => $end_at, 'gift_type' => GIFT_TYPE_COMMON, 'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+            'order' => 'id desc'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        $db = Users::getUserDb();
+
+        $date = date("Ymd", $time);
+
+        foreach ($gift_orders as $gift_order) {
+
+            $room = $gift_order->room;
+
+            if (isPresent($room) && $gift_order->amount) {
+
+                $day_room_wealth_rank_key = $room->generateRoomWealthRankListKey('day', ['date' => $date]);
+                $db->zclear("room_wealth_rank_List_day_" . "_room_id_1009620_" . 20180419);
+                $db->zclear("room_wealth_rank_List_day_" . "_room_id{$room->id}_" . $date);
+                $db->zincrby($day_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
+
+                echoLine('success', $day_room_wealth_rank_key);
+            } else {
+                echoLine('false', $gift_order->id, $gift_order->room_id, $gift_order->amount);
+            }
+        }
+
+
+        $hot_cache = Users::getHotWriteCache();
+        echoLine($hot_cache->get('send_auth_code_user_1139546'));
+        $user_id = fetch($opts, 'user_id');
+        $device_id = fetch($opts, 'device_id');
+        $cache_key = '';
+        if ($user_id) {
+            $cache_key = 'send_auth_code_user_' . $user_id;
+        }
+        if ($device_id) {
+            $hot_cache = Users::getHotWriteCache();
+            echoLine($hot_cache->get('send_auth_code_device_134507'));
+        }
+    }
 }
