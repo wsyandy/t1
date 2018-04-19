@@ -543,30 +543,24 @@ class Unions extends BaseModel
 
     function applyExitUnion($user)
     {
+        if (isBlank($user->union_id) || $user->union_id != $this->id) {
+            return [ERROR_CODE_FAIL, '您已不再此家族'];
+        }
+
         $db = Users::getUserDb();
 
         if ($user->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '家族长不能单独退出家族'];
         }
 
-        info(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON]);
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON],
             'id desc');
-
-        $expire_at = time() - 24 * 60 * 60 * 7;
-
-        if (isDevelopmentEnv()) {
-            $expire_at = time() - 60;
-        }
-
-        /*if ($union_history && $union_history->join_at > $expire_at) {
-            return [ERROR_CODE_FAIL, '退出家族，需要会长同意，请耐心等待'];
-        }*/
 
         if ($db->zscore($this->generateApplyExitUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '你已申请退出,请耐心等待！'];
         }
 
+        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
         if ($union_history) {
             $union_history->status = STATUS_PROGRESS;
             $union_history->apply_exit_at = time();
@@ -595,9 +589,14 @@ class Unions extends BaseModel
 
     function confirmExitUnion($user, $from)
     {
+        if (isBlank($user->union_id) || $user->union_id != $this->id) {
+            return [ERROR_CODE_FAIL, '此用户已不再此家族'];
+        }
 
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS],
             'id desc');
+
+        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
         if ($union_history) {
             $union_history->status = STATUS_OFF;
             $union_history->exit_at = time();
@@ -613,6 +612,10 @@ class Unions extends BaseModel
         $db = Users::getUserDb();
         $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($this->generateRefusedUsersKey(), $user->id);
+        $db->zrem($this->generateNewUsersKey(), $user->id);
+        $db->zrem($this->generateCheckUsersKey(), $user->id);
+        $db->zrem($this->generateAllApplyExitUsersKey(), $user->id);
 
         $content = ['agree' => "您的家族会长已同意您的退出家族申请", 'auto' => "您已经退出了{$this->name}家族"];
         Chats::sendTextSystemMessage($user->id, $content[$from]);
@@ -625,6 +628,10 @@ class Unions extends BaseModel
 
     function exitUnion($user, $opts = [], $union_host = null)
     {
+        if (isBlank($user->union_id) || $user->union_id != $this->id) {
+            return [ERROR_CODE_FAIL, '此用户已不再此家族'];
+        }
+
         $db = Users::getUserDb();
         $exit = fetch($opts, 'exit');
         $kicking = fetch($opts, 'kicking');
@@ -637,11 +644,19 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '您无此权限'];
         }
 
-        $union_history = UnionHistories::findFirstBy(
-            ['user_id' => $user->id, 'union_id' => $this->id], 'id desc');
+        $status = implode(',', [STATUS_ON, STATUS_PROGRESS]);
+
+        $cond = [
+            'conditions' => "union_id = :union_id: and user_id = :user_id: and status in ({$status})",
+            'bind' => ['union_id' => $this->id, 'user_id' => $user->id, 'status' => $status],
+            'order' => 'id desc'
+        ];
+
+        $union_history = UnionHistories::findFirst($cond);
+        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
+
 
         $expire_at = time() - 86400 * 7;
-        //$expire_at = time() - 60;
 
         if (isDevelopmentEnv()) {
             $expire_at = time() - 60;
@@ -651,8 +666,7 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '加入家族后,需要一周后才能退出哦~'];
         }
 
-        $key = $this->generateUsersKey();
-        $db->zrem($key, $user->id);
+        $db->zrem($this->generateUsersKey(), $user->id);
         $db->zrem($this->generateRefusedUsersKey(), $user->id);
         $db->zrem($this->generateNewUsersKey(), $user->id);
         $db->zrem($this->generateCheckUsersKey(), $user->id);
@@ -670,6 +684,8 @@ class Unions extends BaseModel
             $union_history->status = $status;
             $union_history->exit_at = time();
             $union_history->save();
+        } else {
+            info('no union_history', $this->id, $user->id);
         }
 
         $user->union_id = 0;
@@ -718,7 +734,6 @@ class Unions extends BaseModel
             $day_key = self::generateFameValueRankListKey('day', $opts);
 
             $opts['date'] = date('Ymd', strtotime("last day"));
-
 
             $last_day_key = self::generateFameValueRankListKey('day', $opts);
 
@@ -829,20 +844,18 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date('Ymd'));
+            case 'day': {
+                $date = fetch($opts, 'date', date('Ymd'));
 
-                    $key = "total_union_fame_value_day_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "total_union_fame_value_" . $start . "_" . $end;
-                    break;
-                }
+                $key = "total_union_fame_value_day_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "total_union_fame_value_" . $start . "_" . $end;
+                break;
+            }
             default:
                 return '';
         }
