@@ -100,7 +100,7 @@
                     return false
                 }
 
-                var withdraw_account = {{ withdraw_account }};
+                var withdraw_account = '{{ withdraw_account }}';
 
                 if (!withdraw_account) {
                     return false;

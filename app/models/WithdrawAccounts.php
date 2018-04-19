@@ -105,7 +105,7 @@ class WithdrawAccounts extends BaseModel
             return $first_withdraw_account;
         }
 
-        return 0;
+        return null;
     }
 
     static function findFirstWithdrawAccount($user_id)
