@@ -34,7 +34,7 @@ class WithdrawAccounts extends BaseModel
     static function createWithdrawAccount($user, $mobile)
     {
         //暂时只支持添加一张银行卡
-        $old_withdraw_account = self::findFirstWithdrawAccount($user);
+        $old_withdraw_account = self::findFirstWithdrawAccount($user->id);
 
         if (isPresent($old_withdraw_account)) {
             return $old_withdraw_account->id;
