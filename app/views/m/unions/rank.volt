@@ -85,7 +85,7 @@
             page: 1,
             total_page: 1,
             union_list: [],
-            my_rank: 1
+            my_rank: 0
         },
         created: function () {
             this.list();
