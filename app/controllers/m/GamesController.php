@@ -165,7 +165,7 @@ class GamesController extends BaseController
         $body['nickname'] = $this->currentUser()->nickname;
         $body['avatar_url'] = $this->currentUser()->avatar_url;
         $body['sex'] = $this->currentUser()->sex;
-        $body['game_history_id'] = $game_history_id;
+        $body['room_id'] = $game_history_id;
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
