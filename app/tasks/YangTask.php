@@ -848,11 +848,12 @@ class YangTask extends \Phalcon\Cli\Task
             if (isPresent($room) && $gift_order->amount) {
                 echoLine($gift_order->created_at_text, $gift_order->amount);
 
-//                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
-//
-//                $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
-//
-//                echoLine('success', $week_room_wealth_rank_key);
+                $week_room_wealth_rank_key = $room->generateRoomWealthRankListKey('week', ['start' => $start, 'end' => $end]);
+                $db->zclear("room_wealth_rank_List_week__room_id_{$room->id}_20180416_20180422");
+                $db->zclear("room_wealth_rank_List_week__room_id_{$room->id}20180416_20180422");
+                $db->zincrby($week_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
+
+                echoLine('success', $week_room_wealth_rank_key);
 
             } else {
 
@@ -888,7 +889,8 @@ class YangTask extends \Phalcon\Cli\Task
             if (isPresent($room) && $gift_order->amount) {
 
                 $day_room_wealth_rank_key = $room->generateRoomWealthRankListKey('day', ['date' => $date]);
-
+                $db->zclear("room_wealth_rank_List_day_" . "_room_id_1009620_" . 20180419);
+                $db->zclear("room_wealth_rank_List_day_" . "_room_id{$room->id}_" . $date);
                 $db->zincrby($day_room_wealth_rank_key, $gift_order->amount, $gift_order->sender_id);
 
                 echoLine('success', $day_room_wealth_rank_key);
