@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/ruanyuyin/css/recommend.css','/m/css/room_password_pop') }}
-{{ theme_js('/m/ruanyuyin/js/font_rem.js','/m/js/room_password_pop','/m/js/add_friend') }}
+{{ theme_js('/m/ruanyuyin/js/font_rem.js','/m/js/add_friend') }}
 {{ block_end() }}
 <div class="int_box" id="app" v-cloak>
 
@@ -30,20 +30,22 @@
     </div>
 
     {#密码弹框#}
-    <div class="room_cover" :style="{height: cover_height}" >
+    <div class="room_cover" :style="{height: cover_height}">
         <div class="room_pop">
             <img class="room_pop_bg" src="/m/images/room_pop_bg.png" alt="">
             <div class="room_locked">房间已上锁</div>
             <div class="room_lock">
                 <label for="">密码</label>
                 <input class="room_input" maxlength="10" type="text" placeholder="最多输入10个字" id="password" style="
-    background-color: #F0F0F0;">
+    background-color: #F0F0F0;" v-model="password">
             </div>
             <div class="room_btn">
-                <span class="room_out">取消</span>
-                <span class="room_in">进入房间</span>
+                <span class="room_out" @click="roomOut">取消</span>
+                <span class="room_in" @click="roomIn">进入房间</span>
             </div>
+            <div class="fail_pwd" v-show="failpwd">密码错误</div>
         </div>
+
     </div>
 
     {#介绍弹框#}
@@ -70,18 +72,49 @@
 
     var opts = {
         data: {
+            failpwd: false,
             room_hidden: true,
             friend_hidden: true,
             ico_male: "images/ico_male.png",
             ico_female: "images/ico_female.png",
             page: 1,
             user_list: [],
-            cover_height: ''
+            cover_height: '',
+            selected_room_id: '',
+            password: ''
         },
         created: function () {
             this.userList();
         },
         methods: {
+            roomIn: function () {
+                var that = this;
+                var url = "/m/unions/check_password";
+                var data = {
+                    sid: sid,
+                    code: code,
+                    password: vm.password,
+                    room_id: vm.selected_room_id
+                };
+
+                $.authPost(url, data, function (resp) {
+                    if (resp.error_code == 0) {
+                        var url = "app://rooms/detail?id=" + vm.selected_room_id;
+                        location.href = url;
+                        $(".room_cover").fadeOut();
+                    } else {
+                        this.failpwd = true;
+                        setTimeout(function () {
+                            that.failpwd = false;
+                        }, 2000)
+                    }
+                });
+
+            },
+            roomOut: function () {
+                vm.password = '';
+                $(".room_cover").hide();
+            },
             userList: function () {
                 var data = {
                     page: this.page,
@@ -114,10 +147,11 @@
                 location.href = "app://users/other_detail?user_id=" + id;
             },
             enterRoom: function (id) {
+                console.log(id);
                 var data = {room_id: id, sid: sid, code: code};
                 $.authPost("/m/unions/is_need_password", data, function (resp) {
                     if (resp.error_code == 0) {
-                        selected_room_id = id;
+                        vm.selected_room_id = id;
                         $('.room_cover').show();
                     } else {
                         location.href = "app://rooms/detail?id=" + id;
@@ -129,6 +163,7 @@
 
     vm = XVue(opts);
     $(function () {
+        $('.room_cover').hide();
         vm.cover_height = window.screen.height;
     })
 
