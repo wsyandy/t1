@@ -48,16 +48,22 @@ class GamesController extends BaseController
         $pay_type = '';
         $amount = 0;
 
-        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
-            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
-        if ($game_history) {
+        $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
+            'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
+
+        if ($game_history && (time() - $game_history->created_at > 300)) {
+            $game_history->status = GAME_STATUS_END;
+            $game_history->save();
+        }
+
+        if ($game_history && $game_history->status == GAME_STATUS_END) {
             $game_host_user_id = $game_history->user_id;
             $start_data = json_decode($game_history->start_data, true);
             $pay_type = fetch($start_data, 'pay_type');
             $amount = fetch($start_data, 'amount');
             $game_history_id = $game_history->id;
             $can_enter = $game_history->canEnter();
-            if($game_host_user_id == $this->currentUser()->id && $can_enter){
+            if ($game_host_user_id == $this->currentUser()->id && $can_enter) {
                 $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
                 return;
             }
@@ -248,7 +254,7 @@ class GamesController extends BaseController
 
         info($this->currentUser()->id, $game_history, $data);
 
-        if($game_history->status == GAME_STATUS_WAIT){
+        if ($game_history->status == GAME_STATUS_WAIT) {
             $data['can_enter'] = 0;
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
         }
@@ -292,7 +298,7 @@ class GamesController extends BaseController
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
 
-        if($game_history->status != GAME_STATUS_WAIT){
+        if ($game_history->status != GAME_STATUS_WAIT) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
@@ -367,7 +373,7 @@ class GamesController extends BaseController
 
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
-        if(!$game_history || $game_history->status == GAME_STATUS_END){
+        if (!$game_history || $game_history->status == GAME_STATUS_END) {
             echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
             return;
         }
