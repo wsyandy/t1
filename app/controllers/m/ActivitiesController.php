@@ -315,13 +315,13 @@ class ActivitiesController extends BaseController
         $rooms = \Rooms::findByIds($room_ids);
 
         if (count($rooms)) {
-            $first_room = $rooms[0];
 
-            $first_room_income = $incomes[$first_room->id];
-
-            foreach ($rooms as $room) {
-                if ($room != $first_room) {
-                    $room->missing_income = $first_room_income - $incomes[$room->id];
+            foreach ($rooms as $index => $room) {
+                
+                if ($index > 0) {
+                    $last_room = $rooms[$index];
+                    $last_room_income = $incomes[$last_room->id];
+                    $room->missing_income = $last_room_income - $incomes[$room->id];
                 }
             }
         }
