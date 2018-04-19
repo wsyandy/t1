@@ -24,7 +24,8 @@
             <h3>${ users[0].nickname }
                 <img :src="users[0].level_img" v-if="users[0].level">
                 <span :class="users[0].sex ? 'men' :'women'"
-                      v-text="users[0].age?users[0].age:''"></span></h3>
+                      v-text="users[0].age?users[0].age:''"
+                      :style="users[0].age? 'background-position:0.16rem' : 'background-position:center'"></span></h3>
             <p><span>${ users[0].wealth_value }</span>贡献</p>
         </div>
         <table class="table">
@@ -44,7 +45,8 @@
                     <h5><span class="two_color">${ users[1].nickname }</span>
                         <img :src="users[1].level_img" v-if="users[1].level">
                         <i :class="users[1].sex ? 'men' :'women'"
-                           v-text="users[1].age?users[1].age:''"></i>
+                           v-text="users[1].age?users[1].age:''"
+                           :style="users[1].age? 'background-position:0.16rem' : 'background-position:center'"></i>
                     </h5>
                     <p>${ users[1].wealth_value }贡献</p>
                 </td>
@@ -65,7 +67,8 @@
                     <h5><span class="three_color">${ users[2].nickname }</span>
                         <img :src="users[2].level_img" v-if="users[2].level">
                         <i :class="users[2].sex ? 'men' :'women'"
-                           v-text="users[2].age?users[2].age:''"></i></h5>
+                           v-text="users[2].age?users[2].age:''"
+                           :style="users[2].age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
                     <p>${ users[2].wealth_value }贡献</p>
                 </td>
             </tr>
@@ -84,7 +87,8 @@
                     <h5>${ user.nickname }
                         <img :src="user.level_img" v-if="user.level">
                         <i :class="user.sex ? 'men' :'women'"
-                           v-text="user.age?user.age:''"></i></h5>
+                           v-text="user.age?user.age:''"
+                           :style="user.age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
                     <p>${user.wealth_value}贡献</p>
                 </td>
             </tr>
@@ -136,7 +140,7 @@
                     data.per_page = 20;
                 }
                 $.authGet('/m/rooms/find_wealth_rank_list', data, function (resp) {
-                    if(resp.error_code == 0){
+                    if (resp.error_code == 0) {
                         vm.total_page = resp.total_page;
                         vm.current_rank = resp.current_rank;
                         $.each(resp.users, function (index, item) {
