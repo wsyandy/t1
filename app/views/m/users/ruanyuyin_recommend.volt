@@ -103,7 +103,7 @@
                         location.href = url;
                         $(".room_cover").fadeOut();
                     } else {
-                        this.failpwd = true;
+                        that.failpwd = true;
                         setTimeout(function () {
                             that.failpwd = false;
                         }, 2000)
