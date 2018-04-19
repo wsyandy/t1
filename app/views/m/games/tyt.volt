@@ -58,14 +58,14 @@
             },
             watch: {
                 diamond_game_amount: function (val) {
+                    vm.amount = val;
+                    
                     if (vm.select_game_type == 2) {
-                        vm.amount = val;
+
                     }
                 },
                 gold_game_amount: function (val) {
-                    if (vm.select_game_type == 1) {
-                        vm.amount = val;
-                    }
+                    vm.amount = val;
                 }
             },
             methods: {
@@ -103,7 +103,7 @@
                         alert('选择游戏类型');
                         return;
                     }
-                    
+
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
                             vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
