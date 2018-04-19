@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/main.css') }}
 {{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
-{% if current_user.id == game_host_user_id %}
+{% if current_user.id == game_host_user.id and can_create_game %}
     <div id="app" class="select_game">
         <div class="select_game_instructions">
             <div class="instructions_title">
@@ -49,10 +49,11 @@
                 gold_game_amount: '',
                 amount: 0,
                 pay_type: 'free',
-                game_host_user_id: "{{ game_host_user_id }}",
+                game_host_user_id: "{{ game_host_user.id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 room_id: "{{ room_id }}",
+                game_id:"{{ game.id }}",
                 current_user:{{ current_user }}
             },
             watch: {
@@ -94,12 +95,13 @@
                         'user_id': vm.game_host_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'room_id': vm.room_id,
-                        'sid': "{{ current_user.sid }}"
+                        'game_id':vm.game_id,
+                        'sid': vm.sid
                     };
+
                     $.authPost('/m/games/fee', data, function (resp) {
-                        if (!resp.error_code) {
-                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
+                        if (resp.error_code == 0) {
+                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
                         } else {
                             alert(resp.error_reason);
                         }
@@ -136,7 +138,7 @@
             <button @click="go_game()">参与游戏 GO</button>
         </div>
         {#这里回头要加判断，判断用户用户的钻石数是否大于等于入场费#}
-        <div class="prompt_toast" v-if="can_game"><span>${error_reason}</span></div>
+        <div class="prompt_toast" v-if="error_reason"><span>${error_reason}</span></div>
     </div>
     <script>
         var opts = {
@@ -144,16 +146,17 @@
                 pay_type: "{{ pay_type }}",
                 pay_type_text: "",
                 amount: "{{ amount }}",
-                game_host_user_id: "{{ game_host_user_id }}",
+                game_host_user_id: "{{ game_host_user.id }}",
                 room_id: "{{ room_id }}",
-                room_host_nickname: "{{ room_host_nickname }}",
+                game_host_nickname: "{{ game_host_nickname }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                can_game: false,
-                error_reason: '钻石不足',
+                error_reason: '',
                 game_status_text: '',
                 current_user:{{ current_user }},
-                can_create_game: "{{ can_create_game }}"
+                can_create_game: "{{ can_create_game }}",
+                game_history_id:"{{ game_history_id }}",
+                game_id:"{{ game.id }}"
             },
             watch: {},
             methods: {
@@ -163,17 +166,13 @@
                         return;
                     }
                     var data = {
-                        'user_id': vm.current_user_id,
-                        'pay_type': vm.pay_type,
-                        'amount': vm.amount,
-                        'room_id': vm.room_id,
+                        'game_history_id': vm.game_history_id,
                         'sid': vm.sid
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
-                            vm.redirectAction('/m/games/wait?room_id=' + vm.room_id + '&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
                         } else {
-                            vm.can_game = true;
                             vm.error_reason = resp.error_reason;
                         }
                     });
@@ -185,12 +184,12 @@
         $(function () {
             if (!vm.pay_type) {
                 if (vm.can_create_game) {
-                    vm.game_status_text =  vm.room_host_nickname + '正在发起游戏中，请稍后！';
+                    vm.game_status_text =  vm.game_host_nickname + '正在发起游戏中，请稍后！';
                 }else{
                     vm.game_status_text = '您不是主播,不能发起游戏';
                 }
             } else {
-                vm.game_status_text = vm.room_host_nickname + '已发起游戏';
+                vm.game_status_text = vm.game_host_nickname + '已发起游戏';
             }
 
             switch (vm.pay_type) {
