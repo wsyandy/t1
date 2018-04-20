@@ -41,7 +41,7 @@ class UnionsController extends BaseController
         }
     }
 
-    function hotSearchAction()
+    function recommendAction()
     {
         $unions = \Unions::recommend(1, 5);
 

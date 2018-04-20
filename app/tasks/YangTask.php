@@ -980,7 +980,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function hotUnionsSearchAction($params)
     {
-        $url = "http://test.momoyuedu.cn/api/unions/hot_search";
+        $url = "http://test.momoyuedu.cn/api/unions/recommend";
         $body = $this->commonBody();
         $user_id = $params[0];
         $user = \Users::findFirstById($user_id);

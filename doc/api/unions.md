@@ -41,7 +41,7 @@
 
 ## 3.推荐家族
 
-> http-get ```/api/unions/hot_search```
+> http-get ```/api/unions/recommend```
 
 ##### 3.1 请求参数说明
 
