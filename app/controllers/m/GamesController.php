@@ -327,6 +327,8 @@ class GamesController extends BaseController
     {
         info($this->params());
 
+        $current_user = $this->currentUser();
+
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
 
@@ -338,6 +340,12 @@ class GamesController extends BaseController
             $game_history->save();
         }
 
+        // 主动退出
+        if ($this->params('quit') && $game_history->status != GAME_STATUS_END) {
+            info('主动退出', $this->params(), $game_history);
+            $hot_cache->zrem($room_enter_key, $current_user->id);
+        }
+
         $end_data = json_decode($game_history->end_data, true);
         $rank_data = fetch($end_data, 'rank_data', []);
 
@@ -347,7 +355,7 @@ class GamesController extends BaseController
             $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
         }
 
-        $current_user = $this->currentUser();
+
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
 
         $intranet_ip = $current_user->getIntranetIp();
@@ -360,10 +368,6 @@ class GamesController extends BaseController
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
         $pay_type = fetch($start_data, 'pay_type');
-
-        $hot_cache = \GameHistories::getHotWriteCache();
-        $room_enter_key = "game_room_enter_" . $game_history->room_id;
-        $total_user_num = $hot_cache->zcard($room_enter_key);
 
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
