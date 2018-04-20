@@ -272,7 +272,7 @@ class GamesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已退出游戏');
         }
 
-        $user_ids = $hot_cache->zrange($room_wait_key, 0, 1);
+        $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
         $users = \Users::findByIds($user_ids);
 
         $data = $users->toJson('users', 'toSimpleJson');
