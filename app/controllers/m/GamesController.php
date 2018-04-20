@@ -289,6 +289,7 @@ class GamesController extends BaseController
             }
 
             // 扣款成功
+            $data['can_enter'] = 1;
             $room_enter_key = "game_room_enter_" . $game_history->room_id;
             $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
             $hot_cache->expire($room_enter_key, 200);
