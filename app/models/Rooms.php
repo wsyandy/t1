@@ -1491,7 +1491,7 @@ class Rooms extends BaseModel
             }
         }
 
-        if ($user->isIosAuthVersion()) {
+        if ($user && $user->isIosAuthVersion()) {
             return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
         }
 
