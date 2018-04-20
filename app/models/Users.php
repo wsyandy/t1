@@ -1548,9 +1548,9 @@ class Users extends BaseModel
             $user_db->zrem($other_total_key, $this->id);
         }
 
-        $user_db->zrem($friend_note_key, $other_user->id);
-        $user_db->zrem($user_introduce_key, $other_user->id);
-        $user_db->zrem($other_user_introduce_key, $other_user->id);
+        $user_db->hdel($friend_note_key, $other_user->id);
+        $user_db->hdel($user_introduce_key, $other_user->id);
+        $user_db->hdel($other_user_introduce_key, $other_user->id);
     }
 
     //是否为好友
