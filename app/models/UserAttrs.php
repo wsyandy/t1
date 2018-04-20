@@ -182,6 +182,7 @@ trait UserAttrs
     {
         $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,

@@ -517,7 +517,7 @@ class UsersController extends BaseController
         $keyword = $this->params('keyword');
 
         if (!is_null($keyword)) {
-            if (preg_match('/^[0-9]*$/', $keyword) && $keyword !== 0) {
+            if (preg_match('/^[0-9]*$/', $keyword)) {
                 $uid = intval($keyword);
                 $nickname = $keyword;
             } else {

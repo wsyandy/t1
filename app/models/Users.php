@@ -1762,10 +1762,6 @@ class Users extends BaseModel
             }
         }
 
-        if ($nickname) {
-            $cond['conditions'] .= ' and (nickname like :nickname:) ';
-            $cond['bind']['nickname'] = "%{$nickname}%";
-        }
 
         if ($city_id) {
             $cond['conditions'] .= ' and (city_id=:city_id: or geo_city_id=:geo_city_id: or ip_city_id=:ip_city_id:)';
