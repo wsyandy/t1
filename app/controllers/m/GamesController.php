@@ -387,14 +387,6 @@ class GamesController extends BaseController
             }
         }
 
-
-        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
-
-        $intranet_ip = $current_user->getIntranetIp();
-        $receiver_fd = $current_user->getUserFd();
-
-        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-
         info($this->currentUser()->id, $game_history->end_data, 'user_info', $user_datas);
 
         $start_data = json_decode($game_history->start_data, true);
@@ -570,6 +562,15 @@ class GamesController extends BaseController
         $end_data['rank_data'] = $rank_data;
         $game_history->end_data = json_encode($end_data, JSON_UNESCAPED_UNICODE);
         $game_history->save();
+
+        //在游戏结束回调通知的时候，发送结束通知
+        $current_user = $this->currentUser();
+        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
+
+        $intranet_ip = $current_user->getIntranetIp();
+        $receiver_fd = $current_user->getUserFd();
+
+        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
     }

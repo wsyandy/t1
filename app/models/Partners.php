@@ -6,7 +6,7 @@ class Partners extends BaseModel
     static $STATUS = [PARTNER_STATUS_NORMAL => '正常', PARTNER_STATUS_BLOCK => '无效'];
 
     static $NOTIFY_CALLBACK = ['' => '不支持', 'notify_gdt' => '广点通回调', 'notify_active' => '头条回调',
-        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调', 'notify_jp' => '巨朋回调', 'notify_xztx' => '行者天下回调'];
+        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调', 'notify_jp' => '巨朋回调', 'notify_xztx' => '行者天下回调','notify_xc'=>'星辰回调'];
 
     static $GROUP_TYPE = [PARTNER_GROUP_TYPE_NO => '默认'];
 
@@ -150,7 +150,7 @@ class Partners extends BaseModel
         }
 
         $deduct_ratio = $partner->deduct_ratio;
-        
+
         if ($deduct_ratio && $deduct_ratio <= mt_rand(1, 100)) {
             info('callback deduct', $deduct_ratio, $fr, $data);
             return;
@@ -427,6 +427,17 @@ class Partners extends BaseModel
         $source = fetch($data, 'source');
         $callback = fetch($data, 'callback');
         if ($callback && $source == 'adwalker') {
+            $res = httpGet($callback);
+            info($callback, $res->body);
+        };
+    }
+
+    function notifyXc($data)
+    {
+        $source = fetch($data, 'source');
+        $callback = fetch($data, 'callback');
+        if ($callback && $source == 'xc') {
+            $callback = urldecode($callback);
             $res = httpGet($callback);
             info($callback, $res->body);
         };

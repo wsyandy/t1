@@ -326,5 +326,32 @@ class SourcesController extends \ApplicationController
         echo 'success';
         return;
     }
+
+    //星辰广告推广
+    public function xcClickAction()
+    {
+        $attrs['source'] = 'xc';
+        $fields = ['code', 'fr', 'appid', 'idfa', 'callbackurl'];
+        $hot_cache = \Devices::getHotWriteCache();
+
+        foreach ($fields as $key) {
+            if ($key == 'callbackurl') {
+                $attrs['callback'] = $this->params($key);
+            } else {
+                $attrs[$key] = $this->params($key);
+            }
+        }
+
+        $muid = strtolower(md5(strtoupper($attrs['idfa'])));
+        $attrs['muid'] = $muid;
+        $attrs['click_time'] = time();
+
+        $new_click_key = 'new_click_ad_event_' . $attrs['code'] . '_muid_' . $muid;
+        $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
+        info('set', $new_click_key, $attrs);
+
+        echo 'success';
+        return;
+    }
 }
 
