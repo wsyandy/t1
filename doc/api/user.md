@@ -375,7 +375,7 @@
 |uid|用户uid|int|是|新接口|
 |page|当前页|int|是||
 |per_page|每页个数|int|是||
-|keyword|关键字|string|是|||
+|keyword|关键字|string|是|当做uid或昵称，传此参数，无需再传uid|
 
 ##### 10.2 回应参数说明
 ```
