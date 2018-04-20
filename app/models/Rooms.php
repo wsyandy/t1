@@ -1484,15 +1484,15 @@ class Rooms extends BaseModel
         $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_user_num_key = Rooms::getTotalRoomUserNumListKey();
 
-        if ($user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
-        }
-
         foreach ($total_room_ids as $room_id) {
 
             if ($hot_cache->zscore($total_user_num_key, $room_id) < 1) {
                 $hot_cache->zrem($hot_room_list_key, $room_id);
             }
+        }
+
+        if ($user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
         }
 
         $total_entries = $hot_cache->zcard($hot_room_list_key);
