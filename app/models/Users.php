@@ -1457,6 +1457,10 @@ class Users extends BaseModel
 
         $friend_note = $db->hget($friend_note_key, $user_id);
 
+        if (is_null($friend_note)) {
+            return '';
+        }
+
         return $friend_note;
     }
 
