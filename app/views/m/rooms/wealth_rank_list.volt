@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/rooms/css/wealth_list_rank') }}
-{{ theme_js('/m/rooms/js/font_rem') }}
+{{ theme_css('/m/css/wealth_list_rank.css') }}
+{{ theme_js('/js/font_rem.js') }}
 {{ block_end() }}
 
 <div class="vueBox" id="app" v-cloak="">
@@ -19,7 +19,7 @@
                 <div class="pic">
                     <img :src="users[0].avatar_small_url">
                 </div>
-                <img src="images/one_num.png" class="one_num">
+                <img src="/m/images/one_num.png" class="one_num">
             </div>
             <h3>${ users[0].nickname }
                 <img :src="users[0].level_img" v-if="users[0].level">
@@ -31,14 +31,14 @@
         <table class="table">
             <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="images/two.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_weath_two.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic">
                         <div class="pic">
                             <img :src="users[1].avatar_small_url">
                         </div>
-                        <img src="images/two_num.png" class="two_num">
+                        <img src="/m/images/two_num.png" class="two_num">
                     </div>
                 </td>
                 <td>
@@ -53,14 +53,14 @@
             </tr>
             <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="images/three.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_wealth_three.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic three_pic">
                         <div class="pic">
                             <img :src="users[2].avatar_small_url">
                         </div>
-                        <img src="images/three_num.png" class="two_num">
+                        <img src="/m/images/three_num.png" class="two_num">
                     </div>
                 </td>
                 <td>

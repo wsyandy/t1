@@ -12,6 +12,7 @@ class Activities extends BaseModel
     static $files = ['image' => APP_NAME . '/activities/image/%s'];
     static $PLATFORMS = ['client_ios' => '客户端ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
         'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
+    static $TYPE = [ACTIVITY_TYPE_COMMON => '普通活动', ACTIVITY_TYPE_ROOM => '房间活动'];
 
     //抽奖奖品类型
     static $ACTIVITY_PRIZE_TYPE = [1 => '10000金币', 2 => '5位数幸运号', 3 => '1000金币', 4 => '6位数幸运号', 5 => '100金币',
@@ -86,8 +87,8 @@ class Activities extends BaseModel
 
             if ($this->hasChanged($field)) {
                 $obj = self::findFirst([
-                    'conditions' => "$field  = :$field:",
-                    'bind' => [$field => $val]
+                    'conditions' => "$field  = :$field: and type = :type:",
+                    'bind' => [$field => $val, 'type' => $this->type]
                 ]);
 
                 if (isPresent($obj)) {
@@ -99,12 +100,16 @@ class Activities extends BaseModel
     }
 
 
-    static function findActivity($opts)
+    static function findActivities($opts)
     {
         $platform = fetch($opts, 'platform');
         $product_channel_id = fetch($opts, 'product_channel_id');
+        $type = fetch($opts, 'type', ACTIVITY_TYPE_COMMON);
         $conditions = [];
         $bind = [];
+
+        $conditions[] = "type = :type: ";
+        $bind['type'] = $type;
 
         $conditions[] = " (platforms like :platform: or platforms like '*' or platforms = '') ";
         $bind['platform'] = "%" . $platform . "%";
@@ -124,6 +129,25 @@ class Activities extends BaseModel
         $activities = Activities::findForeach($cond);
 
         return $activities;
+    }
+
+    static function findRoomActivities($opts)
+    {
+        $activities = self::findActivities($opts);
+        $res = [];
+
+        if ($activities) {
+
+            foreach ($activities as $activity) {
+                $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
+                $activity = $activity->toSimpleJson();
+                $activity['url'] = $url;
+                $res[] = $activity;
+            }
+
+        }
+
+        return $res;
     }
 
     //添加抽奖活动

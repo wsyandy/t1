@@ -97,7 +97,7 @@ class GamesController extends BaseController
         info($this->params());
 
         $current_user = $this->currentUser();
-
+        $room_id = $current_user->current_room_id;
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
         if ($game_history) {
@@ -111,7 +111,6 @@ class GamesController extends BaseController
             $pay_type = fetch($start_data, 'pay_type');
         } else {
 
-            $room_id = $current_user->current_room_id;
             $game = \Games::findFirstById($this->params('game_id'));
             $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
                 'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
@@ -290,6 +289,7 @@ class GamesController extends BaseController
             }
 
             // 扣款成功
+            $data['can_enter'] = 1;
             $room_enter_key = "game_room_enter_" . $game_history->room_id;
             $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
             $hot_cache->expire($room_enter_key, 200);

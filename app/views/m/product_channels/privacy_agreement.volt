@@ -74,7 +74,7 @@
     <p class="bold text-decoration">若您和我们发生任何纠纷或争议，首先应友好协商解决；协商不成的，您同意将纠纷或争议提交本隐私政策签订地<span class="text-decoration">上海市闵行区</span>有管辖权的人民法院管辖。</p>
     <h4>十、如何联系我们</h4>
     <p>若您对我们的隐私政策有任何疑问，可随时联系我们。</p>
-    <p>邮寄地址：<span class="text-decoration">上海市闵行区宝城路158弄38号1210室</span></p>
+    <p>邮寄地址：<span class="text-decoration">上海市闵行区黎安路999号大虹桥国际6楼</span></p>
     <p>{{ product_channel.agreement_company_name }}  法务部  <span class="text-decoration">张先生</span>收</p>
     <p>邮编：<span class="text-decoration">201100</span></p>
 </div>

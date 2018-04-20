@@ -18,7 +18,7 @@ class ActivitiesController extends BaseController
 
         $platform = 'client_' . $platform;
 
-        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+        $activities = \Activities::findActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
 
         $this->view->sid = $sid;
         $this->view->code = $code;
@@ -294,7 +294,7 @@ class ActivitiesController extends BaseController
         $max = 9;
 
         if (intval($date) > intval($stat_at)) {
-            $max = 3;
+            $max = 2;
         }
 
         $key = "room_stats_income_day_" . $stat_at;
@@ -315,13 +315,13 @@ class ActivitiesController extends BaseController
         $rooms = \Rooms::findByIds($room_ids);
 
         if (count($rooms)) {
-            $first_room = $rooms[0];
 
-            $first_room_income = $incomes[$first_room->id];
-
-            foreach ($rooms as $room) {
-                if ($room != $first_room) {
-                    $room->missing_income = $first_room_income - $incomes[$room->id];
+            foreach ($rooms as $index => $room) {
+                
+                if ($index > 0) {
+                    $last_room = $rooms[$index - 1];
+                    $last_room_income = $incomes[$last_room->id];
+                    $room->missing_income = $last_room_income - $incomes[$room->id];
                 }
             }
         }

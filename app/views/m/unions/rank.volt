@@ -57,11 +57,16 @@
             </li>
         </ul>
     </div>
-    <div class="my_ranking" v-show="!cur_idx">
+    <div class="my_ranking" v-show="!cur_idx && my_rank">
         我的家族日榜排名 <span class="num">${my_rank}</span> 位
     </div>
-    <div class="my_ranking" v-show="cur_idx">
+
+    <div class="my_ranking" v-show="cur_idx && my_rank">
         我的家族周榜排名 <span class="num">${my_rank}</span> 位
+    </div>
+
+    <div class="my_ranking" v-show="!my_rank">
+        您的家族未上榜
     </div>
 
 </div>
@@ -80,7 +85,7 @@
             page: 1,
             total_page: 1,
             union_list: [],
-            my_rank: 1
+            my_rank: 0
         },
         created: function () {
             this.list();

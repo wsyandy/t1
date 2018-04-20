@@ -184,7 +184,7 @@ class WithdrawAccountsController extends BaseController
 
         //校验银行卡
         if (!\IdCardAuths::checkBankAccount($account) && $type == WITHDRAW_ACCOUNT_TYPE_BANK) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '银行卡错误');
+            //return $this->renderJSON(ERROR_CODE_FAIL, '银行卡错误');
         }
         
         $account_bank_id = intval($this->params('account_bank_id'));

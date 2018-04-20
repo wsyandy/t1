@@ -5,8 +5,9 @@
 {{ f.file('image', ['label': '图片']) }}
 {{ f.input('start_at',['label':'开始时间','class':'form_datetime','width':'50%']) }}
 {{ f.input('end_at',['label':'结束时间','class':'form_datetime','width':'50%']) }}
-{{ f.input('rank',['label':'排序', 'width':'50%']) }}
-{{ f.select('status',['label':'状态', 'collection': Activities.STATUS, 'width':'50%']) }}
+{{ f.input('rank',['label':'排序', 'width':'33%']) }}
+{{ f.select('status',['label':'状态', 'collection': Activities.STATUS, 'width':'33%']) }}
+{{ f.select('type',['label':'类型', 'collection': Activities.TYPE, 'width':'33%']) }}
 
 <div class="error_reason" style="color: red;"></div>
 {{ f.submit('保存') }}

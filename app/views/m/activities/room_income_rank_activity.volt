@@ -26,7 +26,7 @@
                                 {% elseif index == 2 %}
                                     <img class="voice_ico" src="/m/images/income_rank_activity_three.png" alt="">
                                 {% else %}
-                                    <span>{{ index }}</span>
+                                    <span>{{ index+1 }}</span>
                                 {% endif %}
                             </td>
                             <td>

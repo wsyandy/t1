@@ -52,7 +52,6 @@
                 game_host_user_id: "{{ game_host_user.id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                room_id: "{{ room_id }}",
                 game_id:"{{ game.id }}",
                 current_user:{{ current_user }}
             },

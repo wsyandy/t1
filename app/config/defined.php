@@ -298,3 +298,6 @@ define('WITHDRAW_ACCOUNT_TYPE_BANK', 2); //银行卡
 define('GAME_STATUS_WAIT', 0);
 define('GAME_STATUS_PLAYING', 1);
 define('GAME_STATUS_END', 2);
+
+define('ACTIVITY_TYPE_COMMON', 1); //普通活动
+define('ACTIVITY_TYPE_ROOM', 2); //活动类型房间

@@ -219,8 +219,6 @@ class RoomsController extends BaseController
     function detailAction()
     {
         $room_id = $this->params('id', 0);
-        $sid = $this->params('sid');
-        $code = $this->params('code');
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -276,19 +274,16 @@ class RoomsController extends BaseController
             $platform = $this->params('pf');
             $platform = 'client_' . $platform;
 
-            $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+            $activities = \Activities::findRoomActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform,
+                'type' => ACTIVITY_TYPE_ROOM]);
+
             if ($activities) {
-                foreach ($activities as $key => $activity) {
-                    $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
-                    $activity = $activity->toSimpleJson();
-                    $activity['url'] = $url;
-                    $res['activities'][] = $activity;
-                }
+                $res['activities'] = $activities;
             }
 
             $game_history = $room->getGameHistory();
             if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id='.$game_history->game_id, 'icon' => $root . 'images/go_game.png'];
+                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
         }
 
