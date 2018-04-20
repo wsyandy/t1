@@ -47,7 +47,7 @@ trait UserAbilities
     function isIosAuthVersion()
     {
         $result = $this->isIos() &&
-            intval($this->version_code) >= intval($this->product_channel->apple_stable_version);
+            intval($this->version_code) > intval($this->product_channel->apple_stable_version);
         return $result;
     }
 
