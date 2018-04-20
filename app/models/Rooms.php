@@ -2170,9 +2170,7 @@ class Rooms extends BaseModel
         //限制搜索条件
         $cond = [
             'conditions' => 'online_status = :online_status: and status = :status: and user_id <> :user_id:',
-            'bind' => [
-                'product_channel_id' => $product_channel->id, 'online_status' => STATUS_ON, 'status' => STATUS_ON,
-                'user_id' => $user_id],
+            'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'user_id' => $user_id],
             'order' => 'last_at desc, user_type asc'
         ];
 
@@ -2215,6 +2213,8 @@ class Rooms extends BaseModel
 
             }
         }
+
+        debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
