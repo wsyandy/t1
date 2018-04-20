@@ -906,7 +906,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function addFriendNoteAction($params)
     {
-        $url = "http://test.momoyuedu.cn/api/friends/add_friend_note";
+        $url = "http://test.momoyuedu.cn/api/users/add_friend_note";
         $body = $this->commonBody();
         $user_id = $params[0];
         $remark = $params[1];

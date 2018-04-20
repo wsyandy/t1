@@ -130,21 +130,3 @@
 	error_reason
 }
 ```
-
-
-### 7 添加备注
-
-> http-post ```/api/friends/add_friend_note```
-
-##### 7.1 请求参数说明
-|参数|名称|值类型|是否可空|备注
-|---|---|---|---|---|
-| user_id |用户id|int|否||
-| friend_note|备注|string|否|客户端需限制文字的长度|
-##### 7.2 回应参数说明
-```
-{
-	error_code  0 成功，非0失败
-	error_reason
-}
-```
