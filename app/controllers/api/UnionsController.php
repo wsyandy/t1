@@ -48,14 +48,12 @@ class UnionsController extends BaseController
         $sid = $this->params('sid');
 
         if (count($unions)) {
-            $unions_json = [];
 
             foreach ($unions as $union) {
-                $url = "url://m/unions/my_union?sid={$sid}&union_id={$union->id}";
-                $unions_json[] = ['name' => $union->name, 'url' => $url];
+                $union->url = "url://m/unions/my_union?sid={$sid}&union_id={$union->id}";
             }
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $unions_json);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $unions->toJson('unions', 'toSimpleJson'));
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, "暂无热搜");

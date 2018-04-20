@@ -39,7 +39,7 @@
 }
 ```
 
-## 3.热搜家族
+## 3.推荐家族
 
 > http-get ```/api/unions/hot_search```
 
@@ -55,10 +55,16 @@
     error_code: 0成功，非0失败
     error_reason  失败原因，默认为空
     unions:[
-         {
-                name string 昵称
-                url string 家族详情链接 url://m/unions/my_union
-         }
+          {
+                     id 用户id
+                     name 昵称
+                     fame_value 声望值
+                     user_num 成员数量
+                     avatar_url 用户头像
+                     avatar_small_url 用户小头像
+                     url 家族详情链接 url://m/unions/my_union
+          }
+          ...
     ]
 }
 ```
