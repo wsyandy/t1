@@ -2167,6 +2167,8 @@ class Rooms extends BaseModel
         $filter_ids = fetch($opts, 'filter_ids', []);
         $user_id = $user->id;
 
+        debug($user->sid, $opts);
+        
         //限制搜索条件
         $cond = [
             'conditions' => 'online_status = :online_status: and status = :status: and user_id <> :user_id:',
