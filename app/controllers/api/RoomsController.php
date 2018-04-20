@@ -276,19 +276,22 @@ class RoomsController extends BaseController
             $platform = $this->params('pf');
             $platform = 'client_' . $platform;
 
-            $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+            $activities = \Activities::findActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+
             if ($activities) {
+
                 foreach ($activities as $key => $activity) {
-                    $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id . '&sid=' . $sid . '&code=' . $code;
+                    $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
                     $activity = $activity->toSimpleJson();
                     $activity['url'] = $url;
                     $res['activities'][] = $activity;
                 }
+
             }
 
             $game_history = $room->getGameHistory();
             if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id='.$game_history->game_id, 'icon' => $root . 'images/go_game.png'];
+                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
         }
 
