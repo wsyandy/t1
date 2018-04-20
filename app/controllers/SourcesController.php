@@ -251,7 +251,7 @@ class SourcesController extends \ApplicationController
 
         if (preg_match('/iOS/i', $attrs['osversion'])) {
             $muid = strtolower(md5(strtoupper($attrs['devid'])));
-        }else{
+        } else {
             $muid = strtolower(md5(strtolower($attrs['devid'])));
         }
 
@@ -302,6 +302,28 @@ class SourcesController extends \ApplicationController
         }
         info($idfa, $result);
         echo json_encode([$idfa => $result], JSON_UNESCAPED_UNICODE);
+        return;
+    }
+
+    //行者天下广告
+    public function xztxClickAction()
+    {
+        $fields = ['source', 'code', 'callback', 'idfa', 'appid', 'fr'];
+        $hot_cache = \Devices::getHotWriteCache();
+
+        foreach ($fields as $field) {
+            $attrs[$field] = $this->params($field);
+        }
+
+        $muid = strtolower(md5(strtolower($attrs['idfa'])));
+        $attrs['muid'] = $muid;
+        $attrs['click_time'] = time();
+
+        $new_click_key = 'new_click_ad_event_' . $attrs['code'] . '_muid_' . $muid;
+        $hot_cache->setex($new_click_key, 60 * 60 * 72, json_encode($attrs, JSON_UNESCAPED_UNICODE));
+        info('set', $new_click_key, $attrs);
+
+        echo 'success';
         return;
     }
 }

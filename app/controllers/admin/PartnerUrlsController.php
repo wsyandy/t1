@@ -78,6 +78,7 @@ class PartnerUrlsController extends BaseController
         $partner_url_id = $this->params('partner_url_id');
         $product_channel = \ProductChannels::findFirstById($product_channel_id);
         $partner_id = $this->params('partner_id');
+
         $fr = '';
         if ($partner_id) {
             $partner = \Partners::findFirstById($partner_id);
@@ -95,6 +96,7 @@ class PartnerUrlsController extends BaseController
         } else {
             $partner_param = sprintf($partner_param, $code, $fr);
         }
+
 
         if ($partner_param && $partner_url->domain) {
             $url = 'http://' . $partner_url->domain . $partner_param;
