@@ -37,17 +37,17 @@ trait UserAbilities
         if ($this->isAndroid()) {
             return false;
         }
-        return $this->isAuthVersion();
+        return $this->isIosAuthVersion();
     }
 
     /**
      * iOS审核版本
      * @return bool
      */
-    function isAuthVersion()
+    function isIosAuthVersion()
     {
         $result = $this->isIos() &&
-            intval($this->version_code) >= intval($this->product_channel->apple_stable_version);
+            intval($this->version_code) > intval($this->product_channel->apple_stable_version);
         return $result;
     }
 

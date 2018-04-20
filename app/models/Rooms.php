@@ -1491,6 +1491,10 @@ class Rooms extends BaseModel
             }
         }
 
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+        }
+
         $total_entries = $hot_cache->zcard($hot_room_list_key);
 
         $offset = $per_page * ($page - 1);
@@ -2155,4 +2159,79 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
+    static function search($user, $product_channel, $page, $per_page, $opts = [])
+    {
+        $new = intval(fetch($opts, 'new', 0));
+        $broadcast = intval(fetch($opts, 'broadcast', 0));
+        $follow = intval(fetch($opts, 'follow', 0));
+        $filter_ids = fetch($opts, 'filter_ids', []);
+        $user_id = $user->id;
+
+        debug($user->sid, $opts);
+        
+        //限制搜索条件
+        $cond = [
+            'conditions' => 'online_status = :online_status: and status = :status: and user_id <> :user_id:',
+            'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'user_id' => $user_id],
+            'order' => 'last_at desc, user_type asc'
+        ];
+
+        if (count($filter_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
+            return \Rooms::findPagination($cond, $page, $per_page);
+        }
+
+        if (STATUS_ON == $broadcast) {
+            $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
+            $cond['conditions'] .= " and theme_type in ($theme_types)";
+        }
+
+        if (STATUS_ON == $follow) {
+
+            $user_ids = $user->followUserIds();
+
+            if (count($user_ids) > 0) {
+                $cond['conditions'] .= " and user_id in (" . implode(',', $user_ids) . ") ";
+            }
+
+        }
+
+        if (!$new && !$broadcast && !$follow && 2 == $product_channel->id) {
+            $search_type = '';
+
+            foreach (\Rooms::$TYPES as $key => $value) {
+
+                $type_value = fetch($opts, $key);
+
+                if (STATUS_ON == $type_value) {
+                    $search_type = $key;
+                    break;
+                }
+            }
+
+            if ($search_type) {
+                $cond['conditions'] .= " and types like :types:";
+                $cond['bind']['types'] = "%" . $search_type . "%";
+
+            }
+        }
+
+        debug($cond);
+
+        $rooms = \Rooms::findPagination($cond, $page, $per_page);
+
+        if (!isDevelopmentEnv() && $rooms->total_entries < 2) {
+
+            $cond = [
+                'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
+                'order' => 'last_at desc, user_type asc'
+            ];
+
+            info("no_hot_rooms", $user->sid);
+
+            $rooms = \Rooms::findPagination($cond, $page, $per_page);
+        }
+
+        return $rooms;
+    }
 }
