@@ -18,7 +18,7 @@ class ActivitiesController extends BaseController
 
         $platform = 'client_' . $platform;
 
-        $activities = \Activities::findActivity(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
+        $activities = \Activities::findActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
 
         $this->view->sid = $sid;
         $this->view->code = $code;
