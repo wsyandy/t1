@@ -268,7 +268,7 @@ class RoomsController extends BaseController
         $platform = 'client_' . $platform;
 
         if ($show_game) {
-            
+
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
             $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
             $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
@@ -280,7 +280,7 @@ class RoomsController extends BaseController
             }
         }
 
-        $activities = \Activities::findRoomActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform,
+        $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 
         if ($activities) {
