@@ -3413,9 +3413,9 @@ class Users extends BaseModel
 
     function canSendToUser($user_id, $gift_amount)
     {
-        $user = \Users::findFirstById($user_id);
+        //$user = \Users::findFirstById($user_id);
         if (!$this->isWhiteListUser()) {
-            if ($this->isCompanyUser() && $user_id != $this->id && !$user->isCompanyUser()) {
+            if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
                 $send_number = $hot_cache->zscore($key, $this->id);
