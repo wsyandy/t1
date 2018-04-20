@@ -512,9 +512,26 @@ class UsersController extends BaseController
         }
 
         $uid = intval($this->params('uid'));
-        if ($uid) {
-            $cond = ['uid' => intval($uid)];
+        $nickname = null;
+
+        $keyword = $this->params('keyword');
+
+        if (!is_null($keyword)) {
+            if (preg_match('/^[0-9]*$/', $keyword) && $keyword !== 0) {
+                $uid = intval($keyword);
+                $nickname = $keyword;
+            } else {
+                $nickname = $keyword;
+            }
+
+            $cond['nickname'] = $nickname;
+
         }
+
+        if ($uid) {
+            $cond['uid'] = intval($uid);
+        }
+
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
         if (count($users)) {
@@ -744,7 +761,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        if ($friend_note && mb_strlen($friend_note) > 250) {
+        if ($friend_note && mb_strlen($friend_note) > 10) {
             return $this->renderJSON(ERROR_CODE_FAIL, '备注字数过长');
         }
 

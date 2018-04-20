@@ -9,7 +9,7 @@ class PartnerUrls extends BaseModel
 
     static $PLATFORM = ['android' => '安卓', 'ios' => 'ios'];
 
-    static $TYPE = ['gdt' => '广点通', 'toutiao' => '头条', 'uc' => '阿里汇川UC', 'wx_gdt' => '微信广告', 'momo' => '陌陌', 'baidu' => '百度', 'sina' => '新浪','jp'=>'巨朋','xztx'=>'行者天下'];
+    static $TYPE = ['gdt' => '广点通', 'toutiao' => '头条', 'uc' => '阿里汇川UC', 'wx_gdt' => '微信广告', 'momo' => '陌陌', 'baidu' => '百度', 'sina' => '新浪','jp'=>'巨朋','xztx'=>'行者天下','cg'=>'辰告'];
 
     static $PARTNER_PARMS = [
         'android_toutiao' => '/sources/active?code=%s&imei=__IMEI__&ip=__IP__&click_time=__TS__&os=__OS__&callback=__CALLBACK_URL__',
@@ -27,7 +27,8 @@ class PartnerUrls extends BaseModel
         'android_sina' => '/sources/sina_click?code=%s&uuid={Uuid}&devid={User}&groupid={Groupid}&osversion={Osversion}',
         'ios_sina' => '/sources/sina_click?code=%s&fr2=%s&uuid={Uuid}&devid={User}&groupid={Groupid}&osversion={Osversion}',
         'ios_jp' => '/sources/jp_click?code=%s&fr=%s&source=jp&appid={appid}&idfa={idfa}&keywords={keywords}&callback={callback}',
-        'ios_xztx' => '/sources/xztx_click?code=%s&fr=%s&appid={appid}&deviceid={deviceid}&source=adwalker&mac={mac}&idfa={idfa}&callback={callback}'
+        'ios_xztx' => '/sources/xztx_click?code=%s&fr=%s&appid={appid}&deviceid={deviceid}&source=adwalker&mac={mac}&idfa={idfa}&callback={callback}',
+        'ios_cg' => '/sources/cg_click?code=%s&fr=%s&appid={appid}&idfa={idfa}&callbackurl={callbackurl}'
     ];
 
     function mergeJson()

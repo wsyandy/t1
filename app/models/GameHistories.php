@@ -28,10 +28,12 @@ class GameHistories extends BaseModel
 
         if ($this->hasChanged('status') && $this->status == GAME_STATUS_END) {
             $hot_cache = \Users::getHotWriteCache();
-            $room_wait_key = "game_room_wait_" . $this->room_id;
-            $room_enter_key = "game_room_enter_" . $this->room_id;
+            $room_wait_key = "game_room_wait_" . $this->id;
+            $room_enter_key = "game_room_enter_" . $this->id;
+            $room_user_quit_key = "game_room_user_quit_" . $this->id;
             $hot_cache->del($room_wait_key);
             $hot_cache->del($room_enter_key);
+            $hot_cache->del($room_user_quit_key);
         }
     }
 
