@@ -325,9 +325,9 @@ class ActivitiesController extends BaseController
                 }
             }
         }
-
+        
         $this->view->rooms = $rooms;
-
+        $this->view->max = $max;
         $this->view->title = "hi语音活动";
     }
 }
