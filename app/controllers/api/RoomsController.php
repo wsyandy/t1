@@ -690,4 +690,42 @@ class RoomsController extends BaseController
         $content_type = $this->params('content_type');
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
+
+    function searchAction()
+    {
+        $page = $this->params('page', 1);
+        $per_page = $this->params('per_page', 10);
+
+        $keyword = $this->params('keyword');
+        if (!$keyword) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
+        }
+
+        $name = $keyword;
+
+        //限制搜索条件
+        $cond = [
+            'conditions' => 'online_status =  :online_status: and status = :status:',
+            'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON],
+            'order' => 'last_at desc, user_type asc'
+        ];
+
+        if ($name) {
+            $cond['conditions'] .= ' and name like :name:';
+            $cond['bind']['name'] = '%' . $name . '%';
+        }
+
+        debug($cond);
+
+        $rooms = \Rooms::findPagination($cond, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+    }
+
+    function hotSearchAction()
+    {
+        $keywords = ['球球', '王者', '绝地', '终结者', '处对象', '音乐', '电台', '第五人格', 'les', '关注'];
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['keywords' => $keywords]);
+    }
 }

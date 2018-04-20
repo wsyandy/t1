@@ -744,7 +744,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        if ($friend_note && mb_strlen($friend_note) > 250) {
+        if ($friend_note && mb_strlen($friend_note) > 10) {
             return $this->renderJSON(ERROR_CODE_FAIL, '备注字数过长');
         }
 

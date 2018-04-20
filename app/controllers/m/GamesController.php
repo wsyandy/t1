@@ -400,7 +400,7 @@ class GamesController extends BaseController
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
         $pay_type = fetch($start_data, 'pay_type');
-
+        info('入场费为=>', $amount, '游戏人数：' . $total_user_num);
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
         $this->view->amount = $amount;
@@ -451,6 +451,8 @@ class GamesController extends BaseController
 
         $room_enter_key = "game_room_enter_" . $game_history->id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
+        info('游戏人数', $total_user_num);
+        info($this->currentUserId());
 
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
@@ -476,7 +478,7 @@ class GamesController extends BaseController
                 $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
             }
 
-            $rank_data[] = [$rank1, $rank1_amount];
+            $rank_data[$rank1] = $rank1_amount;
 
         } elseif ($total_user_num == 2) {
             $rank1_amount = $total_user_num * $amount;
@@ -490,8 +492,8 @@ class GamesController extends BaseController
                 $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
             }
 
-            $rank_data[] = [$rank1, $rank1_amount];
-            $rank_data[] = [$rank2, $rank2_amount];
+            $rank_data[$rank1] = $rank1_amount;
+            $rank_data[$rank2] = $rank2_amount;
 
         } elseif ($total_user_num == 3) {
 
@@ -519,9 +521,9 @@ class GamesController extends BaseController
                 $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
             }
 
-            $rank_data[] = [$rank1, $rank1_amount];
-            $rank_data[] = [$rank2, $rank2_amount];
-            $rank_data[] = [$rank3, $rank3_amount];
+            $rank_data[$rank1] = $rank1_amount;
+            $rank_data[$rank2] = $rank2_amount;
+            $rank_data[$rank3] = $rank3_amount;
 
         } else {
 
@@ -560,9 +562,9 @@ class GamesController extends BaseController
                 $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
             }
 
-            $rank_data[] = [$rank1, $rank1_amount];
-            $rank_data[] = [$rank2, $rank2_amount];
-            $rank_data[] = [$rank3, $rank3_amount];
+            $rank_data[$rank1] = $rank1_amount;
+            $rank_data[$rank2] = $rank2_amount;
+            $rank_data[$rank3] = $rank3_amount;
         }
 
         $end_data['rank_data'] = $rank_data;
