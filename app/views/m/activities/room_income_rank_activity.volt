@@ -4,21 +4,26 @@
 {{ block_end() }}
 
 <div class="bg_box "
-        {% if rooms %}
-    style="height: 68.16rem"
+        {% if max == 2 %}
+    style="height: 59.16rem"
         {% endif %}>
     <div class="top_bg"></div>
 
     <div class="countdown_box">
         <div class="countdown">
-            <p id="hr"> </p>
-            <p id="min"> </p>
-            <p id="sec"> </p>
+            <p id="hr"></p>
+            <p id="min"></p>
+            <p id="sec"></p>
         </div>
     </div>
 
     {% if rooms %}
-        <div class="active_box">
+        <div {% if max == 9 %}
+            class="active_box"
+        {% else %}
+            class="short_active_box"
+        {% endif %}
+        >
             <div class="week_list">
                 <table class="table" style="border:0;" cellpadding="0" cellspacing="0">
                     {% for index,room in rooms %}
@@ -114,14 +119,13 @@
         var total_micro_second = EndTime - NowTime || []
 
 
-
-        if(total_micro_second>0){
+        if (total_micro_second > 0) {
             setTimeout(function () {
                 total_micro_second -= 1000;
-                countdown( end_time)
+                countdown(end_time)
             }, 1000)
-        }else {
-            total_micro_second= 0;
+        } else {
+            total_micro_second = 0;
             $('.countdown_box').addClass('over');
         }
         // 总秒数
@@ -141,12 +145,12 @@
         min = toTwo(min)
         sec = toTwo(sec)
         // 渲染倒计时时钟
-        var dd=document.getElementById("hr");
-        var mm=document.getElementById("min");
-        var ss=document.getElementById("sec");
-        dd.innerText=hr;
-        mm.innerText=min;
-        ss.innerText=sec;
+        var dd = document.getElementById("hr");
+        var mm = document.getElementById("min");
+        var ss = document.getElementById("sec");
+        dd.innerText = hr;
+        mm.innerText = min;
+        ss.innerText = sec;
     }
     /**
      * 封装函数使1位数变2位数
