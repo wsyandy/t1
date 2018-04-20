@@ -40,82 +40,15 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
-        $new = intval($this->params('new', 0));
-        $broadcast = intval($this->params('broadcast', 0));
-        $follow = intval($this->params('follow', 0));
-
-        $user_id = $this->currentUserId();
-
-        //限制搜索条件
-        $cond = [
-            'conditions' => 'online_status = :online_status: and status = :status:',
-            'bind' => ['product_channel_id' => $this->currentProductChannel()->id, 'online_status' => STATUS_ON, 'status' => STATUS_ON],
-            'order' => 'last_at desc, user_type asc'
-        ];
 
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
-        } else if ($new == STATUS_ON) {
-
-            $cond['conditions'] .= ' and user_id <> ' . $user_id;
-            $cond['order'] = "created_at desc";
-
-        } else if ($broadcast == STATUS_ON) {
-            $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
-            $cond['conditions'] .= " and theme_type in ($theme_types)";
-        } else if ($follow == STATUS_ON) {
-
-            $user_ids = $this->currentUser()->followUserIds();
-
-            if (count($user_ids) > 0) {
-                $cond['conditions'] .= " and user_id in (" . implode(',', $user_ids) . ") ";
-                $rooms = \Rooms::findPagination($cond, $page, $per_page);
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
-            }
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
-
-        } else {
-
-            $search_type = '';
-
-            foreach (\Rooms::$TYPES as $key => $value) {
-                $type_value = $this->params($key);
-                if ($type_value == STATUS_ON) {
-                    $search_type = $key;
-                    break;
-                }
-            }
-
-            if ($search_type) {
-
-                $cond['conditions'] .= " and types like :types:";
-                $cond['bind']['types'] = "%" . $search_type . "%";
-
-            } else {
-
-                $cond['conditions'] .= ' and user_id <> ' . $user_id;
-            }
         }
 
-        debug($cond);
-
-        $rooms = \Rooms::findPagination($cond, $page, $per_page);
-
-        if (!isDevelopmentEnv() && $rooms->total_entries < 2) {
-
-            $cond = [
-                'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
-                'order' => 'last_at desc, user_type asc'
-            ];
-
-            info("no_hot_rooms", $this->currentUser()->sid);
-
-            $rooms = \Rooms::findPagination($cond, $page, $per_page);
-        }
+        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
