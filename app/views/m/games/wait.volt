@@ -14,7 +14,7 @@
         <button @click="start_game()" :class="current_user_id==game_host_user_id?'play':''">${ button_text }</button>
     </div>
     {% if current_user.id != game_host_user_id %}
-        <div class="game_quit">
+        <div class="game_quit" style="opacity:0.5;">
             <div class="game_quit_button" @click="exit_game()">
                 <span class="quit"></span>
                 <span>退出</span>
