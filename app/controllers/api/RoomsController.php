@@ -697,7 +697,8 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         $keyword = $this->params('keyword');
-        if (!$keyword) {
+
+        if (is_null($keyword)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
         }
 
@@ -710,10 +711,8 @@ class RoomsController extends BaseController
             'order' => 'last_at desc, user_type asc'
         ];
 
-        if ($name) {
-            $cond['conditions'] .= ' and name like :name:';
-            $cond['bind']['name'] = '%' . $name . '%';
-        }
+        $cond['conditions'] .= ' and name like :name:';
+        $cond['bind']['name'] = '%' . $name . '%';
 
         debug($cond);
 
