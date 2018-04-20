@@ -14,6 +14,7 @@ html {
 }
 
 body {
+    margin-top: 1.332rem;
     color: #333;
     font-family: "微软雅黑";
     width: 100%;
@@ -43,7 +44,7 @@ ol, ul, li {
 
 .bg_box {
     width: 10.0rem;
-    height: 47.16rem;
+    height: 68.16rem;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#7000CC), to(#2D184D));
     background-image: -webkit-linear-gradient(top, #7000CC 0%, #2D184D 100%);
     background-image: -o-linear-gradient(top, #7000CC 0%, #2D184D 100%);
@@ -63,6 +64,15 @@ ol, ul, li {
     height: 20.293333rem;
     background: url(../images/active_bg.png) no-repeat;
     background-size: 100%;
+    margin-top: 1.066667rem;
+}
+
+.short_active_box {
+    width: 96%;
+    height: 11.293333rem;
+    background: url(../images/short_active_bg.png) no-repeat;
+    background-size: 100%;
+    margin: 0 auto;
     margin-top: 1.066667rem;
 }
 
@@ -191,6 +201,66 @@ ol, ul, li {
     color: #FFFFFF;
 }
 
+.countdown_box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 13.32rem;
+    background-image: url("../images/countdown_box.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    z-index: 999;
+}
+
+.countdown {
+    position: absolute;
+    bottom: 0.15rem;
+    left: 0;
+    width: 100%;
+    height: 1.613333rem;
+    font-size: 0.72rem;
+    color: #FFE000;
+    letter-spacing: 0;
+    text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.over {
+    background-image: url("../images/countdown_over.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.over .countdown {
+    color: #a6a6a6;
+}
+
+.countdown p {
+    width: 1.613333rem;
+    height: 1.613333rem;
+    line-height: 1.613333rem;
+    text-align: center;
+    margin-right: 0.74666rem;
+}
+
+.countdown p:last-child {
+    margin-right: 0;
+}
 
 
 

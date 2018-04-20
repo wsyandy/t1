@@ -1,16 +1,29 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/income_rank_activity') }}
+{{ theme_css('/m/css/income_rank_activity1.css') }}
 {{ theme_js('/js/font_rem') }}
 {{ block_end() }}
 
 <div class="bg_box "
-        {% if rooms %}
-    style="height: 68.16rem"
+        {% if max == 2 %}
+    style="height: 59.16rem"
         {% endif %}>
     <div class="top_bg"></div>
 
+    <div class="countdown_box">
+        <div class="countdown">
+            <p id="hr"></p>
+            <p id="min"></p>
+            <p id="sec"></p>
+        </div>
+    </div>
+
     {% if rooms %}
-        <div class="active_box">
+        <div {% if max == 9 %}
+            class="active_box"
+        {% else %}
+            class="short_active_box"
+        {% endif %}
+        >
             <div class="week_list">
                 <table class="table" style="border:0;" cellpadding="0" cellspacing="0">
                     {% for index,room in rooms %}
@@ -92,5 +105,59 @@
                 $(".week_list:eq(" + i + ")").show().siblings(".week_list").hide();
             })
         })
+
+        var end_time = "2018/4/21 00:00";
+
+        countdown(end_time)
     })
+
+
+    function countdown(end_time) {
+        // var EndTime = new Date(that.data.end_time)|| []
+        var EndTime = new Date(end_time) || []
+        var NowTime = new Date().getTime()
+        var total_micro_second = EndTime - NowTime || []
+
+
+        if (total_micro_second > 0) {
+            setTimeout(function () {
+                total_micro_second -= 1000;
+                countdown(end_time)
+            }, 1000)
+        } else {
+            total_micro_second = 0;
+            $('.countdown_box').addClass('over');
+        }
+        // 总秒数
+        var second = Math.floor(total_micro_second / 1000)
+        // 天数
+        var day = Math.floor(second / 3600 / 24)
+        // 小时
+        var hr = Math.floor(second / 3600 % 24)
+        // 分钟
+        var min = Math.floor(second / 60 % 60)
+        // 秒
+        var sec = Math.floor(second % 60)
+        // 时间格式化输出，如11:03 25:19 每1s都会调用一次
+        second = toTwo(second)
+        day = toTwo(day)
+        hr = toTwo(hr)
+        min = toTwo(min)
+        sec = toTwo(sec)
+        // 渲染倒计时时钟
+        var dd = document.getElementById("hr");
+        var mm = document.getElementById("min");
+        var ss = document.getElementById("sec");
+        dd.innerText = hr;
+        mm.innerText = min;
+        ss.innerText = sec;
+    }
+    /**
+     * 封装函数使1位数变2位数
+     */
+    function toTwo(n) {
+        n = n < 10 ? "0" + n : n
+        return n
+    }
+
 </script>
