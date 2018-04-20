@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/rooms/css/main.css','/m/rooms/css/matching.css') }}
+{{ theme_css('/m/css/match_main.css','/m/css/matching.css') }}
 {{ block_end() }}
 
 <div class="matching">

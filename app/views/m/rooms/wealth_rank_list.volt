@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/rooms/css/wealth_list_rank') }}
-{{ theme_js('/m/rooms/js/font_rem') }}
+{{ theme_css('/m/css/wealth_list_rank.css') }}
+{{ theme_js('/js/font_rem.js') }}
 {{ block_end() }}
 
 <div class="vueBox" id="app" v-cloak="">
@@ -31,7 +31,7 @@
         <table class="table">
             <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="/m/images/two.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_weath_two.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic">
@@ -53,7 +53,7 @@
             </tr>
             <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
                 <td style="width:12%;">
-                    <img class="voice_ico" src="/m/images/three.png" alt="">
+                    <img class="voice_ico" src="/m/images/room_wealth_three.png" alt="">
                 </td>
                 <td style="width:24%;">
                     <div class="two_pic three_pic">
@@ -77,7 +77,7 @@
         <div class="line"></div>
         <table class="table table_last">
             <tr v-for="(user,index) in users.slice(3)" @click.stop="userDetail(user.id)">
-                <td style="width:12%;" v-text="index+5"></td>
+                <td style="width:12%;" v-text="index+4"></td>
                 <td style="width:24%;">
                     <div class="pic">
                         <img :src="user.avatar_small_url">
