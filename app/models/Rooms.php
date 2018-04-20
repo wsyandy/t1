@@ -2196,7 +2196,7 @@ class Rooms extends BaseModel
 
         }
 
-        if (!$new && !$broadcast && !$follow) {
+        if (!$new && !$broadcast && !$follow && 2 == $product_channel->id) {
             $search_type = '';
 
             foreach (\Rooms::$TYPES as $key => $value) {
