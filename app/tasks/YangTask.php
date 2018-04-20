@@ -921,7 +921,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function searchRoomsAction($params)
     {
-        $url = "http://test.momoyuedu.cn/api/rooms/search";
+        $url = "http://chance.com/api/rooms/search";
         $body = $this->commonBody();
         $user_id = $params[0];
         $keyword = $params[1];
@@ -945,6 +945,21 @@ class YangTask extends \Phalcon\Cli\Task
         }
         $body = array_merge($body, array('sid' => $user->sid));
         $res = httpPost($url, $body);
+        echoLine($res);
+    }
+
+    function searchUsersAction($params)
+    {
+        $url = "http://chance.com/api/users/search";
+        $body = $this->commonBody();
+        $user_id = $params[0];
+        $keyword = $params[1];
+        $user = \Users::findFirstById($user_id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'keyword' => $keyword));
+        $res = httpGet($url, $body);
         echoLine($res);
     }
 }

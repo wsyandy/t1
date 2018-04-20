@@ -1745,9 +1745,21 @@ class Users extends BaseModel
             $cond = ['conditions' => 'id <> ' . $user->id];
         }
 
-        if ($uid) {
-            $cond['conditions'] .= ' and (uid = :uid:) ';
+        if ($uid && $nickname) {
+            $cond['conditions'] .= ' and (uid = :uid: or nickname like :nickname:) ';
             $cond['bind']['uid'] = $uid;
+            $cond['bind']['nickname'] = "%{$nickname}%";
+        } else {
+
+            if ($nickname) {
+                $cond['conditions'] .= ' and (nickname like :nickname:) ';
+                $cond['bind']['nickname'] = "%{$nickname}%";
+            }
+
+            if ($uid) {
+                $cond['conditions'] .= ' and (uid = :uid:) ';
+                $cond['bind']['uid'] = $uid;
+            }
         }
 
         if ($nickname) {

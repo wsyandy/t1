@@ -512,9 +512,26 @@ class UsersController extends BaseController
         }
 
         $uid = intval($this->params('uid'));
-        if ($uid) {
-            $cond = ['uid' => intval($uid)];
+        $nickname = null;
+
+        $keyword = $this->params('keyword');
+
+        if (!is_null($keyword)) {
+            if (preg_match('/^[0-9]*$/', $keyword) && $keyword !== 0) {
+                $uid = intval($keyword);
+                $nickname = $keyword;
+            } else {
+                $nickname = $keyword;
+            }
+
+            $cond['nickname'] = $nickname;
+
         }
+
+        if ($uid) {
+            $cond['uid'] = intval($uid);
+        }
+
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
         if (count($users)) {
