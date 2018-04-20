@@ -950,7 +950,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function searchUsersAction($params)
     {
-        $url = "http://chance.com/api/users/search";
+        $url = "http://test.momoyuedu.cn/api/users/search";
         $body = $this->commonBody();
         $user_id = $params[0];
         $keyword = $params[1];
