@@ -200,7 +200,6 @@ class GamesController extends BaseController
         $body['nonce_str'] = randStr(20);
         $body['back_url'] = urlencode($this->getRoot() . 'm/games/back?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
         $body['notify_url'] = urlencode($this->getRoot() . 'm/games/notify?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id);
-        info('每个用户对应的回调通知接口',$body['notify_url']);
 
         $str = paramsToStr($body);
 
@@ -261,7 +260,7 @@ class GamesController extends BaseController
 
     function enterAction()
     {
-//        info($this->params());
+        info($this->params());
 
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
@@ -278,7 +277,7 @@ class GamesController extends BaseController
 
         $data = $users->toJson('users', 'toSimpleJson');
 
-//        info($this->currentUser()->id, $game_history, $data);
+        info($this->currentUser()->id, $game_history, $data);
 
         if ($game_history->status == GAME_STATUS_WAIT) {
             $data['can_enter'] = 0;
