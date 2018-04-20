@@ -374,7 +374,8 @@
 |user_id|用户id|int|是|hi老版,废弃|
 |uid|用户uid|int|是|新接口|
 |page|当前页|int|是||
-|per_page|每页个数|int|是|||
+|per_page|每页个数|int|是||
+|keyword|关键字|string|是|||
 
 ##### 10.2 回应参数说明
 ```
@@ -384,6 +385,7 @@
     users:[
         {
              id 用户id
+             uid 用户uid 展示用户唯一标识
              sex	性别 0:女 1:男
              province_name 省名
              city_name 城市
