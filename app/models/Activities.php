@@ -109,7 +109,7 @@ class Activities extends BaseModel
         $bind = [];
 
         $conditions[] = "type = :type: ";
-        $conditions['type'] = $type;
+        $bind['type'] = $type;
 
         $conditions[] = " (platforms like :platform: or platforms like '*' or platforms = '') ";
         $bind['platform'] = "%" . $platform . "%";
