@@ -327,10 +327,10 @@ class SourcesController extends \ApplicationController
         return;
     }
 
-    //星辰广告推广
-    public function xcClickAction()
+    //辰告广告推广
+    public function cgClickAction()
     {
-        $attrs['source'] = 'xc';
+        $attrs['source'] = 'cg';
         $fields = ['code', 'fr', 'appid', 'idfa', 'callbackurl'];
         $hot_cache = \Devices::getHotWriteCache();
 
