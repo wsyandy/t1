@@ -51,29 +51,36 @@ class GamesController extends BaseController
         $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
             'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
 
-        $hot_cache = \GameHistories::getHotWriteCache();
-        $room_enter_key = "game_room_enter_" . $room_id;
-        $total_user_num = $hot_cache->zcard($room_enter_key);
+        if ($game_history) {
 
-        if ($game_history && $game_history->user_id == $this->currentUser()->id
-            && ($game_history->enter_at && (time() - $game_history->enter_at > 300) || $total_user_num == 1)
-        ) {
-            $game_history->status = GAME_STATUS_END;
-            $game_history->save();
-        }
-
-        if ($game_history && $game_history->status != GAME_STATUS_END) {
             $game_host_user_id = $game_history->user_id;
-            $start_data = json_decode($game_history->start_data, true);
-            $pay_type = fetch($start_data, 'pay_type');
-            $amount = fetch($start_data, 'amount');
             $game_history_id = $game_history->id;
-            $can_enter = $game_history->canEnter();
-            if ($game_host_user_id == $this->currentUser()->id && $can_enter) {
-                $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
-                return;
+
+            $hot_cache = \GameHistories::getHotWriteCache();
+            $room_enter_key = "game_room_enter_" . $game_history_id;
+            $total_user_num = $hot_cache->zcard($room_enter_key);
+
+            // 房主再次发起游戏，不是等待状态
+            if ($game_history && $game_history->user_id == $this->currentUser()->id && $total_user_num <= 1 && $game_history->status != GAME_STATUS_WAIT) {
+                $game_history_id = 0;
+                $game_history->status = GAME_STATUS_END;
+                $game_history->save();
             }
-            $can_create_game = false;
+
+            if ($game_history->status != GAME_STATUS_END) {
+
+                $can_create_game = false;
+                $start_data = json_decode($game_history->start_data, true);
+                $pay_type = fetch($start_data, 'pay_type');
+                $amount = fetch($start_data, 'amount');
+
+                $can_enter = $game_history->canEnter();
+                if ($game_host_user_id == $this->currentUser()->id && $can_enter) {
+                    $this->response->redirect("/m/games/wait?game_history_id={$game_history->id}&sid={$this->currentUser()->sid}");
+                    return;
+                }
+            }
+
         } else {
             $game_history_id = 0;
             $game_host_user_id = $this->currentUser()->id;
@@ -112,8 +119,8 @@ class GamesController extends BaseController
         } else {
 
             $game = \Games::findFirstById($this->params('game_id'));
-            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id: and created_at>:created_at:',
-                'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id, 'created_at' => time() - 300], 'order' => 'id desc']);
+            $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and game_id=:game_id:',
+                'bind' => ['room_id' => $room_id, 'status' => GAME_STATUS_END, 'game_id' => $game->id], 'order' => 'id desc']);
             if ($game_history) {
                 return $this->renderJSON(ERROR_CODE_FAIL, $game_history->user->nickname . '已发起游戏，请刷新');
             }
@@ -147,7 +154,8 @@ class GamesController extends BaseController
         if (!$game_history_id) {
 
             $game_history->create();
-            //\GameHistories::delay(300)->asyncCloseGame($game_history->id);
+
+            \GameHistories::delay(600)->asyncCloseGame($game_history->id);
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
@@ -162,7 +170,7 @@ class GamesController extends BaseController
 
         // 用户队列
         $hot_cache = \GameHistories::getHotWriteCache();
-        $room_wait_key = "game_room_wait_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $game_history->id;
         $hot_cache->zadd($room_wait_key, time(), $this->currentUser()->id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['game_history_id' => $game_history->id]);
@@ -173,6 +181,14 @@ class GamesController extends BaseController
         info($this->params());
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
+
+        $hot_cache = \GameHistories::getHotWriteCache();
+        $room_wait_key = "game_room_wait_" . $game_history->id;
+        if(!$hot_cache->zscore($room_wait_key, $this->currentUser()->id)){
+            info('已退出', $this->currentUser()->id, $this->params());
+            $this->response->redirect("/m/games/tyt?game_id={$game_history->game_id}&sid={$this->currentUser()->sid}");
+            return;
+        }
 
         $body = [];
         $body['user_id'] = $this->currentUser()->id;
@@ -215,8 +231,6 @@ class GamesController extends BaseController
             $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
             $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
             if (!$result) {
-                $game_history->status = GAME_STATUS_END;
-                $game_history->save();
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
         }
@@ -225,17 +239,17 @@ class GamesController extends BaseController
             $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
             $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
             if (!$result) {
-                $game_history->status = GAME_STATUS_END;
-                $game_history->save();
                 return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
             }
         }
 
         // 扣款成功
         $hot_cache = \GameHistories::getHotWriteCache();
-        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $room_enter_key = "game_room_enter_" . $game_history->id;
         $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
         $hot_cache->expire($room_enter_key, 180);
+        $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
+        $hot_cache->zrem($room_user_quit_key, $this->currentUser()->id);
 
         $game_history->status = GAME_STATUS_PLAYING;
         $game_history->enter_at = time();
@@ -252,7 +266,12 @@ class GamesController extends BaseController
         $game_history = \GameHistories::findFirstById($game_history_id);
 
         $hot_cache = \GameHistories::getHotWriteCache();
-        $room_wait_key = "game_room_wait_" . $game_history->room_id;
+        $room_wait_key = "game_room_wait_" . $game_history->id;
+        if(!$hot_cache->zscore($room_wait_key, $this->currentUser()->id)){
+            info('已退出', $this->currentUser()->id, $this->params());
+            return $this->renderJSON(ERROR_CODE_FAIL, '已退出游戏');
+        }
+
         $user_ids = $hot_cache->zrange($room_wait_key, 0, 1);
         $users = \Users::findByIds($user_ids);
 
@@ -290,9 +309,12 @@ class GamesController extends BaseController
 
             // 扣款成功
             $data['can_enter'] = 1;
-            $room_enter_key = "game_room_enter_" . $game_history->room_id;
+            $room_enter_key = "game_room_enter_" . $game_history->id;
             $hot_cache->zadd($room_enter_key, time(), $this->currentUser()->id);
-            $hot_cache->expire($room_enter_key, 200);
+            $hot_cache->expire($room_enter_key, 180);
+            $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
+            $hot_cache->zrem($room_user_quit_key, $this->currentUser()->id);
+
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
@@ -309,15 +331,17 @@ class GamesController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
-        $room_id = $game_history->room_id;
         $hot_cache = \GameHistories::getHotWriteCache();
-        $room_wait_key = "game_room_wait_" . $room_id;
+        $room_wait_key = "game_room_wait_" . $game_history->id;
 
         if ($game_history->user_id == $this->currentUser()->id) {
             // 解散比赛
-            $hot_cache->del($room_wait_key);
+            $game_history->status = GAME_STATUS_END;
+            $game_history->save();
+            info('房主解散游戏', $this->params());
         } else {
             $hot_cache->zrem($room_wait_key, $this->currentUser()->id);
+            info('用户退出游戏', $this->params());
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
@@ -332,11 +356,11 @@ class GamesController extends BaseController
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
 
-        $hot_cache = \GameHistories::getHotWriteCache();
-        $room_enter_key = "game_room_enter_" . $game_history->room_id;
-        $total_user_num = $hot_cache->zcard($room_enter_key);
+        if ($game_history->status != GAME_STATUS_END) {
 
-        if($game_history->status != GAME_STATUS_END){
+            $hot_cache = \GameHistories::getHotWriteCache();
+            $room_enter_key = "game_room_enter_" . $game_history->id;
+            $total_user_num = $hot_cache->zcard($room_enter_key);
 
             if ($total_user_num == 1) {
                 $game_history->status = GAME_STATUS_END;
@@ -345,8 +369,9 @@ class GamesController extends BaseController
 
             // 主动退出
             if ($this->params('quit')) {
+                $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
                 info('主动退出', $this->params(), $game_history);
-                $hot_cache->zrem($room_enter_key, $current_user->id);
+                $hot_cache->zadd($room_user_quit_key, time(), $current_user->id);
             }
         }
 
@@ -411,7 +436,7 @@ class GamesController extends BaseController
         }
 
         $hot_cache = \GameHistories::getHotWriteCache();
-        $room_enter_key = "game_room_enter_" . $game_history->room_id;
+        $room_enter_key = "game_room_enter_" . $game_history->id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
 
         $start_data = json_decode($game_history->start_data, true);
