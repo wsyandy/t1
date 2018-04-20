@@ -131,6 +131,25 @@ class Activities extends BaseModel
         return $activities;
     }
 
+    static function findRoomActivities($opts)
+    {
+        $activities = self::findActivities($opts);
+        $res = [];
+
+        if ($activities) {
+
+            foreach ($activities as $activity) {
+                $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
+                $activity = $activity->toSimpleJson();
+                $activity['url'] = $url;
+                $res[] = $activity;
+            }
+
+        }
+
+        return $res;
+    }
+
     //添加抽奖活动
     static function addLuckyDrawActivity($user_id, $opts = [])
     {
