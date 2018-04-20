@@ -6,7 +6,7 @@ class Partners extends BaseModel
     static $STATUS = [PARTNER_STATUS_NORMAL => '正常', PARTNER_STATUS_BLOCK => '无效'];
 
     static $NOTIFY_CALLBACK = ['' => '不支持', 'notify_gdt' => '广点通回调', 'notify_active' => '头条回调',
-        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调' ,'notify_jp' => '巨朋回调','notify_xztx'=>'行者天下回调'];
+        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调', 'notify_jp' => '巨朋回调', 'notify_xztx' => '行者天下回调'];
 
     static $GROUP_TYPE = [PARTNER_GROUP_TYPE_NO => '默认'];
 
@@ -141,10 +141,18 @@ class Partners extends BaseModel
 //        }
 
         $partner = Partners::findFirstByFrHotCache($fr);
+
         if (!$partner || !$partner->notify_callback) {
             $click_time = fetch($data, 'click_time');
             $diff = time() - $click_time;
             info('callback false', $fr, $data, 'interval', $diff);
+            return;
+        }
+
+        $deduct_ratio = $partner->deduct_ratio;
+        
+        if ($deduct_ratio && $deduct_ratio <= mt_rand(1, 100)) {
+            info('callback deduct', $deduct_ratio, $fr, $data);
             return;
         }
 
@@ -176,8 +184,8 @@ class Partners extends BaseModel
     {
         $callback = fetch($data, 'callback');
         $opts = [
-            'appid'=> fetch($data, 'appid'),
-            'idfa'=> fetch($data, 'idfa')
+            'appid' => fetch($data, 'appid'),
+            'idfa' => fetch($data, 'idfa')
         ];
 
         $res = httpGet('http://wall.jpmob.com/wall/iosAck.jsp?', $opts);
