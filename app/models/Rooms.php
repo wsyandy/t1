@@ -2162,7 +2162,7 @@ class Rooms extends BaseModel
     static function search($user, $product_channel, $page, $per_page, $opts = [])
     {
         $new = intval(fetch($opts, 'new', 0));
-        $broadcast = intval(fetch($opts, 'new', 0));
+        $broadcast = intval(fetch($opts, 'broadcast', 0));
         $follow = intval(fetch($opts, 'follow', 0));
         $filter_ids = fetch($opts, 'filter_ids', []);
         $user_id = $user->id;
