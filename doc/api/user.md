@@ -837,7 +837,7 @@
 公共参数
 ```
 
-### 30 添加备注
+### 30 添加好友备注
 
 > http-post ```/api/users/add_friend_note```
 
