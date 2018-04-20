@@ -25,16 +25,6 @@ class YangTask extends \Phalcon\Cli\Task
         echoLine($res);
     }
 
-    function test2Action($params)
-    {
-        $id = $params[0];
-        $user = \Users::findFirstById($id);
-        if (!$user) {
-            echoLine("no user");
-            return;
-        }
-        echoLine($user->toDetailJson());
-    }
 
     function test3Action()
     {
@@ -898,5 +888,34 @@ class YangTask extends \Phalcon\Cli\Task
                 echoLine('false', $gift_order->id, $gift_order->room_id, $gift_order->amount);
             }
         }
+    }
+
+    function otherDetailAction($params)
+    {
+        $url = "http://chance.com/api/users/other_detail";
+        $body = $this->commonBody();
+        $id = $params[0];
+        $user = \Users::findFirstById($id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'user_id' => 78));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function addFriendNoteAction($params)
+    {
+        $url = "http://test.momoyuedu.cn/api/friends/add_friend_note";
+        $body = $this->commonBody();
+        $user_id = $params[0];
+        $remark = $params[1];
+        $user = \Users::findFirstById(122);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'user_id' => $user_id, 'friend_note' => $remark));
+        $res = httpPost($url, $body);
+        echoLine($res);
     }
 }

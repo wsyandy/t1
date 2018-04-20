@@ -77,4 +77,29 @@ class FriendsController extends BaseController
         $this->currentUser()->clearAddFriendInfo();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
+
+    function addFriendNoteAction()
+    {
+        $friend_note = $this->params('friend_note');
+
+        if (isBlank($friend_note)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if ($friend_note && mb_strlen($friend_note) > 250) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '备注字数过长');
+        }
+
+        $user = $this->currentUser();
+
+        $other_user = $this->otherUser();
+
+        if (!$user->isFriend($other_user)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友加备注');
+        }
+
+        $user->addFriendNote($other_user->id, $friend_note);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
 }

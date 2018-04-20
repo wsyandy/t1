@@ -34,6 +34,7 @@
             current_room_lock  当前房间加锁状态
             friend_status int 好友状态 1已添加,2等待验证，3等待接受
             friend_status_text string 好友状态名称
+            friend_note 好友备注名
             self_introduce 自我介绍
             level 用户等级
            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
@@ -123,6 +124,24 @@
 | user_id |用户id|int|否|||
 
 ##### 6.2 回应参数说明
+```
+{
+	error_code  0 成功，非0失败
+	error_reason
+}
+```
+
+
+### 7 添加备注
+
+> http-post ```/api/friends/add_friend_note```
+
+##### 7.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+| user_id |用户id|int|否||
+| friend_note|备注|string|否|客户端需限制文字的长度|
+##### 7.2 回应参数说明
 ```
 {
 	error_code  0 成功，非0失败

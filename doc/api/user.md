@@ -238,6 +238,7 @@
     friend_num 好友人数
     is_friend true/false,是否是好友
     is_follow true/false,是否已关注
+    friend_note 好友备注名 
     interests 兴趣爱好
     height 身高
     age 年龄
