@@ -962,4 +962,33 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpGet($url, $body);
         echoLine($res);
     }
+
+    function searchUnionsAction($params)
+    {
+        $url = "http://test.momoyuedu.cn/api/unions/search";
+        $body = $this->commonBody();
+        $user_id = $params[0];
+        $keyword = $params[1];
+        $user = \Users::findFirstById($user_id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid, 'uid' => $keyword));
+        $res = httpGet($url, $body);
+        echoLine($res);
+    }
+
+    function hotUnionsSearchAction($params)
+    {
+        $url = "http://test.momoyuedu.cn/api/unions/hot_search";
+        $body = $this->commonBody();
+        $user_id = $params[0];
+        $user = \Users::findFirstById($user_id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpPost($url, $body);
+        echoLine($res);
+    }
 }

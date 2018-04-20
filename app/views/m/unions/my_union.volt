@@ -10,7 +10,7 @@
                 <img class="family-ico" src="{{ union.avatar_small_url }}" alt="">
                 <div class="family_name">
                     <span>   {{ union.name }}</span>
-                    <span class="family_id">家族ID:{{ union.id }} </span>
+                    <span class="family_id">家族ID:{{ union.uid }} </span>
                 </div>
             </div>
             <div class="family_top_right">
