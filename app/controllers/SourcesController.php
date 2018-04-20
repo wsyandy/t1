@@ -315,7 +315,7 @@ class SourcesController extends \ApplicationController
             $attrs[$field] = $this->params($field);
         }
 
-        $muid = strtolower(md5(strtolower($attrs['idfa'])));
+        $muid = strtolower(md5(strtoupper($attrs['idfa'])));
         $attrs['muid'] = $muid;
         $attrs['click_time'] = time();
 
