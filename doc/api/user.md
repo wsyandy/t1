@@ -238,6 +238,7 @@
     friend_num 好友人数
     is_friend true/false,是否是好友
     is_follow true/false,是否已关注
+    friend_note 好友备注名 
     interests 兴趣爱好
     height 身高
     age 年龄
@@ -834,4 +835,21 @@
 ##### 29.1 请求参数说明
 ```
 公共参数
+```
+
+### 30 添加好友备注
+
+> http-post ```/api/users/add_friend_note```
+
+##### 30.1 请求参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+| user_id |用户id|int|否||
+| friend_note|备注|string|否|客户端需限制文字的长度|
+##### 30.2 回应参数说明
+```
+{
+	error_code  0 成功，非0失败
+	error_reason
+}
 ```

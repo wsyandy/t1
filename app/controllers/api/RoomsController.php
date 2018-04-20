@@ -262,6 +262,11 @@ class RoomsController extends BaseController
             $show_game = true;
         }
 
+        //活动列表
+        $product_channel_id = $this->currentProductChannelId();
+        $platform = $this->context('platform');
+        $platform = 'client_' . $platform;
+
         if ($show_game) {
 
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
@@ -269,22 +274,17 @@ class RoomsController extends BaseController
             $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
             $res['menu_config'] = $menu_config;
 
-            //活动列表
-            $product_channel_id = $this->currentProductChannelId();
-            $platform = $this->params('pf');
-            $platform = 'client_' . $platform;
-
-            $activities = \Activities::findRoomActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform,
-                'type' => ACTIVITY_TYPE_ROOM]);
-
-            if ($activities) {
-                $res['activities'] = $activities;
-            }
-
             $game_history = $room->getGameHistory();
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
+        }
+
+        $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
+            'type' => ACTIVITY_TYPE_ROOM]);
+
+        if ($activities) {
+            $res['activities'] = $activities;
         }
 
         $user_car_gift = $this->currentUser()->getUserCarGift();

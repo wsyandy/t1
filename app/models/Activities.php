@@ -131,8 +131,12 @@ class Activities extends BaseModel
         return $activities;
     }
 
-    static function findRoomActivities($opts)
+    static function findRoomActivities($user, $opts)
     {
+        if (!$user->canShowRoomActivity()) {
+            return [];
+        }
+
         $activities = self::findActivities($opts);
         $res = [];
 

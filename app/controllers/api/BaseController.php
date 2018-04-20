@@ -36,7 +36,7 @@ class BaseController extends ApplicationController
         'blacks' => ['create', 'destroy'],
         'followers' => ['create', 'destroy'],
         'friends' => ['create', 'destroy', 'agree'],
-        'users' => ['other_detail'],
+        'users' => ['other_detail', 'add_friend_note'],
         'rooms' => ['open_user_chat', 'close_user_chat', 'kicking', 'add_manager', 'delete_manager', 'update_manager'],
     ];
 

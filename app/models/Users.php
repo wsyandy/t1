@@ -1450,6 +1450,30 @@ class Users extends BaseModel
         return $user_db->zcard($followed_key);
     }
 
+    function getFriendNote($user_id)
+    {
+        $db = Users::getUserDb();
+        $friend_note_key = "friend_note_list_user_id_" . $this->id;
+
+        $friend_note = $db->hget($friend_note_key, $user_id);
+
+        if (is_null($friend_note)) {
+            return '';
+        }
+
+        return $friend_note;
+    }
+
+    function addFriendNote($user_id, $friend_note)
+    {
+        $db = Users::getUserDb();
+        $friend_note_key = "friend_note_list_user_id_" . $this->id;
+
+        if ($friend_note) {
+            $db->hset($friend_note_key, $user_id, $friend_note);
+        }
+    }
+
     //添加好友
     function addFriend($other_user, $opts = [])
     {
@@ -1505,6 +1529,8 @@ class Users extends BaseModel
         $other_total_key = 'friend_total_list_user_id_' . $other_user->id;
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
         $other_user_introduce_key = "add_friend_introduce_user_id" . $other_user->id;
+        $friend_note_key = "friend_note_list_user_id_" . $this->id;
+
 
         if ($user_db->zscore($friend_list_key, $other_user->id)) {
             $user_db->zrem($friend_list_key, $other_user->id);
@@ -1522,8 +1548,9 @@ class Users extends BaseModel
             $user_db->zrem($other_total_key, $this->id);
         }
 
-        $user_db->zrem($user_introduce_key, $other_user->id);
-        $user_db->zrem($other_user_introduce_key, $other_user->id);
+        $user_db->hdel($friend_note_key, $other_user->id);
+        $user_db->hdel($user_introduce_key, $other_user->id);
+        $user_db->hdel($other_user_introduce_key, $other_user->id);
     }
 
     //是否为好友
@@ -1586,6 +1613,7 @@ class Users extends BaseModel
 
             $user->self_introduce = $this->getSelfIntroduceText($user);
             $user->friend_status = $friend_status;
+            $user->friend_note = $this->getFriendNote($user->id);
         }
 
         return $users;
@@ -2917,23 +2945,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", beginOfWeek());
-                    $end = date("Ymd", endOfWeek());
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", beginOfWeek());
+                $end = date("Ymd", endOfWeek());
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -3060,24 +3085,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }

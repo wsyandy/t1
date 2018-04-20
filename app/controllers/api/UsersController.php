@@ -446,14 +446,18 @@ class UsersController extends BaseController
             $current_room_lock = $other_current_room->lock;
         }
 
-        $detail_json = $this->otherUser()->toDetailJson();
-        $detail_json['is_friend'] = $this->currentUser()->isFriend($this->otherUser());
-        $detail_json['is_follow'] = $this->currentUser()->isFollow($this->otherUser());
+        $other_user = $this->otherUser();
+        $current_user = $this->currentUser();
+
+        $detail_json = $other_user->toDetailJson();
+        $detail_json['is_friend'] = $current_user->isFriend($other_user);
+        $detail_json['is_follow'] = $current_user->isFollow($other_user);
+        $detail_json['friend_note'] = $current_user->getFriendNote($other_user->id);
         $detail_json['current_room_lock'] = $current_room_lock;
 
         if (!$this->otherUser()->isActive()) {
-            $detail_json['province_name'] = $this->currentUser()->province_name;
-            $detail_json['city_name'] = $this->currentUser()->city_name;
+            $detail_json['province_name'] = $current_user->province_name;
+            $detail_json['city_name'] = $current_user->city_name;
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
@@ -729,5 +733,31 @@ class UsersController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    //添加好友备注
+    function addFriendNoteAction()
+    {
+        $friend_note = $this->params('friend_note');
+
+        if (isBlank($friend_note)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        if ($friend_note && mb_strlen($friend_note) > 250) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '备注字数过长');
+        }
+
+        $user = $this->currentUser();
+
+        $other_user = $this->otherUser();
+
+        if (!$user->isFriend($other_user)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '只能给好友加备注');
+        }
+
+        $user->addFriendNote($other_user->id, $friend_note);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }

@@ -34,6 +34,7 @@
             current_room_lock  当前房间加锁状态
             friend_status int 好友状态 1已添加,2等待验证，3等待接受
             friend_status_text string 好友状态名称
+            friend_note 好友备注名
             self_introduce 自我介绍
             level 用户等级
            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜

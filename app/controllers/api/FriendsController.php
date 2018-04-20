@@ -77,4 +77,5 @@ class FriendsController extends BaseController
         $this->currentUser()->clearAddFriendInfo();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
+
 }
