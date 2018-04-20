@@ -335,15 +335,19 @@ class GamesController extends BaseController
         $hot_cache = \GameHistories::getHotWriteCache();
         $room_enter_key = "game_room_enter_" . $game_history->room_id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
-        if ($total_user_num == 1) {
-            $game_history->status = GAME_STATUS_END;
-            $game_history->save();
-        }
 
-        // 主动退出
-        if ($this->params('quit') && $game_history->status != GAME_STATUS_END) {
-            info('主动退出', $this->params(), $game_history);
-            $hot_cache->zrem($room_enter_key, $current_user->id);
+        if($game_history->status != GAME_STATUS_END){
+
+            if ($total_user_num == 1) {
+                $game_history->status = GAME_STATUS_END;
+                $game_history->save();
+            }
+
+            // 主动退出
+            if ($this->params('quit')) {
+                info('主动退出', $this->params(), $game_history);
+                $hot_cache->zrem($room_enter_key, $current_user->id);
+            }
         }
 
         $end_data = json_decode($game_history->end_data, true);
