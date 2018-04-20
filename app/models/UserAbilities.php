@@ -71,4 +71,16 @@ trait UserAbilities
         return $this->version_code > 4;
     }
 
+    function canShowRoomActivity()
+    {
+        if (1 != $this->product_channel_id) {
+            return false;
+        }
+
+        if ($this->isIos()) {
+            return $this->version_code >= 15;
+        }
+
+        return $this->version_code >= 6;
+    }
 }
