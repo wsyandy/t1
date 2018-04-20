@@ -528,7 +528,7 @@ class UsersController extends BaseController
 
         $user = \Users::findFirst(
             [
-                'conditions' => 'uid = :uid: and id != :id: and user_type = :user_type: and (user_status = :user_status1: or user_status = :user_status2:)  and register_at > 0',
+                'conditions' => 'uid = :uid: and id != :id: and user_type = :user_type: and (user_status = :user_status1: or user_status = :user_status2:)',
                 'bind' => ['uid' => $uid, 'id' => SYSTEM_ID, 'user_type' => USER_TYPE_ACTIVE, 'user_status1' => USER_STATUS_ON, 'user_status2' => USER_STATUS_LOGOUT]
             ]);
 
