@@ -2181,10 +2181,6 @@ class Rooms extends BaseModel
             return \Rooms::findPagination($cond, $page, $per_page);
         }
 
-        if (STATUS_ON == $new) {
-            $cond['order'] = "created_at desc";
-        }
-
         if (STATUS_ON == $broadcast) {
             $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
             $cond['conditions'] .= " and theme_type in ($theme_types)";
