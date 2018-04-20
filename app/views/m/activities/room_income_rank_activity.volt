@@ -101,7 +101,7 @@
             })
         })
 
-        var end_time = "2018-4-21 00:00";
+        var end_time = "2018/4/21 00:00";
 
         countdown(end_time)
     })
