@@ -398,6 +398,7 @@ class GamesController extends BaseController
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
         if (!$game_history || $game_history->status == GAME_STATUS_END) {
+            info('已结算', $this->currentUser()->id, $game_history);
             echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
             return;
         }
