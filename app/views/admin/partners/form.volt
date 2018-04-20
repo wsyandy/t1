@@ -8,8 +8,9 @@
 {{ f.input('fr', ['label': '来源FR','width': '50%']) }}
 {{ f.select('notify_callback',['label': '推广回调', 'collection': Partners.NOTIFY_CALLBACK,'width': '50%']) }}
 
-{{ f.select('group_type',['label': '来源组', 'collection': Partners.GROUP_TYPE,'width': '50%']) }}
-{{ f.input('level', ['label': '等级(1-5)','width': '50%']) }}
+{{ f.select('group_type',['label': '来源组', 'collection': Partners.GROUP_TYPE,'width': '33%']) }}
+{{ f.input('level', ['label': '等级(1-5)','width': '33%']) }}
+{{ f.input('deduct_ratio', ['label': '同步扣量比例(1-100)','width': '33%']) }}
 
 {{ f.submit('保存') }}
 <tr id="message_td" style="display: none;">

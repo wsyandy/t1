@@ -1,0 +1,1 @@
+ALTER TABLE partners add deduct_ratio INTEGER ;
