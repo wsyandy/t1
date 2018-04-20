@@ -220,7 +220,7 @@ class Unions extends BaseModel
     //搜索公会
     static function search($user, $page, $per_page, $opts = [])
     {
-//        $recommend = fetch($opts, 'recommend', 0);
+        $uid = fetch($opts, 'uid', 0);
         $type = fetch($opts, 'type', 0);
         $id = fetch($opts, 'id', 0);
         $name = fetch($opts, 'name', 0);
@@ -235,24 +235,24 @@ class Unions extends BaseModel
             'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_SUCCESS],
         ];
 
-//        if ($recommend) {
-//            $cond['conditions'] .= " and recommend = :recommend:";
-//            $cond['bind']['recommend'] = $recommend;
-//        }
-
         //根据id name搜索是否需要recommend
-        if ($name && $id) {
-            $cond['conditions'] .= " and (name = :name: or id = :id:)";
+        if ($name && $uid) {
+            $cond['conditions'] .= " and (name = :name: or uid = :uid:)";
             $cond['bind']['name'] = "%" . $name . "%";
-            $cond['bind']['id'] = $id;
+            $cond['bind']['uid'] = $uid;
         } else {
             if ($name) {
                 $cond['conditions'] .= " and name like :name:";
                 $cond['bind']['name'] = "%" . $name . "%";
-            } else if ($id) {
-                $cond['conditions'] .= " and id = :id:";
-                $cond['bind']['id'] = $id;
+            } else if ($uid) {
+                $cond['conditions'] .= " and uid = :uid:";
+                $cond['bind']['uid'] = $uid;
             }
+        }
+
+        if ($id) {
+            $cond['conditions'] = " and id = :id:";
+            $cond['bind']['id'] = $id;
         }
 
         if ($order) {
@@ -920,16 +920,23 @@ class Unions extends BaseModel
 
     function toSimpleJson()
     {
-        return [
+        $data = [
             'id' => $this->id,
             'uid' => $this->uid,
             'name' => $this->name,
             'fame_value' => $this->fame_value,
             'user_num' => $this->user_num,
             'avatar_url' => $this->avatar_url,
-            'avatar_small_url' => $this->avatar_small_url
+            'avatar_small_url' => $this->avatar_small_url,
         ];
+
+        if (isset($this->url)) {
+            $data['url'] = $this->url;
+        }
+
+        return $data;
     }
+
 
     function updateProfile($opts)
     {

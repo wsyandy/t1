@@ -102,13 +102,13 @@ class UnionsController extends BaseController
     function searchAction()
     {
         $recommend = $this->params('recommend', 0);
-        $id = $this->params('search_value', 0);
+        $uid = $this->params('search_value', 0);
         $order = $this->params('order', null);
 
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-        $opts = ['type' => UNION_TYPE_PRIVATE, 'recommend' => $recommend, 'id' => $id, 'order' => $order];
+        $opts = ['type' => UNION_TYPE_PRIVATE, 'recommend' => $recommend, 'uid' => $uid, 'order' => $order];
         $user = $this->currentUser();
 
         if ($recommend) {
