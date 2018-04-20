@@ -356,12 +356,12 @@ class GamesController extends BaseController
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
 
+        // 中途退出
         if ($game_history->status != GAME_STATUS_END) {
 
             $hot_cache = \GameHistories::getHotWriteCache();
             $room_enter_key = "game_room_enter_" . $game_history->id;
             $total_user_num = $hot_cache->zcard($room_enter_key);
-
             if ($total_user_num == 1) {
                 $game_history->status = GAME_STATUS_END;
                 $game_history->save();
@@ -377,6 +377,7 @@ class GamesController extends BaseController
 
         $end_data = json_decode($game_history->end_data, true);
         $rank_data = fetch($end_data, 'rank_data', []);
+        $total_user_num = fetch($end_data, 'enter_user_num');
 
         $user_datas = [];
         foreach ($rank_data as $user_id => $settlement_amount) {
