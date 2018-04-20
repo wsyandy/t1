@@ -670,7 +670,7 @@
 |room_id|房间id|int|否|||
 
 ### 27 热搜关键词
-> http-get ```/api/rooms/hot_search_keywords``` 
+> http-get ```/api/rooms/hot_search``` 
 
 ##### 27.1 请求参数说明
 ```

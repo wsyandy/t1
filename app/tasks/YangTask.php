@@ -936,7 +936,7 @@ class YangTask extends \Phalcon\Cli\Task
 
     function hotRoomKeywordsAction($params)
     {
-        $url = "http://test.momoyuedu.cn/api/rooms/hot_search_keywords";
+        $url = "http://test.momoyuedu.cn/api/rooms/hot_search";
         $body = $this->commonBody();
         $user_id = $params[0];
         $user = \Users::findFirstById($user_id);

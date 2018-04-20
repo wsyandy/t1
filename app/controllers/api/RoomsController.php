@@ -722,7 +722,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
-    function hotSearchKeywordsAction()
+    function hotSearchAction()
     {
         $keywords = ['球球', '王者', '绝地', '终结者', '处对象', '音乐', '电台', '第五人格', 'les', '关注'];
 
