@@ -337,8 +337,8 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = "送1000钻";
 
-        $start = strtotime('2018-04-21 21:00:00');
-        $end = strtotime('2018-04-21 21:00:00');
+        $start = strtotime('2018-04-21 21:10:00');
+        $end = strtotime('2018-04-21 21:20:00');
         $gift_id = 26;
 
         if (isDevelopmentEnv()) {
