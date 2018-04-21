@@ -4,11 +4,24 @@
 
 <div id="handwritten" class="handwritten">
     <span class="handwritten_top_bg"></span>
-    <div class="handwritten_state">
-          <span>  <p id="hr"></p>:
+    {% if is_end %}
+        <div class="handwritten_state">
+            <span>活动已结束</span>
+        </div>
+    {% elseif is_start %}
+        <div class="handwritten_state">
+          <span>倒计时:<p id="hr"></p>:
             <p id="min"></p>:
             <p id="sec"></p></span>
-    </div>
+        </div>
+
+    {% else %}
+        <div class="handwritten_state">
+          <span>距离活动开始:<p id="hr"></p>:
+            <p id="min"></p>:
+            <p id="sec"></p></span>
+        </div>
+    {% endif %}
     <span class="handwritten_prop"></span>
     <span class="handwritten_point_to"></span>
     <div class="handwritten_rules">
@@ -58,7 +71,7 @@
     })
 
     $(function () {
-        var end_time = "2018/4/22 00:00";
+        var end_time = '{{ end_time }}';
         countdown(end_time);
     })
 
