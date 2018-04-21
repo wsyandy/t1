@@ -1380,18 +1380,13 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-【【活动提醒】
-实现一个小目标~
-先拿一个独特靓号
-还有两万现金大奖！
-四月最壕活动开启
-还等什么？
-了解活动详情
-点击左上角侧边栏“活动”查看
+系统消息:
+恭喜"温柔乡顶级男神派对"在#四月最壕活动#中获得冠军，奖金20000元+靓号556677，
+请获奖人及时联系Hi语音官方更多福利更多精彩请持续关注小Hi的活动哦~
 EOF;
 
-        $title = "超炫六位号，奖金两万元！";
-        $body = "明日活动开启，点击了解详情！";
+        $title = "四月最壕活动结束，恭喜温柔乡男神们获得2W奖金+靓号556677";
+        $body = "";
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',

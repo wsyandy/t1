@@ -254,4 +254,13 @@ class UnionsController extends BaseController
         $this->view->product_channel_id = intval($product_channel_id);
 
     }
+
+    function totalRankListAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+        $unions = \Unions::findPagination(['order' => 'fame_value desc'], $page, $per_page);
+
+        $this->view->unions = $unions;
+    }
 }
