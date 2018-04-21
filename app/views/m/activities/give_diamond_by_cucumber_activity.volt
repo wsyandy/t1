@@ -10,7 +10,7 @@
         </div>
     {% elseif is_start %}
         <div class="handwritten_state">
-          <span>倒计时:<p id="hr"></p>:
+          <span>距离活动结束:<p id="hr"></p>:
             <p id="min"></p>:
             <p id="sec"></p></span>
         </div>
