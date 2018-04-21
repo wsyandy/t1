@@ -403,4 +403,42 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }
     }
+
+    function gameWhiteListAction()
+    {
+        $id = $this->params('id');
+        $hot_cache = \Rooms::getHotWriteCache();
+
+        $key = "room_game_white_list";
+        if ($id && $hot_cache->zscore($key, $id) > 0) {
+            $room_id_list = [$id];
+        } else {
+            $room_id_list = $hot_cache->zrange($key, 0, -1);
+        }
+        $this->view->room_id_list = $room_id_list;
+    }
+
+    function addGameWhiteListAction()
+    {
+        if ($this->request->isPost()) {
+            $id = $this->params('id');
+
+            $room = \Rooms::findFirstById($id);
+
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            \Rooms::addGameWhiteList($id);
+
+            return $this->response->redirect('/admin/rooms/game_white_list');
+        }
+    }
+
+    function deleteGameWhiteListAction()
+    {
+        $id = $this->params('id');
+        \Rooms::deleteGameWhiteList($id);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/game_white_list']);
+    }
 }

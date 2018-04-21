@@ -87,6 +87,9 @@
                     {% if isAllowed('game_histories','index') %}
                         <li><a href="/admin/game_histories">游戏记录</a></li>
                     {% endif %}
+                    {% if isAllowed('rooms','game_white_list') %}
+                        <li><a href="/admin/rooms/game_white_list">游戏白名单</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

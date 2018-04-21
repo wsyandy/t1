@@ -2237,4 +2237,26 @@ class Rooms extends BaseModel
         $rooms = Rooms::findPagination($cond, 1, 2);
         return $rooms;
     }
+
+    static function getGameWhiteList()
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+        return $hot_cache->zrange("room_game_white_list", 0, -1);
+    }
+
+    static function addGameWhiteList($room_id)
+    {
+        if ($room_id) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zadd("room_game_white_list", time(), $room_id);
+        }
+    }
+
+    static function deleteGameWhiteList($room_id)
+    {
+        if ($room_id) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zrem("room_game_white_list", $room_id);
+        }
+    }
 }

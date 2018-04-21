@@ -188,10 +188,9 @@ class RoomsController extends BaseController
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
         $root = $this->getRoot();
-        $ip = $this->remoteIp();
         $show_game = false;
 
-        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
+        if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
             $show_game = true;
         }
 
