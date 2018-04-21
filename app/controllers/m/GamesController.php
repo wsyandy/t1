@@ -32,9 +32,11 @@ class GamesController extends BaseController
 
         // 必须在房间才可玩游戏
         $room_id = $this->currentUser()->current_room_id;
-        if (!$room_id) {
+        if (!$room_id || $room_id != $this->currentUser()->room_id) {
+            $this->response->redirect('app://back');
             return;
         }
+
         $game = \Games::findFirstById($this->params('game_id'));
         if (!$game) {
             return;
