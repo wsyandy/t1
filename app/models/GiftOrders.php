@@ -249,7 +249,6 @@ class GiftOrders extends BaseModel
         }
     }
 
-
     function updateUserData()
     {
         $time = time();

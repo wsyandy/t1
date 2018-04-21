@@ -111,9 +111,11 @@
         var dd = document.getElementById("hr");
         var mm = document.getElementById("min");
         var ss = document.getElementById("sec");
-        dd.innerText = hr;
-        mm.innerText = min;
-        ss.innerText = sec;
+        if (dd) {
+            dd.innerText = hr;
+            mm.innerText = min;
+            ss.innerText = sec;
+        }
     }
 
     /**
