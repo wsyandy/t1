@@ -61,7 +61,8 @@ class GamesController extends BaseController
             $total_user_num = $hot_cache->zcard($room_enter_key);
 
             // 房主再次发起游戏，不是等待状态
-            if ($game_history && $game_history->user_id == $this->currentUser()->id && $total_user_num <= 1 && $game_history->status != GAME_STATUS_WAIT) {
+            if ($game_history && $game_history->user_id == $this->currentUser()->id
+                && $total_user_num <= 1 && $game_history->status != GAME_STATUS_WAIT || time() - $game_history->created_at > 1800) {
                 $game_history_id = 0;
                 $game_history->status = GAME_STATUS_END;
                 $game_history->save();
