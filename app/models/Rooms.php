@@ -120,10 +120,6 @@ class Rooms extends BaseModel
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
 
-        if ($this->country) {
-            $data['country_image_url'] = $this->country->image_small_url;
-        }
-
         return $data;
     }
 
@@ -2168,7 +2164,7 @@ class Rooms extends BaseModel
         $user_id = $user->id;
 
         debug($user->sid, $opts);
-        
+
         //限制搜索条件
         $cond = [
             'conditions' => 'online_status = :online_status: and status = :status: and user_id <> :user_id:',
@@ -2196,7 +2192,7 @@ class Rooms extends BaseModel
 
         }
 
-        if (!$new && !$broadcast && !$follow && 2 == $product_channel->id) {
+        if (!$new && !$broadcast && !$follow) {
             $search_type = '';
 
             foreach (\Rooms::$TYPES as $key => $value) {
@@ -2232,6 +2228,13 @@ class Rooms extends BaseModel
             $rooms = \Rooms::findPagination($cond, $page, $per_page);
         }
 
+        return $rooms;
+    }
+
+    static function searchTopRoom()
+    {
+        $cond = ['conditions' => 'top = :top:', 'bind' => ['top' => STATUS_ON]];
+        $rooms = Rooms::findPagination($cond, 1, 2);
         return $rooms;
     }
 }

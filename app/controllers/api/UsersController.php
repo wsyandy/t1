@@ -777,4 +777,15 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
+
+    function recommendAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 12);
+
+        $users = $this->currentUser()->nearby($page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
+
+    }
 }
