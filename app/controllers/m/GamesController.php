@@ -437,8 +437,7 @@ class GamesController extends BaseController
 
         $room_enter_key = "game_room_enter_" . $game_history->id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
-        info('游戏人数', $total_user_num);
-        info($this->currentUserId());
+        info($this->currentUserId(), '游戏人数', $total_user_num);
 
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
