@@ -660,4 +660,55 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['keywords' => $keywords]);
     }
+
+    function hotAction()
+    {
+        $top = $this->params('top');
+        $hot = $this->params('hot');
+        $gang_up = $this->params('gang_up');
+        $gang_up_category = $this->params('gang_up_category');
+
+        $top_rooms_json = [];
+        $hot_rooms_json = [];
+        $gang_up_rooms_json = [];
+        $gang_up_category_json = [];
+
+        if (STATUS_ON == $top) {
+            $top_rooms = \Rooms::searchTopRoom();
+            $top_rooms_json = $top_rooms->toJson('top_rooms', 'toSimpleJson');
+        }
+
+        if (STATUS_ON == $hot) {
+            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
+        }
+
+        if (STATUS_ON == $gang_up) {
+            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
+                ['gang_up' => $gang_up]);
+            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');;
+        }
+
+        if (STATUS_ON == $gang_up_category) {
+            $gang_up_category_json[] = ['name' => '测试1', 'type' => 'test1', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+            $gang_up_category_json[] = ['name' => '测试2', 'type' => 'test2', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+            $gang_up_category_json[] = ['name' => '测试3', 'type' => 'test3', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+            $gang_up_category_json[] = ['name' => '测试4', 'type' => 'test4', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+        }
+
+        $res['gang_up_category'] = $gang_up_category_json;
+        $res['gang_up_rooms'] = fetch($gang_up_rooms_json, 'gang_up_rooms');
+        $res['hot_rooms'] = fetch($hot_rooms_json, 'hot_rooms');
+        $res['top_rooms'] = fetch($top_rooms_json, 'top_rooms');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    function recommendAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 12);
+        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+    }
 }
