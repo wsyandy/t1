@@ -349,7 +349,7 @@ class ActivitiesController extends BaseController
 
         $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
         $user_db = \Users::getUserDb();
-        $datas = $user_db->zrevrange($key, 0, 3, 'withscores');
+        $datas = $user_db->zrevrange($key, 0, 2, 'withscores');
         $data = [];
         $user_ids = [];
 
