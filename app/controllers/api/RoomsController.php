@@ -188,28 +188,23 @@ class RoomsController extends BaseController
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
         $root = $this->getRoot();
-        $show_game = false;
-
-        if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
-            $show_game = true;
-        }
-
         //活动列表
         $product_channel_id = $this->currentProductChannelId();
         $platform = $this->context('platform');
         $platform = 'client_' . $platform;
 
+        $show_game = false;
+        if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
+            $show_game = true;
+        }
         if ($show_game) {
-
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-
             $res['menu_config'] = $menu_config;
+        }
 
-            $game_history = $room->getGameHistory();
-
-            if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
-            }
+        $game_history = $room->getGameHistory();
+        if ($game_history) {
+            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
         }
 
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
