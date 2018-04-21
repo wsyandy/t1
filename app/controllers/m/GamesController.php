@@ -519,6 +519,8 @@ class GamesController extends BaseController
         $game_history->end_data = json_encode($end_data, JSON_UNESCAPED_UNICODE);
         $game_history->save();
 
+        info($this->currentUser()->id, $game_history->id, $end_data);
+
         // rank1
         if ($rank1_user && intval($rank1_amount)) {
             if ($pay_type == PAY_TYPE_DIAMOND) {
