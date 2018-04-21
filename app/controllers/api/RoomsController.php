@@ -202,11 +202,11 @@ class RoomsController extends BaseController
         if ($show_game) {
 
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-            $menu_config[] = ['show' => true, 'title' => '测试1', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
-            $menu_config[] = ['show' => true, 'title' => '测试2', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/avatar.png'];
+
             $res['menu_config'] = $menu_config;
 
             $game_history = $room->getGameHistory();
+
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
             }
