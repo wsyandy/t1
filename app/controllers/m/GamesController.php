@@ -207,7 +207,7 @@ class GamesController extends BaseController
         if (isDevelopmentEnv()) {
             $url = 'http://tyt.momoyuedu.cn/?' . $str;
         } else {
-            $url = 'https://tyt.momoyuedu.cn/?' . $str;
+            $url = 'http://tyt.momoyuedu.cn/?' . $str;
         }
 
         info($this->currentUser()->id, 'url', $url);
