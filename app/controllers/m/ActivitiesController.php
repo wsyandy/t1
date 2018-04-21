@@ -340,6 +340,7 @@ class ActivitiesController extends BaseController
         $start = strtotime('2018-04-21 19:00:00');
         $end = strtotime('2018-04-21 19:10:59');
         $gift_id = 26;
+
         if (isDevelopmentEnv()) {
             $start = strtotime('2018-04-21 18:00:00');
             $end = strtotime('2018-04-21 20:10:59');
@@ -348,11 +349,13 @@ class ActivitiesController extends BaseController
 
         $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
         $user_db = \Users::getUserDb();
-        $user_ids = $user_db->zrevrange($key, 0, 9, 'withscores');
+        $datas = $user_db->zrevrange($key, 0, 9, 'withscores');
         $data = [];
+        $user_ids = [];
 
-        foreach ($user_ids as $user_id => $gift_num) {
+        foreach ($datas as $user_id => $gift_num) {
             $data[$user_id] = $gift_num;
+            $user_ids[] = $user_id;
         }
 
         $users = \Users::findByIds($user_ids);
