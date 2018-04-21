@@ -829,7 +829,7 @@
              ....
         ],
         
-  gang_up_category:[ 开黑分类
+  gang_up_categories:[ 开黑分类
     {
         name string 分类名称
         type 分类类型
