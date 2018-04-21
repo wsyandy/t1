@@ -91,6 +91,12 @@
                     vm.users = resp.users;
                     vm.can_enter = resp.can_enter;
                 }
+            }else {
+                if(resp.url){
+                    clearInterval(interval_time);
+                    alert(resp.error_reason);
+                    window.location.href = resp.url;
+                }
             }
         });
     }

@@ -272,7 +272,12 @@ class GamesController extends BaseController
         $room_wait_key = "game_room_wait_" . $game_history->id;
         if (!$hot_cache->zscore($room_wait_key, $this->currentUser()->id)) {
             info('已退出', $this->currentUser()->id, $this->params());
-            return $this->renderJSON(ERROR_CODE_FAIL, '已退出游戏');
+            return $this->renderJSON(ERROR_CODE_FAIL, '您已退出游戏');
+        }
+
+        if ($game_history->status == GAME_STATUS_END) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '发起者解散游戏',
+                ['url' => 'm/games/back?sid=' . $this->currentUser()->sid . '&game_history_id=' . $game_history_id]);
         }
 
         $user_ids = $hot_cache->zrange($room_wait_key, 0, -1);
