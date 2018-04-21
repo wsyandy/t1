@@ -690,7 +690,7 @@ class RoomsController extends BaseController
             $gang_up_category_json[] = ['name' => '测试4', 'type' => 'test4', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
         }
 
-        $res['gang_up_category'] = $gang_up_category_json;
+        $res['gang_up_categories'] = $gang_up_category_json;
         $res['gang_up_rooms'] = fetch($gang_up_rooms_json, 'gang_up_rooms');
         $res['hot_rooms'] = fetch($hot_rooms_json, 'hot_rooms');
         $res['top_rooms'] = fetch($top_rooms_json, 'top_rooms');
