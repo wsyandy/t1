@@ -24,17 +24,18 @@
             <ul class="handwritten_ranking_ul">
                 {% for k, user in users %}
                     <li>
-                        {% if k == 0 %}
-                            <b class="neo"><i>{{ k }}</i>st</b>
+                        {% set index = k + 1 %}
+                        {% if index == 1 %}
+                            <b class="neo"><i>{{ index }}</i>st</b>
                         {% endif %}
-                        {% if k == 1 %}
-                            <b class="two"><i>{{ k }}</i>st</b>
+                        {% if index == 2 %}
+                            <b class="two"><i>{{ index }}</i>st</b>
                         {% endif %}
-                        {% if k == 2 %}
-                            <b class="three"><i>{{ k}}</i>st</b>
+                        {% if index == 3 %}
+                            <b class="three"><i>{{ index }}</i>st</b>
                         {% endif %}
-                        {% if k > 2 %}
-                            <b>{{ k }}</b>
+                        {% if index > 3 %}
+                            <b>{{ index }}</b>
                         {% endif %}
                         <span class="name">{{ user.nickname }}</span>
                         <span class="num">{{ user.gift_num }}</span>
