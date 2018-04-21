@@ -65,7 +65,7 @@
     var app = new Vue({
         el: '#handwritten',
         data: {
-            isEnd: {{ is_end }}
+            isEnd: true
         },
         methods: {}
     })
