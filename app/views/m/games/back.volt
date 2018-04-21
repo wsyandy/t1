@@ -16,7 +16,9 @@
         <div class="current_game">
             <p>当前游戏模式：<span>${pay_type_text}模式</span></p>
             <p>奖金池共计：<span :class="pay_type == 'diamond'?'masonry':'gold'">{{ total_amount }}</span></p>
-            <p>手续费：<span>奖金池的10%</span></p>
+            {% if total_amount %}
+                <p>手续费：<span>奖金池的10%</span></p>
+            {% endif %}
         </div>
         <div class="settlement_wire_box" >
             <span class="line"></span>
