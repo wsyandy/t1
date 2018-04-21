@@ -370,9 +370,24 @@ class ActivitiesController extends BaseController
             $is_end = 0;
         }
 
+        $is_start = 0;
+
+        if ($start < time()) {
+            $is_start = 1;
+        }
+
+        $end_time = $start;
+
+        if ($is_start) {
+            $end_time = $end;
+        }
+
+        $this->view->end = $end;
         $this->view->end = $end;
         $this->view->start = $start;
         $this->view->users = $users;
         $this->view->is_end = $is_end;
+        $this->view->is_start = $is_start;
+        $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
 }
