@@ -39,6 +39,7 @@ class GamesController extends BaseController
 
         $game = \Games::findFirstById($this->params('game_id'));
         if (!$game) {
+            $this->response->redirect('app://back');
             return;
         }
 
