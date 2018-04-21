@@ -2801,17 +2801,8 @@ class Users extends BaseModel
             }
 
             $sender->update();
+            Users::activityStat($gift_order, ['time' => $time]);
         }
-
-//        $user = $gift_order->user;
-//        $user_experience = 0.01 * $amount;
-//        if ($user) {
-//            $user->experience += $user_experience;
-//            $user_level = $user->calculateLevel();
-//            $user->level = $user_level;
-//            $user->segment = $user->calculateSegment();
-//            $user->update();
-//        }
 
         unlock($lock);
     }
@@ -2859,6 +2850,31 @@ class Users extends BaseModel
         }
 
         unlock($lock);
+    }
+
+    //活动统计
+    static function activityStat($gift_order, $opts)
+    {
+        $start = strtotime('2018-04-21 19:00:00');
+        $end = strtotime('2018-04-21 19:10:59');
+        $time = fetch($opts, 'time', time());
+        $gift_id = 26;
+
+        if (isDevelopmentEnv()) {
+            $start = strtotime('2018-04-21 18:00:00');
+            $end = strtotime('2018-04-21 20:10:59');
+            $gift_id = 87;
+        }
+
+        if ($time >= $start && $time <= $end && $gift_id == $gift_order->gift_id) {
+            $gift_num = $gift_order->gift_num;
+            $sender_id = $gift_order->sender_id;
+            $time = fetch($opts, 'time');
+            $db = Users::getUserDb();
+            $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
+            $db->zincrby($key, $gift_num, $sender_id);
+            info($start, $end, $key, $gift_num, $sender_id, $time);
+        }
     }
 
     function saveFdInfo($fd, $online_token, $ip)
@@ -2953,20 +2969,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3093,21 +3112,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }

@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1003583;
-        $new_user_id = 10086;
+        $user_id = 1206502;
+        $new_user_id = 100106;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -124,13 +124,13 @@ class UsersTask extends \Phalcon\Cli\Task
         echoLine($data);
 
         foreach ($data as $k => $v) {
-            if ('id' == $k || 'uid' == $k) {
+            if ('id' == $k || 'uid' == $k || 'sid' == $k) {
                 continue;
             }
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 10086;
+        $new_user->uid = 100106;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
@@ -425,7 +425,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
     function resetUserAction()
     {
-        $user_id = 10086;
+        $user_id = 100106;
         $user = Users::findFirstById($user_id);
         $new_user = new Users();
 
@@ -433,7 +433,7 @@ class UsersTask extends \Phalcon\Cli\Task
         echoLine($data);
 
         foreach ($data as $k => $v) {
-            if ('id' == $k || 'uid' == $k) {
+            if ('id' == $k || 'uid' == $k || 'sid' == $k) {
                 continue;
             }
             $new_user->$k = $v;
@@ -733,7 +733,7 @@ class UsersTask extends \Phalcon\Cli\Task
         }
 
 
-        $user_id = 1003583;
+        $user_id = 1206502;
         $user = Users::findFirstById($user_id);
         $user->mobile = '1';
         $user->avatar_status = AUTH_FAIL;

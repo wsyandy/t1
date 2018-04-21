@@ -281,6 +281,7 @@ class ActivitiesController extends BaseController
         $this->view->title = "梦幻周榜";
     }
 
+    //房间流水活动
     function roomIncomeRankActivityAction()
     {
         $stat_at = '20180420';
@@ -317,7 +318,7 @@ class ActivitiesController extends BaseController
         if (count($rooms)) {
 
             foreach ($rooms as $index => $room) {
-                
+
                 if ($index > 0) {
                     $last_room = $rooms[$index - 1];
                     $last_room_income = $incomes[$last_room->id];
@@ -325,9 +326,50 @@ class ActivitiesController extends BaseController
                 }
             }
         }
-        
+
         $this->view->rooms = $rooms;
         $this->view->max = $max;
         $this->view->title = "hi语音活动";
+    }
+
+    //送钻石活动 道具 小黄瓜
+    function giveDiamondByCucumberActivityAction()
+    {
+        $this->view->title = "送1000钻";
+
+        $start = strtotime('2018-04-21 19:00:00');
+        $end = strtotime('2018-04-21 19:10:59');
+        $gift_id = 26;
+        if (isDevelopmentEnv()) {
+            $start = strtotime('2018-04-21 18:00:00');
+            $end = strtotime('2018-04-21 20:10:59');
+            $gift_id = 87;
+        }
+
+        $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
+        $user_db = \Users::getUserDb();
+        $user_ids = $user_db->zrevrange($key, 0, 9, 'withscores');
+        $data = [];
+
+        foreach ($user_ids as $user_id => $gift_num) {
+            $data[$user_id] = $gift_num;
+        }
+
+        $users = \Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->gift_num = $data[$user->id];
+        }
+
+        $is_end = 1;
+
+        if ($end > time()) {
+            $is_end = 0;
+        }
+
+        $this->view->end = $end;
+        $this->view->start = $start;
+        $this->view->users = $users;
+        $this->view->is_end = $is_end;
     }
 }
