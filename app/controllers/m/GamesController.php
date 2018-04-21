@@ -381,7 +381,7 @@ class GamesController extends BaseController
 
         $user_datas = [];
         foreach ($rank_data as $user_id => $settlement_amount) {
-            if($user_id){
+            if ($user_id) {
                 $user = \Users::findFirstById($user_id);
                 $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
             }
@@ -431,15 +431,6 @@ class GamesController extends BaseController
         }
 
         $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
-        if ($rank1 && $hot_cache->zscore($room_user_quit_key, $rank1)) {
-            $rank1 = 0;
-        }
-        if ($rank2 && $hot_cache->zscore($room_user_quit_key, $rank2)) {
-            $rank2 = 0;
-        }
-        if ($rank3 && $hot_cache->zscore($room_user_quit_key, $rank3)) {
-            $rank3 = 0;
-        }
 
         $room_enter_key = "game_room_enter_" . $game_history->id;
         $total_user_num = $hot_cache->zcard($room_enter_key);
@@ -449,119 +440,122 @@ class GamesController extends BaseController
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
         $pay_type = fetch($start_data, 'pay_type');
-
+        
         $game_history->status = GAME_STATUS_END;
         $game_history->save();
 
         $rank1_user = \Users::findFirstById($rank1);
         $rank2_user = \Users::findFirstById($rank2);
         $rank3_user = \Users::findFirstById($rank3);
+        $rank1_amount = 0;
+        $rank2_amount = 0;
+        $rank3_amount = 0;
 
         $end_data = ['enter_user_num' => $total_user_num];
         $rank_data = [];
-        if ($total_user_num == 1) {
-            $rank1_amount = $total_user_num * $amount;
-            if ($pay_type == PAY_TYPE_DIAMOND) {
-                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-            }
-            if ($pay_type == PAY_TYPE_GOLD) {
-                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-            }
 
-            $rank_data[$rank1] = $rank1_amount;
+        $total_amount = $total_user_num * $amount * 0.9;
+        if ($total_user_num > 3) {
+            $total_amount = ($total_user_num - 3) * $amount * 0.9;
+        }
+
+        if ($total_user_num == 1) {
+            $rank1_amount = ceil($total_amount);
+            if ($hot_cache->zscore($room_user_quit_key, $rank1)) {
+                $rank1_amount = '退出';
+            }
 
         } elseif ($total_user_num == 2) {
-            $rank1_amount = $total_user_num * $amount;
+            $rank1_amount = ceil($total_amount);
             $rank2_amount = 0;
-            if ($pay_type == PAY_TYPE_DIAMOND) {
-                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            if ($hot_cache->zscore($room_user_quit_key, $rank1)) {
+                $rank1_amount = '退出';
             }
-            if ($pay_type == PAY_TYPE_GOLD) {
-                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
-            }
-
-            $rank_data[$rank1] = $rank1_amount;
-            $rank_data[$rank2] = $rank2_amount;
 
         } elseif ($total_user_num == 3) {
 
-            $total_amount = $total_user_num * $amount;
             $rank1_amount = round($total_amount * 0.8);
             $rank2_amount = round($total_amount * 0.2);
             $rank3_amount = 0;
-            // rank1
-            if ($pay_type == PAY_TYPE_DIAMOND) {
-                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-            }
-            if ($pay_type == PAY_TYPE_GOLD) {
-                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+
+            if ($hot_cache->zscore($room_user_quit_key, $rank1)) {
+                $rank1_amount = '退出';
             }
 
-            // rank2
-            if ($pay_type == PAY_TYPE_DIAMOND && $rank2_user) {
-                $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            if ($hot_cache->zscore($room_user_quit_key, $rank2)) {
+                $rank2_amount = '退出';
             }
-            if ($pay_type == PAY_TYPE_GOLD && $rank2_user) {
-                $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
-            }
-
-            $rank_data[$rank1] = $rank1_amount;
-            $rank_data[$rank2] = $rank2_amount;
-            $rank_data[$rank3] = $rank3_amount;
 
         } else {
 
-            $total_amount = ($total_user_num - 3) * $amount;
             $rank1_amount = $amount + round($total_amount * 0.7);
             $rank2_amount = $amount + round($total_amount * 0.2);
             $rank3_amount = $amount + round($total_amount * 0.1);
 
-            // rank1
-            if ($pay_type == PAY_TYPE_DIAMOND) {
-                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
-            }
-            if ($pay_type == PAY_TYPE_GOLD) {
-                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            if ($hot_cache->zscore($room_user_quit_key, $rank1)) {
+                $rank1_amount = '退出';
             }
 
-            // rank2
-            if ($pay_type == PAY_TYPE_DIAMOND && $rank2_user) {
-                $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
-            }
-            if ($pay_type == PAY_TYPE_GOLD && $rank2_user) {
-                $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            if ($hot_cache->zscore($room_user_quit_key, $rank2)) {
+                $rank2_amount = '退出';
             }
 
-            // rank3
-            if ($pay_type == PAY_TYPE_DIAMOND && $rank3_user) {
-                $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
+            if ($hot_cache->zscore($room_user_quit_key, $rank3)) {
+                $rank3_amount = '退出';
             }
-            if ($pay_type == PAY_TYPE_GOLD && $rank3_user) {
-                $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
-            }
+        }
 
+        if ($rank1_user) {
             $rank_data[$rank1] = $rank1_amount;
+        }
+        if ($rank2_user) {
             $rank_data[$rank2] = $rank2_amount;
+        }
+        if ($rank3_user) {
             $rank_data[$rank3] = $rank3_amount;
         }
 
         $end_data['rank_data'] = $rank_data;
         $game_history->end_data = json_encode($end_data, JSON_UNESCAPED_UNICODE);
         $game_history->save();
+
+        // rank1
+        if ($rank1_user && intval($rank1_amount)) {
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
+                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+            }
+        }
+
+        // rank2
+        if ($rank2_user && intval($rank2_amount)) {
+
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
+                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+            }
+        }
+
+        // rank3
+        if ($rank3_user && intval($rank3_amount)) {
+
+            if ($pay_type == PAY_TYPE_DIAMOND) {
+                $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
+            }
+            if ($pay_type == PAY_TYPE_GOLD) {
+                $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
+                $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
+            }
+        }
 
         //在游戏结束回调通知的时候，发送结束通知
         $current_user = $this->currentUser();
