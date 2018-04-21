@@ -6,11 +6,11 @@
     <div class="select_game_instructions">
         <div class="instructions_title">
             <span class="wire"></span>
-            <h3>说明</h3>
+            <h3>结算说明</h3>
             <span class="wire"></span>
         </div>
-        <p>1. 参与人数越多，胜利者奖励越高；未排名玩家消耗的游戏币总和，将按照比例分给胜利者</p>
-        <p>2. 中途退出游戏的玩家不论分值均不计入排名</p>
+        <p>1. 参与人数越多，胜利者奖励越高；奖金总和，将按照比例分给胜利者</p>
+        <p>2. 中途退出游戏的玩家不计入排名</p>
     </div>
     {% if user_num %}
         <div class="current_game">
