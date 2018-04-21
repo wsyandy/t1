@@ -271,7 +271,7 @@
                             </ul>
                         </li>
                     {% endif %}
-                    {% if isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') %}
+                    {% if isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') or isAllowed('unions','total_rank_list') %}
                         <li class="dropdown-submenu">
                             <a href="javascript:;" tabindex="-1">家族排行榜统计</a>
                             <ul class="dropdown-menu">
@@ -280,6 +280,9 @@
                                 {% endif %}
                                 {% if isAllowed('unions','week_rank_list') %}
                                     <li><a href="/admin/unions/week_rank_list">周榜统计</a></li>
+                                {% endif %}
+                                {% if isAllowed('unions','total_rank_list') %}
+                                    <li><a href="/admin/unions/total_rank_list">总榜统计</a></li>
                                 {% endif %}
                             </ul>
                         </li>
