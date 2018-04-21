@@ -155,7 +155,7 @@ class GamesController extends BaseController
 
             $game_history->create();
 
-            \GameHistories::delay(600)->asyncCloseGame($game_history->id);
+            \GameHistories::delay(900)->asyncCloseGame($game_history->id);
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
@@ -254,6 +254,8 @@ class GamesController extends BaseController
         $game_history->status = GAME_STATUS_PLAYING;
         $game_history->enter_at = time();
         $game_history->save();
+
+        \GameHistories::delay(200)->asyncCloseGame($game_history->id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
