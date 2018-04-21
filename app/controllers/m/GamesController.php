@@ -440,7 +440,7 @@ class GamesController extends BaseController
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
         $pay_type = fetch($start_data, 'pay_type');
-        
+
         $game_history->status = GAME_STATUS_END;
         $game_history->save();
 
