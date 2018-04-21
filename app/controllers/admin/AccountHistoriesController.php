@@ -30,6 +30,8 @@ class AccountHistoriesController extends BaseController
     function giveDiamondAction()
     {
         $user_id = $this->params('user_id');
+        $content = $this->params('content');
+
         if ($this->request->isPost()) {
 
             if (!$this->currentOperator()->isSuperOperator()) {
@@ -37,6 +39,10 @@ class AccountHistoriesController extends BaseController
             }
 
             $user = \Users::findFirstById($user_id);
+
+            if ($content) {
+                \Chats::sendTextSystemMessage($user_id, $content);
+            }
 
             $amount = intval($this->params('diamond'));
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => $this->currentOperator()->id];
