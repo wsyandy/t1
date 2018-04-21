@@ -2855,14 +2855,14 @@ class Users extends BaseModel
     //活动统计
     static function activityStat($gift_order, $opts)
     {
-        $start = strtotime('2018-04-21 19:00:00');
-        $end = strtotime('2018-04-21 19:10:59');
+        $start = strtotime('2018-04-21 20:00:00');
+        $end = strtotime('2018-04-21 20:10:59');
         $time = fetch($opts, 'time', time());
         $gift_id = 26;
 
         if (isDevelopmentEnv()) {
             $start = strtotime('2018-04-21 18:00:00');
-            $end = strtotime('2018-04-21 20:10:59');
+            $end = strtotime('2018-04-21 19:25:59');
             $gift_id = 87;
         }
 
