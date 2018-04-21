@@ -6,9 +6,7 @@
     <span class="handwritten_top_bg"></span>
     {% if is_end %}
         <div class="handwritten_state">
-            <span>活动已结束<p id="hr"></p>:
-            <p id="min"></p>:
-            <p id="sec"></p></span>
+            <span>活动已结束</span>
         </div>
     {% elseif is_start %}
         <div class="handwritten_state">
@@ -113,9 +111,11 @@
         var dd = document.getElementById("hr");
         var mm = document.getElementById("min");
         var ss = document.getElementById("sec");
-        dd.innerText = hr;
-        mm.innerText = min;
-        ss.innerText = sec;
+        if (dd) {
+            dd.innerText = hr;
+            mm.innerText = min;
+            ss.innerText = sec;
+        }
     }
 
     /**
