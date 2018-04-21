@@ -16,15 +16,14 @@
 
 <script type="text/javascript">
     $(function () {
+
         $(".form_datetime").datetimepicker({
             language: "zh-CN",
-            format: 'yyyy-mm-dd hh:00',
-            weekStart: 1,
+            format: 'yyyy-mm-dd hh:ii',
             autoclose: 1,
             todayBtn: 1,
             todayHighlight: 1,
             startView: 2,
-            minView: 0
         });
     });
 </script>
