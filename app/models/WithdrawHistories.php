@@ -255,7 +255,7 @@ EOF;
 
     static function waitWithdrawHistory($user)
     {
-        $user_ids = [800000, 1057113, 1057574, 1110623, 1012665, 1057722, 1059033, 1057582];
+        $user_ids = [800000, 1057113, 1057574, 1110623, 1012665, 1057722, 1059033, 1057582, 1132204];
 
         if (in_array($user->id, $user_ids) && time() < strtotime("2018-04-22 23:59:59")) {
             info($user_ids, $user->id);
