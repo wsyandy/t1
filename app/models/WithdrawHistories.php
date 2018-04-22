@@ -255,13 +255,6 @@ EOF;
 
     static function waitWithdrawHistory($user)
     {
-        $user_ids = [1057722, 1132204];
-
-        if (in_array($user->id, $user_ids) && time() < strtotime("2018-04-22 23:59:59")) {
-            info($user_ids, $user->id);
-            return null;
-        }
-
         $start = beginOfWeek();
         $end = endOfWeek();
 
