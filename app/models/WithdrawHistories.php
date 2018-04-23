@@ -141,8 +141,8 @@ EOF;
         $amount = fetch($opts, 'amount');
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
 
-        if ($amount >= 10000) {
-            return [ERROR_CODE_FAIL, '单次限额10000元'];
+        if ($amount > 20000) {
+            return [ERROR_CODE_FAIL, '单次限额20000元'];
         }
 
         $withdraw_account = WithdrawAccounts::findFirstById($withdraw_account_id);

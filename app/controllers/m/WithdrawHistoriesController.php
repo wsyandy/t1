@@ -68,8 +68,8 @@ class WithdrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
-            if ($amount >= 10000) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '单次限额10000元');
+            if ($amount > 20000) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '单次限额20000元');
             }
 
             if (isBlank($withdraw_account_id)) {
