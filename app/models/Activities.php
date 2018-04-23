@@ -317,15 +317,20 @@ class Activities extends BaseModel
 
         debug($gift_id, $opts);
 
-        if (in_array($gift_id, [59, 60, 61])) {
+        $gift_ids = [59, 60, 61];
+        if (isDevelopmentEnv()) {
+            $gift_ids = [123, 124, 125];
+        }
+
+        if (in_array($gift_id, $gift_ids)) {
 
             $time = fetch($opts, 'time', time());
             $user_id = $gift_order->user_id;
             $amount = $gift_order->amount;
-            $activity_start = '2018-04-23 14:00:00';
+            $activity_start = '2018-04-23 18:00:00';
 
             if (isDevelopmentEnv()) {
-                $activity_start = '2018-04-23 11:30:00';
+                $activity_start = '2018-04-23 14:30:00';
             }
 
             if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 24:59:59')) {

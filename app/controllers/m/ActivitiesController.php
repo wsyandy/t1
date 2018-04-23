@@ -396,27 +396,21 @@ class ActivitiesController extends BaseController
     {
         if ($this->request->isAjax()) {
 
-            $index = $this->params('index');
+            $index = intval($this->params('index'));
             $start = date("Ymd", beginOfWeek());
             $end = date("Ymd", endOfWeek());
 
-            switch ($index) {
-                case 1: {
-                    $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
-                    break;
-                }
-                case 2: {
-                    $key = "week_charm_rank_list_gift_id_60_" . $start . "_" . $end;
-                    break;
-                }
-                case 3: {
-                    $key = "week_charm_rank_list_gift_id_61_" . $start . "_" . $end;
-                    break;
-                }
-                default: {
-                    $key = \Users::generateFieldRankListKey('week', 'charm');
-                }
+            $gift_ids = [59, 60, 61];
+            if (isDevelopmentEnv()) {
+                $gift_ids = [123, 124, 125];
             }
+
+            if ($index && $index <= 3) {
+                $key = "week_charm_rank_list_gift_id_" . $gift_ids[$index - 1] . "_" . $start . "_" . $end;
+            } else {
+                $key = \Users::generateFieldRankListKey('week', 'charm');
+            }
+
             debug($key);
 
             $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
