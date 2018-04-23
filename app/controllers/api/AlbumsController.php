@@ -51,6 +51,10 @@ class AlbumsController extends BaseController
             $image_files[] = $image_file;
         }
 
+        if(!$image_files){
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '已成功');
+        }
+
         $res = \Albums::uploadImage($user, $image_files);
         if ($res) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
