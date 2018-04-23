@@ -21,10 +21,6 @@
 10. 好友列表：app://friends
 11. 消息列表页面 app://messages
 12. 聊天页面 app://messages/show?user_id=xxx&nickname=xxx&avatar_url=xxxx
-13. 分享到qq好友 app://share/qq/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
-14. 分享到微信好友 app://share/wx/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
-15. 分享到微信朋友圈 app://share/wx/moments?title=xxx&content=xxxx&share_url=xxx&icon=xxx
-16. 分享到新浪微博 app://share/sinaweibo?title=xxx&content=xxxx&share_url=xxx&icon=xxx
 
 ## url协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
@@ -38,6 +34,12 @@
 ## h5打开app协议
    进入房间:产品code://enter_room?param1=a&param2=b 例: yuewan://enter_room?room_id=1&user_id=2
 
+## 分享协议
+1. 分享到qq好友 app_share://qq/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+2. 分享到微信好友 app_share://wx/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+3. 分享到微信朋友圈 app_share://wx/moments?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+4. 分享到新浪微博 app_share://sinaweibo?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+    
 # 2. error_code 状态码协议
 
 状态码|原因|说明
