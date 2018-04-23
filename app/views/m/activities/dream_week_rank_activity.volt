@@ -104,7 +104,7 @@
                 {% for user in charm_users %}
                     <li>
                         <span class="name">{{ user.nickname }}</span>
-                        <span>ID：{{ user.id }}</span>
+                        <span>ID：{{ user.uid }}</span>
                     </li>
                 {% endfor %}
             </ul>
@@ -125,7 +125,7 @@
                 {% for user in wealth_users %}
                     <li>
                         <span class="name">{{ user.nickname }}</span>
-                        <span>ID：{{ user.id }}</span>
+                        <span>ID：{{ user.uid }}</span>
                     </li>
                 {% endfor %}
             </ul>
