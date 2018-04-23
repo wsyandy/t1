@@ -83,7 +83,7 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-            <div @click="saveImg()" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>
+            <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
     </div>
     <div v-if="isSaveSuccess" class="toast_text_box">
@@ -124,15 +124,6 @@
             go_voice_identify: function () {
                 var url = '/m/users/recording';
                 vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex);
-            },
-            saveImg:function () {
-                var data = {
-                    'sid':vm.sid,
-                    'code':vm.code
-                };
-                $.authGet('/m/users/to_browser',data, function (resp) {
-
-                })
             }
         }
     };
@@ -150,7 +141,6 @@
             if(!resp.error_code){
                 vm.tonic = resp.tonic;
                 vm.tonic_ratio = resp.tonic_ratio;
-                console.log(vm.avatar_url);
                 if(resp.avatar_url){
                    vm.avatar_url = resp.avatar_url;
                 }else{
@@ -239,7 +229,7 @@
             var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
             save_link.href = data;
             save_link.download = filename;
-
+            
             var event = document.createEvent('MouseEvents');
             event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             save_link.dispatchEvent(event);
