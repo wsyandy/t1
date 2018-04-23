@@ -410,7 +410,7 @@ class ActivitiesController extends BaseController
 
             $opts = ['start' => $start, 'end' => $end];
 
-            $gift_ids = [59, 60, 61];
+            $gift_ids = [61, 60, 59];
 
             if (isDevelopmentEnv()) {
                 $gift_ids = [123, 124, 125];
