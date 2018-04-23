@@ -315,6 +315,8 @@ class Activities extends BaseModel
     {
         $gift_id = $gift_order->gift_id;
 
+        debug($gift_id, $opts);
+
         if (in_array($gift_id, [59, 60, 61])) {
 
             $time = fetch($opts, 'time', time());
