@@ -1,0 +1,323 @@
+html, body, p, div, ul, li {
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: "PingFangSC-Regular";
+}
+
+div, ul, li {
+    display: flex;
+    box-sizing: border-box;
+}
+
+ul, li {
+    list-style: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+/* 周榜活动 */
+.week_activity {
+    padding-top: 24px;
+    flex-direction: column;
+    background-image: linear-gradient(-180deg, #1F1054 0%, #501791 100%);
+}
+
+.week_title_bg {
+    width: 270px;
+    height: 102px;
+    margin: 0 auto;
+    background: url(../images/week_title_bg.png) center no-repeat;
+    background-size: cover;
+}
+
+.week_title_textbg {
+    padding-top: 18px;
+    width: 292px;
+    height: 159px;
+    margin: 0 auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url(../images/week_title_textbg.png) center no-repeat;
+    background-size: cover;
+}
+
+.week_title_textbg span {
+    font-size: 13px;
+    color: #333333;
+    line-height: 26px;
+}
+
+.week_title_textbox {
+    margin: 15px 38px 0;
+    flex-direction: column;
+    font-size: 14px;
+    color: #FFFFFF;
+    text-align: center;
+    line-height: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px dotted #FFFFFF;
+}
+
+.week_title_textbox .week_get_text {
+    margin: 10px auto 0;
+    width: 179px;
+    height: 19px;
+    background: url(../images/week_get_text.png) center no-repeat;
+    background-size: cover;
+}
+
+.week_process {
+    margin: 20px 22px 0;
+    height: 350px;
+}
+
+.week_title_type {
+    margin: 0 auto;
+    width: 169px;
+    height: 49px;
+}
+
+.charm_reward {
+    margin-top: 26px;
+    background: url(../images/week_charm_reward.png) center no-repeat;
+    background-size: cover;
+}
+
+.real_time {
+    margin-top: 35px;
+    background: url(../images/week_title_real_time.png) center no-repeat;
+    background-size: cover;
+}
+
+.week_charm_rewardul {
+    margin: 21px 8px 0;
+    flex-direction: column;
+}
+
+.week_charm_rewardul li {
+    margin-bottom: 26px;
+    font-size: 14px;
+    color: #FFFFFF;
+    justify-content: center;
+}
+
+.week_charm_rewardul li .type {
+    width: 88px;
+}
+
+.week_charm_rewardul li .center {
+    margin-right: 30px;
+}
+
+.week_charm_rewardul li .behind {
+    width: 110px;
+}
+
+.week_rules_tltle {
+    margin: 10px auto 0;
+    width: 114px;
+    height: 30px;
+    background: url(../images/week_rules_tltle.png) center no-repeat;
+    background-size: 114px 30px;
+}
+
+.week_rules_box {
+    margin: 20px auto 0;
+    padding: 0 16px;
+    width: 296px;
+    height: 317px;
+    justify-content: center;
+    background: url(../images/week_rules_box_border.png) center no-repeat;
+    background-size: 296px 317px;
+    flex-direction: column;
+}
+
+.week_rules_box p {
+    font-size: 12px;
+    color: #FFFFFF;
+    display: flex;
+}
+
+.week_rules_box p span {
+    line-height: 24px;
+}
+
+.week_countdown {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #FFFFFF;
+    justify-content: center;
+}
+
+.week_list_tab {
+    margin: 20px 18px 0;
+    height: 35px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+}
+
+.week_list_tab li {
+    flex: 1;
+    color: white;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.week_list_tab li.cur {
+    background-image: linear-gradient(-150deg, #C925F7 0%, #5B06D3 100%);
+}
+
+.week_list_tab li img {
+    width: 25px;
+    height: 25px;
+}
+
+.week_top_three {
+    margin: 26px 40px 0;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.week_top_three_li {
+    flex-direction: column;
+    align-items: center;
+}
+
+.week_top_three_li p {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
+.week_top_three_li p.two {
+    color: #56B1E3;
+}
+
+.week_top_three_li p.three {
+    font-size: 12px;
+    color: #F37F32;
+}
+
+.week_top_three_li .header {
+    padding-top: 18px;
+    position: relative;
+    width: 89px;
+    height: 88px;
+    justify-content: center;
+}
+
+.week_top_three_li .header .two {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 89px;
+    height: 88px;
+    background: url(../images/week_second.png) center no-repeat;
+    background-size: 89px 88px;
+}
+
+.week_top_three_li .neo {
+    padding-top: 18px;
+    position: relative;
+    width: 109px;
+    height: 111px;
+    justify-content: center;
+}
+
+.week_top_three_li .neo span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 109px;
+    height: 111px;
+    background: url(../images/week_first_name.png) center no-repeat;
+    background-size: 109px 111px;
+}
+
+.week_top_three_li p {
+    color: #F45189;
+}
+
+.week_top_three_li .neo img {
+    margin-top: 6px;
+    margin-left: -2px;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+}
+
+.week_top_three_li .header img {
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
+    margin-left: -2px;
+}
+
+.week_top_three_li .header .three {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 89px;
+    height: 88px;
+    background: url(../images/week_third.png) center no-repeat;
+    background-size: 89px 88px;
+}
+
+.week_top_three_li span {
+    font-size: 12px;
+    color: #FFFFFF;
+}
+
+.week_list_content {
+    margin: 25px 18px 0;
+    background-color: white;
+    flex-direction: column;
+    border-radius: 6px;
+}
+
+.week_list_content li {
+    width: 100%;
+    height: 60px;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.week_list_content li .level {
+    font-size: 12px;
+    color: #595959;
+    margin: 0 18px 0 15px;
+}
+
+.week_list_content li img {
+    width: 35px;
+    height: 35px;
+    border-radius: 17.5px;
+    border: 1px solid #ddd;
+}
+
+.week_list_content li .name {
+    margin-left: 18px;
+    width: 156px;
+    font-size: 14px;
+    color: #535353;
+}
+
+.week_list_content li span {
+    font-size: 12px;
+    color: #595959;
+}
+
+.week_hint_text {
+    margin: 20px auto 26px;
+    font-size: 12px;
+    color: #FFFFFF;
+}
+
+.vueBox {
+    width: 100%
+}

@@ -390,4 +390,51 @@ class ActivitiesController extends BaseController
         $this->view->is_start = $is_start;
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
+
+    //送肥皂，社会猫，肥皂礼物
+    function giftWeekRankActivityAction()
+    {
+        if ($this->request->isAjax()) {
+
+            $index = $this->params('index');
+            $start = date("Ymd", beginOfWeek());
+            $end = date("Ymd", endOfWeek());
+
+            switch ($index) {
+                case 1: {
+                    $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
+                    break;
+                }
+                case 2: {
+                    $key = "week_charm_rank_list_gift_id_60_" . $start . "_" . $end;
+                    break;
+                }
+                case 3: {
+                    $key = "week_charm_rank_list_gift_id_61_" . $start . "_" . $end;
+                    break;
+                }
+                default: {
+                    $key = \Users::generateFieldRankListKey('week', 'charm');
+                }
+            }
+
+            $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+
+//            $charm_users = \Users::findByIds([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+            if (count($charm_users)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
+            }
+        }
+
+        $this->view->code = $this->params('code');
+        $this->view->sid = $this->params('sid');
+        $this->view->start_text = "2018年4月5日0时";
+        $this->view->end_text = "2018年4月8日0时";
+
+        $this->view->title = "等待玩家";
+    }
+
 }
