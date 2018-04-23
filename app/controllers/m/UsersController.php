@@ -205,25 +205,26 @@ class UsersController extends BaseController
         if (!$consonant_ratios) {
             $consonant_ratios = $user->getRatio($tonic_ratio);
         }
+
         if ($sex) {
             $consonant_index = array_rand($all_consonant_male, 3);
-            $consonants = [
-                $consonant_ratios[0] => $all_consonant_male[$consonant_index[0]],
-                $consonant_ratios[1] => $all_consonant_male[$consonant_index[1]],
-                $consonant_ratios[2] => $all_consonant_male[$consonant_index[2]]
-            ];
+            $consonant1 = [$consonant_ratios[0] => $all_consonant_male[$consonant_index[0]]];
+            $consonant2 = [$consonant_ratios[1] => $all_consonant_male[$consonant_index[1]]];
+            $consonant3 = [$consonant_ratios[2] => $all_consonant_male[$consonant_index[2]]];
         } else {
             $consonant_index = array_rand($all_consonant_female, 3);
-            $consonants = [
-                $consonant_ratios[0] => $all_consonant_female[$consonant_index[0]],
-                $consonant_ratios[1] => $all_consonant_female[$consonant_index[1]],
-                $consonant_ratios[2] => $all_consonant_female[$consonant_index[2]]
-            ];
+            $consonant1 = [$consonant_ratios[0] => $all_consonant_female[$consonant_index[0]]];
+            $consonant2 = [$consonant_ratios[1] => $all_consonant_female[$consonant_index[1]]];
+            $consonant3 = [$consonant_ratios[2] => $all_consonant_female[$consonant_index[2]]];
         }
-        krsort($consonants);
-        info($consonants);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['consonants' => $consonants, 'consonant_ratios' => $consonant_ratios]);
+        $consonants = [
+            'consonant1'=>$consonant1,
+            'consonant2'=>$consonant2,
+            'consonant3'=>$consonant3
+        ];
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $consonants);
 
     }
 

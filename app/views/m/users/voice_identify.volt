@@ -22,9 +22,19 @@
         <div class="save_picture_li">
             <span class="title">辅音色:</span>
             <div class="save_picture_libox">
-                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant,consonant_ratio in consonants">
-                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant}</span>
-                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio}%</span>
+                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant1,consonant_ratio1 in consonant1">
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant1}</span>
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio1}%</span>
+                    <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
+                </p>
+                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant2,consonant_ratio2 in consonant2">
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant2}</span>
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio2}%</span>
+                    <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
+                </p>
+                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant3,consonant_ratio3 in consonant3">
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant3}</span>
+                    <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio3}%</span>
                     <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
                 </p>
             </div>
@@ -90,13 +100,15 @@
             tonic:"",
             consonants:[],
             tonic_ratio:"",
-            consonant_ratios:[],
             property:'',
             mate:'',
             heartbeat_value:'',
             flirt_value:'',
             fall_down_value:'',
-            grade:''
+            grade:'',
+            consonant1:'',
+            consonant2:'',
+            consonant3:''
         },
 
         methods: {
@@ -145,8 +157,9 @@
         };
         $.authGet('/m/users/get_consonants',data, function (resp) {
            if(!resp.error_code){
-               vm.consonants = resp.consonants;
-               vm.consonant_ratios = resp.consonant_ratios;
+               vm.consonant1 = resp.consonant1;
+               vm.consonant2 = resp.consonant2;
+               vm.consonant3 = resp.consonant3;
            }
         })
     }
