@@ -44,9 +44,9 @@ class AccountHistories extends BaseModel
         $user = $this->user;
         $user->diamond = $this->balance;
         // 系统赠送
-        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
-            $user->organisation = USER_ORGANISATION_COMPANY;
-        }
+//        if ($this->fee_type == ACCOUNT_TYPE_GIVE && $user->organisation != USER_ORGANISATION_COMPANY) {
+//            $user->organisation = USER_ORGANISATION_COMPANY;
+//        }
         $user->update();
 
         $user_attrs = $user->getStatAttrs();
