@@ -81,7 +81,7 @@ class Unions extends BaseModel
             }
         }
 
-        $amount = 100;
+        $amount = CREATE_UNION_AMOUNT;
 
         $name = trim(fetch($opts, 'name', '')); //家族名称
         $notice = trim(fetch($opts, 'notice', '')); //家族公告
