@@ -234,7 +234,8 @@ trait UserAttrs
         return array(
             'id' => $this->id,
             'nickname' => $this->nickname,
-            'avatar_url' => $this->avatar_small_url
+            'avatar_url' => $this->avatar_small_url,
+            'sex'=>$this->sex
         );
     }
 
