@@ -15,10 +15,21 @@ class UsersController extends BaseController
         $mobile = $this->params("user[mobile_eq]");
         $user_type = $this->params("user[user_type_eq]");
         $user_status = $this->params("user[user_status_eq]");
+        $nickname = $this->params("nickname");
         $product_channel_id = $this->params("user[product_channel_id_eq]");
 
         $cond = $this->getConditions('user');
         $cond['order'] = 'id desc';
+
+        if ($nickname) {
+
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and nickname like '%$nickname%'";
+            } else {
+                $cond['conditions'] = "nickname like '%$nickname%'";
+            }
+        }
+
 
         $users = \Users::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->users = $users;
@@ -28,6 +39,7 @@ class UsersController extends BaseController
         $this->view->user_status = $user_status == '' ? '' : intval($user_status);
         $this->view->mobile = $mobile;
         $this->view->user_id = $user_id;
+        $this->view->nickname = $nickname;
         $this->view->product_channel_id = intval($product_channel_id);
     }
 
