@@ -411,6 +411,7 @@ class ActivitiesController extends BaseController
             $opts = ['start' => $start, 'end' => $end];
 
             $gift_ids = [59, 60, 61];
+
             if (isDevelopmentEnv()) {
                 $gift_ids = [123, 124, 125];
             }
@@ -431,7 +432,9 @@ class ActivitiesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }
         }
+
         $start_time = "2018/4/23 18:00";
+
         if (isDevelopmentEnv()) {
             $start_time = "2018/4/23 14:50";
         }
@@ -441,7 +444,7 @@ class ActivitiesController extends BaseController
         $this->view->start_time = $start_time;
         $this->view->end_time = "2018/4/29 23:59:59";
 
-        $this->view->title = "等待玩家";
+        $this->view->title = "社会我Hi音";
     }
 
 }
