@@ -280,7 +280,7 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = "梦幻周榜";
 
-        $opts = ['start' => '201804016', 'end' => '20180422'];
+        $opts = ['start' => '20180416', 'end' => '20180422'];
 
         $charm_users = \Users::findFieldRankList('week', 'charm', 1, 3, $opts);
         $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 3, $opts);
