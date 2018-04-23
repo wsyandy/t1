@@ -3440,4 +3440,17 @@ class Users extends BaseModel
     {
         return SYSTEM_ID == $this->id;
     }
+
+    function bindMobile($mobile)
+    {
+        if ($this->mobile) {
+            return [ERROR_CODE_FAIL, '您已经绑定过手机号码'];
+        }
+
+        $this->mobile = $mobile;
+
+        if($this->update()) {
+            GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, 500, []);
+        }
+    }
 }

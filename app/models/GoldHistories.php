@@ -31,7 +31,8 @@ class GoldHistories extends BaseModel
         GOLD_TYPE_GIVE => '系统赠送',
         GOLD_TYPE_GAME_INCOME => '游戏收入',
         GOLD_TYPE_GAME_EXPENSES => '游戏支出',
-        GOLD_TYPE_ACTIVITY_LUCKY_DRAW => '活动抽奖赠送'
+        GOLD_TYPE_ACTIVITY_LUCKY_DRAW => '活动抽奖赠送',
+        GOLD_TYPE_BIND_MOBILE => '绑定手机号码',
     ];
 
 

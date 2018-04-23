@@ -236,6 +236,7 @@ define('GOLD_TYPE_GIVE', 6); //赠送金币
 define('GOLD_TYPE_GAME_INCOME', 10); //游戏收入
 define('GOLD_TYPE_GAME_EXPENSES', 11); //游戏支出
 define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
+define('GOLD_TYPE_BIND_MOBILE', 13); //活动抽奖赠送
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');
