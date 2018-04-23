@@ -302,4 +302,74 @@ class Activities extends BaseModel
 
         return $num;
     }
+
+    //礼物活动
+    static function giftActivityStat($gift_order, $opts = [])
+    {
+        //礼物周榜活动
+        self::giftWeekRankList($gift_order, $opts);
+    }
+
+    //礼物周榜活动
+    static function giftWeekRankList($gift_order, $opts = [])
+    {
+        $gift_id = $gift_order->gift_id;
+
+        debug($gift_id, $opts);
+
+        $gift_ids = [59, 60, 61];
+        if (isDevelopmentEnv()) {
+            $gift_ids = [123, 124, 125];
+        }
+
+        if (in_array($gift_id, $gift_ids)) {
+
+            $time = fetch($opts, 'time', time());
+            $user_id = $gift_order->user_id;
+            $amount = $gift_order->amount;
+            $activity_start = '2018-04-23 18:00:00';
+
+            if (isDevelopmentEnv()) {
+                $activity_start = '2018-04-23 14:50:00';
+            }
+
+            if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 23:59:59')) {
+                info("game_over", $gift_id, $user_id, $amount, $opts);
+                return;
+            }
+
+            info($gift_id, $user_id, $amount, $opts);
+
+            $start = fetch($opts, 'start', date("Ymd", beginOfWeek($time)));
+            $end = fetch($opts, 'end', date("Ymd", endOfWeek($time)));
+            $key = "week_charm_rank_list_gift_id_{$gift_id}_" . $start . "_" . $end;
+            $user_db = Users::getUserDb();
+            $user_db->zincrby($key, $amount, $user_id);
+        }
+    }
+
+    //小黄瓜活动统计
+    static function activityStat($gift_order, $opts)
+    {
+        $start = strtotime('2018-04-21 21:10:00');
+        $end = strtotime('2018-04-21 21:20:00');
+        $time = fetch($opts, 'time', time());
+        $gift_id = 26;
+
+        if (isDevelopmentEnv()) {
+            $start = strtotime('2018-04-21 18:00:00');
+            $end = strtotime('2018-04-21 19:25:59');
+            $gift_id = 87;
+        }
+
+        if ($time >= $start && $time <= $end && $gift_id == $gift_order->gift_id) {
+            $gift_num = $gift_order->gift_num;
+            $sender_id = $gift_order->sender_id;
+            $time = fetch($opts, 'time');
+            $db = Users::getUserDb();
+            $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
+            $db->zincrby($key, $gift_num, $sender_id);
+            info($start, $end, $key, $gift_num, $sender_id, $time);
+        }
+    }
 }

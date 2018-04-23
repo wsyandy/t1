@@ -279,6 +279,14 @@ class ActivitiesController extends BaseController
     function dreamWeekRankActivityAction()
     {
         $this->view->title = "梦幻周榜";
+
+        $opts = ['start' => '20180416', 'end' => '20180422'];
+
+        $charm_users = \Users::findFieldRankList('week', 'charm', 1, 3, $opts);
+        $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 3, $opts);
+
+        $this->view->charm_users = $charm_users;
+        $this->view->wealth_users = $wealth_users;
     }
 
     //房间流水活动
@@ -390,4 +398,53 @@ class ActivitiesController extends BaseController
         $this->view->is_start = $is_start;
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
+
+    //送肥皂，社会猫，肥皂礼物
+    function giftWeekRankActivityAction()
+    {
+        if ($this->request->isAjax()) {
+
+            $index = intval($this->params('index'));
+            $start = "20180423";
+            $end = "20180429";
+
+            $opts = ['start' => $start, 'end' => $end];
+
+            $gift_ids = [59, 60, 61];
+
+            if (isDevelopmentEnv()) {
+                $gift_ids = [123, 124, 125];
+            }
+
+            if ($index && $index <= 3) {
+                $key = "week_charm_rank_list_gift_id_" . $gift_ids[$index - 1] . "_" . $start . "_" . $end;
+            } else {
+                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+            }
+
+            debug($key);
+
+            $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+
+            if (count($charm_users)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
+            }
+        }
+
+        $start_time = "2018/4/23 18:00";
+
+        if (isDevelopmentEnv()) {
+            $start_time = "2018/4/23 14:50";
+        }
+
+        $this->view->code = $this->params('code');
+        $this->view->sid = $this->params('sid');
+        $this->view->start_time = $start_time;
+        $this->view->end_time = "2018/4/29 23:59:59";
+
+        $this->view->title = "社会我Hi音";
+    }
+
 }

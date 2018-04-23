@@ -1512,7 +1512,7 @@ class MeiTask extends \Phalcon\Cli\Task
     {
         info(valueToStr(1032442333444333));
 
-        $user = Users::findById(1030079);
+        $user = Users::findById(1195377);
         $user->organisation = 0;
         $user->update();
 

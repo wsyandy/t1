@@ -356,7 +356,7 @@ trait UserAttrs
     function isBlocked()
     {
         return USER_STATUS_BLOCKED_ACCOUNT == $this->user_status
-        || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
+            || USER_STATUS_BLOCKED_DEVICE == $this->user_status || USER_STATUS_OFF == $this->user_status;
     }
 
     function isNormal()
@@ -898,5 +898,14 @@ trait UserAttrs
     function isEmailLogin()
     {
         return $this->login_type == USER_LOGIN_TYPE_EMAIL;
+    }
+
+    function bindMobileStatus()
+    {
+        if ($this->mobile) {
+            return 1;
+        }
+
+        return 2;
     }
 }

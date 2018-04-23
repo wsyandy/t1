@@ -107,6 +107,17 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
+        if ('bind_mobile' == $sms_type) {
+
+            if ($this->currentUser()->mobile) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您已经绑定了手机号码');
+            }
+
+            if ($user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码已绑定其他用户');
+            }
+        }
+
         if ('login' == $sms_type && !$user) {
             return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
@@ -787,5 +798,53 @@ class UsersController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
 
+    }
+
+    function bindMobileAction()
+    {
+        if ($this->request->isPost()) {
+
+            $mobile = $this->params('mobile');
+            $auth_code = $this->params('auth_code');
+            $sms_token = $this->params('sms_token');
+
+            if (!$auth_code || !$sms_token) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            if (!isMobile($mobile)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
+            }
+
+            $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
+
+            if ($user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码已绑定其他用户');
+            }
+
+            if ($user->isBlocked()) {
+                info("block_user_login", $user->sid);
+                return $this->renderJSON(ERROR_CODE_FAIL, '账户异常');
+            }
+
+            $context = $this->context();
+
+            list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
+                $mobile, $auth_code, $sms_token, $context);
+
+            if ($error_code != ERROR_CODE_SUCCESS) {
+                return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
+            }
+
+            list($error_code, $error_reason) = $user->bindMobile($mobile);
+
+            if ($error_code != ERROR_CODE_SUCCESS) {
+                return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '绑定成功');
+        } else {
+            return $this->renderJSON(ERROR_CODE_FAIL, '非法访问!');
+        }
     }
 }

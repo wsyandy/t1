@@ -19,7 +19,8 @@
 ##### 1.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---|
-|name|房间名称|string|否|||
+|name|房间名称|string|否||
+|room_category_id|房间分类id|int|是|||
 
 ##### 1.2 回应参数说明
 ```
@@ -42,7 +43,8 @@
 |---|---|---|---|---
 |id|房间id|int|否||
 |name|房间名称|string|是||
-|topic|房间话题|string|是|||
+|topic|房间话题|string|是||
+|room_category_id|房间分类id|int|是|||
 
 ##### 2.2 回应参数说明
 ```
@@ -879,5 +881,23 @@
         }
          ....
     ]
+}
+```
+
+### 31 匹配房间
+
+> http-get ```/api/rooms/match```
+
+##### 31.1 请求参数说明
+```angular2html
+公共参数
+```
+
+##### 31.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id int 匹配到的房间id
 }
 ```

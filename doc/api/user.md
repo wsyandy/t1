@@ -15,7 +15,7 @@
 |参数|名称|值类型|是否可空|备注
 |---|---|---|---|---|
 | mobile |手机|string|否||
-| sms_type |短信类型|string|否|登录login 注册register|
+| sms_type |短信类型|string|否|登录login 注册register 绑定手机号码bind_mobile|
 ##### 2.2 回应参数说明
 ```
 {
@@ -897,4 +897,24 @@
         }
     ]               
 }
+```
+
+### 32 绑定手机号码
+
+> http-post ```/api/users/bind_mobile```
+
+##### 参数说明
+|参数|名称|值类型|是否可空|备注
+|---|---|---|---|---|
+|sms_token|短信验证|string|否| (忘记密码登录时提供)|
+|auth_code|验证码|string|否|(忘记密码登录时提供)|
+|mobile|手机号码|string|否|||
+
+##### 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+
 ```

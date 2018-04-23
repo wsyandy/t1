@@ -62,6 +62,8 @@
     error_code:   0/-1  
     error_reason: '返回码说明'    
     gold: 剩余金币
+    bind_mobile_status int 1 已绑定 2 未绑定绑定手机号码状态
+    bind_mobile_gold 绑定手机号码奖励金币数量 
     sign_in_status: 签到状态
     sign_in_message: 连续签到xx天，今天/明天签到可获得xxxx金币
     gold_works:[

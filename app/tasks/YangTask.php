@@ -991,4 +991,12 @@ class YangTask extends \Phalcon\Cli\Task
         $res = httpPost($url, $body);
         echoLine($res);
     }
+
+    function test()
+    {
+        $db = \Users::getUserDb();
+        $key = "week_charm_rank_list_gift_id_60_20180423_20180429";
+        $res = $db->zrevrange($key,0,9);
+        var_dump($res);
+    }
 }
