@@ -167,10 +167,44 @@ class UsersController extends BaseController
         }
 
         $tonic_ratio = $tonic_ratio = mt_rand(50, 59);
+        $avatar_url = '';
+        switch ($tonic) {
+            case '少女音':
+                $avatar_url = '/m/images/shaonv.png';
+                break;
+            case '萝莉音':
+                $avatar_url = '/m/images/luoli.png';
+                break;
+            case '少萝音':
+                $avatar_url = '/m/images/shaoluo.png';
+                break;
+            case '少御音':
+                $avatar_url = '/m/images/shaoyu.png';
+                break;
+            case '御姐音':
+                $avatar_url = '/m/images/yujie.png';
+                break;
+            case '青年音':
+                $avatar_url = '/m/images/qingnian.png';
+                break;
+            case '正太音':
+                $avatar_url = '/m/images/zhengtai.png';
+                break;
+            case '少年音':
+                $avatar_url = '/m/images/shaonian.png';
+                break;
+            case '暖男音':
+                $avatar_url = '/m/images/nuannan.png';
+                break;
+            case '青受音':
+                $avatar_url = '/m/images/qingshou.png';
+                break;
+        }
 
         $data = [
             'tonic' => $tonic,
-            'tonic_ratio' => $tonic_ratio
+            'tonic_ratio' => $tonic_ratio,
+            'avatar_url' => $avatar_url
         ];
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $data);
 
@@ -219,9 +253,9 @@ class UsersController extends BaseController
         }
 
         $consonants = [
-            'consonant1'=>$consonant1,
-            'consonant2'=>$consonant2,
-            'consonant3'=>$consonant3
+            'consonant1' => $consonant1,
+            'consonant2' => $consonant2,
+            'consonant3' => $consonant3
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $consonants);
@@ -265,5 +299,13 @@ class UsersController extends BaseController
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $datas);
+    }
+
+    function toBrowserAction()
+    {
+        $user = $this->currentUser();
+        $avatar_url = $user->avatar_url;
+        $avatar_url = preg_replace('/http|https/i', 'browser', $avatar_url);
+        $this->response->redirect('browser://www.baidu.com');
     }
 }
