@@ -42,8 +42,8 @@ html,body{
     color: #808080;
 }
 .sound_entry_select{
-    margin: 45px 66px 0;
-    justify-content: space-between;
+    margin: 45px auto 0;
+    justify-content: center;
 }
 .sound_entry_select li{
     cursor: pointer;
@@ -66,10 +66,17 @@ html,body{
     border-color: #FF76A5;
     box-shadow: 0 1px 0 0 #FDA4C1;
 }
-.sound_entry_select li.selected{
-    border-width: 1px;
-    border-style: solid;
-    box-shadow:0 0 0 0 #B2DAFF;
+.sound_entry_select li.selected_men{
+    margin-right: 16px;
+    width: 113px;
+    background: url(../images/selected_men_icon.png) #D8ECFF 83px center no-repeat;
+    background-size: 23px;
+}
+.sound_entry_select li.selected_women{
+    margin-left: 16px;
+    width: 113px;
+    background: url(../images/selected_women_icon.png) #FFD2E1 83px center no-repeat;
+    background-size: 23px;
 }
 .sound_entry_select li .men_icon{
     width: 27px;

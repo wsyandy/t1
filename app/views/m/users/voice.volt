@@ -7,8 +7,8 @@
         <input type="text" :placeholder="user.nickname?user.nickname:'给自己起一个好听的名字'"/>
     </div>
     <ul class="sound_entry_select">
-        <li :class="['men',select_sex&&'selected']" @click="selectMale()"><span class="men_icon"></span>男神</li>
-        <li :class="['women',!select_sex&&'selected']" @click="selectFemale()"><span class="women_icon"></span>女神</li>
+        <li :class="['men',select_sex&&'selected_men']" @click="selectMale()"><span class="men_icon"></span>男神</li>
+        <li :class="['women',!select_sex&&'selected_women']" @click="selectFemale()"><span class="women_icon"></span>女神</li>
     </ul>
     <div class="sound_entry_button" @click="go_voice_identify()"><span>声音鉴定</span></div>
     <span class="sound_entry_wire"></span>
