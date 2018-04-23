@@ -1,0 +1,1 @@
+ALTER TABLE users add COLUMN blocked_reason VARCHAR (255);
