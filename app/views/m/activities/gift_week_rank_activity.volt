@@ -123,17 +123,17 @@
                     index: this.tab_index
                 };
                 $.authGet('/m/activities/gift_week_rank_activity', data, function (resp) {
+                    vm.users = [];
+
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.users.push(item);
                         });
-                        console.log(vm.users);
                     }
                 });
             },
             selectTab: function (index) {
                 this.tab_index = index;
-                this.users = [];
                 this.getUsers();
             }
         }
