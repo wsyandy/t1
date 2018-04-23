@@ -13,6 +13,9 @@
     <label for="mobile">手机号</label>
     <input name="user[mobile_eq]" type="text" id="mobile" value="{{ mobile }}"/>
 
+    <label for="nickname">用户昵称</label>
+    <input name="nickname" type="text" id="nickname" value="{{ nickname }}"/>
+
     <label for="user_type">类型</label>
     <select name="user[user_type_eq]" id="user_type_eq">
         {{ options(user_types, user_type) }}
