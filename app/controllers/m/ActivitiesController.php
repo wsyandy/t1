@@ -405,8 +405,10 @@ class ActivitiesController extends BaseController
         if ($this->request->isAjax()) {
 
             $index = intval($this->params('index'));
-            $start = date("Ymd", beginOfWeek());
-            $end = date("Ymd", endOfWeek());
+            $start = "20180423";
+            $end = "20180429";
+
+            $opts = ['start' => $start, 'end' => $end];
 
             $gift_ids = [59, 60, 61];
             if (isDevelopmentEnv()) {
@@ -416,14 +418,12 @@ class ActivitiesController extends BaseController
             if ($index && $index <= 3) {
                 $key = "week_charm_rank_list_gift_id_" . $gift_ids[$index - 1] . "_" . $start . "_" . $end;
             } else {
-                $key = \Users::generateFieldRankListKey('week', 'charm');
+                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
             }
 
             debug($key);
 
             $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
-
-//            $charm_users = \Users::findByIds([31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
 
             if (count($charm_users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
@@ -439,7 +439,7 @@ class ActivitiesController extends BaseController
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->start_time = $start_time;
-        $this->view->end_time = "2018/4/29 14:00";
+        $this->view->end_time = "2018/4/29 23:59:59";
 
         $this->view->title = "等待玩家";
     }
