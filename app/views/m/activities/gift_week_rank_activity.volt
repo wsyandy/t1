@@ -52,7 +52,7 @@
             <p><span>1.</span><span>所有冠名权的时限均只有一周</span></p>
             <p><span>2.</span><span>用户在活动期间收到礼物，每收到1个钻石礼物，用户的魅力值+1，每送出一个1个钻石礼物，贡献值+1;</span></p>
             <p><span>3.</span><span>礼物榜按用户收到对应礼物（社会猫，小猪佩奇，肥皂）的个数进行排名</span></p>
-            <p><span>4.</span><span>活动时间为2018年4月23日0时——2018年4月29日24时</span></p>
+            <p><span>4.</span><span>活动时间为2018年4月23日17时——2018年4月29日24时</span></p>
             <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID作为冠名内容；</span></p>
             <p><span>6.</span><span>活动结果将会在每周一12:00公布，请保持关注</span></p>
         </div>
@@ -71,22 +71,22 @@
                                                                           alt="icon"><span>肥皂</span></li>
         </ul>
         <div class="week_top_three" v-if="users.length">
-            <div class="week_top_three_li">
+            <div class="week_top_three_li" v-if="users.length > 1">
                 <div class="header">
                     <span class="two"></span>
-                    <img :src="users[0].avatar_small_url" alt="">
+                    <img :src="users[1].avatar_small_url" alt="">
                 </div>
-                <p class="two">${users[0].nickname}</p>
-                <span>魅力值：${users[0].charm_value}</span>
-            </div>
-            <div class="week_top_three_li">
-                <div class="neo">
-                    <span></span>
-                    <img :src="users[1].avatar_small_url" alt=""></div>
-                <p>${users[1].nickname}</p>
+                <p class="two">${users[1].nickname}</p>
                 <span>魅力值：${users[1].charm_value}</span>
             </div>
-            <div class="week_top_three_li">
+            <div class="week_top_three_li" >
+                <div class="neo">
+                    <span></span>
+                    <img :src="users[0].avatar_small_url" alt=""></div>
+                <p>${users[0].nickname}</p>
+                <span>魅力值：${users[0].charm_value}</span>
+            </div>
+            <div class="week_top_three_li" v-if="users.length > 2">
                 <div class="header">
                     <span class="three"></span>
                     <img :src="users[2].avatar_small_url" alt="">
@@ -95,7 +95,7 @@
                 <span>魅力值：${users[2].charm_value}</span>
             </div>
         </div>
-        <ul class="week_list_content">
+        <ul class="week_list_content" v-if="users.length > 3">
             <li v-for="user in users.slice(3)">
                 <span class="level">${user.rank}</span>
                 <img :src="user.avatar_small_url" alt="头像"/>
@@ -148,7 +148,7 @@
 
         var end_time = "2018/4/29 14:00";
 
-        var start_time = "2018/4/23 14:00";
+        var start_time = "2018/4/23 17:00";
 
         countdown(end_time, start_time)
     });
