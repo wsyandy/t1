@@ -20,9 +20,14 @@ class UsersController extends BaseController
 
         $cond = $this->getConditions('user');
         $cond['order'] = 'id desc';
-        
+
         if ($nickname) {
-            $cond['conditions'] .= " and nickname like '%$nickname%'";
+
+            if (isset($cond['conditions'])) {
+                $cond['conditions'] .= " and nickname like '%$nickname%'";
+            } else {
+                $cond['conditions'] = "nickname like '%$nickname%'";
+            }
         }
 
 
