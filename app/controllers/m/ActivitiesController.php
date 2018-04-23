@@ -423,11 +423,15 @@ class ActivitiesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }
         }
+        $start_time = "2018/4/23 18:00";
+        if(isDevelopmentEnv()){
+            $start_time = "2018/4/23 14:50";
+        }
 
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
-        $this->view->start_text = "2018年4月5日0时";
-        $this->view->end_text = "2018年4月8日0时";
+        $this->view->start_time = $start_time;
+        $this->view->end_time = "2018/4/29 14:00";
 
         $this->view->title = "等待玩家";
     }

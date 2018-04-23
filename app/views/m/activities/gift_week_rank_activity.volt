@@ -146,15 +146,9 @@
 
     $(function () {
 
-        var end_time = "2018/4/29 14:00";
+        var end_time = "{{ end_time }}";
 
-        var start_time = "2018/4/23 18:00";
-
-
-        if (isDevelopmentEnv) {
-            start_time = "2018/4/23 14:30";
-        }
-
+        var start_time = "{{ start_time }}";
 
         countdown(end_time, start_time)
     });

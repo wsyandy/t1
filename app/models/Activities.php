@@ -330,7 +330,7 @@ class Activities extends BaseModel
             $activity_start = '2018-04-23 18:00:00';
 
             if (isDevelopmentEnv()) {
-                $activity_start = '2018-04-23 14:30:00';
+                $activity_start = '2018-04-23 14:50:00';
             }
 
             if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 24:59:59')) {
