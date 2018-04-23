@@ -439,7 +439,7 @@ class ActivitiesController extends BaseController
         $this->view->code = $this->params('code');
         $this->view->sid = $this->params('sid');
         $this->view->start_time = $start_time;
-        $this->view->end_time = "2018/4/29 23:59";
+        $this->view->end_time = "2018/4/29 23:59:59";
 
         $this->view->title = "等待玩家";
     }
