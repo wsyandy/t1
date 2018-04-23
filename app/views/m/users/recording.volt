@@ -70,8 +70,7 @@
             // 抬起
             onRecordingEnd:function(){
                 clearInterval(this.times);
-                console.log(111);
-                if(this.recordingLength<20){
+                if(this.recordingLength<50){
                     // 录音时间太短重置
                     this.showToast();
                     this.recordingLength = 1;
