@@ -128,6 +128,7 @@ class UsersController extends BaseController
     function voiceAction()
     {
         $user = $this->currentUser();
+        $this->response->redirect('browser://www.baidu.com');
         $this->view->user = json_encode($user->toChatJson(), JSON_UNESCAPED_UNICODE);
     }
 
