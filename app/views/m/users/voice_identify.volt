@@ -83,12 +83,15 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-            {#<div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>#}
+            <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
     </div>
     <div v-if="isSaveSuccess" class="toast_text_box">
         <span class="toast_text">保存成功</span>
     </div>
+    <form id="test_upload">
+        <input >
+    </form>
 </div>
 <script>
     var opts = {
@@ -208,7 +211,7 @@
         };
 
         // 加工image data，替换mime type
-        imgData = imgData.replace(_fixType(type),'image/octet-stream');
+        //imgData = imgData.replace(_fixType(type),'image/octet-stream');
 
         /**
          * 在本地进行文件保存
@@ -219,6 +222,8 @@
             var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
             save_link.href = data;
             save_link.download = filename;
+
+            console.log(data);
 
             var event = document.createEvent('MouseEvents');
             event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);

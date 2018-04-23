@@ -3230,4 +3230,34 @@ EOF;
             echoLine($hot_cache->get('send_auth_code_device_134507'));
         }
     }
+
+    function test22Action()
+    {
+        $content = file_get_contents(APP_ROOT . "temp/test.txt");
+        $content = trim($content);
+        //$content = base64_decode($content);
+
+        //data:image/octet-stream;base64
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $content, $result)) {
+            $type = $result[2];
+            echoLine($type);
+            if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
+                $new_file = APP_ROOT . "temp/test" . '.' . $type;
+                if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $content)))) {
+                    $img_path = str_replace('../../..', '', $new_file);
+                    echo '图片上传成功</br>![](' . $img_path . ')';
+                } else {
+                    echo '图片上传失败</br>';
+
+                }
+            } else {
+                //文件类型错误
+                echo '图片上传类型错误';
+            }
+
+        } else {
+            //文件错误
+            echo '文件错误';
+        }
+    }
 }
