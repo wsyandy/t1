@@ -32,4 +32,5 @@
 * [产品渠道](product_channels.md)
 * [家族](unions.md)
 * [产品菜单](product_menus.md)
+* [房间分类](room_categories.md)
 ## Published with GitBook
