@@ -79,7 +79,7 @@
                 <p class="two">${users[1].nickname}</p>
                 <span>魅力值：${users[1].charm_value}</span>
             </div>
-            <div class="week_top_three_li" >
+            <div class="week_top_three_li">
                 <div class="neo">
                     <span></span>
                     <img :src="users[0].avatar_small_url" alt=""></div>
@@ -149,6 +149,12 @@
         var end_time = "2018/4/29 14:00";
 
         var start_time = "2018/4/23 18:00";
+
+
+        if (isDevelopmentEnv) {
+            start_time = "2018/4/23 14:30";
+        }
+
 
         countdown(end_time, start_time)
     });
