@@ -2945,23 +2945,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", beginOfWeek());
-                    $end = date("Ymd", endOfWeek());
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", beginOfWeek());
+                $end = date("Ymd", endOfWeek());
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -3088,24 +3085,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }
@@ -3452,6 +3446,34 @@ class Users extends BaseModel
         if($this->update()) {
             $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
             GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
+        }
+    }
+    function getRatio($tonic_ratio)
+    {
+        $all_ratio = 100;
+        $consonant_ratio1 = mt_rand(20, 29);
+        list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+
+        if (isBlank($consonant_ratio2) || isBlank($consonant_ratio3)) {
+            list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+        }
+        return [$consonant_ratio1, $consonant_ratio2, $consonant_ratio3];
+
+
+    }
+
+    function getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1)
+    {
+        $consonant_ratio2 = mt_rand(10, $all_ratio - $tonic_ratio - $consonant_ratio1);
+        if ($consonant_ratio2 > 20) {
+            $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+        } else {
+            $consonant_ratio3 = $all_ratio - $tonic_ratio - $consonant_ratio1 - $consonant_ratio2;
+            if ($consonant_ratio3 == 0) {
+                $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+            } else {
+                return [$consonant_ratio2, $consonant_ratio3];
+            }
         }
     }
 }
