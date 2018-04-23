@@ -303,4 +303,5 @@ define('GAME_STATUS_END', 2);
 define('ACTIVITY_TYPE_COMMON', 1); //普通活动
 define('ACTIVITY_TYPE_ROOM', 2); //活动类型房间
 
-define('BIND_MOBILE_GOLD', 500);
+define('BIND_MOBILE_GOLD', 500); //绑定手机号码奖励金币数量
+define('CREATE_UNION_AMOUNT', 10000); //创建家族所需钻石
