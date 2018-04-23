@@ -82,7 +82,7 @@
                                 <img class="voice_ico" src="/m/images/ico_third.png" alt=""> rd
                             {% endif %}
                         </td>
-                        <td>{{ user.id }}</td>
+                        <td>{{ user.uid }}</td>
                         <td>{{ user.nickname }}</td>
                     </tr>
                 {% endfor %}
@@ -106,7 +106,7 @@
                                 <img class="voice_ico" src="/m/images/ico_third.png" alt=""> rd
                             {% endif %}
                         </td>
-                        <td>{{ user.id }}</td>
+                        <td>{{ user.uid }}</td>
                         <td>{{ user.nickname }}</td>
                     </tr>
                 {% endfor %}
