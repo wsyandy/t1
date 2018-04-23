@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/activities/css/dream_week_rank_activity') }}
+{{ theme_css('/m/activities/css/dream_week_rank_activity_1') }}
 {{ block_end() }}
 <div id="await_player" class="gift_online">
     <img class="gift_online_banner" src="/m/activities/images/gift_online_banner.png" alt="">
