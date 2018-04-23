@@ -58,8 +58,7 @@
         </div>
         <span class="week_title_type real_time"></span>
         <div class="week_countdown">
-            <span id="time_text">  剩余时间： </span>
-            <p id="time">02:22:18</p>
+            <span id="time_text">  活动未开始 </span>
         </div>
         <ul class="week_list_tab">
             <li @click="selectTab(0)" :class="[tab_index==0&&'cur']"><img src="/m/images/week_total_list.png"
@@ -78,14 +77,14 @@
                     <img :src="users[0].avatar_small_url" alt="">
                 </div>
                 <p class="two">${users[0].nickname}</p>
-                <span>魅力值：${users[0].charm}</span>
+                <span>魅力值：${users[0].charm_value}</span>
             </div>
             <div class="week_top_three_li">
                 <div class="neo">
                     <span></span>
                     <img :src="users[1].avatar_small_url" alt=""></div>
                 <p>${users[1].nickname}</p>
-                <span>魅力值：${users[1].charm}</span>
+                <span>魅力值：${users[1].charm_value}</span>
             </div>
             <div class="week_top_three_li">
                 <div class="header">
@@ -93,7 +92,7 @@
                     <img :src="users[2].avatar_small_url" alt="">
                 </div>
                 <p class="three">${users[2].nickname}</p>
-                <span>魅力值：${users[2].charm}</span>
+                <span>魅力值：${users[2].charm_value}</span>
             </div>
         </div>
         <ul class="week_list_content">
@@ -101,7 +100,7 @@
                 <span class="level">${user.rank}</span>
                 <img :src="user.avatar_small_url" alt="头像"/>
                 <span class="name">${user.nickname}</span>
-                <span>魅力值：${user.charm}</span>
+                <span>魅力值：${user.charm_value}</span>
             </li>
         </ul>
 
@@ -120,9 +119,6 @@
         },
         methods: {
             getUsers: function () {
-                if (this.page > this.total_page) {
-                    return
-                }
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
@@ -132,7 +128,8 @@
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.users.push(item);
-                        })
+                        });
+                        console.log(vm.users);
                     }
                 });
             },
@@ -151,46 +148,64 @@
 
         var end_time = "2018/4/29 14:00";
 
-        countdown(end_time)
+        var start_time = "2018/4/23 14:00";
+
+        countdown(end_time, start_time)
     });
 
 
-    function countdown(end_time) {
-        // var EndTime = new Date(that.data.end_time)|| []
-        var EndTime = new Date(end_time) || []
-        var NowTime = new Date().getTime()
-        var total_micro_second = EndTime - NowTime || []
+    function countdown(end_time, start_time) {
+        var EndTime = new Date(end_time) || [];
+        var StartTime = new Date(start_time) || [];
 
+        var NowTime = new Date().getTime();
+
+        var text = '';
+
+        if (NowTime < StartTime) {
+            EndTime = StartTime;
+            text = "距离活动开始：";
+        } else {
+            text = "剩余时间：";
+        }
+
+        var total_micro_second = EndTime - NowTime || [];
 
         if (total_micro_second > 0) {
             setTimeout(function () {
                 total_micro_second -= 1000;
-                countdown(end_time)
+                countdown(end_time, start_time);
             }, 1000)
         } else {
             total_micro_second = 0;
-            $('.countdown_box').addClass('over');
         }
-        // 总秒数
-        var second = Math.floor(total_micro_second / 1000)
-        // 天数
-        var day = Math.floor(second / 3600 / 24)
-        // 小时
-        var hr = Math.floor(second / 3600 % 24)
-        // 分钟
-        var min = Math.floor(second / 60 % 60)
-        // 秒
-        var sec = Math.floor(second % 60)
-        // 时间格式化输出，如11:03 25:19 每1s都会调用一次
-        second = toTwo(second)
-        day = toTwo(day)
-        hr = toTwo(hr)
-        min = toTwo(min)
-        sec = toTwo(sec)
-        // 渲染倒计时时钟
-        var time = day + "天" + hr + ":" + min + ":" + sec;
 
-        var _time = document.getElementById("time");
+        var time = '活动已结束';
+
+        if (total_micro_second > 0) {
+            // 总秒数
+            var second = Math.floor(total_micro_second / 1000)
+            // 天数
+            var day = Math.floor(second / 3600 / 24)
+            // 小时
+            var hr = Math.floor(second / 3600 % 24)
+            // 分钟
+            var min = Math.floor(second / 60 % 60)
+            // 秒
+            var sec = Math.floor(second % 60)
+            // 时间格式化输出，如11:03 25:19 每1s都会调用一次
+            second = toTwo(second)
+            day = toTwo(day)
+            hr = toTwo(hr)
+            min = toTwo(min)
+            sec = toTwo(sec)
+
+            // 渲染倒计时时钟
+            time = text + day + "天" + hr + ":" + min + ":" + sec;
+        }
+
+        var _time = document.getElementById("time_text");
+
         _time.innerText = time;
 
     }

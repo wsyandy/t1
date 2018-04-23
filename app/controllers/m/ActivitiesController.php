@@ -417,10 +417,11 @@ class ActivitiesController extends BaseController
                     $key = \Users::generateFieldRankListKey('week', 'charm');
                 }
             }
+            debug($key);
 
             $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
 
-//            $charm_users = \Users::findByIds([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+//            $charm_users = \Users::findByIds([31, 32, 33, 34, 35, 36, 37, 38, 39, 40]);
 
             if (count($charm_users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
