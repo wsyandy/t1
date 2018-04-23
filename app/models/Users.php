@@ -2801,7 +2801,6 @@ class Users extends BaseModel
             }
 
             $sender->update();
-            Users::activityStat($gift_order, ['time' => $time]);
         }
 
         unlock($lock);
@@ -2832,6 +2831,8 @@ class Users extends BaseModel
 
             if (!$user->isCompanyUser()) {
                 Users::updateFiledRankList($user->id, 'charm', $charm_value, ['time' => $time]);
+
+                Activities::giftActivityStat($gift_order, $opts);
             }
 
             $union = $user->union;
@@ -2850,31 +2851,6 @@ class Users extends BaseModel
         }
 
         unlock($lock);
-    }
-
-    //活动统计
-    static function activityStat($gift_order, $opts)
-    {
-        $start = strtotime('2018-04-21 21:10:00');
-        $end = strtotime('2018-04-21 21:20:00');
-        $time = fetch($opts, 'time', time());
-        $gift_id = 26;
-
-        if (isDevelopmentEnv()) {
-            $start = strtotime('2018-04-21 18:00:00');
-            $end = strtotime('2018-04-21 19:25:59');
-            $gift_id = 87;
-        }
-
-        if ($time >= $start && $time <= $end && $gift_id == $gift_order->gift_id) {
-            $gift_num = $gift_order->gift_num;
-            $sender_id = $gift_order->sender_id;
-            $time = fetch($opts, 'time');
-            $db = Users::getUserDb();
-            $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
-            $db->zincrby($key, $gift_num, $sender_id);
-            info($start, $end, $key, $gift_num, $sender_id, $time);
-        }
     }
 
     function saveFdInfo($fd, $online_token, $ip)
