@@ -340,8 +340,8 @@ class Activities extends BaseModel
 
             info($gift_id, $user_id, $amount, $opts);
 
-            $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-            $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+            $start = fetch($opts, 'start', date("Ymd", beginOfWeek($time)));
+            $end = fetch($opts, 'end', date("Ymd", endOfWeek($time)));
             $key = "week_charm_rank_list_gift_id_{$gift_id}_" . $start . "_" . $end;
             $user_db = Users::getUserDb();
             $user_db->zincrby($key, $amount, $user_id);
