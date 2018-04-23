@@ -306,6 +306,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $avatar_url = $user->avatar_url;
         $avatar_url = preg_replace('/http|https/i', 'browser', $avatar_url);
+        info('测试跳转');
         $this->response->redirect('browser://www.baidu.com');
     }
 }
