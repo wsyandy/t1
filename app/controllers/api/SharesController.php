@@ -23,7 +23,9 @@ class SharesController extends BaseController
             $share_json[] = ['name' => $name, 'type' => $type, 'work_status' => $status, 'work_gold' => $gold];
         }
 
-        $opts = ['gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message, 'gold_works' => $share_json];
+        $opts = [
+            'gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message,
+            'gold_works' => $share_json, 'mobile' => $user->mobile, 'bind_mobile_gold' => BIND_MOBILE_GOLD];
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
     }
 
