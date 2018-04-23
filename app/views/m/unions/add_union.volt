@@ -52,7 +52,7 @@
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input class="close_submit" type="submit" name="submit" value="">
 
-                <span>申请创建（100钻石）</span>
+                <span>申请创建（10000钻石）</span>
             </div>
 
 
@@ -61,7 +61,7 @@
                 <div class="popup_box">
                     <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
                     <div class="popup_text" id="popup_text">
-                        创建家族需要支付100钻石，您的钻石数量不足，请先充值
+                        创建家族需要支付10000钻石，您的钻石数量不足，请先充值
                     </div>
                     <div class="popup_btn">
                         <a class="btn_cancel" href="#" @click="establishFamily(0)">取消</a>
