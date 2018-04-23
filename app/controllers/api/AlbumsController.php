@@ -38,6 +38,7 @@ class AlbumsController extends BaseController
             if (!$image_file) {
                 break;
             }
+            info($image_file);
             $image_files[] = $image_file;
         }
 
