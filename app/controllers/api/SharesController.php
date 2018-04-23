@@ -25,7 +25,7 @@ class SharesController extends BaseController
 
         $opts = [
             'gold' => $user->gold, 'sign_in_status' => $user->sign_in_status, 'sign_in_message' => $user->sign_in_message,
-            'gold_works' => $share_json, 'mobile' => $user->mobile, 'bind_mobile_gold' => BIND_MOBILE_GOLD];
+            'gold_works' => $share_json, 'bind_mobile_status' => $user->bindMobileStatus(), 'bind_mobile_gold' => BIND_MOBILE_GOLD];
         $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
     }
 
