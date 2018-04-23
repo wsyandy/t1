@@ -149,3 +149,75 @@ html,body{
   font-size: 12px;
   color: #FFFFFF;
 }
+
+
+.activity_results{
+  flex-direction: column;
+  width: 100%;
+  height: 667px;
+  background: url(../images/activity_results_bg.png) center no-repeat;
+  background-size: 100% 667px;
+}
+.activity_results_title{
+  margin-top: 90px;
+  justify-content: center;
+
+}
+.activity_results_title .title_text{
+  width: 166px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid #21A6FF;
+  font-size: 20px;
+  color: #FFFFFF;
+  border-radius: 20px;
+  background-image: linear-gradient(-269deg, #00CDFF 3%, #50E2FF 100%);
+}
+.activity_results_box{
+  margin: 25px 15px 0;
+  height: 175px;
+  background: #2EAEFF;
+  border-radius: 5px;
+}
+.activity_results_boxul{
+  margin: 28px 0;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.activity_results_boxul li{
+  font-size: 15px;
+  color: #FFFFFF;
+}
+.activity_results_boxul li .name{
+  width: 124px;
+}
+.activity_results_box_list{
+  width: 77px;
+  padding-top: 16px;
+  margin-left: 18px;
+  margin-right: 33px;
+  flex-direction: column;
+  align-items: center;
+  background: url(../images/activity_results_line.png) center no-repeat;
+  background-size: 77px 93px;
+}
+.activity_results_box_list .neo{
+  width: 48px;
+  height: 48px;
+  background: url(../images/activity_results_neo.png) center no-repeat;
+  background-size: cover;
+}
+.activity_results_box_list .two{
+  width: 48px;
+  height: 48px;
+  background: url(../images/activity_results_two.png) center no-repeat;
+  background-size: cover;
+}
+.activity_results_box_list .three{
+  width: 48px;
+  height: 48px;
+  background: url(../images/activity_results_three.png) center no-repeat;
+  background-size: cover;
+}
+

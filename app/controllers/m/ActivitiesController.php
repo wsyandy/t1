@@ -279,6 +279,14 @@ class ActivitiesController extends BaseController
     function dreamWeekRankActivityAction()
     {
         $this->view->title = "梦幻周榜";
+
+        $opts = ['start' => '201804016', 'end' => '20180422'];
+
+        $charm_users = \Users::findFieldRankList('week', 'charm', 1, 3, $opts);
+        $wealth_users = \Users::findFieldRankList('week', 'wealth', 1, 3, $opts);
+
+        $this->view->charm_users = $charm_users;
+        $this->view->wealth_users = $wealth_users;
     }
 
     //房间流水活动
@@ -424,7 +432,7 @@ class ActivitiesController extends BaseController
             }
         }
         $start_time = "2018/4/23 18:00";
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $start_time = "2018/4/23 14:50";
         }
 

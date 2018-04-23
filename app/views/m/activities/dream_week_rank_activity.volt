@@ -5,19 +5,19 @@
     <img class="gift_online_banner" src="/m/activities/images/gift_online_banner.png" alt="">
     <ul class="gift_online_introduce">
         <li>
-            <img src="/m/activities/images/gift_highheels.png" alt="高跟鞋" />
+            <img src="/m/activities/images/gift_highheels.png" alt="高跟鞋"/>
             <p>世间有一双水晶鞋，穿上它的人夜晚会做甜蜜蜜的梦梦中，草莓棉花糖组成蜜粉色的树灯火辉煌的宫殿里，舞会已经开场而你就是真正的公主</p>
         </li>
         <li>
-            <img src="/m/activities/images/gift_handcatenary.png" alt="手链" />
+            <img src="/m/activities/images/gift_handcatenary.png" alt="手链"/>
             <p>倾世的美人潘多拉，她离开奥林匹斯的时候，一定落下滚滚的泪珠泪珠儿串起成手链寂寞的等待有缘的人</p>
         </li>
         <li>
-            <img src="/m/activities/images/gift_rolex.png" alt="劳力士" />
+            <img src="/m/activities/images/gift_rolex.png" alt="劳力士"/>
             <p>劳力士是沉稳的，成熟的，寡言的年仅24岁的威尔斯多夫只身前往伦敦漂泊异乡忍受嘲讽多年后，ROLEX诞生</p>
         </li>
         <li>
-            <img src="/m/activities/images/gift_diamondring.png" alt="钻石" />
+            <img src="/m/activities/images/gift_diamondring.png" alt="钻石"/>
             <p>钻石是承诺，因经年累月的温柔陪伴凝聚而出真心浮世万千，吾爱有三。日、月与卿。日为朝，月为暮，卿为朝朝暮暮。</p>
         </li>
     </ul>
@@ -85,5 +85,53 @@
         <p><span>5、</span><span>获奖用户请联系官方客服QQ：3407150190领取奖励；</span></p>
         <p><span>6、</span><span>活动结果将会在每周一14:00公布，请保持关注。</span></p>
     </div>
+
+    <!-- 新加结果 -->
+    <div class="activity_results">
+        <div class="activity_results_title">
+            <div class="title_text">
+                <span>魅力榜</span>
+            </div>
+        </div>
+        <div class="activity_results_box">
+            <div class="activity_results_box_list">
+                <span class="neo"></span>
+                <span class="two"></span>
+                <span class="three"></span>
+                <span class="line"></span>
+            </div>
+            <ul class="activity_results_boxul">
+                {% for user in charm_users %}
+                    <li>
+                        <span class="name">{{ user.nickname }}</span>
+                        <span>ID：{{ user.id }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="activity_results_title" style="margin-top: 38px;">
+            <div class="title_text">
+                <span>贡献榜</span>
+            </div>
+        </div>
+        <div class="activity_results_box">
+            <div class="activity_results_box_list">
+                <span class="neo"></span>
+                <span class="two"></span>
+                <span class="three"></span>
+                <span class="line"></span>
+            </div>
+            <ul class="activity_results_boxul">
+                {% for user in wealth_users %}
+                    <li>
+                        <span class="name">{{ user.nickname }}</span>
+                        <span>ID：{{ user.id }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <!-- 新加结果 -->
+
     <p class="gift_online_bottom">活动最终解释权归Hi语音官方团队</p>
 </div>
