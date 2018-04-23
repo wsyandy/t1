@@ -210,11 +210,16 @@
             var event = document.createEvent('MouseEvents');
             event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             save_link.dispatchEvent(event);
+            vm.isSaveSuccess  = true;
+            setTimeout(function () {
+                vm.isSaveSuccess = false;
+            },1500)
         };
 
         // 下载后的文件名
         var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
         // download
         saveFile(imgData,filename);
+
     }
 </script>
