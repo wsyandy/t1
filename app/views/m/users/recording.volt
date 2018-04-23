@@ -71,7 +71,7 @@
             onRecordingEnd:function(){
                 clearInterval(this.times);
                 console.log(111);
-                if(this.recordingLength<50){
+                if(this.recordingLength<20){
                     // 录音时间太短重置
                     this.showToast();
                     this.recordingLength = 1;
@@ -85,7 +85,7 @@
                 this.isAnalysis = true;
                 this.isToast = false;
                 setTimeout(function () {
-                    var url = '/m/users/fourier_ana';
+                    var url = '/m/users/voice_identify';
                     vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex);
                 },2000)
 
