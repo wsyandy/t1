@@ -3450,7 +3450,8 @@ class Users extends BaseModel
         $this->mobile = $mobile;
 
         if($this->update()) {
-            GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD);
+            $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
+            GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
         }
     }
 }
