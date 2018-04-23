@@ -33,7 +33,7 @@
         <div class="family_introduce">
             <div class="family_introduce_title">【 家族说明 】</div>
             <ul>
-                <li v-for="(item,i) in family_introduce" :class="{font_weight_bold:i==6}">
+                <li v-for="(item,i) in family_introduce" :class="{font_weight_bold:i==7}">
                     ${ i+1 }. ${ item }
                 </li>
             </ul>
