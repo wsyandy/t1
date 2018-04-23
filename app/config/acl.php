@@ -34,7 +34,7 @@ return [
         'channel_soft_versions' => '*', 'word_visit_histories' => '*',
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*', 'id_card_auths' => '*',
-        'unions' => ['day_rank_list', 'week_rank_list'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
+        'unions' => ['day_rank_list', 'week_rank_list', 'index', 'edit', 'update', 'family'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
         'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update'],
         'room_themes' => '*', 'broadcasts' => '*'
     ],

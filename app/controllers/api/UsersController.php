@@ -831,7 +831,7 @@ class UsersController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
             }
 
-            list($error_code, $error_reason) = $user->bindMobile($mobile);
+            list($error_code, $error_reason) = $this->currentUser()->bindMobile($mobile);
 
             if ($error_code != ERROR_CODE_SUCCESS) {
                 return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
