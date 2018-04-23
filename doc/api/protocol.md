@@ -21,6 +21,10 @@
 10. 好友列表：app://friends
 11. 消息列表页面 app://messages
 12. 聊天页面 app://messages/show?user_id=xxx&nickname=xxx&avatar_url=xxxx
+13. 分享到qq好友 app://share/qq/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+14. 分享到微信好友 app://share/wx/friend?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+15. 分享到微信朋友圈 app://share/wx/moments?title=xxx&content=xxxx&share_url=xxx&icon=xxx
+16. 分享到新浪微博 app://share/sinaweibo?title=xxx&content=xxxx&share_url=xxx&icon=xxx
 
 ## url协议
 1. 注册登录协议 url://m/product_channels/reg_agreement
