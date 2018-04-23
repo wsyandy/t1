@@ -36,7 +36,10 @@ return [
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*', 'id_card_auths' => '*',
         'unions' => ['day_rank_list', 'week_rank_list', 'index', 'edit', 'update', 'family'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
         'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update'],
-        'room_themes' => '*', 'broadcasts' => '*'
+        'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
+        'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic'],
+        'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'], 'orders' => ['index'],
+        'payments' => ['index']
     ],
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
         'push_messages' => '*', 'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'banned_words' => ' *',
