@@ -33,7 +33,7 @@
         <div class="family_introduce">
             <div class="family_introduce_title">【 家族说明 】</div>
             <ul>
-                <li v-for="(item,i) in family_introduce" :class="{font_weight_bold:i==7}">
+                <li v-for="(item,i) in family_introduce" :class="{font_weight_bold:i==6}">
                     ${ i+1 }. ${ item }
                 </li>
             </ul>
@@ -75,7 +75,6 @@
             family_introduce: [
                 "Hi语音的用户可以自由选择，加入家族、创建家族或退出家族。",
                 "创建家族需要的一定的钻石数，待家族通过考核期后，其相应钻石数会返还给家族长。",
-                "家族会长可以享有一定特权，例如推荐用户上热门等。",
                 "每个用户只能加入一个家族，不能重复加入。",
                 '退出家族时，如果家族会长同意可立即退出家族，如果家族会长未审批，7天后自动退出家族。',
                 "会长可以设置新成员加入方式，所有人都可以加入或者需要申请才能加入。",
