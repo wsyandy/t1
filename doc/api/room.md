@@ -883,3 +883,21 @@
     ]
 }
 ```
+
+### 31 匹配房间
+
+> http-get ```/api/rooms/match```
+
+##### 31.1 请求参数说明
+```angular2html
+公共参数
+```
+
+##### 31.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id int 匹配到的房间id
+}
+```
