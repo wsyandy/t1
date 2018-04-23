@@ -32,13 +32,22 @@ class AlbumsController extends BaseController
     {
         $user = $this->currentUser();
 
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'albums_upload_cache_' . $this->currentUser()->id;
+
         $image_files = [];
         for ($i = 0; $i < 27; $i++) {
             $image_file = $this->file('image_file' . $i);
             if (!$image_file) {
                 break;
             }
-            info($image_file);
+            $md5_val = md5_file($image_file);
+            if ($hot_cache->get($cache_key . '_' . $md5_val)) {
+                info('重复上传', $image_file);
+                continue;
+            }
+
+            $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
             $image_files[] = $image_file;
         }
 

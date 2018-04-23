@@ -355,9 +355,18 @@ class UsersController extends BaseController
     {
         $user = $this->currentUser();
 
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'avatar_upload_cache_' . $this->currentUser()->id;
+
         $avatar_file = $this->file('avatar_file');
         if ($avatar_file) {
-            $user->updateAvatar($avatar_file);
+            $md5_val = md5_file($avatar_file);
+            if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
+                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $user->updateAvatar($avatar_file);
+            }else{
+                info('重复上传', $avatar_file);
+            }
         }
 
         $params = $this->params();
@@ -380,10 +389,19 @@ class UsersController extends BaseController
     {
         $user = $this->currentUser();
 
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'avatar_upload_cache_' . $this->currentUser()->id;
+
         // 更新头像
         $avatar_file = $this->file('avatar_file');
         if ($avatar_file) {
-            $user->updateAvatar($avatar_file);
+            $md5_val = md5_file($avatar_file);
+            if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
+                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $user->updateAvatar($avatar_file);
+            }else{
+                info('重复上传', $avatar_file);
+            }
         }
         return $this->renderJSON(ERROR_CODE_SUCCESS, '更新成功');
 
