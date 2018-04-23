@@ -215,6 +215,14 @@ html,body{
 .recording_but span{
     font-size: 18px;
     color: #FFFFFF;
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+
 }
 .recording_but_hint{
     margin: 16px auto 0;
