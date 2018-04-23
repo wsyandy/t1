@@ -21,7 +21,7 @@
     room_categories:[
     {
         name:娱乐
-        second_caterories: [
+        second_categories: [
             {
                 id : 1
                 name:唱歌
