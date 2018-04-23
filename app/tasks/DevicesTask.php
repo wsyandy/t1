@@ -55,13 +55,13 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-        $date = ['2018-04-17'];
+        $date = ['2018-04-20', '2018-04-21', '2018-04-22'];
 
         foreach ($date as $stat_at) {
 
             $devices = Devices::find(
                 [
-                    'conditions' => 'partner_id = 85 and created_at >= :start: and created_at <= :end:',
+                    'conditions' => 'partner_id = 27 and created_at >= :start: and created_at <= :end:',
                     'bind' => ['start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
@@ -90,7 +90,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
             echoLine($total_num);
             foreach ($res as $type => $num) {
                 $text = "手机型号:" . $type . "激活数量:" . $num;
-                echoLine($text);
+                //echoLine($text);
                 fwrite($f, $text . "\r\n");
             }
 
@@ -105,14 +105,14 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeUserRegisterAction()
     {
-        $date = ['2018-04-17'];
+        $date = ['2018-04-20', '2018-04-21', '2018-04-22'];
 
         foreach ($date as $stat_at) {
 
             $users = Users::find(
                 [
                     'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
-                    'bind' => ['partner_id' => 85, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
             $total_num = count($users);
@@ -261,8 +261,8 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
 
         $partner_id = 27;
-        for($i = 1; $i < 30; $i++){
-            $stat_at = time() - $i * 24 *3600;
+        for ($i = 1; $i < 30; $i++) {
+            $stat_at = time() - $i * 24 * 3600;
             $a_num = Devices::count(['conditions' => 'partner_id=:partner_id: and created_at>=:sc_at: and created_at<=:ec_at:',
                 'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)]
             ]);
@@ -271,13 +271,13 @@ class DevicesTask extends \Phaclcon\Cli\Task
                 'bind' => ['partner_id' => $partner_id, 's_at' => beginOfDay($stat_at), 'e_at' => endOfDay($stat_at), 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
             ]);
 
-            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num/$a_num));
+            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num / $a_num));
         }
 
 
         $partner_id = 27;
-        for($i = 1; $i < 30; $i++){
-            $stat_at = time() - $i * 24 *3600;
+        for ($i = 1; $i < 30; $i++) {
+            $stat_at = time() - $i * 24 * 3600;
             $a_num = Devices::count(['conditions' => 'partner_id=:partner_id: and created_at>=:sc_at: and created_at<=:ec_at:',
                 'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)]
             ]);
@@ -290,13 +290,13 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
             $r_num = count($users);
 
-            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num/$a_num));
+            echoLine(date('Y-m-d', $stat_at), '激活', $a_num, '注册', $r_num, '注册率', sprintf("%0.2f", $r_num / $a_num));
         }
 
 
         $partner_id = 27;
-        for($i = 1; $i < 30; $i++){
-            $stat_at = time() - $i * 24 *3600;
+        for ($i = 1; $i < 30; $i++) {
+            $stat_at = time() - $i * 24 * 3600;
 
             $users = Users::find(['conditions' => 'partner_id=:partner_id: and device_id > 1 and (login_type="" or login_type is null) and created_at>=:sc_at: and created_at<=:ec_at:',
                 'bind' => ['partner_id' => $partner_id, 'sc_at' => beginOfDay($stat_at), 'ec_at' => endOfDay($stat_at)],
@@ -304,10 +304,10 @@ class DevicesTask extends \Phaclcon\Cli\Task
             ]);
 
             $data = [];
-            foreach($users as $user){
-                if(isset($data[$user->manufacturer])){
+            foreach ($users as $user) {
+                if (isset($data[$user->manufacturer])) {
                     $data[$user->manufacturer] += 1;
-                }else{
+                } else {
                     $data[$user->manufacturer] = 1;
                 }
             }
