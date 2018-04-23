@@ -333,7 +333,7 @@ class Activities extends BaseModel
                 $activity_start = '2018-04-23 14:50:00';
             }
 
-            if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 24:59:59')) {
+            if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 23:59:59')) {
                 info("game_over", $gift_id, $user_id, $amount, $opts);
                 return;
             }
