@@ -1142,31 +1142,44 @@ class UsersTask extends \Phalcon\Cli\Task
             $last_at = time() - 60 * 3;
         }
 
-        $users = Users::findForeach([
-            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
+        $product_channel_id = 1;
+
+        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . '20180416';
+
+        $user_db = Users::getUserDb();
+        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
+
+        $users = Users::find([
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and
+             user_type = :user_type: and avatar_status = :avatar_status: and id not in (' . implode(',', $user_ids) . ")",
             'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
             'order' => 'last_at desc',
-            'limit' => 1000
+            'columns' => 'id'
         ]);
 
+        echoLine(count($users));
+
         $num = 0;
-        $product_channel_id = 1;
 
         $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
         $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
 
         $silent_users = Users::find($cond);
+
+        echoLine(count($silent_users));
+
         $silent_user_ids = [];
 
         foreach ($silent_users as $silent_user) {
             $silent_user_ids[] = $silent_user->id;
         }
 
-        $gift_ids = [6, 7, 36];
+        $gift_ids = [7, 36];
 
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
         $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
+        $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_";
 
         $user_db = Users::getUserDb();
         $user_db->zadd($wake_up_user_days_key, time(), $stat_at);
@@ -1185,29 +1198,18 @@ class UsersTask extends \Phalcon\Cli\Task
             $send_user = Users::findFirstById($send_user_id);
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
 
-            $give_result = \GiftOrders::giveTo($send_user_id, $user->id, $gift, 1);
+            $user_db->zadd($send_user_ids_key, time(), $user->id);
 
-            echoLine($give_result, $content);
-
-            if ($give_result) {
-                $user_db->zadd($send_user_ids_key, time(), $user->id);
-            }
+            $data = ['sender_id' => $send_user_id, 'gift_id' => $gift_id];
+            $user_db->setex($wake_up_user_send_gift_key . $user->id, 3 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
 
             $push_data = ['title' => $content, 'body' => $content];
             \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
 
             $num++;
 
-            Chats::sendTextSystemMessage($user->id, $content);
-
             echoLine($user->id, $send_user_id, $content, $num);
-
-            if ($num >= 1000) {
-                break;
-            }
         }
-
-        echoLine(count($silent_user_ids));
     }
 
     function wakeupUsersStatAction()

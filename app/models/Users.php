@@ -997,6 +997,10 @@ class Users extends BaseModel
 
             // 线上提醒
             self::delay()->pushOnlineRemind($this->id);
+
+            if ($this->hasOfflineGift()) {
+                self::delay()->sendOfflineSendGift($this->id);
+            }
         }
 
         debug($this->id, $fresh_attrs);
@@ -2945,20 +2949,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3085,21 +3092,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
@@ -3446,6 +3456,55 @@ class Users extends BaseModel
         if ($this->update()) {
             $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
             GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
+        }
+    }
+
+    //有离线礼物
+    function hasOfflineGift()
+    {
+        $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $this->id;
+        $user_db = Users::getUserDb();
+
+        return $user_db->get($wake_up_user_send_gift_key);
+    }
+
+    //离线送礼物
+    static function sendOfflineSendGift($user_id)
+    {
+        $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $user_id;
+        $user_db = Users::getUserDb();
+        $data = $user_db->get($wake_up_user_send_gift_key);
+        info($user_id, $data);
+
+        if (!$data) {
+            return;
+        }
+
+        $data = json_decode($data, true);
+        $sender_id = fetch($data, 'sender_id');
+        $gift_id = fetch($data, 'gift_id');
+
+        if (!$gift_id || !$sender_id) {
+            return;
+        }
+
+        $gift = Gifts::findFirstById($gift_id);
+
+        if (!$gift) {
+            info("gift is null");
+            return;
+        }
+
+        $give_result = \GiftOrders::giveTo($sender_id, [$user_id], $gift, 1, 1);
+
+        if ($give_result) {
+            $send_user = Users::findFirstById($sender_id);
+            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+            info("send_gift_success", $content);
+            $user_db->del($wake_up_user_send_gift_key);
+            Chats::sendTextSystemMessage($user_id, $content);
+        } else {
+            info("send_gift_fail");
         }
     }
 }
