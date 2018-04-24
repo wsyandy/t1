@@ -333,15 +333,15 @@ html,body{
 }
 .save_picture_header{
     margin: 0 auto;
-    width: 85px;
-    height:85px;
-    border-radius: 42px;
+    width: 90px;
+    height:90px;
+    border-radius: 45px;
     border: 2px solid #73B3FB;
     justify-content: center;
     align-items: flex-end;
 }
 .save_picture_header img{
-    width: 96px;
+    width: 100px;
     height: 100px;
 }
 .save_picture_name{
@@ -414,7 +414,7 @@ html,body{
     width: 34px;
     height: 16px;
     background: url(../images/men_two_s.png) center no-repeat;
-    background-size: 34px 16px;
+    background-size: 24px 16px;
 }
 .save_picture_li .score_icon3{
     margin-left: 10px;
@@ -430,7 +430,7 @@ html,body{
     width: 34px;
     height: 16px;
     background: url(../images/women_two_s.png) center no-repeat;
-    background-size: 34px 16px;
+    background-size: 24px 16px;
 }
 
 .save_picture_bom{
