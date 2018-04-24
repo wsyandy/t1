@@ -9,7 +9,12 @@
 
     <label for="status">状态</label>
     <select name="status" type="text" id="status">
-        {{ options(Unions.STATUS,'','') }}
+        {{ options(Unions.STATUS,status,'') }}
+    </select>
+
+    <label for="auth_status">审核状态</label>
+    <select name="auth_status" type="text" id="auth_status">
+        {{ options(Unions.AUTH_STATUS, auth_status,'') }}
     </select>
 
     <button type="submit" class="ui button">搜索</button>
@@ -18,6 +23,9 @@
 {% macro oper_link(union) %}
     {% if isAllowed('users','index') %}
         <a href="/admin/users/index?user[union_id_eq]={{ union.id }}">家族成员</a><br/>
+    {% endif %}
+    {% if isAllowed('unions','auth') and union.auth_status == 3 %}
+        <a href="/admin/unions/auth/{{ union.id }}" class="modal_action">审核</a><br/>
     {% endif %}
     {% if isAllowed('unions','edit') %}
         <a href="/admin/unions/edit/{{ union.id }}" class="modal_action">编辑</a><br/>
@@ -41,5 +49,5 @@
 {% endmacro %}
 
 {{ simple_table(unions, ['ID': 'id','uid': 'uid',"头像":"avatar_img",'家族名称': 'name','族长': 'user_link','家族信息':'family_info',
-'状态': 'status_text','操作' :'oper_link'
+    '创建家族花费钻石数额':'create_union_cost_amount','状态': 'status_text','操作' :'oper_link'
 ]) }}

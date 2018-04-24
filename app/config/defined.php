@@ -133,6 +133,7 @@ define('ACCOUNT_TYPE_GIVE', 3); //系统赠送
 define('ACCOUNT_TYPE_CREATE_UNION', 4); //创建公会
 define('ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石
 define('ACCOUNT_TYPE_DEDUCT', 6); //系统扣除
+define('ACCOUNT_TYPE_CREATE_UNION_REFUND', 7); //创建公会返还
 define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 

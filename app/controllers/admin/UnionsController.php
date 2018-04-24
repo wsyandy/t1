@@ -152,6 +152,7 @@ class UnionsController extends BaseController
         $id = $this->params('id');
         $uid = $this->params('uid');
         $status = $this->params('status', STATUS_ON);
+        $auth_status = $this->params('auth_status', AUTH_SUCCESS);
 
         $cond = [];
         $cond['order'] = "id desc";
@@ -163,6 +164,10 @@ class UnionsController extends BaseController
 
         if ($uid) {
             $cond['conditions'] .= " and uid = " . $uid;
+        }
+
+        if ($auth_status) {
+            $cond['conditions'] .= " and auth_status = " . $auth_status;
         }
 
         if ($user_id) {
@@ -184,6 +189,8 @@ class UnionsController extends BaseController
         $unions = \Unions::findPagination($cond, $page, $per_page);
 
         $this->view->unions = $unions;
+        $this->view->status = $status;
+        $this->view->auth_status = $auth_status;
     }
 
     function settledAmountAction()
@@ -262,5 +269,40 @@ class UnionsController extends BaseController
         $unions = \Unions::findPagination(['order' => 'fame_value desc'], $page, $per_page);
 
         $this->view->unions = $unions;
+    }
+
+    function authAction()
+    {
+        $id = $this->params('id');
+        $union = \Unions::findFirstById($id);
+
+        if (!$union) {
+            echo "参数非法";
+            return false;
+        }
+
+        if ($this->request->isPost()) {
+
+            $amount = intval($this->params('amount'));
+            $auth_status = $this->params('auth_status');
+            $union->auth_status = $auth_status;
+
+            if ($amount > 0 && $union->auth_status == AUTH_SUCCESS) {
+
+                if ($amount > $union->getCreateUnionCostAmount()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '返还金额大于 创建家族花费金额');
+                }
+
+                \AccountHistories::changeBalance($union->user_id, ACCOUNT_TYPE_CREATE_UNION_REFUND, $amount, ['remark' => '创建家族返还钻石' . $amount]);
+            }
+
+            if ($union->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['redirect_url' => '/admin/unions/family?status=1&auth_status=3']);
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '');
+        }
+
+        $this->view->id = $id;
     }
 }
