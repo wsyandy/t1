@@ -3,10 +3,10 @@
 {{ theme_js('/js/vue.min.js','/m/js/html2canvas.min') }}
 {{ block_end() }}
 <script>
-    (function(doc, win) {
+    (function (doc, win) {
         var docEl = doc.documentElement,
             resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-            recalc = function() {
+            recalc = function () {
                 var clientWidth = docEl.clientWidth;
                 if (!clientWidth) return;
                 docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
@@ -20,7 +20,7 @@
 <div id="app" class="save_picture">
     <div :class="['save_picture_box',!sex&&'women']">
         <div class="save_picture_header" :style="{borderColor:!sex?'#F6427F':'#73B3FB'}">
-            <img :src="avatar_url" alt="头像" />
+            <img :src="avatar_url" alt="头像"/>
         </div>
         <div class="save_picture_name">
             <span class="wire" :style="{backgroundColor:!sex?'rgba(255,87,154,0.62)':'rgba(87,153,255,0.4)'}"></span>
@@ -37,17 +37,20 @@
         <div class="save_picture_li">
             <span class="title">辅音色:</span>
             <div class="save_picture_libox">
-                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant1,consonant_ratio1 in consonant1">
+                <p class="save_picture_li_line" style="margin-bottom:10px;"
+                   v-for=" consonant1,consonant_ratio1 in consonant1">
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant1}</span>
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio1}%</span>
                     <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
                 </p>
-                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant2,consonant_ratio2 in consonant2">
+                <p class="save_picture_li_line" style="margin-bottom:10px;"
+                   v-for=" consonant2,consonant_ratio2 in consonant2">
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant2}</span>
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio2}%</span>
                     <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
                 </p>
-                <p class="save_picture_li_line" style="margin-bottom:10px;" v-for=" consonant3,consonant_ratio3 in consonant3">
+                <p class="save_picture_li_line" style="margin-bottom:10px;"
+                   v-for=" consonant3,consonant_ratio3 in consonant3">
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant3}</span>
                     <span :style="{color:!sex?'#FF659A':'#71A7FC'}">${consonant_ratio3}%</span>
                     <i :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" class="wire"></i>
@@ -98,8 +101,9 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-            <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
-        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
+        <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
+        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
+        </div>
     </div>
     <div v-if="isSaveSuccess" class="toast_text_box">
         <span class="toast_text">保存成功</span>
@@ -108,29 +112,29 @@
 <script>
     var opts = {
         data: {
-            isSaveSuccess:false,
+            isSaveSuccess: false,
             sex:{{ sex }},//0为女1为男 主题切换  原本是0为男1为女 现在样式中已全部取反
-            code:"{{ code }}",
-            sid:"{{ sid }}",
-            tonic:"",
-            nickname:"{{ nickname }}",
-            consonants:[],
-            tonic_ratio:"",
-            property:'',
-            mate:'',
-            heartbeat_value:'',
-            flirt_value:'',
-            fall_down_value:'',
-            grade:'',
-            consonant1:'',
-            consonant2:'',
-            consonant3:'',
-            avatar_url:''
+            code: "{{ code }}",
+            sid: "{{ sid }}",
+            tonic: "",
+            nickname: "{{ nickname }}",
+            consonants: [],
+            tonic_ratio: "",
+            property: '',
+            mate: '',
+            heartbeat_value: '',
+            flirt_value: '',
+            fall_down_value: '',
+            grade: '',
+            consonant1: '',
+            consonant2: '',
+            consonant3: '',
+            avatar_url: ''
         },
 
         methods: {
-            screenshotsImg:function(){
-                html2canvas(document.querySelector(".save_picture_box"),{
+            screenshotsImg: function () {
+                html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true,//
                 }).then(canvas => {
@@ -139,7 +143,7 @@
             },
             go_voice_identify: function () {
                 var url = '/m/users/recording';
-                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex);
+                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
             }
         }
     };
@@ -147,22 +151,23 @@
     $(function () {
         getTonic();
     });
+
     function getTonic() {
         var data = {
-            'sid':vm.sid,
-            'code':vm.code,
-            'sex':vm.sex
+            'sid': vm.sid,
+            'code': vm.code,
+            'sex': vm.sex
         };
-        $.authGet('/m/users/get_tonic',data, function (resp) {
-            if(!resp.error_code){
+        $.authGet('/m/users/get_tonic', data, function (resp) {
+            if (!resp.error_code) {
                 vm.tonic = resp.tonic;
                 vm.tonic_ratio = resp.tonic_ratio;
-                if(resp.avatar_url){
+                if (resp.avatar_url) {
                     vm.avatar_url = resp.avatar_url;
-                }else{
-                    if(vm.sex){
+                } else {
+                    if (vm.sex) {
                         vm.avatar_url = '/m/images/men_haeder.png';
-                    }else{
+                    } else {
                         vm.avatar_url = '/m/images/women_haeder.png';
                     }
                 }
@@ -176,27 +181,28 @@
 
     function getConsonants() {
         var data = {
-            'sid':vm.sid,
-            'code':vm.code,
-            'sex':vm.sex,
-            'tonic_ratio':vm.tonic_ratio
+            'sid': vm.sid,
+            'code': vm.code,
+            'sex': vm.sex,
+            'tonic_ratio': vm.tonic_ratio
         };
-        $.authGet('/m/users/get_consonants',data, function (resp) {
-           if(!resp.error_code){
-               vm.consonant1 = resp.consonant1;
-               vm.consonant2 = resp.consonant2;
-               vm.consonant3 = resp.consonant3;
-           }
+        $.authGet('/m/users/get_consonants', data, function (resp) {
+            if (!resp.error_code) {
+                vm.consonant1 = resp.consonant1;
+                vm.consonant2 = resp.consonant2;
+                vm.consonant3 = resp.consonant3;
+            }
         })
     }
+
     function getProperty() {
         var data = {
-            'sid':vm.sid,
-            'code':vm.code,
-            'sex':vm.sex
+            'sid': vm.sid,
+            'code': vm.code,
+            'sex': vm.sex
         };
-        $.authGet('/m/users/get_property',data, function (resp) {
-            if(!resp.error_code){
+        $.authGet('/m/users/get_property', data, function (resp) {
+            if (!resp.error_code) {
                 vm.property = resp.property;
                 vm.mate = resp.mate;
             }
@@ -205,12 +211,12 @@
 
     function getCharmValue() {
         var data = {
-            'sid':vm.sid,
-            'code':vm.code,
-            'sex':vm.sex
+            'sid': vm.sid,
+            'code': vm.code,
+            'sex': vm.sex
         };
-        $.authGet('/m/users/get_charm_value',data, function (resp) {
-            if(!resp.error_code){
+        $.authGet('/m/users/get_charm_value', data, function (resp) {
+            if (!resp.error_code) {
                 vm.heartbeat_value = resp.heartbeat_value;
                 vm.flirt_value = resp.flirt_value;
                 vm.fall_down_value = resp.fall_down_value;
@@ -218,7 +224,8 @@
             }
         })
     }
-    function canvasTurnImg(canvas){
+
+    function canvasTurnImg(canvas) {
         // 图片导出为 png 格式
         var type = 'png';
         var imgData = canvas.toDataURL(type);
@@ -227,7 +234,7 @@
          * @param  {String} type the old mime-type
          * @return the new mime-type
          */
-        var _fixType = function(type) {
+        var _fixType = function (type) {
             type = type.toLowerCase().replace(/jpg/i, 'jpeg');
             var r = type.match(/png|jpeg|bmp|gif/)[0];
             return 'image/' + r;
@@ -241,7 +248,7 @@
          * @param  {String} data     要保存到本地的图片数据
          * @param  {String} filename 文件名
          */
-        function saveFile(data, filename){
+        function saveFile(data, filename) {
             var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
             save_link.href = data;
             save_link.download = filename;
@@ -257,16 +264,17 @@
         var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
         // download
 //        saveFile(imgData,filename);
-        saveImage(imgData,filename);
-        function saveImage(img_data,filename) {
+        saveImage(imgData, filename);
+
+        function saveImage(img_data, filename) {
             var data = {
-                'sid':vm.sid,
-                'code':vm.code,
-                'image_data':img_data,
-                'filename':filename
+                'sid': vm.sid,
+                'code': vm.code,
+                'image_data': img_data,
+                'filename': filename
             };
-            $.authPost('/m/users/save_image',data, function (resp) {
-                    alert(resp.error_reason);
+            $.authPost('/m/users/save_image', data, function (resp) {
+                alert(resp.error_reason);
             })
         }
 

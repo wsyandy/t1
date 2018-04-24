@@ -339,10 +339,15 @@ html,body{
     border: 2px solid #73B3FB;
     justify-content: center;
     align-items: flex-end;
+    position: relative;
 }
 .save_picture_header img{
-    width: 2rem;
-    height: 2rem;
+    width: 2.08rem;
+    height: 2.08rem;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1.04rem;
 }
 .save_picture_name{
     position: relative;
