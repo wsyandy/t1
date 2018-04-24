@@ -1,0 +1,1 @@
+ALTER TABLE product_menus ADD COLUMN product_channel_id INTEGER ;

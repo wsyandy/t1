@@ -16,13 +16,17 @@ class ProductMenus extends BaseModel
             return [ERROR_CODE_FAIL, '类型不能为空'];
         }
 
+        if (isBlank($this->product_channel_id)) {
+            return [ERROR_CODE_FAIL, '产品渠道不能为空'];
+        }
+
         if ($this->hasChanged('type')) {
             $room_category = RoomCategories::findFirstByType($this->type);
             if (isBlank($room_category)) {
                 return [ERROR_CODE_FAIL, '类型不合法'];
             }
 
-            $product_menu = ProductMenus::findFirstByType($this->type);
+            $product_menu = ProductMenus::findFirstBy(['type' => $this->type, 'product_channel_id' => $this->product_channel_id]);
             if (isPresent($product_menu)) {
                 return [ERROR_CODE_FAIL, '类型不能重复'];
             }

@@ -15,6 +15,10 @@ class RoomCategories extends BaseModel
             return [ERROR_CODE_FAIL, '类型不能为空'];
         }
 
+        if (isBlank($this->name)) {
+            return [ERROR_CODE_FAIL, '名字不能为空'];
+        }
+
         if ($this->hasChanged('type')) {
             $room_category = self::findFirstByType($this->type);
             if (isPresent($room_category)) {

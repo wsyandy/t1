@@ -412,9 +412,6 @@
                     {% if isAllowed('games','index') %}
                         <li><a href="/admin/games">游戏配置</a></li>
                     {% endif %}
-                    {% if isAllowed('product_menus','index') %}
-                        <li><a href="/admin/product_menus">产品菜单配置</a></li>
-                    {% endif %}
                 </ul>
             </li>
         {% endif %}

@@ -992,11 +992,23 @@ class YangTask extends \Phalcon\Cli\Task
         echoLine($res);
     }
 
-    function test()
+    function apiAction($params)
     {
-        $db = \Users::getUserDb();
-        $key = "week_charm_rank_list_gift_id_60_20180423_20180429";
-        $res = $db->zrevrange($key,0,9);
-        var_dump($res);
+        $body = $this->commonBody();
+        $user_id = $params[0];
+        $url = $params[1];
+
+        if (isBlank($url)) {
+//            $url = "http://chance.com/api/product_menus";
+            $url = "http://chance.com/api/room_categories";
+        }
+
+        $user = \Users::findFirstById($user_id);
+        if ($user->needUpdateInfo()) {
+            $user = $this->updateUserInfo($user);
+        }
+        $body = array_merge($body, array('sid' => $user->sid));
+        $res = httpGet($url, $body);
+        echoLine($res);
     }
 }

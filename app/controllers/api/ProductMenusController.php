@@ -12,16 +12,20 @@ class ProductMenusController extends BaseController
 {
     function indexAction()
     {
-        $product_menus = [
-            ['name' => '推荐', 'type' => 'recommend'],
-            ['name' => '娱乐', 'type' => 'amuse'],
-            ['name' => '开黑', 'type' => 'gang_up'],
-            ['name' => '娱乐', 'type' => 'amuse'],
-            ['name' => '最新', 'type' => 'new'],
-            ['name' => '关注', 'type' => 'follow'],
-            ['name' => '附近', 'type' => 'nearby'],
+        $cond = [
+            'conditions' => " status = :status: and product_channel_id = :product_channel_id:",
+            'bind' => ['status' => STATUS_ON, 'product_channel_id' => $this->currentProductChannelId()],
+            'order' => 'rank desc,id desc'
         ];
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['product_menus' => $product_menus]);
+        $product_menus = \ProductMenus::find($cond);
+
+        $product_menus_json = [];
+
+        foreach ($product_menus as $product_menu) {
+            $product_menus_json[] = ['name' => $product_menu->name, 'type' => $product_menu->type];
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['product_menus' => $product_menus_json]);
     }
 }

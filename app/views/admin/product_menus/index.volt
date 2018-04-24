@@ -1,8 +1,10 @@
-<a href="/admin/product_menus/new" class="modal_action">新建</a>
+<a href="/admin/product_menus/new?product_channel_id={{ product_channel_id }}" class="modal_action">新建</a>
 
 <form name="search_form" action="/admin/product_menus" method="get" autocomplete="off" id="search_form">
     <label for="id">ID</label>
     <input name="product_menu[id_eq]" type="text" id="id"/>
+
+    <input type="hidden" name="product_channel_id" value="{{ product_channel_id }}">
 
     <button type="submit" class="ui button">搜索</button>
 </form>

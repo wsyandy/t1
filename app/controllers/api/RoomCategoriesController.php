@@ -12,84 +12,35 @@ class RoomCategoriesController extends BaseController
 {
     function indexAction()
     {
-        $room_categories = [
-            [
-                'name' => '娱乐',
-                'second_categories' => [
-                    [
-                        'id' => 2,
-                        'name' => '唱歌',
-                    ],
-                    [
-                        'id' => 3,
-                        'name' => '唱歌1',
-                    ],
-                    [
-                        'id' => 4,
-                        'name' => '唱歌2',
-                    ],
-                    [
-                        'id' => 5,
-                        'name' => '唱歌3',
-                    ],
-                    [
-                        'id' => 6,
-                        'name' => '唱歌4',
-                    ]
-                ]
-            ],
-            [
-                'name' => '娱乐',
-                'second_categories' => [
-                    [
-                        'id' => 8,
-                        'name' => '唱歌',
-                    ],
-                    [
-                        'id' => 9,
-                        'name' => '唱歌1',
-                    ],
-                    [
-                        'id' => 10,
-                        'name' => '唱歌2',
-                    ],
-                    [
-                        'id' => 11,
-                        'name' => '唱歌3',
-                    ],
-                    [
-                        'id' => 12,
-                        'name' => '唱歌4',
-                    ]
-                ]
-            ],
-            [
-                'name' => '娱乐',
-                'second_categories' => [
-                    [
-                        'id' => 14,
-                        'name' => '唱歌',
-                    ],
-                    [
-                        'id' => 15,
-                        'name' => '唱歌1',
-                    ],
-                    [
-                        'id' => 16,
-                        'name' => '唱歌2',
-                    ],
-                    [
-                        'id' => 17,
-                        'name' => '唱歌3',
-                    ],
-                    [
-                        'id' => 18,
-                        'name' => '唱歌4',
-                    ]
-                ]
-            ]
+        $parent_cond = [
+            'conditions' => " status = :status: and (parent_id is null or parent_id = 0)",
+            'bind' => ['status' => STATUS_ON],
+            'order' => 'rank desc,id desc',
         ];
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['room_categories' => $room_categories]);
+        $room_categories = \RoomCategories::find($parent_cond);
+
+        $room_categories_json = [];
+
+        foreach ($room_categories as $room_category) {
+            $children_cond = [
+                'conditions' => " status = :status: and parent_id = :parent_id:",
+                'bind' => ['status' => STATUS_ON, 'parent_id' => $room_category->id],
+                'order' => 'rank desc,id desc',
+            ];
+
+            $second_categories = \RoomCategories::find($children_cond);
+
+            $second_categories_json = [];
+
+            foreach ($second_categories as $second_category) {
+                $second_categories_json[] = ['id' => $second_category->id, 'name' => $second_category->name];
+            }
+
+            $room_categories_json[] = ['name' => $room_category->name, 'second_categories' => $second_categories_json];
+        }
+
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['room_categories' => $room_categories_json]);
     }
 }
