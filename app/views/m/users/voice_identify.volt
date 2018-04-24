@@ -23,8 +23,8 @@
             <img :src="avatar_url" alt="头像"/>
         </div>
         <div class="save_picture_name">
-            <span class="wire" :style="{backgroundColor:!sex?'rgba(255,87,154,0.62)':'rgba(87,153,255,0.4)'}"></span>
-            <span :style="{color:!sex?'#F53F7D':'#60A4F1' }">${nickname}</span>
+            <span class="wire" :style="{backgroundColor:!sex?'#ffe2ec':'#d4e7fc'}"></span>
+            <span :style="{color:!sex?'#F53F7D':'#60A4F1',zIndex:10}">${nickname}</span>
         </div>
         <div class="save_picture_li">
             <span class="title">主音色:</span>
