@@ -1415,5 +1415,18 @@ EOF;
             }
         }
     }
+
+    function offlineUserNumAction()
+    {
+        $last_at = time() - 86400 * 2;
+
+        $users = Users::find([
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and user_type = :user_type: and avatar_status = :avatar_status:',
+            'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+    }
 }
 
