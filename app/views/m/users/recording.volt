@@ -57,16 +57,17 @@
 
         methods: {
             // 按下
-            onRecordingStart(){
+            onRecordingStart:function(){
+                var self =this;
                 if(this.recordingLength>=100) return false;
-                this.times = setInterval(()=>{
-                    this.recordingLength++;
-                this.isToast = true;
-                if(this.recordingLength>=100){
-                    clearInterval(this.times);
-                    this.onAnalysis();
-                }
-            },100);
+                this.times = setInterval(function () {
+                    self.recordingLength++;
+                    self.isToast = true;
+                    if(self.recordingLength>=100){
+                        clearInterval(this.times);
+                        self.onAnalysis();
+                    }
+                },100);
             },
             // 抬起
             onRecordingEnd:function(){
