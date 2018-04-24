@@ -61,13 +61,22 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
+        $opts = ['name' => $name];
+
         $room = \Rooms::findFirstByUserId($this->currentUser()->id);
         if ($room) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '已创建', ['id' => $room->id,
                 'name' => $room->name, 'channel_name' => $room->channel_name]);
         }
 
-        $room = \Rooms::createRoom($this->currentUser(), $name);
+        $room_category_ids = $this->params('room_category_ids');
+
+        //还要判断是否符合规则
+        if (isPresent($room_category_ids)) {
+            $opts['room_category_ids'] = $room_category_ids;
+        }
+
+        $room = \Rooms::createRoom($this->currentUser(), $opts);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['id' => $room->id,
             'uid' => $room->uid, 'name' => $room->name, 'channel_name' => $room->channel_name]);
@@ -217,6 +226,18 @@ class RoomsController extends BaseController
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
+
+        //房间分类信息
+        $room_category_ids = $room->room_category_ids;
+        if (isPresent($room_category_ids)) {
+            $room_category_ids = explode(',', $room_category_ids);
+            $res['room_category_ids'] = [];
+
+            foreach ($room_category_ids as $room_category_id) {
+                $res['room_category_ids'][] = intval($room_category_id);
+            }
+
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);

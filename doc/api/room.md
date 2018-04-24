@@ -208,7 +208,7 @@
              },
              ...
          ]	   
-     "activities": [
+     activities: [
              {
                  "id": int 活动ID,
                  "image_small_url": '',
@@ -216,10 +216,17 @@
              }
              ...
          ],
-     "game": {
+     game: {
              "url": string  跳转地址,
              "icon": string 图片地址
          },
+     room_category_ids:[
+            1 ,  房间分类的id
+            2 ,  房间分类的id
+            3 ,  房间分类的id
+            4 ,  房间分类的id
+            ...
+     ]
 }
 ```
 

@@ -218,10 +218,19 @@ class Rooms extends BaseModel
         return $data['room_seats'];
     }
 
-    static function createRoom($user, $name)
+    static function createRoom($user, $opts)
     {
+        $name = fetch($opts, 'name');
+        $room_category_ids = fetch($opts, 'room_category_ids');
+
         $room = new Rooms();
         $room->name = $name;
+
+        //还要判断是否符合规则
+        if (isPresent($room_category_ids)) {
+            $room->room_category_ids = $room_category_ids;
+        }
+
         $room->user_id = $user->id;
         $room->user = $user;
         $room->status = STATUS_ON;
@@ -287,6 +296,13 @@ class Rooms extends BaseModel
             }
 
             $this->topic = $topic;
+        }
+
+        $room_category_ids = fetch($params, 'room_category_ids');
+
+        //还要判断是否符合规则
+        if (isPresent($room_category_ids)) {
+            $this->room_category_ids = $room_category_ids;
         }
 
         $this->update();
@@ -1732,19 +1748,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
