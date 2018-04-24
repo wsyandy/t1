@@ -49,5 +49,6 @@
 {% endmacro %}
 
 {{ simple_table(unions, ['ID': 'id','uid': 'uid',"头像":"avatar_img",'家族名称': 'name','族长': 'user_link','家族信息':'family_info',
+    '创建时间':'created_at_text','解散时间':'dismissed_at_text',
     '创建家族花费钻石数额':'create_union_cost_amount','状态': 'status_text','操作' :'oper_link'
 ]) }}

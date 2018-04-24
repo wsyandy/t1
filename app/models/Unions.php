@@ -839,20 +839,18 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date('Ymd'));
+            case 'day': {
+                $date = fetch($opts, 'date', date('Ymd'));
 
-                    $key = "total_union_fame_value_day_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "total_union_fame_value_" . $start . "_" . $end;
-                    break;
-                }
+                $key = "total_union_fame_value_day_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "total_union_fame_value_" . $start . "_" . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -1035,5 +1033,20 @@ class Unions extends BaseModel
         }
 
         return 0;
+    }
+
+    //解散时间
+    function getDismissedAtText()
+    {
+        if ($this->status == STATUS_OFF) {
+
+            $union_history = UnionHistories::findFirstBy(['union_id' => $this->id, 'user_id' => $this->user_id]);
+
+            if ($union_history) {
+                return $union_history->exit_at_text;
+            }
+        }
+
+        return '';
     }
 }
