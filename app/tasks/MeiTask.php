@@ -3265,5 +3265,9 @@ EOF;
     {
         $unions = Unions::findBy(['auth_status' => AUTH_NONE]);
         echoLine(count($unions));
+
+        $union = Unions::findFirstById(1);
+        $union->auth_status = AUTH_WAIT;
+        $union->update();
     }
 }

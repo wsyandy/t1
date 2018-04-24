@@ -117,7 +117,7 @@ class Unions extends BaseModel
         $union->product_channel_id = $user->product_channel_id;
         $union->user_id = $user->id;
         $union->status = STATUS_ON;
-        $union->auth_status = AUTH_SUCCESS;
+        $union->auth_status = AUTH_WAIT;
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
@@ -151,7 +151,7 @@ class Unions extends BaseModel
             $union->product_channel_id = $user->product_channel_id;
             $union->user_id = $user->id;
             $union->status = STATUS_ON;
-            $union->auth_status = AUTH_SUCCESS;
+            $union->auth_status = AUTH_WAIT;
             $union->mobile = $user->mobile;
             $union->type = UNION_TYPE_PRIVATE;
             $union->avatar_status = AUTH_SUCCESS;
@@ -231,8 +231,8 @@ class Unions extends BaseModel
         }
 
         $cond = [
-            'conditions' => 'type = :type: and status = :status: and auth_status = :auth_status:',
-            'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_SUCCESS],
+            'conditions' => 'type = :type: and status = :status: and auth_status != :auth_status:',
+            'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_FAIL],
         ];
 
         //根据id name搜索是否需要recommend
@@ -839,18 +839,20 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date('Ymd'));
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date('Ymd'));
 
-                $key = "total_union_fame_value_day_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "total_union_fame_value_" . $start . "_" . $end;
-                break;
-            }
+                    $key = "total_union_fame_value_day_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "total_union_fame_value_" . $start . "_" . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -1016,5 +1018,22 @@ class Unions extends BaseModel
     function getWaitWithdrawAmount()
     {
         return $this->amount - $this->frozen_amount;
+    }
+
+    //创建家族花费钻石数额
+    function getCreateUnionCostAmount()
+    {
+        $user_id = $this->user_id;
+
+        $account_history = AccountHistories::findFirstBy(
+            [
+                'user_id' => $user_id, 'fee_type' => ACCOUNT_TYPE_CREATE_UNION
+            ], 'id desc');
+
+        if ($account_history) {
+            return abs($account_history->amount);
+        }
+
+        return 0;
     }
 }
