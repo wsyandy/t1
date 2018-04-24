@@ -141,7 +141,7 @@ class Unions extends BaseModel
             $union->mobile = '';
             $union->type = 0;
             $union->user_id = 0;
-            $union->auth_status = 0;
+            $union->auth_status = AUTH_NONE;
             $union->update();
 
             $union = new Unions();
@@ -251,7 +251,7 @@ class Unions extends BaseModel
         }
 
         if ($id) {
-            $cond['conditions'] = " and id = :id:";
+            $cond['conditions'] .= " and id = :id:";
             $cond['bind']['id'] = $id;
         }
 
@@ -953,11 +953,6 @@ class Unions extends BaseModel
             }
 
             $this->$filed = $value;
-        }
-
-        if (!$this->needUpdateProfile()) {
-            $this->auth_status = AUTH_WAIT;
-            $this->status = STATUS_ON;
         }
 
         $this->update();
