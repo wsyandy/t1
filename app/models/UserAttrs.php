@@ -909,4 +909,74 @@ trait UserAttrs
 
         return 2;
     }
+
+    function getRatio($tonic_ratio)
+    {
+        $all_ratio = 100;
+        $consonant_ratio1 = mt_rand(20, 29);
+        list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+
+        if (isBlank($consonant_ratio2) || isBlank($consonant_ratio3)) {
+            list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+        }
+        return [$consonant_ratio1, $consonant_ratio2, $consonant_ratio3];
+
+
+    }
+
+    function getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1)
+    {
+        $consonant_ratio2 = mt_rand(10, $all_ratio - $tonic_ratio - $consonant_ratio1);
+        if ($consonant_ratio2 > 20) {
+            $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+        } else {
+            $consonant_ratio3 = $all_ratio - $tonic_ratio - $consonant_ratio1 - $consonant_ratio2;
+            if ($consonant_ratio3 == 0) {
+                $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+            } else {
+                return [$consonant_ratio2, $consonant_ratio3];
+            }
+        }
+    }
+
+    static function getTonicAvatar($tonic)
+    {
+        switch ($tonic) {
+            case '少女音':
+                $avatar_url = '/m/images/shaonv.png';
+                break;
+            case '萝莉音':
+                $avatar_url = '/m/images/luoli.png';
+                break;
+            case '少萝音':
+                $avatar_url = '/m/images/shaoluo.png';
+                break;
+            case '少御音':
+                $avatar_url = '/m/images/shaoyu.png';
+                break;
+            case '御姐音':
+                $avatar_url = '/m/images/yujie.png';
+                break;
+            case '青年音':
+                $avatar_url = '/m/images/qingnian.png';
+                break;
+            case '正太音':
+                $avatar_url = '/m/images/zhengtai.png';
+                break;
+            case '少年音':
+                $avatar_url = '/m/images/shaonian.png';
+                break;
+            case '暖男音':
+                $avatar_url = '/m/images/nuannan.png';
+                break;
+            case '青受音':
+                $avatar_url = '/m/images/qingshou.png';
+                break;
+            default:
+                $avatar_url = '';
+                break;
+        }
+        return $avatar_url;
+    }
+
 }
