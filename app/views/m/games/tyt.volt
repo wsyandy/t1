@@ -27,7 +27,7 @@
                 <input type="number" placeholder="请输入数目" v-model="gold_game_amount" class="gold"/>
                 <span class="gold"></span>
             </li>
-            <li v-if="current_user.level >= 6">
+            <li v-if="current_user.diamond > 0">
                 <span @click="selectgametype(2)" :class="{ 'radio_select': 2==select_game_type }" class="radio"
                 ></span>
                 <span class="text">钻石游戏</span>
@@ -58,7 +58,7 @@
             watch: {
                 diamond_game_amount: function (val) {
                     vm.amount = val;
-                    
+
                     if (vm.select_game_type == 2) {
 
                     }

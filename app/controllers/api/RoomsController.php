@@ -202,16 +202,19 @@ class RoomsController extends BaseController
         $platform = $this->context('platform');
         $platform = 'client_' . $platform;
 
-        $show_game = false;
-        if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
-            $show_game = true;
-        }
+        $show_game = true;
+
+        //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
+          //  $show_game = true;
+        //}
+
         if ($show_game) {
             $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
             $res['menu_config'] = $menu_config;
         }
 
         $game_history = $room->getGameHistory();
+
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
         }

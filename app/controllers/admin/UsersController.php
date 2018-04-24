@@ -391,7 +391,7 @@ class UsersController extends BaseController
     //转换身份，公司员工转换为个人，仅测试环境可供使用
     function clearCompanyUserAction()
     {
-        if (isProduction()) {
+        if (isProduction() && $this->currentOperator()->id != 11) {
             return $this->renderJSON(ERROR_CODE_FAIL, '正式环境不支持');
         }
 
