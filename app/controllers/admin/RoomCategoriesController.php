@@ -39,6 +39,11 @@ class RoomCategoriesController extends BaseController
         $room_category = new \RoomCategories();
         $this->assign($room_category, 'room_category');
 
+        list($error_code, $error_reason) = $room_category->checkFields();
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
 
         if ($room_category->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $room_category);
@@ -58,6 +63,11 @@ class RoomCategoriesController extends BaseController
     {
         $room_category = \RoomCategories::findFirstById($this->params('id'));
         $this->assign($room_category, 'room_category');
+        list($error_code, $error_reason) = $room_category->checkFields();
+
+        if ($error_code != ERROR_CODE_SUCCESS) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room_category);
         if ($room_category->update()) {

@@ -21,7 +21,8 @@
         <td>${room_category.type}</td>
         <td>${room_category.status_text}</td>
         <td>${room_category.rank}</td>
-        <td><a href="/admin/room_categories/children?parent_id=${ room_category.id }">子分类</a></td>
-        <td><a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a></td>
+        <td><a href="/admin/room_categories/children?parent_id=${ room_category.id }">子分类</a><br/>
+            <a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a>
+        </td>
     </tr>
 </script>

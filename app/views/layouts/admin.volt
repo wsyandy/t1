@@ -94,7 +94,7 @@
             </li>
         {% endif %}
 
-        {% if isAllowed('rooms','index') or isAllowed('rooms','auto_hot') or isAllowed('broadcasts','index') %}
+        {% if isAllowed('rooms','index') or isAllowed('rooms','auto_hot') or isAllowed('broadcasts','index') or isAllowed('room_categories','index') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">房间<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -109,6 +109,9 @@
                     {% endif %}
                     {% if isAllowed('broadcasts','index') %}
                         <li><a href="/admin/broadcasts">电台房间列表</a></li>
+                    {% endif %}
+                    {% if isAllowed('room_categories','index') %}
+                        <li><a href="/admin/room_categories/index">房间类型</a></li>
                     {% endif %}
                 </ul>
             </li>
@@ -409,8 +412,8 @@
                     {% if isAllowed('games','index') %}
                         <li><a href="/admin/games">游戏配置</a></li>
                     {% endif %}
-                    {% if isAllowed('room_categories','index') %}
-                        <li><a href="/admin/room_categories/index">房间类型</a></li>
+                    {% if isAllowed('product_menus','index') %}
+                        <li><a href="/admin/product_menus">产品菜单配置</a></li>
                     {% endif %}
                 </ul>
             </li>
