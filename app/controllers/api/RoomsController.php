@@ -233,9 +233,9 @@ class RoomsController extends BaseController
 
         //房间分类信息
         $room_category_ids = $room->room_category_ids;
+        $res['room_category_ids'] = [];
         if (isPresent($room_category_ids)) {
             $room_category_ids = explode(',', $room_category_ids);
-            $res['room_category_ids'] = [];
 
             foreach ($room_category_ids as $room_category_id) {
                 $res['room_category_ids'][] = intval($room_category_id);
