@@ -26,12 +26,15 @@ class ProductChannelsController extends BaseController
     {
         $root = $this->getRoot();
         //声网登录密码
-
+        $product_channel_id = $this->currentProductChannelId();
         if (isDevelopmentEnv()) {
             $detail_json['menu_config'][] = ['show' => true, 'title' => '推荐', 'url' => '/m/users/recommend', 'icon' => $root . 'images/menu_recommend.png'];
             $detail_json['menu_config'][] = ['show' => true, 'title' => '测一测', 'url' => '/m/users/voice', 'icon' => $root . 'images/test.png'];
         } else {
             $detail_json['menu_config'][] = ['show' => false, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
+            if ($product_channel_id == 1) {
+                $detail_json['menu_config'][] = ['show' => true, 'title' => '测一测', 'url' => '/m/users/voice', 'icon' => $root . 'images/test.png'];
+            }
         }
 
         $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity.png'];
