@@ -5,7 +5,7 @@
 <div id="app" class="save_picture">
     <div :class="['save_picture_box',!sex&&'women']">
         <div class="save_picture_header" :style="{borderColor:!sex?'#F6427F':'#73B3FB'}">
-            <img :src="avatar_url" alt="头像" />
+            <img :src="[!sex?'/m/images/women_haeder.png':'/m/images/men_haeder.png']" alt="头像" />
         </div>
         <div class="save_picture_name">
             <span class="wire" :style="{backgroundColor:!sex?'rgba(255,87,154,0.62)':'rgba(87,153,255,0.4)'}"></span>
@@ -83,7 +83,7 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-            {#<div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>#}
+            <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>保存图片</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
     </div>
     <div v-if="isSaveSuccess" class="toast_text_box">
@@ -108,8 +108,7 @@
             grade:'',
             consonant1:'',
             consonant2:'',
-            consonant3:'',
-            avatar_url:''
+            consonant3:''
         },
 
         methods: {
@@ -130,7 +129,7 @@
     vm = XVue(opts);
     $(function () {
         getTonic();
-    });
+    })
     function getTonic() {
         var data = {
             'sid':vm.sid,
@@ -141,15 +140,6 @@
             if(!resp.error_code){
                 vm.tonic = resp.tonic;
                 vm.tonic_ratio = resp.tonic_ratio;
-                if(resp.avatar_url){
-                   vm.avatar_url = resp.avatar_url;
-                }else{
-                    if(vm.sex){
-                        vm.avatar_url = '/m/images/men_haeder.png';
-                    }else{
-                        vm.avatar_url = '/m/images/women_haeder.png';
-                    }
-                }
                 getConsonants();
                 getProperty();
                 getCharmValue();
@@ -218,7 +208,7 @@
         };
 
         // 加工image data，替换mime type
-        imgData = imgData.replace(_fixType(type),'image/octet-stream');
+        //imgData = imgData.replace(_fixType(type),'image/octet-stream');
 
         /**
          * 在本地进行文件保存
@@ -229,7 +219,9 @@
             var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
             save_link.href = data;
             save_link.download = filename;
-            
+
+            console.log(data);
+
             var event = document.createEvent('MouseEvents');
             event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             save_link.dispatchEvent(event);

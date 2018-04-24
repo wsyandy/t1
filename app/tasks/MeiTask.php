@@ -3233,20 +3233,17 @@ EOF;
 
     function test22Action()
     {
-        $image_data = file_get_contents(APP_ROOT . "/temp/test.txt");
+        $content = file_get_contents(APP_ROOT . "temp/test.txt");
+        $content = trim($content);
+        //$content = base64_decode($content);
 
-        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
+        //data:image/octet-stream;base64
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $content, $result)) {
             $type = $result[2];
             echoLine($type);
             if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
-                $new_file = APP_ROOT . 'temp' . uniqid() . '.' . $type;
-                echoLine($result[1]);
-                $data = base64_decode(str_replace($result[1], '', $image_data));
-
-                debug($data);
-
-                if (file_put_contents($new_file, $data)) {
-
+                $new_file = APP_ROOT . "temp/test" . '.' . $type;
+                if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $content)))) {
                     $img_path = str_replace('../../..', '', $new_file);
                     echo '图片上传成功</br>![](' . $img_path . ')';
                 } else {
