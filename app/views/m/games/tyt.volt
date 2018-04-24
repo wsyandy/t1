@@ -52,7 +52,7 @@
                 game_host_user_id: "{{ game_host_user.id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                game_id: "{{ game.id }}",
+                game_id:"{{ game.id }}",
                 current_user:{{ current_user }}
             },
             watch: {
@@ -94,11 +94,11 @@
                         'user_id': vm.game_host_user_id,
                         'pay_type': vm.pay_type,
                         'amount': vm.amount,
-                        'game_id': vm.game_id,
+                        'game_id':vm.game_id,
                         'sid': vm.sid
                     };
 
-                    if (vm.pay_type == 'free' && vm.amount > 0) {
+                    if(vm.pay_type == 'free' && vm.amount > 0){
                         alert('选择游戏类型');
                         return;
                     }
@@ -158,8 +158,8 @@
                 game_status_text: '',
                 current_user:{{ current_user }},
                 can_create_game: "{{ can_create_game }}",
-                game_history_id: "{{ game_history_id }}",
-                game_id: "{{ game.id }}"
+                game_history_id:"{{ game_history_id }}",
+                game_id:"{{ game.id }}"
             },
             watch: {},
             methods: {
@@ -185,10 +185,10 @@
         };
 
         $(function () {
-            if (!vm.pay_type && vm.game_history_id) {
+            if (!vm.pay_type &&  vm.game_history_id) {
                 if (vm.can_create_game) {
-                    vm.game_status_text = vm.game_host_nickname + '正在发起游戏中，请稍后！';
-                } else {
+                    vm.game_status_text =  vm.game_host_nickname + '正在发起游戏中，请稍后！';
+                }else{
                     vm.game_status_text = '您不是主播,不能发起游戏';
                 }
             } else {
