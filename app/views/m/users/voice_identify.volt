@@ -139,7 +139,7 @@
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
-                },function (canvas) {
+                }).then(function (canvas) {
                     canvasTurnImg(canvas)
                 });
             },
