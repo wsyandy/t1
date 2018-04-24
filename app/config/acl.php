@@ -19,7 +19,7 @@ return [
     'operat_manager' => ['dashboard' => '*', 'stats' => ['hours', 'days', 'partners'], 'partners' => '*',
         'operators' => ['index', 'partners', 'update_partners'], 'channel_soft_versions' => '*',
         'wap_visits' => '*', 'word_visits' => '*', 'wap_visit_histories' => '*', 'word_visit_histories' => '*', 'gdt_configs' => '*',
-        'partner_urls' => '*'],
+        'partner_urls' => '*', 'export_histories' => '*'],
 
     'producter' => ['dashboard' => '*', 'product_channels' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'orders' => '*', 'products' => '*', 'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*',
