@@ -438,7 +438,7 @@ html,body{
 }
 
 .save_picture_bom{
-    margin: .66rem .92rem 0;
+    margin: .5rem .92rem 0;
     align-items: center;
     justify-content: space-between;
 }
