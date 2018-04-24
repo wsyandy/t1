@@ -3269,5 +3269,11 @@ EOF;
         $union = Unions::findFirstById(1);
         $union->auth_status = AUTH_WAIT;
         $union->update();
+
+        $db = \Users::getUserDb();
+        $good_num_list_key = 'good_num_list';
+        $db->zadd($good_num_list_key, time(), 1234567);
+
+        echoLine($db->zscore($good_num_list_key, 1234567));
     }
 }

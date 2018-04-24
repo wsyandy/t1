@@ -1134,8 +1134,11 @@ class UsersTask extends \Phalcon\Cli\Task
         echoLine(count($activities));
     }
 
-    function wakeupUsersAction()
+    function wakeupUsersAction($opts)
     {
+        $min_id = $opts[0];
+        $max_id = $opts[1];
+
         $last_at = time() - 3600 * 48;
 
         if (isDevelopmentEnv()) {
@@ -1149,22 +1152,28 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_db = Users::getUserDb();
         $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
 
-        $users = Users::find([
+        $cond = [
             'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and
-             user_type = :user_type: and avatar_status = :avatar_status: and id not in (' . implode(',', $user_ids) . ")",
+             user_type = :user_type: and avatar_status = :avatar_status:',
             'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
             'order' => 'last_at desc',
             'columns' => 'id'
-        ]);
+        ];
+
+        if ($user_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $user_ids) . ")";
+        }
+
+        $users = Users::find($cond);
 
         echoLine(count($users));
 
         $num = 0;
 
-        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
-        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
-
-        $silent_users = Users::find($cond);
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_key";
+        $silent_user_ids = $hot_cache->zrange($key, 0, -1);
+        $silent_users = Users::findByIds($silent_user_ids);
 
         echoLine(count($silent_users));
 
@@ -1192,23 +1201,26 @@ class UsersTask extends \Phalcon\Cli\Task
         //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
         foreach ($users as $user) {
 
+            $user = Users::findFirstById($user->id);
+
             $gift_id = $gift_ids[array_rand($gift_ids)];
             $gift = Gifts::findFirstById($gift_id);
-            $send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
-            $send_user = Users::findFirstById($send_user_id);
+            //$send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
+            //$send_user = Users::findFirstById($send_user_id);
+            $send_user = $silent_users[array_rand($silent_user_ids)];
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
 
             $user_db->zadd($send_user_ids_key, time(), $user->id);
 
-            $data = ['sender_id' => $send_user_id, 'gift_id' => $gift_id];
-            $user_db->setex($wake_up_user_send_gift_key . $user->id, 3 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $data = ['sender_id' => $send_user->id, 'gift_id' => $gift_id];
+            $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 3 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
 
             $push_data = ['title' => $content, 'body' => $content];
-            \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+            \Pushers::delay(mt_rand(1, 1800))->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
 
             $num++;
 
-            echoLine($user->id, $send_user_id, $content, $num);
+            echoLine($user->id, $send_user->id, $content, $num);
         }
     }
 
@@ -1429,6 +1441,20 @@ EOF;
         ]);
 
         echoLine(count($users));
+    }
+
+    function addSilentUserActon()
+    {
+        $cond['conditions'] = "user_type = :user_type: and avatar_status = :avatar_status:";
+        $cond['bind'] = ['user_type' => USER_TYPE_SILENT, 'avatar_status' => AUTH_SUCCESS];
+        $silent_users = Users::find($cond);
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_key";
+
+        foreach ($silent_users as $silent_user) {
+            $hot_cache->zadd($key, time(), $silent_user->id);
+        }
     }
 }
 

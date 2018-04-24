@@ -998,8 +998,10 @@ class Users extends BaseModel
             // 线上提醒
             self::delay()->pushOnlineRemind($this->id);
 
-            if ($this->hasOfflineGift()) {
-                self::delay()->sendOfflineSendGift($this->id);
+            $send_gift_data = $this->hasOfflineGift();
+
+            if ($send_gift_data) {
+                self::delay()->sendOfflineSendGift($this->id, $send_gift_data);
             }
         }
 
@@ -3463,24 +3465,32 @@ class Users extends BaseModel
     function hasOfflineGift()
     {
         $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $this->id;
-        $user_db = Users::getUserDb();
 
-        return $user_db->get($wake_up_user_send_gift_key);
+        $hot_cache = self::getHotWriteCache();
+
+        if ($hot_cache->set($wake_up_user_send_gift_key, 1, ['NX', 'EX' => 2])) {
+            info("wake_up_user_send_gift_key_lock", $this->id);
+            return null;
+        }
+
+        $res = $hot_cache->get($wake_up_user_send_gift_key);
+        $hot_cache->del($wake_up_user_send_gift_key);
+        return $res;
     }
 
     //离线送礼物
-    static function sendOfflineSendGift($user_id)
+    static function sendOfflineSendGift($user_id, $data)
     {
-        $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $user_id;
-        $user_db = Users::getUserDb();
-        $data = $user_db->get($wake_up_user_send_gift_key);
         info($user_id, $data);
 
         if (!$data) {
             return;
         }
 
-        $data = json_decode($data, true);
+        if (!is_array($data)) {
+            $data = json_decode($data, true);
+        }
+
         $sender_id = fetch($data, 'sender_id');
         $gift_id = fetch($data, 'gift_id');
 
@@ -3501,7 +3511,6 @@ class Users extends BaseModel
             $send_user = Users::findFirstById($sender_id);
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
             info("send_gift_success", $content);
-            $user_db->del($wake_up_user_send_gift_key);
             Chats::sendTextSystemMessage($user_id, $content);
         } else {
             info("send_gift_fail");
