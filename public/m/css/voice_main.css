@@ -238,6 +238,13 @@ html,body{
     font-size: 14px;
     color: #FF6C9B;
     text-align: center;
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
 }
 .recording_tosat{
     position: fixed;
@@ -354,11 +361,14 @@ html,body{
     left: 50%;
     margin-left: -1.04rem;
 }
+.save_picture_name_box{
+    justify-content: center;
+}
 .save_picture_name{
     position: relative;
     left: 0;
     top: 0;
-    margin: 0 auto .36rem;
+    margin-bottom: .36rem;
     font-size: .5rem;
     color: #60A4F1;
     font-family: soundFont;

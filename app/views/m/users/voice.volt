@@ -30,8 +30,13 @@
         },
         methods: {
             go_voice_identify: function () {
-                var url = '/m/users/recording';
-                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
+                if(vm.nickname){
+                    var url = '/m/users/recording';
+                    vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
+                }else{
+                    alert('请输入昵称！');
+                }
+
             },
             selectMale: function () {
                 vm.select_sex = true;

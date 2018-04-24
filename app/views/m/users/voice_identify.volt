@@ -22,9 +22,11 @@
         <div class="save_picture_header" :style="{borderColor:!sex?'#F6427F':'#73B3FB'}">
             <img :src="avatar_url" alt="头像"/>
         </div>
-        <div class="save_picture_name">
-            <span class="wire" :style="{backgroundColor:!sex?'#ffe2ec':'#d4e7fc'}"></span>
-            <span :style="{color:!sex?'#F53F7D':'#60A4F1',zIndex:10}">${nickname}</span>
+        <div class="save_picture_name_box">
+            <p class="save_picture_name">
+                <span :style="{color:!sex?'#F53F7D':'#60A4F1',zIndex:1,position: 'relative'}">${nickname}</span>
+                <span class="wire" :style="{backgroundColor:!sex?'#ffe2ec':'#d4e7fc'}"></span>
+            </p>
         </div>
         <div class="save_picture_li">
             <span class="title">主音色:</span>
