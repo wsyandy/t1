@@ -167,39 +167,7 @@ class UsersController extends BaseController
         }
 
         $tonic_ratio = $tonic_ratio = mt_rand(50, 59);
-        $avatar_url = '';
-        switch ($tonic) {
-            case '少女音':
-                $avatar_url = '/m/images/shaonv.png';
-                break;
-            case '萝莉音':
-                $avatar_url = '/m/images/luoli.png';
-                break;
-            case '少萝音':
-                $avatar_url = '/m/images/shaoluo.png';
-                break;
-            case '少御音':
-                $avatar_url = '/m/images/shaoyu.png';
-                break;
-            case '御姐音':
-                $avatar_url = '/m/images/yujie.png';
-                break;
-            case '青年音':
-                $avatar_url = '/m/images/qingnian.png';
-                break;
-            case '正太音':
-                $avatar_url = '/m/images/zhengtai.png';
-                break;
-            case '少年音':
-                $avatar_url = '/m/images/shaonian.png';
-                break;
-            case '暖男音':
-                $avatar_url = '/m/images/nuannan.png';
-                break;
-            case '青受音':
-                $avatar_url = '/m/images/qingshou.png';
-                break;
-        }
+        $avatar_url = \Users::getTonicAvatar($tonic);
 
         $data = [
             'tonic' => $tonic,
@@ -301,12 +269,42 @@ class UsersController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $datas);
     }
 
-    function toBrowserAction()
+    function saveImageAction()
     {
+        $image_data = $this->params('image_data');
+        $image_data = trim($image_data);
         $user = $this->currentUser();
-        $avatar_url = $user->avatar_url;
-        $avatar_url = preg_replace('/http|https/i', 'browser', $avatar_url);
-        info('测试跳转');
-        $this->response->redirect('browser://www.baidu.com');
+
+        //data:image/octet-stream;base64
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
+            $type = $result[2];
+            echoLine($type);
+            if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
+                $new_file = $source_filename = APP_ROOT . 'temp/voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
+                if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $image_data)))) {
+                    $img_path = str_replace('../../..', '', $new_file);
+                    $img_files[] = $img_path;
+                    $res = \Albums::uploadImage($user, $img_files);
+                    if ($res) {
+                        if (file_exists($source_filename)) {
+                            unlink($source_filename);
+                        }
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片上传成功');
+                    } else {
+                        return $this->renderJSON(ERROR_CODE_FAIL, '图片上传失败');
+                    }
+                } else {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '图片生成失败');
+
+                }
+            } else {
+                //文件类型错误
+                return $this->renderJSON(ERROR_CODE_FAIL, '图片上传类型错误');
+            }
+
+        } else {
+            //文件错误
+            return $this->renderJSON(ERROR_CODE_FAIL, '文件错误');
+        }
     }
 }

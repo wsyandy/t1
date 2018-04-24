@@ -3443,11 +3443,12 @@ class Users extends BaseModel
 
         $this->mobile = $mobile;
 
-        if($this->update()) {
+        if ($this->update()) {
             $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
             GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
         }
     }
+
     function getRatio($tonic_ratio)
     {
         $all_ratio = 100;
@@ -3476,4 +3477,45 @@ class Users extends BaseModel
             }
         }
     }
+
+    static function getTonicAvatar($tonic)
+    {
+        switch ($tonic) {
+            case '少女音':
+                $avatar_url = '/m/images/shaonv.png';
+                break;
+            case '萝莉音':
+                $avatar_url = '/m/images/luoli.png';
+                break;
+            case '少萝音':
+                $avatar_url = '/m/images/shaoluo.png';
+                break;
+            case '少御音':
+                $avatar_url = '/m/images/shaoyu.png';
+                break;
+            case '御姐音':
+                $avatar_url = '/m/images/yujie.png';
+                break;
+            case '青年音':
+                $avatar_url = '/m/images/qingnian.png';
+                break;
+            case '正太音':
+                $avatar_url = '/m/images/zhengtai.png';
+                break;
+            case '少年音':
+                $avatar_url = '/m/images/shaonian.png';
+                break;
+            case '暖男音':
+                $avatar_url = '/m/images/nuannan.png';
+                break;
+            case '青受音':
+                $avatar_url = '/m/images/qingshou.png';
+                break;
+            default:
+                $avatar_url = '';
+                break;
+        }
+        return $avatar_url;
+    }
+
 }
