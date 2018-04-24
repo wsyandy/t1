@@ -15,11 +15,23 @@ class UnionsController extends BaseController
         $sid = $this->params('sid');
         $user = $this->currentUser();
 
-        if (isBlank($uid)) {
+        $opts = [];
+
+        $name = $this->params('name');
+
+        if (isPresent($name)) {
+            $opts['name'] = $name;
+        }
+
+        if ($uid) {
+            $opts['uid'] = $uid;
+        }
+
+        if (isBlank($opts)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $opts = ['uid' => $uid, 'type' => UNION_TYPE_PRIVATE];
+        $opts['type'] = UNION_TYPE_PRIVATE;
 
         $page = 1;
 

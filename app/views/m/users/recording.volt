@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/voice_main.css') }}
+{{ theme_css('/m/css/voice_main1.css') }}
 {{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
 {#<div id="app">#}
