@@ -2,6 +2,21 @@
 {{ theme_css('/m/css/voice_main.css') }}
 {{ theme_js('/js/vue.min.js','/m/js/html2canvas.min') }}
 {{ block_end() }}
+<script>
+    (function(doc, win) {
+        var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function() {
+                var clientWidth = docEl.clientWidth;
+                if (!clientWidth) return;
+                docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+            };
+
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+</script>
 <div id="app" class="save_picture">
     <div :class="['save_picture_box',!sex&&'women']">
         <div class="save_picture_header" :style="{borderColor:!sex?'#F6427F':'#73B3FB'}">
@@ -130,9 +145,8 @@
     };
     vm = XVue(opts);
     $(function () {
-        console.log(vm.nickname);
         getTonic();
-    })
+    });
     function getTonic() {
         var data = {
             'sid':vm.sid,

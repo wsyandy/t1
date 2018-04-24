@@ -320,70 +320,69 @@ html,body{
 /* 保存图片结果页 */
 /* .save_picture{} */
 .save_picture_box{
-    padding-top: 45px;
+    padding-top: .9rem;
     width: 100%;
-    height: 603px;
+    height: 12.06rem;
     flex-direction: column;
     background: url(../images/save_picture_men_bg.png) center top no-repeat;
-    background-size: 100% 603px;
+    background-size: 7.5rem 12.06rem;
 }
 .save_picture_box.women{
     background: url(../images/save_picture_women_bg.png) center top no-repeat;
-    background-size: 100% 603px;
+    background-size: 7.5rem 12.06px;
 }
 .save_picture_header{
     margin: 0 auto;
-    width: 90px;
-    height:90px;
-    border-radius: 45px;
+    width:1.8rem;
+    height:1.8rem;
+    border-radius: .9rem;
     border: 2px solid #73B3FB;
     justify-content: center;
     align-items: flex-end;
 }
 .save_picture_header img{
-    width: 100px;
-    height: 100px;
+    width: 2rem;
+    height: 2rem;
 }
 .save_picture_name{
     position: relative;
     left: 0;
     top: 0;
-    margin: 0 auto 18px;
-    font-size: 25px;
+    margin: 0 auto .36rem;
+    font-size: .5rem;
     color: #60A4F1;
     font-family: soundFont;
 }
 .save_picture_name .wire{
     position: absolute;
-    bottom: 4px;
+    bottom: .08rem;
     left: 0;
-    height: 10px;
+    height: .2rem;
     width: 100%;
-    border-radius: 5px;
+    border-radius: .1rem;
     background: rgba(87,153,255,0.4);
 }
 .save_picture_li{
-    margin: 0 40px 14px;
+    margin: 0 .8rem .28rem;
     font-family: soundFont;
-    /* align-items: center; */
     justify-content: space-between;
 }
 .save_picture_li .title{
-    font-size:19px;
+    font-size:.38rem;
     color: #404040;
     font-family: soundFont;
 }
 .save_picture_li .text{
-    font-size: 18px;
+    font-size: .36rem;
     color: #71A7FC;
     font-family: soundFont;
 }
 .save_picture_li_line{
-    padding-right:8px;
+    padding-right:.16rem;
     position: relative;
-    width: 210px;
+    width: 4.2rem;
     font-family: soundFont;
-    font-size: 18px;
+    font-size: .36rem;
     color: #71A7FC;
     display: flex;
     justify-content: space-between;
@@ -392,49 +391,49 @@ html,body{
 .save_picture_li_line .wire{
     position: absolute;
     right: 0;
-    top: 4px;
-    height: 12px;
-    width:4px;
+    top:.08rem;
+    height: .24rem;
+    width:.08rem;
     background-color: #71A7FC;
 }
 .save_picture_libox{
     flex-direction: column;
 }
 .save_picture_li .score_icon1{
-    margin-left: 10px;
-    margin-top: 3px;
-    width: 34px;
-    height: 16px;
+    margin-left: .2rem;
+    margin-top: .06rem;
+    width: .68rem;
+    height: .32rem;
     background: url(../images/men_three_s.png) center no-repeat;
-    background-size: 34px 16px;
+    background-size: .68rem .32rem;
 }
 .save_picture_li .score_icon2{
-    margin-left: 10px;
-    margin-top: 3px;
-    width: 34px;
-    height: 16px;
+    margin-left: .2rem;
+    margin-top: 0.06rem;
+    width: .68rem;
+    height: .32rem;
     background: url(../images/men_two_s.png) center no-repeat;
-    background-size: 24px 16px;
+    background-size:.48rem .32rem;
 }
 .save_picture_li .score_icon3{
-    margin-left: 10px;
-    margin-top: 3px;
-    width: 34px;
-    height: 16px;
+    margin-left: .2rem;
+    margin-top: 0.06rem;
+    width: .68rem;
+    height: .32rem;
     background: url(../images/women_three_s.png) center no-repeat;
-    background-size: 34px 16px;
+    background-size:.68rem .32rem;
 }
 .save_picture_li .score_icon4{
-    margin-left: 10px;
-    margin-top: 3px;
-    width: 34px;
-    height: 16px;
+    margin-left: .2rem;
+    margin-top: 0.06rem;
+    width: .68rem;
+    height: .32rem;
     background: url(../images/women_two_s.png) center no-repeat;
-    background-size: 24px 16px;
+    background-size:.48rem .32rem;
 }
 
 .save_picture_bom{
-    margin: 33px 46px 0;
+    margin: .66rem .92rem 0;
     align-items: center;
     justify-content: space-between;
 }
@@ -445,26 +444,26 @@ html,body{
     align-items: center;
 }
 .save_picture_bomleft_line img{
-    width: 30px;
-    height: 30px;
+    width: .6rem;
+    height: .6rem;
 }
 .save_picture_bomleft_line p{
-    margin-left: 12px;
-    font-size: 15px;
+    margin-left: .24rem;
+    font-size: .24rem;
     color: #404040;
 }
 .save_picture_bomleft .hint{
-    margin-top: 11px;
-    padding-right: 30px;
+    margin-top: .22rem;
+    padding-right: .6rem;
     font-family: soundFont;
-    font-size: 15px;
+    font-size: .3rem;
     color: #666666;
     background: url(../images/finger_icon.png) right center no-repeat;
-    background-size: 20px 15px;
+    background-size: .4rem .3rem;
 }
 .save_picture_qr_code{
-    width: 72px;
-    height: 72px;
+    width: 1.44rem;
+    height: 1.44rem;
     background: url(../images/qe_code_men.png) center no-repeat;
     background-size: cover;
     justify-content: center;
@@ -475,8 +474,8 @@ html,body{
     background-size: cover;
 }
 .save_picture_qr_code img{
-    width: 62px;
-    height: 62px;
+    width:1.24rem;
+    height: 1.24rem;
     background-color: white;
 }
 .save_picture_fl{
@@ -484,20 +483,20 @@ html,body{
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 50px;
+    height: 1rem;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 .2rem;
     background-color: #73AFF4 ;
 }
 .save_picture_fl .button{
-    width: 84px;
-    height: 32px;
+    width: 1.68rem;
+    height: .64rem;
     align-items: center;
     justify-content: center;
     background-color: white;
-    border-radius: 6px;
-    font-size: 17px;
+    border-radius: .12rem;
+    font-size: .34rem;
     color: #5AA3F6;
     font-family: soundFont;
 }
