@@ -205,7 +205,7 @@ class RoomsController extends BaseController
         $show_game = true;
 
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
-          //  $show_game = true;
+        //  $show_game = true;
         //}
 
         if ($show_game) {
@@ -697,13 +697,16 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            //$hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            $hot_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
         if (STATUS_ON == $gang_up) {
-            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
-                ['gang_up' => $gang_up]);
+//            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
+//                ['gang_up' => $gang_up]);
+
+            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
             $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');;
         }
 

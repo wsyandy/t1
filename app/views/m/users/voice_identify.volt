@@ -138,8 +138,8 @@
             screenshotsImg: function () {
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
-                    useCORS: true,//
-                }).then(canvas => {
+                    useCORS: true
+                },function (canvas) {
                     canvasTurnImg(canvas)
                 });
             },
