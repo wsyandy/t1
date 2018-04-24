@@ -30,7 +30,7 @@
     <div v-if="isTosatText" class="toast_text_box">
         <span class="toast_text">录制时间太短，请重新录制</span>
     </div>
-    <div v-if="isAnalysis" class="recording_analysis">
+    <div v-if="false" class="recording_analysis">
         <div class="recording_analysis_box">
             <h5>温馨小提示</h5>
             <p>正在分析中，请稍等几秒哟～</p>
