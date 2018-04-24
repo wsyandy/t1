@@ -4,11 +4,12 @@
 {{ block_end() }}
 <div id="app" class="sound_entry">
     <div class="sound_entry_input">
-        <input type="text" :placeholder="user.nickname?user.nickname:'给自己起一个好听的名字'"/>
+        <input type="text" :placeholder="nickname?nickname:'给自己起一个好听的名字'" v-model="nickname" maxlength="10"/>
     </div>
     <ul class="sound_entry_select">
         <li :class="['men',select_sex&&'selected_men']" @click="selectMale()"><span class="men_icon"></span>男神</li>
-        <li :class="['women',!select_sex&&'selected_women']" @click="selectFemale()"><span class="women_icon"></span>女神</li>
+        <li :class="['women',!select_sex&&'selected_women']" @click="selectFemale()"><span class="women_icon"></span>女神
+        </li>
     </ul>
     <div class="sound_entry_button" @click="go_voice_identify()"><span>声音鉴定</span></div>
     <span class="sound_entry_wire"></span>
@@ -24,13 +25,13 @@
             select_sex: true,
             sex: 1,
             sid: "{{ sid }}",
-            code: "{{ code }}"
+            code: "{{ code }}",
+            nickname: ""
         },
-
         methods: {
             go_voice_identify: function () {
                 var url = '/m/users/recording';
-                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex);
+                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
             },
             selectMale: function () {
                 vm.select_sex = true;
@@ -44,11 +45,13 @@
     };
     vm = XVue(opts);
     $(function () {
-       vm.sex = vm.user.sex;
-       if(vm.sex){
-           vm.select_sex = true;
-       }else{
-           vm.select_sex = false;
-       }
+        vm.sex = vm.user.sex;
+        vm.nickname = vm.user.nickname;
+        console.log(vm.nickname);
+        if (vm.sex) {
+            vm.select_sex = true;
+        } else {
+            vm.select_sex = false;
+        }
     })
 </script>
