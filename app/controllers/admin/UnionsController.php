@@ -283,17 +283,23 @@ class UnionsController extends BaseController
 
         if ($this->request->isPost()) {
 
-            $amount = intval($this->params('amount'));
+            $amount = $this->params('amount', 0);
             $auth_status = $this->params('auth_status');
             $union->auth_status = $auth_status;
 
-            if ($amount > 0 && $union->auth_status == AUTH_SUCCESS) {
+            if ($amount) {
+
+                if ($amount < 0) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '返还金额有误');
+                }
 
                 if ($amount > $union->getCreateUnionCostAmount()) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '返还金额大于 创建家族花费金额');
                 }
 
-                \AccountHistories::changeBalance($union->user_id, ACCOUNT_TYPE_CREATE_UNION_REFUND, $amount, ['remark' => '创建家族返还钻石' . $amount]);
+                if (AUTH_SUCCESS == $union->auth_status) {
+                    \AccountHistories::changeBalance($union->user_id, ACCOUNT_TYPE_CREATE_UNION_REFUND, $amount, ['remark' => '创建家族返还钻石' . $amount]);
+                }
             }
 
             if ($union->update()) {
