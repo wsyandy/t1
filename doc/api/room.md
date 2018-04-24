@@ -44,7 +44,7 @@
 |id|房间id|int|否||
 |name|房间名称|string|是||
 |topic|房间话题|string|是||
-|room_category_id|房间分类id|int|是|||
+|room_category_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
 
 ##### 2.2 回应参数说明
 ```
