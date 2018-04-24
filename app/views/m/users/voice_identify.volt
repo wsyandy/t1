@@ -9,7 +9,7 @@
         </div>
         <div class="save_picture_name">
             <span class="wire" :style="{backgroundColor:!sex?'rgba(255,87,154,0.62)':'rgba(87,153,255,0.4)'}"></span>
-            <span :style="{color:!sex?'#F53F7D':'#60A4F1' }">戏子入画</span>
+            <span :style="{color:!sex?'#F53F7D':'#60A4F1' }">${nickname}</span>
         </div>
         <div class="save_picture_li">
             <span class="title">主音色:</span>
@@ -98,6 +98,7 @@
             code:"{{ code }}",
             sid:"{{ sid }}",
             tonic:"",
+            nickname:"{{ nickname }}",
             consonants:[],
             tonic_ratio:"",
             property:'',
@@ -129,6 +130,7 @@
     };
     vm = XVue(opts);
     $(function () {
+        console.log(vm.nickname);
         getTonic();
     })
     function getTonic() {

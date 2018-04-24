@@ -51,7 +51,8 @@
             code:"{{ code }}",
             sid:"{{ sid }}",
             read_text:"{{ read_text }}",
-            sex:"{{ sex }}"
+            sex:"{{ sex }}",
+            nickname:"{{ nickname }}"
         },
 
         methods: {
@@ -85,7 +86,7 @@
                 this.isToast = false;
                 setTimeout(function () {
                     var url = '/m/users/voice_identify';
-                    vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex);
+                    vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex+'&nickname='+vm.nickname);
                 },2000)
 
 
