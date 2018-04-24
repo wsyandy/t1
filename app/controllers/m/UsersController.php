@@ -293,7 +293,7 @@ class UsersController extends BaseController
                         if (file_exists($source_filename)) {
                             unlink($source_filename);
                         }
-                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到个人资料相册');
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到Hi相册');
                     } else {
                         return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
                     }
