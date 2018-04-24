@@ -304,5 +304,6 @@ class UnionsController extends BaseController
         }
 
         $this->view->id = $id;
+        $this->view->auth_status = [AUTH_SUCCESS => '审核成功', AUTH_WAIT => '等待审核'];
     }
 }
