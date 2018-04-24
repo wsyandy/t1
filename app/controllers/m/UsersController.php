@@ -289,18 +289,13 @@ class UsersController extends BaseController
                     $img_path = str_replace('../../..', '', $new_file);
                     $img_files[] = $img_path;
                     $res = \Albums::uploadImage($user, $img_files);
-                    $image_result = $this->saveImageToPhone();
                     if ($res) {
-                        if ($image_result) {
-                            if (file_exists($source_filename)) {
-                                unlink($source_filename);
-                            }
-                            return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到个人资料相册');
-                        } else {
-                            return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
+                        if (file_exists($source_filename)) {
+                            unlink($source_filename);
                         }
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到个人资料相册');
                     } else {
-                        return $this->renderJSON(ERROR_CODE_FAIL, '图片上传失败');
+                        return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
                     }
                 } else {
                     return $this->renderJSON(ERROR_CODE_FAIL, '图片生成失败');
@@ -314,47 +309,5 @@ class UsersController extends BaseController
             //文件错误
             return $this->renderJSON(ERROR_CODE_FAIL, '文件错误');
         }
-    }
-
-    function saveImageToPhone($file = '', $timeout = 60)
-    {
-        $album = \Albums::findFirst([
-            'conditions' => 'user_id=:user_id: and auth_status=:auth_status:',
-            'bind' => ['user_id' => $this->currentUserId(), 'auth_status' => AUTH_WAIT],
-            'order' => 'created_at desc'
-        ]);
-        $url = $album->image_url;
-        $file = empty($file) ? pathinfo($url, PATHINFO_BASENAME) : $file;
-        $dir = pathinfo($file, PATHINFO_DIRNAME);
-        !is_dir($dir) && @mkdir($dir, 0755, true);
-        $url = str_replace(" ", "%20", $url);
-
-        if (function_exists('curl_init')) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-            $temp = curl_exec($ch);
-            if (@file_put_contents($file, $temp) && !curl_error($ch)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            $opts = array(
-                "http" => array(
-                    "method" => "GET",
-                    "header" => "",
-                    "timeout" => $timeout)
-            );
-            $context = stream_context_create($opts);
-            if (@copy($url, $file, $context)) {
-                //$http_response_header
-                return true;
-            } else {
-                return false;
-            }
-        }
-
     }
 }
