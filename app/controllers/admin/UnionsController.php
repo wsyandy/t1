@@ -298,7 +298,11 @@ class UnionsController extends BaseController
                 }
 
                 if (AUTH_SUCCESS == $union->auth_status) {
-                    \AccountHistories::changeBalance($union->user_id, ACCOUNT_TYPE_CREATE_UNION_REFUND, $amount, ['remark' => '创建家族返还钻石' . $amount]);
+                    $res = \AccountHistories::changeBalance($union->user_id, ACCOUNT_TYPE_CREATE_UNION_REFUND, $amount, ['remark' => '创建家族返还钻石' . $amount]);
+
+                    if ($res) {
+                        \Chats::sendTextSystemMessage($union->user_id, "系统提示：恭喜您的家族已经通过考核期，创建家族使用的" . $amount . "钻已经返还到您的账户，请注意查收~");
+                    }
                 }
             }
 
