@@ -35,11 +35,11 @@
    进入房间:产品code://enter_room?param1=a&param2=b 例: yuewan://enter_room?room_id=1&user_id=2
 
 ## 分享协议
-1. 分享到qq好友 app://share?platform=qq_friend&title=xxx&content=xxxx&share_url=xxx&icon=xxx
-2. 分享到qq空间 app://share?platform=qq_zone&title=xxx&content=xxxx&share_url=xxx&icon=xxx
-3. 分享到微信好友 app://share?platform=wx_friend&title=xxx&content=xxxx&share_url=xxx&icon=xxx
-4. 分享到微信朋友圈 app://share?platform=wx_moments&title=xxx&content=xxxx&share_url=xxx&icon=xxx
-5. 分享到新浪微博 app://share?platform=sinaweibo&title=xxx&content=xxxx&share_url=xxx&icon=xxx
+1. 分享到qq好友 app://share?platform=qq_friend&title=xxx&content=xxxx&share_url=xxx&icon=xxx&share_history_id=xxx
+2. 分享到qq空间 app://share?platform=qq_zone&title=xxx&content=xxxx&share_url=xxx&icon=xxx&share_history_id=xxx
+3. 分享到微信好友 app://share?platform=wx_friend&title=xxx&content=xxxx&share_url=xxx&icon=xxx&share_history_id=xxx
+4. 分享到微信朋友圈 app://share?platform=wx_moments&title=xxx&content=xxxx&share_url=xxx&icon=xxx&share_history_id=xxx
+5. 分享到新浪微博 app://share?platform=sinaweibo&title=xxx&content=xxxx&share_url=xxx&icon=xxx&share_history_id=xxx
     
 # 2. error_code 状态码协议
 
