@@ -117,7 +117,7 @@ class Unions extends BaseModel
         $union->product_channel_id = $user->product_channel_id;
         $union->user_id = $user->id;
         $union->status = STATUS_ON;
-        $union->auth_status = AUTH_SUCCESS;
+        $union->auth_status = AUTH_WAIT;
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
@@ -151,7 +151,7 @@ class Unions extends BaseModel
             $union->product_channel_id = $user->product_channel_id;
             $union->user_id = $user->id;
             $union->status = STATUS_ON;
-            $union->auth_status = AUTH_SUCCESS;
+            $union->auth_status = AUTH_WAIT;
             $union->mobile = $user->mobile;
             $union->type = UNION_TYPE_PRIVATE;
             $union->avatar_status = AUTH_SUCCESS;
@@ -231,8 +231,8 @@ class Unions extends BaseModel
         }
 
         $cond = [
-            'conditions' => 'type = :type: and status = :status: and auth_status = :auth_status:',
-            'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_SUCCESS],
+            'conditions' => 'type = :type: and status = :status: and auth_status != :auth_status:',
+            'bind' => ['type' => $type, 'status' => STATUS_ON, 'auth_status' => AUTH_FAIL],
         ];
 
         //根据id name搜索是否需要recommend
