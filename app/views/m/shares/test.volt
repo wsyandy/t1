@@ -28,7 +28,7 @@
                 $.authGet('/m/shares/create', data, function (resp) {
 
                     vm.url = "app://share?platform=" + platform + "&title=" + resp.title + "&content=" + resp.description +
-                            "&share_url=" + resp.url + "&icon=" + resp.image_url;
+                            "&share_url=" + resp.url + "&icon=" + resp.image_url + "&share_history_id=" + resp.share_history_id;
 
                     location.href = vm.url;
                 })
