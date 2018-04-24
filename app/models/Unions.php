@@ -251,7 +251,7 @@ class Unions extends BaseModel
         }
 
         if ($id) {
-            $cond['conditions'] = " and id = :id:";
+            $cond['conditions'] .= " and id = :id:";
             $cond['bind']['id'] = $id;
         }
 
