@@ -89,9 +89,6 @@
     <div v-if="isSaveSuccess" class="toast_text_box">
         <span class="toast_text">保存成功</span>
     </div>
-    <form id="test_upload">
-        <input >
-    </form>
 </div>
 <script>
     var opts = {
