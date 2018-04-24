@@ -3260,4 +3260,10 @@ EOF;
             echo '文件错误';
         }
     }
+
+    function test23Action()
+    {
+        $unions = Unions::findBy(['auth_status' => AUTH_NONE]);
+        echoLine(count($unions));
+    }
 }
