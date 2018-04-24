@@ -578,6 +578,7 @@ class GamesController extends BaseController
         $intranet_ip = $current_user->getIntranetIp();
         $receiver_fd = $current_user->getUserFd();
 
+        info($current_user->sid, $body);
         \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
