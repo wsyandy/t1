@@ -285,16 +285,14 @@ class UsersController extends BaseController
                     $img_path = str_replace('../../..', '', $new_file);
                     $img_files[] = $img_path;
                     $res = \Albums::uploadImage($user, $img_files);
-                    $image_result = $user->saveImageToPhone();
-                    if($res){
-                        if ($image_result) {
-                            if (file_exists($source_filename)) {
-                                unlink($source_filename);
-                            }
-                            return $this->renderJSON(ERROR_CODE_SUCCESS, '图片上传成功');
-                        } else {
-                            return $this->renderJSON(ERROR_CODE_FAIL, '图片上传失败');
+//                    $image_result = $user->saveImageToPhone();
+                    if ($res) {
+                        if (file_exists($source_filename)) {
+                            unlink($source_filename);
                         }
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到个人资料相册');
+                    } else {
+                        return $this->renderJSON(ERROR_CODE_FAIL, '图片上传失败');
                     }
                 } else {
                     return $this->renderJSON(ERROR_CODE_FAIL, '图片生成失败');
