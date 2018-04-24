@@ -422,7 +422,7 @@ class Partners extends BaseModel
         return '失败，联系开发人员';
     }
 
-    function notifyXztx($data)
+    static function notifyXztx($data)
     {
         $source = fetch($data, 'source');
         $callback = fetch($data, 'callback');
@@ -432,7 +432,7 @@ class Partners extends BaseModel
         };
     }
 
-    function notifyCg($data)
+    static function notifyCg($data)
     {
         $source = fetch($data, 'source');
         $callback = fetch($data, 'callback');
