@@ -771,7 +771,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up_category) {
-            $room_category = \RoomCategories::findFirsByType('gang_up');
+            $room_category = \RoomCategories::findFirstByType('gang_up');
             if (isPresent($room_category)) {
                 $gang_up_categories = \RoomCategories::find(
                     [
