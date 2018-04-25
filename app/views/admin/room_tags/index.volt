@@ -19,6 +19,7 @@
         <td>${room_tag.name}</td>
         <td>${room_tag.status_text}</td>
         <td>${room_tag.rank}</td>
+        <td>
             <a href="/admin/room_tags/edit/${room_tag.id}" class="modal_action">编辑</a>
         </td>
     </tr>
