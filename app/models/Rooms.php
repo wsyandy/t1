@@ -47,7 +47,7 @@ class Rooms extends BaseModel
 
     function beforeCreate()
     {
-
+        $this->uid = $this->generateUid();
     }
 
     function afterCreate()
@@ -56,6 +56,7 @@ class Rooms extends BaseModel
             $this->uid = $this->generateUid();
             $this->update();
         }
+
         if ($this->hasChanged('name')) {
             self::delay()->updateRoomTypes($this->id);
         }
@@ -78,11 +79,40 @@ class Rooms extends BaseModel
      */
     function generateUid()
     {
-        if (isDevelopmentEnv()) {
-            return $this->id + 100000;
+
+        for ($i = 0; $i < 10; $i++) {
+            $uid = $this->randUid();
+            if(!$uid){
+                continue;
+            }
+            $lock_key = 'lock_generate_room_uid_' . $uid;
+            $hot_cache = self::getHotWriteCache();
+            if (!$hot_cache->setnx($lock_key, $uid)) {
+                info('加锁失败', $lock_key);
+                continue;
+            }
+            $hot_cache->expire($lock_key, 3);
+            info('加锁成功', $lock_key);
+
+            return $uid;
         }
 
         return $this->id;
+    }
+
+    function randUid()
+    {
+
+        $user_db = Users::getUserDb();
+        $not_good_no_uid = 'room_not_good_no_uid_list';
+        $offset = mt_rand(0, 100000);
+        $uid = $user_db->zrange($not_good_no_uid, $offset, $offset);
+        $uid = current($uid);
+        if (!$user_db->zrem($not_good_no_uid, $uid)) {
+            $user_db->zrem($not_good_no_uid, $uid);
+        }
+
+        return $uid;
     }
 
     function isHot()
