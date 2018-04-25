@@ -24,3 +24,15 @@
         <td><a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a></td>
     </tr>
 </script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.selectpicker').selectpicker();
+
+        {% for room_category in room_categories %}
+        {% if room_category.status != 1 %}
+        $("#room_category_{{ room_category.id }}").css({"background-color": "grey"});
+        {% endif %}
+        {% endfor %}
+    });
+</script>
