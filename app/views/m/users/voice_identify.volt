@@ -98,7 +98,7 @@
                 <p class="hint">扫一扫，生成你的声鉴卡</p>
             </div>
             <div :class="['save_picture_qr_code',!sex&&'women']">
-                <img src="/m/images/wx.png" alt="">
+                <img src="/m/images/wx_m.jpg" alt="">
             </div>
         </div>
     </div>
@@ -283,6 +283,7 @@
         };
 
         var params = {data: img_data, file_type: 'base64'};
+        params = JSON.stringify(params)
 
         if (is_dev) {
             if ($.isIos()) {
