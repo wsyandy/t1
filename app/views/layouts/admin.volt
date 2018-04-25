@@ -114,7 +114,7 @@
                         <li><a href="/admin/room_categories/index">房间分类</a></li>
                     {% endif %}
                     {% if isAllowed('room_tags','index') %}
-                        <li><a href="/admin/room_tags/index">房间类型</a></li>
+                        <li><a href="/admin/room_tags/index">房间标签</a></li>
                     {% endif %}
                 </ul>
             </li>
