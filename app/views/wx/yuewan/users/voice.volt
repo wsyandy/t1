@@ -23,8 +23,6 @@
         data: {
             select_sex: true,
             sex: 1,
-            sid: "{{ sid }}",
-            code: "{{ code }}",
             nickname: ""
         },
         methods: {

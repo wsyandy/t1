@@ -110,8 +110,6 @@
     var opts = {
         data: {
             sex:{{ sex }},//0为女1为男 主题切换  原本是0为男1为女 现在样式中已全部取反
-            code: "{{ code }}",
-            sid: "{{ sid }}",
             tonic: "",
             nickname: "{{ nickname }}",
             consonants: [],
@@ -131,7 +129,7 @@
         methods: {
             go_voice_identify: function () {
                 var url = '/wx/users/recording';
-                vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
+                vm.redirectAction(url + '?sex=' + vm.sex + '&nickname=' + vm.nickname);
             }
         }
     };
@@ -142,8 +140,6 @@
 
     function getTonic() {
         var data = {
-            'sid': vm.sid,
-            'code': vm.code,
             'sex': vm.sex
         };
         $.authGet('/wx/users/get_tonic', data, function (resp) {
@@ -169,8 +165,6 @@
 
     function getConsonants() {
         var data = {
-            'sid': vm.sid,
-            'code': vm.code,
             'sex': vm.sex,
             'tonic_ratio': vm.tonic_ratio
         };
@@ -185,8 +179,6 @@
 
     function getProperty() {
         var data = {
-            'sid': vm.sid,
-            'code': vm.code,
             'sex': vm.sex
         };
         $.authGet('/wx/users/get_property', data, function (resp) {
@@ -199,8 +191,6 @@
 
     function getCharmValue() {
         var data = {
-            'sid': vm.sid,
-            'code': vm.code,
             'sex': vm.sex
         };
         $.authGet('/wx/users/get_charm_value', data, function (resp) {
