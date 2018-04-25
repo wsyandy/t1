@@ -16,6 +16,8 @@ class ActivitiesController extends BaseController
         $page = $this->params('page');
         $activities = \Activities::findPagination($cond, $page);
         $this->view->activities = $activities;
+        $this->view->types = \Activities::$TYPE;
+        $this->view->type = intval($this->params('activity[type_eq]'));
     }
 
     function newAction()
