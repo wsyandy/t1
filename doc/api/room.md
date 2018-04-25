@@ -395,6 +395,11 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            room_category_names:[
+               '唱歌' string，
+               '陪玩' string，
+               ...
+            ]
         }
          ....
     ]
@@ -740,6 +745,11 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            room_category_names:[
+               '唱歌' string，
+               '陪玩' string，
+               ...
+            ]                       
         }
          ....
     ]
@@ -885,6 +895,11 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
+            room_category_names:[
+                 '唱歌' string，
+                 '陪玩' string，
+                 ...
+            ]
         }
          ....
     ]
