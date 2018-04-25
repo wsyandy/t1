@@ -40,6 +40,13 @@ class SoftVersionsController extends BaseController
                 debug($soft_version->permit_ip, $ip);
                 continue;
             }
+
+            //版本号强制升级
+            if ($soft_version->min_version_code && $version_code <= $soft_version->min_version_code) {
+                info($this->currentUser()->sid, $soft_version->id, $soft_version->min_version_code, $version_code);
+                $soft_version->force_update = true;
+            }
+
             $select_soft_version = $soft_version;
             break;
         }
