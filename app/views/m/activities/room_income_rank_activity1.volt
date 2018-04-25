@@ -71,7 +71,7 @@
     var opts = {
         data: {
             //活动状态:0预告、1进行、2结束
-            activityState: 0,
+            activityState: 0
         },
         methods: {}
     };
