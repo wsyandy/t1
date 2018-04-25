@@ -268,6 +268,11 @@
 //        saveFile(imgData,filename);
         saveImage(imgData, filename);
 
+        var is_dev = false;
+        {% if isDevelopmentEnv() %}
+        is_dev = true;
+        {% endif %}
+
         function saveImage(img_data, filename) {
             var data = {
                 'sid': vm.sid,
@@ -275,6 +280,17 @@
                 'image_data': img_data,
                 'filename': filename
             };
+
+            if (is_dev) {
+                if ($.isIos()) {
+                    window.webkit.messageHandlers.saveImage.postMessage(image_data);
+                    //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
+                } else {
+                    JsCallback.saveImage(image_data);
+                    // JsCallback.saveMusic
+                }
+            }
+
             $.authPost('/m/users/save_image', data, function (resp) {
                 alert(resp.error_reason);
             })
