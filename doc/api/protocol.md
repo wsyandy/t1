@@ -39,16 +39,16 @@
 platform 分享平台
 type 分享类型 web_page网页 text文本 image 图片
 title 分享的标题
-content 分享的内容
+description 分享的内容
 share_url 分享的地址 
 image_url 分享的图片 分享类型为图片时有此参数
 share_history_id 分享记录的id
 ```
-1. 分享到qq好友 app://share?platform=qq_friend&type=web_page&title=xxx&content=xxxx&share_url=xxx&icon=xxx&image_url=xxx&share_history_id=xxx
-2. 分享到qq空间 app://share?platform=qq_zone&type=web_page&title=xxx&content=xxxx&share_url=xxx&icon=xxx&image_url=xxx&share_history_id=xxx
-3. 分享到微信好友 app://share?platform=wx_friend&type=web_page&title=xxx&content=xxxx&share_url=xxx&icon=xxx&image_url=xxx&share_history_id=xxx
-4. 分享到微信朋友圈 app://share?platform=wx_moments&type=web_page&title=xxx&content=xxxx&share_url=xxx&icon=xxx&image_url=xxx&share_history_id=xxx
-5. 分享到新浪微博 app://share?platform=sinaweibo&type=web_page&title=xxx&content=xxxx&share_url=xxx&icon=xxx&image_url=xxx&share_history_id=xxx
+1. 分享到qq好友 app://share?platform=qq_friend&type=web_page&title=xxx&description=xxxx&share_url=xxx&image_url=xxx&share_history_id=xxx
+2. 分享到qq空间 app://share?platform=qq_zone&type=web_page&title=xxx&description=xxxx&share_url=xxx&image_url=xxx&share_history_id=xxx
+3. 分享到微信好友 app://share?platform=wx_friend&type=web_page&title=xxx&description=xxxx&share_url=xxx&image_url=xxx&share_history_id=xxx
+4. 分享到微信朋友圈 app://share?platform=wx_moments&type=web_page&title=xxx&description=xxxx&share_url=xxx&image_url=xxx&share_history_id=xxx
+5. 分享到新浪微博 app://share?platform=sinaweibo&type=web_page&title=xxx&description=xxxx&share_url=xxx&image_url=xxx&share_history_id=xxx
     
 # 2. error_code 状态码协议
 
