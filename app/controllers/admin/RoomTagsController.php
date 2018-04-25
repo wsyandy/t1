@@ -15,11 +15,6 @@ class RoomTagsController extends BaseController
         $cond = $this->getConditions('room_tag');
         $page = $this->params('page');
         $cond['order'] = 'rank desc,id desc';
-        if (isset($cond['conditions'])) {
-            $cond['conditions'] .= ' and parent_id is null or parent_id = 0';
-        } else {
-            $cond['conditions'] = ' parent_id is null or parent_id = 0';
-        }
         $room_tags = \RoomTags::findPagination($cond, $page);
         $this->view->room_tags = $room_tags;
     }
@@ -28,10 +23,6 @@ class RoomTagsController extends BaseController
     {
         $room_tag = new \RoomTags();
         $room_tag->status = STATUS_ON;
-        $parent_id = intval($this->params('parent_id'));
-        if ($parent_id) {
-            $room_tag->parent_id = $parent_id;
-        }
         $this->view->room_tag = $room_tag;
     }
 
@@ -76,14 +67,5 @@ class RoomTagsController extends BaseController
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
         }
-    }
-
-    function childrenAction()
-    {
-        $parent_id = $this->params('parent_id');
-        $room_tags = \RoomTags::findByParentId($parent_id);
-
-        $this->view->parent_id = $parent_id;
-        $this->view->room_tags = $room_tags;
     }
 }
