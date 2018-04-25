@@ -647,18 +647,12 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-        $keyword = $this->params('keyword',null);
+        $keyword = $this->params('keyword', null);
         $type = $this->params('type');
 
         //关键词和类型不能同时为空
         if (is_null($keyword) && isBlank($type)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-
-        if ($type == 'hot') {
-            //热门房间从缓存中拉取
-            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
         $cond = [];
@@ -713,7 +707,12 @@ class RoomsController extends BaseController
 
         //限制搜索条件
 
-        $cond['conditions'] .= " and online_status = :online_status: and status = :status:";
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and online_status = :online_status: and status = :status:";
+        } else {
+            $cond['conditions'] = " online_status = :online_status: and status = :status:";
+        }
+
         $cond['bind']['online_status'] = STATUS_ON;
         $cond['bind']['status'] = STATUS_ON;
         if (!isset($cond['order'])) {
