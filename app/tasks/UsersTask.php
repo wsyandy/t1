@@ -1234,40 +1234,44 @@ class UsersTask extends \Phalcon\Cli\Task
     {
         $product_channel_id = 1;
         $user_db = \Users::getUserDb();
-        $stat_at = date("Ymd", strtotime("-1 day"));
+        $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1, 'withscores');
-
+        $total = $user_db->zcard($send_user_ids_key);
         $active_user = 0;
         $recharge_user = 0;
         $recharge_amount = 0;
 
-        foreach ($user_ids as $user_id => $send_at) {
+        for ($i = 0; $i <= $total; $i += 1000) {
 
-            $user = \Users::findFirstById($user_id);
-            $pay_amount = $user->pay_amount;
-            $last_at = $user->last_at;
+            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 1000 - 1);
+            $users = Users::findByIds($user_ids);
+            echoLine(count($user_ids));
 
-            if ($last_at > $send_at) {
-                $active_user += 1;
-            }
+            foreach ($users as $user) {
+                $pay_amount = $user->pay_amount;
+                $last_at = $user->last_at;
 
-            if ($pay_amount > 0) {
-                $recharge_user += 1;
-                $recharge_amount += $pay_amount;
+                $send_at = $user_db->zscore($send_user_ids_key, $user->id);
+
+                if ($last_at > $send_at) {
+                    $active_user += 1;
+                }
+
+                if ($pay_amount > 0) {
+                    $recharge_user += 1;
+                    $recharge_amount += $pay_amount;
+                }
             }
         }
 
-        $send_user = $user_db->zcard($send_user_ids_key);
-
-        $datas = ['send_user' => $send_user, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
+        $datas = ['send_user' => $total, 'active_user' => $active_user, 'recharge_user' => $recharge_user, 'recharge_amount' => $recharge_amount];
         $send_user_stat_key = "wake_up_user_send_gift_stat_key_product_channel_id$product_channel_id" . $stat_at;
 
         if (isDevelopmentEnv()) {
             $user_db->hclear($send_user_stat_key);
         }
 
-        echoLine("?????", $datas);
+        echoLine("====", $datas);
 
         $user_db->hmset($send_user_stat_key, $datas);
 

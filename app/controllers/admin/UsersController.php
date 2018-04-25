@@ -503,4 +503,45 @@ class UsersController extends BaseController
         $this->view->datas = $datas;
         $this->view->product_channel_id = $product_channel_id;
     }
+
+    //添加屏蔽附近的人
+    function addBlockedNearbyUserAction()
+    {
+        if ($this->request->isPost()) {
+
+            $user_id = $this->params('user_id');
+
+            if (!$user_id) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+            $hot_cache = \Users::getHotWriteCache();
+            $key = "blocked_nearby_user_list";
+            $hot_cache->zadd($key, time(), $user_id);
+            return $this->response->redirect('/admin/users/blocked_nearby_user_list');
+        }
+    }
+
+    function blockedNearbyUserListAction()
+    {
+        $user_id = $this->params('user_id');
+        $hot_cache = \Users::getHotWriteCache();
+
+        $key = "blocked_nearby_user_list";
+
+        if ($user_id && $hot_cache->zscore($key, $user_id) > 0) {
+            $user_id_list = [$user_id];
+        } else {
+            $user_id_list = $hot_cache->zrange($key, 0, -1);
+        }
+        $this->view->user_id_list = $user_id_list;
+    }
+
+    function deleteBlockedNearbyUserAction()
+    {
+        $user_id = $this->params('user_id');
+        $hot_cache = \Users::getHotWriteCache();
+        $key = "blocked_nearby_user_list";
+        $hot_cache->zrem($key, $user_id);
+        $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/users/blocked_nearby_user_list']);
+    }
 }
