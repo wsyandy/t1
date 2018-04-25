@@ -453,7 +453,7 @@ class ActivitiesController extends BaseController
         $activity = \Activities::findFirstById($id);
         $start_at = $activity->start_at;
         $end_at = $activity->end_at;
-        $end_time = date("Y/m/d/ H:i:s", $start_at);
+        $end_time = date("Y/m/d H:i:s", $start_at);
         debug($end_time);
 
         $this->view->end_time = $end_time;
