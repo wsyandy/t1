@@ -680,7 +680,7 @@ class RoomsController extends BaseController
 
             } elseif ($type == 'new') {
 
-                $cond['order'] = ['last_at desc,user_type asc'];
+                $cond['order'] = 'last_at desc,user_type asc';
 
             } else {
 
