@@ -267,36 +267,36 @@
         // download
 //        saveFile(imgData,filename);
         saveImage(imgData, filename);
+    }
 
-        var is_dev = false;
-        {% if isDevelopmentEnv() %}
-        is_dev = true;
-        {% endif %}
+    var is_dev = false;
+    {% if isDevelopmentEnv() %}
+    is_dev = true;
+    {% endif %}
 
-        function saveImage(img_data, filename) {
-            var data = {
-                'sid': vm.sid,
-                'code': vm.code,
-                'image_data': img_data,
-                'filename': filename
-            };
+    function saveImage(img_data, filename) {
+        var data = {
+            'sid': vm.sid,
+            'code': vm.code,
+            'image_data': img_data,
+            'filename': filename
+        };
 
-            if (is_dev) {
-                if ($.isIos()) {
-                    window.webkit.messageHandlers.saveImage.postMessage(image_data);
-                    alert('ios');
-                    //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
-                } else {
-                    JsCallback.saveImage(image_data);
-                    alert('android');
-                    // JsCallback.saveMusic
-                }
+        if (is_dev) {
+            if ($.isIos()) {
+                window.webkit.messageHandlers.saveImage.postMessage(image_data);
+                alert('ios');
+                //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
+            } else {
+                JsCallback.saveImage(image_data);
+                alert('android');
+                // JsCallback.saveMusic
             }
-
-            $.authPost('/m/users/save_image', data, function (resp) {
-                alert(resp.error_reason);
-            })
         }
 
+        $.authPost('/m/users/save_image', data, function (resp) {
+            alert(resp.error_reason);
+        })
     }
+
 </script>

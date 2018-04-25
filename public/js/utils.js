@@ -196,7 +196,7 @@ ts = function () {
     };
 
     $.isIos = function () {
-        var ua = window.userAgent.toLocaleLowerCase();
+        var ua = navigator.userAgent.toLocaleLowerCase();
         var is_ios = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);
         return is_ios;
     }
