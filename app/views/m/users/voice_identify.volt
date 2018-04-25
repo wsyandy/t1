@@ -282,6 +282,8 @@
             'filename': filename
         };
 
+        img_data = "'" + img_data + "'";
+        
         if (is_dev) {
             if ($.isIos()) {
                 alert('ios begin');
