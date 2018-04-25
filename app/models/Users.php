@@ -1869,6 +1869,12 @@ class Users extends BaseModel
         //屏蔽公司内部账号
         $company_filter_ids = [1159082, 102028, 1163191, 1198382, 1149108, 1234665, 1235467];
 
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+
+        if ($block_near_by_user_ids) {
+            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
+        }
+
         $filter_ids = array_merge($filter_ids, $company_filter_ids);
 
         if (!$this->geo_hash) {
@@ -3516,5 +3522,13 @@ class Users extends BaseModel
         } else {
             info("send_gift_fail");
         }
+    }
+
+    //获取屏蔽附近的人列表
+    static function getBlockedNearbyUserIds()
+    {
+        $key = 'blocked_nearby_user_list';
+        $hot_cache = Users::getHotReadCache();
+        return $hot_cache->zrange($key, 0, -1);
     }
 }
