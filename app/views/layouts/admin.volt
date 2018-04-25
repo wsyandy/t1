@@ -111,7 +111,10 @@
                         <li><a href="/admin/broadcasts">电台房间列表</a></li>
                     {% endif %}
                     {% if isAllowed('room_categories','index') %}
-                        <li><a href="/admin/room_categories/index">房间类型</a></li>
+                        <li><a href="/admin/room_categories/index">房间分类</a></li>
+                    {% endif %}
+                    {% if isAllowed('room_tags','index') %}
+                        <li><a href="/admin/room_tags/index">房间类型</a></li>
                     {% endif %}
                 </ul>
             </li>
