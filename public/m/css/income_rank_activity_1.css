@@ -1,0 +1,190 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+}
+
+/* 流水活动 */
+.water_activity{
+  background-color: #100C24;
+  flex-direction: column;
+}
+.water_activity_start{
+  width: 7.5rem;
+  height: 12.42rem;
+  background:url(../images/water_activity_bg.png) center no-repeat;
+  background-size: 7.5rem 12.42rem; 
+}
+.water_activity_trailer{
+  padding-top: 2.1rem;
+  width: 7.5rem;
+  height: 4.64rem;
+  background: url(../images/water_activity_trailer_bg.png) center no-repeat;
+  background-size: 7.5rem 4.64rem;
+  justify-content: center;
+}
+.start_countdown{
+  background: url(../images/start_countdown_bg.png) center no-repeat;
+  background-size: 7.5rem 4.64rem;
+}
+.water_activity_list_title{
+  margin-bottom: .46rem;
+  width: 7.5rem;
+  height:  1.24rem;
+  background: url(../images/water_activity_list_title.png) center no-repeat;
+  background-size: 5.44rem 1.24rem;
+}
+.water_activity_trailer p{
+  font-size: .64rem;
+  color: #FCFF00;
+}
+.water_activity_title{
+  margin-left: .3rem;
+  width: 6.9rem;
+  height: 8.82rem;
+  background-color: #28195A;
+  border: 1px solid #715CFF;
+  border-radius: 0.16rem;
+  justify-content: center;
+  align-items: center;
+}
+.water_activity_title img{
+  width: 5.48rem;
+  height: 8.09rem;
+}
+
+.water_activity_rules{
+  margin-left: .3rem;
+  margin-top: .5rem;
+  width: 6.9rem;
+  height: 6.23rem;
+  background-color: #1D163E;
+  border-radius: .16rem;
+  flex-direction: column;
+}
+.water_activity_rules .title{
+  margin: .3rem;
+  font-size: .32rem;
+  color: #D5941E;
+}
+.water_activity_rules_line{
+  margin: 0 .3rem .4rem;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.water_activity_rules_line .dot{
+  margin-top: .18rem;
+  width: .16rem;
+  height: .16rem;
+  border-radius: .08rem;
+  background-color: #FF3E6F;
+}
+.water_activity_rules_line p{
+  width: 6rem;
+  font-size: .32rem;
+  color: #FFFFFF;
+  line-height: .5rem;
+}
+.water_activity_rules_line p i{
+  font-style: normal;
+  color: #fdb72f;
+}
+.water_activity_copyright{
+  margin: .7rem 0 .64rem;
+  text-align: center;
+  font-size: .32rem;
+  color: #FFFFFF;
+}
+.water_activity_list{
+  margin-left: .3rem;
+  width: 6.9rem;
+  padding: .45rem .5rem .08rem .27rem;
+  background-color: #28195A;
+  border: 1px solid #715CFF; 
+  border-radius: .16rem;
+  flex-direction: column;
+}
+.water_activity_list_top{
+  font-size: .32rem;
+  color: #FFFFFF;
+  margin-bottom: .6rem;
+}
+.water_activity_list_top span{
+  margin-right: .65rem;
+}
+.water_activity_ul{
+  flex-direction: column;
+}
+.water_activity_ul li{
+  align-items: center;
+  margin-bottom: .5rem;
+}
+.water_activity_ul li .ranking{
+  width: .6rem;
+  height: .6rem;
+  text-align: center;
+  line-height: .6rem;
+  font-size: .3rem;
+  color: #FFFFFF;
+}
+.water_activity_ul li .header{
+  margin-left: .32rem;
+  width: .6rem;
+  height: .6rem;
+}
+.water_activity_ul li .name{
+  margin-left: .2rem;
+  width: 1.82rem;
+  font-size: .28rem;
+  color: #AD9EFF;
+}
+.water_activity_ul li .prompt{
+  width: 1.2rem;
+  font-size: .28rem;
+  color: #AD9EFF;
+  text-align: center;
+}
+.water_activity_ul li .trophy{
+  margin-left: .6rem;
+  width: .74rem;
+  height: .65rem;
+  background: url(../images/water_activity_trophy.png) center no-repeat;
+  background-size: .47rem .51rem;
+}
+.water_activity_ul li .score{
+  /* margin-left: .6rem; */
+  width: 1.34rem;
+  text-align: right;
+  font-size: .28rem;
+  color: #AD9EFF;
+}
+.water_activity_ul li .ranking_neo{
+  width: .6rem;
+  height: .6rem;
+  background: url(../images/ranking_neo_icon.png) center no-repeat;
+  background-size: .6rem;
+}
+.water_activity_ul li .ranking_two{
+  width: .6rem;
+  height: .6rem;
+  background: url(../images/ranking_two_icon.png) center no-repeat;
+  background-size: .6rem;
+}
+.water_activity_ul li .ranking_three{
+  width: .6rem;
+  height: .6rem;
+  background: url(../images/ranking_three_icon.png) center no-repeat;
+  background-size: .6rem;
+}
