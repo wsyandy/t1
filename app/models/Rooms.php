@@ -82,7 +82,7 @@ class Rooms extends BaseModel
 
         for ($i = 0; $i < 10; $i++) {
             $uid = $this->randUid();
-            if(!$uid){
+            if (!$uid) {
                 continue;
             }
             $lock_key = 'lock_generate_room_uid_' . $uid;
@@ -150,8 +150,8 @@ class Rooms extends BaseModel
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
 
-        if (isset($this->category_names)) {
-            $data['room_category_names'] = $this->category_names;
+        if (isset($this->tag_names)) {
+            $data['room_tag_names'] = $this->tag_names;
         }
 
         return $data;
@@ -255,26 +255,26 @@ class Rooms extends BaseModel
     static function createRoom($user, $opts)
     {
         $name = fetch($opts, 'name');
-        $room_category_ids = fetch($opts, 'room_category_ids');
+        $room_tag_ids = fetch($opts, 'room_tag_ids');
 
         $room = new Rooms();
         $room->name = $name;
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
+        if (isPresent($room_tag_ids)) {
 
-            $room_categories = RoomCategories::findByIds($room_category_ids);
+            $room_tags = RoomTags::findByIds($room_tag_ids);
 
-            if (count($room_categories)) {
-                $room->room_category_ids = $room_category_ids;
+            if (count($room_tags)) {
+                $room->room_tag_ids = $room_tag_ids;
 
 
-                $room_category_names = [];
-                foreach ($room_categories as $room_category) {
-                    $room_category_names[] = $room_category->name;
+                $room_tag_names = [];
+                foreach ($room_tags as $room_tag) {
+                    $room_tag_names[] = $room_tag->name;
                 }
 
-                $room->room_category_names = implode(',', $room_category_names);
+                $room->room_tag_names = implode(',', $room_tag_names);
             }
 
         }
@@ -347,22 +347,22 @@ class Rooms extends BaseModel
             $this->topic = $topic;
         }
 
-        $room_category_ids = fetch($params, 'room_category_ids');
+        $room_tag_ids = fetch($params, 'room_tag_ids');
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
-            $room_categories = RoomCategories::findByIds($room_category_ids);
+        if (isPresent($room_tag_ids)) {
+            $room_tags = RoomTags::findByIds($room_tag_ids);
 
-            if (count($room_categories)) {
-                $this->room_category_ids = $room_category_ids;
+            if (count($room_tags)) {
+                $this->room_tag_ids = $room_tag_ids;
 
 
-                $room_category_names = [];
-                foreach ($room_categories as $room_category) {
-                    $room_category_names[] = $room_category->name;
+                $room_tag_names = [];
+                foreach ($room_tags as $room_tag) {
+                    $room_tag_names[] = $room_tag->name;
                 }
 
-                $this->room_category_names = implode(',', $room_category_names);
+                $this->room_tag_names = implode(',', $room_tag_names);
             }
         }
 
@@ -1809,17 +1809,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2335,10 +2337,10 @@ class Rooms extends BaseModel
         }
     }
 
-    function getRoomCategoryNamesText()
+    function getRoomTagNamesText()
     {
-        if ($this->room_category_names) {
-            return explode(',', $this->room_category_names);
+        if ($this->room_tag_names) {
+            return explode(',', $this->room_tag_names);
         }
 
         return [];

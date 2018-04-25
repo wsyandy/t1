@@ -69,11 +69,11 @@ class RoomsController extends BaseController
                 'name' => $room->name, 'channel_name' => $room->channel_name]);
         }
 
-        $room_category_ids = $this->params('room_category_ids');
+        $room_tag_ids = $this->params('room_tag_ids');
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
-            $opts['room_category_ids'] = $room_category_ids;
+        if (isPresent($room_tag_ids)) {
+            $opts['room_tag_ids'] = $room_tag_ids;
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $opts);
@@ -232,15 +232,16 @@ class RoomsController extends BaseController
         }
 
         //房间分类信息
-        $room_category_ids = $room->room_category_ids;
-        $res['room_category_ids'] = [];
-        if (isPresent($room_category_ids)) {
-            $room_category_ids = explode(',', $room_category_ids);
+        $room_tag_ids = $room->room_tag_ids;
 
-            foreach ($room_category_ids as $room_category_id) {
-                $res['room_category_ids'][] = intval($room_category_id);
+        $res['room_tag_ids'] = [];
+        if (isPresent($room_tag_ids)) {
+
+            $room_tag_ids = explode(',', $room_tag_ids);
+
+            foreach ($room_tag_ids as $room_tag_id) {
+                $res['room_tag_ids'][] = intval($room_tag_id);
             }
-
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);

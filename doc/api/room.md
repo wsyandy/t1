@@ -20,7 +20,7 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---|
 |name|房间名称|string|否||
-|room_category_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
+|room_tag_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
 
 ##### 1.2 回应参数说明
 ```
@@ -44,7 +44,7 @@
 |id|房间id|int|否||
 |name|房间名称|string|是||
 |topic|房间话题|string|是||
-|room_category_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
+|room_tag_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
 
 ##### 2.2 回应参数说明
 ```
@@ -220,7 +220,7 @@
              "url": string  跳转地址,
              "icon": string 图片地址
          },
-     room_category_ids:[
+     room_tag_ids:[
             1 ,  房间分类的id
             2 ,  房间分类的id
             3 ,  房间分类的id
@@ -834,7 +834,7 @@
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
-                room_category_names:[
+                room_tag_names:[
                      '唱歌' string，
                      '陪玩' string，
                       ...
