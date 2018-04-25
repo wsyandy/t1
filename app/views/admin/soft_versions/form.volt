@@ -11,9 +11,10 @@
 
 {{ f.input('permit_ip',[ 'label':'仅以下IP可升级' ]) }}
 {{ f.select('force_update', ['label': '是否强制升级', 'collection': SoftVersions.FORCE_UPDATE, 'blank':true,'width': '50%']) }}
+{{ f.input('min_version_code', ['label': '最低版本号(小于等于此版本号强制升级)','width': '50%']) }}
 {{ f.input('fr', ['label': '指定fr升级，空为全部适用','width': '50%']) }}
 
-{{ f.input('built_in_fr', ['label': '安装包内置fr']) }}
+{{ f.input('built_in_fr', ['label': '安装包内置fr', 'width': '50%']) }}
 {{ f.file('file',[ 'label':'上传安卓安装包' ]) }}
 {{ f.input('ios_down_url',[ 'label':'IOS下载地址' ]) }}
 {{ f.input('weixin_url',[ 'label':'应用宝下载地址' ]) }}
