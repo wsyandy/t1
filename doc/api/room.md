@@ -395,11 +395,6 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
-            room_category_names:[
-               '唱歌' string，
-               '陪玩' string，
-               ...
-            ]
         }
          ....
     ]
@@ -714,7 +709,7 @@
 |---|---|---|---|---
 |page|页码|int|否||
 |per_page|每页|int|否||
-|type|房间类型|string|是|产品菜单接口返回的参数|
+|type|房间类型|string|是|最新:new,推荐:recommend,开黑:gang_up,交友:friend,电台:broadcast,关注:follow,附近:nearby|
 |keyword|关键词|string|是|||
 
 
@@ -744,12 +739,7 @@
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳
             last_at int 最后活跃时间
-            user_num 在线人数
-            room_category_names:[
-               '唱歌' string，
-               '陪玩' string，
-               ...
-            ]                       
+            user_num 在线人数                       
         }
          ....
     ]
@@ -844,6 +834,11 @@
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
+                room_category_names:[
+                     '唱歌' string，
+                     '陪玩' string，
+                      ...
+                ]
             }
              ....
         ],
@@ -895,11 +890,6 @@
             created_at int 创建时间戳
             last_at int 最后活跃时间
             user_num 在线人数
-            room_category_names:[
-                 '唱歌' string，
-                 '陪玩' string，
-                 ...
-            ]
         }
          ....
     ]
