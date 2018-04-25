@@ -283,16 +283,18 @@
         };
 
         img_data = "'" + img_data + "'";
+
+        var params = "'" + {'data': img_data, 'file_type': 'base64'} + "'";
         
         if (is_dev) {
             if ($.isIos()) {
                 alert('ios begin');
-                window.webkit.messageHandlers.saveImage.postMessage({'data': img_data, 'file_type': 'base64'});
+                window.webkit.messageHandlers.saveImage.postMessage(params);
                 alert('ios end');
                 //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
             } else {
                 alert('android begin');
-                JsCallback.saveImage({'data': img_data, 'file_type': 'base64'});
+                JsCallback.saveImage(params);
                 alert('android end');
                 // JsCallback.saveMusic
             }
