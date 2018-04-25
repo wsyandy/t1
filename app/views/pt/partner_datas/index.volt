@@ -15,7 +15,6 @@
         {% for key, text in stat_fields %}
             <th>{{ text }}</th>
         {% endfor %}
-        <th>注册率</th>
     </tr>
     </thead>
 
@@ -28,7 +27,6 @@
             {% for stat_field,text  in stat_fields %}
                 <td id="{{ partner_data.id }}_{{ stat_field }}"></td>
             {% endfor %}
-            <td>{{ partner_data.register_ratio }}%</td>
         </tr>
     {% endfor %}
     </tbody>
