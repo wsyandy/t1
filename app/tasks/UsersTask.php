@@ -1279,27 +1279,53 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_db = \Users::getUserDb();
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
-        $users = Users::findByIds($user_ids);
+        $total = $user_db->zcard($send_user_ids_key);
+        echoLine($total);
+        $hot_cache = Users::getHotWriteCache();
 
-        foreach ($users as $user) {
-            //亲，你现在有*元待提现，赶紧去提现！
+        for ($i = 0; $i <= $total; $i += 1000) {
 
-            $hi_conins = $user->getWithdrawAmount();
+            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 1000 - 1);
+            $users = Users::findByIds($user_ids);
+            echoLine(count($user_ids));
 
-            if ($hi_conins > 0) {
-                $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
+            foreach ($users as $user) {
+                //亲，你现在有*元待提现，赶紧去提现！
 
-                $push_data = ['title' => $content, 'body' => $content];
+                $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $user->id;
+                $data = $hot_cache->get($wake_up_user_send_gift_key);
+                $hi_conins = 0;
 
-                \Pushers::delay()->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+                if ($data) {
+                    $data = json_decode($data, true);
+                    $gift_id = fetch($data, 'gift_id');
 
-                Chats::sendTextSystemMessage($user->id, $content);
+                    $gift = Gifts::findFirstById($gift_id);
 
-                echoLine($user->id, $content);
-            } else {
-                echoLine($user->id, "no have hi_coins");
+                    if ($gift) {
+                        $amount = $gift->amount;
+                        $hi_conins = $amount * 0.045;
+                    }
+
+                } else {
+                    $hi_conins = $user->getWithdrawAmount();
+                }
+
+                if ($hi_conins > 0) {
+                    $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
+
+                    $push_data = ['title' => $content, 'body' => $content];
+
+                    \Pushers::delay(mt_rand(1, 1800))->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+
+                    //Chats::sendTextSystemMessage($user->id, $content);
+
+                    echoLine($user->id, $content);
+                } else {
+                    echoLine($user->id, "no have hi_coins");
+                }
             }
+
         }
     }
 
