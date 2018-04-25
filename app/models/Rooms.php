@@ -117,7 +117,8 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at,
+            'room_category_names' =>  $this->getRoomCategoryNamesText()
         ];
 
         return $data;
@@ -228,8 +229,23 @@ class Rooms extends BaseModel
 
         //还要判断是否符合规则
         if (isPresent($room_category_ids)) {
-            $room->room_category_ids = $room_category_ids;
+
+            $room_categories = RoomCategories::findByIds($room_category_ids);
+
+            if (count($room_categories)) {
+                $room->room_category_ids = $room_category_ids;
+
+
+                $room_category_names = [];
+                foreach ($room_categories as $room_category) {
+                    $room_category_names[] = $room_category->name;
+                }
+
+                $room->room_category_names = implode(',', $room_category_names);
+            }
+
         }
+
 
         $room->user_id = $user->id;
         $room->user = $user;
@@ -302,7 +318,19 @@ class Rooms extends BaseModel
 
         //还要判断是否符合规则
         if (isPresent($room_category_ids)) {
-            $this->room_category_ids = $room_category_ids;
+            $room_categories = RoomCategories::findByIds($room_category_ids);
+
+            if (count($room_categories)) {
+                $this->room_category_ids = $room_category_ids;
+
+
+                $room_category_names = [];
+                foreach ($room_categories as $room_category) {
+                    $room_category_names[] = $room_category->name;
+                }
+
+                $this->room_category_names = implode(',', $room_category_names);
+            }
         }
 
         $this->update();
@@ -2272,5 +2300,14 @@ class Rooms extends BaseModel
             $hot_cache = Rooms::getHotWriteCache();
             $hot_cache->zrem("room_game_white_list", $room_id);
         }
+    }
+
+    function getRoomCategoryNamesText()
+    {
+        if ($this->room_category_names) {
+            return explode(',', $this->room_category_names);
+        }
+
+        return [];
     }
 }
