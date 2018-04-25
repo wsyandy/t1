@@ -1216,7 +1216,13 @@ class UsersTask extends \Phalcon\Cli\Task
             $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 3 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
 
             $push_data = ['title' => $content, 'body' => $content];
-            \Pushers::delay(mt_rand(1, 1800))->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
+            $delay = mt_rand(1, 1800);
+
+            if (isDevelopmentEnv()) {
+                $delay = 1;
+            }
+
+            \Pushers::delay($delay)->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
 
             $num++;
 
