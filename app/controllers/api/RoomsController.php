@@ -764,7 +764,7 @@ class RoomsController extends BaseController
             $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
 
             foreach ($gang_up_rooms as $gang_up_room) {
-                $gang_up_room->category_names = $gang_up_room->getRoomCategoryNamesText();
+                $gang_up_room->category_names = ['test1'];
             }
 
             $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
