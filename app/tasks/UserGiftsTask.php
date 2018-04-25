@@ -87,18 +87,19 @@ class UserGiftsTask extends \Phalcon\Cli\Task
 
             if (!$user_gift) {
                 echoLine($gift_id, $num, $total_amount);
+
+                $user_gift = new UserGifts();
+                $user_gift->name = $gift->name;
+                $user_gift->gift_id = $gift->id;
+                $user_gift->user_id = $user_id;
+                $user_gift->num = $num;
+                $user_gift->amount = $gift->amount;
+                $user_gift->total_amount = $total_amount;
+                $user_gift->pay_type = $gift->pay_type;
+                $user_gift->gift_type = $gift->type;
+                $user_gift->save();
             }
 
-            $user_gift = new UserGifts();
-            $user_gift->name = $gift->name;
-            $user_gift->gift_id = $gift->id;
-            $user_gift->user_id = $user_id;
-            $user_gift->num = $num;
-            $user_gift->amount = $gift->amount;
-            $user_gift->total_amount = $total_amount;
-            $user_gift->pay_type = $gift->pay_type;
-            $user_gift->gift_type = $gift->gift_type;
-            $user_gift->save();
         }
     }
 }
