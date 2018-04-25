@@ -17,6 +17,7 @@
         <img src="/m/images/logo2.png" alt="logo"/>
         <span>Hi语音鉴定，必属精品</span>
     </div>
+    <div class="sound_entry_bottom_bg"></div>
 </div>
 <script>
     var opts = {

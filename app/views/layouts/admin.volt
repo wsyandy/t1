@@ -305,7 +305,9 @@
                     {% if isAllowed('users', 'wakeup_stat') %}
                         <li><a href="/admin/users/wakeup_stat">唤醒离线24小时用户统计</a></li>
                     {% endif %}
-
+                    {% if isAllowed('partner_datas','index') %}
+                        <li><a href="/admin/partner_datas/index">推广激活统计</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
@@ -371,6 +373,9 @@
                     {% endif %}
                     {% if isAllowed('export_histories','index') %}
                         <li><a href="/admin/export_histories">导出记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('partner_accounts','index') %}
+                        <li><a href="/admin/partner_accounts">合作方账号管理</a></li>
                     {% endif %}
                 </ul>
             </li>
