@@ -282,10 +282,8 @@
             'filename': filename
         };
 
-        img_data = "'" + img_data + "'";
+        var params = {data: img_data, file_type: 'base64'};
 
-        var params = "'" + {'data': img_data, 'file_type': 'base64'} + "'";
-        
         if (is_dev) {
             if ($.isIos()) {
                 alert('ios begin');
