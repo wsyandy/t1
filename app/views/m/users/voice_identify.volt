@@ -285,12 +285,12 @@
         if (is_dev) {
             if ($.isIos()) {
                 alert('ios begin');
-                window.webkit.messageHandlers.saveImage.postMessage(img_data, 'base64');
+                window.webkit.messageHandlers.saveImage.postMessage({'data': img_data, 'file_type': 'base64'});
                 alert('ios end');
                 //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
             } else {
                 alert('android begin');
-                JsCallback.saveImage(img_data, 'base64');
+                JsCallback.saveImage({'data': img_data, 'file_type': 'base64'});
                 alert('android end');
                 // JsCallback.saveMusic
             }
