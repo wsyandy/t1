@@ -447,4 +447,21 @@ class ActivitiesController extends BaseController
         $this->view->title = "社会我Hi音";
     }
 
+    function roomIncomeRankActivity1Action()
+    {
+        $id = $this->params('id');
+        $activity = \Activities::findFirstById($id);
+        $start_at = $activity->start_at;
+        $end_at = $activity->end_at;
+        $end_time = date("Y/m/d/ H:i:s", $start_at);
+        debug($end_time);
+
+        $this->view->end_time = $end_time;
+        $this->view->end = date("Y年m月d号H点", $end_at);
+        $this->view->start = date("Y年m月d号H点", $start_at);
+
+
+        $this->view->title = "流水活动";
+
+    }
 }
