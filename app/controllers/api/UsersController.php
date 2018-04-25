@@ -364,7 +364,7 @@ class UsersController extends BaseController
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
                 $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
                 $user->updateAvatar($avatar_file);
-            }else{
+            } else {
                 info('重复上传', $avatar_file);
             }
         }
@@ -399,7 +399,7 @@ class UsersController extends BaseController
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
                 $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
                 $user->updateAvatar($avatar_file);
-            }else{
+            } else {
                 info('重复上传', $avatar_file);
             }
         }
@@ -543,7 +543,7 @@ class UsersController extends BaseController
         $uid = intval($this->params('uid'));
         $nickname = null;
 
-        $keyword = $this->params('keyword');
+        $keyword = $this->params('keyword', null);
 
         if (!is_null($keyword)) {
             if (preg_match('/^[0-9]*$/', $keyword)) {
@@ -839,7 +839,7 @@ class UsersController extends BaseController
             if ($user) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '手机号码已绑定其他用户');
             }
-            
+
             $context = $this->context();
 
             list($error_code, $error_reason) = \SmsHistories::checkAuthCode($this->currentProductChannel(),
