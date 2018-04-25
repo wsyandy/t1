@@ -1,6 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/voice_main1.css') }}
-{{ theme_js('/m/js/html2canvas.min') }}
+{{ weixin_css('voice_main.css') }}
 {{ block_end() }}
 <script>
     (function (doc, win) {
@@ -92,29 +91,24 @@
         <div class="save_picture_bom">
             <div class="save_picture_bomleft">
                 <div class="save_picture_bomleft_line">
-                    <img src="/m/images/logo2.png" alt="logo">
+                    <img src="/wx/yuewan/images/logo2.png" alt="logo">
                     <p>Hi语音</p>
                 </div>
                 <p class="hint">扫一扫，生成你的声鉴卡</p>
             </div>
             <div :class="['save_picture_qr_code',!sex&&'women']">
-                <img src="/m/images/wx_m.jpg" alt="">
+                <img src="/wx/yuewan/images/wx.png" alt="">
             </div>
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-        <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
         </div>
-    </div>
-    <div v-if="isSaveSuccess" class="toast_text_box">
-        <span class="toast_text">保存成功</span>
     </div>
 </div>
 <script>
     var opts = {
         data: {
-            isSaveSuccess: false,
             sex:{{ sex }},//0为女1为男 主题切换  原本是0为男1为女 现在样式中已全部取反
             code: "{{ code }}",
             sid: "{{ sid }}",
@@ -135,16 +129,8 @@
         },
 
         methods: {
-            screenshotsImg: function () {
-                html2canvas(document.querySelector(".save_picture_box"), {
-                    backgroundColor: 'transparent',// 设置背景透明
-                    useCORS: true
-                }).then(function (canvas) {
-                    canvasTurnImg(canvas)
-                });
-            },
             go_voice_identify: function () {
-                var url = '/m/users/recording';
+                var url = '/wx/users/recording';
                 vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
             }
         }
@@ -160,7 +146,7 @@
             'code': vm.code,
             'sex': vm.sex
         };
-        $.authGet('/m/users/get_tonic', data, function (resp) {
+        $.authGet('/wx/users/get_tonic', data, function (resp) {
             if (!resp.error_code) {
                 vm.tonic = resp.tonic;
                 vm.tonic_ratio = resp.tonic_ratio;
@@ -168,9 +154,9 @@
                     vm.avatar_url = resp.avatar_url;
                 } else {
                     if (vm.sex) {
-                        vm.avatar_url = '/m/images/men_haeder.png';
+                        vm.avatar_url = '/wx/yuewan/images/men_haeder.png';
                     } else {
-                        vm.avatar_url = '/m/images/women_haeder.png';
+                        vm.avatar_url = '/wx/yuewan/images/women_haeder.png';
                     }
                 }
 
@@ -188,7 +174,7 @@
             'sex': vm.sex,
             'tonic_ratio': vm.tonic_ratio
         };
-        $.authGet('/m/users/get_consonants', data, function (resp) {
+        $.authGet('/wx/users/get_consonants', data, function (resp) {
             if (!resp.error_code) {
                 vm.consonant1 = resp.consonant1;
                 vm.consonant2 = resp.consonant2;
@@ -203,7 +189,7 @@
             'code': vm.code,
             'sex': vm.sex
         };
-        $.authGet('/m/users/get_property', data, function (resp) {
+        $.authGet('/wx/users/get_property', data, function (resp) {
             if (!resp.error_code) {
                 vm.property = resp.property;
                 vm.mate = resp.mate;
@@ -217,7 +203,7 @@
             'code': vm.code,
             'sex': vm.sex
         };
-        $.authGet('/m/users/get_charm_value', data, function (resp) {
+        $.authGet('/wx/users/get_charm_value', data, function (resp) {
             if (!resp.error_code) {
                 vm.heartbeat_value = resp.heartbeat_value;
                 vm.flirt_value = resp.flirt_value;
@@ -226,86 +212,4 @@
             }
         })
     }
-
-    function canvasTurnImg(canvas) {
-        // 图片导出为 png 格式
-        var type = 'png';
-        var imgData = canvas.toDataURL(type);
-        /**
-         * 获取mimeType
-         * @param  {String} type the old mime-type
-         * @return the new mime-type
-         */
-        var _fixType = function (type) {
-            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-            var r = type.match(/png|jpeg|bmp|gif/)[0];
-            return 'image/' + r;
-        };
-
-        // 加工image data，替换mime type
-        //imgData = imgData.replace(_fixType(type),'image/octet-stream');
-
-        /**
-         * 在本地进行文件保存
-         * @param  {String} data     要保存到本地的图片数据
-         * @param  {String} filename 文件名
-         */
-        function saveFile(data, filename) {
-            var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-            save_link.href = data;
-            save_link.download = filename;
-
-            console.log(data);
-
-            var event = document.createEvent('MouseEvents');
-            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            save_link.dispatchEvent(event);
-        };
-
-        // 下载后的文件名
-        var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
-        // download
-//        saveFile(imgData,filename);
-        saveImage(imgData, filename);
-    }
-
-    var is_dev = false;
-    {% if isDevelopmentEnv() %}
-    is_dev = true;
-    {% endif %}
-
-    function saveImage(img_data, filename) {
-        var data = {
-            'sid': vm.sid,
-            'code': vm.code,
-            'image_data': img_data,
-            'filename': filename
-        };
-        var file_type = 'base64';
-
-//        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180118205a608c73d25c8.jpg';
-//        file_type = 'image_url';
-        var params = {data: img_data, file_type: file_type};
-        params = JSON.stringify(params)
-
-        if (is_dev) {
-            if ($.isIos()) {
-                alert('ios begin');
-                window.webkit.messageHandlers.saveImage.postMessage(params);
-                alert('ios end');
-                //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
-            } else {
-                alert('android begin');
-//                JsCallback.saveImage(params);
-                JsCallback.saveImageBase64(img_data);
-                alert('android end');
-                // JsCallback.saveMusic
-            }
-        }
-
-        $.authPost('/m/users/save_image', data, function (resp) {
-            alert(resp.error_reason);
-        })
-    }
-
 </script>

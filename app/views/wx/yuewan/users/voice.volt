@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/voice_main1.css') }}
+{{ weixin_css('voice_main.css') }}
 {{ block_end() }}
 <div id="app" class="sound_entry">
     <div class="sound_entry_input">
@@ -21,7 +21,6 @@
 <script>
     var opts = {
         data: {
-            user:{{ user }},
             select_sex: true,
             sex: 1,
             sid: "{{ sid }}",
@@ -31,8 +30,8 @@
         methods: {
             go_voice_identify: function () {
                 if(vm.nickname){
-                    var url = '/m/users/recording';
-                    vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
+                    var url = '/wx/users/recording';
+                    vm.redirectAction(url + '?sex=' + vm.sex + '&nickname=' + vm.nickname);
                 }else{
                     alert('请输入昵称！');
                 }
@@ -50,9 +49,6 @@
     };
     vm = XVue(opts);
     $(function () {
-        vm.sex = vm.user.sex;
-        vm.nickname = vm.user.nickname;
-        console.log(vm.nickname);
         if (vm.sex) {
             vm.select_sex = true;
         } else {
