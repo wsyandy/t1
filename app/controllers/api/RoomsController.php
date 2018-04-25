@@ -492,7 +492,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户已经是管理员');
         }
 
-        if ($room->manager_num >= 2) {
+        if ($room->manager_num >= 10) {
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
 
