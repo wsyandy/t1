@@ -648,22 +648,77 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 10);
 
         $keyword = $this->params('keyword');
+        $type = $this->params('type');
 
-        if (is_null($keyword)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
+        //关键词和类型不能同时为空
+        if (is_null($keyword) && isBlank($type)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $name = $keyword;
+        if ($type == 'hot') {
+            //热门房间从缓存中拉取
+            $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
+        $cond = [];
+
+        if (!is_null($keyword)) {
+
+            $cond['conditions'] = '(name like :name: or room_category_names like :room_category_names:)';
+            $cond['bind']['name'] = '%' . $keyword . '%';
+            $cond['bind']['room_category_names'] = '%' . $keyword . '%';
+
+        } elseif ($type) {
+
+            if ($type == 'broadcast') {
+
+                $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
+                $cond['conditions'] = " theme_type in ($theme_types)";
+
+            } elseif ($type == 'follow') {
+
+                $user_ids = $this->currentUser()->followUserIds();
+
+                if (count($user_ids) > 0) {
+                    $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
+                }
+
+            } elseif ($type == 'new') {
+
+                $cond['order'] = ['last_at desc,user_type asc'];
+
+            } else {
+
+                $search_type = '';
+
+                foreach (\Rooms::$TYPES as $key => $value) {
+
+                    if ($type == $key) {
+                        $search_type = $key;
+                        break;
+                    }
+                }
+
+                if ($search_type) {
+                    $cond['conditions'] = " types like :types:";
+                    $cond['bind']['types'] = "%" . $search_type . "%";
+                }
+            }
+        }
+
+        if (isBlank($cond)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
 
         //限制搜索条件
-        $cond = [
-            'conditions' => 'online_status =  :online_status: and status = :status:',
-            'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON],
-            'order' => 'last_at desc, user_type asc'
-        ];
 
-        $cond['conditions'] .= ' and name like :name:';
-        $cond['bind']['name'] = '%' . $name . '%';
+        $cond['conditions'] .= " and online_status = :online_status: and status = :status:";
+        $cond['bind']['online_status'] = STATUS_ON;
+        $cond['bind']['status'] = STATUS_ON;
+        if (!isset($cond['order'])) {
+            $cond['order'] = 'last_at desc,user_type asc';
+        }
 
         debug($cond);
 
