@@ -24,7 +24,7 @@ class RoomCategoriesController extends BaseController
         $room_categories_json = [];
 
         foreach ($room_categories as $room_category) {
-            $second_categories_json[] = ['id' => $room_category->id, 'name' => $room_category->name];
+            $room_categories_json[] = ['id' => $room_category->id, 'name' => $room_category->name];
         }
 
 
