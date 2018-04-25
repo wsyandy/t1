@@ -11,13 +11,12 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-{{ simple_table(room_tags, ['id': 'id','名称': 'name','类型': 'type','状态':'status_text', '排序':'rank','操作': 'operator_link']) }}
+{{ simple_table(room_tags, ['id': 'id','名称': 'name','状态':'status_text', '排序':'rank','操作': 'operator_link']) }}
 
 <script type="text/template" id="room_tag_tpl">
     <tr id="room_tag_${room_tag.id}">
         <td>${room_tag.id}</td>
         <td>${room_tag.name}</td>
-        <td>${room_tag.type}</td>
         <td>${room_tag.status_text}</td>
         <td>${room_tag.rank}</td>
             <a href="/admin/room_tags/edit/${room_tag.id}" class="modal_action">编辑</a>
