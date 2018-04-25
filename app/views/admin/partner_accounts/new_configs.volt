@@ -23,6 +23,7 @@
     <input name="partner_account[id]" value="{{ partner_account.id}}" type="hidden"/>
 
     <input type="submit" class="btn btn-default " value="保存"/>
+    <div class="error_reason" style="color: red;"></div>
 </form>
 
 

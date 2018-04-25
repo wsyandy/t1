@@ -88,6 +88,13 @@ class PartnerAccountsController extends BaseController
         if (!fetch($opts, 'partner_id') || !fetch($opts, 'product_channel_id')) {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置不完整');
         }
+
+        $partner_account_product_channel_by_partner_id = \PartnerAccountProductChannels::findFirstBy(['partner_id'=>fetch($opts,'partner_id')]);
+        if($partner_account_product_channel_by_partner_id && $partner_account_product_channel_by_partner_id->partner_account_id != fetch($opts, 'id')){
+            return $this->renderJSON(ERROR_CODE_FAIL,'当前推广渠道在其他账号下已存在');
+
+        }
+
         $partner_account_product_channel = \PartnerAccountProductChannels::findFirst(['conditions' =>
             'partner_id=:partner_id: and product_channel_id=:product_channel_id: and partner_account_id=:partner_account_id:',
             'bind' => ['partner_id' => fetch($opts, 'partner_id'), 'product_channel_id' => fetch($opts, 'product_channel_id'),
