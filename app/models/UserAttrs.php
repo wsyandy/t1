@@ -910,29 +910,29 @@ trait UserAttrs
         return 2;
     }
 
-    function getRatio($tonic_ratio)
+    static function getRatio($tonic_ratio)
     {
         $all_ratio = 100;
         $consonant_ratio1 = mt_rand(20, 29);
-        list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+        list($consonant_ratio2, $consonant_ratio3) = self::getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
 
         if (isBlank($consonant_ratio2) || isBlank($consonant_ratio3)) {
-            list($consonant_ratio2, $consonant_ratio3) = $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+            list($consonant_ratio2, $consonant_ratio3) = self::getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
         }
         return [$consonant_ratio1, $consonant_ratio2, $consonant_ratio3];
 
 
     }
 
-    function getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1)
+    static function getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1)
     {
         $consonant_ratio2 = mt_rand(10, $all_ratio - $tonic_ratio - $consonant_ratio1);
         if ($consonant_ratio2 > 20) {
-            $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+            self::getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
         } else {
             $consonant_ratio3 = $all_ratio - $tonic_ratio - $consonant_ratio1 - $consonant_ratio2;
             if ($consonant_ratio3 == 0) {
-                $this->getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
+                self::getResidueRatio($all_ratio, $tonic_ratio, $consonant_ratio1);
             } else {
                 return [$consonant_ratio2, $consonant_ratio3];
             }

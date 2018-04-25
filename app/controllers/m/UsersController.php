@@ -185,7 +185,6 @@ class UsersController extends BaseController
 
     function getConsonantsAction()
     {
-        $user = $this->currentUser();
         $sex = $this->params('sex');
         $tonic_ratio = $this->params('tonic_ratio');
         $all_consonant_male = ['慵懒温润青受音', '清秀气质青年音', '咩咩小受音',
@@ -207,9 +206,9 @@ class UsersController extends BaseController
             '撩人小磕音', '空灵舒服玻璃音', '甜美乖张含笑音',
             '山间黄鹂吟鸣音', '隐藏清新女神音', '可爱小家碧玉音', '清爽雨后小甜音'];
 
-        $consonant_ratios = $user->getRatio($tonic_ratio);
+        $consonant_ratios = \Users::getRatio($tonic_ratio);
         if (!$consonant_ratios) {
-            $consonant_ratios = $user->getRatio($tonic_ratio);
+            $consonant_ratios = \Users::getRatio($tonic_ratio);
         }
 
         if ($sex) {
