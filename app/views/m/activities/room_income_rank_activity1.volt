@@ -49,7 +49,7 @@
         <span class="title">活动规则</span>
         <div class="water_activity_rules_line">
             <span class="dot"></span>
-            <p>其房间流水排行第一名的房主用户将获得靓号 <i>666777</i> 与 <i>500000</i> 钻奖励；</p>
+            <p>其房间流水排行第一名的房主用户将获得靓号 <i>666777</i> 和 <i>500000</i> 钻奖励；</p>
         </div>
         <div class="water_activity_rules_line">
             <span class="dot"></span>
@@ -64,7 +64,7 @@
             <p>获奖用户联系官方QQ：3407150190领取奖励；</p>
         </div>
     </div>
-    <p class="water_activity_copyright">活动最终解释权归HI语音官方团队</p>
+    <p class="water_activity_copyright">活动最终解释权归Hi语音官方团队</p>
 </div>
 
 <script>

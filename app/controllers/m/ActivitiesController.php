@@ -457,8 +457,10 @@ class ActivitiesController extends BaseController
         debug($end_time);
 
         $this->view->end_time = $end_time;
-        $this->view->end = date("Y年m月d号H点", $end_at);
-        $this->view->start = date("Y年m月d号H点", $start_at);
+        $end_hour = intval(date("H", $end_at));
+        $start_hour = intval(date("H", $start_at));
+        $this->view->end = date("Y年m月d号{$end_hour}点", $end_at);
+        $this->view->start = date("Y年m月d号{$start_hour}点", $start_at);
 
 
         $this->view->title = "流水活动";
