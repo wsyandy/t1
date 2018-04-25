@@ -3276,4 +3276,42 @@ EOF;
 
         echoLine($db->zscore($good_num_list_key, 1234567));
     }
+
+    function test24Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_key";
+        $silent_user_ids = $hot_cache->zrange($key, 0, -1);
+        $silent_users = Users::findByIds($silent_user_ids);
+
+//        $res = httpGet('http://mt-development.img-cn-hangzhou.aliyuncs.com/avatar/2018/02/05/e2f48818d52c9ecf2c46a589fa2a3d79.jpg');
+//        echoLine($res->code);
+
+        $rooms = Rooms::findForeach(['order' => 'last_at desc']);
+        $i = 0;
+        foreach ($rooms as $room) {
+
+
+            $user = $room->user;
+
+            if (!$user) {
+                continue;
+            }
+
+            $res = httpGet($user->avatar_small_url);
+
+            if (200 != $res->code) {
+                $silent_user = $silent_users[array_rand($silent_user_ids)];
+                $user->avatar = $silent_user->avatar;
+                $user->update();
+                echoLine($user->id, $silent_user->id);
+            }
+
+            $i++;
+
+            if ($i >= 5000) {
+                break;
+            }
+        }
+    }
 }
