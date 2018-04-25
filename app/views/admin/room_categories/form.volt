@@ -6,6 +6,7 @@
 {{ f.input('type',['label':'类型','width':'50%']) }}
 {{ f.input('rank',['label':'排序', 'width':'50%']) }}
 {{ f.select('status',['label':'状态', 'collection': RoomCategories.STATUS, 'width':'50%']) }}
+{{ f.file('image',['label':'图片']) }}
 
 <div class="error_reason" style="color: red;"></div>
 {{ f.submit('保存') }}

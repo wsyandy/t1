@@ -771,10 +771,20 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up_category) {
-            $gang_up_category_json[] = ['name' => '测试1', 'type' => 'test1', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试2', 'type' => 'test2', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试3', 'type' => 'test3', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试4', 'type' => 'test4', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+            $room_category = \RoomCategories::findFirsByType('gang_up');
+            if (isPresent($room_category)) {
+                $gang_up_categories = \RoomCategories::find(
+                    [
+                        'conditions' => " status = :status: and parent_id = :parent_id:",
+                        'bind' => ['status' => STATUS_ON, 'parent_id' => $room_category->id],
+                        'order' => 'rank desc,id desc',
+                    ]
+                );
+
+                foreach ($gang_up_categories as $item) {
+                    $gang_up_category_json[] = ['name' => $item->name, 'type' => $item->type, 'image_small_url' => $item->image_url];
+                }
+            }
         }
 
         $res['gang_up_categories'] = $gang_up_category_json;
