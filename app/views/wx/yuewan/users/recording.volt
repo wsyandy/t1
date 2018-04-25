@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/voice_main1.css') }}
+{{ weixin_css('voice_main.css') }}
 {{ block_end() }}
 <div id="app" class="recording">
     <p class="recording_title">请录制一段不少于5秒的音频</p>
@@ -46,8 +46,6 @@
             isTosatText: false,
             isAnalysis: false,
             recordingLength:1,
-            code:"{{ code }}",
-            sid:"{{ sid }}",
             read_text:"{{ read_text }}",
             sex:"{{ sex }}",
             nickname:"{{ nickname }}"
@@ -84,8 +82,8 @@
                 this.isAnalysis = true;
                 this.isToast = false;
                 setTimeout(function () {
-                    var url = '/m/users/voice_identify';
-                    vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex+'&nickname='+vm.nickname);
+                    var url = '/wx/users/voice_identify';
+                    vm.redirectAction(url + '?sex=' + vm.sex+'&nickname='+vm.nickname);
                 },2000)
 
 
