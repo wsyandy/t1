@@ -1,5 +1,5 @@
 {% if isAllowed('partner_accounts','new') %}
-    <a href="/admin/partner_accounts/new" class="modal_action">新建</a> <a target="_blank" href="http://chance.com/pt">登陆后台</a>
+    <a href="/admin/partner_accounts/new" class="modal_action">新建</a> <a target="_blank" href="{{ root }}pt">登陆后台</a>
 {% endif %}
 
 {%- macro new_edit_link(partner_account) %}
