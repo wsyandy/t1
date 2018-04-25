@@ -22,25 +22,24 @@ class DevicesController extends BaseController
             if ($device) {
 
                 $user = \Users::registerForClientByDevice($device);
-
                 if (!$user) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '激活失败', ['sid' => ""]);
                 }
 
-                $db = \Users::getUserDb();
-                $good_num_list_key = 'good_num_list';
-
-                if ($db->zscore($good_num_list_key, $user->id)) {
-                    info("good_num", $user->id);
-                    $user->user_type = USER_TYPE_SILENT;
-                    $user->user_status = USER_STATUS_OFF;
-                    $user->device_id = 0;
-                    $device->user_id = 0;
-                    $device->update();
-                    $user->update();
-
-                    $user = \Users::registerForClientByDevice($device);
-                }
+//                $db = \Users::getUserDb();
+//                $good_num_list_key = 'good_num_list';
+//
+//                if ($db->zscore($good_num_list_key, $user->id)) {
+//                    info("good_num", $user->id);
+//                    $user->user_type = USER_TYPE_SILENT;
+//                    $user->user_status = USER_STATUS_OFF;
+//                    $user->device_id = 0;
+//                    $device->user_id = 0;
+//                    $device->update();
+//                    $user->update();
+//
+//                    $user = \Users::registerForClientByDevice($device);
+//                }
 
                 // 防止写入失败
                 if (!$user->sid || !$user->device_id) {
