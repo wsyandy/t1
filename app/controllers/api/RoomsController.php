@@ -647,7 +647,7 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-        $keyword = $this->params('keyword');
+        $keyword = $this->params('keyword',null);
         $type = $this->params('type');
 
         //关键词和类型不能同时为空
