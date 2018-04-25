@@ -284,12 +284,14 @@
 
         if (is_dev) {
             if ($.isIos()) {
+                alert('ios begin');
                 window.webkit.messageHandlers.saveImage.postMessage(image_data);
-                alert('ios');
+                alert('ios end');
                 //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
             } else {
+                alert('android begin');
                 JsCallback.saveImage(image_data);
-                alert('android');
+                alert('android end');
                 // JsCallback.saveMusic
             }
         }
