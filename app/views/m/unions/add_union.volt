@@ -56,7 +56,7 @@
             </div>
 
 
-            <div class="popup_cover">
+            <div class="popup_cover" v-if="isPop">
                 <div class="popup_box">
                     <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
                     <div class="popup_text" id="popup_text">
@@ -193,16 +193,19 @@
             success: function (resp, status, xhr) {
                 can_create = true;
 
-                if (resp.error_code == -400) {
-                    vm.isPop = true;
-                    return false;
-                } else {
-                    alert(resp.error_reason);
-                }
+//                if (resp.error_code == -400) {
+//                    vm.isPop = true;
+//                    return false;
+//                } else {
+//                    alert(resp.error_reason);
+//                }
 
-                if (resp.error_url) {
-                    location.href = resp.error_url
-                }
+                var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
+                location.href = url;
+
+//                if (resp.error_url) {
+//                    location.href = resp.error_url
+//                }
             }
         });
 
