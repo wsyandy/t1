@@ -129,6 +129,7 @@
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
+                    return false;
                 }
             },
             setSelect: function () {
