@@ -148,6 +148,9 @@ html,body{
 .water_activity_ul li .name{
   margin-left: .2rem;
   width: 1.82rem;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
   font-size: .28rem;
   color: #AD9EFF;
 }
