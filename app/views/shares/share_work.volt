@@ -58,12 +58,25 @@
 
     $(document).ready(function () {
 
-        if ({{ soft_version_id }}) {
-            setTimeout(showTip, 2000);
+        if ($.isWeixinClient() || $.isWeiboClient()) {
+
+            $("#open_in_browser_tip").removeClass('none');
+
+        } else {
+
+            $(".jump").click(function () {
+
+                if ({{ soft_version_id }}) {
+                    setTimeout(showTip, 2000);
+                }
+
+            });
         }
+
         $(".close_right").click(function () {
             $(".fudong").hide();
-            $(".fudong_bg").hide();        })
+            $(".fudong_bg").hide();
+        });
     });
 
 </script>
