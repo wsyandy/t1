@@ -660,7 +660,7 @@ class RoomsController extends BaseController
 
         if (!is_null($keyword)) {
 
-            $cond['conditions'] = '(name like :name: or room_category_names like :room_category_names:)';
+            $cond['conditions'] = 'name like :name:';
             $cond['bind']['name'] = '%' . $keyword . '%';
             $cond['bind']['room_category_names'] = '%' . $keyword . '%';
 
