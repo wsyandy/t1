@@ -56,7 +56,7 @@
             </div>
 
 
-            <div class="popup_cover" v-if="isPop">
+            <div class="popup_cover">
                 <div class="popup_box">
                     <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
                     <div class="popup_text" id="popup_text">
