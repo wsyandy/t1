@@ -116,8 +116,15 @@
                     this.set_select = '/m/images/ico-select.png';
                 }
             },
+
+
             establishFamily: function (index) {
                 this.isPop = false;
+
+                if (isIos && !vm.is_development) {
+                    alert("请到我的账户充值");
+                    return;
+                }
 
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
