@@ -302,7 +302,8 @@
             } else {
                 alert('android begin');
 //                JsCallback.saveImage(params);
-                JsCallback.saveImageBase64(img_data);
+//                JsCallback.saveImageBase64(img_data);  //保存图片
+                JsCallback.saveMusic(img_data);  //保存音乐
                 alert('android end');
                 // JsCallback.saveMusic
             }
