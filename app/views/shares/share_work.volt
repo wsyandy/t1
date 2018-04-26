@@ -39,7 +39,7 @@
 
     <div class="btn_download">
         <img class="btn_pink" src="/shares/images/btn_pink.png" alt="">
-        <span>立即下载</span>
+        <a href="#" id="jump">立即下载</a>
     </div>
 
 </div>
@@ -54,6 +54,8 @@
 
         if ($.isWeixinClient() || $.isWeiboClient()) {
             $("#open_in_browser_tip").removeClass('none');
+        } else if ($.isQqClient()) {
+            $("#jump").attr('href', '{{ user.product_channel.code }}' + '://');
         }
 
         $(".btn_download").click(function (e) {
@@ -71,6 +73,7 @@
     });
 
     function Download() {
+        $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
         window.location = "/soft_versions/index?id=" + {{ soft_version_id }};
     }
 </script>

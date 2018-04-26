@@ -223,7 +223,7 @@ html {
     left: 0;
 }
 
-.btn_download span {
+.btn_download a {
     position: relative;
     font-size: 0.34rem;
     color: #FFFFFF;
