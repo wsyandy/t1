@@ -267,17 +267,17 @@ class GiftOrders extends BaseModel
                 $sender->addCompanyUserSendNumber($total_amount);
             }
 
-            $result = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
+            $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
-            $result = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
+            $target = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
         }
 
-        if ($result) {
+        if ($target) {
 
             $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
-                'receiver_current_room_id' => $receiver->current_room_id];
+                'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => time()];
 
             self::asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
             return true;
@@ -297,7 +297,11 @@ class GiftOrders extends BaseModel
         $gift_num = fetch($opts, 'gift_num');
         $sender_current_room_id = fetch($opts, 'sender_current_room_id');
         $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
+        $time = fetch($opts, 'time');
+        $target_id = fetch($opts, 'target_id');
         $receivers = Users::findByIds($receiver_ids);
+
+        info($sender_id, $receiver_ids, $gift_id, $opts);
 
         foreach ($receivers as $receiver) {
 
@@ -321,6 +325,7 @@ class GiftOrders extends BaseModel
             $gift_order->sender_union_type = $sender->union_type;
             $gift_order->sender_country_id = $sender->country_id;
             $gift_order->receiver_country_id = $receiver->country_id;
+            $gift_order->target_id = $target_id;
             $gift_order->product_channel_id = $receiver->product_channel_id;
 
             if ($sender_id == $receiver_id) {
@@ -338,15 +343,18 @@ class GiftOrders extends BaseModel
             }
 
             if ($gift_order->create()) {
-                $gift_order->updateUserGiftData($gift);
+                $gift_order->updateUserGiftData($gift, ['time' => $time]);
             } else {
                 info("Exce gift_order_create_fail", $sender_id, $receiver_ids, $gift_id, $opts);
             }
         }
     }
 
-    function updateUserGiftData($gift)
+    function updateUserGiftData($gift, $opts = [])
     {
+        info($gift->id, $this->user->id, $opts);
+
+        $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
             \UserGifts::delay()->updateGiftExpireAt($this->id);
@@ -354,22 +362,25 @@ class GiftOrders extends BaseModel
             \UserGifts::delay()->updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
-                info($this->user->id, $gift->id);
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time()]);
+                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
                 //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time(), 'async_verify_data' => 1]);
+                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time, 'async_verify_data' => 1]);
             }
         }
 
         if ($gift->isDiamondPayType()) {
-            $this->updateUserData();
+            $this->updateUserData($opts);
         }
     }
 
-    function updateUserData()
+    function updateUserData($opts = [])
     {
-        $time = time();
+        $time = $time = fetch($opts, 'time', time());
+
+        info($this->user->id, $opts);
+
+        $params = ['time' => $time];
 
         //统计房间收益
         if ($this->room) {
@@ -378,7 +389,7 @@ class GiftOrders extends BaseModel
                 $this->room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, ['time' => $time]);
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, $params);
                 }
             }
 
@@ -388,10 +399,9 @@ class GiftOrders extends BaseModel
             }
         }
 
-        $opts = ['time' => $time];
 
-        \Users::delay()->updateExperience($this->id, $opts);
-        \Users::delay()->updateCharm($this->id, $opts);
+        \Users::delay()->updateExperience($this->id, $params);
+        \Users::delay()->updateCharm($this->id, $params);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
