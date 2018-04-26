@@ -96,7 +96,7 @@
             }
         } else if (NowTime >= StartTime) {
             if (vm.activityState != 1) {
-                vm.activityState = 1;
+                location.reload();
             }
         }
 
