@@ -2311,7 +2311,7 @@ class Rooms extends BaseModel
     static function searchTopRoom()
     {
         $cond = ['conditions' => 'top = :top:', 'bind' => ['top' => STATUS_ON]];
-        $rooms = Rooms::findPagination($cond, 1, 1);
+        $rooms = Rooms::findPagination($cond, 1, 2);
         return $rooms;
     }
 
