@@ -55,22 +55,21 @@
                 <span>申请创建（10000钻石）</span>
             </div>
 
-
-            <div class="popup_cover" v-if="isPop">
-                <div class="popup_box">
-                    <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
-                    <div class="popup_text" id="popup_text">
-                        创建家族需要支付10000钻石，您的钻石数量不足，请先充值
-                    </div>
-                    <div class="popup_btn">
-                        <a class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</a>
-                        <a class="btn_recharge" href="#" @click.stop="establishFamily(1)">前往充值</a>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </form>
+
+    <div class="popup_cover" v-if="isPop">
+        <div class="popup_box">
+            <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
+            <div class="popup_text" id="popup_text">
+                创建家族需要支付10000钻石，您的钻石数量不足，请先充值
+            </div>
+            <div class="popup_btn">
+                <a class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</a>
+                <a class="btn_recharge" href="#" @click.stop="establishFamily(1)">前往充值</a>
+            </div>
+        </div>
+    </div>
 
     <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
         <div :class="[isSet ? '' : 'fixed', 'pop_bottom']">
