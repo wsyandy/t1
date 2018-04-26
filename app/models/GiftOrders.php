@@ -279,7 +279,7 @@ class GiftOrders extends BaseModel
             $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
                 'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => time()];
 
-            self::asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+            self::delay()->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
             return true;
         }
 

@@ -3317,28 +3317,6 @@ EOF;
 
     function test25Action()
     {
-
-        $gift_ids = [59, 60, 61];
-
-
-        $time = fetch($opts, 'time', time());
-        $user_id = $gift_order->user_id;
-        $amount = $gift_order->amount;
-        $activity_start = '2018-04-23 18:00:00';
-
-        if (isDevelopmentEnv()) {
-            $activity_start = '2018-04-23 14:50:00';
-        }
-
-        if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 23:59:59')) {
-            info("game_over", $gift_id, $user_id, $amount, $opts);
-            return;
-        }
-
-        info($gift_id, $user_id, $amount, $opts);
-
-        $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-        $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
         $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrange($key, 0, -1, 'withscores');
