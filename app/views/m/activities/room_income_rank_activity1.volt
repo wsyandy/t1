@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/income_rank_activity2') }}
+{{ theme_css('/m/css/income_rank_activity3') }}
 {{ theme_js('/m/js/income_rank_activity_1') }}
 {{ block_end() }}
 
