@@ -121,7 +121,7 @@
 
                 alert(index);
                 if (index == 1) {
-                    var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
+                    var url = "url://m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
                 }
             },
