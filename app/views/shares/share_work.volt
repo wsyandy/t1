@@ -37,10 +37,7 @@
         </div>
     </div>
 
-    <div class="btn_download">
-        <img class="btn_pink" src="/shares/images/btn_pink.png" alt="">
-        <a href="#" id="jump">立即下载</a>
-    </div>
+    <a href="#" id="jump" class="jump">立即下载</a>
 
 </div>
 
@@ -58,7 +55,7 @@
             $("#jump").attr('href', '{{ user.product_channel.code }}' + '://');
         }
 
-        $(".btn_download").click(function (e) {
+        $(".jump").click(function (e) {
             e.preventDefault();
 
             var app_url = '{{ user.product_channel.code }}' + '://';
@@ -74,7 +71,7 @@
 
     function Download() {
         $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
-        window.location = "/soft_versions/index?id=" + {{ soft_version_id }};
+        location.href = "/soft_versions/index?id=" + {{ soft_version_id }};
     }
 </script>
 </body>

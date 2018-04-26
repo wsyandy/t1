@@ -232,3 +232,25 @@ html {
 .none {
     display: none;
 }
+
+.jump {
+    position: relative;
+    width: 6.8rem;
+    height: 0.93rem;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    align-items: center;
+    margin-top: 1.2rem;
+    /*display: block;*/
+    /*margin: 0 auto;*/
+    line-height: 35px;
+    text-align: center;
+    background: #F45189;
+    border-radius: 50px;
+    font-size: 17px;
+    color: #FFFFFF;
+    /*margin-top: 26px;*/
+}
