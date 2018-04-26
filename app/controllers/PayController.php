@@ -43,8 +43,9 @@ class PayController extends ApplicationController
 
         $user_id = $this->params('user_id');
         $user = null;
+
         if ($user_id) {
-            $user = \Users::findFirstById($user_id);
+            $user = \Users::findFirstByUid($user_id);
         }
 
         if (!$user || $user->isSilent()) {
@@ -62,6 +63,7 @@ class PayController extends ApplicationController
         $product = \Products::findFirstById($this->params('product_id'));
 
         list($error_code, $error_reason, $order) = \Orders::createOrder($user, $product);
+
         if (ERROR_CODE_FAIL == $error_code) {
             return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
         }
@@ -125,7 +127,7 @@ class PayController extends ApplicationController
     function checkUserAction()
     {
         $user_id = $this->params('user_id');
-        $user = \Users::findFirstById($user_id);
+        $user = \Users::findFirstByUid($user_id);
         $nickname = '此ID不存在';
         if ($user && $user->isActive()) {
             $nickname = $user->nickname;
