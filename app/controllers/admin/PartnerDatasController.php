@@ -67,10 +67,7 @@ class PartnerDatasController extends BaseController
         }
 
         $activated_num = fetch($opts, 'activated_num');
-        $settlement_num = fetch($opts, 'settlement_num');
-        $register_ratio = sprintf('%0.2f', ($settlement_num / $activated_num) * 100);
 
-        $data['register_ratio'] = $register_ratio;
         $partner_data->rank = $activated_num;
         $partner_data->data = json_encode($data, JSON_UNESCAPED_UNICODE);
         $partner_data->save();
@@ -115,10 +112,7 @@ class PartnerDatasController extends BaseController
         }
 
         $activated_num = fetch($opts, 'activated_num');
-        $settlement_num = fetch($opts, 'settlement_num');
-        $register_ratio = sprintf('%0.2f', ($settlement_num / $activated_num) * 100);
 
-        $data['register_ratio'] = $register_ratio;
         $partner_data->rank = $activated_num;
         $partner_data->data = json_encode($data, JSON_UNESCAPED_UNICODE);
         $partner_data->save();
