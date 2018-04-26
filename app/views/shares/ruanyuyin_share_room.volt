@@ -17,7 +17,7 @@
             <img src="{{ user.avatar_url }}" alt="">
         </div>
         <div class="share_name">{{ user.nickname }}</div>
-        <div class="share_id">ID: <span>{{ user.id }}</span></div>
+        <div class="share_id">ID: <span>{{ user.uid }}</span></div>
         <div class="share_title">我正在这个房间玩，快来一起连麦嗨~</div>
         <a class="share_enter" id="jump_room"> 进入TA的房间 </a>
     </div>

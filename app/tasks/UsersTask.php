@@ -1437,17 +1437,18 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-系统消息:
-恭喜"温柔乡顶级男神派对"在#四月最壕活动#中获得冠军，奖金20000元+靓号556677，
-请获奖人及时联系Hi语音官方更多福利更多精彩请持续关注小Hi的活动哦~
+震惊！史上最牛X的送送送
+50万钻+绝版号666777
+你只有一次机会~
+活动即将开始，点击左上角“活动”了解详情！
 EOF;
 
-        $title = "四月最壕活动结束，恭喜温柔乡男神们获得2W奖金+靓号556677";
-        $body = "";
+        $title = "震惊！史上最牛X的送送送";
+        $body = "50万钻+绝版号666777，点击左上角“活动”了解详情！";
 
         $users = Users::find([
-            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE],
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
             'columns' => 'id'
         ]);
 

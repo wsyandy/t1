@@ -46,15 +46,14 @@
             </div>
 
             {#<div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}" >#}
-                {#<input class="close_submit" type="submit" name="submit" value="申请创建（100钻石）"#}
-                       {#:style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">#}
+            {#<input class="close_submit" type="submit" name="submit" value="申请创建（100钻石）"#}
+            {#:style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">#}
             {#</div>#}
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input class="close_submit" type="submit" name="submit" value="">
 
                 <span>申请创建（10000钻石）</span>
             </div>
-
 
 
             <div class="popup_cover" v-if="isPop">
@@ -64,8 +63,8 @@
                         创建家族需要支付10000钻石，您的钻石数量不足，请先充值
                     </div>
                     <div class="popup_btn">
-                        <a class="btn_cancel" href="#" @click="establishFamily(0)">取消</a>
-                        <a class="btn_recharge" href="#" @click="establishFamily(1)">前往充值</a>
+                        <a class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</a>
+                        <a class="btn_recharge" href="#" @click.stop="establishFamily(1)">前往充值</a>
                     </div>
                 </div>
             </div>
@@ -117,12 +116,16 @@
                     this.set_select = '/m/images/ico-select.png';
                 }
             },
+
+
             establishFamily: function (index) {
                 this.isPop = false;
+
                 if (isIos && !vm.is_development) {
                     alert("请到我的账户充值");
                     return;
                 }
+
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
@@ -188,11 +191,14 @@
 
             success: function (resp, status, xhr) {
                 can_create = true;
+
                 if (resp.error_code == -400) {
                     vm.isPop = true;
+                    return false;
                 } else {
                     alert(resp.error_reason);
                 }
+
                 if (resp.error_url) {
                     location.href = resp.error_url
                 }

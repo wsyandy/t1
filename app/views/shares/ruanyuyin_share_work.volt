@@ -16,7 +16,7 @@
             <img src="{{ user.avatar_url }}" alt="">
         </div>
         <div class="share_name">{{ user.nickname }}</div>
-        <div class="share_id">ID: <span>{{ user.id }}</span></div>
+        <div class="share_id">ID: <span>{{ user.uid }}</span></div>
         <div class="share_title">
             软语音是一个非常好玩的语音直播软件,推荐给你玩一玩,里面可以连麦聊天,组队开黑！
         </div>

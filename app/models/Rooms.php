@@ -47,7 +47,7 @@ class Rooms extends BaseModel
 
     function beforeCreate()
     {
-
+        $this->uid = $this->generateUid();
     }
 
     function afterCreate()
@@ -56,6 +56,7 @@ class Rooms extends BaseModel
             $this->uid = $this->generateUid();
             $this->update();
         }
+
         if ($this->hasChanged('name')) {
             self::delay()->updateRoomTypes($this->id);
         }
@@ -78,11 +79,40 @@ class Rooms extends BaseModel
      */
     function generateUid()
     {
-        if (isDevelopmentEnv()) {
-            return $this->id + 100000;
+
+        for ($i = 0; $i < 10; $i++) {
+            $uid = $this->randUid();
+            if (!$uid) {
+                continue;
+            }
+            $lock_key = 'lock_generate_room_uid_' . $uid;
+            $hot_cache = self::getHotWriteCache();
+            if (!$hot_cache->setnx($lock_key, $uid)) {
+                info('加锁失败', $lock_key);
+                continue;
+            }
+            $hot_cache->expire($lock_key, 3);
+            info('加锁成功', $lock_key);
+
+            return $uid;
         }
 
         return $this->id;
+    }
+
+    function randUid()
+    {
+
+        $user_db = Users::getUserDb();
+        $not_good_no_uid = 'room_not_good_no_uid_list';
+        $offset = mt_rand(0, 100000);
+        $uid = $user_db->zrange($not_good_no_uid, $offset, $offset);
+        $uid = current($uid);
+        if (!$user_db->zrem($not_good_no_uid, $uid)) {
+            $user_db->zrem($not_good_no_uid, $uid);
+        }
+
+        return $uid;
     }
 
     function isHot()
@@ -119,6 +149,10 @@ class Rooms extends BaseModel
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
+
+        if (isset($this->tag_names)) {
+            $data['room_tag_names'] = $this->tag_names;
+        }
 
         return $data;
     }
@@ -221,15 +255,30 @@ class Rooms extends BaseModel
     static function createRoom($user, $opts)
     {
         $name = fetch($opts, 'name');
-        $room_category_ids = fetch($opts, 'room_category_ids');
+        $room_tag_ids = fetch($opts, 'room_tag_ids');
 
         $room = new Rooms();
         $room->name = $name;
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
-            $room->room_category_ids = $room_category_ids;
+        if (isPresent($room_tag_ids)) {
+
+            $room_tags = RoomTags::findByIds($room_tag_ids);
+
+            if (count($room_tags)) {
+                $room->room_tag_ids = $room_tag_ids;
+
+
+                $room_tag_names = [];
+                foreach ($room_tags as $room_tag) {
+                    $room_tag_names[] = $room_tag->name;
+                }
+
+                $room->room_tag_names = implode(',', $room_tag_names);
+            }
+
         }
+
 
         $room->user_id = $user->id;
         $room->user = $user;
@@ -298,11 +347,23 @@ class Rooms extends BaseModel
             $this->topic = $topic;
         }
 
-        $room_category_ids = fetch($params, 'room_category_ids');
+        $room_tag_ids = fetch($params, 'room_tag_ids');
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
-            $this->room_category_ids = $room_category_ids;
+        if (isPresent($room_tag_ids)) {
+            $room_tags = RoomTags::findByIds($room_tag_ids);
+
+            if (count($room_tags)) {
+                $this->room_tag_ids = $room_tag_ids;
+
+
+                $room_tag_names = [];
+                foreach ($room_tags as $room_tag) {
+                    $room_tag_names[] = $room_tag->name;
+                }
+
+                $this->room_tag_names = implode(',', $room_tag_names);
+            }
         }
 
         $this->update();
@@ -1748,17 +1809,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2272,5 +2335,14 @@ class Rooms extends BaseModel
             $hot_cache = Rooms::getHotWriteCache();
             $hot_cache->zrem("room_game_white_list", $room_id);
         }
+    }
+
+    function getRoomTagNamesText()
+    {
+        if ($this->room_tag_names) {
+            return explode(',', $this->room_tag_names);
+        }
+
+        return [];
     }
 }

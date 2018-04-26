@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/voice_main1.css') }}
-{{ theme_js('/js/vue.min.js','/m/js/html2canvas.min') }}
+{{ theme_js('/m/js/html2canvas.min') }}
 {{ block_end() }}
 <script>
     (function (doc, win) {
@@ -98,7 +98,7 @@
                 <p class="hint">扫一扫，生成你的声鉴卡</p>
             </div>
             <div :class="['save_picture_qr_code',!sex&&'women']">
-                <img src="/m/images/wx.png" alt="">
+                <img src="/m/images/wx_m.jpg" alt="">
             </div>
         </div>
     </div>
@@ -267,18 +267,51 @@
         // download
 //        saveFile(imgData,filename);
         saveImage(imgData, filename);
+    }
 
-        function saveImage(img_data, filename) {
-            var data = {
-                'sid': vm.sid,
-                'code': vm.code,
-                'image_data': img_data,
-                'filename': filename
-            };
-            $.authPost('/m/users/save_image', data, function (resp) {
-                alert(resp.error_reason);
-            })
+    var is_dev = false;
+    {% if isDevelopmentEnv() %}
+    is_dev = true;
+    {% endif %}
+
+    function saveImage(img_data, filename) {
+        var data = {
+            'sid': vm.sid,
+            'code': vm.code,
+            'image_data': img_data,
+            'filename': filename
+        };
+        var file_type = 'base64';
+        //图片链接
+//        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180118205a608c73d25c8.jpg';
+//        file_type = 'image_url';
+
+//        //音乐链接
+//        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/musics/file/5ae0721822525.mp3';
+//        file_type = 'music_url';
+
+        var params = {data: img_data, file_type: file_type};
+        params = JSON.stringify(params)
+
+        if (is_dev) {
+            if ($.isIos()) {
+                alert('ios begin');
+                window.webkit.messageHandlers.saveImage.postMessage(params);
+                alert('ios end');
+                //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
+            } else {
+                alert('android begin');
+//                JsCallback.saveImage(params);
+                JsCallback.saveImageBase64(img_data);  //保存图片
+//                JsCallback.saveMusic(img_data);  //保存音乐
+                alert('android end');
+                // JsCallback.saveMusic
+            }
         }
 
+        $.authPost('/m/users/save_image', data, function (resp) {
+            alert(resp.error_reason);
+        })
     }
+
 </script>

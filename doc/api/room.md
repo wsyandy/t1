@@ -20,7 +20,7 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---|
 |name|房间名称|string|否||
-|room_category_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
+|room_tag_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
 
 ##### 1.2 回应参数说明
 ```
@@ -44,7 +44,7 @@
 |id|房间id|int|否||
 |name|房间名称|string|是||
 |topic|房间话题|string|是||
-|room_category_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
+|room_tag_ids|房间分类id|string|是|单个分类只传id，例："1"；多个分类id用逗号隔开，例："1,2"|
 
 ##### 2.2 回应参数说明
 ```
@@ -220,7 +220,7 @@
              "url": string  跳转地址,
              "icon": string 图片地址
          },
-     room_category_ids:[
+     room_tag_ids:[
             1 ,  房间分类的id
             2 ,  房间分类的id
             3 ,  房间分类的id
@@ -709,7 +709,7 @@
 |---|---|---|---|---
 |page|页码|int|否||
 |per_page|每页|int|否||
-|type|房间类型|string|是|产品菜单接口返回的参数|
+|type|房间类型|string|是|最新:new,推荐:recommend,开黑:gang_up,交友:friend,电台:broadcast,关注:follow,附近:nearby|
 |keyword|关键词|string|是|||
 
 
@@ -739,7 +739,7 @@
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳
             last_at int 最后活跃时间
-            user_num 在线人数
+            user_num 在线人数                       
         }
          ....
     ]
@@ -834,6 +834,11 @@
                 created_at int 创建时间戳
                 last_at int 最后活跃时间
                 user_num 在线人数
+                room_tag_names:[
+                     '唱歌' string，
+                     '陪玩' string，
+                      ...
+                ]
             }
              ....
         ],

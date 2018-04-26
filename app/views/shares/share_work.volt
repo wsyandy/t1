@@ -18,7 +18,7 @@
         </div>
         <div class="share_user">
             <div class="share_user_name">{{ user.nickname }}</div>
-            <div class="share_user_id">ID:{{ user.id }}</div>
+            <div class="share_user_id">ID:{{ user.uid }}</div>
         </div>
         <div class="share_text">
             老铁，Hi语音确实是一个非常好玩的语音
@@ -37,10 +37,7 @@
         </div>
     </div>
 
-    <div class="btn_download">
-        <img class="btn_pink" src="/shares/images/btn_pink.png" alt="">
-        <span>立即下载</span>
-    </div>
+    <a href="" id="jump" class="jump">立即下载</a>
 
 </div>
 
@@ -54,24 +51,26 @@
 
         if ($.isWeixinClient() || $.isWeiboClient()) {
             $("#open_in_browser_tip").removeClass('none');
+        } else if ($.isQqClient()) {
+            $("#jump").attr('href', '{{ user.product_channel.code }}' + '://');
+        } else {
+            $(".jump").click(function (e) {
+                e.preventDefault();
+
+                var app_url = '{{ user.product_channel.code }}' + '://';
+
+                window.location = app_url;
+
+                if ({{ soft_version_id }}) {
+                    setTimeout(Download, 2000);
+                }
+            });
         }
-
-        $(".btn_download").click(function (e) {
-            e.preventDefault();
-
-            var app_url = '{{ user.product_channel.code }}' + '://';
-
-            window.location = app_url;
-
-            if ({{ soft_version_id }}) {
-                setTimeout(Download, 2000);
-            }
-        });
-
     });
 
     function Download() {
-        window.location = "/soft_versions/index?id=" + {{ soft_version_id }};
+        $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
+        location.href = "/soft_versions/index?id=" + {{ soft_version_id }};
     }
 </script>
 </body>

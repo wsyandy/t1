@@ -45,11 +45,11 @@ class PaymentsController extends BaseController
 
     function createAction()
     {
-
         $user_id = $this->params('user_id');
         $user = null;
+
         if ($user_id) {
-            $user = \Users::findFirstById($user_id);
+            $user = \Users::findFirstByUid($user_id);
         }
 
         if (!$user || $user->isSilent()) {
@@ -130,7 +130,7 @@ class PaymentsController extends BaseController
 
         $this->view->order = $order;
         $payment = \Payments::findFirstByOrderId($order->id);
-        $this->session->set('pay_user_id', $order->user_id);
+        $this->session->set('pay_user_id', $order->user->uid);
         $this->session->set('pay_user_name', $order->user->nickname);
 
         if (!$payment || !$order->isPaid()) {
@@ -144,6 +144,6 @@ class PaymentsController extends BaseController
 
     function questionsAction()
     {
-        
+
     }
 }

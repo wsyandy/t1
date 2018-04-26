@@ -63,6 +63,32 @@ class Chats extends BaseModel
         'content_type' => array('null' => '不能为空', 'in' => [CHAT_CONTENT_TYPE_TEXT]),
     );
 
+    function beforeCreate()
+    {
+        $this->id = $this->generateId();
+    }
+
+    function afterCreate()
+    {
+        $cache_db = \Chats::getXRedis(0);
+        if (!$this->isFromAdmin()) {
+            $cache_db->zadd('chat_session_' . $this->sender_id . '_' . $this->receiver_id, time(), $this->id);
+            $cache_db->zadd('chat_user_list_' . $this->sender_id, time(), $this->receiver_id);
+        }
+
+        if (!$this->isToAdmin()) {
+            $cache_db->zadd('chat_session_' . $this->receiver_id . '_' . $this->sender_id, time(), $this->id);
+            $cache_db->zadd('chat_user_list_' . $this->receiver_id, time(), $this->sender_id);
+        }
+    }
+
+    function asyncAfterCreate()
+    {
+        if ($this->isFromAdmin()) {
+            $this->notifyAdminMessage();
+        }
+    }
+
     static function getCacheEndPoint()
     {
         $config = self::di('config');
@@ -142,25 +168,6 @@ class Chats extends BaseModel
         return false;
     }
 
-    function beforeCreate()
-    {
-        $this->id = $this->generateId();
-    }
-
-    function afterCreate()
-    {
-        $cache_db = \Chats::getXRedis(0);
-        if (!$this->isFromAdmin()) {
-            $cache_db->zadd('chat_session_' . $this->sender_id . '_' . $this->receiver_id, time(), $this->id);
-            $cache_db->zadd('chat_user_list_' . $this->sender_id, time(), $this->receiver_id);
-        }
-
-        if (!$this->isToAdmin()) {
-            $cache_db->zadd('chat_session_' . $this->receiver_id . '_' . $this->sender_id, time(), $this->id);
-            $cache_db->zadd('chat_user_list_' . $this->receiver_id, time(), $this->sender_id);
-        }
-    }
-
     function isFromAdmin()
     {
         return SYSTEM_ID == $this->sender_id;
@@ -169,13 +176,6 @@ class Chats extends BaseModel
     function isToAdmin()
     {
         return SYSTEM_ID == $this->receiver_id;
-    }
-
-    function asyncAfterCreate()
-    {
-        if ($this->isFromAdmin()) {
-            $this->notifyAdminMessage();
-        }
     }
 
     function notifyAdminMessage()

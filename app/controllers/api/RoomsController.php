@@ -69,11 +69,11 @@ class RoomsController extends BaseController
                 'name' => $room->name, 'channel_name' => $room->channel_name]);
         }
 
-        $room_category_ids = $this->params('room_category_ids');
+        $room_tag_ids = $this->params('room_tag_ids');
 
         //还要判断是否符合规则
-        if (isPresent($room_category_ids)) {
-            $opts['room_category_ids'] = $room_category_ids;
+        if (isPresent($room_tag_ids)) {
+            $opts['room_tag_ids'] = $room_tag_ids;
         }
 
         $room = \Rooms::createRoom($this->currentUser(), $opts);
@@ -232,15 +232,16 @@ class RoomsController extends BaseController
         }
 
         //房间分类信息
-        $room_category_ids = $room->room_category_ids;
-        $res['room_category_ids'] = [];
-        if (isPresent($room_category_ids)) {
-            $room_category_ids = explode(',', $room_category_ids);
+        $room_tag_ids = $room->room_tag_ids;
 
-            foreach ($room_category_ids as $room_category_id) {
-                $res['room_category_ids'][] = intval($room_category_id);
+        $res['room_tag_ids'] = [];
+        if (isPresent($room_tag_ids)) {
+
+            $room_tag_ids = explode(',', $room_tag_ids);
+
+            foreach ($room_tag_ids as $room_tag_id) {
+                $res['room_tag_ids'][] = intval($room_tag_id);
             }
-
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
@@ -491,7 +492,7 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '用户已经是管理员');
         }
 
-        if ($room->manager_num >= 2) {
+        if ($room->manager_num >= 10) {
             return $this->renderJSON(ERROR_CODE_FAIL, '管理员已满');
         }
 
@@ -647,23 +648,77 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
-        $keyword = $this->params('keyword');
+        $keyword = $this->params('keyword', null);
+        $type = $this->params('type');
 
-        if (is_null($keyword)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '搜索词不能为空！');
+        //关键词和类型不能同时为空
+        if (is_null($keyword) && isBlank($type)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $name = $keyword;
+        $cond = [];
+
+        if (!is_null($keyword)) {
+
+            $cond['conditions'] = 'name like :name:';
+            $cond['bind']['name'] = '%' . $keyword . '%';
+            $cond['bind']['room_category_names'] = '%' . $keyword . '%';
+
+        } elseif ($type) {
+
+            if ($type == 'broadcast') {
+
+                $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
+                $cond['conditions'] = " theme_type in ($theme_types)";
+
+            } elseif ($type == 'follow') {
+
+                $user_ids = $this->currentUser()->followUserIds();
+
+                if (count($user_ids) > 0) {
+                    $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
+                }
+
+            } elseif ($type == 'new') {
+
+                $cond['order'] = 'last_at desc,user_type asc';
+
+            } else {
+
+                $search_type = '';
+
+                foreach (\Rooms::$TYPES as $key => $value) {
+
+                    if ($type == $key) {
+                        $search_type = $key;
+                        break;
+                    }
+                }
+
+                if ($search_type) {
+                    $cond['conditions'] = " types like :types:";
+                    $cond['bind']['types'] = "%" . $search_type . "%";
+                }
+            }
+        }
+
+        if (isBlank($cond)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
 
         //限制搜索条件
-        $cond = [
-            'conditions' => 'online_status =  :online_status: and status = :status:',
-            'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON],
-            'order' => 'last_at desc, user_type asc'
-        ];
 
-        $cond['conditions'] .= ' and name like :name:';
-        $cond['bind']['name'] = '%' . $name . '%';
+        if (isset($cond['conditions'])) {
+            $cond['conditions'] .= " and online_status = :online_status: and status = :status:";
+        } else {
+            $cond['conditions'] = " online_status = :online_status: and status = :status:";
+        }
+
+        $cond['bind']['online_status'] = STATUS_ON;
+        $cond['bind']['status'] = STATUS_ON;
+        if (!isset($cond['order'])) {
+            $cond['order'] = 'last_at desc,user_type asc';
+        }
 
         debug($cond);
 
@@ -706,15 +761,30 @@ class RoomsController extends BaseController
 //            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
 //                ['gang_up' => $gang_up]);
 
-            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
-            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');;
+            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
+
+            foreach ($gang_up_rooms as $gang_up_room) {
+                $gang_up_room->category_names = ['test1'];
+            }
+
+            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
         }
 
         if (STATUS_ON == $gang_up_category) {
-            $gang_up_category_json[] = ['name' => '测试1', 'type' => 'test1', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试2', 'type' => 'test2', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试3', 'type' => 'test3', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
-            $gang_up_category_json[] = ['name' => '测试4', 'type' => 'test4', 'image_small_url' => $this->getRoot() . "images/system_avatar.png"];
+            $room_category = \RoomCategories::findFirstByType('gang_up');
+            if (isPresent($room_category)) {
+                $gang_up_categories = \RoomCategories::find(
+                    [
+                        'conditions' => " status = :status: and parent_id = :parent_id:",
+                        'bind' => ['status' => STATUS_ON, 'parent_id' => $room_category->id],
+                        'order' => 'rank desc,id desc',
+                    ]
+                );
+
+                foreach ($gang_up_categories as $item) {
+                    $gang_up_category_json[] = ['name' => $item->name, 'type' => $item->type, 'image_small_url' => $item->image_url];
+                }
+            }
         }
 
         $res['gang_up_categories'] = $gang_up_category_json;

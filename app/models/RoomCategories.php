@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
@@ -8,6 +9,24 @@
 class RoomCategories extends BaseModel
 {
     static $STATUS = [STATUS_ON => '正常', STATUS_OFF => '禁用'];
+
+    static $files = ['image' => APP_NAME . '/room_categories/image/%s'];
+
+    function getImageUrl()
+    {
+        $image = $this->image;
+
+        if ($image) {
+            return StoreFile::getUrl($image);
+        }
+
+        return '';
+    }
+
+    function mergeJson()
+    {
+        return ['image_url' => $this->image_url];
+    }
 
     function checkFields()
     {
