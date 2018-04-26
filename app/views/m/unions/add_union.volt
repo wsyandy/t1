@@ -66,7 +66,7 @@
             </div>
             <div class="popup_btn">
                 <a class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</a>
-                <a class="btn_recharge" href="#" @click.stop="establishFamily(1)">前往充值</a>
+                <a class="btn_recharge" href="/m/products&sid={{ sid}}&code={{ code }}" @click.stop="establishFamily(1)">前往充值</a>
             </div>
         </div>
     </div>
@@ -125,11 +125,11 @@
                     return;
                 }
 
-                if (index == 1) {
-                    var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
-                    location.href = url;
-                    return false;
-                }
+//                if (index == 1) {
+//                    var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
+//                    location.href = url;
+//                    return false;
+//                }
             },
             setSelect: function () {
                 this.isSet = true
