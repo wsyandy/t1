@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <a href="#" id="jump" class="jump">立即下载</a>
+    <a href="" id="jump" class="jump">立即下载</a>
 
 </div>
 
