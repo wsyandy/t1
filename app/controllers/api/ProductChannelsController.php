@@ -64,7 +64,7 @@ class ProductChannelsController extends BaseController
                 $product_menus_json[] = ['name' => $product_menu->name, 'type' => $product_menu->type];
             }
 
-            $detail_json['product_menus'] = $product_menus;
+            $detail_json['product_menus'] = $product_menus_json;
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
