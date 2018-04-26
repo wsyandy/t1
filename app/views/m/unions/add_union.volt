@@ -195,13 +195,13 @@
                 if (resp.error_code == -400) {
                     vm.isPop = true;
                     return false;
-                } else {
+                } else if (resp.error_code != 0) {
                     alert(resp.error_reason);
+                    return false;
+                } else {
+                    window.history.back(-1);
                 }
 
-//                if (resp.error_url) {
-//                    location.href = resp.error_url
-//                }
             }
         });
 
