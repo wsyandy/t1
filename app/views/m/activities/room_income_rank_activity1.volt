@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/income_rank_activity_1') }}
+{{ theme_css('/m/css/income_rank_activity2') }}
 {{ theme_js('/m/js/income_rank_activity_1') }}
 {{ block_end() }}
 
@@ -9,7 +9,7 @@
         <p id="time"></p>
     </div>
     <div v-if="activityState==0" class="water_activity_title">
-        <img src="/m/images/water_activity_titlebg.png" alt="文字说明"/>
+        <img src="/m/images/week_activity_title_bg.png" alt="文字说明"/>
     </div>
     <div v-if="activityState>=1" :style="{marginTop: '.5rem'}" class="water_activity_list_title"></div>
     <div v-if="activityState>=1" class="water_activity_list">
