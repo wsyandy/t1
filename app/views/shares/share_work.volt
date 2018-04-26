@@ -5,7 +5,7 @@
     <title>分享</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/shares/css/share_work.css">
+    <link rel="stylesheet" href="/shares/css/share_work1.css">
 </head>
 <body>
 <img class="share_bg" src="/shares/images/share_work_bg.png" alt="">
@@ -37,8 +37,17 @@
         </div>
     </div>
 
-    <a href="" id="jump" class="jump">立即下载</a>
+    <a href="{{ user.product_channel.code }}://" id="jump" class="jump">立即下载</a>
 
+</div>
+
+<!-- 弹框 开始-->
+<div class="fudong">
+    <h3>您还未安装 <b>Hi语音 </b>，无法直接进入App，请先去下载</h3>
+    <div class="btn_list">
+        <span class="close_btn">取消</span>
+        <span><a href="/soft_versions/index?id={{ soft_version_id }}" class="close_right">去下载</a></span>
+    </div>
 </div>
 
 <script src="/js/jquery/1.11.2/jquery.min.js"></script>
@@ -49,29 +58,14 @@
 
     $(document).ready(function () {
 
-        if ($.isWeixinClient() || $.isWeiboClient()) {
-            $("#open_in_browser_tip").removeClass('none');
-        } else if ($.isQqClient()) {
-            $("#jump").attr('href', '{{ user.product_channel.code }}' + '://');
-        } else {
-            $(".jump").click(function (e) {
-                e.preventDefault();
-
-                var app_url = '{{ user.product_channel.code }}' + '://';
-
-                window.location = app_url;
-
-                if ({{ soft_version_id }}) {
-                    setTimeout(Download, 2000);
-                }
-            });
+        if ({{ soft_version_id }}) {
+            setTimeout(showTip, 2000);
         }
+        $(".close_right").click(function () {
+            $(".fudong").hide();
+            $(".fudong_bg").hide();        })
     });
 
-    function Download() {
-        $("#jump").attr('href', "/soft_versions/index?id=" + {{ soft_version_id }});
-        location.href = "/soft_versions/index?id=" + {{ soft_version_id }};
-    }
 </script>
 </body>
 </html>
