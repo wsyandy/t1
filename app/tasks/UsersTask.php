@@ -1230,11 +1230,18 @@ class UsersTask extends \Phalcon\Cli\Task
         }
     }
 
-    function wakeupUsersStatAction()
+    function wakeupUsersStatAction($opts)
     {
+        if (count($opts) < 1) {
+            echoLine("参数错误");
+            return;
+        }
+
         $product_channel_id = 1;
         $user_db = \Users::getUserDb();
-        $stat_at = date("Ymd");
+        //$stat_at = date("Ymd");
+        $stat_at = $opts[0];
+
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
         $total = $user_db->zcard($send_user_ids_key);
         $active_user = 0;
