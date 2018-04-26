@@ -49,7 +49,7 @@ class WeixinMenus extends BaseModel
         $config = $di->get('config');
         $protocol = $config->request_protocol;
 
-        $domain = $protocol . $domain;
+        $domain = $protocol . "://" . $domain;
 
         $body = [];
 
