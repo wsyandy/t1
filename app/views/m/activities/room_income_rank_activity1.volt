@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/income_rank_activity4') }}
+{{ theme_css('/m/css/income_rank_activity5') }}
 {{ theme_js('/m/js/income_rank_activity_1') }}
 {{ block_end() }}
 
@@ -26,9 +26,10 @@
                         {% elseif index == 2 %}
                             <span class="ranking_three"></span>
                         {% else %}
-                            <span class="ranking">{{ item +4 }}</span>
+                            <span class="ranking">{{ index +1 }}</span>
                         {% endif %}
-                        <span class="name">{{ room.user_avatar_url }}</span>
+                        <img class="header" src="{{ room.user_avatar_url }}" alt="头像" />
+                        <span class="name">{{ room.user_nickname }}</span>
                         {% if index == 0 %}
                             <span class="prompt">冠军</span>
                             <span class="trophy"></span>
