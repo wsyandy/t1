@@ -118,7 +118,7 @@
 {
     error_code  0 成功，非0失败
     error_reason  失败原因，默认为空
-    id 用户id
+    id 用户id 即时通信账户(声网，环信)
     uid 用户uid 展示用户唯一标识
     sex	性别 0:女 1:男
     province_name 省名
@@ -141,6 +141,9 @@
     segment_text 段位文本 星耀1
     gold 用户金币数量
     diamond 用户钻石数量
+    im_password 即时通信密码(声网，环信)
+    app_id string 信令应用id
+    signaling_key string 信令token
 }
 ```
 
