@@ -1865,7 +1865,6 @@ class Users extends BaseModel
 
         //屏蔽公司内部账号
         $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-
         if ($block_near_by_user_ids) {
             $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
         }
@@ -1914,7 +1913,7 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
         info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
 
-        if ($users->count() < 3) {
+        if ($users->total_entries < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
