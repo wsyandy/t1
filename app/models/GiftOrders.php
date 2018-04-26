@@ -227,6 +227,124 @@ class GiftOrders extends BaseModel
         return $error_code;
     }
 
+    /**
+     * @param $sender_id
+     * @param $receiver_ids
+     * @param $gift
+     * @param $gift_num
+     */
+    static function sendGift($sender, $receiver_ids, $gift, $gift_num)
+    {
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(",", $receiver_ids);
+        }
+
+        $receiver_num = count($receiver_ids);
+
+        if ($receiver_num < 1) {
+            info("param error", $sender->id);
+            return false;
+        }
+
+        //送礼物总个数
+        $total_gift_num = $receiver_num * $gift_num;
+        $total_amount = intval($gift->amount) * $total_gift_num;
+
+        if (!$sender->canGiveGift($gift, $total_gift_num)) {
+            return false;
+        }
+
+        $opts = ['mobile' => $sender->mobile];
+
+        $receiver_id = $receiver_ids[0];
+        $receiver = Users::findFirstById($receiver_id);
+
+        if ($gift->isDiamondPayType()) {
+            $remark = '送礼物消费' . $total_amount . '钻石,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
+            $opts['remark'] = $remark;
+
+            if ($sender->isCompanyUser()) {
+                $sender->addCompanyUserSendNumber($total_amount);
+            }
+
+            $result = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
+        } else {
+            $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
+            $opts['remark'] = $remark;
+            $result = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
+        }
+
+        if ($result) {
+
+            $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
+                'receiver_current_room_id' => $receiver->current_room_id];
+
+            self::asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+            return true;
+        }
+
+        return false;
+    }
+
+    static function asyncCreateGiftOrder($sender_id, $receiver_ids, $gift_id, $opts = [])
+    {
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(",", $receiver_ids);
+        }
+
+        $sender = Users::findFirstById($sender_id);
+        $gift = Gifts::findFirstById($gift_id);
+        $gift_num = fetch($opts, 'gift_num');
+        $sender_current_room_id = fetch($opts, 'sender_current_room_id');
+        $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
+        $receivers = Users::findByIds($receiver_ids);
+
+        foreach ($receivers as $receiver) {
+
+            $receiver_id = $receiver->id;
+
+            $gift_order = new GiftOrders();
+            $gift_order->sender_id = $sender_id;
+            $gift_order->user_id = $receiver_id;
+            $gift_order->gift_id = $gift->id;
+            $gift_order->amount = $gift->amount * $gift_num;
+            $gift_order->name = $gift->name;
+            $gift_order->pay_type = $gift->pay_type;
+            $gift_order->gift_type = $gift->type;
+            $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+            $gift_order->gift_num = $gift_num;
+            $gift_order->receiver_user_type = $receiver->user_type;
+            $gift_order->sender_user_type = $sender->user_type;
+            $gift_order->receiver_union_id = $receiver->union_id;
+            $gift_order->sender_union_id = $sender->union_id;
+            $gift_order->receiver_union_type = $receiver->union_type;
+            $gift_order->sender_union_type = $sender->union_type;
+            $gift_order->sender_country_id = $sender->country_id;
+            $gift_order->receiver_country_id = $receiver->country_id;
+            $gift_order->product_channel_id = $receiver->product_channel_id;
+
+            if ($sender_id == $receiver_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+            } else {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+            }
+
+            // 在房间里送里面
+            if ($sender_current_room_id && $receiver_current_room_id && $sender_current_room_id == $receiver_current_room_id) {
+                $sender_current_room = Rooms::findFirstById($sender_current_room_id);
+                $gift_order->room_id = $sender_current_room_id;
+                $gift_order->room_union_id = $sender_current_room->union_id;
+                $gift_order->room_union_type = $sender_current_room->union_type;
+            }
+
+            if ($gift_order->create()) {
+                $gift_order->updateUserGiftData($gift);
+            } else {
+                info("Exce gift_order_create_fail", $sender_id, $receiver_ids, $gift_id, $opts);
+            }
+        }
+    }
+
     function updateUserGiftData($gift)
     {
 
