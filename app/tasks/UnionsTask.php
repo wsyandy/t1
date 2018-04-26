@@ -262,4 +262,41 @@ class UnionsTask extends \Phalcon\Cli\Task
         }
 
     }
+
+    function testAction()
+    {
+        $union_histories = Unions::find(['columns' => 'user_id']);
+        echoLine(count($union_histories));
+
+        foreach ($union_histories as $union_history) {
+            $user_id = $union_history->user_id;
+            $exit_union_history = UnionHistories::findFirstBy(['status' => STATUS_OFF, 'user_id' => $user_id], 'id desc');
+            $add_union_history = UnionHistories::findFirstBy(['status' => STATUS_ON, 'user_id' => $user_id], 'id desc');
+
+            if ($add_union_history->id > $exit_union_history->id && $add_union_history->join_at <= $exit_union_history->exit_at) {
+                $user = Users::findFirstById($user_id);
+
+                $user->union_id = $add_union_history->union_id;
+                $user->update();
+                echoLine($user_id, $add_union_history->union_id, $exit_union_history->union_id);
+            }
+        }
+
+        $time = 7 * 24 * 60 * 60;
+
+        //7天自动退出 测试环境30分钟
+        if (isDevelopmentEnv()) {
+            $time = 5 * 60;
+        }
+
+        $start_at = time() - 60 * 30 - $time;
+        $end_at = time() - $time;
+
+        $union_histories = \UnionHistories::find([
+            'conditions' => 'status = :status: and apply_exit_at < :exit_end_at:',
+            'bind' => ['status' => STATUS_PROGRESS, 'exit_end_at' => $end_at]
+        ]);
+
+        echoLine(count($union_histories));
+    }
 }

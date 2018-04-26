@@ -1,6 +1,5 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/voice_main1.css') }}
-{{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
 <div id="app" class="sound_entry">
     <div class="sound_entry_input">
@@ -17,6 +16,7 @@
         <img src="/m/images/logo2.png" alt="logo"/>
         <span>Hi语音鉴定，必属精品</span>
     </div>
+    <div class="sound_entry_bottom_bg"></div>
 </div>
 <script>
     var opts = {

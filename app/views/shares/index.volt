@@ -16,7 +16,7 @@
             <img src="{{ user.avatar_small_url }}">
         </div>
         <h3>{{ user.nickname }}</h3>
-        <p>ID：{{ user.id }}</p>
+        <p>ID：{{ user.uid }}</p>
         <a href="" class="upload_btn" id="jump_room">进入Ta的房间</a>
     </div>
 </div>

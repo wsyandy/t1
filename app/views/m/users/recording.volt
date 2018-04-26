@@ -1,8 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/voice_main1.css') }}
-{{ theme_js('/js/vue.min.js') }}
 {{ block_end() }}
-{#<div id="app">#}
 <div id="app" class="recording">
     <p class="recording_title">请录制一段不少于5秒的音频</p>
     <div class="recording_title_hint">
@@ -39,8 +37,8 @@
             </div>
         </div>
     </div>
+    <div class="sound_entry_bottom_bg"></div>
 </div>
-{#</div>#}
 <script>
     var opts = {
         data: {

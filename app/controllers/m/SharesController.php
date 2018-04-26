@@ -13,6 +13,8 @@ class SharesController extends BaseController
     {
         $room_id = $this->params('room_id');
         $share_source = 'H5';
+        $type = $this->params('type');
+        $platform = $this->params('platform');
 
         $user = $this->currentUser();
         $code = $this->currentProductChannel()->code;
@@ -39,15 +41,25 @@ class SharesController extends BaseController
         $url = $share_history->getShareUrl($this->getRoot(), $code);
         $title = $share_history->getShareTitle($user->nickname, $product_channel_name);
 
-        $res = [
-            'title' => $title,
-            'image_url' => $image_url,
-            'image_small_url' => $image_small_url,
-            'description' => $description,
-            'url' => $url,
-            'share_history_id' => $share_history->id
-        ];
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+        $test_url = "app://share?platform=" . $platform . "&type=" . $type;
+
+        switch ($type) {
+            case 'web_page': {
+                $test_url .= "&title=" . $title . "&description=" . $description .
+                    "&share_url=" . $url . "&image_url=" . $image_url . "&share_history_id=" . $share_history->id;
+                break;
+            }
+            case 'image': {
+                $test_url .= "&image_url=" . $image_url . "&share_history_id=" . $share_history->id;
+                break;
+            }
+            case 'text': {
+                $test_url .= "&description=" . $description . "&share_history_id=" . $share_history->id;
+                break;
+            }
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['test_url' => $test_url]);
     }
 
     function testAction()

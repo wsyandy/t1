@@ -86,6 +86,8 @@ class Users extends BaseModel
 
     function beforeCreate()
     {
+        $this->uid = $this->generateUid();
+
         $this->user_status = USER_STATUS_ON;
         if (!$this->user_type) {
             $this->user_type = USER_TYPE_ACTIVE;
@@ -117,6 +119,7 @@ class Users extends BaseModel
         if (!$this->uid) {
             $this->uid = $this->generateUid();
             $this->update();
+            info('Exce no_uid', $this->id);
         }
     }
 
@@ -195,19 +198,13 @@ class Users extends BaseModel
      */
     function generateUid()
     {
-        if (isDevelopmentEnv()) {
-            return $this->id + 100000;
-        }
-
-        return $this->id;
-    }
-
-    function generateUid2()
-    {
 
         for ($i = 0; $i < 10; $i++) {
             $uid = $this->randUid();
-            $lock_key = 'lock_generate_uid_' . $uid;
+            if(!$uid){
+                continue;
+            }
+            $lock_key = 'lock_generate_user_uid_' . $uid;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->setnx($lock_key, $uid)) {
                 info('加锁失败', $lock_key);
@@ -226,17 +223,17 @@ class Users extends BaseModel
     {
 
         $user_db = Users::getUserDb();
-        $not_good_no_uid = 'not_good_no_uid_list';
-        $offset = mt_rand(0, 200000);
+        $not_good_no_uid = 'user_not_good_no_uid_list';
+        $offset = mt_rand(0, 100000);
         $uid = $user_db->zrange($not_good_no_uid, $offset, $offset);
         $uid = current($uid);
         if (!$user_db->zrem($not_good_no_uid, $uid)) {
             $user_db->zrem($not_good_no_uid, $uid);
         }
 
-        info('uid', $uid);
         return $uid;
     }
+
 
     /**
      * 产生 SID

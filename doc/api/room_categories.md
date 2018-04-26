@@ -18,36 +18,16 @@
      channel_name: ''
      channel_key: '' 发起者channel_key                  
      receiver_channel_key: '' 接受者channel_key
-    room_categories:[
-    {
-        name:娱乐
-        second_categories: [
+     room_categories:[
             {
                 id : 1
                 name:唱歌
             }
-            
             {
                 id : 2
                 name:陪玩
             }
-        ]
-    }
-    
-    {
-        name:娱乐
-        second_caterories: [
-            {
-                id : 1
-                name:唱歌
-            }
-        
-            {
-                id : 2
-                name:陪玩
-            }
-        ]
-    } 
-   ]                 
+            ...
+     ]                 
 }
 ```

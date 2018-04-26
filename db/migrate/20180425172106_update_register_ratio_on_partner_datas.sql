@@ -1,0 +1,1 @@
+alter table partner_datas drop column register_ratio;

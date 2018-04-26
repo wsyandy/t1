@@ -133,31 +133,31 @@ class Unions extends BaseModel
         $union->avatar = $dest_filename;
         $union->save();
 
-        $db = \Users::getUserDb();
-        $good_num_list_key = 'good_num_list';
-
-        if ($db->zscore($good_num_list_key, $union->id)) {
-            $union->status = STATUS_OFF;
-            $union->mobile = '';
-            $union->type = 0;
-            $union->user_id = 0;
-            $union->auth_status = AUTH_NONE;
-            $union->update();
-
-            $union = new Unions();
-            $union->name = $name;
-            $union->notice = $notice;
-            $union->need_apply = $need_apply;
-            $union->product_channel_id = $user->product_channel_id;
-            $union->user_id = $user->id;
-            $union->status = STATUS_ON;
-            $union->auth_status = AUTH_WAIT;
-            $union->mobile = $user->mobile;
-            $union->type = UNION_TYPE_PRIVATE;
-            $union->avatar_status = AUTH_SUCCESS;
-            $union->avatar = $dest_filename;
-            $union->save();
-        }
+//        $db = \Users::getUserDb();
+//        $good_num_list_key = 'good_num_list';
+//
+//        if ($db->zscore($good_num_list_key, $union->id)) {
+//            $union->status = STATUS_OFF;
+//            $union->mobile = '';
+//            $union->type = 0;
+//            $union->user_id = 0;
+//            $union->auth_status = AUTH_NONE;
+//            $union->update();
+//
+//            $union = new Unions();
+//            $union->name = $name;
+//            $union->notice = $notice;
+//            $union->need_apply = $need_apply;
+//            $union->product_channel_id = $user->product_channel_id;
+//            $union->user_id = $user->id;
+//            $union->status = STATUS_ON;
+//            $union->auth_status = AUTH_WAIT;
+//            $union->mobile = $user->mobile;
+//            $union->type = UNION_TYPE_PRIVATE;
+//            $union->avatar_status = AUTH_SUCCESS;
+//            $union->avatar = $dest_filename;
+//            $union->save();
+//        }
 
 
         $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
@@ -489,6 +489,7 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '该用户已经加入其它家族'];
         }
 
+
         $db = Users::getUserDb();
         $key = $this->generateUsersKey();
 
@@ -547,18 +548,18 @@ class Unions extends BaseModel
             return [ERROR_CODE_FAIL, '您已不再此家族'];
         }
 
-        $db = Users::getUserDb();
-
         if ($user->isUnionHost($this)) {
             return [ERROR_CODE_FAIL, '家族长不能单独退出家族'];
         }
 
-        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON],
-            'id desc');
+        $db = Users::getUserDb();
 
         if ($db->zscore($this->generateApplyExitUsersKey(), $user->id)) {
             return [ERROR_CODE_FAIL, '你已申请退出,请耐心等待！'];
         }
+
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON],
+            'id desc');
 
         info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
         if ($union_history) {
@@ -839,18 +840,20 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date('Ymd'));
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date('Ymd'));
 
-                $key = "total_union_fame_value_day_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "total_union_fame_value_" . $start . "_" . $end;
-                break;
-            }
+                    $key = "total_union_fame_value_day_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "total_union_fame_value_" . $start . "_" . $end;
+                    break;
+                }
             default:
                 return '';
         }

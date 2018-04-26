@@ -25,7 +25,7 @@ html,body{
   width: 7.5rem;
   height: 12.42rem;
   background:url(../images/water_activity_bg.png) center no-repeat;
-  background-size: 7.5rem 12.42rem; 
+  background-size: 7.5rem 12.42rem;
 }
 .water_activity_trailer{
   padding-top: 2.1rem;
@@ -59,6 +59,7 @@ html,body{
   border-radius: 0.16rem;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 .water_activity_title img{
   width: 5.48rem;
@@ -112,7 +113,7 @@ html,body{
   width: 6.9rem;
   padding: .45rem .5rem .08rem .27rem;
   background-color: #28195A;
-  border: 1px solid #715CFF; 
+  border: 1px solid #715CFF;
   border-radius: .16rem;
   flex-direction: column;
 }
@@ -187,4 +188,11 @@ html,body{
   height: .6rem;
   background: url(../images/ranking_three_icon.png) center no-repeat;
   background-size: .6rem;
+}
+.water_activity_title span{
+  position: absolute;
+  left: 2.4rem;
+  top: 5.1rem;
+  font-size: .4rem;
+  color: #D5941E;
 }
