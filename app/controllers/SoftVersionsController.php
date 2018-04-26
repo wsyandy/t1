@@ -33,8 +33,8 @@ class SoftVersionsController extends \ApplicationController
 
             } else {
 
-                // 微信浏览器下载
-                if ($this->isWeixinClient() && $soft_version->weixin_url) {
+                // 微信浏览器下载 或QQ浏览器下载
+                if (($this->isWeixinClient() || $this->isQqClient()) && $soft_version->weixin_url) {
                     $soft_version->increase('download_num');
                     $this->response->redirect($soft_version->weixin_url);
                     return;
@@ -93,6 +93,12 @@ class SoftVersionsController extends \ApplicationController
             }
         }
 
+    }
+
+    function isQqClient()
+    {
+        $ua = $this->request->getUserAgent();
+        return !!(strpos($ua, 'QQ') && strpos($ua, 'Mobile'));
     }
 
 }

@@ -1,9 +1,4 @@
-;
 
-function colse_fd() {
-    $(".fudong").hide();
-    $(".fudong_bg").hide();
-};
 
 $(".fudong").hide();
 $(".fudong_bg").hide();
@@ -30,6 +25,10 @@ function showTip() {
     $(".upload_btn").removeAttr('disabled')
 }
 
+function colse_fd() {
+    $(".fudong").hide();
+    $(".fudong_bg").hide();
+}
 
 // $(".upload_btn").click(function (e) {
 

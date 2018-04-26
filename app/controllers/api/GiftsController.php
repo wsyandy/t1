@@ -89,9 +89,10 @@ class GiftsController extends BaseController
 
         if ($this->currentUser()->canGiveGift($gift, $total_gift_num)) {
 
-            $give_result = \GiftOrders::giveTo($this->currentUserId(), $receiver_ids, $gift, $gift_num, $total_gift_num);
+            $give_result = \GiftOrders::sendGift($this->currentUser(), $receiver_ids, $gift, $gift_num);
 
             if ($give_result) {
+
                 $notify_data = \ImNotify::generateNotifyData(
                     'gifts',
                     'give',

@@ -65,7 +65,7 @@ class AccountHistories extends BaseModel
 
         if (!$user) {
             info($user_id);
-            return false;
+            return null;
         }
 
         $account_history = new \AccountHistories();
@@ -84,11 +84,11 @@ class AccountHistories extends BaseModel
         }
 
         if ($account_history->save()) {
-            return true;
+            return $account_history;
         }
 
         info($user->sid, $fee_type, $amount, $opts);
-        return false;
+        return null;
     }
 
     function checkBalance()

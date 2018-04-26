@@ -254,3 +254,67 @@ html {
     color: #FFFFFF;
     /*margin-top: 26px;*/
 }
+
+/*删除弹框*/
+.fudong {
+    width: 250px;
+    height: 150px;
+    position: fixed;
+    z-index: 999999;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+}
+
+.fudong_bg {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.60);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+
+.fudong h3 {
+    padding: 0 17px;
+    text-align: center;
+    font-size: 14px;
+    color: #424242;
+    margin-top: 33px;
+    line-height: 22px;
+}
+
+.fudong h3 b {
+    font-size: 14px;
+    color: #F45189;
+    font-weight: normal;
+}
+
+.btn_list {
+    margin-top: 28px;
+    text-align: center;
+    overflow: hidden;
+    border-top: 1px solid #f9f9f9;
+}
+
+.btn_list span {
+    float: left;
+    display: block;
+    width: 49.5%;
+    height: 44px;
+    line-height: 44px;
+    border-radius: 2px;
+    font-size: 16px;
+    color: #BABABA;
+    cursor: pointer;
+}
+
+.btn_list .close_right {
+    color: #5A5A5A;
+    border-left: 1px solid #f9f9f9;
+}
+
+.none {
+    display: none;
+}

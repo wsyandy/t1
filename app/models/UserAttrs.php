@@ -44,23 +44,8 @@ trait UserAttrs
             'i_segment' => $this->i_segment,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
-            'diamond' => $this->diamond,
-            'i_gold' => $this->i_gold,
-            'lang' => $this->lang,
-            'country_id' => $this->country_id
+            'diamond' => $this->diamond
         ];
-
-        if ($this->country_id) {
-            $data['country_english_name'] = $this->country_english_name;
-            $data['country_chinese_name'] = $this->country_chinese_name;
-        } else {
-            $data['country_english_name'] = '';
-            $data['country_chinese_name'] = '';
-        }
-
-        if (isDevelopmentEnv()) {
-            //    $data['id'] = $this->uid;
-        }
 
         if (isPresent($this->union)) {
             $data['union_name'] = $this->union->name;
@@ -235,7 +220,7 @@ trait UserAttrs
             'id' => $this->id,
             'nickname' => $this->nickname,
             'avatar_url' => $this->avatar_small_url,
-            'sex'=>$this->sex
+            'sex' => $this->sex
         );
     }
 

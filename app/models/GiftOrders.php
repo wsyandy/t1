@@ -227,8 +227,159 @@ class GiftOrders extends BaseModel
         return $error_code;
     }
 
-    function updateUserGiftData($gift)
+    /**
+     * @param $sender_id
+     * @param $receiver_ids
+     * @param $gift
+     * @param $gift_num
+     */
+    static function sendGift($sender, $receiver_ids, $gift, $gift_num)
     {
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(",", $receiver_ids);
+        }
+
+        $receiver_num = count($receiver_ids);
+
+        if ($receiver_num < 1) {
+            info("param error", $sender->id);
+            return false;
+        }
+
+        //送礼物总个数
+        $total_gift_num = $receiver_num * $gift_num;
+        $total_amount = intval($gift->amount) * $total_gift_num;
+
+        if (!$sender->canGiveGift($gift, $total_gift_num)) {
+            return false;
+        }
+
+        $opts = ['mobile' => $sender->mobile];
+
+        $receiver_id = $receiver_ids[0];
+        $receiver = Users::findFirstById($receiver_id);
+
+        if ($gift->isDiamondPayType()) {
+            $remark = '送礼物消费' . $total_amount . '钻石,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
+            $opts['remark'] = $remark;
+
+            if ($sender->isCompanyUser()) {
+                $sender->addCompanyUserSendNumber($total_amount);
+            }
+
+            $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
+        } else {
+            $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
+            $opts['remark'] = $remark;
+            $target = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
+        }
+
+        if ($target) {
+
+            $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
+                'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => time()];
+
+            self::delay()->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+
+            $opts['async_verify_data'] = 1;
+            self::delay(15)->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+            return true;
+        }
+
+        return false;
+    }
+
+    static function asyncCreateGiftOrder($sender_id, $receiver_ids, $gift_id, $opts = [])
+    {
+        if (!is_array($receiver_ids)) {
+            $receiver_ids = explode(",", $receiver_ids);
+        }
+
+        $sender = Users::findFirstById($sender_id);
+        $gift = Gifts::findFirstById($gift_id);
+        $gift_num = fetch($opts, 'gift_num');
+        $sender_current_room_id = fetch($opts, 'sender_current_room_id');
+        $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
+        $time = fetch($opts, 'time');
+        $target_id = fetch($opts, 'target_id');
+        $async_verify_data = fetch($opts, 'async_verify_data');
+
+        if ($async_verify_data) {
+
+            $cond = [
+                'conditions' => 'target_id = :target_id: and pay_type = :pay_type:',
+                'bind' => ['target_id' => $target_id, 'pay_type' => $gift->pay_type],
+                'order' => 'id desc'
+            ];
+
+            $gift_order = GiftOrders::findFirst($cond);
+
+            if ($gift_order) {
+                info("gift_already_save", $sender_id, $receiver_ids, $gift_id, $opts);
+                return;
+            }
+
+            info("Exce already_save_fail", $sender_id, $receiver_ids, $gift_id, $opts);
+
+            return;
+        }
+
+        $receivers = Users::findByIds($receiver_ids);
+
+        info($sender_id, $receiver_ids, $gift_id, $opts);
+
+        foreach ($receivers as $receiver) {
+
+            $receiver_id = $receiver->id;
+
+            $gift_order = new GiftOrders();
+            $gift_order->sender_id = $sender_id;
+            $gift_order->user_id = $receiver_id;
+            $gift_order->gift_id = $gift->id;
+            $gift_order->amount = $gift->amount * $gift_num;
+            $gift_order->name = $gift->name;
+            $gift_order->pay_type = $gift->pay_type;
+            $gift_order->gift_type = $gift->type;
+            $gift_order->status = GIFT_ORDER_STATUS_SUCCESS;
+            $gift_order->gift_num = $gift_num;
+            $gift_order->receiver_user_type = $receiver->user_type;
+            $gift_order->sender_user_type = $sender->user_type;
+            $gift_order->receiver_union_id = $receiver->union_id;
+            $gift_order->sender_union_id = $sender->union_id;
+            $gift_order->receiver_union_type = $receiver->union_type;
+            $gift_order->sender_union_type = $sender->union_type;
+            $gift_order->sender_country_id = $sender->country_id;
+            $gift_order->receiver_country_id = $receiver->country_id;
+            $gift_order->target_id = $target_id;
+            $gift_order->product_channel_id = $receiver->product_channel_id;
+
+            if ($sender_id == $receiver_id) {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+            } else {
+                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+            }
+
+            // 在房间里送里面
+            if ($sender_current_room_id && $receiver_current_room_id && $sender_current_room_id == $receiver_current_room_id) {
+                $sender_current_room = Rooms::findFirstById($sender_current_room_id);
+                $gift_order->room_id = $sender_current_room_id;
+                $gift_order->room_union_id = $sender_current_room->union_id;
+                $gift_order->room_union_type = $sender_current_room->union_type;
+            }
+
+            if ($gift_order->create()) {
+                $gift_order->updateUserGiftData($gift, ['time' => $time]);
+            } else {
+                info("Exce gift_order_create_fail", $sender_id, $receiver_ids, $gift_id, $opts);
+            }
+        }
+    }
+
+    function updateUserGiftData($gift, $opts = [])
+    {
+        info($gift->id, $this->user->id, $opts);
+
+        $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
             \UserGifts::delay()->updateGiftExpireAt($this->id);
@@ -236,22 +387,25 @@ class GiftOrders extends BaseModel
             \UserGifts::delay()->updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
-                info($this->user->id, $gift->id);
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time()]);
+                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
                 //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => time(), 'async_verify_data' => 1]);
+                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time, 'async_verify_data' => 1]);
             }
         }
 
         if ($gift->isDiamondPayType()) {
-            $this->updateUserData();
+            $this->updateUserData($opts);
         }
     }
 
-    function updateUserData()
+    function updateUserData($opts = [])
     {
-        $time = time();
+        $time = $time = fetch($opts, 'time', time());
+
+        info($this->user->id, $opts);
+
+        $params = ['time' => $time];
 
         //统计房间收益
         if ($this->room) {
@@ -260,7 +414,7 @@ class GiftOrders extends BaseModel
                 $this->room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, ['time' => $time]);
+                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, $params);
                 }
             }
 
@@ -270,10 +424,9 @@ class GiftOrders extends BaseModel
             }
         }
 
-        $opts = ['time' => $time];
 
-        \Users::delay()->updateExperience($this->id, $opts);
-        \Users::delay()->updateCharm($this->id, $opts);
+        \Users::delay()->updateExperience($this->id, $params);
+        \Users::delay()->updateCharm($this->id, $params);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
