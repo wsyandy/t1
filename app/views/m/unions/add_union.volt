@@ -46,15 +46,14 @@
             </div>
 
             {#<div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}" >#}
-                {#<input class="close_submit" type="submit" name="submit" value="申请创建（100钻石）"#}
-                       {#:style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">#}
+            {#<input class="close_submit" type="submit" name="submit" value="申请创建（100钻石）"#}
+            {#:style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">#}
             {#</div>#}
             <div class="family-btn" :style="{backgroundColor: hasAgree?'#FDC8DA':'#F45189'}">
                 <input class="close_submit" type="submit" name="submit" value="">
 
                 <span>申请创建（10000钻石）</span>
             </div>
-
 
 
             <div class="popup_cover" v-if="isPop">
@@ -119,10 +118,7 @@
             },
             establishFamily: function (index) {
                 this.isPop = false;
-                if (isIos && !vm.is_development) {
-                    alert("请到我的账户充值");
-                    return;
-                }
+                
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
