@@ -65,7 +65,7 @@
                 创建家族需要支付10000钻石，您的钻石数量不足，请先充值
             </div>
             <div class="popup_btn">
-                <p class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</p>
+                <p class="btn_cancel" @click.stop="establishFamily(0)">取消</p>
                 <a class="btn_recharge" href="/m/products&sid={{ sid}}&code={{ code }}" @click.stop="establishFamily(1)">前往充值</a>
             </div>
         </div>
