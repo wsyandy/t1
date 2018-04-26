@@ -18,7 +18,7 @@
         </div>
         <div class="share_user">
             <div class="share_user_name">{{ user.nickname }}</div>
-            <div class="share_user_id">ID:{{ user.id }}</div>
+            <div class="share_user_id">ID:{{ user.uid }}</div>
         </div>
         <div class="share_text">
             老铁，Hi语音确实是一个非常好玩的语音
