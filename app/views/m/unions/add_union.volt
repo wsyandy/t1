@@ -119,9 +119,8 @@
             establishFamily: function (index) {
                 this.isPop = false;
 
-                alert(index);
                 if (index == 1) {
-                    var url = "url://m/products&sid=" + vm.sid + "&code=" + vm.code;
+                    var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
                 }
             },
