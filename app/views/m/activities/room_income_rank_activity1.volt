@@ -120,7 +120,7 @@
         sec = toTwo(sec)
         // 渲染倒计时时钟
 
-        var time =   day + "天" + hr + ":" + min + ":" + sec;
+        var time =   parseInt(day) + "天" + parseInt(hr) + ":" + parseInt(min) + ":" + parseInt(sec);
 
         var _time = document.getElementById("time");
 
