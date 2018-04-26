@@ -9,7 +9,7 @@ class PartnerAccountsController extends BaseController
         $page = $this->params('page');
         $partner_accounts = \PartnerAccounts::findPagination(['order' => 'id desc'], $page, 60);
 
-        $root = $this->getRoot();
+        $root = "https://pd.momoyuedu.cn/";
         $this->view->root = $root;
         $this->view->partner_accounts = $partner_accounts;
     }
