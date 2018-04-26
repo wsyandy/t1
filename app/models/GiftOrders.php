@@ -280,6 +280,9 @@ class GiftOrders extends BaseModel
                 'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => time()];
 
             self::delay()->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+
+            $opts['async_verify_data'] = 1;
+            self::delay(15)->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
             return true;
         }
 
@@ -299,6 +302,28 @@ class GiftOrders extends BaseModel
         $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
         $time = fetch($opts, 'time');
         $target_id = fetch($opts, 'target_id');
+        $async_verify_data = fetch($opts, 'async_verify_data');
+
+        if ($async_verify_data) {
+
+            $cond = [
+                'conditions' => 'target_id = :target_id: and pay_type = :pay_type:',
+                'bind' => ['target_id' => $target_id, 'pay_type' => $gift->pay_type],
+                'order' => 'id desc'
+            ];
+
+            $gift_order = GiftOrders::findFirst($cond);
+
+            if ($gift_order) {
+                info("gift_already_save", $sender_id, $receiver_ids, $gift_id, $opts);
+                return;
+            }
+
+            info("Exce already_save_fail", $sender_id, $receiver_ids, $gift_id, $opts);
+
+            return;
+        }
+
         $receivers = Users::findByIds($receiver_ids);
 
         info($sender_id, $receiver_ids, $gift_id, $opts);
