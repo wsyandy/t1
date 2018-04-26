@@ -286,9 +286,9 @@
 //        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180118205a608c73d25c8.jpg';
 //        file_type = 'image_url';
 
-        //音乐链接
-        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/musics/file/5ae0721822525.mp3';
-        file_type = 'music_url';
+//        //音乐链接
+//        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/musics/file/5ae0721822525.mp3';
+//        file_type = 'music_url';
 
         var params = {data: img_data, file_type: file_type};
         params = JSON.stringify(params)
@@ -302,8 +302,8 @@
             } else {
                 alert('android begin');
 //                JsCallback.saveImage(params);
-//                JsCallback.saveImageBase64(img_data);  //保存图片
-                JsCallback.saveMusic(img_data);  //保存音乐
+                JsCallback.saveImageBase64(img_data);  //保存图片
+//                JsCallback.saveMusic(img_data);  //保存音乐
                 alert('android end');
                 // JsCallback.saveMusic
             }
