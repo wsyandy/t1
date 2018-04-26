@@ -3322,24 +3322,24 @@ EOF;
 
         $start = date("Ymd", beginOfWeek());
         $end =  date("Ymd", endOfWeek());
-        $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
+        $key = "week_charm_rank_list_gift_id_60_" . $start . "_" . $end;
         $user_db = Users::getUserDb();
-        $data = $user_db->zrange($key, 0, -1, 'withscores');
+        $data = $user_db->zrevrange($key, 0, -1, 'withscores');
 
         foreach ($data as $user_id => $amount) {
 
             $total_amount = GiftOrders::sum(
                 [
                     'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
-                    'bind' => ['user_id' => $user_id, 'gift_id' => 59],
+                    'bind' => ['user_id' => $user_id, 'gift_id' => 60],
                     'column' => 'amount'
                 ]);
 
-            if ($total_amount != $amount) {
+            if ($total_amount == $amount) {
                 echoLine($user_id, $total_amount, $amount);
             }
 
-            $user_db->zadd($key, $total_amount, $user_id);
+            //$user_db->zadd($key, $total_amount, $user_id);
         }
 
         echoLine(count($user_db->zrange($key, 0, -1)));
