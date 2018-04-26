@@ -130,7 +130,7 @@ class PaymentsController extends BaseController
 
         $this->view->order = $order;
         $payment = \Payments::findFirstByOrderId($order->id);
-        $this->session->set('pay_user_id', $order->user_id);
+        $this->session->set('pay_user_id', $order->user->uid);
         $this->session->set('pay_user_name', $order->user->nickname);
 
         if (!$payment || !$order->isPaid()) {
