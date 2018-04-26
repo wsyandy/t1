@@ -761,7 +761,7 @@ class RoomsController extends BaseController
 //            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
 //                ['gang_up' => $gang_up]);
 
-            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
+            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
 
             foreach ($gang_up_rooms as $gang_up_room) {
                 $gang_up_room->category_names = ['test1'];

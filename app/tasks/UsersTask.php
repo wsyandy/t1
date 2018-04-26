@@ -1447,7 +1447,7 @@ EOF;
         $body = "50万钻+绝版号666777，点击左上角“活动”了解详情！";
 
         $users = Users::find([
-            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at <= :last_at:',
+            'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
             'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
             'columns' => 'id'
         ]);
