@@ -119,7 +119,7 @@
             establishFamily: function (index) {
                 this.isPop = false;
 
-
+                alert(index);
                 if (index == 1) {
                     var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
                     location.href = url;
@@ -188,7 +188,7 @@
 
                 if (resp.error_code == -400) {
                     vm.isPop = true;
-                    return;
+                    return false;
                 } else {
                     alert(resp.error_reason);
                 }
