@@ -463,7 +463,7 @@ class ActivitiesController extends BaseController
         $this->view->start = date("Y年m月d号{$start_hour}点", $start_at);
 
 
-        $this->view->title = "流水活动";
+        $this->view->title = "疯狂送!送!送!";
 
     }
 }

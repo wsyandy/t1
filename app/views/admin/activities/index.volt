@@ -18,6 +18,12 @@
     <label for="id">ID</label>
     <input name="activity[id_eq]" type="text" id="id"/>
 
+    <label for="type_eq">类型</label>
+
+    <select name="activity[type_eq]" id="type_eq">
+        {{ options(types, type) }}
+    </select>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 
