@@ -115,7 +115,7 @@ class GoodNoTask extends \Phalcon\Cli\Task
         echoLine('计算范围', $min_id, $min_max);
 
         $total = $user_db->zcard($not_good_no_uid);
-        if ($total > 1000000) {
+        if ($total > 500000) {
             echoLine('return', $not_good_no_uid, 'total', $total);
             return;
         }
