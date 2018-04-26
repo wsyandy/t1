@@ -1809,19 +1809,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2196,6 +2194,9 @@ class Rooms extends BaseModel
     static function updateRoomTypes($room_id)
     {
         $room = \Rooms::findFirstById($room_id);
+        if ( $room->theme_type == ROOM_THEME_TYPE_BROADCAST) {
+            return;
+        }
         $type_keywords = [
             'gang_up' => ['开黑', '游戏', '球球', '王者', '吃鸡', '绝地求生', '求带', '刺激战场', '第五人格', '迷雾'],
             'friend' => ['交友', '处对象', '连麦', '处关系', 'u处', 'u连', 'les', '聊天'],
