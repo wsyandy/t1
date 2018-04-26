@@ -39,7 +39,7 @@ return [
         'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
         'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic'],
         'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'], 'orders' => ['index'],
-        'payments' => ['index']
+        'payments' => ['index'], 'audios' => '*', 'audio_chapters' => '*'
     ],
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
         'push_messages' => '*', 'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'banned_words' => ' *',
