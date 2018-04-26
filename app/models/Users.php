@@ -1954,8 +1954,8 @@ class Users extends BaseModel
             $user_ids[] = $user->id;
         }
 
-        $hot_cache->setex($cache_key, 180, json_encode($user_ids, JSON_UNESCAPED_UNICODE));
-        $hot_cache->setex($cache_total_entries_key, 180, $users->total_entries);
+        $hot_cache->setex($cache_key, 90, json_encode($user_ids, JSON_UNESCAPED_UNICODE));
+        $hot_cache->setex($cache_total_entries_key, 90, $users->total_entries);
 
         // 计算距离
         $this->calDistance($users);
