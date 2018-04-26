@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/income_rank_activity3') }}
+{{ theme_css('/m/css/income_rank_activity4') }}
 {{ theme_js('/m/js/income_rank_activity_1') }}
 {{ block_end() }}
 
@@ -10,6 +10,7 @@
     </div>
     <div v-if="activityState==0" class="water_activity_title">
         <img src="/m/images/week_activity_title_bg.png" alt="文字说明"/>
+        <span>(价值5万元)</span>
     </div>
     <div v-if="activityState>=1" :style="{marginTop: '.5rem'}" class="water_activity_list_title"></div>
     <div v-if="activityState>=1" class="water_activity_list">
