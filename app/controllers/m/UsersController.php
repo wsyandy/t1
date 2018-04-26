@@ -288,10 +288,10 @@ class UsersController extends BaseController
                     $img_path = str_replace('../../..', '', $new_file);
                     $img_files[] = $img_path;
                     $res = \Albums::uploadImage($user, $img_files);
+                    if (file_exists($source_filename)) {
+                        unlink($source_filename);
+                    }
                     if ($res) {
-                        if (file_exists($source_filename)) {
-                            unlink($source_filename);
-                        }
                         return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到Hi相册');
                     } else {
                         return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
