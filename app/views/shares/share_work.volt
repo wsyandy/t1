@@ -53,20 +53,19 @@
             $("#open_in_browser_tip").removeClass('none');
         } else if ($.isQqClient()) {
             $("#jump").attr('href', '{{ user.product_channel.code }}' + '://');
+        } else {
+            $(".jump").click(function (e) {
+                e.preventDefault();
+
+                var app_url = '{{ user.product_channel.code }}' + '://';
+
+                window.location = app_url;
+
+                if ({{ soft_version_id }}) {
+                    setTimeout(Download, 2000);
+                }
+            });
         }
-
-        $(".jump").click(function (e) {
-            e.preventDefault();
-
-            var app_url = '{{ user.product_channel.code }}' + '://';
-
-            window.location = app_url;
-
-            if ({{ soft_version_id }}) {
-                setTimeout(Download, 2000);
-            }
-        });
-
     });
 
     function Download() {
