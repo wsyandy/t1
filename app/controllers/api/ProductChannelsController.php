@@ -24,6 +24,9 @@ class ProductChannelsController extends BaseController
 
     function bootConfigAction()
     {
+        $side_menu = $this->params('side_menu');
+        $product_menu = $this->params('product_menu');
+
         $root = $this->getRoot();
         //声网登录密码
         $product_channel_id = $this->currentProductChannelId();
@@ -40,6 +43,29 @@ class ProductChannelsController extends BaseController
 
         $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity.png'];
         $detail_json['menu_config'][] = ['show' => true, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union.png'];
+
+        $cond = [
+            'conditions' => " status = :status: and product_channel_id = :product_channel_id:",
+            'bind' => ['status' => STATUS_ON, 'product_channel_id' => $this->currentProductChannelId()],
+            'order' => 'rank desc,id desc'
+        ];
+
+        if (isDevelopmentEnv() && !$side_menu) {
+            $detail_json['menu_config'] = '';
+        }
+
+        if ($product_menu) {
+
+            $product_menus = \ProductMenus::find($cond);
+
+            $product_menus_json = [];
+
+            foreach ($product_menus as $product_menu) {
+                $product_menus_json[] = ['name' => $product_menu->name, 'type' => $product_menu->type];
+            }
+
+            $detail_json['product_menus'] = $product_menus;
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
