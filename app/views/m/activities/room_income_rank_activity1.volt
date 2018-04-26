@@ -28,7 +28,7 @@
                         {% else %}
                             <span class="ranking">{{ index +1 }}</span>
                         {% endif %}
-                        <img class="header" src="{{ room.user_avatar_url }}" alt="头像" />
+                        <img class="header" src="{{ room.user_avatar_url }}" alt="头像"/>
                         <span class="name">{{ room.user_nickname }}</span>
                         {% if index == 0 %}
                             <span class="prompt">冠军</span>
@@ -90,10 +90,14 @@
         var EndTime = new Date(end_time) || [];
         var NowTime = new Date().getTime();
 
-        if (vm.activityState != 2 && NowTime >= EndTime) {
-            location.reload();
-        } else if (vm.activityState != 1 && NowTime >= StartTime) {
-            vm.activityState = 1;
+        if (NowTime >= EndTime) {
+            if (vm.activityState != 2) {
+                location.reload();
+            }
+        } else if (NowTime >= StartTime) {
+            if (vm.activityState != 1) {
+                vm.activityState = 1;
+            }
         }
 
 
@@ -112,6 +116,7 @@
             }, 1000)
         } else {
             total_micro_second = 0;
+            return;
         }
         // 总秒数
         var second = Math.floor(total_micro_second / 1000);
