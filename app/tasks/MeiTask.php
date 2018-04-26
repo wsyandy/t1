@@ -3317,6 +3317,11 @@ EOF;
 
     function test25Action()
     {
+
+        $gift_ids = [59, 60, 61];
+
+        $start = date("Ymd", beginOfWeek());
+        $end =  date("Ymd", endOfWeek());
         $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrange($key, 0, -1, 'withscores');
