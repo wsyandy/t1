@@ -54,7 +54,7 @@
     {#<a href="/admin/product_channels/emchat/{{ product_channel.id }}" class="modal_action">环信配置</a><br/>#}
     {#<a href="/admin/product_channels/copy?id={{ product_channel.id }}" class="modal_action">复制产品渠道到</a><br/>#}
     {% if isAllowed('product_channels','getui_global_push') and !isDevelopmentEnv() %}
-    <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a>
+    <a href="/admin/product_channels/getui_global_push?id={{ product_channel.id }}" class="modal_action">个推全局推送</a><br/>
     {% endif %}
     {% if isAllowed('product_menus','index') %}
         <a href="/admin/product_menus?product_channel_id={{ product_channel.id }}">产品菜单配置</a>
