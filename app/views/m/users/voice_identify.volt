@@ -282,9 +282,14 @@
             'filename': filename
         };
         var file_type = 'base64';
-
+        //图片链接
 //        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180118205a608c73d25c8.jpg';
 //        file_type = 'image_url';
+
+        //音乐链接
+        img_data = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/musics/file/5ae0721822525.mp3';
+        file_type = 'music_url';
+
         var params = {data: img_data, file_type: file_type};
         params = JSON.stringify(params)
 
