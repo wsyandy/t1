@@ -340,6 +340,66 @@ class ActivitiesController extends BaseController
         $this->view->title = "hi语音活动";
     }
 
+    function roomIncomeRankActivity1Action()
+    {
+        $id = $this->params('id');
+        $activity = \Activities::findFirstById($id);
+        $start_at = $activity->start_at;
+        $end_at = $activity->end_at;
+        $time = time();
+
+        //活动未开始
+        $activity_state = 0;
+        $max = 0;
+        $rooms = null;
+
+        if ($time >= $end_at) {
+            //活动结束
+            $activity_state = 2;
+            $max = 2;
+        } else if ($time >= $start_at) {
+            //活动进行中
+            $activity_state = 1;
+            $max = 9;
+        }
+
+        if ($activity_state > 0) {
+            $key = "room_stats_income_day_" . date('Ymd', $start_at);
+            $db = \Rooms::getRoomDb();
+            $res = $db->zrevrange($key, 0, $max, 'withscores');
+
+            $room_ids = [];
+            $incomes = [];
+
+            foreach ($res as $k => $value) {
+                $room_ids[] = $k;
+                $incomes[$k] = $value;
+            }
+            $rooms = \Rooms::findByIds($room_ids);
+
+            if (count($rooms)) {
+                foreach ($rooms as $index => $room) {
+                    if ($index > 0) {
+                        $last_room = $rooms[$index - 1];
+                        $last_room_income = $incomes[$last_room->id];
+                        $room->missing_income = $last_room_income - $incomes[$room->id];
+                    }
+                }
+            }
+        }
+
+        $this->view->activity_state = $activity_state;
+        $this->view->rooms = $rooms;
+
+        $this->view->start_time = date("Y/m/d H:i:s", $start_at);
+        $this->view->end_time = date("Y/m/d H:i:s", $end_at);;
+        $end_hour = intval(date("H", $end_at));
+        $start_hour = intval(date("H", $start_at));
+        $this->view->end = date("Y年m月d号{$end_hour}点", $end_at);
+        $this->view->start = date("Y年m月d号{$start_hour}点", $start_at);
+        $this->view->title = "疯狂送!送!送!";
+    }
+
     //送钻石活动 道具 小黄瓜
     function giveDiamondByCucumberActivityAction()
     {
@@ -445,25 +505,5 @@ class ActivitiesController extends BaseController
         $this->view->end_time = "2018/4/29 23:59:59";
 
         $this->view->title = "社会我Hi音";
-    }
-
-    function roomIncomeRankActivity1Action()
-    {
-        $id = $this->params('id');
-        $activity = \Activities::findFirstById($id);
-        $start_at = $activity->start_at;
-        $end_at = $activity->end_at;
-        $end_time = date("Y/m/d H:i:s", $start_at);
-        debug($end_time);
-
-        $this->view->end_time = $end_time;
-        $end_hour = intval(date("H", $end_at));
-        $start_hour = intval(date("H", $start_at));
-        $this->view->end = date("Y年m月d号{$end_hour}点", $end_at);
-        $this->view->start = date("Y年m月d号{$start_hour}点", $start_at);
-
-
-        $this->view->title = "疯狂送!送!送!";
-
     }
 }

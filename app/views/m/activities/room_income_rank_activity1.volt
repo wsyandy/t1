@@ -13,39 +13,34 @@
         <span>(价值5万元)</span>
     </div>
     <div v-if="activityState>=1" :style="{marginTop: '.5rem'}" class="water_activity_list_title"></div>
-    <div v-if="activityState>=1" class="water_activity_list">
-        <p class="water_activity_list_top"><span>排名</span><span>房主昵称</span></p>
-        <ul class="water_activity_ul">
-            <li>
-                <span class="ranking_neo"></span>
-                <img class="header" src="/m/images/ranking_three_icon.png" alt="头像"/>
-                <span class="name">昵称昵称昵称</span>
-                <span class="prompt">冠军</span>
-                <span class="trophy"></span>
-            </li>
-            <li>
-                <span class="ranking_two"></span>
-                <img class="header" src="/m/images/ranking_three_icon.png" alt="头像"/>
-                <span class="name">昵称昵称昵称</span>
-                <span class="prompt">冠军</span>
-                <span class="score">12144</span>
-            </li>
-            <li>
-                <span class="ranking_three"></span>
-                <img class="header" src="/m/images/ranking_three_icon.png" alt="头像"/>
-                <span class="name">昵称昵称昵称</span>
-                <span class="prompt">冠军</span>
-                <span class="score">12144</span>
-            </li>
-            <li v-if="activityState==1" v-for="item in 6">
-                <span class="ranking">${ item +4 }</span>
-                <img class="header" src="/m/images/ranking_three_icon.png" alt="头像"/>
-                <span class="name">昵称昵称昵称</span>
-                <span class="prompt">冠军</span>
-                <span class="score">12144</span>
-            </li>
-        </ul>
-    </div>
+    {% if rooms %}
+        <div v-if="activityState>=1" class="water_activity_list">
+            <p class="water_activity_list_top"><span>排名</span><span>房主昵称</span></p>
+            <ul class="water_activity_ul">
+                {% for index,room in rooms %}
+                    <li>
+                        {% if index == 0 %}
+                            <span class="ranking_neo"></span>
+                        {% elseif index == 1 %}
+                            <span class="ranking_two"></span>
+                        {% elseif index == 2 %}
+                            <span class="ranking_three"></span>
+                        {% else %}
+                            <span class="ranking">{{ item +4 }}</span>
+                        {% endif %}
+                        <span class="name">{{ room.user_avatar_url }}</span>
+                        {% if index == 0 %}
+                            <span class="prompt">冠军</span>
+                            <span class="trophy"></span>
+                        {% else %}
+                            <span class="prompt">距前一名差</span>
+                            <span class="score">{{ room.missing_income }}</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <div class="water_activity_rules">
         <span class="title">活动规则</span>
         <div class="water_activity_rules_line">
@@ -72,7 +67,7 @@
     var opts = {
         data: {
             //活动状态:0预告、1进行、2结束
-            activityState: 0
+            activityState: {{ activity_state }}
         },
         methods: {}
     };
@@ -81,47 +76,60 @@
 
     $(function () {
 
+        var start_time = '{{ start_time }}';
         var end_time = '{{ end_time }}';
 
-        countdown(end_time)
+        countdown(end_time, start_time)
     });
 
 
-    function countdown(end_time) {
+    function countdown(end_time, start_time) {
         // var EndTime = new Date(that.data.end_time)|| []
-        var EndTime = new Date(end_time) || []
-        var NowTime = new Date().getTime()
-        var total_micro_second = EndTime - NowTime || []
+        var StartTime = new Date(start_time) || [];
+        var EndTime = new Date(end_time) || [];
+        var NowTime = new Date().getTime();
 
+        if (vm.activityState != 2 && NowTime >= EndTime) {
+            location.reload();
+        } else if (vm.activityState != 1 && NowTime >= StartTime) {
+            vm.activityState = 1;
+        }
+
+
+        if (NowTime < StartTime) {
+            EndTime = StartTime;
+        }
+
+        var total_micro_second = EndTime - NowTime || [];
+
+        console.log(total_micro_second);
 
         if (total_micro_second > 0) {
             setTimeout(function () {
                 total_micro_second -= 1000;
-                countdown(end_time)
+                countdown(end_time, start_time)
             }, 1000)
         } else {
             total_micro_second = 0;
-            $('.countdown_box').addClass('over');
         }
         // 总秒数
-        var second = Math.floor(total_micro_second / 1000)
+        var second = Math.floor(total_micro_second / 1000);
         // 天数
-        var day = Math.floor(second / 3600 / 24)
+        var day = Math.floor(second / 3600 / 24);
         // 小时
-        var hr = Math.floor(second / 3600 % 24)
+        var hr = Math.floor(second / 3600 % 24);
         // 分钟
-        var min = Math.floor(second / 60 % 60)
+        var min = Math.floor(second / 60 % 60);
         // 秒
-        var sec = Math.floor(second % 60)
+        var sec = Math.floor(second % 60);
         // 时间格式化输出，如11:03 25:19 每1s都会调用一次
-        second = toTwo(second)
-        day = toTwo(day)
-        hr = toTwo(hr)
-        min = toTwo(min)
-        sec = toTwo(sec)
+        day = toTwo(day);
+        hr = toTwo(hr);
+        min = toTwo(min);
+        sec = toTwo(sec);
         // 渲染倒计时时钟
 
-        var time =   parseInt(day) + "天" + parseInt(hr) + ":" + parseInt(min) + ":" + parseInt(sec);
+        var time = parseInt(day) + "天" + parseInt(hr) + ":" + parseInt(min) + ":" + parseInt(sec);
 
         var _time = document.getElementById("time");
 
@@ -131,7 +139,7 @@
      * 封装函数使1位数变2位数
      */
     function toTwo(n) {
-        n = n < 10 ? "0" + n : n
+        n = n < 10 ? "0" + n : n;
         return n
     }
 </script>
