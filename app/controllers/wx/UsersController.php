@@ -177,10 +177,11 @@ class UsersController extends BaseController
                         $toShareJson = [
                             'title' => '哇 ~  原来我的声音 ...',
                             'description' => '专业的声音鉴定,快来领取属于自己的专属声鉴卡！',
+                            'type' => 'video',
                             'image_url' => $image_url,
                             'data_url' => $data_url
                         ];
-
+                        info('分享数据：', $toShareJson);
                         return $this->renderJSON(ERROR_CODE_SUCCESS, 'success', $toShareJson);
                     } else {
                         return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
