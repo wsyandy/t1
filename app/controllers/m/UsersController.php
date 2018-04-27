@@ -171,6 +171,7 @@ class UsersController extends BaseController
 
         $this->view->sex = $sex;
         $this->view->nickname = $nickname;
+        $this->view->show_share = $show_share;
         $this->view->user = json_encode($user->toChatJson(), JSON_UNESCAPED_UNICODE);
     }
 
