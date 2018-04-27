@@ -165,7 +165,7 @@ class UsersController extends BaseController
         $ip = $this->remoteIp();
         $show_share = false;
 
-        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
+        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40', '139.227.253.253'])) {
             $show_share = true;
         }
 
