@@ -360,9 +360,9 @@
 
             if (is_dev) {
                 if ($.isIos()) {
-                    alert('ios begin');
+//                    alert('ios begin');
                     window.webkit.messageHandlers.saveImage.postMessage(params);
-                    alert('ios end');
+//                    alert('ios end');
                     //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
                 } else {
                     alert('android begin');
@@ -375,7 +375,7 @@
             }
 
             $.authPost('/m/users/save_image', data, function (resp) {
-                alert(resp.error_reason);
+//                alert(resp.error_reason);
             });
         }
 
