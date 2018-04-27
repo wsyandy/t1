@@ -202,21 +202,10 @@ class BaseController extends \ApplicationController
         return $version;
     }
 
-    function getUrl()
-    {
-        $request_host = $this->isHttps() ? 'https' : 'http';
-        $host = $this->request->getHttpHost();
-        $uri = $this->request->getURI();
-        $uri = substr($uri, 1);
-
-        return $request_host . '://' . $host . '/' . $uri;
-    }
-
-
     function getSignPackage()
     {
         $product_channel = $this->currentProductChannel();
-        $url = $this->getUrl();
+        $url = $this->getFullUrl();
         $weixin_event = new \WeixinEvents($product_channel);
         $sign_package = $weixin_event->getSignPackage($url);
         return $sign_package;

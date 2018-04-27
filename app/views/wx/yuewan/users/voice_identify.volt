@@ -132,20 +132,7 @@
             consonant1: '',
             consonant2: '',
             consonant3: '',
-            avatar_url: '',
-            share_data: {
-                title: '',
-                link: '',
-                imgUrl: "",
-                desc: '',
-                type:'',
-                dataUrl:'',
-                success: function () {
-                    alert("分享成功!!");
-                },
-                cancel: function () {
-                }
-            }
+            avatar_url: ''
         },
 
         methods: {
@@ -293,22 +280,30 @@
     {#is_dev = true;#}
     {#{% endif %}#}
 
-    function getImage(img_data, filename) {
+    function getImage(image_data, filename) {
         var data = {
             'sid': vm.sid,
             'code': vm.code,
-            'image_data': img_data,
+            'image_data': image_data,
             'filename': filename
         };
 
         $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
             if (0 == resp.error_code) {
-                vm.share_data.title = resp.title;
-                vm.share_data.imgUrl = resp.image_url;
-                vm.share_data.type = resp.type;
-                vm.share_data.desc = resp.description;
-                vm.share_data.dataUrl = resp.data_url;
-                vm.share_data.link = resp.data_url;
+                wx.onMenuShareAppMessage({
+                    title: resp.title,
+                    desc: resp.description,
+                    link: resp.data_url,
+                    imgUrl: resp.image_url,
+                    type: resp.type,
+                    dataUrl: resp.data_url,
+                    success: function () {
+                        alert('分享成功！！');
+                    },
+                    cancel: function () {
+                        alert('分享失败，请重试！');
+                    }
+                });
             } else {
                 alert(resp.error_reason);
             }
