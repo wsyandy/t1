@@ -73,6 +73,7 @@
     error_reason: '赠送成功/失败/余额不足'
     diamond: 用户钻石余额
     gold: 用户金币余额
+    total_amount: 消费的钻石或金币数额
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'

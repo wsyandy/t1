@@ -105,9 +105,15 @@ class GiftsController extends BaseController
                     ]
                 );
 
+                $receiver_ids = explode(",", $receiver_ids);
+                $receiver_num = count($receiver_ids);
+                $total_gift_num = $receiver_num * $gift_num;
+                $total_amount = intval($gift->amount) * $total_gift_num;
+
+
                 $current_user = $this->currentUser(true);
 
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold]);
+                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $total_amount]);
 
                 $error_reason = "购买成功";
 
