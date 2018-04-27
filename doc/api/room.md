@@ -739,7 +739,12 @@
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳
             last_at int 最后活跃时间
-            user_num 在线人数                       
+            user_num 在线人数 
+            room_tag_names:[
+                  '球球' string，
+                  '王者荣耀' string，
+                   ...
+            ]
         }
          ....
     ]

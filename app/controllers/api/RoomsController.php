@@ -720,6 +720,10 @@ class RoomsController extends BaseController
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
+        foreach ($rooms as $room) {
+            $room->tag_names = $room->getRoomTagNamesText();
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -760,7 +764,7 @@ class RoomsController extends BaseController
             $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
 
             foreach ($gang_up_rooms as $gang_up_room) {
-                $gang_up_room->category_names = ['test1'];
+                $gang_up_room->tag_names = ['test1'];
             }
 
             $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
