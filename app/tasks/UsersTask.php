@@ -1443,7 +1443,7 @@ EOF;
 活动即将开始，点击左上角“活动”了解详情！
 EOF;
 
-        $title = "震惊！史上最牛X的送送送";
+        $title = "史上最牛X的送送送火热进行中";
         $body = "50万钻+绝版号666777，点击左上角“活动”了解详情！";
 
         $users = Users::find([
@@ -1466,7 +1466,7 @@ EOF;
             if ($num >= 50) {
                 echoLine($num, count($user_ids), $delay);
                 Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
-                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                //Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
                 $delay += 2;
                 $user_ids = [];
                 $num = 0;

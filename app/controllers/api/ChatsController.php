@@ -45,6 +45,10 @@ class ChatsController extends BaseController
         $content_type = $this->params('content_type'); // text image voice
         $file = $this->params('file');
 
+        if (isDevelopmentEnv() && isBlank($content)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
+        }
+
         if (!$this->currentUser()->isFriend($this->otherUser())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '对方不是您的好友');
         }
