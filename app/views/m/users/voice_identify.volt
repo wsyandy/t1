@@ -110,7 +110,7 @@
         <span @click="showShare" class="share_buttom">分享</span>
     </div>
 
-        {% if isDevelopmentEnv() %}
+        {% if show_share %}
         <div v-if="isShareToast" class="share_link_toast">
             <div class="share_link_box">
             <ul class="share_link">
@@ -344,7 +344,7 @@
         }
 
         var is_dev = false;
-        {% if isDevelopmentEnv() %}
+        {% if show_share %}
         is_dev = true;
         {% endif %}
 
