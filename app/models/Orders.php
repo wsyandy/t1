@@ -73,7 +73,7 @@ class Orders extends BaseModel
         $order->product_channel_id = $user->product_channel_id;
         $order->partner_id = $user->partner_id;
         $order->platform = $user->platform;
-        $order->province_id = $user->getSearchCityId();
+        $order->province_id = $user->getSearchProvinceId();
         $order->mobile = $user->mobile;
         $order->union_id = $user->union_id;
         $order->union_type = $user->union_type;
