@@ -26,7 +26,7 @@
         {% endif %}
     </div>
     <div class="pay_money">
-        {#//支付方式 优惠充值 关注公众号 HI-6888#}
+        {#//支付方式 优惠充值 关注公众号 HI-7899#}
         <h3></h3>
         <ul>
             {% for k, payment_channel in payment_channels %}

@@ -6,7 +6,7 @@
         <label class="string optional control-label" for="partner_data_product_channel_id">产品渠道</label>
         <div>
             <select  text_field="name" value_field="id" name="partner_data[product_channel_id]" id="partner_data_product_channel_id" class="selectpicker select optional form-control" data-live-search="true">
-                {{ options(product_channels, product_channel_id, 'id', 'name') }}
+                    {{ options(product_channels, '', 'id', 'name') }}
             </select>
 
         </div>
@@ -15,25 +15,16 @@
          style="padding-left: 2px; padding-right: 2px;float:left;width:50%"><label class="string optional control-label" for="partner_data_partner_id">推广渠道</label>
         <div>
             <select  text_field="name" value_field="id" name="partner_data[partner_id]" id="partner_data_partner_id" class="selectpicker select optional form-control" data-live-search="true">
-                {{ options(partners, partner_id, 'id', 'name') }}
+                {{ options(partners, '', 'id', 'name') }}
             </select>
         </div>
     </div>
     <div class="form-group string optional partner_data_activated_num"
-         style="padding-left: 2px; padding-right: 2px;float:left;width:50%"><label class="string optional control-label" for="partner_data_activated_num">激活人数</label>
+         style="padding-left: 2px; padding-right: 2px;float:left;width:100%"><label class="string optional control-label" for="partner_data_activated_num">激活人数</label>
         <div><input type="text" class="  input optional form-control" id="partner_data_activated_num"
                     name="partner_data[activated_num]" value="">
         </div>
     </div>
-    <div class="form-group string optional partner_data_settlement_num"
-         style="padding-left: 2px; padding-right: 2px;float:left;width:50%"><label class="string optional control-label" for="partner_data_settlement_num">注册人数</label>
-        <div><input type="text" class="  input optional form-control" id="partner_data_settlement_num"
-                    name="partner_data[settlement_num]" value="">
-        </div>
-    </div>
-
-
-
     <div class="form-group string optional partner_data_start_at"
          style="padding-left: 2px; padding-right: 2px;float:left;width:100%"><label
                 class="string optional control-label" for="partner_data_start_at">时间</label>

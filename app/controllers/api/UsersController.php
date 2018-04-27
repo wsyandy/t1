@@ -509,6 +509,12 @@ class UsersController extends BaseController
     function basicInfoAction()
     {
         $basic_json = $this->currentUser()->toBasicJson();
+        $app_id = $this->currentProductChannel()->getImAppId();
+        $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+
+        $basic_json['signaling_key'] = $signaling_key;
+        $basic_json['app_id'] = $app_id;
+        $basic_json['im_password'] = $this->currentUser()->im_password;
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 

@@ -54,7 +54,7 @@ class GoldHistories extends BaseModel
 
         if (isBlank($user)) {
             info($user_id);
-            return false;
+            return null;
         }
 
         $gold_history = new GoldHistories();
@@ -82,11 +82,11 @@ class GoldHistories extends BaseModel
                 \Stats::delay()->record('user', 'gold_obtain', $stat_attrs);
             }
 
-            return true;
+            return $gold_history;
         }
 
         info('Exce', $user->sid, $fee_type, $amount, $opts);
-        return false;
+        return null;
     }
 
     function checkBalance()

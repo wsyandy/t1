@@ -1104,6 +1104,14 @@ class Users extends BaseModel
             debug($user->id, 'geo', $user->geo_province_id, $user->geo_city_id);
         }
 
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+
+        if (count($block_near_by_user_ids) > 0 && in_array($user_id, $block_near_by_user_ids)) {
+            info("屏蔽附近的人", $block_near_by_user_ids, $user_id);
+            $user->update();
+            return;
+        }
+
         // 计算geo hash值
         $geo_hash = new \geo\GeoHash();
         $hash = $geo_hash->encode($latitude, $longitude);
@@ -1797,10 +1805,10 @@ class Users extends BaseModel
             $cond['conditions'] .= " and user_type = " . $user_type;
         }
 
-        if ($filter_ids) {
-            $filter_ids = implode(',', $filter_ids);
-            $cond['conditions'] .= " and id not in ({$filter_ids})";
-        }
+//        if ($filter_ids) {
+//            $filter_ids = implode(',', $filter_ids);
+//            $cond['conditions'] .= " and id not in ({$filter_ids})";
+//        }
 
         $cond['conditions'] .= " and id != " . SYSTEM_ID . " and avatar_status = " . AUTH_SUCCESS . ' and (user_status = ' . USER_STATUS_ON .
             ' or user_status = ' . USER_STATUS_LOGOUT . ')';
@@ -1869,21 +1877,23 @@ class Users extends BaseModel
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
-        $filter_ids = fetch($opts, 'filter_ids', []);
+        $cal_start = microtime(true);
 
-        if (!is_array($filter_ids)) {
-            $filter_ids = explode(',', $filter_ids);
-        }
-
-        //屏蔽公司内部账号
-        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-
-        if ($block_near_by_user_ids) {
-            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
-        }
+//        $filter_ids = fetch($opts, 'filter_ids', []);
+//
+//        if (!is_array($filter_ids)) {
+//            $filter_ids = explode(',', $filter_ids);
+//        }
+//
+//        //屏蔽公司内部账号
+//        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+//        if ($block_near_by_user_ids) {
+//            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
+//        }
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
+            $this->calDistance($users);
             return $users;
         }
 
@@ -1895,6 +1905,26 @@ class Users extends BaseModel
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
+
+        $hot_cache = self::getHotWriteCache();
+        $cache_key = 'nearby_' . $prefix . '_page' . $page . '_per_page' . $per_page;
+        $cache_total_entries_key = 'nearby_' . $prefix . '_total_entries';
+
+        $user_ids = $hot_cache->get($cache_key);
+        $total_entries = $hot_cache->get($cache_total_entries_key);
+
+        if ($user_ids && $total_entries) {
+            info('cache', $cache_key, $total_entries);
+            $user_ids = json_decode($user_ids, true);
+            $objects = Users::findByIds($user_ids);
+            $users = new PaginationModel($objects, $total_entries, $page, $per_page);
+            $users->clazz = 'Users';
+
+            // 计算距离
+            $this->calDistance($users);
+            return $users;
+        }
+
 
         $condition = "(";
         $bind = [];
@@ -1909,10 +1939,10 @@ class Users extends BaseModel
             }
         }
 
-        if (count($filter_ids) > 0) {
-            $filter_ids = implode(',', $filter_ids);
-            $condition .= " and id not in ({$filter_ids})";
-        }
+//        if (count($filter_ids) > 0) {
+//            $filter_ids = implode(',', $filter_ids);
+//            $condition .= " and id not in ({$filter_ids})";
+//        }
 
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
@@ -1926,12 +1956,25 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
         info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
 
-        if ($users->count() < 3) {
+        if ($users->total_entries < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
         }
 
+        $user_ids = [];
+
+        foreach ($users as $user) {
+            $user_ids[] = $user->id;
+        }
+
+        $hot_cache->setex($cache_key, 90, json_encode($user_ids, JSON_UNESCAPED_UNICODE));
+        $hot_cache->setex($cache_total_entries_key, 90, $users->total_entries);
+
         // 计算距离
         $this->calDistance($users);
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
+
+        info("nearby_search_execute_time", $execute_time);
 
         return $users;
     }
@@ -2962,20 +3005,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3102,21 +3148,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
