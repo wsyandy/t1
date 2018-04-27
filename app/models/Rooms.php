@@ -57,7 +57,7 @@ class Rooms extends BaseModel
             $this->update();
         }
 
-        if ($this->hasChanged('name')) {
+        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
             self::delay()->updateRoomTypes($this->id);
         }
     }
@@ -69,7 +69,7 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name')) {
+        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
             self::delay()->updateRoomTypes($this->id);
         }
     }
@@ -2194,9 +2194,7 @@ class Rooms extends BaseModel
     static function updateRoomTypes($room_id)
     {
         $room = \Rooms::findFirstById($room_id);
-        if ( $room->theme_type == ROOM_THEME_TYPE_BROADCAST) {
-            return;
-        }
+
         $type_keywords = [
             'gang_up' => ['开黑', '游戏', '球球', '王者', '吃鸡', '绝地求生', '求带', '刺激战场', '第五人格', '迷雾'],
             'friend' => ['交友', '处对象', '连麦', '处关系', 'u处', 'u连', 'les', '聊天'],
