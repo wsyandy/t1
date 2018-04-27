@@ -138,6 +138,7 @@
                 link: '',
                 imgUrl: "",
                 desc: '',
+                type:'',
                 dataUrl:'',
                 success: function () {
                     alert("分享成功!!");
@@ -304,9 +305,9 @@
             if (0 == resp.error_code) {
                 vm.share_data.title = resp.title;
                 vm.share_data.imgUrl = resp.image_url;
+                vm.share_data.type = resp.type;
                 vm.share_data.desc = resp.description;
                 vm.share_data.dataUrl = resp.data_url;
-                console.log(vm.share_data);
             } else {
                 alert(resp.error_reason);
             }
