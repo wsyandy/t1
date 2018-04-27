@@ -225,7 +225,7 @@
     }
 
     var weixin_config_params = {
-        debug: false,
+        debug: true,
         appId: "{{ sign_package["appId"] }}",
         timestamp: "{{ sign_package['timestamp'] }}",
         nonceStr: "{{ sign_package['nonceStr'] }}",
