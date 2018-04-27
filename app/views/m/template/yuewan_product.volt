@@ -61,9 +61,9 @@
     <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
     <span>优惠充值</span>
     <span>关注公众号</span>
-    <a href="#" class="WeChatID">Hi-6888</a>
+    <a href="#" class="WeChatID">Hi-7899</a>
     {% if is_ios %}
-    <span class="btn_copy" data-clipboard-text="Hi-6888" id="copy">复制去微信</span>
+    <span class="btn_copy" data-clipboard-text="Hi-7899" id="copy">复制去微信</span>
     {% endif %}
 </div>
 {% endif %}
