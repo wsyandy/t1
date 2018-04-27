@@ -514,9 +514,18 @@ class UsersController extends BaseController
             if (!$user_id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
-            $hot_cache = \Users::getHotWriteCache();
-            $key = "blocked_nearby_user_list";
-            $hot_cache->zadd($key, time(), $user_id);
+
+
+            $user = \Users::findFirstById($user_id);
+
+            if ($user) {
+                $user->geo_hash = '';
+                $user->update();
+                $hot_cache = \Users::getHotWriteCache();
+                $key = "blocked_nearby_user_list";
+                $hot_cache->zadd($key, time(), $user_id);
+            }
+
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');
         }
     }
@@ -539,9 +548,26 @@ class UsersController extends BaseController
     function deleteBlockedNearbyUserAction()
     {
         $user_id = $this->params('user_id');
-        $hot_cache = \Users::getHotWriteCache();
-        $key = "blocked_nearby_user_list";
-        $hot_cache->zrem($key, $user_id);
+
+        $user = \Users::findFirstById($user_id);
+
+        if ($user) {
+
+            $hot_cache = \Users::getHotWriteCache();
+            $key = "blocked_nearby_user_list";
+            $hot_cache->zrem($key, $user_id);
+
+            $geo_hash = new \geo\GeoHash();
+            $hash = $geo_hash->encode($user->latitude, $user->longitude);
+            info($user->id, $user->latitude, $user->longitude, $hash);
+
+            if ($hash) {
+                $user->geo_hash = $hash;
+            }
+
+            $user->update();
+        }
+
         $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/users/blocked_nearby_user_list']);
     }
 }
