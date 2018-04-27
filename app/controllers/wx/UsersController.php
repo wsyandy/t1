@@ -155,19 +155,13 @@ class UsersController extends BaseController
 
     function getImageForWxShareAction()
     {
-        $image_data = $this->params('image_data');
-        $data_url = \Users::getImageForShare($image_data);
         $image_url = $this->currentProductChannel()->avatar_url;
         $toShareJson = [
             'title' => '哇 ~  原来我的声音 ...',
             'description' => '专业的声音鉴定,快来领取属于自己的专属声鉴卡！',
             'link'=>$this->getRoot().'wx/users/voice',
-            'type' => 'video',
             'image_url' => $image_url,
-            'data_url' => $data_url
         ];
         return $this->renderJSON(ERROR_CODE_SUCCESS, 'success', $toShareJson);
-
-
     }
 }

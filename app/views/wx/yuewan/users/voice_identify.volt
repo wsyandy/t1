@@ -144,11 +144,29 @@
                 $('.prompt_share').hide();
             },
             shareVoice:function () {
-                html2canvas(document.querySelector(".save_picture_box"),{
-                    backgroundColor: 'transparent',// 设置背景透明
-                    useCORS: true
-                }).then(function (canvas) {
-                    canvasTurnImg(canvas)
+                var data = {
+                    'sid': vm.sid,
+                    'code': vm.code
+                };
+
+                $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
+                    if (0 == resp.error_code) {
+                        wx.onMenuShareAppMessage({
+                            title: resp.title,
+                            desc: resp.description,
+                            link: resp.link,
+                            imgUrl: resp.image_url,
+                            success: function () {
+                                alert('分享成功！！');
+                                $('.prompt_share').hide();
+                            },
+                            cancel: function () {
+                                alert('分享失败，请重试！');
+                            }
+                        });
+                    } else {
+                        alert(resp.error_reason);
+                    }
                 });
                 $('.prompt_share').show();
             }
@@ -234,80 +252,5 @@
     };
 
     weixinJsConfig.initWxConfig(weixin_config_params);
-
-    function canvasTurnImg(canvas) {
-        // 图片导出为 png 格式
-        var type = 'png';
-        var imgData = canvas.toDataURL(type);
-        /**
-         * 获取mimeType
-         * @param  {String} type the old mime-type
-         * @return the new mime-type
-         */
-        var _fixType = function (type) {
-            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-            var r = type.match(/png|jpeg|bmp|gif/)[0];
-            return 'image/' + r;
-        };
-
-        // 加工image data，替换mime type
-        //imgData = imgData.replace(_fixType(type),'image/octet-stream');
-
-        /**
-         * 在本地进行文件保存
-         * @param  {String} data     要保存到本地的图片数据
-         * @param  {String} filename 文件名
-         */
-        function saveFile(data, filename) {
-            var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
-            save_link.href = data;
-            save_link.download = filename;
-
-            console.log(data);
-
-            var event = document.createEvent('MouseEvents');
-            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            save_link.dispatchEvent(event);
-        }
-
-        // 下载后的文件名
-        var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
-        getImage(imgData, filename);
-    }
-
-    {#var is_dev = false;#}
-    {#{% if isDevelopmentEnv() %}#}
-    {#is_dev = true;#}
-    {#{% endif %}#}
-
-    function getImage(image_data, filename) {
-        var data = {
-            'sid': vm.sid,
-            'code': vm.code,
-            'image_data': image_data,
-            'filename': filename
-        };
-
-        $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
-            if (0 == resp.error_code) {
-                wx.onMenuShareAppMessage({
-                    title: resp.title,
-                    desc: resp.description,
-                    link: resp.link,
-                    imgUrl: resp.image_url,
-                    type: resp.type,
-                    dataUrl: resp.data_url,
-                    success: function () {
-                        alert('分享成功！！');
-                    },
-                    cancel: function () {
-                        alert('分享失败，请重试！');
-                    }
-                });
-            } else {
-                alert(resp.error_reason);
-            }
-        })
-    }
 
 </script>
