@@ -682,6 +682,8 @@ class RoomsController extends BaseController
 
                 if (count($user_ids) > 0) {
                     $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
+                } else {
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => '']);
                 }
 
             } elseif ($type == 'new') {
@@ -724,10 +726,6 @@ class RoomsController extends BaseController
         debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
-
-        foreach ($rooms as $room) {
-            $room->tag_names = $room->getRoomTagNamesText();
-        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
