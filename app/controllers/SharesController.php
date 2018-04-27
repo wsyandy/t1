@@ -114,4 +114,11 @@ class SharesController extends ApplicationController
         }
 
     }
+
+    // 分销注册页面
+    function distributeAction()
+    {
+
+    }
+
 }
