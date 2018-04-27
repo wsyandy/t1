@@ -137,6 +137,7 @@
             <span class="toast_text">请稍后。。。</span>
         </div>
     </div>
+</div>
     <script>
         var opts = {
             data: {
@@ -322,9 +323,6 @@
             var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
             // download
 //        saveFile(imgData,filename);
-            if (event_type == 'save') {
-                saveImage(imgData, filename);
-            }
             switch (event_type) {
                 case 'save':
                     saveImage(imgData);
@@ -378,6 +376,7 @@
 
             $.authPost('/m/users/save_image', data, function (resp) {
                 alert(resp.error_reason);
-            })
+            });
         }
+
     </script>
