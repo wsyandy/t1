@@ -1191,6 +1191,7 @@ class Rooms extends BaseModel
         $data['receiver_id'] = $receiver->id;
         $data['receiver_nickname'] = $receiver_nickname;
         $data['receiver_room_seat_id'] = $receiver->current_room_seat_id;
+        $data['pay_type'] = $gift->pay_type;
         $data['total_amount'] = $gift_num * $gift->amount;
 
         $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];
