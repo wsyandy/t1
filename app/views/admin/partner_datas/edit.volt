@@ -20,7 +20,7 @@
     <div class="form-group string optional partner_data_activated_num"
          style="padding-left: 2px; padding-right: 2px;float:left;width: 100%"><label class="string optional control-label" for="partner_data_activated_num">激活人数</label>
         <div><input type="text" class="  input optional form-control" id="partner_data_activated_num"
-                    name="partner_data[activated_num]" value="{{ data.activated_num }}">
+                    name="partner_data[activated_num]" value="">
         </div>
     </div>
     <div class="form-group string optional partner_data_start_at"

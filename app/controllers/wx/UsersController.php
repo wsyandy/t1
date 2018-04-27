@@ -1,4 +1,5 @@
 <?php
+
 namespace wx;
 
 class UsersController extends BaseController
@@ -33,8 +34,10 @@ class UsersController extends BaseController
     {
         $sex = $this->params('sex');
         $nickname = $this->params('nickname');
+
         $this->view->sex = $sex;
         $this->view->nickname = $nickname;
+        $this->view->sign_package = $this->getSignPackage();
     }
 
     function getTonicAction()
@@ -148,5 +151,51 @@ class UsersController extends BaseController
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $datas);
+    }
+
+    function getImageForWxShareAction()
+    {
+        $image_data = $this->params('image_data');
+        $image_data = trim($image_data);
+
+        //data:image/octet-stream;base64
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
+            $type = $result[2];
+            echoLine($type);
+            if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
+                $file_name = 'voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
+                $new_file = $source_filename = APP_ROOT . 'temp/' . $file_name;
+                if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $image_data)))) {
+                    $img_path = str_replace('../../..', '', $new_file);
+                    $res = \StoreFile::upload($img_path, APP_NAME . '/users/voices/' . $file_name);
+                    $data_url = \StoreFile::getUrl($res);
+                    if (file_exists($source_filename)) {
+                        unlink($source_filename);
+                    }
+                    if ($data_url) {
+                        $image_url = $this->currentProductChannel()->avatar_url;
+                        $toShareJson = [
+                            'title' => '哇 ~  原来我的声音 ...',
+                            'description' => '专业的声音鉴定,快来领取属于自己的专属声鉴卡！',
+                            'image_url' => $image_url,
+                            'data_url' => $data_url
+                        ];
+
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, 'success', $toShareJson);
+                    } else {
+                        return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
+                    }
+                } else {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '图片生成失败');
+                }
+            } else {
+                //文件类型错误
+                return $this->renderJSON(ERROR_CODE_FAIL, '图片上传类型错误');
+            }
+
+        } else {
+            //文件错误
+            return $this->renderJSON(ERROR_CODE_FAIL, '文件错误');
+        }
     }
 }

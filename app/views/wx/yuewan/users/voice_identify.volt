@@ -1,6 +1,9 @@
 {{ block_begin('head') }}
 {{ weixin_css('voice_main.css') }}
+{{ theme_js('/m/js/html2canvas.min') }}
 {{ block_end() }}
+<script src="/js/jweixin-1.0.0.js"></script>
+<script src="/js/weixin_config.js"></script>
 <script>
     (function (doc, win) {
         var docEl = doc.documentElement,
@@ -102,8 +105,14 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
+        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice"><span>分享朋友</span></div>
+        <div class="button1" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice"><span>分享朋友圈</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
         </div>
+    </div>
+    <div class="prompt_share" @click="hiddenAction">
+        <span class="prompt_arrow"></span>
+        <img src="/wx/{{ current_theme }}/images/prompt_pioter.png" alt="点击右上角分享">
     </div>
 </div>
 <script>
@@ -123,13 +132,37 @@
             consonant1: '',
             consonant2: '',
             consonant3: '',
-            avatar_url: ''
+            avatar_url: '',
+            share_data: {
+                title: '',
+                link: '',
+                imgUrl: "",
+                desc: '',
+                dataUrl:'',
+                success: function () {
+                    alert("分享成功!!");
+                },
+                cancel: function () {
+                }
+            }
         },
 
         methods: {
             go_voice_identify: function () {
                 var url = '/wx/users/recording';
                 vm.redirectAction(url + '?sex=' + vm.sex + '&nickname=' + vm.nickname);
+            },
+            hiddenAction:function () {
+                $('.prompt_share').hide();
+            },
+            shareVoice:function () {
+                html2canvas(document.querySelector(".save_picture_box"),{
+                    backgroundColor: 'transparent',// 设置背景透明
+                    useCORS: true
+                }).then(function (canvas) {
+                    canvasTurnImg(canvas)
+                });
+                $('.prompt_share').show();
             }
         }
     };
@@ -202,4 +235,82 @@
             }
         })
     }
+
+    var weixin_config_params = {
+        debug: false,
+        appId: "{{ sign_package["appId"] }}",
+        timestamp: "{{ sign_package['timestamp'] }}",
+        nonceStr: "{{ sign_package['nonceStr'] }}",
+        signature: "{{ sign_package['signature'] }}",
+        jsApiList: ["onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareQZone"],
+    };
+
+    weixinJsConfig.initWxConfig(weixin_config_params);
+
+    function canvasTurnImg(canvas) {
+        // 图片导出为 png 格式
+        var type = 'png';
+        var imgData = canvas.toDataURL(type);
+        /**
+         * 获取mimeType
+         * @param  {String} type the old mime-type
+         * @return the new mime-type
+         */
+        var _fixType = function (type) {
+            type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+            var r = type.match(/png|jpeg|bmp|gif/)[0];
+            return 'image/' + r;
+        };
+
+        // 加工image data，替换mime type
+        //imgData = imgData.replace(_fixType(type),'image/octet-stream');
+
+        /**
+         * 在本地进行文件保存
+         * @param  {String} data     要保存到本地的图片数据
+         * @param  {String} filename 文件名
+         */
+        function saveFile(data, filename) {
+            var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+            save_link.href = data;
+            save_link.download = filename;
+
+            console.log(data);
+
+            var event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            save_link.dispatchEvent(event);
+        }
+
+        // 下载后的文件名
+        var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
+        getImage(imgData, filename);
+    }
+
+    {#var is_dev = false;#}
+    {#{% if isDevelopmentEnv() %}#}
+    {#is_dev = true;#}
+    {#{% endif %}#}
+
+    function getImage(img_data, filename) {
+        var data = {
+            'sid': vm.sid,
+            'code': vm.code,
+            'image_data': img_data,
+            'filename': filename
+        };
+
+        $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
+            if (0 == resp.error_code) {
+                vm.share_data.title = resp.title;
+                vm.share_data.imgUrl = resp.image_url;
+                vm.share_data.desc = resp.description;
+                vm.share_data.dataUrl = resp.data_url;
+                console.log(vm.share_data);
+            } else {
+                alert(resp.error_reason);
+            }
+        })
+    }
+
 </script>

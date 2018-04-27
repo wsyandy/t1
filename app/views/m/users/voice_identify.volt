@@ -103,7 +103,10 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-        <div @click="screenshotsImg" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
+        <div @click="screenshotsImg('save')" class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
+        {% if isDevelopmentEnv() %}
+        <div @click="share('wx_friend','image','voice')" class="button1" :style="{color:!sex?'#FF659A':'#71A7FC'}"><span>分享微信好友</span></div>
+        {% endif %}
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
         </div>
     </div>
@@ -131,21 +134,47 @@
             consonant1: '',
             consonant2: '',
             consonant3: '',
-            avatar_url: ''
+            avatar_url: '',
+            redirect_url:'',
+            image_data:''
         },
 
         methods: {
-            screenshotsImg: function () {
+            screenshotsImg: function (type) {
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
                 }).then(function (canvas) {
-                    canvasTurnImg(canvas)
+                    canvasTurnImg(canvas,type)
                 });
             },
             go_voice_identify: function () {
                 var url = '/m/users/recording';
                 vm.redirectAction(url + '?sid=' + vm.sid + '&code=' + vm.code + '&sex=' + vm.sex + '&nickname=' + vm.nickname);
+            },
+            //platform => qq_friend：qq好友    qq_zone：qq空间    wx_friend：微信好友  wx_moments：朋友圈  sinaweibo：新浪微博
+            //type => image：图片    web_page：网页   text：文本
+            share: function (platform, type,share_source) {
+                html2canvas(document.querySelector(".save_picture_box"), {
+                    backgroundColor: 'transparent',// 设置背景透明
+                    useCORS: true
+                }).then(function (canvas) {
+                    var image_data= canvasTurnImg(canvas,type)
+                    var data = {
+                        code: vm.code,
+                        sid: vm.sid,
+                        platform: platform,
+                        type: type,
+                        share_source:share_source,
+                        image_data:image_data
+                    };
+                    
+                    $.authPost('/m/shares/create', data, function (resp) {
+                        vm.redirect_url = resp.test_url;
+                        console.log(vm.redirect_url);
+                        location.href = vm.redirect_url;
+                    })
+                });
             }
         }
     };
@@ -227,7 +256,7 @@
         })
     }
 
-    function canvasTurnImg(canvas) {
+    function canvasTurnImg(canvas,event_type) {
         // 图片导出为 png 格式
         var type = 'png';
         var imgData = canvas.toDataURL(type);
@@ -266,7 +295,18 @@
         var filename = 'screenshots_card_' + (new Date()).getTime() + '.' + type;
         // download
 //        saveFile(imgData,filename);
-        saveImage(imgData, filename);
+        if(event_type == 'save'){
+            saveImage(imgData, filename);
+        }
+        switch(event_type){
+            case 'save':
+                saveImage(imgData);
+                break;
+            case 'image':
+                return imgData;
+                break;
+        }
+
     }
 
     var is_dev = false;
@@ -313,5 +353,6 @@
             alert(resp.error_reason);
         })
     }
+
 
 </script>

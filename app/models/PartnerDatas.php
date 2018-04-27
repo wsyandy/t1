@@ -12,7 +12,7 @@ class PartnerDatas extends BaseModel
      */
     private $_product_channel;
 
-    static $STAT_FIELDS = ['activated_num' => '激活人数', 'settlement_num' => '注册人数','register_ratio'=>'注册率%'];
+    static $STAT_FIELDS = ['activated_num' => '激活人数'];
 
     function mergeJson()
     {
