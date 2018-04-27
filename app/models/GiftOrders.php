@@ -283,6 +283,7 @@ class GiftOrders extends BaseModel
 
             $opts['async_verify_data'] = 1;
             self::delay(15)->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
+            self::delay(30)->asyncCreateGiftOrder($sender->id, $receiver_ids, $gift->id, $opts);
             return true;
         }
 
@@ -320,8 +321,6 @@ class GiftOrders extends BaseModel
             }
 
             info("Exce already_save_fail", $sender_id, $receiver_ids, $gift_id, $opts);
-
-            return;
         }
 
         $receivers = Users::findByIds($receiver_ids);
