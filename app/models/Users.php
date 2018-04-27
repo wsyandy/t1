@@ -1877,6 +1877,8 @@ class Users extends BaseModel
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
+        $cal_start = microtime(true);
+
 //        $filter_ids = fetch($opts, 'filter_ids', []);
 //
 //        if (!is_array($filter_ids)) {
@@ -1969,6 +1971,10 @@ class Users extends BaseModel
 
         // 计算距离
         $this->calDistance($users);
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
+
+        info("nearby_search_execute_time", $execute_time);
 
         return $users;
     }

@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/union_main','/m/css/union_add') }}
+{{ theme_css('/m/css/union_main','/m/css/add_union') }}
 {{ theme_js('/js/jquery.form/3.51.0/jquery.form') }}
 {{ block_end() }}
 
@@ -55,6 +55,7 @@
                 <span>申请创建（10000钻石）</span>
             </div>
 
+            <div class="tip"><p>家族通过考核期后，创建家族所用的钻石数会原数返还给家族长。</p></div>
         </div>
     </form>
 

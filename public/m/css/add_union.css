@@ -320,6 +320,12 @@
     color: #fff;
 }
 
+.tip{
+    font-size: 0.24rem;
+    text-align: -webkit-left;
+    padding: 0.3rem;
+}
+
 /*家族设置底部弹窗*/
 
 .pop_bottom {
