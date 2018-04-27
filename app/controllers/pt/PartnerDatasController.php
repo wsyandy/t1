@@ -21,7 +21,7 @@ class PartnerDatasController extends BaseController
         foreach ($partner_account_product_channels as $partner_account_product_channel) {
             $product_channel_id = $partner_account_product_channel->product_channel_id;
             $partner_id = $partner_account_product_channel->partner_id;
-            $cond = ['conditions' => 'time_type = :time_type: and stat_at >= :start_at: and stat_at <= :end_at: and partner_id = :partner_id: and product_channel_id = :product_channel_id:',
+            $cond = ['conditions' => 'time_type = :time_type: and stat_at >= :start_at: and stat_at <= :end_at: and partner_id = :partner_id: and product_channel_id = :product_channel_id: and data is not null and data <> ""',
                 'bind' => ['time_type' => STAT_DAY, 'start_at' => $start_at_time, 'end_at' => $end_at_time, 'partner_id' => $partner_id,
                     'product_channel_id' => $product_channel_id],
                 'order' => 'rank desc'

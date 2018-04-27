@@ -1877,13 +1877,13 @@ class Users extends BaseModel
 
         //屏蔽公司内部账号
         $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-
         if ($block_near_by_user_ids) {
             $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
         }
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
+            $this->calDistance($users);
             return $users;
         }
 
@@ -1895,6 +1895,25 @@ class Users extends BaseModel
         //取出相邻八个区域
         $neighbors = $geohash->neighbors($prefix);
         array_push($neighbors, $prefix);
+
+        $hot_cache = self::getHotWriteCache();
+        $cache_key = 'nearby_'.$prefix.'_page'.$page.'_per_page'.$per_page;
+        $cache_total_entries_key = 'nearby_'.$prefix.'_total_entries';
+
+        $user_ids = $hot_cache->get($cache_key);
+        $total_entries = $hot_cache->get($cache_total_entries_key);
+        if($user_ids && $total_entries){
+            info('cache', $cache_key, $total_entries);
+            $user_ids = json_decode($user_ids, true);
+            $objects = Users::findByIds($user_ids);
+            $users = new PaginationModel($objects, $total_entries, $page, $per_page);
+            $users->clazz = 'Users';
+
+            // 计算距离
+            $this->calDistance($users);
+            return $users;
+        }
+
 
         $condition = "(";
         $bind = [];
@@ -1926,9 +1945,17 @@ class Users extends BaseModel
         $users = Users::findPagination($conds, $page, $per_page);
         info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
 
-        if ($users->count() < 3) {
+        if ($users->total_entries < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
         }
+
+        $user_ids = [];
+        foreach ($users as $user){
+            $user_ids[] = $user->id;
+        }
+
+        $hot_cache->setex($cache_key, 90, json_encode($user_ids, JSON_UNESCAPED_UNICODE));
+        $hot_cache->setex($cache_total_entries_key, 90, $users->total_entries);
 
         // 计算距离
         $this->calDistance($users);
