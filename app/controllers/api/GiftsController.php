@@ -76,10 +76,10 @@ class GiftsController extends BaseController
         }
 
         $total_gift_num = count($receiver_ids) * $gift_num;
+        $gift_amount = $total_gift_num * $gift->amount;
 
         if ($gift->isDiamondPayType()) {
 
-            $gift_amount = $total_gift_num * $gift->amount;
             $check_result = $this->currentUser()->canSendToUser($receiver_ids, $gift_amount);
 
             if (!$check_result) {
@@ -107,7 +107,7 @@ class GiftsController extends BaseController
 
                 $current_user = $this->currentUser(true);
 
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold]);
+                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
                 $error_reason = "购买成功";
 

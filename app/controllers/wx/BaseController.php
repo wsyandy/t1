@@ -201,4 +201,13 @@ class BaseController extends \ApplicationController
 
         return $version;
     }
+
+    function getSignPackage()
+    {
+        $product_channel = $this->currentProductChannel();
+        $url = $this->getFullUrl();
+        $weixin_event = new \WeixinEvents($product_channel);
+        $sign_package = $weixin_event->getSignPackage($url);
+        return $sign_package;
+    }
 }

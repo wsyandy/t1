@@ -5,6 +5,7 @@
  * Date: 2018/4/24
  * Time: 下午3:04
  */
+
 namespace m;
 
 class SharesController extends BaseController
@@ -12,9 +13,10 @@ class SharesController extends BaseController
     function createAction()
     {
         $room_id = $this->params('room_id');
-        $share_source = 'H5';
+        $share_source = $this->params('share_source', 'H5');
         $type = $this->params('type');
         $platform = $this->params('platform');
+        $image_data = $this->params('image_data', '');
 
         $user = $this->currentUser();
         $code = $this->currentProductChannel()->code;
@@ -33,6 +35,10 @@ class SharesController extends BaseController
 
         if ($share_history->isGoldWorks()) {
             $image_url = $image_small_url;
+        }
+
+        if ($share_history->share_source == 'voice') {
+            $image_url = \Users::getImageForShare($image_data);
         }
         $product_channel_name = $this->currentProductChannel()->name;
 

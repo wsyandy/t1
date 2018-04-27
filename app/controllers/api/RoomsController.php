@@ -640,6 +640,11 @@ class RoomsController extends BaseController
     {
         $content = $this->params('content');
         $content_type = $this->params('content_type');
+
+        if (isDevelopmentEnv() && isBlank($content)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 
@@ -677,6 +682,8 @@ class RoomsController extends BaseController
 
                 if (count($user_ids) > 0) {
                     $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
+                } else {
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
                 }
 
             } elseif ($type == 'new') {
@@ -719,10 +726,6 @@ class RoomsController extends BaseController
         debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
-
-        foreach ($rooms as $room) {
-            $room->tag_names = $room->getRoomTagNamesText();
-        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }

@@ -1,6 +1,9 @@
 {{ block_begin('head') }}
 {{ weixin_css('voice_main.css') }}
+{{ theme_js('/m/js/html2canvas.min') }}
 {{ block_end() }}
+<script src="/js/jweixin-1.0.0.js"></script>
+<script src="/js/weixin_config.js"></script>
 <script>
     (function (doc, win) {
         var docEl = doc.documentElement,
@@ -102,8 +105,14 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
+        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice('friend')"><span>分享朋友</span></div>
+        <div class="button1" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice('moments')"><span>分享朋友圈</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
         </div>
+    </div>
+    <div class="prompt_share" @click="hiddenAction">
+        <span class="prompt_arrow"></span>
+        <img src="/wx/{{ current_theme }}/images/prompt_pioter.png" alt="点击右上角分享">
     </div>
 </div>
 <script>
@@ -130,6 +139,31 @@
             go_voice_identify: function () {
                 var url = '/wx/users/recording';
                 vm.redirectAction(url + '?sex=' + vm.sex + '&nickname=' + vm.nickname);
+            },
+            hiddenAction:function () {
+                $('.prompt_share').hide();
+            },
+            shareVoice:function (type) {
+                var data = {
+                    'sid': vm.sid,
+                    'code': vm.code
+                };
+
+                $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
+                    if (0 == resp.error_code) {
+                        switch (type){
+                            case 'friend':
+                                wxFriendShare(resp);
+                                break;
+                            case 'moments':
+                                wxMomentsShare(resp);
+                                break;
+                        }
+                    } else {
+                        alert(resp.error_reason);
+                    }
+                });
+                $('.prompt_share').show();
             }
         }
     };
@@ -202,4 +236,39 @@
             }
         })
     }
+
+    var weixin_config_params = {
+        debug: false,
+        appId: "{{ sign_package["appId"] }}",
+        timestamp: "{{ sign_package['timestamp'] }}",
+        nonceStr: "{{ sign_package['nonceStr'] }}",
+        signature: "{{ sign_package['signature'] }}",
+        jsApiList: ["onMenuShareTimeline", "onMenuShareAppMessage", "onMenuShareQQ", "onMenuShareQZone"],
+    };
+
+    weixinJsConfig.initWxConfig(weixin_config_params);
+
+    function wxFriendShare(resp) {
+        wx.onMenuShareAppMessage({
+            title: resp.title,
+            desc: resp.description,
+            link: resp.link,
+            imgUrl: resp.image_url,
+            success: function () {
+                $('.prompt_share').hide();
+            }
+        });
+    }
+
+    function wxMomentsShare(resp) {
+        wx.onMenuShareTimeline({
+            title: resp.title,
+            link: resp.link,
+            imgUrl: resp.image_url,
+            success: function () {
+                $('.prompt_share').hide();
+            }
+        })
+    }
+
 </script>

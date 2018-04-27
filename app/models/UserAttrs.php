@@ -963,5 +963,40 @@ trait UserAttrs
         }
         return $avatar_url;
     }
+    static function getImageForShare($image_data)
+    {
+        $image_data = trim($image_data);
 
+        //data:image/octet-stream;base64
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
+            $type = $result[2];
+            echoLine($type);
+            if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
+                $file_name = 'voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
+                $new_file = $source_filename = APP_ROOT . 'temp/' . $file_name;
+                if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $image_data)))) {
+                    $img_path = str_replace('../../..', '', $new_file);
+                    $res = \StoreFile::upload($img_path, APP_NAME . '/users/voices/' . $file_name);
+                    $image_url = \StoreFile::getUrl($res);
+                    if (file_exists($source_filename)) {
+                        unlink($source_filename);
+                    }
+                    if ($image_url) {
+                        return $image_url;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                //文件类型错误
+                return false;
+            }
+
+        } else {
+            //文件错误
+            return false;
+        }
+    }
 }

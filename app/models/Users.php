@@ -162,6 +162,10 @@ class Users extends BaseModel
         if ($this->hasChanged('register_at') && $this->register_at) {
             $this->registerStat();
             $this->createEmUser();
+
+            if ($this->isMobileLogin()) {
+                $this->bindMobileSendGold();
+            }
         }
 
         if ($this->hasChanged('user_status') && USER_STATUS_LOGOUT == $this->user_status && $this->current_room_id) {
@@ -3317,6 +3321,10 @@ class Users extends BaseModel
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
 
+        if (isDevelopmentEnv()) {
+            $expire = 1 * 60;
+        }
+
         $db->setex($key, $expire, $times);
         return $res;
     }
@@ -3510,9 +3518,14 @@ class Users extends BaseModel
         $this->mobile = $mobile;
 
         if ($this->update()) {
-            $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
-            GoldHistories::changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
+            $this->bindMobileSendGold();
         }
+    }
+
+    function bindMobileSendGold()
+    {
+        $remark = "绑定手机号码奖励" . BIND_MOBILE_GOLD . "金币";
+        GoldHistories::delay()->changeBalance($this->id, GOLD_TYPE_BIND_MOBILE, BIND_MOBILE_GOLD, ['remark' => $remark]);
     }
 
     //有离线礼物

@@ -56,9 +56,11 @@
         $('.selectpicker').selectpicker();
 
         {% for partner_data in partner_datas %}
+        {% if isPresent(partner_data.data) %}
         {% for index_key, value in partner_data.data | json_decode %}
         $("#{{ partner_data.id }}_{{ index_key }}").html({{ value }});
         {% endfor %}
+        {% endif %}
         {% endfor %}
 
     });

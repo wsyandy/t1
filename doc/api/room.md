@@ -709,7 +709,7 @@
 |---|---|---|---|---
 |page|页码|int|否||
 |per_page|每页|int|否||
-|type|房间类型|string|是|最新:new,推荐:recommend,开黑:gang_up,交友:friend,电台:broadcast,关注:follow,附近:nearby|
+|type|房间类型|string|是|最新:new,推荐:recommend,开黑:gang_up,交友:friend,电台:broadcast,关注:follow,附近:nearby,娱乐:amuse|
 |keyword|关键词|string|是|||
 
 

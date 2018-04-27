@@ -57,7 +57,7 @@ class Rooms extends BaseModel
             $this->update();
         }
 
-        if ($this->hasChanged('name')) {
+        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
             self::delay()->updateRoomTypes($this->id);
         }
     }
@@ -69,7 +69,7 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name')) {
+        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
             self::delay()->updateRoomTypes($this->id);
         }
     }
@@ -150,9 +150,7 @@ class Rooms extends BaseModel
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
         ];
 
-        if (isset($this->tag_names)) {
-            $data['room_tag_names'] = $this->tag_names;
-        }
+        $data['room_tag_names'] = $this->getRoomTagNamesText();
 
         return $data;
     }
@@ -1191,6 +1189,8 @@ class Rooms extends BaseModel
         $data['receiver_id'] = $receiver->id;
         $data['receiver_nickname'] = $receiver_nickname;
         $data['receiver_room_seat_id'] = $receiver->current_room_seat_id;
+        $data['pay_type'] = $gift->pay_type;
+        $data['total_amount'] = $gift_num * $gift->amount;
 
         $body = ['action' => 'send_gift', 'notify_type' => 'bc', 'channel_name' => $this->channel_name, 'gift' => $data];
 
@@ -1809,17 +1809,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2194,9 +2196,7 @@ class Rooms extends BaseModel
     static function updateRoomTypes($room_id)
     {
         $room = \Rooms::findFirstById($room_id);
-        if ( $room->theme_type == ROOM_THEME_TYPE_BROADCAST) {
-            return;
-        }
+
         $type_keywords = [
             'gang_up' => ['开黑', '游戏', '球球', '王者', '吃鸡', '绝地求生', '求带', '刺激战场', '第五人格', '迷雾'],
             'friend' => ['交友', '处对象', '连麦', '处关系', 'u处', 'u连', 'les', '聊天'],

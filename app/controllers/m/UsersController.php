@@ -36,11 +36,18 @@ class UsersController extends BaseController
         $code = $this->params('code');
         $file_name = $code . '_level_introduce';
         $file_path = APP_ROOT . 'app/views/m/users/' . $file_name . '.volt';
+        $time = time();
+        $activity_time = strtotime(date('Y-05-01'), $time);
+        $is_activity_show = false;
+        if($time >= $activity_time){
+            $is_activity_show = true;
+        }
+
         if (file_exists($file_path)) {
             $this->pick('m/users/' . $file_name);
             return;
         }
-
+        $this->view->is_activity_show = $is_activity_show;
         $this->view->title = 'Hi荣耀等级介绍';
     }
 

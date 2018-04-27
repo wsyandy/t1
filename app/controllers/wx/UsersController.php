@@ -1,4 +1,5 @@
 <?php
+
 namespace wx;
 
 class UsersController extends BaseController
@@ -33,8 +34,10 @@ class UsersController extends BaseController
     {
         $sex = $this->params('sex');
         $nickname = $this->params('nickname');
+
         $this->view->sex = $sex;
         $this->view->nickname = $nickname;
+        $this->view->sign_package = $this->getSignPackage();
     }
 
     function getTonicAction()
@@ -148,5 +151,17 @@ class UsersController extends BaseController
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $datas);
+    }
+
+    function getImageForWxShareAction()
+    {
+        $image_url = $this->currentProductChannel()->avatar_url;
+        $toShareJson = [
+            'title' => '哇 ~  原来我的声音 ...',
+            'description' => '专业的声音鉴定,快来领取属于自己的专属声鉴卡！',
+            'link'=>$this->getRoot().'wx/users/voice',
+            'image_url' => $image_url,
+        ];
+        return $this->renderJSON(ERROR_CODE_SUCCESS, 'success', $toShareJson);
     }
 }

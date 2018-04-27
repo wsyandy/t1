@@ -231,6 +231,8 @@
             image_big_url 静态大图
             image_small_url 静态小图
             num 礼物个数
+            pay_type 礼物的支付类型
+            total_amount: 礼物的总价值
         }
     }
 ```   
