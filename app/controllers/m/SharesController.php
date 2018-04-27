@@ -38,7 +38,7 @@ class SharesController extends BaseController
         }
 
         if ($share_history->share_source == 'voice') {
-            $image_url = $user->getImageForShare($image_data);
+            $image_url = \Users::getImageForShare($image_data);
         }
         $product_channel_name = $this->currentProductChannel()->name;
 

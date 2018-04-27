@@ -963,7 +963,7 @@ trait UserAttrs
         }
         return $avatar_url;
     }
-    function getImageForShare($image_data)
+    static function getImageForShare($image_data)
     {
         $image_data = trim($image_data);
 
