@@ -105,11 +105,7 @@ class GiftsController extends BaseController
                     ]
                 );
 
-                $receiver_ids = explode(",", $receiver_ids);
-                $receiver_num = count($receiver_ids);
-                $total_gift_num = $receiver_num * $gift_num;
-                $total_amount = intval($gift->amount) * $total_gift_num;
-
+                $total_amount = $total_gift_num * $gift->amount;
 
                 $current_user = $this->currentUser(true);
 
