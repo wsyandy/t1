@@ -683,7 +683,7 @@ class RoomsController extends BaseController
                 if (count($user_ids) > 0) {
                     $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
                 } else {
-                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => '']);
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
                 }
 
             } elseif ($type == 'new') {
