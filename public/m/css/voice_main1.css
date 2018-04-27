@@ -508,16 +508,23 @@ html,body{
     height: 1.24rem;
     background-color: white;
 }
+/* 改起点 */
 .save_picture_fl{
     position: fixed;
     left: 0;
-    bottom: 0;
+    bottom:0;
     width: 100%;
-    height: 1rem;
-    justify-content: space-between;
-    align-items: center;
+    background-color: rgba(255, 255, 255, 0.7);
+    /* background: url(../images/share_link_bg.png) center no-repeat;
+    background-size: cover; */
+    flex-direction: column;
+}
+.save_picture_flbut{
+    width: 100%;
+    height: .92rem;
     padding: 0 .2rem;
-    background-color: #73AFF4 ;
+    align-items: center;
+    justify-content: space-between;
 }
 .save_picture_fl .button{
     width: 1.68rem;
@@ -527,17 +534,57 @@ html,body{
     background-color: white;
     border-radius: .12rem;
     font-size: .34rem;
-    color: #5AA3F6;
+    color: #fff;
     font-family: soundFont;
 }
-.save_picture_fl .button1{
-    width: 2.2rem;
-    height: .64rem;
-    align-items: center;
+.share_link{
+    border-top: 1px solid #D3D3D3;
+    width: 100%;
+    height: 1.28rem;
+    justify-content: space-around;
+}
+.share_link li{
+    flex: 1;
+    flex-direction: column;
     justify-content: center;
-    background-color: white;
-    border-radius: .12rem;
-    font-size: .34rem;
-    color: #5AA3F6;
-    font-family: soundFont;
+    align-items: center;
+}
+.share_link li span{
+    font-size: .22rem;
+    color: #717171;
+}
+.share_link li .weixin_icon{
+    width: .6rem;
+    height: .6rem;
+    margin-bottom: .04rem;
+    background: url(../images/weixin_icon.png) center no-repeat;
+    background-size: .6rem;
+}
+.share_link li .friends_icon{
+    width: .6rem;
+    height: .6rem;
+    margin-bottom: .04rem;
+    background: url(../images/friends_icon.png) center no-repeat;
+    background-size: .6rem;
+}
+.share_link li .qq_icon{
+    width: .6rem;
+    height: .6rem;
+    margin-bottom: .04rem;
+    background: url(../images/qq_icon.png) center no-repeat;
+    background-size: .6rem;
+}
+.share_link li .kongjian_icon{
+    width: .6rem;
+    height: .6rem;
+    margin-bottom: .04rem;
+    background: url(../images/kongjian_icon.png) center no-repeat;
+    background-size: .6rem;
+}
+.share_link li .weibo_icon{
+    width: .6rem;
+    height: .6rem;
+    margin-bottom: .04rem;
+    background: url(../images/weibo_icon.png) center no-repeat;
+    background-size: .6rem;
 }
