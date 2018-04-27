@@ -702,10 +702,6 @@ class RoomsController extends BaseController
             }
         }
 
-        if (isBlank($cond)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-
         //限制搜索条件
 
         if (isset($cond['conditions'])) {
