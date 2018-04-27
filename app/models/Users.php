@@ -1877,6 +1877,8 @@ class Users extends BaseModel
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
+        $cal_start = microtime(true);
+
 //        $filter_ids = fetch($opts, 'filter_ids', []);
 //
 //        if (!is_array($filter_ids)) {
@@ -1970,6 +1972,10 @@ class Users extends BaseModel
         // 计算距离
         $this->calDistance($users);
 
+        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
+
+        info("nearby_search_execute_time", $execute_time);
+
         return $users;
     }
 
@@ -1978,8 +1984,6 @@ class Users extends BaseModel
         if (!$users || count($users) < 1) {
             return;
         }
-
-        $cal_start = microtime(true);
 
         // 10km---0.01km
         foreach ($users as $key => $user) {
@@ -2013,10 +2017,6 @@ class Users extends BaseModel
                 info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
-
-        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
-
-        info("calDistance_execute_time", $execute_time);
     }
 
     function getSearchCityId()
