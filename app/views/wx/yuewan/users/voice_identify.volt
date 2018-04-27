@@ -293,7 +293,7 @@
                 wx.onMenuShareAppMessage({
                     title: resp.title,
                     desc: resp.description,
-                    link: resp.data_url,
+                    link: resp.link,
                     imgUrl: resp.image_url,
                     type: resp.type,
                     dataUrl: resp.data_url,
