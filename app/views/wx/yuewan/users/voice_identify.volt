@@ -105,8 +105,8 @@
         </div>
     </div>
     <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice"><span>分享朋友</span></div>
-        <div class="button1" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice"><span>分享朋友圈</span></div>
+        <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice('friend')"><span>分享朋友</span></div>
+        <div class="button1" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="shareVoice('moments')"><span>分享朋友圈</span></div>
         <div class="button" :style="{color:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
         </div>
     </div>
@@ -143,7 +143,7 @@
             hiddenAction:function () {
                 $('.prompt_share').hide();
             },
-            shareVoice:function () {
+            shareVoice:function (type) {
                 var data = {
                     'sid': vm.sid,
                     'code': vm.code
@@ -151,19 +151,14 @@
 
                 $.authPost('/wx/users/get_image_for_wx_share', data, function (resp) {
                     if (0 == resp.error_code) {
-                        wx.onMenuShareAppMessage({
-                            title: resp.title,
-                            desc: resp.description,
-                            link: resp.link,
-                            imgUrl: resp.image_url,
-                            success: function () {
-                                alert('分享成功！！');
-                                $('.prompt_share').hide();
-                            },
-                            cancel: function () {
-                                alert('分享失败，请重试！');
-                            }
-                        });
+                        switch (type){
+                            case 'friend':
+                                wxFriendShare(resp);
+                                break;
+                            case 'moments':
+                                wxMomentsShare(resp);
+                                break;
+                        }
                     } else {
                         alert(resp.error_reason);
                     }
@@ -243,7 +238,7 @@
     }
 
     var weixin_config_params = {
-        debug: true,
+        debug: false,
         appId: "{{ sign_package["appId"] }}",
         timestamp: "{{ sign_package['timestamp'] }}",
         nonceStr: "{{ sign_package['nonceStr'] }}",
@@ -252,5 +247,36 @@
     };
 
     weixinJsConfig.initWxConfig(weixin_config_params);
+
+    function wxFriendShare(resp) {
+        wx.onMenuShareAppMessage({
+            title: resp.title,
+            desc: resp.description,
+            link: resp.link,
+            imgUrl: resp.image_url,
+            success: function () {
+                alert('分享成功！！');
+                $('.prompt_share').hide();
+            },
+            cancel: function () {
+                alert('分享失败，请重试！');
+            }
+        });
+    }
+
+    function wxMomentsShare(resp) {
+        wx.onMenuShareTimeline({
+            title: resp.title,
+            link: resp.link,
+            imgUrl: resp.image_url,
+            success: function () {
+                alert('分享成功！！');
+                $('.prompt_share').hide();
+            },
+            cancel: function () {
+                alert('分享失败，请重试！');
+            }
+        })
+    }
 
 </script>
