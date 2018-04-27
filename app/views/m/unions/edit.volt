@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/union_main','/m/css/union_add') }}
+{{ theme_css('/m/css/union_main','/m/css/add_union') }}
 {{ theme_js('/js/jquery.form/3.51.0/jquery.form') }}
 {{ block_end() }}
 
