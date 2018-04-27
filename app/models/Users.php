@@ -1979,6 +1979,8 @@ class Users extends BaseModel
             return;
         }
 
+        $cal_start = microtime(true);
+
         // 10km---0.01km
         foreach ($users as $key => $user) {
 
@@ -2011,6 +2013,10 @@ class Users extends BaseModel
                 info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
+
+        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
+
+        info("calDistance_execute_time", $execute_time);
     }
 
     function getSearchCityId()
