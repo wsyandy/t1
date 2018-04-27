@@ -74,6 +74,7 @@
     diamond: 用户钻石余额
     gold: 用户金币余额
     total_amount: 消费的钻石或金币数额
+    pay_type: 礼物的支付类型
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'

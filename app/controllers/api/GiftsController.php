@@ -113,7 +113,8 @@ class GiftsController extends BaseController
 
                 $current_user = $this->currentUser(true);
 
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $total_amount]);
+
+                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $total_amount, 'pay_type' => $gift->pay_type]);
 
                 $error_reason = "购买成功";
 
