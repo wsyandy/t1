@@ -45,7 +45,7 @@ class ChatsController extends BaseController
         $content_type = $this->params('content_type'); // text image voice
         $file = $this->params('file');
 
-        if (isDevelopmentEnv() && isBlank($content)) {
+        if (isDevelopmentEnv() && isBlank($content) && isBlank($file)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
         }
 
