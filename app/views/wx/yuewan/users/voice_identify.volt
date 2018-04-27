@@ -255,11 +255,7 @@
             link: resp.link,
             imgUrl: resp.image_url,
             success: function () {
-                alert('分享成功！！');
                 $('.prompt_share').hide();
-            },
-            cancel: function () {
-                alert('分享失败，请重试！');
             }
         });
     }
@@ -270,11 +266,7 @@
             link: resp.link,
             imgUrl: resp.image_url,
             success: function () {
-                alert('分享成功！！');
                 $('.prompt_share').hide();
-            },
-            cancel: function () {
-                alert('分享失败，请重试！');
             }
         })
     }
