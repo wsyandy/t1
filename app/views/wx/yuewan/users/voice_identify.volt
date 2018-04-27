@@ -308,6 +308,7 @@
                 vm.share_data.type = resp.type;
                 vm.share_data.desc = resp.description;
                 vm.share_data.dataUrl = resp.data_url;
+                vm.share_data.link = resp.data_url;
             } else {
                 alert(resp.error_reason);
             }
