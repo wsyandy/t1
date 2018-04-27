@@ -618,12 +618,12 @@ class Rooms extends BaseModel
         $user_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
         $users = Users::findByIds($user_ids);
 
-        foreach ($users as $user) {
-            if ($user->isManager($this) && USER_ROLE_MANAGER != $user->user_role) {
-                $user->user_role = USER_ROLE_MANAGER;
-                $user->update();
-            }
-        }
+//        foreach ($users as $user) {
+//            if ($user->isManager($this) && USER_ROLE_MANAGER != $user->user_role) {
+//                $user->user_role = USER_ROLE_MANAGER;
+//                $user->update();
+//            }
+//        }
 
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
