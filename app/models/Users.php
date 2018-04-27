@@ -3295,6 +3295,10 @@ class Users extends BaseModel
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
 
+        if (isDevelopmentEnv()) {
+            $expire = 1 * 60;
+        }
+
         $db->setex($key, $expire, $times);
         return $res;
     }
