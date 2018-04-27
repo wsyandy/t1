@@ -104,8 +104,10 @@
     </div>
     <div class="save_picture_fl">
         <div class="save_picture_flbut">
-            <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
-            <div @click="screenshotsImg('save')" class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
+            <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
+            </div>
+            <div @click="screenshotsImg('save')" class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
+                <span>存至Hi相册</span></div>
         </div>
         {% if isDevelopmentEnv() %}
             <ul class="share_link">
@@ -131,14 +133,14 @@
                 </li>
             </ul>
         {% endif %}
-        <div v-if="isSaveSuccess" class="toast_text_box">
-            <span class="toast_text">保存成功</span>
+        <div v-if="isShareSuccess" class="toast_text_box">
+            <span class="toast_text">请稍后。。。</span>
         </div>
     </div>
     <script>
         var opts = {
             data: {
-                isSaveSuccess: false,
+                isShareSuccess: false,
                 sex:{{ sex }},//0为女1为男 主题切换  原本是0为男1为女 现在样式中已全部取反
                 code: "{{ code }}",
                 sid: "{{ sid }}",
@@ -191,6 +193,10 @@
                         };
 
                         $.authPost('/m/shares/create', data, function (resp) {
+                            vm.isShareSuccess = true;
+                            setTimeout(function () {
+                                vm.isShareSuccess = false;
+                            }, 3000);
                             vm.redirect_url = resp.test_url;
                             console.log(vm.redirect_url);
                             location.href = vm.redirect_url;
@@ -374,6 +380,4 @@
                 alert(resp.error_reason);
             })
         }
-
-
     </script>
