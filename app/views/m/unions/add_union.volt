@@ -55,22 +55,21 @@
                 <span>申请创建（10000钻石）</span>
             </div>
 
-
-            <div class="popup_cover" v-if="isPop">
-                <div class="popup_box">
-                    <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
-                    <div class="popup_text" id="popup_text">
-                        创建家族需要支付10000钻石，您的钻石数量不足，请先充值
-                    </div>
-                    <div class="popup_btn">
-                        <a class="btn_cancel" href="#" @click.stop="establishFamily(0)">取消</a>
-                        <a class="btn_recharge" href="#" @click.stop="establishFamily(1)">前往充值</a>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </form>
+
+    <div class="popup_cover" v-if="isPop">
+        <div class="popup_box">
+            <img class="ico-warn" src="/m/images/ico-warn.png" alt="">
+            <div class="popup_text" id="popup_text">
+                创建家族需要支付10000钻石，您的钻石数量不足，请先充值
+            </div>
+            <div class="popup_btn">
+                <p class="btn_cancel" @click.stop="establishFamily(0)">取消</p>
+                <a class="btn_recharge" href="/m/products&sid={{ sid}}&code={{ code }}" @click.stop="establishFamily(1)">前往充值</a>
+            </div>
+        </div>
+    </div>
 
     <div :class="[isSet ? '' : 'fixed', 'popup_cover']">
         <div :class="[isSet ? '' : 'fixed', 'pop_bottom']">
@@ -120,17 +119,6 @@
 
             establishFamily: function (index) {
                 this.isPop = false;
-
-                if (isIos && !vm.is_development) {
-                    alert("请到我的账户充值");
-                    return;
-                }
-
-                if (index == 1) {
-                    var url = "/m/products&sid=" + vm.sid + "&code=" + vm.code;
-                    location.href = url;
-                    return false;
-                }
             },
             setSelect: function () {
                 this.isSet = true
@@ -196,13 +184,13 @@
                 if (resp.error_code == -400) {
                     vm.isPop = true;
                     return false;
-                } else {
+                } else if (resp.error_code != 0) {
                     alert(resp.error_reason);
+                    return false;
+                } else {
+                    window.history.back(-1);
                 }
 
-                if (resp.error_url) {
-                    location.href = resp.error_url
-                }
             }
         });
 
