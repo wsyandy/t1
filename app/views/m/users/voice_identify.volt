@@ -104,12 +104,15 @@
     </div>
     <div class="save_picture_fl">
         <div class="save_picture_flbut">
-            <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
-            </div>
-            <div @click="screenshotsImg('save')" class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-                <span>存至Hi相册</span></div>
+            <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span></div>
+            <div @click="screenshotsImg('save')" class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}"><span>存至Hi相册</span></div>
         </div>
+        <span @click="showShare" class="share_buttom">分享</span>
+    </div>
+
         {% if isDevelopmentEnv() %}
+        <div v-if="isShareToast" class="share_link_toast">
+            <div class="share_link_box">
             <ul class="share_link">
                 <li @click="share('wx_friend','image','voice')">
                     <span class="weixin_icon"></span>
@@ -132,15 +135,18 @@
                     <span>微博</span>
                 </li>
             </ul>
+                <div @click="showShare" class="cancel_share_link"><span>取消</span></div>
+            </div>
+        </div>
         {% endif %}
         <div v-if="isShareSuccess" class="toast_text_box">
             <span class="toast_text">请稍后。。。</span>
         </div>
-    </div>
 </div>
     <script>
         var opts = {
             data: {
+                isShareToast:false,
                 isShareSuccess: false,
                 sex:{{ sex }},//0为女1为男 主题切换  原本是0为男1为女 现在样式中已全部取反
                 code: "{{ code }}",
@@ -164,6 +170,9 @@
             },
 
             methods: {
+                showShare:function(){
+                    this.isShareToast = !this.isShareToast;
+                },
                 screenshotsImg: function (type) {
                     html2canvas(document.querySelector(".save_picture_box"), {
                         backgroundColor: 'transparent',// 设置背景透明
