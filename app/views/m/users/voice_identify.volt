@@ -388,7 +388,7 @@
         }
 
         $.authPost('/m/users/save_image', data, function (resp) {
-//                alert(resp.error_reason);
+               alert(resp.error_reason);
         });
     }
 
