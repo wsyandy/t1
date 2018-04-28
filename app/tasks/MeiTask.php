@@ -3321,7 +3321,7 @@ EOF;
         $gift_ids = [59, 60, 61];
 
         $start = date("Ymd", beginOfWeek());
-        $end =  date("Ymd", endOfWeek());
+        $end = date("Ymd", endOfWeek());
         $key = "week_charm_rank_list_gift_id_59_" . $start . "_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrevrange($key, 0, -1, 'withscores');
@@ -3349,5 +3349,24 @@ EOF;
 
         $hot_cache = Users::getHotReadCache();
 
+
+        $room = Rooms::findFirstById(1008434);
+        echoLine($room->types);
+    }
+
+    function test26Action()
+    {
+        $cond = ['conditions' => 'name like :name:', 'bind' => ['name' => '%积分卡书法家%']];
+
+        $room_category_word = RoomCategoryKeywords::findFirst($cond);
+        echoLine($room_category_word);
+
+        $rooms = Rooms::find(['conditions' => 'last_at >= :last_at:', 'bind' => ['last_at' => time() - 86400 * 2], 'columns' => 'id']);
+        echoLine(count($rooms));
+
+        foreach ($rooms as $room) {
+            Rooms::updateRoomTypes($room->id);
+
+        }
     }
 }
