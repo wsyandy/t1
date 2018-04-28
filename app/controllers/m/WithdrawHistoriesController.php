@@ -22,12 +22,7 @@ class WithdrawHistoriesController extends BaseController
         }
 
         $show_withdraw = true;
-        $ip = $this->remoteIp();
-
-//        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40'])) {
-//            $show_withdraw = true;
-//        }
-
+        
         $this->view->is_height_version = $is_height_version;
         $this->view->user = $user;
         $this->view->code = $this->params('code');
