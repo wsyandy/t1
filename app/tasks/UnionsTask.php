@@ -299,4 +299,17 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         echoLine(count($union_histories));
     }
+
+    function incomeAction()
+    {
+        $cond = [
+            'conditions' => 'union_id = :union_id: and created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => ['union_id' => 1068, 'start' => beginOfMonth(), 'end' => endOfMonth(), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+    }
 }

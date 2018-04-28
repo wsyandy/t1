@@ -693,27 +693,27 @@ class RoomsController extends BaseController
                 $cond['order'] = 'last_at desc,user_type asc';
 
             } else {
-                $search_type = '';
+//                $search_type = '';
 
-                foreach (\Rooms::$TYPES as $key => $value) {
+//                foreach (\Rooms::$TYPES as $key => $value) {
+//
+//                    if ($type == $key) {
+//                        $search_type = $key;
+//                        break;
+//                    }
+//                }
+//
+//                if ($search_type) {
+//                    $room_category = \RoomCategories::findFirstByType($search_type);
+//
+//                    if ($room_category) {
+//                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
+//                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
+//                    }
+//                }
 
-                    if ($type == $key) {
-                        $search_type = $key;
-                        break;
-                    }
-                }
-
-                if ($search_type) {
-                    $room_category = \RoomCategories::findFirstByType($search_type);
-
-                    if ($room_category) {
-                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
-                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
-                    }
-                }
-
-//                $cond['conditions'] = " room_category_types like :room_category_types:";
-//                $cond['bind']['room_category_types'] = "%," . $type . ",%";
+                $cond['conditions'] = " room_category_types like :room_category_types:";
+                $cond['bind']['room_category_types'] = "%," . $type . ",%";
             }
         }
 
