@@ -42,7 +42,7 @@
         <ul class="gold_egg_marquee_ul" :class="{marquee_top:animate}">
             <li v-for="(item, index) in draw_histories_list">
                 <span>恭喜“${item.user_nickname}”砸中了</span>
-                <span class="gold">${item.pay_amount}${item.type_text}</span>
+                <span class="gold">${item.number}${item.type_text}</span>
             </li>
         </ul>
     </div>
@@ -75,7 +75,7 @@
             <ul class="winning_results_ul">
                 <li v-for="draw_history in draw_histories"><span>获得${draw_history.type_text}</span>
                     <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}">
-                        ＋${draw_history.pay_amount}</span>
+                        ＋${draw_history.number}</span>
                 </li>
             </ul>
         </div>
@@ -92,7 +92,6 @@
             isHintToast:false,
             isResultsToast:false,
             //开奖状态：0为单抽获得金币、1为单抽获得钻石、2十连抽
-            pay_type:'gold',
             animate: false,
             wait: false,
             draw_histories_list: {{ draw_histories }},
