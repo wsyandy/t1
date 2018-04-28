@@ -34,7 +34,8 @@ class ProductChannelsController extends BaseController
             $detail_json['menu_config'][] = ['show' => true, 'title' => '推荐', 'url' => '/m/users/recommend', 'icon' => $root . 'images/menu_recommend.png'];
             $detail_json['menu_config'][] = ['show' => true, 'title' => '测试分享协议', 'url' => '/m/shares/test', 'icon' => $root . 'images/test.png'];
             $detail_json['menu_config'][] = ['show' => true, 'title' => '测一测', 'url' => '/m/users/voice', 'icon' => $root . 'images/test.png'];
-            $detail_json['menu_config'][] = ['show' => true, 'title' => '测试推广系统', 'url' => '/m/distribute', 'icon' => $root . 'images/test.png'];
+            $detail_json['menu_config'][] = ['show' => true, 'title' => '测试分销', 'url' => '/m/distribute', 'icon' => $root . 'images/test.png'];
+            $detail_json['menu_config'][] = ['show' => true, 'title' => '测试砸金蛋', 'url' => '/m/draw_histories', 'icon' => $root . 'images/test.png'];
         } else {
             $detail_json['menu_config'][] = ['show' => false, 'title' => '游戏', 'url' => '/m/games', 'icon' => $root . 'images/menu_game.png'];
             if ($product_channel_id == 1) {
