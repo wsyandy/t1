@@ -24,6 +24,14 @@ class RoomsController extends BaseController
         $uid = $this->params('room[uid_eq]');
         $union_id = $this->params('union_id', 0);
         $user_id = $this->params('user_id', 0);
+        $user_uid = $this->params('user_uid', 0);
+
+        if ($user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
+            if (isPresent($user) && isBlank($user_id)) {
+                $user_id = $user->id;
+            }
+        }
 
         if (isset($cond['conditions'])) {
             $cond['conditions'] .= " and user_id > 0";
@@ -66,6 +74,7 @@ class RoomsController extends BaseController
         $this->view->union_id = $union_id ? intval($union_id) : '';
         $this->view->name = $name;
         $this->view->user_id = $user_id ? $user_id : '';
+        $this->view->user_uid = $user_uid ? $user_uid : '';
         $this->view->online_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
         $this->view->status_on_room_num = \Rooms::count(['conditions' => 'online_status = ' . STATUS_ON]);
     }

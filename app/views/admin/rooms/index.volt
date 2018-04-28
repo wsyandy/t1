@@ -33,6 +33,9 @@
     <label for="user_id_eq">房主ID</label>
     <input name="user_id" type="text" id="user_id_eq" value="{{ user_id }}"/>
 
+    <label for="user_uid">房主UID</label>
+    <input name="user_uid" type="text" id="user_uid" value="{{ user_uid }}"/>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 
@@ -46,6 +49,7 @@
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
     {% endif %}
     房主ID:{{ room.user.id }}<br/>
+    房主UID:{{ room.user.uid }}<br/>
     性别:{{ room.user.sex_text }}<br/>
     手机号码:{{ room.user_mobile }}<br/>
 {% endmacro %}
@@ -117,6 +121,7 @@
                 姓名:<a href="/admin/users?user[id_eq]=${ room.user_id }">${ room.user_nickname }</a><br/>
             {% endif %}
             房主ID:${ room.user_id }<br/>
+            房主UID:${ room.user_uid }<br/>
             性别:${ room.user_sex_text }<br/>
             手机号码:${ room.user_mobile }<br/>
         </td>

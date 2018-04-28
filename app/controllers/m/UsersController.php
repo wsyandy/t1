@@ -39,7 +39,7 @@ class UsersController extends BaseController
         $time = time();
         $activity_time = strtotime(date('Y-05-01'), $time);
         $is_activity_show = false;
-        if ($time >= $activity_time) {
+        if ($time >= $activity_time || isDevelopmentEnv()) {
             $is_activity_show = true;
         }
 

@@ -126,7 +126,7 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['partner_id'] = $partner_id;
         }
 
-        if ($platform) {
+        if ($platform != -1) {
             $find_cond['conditions'] .= ' and platform=:platform:';
             $find_cond['bind']['platform'] = $platform;
         }
@@ -138,14 +138,14 @@ class ProvinceStats extends BaseModel
 
     static function registerNum($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at)
     {
-        $find_cond['conditions'] = 'register_at>=:start_at: and register_at<=:end_at: and platform = :platform:';
-        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at, 'platform' => $platform];
+        $find_cond['conditions'] = 'register_at>=:start_at: and register_at<=:end_at: ';
+        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at];
+        
         if ($province_id) {
             $find_cond['conditions'] .= ' and province_id=:province_id:';
             $find_cond['bind']['province_id'] = $province_id;
-        } else {
-            $find_cond['conditions'] .= ' and (province_id is null or province_id=0)';
         }
+
         if ($product_channel_id > 0) {
             $find_cond['conditions'] .= ' and product_channel_id=:product_channel_id:';
             $find_cond['bind']['product_channel_id'] = $product_channel_id;
@@ -154,12 +154,12 @@ class ProvinceStats extends BaseModel
         if ($partner_id) {
             $find_cond['conditions'] .= ' and partner_id=:partner_id:';
             $find_cond['bind']['partner_id'] = $partner_id;
-        } else {
-            $find_cond['conditions'] .= ' and (partner_id is null or partner_id=0)';
         }
 
-        $find_cond['conditions'] .= ' and mobile!=:mobile:';
-        $find_cond['bind']['mobile'] = '';
+        if ($platform != -1) {
+            $find_cond['conditions'] .= ' and platform=:platform:';
+            $find_cond['bind']['platform'] = $platform;
+        }
 
         $total = Users::count($find_cond);
 
@@ -186,7 +186,7 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['partner_id'] = $partner_id;
         }
 
-        if ($platform) {
+        if ($platform != -1) {
             $find_cond['conditions'] .= ' and platform=:platform:';
             $find_cond['bind']['platform'] = $platform;
         }

@@ -671,12 +671,7 @@ class RoomsController extends BaseController
 
         } elseif ($type) {
 
-            if ($type == 'broadcast') {
-
-                $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
-                $cond['conditions'] = " theme_type in ($theme_types)";
-
-            } elseif ($type == 'follow') {
+            if ($type == 'follow') {
 
                 $user_ids = $this->currentUser()->followUserIds();
 
@@ -688,24 +683,17 @@ class RoomsController extends BaseController
 
             } elseif ($type == 'new') {
 
+                if (isset($cond['conditions'])) {
+                    $cond['conditions'] .= " last_at >= :last_at:";
+                } else {
+                    $cond['conditions'] = " last_at >= :last_at:";
+                }
+
+                $cond['bind']['last_at'] = time() - 15 * 60;
                 $cond['order'] = 'last_at desc,user_type asc';
-
             } else {
-
-                $search_type = '';
-
-                foreach (\Rooms::$TYPES as $key => $value) {
-
-                    if ($type == $key) {
-                        $search_type = $key;
-                        break;
-                    }
-                }
-
-                if ($search_type) {
-                    $cond['conditions'] = " types like :types:";
-                    $cond['bind']['types'] = "%" . $search_type . "%";
-                }
+                $rooms = \Rooms::findRoomsByCategoryType($type, $page, $per_page);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
             }
         }
 
@@ -760,12 +748,11 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up) {
-            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
-            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
+            $gang_up_rooms_json = \Rooms::searchGangUpRooms(1, 4);
         }
 
         if (STATUS_ON == $gang_up_category) {
-            
+
             $room_category = \RoomCategories::findFirstByType('gang_up');
             if (isPresent($room_category)) {
                 $gang_up_categories = \RoomCategories::find(

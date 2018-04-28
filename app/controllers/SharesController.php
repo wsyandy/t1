@@ -127,7 +127,11 @@ class SharesController extends ApplicationController
         }
 
         $share_history->increase('view_num');
-        $user = $share_history->user;
+        $share_user = $share_history->user;
+        $this->view->share_history_id = $share_history_id;
+
+        $this->view->code = $code;
+        $this->view->share_user = $share_user;
 
     }
 
@@ -138,6 +142,7 @@ class SharesController extends ApplicationController
         }
 
         $image_token = $this->params('image_token');
+        $code = $this->params('code');
 
         if (!$image_token) {
             info("image_token_error", $this->remoteIp(), $this->request->getUserAgent(), $this->headers());
@@ -155,6 +160,7 @@ class SharesController extends ApplicationController
         $share_history_id = $this->params('share_history_id');
         $share_history = \ShareHistories::findFirstById($share_history_id);
         if (!$share_history) {
+            info('分享历史id：', $share_history_id, $share_history);
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
@@ -163,7 +169,7 @@ class SharesController extends ApplicationController
         if (!isMobile($mobile)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
         }
-
+        
         $user = \Users::findFirstByMobile($product_channel, $mobile);
         if ($user) {
             info('已注册', $share_history_id, $product_channel->code, $mobile, 'user_fr', $user->fr);
@@ -202,7 +208,7 @@ class SharesController extends ApplicationController
         // 下载哪个软件包 需要重新配置
         $soft_version = \SoftVersions::findFirst([
             'conditions' => 'product_channel_id=:product_channel_id: and platform=:platform: and channel_package = 0 and status = :status:',
-            'bind' => ['product_channel_id' => $user->product_channel_id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
+            'bind' => ['product_channel_id' => $product_channel->id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
             'order' => 'id asc'
         ]);
 
@@ -223,13 +229,16 @@ class SharesController extends ApplicationController
         if ($partner) {
             $sms_sem_history->partner_id = $partner->id;
         }
+
+        $sms_sem_history->product_channel_id = $product_channel->id;
+        $sms_sem_history->product_channel_id =
         $sms_sem_history->soft_version_id = $soft_version_id;
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->status = AUTH_WAIT;
         $sms_sem_history->save();
 
         // 跳转应用宝地址
-        
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $soft_version->weixin_url]);
     }
 

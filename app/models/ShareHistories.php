@@ -12,6 +12,11 @@ class ShareHistories extends BaseModel
      * @type Users
      */
     private $_user;
+    /**
+     * @type ProductChannels
+     */
+    private $_product_channel;
+
 
     static $STATUS = [SHARE_STATUS_WAIT => '未知', SHARE_STATUS_SUCCESS => '分享成功',
         SHARE_STATUS_FAIL => '分享失败', SHARE_STATUS_CANCEL => '分享取消'];

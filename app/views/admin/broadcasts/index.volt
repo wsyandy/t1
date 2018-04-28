@@ -18,6 +18,9 @@
     <label for="user_id_eq">房主ID</label>
     <input name="user_id" type="text" id="user_id_eq"/>
 
+    <label for="user_uid">房主UID</label>
+    <input name="user_uid" type="text" id="user_uid" value="{{ user_uid }}"/>
+
     <button type="submit" class="ui button">搜索</button>
 </form>
 

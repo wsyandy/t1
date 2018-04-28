@@ -11,7 +11,16 @@
     <img src="{{ object.image_url }}" width="50"/>
 {% endmacro %}
 
-{{ simple_table(room_categories, ['id': 'id','名称': 'name','图片':'image_link','类型': 'type','状态':'status_text','排序':'rank','编辑': 'edit_link']) }}
+{% macro profile_link(room_category) %}
+    {% if isAllowed('room_category_keywords','index') %}
+        <a href="/admin/room_category_keywords/index?room_category_id={{ room_category.id }}">关键词</a><br/>
+    {% endif %}
+    {% if isAllowed('room_category','edit') %}
+        <a class="modal_action" href="/admin/room_categories/edit?id={{ room_category.id }}">编辑</a><br/>
+    {% endif %}
+{% endmacro %}
+
+{{ simple_table(room_categories, ['id': 'id','名称': 'name','图片':'image_link','类型': 'type','状态':'status_text','排序':'rank','操作': 'profile_link']) }}
 
 <script type="text/template" id="room_category_tpl">
     <tr id="room_category_${room_category.id}">
@@ -21,7 +30,10 @@
         <td>${room_category.type}</td>
         <td>${room_category.status_text}</td>
         <td>${room_category.rank}</td>
-        <td><a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a></td>
+        <td>
+            <a href="/admin/room_category_keywords/index?room_category_id=${room_category.id}">关键词</a><br>
+            <a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a>
+        </td>
     </tr>
 </script>
 
