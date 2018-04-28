@@ -93,6 +93,10 @@
                     {% if isAllowed('rooms','game_white_list') %}
                         <li><a href="/admin/rooms/game_white_list">游戏白名单</a></li>
                     {% endif %}
+                    {% if isAllowed('draw_histories','index') %}
+                        <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}
