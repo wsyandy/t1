@@ -682,67 +682,41 @@ class RoomsController extends BaseController
                 }
 
             } elseif ($type == 'new') {
+
+                if (isset($cond['conditions'])) {
+                    $cond['conditions'] .= " last_at >= :last_at:";
+                } else {
+                    $cond['conditions'] = " last_at >= :last_at:";
+                }
+
+                $cond['bind']['last_at'] = time() - 15 * 60;
                 $cond['order'] = 'last_at desc,user_type asc';
+
             } else {
+//                $search_type = '';
 
-                $search_type = '';
-
-                foreach (\Rooms::$TYPES as $key => $value) {
-
-                    if ($type == $key) {
-                        $search_type = $key;
-                        break;
-                    }
-                }
-
-                if ($search_type) {
-                    $room_category = \Rooms::findFirstByType($search_type);
-
-                    if ($room_category) {
-                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
-                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
-                    }
-                }
-            }
-        }
-//            } else {
-//                if ($type == 'broadcast') {
+//                foreach (\Rooms::$TYPES as $key => $value) {
 //
-//                    $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
-//                    $cond['conditions'] = " theme_type in ($theme_types)";
-//
-//                } elseif ($type == 'follow') {
-//
-//                    $user_ids = $this->currentUser()->followUserIds();
-//
-//                    if (count($user_ids) > 0) {
-//                        $cond['conditions'] = " user_id in (" . implode(',', $user_ids) . ") ";
-//                    } else {
-//                        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
-//                    }
-//
-//                } elseif ($type == 'new') {
-//
-//                    $cond['order'] = 'last_at desc,user_type asc';
-//
-//                } else {
-//
-//                    $search_type = '';
-//
-//                    foreach (\Rooms::$TYPES as $key => $value) {
-//
-//                        if ($type == $key) {
-//                            $search_type = $key;
-//                            break;
-//                        }
-//                    }
-//
-//                    if ($search_type) {
-//                        $cond['conditions'] = " types like :types:";
-//                        $cond['bind']['types'] = "%" . $search_type . "%";
+//                    if ($type == $key) {
+//                        $search_type = $key;
+//                        break;
 //                    }
 //                }
-//            }
+//
+//                if ($search_type) {
+//                    $room_category = \RoomCategories::findFirstByType($search_type);
+//
+//                    if ($room_category) {
+//                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
+//                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
+//                    }
+//                }
+
+                $cond['conditions'] = " room_category_types like :room_category_types:";
+                $cond['bind']['room_category_types'] = "%," . $type . ",%";
+            }
+        }
+
         //限制搜索条件
 
         if (isset($cond['conditions'])) {
@@ -794,8 +768,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up) {
-            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
-            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
+            $gang_up_rooms_json = \Rooms::searchGangUpRooms(1, 4);
         }
 
         if (STATUS_ON == $gang_up_category) {

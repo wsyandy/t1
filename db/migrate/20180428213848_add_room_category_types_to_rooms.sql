@@ -1,0 +1,1 @@
+ALTER TABLE rooms add COLUMN room_category_types text;

@@ -8,6 +8,11 @@
  */
 class RoomCategories extends BaseModel
 {
+    /**
+     * @type RoomCategories
+     */
+    private $_parent;
+
     static $STATUS = [STATUS_ON => '正常', STATUS_OFF => '禁用'];
 
     static $files = ['image' => APP_NAME . '/room_categories/image/%s'];
