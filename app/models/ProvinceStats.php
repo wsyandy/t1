@@ -15,8 +15,8 @@ class ProvinceStats extends BaseModel
 
     static $TIME_TYPE = [STAT_DAY => '天'];
 
-    static $PLATFORMS = ['ios' => 'ios', 'client_android' => '客户端安卓', 'weixin_ios' => '微信ios',
-        'weixin_android' => '微信安卓', 'touch_ios' => 'H5ios', 'touch_android' => 'H5安卓'];
+    static $PLATFORMS = [USER_PLATFORM_IOS => '苹果客户端', USER_PLATFORM_ANDROID => '安卓客户端',
+        USER_PLATFORM_WEIXIN_IOS => '微信苹果端', USER_PLATFORM_WEIXIN_ANDROID => '微信安卓端'];
 
     static $STAT_FIELDS = [
         'active_num' => '激活数(关注数)',
@@ -207,8 +207,7 @@ class ProvinceStats extends BaseModel
         $find_cond = ProvinceStats::getOrderCond($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at);
 
         $find_cond['column'] = 'distinct user_id';
-        $orders = Orders::find($find_cond);
-        $total = count($orders);
+        $total = Orders::count($find_cond);
 
         return $total;
     }
@@ -218,10 +217,9 @@ class ProvinceStats extends BaseModel
         $find_cond = ProvinceStats::getOrderCond($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at);
 
         $find_cond['column'] = 'distinct amount';
-        $orders = Orders::find($find_cond);
-        $total = count($orders);
+        $total_amount = Orders::sum($find_cond);
 
-        return $total;
+        return $total_amount;
     }
 
     function calculate()

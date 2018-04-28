@@ -455,7 +455,6 @@ class StatTask extends \Phalcon\Cli\Task
     function provinceStatsAction()
     {
         $stat_at = time() - 3600;
-        $stat_at = strtotime('20180108000000');
 
         $province_ids = [0];
         $product_channel_ids = [-1];
