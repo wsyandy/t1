@@ -110,7 +110,7 @@ class DrawHistories extends BaseModel
 
             // 超过支出
             if ($total_pay_amount < $total_number) {
-                $hit_diamond = true;
+                $hit_diamond = false;
             }
 
             if ($total_pay_amount > 100 && $total_pay_amount > $total_number * mt_rand(2, 5) && mt_rand(1, 100) < 90) {
@@ -153,7 +153,7 @@ class DrawHistories extends BaseModel
         $result = self::calculatePrize($user);
 
         info($user->id, $result);
-        
+
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
         $draw_history->product_channel_id = $user->product_channel_id;
@@ -162,6 +162,15 @@ class DrawHistories extends BaseModel
         $draw_history->pay_type = fetch($opts, 'pay_type');
         $draw_history->pay_amount = fetch($opts, 'pay_amount');
         $draw_history->save();
+
+        if($draw_history->type == 'diamond'){
+            $remark = '抽奖获得' . $draw_history->number . '钻石';
+            $opts['remark'] = $remark;
+            $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+        }else{
+            $opts = ['remark' => '抽奖获得' . $draw_history->number.'金币'];
+            $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+        }
 
         $user_db = Users::getUserDb();
         // 系统总收入

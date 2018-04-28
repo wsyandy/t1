@@ -48,7 +48,6 @@ class DrawHistoriesController extends BaseController
             }
 
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_EXPENSES, $total_amount, $opts);
-
             if (!$target) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
