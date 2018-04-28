@@ -102,7 +102,7 @@
             </div>
         </div>
     </div>
-    <div class="save_picture_fl">
+    <div class="save_picture_fl" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
         <div class="save_picture_flbut">
             <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
             </div>
