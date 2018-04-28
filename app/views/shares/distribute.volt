@@ -49,7 +49,7 @@
                 <input type="button" class="get_verify"  value="获取验证码" @click="getAuthCode()"/>
             </li>
             <li>
-                <input class="input_password" type="password" placeholder="请输入密码"   value="">
+                <input class="input_password" type="password" placeholder="请输入密码"   value="" v-model="password">
             </li>
         </ul>
         <div class="register_btn " @click="register">
@@ -156,6 +156,7 @@
                         vm.error_text = resp.error_reason;
                         vm.send_status = false;
                     } else {
+                        vm.sms_token = resp.sms_token;
                         $tips.show(10).delay(1000).fadeOut();
                         vm.error_text = resp.error_reason;
                     }
