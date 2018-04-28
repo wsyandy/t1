@@ -3361,11 +3361,13 @@ EOF;
         $room_category_word = RoomCategoryKeywords::findFirst($cond);
         echoLine($room_category_word);
 
-        $rooms = Rooms::find(['conditions' => 'last_at >= :last_at:', 'bind' => ['last_at' => time() - 86400], 'columns' => 'id']);
+        $rooms = Rooms::find(['conditions' => 'last_at >= :last_at:', 'bind' => ['last_at' => time() - 3600], 'columns' => 'id']);
         echoLine(count($rooms));
 
         foreach ($rooms as $room) {
-            Rooms::updateRoomTypes($room->id);
+            $room = Rooms::findFirstById($room->id);
+            echoLine($room->room_category_types);
+//            Rooms::updateRoomTypes($room->id);
         }
     }
 }
