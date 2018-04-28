@@ -161,9 +161,6 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['platform'] = $platform;
         }
 
-        $find_cond['conditions'] .= ' and mobile!=:mobile:';
-        $find_cond['bind']['mobile'] = '';
-
         $total = Users::count($find_cond);
 
         return $total;
