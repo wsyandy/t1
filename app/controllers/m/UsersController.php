@@ -161,8 +161,17 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $sex = $this->params('sex');
         $nickname = $this->params('nickname');
+
+        $ip = $this->remoteIp();
+        $show_share = false;
+
+        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40', '139.227.253.253'])) {
+            $show_share = true;
+        }
+
         $this->view->sex = $sex;
         $this->view->nickname = $nickname;
+        $this->view->show_share = $show_share;
         $this->view->user = json_encode($user->toChatJson(), JSON_UNESCAPED_UNICODE);
     }
 

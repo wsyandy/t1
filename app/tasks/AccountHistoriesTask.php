@@ -58,11 +58,11 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
 
     function fixGiftOrderAction()
     {
-        $sender_id = 1258752;
-        $receiver_ids = [1206845];
+        $sender_id = 1009661;
+        $receiver_ids = [1205028];
 
-        $gift_id = 28;
-        $opts = '{"gift_num":1,"sender_current_room_id":1002353,"receiver_current_room_id":1002353,"target_id":671893,"time":1524832326,"async_verify_data":1}';
+        $gift_id = 26;
+        $opts = '{"gift_num":1,"sender_current_room_id":1002353,"receiver_current_room_id":1002353,"target_id":470448,"time":1524839457,"async_verify_data":1}';
         $opts = json_decode($opts, true);
         $target_id = fetch($opts, 'target_id');
         $gift = Gifts::findFirstById($gift_id);
@@ -90,6 +90,6 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
             return;
         }
 
-        //GiftOrders::asyncCreateGiftOrder($sender_id, $receiver_ids, $gift_id, $opts);
+        GiftOrders::asyncCreateGiftOrder($sender_id, $receiver_ids, $gift_id, $opts);
     }
 }
