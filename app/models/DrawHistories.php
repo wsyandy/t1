@@ -87,6 +87,7 @@ class DrawHistories extends BaseModel
         $user_rate_multi = 1;
         if ($hit_diamond) {
 
+            //用户获得钻石
             $decr_history = self::findFirst([
                 'conditions' => 'user_id = :user_id: and type=:type:',
                 'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
@@ -97,6 +98,7 @@ class DrawHistories extends BaseModel
                 $total_number = intval($decr_history->total_number);
             }
 
+            //用户消耗钻石
             $incr_history = self::findFirst([
                 'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
                 'bind' => ['user_id' => $user->id, 'pay_type' => 'diamond'],
@@ -114,10 +116,12 @@ class DrawHistories extends BaseModel
             if ($total_pay_amount > 100 && $total_pay_amount > $total_number * mt_rand(2, 5) && mt_rand(1, 100) < 90) {
                 $user_rate_multi = ceil(($total_pay_amount - $total_number) / 100);
             }
+
+            info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
         }
 
 
-        info('cal', $user->id, $incr_num, $decr_num, 'user_rate_multi', $user_rate_multi, 'pay', $total_pay_amount);
+        info('cal', $user->id, '系统收入', $incr_num, '系统支出', $decr_num, 'user_rate_multi', $user_rate_multi);
 
         $random = mt_rand(1, 1000);
         $data = self::getData();
@@ -148,6 +152,8 @@ class DrawHistories extends BaseModel
 
         $result = self::calculatePrize($user);
 
+        info($user->id, $result);
+        
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
         $draw_history->product_channel_id = $user->product_channel_id;
@@ -162,13 +168,9 @@ class DrawHistories extends BaseModel
         $cache_key = 'draw_total_amount_incr_' . $draw_history->pay_type;
         $incr_num = $user_db->incrby($cache_key, intval($draw_history->pay_amount));
 
-        info($cache_key, $incr_num);
-
         // 系统支出
         $cache_decr_key = 'draw_total_amount_decr_' . $draw_history->type;
         $decr_num = $user_db->incrby($cache_decr_key, intval($draw_history->number));
-
-        info($cache_decr_key, $decr_num);
 
         return $draw_history;
     }
