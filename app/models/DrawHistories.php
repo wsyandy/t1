@@ -57,8 +57,8 @@ class DrawHistories extends BaseModel
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 2];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 3];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 10];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 10];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 9];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 11];
         $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 1000, 'rate' => 30];
         $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
 
@@ -82,7 +82,17 @@ class DrawHistories extends BaseModel
             $hit_diamond = true;
         }
 
+        //用户消耗钻石
+        $incr_history = self::findFirst([
+            'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
+            'bind' => ['user_id' => $user->id, 'pay_type' => 'diamond'],
+            'order' => 'id desc']);
+
         $total_pay_amount = 0;
+        if ($incr_history) {
+            $total_pay_amount = intval($incr_history->total_pay_amount);
+        }
+
         // 倍率
         $user_rate_multi = 1;
         if ($hit_diamond) {
@@ -96,16 +106,6 @@ class DrawHistories extends BaseModel
             $total_number = 0;
             if ($decr_history) {
                 $total_number = intval($decr_history->total_number);
-            }
-
-            //用户消耗钻石
-            $incr_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
-                'bind' => ['user_id' => $user->id, 'pay_type' => 'diamond'],
-                'order' => 'id desc']);
-
-            if ($incr_history) {
-                $total_pay_amount = intval($incr_history->total_pay_amount);
             }
 
             // 超过支出
@@ -129,7 +129,7 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && ($decr_num + fetch($datum, 'number') > $incr_num * 0.75)
+                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 5 || $decr_num + fetch($datum, 'number') > $incr_num * 0.75)
                     ) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
