@@ -87,7 +87,7 @@
             image_token:'',
             captcha_code:'',
             error_text:'',
-            share_history_id:"{{ share_history_id }}"
+            share_history_id:""
 
 
         },
@@ -231,8 +231,10 @@
 
         return true;
     }
-
-
+    $(function () {
+        vm.share_history_id = '{{ share_history_id }}';
+        alert( vm.share_history_id);
+    })
 </script>
 </body>
 </html>
