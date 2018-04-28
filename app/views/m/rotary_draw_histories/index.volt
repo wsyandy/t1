@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>砸金蛋</title>
-    <link rel="stylesheet" href="/m/rotary_draw_histories/css/main.css">
-    <script>
+{{ block_begin('head') }}
+    {{ theme_css('/m/css/rotary_draw_histories.css') }}
+{{ block_end() }}
+
+<script>
         (function(doc, win) {
             var docEl = doc.documentElement,
                 resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
@@ -21,8 +17,7 @@
             doc.addEventListener('DOMContentLoaded', recalc, false);
         })(document, window);
     </script>
-</head>
-<body>
+
 <div id="app" class="gold_egg">
     <div class="gold_egg_banner"> <span>活动时间：5月1－3</span></div>
     <div class="gold_egg_reward">
@@ -119,7 +114,9 @@
                 {
                     name: '4军',
                 }
-            ]
+            ],
+            sid:'{{ sid }}',
+            code:'{{ code }}'
         },
         mounted:function(){
             setInterval(this.showMarquee, 2000)
@@ -127,6 +124,7 @@
         methods: {
             smashEggs:function(num){
                 var self = this;
+
                 switch(num){
                     case 1:
                         this.isLottery = !this.isLottery;
@@ -135,6 +133,7 @@
                         this.isLottery = !this.isLottery;
                         break;
                 }
+
                 this.times = setTimeout(function(){
                     if(num==1){
                         self.isLottery = false;
@@ -146,6 +145,16 @@
                     }
                     clearTimeout(self.times)
                 },3000);
+
+                var data = {
+                    num:num,
+                    sid:this.sid,
+                    code:this.code
+                };
+
+                $.authPost('/m/rotary_draw_histories/rotary', data, function () {
+
+                });
             },
             closeResults:function(){
                 this.isResultsToast = false;
@@ -168,5 +177,3 @@
         }
     })
 </script>
-</body>
-</html>
