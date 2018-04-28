@@ -2395,4 +2395,24 @@ class Rooms extends BaseModel
 
         return [];
     }
+
+    static function searchGangUpRooms($page, $per_page)
+    {
+        $room_category = \RoomCategories::findFirstByType('gang_up');
+
+        if ($room_category) {
+
+            $cond = [
+                'conditions' => 'online_status = :online_status: and status = :status: and room_category_ids like :room_category_ids:',
+                'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'room_category_ids' => "%," . $room_category->id . ",%"],
+                'order' => 'last_at desc'
+            ];
+        }
+
+        $gang_up_rooms = \Rooms::findPagination($cond, $page, $per_page);
+
+        $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
+
+        return $gang_up_rooms_json;
+    }
 }

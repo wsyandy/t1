@@ -765,17 +765,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up) {
-
-            $room_category = \RoomCategories::findFirstByType('gang_up');
-
-            if ($room_category) {
-                $cond['conditions'] = " room_category_ids like :room_category_ids:";
-                $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
-                $cond['order'] = 'last_at desc';
-            }
-
-            $gang_up_rooms = \Rooms::findPagination($cond, 1, 4);
-            $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
+            $gang_up_rooms_json = \Rooms::searchGangUpRooms(1, 4);
         }
 
         if (STATUS_ON == $gang_up_category) {
