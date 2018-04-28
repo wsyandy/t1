@@ -15,6 +15,38 @@ class DrawHistories extends BaseModel
 
     static $TYPE = ['gold' => '金币', 'diamond' => '钻石', 'gift' => '礼物'];
 
+    function beforeCreate()
+    {
+        return $this->checkBalance();
+    }
+
+    function checkBalance()
+    {
+        $decr_history = self::findFirst([
+            'conditions' => 'user_id = :user_id: and type=:type:',
+            'bind' => ['user_id' => $this->user_id, 'type' => $this->type],
+            'order' => 'id desc']);
+
+        $old_total_number = 0;
+        if ($decr_history) {
+            $old_total_number = intval($decr_history->total_number);
+        }
+        $this->total_number = $old_total_number + $this->number;
+
+        $incr_history = self::findFirst([
+            'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
+            'bind' => ['user_id' => $this->user_id, 'pay_type' => $this->pay_type],
+            'order' => 'id desc']);
+
+        $old_total_pay_amount = 0;
+        if ($incr_history) {
+            $old_total_pay_amount = intval($incr_history->total_pay_amount);
+        }
+        $this->total_pay_amount = $old_total_pay_amount + $this->pay_amount;
+        
+        return false;
+    }
+
     static function getData()
     {
         $data = [];
@@ -34,11 +66,38 @@ class DrawHistories extends BaseModel
     // 计算奖品
     static function calculatePrize($user)
     {
+        $user_db = Users::getUserDb();
+        // 系统总收入
+        $cache_key = 'draw_total_amount_incr_diamond';
+        $incr_num = $user_db->get($cache_key);
+        // 系统支出
+        $cache_decr_key = 'draw_total_amount_decr_diamond';
+        $decr_num = $user_db->get($cache_decr_key);
+
+        $hit_diamond = false;
+        // 最多拿出20%
+        if ($incr_num * 0.2 > $decr_num) {
+            $hit_diamond = true;
+        }
+
+        // 倍数
+        $user_rate_multi = 1;
+
+
+        info('钻石', $incr_num, $decr_num, $hit_diamond);
+
         $random = mt_rand(1, 1000);
         $data = self::getData();
         foreach ($data as $datum) {
-            if (fetch($datum, 'rate') * 10 > $random) {
-                return $datum;
+            if ($hit_diamond) {
+                if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
+                    return $datum;
+                }
+            } else {
+                // 只能命中金币
+                if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random && fetch($datum, 'type') == 'gold') {
+                    return $datum;
+                }
             }
         }
 
@@ -55,16 +114,25 @@ class DrawHistories extends BaseModel
         $draw_history->product_channel_id = $user->product_channel_id;
         $draw_history->type = fetch($result, 'type');
         $draw_history->number = fetch($result, 'number');
-        $draw_history->type = fetch($result, 'type');
         $draw_history->pay_type = fetch($opts, 'pay_type');
         $draw_history->pay_amount = fetch($opts, 'pay_amount');
-
         $draw_history->save();
 
-        info($draw_history);
+        $user_db = Users::getUserDb();
+        // 系统总收入
+        $cache_key = 'draw_total_amount_incr_' . $draw_history->pay_type;
+        $incr_num = $user_db->incrby($cache_key, intval($draw_history->pay_amount));
+
+        info($cache_key, $incr_num);
+
+        // 系统支出
+        $cache_decr_key = 'draw_total_amount_decr_' . $draw_history->type;
+        $decr_num = $user_db->incrby($cache_decr_key, intval($draw_history->number));
+
+        info($cache_decr_key, $decr_num);
 
         return $draw_history;
     }
 
-    
+
 }
