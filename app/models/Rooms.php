@@ -2195,8 +2195,8 @@ class Rooms extends BaseModel
 
     static function updateRoomTypes($room_id)
     {
-        $room_category_words = RoomCategoryKeywords::findForeach();
-        $room_categories = RoomCategories::findForeach();
+        $room_category_words = RoomCategoryKeywords::find(['order' => 'id desc']);
+        $room_categories = RoomCategories::find(['order' => 'id desc']);
 
         $room_category_word_names = [];
         $room_category_names = [];
@@ -2279,6 +2279,7 @@ class Rooms extends BaseModel
         $parent_room_categories = RoomCategories::findByIds($parent_room_category_ids);
 
         if ($parent_room_categories) {
+
             foreach ($parent_room_categories as $parent_room_category) {
                 $room->saveRoomIdsByCategoryType($parent_room_category->type);
             }
@@ -2291,6 +2292,7 @@ class Rooms extends BaseModel
             }
 
         } else {
+
             foreach ($room_categories as $room_category) {
                 $room->delRoomIdsByCategoryType($room_category->type);
             }
