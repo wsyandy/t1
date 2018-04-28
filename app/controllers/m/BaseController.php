@@ -207,6 +207,10 @@ class BaseController extends \ApplicationController
             return $this->renderJSON(ERROR_CODE_FAIL, '账户被封');
         }
 
+        if ($this->currentUser()) {
+            $this->view->sid = $this->currentUser()->sid;
+        }
+
         // 不验证用户登录
         if ($this->skipAuth($controller_name, $action_name)) {
             return;
@@ -216,7 +220,6 @@ class BaseController extends \ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
         }
 
-        $this->view->sid = $this->currentUser()->sid;
         $this->view->current_user = $this->currentUser();
     }
 

@@ -38,11 +38,14 @@ class DrawHistoriesController extends BaseController
             $remark = '抽奖消费' . $total_amount . '钻石';
             $opts['remark'] = $remark;
             $user = $this->currentUser();
+
+            debug($user->id, $user->diamond);
             if ($user->diamond < $total_amount) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
 
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_EXPENSES, $total_amount, $opts);
+
             if (!$target) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
@@ -64,6 +67,8 @@ class DrawHistoriesController extends BaseController
         $draw_histories = \DrawHistories::find(['conditions' => 'user_id=:user_id:',
             'bind' => ['user_id' => $user->id]
         ]);
+
+        $this->view->draw_histories = $draw_histories;
     }
 
 

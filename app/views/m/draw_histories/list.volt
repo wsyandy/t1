@@ -1,28 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>中奖记录</title>
-    <link rel="stylesheet" href="/m/rotary_draw_histories/css/main.css">
-    <script>
-        (function(doc, win) {
-            var docEl = doc.documentElement,
-                resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-                recalc = function() {
-                    var clientWidth = docEl.clientWidth;
-                    if (!clientWidth) return;
-                    docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
-                };
+{{ block_begin('head') }}
+    {{ theme_css('/m/css/draw_histories.css') }}
+{{ block_end() }}
+<script>
+    (function (doc, win) {
+        var docEl = doc.documentElement,
+            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+            recalc = function () {
+                var clientWidth = docEl.clientWidth;
+                if (!clientWidth) return;
+                docEl.style.fontSize = 100 * (clientWidth / 750) + 'px';
+            };
 
-            if (!doc.addEventListener) return;
-            win.addEventListener(resizeEvt, recalc, false);
-            doc.addEventListener('DOMContentLoaded', recalc, false);
-        })(document, window);
-    </script>
-</head>
-<body>
+        if (!doc.addEventListener) return;
+        win.addEventListener(resizeEvt, recalc, false);
+        doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+</script>
 <div id="app" class="winning_record">
     <div class="winning_record_number">
         <div class="winning_record_numberli">
@@ -85,11 +78,7 @@
 <script>
     var app = new Vue({
         el: '#app',
-        data: {
-
-        },
+        data: {},
         methods: {}
     })
 </script>
-</body>
-</html>

@@ -54,7 +54,7 @@
         <span>1.金币x100、金币x1000</span>
         <span>2.钻石x10、钻石x30、钻石x100、钻石x500、</span>
     </div>
-    <div class="gold_eggmy_prize">
+    <div class="gold_eggmy_prize" @click="redirectAction('/m/draw_histories/list?sid=' + sid + '&code=' + code )">
         <span>我的奖品</span>
     </div>
 
@@ -90,10 +90,8 @@
     <div v-if="isHintToast || isResultsToast" class="mask_box"></div>
 </div>
 
-<script src="/js/vue/2.0.5/vue.min.js"></script>
 <script>
-    var app = new Vue({
-        el: '#app',
+    var data = {
         data: {
             isLottery:false,
             isHintToast:false,
@@ -101,6 +99,7 @@
             //开奖状态：0为单抽获得金币、1为单抽获得钻石、2十连抽
             resultsState:0,
             animate: false,
+            wait: false,
             marqueeList:[
                 {
                     name: '1军ddd',
@@ -122,34 +121,38 @@
             setInterval(this.showMarquee, 2000)
         },
         methods: {
-            smashEggs:function(num){
-                var self = this;
-
+            result:function (self, num) {
                 switch(num){
                     case 1:
-                        this.isLottery = !this.isLottery;
+                        self.isLottery = !self.isLottery;
                         break;
                     case 10:
-                        this.isLottery = !this.isLottery;
+                        self.isLottery = !self.isLottery;
                         break;
                 }
 
-                this.times = setTimeout(function(){
-                    if(num==1){
-                        self.isLottery = false;
-                        self.isResultsToast = true;
-                    }else{
-                        self.isLottery = false;
-                        self.isResultsToast = true;
-                        self.resultsState = 2;
-                    }
-                    clearTimeout(self.times)
-                },3000);
+                if(num==1){
+                    self.isLottery = false;
+                    self.isResultsToast = true;
+                }else{
+                    self.isLottery = false;
+                    self.isResultsToast = true;
+                    self.resultsState = 2;
+                }
+            },
+            smashEggs:function(num){
+                var self = this;
+
+                if(self.wait) {
+                    return;
+                }
+
+                self.wait = true;
 
                 var data = {
                     num:num,
-                    sid:this.sid,
-                    code:this.code
+                    sid:self.sid,
+                    code:self.code
                 };
 
                 $.authPost('/m/draw_histories/draw', data, function (resp) {
@@ -157,18 +160,17 @@
                         alert(resp.error_reason);
                         return;
                     }
+
+                    self.result(self, num);
                 });
             },
+
             closeResults:function(){
                 this.isResultsToast = false;
+                this.wait = false;
             },
             topupBalance:function(type){
                 this.isHintToast = false;
-                if(type){
-                    console.log('去充值')
-                }else{
-                    console.log('取消')
-                }
             },
             showMarquee: function () {
                 this.animate = true;
@@ -178,5 +180,7 @@
                 this.animate = false;
             },500)},
         }
-    })
+    };
+
+    var vm = new XVue(data);
 </script>
