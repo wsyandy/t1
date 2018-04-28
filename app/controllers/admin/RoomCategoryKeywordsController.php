@@ -36,7 +36,40 @@ class RoomCategoryKeywordsController extends BaseController
         $this->assign($room_category_keyword, 'room_category_keyword');
 
         if ($room_category_keyword->save()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '',  ['room_category_keyword' => $room_category_keyword->toJson()]);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['room_category_keyword' => $room_category_keyword->toJson()]);
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '');
+    }
+
+    function editAction()
+    {
+        $room_category_id = $this->params('id');
+        $room_category_keyword = \RoomCategoryKeywords::findFirstById($room_category_id);
+        $this->view->room_category_keyword = $room_category_keyword;
+    }
+
+    function updateAction()
+    {
+        $room_category_id = $this->params('id');
+        $room_category_keyword = \RoomCategoryKeywords::findFirstById($room_category_id);
+
+        $this->assign($room_category_keyword, 'room_category_keyword');
+
+        if ($room_category_keyword->update()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['room_category_keyword' => $room_category_keyword->toJson()]);
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '');
+    }
+
+    function deleteAction()
+    {
+        $room_category_id = $this->params('id');
+        $room_category_keyword = \RoomCategoryKeywords::findFirstById($room_category_id);
+
+        if ($room_category_keyword->delete()) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '');
