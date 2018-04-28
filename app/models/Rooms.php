@@ -2223,15 +2223,20 @@ class Rooms extends BaseModel
         echoLine($name);
 
         $room_category_ids = [];
+        $select_room_category_names = [];
+        $select_room_category_types = [];
         $parent_room_category_ids = [];
 
         if ($room_category_names) {
             foreach ($room_category_names as $room_category_id => $room_category_name) {
 
-                if (preg_match("/$name/i", $room_category_name) || preg_match("/$room_category_name/i", $name)) {
+                if (preg_match("/$room_category_name/i", $name)) {
 
                     $room_category = RoomCategories::findFirstById($room_category_id);
+
                     $room_category_ids[] = $room_category->id;
+                    $select_room_category_names[] = $room_category->name;
+                    $select_room_category_types[] = $room_category->type;
 
                     $parent_room_category_id = $room_category->parent_id;
 
@@ -2246,7 +2251,7 @@ class Rooms extends BaseModel
         if ($room_category_word_names) {
             foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
 
-                if (preg_match("/$name/i", $room_category_word_name) || preg_match("/$room_category_word_name/i", $name)) {
+                if (preg_match("/$room_category_word_name/i", $name)) {
                     $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
                     $room_category = $room_category_word->room_category;
 
@@ -2254,11 +2259,15 @@ class Rooms extends BaseModel
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $room_category->id;
+                        $select_room_category_names[] = $room_category->name;
+                        $select_room_category_types[] = $room_category->type;
                         $parent_room_category_ids[] = $parent_room_category_id;
                     }
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $parent_room_category_id;
+                        $select_room_category_names[] = $room_category->name;
+                        $select_room_category_types[] = $room_category->type;
                         $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }
@@ -2266,14 +2275,26 @@ class Rooms extends BaseModel
         }
 
         $room_category_ids = array_unique($room_category_ids);
+        $select_room_category_names = array_unique($select_room_category_names);
+        $select_room_category_types = array_unique($select_room_category_types);
         $parent_room_category_ids = array_unique($parent_room_category_ids);
 
         debug($room_category_ids, $room_category_names, $room_category_word_names);
 
         $room_category_ids = implode(',', $room_category_ids);
+        $select_room_category_types = implode(',', $select_room_category_types);
+        $select_room_category_names = implode(',', $select_room_category_names);
 
         if ($room_category_ids) {
             $room_category_ids = ',' . $room_category_ids . ",";
+        }
+
+        if ($select_room_category_names) {
+            $select_room_category_names = ',' . $select_room_category_names . ',';
+        }
+
+        if ($select_room_category_types) {
+            $select_room_category_types = ',' . $select_room_category_types . ',';
         }
 
         $parent_room_categories = RoomCategories::findByIds($parent_room_category_ids);
@@ -2299,8 +2320,9 @@ class Rooms extends BaseModel
         }
 
         $room->room_category_ids = $room_category_ids;
+        $room->room_category_names = $select_room_category_names;
+        $room->room_category_types = $select_room_category_types;
         $room->update();
-
     }
 
     function saveRoomIdsByCategoryType($type)
