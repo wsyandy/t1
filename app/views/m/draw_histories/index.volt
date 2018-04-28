@@ -52,7 +52,7 @@
         <span>2.抽中的钻石数将会直接放入您的账户。</span>
         <p>奖品：</p>
         <span>1.金币x100、金币x1000</span>
-        <span>2.钻石x10、钻石x30、钻石x100、钻石x500、</span>
+        <span>2.钻石x10、钻石x30、钻石x100、钻石x500、钻石x1000、钻石x10000、钻石x100000</span>
     </div>
     <div class="gold_eggmy_prize" @click="redirectAction('/m/draw_histories/list?sid=' + sid + '&code=' + code )">
         <span>我的奖品</span>
