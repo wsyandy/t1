@@ -11,8 +11,17 @@ namespace m;
 
 class RotaryDrawHistoriesController extends BaseController
 {
+
     function indexAction()
     {
+
+        $user = $this->currentUser();
+        $cond = ['conditions' => 'user_id!=:user_id:',
+            'bind' => ['user_id' => $user->id],
+            'order' => 'id desc'
+        ];
+
+        $rotary_draw_histories = \RotaryDrawHistories::findPagination($cond, 1, 10);
 
     }
 
@@ -42,9 +51,13 @@ class RotaryDrawHistoriesController extends BaseController
 
     }
 
+    // 我的奖品
     function listAction()
     {
-
+        $user = $this->currentUser();
+        $rotary_draw_histories = \RotaryDrawHistories::find(['conditions' => 'user_id=:user_id:',
+            'bind' => ['user_id' => $user->id]
+        ]);
     }
 
 
