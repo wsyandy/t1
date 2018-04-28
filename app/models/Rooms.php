@@ -2334,7 +2334,7 @@ class Rooms extends BaseModel
             }
         }
 
-        debug($select_room_category_names, $select_room_category_types);
+        info($select_room_category_names, $select_room_category_types);
         $room->room_category_ids = $room_category_ids;
         $room->room_category_names = $select_room_category_names;
         $room->room_category_types = $select_room_category_types;
