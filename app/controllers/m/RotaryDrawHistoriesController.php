@@ -30,12 +30,12 @@ class RotaryDrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
 
-            $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_BUY_GIFT, $amount, $opts);
+            $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_EXPENSES, $amount, $opts);
+            if(!$target){
+                return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+            }
 
-            $random = mt_rand(1, 100);
-            $type = 'gold';
-
-            $res = \RotaryDrawHistories::createHistory($this->currentUser(), []);
+            $rotary_draw_history = \RotaryDrawHistories::createHistory($this->currentUser(), []);
 
             $key = 'lucky_draw_num_activity_id_' . $activity_id; //减去用户抽取次数
             $day_user_key = 'lucky_draw_activity_id_' . $activity_id . '_user' . date("Y-m-d"); //记录每天抽奖的人数

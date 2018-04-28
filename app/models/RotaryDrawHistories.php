@@ -18,18 +18,43 @@ class RotaryDrawHistories extends BaseModel
     static function getData()
     {
         $data = [];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 1000, 'rate' => 30];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 15];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 5];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 2];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 0.5];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 0.5];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 2];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 5];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 15];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 1000, 'rate' => 30];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
 
         return $data;
     }
 
+    // 计算奖品
+    static function calculatePrize($user)
+    {
+        $random = mt_rand(1, 1000);
+        $data = self::getData();
+        foreach ($data as $datum) {
+            if (fetch($datum, 'rate') * 10 > $random) {
+                return $datum;
+            }
+        }
+
+        return ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
+    }
+
+    static function createHistory($user, $opts = [])
+    {
+
+        $result = self::calculatePrize($user);
+
+        $draw_history = new RotaryDrawHistories();
+        $draw_history->user_id = $user->id;
+        $draw_history->save();
+
+        return $draw_history;
+    }
 
 }
