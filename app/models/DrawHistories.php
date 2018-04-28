@@ -76,9 +76,10 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
+        $pool_rate = mt_rand(70, 90)/100;
         $hit_diamond = false;
         // 最多拿出30%
-        if ($incr_num * 0.75 > $decr_num) {
+        if ($incr_num * $pool_rate > $decr_num) {
             $hit_diamond = true;
         }
 
@@ -129,7 +130,7 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 5 || $decr_num + fetch($datum, 'number') > $incr_num * 0.75)
+                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 5 || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
                     ) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
