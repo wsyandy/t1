@@ -76,7 +76,7 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
-        $pool_rate = mt_rand(70, 90)/100;
+        $pool_rate = mt_rand(60, 80)/100;
         $hit_diamond = false;
         // 最多拿出30%
         if ($incr_num * $pool_rate > $decr_num) {
