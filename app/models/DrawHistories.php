@@ -82,6 +82,10 @@ class DrawHistories extends BaseModel
             $hit_diamond = true;
         }
 
+        if(isDevelopmentEnv()){
+            $hit_diamond = true;
+        }
+
         $total_pay_amount = 0;
         // 倍率
         $user_rate_multi = 1;
@@ -109,7 +113,7 @@ class DrawHistories extends BaseModel
             }
 
             // 超过支出
-            if ($total_pay_amount < $total_number) {
+            if ($total_pay_amount < $total_number && isProduction()) {
                 $hit_diamond = false;
             }
 
