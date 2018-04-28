@@ -3366,7 +3366,6 @@ EOF;
 
         foreach ($rooms as $room) {
             Rooms::updateRoomTypes($room->id);
-
         }
     }
 }
