@@ -15,7 +15,7 @@ class ProvinceStatsController extends BaseController
         $end_at_time = endOfDay(strtotime($start_at));
         $product_channel_id = $this->params('product_channel_id', '-1');
         $partner_id = $this->params('partner_id', 0);
-        $platform = $this->params('platform', 'weixin');
+        $platform = $this->params('platform', -1);
 
 
         $cond = ['conditions' => 'time_type = :time_type: and stat_at >= :start_at: and stat_at <= :end_at: and 

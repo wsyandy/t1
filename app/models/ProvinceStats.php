@@ -126,7 +126,7 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['partner_id'] = $partner_id;
         }
 
-        if ($platform) {
+        if ($platform > 0) {
             $find_cond['conditions'] .= ' and platform=:platform:';
             $find_cond['bind']['platform'] = $platform;
         }
@@ -186,7 +186,7 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['partner_id'] = $partner_id;
         }
 
-        if ($platform) {
+        if ($platform > 0) {
             $find_cond['conditions'] .= ' and platform=:platform:';
             $find_cond['bind']['platform'] = $platform;
         }

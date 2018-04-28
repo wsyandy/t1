@@ -459,7 +459,7 @@ class StatTask extends \Phalcon\Cli\Task
         $province_ids = [0];
         $product_channel_ids = [-1];
         $platforms = ProvinceStats::$PLATFORMS;
-        $partner_ids = [0];
+        $partner_ids = [];
 
         $product_channels = ProductChannels::findForeach();
         foreach ($product_channels as $product_channel) {
