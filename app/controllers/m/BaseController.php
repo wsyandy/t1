@@ -18,7 +18,8 @@ class BaseController extends \ApplicationController
     static $SKIP_ACTIONS = [
         'activities' => '*',
         'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies'],
-        'payments' => ['index']
+        'payments' => ['index'],
+        'rotary_draw_histories' => '*'
     ];
 
     function currentUserId()

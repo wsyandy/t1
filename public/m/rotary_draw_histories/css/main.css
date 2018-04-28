@@ -1,0 +1,389 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+}
+.winning_record{
+  flex-direction: column;
+}
+.winning_record_number{
+  width: 100%;
+  padding: .1rem .3rem;
+  background-color: #fff;
+  border-bottom: .2rem solid #F3F3F3;
+}
+.winning_record_numberli{
+  position: relative;
+  width: 50%;
+  height: 2.06rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.winning_record_numberli span{
+  font-size: .30rem;
+  color: #717171;
+}
+.winning_record_numberli b{
+  margin-top: .18rem;
+  font-size: .44rem;
+  color: #FF6D59;
+}
+.winning_record_numberli .wire{
+  position: absolute;
+  right: 0;
+  top: .5rem;
+  width: 1px;
+  height: 1rem;
+  background-color: #ECECEC;
+}
+.winning_record_list{
+  flex-direction: column;
+}
+.winning_record_list .title{
+  padding-left: .3rem;
+  height: .82rem;
+  line-height: .82rem;
+  font-size: .3rem;
+  color: #9E9E9E;
+}
+.winning_record_ul{
+  flex-direction: column;
+}
+.winning_record_ul li{
+  margin: 0 .2rem 0 .3rem;
+  height: 1.5rem;
+  border-bottom: 1px solid #E8E8E8;
+  align-items: center;
+  justify-content: space-between;
+}
+.winning_record_ul_left{
+  flex-direction: column;
+}
+.winning_record_ul_left p{
+  font-size: .28rem;
+  color: #404040;
+}
+.winning_record_ul_left span{
+  margin-top: .1rem;
+  font-size: .24rem;
+  color: #969696;
+}
+.winning_record_ul_right{
+  align-items: center;
+}
+.winning_record_ul_right span{
+  font-size: .34rem;
+  color: #494949;
+  margin-left: .06rem;
+}
+.winning_record_ul_right .diamond{
+  width: .3rem;
+  height: .3rem;
+  background: url(../images/diamond_icon.png) center no-repeat;
+  background-size: .3rem;
+}
+.winning_record_ul_right .gold{
+  width: .3rem;
+  height: .3rem;
+  background: url(../images/gold_icon.png) center no-repeat;
+  background-size: .3rem;
+}
+
+.gold_egg{
+  flex-direction: column;
+  background-color: #ff5845;
+}
+.gold_egg_banner{
+  padding-top: 3.89rem;
+  width: 7.5rem;
+  height: 4.64rem;
+  background: url(../images/gold_egg_banner_bg.png) center no-repeat;
+  background-size: 7.5rem 4.64rem;
+  justify-content: center;
+}
+.gold_egg_banner span{
+  text-align: center;
+  font-size: .32rem;
+  color: #D2331B;
+}
+.gold_egg_reward{
+  padding: 0 1.6rem;
+  justify-content: space-between;
+}
+.gold_egg_rewardli .diamond{
+  width: .4rem;
+  height: .4rem;
+  background: url(../images/diamond_icon.png) center no-repeat;
+  background-size: .4rem;
+}
+.gold_egg_rewardli .gold{
+  width: .4rem;
+  height: .4rem;
+  background: url(../images/gold_icon.png) center no-repeat;
+  background-size: .4rem;
+}
+.gold_egg_rewardli .text{
+  margin-left: .14rem;
+  font-size: .32rem;
+  color: #FFF9C5;
+}
+.gold_egg_box{
+  position: relative;
+  margin-bottom: .3rem;
+  width: 7.5rem;
+  height: 7.7rem;
+  background: url(../images/gold_egg_box_bg.png) center bottom no-repeat;
+  background-size: 5.84rem 2.08rem;
+}
+.gold_egg_box_hint{
+  position: absolute;
+  bottom: .86rem;
+  left: 2.77rem;
+  width: 1.96rem;
+  height: .6rem;
+  border: 2px solid #FFCE11;
+  border-radius: .1rem;
+  background-color: #F6533E;
+  font-size: .26rem;
+  color: #FFEF3B;
+  text-align: center;
+  line-height: .6rem;
+}
+.egg_gif_start{
+  position: absolute;
+  left: 0;
+  bottom: .8rem;
+  width: 7.5rem;
+  height: 7.8rem;
+  background:url(../images/gifbefore.gif) center no-repeat; 
+  background-size: 7.5rem 7.8rem;
+  /* animation: myfirst .8s linear 1s infinite alternate;  */
+}
+.egg_gif_gifafter{
+  background:url(../images/gifafter.gif) center no-repeat; 
+  background-size: 7.5rem 7.8rem;
+}
+.gold_egg_butbox{
+  margin: 0 0.8rem;
+  justify-content: space-between;
+}
+.gold_egg_butboxli{
+  width: 2.6rem;
+  height: .88rem;
+  background: url(../images/egg_neo_buttom.png) center no-repeat;
+  background-size: 2.6rem .88rem;
+  font-size: .36rem;
+  color: #C72715;
+  justify-content: center;
+  align-items: center;
+}
+.ten_buttom{
+  background: url(../images/egg_ten_buttom.png) center no-repeat;
+  background-size: 2.6rem .88rem;
+}
+.gold_egg_rules{
+  margin-top: .96rem;
+  flex-direction: column;
+  margin-left: .4rem;
+}
+.gold_egg_rules p{
+  font-size: .28rem;
+  color: #FFCD4C;
+  margin-bottom: .2rem;
+}
+.gold_egg_rules span{
+  margin-bottom: .1rem;
+  font-size: .26rem;
+  color: #FFD264;
+}
+.gold_egg_marquee{
+  position: relative;
+  margin-top: .46rem;
+  margin-left: .68rem;  
+  padding-top: .2rem;
+  width: 6.14rem;
+  height: 2rem;
+  background-color: rgba(255,255,255,0.12);
+  border-radius: .2rem;
+  overflow: hidden;
+}
+.gold_egg_marquee_ul{
+  position: absolute;
+  left: 0;
+  top: .2rem;
+  flex-direction: column;
+  margin-left: .4rem;
+}
+.marquee_top{
+  transition: all 0.5s;
+	margin-top: -.6rem;
+}
+.gold_egg_marquee_ul li{
+  padding-left: .58rem;
+  height: .6rem;
+  font-size: .28rem;
+  color: #FFFFFF;
+  background: url(../images/horn_icon.png) left .08rem no-repeat;
+  background-size: .3rem;
+}
+.gold_egg_marquee_ul li .gold{
+  font-size: .28rem;
+  color: #FFDA5D;
+}
+.gold_eggmy_prize{
+  position: fixed;
+  top: 5.82rem;
+  right: 0;
+  width: 1.42rem;
+  height: 1.12rem;
+  justify-content: center;
+  border: 2px solid #FBDB36;
+  border-right: none;
+  border-top-left-radius: .2rem;
+  border-bottom-left-radius: .2rem;
+  background: url(../images/prize_icon.png) #D24600 center .14rem no-repeat;
+  background-size: .4rem;
+}
+.gold_eggmy_prize span{
+  margin-top: .6rem;
+  font-size: .28rem;
+  color: #FFF200;
+}
+.not_balance_toast{
+  padding-top: .34rem;
+  position: fixed;
+  top: 4.12rem;
+  left: 1rem;
+  width: 5.5rem;
+  height: 3.02rem;
+  background-color: #fff;
+  z-index: 101;
+  border-radius: .2rem;
+  flex-direction: column;
+  align-items: center;
+}
+.not_balance_box{
+  width: 100%;
+  padding: 0 .5rem;
+  justify-content: space-between;
+}
+.not_balance_toast .hint{
+  margin-top: .25rem;
+  margin-bottom: .52rem;
+  font-size: .28rem;
+  color: #595959;
+}
+.not_balance_toast b{
+  font-size: .34rem;
+  color: #565656;
+}
+.not_balance_box .cancel{
+  width: 2.1rem;
+  height: .76rem;
+  line-height: .76rem;
+  text-align: center;
+  border: 1px solid #DCDCDC;
+  border-radius: .38rem;
+  font-size: .30rem;
+  color: #969696;
+}
+.not_balance_box .topup{
+  width: 2.1rem;
+  height: .76rem;  
+  line-height: .76rem;
+  font-size: .30rem;
+  color: #FFFFFF;
+  text-align: center;
+  border-radius: .38rem;
+  background-color: #F45189;
+}
+.winning_results_toast{
+  padding-top: 1.4rem;
+  width: 5.8rem;
+  height: 6.84rem;
+  position: fixed;
+  top: 1.66rem;
+  left: .85rem;
+  background: url(../images/winning_results_toast.png) center no-repeat;
+  background-size: 5.8rem 6.84rem;
+  z-index: 102;
+  flex-direction: column;
+  align-items: center;
+} 
+.winning_results_toast .gold_bigicon{
+  width: 5.4rem;
+  height: 2.8rem;
+  background: url(../images/gold_bigicon.png) center no-repeat;
+  background-size: 5.4rem 2.8rem;
+}
+.winning_results_toast .diamond_bigicon{
+  width: 5.4rem;
+  height: 2.8rem;
+  background: url(../images/diamond_bigicon.png) center no-repeat;
+  background-size: 5.4rem 2.8rem;
+}
+.winning_results_text{
+  margin-top: .3rem;
+  font-size: .32rem;
+  color: #FFFFFF;
+}
+.winning_results_buttom{
+  margin-top: .62rem;
+  width: 3.96rem;
+  height: .8rem;
+  border-radius: .4rem;
+  justify-content: center;
+  align-items: center;
+  font-size: .36rem;
+  color: #E56E23;
+  background-image: linear-gradient(-180deg, #FFF46A 0%, #FFE638 100%);
+  box-shadow: 0 .05rem 0 0 #DF4406, inset 0 0 .08rem 0 rgba(255,213,194,0.57);
+}
+.winning_results_ulbox{
+  width: 4.65rem;
+  height: 3.52rem;
+  overflow-y: scroll;
+}
+.winning_results_ul{
+  width: 4.65rem;
+  height: 7.2rem;
+  flex-direction: column;
+}
+.winning_results_ul li{
+  justify-content: space-between;
+  font-size: .34rem;
+  color: #FFF9C5;
+  margin-bottom: .25rem;
+}
+.winning_results_ul li .gold{
+  padding-right: .48rem;
+  background: url(../images/gold_icon.png) right center no-repeat;
+  background-size: .38rem;
+}
+.winning_results_ul li .diamond{
+  padding-right: .48rem;
+  background: url(../images/diamond_icon.png) right center no-repeat;
+  background-size: .38rem;
+}
+.mask_box{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background-color: rgba(0,0,0,0.5);
+}
