@@ -36,7 +36,7 @@
             var code = $(this).find('#code').attr("value");
 
             if ('gold_eggs_draw' == code) {
-                window.location.href = "/m/draw_histories/" + code + "?id=" + id + "&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
+                window.location.href = "/m/draw_histories?sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
                 return;
             }
 
