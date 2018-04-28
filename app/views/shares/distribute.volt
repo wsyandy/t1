@@ -80,15 +80,14 @@
             mobile: '',
             auth_code: '',
             password: '',
+            share_history_id:'{{ share_history_id }}',
             sms_token: '',
             register_status: false,
             send_status: false,
             code:"{{ code }}",
             image_token:'',
             captcha_code:'',
-            error_text:'',
-            share_history_id:""
-
+            error_text:''
 
         },
         methods: {
@@ -231,10 +230,6 @@
 
         return true;
     }
-    $(function () {
-        vm.share_history_id = '{{ share_history_id }}';
-        alert( vm.share_history_id);
-    })
 </script>
 </body>
 </html>

@@ -128,7 +128,7 @@ class SharesController extends ApplicationController
 
         $share_history->increase('view_num');
         $share_user = $share_history->user;
-
+        $this->view->share_history_id = $share_history_id;
 
         $this->view->code = $code;
         $this->view->share_user = $share_user;
