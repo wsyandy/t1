@@ -136,9 +136,25 @@ define('ACCOUNT_TYPE_DEDUCT', 6); //系统扣除
 define('ACCOUNT_TYPE_CREATE_UNION_REFUND', 7); //创建公会返还
 define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
-
 define('ACCOUNT_TYPE_DISTRIBUTE_REGISTER', 21); //分销注册
 define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
+define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
+define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
+
+//金币
+define('GOLD_TYPE_SIGN_IN', 1); //用户签到
+define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
+define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
+define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
+define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
+define('GOLD_TYPE_GIVE', 6); //赠送金币
+define('GOLD_TYPE_GAME_INCOME', 10); //游戏收入
+define('GOLD_TYPE_GAME_EXPENSES', 11); //游戏支出
+define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
+define('GOLD_TYPE_BIND_MOBILE', 13); //绑定手机赠送
+define('GOLD_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
+define('GOLD_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
+
 
 // 兑换比例
 define('HI_COIN_TO_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
@@ -229,18 +245,6 @@ define('UNION_TYPE_PRIVATE', 2); //家族
 
 define('WITHDRAW_TYPE_USER', 1); //用户体现
 define('WITHDRAW_TYPE_UNION', 2); //家族体现
-
-//金币
-define('GOLD_TYPE_SIGN_IN', 1); //用户签到
-define('GOLD_TYPE_BUY_GIFT', 2); //购买礼物
-define('GOLD_TYPE_SHARE_WORK', 3); //分享任务领取奖励
-define('GOLD_TYPE_BUY_GOLD', 4); //购买金币
-define('GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND', 5); //Hi币兑钻石获得
-define('GOLD_TYPE_GIVE', 6); //赠送金币
-define('GOLD_TYPE_GAME_INCOME', 10); //游戏收入
-define('GOLD_TYPE_GAME_EXPENSES', 11); //游戏支出
-define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
-define('GOLD_TYPE_BIND_MOBILE', 13); //活动抽奖赠送
 
 //礼物付费类型
 define('GIFT_PAY_TYPE_DIAMOND', 'diamond');

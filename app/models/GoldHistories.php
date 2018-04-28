@@ -33,8 +33,9 @@ class GoldHistories extends BaseModel
         GOLD_TYPE_GAME_EXPENSES => '游戏支出',
         GOLD_TYPE_ACTIVITY_LUCKY_DRAW => '活动抽奖赠送',
         GOLD_TYPE_BIND_MOBILE => '绑定手机号码',
+        GOLD_TYPE_DRAW_INCOME => '转盘抽奖收入',
+        GOLD_TYPE_DRAW_EXPENSES => '转盘抽奖支出'
     ];
-
 
     function beforeCreate()
     {
@@ -121,7 +122,8 @@ class GoldHistories extends BaseModel
      */
     function isCostGold()
     {
-        return $this->fee_type == GOLD_TYPE_BUY_GIFT || $this->fee_type == GOLD_TYPE_GAME_EXPENSES;
+        return $this->fee_type == GOLD_TYPE_BUY_GIFT || $this->fee_type == GOLD_TYPE_GAME_EXPENSES
+            || $this->fee_type == GOLD_TYPE_DRAW_EXPENSES;
     }
 
     /**
