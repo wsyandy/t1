@@ -696,7 +696,7 @@ class RoomsController extends BaseController
                 }
 
                 if ($search_type) {
-                    $room_category = \Rooms::findFirstByType($search_type);
+                    $room_category = \RoomCategories::findFirstByType($search_type);
 
                     if ($room_category) {
                         $cond['conditions'] = " room_category_ids like :room_category_ids:";
