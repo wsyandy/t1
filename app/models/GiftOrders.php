@@ -181,7 +181,7 @@ class GiftOrders extends BaseModel
 
             if ($gift_order->create()) {
                 $remark = '购买礼物(' . $gift->name . ')' . $gift_num . '个, 花费' . $gift_order->pay_type_text . $gift_order->amount;
-                $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile];
+                $opts = ['gift_order_id' => $gift_order->id, 'remark' => $remark, 'mobile' => $sender->mobile, 'target_id' => $gift_order->id];
 
                 //扣除钻石
                 if ($gift->isDiamondPayType()) {

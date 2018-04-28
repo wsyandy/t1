@@ -64,7 +64,7 @@ class GoldHistories extends BaseModel
         $gold_history->amount = $amount;
         $gold_history->country_id = $user->country_id;
 
-        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id'] as $column) {
+        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id', 'target_id'] as $column) {
 
             $value = fetch($opts, $column);
             if ($value) {

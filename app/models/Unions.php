@@ -133,33 +133,6 @@ class Unions extends BaseModel
         $union->avatar = $dest_filename;
         $union->save();
 
-//        $db = \Users::getUserDb();
-//        $good_num_list_key = 'good_num_list';
-//
-//        if ($db->zscore($good_num_list_key, $union->id)) {
-//            $union->status = STATUS_OFF;
-//            $union->mobile = '';
-//            $union->type = 0;
-//            $union->user_id = 0;
-//            $union->auth_status = AUTH_NONE;
-//            $union->update();
-//
-//            $union = new Unions();
-//            $union->name = $name;
-//            $union->notice = $notice;
-//            $union->need_apply = $need_apply;
-//            $union->product_channel_id = $user->product_channel_id;
-//            $union->user_id = $user->id;
-//            $union->status = STATUS_ON;
-//            $union->auth_status = AUTH_WAIT;
-//            $union->mobile = $user->mobile;
-//            $union->type = UNION_TYPE_PRIVATE;
-//            $union->avatar_status = AUTH_SUCCESS;
-//            $union->avatar = $dest_filename;
-//            $union->save();
-//        }
-
-
         $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
         $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 

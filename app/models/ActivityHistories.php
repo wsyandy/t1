@@ -75,7 +75,7 @@ class ActivityHistories extends BaseModel
                 }
 
                 GoldHistories::changeBalance($user_id, GOLD_TYPE_ACTIVITY_LUCKY_DRAW, $gold, [
-                    'remark' => "活动" . $activity_history->activity->title . "奖励" . $gold . "金币", 'activity_id' => $activity_id]);
+                    'remark' => "活动" . $activity_history->activity->title . "奖励" . $gold . "金币", 'activity_id' => $activity_id, 'target_id' => $activity_id]);
                 $activity_history->gold = $gold;
                 $activity_history->update();
             } elseif (in_array($prize_type, [6, 7, 8])) {

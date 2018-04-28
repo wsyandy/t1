@@ -258,7 +258,8 @@ class HiCoinHistories extends BaseModel
             $user->hi_coins = $hi_coin_history->balance;
             $user->update();
 
-            $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id];
+            $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id, 'target_id' => $hi_coin_history->id];
+
             if ($hi_coin_history->gold > 0) {
                 \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
             }
