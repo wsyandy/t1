@@ -147,7 +147,7 @@ class Activities extends BaseModel
                 $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
 
                 if ('gold_eggs_draw' == $activity->code) {
-                    $url = 'url://m/draw_histories/draw';
+                    $url = 'url://m/draw_histories';
                 }
 
                 $activity = $activity->toSimpleJson();
