@@ -32,7 +32,9 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
         ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
         ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出',
-        ACCOUNT_TYPE_DEDUCT => '系统扣除'
+        ACCOUNT_TYPE_DEDUCT => '系统扣除',
+        ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
+        ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值'
     ];
 
     function beforeCreate()

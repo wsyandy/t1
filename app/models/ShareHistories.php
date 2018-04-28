@@ -43,6 +43,9 @@ class ShareHistories extends BaseModel
         if ($this->isGoldWorks()) {
             return $root . 'shares/share_work?share_history_id=' . $this->id . '&code=' . $code;
         }
+        if ($this->isDistribute()) {
+            return $root . 'shares/distribute?share_history_id=' . $this->id . '&code=' . $code;
+        }
 
         return $root . 'shares?share_history_id=' . $this->id . '&code=' . $code;
     }
@@ -92,4 +95,10 @@ class ShareHistories extends BaseModel
     {
         return $this->share_source == 'gold_works';
     }
+
+    function isDistribute()
+    {
+        return $this->share_source == 'distribute';
+    }
+
 }

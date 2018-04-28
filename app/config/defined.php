@@ -137,6 +137,9 @@ define('ACCOUNT_TYPE_CREATE_UNION_REFUND', 7); //创建公会返还
 define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 
+define('ACCOUNT_TYPE_DISTRIBUTE_REGISTER', 21); //分销注册
+define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
+
 // 兑换比例
 define('HI_COIN_TO_DIAMOND_RATE', 10); //Hi币 兑换 钻石 比例
 define('HI_COIN_TO_CNY_RATE', 1); //Hi币 兑换 人民币 比例
