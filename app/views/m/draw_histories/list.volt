@@ -20,12 +20,12 @@
     <div class="winning_record_number">
         <div class="winning_record_numberli">
             <span>钻石</span>
-            <b>1000</b>
+            <b>{{ diamond_total_number }}</b>
             <span class="wire"></span>
         </div>
         <div class="winning_record_numberli">
             <span>金币</span>
-            <b style="color: #F6B92A;">1000</b>
+            <b style="color: #F6B92A;">{{ gold_total_number }}</b>
         </div>
     </div>
     <div class="winning_record_list">
