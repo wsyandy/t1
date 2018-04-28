@@ -16,8 +16,8 @@ class DrawHistoriesController extends BaseController
     {
 
         $user = $this->currentUser();
-        $cond = ['conditions' => 'user_id!=:user_id:',
-            'bind' => ['user_id' => $user->id],
+        $cond = ['conditions' => 'user_id!=:user_id: and type=:type:',
+            'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
             'order' => 'id desc'
         ];
 
