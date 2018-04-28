@@ -15,13 +15,12 @@ class DrawHistoriesController extends BaseController
     function indexAction()
     {
 
-        $user = $this->currentUser();
-        $cond = ['conditions' => 'user_id!=:user_id: and type=:type:',
-            'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
+        $cond = ['conditions' => 'type=:type:',
+            'bind' => ['type' => 'diamond'],
             'order' => 'id desc'
         ];
 
-        $draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+        $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
 
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
