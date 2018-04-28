@@ -37,7 +37,7 @@
                     <span>${draw_history.created_at_text}</span>
                 </div>
                 <div class="winning_record_ul_right">
-                    <span>＋${draw_history.pay_amount}</span>
+                    <span>＋${draw_history.number}</span>
                     <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}"></span>
                 </div>
             </li>

@@ -70,7 +70,7 @@
     <div v-if="isResultsToast" class="winning_results_toast">
         <span v-if="resultsState==0" :class="{'gold_bigicon':draw_histories[0].type == 'gold'}"></span>
         <span  v-if="resultsState==1" :class="{'diamond_bigicon':draw_histories[0].type == 'diamond'}"></span>
-        <span  v-if="resultsState<=1" class="winning_results_text">获得10 ${draw_histories[0].type == 'gold' ? '金币' : '钻石'}</span>
+        <span  v-if="resultsState<=1" class="winning_results_text">获得${draw_histories[0].number}${draw_histories[0].type_text}</span>
         <div  v-if="resultsState==2" class="winning_results_ulbox">
             <ul class="winning_results_ul">
                 <li v-for="draw_history in draw_histories"><span>获得${draw_history.type_text}</span>
