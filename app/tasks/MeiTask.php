@@ -3343,5 +3343,11 @@ EOF;
         }
 
         echoLine(count($user_db->zrange($key, 0, -1)));
+
+        $user = Users::findFirstById(1001314);
+        echoLine($user->push_token);
+
+        $hot_cache = Users::getHotReadCache();
+
     }
 }

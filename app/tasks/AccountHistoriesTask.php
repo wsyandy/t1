@@ -40,7 +40,7 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
     function giveAction($params)
     {
         $amount = $params[0];
-        if($amount > 100){
+        if ($amount > 100) {
             echoLine('error', $params);
             return;
         }
@@ -54,5 +54,42 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
             \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, $amount, $opts);
         }
 
+    }
+
+    function fixGiftOrderAction()
+    {
+        $sender_id = 1009661;
+        $receiver_ids = [1205028];
+
+        $gift_id = 26;
+        $opts = '{"gift_num":1,"sender_current_room_id":1002353,"receiver_current_room_id":1002353,"target_id":470448,"time":1524839457,"async_verify_data":1}';
+        $opts = json_decode($opts, true);
+        $target_id = fetch($opts, 'target_id');
+        $gift = Gifts::findFirstById($gift_id);
+
+        unset($opts['async_verify_data']);
+
+        $cond = [
+            'conditions' => 'target_id = :target_id: and pay_type = :pay_type:',
+            'bind' => ['target_id' => $target_id, 'pay_type' => $gift->pay_type],
+            'order' => 'id desc'
+        ];
+
+        if ($gift->isDiamondPayType()) {
+            $target = AccountHistories::findFirstById($target_id);
+        } else {
+            $target = GoldHistories::findFirstById($target_id);
+        }
+
+        echoLine($target->id, $target->user_id);
+
+        $gift_order = GiftOrders::findFirst($cond);
+
+        if ($gift_order) {
+            echoLine($opts);
+            return;
+        }
+
+        GiftOrders::asyncCreateGiftOrder($sender_id, $receiver_ids, $gift_id, $opts);
     }
 }

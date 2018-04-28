@@ -755,25 +755,17 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-            //$hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
-            $hot_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 9, ['new' => 1]);
+            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
         if (STATUS_ON == $gang_up) {
-//            $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4,
-//                ['gang_up' => $gang_up]);
-
             $gang_up_rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), 1, 4, ['new' => 1]);
-
-            foreach ($gang_up_rooms as $gang_up_room) {
-                $gang_up_room->tag_names = ['test1'];
-            }
-
             $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
         }
 
         if (STATUS_ON == $gang_up_category) {
+            
             $room_category = \RoomCategories::findFirstByType('gang_up');
             if (isPresent($room_category)) {
                 $gang_up_categories = \RoomCategories::find(

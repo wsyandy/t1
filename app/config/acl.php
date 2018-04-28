@@ -26,7 +26,8 @@ return [
         'sms_channels' => '*', 'soft_versions' => '*', 'client_themes' => '*', 'push_messages' => '*', 'partners' => '*',
         'channel_soft_versions' => '*', 'gifts' => '*', 'emoticon_images' => '*', 'audios' => "*", 'room_themes' => '*',
         'musics' => '*', 'banners' => '*', 'complaints' => '*', 'sms_histories' => '*', 'rooms' => '*', 'broadcasts' => '*',
-        'share_histories' => '*', 'audio_chapters' => '*', 'payment_channels' => '*', 'product_groups' => '*'
+        'share_histories' => '*', 'audio_chapters' => '*', 'payment_channels' => '*', 'product_groups' => '*', 'product_menus' => '*',
+        'room_tags' => '*', 'room_categories' => '*'
     ],
 
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
@@ -38,8 +39,8 @@ return [
         'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update'],
         'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
         'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic'],
-        'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'], 'orders' => ['index'],
-        'payments' => ['index'], 'audios' => '*', 'audio_chapters' => '*'
+        'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'],
+        'payments' => ['index'], 'audios' => '*', 'audio_chapters' => '*', 'product_menus' => '*', 'room_tags' => '*', 'room_categories' => '*'
     ],
     'product_operator_assistant' => ['dashboard' => '*', 'users' => ['index', 'detail', 'edit', 'update'], 'rooms' => '*',
         'push_messages' => '*', 'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'banned_words' => ' *',
