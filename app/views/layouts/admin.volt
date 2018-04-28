@@ -200,7 +200,7 @@
             or isAllowed('wap_visits','index') or isAllowed('word_visits','days') or isAllowed('stats', 'stat_room_time') or
             isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') or
             isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') or isAllowed('activities', 'stat') or
-            isAllowed('gift_stats', 'days') or isAllowed('partner_datas','index') %}
+            isAllowed('gift_stats', 'days') or isAllowed('partner_datas','index')  or isAllowed('province_stats','days')%}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -313,6 +313,9 @@
                     {% endif %}
                     {% if isAllowed('partner_datas','index') %}
                         <li><a href="/admin/partner_datas/index">推广激活统计</a></li>
+                    {% endif %}
+                    {% if isAllowed('province_stats','days') %}
+                        <li><a href="/admin/province_stats/days">省份统计</a></li>
                     {% endif %}
                 </ul>
             </li>

@@ -289,9 +289,9 @@ class StatTask extends \Phalcon\Cli\Task
 
         $sys_db = Stats::getStatDb();
         foreach ($keys as $i => $key) {
-            if($type == 'set'){
+            if ($type == 'set') {
                 $sys_db->del($key);
-            }else{
+            } else {
                 $sys_db->zclear($key);
             }
 
@@ -344,9 +344,10 @@ class StatTask extends \Phalcon\Cli\Task
         return $conds;
     }
 
-    function hour2Action(){
+    function hour2Action()
+    {
         $time = time() - 1800;
-        for ($i = 1; $i < 80; $i++){
+        for ($i = 1; $i < 80; $i++) {
             $time3 = $time - $i * 3600;
             echoLine(date('YmdH', $time3));
             $this->hour3Action($time3);
@@ -406,7 +407,7 @@ class StatTask extends \Phalcon\Cli\Task
 
         $time = time() - 1800 - $params[0] * 3600 * 24;
         echoLine(date("Ymd", $time));
-        
+
         $conds = $this->getConds2($time);
         $fields = Stats::$STAT_FIELDS;
         $stat_at = strtotime(date('Ymd 00:00:00', $time)); // 零点
@@ -449,6 +450,46 @@ class StatTask extends \Phalcon\Cli\Task
             $stat->save();
         }
 
+    }
+
+    function provinceStatsAction()
+    {
+        $stat_at = time() - 3600;
+        $stat_at = strtotime('20180108000000');
+
+        $province_ids = [0];
+        $product_channel_ids = [-1];
+        $platforms = ProvinceStats::$PLATFORMS;
+        $partner_ids = [0];
+
+        $product_channels = ProductChannels::findForeach();
+        foreach ($product_channels as $product_channel) {
+            if ($product_channel->status == STATUS_ON) {
+                $product_channel_ids[] = $product_channel->id;
+            }
+        }
+
+        $provinces = Provinces::findForeach();
+        foreach ($provinces as $province) {
+            $province_ids[] = $province->id;
+        }
+
+        $partners = Partners::findForeach();
+        foreach ($partners as $partner) {
+            if ($partner->status == STATUS_ON) {
+                $partner_ids[] = $partner->id;
+            }
+        }
+
+        foreach ($product_channel_ids as $product_channel_id) {
+            foreach ($partner_ids as $partner_id) {
+                foreach ($province_ids as $province_id) {
+                    foreach ($platforms as $platform => $val) {
+                        ProvinceStats::dayStat($product_channel_id, $province_id, $partner_id, $platform, $stat_at);
+                    }
+                }
+            }
+        }
     }
 
 }
