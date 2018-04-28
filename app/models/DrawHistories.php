@@ -70,10 +70,10 @@ class DrawHistories extends BaseModel
     {
         $user_db = Users::getUserDb();
         // 系统总收入
-        $cache_key = 'draw_total_amount_incr_diamond';
+        $cache_key = 'draw_history_total_amount_incr_diamond';
         $incr_num = $user_db->get($cache_key);
         // 系统支出
-        $cache_decr_key = 'draw_total_amount_decr_diamond';
+        $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
         $hit_diamond = false;
@@ -177,11 +177,11 @@ class DrawHistories extends BaseModel
 
         $user_db = Users::getUserDb();
         // 系统总收入
-        $cache_key = 'draw_total_amount_incr_' . $draw_history->pay_type;
+        $cache_key = 'draw_history_total_amount_incr_' . $draw_history->pay_type;
         $incr_num = $user_db->incrby($cache_key, intval($draw_history->pay_amount));
 
         // 系统支出
-        $cache_decr_key = 'draw_total_amount_decr_' . $draw_history->type;
+        $cache_decr_key = 'draw_history_total_amount_decr_' . $draw_history->type;
         $decr_num = $user_db->incrby($cache_decr_key, intval($draw_history->number));
 
         return $draw_history;
