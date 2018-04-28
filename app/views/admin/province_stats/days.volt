@@ -13,11 +13,11 @@
         {{ options(platforms, platform) }}
     </select>
 
-    <label for="partner_id">
-        <select name="partner_id" id="partner_id">
-            {{ options(partners,partner_id,'id','name') }}
-        </select>
-    </label>
+    <label for="partner_id"> 渠道</label>
+
+    <select name="partner_id" id="partner_id">
+        {{ options(partners,partner_id,'id','name') }}
+    </select>
 
     <label for="start_at">日期</label>
     <input type="text" name="start_at" class="form_datetime" id="start_at" value="{{ start_at }}" size="16">

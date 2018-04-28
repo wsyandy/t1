@@ -15,7 +15,7 @@ class ProvinceStats extends BaseModel
 
     static $TIME_TYPE = [STAT_DAY => '天'];
 
-    static $PLATFORMS = [USER_PLATFORM_IOS => '苹果客户端', USER_PLATFORM_ANDROID => '安卓客户端',
+    static $PLATFORMS = ['-1' => '全部', USER_PLATFORM_IOS => '苹果客户端', USER_PLATFORM_ANDROID => '安卓客户端',
         USER_PLATFORM_WEIXIN_IOS => '微信苹果端', USER_PLATFORM_WEIXIN_ANDROID => '微信安卓端'];
 
     static $STAT_FIELDS = [
@@ -71,7 +71,7 @@ class ProvinceStats extends BaseModel
 
         //订单金额
         $order_amount = 0;
-        if($order_amount){
+        if ($order_num) {
             $order_amount = self::orderAmount($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at);
         }
         $data_hash['order_amount'] = $order_amount;
@@ -109,14 +109,13 @@ class ProvinceStats extends BaseModel
     static function activeNum($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at)
     {
 
-        $find_cond['conditions'] = 'created_at>=:start_at: and created_at<=:end_at: and platform = :platform:';
-        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at, 'platform' => $platform];
+        $find_cond['conditions'] = 'created_at>=:start_at: and created_at<=:end_at: ';
+        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at];
         if ($province_id) {
             $find_cond['conditions'] .= ' and province_id=:province_id:';
             $find_cond['bind']['province_id'] = $province_id;
-        } else {
-            $find_cond['conditions'] .= ' and (province_id is null or province_id=0)';
         }
+
         if ($product_channel_id > 0) {
             $find_cond['conditions'] .= ' and product_channel_id=:product_channel_id:';
             $find_cond['bind']['product_channel_id'] = $product_channel_id;
@@ -125,8 +124,11 @@ class ProvinceStats extends BaseModel
         if ($partner_id) {
             $find_cond['conditions'] .= ' and partner_id=:partner_id:';
             $find_cond['bind']['partner_id'] = $partner_id;
-        } else {
-            $find_cond['conditions'] .= ' and (partner_id is null or partner_id=0)';
+        }
+
+        if ($platform) {
+            $find_cond['conditions'] .= ' and platform=:platform:';
+            $find_cond['bind']['platform'] = $platform;
         }
 
         $total = Users::count($find_cond);
@@ -165,17 +167,15 @@ class ProvinceStats extends BaseModel
     }
 
 
-
     static function getOrderCond($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at)
     {
-        $find_cond['conditions'] = 'created_at>=:start_at: and created_at<=:end_at: and platform = :platform: and status =:status:';
-        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at, 'platform' => $platform, 'status' => ORDER_STATUS_SUCCESS];
+        $find_cond['conditions'] = 'created_at>=:start_at: and created_at<=:end_at: and status =:status:';
+        $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at, 'status' => ORDER_STATUS_SUCCESS];
         if ($province_id) {
             $find_cond['conditions'] .= ' and province_id=:province_id:';
             $find_cond['bind']['province_id'] = $province_id;
-        } else {
-            $find_cond['conditions'] .= ' and (province_id is null or province_id=0)';
         }
+
         if ($product_channel_id > 0) {
             $find_cond['conditions'] .= ' and product_channel_id=:product_channel_id:';
             $find_cond['bind']['product_channel_id'] = $product_channel_id;
@@ -184,8 +184,11 @@ class ProvinceStats extends BaseModel
         if ($partner_id) {
             $find_cond['conditions'] .= ' and partner_id=:partner_id:';
             $find_cond['bind']['partner_id'] = $partner_id;
-        } else {
-            $find_cond['conditions'] .= ' and (partner_id is null or partner_id=0)';
+        }
+
+        if ($platform) {
+            $find_cond['conditions'] .= ' and platform=:platform:';
+            $find_cond['bind']['platform'] = $platform;
         }
 
         return $find_cond;
