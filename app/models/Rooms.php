@@ -2220,7 +2220,6 @@ class Rooms extends BaseModel
 
         $name = $room->name;
 
-        echoLine($name);
 
         $room_category_ids = [];
         $select_room_category_names = [];
@@ -2295,7 +2294,6 @@ class Rooms extends BaseModel
         $select_room_category_types = array_filter(array_unique($select_room_category_types));
         $parent_room_category_ids = array_filter(array_unique($parent_room_category_ids));
 
-        debug($room_category_ids, $room_category_names, $room_category_word_names);
 
         $room_category_ids = implode(',', $room_category_ids);
         $select_room_category_types = implode(',', $select_room_category_types);
