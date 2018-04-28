@@ -2220,7 +2220,6 @@ class Rooms extends BaseModel
 
         $name = $room->name;
 
-        echoLine($name);
 
         $room_category_ids = [];
         $select_room_category_names = [];
@@ -2229,6 +2228,13 @@ class Rooms extends BaseModel
 
         if ($room_category_names) {
             foreach ($room_category_names as $room_category_id => $room_category_name) {
+
+                $room_category_name = preg_replace('/\./', '', $room_category_name);
+
+                if (!$room_category_name) {
+                    continue;
+                }
+
 
                 if (preg_match("/$room_category_name/i", $name)) {
 
@@ -2241,15 +2247,25 @@ class Rooms extends BaseModel
                     $parent_room_category_id = $room_category->parent_id;
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                        $parent_room_category_ids[] = $parent_room_category_id;
+                        $select_room_category_types[] = $room_category->parent->type;
+                        $select_room_category_names[] = $room_category->parent->name;
                         $room_category_ids[] = $parent_room_category_id;
+                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }
             }
         }
 
         if ($room_category_word_names) {
+
             foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
+
+                $room_category_word_name = preg_replace('/\./', '', $room_category_word_name);
+
+                if (!$room_category_word_name) {
+                    continue;
+                }
+
 
                 if (preg_match("/$room_category_word_name/i", $name)) {
                     $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
@@ -2257,17 +2273,16 @@ class Rooms extends BaseModel
 
                     $parent_room_category_id = $room_category->parent_id;
 
-                    if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                    if (!in_array($room_category->id, $room_category_ids)) {
                         $room_category_ids[] = $room_category->id;
                         $select_room_category_names[] = $room_category->name;
                         $select_room_category_types[] = $room_category->type;
-                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $parent_room_category_id;
-                        $select_room_category_names[] = $room_category->name;
-                        $select_room_category_types[] = $room_category->type;
+                        $select_room_category_names[] = $room_category->parent->name;
+                        $select_room_category_types[] = $room_category->parent->type;
                         $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }
@@ -2275,11 +2290,10 @@ class Rooms extends BaseModel
         }
 
         $room_category_ids = array_unique($room_category_ids);
-        $select_room_category_names = array_unique($select_room_category_names);
-        $select_room_category_types = array_unique($select_room_category_types);
-        $parent_room_category_ids = array_unique($parent_room_category_ids);
+        $select_room_category_names = array_filter(array_unique($select_room_category_names));
+        $select_room_category_types = array_filter(array_unique($select_room_category_types));
+        $parent_room_category_ids = array_filter(array_unique($parent_room_category_ids));
 
-        debug($room_category_ids, $room_category_names, $room_category_word_names);
 
         $room_category_ids = implode(',', $room_category_ids);
         $select_room_category_types = implode(',', $select_room_category_types);
@@ -2319,7 +2333,7 @@ class Rooms extends BaseModel
             }
         }
 
-        debug($select_room_category_names, $select_room_category_types);
+        info($select_room_category_names, $select_room_category_types);
         $room->room_category_ids = $room_category_ids;
         $room->room_category_names = $select_room_category_names;
         $room->room_category_types = $select_room_category_types;

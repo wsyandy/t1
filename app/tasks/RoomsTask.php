@@ -763,4 +763,14 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         unlock($lock);
     }
+
+    function initRoomCategoryAction()
+    {
+        $rooms = Rooms::find(['conditions' => 'last_at >= :last_at:', 'bind' => ['last_at' => time() - 3600], 'columns' => 'id']);
+        echoLine(count($rooms));
+
+        foreach ($rooms as $room) {
+            Rooms::updateRoomTypes($room->id);
+        }
+    }
 }
