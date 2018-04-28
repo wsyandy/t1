@@ -116,6 +116,11 @@
                         self.isResultsToast = true;
                         break;
                 }
+
+                setTimeout(function () {
+                    self.isLottery = !self.isLottery;
+                }, 3000);
+
                 //
                 // if(num==1){
                 //     self.isLottery = false;
