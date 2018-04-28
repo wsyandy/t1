@@ -1,4 +1,4 @@
-create table rotary_draw_histories(
+create table draw_histories(
   id serial PRIMARY key not null,
   product_channel_id integer,
   user_id integer,

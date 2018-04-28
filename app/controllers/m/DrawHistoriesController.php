@@ -9,7 +9,7 @@
 namespace m;
 
 
-class RotaryDrawHistoriesController extends BaseController
+class DrawHistoriesController extends BaseController
 {
 
     function indexAction()
@@ -21,7 +21,7 @@ class RotaryDrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $rotary_draw_histories = \RotaryDrawHistories::findPagination($cond, 1, 10);
+        $draw_histories = \DrawHistories::findPagination($cond, 1, 10);
 
     }
 
@@ -47,9 +47,9 @@ class RotaryDrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
 
-            $rotary_draw_histories = [];
+            $draw_histories = [];
             for ($i = 1; $i <= $num; $i++){
-                $rotary_draw_histories[] = \RotaryDrawHistories::createHistory($this->currentUser(), []);
+                $draw_histories[] = \DrawHistories::createHistory($this->currentUser(), []);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
@@ -61,7 +61,7 @@ class RotaryDrawHistoriesController extends BaseController
     function listAction()
     {
         $user = $this->currentUser();
-        $rotary_draw_histories = \RotaryDrawHistories::find(['conditions' => 'user_id=:user_id:',
+        $draw_histories = \DrawHistories::find(['conditions' => 'user_id=:user_id:',
             'bind' => ['user_id' => $user->id]
         ]);
     }
