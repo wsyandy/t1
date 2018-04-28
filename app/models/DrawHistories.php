@@ -109,13 +109,13 @@ class DrawHistories extends BaseModel
                 $hit_diamond = true;
             }
 
-            if ($total_pay_amount > 1000 && $total_pay_amount > $total_number * 2) {
-                $user_rate_multi += ceil($total_pay_amount / 1000);
+            if ($total_pay_amount > 100 && $total_pay_amount > $total_number * 2) {
+                $user_rate_multi += ceil($total_pay_amount / 100);
             }
         }
 
 
-        info('cal', $incr_num, $decr_num, $hit_diamond);
+        info('cal', $user->id, $incr_num, $decr_num, $hit_diamond, 'user_rate_multi', $user_rate_multi, 'pay', $total_pay_amount);
 
         $random = mt_rand(1, 1000);
         $data = self::getData();
@@ -170,7 +170,7 @@ class DrawHistories extends BaseModel
 
         return $draw_history;
     }
-    
+
     function toSimpleJson()
     {
         return [
