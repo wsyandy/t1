@@ -9,9 +9,9 @@
 class RoomCategories extends BaseModel
 {
     /**
-     * @type Partners
+     * @type RoomCategories
      */
-    private $_partner;
+    private $_parent;
 
     static $STATUS = [STATUS_ON => '正常', STATUS_OFF => '禁用'];
 
