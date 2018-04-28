@@ -1437,10 +1437,9 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-震惊！史上最牛X的送送送
-50万钻+绝版号666777
-你只有一次机会~
-活动即将开始，点击左上角“活动”了解详情！
+2018年5月1日Hi荣耀等级特权赠送ID活动，赠送门槛上调；
+5月1号之前升段的用户，平台按现有活动赠送标准给与特权ID奖励。
+5月1号0点后升段的用户，平台将按照活动新的赠送标准给与特权ID奖励，请各位用户把握住机会。
 EOF;
 
         $title = "史上最牛X的送送送火热进行中";
@@ -1448,7 +1447,7 @@ EOF;
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 86400],
             'columns' => 'id'
         ]);
 
@@ -1465,8 +1464,8 @@ EOF;
 
             if ($num >= 50) {
                 echoLine($num, count($user_ids), $delay);
-                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
-                //Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                //Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
                 $delay += 2;
                 $user_ids = [];
                 $num = 0;
