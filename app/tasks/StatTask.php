@@ -456,10 +456,10 @@ class StatTask extends \Phalcon\Cli\Task
     {
         $stat_at = time() - 3600;
 
-        $province_ids = [0];
+        $province_ids = [];
         $product_channel_ids = [-1];
         $platforms = ProvinceStats::$PLATFORMS;
-        $partner_ids = [];
+        $partner_ids = [0];
 
         $product_channels = ProductChannels::findForeach();
         foreach ($product_channels as $product_channel) {
