@@ -200,7 +200,7 @@
             or isAllowed('wap_visits','index') or isAllowed('word_visits','days') or isAllowed('stats', 'stat_room_time') or
             isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') or
             isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') or isAllowed('activities', 'stat') or
-            isAllowed('gift_stats', 'days') %}
+            isAllowed('gift_stats', 'days') or isAllowed('partner_datas','index') %}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
