@@ -22,6 +22,7 @@
             <p id="sec"></p></span>
         </div>
     {% endif %}
+    {#<p style="text-align: center;color: white; font-size: 18px;padding-top: 10px">dddd :sss</p>#}
     <span class="handwritten_prop"></span>
     <span class="handwritten_point_to"></span>
     <div class="handwritten_rules">
