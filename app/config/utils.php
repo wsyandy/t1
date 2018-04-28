@@ -124,3 +124,15 @@ function paramsToStr($params)
 
     return $source;
 }
+
+//内部ip
+function isInternalIp($ip)
+{
+    $res = false;
+
+    if (in_array($ip, ['139.227.252.230'])) {
+        $res = true;
+    }
+
+    return $res;
+}

@@ -39,7 +39,7 @@ class UsersController extends BaseController
         $time = time();
         $activity_time = strtotime(date('Y-05-01'), $time);
         $is_activity_show = false;
-        if($time >= $activity_time){
+        if ($time >= $activity_time) {
             $is_activity_show = true;
         }
 
@@ -161,11 +161,9 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $sex = $this->params('sex');
         $nickname = $this->params('nickname');
-
-        $ip = $this->remoteIp();
         $show_share = false;
 
-        if (in_array($ip, ['116.226.119.13', '116.226.120.117', '139.227.253.40', '139.227.253.253'])) {
+        if (isInternalIp($this->remoteIp())) {
             $show_share = true;
         }
 
