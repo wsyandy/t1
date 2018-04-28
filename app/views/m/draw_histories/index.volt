@@ -35,7 +35,7 @@
         <span class="gold_egg_box_hint">10钻石／次</span>
     </div>
     <div class="gold_egg_butbox">
-        <div @click="smashEggs(1)" class="gold_egg_butboxli"><span>砸蛋一个</span></div>
+        <div @click="smashEggs(1)" class="gold_egg_butboxli ten_buttom"><span>砸蛋一个</span></div>
         <div @click="smashEggs(10)" class="gold_egg_butboxli ten_buttom"><span>砸蛋十个</span></div>
     </div>
     <div class="gold_egg_marquee">
