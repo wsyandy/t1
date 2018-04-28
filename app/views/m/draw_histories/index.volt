@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-    {{ theme_css('/m/css/rotary_draw_histories.css') }}
+    {{ theme_css('/m/css/draw_histories.css') }}
 {{ block_end() }}
 
 <script>
