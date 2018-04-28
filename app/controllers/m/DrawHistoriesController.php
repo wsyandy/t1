@@ -65,11 +65,18 @@ class DrawHistoriesController extends BaseController
     function listAction()
     {
         $user = $this->currentUser();
-        $draw_histories = \DrawHistories::find(['conditions' => 'user_id=:user_id:',
-            'bind' => ['user_id' => $user->id]
-        ]);
 
-        $this->view->draw_histories = $draw_histories;
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 10);
+
+        if ($this->request->isAjax()) {
+
+            $draw_histories = \DrawHistories::findPagination(['conditions' => 'user_id=:user_id:',
+                'bind' => ['user_id' => $user->id]
+            ], $page, $per_page);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $draw_histories->toJson('draw_histories', 'toSimpleJson'));
+        }
     }
 
 

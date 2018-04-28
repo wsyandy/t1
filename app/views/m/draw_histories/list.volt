@@ -31,54 +31,73 @@
     <div class="winning_record_list">
         <p class="title">明细</p>
         <ul class="winning_record_ul">
-            <li>
+            <li v-for="draw_history in draw_histories">
                 <div class="winning_record_ul_left">
-                    <p>获得砖石</p>
-                    <span>2018-04-25 12:23</span>
+                    <p>获得${draw_history.type_text}</p>
+                    <span>${draw_history.created_at_text}</span>
                 </div>
                 <div class="winning_record_ul_right">
-                    <span>＋10</span>
-                    <span class="diamond"></span>
-                </div>
-            </li>
-            <li>
-                <div class="winning_record_ul_left">
-                    <p>获得砖石</p>
-                    <span>2018-04-25 12:23</span>
-                </div>
-                <div class="winning_record_ul_right">
-                    <span>＋10</span>
-                    <span class="diamond"></span>
-                </div>
-            </li>
-            <li>
-                <div class="winning_record_ul_left">
-                    <p>获得砖石</p>
-                    <span>2018-04-25 12:23</span>
-                </div>
-                <div class="winning_record_ul_right">
-                    <span>＋10</span>
-                    <span class="gold"></span>
-                </div>
-            </li>
-            <li>
-                <div class="winning_record_ul_left">
-                    <p>获得砖石</p>
-                    <span>2018-04-25 12:23</span>
-                </div>
-                <div class="winning_record_ul_right">
-                    <span>＋10</span>
-                    <span class="gold"></span>
+                    <span>＋${draw_history.pay_amount}</span>
+                    <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}"></span>
                 </div>
             </li>
         </ul>
     </div>
 </div>
-<script src="/js/vue/2.0.5/vue.min.js"></script>
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {},
-        methods: {}
+    var opts = {
+        data: {
+            sid: '{{ sid }}',
+            code: '{{ code }}',
+            draw_histories: [],
+            page: 1,
+            total_page: 1,
+            loading: false
+        },
+        methods: {
+            loadData: function () {
+
+                if (vm.page > vm.total_page) {
+                    return false;
+                }
+
+                vm.page++;
+
+                var data = {
+                    sid: this.sid,
+                    code: this.code,
+                    page: this.page
+                };
+
+                $.authGet('/m/draw_histories/list', data, function (resp) {
+                    vm.total_page = resp.total_page;
+                    vm.loading = false;
+
+                    if (resp.draw_histories) {
+                        $.each(resp.draw_histories, function (i, item) {
+                            vm.draw_histories.push(item);
+                        });
+                    }
+                });
+            }
+        }
+    };
+
+    var vm = new XVue(opts);
+
+    vm.loadData();
+
+    $(function () {
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                if (vm.loading) {
+                    return;
+                }
+
+                vm.loading = true;
+                vm.loadData();
+            }
+        });
     })
+
 </script>

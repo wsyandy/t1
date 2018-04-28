@@ -170,6 +170,14 @@ class DrawHistories extends BaseModel
 
         return $draw_history;
     }
-
-
+    
+    function toSimpleJson()
+    {
+        return [
+            'created_at_text' => $this->created_at_text,
+            'pay_amount' => $this->pay_amount,
+            'type' => $this->type,
+            'type_text' => $this->type_text,
+        ];
+    }
 }
