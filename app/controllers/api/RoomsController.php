@@ -691,9 +691,10 @@ class RoomsController extends BaseController
 
                 $cond['bind']['last_at'] = time() - 15 * 60;
                 $cond['order'] = 'last_at desc,user_type asc';
+
             } else {
-                $rooms = \Rooms::findRoomsByCategoryType($type, $page, $per_page);
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+                $cond['conditions'] = " room_category_types like :room_category_types:";
+                $cond['bind']['room_category_types'] = "%," . $type . ",%";
             }
         }
 
