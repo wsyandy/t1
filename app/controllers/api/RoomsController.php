@@ -692,25 +692,8 @@ class RoomsController extends BaseController
                 $cond['bind']['last_at'] = time() - 15 * 60;
                 $cond['order'] = 'last_at desc,user_type asc';
             } else {
-
-                $search_type = '';
-
-                foreach (\Rooms::$TYPES as $key => $value) {
-
-                    if ($type == $key) {
-                        $search_type = $key;
-                        break;
-                    }
-                }
-
-                if ($search_type) {
-                    $room_category = \RoomCategories::findFirstByType($search_type);
-
-                    if ($room_category) {
-                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
-                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
-                    }
-                }
+                $rooms = \Rooms::findRoomsByCategoryType($type, $page, $per_page);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
             }
         }
 
