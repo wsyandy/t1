@@ -51,8 +51,9 @@ class DrawHistoriesController extends BaseController
             }
 
             $draw_histories = [];
-            for ($i = 1; $i <= $num; $i++){
-                $draw_histories[] = \DrawHistories::createHistory($this->currentUser(), []);
+            for ($i = 1; $i <= $num; $i++) {
+                $draw_histories[] = \DrawHistories::createHistory($this->currentUser(),
+                    ['pay_type' => 'diamond', 'pay_amount' => $amount]);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');

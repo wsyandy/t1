@@ -56,6 +56,9 @@ class DrawHistories extends BaseModel
         $draw_history->type = fetch($result, 'type');
         $draw_history->number = fetch($result, 'number');
         $draw_history->type = fetch($result, 'type');
+        $draw_history->pay_type = fetch($opts, 'pay_type');
+        $draw_history->pay_amount = fetch($opts, 'pay_amount');
+
         $draw_history->save();
 
         info($draw_history);
@@ -63,4 +66,5 @@ class DrawHistories extends BaseModel
         return $draw_history;
     }
 
+    
 }
