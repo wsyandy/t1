@@ -16,7 +16,7 @@
         <a href="/admin/room_category_keywords/index?room_category_id={{ room_category.id }}">关键词</a><br/>
     {% endif %}
     {% if isAllowed('room_category','edit') %}
-        <a class="modal_action" href="/admin/room_category/edit?id={{ room_category.id }}">编辑</a><br/>
+        <a class="modal_action" href="/admin/room_categories/edit?id={{ room_category.id }}">编辑</a><br/>
     {% endif %}
 {% endmacro %}
 
@@ -30,7 +30,10 @@
         <td>${room_category.type}</td>
         <td>${room_category.status_text}</td>
         <td>${room_category.rank}</td>
-        <td><a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a></td>
+        <td>
+            <a href="/admin/room_category_keywords/index?room_category_id=${room_category.id}">关键词</a><br>
+            <a href="/admin/room_categories/edit/${room_category.id}" class="modal_action">编辑</a>
+        </td>
     </tr>
 </script>
 
