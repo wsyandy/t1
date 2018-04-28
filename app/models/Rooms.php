@@ -2229,7 +2229,7 @@ class Rooms extends BaseModel
 
         if ($room_category_names) {
             foreach ($room_category_names as $room_category_id => $room_category_name) {
-                
+
                 $room_category_name = preg_replace('/\./', '', $room_category_name);
 
                 if (!$room_category_name) {
@@ -2248,8 +2248,10 @@ class Rooms extends BaseModel
                     $parent_room_category_id = $room_category->parent_id;
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                        $parent_room_category_ids[] = $parent_room_category_id;
+                        $select_room_category_types[] = $room_category->parent->type;
+                        $select_room_category_names[] = $room_category->parent->name;
                         $room_category_ids[] = $parent_room_category_id;
+                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }
             }
@@ -2272,17 +2274,16 @@ class Rooms extends BaseModel
 
                     $parent_room_category_id = $room_category->parent_id;
 
-                    if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                    if (!in_array($room_category->id, $room_category_ids)) {
                         $room_category_ids[] = $room_category->id;
                         $select_room_category_names[] = $room_category->name;
                         $select_room_category_types[] = $room_category->type;
-                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $parent_room_category_id;
-                        $select_room_category_names[] = $room_category->name;
-                        $select_room_category_types[] = $room_category->type;
+                        $select_room_category_names[] = $room_category->parent->name;
+                        $select_room_category_types[] = $room_category->parent->type;
                         $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }

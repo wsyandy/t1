@@ -3366,8 +3366,8 @@ EOF;
 
         foreach ($rooms as $room) {
             $room = Rooms::findFirstById($room->id);
-            echoLine($room->room_category_types);
-//            Rooms::updateRoomTypes($room->id);
+//            echoLine($room->room_category_types);
+            Rooms::updateRoomTypes($room->id);
         }
     }
 }
