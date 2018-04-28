@@ -15,6 +15,8 @@ class DrawHistories extends BaseModel
 
     static $TYPE = ['gold' => '金币', 'diamond' => '钻石', 'gift' => '礼物'];
 
+    static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
+
     function beforeCreate()
     {
         return $this->checkBalance();
