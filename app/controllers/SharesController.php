@@ -169,7 +169,7 @@ class SharesController extends ApplicationController
         if (!isMobile($mobile)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
         }
-        info('对应分享历史的产品渠道', $product_channel);
+        
         $user = \Users::findFirstByMobile($product_channel, $mobile);
         if ($user) {
             info('已注册', $share_history_id, $product_channel->code, $mobile, 'user_fr', $user->fr);
