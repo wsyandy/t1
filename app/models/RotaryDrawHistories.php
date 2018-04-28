@@ -6,7 +6,7 @@
  * Date: 18/4/28
  * Time: 下午4:29
  */
-class RotaryDrawHistories extends BaseModel
+class DrawHistories extends BaseModel
 {
     /**
      * @type Users
@@ -50,7 +50,7 @@ class RotaryDrawHistories extends BaseModel
 
         $result = self::calculatePrize($user);
 
-        $draw_history = new RotaryDrawHistories();
+        $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
         $draw_history->product_channel_id = $user->product_channel_id;
         $draw_history->type = fetch($result, 'type');

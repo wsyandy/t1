@@ -19,7 +19,7 @@ class BaseController extends \ApplicationController
         'activities' => '*',
         'product_channels' => ['user_agreement', 'privacy_agreement', 'strategies'],
         'payments' => ['index'],
-        'rotary_draw_histories' => '*'
+        'draw_histories' => '*'
     ];
 
     function currentUserId()
