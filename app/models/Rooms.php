@@ -2274,9 +2274,6 @@ class Rooms extends BaseModel
             $room_category_ids = ',' . $room_category_ids . ",";
         }
 
-        $room->room_category_ids = $room_category_ids;
-        $room->update();
-
         $parent_room_categories = RoomCategories::findByIds($parent_room_category_ids);
 
         if ($parent_room_categories) {
@@ -2296,6 +2293,10 @@ class Rooms extends BaseModel
                 $room->delRoomIdsByCategoryType($room_category->type);
             }
         }
+
+        $room->room_category_ids = $room_category_ids;
+        $room->update();
+
     }
 
     function saveRoomIdsByCategoryType($type)
