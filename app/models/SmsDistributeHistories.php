@@ -84,12 +84,10 @@ class SmsDistributeHistories extends BaseModel
         if ($share_user) {
             switch ($type) {
                 case 'login':
-                    $result = \SmsDistributeHistories::distributeRegisterBonus($share_user);
-                    return $result;
+                    \SmsDistributeHistories::distributeRegisterBonus($share_user);
                     break;
                 case 'pay':
-                    $result = \SmsDistributeHistories::distributePayBonus($share_user, $amount);
-                    return $result;
+                    \SmsDistributeHistories::distributePayBonus($share_user, $amount);
                     break;
             }
 
@@ -116,10 +114,10 @@ class SmsDistributeHistories extends BaseModel
     {
         $user_id = $share_user->share_user_id;
         $user = \Users::findFirstById($user_id);
-        $bonus_amount = intval($amount * 0.2);
-        $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $user->mobile];
-        $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
-
-        return $result;
+        if($user){
+            $bonus_amount = intval($amount * 0.2);
+            $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $user->mobile];
+            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+        }
     }
 }
