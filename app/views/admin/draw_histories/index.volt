@@ -1,6 +1,7 @@
 <ol class="breadcrumb">
-    <li class="active">总收入: {{ total_incr_num }}</li>
-    <li class="active">总支出: {{ total_decr_num }}</li>
+    <li class="active">钻石总收入: {{ total_incr_num }}</li>
+    <li class="active">钻石总支出: {{ total_decr_num }}</li>
+    <li class="active">金币总支出: {{ total_decr_gold_num }}</li>
 </ol>
 
 {{ simple_table(draw_histories,[

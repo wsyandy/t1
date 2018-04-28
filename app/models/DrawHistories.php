@@ -59,8 +59,8 @@ class DrawHistories extends BaseModel
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 3];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 9];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 11];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 1000, 'rate' => 30];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 200, 'rate' => 30];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 43.4];
 
         return $data;
     }
@@ -147,7 +147,7 @@ class DrawHistories extends BaseModel
             }
         }
 
-        return ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
+        return ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 43.4];
     }
 
     static function createHistory($user, $opts = [])
