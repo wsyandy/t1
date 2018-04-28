@@ -115,7 +115,7 @@ class DrawHistories extends BaseModel
             }
 
             if ($total_pay_amount > 100 && $total_pay_amount > $total_number && mt_rand(1, 100) < 80) {
-                $user_rate_multi = ceil(($total_pay_amount - $total_number) / 50);
+                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 100));
             }
 
             info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
@@ -130,7 +130,7 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 5 || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
+                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3 || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
                     ) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
