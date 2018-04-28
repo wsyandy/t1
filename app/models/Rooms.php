@@ -2195,7 +2195,6 @@ class Rooms extends BaseModel
 
     static function updateRoomTypes($room_id)
     {
-        $rooms = Rooms::find(['conditions' => 'last_at >= :last_at:', 'bind' => ['last_at' => time() - 86400 * 2], 'columns' => 'id']);
         $room_category_words = RoomCategoryKeywords::findForeach();
         $room_categories = RoomCategories::findForeach();
 
@@ -2216,65 +2215,63 @@ class Rooms extends BaseModel
 
         debug($room_category_word_names, $room_category_names);
 
-        foreach ($rooms as $room) {
 
-            $room = Rooms::findFirstById($room->id);
+        $room = Rooms::findFirstById($room_id);
 
-            $name = $room->name;
+        $name = $room->name;
 
-            echoLine($name);
+        echoLine($name);
 
-            $room_category_ids = [];
+        $room_category_ids = [];
 
-            if ($room_category_names) {
-                foreach ($room_category_names as $room_category_id => $room_category_name) {
+        if ($room_category_names) {
+            foreach ($room_category_names as $room_category_id => $room_category_name) {
 
-                    if (preg_match("/$room_category_name/", $name)) {
+                if (preg_match("/$room_category_name/", $name)) {
 
-                        $room_category = RoomCategories::findFirstById($room_category_id);
-                        $room_category_ids[] = $room_category->id;
+                    $room_category = RoomCategories::findFirstById($room_category_id);
+                    $room_category_ids[] = $room_category->id;
 
-                        $parent_room_category_id = $room_category->parent_id;
+                    $parent_room_category_id = $room_category->parent_id;
 
-                        if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                            $room_category_ids[] = $parent_room_category_id;
-                        }
+                    if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                        $room_category_ids[] = $parent_room_category_id;
                     }
                 }
             }
-
-            if ($room_category_word_names) {
-                foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
-
-                    if (preg_match("/$room_category_name/", $name)) {
-                        $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
-                        $room_category = $room_category_word->room_category;
-
-                        $parent_room_category_id = $room_category->parent_id;
-
-                        if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                            $room_category_ids[] = $room_category->id;
-                        }
-
-                        if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                            $room_category_ids[] = $parent_room_category_id;
-                        }
-                    }
-                }
-            }
-
-            $room_category_ids = array_unique($room_category_ids);
-
-            debug($room_category_ids, $room_category_names, $room_category_word_names);
-
-            $room_category_ids = implode(',', $room_category_ids);
-            if ($room_category_ids) {
-                $room_category_ids = ',' . $room_category_ids . ",";
-            }
-
-            $room->room_category_ids = $room_category_ids;
-            $room->update();
         }
+
+        if ($room_category_word_names) {
+            foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
+
+                if (preg_match("/$room_category_name/", $name)) {
+                    $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
+                    $room_category = $room_category_word->room_category;
+
+                    $parent_room_category_id = $room_category->parent_id;
+
+                    if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                        $room_category_ids[] = $room_category->id;
+                    }
+
+                    if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                        $room_category_ids[] = $parent_room_category_id;
+                    }
+                }
+            }
+        }
+
+        $room_category_ids = array_unique($room_category_ids);
+
+        debug($room_category_ids, $room_category_names, $room_category_word_names);
+
+        $room_category_ids = implode(',', $room_category_ids);
+        if ($room_category_ids) {
+            $room_category_ids = ',' . $room_category_ids . ",";
+        }
+
+        $room->room_category_ids = $room_category_ids;
+        $room->update();
     }
 
     function getGameHistory()
