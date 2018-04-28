@@ -40,9 +40,9 @@
     </div>
     <div class="gold_egg_marquee">
         <ul class="gold_egg_marquee_ul" :class="{marquee_top:animate}">
-            <li v-for="(item, index) in marqueeList">
-                <span>恭喜“{{item.name}}的大”砸中了</span>
-                <span class="gold">100钻石</span>
+            <li v-for="(item, index) in draw_histories_list">
+                <span>恭喜“${item.user_nickname}”砸中了</span>
+                <span class="gold">${item.pay_amount}${item.type_text}</span>
             </li>
         </ul>
     </div>
@@ -63,26 +63,20 @@
         <span class="hint">您的钻石余额不足，请先充值</span>
         <div class="not_balance_box">
             <span @click="topupBalance(false)" class="cancel">取消</span>
-            <span @click="topupBalance(true)"  class="topup">充值</span>
+            <span @click="redirectAction('/m/products&sid={{ sid}}&code={{ code }}')"  class="topup">充值</span>
         </div>
     </div>
 
     <div v-if="isResultsToast" class="winning_results_toast">
-        <span v-if="resultsState==0" class="gold_bigicon"></span>
-        <span  v-if="resultsState==1" class="diamond_bigicon"></span>
-        <span  v-if="resultsState<=1" class="winning_results_text">获得10{{resultsState==0?'金币':'钻石'}}</span>
+        <span v-if="resultsState==0" :class="{'gold_bigicon':draw_histories[0].type == 'gold'}"></span>
+        <span  v-if="resultsState==1" :class="{'diamond_bigicon':draw_histories[0].type == 'diamond'}"></span>
+        <span  v-if="resultsState<=1" class="winning_results_text">获得10 ${draw_histories[0].type == 'gold' ? '金币' : '钻石'}</span>
         <div  v-if="resultsState==2" class="winning_results_ulbox">
             <ul class="winning_results_ul">
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
-                <li><span>获得钻石</span><span class="gold">＋10</span></li>
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
-                <li><span>获得钻石</span><span class="gold">＋10</span></li>
-                <li><span>获得钻石</span><span class="gold">＋10</span></li>
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
-                <li><span>获得钻石</span><span class="gold">＋10</span></li>
-                <li><span>获得钻石</span><span class="diamond">＋10</span></li>
+                <li v-for="draw_history in draw_histories"><span>获得${draw_history.type_text}</span>
+                    <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}">
+                        ＋${draw_history.pay_amount}</span>
+                </li>
             </ul>
         </div>
         <div @click="closeResults" class="winning_results_buttom"><span>确定</span></div>
@@ -93,29 +87,18 @@
 <script>
     var data = {
         data: {
+            resultsState:0,
             isLottery:false,
             isHintToast:false,
             isResultsToast:false,
             //开奖状态：0为单抽获得金币、1为单抽获得钻石、2十连抽
-            resultsState:0,
+            pay_type:'gold',
             animate: false,
             wait: false,
-            marqueeList:[
-                {
-                    name: '1军ddd',
-                },
-                {
-                    name: '2军',
-                },
-                {
-                    name: '3军',
-                },
-                {
-                    name: '4军',
-                }
-            ],
+            draw_histories_list: {{ draw_histories }},
             sid:'{{ sid }}',
-            code:'{{ code }}'
+            code:'{{ code }}',
+            draw_histories :[]
         },
         mounted:function(){
             setInterval(this.showMarquee, 2000)
@@ -125,20 +108,22 @@
                 switch(num){
                     case 1:
                         self.isLottery = !self.isLottery;
+                        self.isResultsToast = true;
                         break;
                     case 10:
                         self.isLottery = !self.isLottery;
+                        self.isResultsToast = true;
                         break;
                 }
-
-                if(num==1){
-                    self.isLottery = false;
-                    self.isResultsToast = true;
-                }else{
-                    self.isLottery = false;
-                    self.isResultsToast = true;
-                    self.resultsState = 2;
-                }
+                //
+                // if(num==1){
+                //     self.isLottery = false;
+                //     self.isResultsToast = true;
+                // }else{
+                //     self.isLottery = false;
+                //     self.isResultsToast = true;
+                //     self.resultsState = 2;
+                // }
             },
             smashEggs:function(num){
                 var self = this;
@@ -155,10 +140,29 @@
                     code:self.code
                 };
 
+                vm.draw_histories = [];
+
                 $.authPost('/m/draw_histories/draw', data, function (resp) {
                     if(0 !== resp.error_code) {
-                        alert(resp.error_reason);
+                        vm.isHintToast = true;
+                        self.wait = false;
                         return;
+                    }
+
+                    if (resp.draw_histories) {
+                        $.each(resp.draw_histories, function (i, item) {
+                            vm.draw_histories.push(item);
+                        });
+
+                        if(num == 1) {
+                            if('diamond' == resp.draw_histories[0].type) {
+                                self.resultsState = 1;
+                            } else {
+                                self.resultsState = 0;
+                            }
+                        } else {
+                            self.resultsState = 2;
+                        }
                     }
 
                     self.result(self, num);
@@ -175,8 +179,8 @@
             showMarquee: function () {
                 this.animate = true;
                 setTimeout(()=>{
-                    this.marqueeList.push(this.marqueeList[0]);
-                this.marqueeList.shift();
+                    this.draw_histories_list.push(this.draw_histories_list[0]);
+                this.draw_histories_list.shift();
                 this.animate = false;
             },500)},
         }

@@ -23,6 +23,9 @@ class DrawHistoriesController extends BaseController
 
         $draw_histories = \DrawHistories::findPagination($cond, 1, 10);
 
+        $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
+
+        $this->view->draw_histories = json_encode($res['draw_histories'], JSON_UNESCAPED_UNICODE);
     }
 
     // 砸蛋抽奖
@@ -51,12 +54,13 @@ class DrawHistoriesController extends BaseController
             }
 
             $draw_histories = [];
+
             for ($i = 1; $i <= $num; $i++) {
-                $draw_histories[] = \DrawHistories::createHistory($this->currentUser(),
-                    ['pay_type' => 'diamond', 'pay_amount' => $amount]);
+                $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
+                $draw_histories[] = $draw_history->toSimpleJson();
             }
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
         }
 
     }
@@ -72,7 +76,7 @@ class DrawHistoriesController extends BaseController
         if ($this->request->isAjax()) {
 
             $draw_histories = \DrawHistories::findPagination(['conditions' => 'user_id=:user_id:',
-                'bind' => ['user_id' => $user->id]
+                'bind' => ['user_id' => $user->id], 'order' => 'id desc'
             ], $page, $per_page);
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $draw_histories->toJson('draw_histories', 'toSimpleJson'));
