@@ -2229,6 +2229,10 @@ class Rooms extends BaseModel
 
                 $room_category_name = preg_replace('/\./', '', $room_category_name);
 
+                if (!$room_category_name) {
+                    continue;
+                }
+
                 if (preg_match("/$name/i", $room_category_name) || preg_match("/$room_category_name/i", $name)) {
 
                     $room_category = RoomCategories::findFirstById($room_category_id);
@@ -2247,6 +2251,10 @@ class Rooms extends BaseModel
             foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
 
                 $room_category_word_name = preg_replace('/\./', '', $room_category_word_name);
+
+                if (!$room_category_word_name) {
+                    continue;
+                }
 
                 if (preg_match("/$name/i", $room_category_word_name) || preg_match("/$room_category_word_name/i", $name)) {
                     $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
