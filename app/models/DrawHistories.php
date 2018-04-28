@@ -109,7 +109,7 @@ class DrawHistories extends BaseModel
                 $hit_diamond = true;
             }
 
-            if ($total_pay_amount > 100 && $total_pay_amount > $total_number * mt_rand(2, 5) && mt_rand(1, 100) < 95) {
+            if ($total_pay_amount > 100 && $total_pay_amount > $total_number * mt_rand(2, 5) && mt_rand(1, 100) < 90) {
                 $user_rate_multi = ceil(($total_pay_amount - $total_number) / 100);
             }
         }
