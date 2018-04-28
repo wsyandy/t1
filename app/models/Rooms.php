@@ -2291,9 +2291,9 @@ class Rooms extends BaseModel
         }
 
         $room_category_ids = array_unique($room_category_ids);
-        $select_room_category_names = array_unique($select_room_category_names);
-        $select_room_category_types = array_unique($select_room_category_types);
-        $parent_room_category_ids = array_unique($parent_room_category_ids);
+        $select_room_category_names = array_filter(array_unique($select_room_category_names));
+        $select_room_category_types = array_filter(array_unique($select_room_category_types));
+        $parent_room_category_ids = array_filter(array_unique($parent_room_category_ids));
 
         debug($room_category_ids, $room_category_names, $room_category_word_names);
 
