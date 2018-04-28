@@ -1,0 +1,64 @@
+html{
+    background-color:  #fff;
+}
+.extend_box{
+    position: relative;
+    width: 5.94rem;
+    height: 10.08rem;
+    margin: 0.2rem auto;
+}
+.extend_img{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 5.94rem;
+    height: 10.08rem;
+}
+.qr_code{
+    position: absolute;
+    bottom: 1.18rem;
+    left: 50%;
+    margin-left: -0.8rem;
+    width: 1.6rem;
+    height:  1.6rem;
+}
+
+.extend_qr{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height:  0.9rem;
+    text-align: center;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+
+}
+.extend_share{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 1.8rem;
+    background: #FFFFFF;
+    box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
+}
+.extend_share li{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.extend_share li img{
+    width: 0.8rem;
+    height: 0.8rem;
+}
+.extend_share li span{
+    font-size: 0.22rem;
+    color: #7F7F7F;
+    padding-top: 0.1rem;
+}

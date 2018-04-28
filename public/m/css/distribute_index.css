@@ -1,0 +1,99 @@
+html{
+    background-color:  #F4F4F4;
+}
+
+.invite_header{
+    width: 100%;
+    height: 4.96rem;
+    padding: 0.3rem;
+    background-color: #fff;
+}
+.invite_info{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 0.7rem;
+
+}
+.invite_bonus,.invite_num{
+    width: 50%;
+    height: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.3rem;
+    color: #717171;
+}
+.invite_bonus span,.invite_num span{
+    font-size: 0.44rem;
+    padding-top: 0.2rem;
+    color: #F45189;
+}
+.invite_num span{
+    color: #594997;
+}
+.invite_line{
+    width: 0;
+    height: 1.1rem;
+    border-left: 1px solid  #ECECEC;
+}
+.invite_btn{
+    width: 6.8rem;
+    height: 0.88rem;
+    background-color: #F45189;
+    border-radius: 1rem;
+    font-size: 0.32rem;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.invite_star{
+    width: 0.36rem;
+    height: 0.36rem;
+    margin-right: 0.2rem;
+}
+
+/*邀请规则*/
+.invite_rules{
+    width: 100%;
+    padding: 0.5rem 0.3rem;
+}
+.rules_title{
+    width: 100%;
+    text-align: center;
+    font-size: 0.3rem;
+    color: #494949;
+    padding-bottom: 0.3rem;
+}
+.rules_title span{
+    display: inline-block;
+    line-height: 0.5rem;
+    position: relative;
+}
+.rules_title span:before{
+    content: "";
+    position: absolute;
+    top:0.21rem;
+    background-color: #C9C9C9;
+    width: 0.9rem;
+    height: 1px;
+    left: -1.1rem;
+}
+.rules_title span:after{
+    content: "";
+    position: absolute;
+    top:0.21rem;
+    background-color: #C9C9C9;
+    width: 0.9rem;
+    height: 1px;
+    right: -1.1rem;
+}
+.rules_list li{
+    font-size: 0.26rem;
+    line-height: 0.42rem;
+    color: #666;
+    padding-bottom: 0.2rem;
+}
+.rules_list li span{ color:#ff6c26}

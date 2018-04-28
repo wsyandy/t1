@@ -1,0 +1,122 @@
+html{
+    background-color:  #fff;
+}
+.swiperTab {
+    position: fixed;
+    left: 0;
+    top:0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 1.08rem;
+    background-color: #F4F4F4;
+    z-index: 999;
+}
+
+.swiperTab li {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 0.88rem;
+    font-size: 0.3rem;
+    color: #727272;
+    background-color: #fff;
+}
+
+.swiperTab li.active {
+    color: #F45189;
+}
+
+.swiperTab li  .border{
+    position: absolute;
+    bottom: 0;
+    left:50%;
+    opacity: 0;
+    width: 0.96rem;
+    margin-left: 100%;
+    height: 0.05rem;
+    background: #F45189;
+    border-radius: 1rem;
+    transition: margin-left 0.5s;
+}
+
+.swiperTab li:last-child .border{
+    margin-left: -100%;
+}
+.swiperTab li.active .border{
+    opacity: 1;
+    margin-left: -0.48rem;
+}
+
+.swiper-container{
+    position: relative;
+    top:1.08rem;
+    width: 100%;
+}
+.swiper-wrapper{
+    width: 100%;
+}
+.swiper-slide{
+    width: 100%;
+}
+
+.invite_list{
+    width: 100%;
+    padding: 0 0.3rem;
+}
+.invite_list li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 1.5rem;
+
+}
+
+.user_avatar{
+    width: 0.98rem;
+    height: 0.98rem;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 0.3rem;
+}
+.invite_info{
+    width: 5.5rem;
+    height: 1.5rem;
+    border-bottom: 1px solid #F3F3F3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user_info{
+    width:3.92rem ;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+.user_name{
+    font-size: 0.3rem;
+    color: #404040;
+    padding-bottom: 0.1rem;
+}
+.invite_time{
+    font-size: 0.22rem;
+    color: #9F9F9F;
+}
+.invite_reward{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size:0.28rem;
+    color: #333333;
+}
+.reward_diamond{
+    width: 0.34rem;
+    height: 0.34rem;
+    margin-left: 0.05rem;
+}

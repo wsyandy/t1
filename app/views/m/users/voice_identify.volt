@@ -98,7 +98,7 @@
                 <p class="hint">扫一扫，生成你的声鉴卡</p>
             </div>
             <div :class="['save_picture_qr_code',!sex&&'women']">
-                <img src="/m/images/wx_m.jpg" alt="">
+                <img src="/m/images/wx.png" alt="">
             </div>
         </div>
     </div>
@@ -107,7 +107,7 @@
             <div class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}" @click="go_voice_identify()"><span>重新鉴定</span>
             </div>
             <div @click="screenshotsImg('save')" class="button" :style="{backgroundColor:!sex?'#FF659A':'#71A7FC'}">
-                <span>存至Hi相册</span></div>
+                <span>存至{% if !show_share %}Hi{% endif %}相册</span></div>
         </div>
         {% if show_share %}
             <span @click="showShare" class="share_buttom">分享</span>
@@ -352,12 +352,11 @@
     is_dev = true;
     {% endif %}
 
-    function saveImage(img_data, filename) {
+    function saveImage(img_data) {
         var data = {
             'sid': vm.sid,
             'code': vm.code,
-            'image_data': img_data,
-            'filename': filename
+            'image_data': img_data
         };
         var file_type = 'base64';
         //图片链接

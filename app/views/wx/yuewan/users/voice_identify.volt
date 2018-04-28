@@ -100,7 +100,7 @@
                 <p class="hint">扫一扫，生成你的声鉴卡</p>
             </div>
             <div :class="['save_picture_qr_code',!sex&&'women']">
-                <img src="/wx/yuewan/images/wx.png" alt="">
+                <img src="/wx/yuewan/images/wx_m.jpg" alt="">
             </div>
         </div>
     </div>

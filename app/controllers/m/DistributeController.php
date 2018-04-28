@@ -24,7 +24,8 @@ class DistributeController extends BaseController
             'bind' => ['status' => AUTH_SUCCESS, 'share_user_id' => $user->id]
         ]);
 
-
+        $this->view->total_amount = $total_amount;
+        $this->view->user_num = $user_num;
     }
 
     // 我的推广页
@@ -47,6 +48,17 @@ class DistributeController extends BaseController
 
         $share_url = $share_history->getShareUrl($this->getRoot(), $this->currentProductChannel()->code);
 
+        $qrcode = generateQrcode($share_url);
+        $product_channel_name = $this->currentProductChannel()->name;
+        $this->view->qrcode = $qrcode;
+        $this->view->product_channel_name = $product_channel_name;
+
+
+
+    }
+    function detailAction()
+    {
+        
     }
 
 }

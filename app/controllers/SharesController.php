@@ -127,7 +127,11 @@ class SharesController extends ApplicationController
         }
 
         $share_history->increase('view_num');
-        $user = $share_history->user;
+        $share_user = $share_history->user;
+
+
+        $this->view->code = $code;
+        $this->view->share_user = $share_user;
 
     }
 
@@ -138,6 +142,7 @@ class SharesController extends ApplicationController
         }
 
         $image_token = $this->params('image_token');
+        $code = $this->params('code');
 
         if (!$image_token) {
             info("image_token_error", $this->remoteIp(), $this->request->getUserAgent(), $this->headers());
@@ -223,13 +228,16 @@ class SharesController extends ApplicationController
         if ($partner) {
             $sms_sem_history->partner_id = $partner->id;
         }
+        $product_channel = \ProductChannels::findFirstByCodeHotCache($code);
+        $sms_sem_history->product_channel_id = $product_channel->id;
+        $sms_sem_history->product_channel_id =
         $sms_sem_history->soft_version_id = $soft_version_id;
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->status = AUTH_WAIT;
         $sms_sem_history->save();
 
         // 跳转应用宝地址
-        
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $soft_version->weixin_url]);
     }
 
