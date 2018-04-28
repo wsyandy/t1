@@ -152,8 +152,11 @@
                     code:this.code
                 };
 
-                $.authPost('/m/rotary_draw_histories/rotary', data, function () {
-
+                $.authPost('/m/rotary_draw_histories/rotary', data, function (resp) {
+                    if(0 !== resp.error_code) {
+                        alert(resp.error_reason);
+                        return;
+                    }
                 });
             },
             closeResults:function(){
