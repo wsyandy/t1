@@ -34,6 +34,12 @@
             $(this).addClass('time_min_selected').siblings().removeClass('time_min_selected');
             var id = $(this).find('.arrow').attr("id");
             var code = $(this).find('#code').attr("value");
+
+            if ('gold_eggs_draw' == code) {
+                window.location.href = "/m/draw_histories/" + code + "?id=" + id + "&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
+                return;
+            }
+
             if (code) {
                 window.location.href = "/m/activities/" + code + "?id=" + id + "&sid=" + '{{ sid }}' + "&code=" + '{{ code }}';
             } else {
