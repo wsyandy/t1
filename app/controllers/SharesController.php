@@ -143,7 +143,7 @@ class SharesController extends ApplicationController
 
         $image_token = $this->params('image_token');
         $code = $this->params('code');
-        
+
         if (!$image_token) {
             info("image_token_error", $this->remoteIp(), $this->request->getUserAgent(), $this->headers());
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -169,7 +169,7 @@ class SharesController extends ApplicationController
         if (!isMobile($mobile)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
         }
-
+        info('对应分享历史的产品渠道', $product_channel);
         $user = \Users::findFirstByMobile($product_channel, $mobile);
         if ($user) {
             info('已注册', $share_history_id, $product_channel->code, $mobile, 'user_fr', $user->fr);
@@ -208,7 +208,7 @@ class SharesController extends ApplicationController
         // 下载哪个软件包 需要重新配置
         $soft_version = \SoftVersions::findFirst([
             'conditions' => 'product_channel_id=:product_channel_id: and platform=:platform: and channel_package = 0 and status = :status:',
-            'bind' => ['product_channel_id' => $user->product_channel_id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
+            'bind' => ['product_channel_id' => $product_channel->id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
             'order' => 'id asc'
         ]);
 
@@ -229,7 +229,7 @@ class SharesController extends ApplicationController
         if ($partner) {
             $sms_sem_history->partner_id = $partner->id;
         }
-        $product_channel = \ProductChannels::findFirstByCodeHotCache($code);
+
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->product_channel_id =
         $sms_sem_history->soft_version_id = $soft_version_id;
