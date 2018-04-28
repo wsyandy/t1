@@ -129,7 +129,7 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && fetch($datum, 'number') > $total_pay_amount * 2) {
+                    if (fetch($datum, 'type') == 'diamond' && fetch($datum, 'number') > $total_pay_amount * 3) {
                         // 大于支出的2倍
                         continue;
                     }
