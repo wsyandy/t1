@@ -19,7 +19,7 @@
 </script>
 
 <div id="app" class="gold_egg">
-    <div class="gold_egg_banner"><span>活动时间：5月1－3日</span></div>
+    <div class="gold_egg_banner"><span>活动时间：4月29日－5月1日</span></div>
     <div class="gold_egg_reward">
         <div class="gold_egg_rewardli">
             <span class="gold"></span>
