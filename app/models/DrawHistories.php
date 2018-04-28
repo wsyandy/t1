@@ -82,7 +82,7 @@ class DrawHistories extends BaseModel
             $hit_diamond = true;
         }
 
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $hit_diamond = true;
         }
 
@@ -133,7 +133,7 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && fetch($datum, 'number') > $total_pay_amount * 2) {
+                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 2 || $decr_num + fetch($datum, 'number') > $incr_num * 0.3)) {
                         // 大于支出的2倍
                         continue;
                     }
@@ -167,12 +167,12 @@ class DrawHistories extends BaseModel
         $draw_history->pay_amount = fetch($opts, 'pay_amount');
         $draw_history->save();
 
-        if($draw_history->type == 'diamond'){
+        if ($draw_history->type == 'diamond') {
             $remark = '抽奖获得' . $draw_history->number . '钻石';
             $opts['remark'] = $remark;
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
-        }else{
-            $opts = ['remark' => '抽奖获得' . $draw_history->number.'金币'];
+        } else {
+            $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         }
 
