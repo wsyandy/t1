@@ -82,10 +82,6 @@ class DrawHistories extends BaseModel
             $hit_diamond = true;
         }
 
-        if (isDevelopmentEnv()) {
-            $hit_diamond = true;
-        }
-
         $total_pay_amount = 0;
         // 倍率
         $user_rate_multi = 1;
@@ -133,7 +129,10 @@ class DrawHistories extends BaseModel
             if ($hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 2 || $decr_num + fetch($datum, 'number') > $incr_num * 0.3)) {
+                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount
+                            || $decr_num + fetch($datum, 'number') > $incr_num * 0.3)
+                    ) {
+                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
                         continue;
                     }
