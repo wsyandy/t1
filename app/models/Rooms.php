@@ -2234,9 +2234,9 @@ class Rooms extends BaseModel
                     $room_category_ids[] = $room_category->id;
 
                     $parent_room_category_id = $room_category->parent_id;
-                    $parent_room_category_ids[] = $parent_room_category_id;
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                        $parent_room_category_ids[] = $parent_room_category_id;
                         $room_category_ids[] = $parent_room_category_id;
                     }
                 }
@@ -2251,14 +2251,15 @@ class Rooms extends BaseModel
                     $room_category = $room_category_word->room_category;
 
                     $parent_room_category_id = $room_category->parent_id;
-                    $parent_room_category_ids[] = $parent_room_category_id;
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $room_category->id;
+                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
 
                     if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
                         $room_category_ids[] = $parent_room_category_id;
+                        $parent_room_category_ids[] = $parent_room_category_id;
                     }
                 }
             }
@@ -2270,6 +2271,7 @@ class Rooms extends BaseModel
         debug($room_category_ids, $room_category_names, $room_category_word_names);
 
         $room_category_ids = implode(',', $room_category_ids);
+
         if ($room_category_ids) {
             $room_category_ids = ',' . $room_category_ids . ",";
         }
