@@ -2197,68 +2197,60 @@ class Rooms extends BaseModel
     {
         $room = \Rooms::findFirstById($room_id);
 
-//        $type_keywords = [
-//            'gang_up' => ['开黑', '游戏', '球球', '王者', '吃鸡', '绝地求生', '求带', '刺激战场', '第五人格', '迷雾'],
-//            'friend' => ['交友', '处对象', '连麦', '处关系', 'u处', 'u连', 'les', '聊天'],
-//            'amuse' => ['麦序', '捕鱼', '打地鼠'],
-//            'sing' => ['点歌', '唱歌', '听歌', '点唱', '说唱'],
-//            'broadcast' => ['电台', 'FM'],
-//        ];
-//        $current_room_types = [];
-//        foreach ($type_keywords as $type => $keyword) {
-//            foreach ($keyword as $word) {
-//                $is_have = mb_strstr($room->name, $word);
-//                if ($is_have) {
-//                    if (!in_array($type, $current_room_types)) {
-//                        $current_room_types[] = $type;
-//                    }
-//                }
-//            }
-//        }
-//        if (in_array('broadcast', $current_room_types)) {
-//            $room->theme_type = ROOM_THEME_TYPE_USER_BROADCAST;
-//        } else {
-//            $room->theme_type = '';
-//        }
-//        $current_room_types = implode(',', $current_room_types);
-//        $room->types = $current_room_types;
-//        $room->update();
-
         $name = $room->name;
 
-        $cond = ['conditions' => 'name like :name:', 'bind' => ['name' => "%$name%"]];
-        $room_category_words = RoomCategoryKeywords::find($cond);
+        $room_category_words = RoomCategoryKeywords::find(['columns' => 'id, name']);
+        $room_categories = RoomCategories::find(['columns' => 'id, name']);
+
+        $room_category_word_names = [];
+        $room_category_names = [];
+
+        foreach ($room_category_words as $room_category_word) {
+            $room_category_word_names[$room_category_word->id] = $room_category_word->name;
+        }
+
+        foreach ($room_categories as $room_category) {
+            $room_categories[$room_category->id] = $room_category->name;
+        }
 
         $room_category_ids = [];
 
-        foreach ($room_category_words as $room_category_word) {
-            $room_category = $room_category_word->room_category;
-            $parent_room_category_id = $room_category->parent_id;
-            $room_category_ids[] = $room_category->id;
+        foreach ($room_category_names as $room_category_id => $room_category_name) {
 
-            if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                $room_category_ids[] = $parent_room_category_id;
+            if (preg_match("/$name/", $room_category_name)) {
+
+                $room_category = RoomCategories::findFirstById($room_category_id);
+                $room_category_ids[] = $room_category->id;
+
+                $parent_room_category_id = $room_category->parent_id;
+
+                if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                    $room_category_ids[] = $parent_room_category_id;
+                }
             }
         }
 
-        $room_categories = RoomCategories::find($cond);
+        foreach ($room_category_word_names as $room_category_word_id => $room_category_word_name) {
 
-        foreach ($room_categories as $room_category) {
+            if (preg_match("/$name/", $room_category_name)) {
+                $room_category_word = RoomCategoryKeywords::findFirstById($room_category_word_id);
+                $room_category = $room_category_word->room_category;
 
-            $parent_room_category_id = $room_category->parent_id;
+                $parent_room_category_id = $room_category->parent_id;
 
-            if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                $room_category_ids[] = $room_category->id;
-            }
+                if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                    $room_category_ids[] = $room_category->id;
+                }
 
-            if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
-                $room_category_ids[] = $parent_room_category_id;
+                if (!in_array($parent_room_category_id, $room_category_ids) && $parent_room_category_id) {
+                    $room_category_ids[] = $parent_room_category_id;
+                }
             }
         }
 
         $room_category_ids = array_unique($room_category_ids);
 
-        debug($room_category_ids);
+        debug($room_category_ids, $room_category_names, $room_category_word_names);
 
         $room_category_ids = implode(',', $room_category_ids);
         if ($room_category_ids) {
