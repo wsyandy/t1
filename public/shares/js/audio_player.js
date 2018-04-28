@@ -8,7 +8,7 @@
  * LRC歌词     http://lrc.bzmtv.com/
  *
  */
-;(function($){
+$(function () {
     var rotatetimer,    /* 旋转定时器 */
         isNext = false,  /* 播放结束是下一首还是暂停 */
         isPlay = false, /* 播放状态 */
@@ -56,8 +56,10 @@
 
     /*播放*/
     $btnPlay.on('click', function() {
+        console.log(11111111);
         isPlay ? nplay() : iplay() ;
     });
+
 
 
     /*播放歌曲方法*/
@@ -84,7 +86,7 @@
         music.play();
         isPlay = true;
         $cdControllerArm.addClass("cd_play");
-         /* jquery.rotate 旋转动画插件  */
+        /* jquery.rotate 旋转动画插件  */
         rotatetimer = setInterval(function() {
             angle += 1;
             $cover.rotate(angle);
@@ -119,4 +121,7 @@
         return changInt(parseInt(num/60))+":"+ changInt(Math.round(num%60));
     }
 
-})(jQuery);
+})
+// ;(function($){
+//
+// })(jQuery);

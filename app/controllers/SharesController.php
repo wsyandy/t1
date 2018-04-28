@@ -143,7 +143,7 @@ class SharesController extends ApplicationController
 
         $image_token = $this->params('image_token');
         $code = $this->params('code');
-
+        
         if (!$image_token) {
             info("image_token_error", $this->remoteIp(), $this->request->getUserAgent(), $this->headers());
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
@@ -160,6 +160,7 @@ class SharesController extends ApplicationController
         $share_history_id = $this->params('share_history_id');
         $share_history = \ShareHistories::findFirstById($share_history_id);
         if (!$share_history) {
+            info('分享历史id：', $share_history_id, $share_history);
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 

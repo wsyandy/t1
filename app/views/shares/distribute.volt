@@ -33,10 +33,9 @@
     <div class="register_title"> <span>备受年轻人欢迎的语音直播平台</span> </div>
 
     <div class="register_box">
-        <form method="get" action="" id="login"></form>
         <ul>
             <li>
-                <input class="input_phone" type="text" placeholder="手机号" form="login" value="" name="mobile"
+                <input class="input_phone" type="text" placeholder="手机号" value="" name="mobile"
                        v-model="mobile">
             </li>
             <li >
@@ -45,9 +44,9 @@
                 <input type="hidden" class="get_verify" id="image_token" value="" v-model="image_token"/></input>
             </li>
             <li>
-                <input class="input_verify" type="text" placeholder="请输入验证码" form="login" disabled name="auth_code"
+                <input class="input_verify" type="text" placeholder="请输入验证码"  disabled name="auth_code"
                        v-model="auth_code">
-                <input type="button" class="get_verify"   form="login" value="获取验证码" @click="getAuthCode()"/>
+                <input type="button" class="get_verify"  value="获取验证码" @click="getAuthCode()"/>
             </li>
             <li>
                 <input class="input_password" type="password" placeholder="请输入密码"   value="">
@@ -64,12 +63,15 @@
 </div>
 <!--底部导航-->
 </div>
+
 <script src="/shares/js/jquery.min.js"></script>
+<script src="/js/utils.js"></script>
 <!--旋转动画插件-->
 <script src="/shares/js/jquery.rotate.min.js"></script>
 <!--音频播放器-->
 <script src="/shares/js/audio_player.js"></script>
-<script src="/js/utils.js"></script>
+
+
 <script src="/js/vue/2.0.5/vue.min.js"></script>
 <!--倒计时-->
 <script>
@@ -148,7 +150,7 @@
                     share_history_id:vm.share_history_id,
                     code:vm.code
                 };
-                console.log(data);
+
                 $.authPost('/shares/mobile_auth', data, function (resp) {
                     if (resp.error_code != 0) {
                         $tips.show(10).delay(1000).fadeOut();

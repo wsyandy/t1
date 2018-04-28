@@ -105,9 +105,13 @@
         params = JSON.stringify(params)
 
         if ($.isIos()) {
+            alert('ios begin');
             window.webkit.messageHandlers.saveImage.postMessage(params);
+            alert('ios end');
         } else {
+            alert('Android begin');
             JsCallback.saveImageBase64(img_data);  //保存图片
+            alert('Android end');
         }
     }
 </script>
