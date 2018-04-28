@@ -52,6 +52,10 @@ class RotaryDrawHistories extends BaseModel
 
         $draw_history = new RotaryDrawHistories();
         $draw_history->user_id = $user->id;
+        $draw_history->product_channel_id = $user->product_channel_id;
+        $draw_history->type = fetch($result, 'type');
+        $draw_history->number = fetch($result, 'number');
+        $draw_history->type = fetch($result, 'type');
         $draw_history->save();
 
         return $draw_history;
