@@ -189,6 +189,8 @@ class DrawHistories extends BaseModel
         return [
             'created_at_text' => $this->created_at_text,
             'pay_amount' => $this->pay_amount,
+            'pay_type' => $this->pay_type,
+            'number' => $this->number,
             'type' => $this->type,
             'type_text' => $this->type_text,
             'user_nickname' => $this->user_nickname
