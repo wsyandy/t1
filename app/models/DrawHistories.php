@@ -152,6 +152,8 @@ class DrawHistories extends BaseModel
 
         $result = self::calculatePrize($user);
 
+        info($user->id, $result);
+        
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
         $draw_history->product_channel_id = $user->product_channel_id;
