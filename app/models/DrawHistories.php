@@ -115,7 +115,7 @@ class DrawHistories extends BaseModel
         }
 
 
-        info('cal', $user->id, $incr_num, $decr_num, $hit_diamond, 'user_rate_multi', $user_rate_multi, 'pay', $total_pay_amount);
+        info('cal', $user->id, $incr_num, $decr_num, 'user_rate_multi', $user_rate_multi, 'pay', $total_pay_amount);
 
         $random = mt_rand(1, 1000);
         $data = self::getData();
