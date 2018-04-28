@@ -58,6 +58,8 @@ class RotaryDrawHistories extends BaseModel
         $draw_history->type = fetch($result, 'type');
         $draw_history->save();
 
+        info($draw_history);
+
         return $draw_history;
     }
 
