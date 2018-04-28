@@ -129,8 +129,6 @@ class ProvinceStats extends BaseModel
             $find_cond['conditions'] .= ' and (partner_id is null or partner_id=0)';
         }
 
-        debug($find_cond);
-
         $total = Users::count($find_cond);
 
         return $total;
@@ -138,7 +136,7 @@ class ProvinceStats extends BaseModel
 
     static function registerNum($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at)
     {
-        $find_cond['conditions'] = 'created_at>=:start_at: and created_at<=:end_at: and platform = :platform:';
+        $find_cond['conditions'] = 'register_at>=:start_at: and register_at<=:end_at: and platform = :platform:';
         $find_cond['bind'] = ['start_at' => $start_at, 'end_at' => $end_at, 'platform' => $platform];
         if ($province_id) {
             $find_cond['conditions'] .= ' and province_id=:province_id:';
