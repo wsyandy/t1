@@ -15,6 +15,15 @@ class BroadcastsController extends BaseController
         $cond = $this->getConditions('room');
         $user_id = $this->params('user_id', 0);
 
+        $user_uid = $this->params('user_uid', 0);
+
+        if ($user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
+            if (isPresent($user) && isBlank($user_id)) {
+                $user_id = $user->id;
+            }
+        }
+
         if (isset($cond['conditions'])) {
             $cond['conditions'] .= " and (theme_type = " . ROOM_THEME_TYPE_BROADCAST . " or theme_type = " . ROOM_THEME_TYPE_USER_BROADCAST . ")";
         } else {
@@ -40,6 +49,7 @@ class BroadcastsController extends BaseController
         debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page, $total_entries);
+        $this->view->user_uid = $user_uid ? $user_uid : '';
         $this->view->rooms = $rooms;
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
         $this->view->total_entries = \Rooms::count($cond);
