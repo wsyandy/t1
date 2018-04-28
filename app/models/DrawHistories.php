@@ -56,9 +56,9 @@ class DrawHistories extends BaseModel
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 0.5];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 2];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 5];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 15];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 3];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 10];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 10];
         $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 1000, 'rate' => 30];
         $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 43.4];
 
@@ -113,7 +113,7 @@ class DrawHistories extends BaseModel
                 $hit_diamond = false;
             }
 
-            if ($total_pay_amount > 100 && $total_pay_amount > $total_number && mt_rand(1, 100) < 90) {
+            if ($total_pay_amount > 100 && $total_pay_amount > $total_number && mt_rand(1, 100) < 80) {
                 $user_rate_multi = ceil(($total_pay_amount - $total_number) / 50);
             }
 
