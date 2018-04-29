@@ -3382,5 +3382,9 @@ EOF;
 
             $user_db->zincrby($key, 10, $user->id);
         }
+
+        $room = Rooms::findFirstById(21);
+        $user = Users::findFirstById(1);
+        $room->pushTopTopicMessage($user, "哇哦！xxx刚刚砸出一万钻大奖！还不快来砸金蛋，试试手气~");
     }
 }
