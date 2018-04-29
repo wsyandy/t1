@@ -29,7 +29,7 @@ class DrawHistories extends BaseModel
             $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
             Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
         } else {
-            
+
             if (isDevelopmentEnv()) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
@@ -156,12 +156,12 @@ class DrawHistories extends BaseModel
 
             if ($total_pay_amount > $total_number) {
                 $decr_rate = ($total_pay_amount - $total_number) / $total_pay_amount;
-                if ($decr_rate > 0.3 && mt_rand(1, 100) < 75) {
+                if ($decr_rate * 100 > mt_rand(20, 30) && mt_rand(1, 100) < 75) {
                     $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 300));
                 }
-            }
 
-            info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
+                info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi, 'rate', $decr_rate);
+            }
         }
 
 

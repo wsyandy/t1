@@ -21,17 +21,26 @@ class DrawHistoriesController extends BaseController
         ];
 
         $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
         $cond = ['conditions' => 'type=:type: and number >= 1000',
             'bind' => ['type' => 'diamond'],
             'order' => 'id desc'
         ];
 
-        $max_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
-        $max_res = $max_draw_histories->toJson('draw_histories', 'toSimpleJson');
+        $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $qian_res = $qian_draw_histories->toJson('draw_histories', 'toSimpleJson');
+        $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
-        $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
-        $res['draw_histories'] = array_merge($max_res['draw_histories'], $res['draw_histories']);
+        $cond = ['conditions' => 'type=:type: and number >= 10000',
+            'bind' => ['type' => 'diamond'],
+            'order' => 'id desc'
+        ];
+
+        $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
+        $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
+
         shuffle($res['draw_histories']);
 
         $this->view->draw_histories = json_encode($res['draw_histories'], JSON_UNESCAPED_UNICODE);
