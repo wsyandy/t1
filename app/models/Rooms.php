@@ -1635,6 +1635,7 @@ class Rooms extends BaseModel
         $hot = fetch($opts, 'hot');
         $room_id = fetch($opts, 'room_id');
         $expire_time = fetch($opts, 'expire_time');
+        $type = fetch($opts, 'type', 'notice');
 
         if ($hot) {
 
@@ -1652,8 +1653,15 @@ class Rooms extends BaseModel
             $rooms = Rooms::find($cond);
         }
 
+        $system_user = Users::findFirstById(1);
+
         foreach ($rooms as $room) {
-            $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+
+            if ('notice' == $type) {
+                $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
+            } else {
+                $room->pushTopTopicMessage($system_user, $content);
+            }
         }
     }
 
