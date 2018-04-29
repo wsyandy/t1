@@ -83,6 +83,10 @@ class DrawHistories extends BaseModel
             $hit_diamond = true;
         }
 
+        if(isDevelopmentEnv()){
+            $hit_diamond = true;
+        }
+        
         //用户消耗钻石
         $incr_history = self::findFirst([
             'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
