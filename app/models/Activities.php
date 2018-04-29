@@ -350,6 +350,8 @@ class Activities extends BaseModel
                 }
             }
 
+        } else {
+            debug($gift_order->id, $opts = []);
         }
     }
 
