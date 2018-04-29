@@ -132,7 +132,7 @@ class DrawHistories extends BaseModel
             }
         } else {
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
-            $user_rate_multi = 10;
+            $user_rate_multi = 5;
             $pool_rate = 0.9;
             if ($incr_num * $pool_rate > $decr_num) {
                 $can_hit_diamond = true;
