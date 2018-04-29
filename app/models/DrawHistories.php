@@ -24,17 +24,16 @@ class DrawHistories extends BaseModel
 
     function afterCreate()
     {
-        if ('diamond' == $this->type) {
 
-            if ($this->number >= 10000) {
+        if ('diamond' == $this->type && $this->number >= 10000) {
+            $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
+            Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
+        } else {
+            
+            if (isDevelopmentEnv()) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
             }
-        }
-
-        if (isDevelopmentEnv()) {
-            $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
-            Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
         }
     }
 
@@ -86,7 +85,7 @@ class DrawHistories extends BaseModel
     {
 
         // 必中钻石
-        if($hit_diamond){
+        if ($hit_diamond) {
             return ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 26.6];
         }
 
@@ -106,11 +105,11 @@ class DrawHistories extends BaseModel
             $can_hit_diamond = true;
         }
 
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $can_hit_diamond = true;
             $pool_rate = 1;
         }
-        
+
         //用户消耗钻石
         $incr_history = self::findFirst([
             'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
