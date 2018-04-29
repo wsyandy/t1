@@ -76,7 +76,7 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
-        $pool_rate = mt_rand(60, 80) / 100;
+        $pool_rate = mt_rand(75, 85) / 100;
         $hit_diamond = false;
         // 最多拿出80%
         if ($incr_num * $pool_rate > $decr_num) {
@@ -98,7 +98,7 @@ class DrawHistories extends BaseModel
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
                 $user_rate_multi = $total_pay_amount;
-                $pool_rate = 0.9;
+                $pool_rate = 0.95;
                 if ($incr_num * $pool_rate > $decr_num) {
                     $hit_diamond = true;
                 }
@@ -107,7 +107,7 @@ class DrawHistories extends BaseModel
         } else {
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             $user_rate_multi = 10;
-            $pool_rate = 0.9;
+            $pool_rate = 0.95;
             if ($incr_num * $pool_rate > $decr_num) {
                 $hit_diamond = true;
             }
