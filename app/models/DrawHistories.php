@@ -156,7 +156,7 @@ class DrawHistories extends BaseModel
             if ($total_pay_amount > $total_number) {
                 $decr_rate = ($total_pay_amount - $total_number) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 30) && mt_rand(1, 100) < 75) {
-                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 300));
+                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(100, 300));
                 }
 
                 info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi, 'rate', $decr_rate);
@@ -173,7 +173,7 @@ class DrawHistories extends BaseModel
             if ($can_hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3
+                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * 3
                             || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 5
                             || $decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.05))
                     ) {
