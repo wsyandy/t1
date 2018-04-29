@@ -19,7 +19,7 @@ class Activities extends BaseModel
         6 => '小马驹座驾', 7 => '神秘礼物', 8 => '兰博基尼座驾'];
 
     //活动类型
-    static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_day_week_list' => '礼物日榜单', 'gift_week_list' => '礼物周榜单'];
+    static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_day_list' => '礼物日榜单', 'gift_week_list' => '礼物周榜单'];
 
     function getImageUrl()
     {
@@ -365,7 +365,7 @@ class Activities extends BaseModel
 
     function isGiftMinuteList()
     {
-        return 'gift_minute_list' == $this->activity_type;
+        return 'gift_minutes_list' == $this->activity_type;
     }
 
     //礼物周榜活动
@@ -428,7 +428,7 @@ class Activities extends BaseModel
         $key = '';
 
         if ($this->isGiftMinuteList()) {
-            $key = "gift_minute_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
+            $key = "gift_minutes_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
         }
 
         if ($this->isGiftDayList()) {
