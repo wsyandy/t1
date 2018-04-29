@@ -63,9 +63,20 @@ class DrawHistoriesController extends BaseController
 
             $draw_histories = [];
 
+            $hit_diamond_num = 0;
             for ($i = 1; $i <= $num; $i++) {
-                $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
+
+                if ($i >= mt_rand(8, 10) && $hit_diamond_num < 1) {
+                    $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount, 'hit_diamond' => true]);
+                } else {
+                    $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
+                }
+
                 $draw_histories[] = $draw_history->toSimpleJson();
+                if ($draw_history->type == 'diamond') {
+                    $hit_diamond_num++;
+                }
+
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);

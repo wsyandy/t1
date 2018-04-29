@@ -66,8 +66,14 @@ class DrawHistories extends BaseModel
     }
 
     // 计算奖品
-    static function calculatePrize($user)
+    static function calculatePrize($user, $hit_diamond = false)
     {
+
+        // 必中钻石
+        if($hit_diamond){
+            return ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 26.6];
+        }
+
         $user_db = Users::getUserDb();
         // 系统总收入
         $cache_key = 'draw_history_total_amount_incr_diamond';
@@ -76,15 +82,15 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
-        $pool_rate = mt_rand(75, 85) / 100;
-        $hit_diamond = false;
+        $pool_rate = mt_rand(70, 80) / 100;
+        $can_hit_diamond = false;
         // 最多拿出80%
         if ($incr_num * $pool_rate > $decr_num) {
-            $hit_diamond = true;
+            $can_hit_diamond = true;
         }
 
         if(isDevelopmentEnv()){
-            $hit_diamond = true;
+            $can_hit_diamond = true;
             $pool_rate = 1;
         }
         
@@ -103,23 +109,23 @@ class DrawHistories extends BaseModel
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
                 $user_rate_multi = $total_pay_amount;
-                $pool_rate = 0.95;
+                $pool_rate = 0.90;
                 if ($incr_num * $pool_rate > $decr_num) {
-                    $hit_diamond = true;
+                    $can_hit_diamond = true;
                 }
 
             }
         } else {
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             $user_rate_multi = 10;
-            $pool_rate = 0.95;
+            $pool_rate = 0.90;
             if ($incr_num * $pool_rate > $decr_num) {
-                $hit_diamond = true;
+                $can_hit_diamond = true;
             }
         }
 
         // 老用户
-        if ($hit_diamond && $user_rate_multi <= 1) {
+        if ($can_hit_diamond && $user_rate_multi <= 1) {
 
             //用户获得钻石
             $decr_history = self::findFirst([
@@ -145,7 +151,7 @@ class DrawHistories extends BaseModel
         $random = mt_rand(1, 1000);
         $data = self::getData();
         foreach ($data as $datum) {
-            if ($hit_diamond) {
+            if ($can_hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
                     if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3 || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
@@ -171,7 +177,9 @@ class DrawHistories extends BaseModel
     static function createHistory($user, $opts = [])
     {
 
-        $result = self::calculatePrize($user);
+        $hit_diamond = fetch($opts, 'hit_diamond', false);
+
+        $result = self::calculatePrize($user, $hit_diamond);
 
         info($user->id, $result);
 
