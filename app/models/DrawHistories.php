@@ -85,6 +85,7 @@ class DrawHistories extends BaseModel
 
         if(isDevelopmentEnv()){
             $hit_diamond = true;
+            $pool_rate = 1;
         }
         
         //用户消耗钻石
