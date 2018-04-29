@@ -531,20 +531,17 @@ class ActivitiesController extends BaseController
             return false;
         }
 
-        if ($end > time()) {
-            $users = $activity->getRanListUsers($gift_id, 3);
-        } else {
-            $users = $activity->getRanListUsers($gift_id, 9);
-        }
+        $users = $activity->getRanListUsers($gift_id, 9);
 
 
         $end_time = $start < time() ? $end : $start;
 
         $this->view->end = $end;
-        $this->view->end = $end;
         $this->view->start = $start;
         $this->view->gift = $gift;
         $this->view->users = $users;
+        $this->view->activity_start_hour = date("H:i", $activity->start_at);
+        $this->view->activity_end_hour = date("H:i", $activity->end_at);
         $this->view->is_end = $end > time() ? 0 : 1;
         $this->view->is_start = $start < time() ? 1 : 0;
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
@@ -574,20 +571,16 @@ class ActivitiesController extends BaseController
             return false;
         }
 
-        if ($end > time()) {
-            $users = $activity->getRanListUsers($gift_id, 3);
-        } else {
-            $users = $activity->getRanListUsers($gift_id, 9);
-        }
-
+        $users = $activity->getRanListUsers($gift_id, 9);
 
         $end_time = $start < time() ? $end : $start;
 
         $this->view->end = $end;
-        $this->view->end = $end;
         $this->view->start = $start;
         $this->view->gift = $gift;
         $this->view->users = $users;
+        $this->view->activity_start_hour = date("H:i", $activity->start_at);
+        $this->view->activity_end_hour = date("H:i", $activity->end_at);
         $this->view->is_end = $end > time() ? 0 : 1;
         $this->view->is_start = $start < time() ? 1 : 0;
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
