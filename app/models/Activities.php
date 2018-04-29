@@ -329,6 +329,8 @@ class Activities extends BaseModel
 
         if (count($activities) > 0) {
 
+            debug($cond, count($activities));
+
             foreach ($activities as $activity) {
 
                 $key = $activity->getStatKey($gift_id);
@@ -351,7 +353,7 @@ class Activities extends BaseModel
             }
 
         } else {
-            debug($gift_order->id, $opts);
+            debug($gift_order->id, $cond, $opts);
         }
     }
 
@@ -410,8 +412,6 @@ class Activities extends BaseModel
 
     static function activityGiftListStat($gift_order, $opts)
     {
-        $start = fetch($opts, 'start');
-        $end = fetch($opts, 'end');
         $key = fetch($opts, 'key');
         $gift_id = $gift_order->gift_id;
 
@@ -423,7 +423,7 @@ class Activities extends BaseModel
             $time = fetch($opts, 'time');
             $db = Users::getUserDb();
             $db->zincrby($key, $gift_num, $sender_id);
-            info($start, $end, $key, $gift_num, $sender_id, $time);
+            info($key, $gift_num, $sender_id, $time);
         }
     }
 
