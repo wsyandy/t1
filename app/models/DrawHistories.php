@@ -26,6 +26,7 @@ class DrawHistories extends BaseModel
     {
 
         if ('diamond' == $this->type && $this->number >= 10000) {
+            info('全服', $this->id, $this->user_id, $this->number);
             $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
             Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
         } else {
