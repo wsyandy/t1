@@ -3370,4 +3370,17 @@ EOF;
             Rooms::updateRoomTypes($room->id);
         }
     }
+
+    function test27Action()
+    {
+        $activity = Activities::findFirstById(2);
+        $key = "gift_minutes_list_activity_stat_gift_id_" . 24 . "_start_" . $activity->start_at . "_end_" . $activity->end_at;
+
+        $users = Users::findForeach();
+        $user_db = Users::getUserDb();
+        foreach ($users as $user) {
+
+            $user_db->zincrby($key, 10, $user->id);
+        }
+    }
 }

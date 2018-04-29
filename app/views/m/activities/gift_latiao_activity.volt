@@ -22,7 +22,7 @@
             <p id="sec"></p></span>
         </div>
     {% endif %}
-    {#<p style="text-align: center;color: white; font-size: 18px;padding-top: 10px">dddd :sss</p>#}
+    <p style="text-align: center;color: white; font-size: 18px;padding-top: 10px">活动时间 : {{ activity_start_hour }} - {{ activity_end_hour }}</p>
     <span class="handwritten_prop"></span>
     <span class="handwritten_point_to"></span>
     <div class="handwritten_rules">
