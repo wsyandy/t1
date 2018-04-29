@@ -146,7 +146,13 @@ class Activities extends BaseModel
         if ($activities) {
 
             foreach ($activities as $activity) {
+
                 $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
+
+                if ('gold_eggs_draw' == $activity->code) {
+                    $url = 'url://m/draw_histories';
+                }
+
                 $activity = $activity->toSimpleJson();
                 $activity['url'] = $url;
                 $res[] = $activity;
@@ -315,8 +321,8 @@ class Activities extends BaseModel
 
         $gift_id = $gift_order->gift_id;
         $cond = [
-            'conditions' => 'gift_ids like :gift_ids: and status = :status: and start_at <= :start: and end_at >= :end:',
-            'bind' => ['gift_ids' => "%," . $gift_id . ",%", 'status' => STATUS_ON, 'start' => $time, 'end' => $time]
+            'conditions' => 'type = :type: and gift_ids like :gift_ids: and status = :status: and start_at <= :start: and end_at >= :end:',
+            'bind' => ['type' => ACTIVITY_TYPE_COMMON, 'gift_ids' => "%," . $gift_id . ",%", 'status' => STATUS_ON, 'start' => $time, 'end' => $time]
         ];
 
         $activities = Activities::find($cond);

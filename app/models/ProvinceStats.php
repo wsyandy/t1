@@ -131,7 +131,7 @@ class ProvinceStats extends BaseModel
             $find_cond['bind']['platform'] = $platform;
         }
 
-        $total = Users::count($find_cond);
+        $total = Devices::count($find_cond);
 
         return $total;
     }
@@ -217,7 +217,7 @@ class ProvinceStats extends BaseModel
     {
         $find_cond = ProvinceStats::getOrderCond($province_id, $product_channel_id, $partner_id, $platform, $start_at, $end_at);
 
-        $find_cond['column'] = 'distinct amount';
+        $find_cond['column'] = 'amount';
         $total_amount = Orders::sum($find_cond);
 
         return $total_amount;

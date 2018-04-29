@@ -35,7 +35,7 @@
         <span class="gold_egg_box_hint">10钻石／次</span>
     </div>
     <div class="gold_egg_butbox">
-        <div @click="smashEggs(1)" class="gold_egg_butboxli"><span>砸蛋一个</span></div>
+        <div @click="smashEggs(1)" class="gold_egg_butboxli ten_buttom"><span>砸蛋一个</span></div>
         <div @click="smashEggs(10)" class="gold_egg_butboxli ten_buttom"><span>砸蛋十个</span></div>
     </div>
     <div class="gold_egg_marquee">
@@ -52,7 +52,7 @@
         <span>2.抽中的钻石数将会直接放入您的账户。</span>
         <span></span>
         <p>活动奖品：</p>
-        <span>1.金币x100、金币x1000</span>
+        <span>1.金币x50、金币x200</span>
         <span>2.钻石x10、钻石x30、钻石x100、钻石x500、</span>
         <span>  钻石x1000、钻石x10000、钻石x100000</span>
     </div>
@@ -116,6 +116,11 @@
                         self.isResultsToast = true;
                         break;
                 }
+
+                setTimeout(function () {
+                    self.isLottery = !self.isLottery;
+                }, 3000);
+
                 //
                 // if(num==1){
                 //     self.isLottery = false;
