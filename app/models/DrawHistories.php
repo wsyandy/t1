@@ -100,7 +100,6 @@ class DrawHistories extends BaseModel
 
         $pool_rate = mt_rand(70, 80) / 100;
         $can_hit_diamond = false;
-
         if ($incr_num * $pool_rate > $decr_num) {
             $can_hit_diamond = true;
         }
@@ -125,7 +124,7 @@ class DrawHistories extends BaseModel
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
                 $user_rate_multi = $total_pay_amount;
-                $pool_rate = 0.90;
+                $pool_rate = 0.9;
                 if ($incr_num * $pool_rate > $decr_num) {
                     $can_hit_diamond = true;
                 }
@@ -134,7 +133,7 @@ class DrawHistories extends BaseModel
         } else {
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             $user_rate_multi = 10;
-            $pool_rate = 0.90;
+            $pool_rate = 0.9;
             if ($incr_num * $pool_rate > $decr_num) {
                 $can_hit_diamond = true;
             }
@@ -169,13 +168,14 @@ class DrawHistories extends BaseModel
 
         $random = mt_rand(1, 1000);
         $data = self::getData();
+
         foreach ($data as $datum) {
             if ($can_hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
                     if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3
                             || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 5
-                            || $decr_num + fetch($datum, 'number') > $incr_num * 0.85)
+                            || $decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.05))
                     ) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
