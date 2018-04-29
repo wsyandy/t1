@@ -61,8 +61,6 @@
                     return false;
                 }
 
-                vm.page++;
-
                 var data = {
                     sid: this.sid,
                     code: this.code,
@@ -72,6 +70,7 @@
                 $.authGet('/m/draw_histories/list', data, function (resp) {
                     vm.total_page = resp.total_page;
                     vm.loading = false;
+                    vm.page++;
 
                     if (resp.draw_histories) {
                         $.each(resp.draw_histories, function (i, item) {
