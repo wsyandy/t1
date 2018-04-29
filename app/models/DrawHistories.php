@@ -54,13 +54,13 @@ class DrawHistories extends BaseModel
         $data = [];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 0.5];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 2];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 3];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 9];
-        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 11];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 200, 'rate' => 30];
-        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 43.4];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 1.6];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 3.6];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 6.6];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15.6];
+        $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 26.6];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 200, 'rate' => 56.6];
+        $data[] = ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100];
 
         return $data;
     }
@@ -92,6 +92,9 @@ class DrawHistories extends BaseModel
         $total_pay_amount = 0;
         if ($incr_history) {
             $total_pay_amount = intval($incr_history->total_pay_amount);
+            if($total_pay_amount < 50 && $incr_history->total_number < 10){
+
+            }
         }
 
         // 倍率
@@ -109,13 +112,8 @@ class DrawHistories extends BaseModel
                 $total_number = intval($decr_history->total_number);
             }
 
-            // 超过支出
-            if ($total_pay_amount < $total_number) {
-                $hit_diamond = false;
-            }
-
-            if ($total_pay_amount > 100 && $total_pay_amount > $total_number && mt_rand(1, 100) < 75) {
-                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 100));
+            if ($total_pay_amount > $total_number && mt_rand(1, 100) < 75) {
+                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 200));
             }
 
             info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
@@ -141,13 +139,13 @@ class DrawHistories extends BaseModel
                 }
             } else {
                 // 只能命中金币
-                if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random && fetch($datum, 'type') == 'gold') {
+                if (fetch($datum, 'rate') * 10 > $random && fetch($datum, 'type') == 'gold') {
                     return $datum;
                 }
             }
         }
 
-        return ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 43.4];
+        return ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100];
     }
 
     static function createHistory($user, $opts = [])
