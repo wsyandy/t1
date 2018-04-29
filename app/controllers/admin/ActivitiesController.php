@@ -38,6 +38,16 @@ class ActivitiesController extends BaseController
             return $this->renderJSON($error_code, $error_reason);
         }
 
+        if ($activity->gift_ids) {
+            $gift_ids = preg_replace('/，/', ',', $activity->gift_ids);
+            $gift_ids = trim($gift_ids, ',');
+            $activity->gift_ids = "," . $gift_ids . ",";
+        }
+
+        if ($activity->end_at < $activity->start_at) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '时间错误');
+        }
+
         if ($activity->save()) {
             \OperatingRecords::logAfterCreate($this->currentOperator(), $activity);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', ['activity' => $activity->toJson()]);
@@ -63,7 +73,18 @@ class ActivitiesController extends BaseController
             return $this->renderJSON($error_code, $error_reason);
         }
 
+        if ($activity->gift_ids) {
+            $gift_ids = preg_replace('/，/', ',', $activity->gift_ids);
+            $gift_ids = trim($gift_ids, ',');
+            $activity->gift_ids = "," . $gift_ids . ",";
+        }
+
+        if ($activity->end_at < $activity->start_at) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '时间错误');
+        }
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $activity);
+
         if ($activity->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '修改成功', ['activity' => $activity->toJson()]);
         } else {
