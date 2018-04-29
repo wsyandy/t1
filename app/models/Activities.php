@@ -18,6 +18,9 @@ class Activities extends BaseModel
     static $ACTIVITY_PRIZE_TYPE = [1 => '10000金币', 2 => '5位数幸运号', 3 => '1000金币', 4 => '6位数幸运号', 5 => '100金币',
         6 => '小马驹座驾', 7 => '神秘礼物', 8 => '兰博基尼座驾'];
 
+    //活动类型
+    static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_day_week_list' => '礼物日榜单', 'gift_week_list' => '礼物周榜单'];
+
     function getImageUrl()
     {
         $image = $this->image;
@@ -314,6 +317,55 @@ class Activities extends BaseModel
     {
         //礼物周榜活动
         self::giftWeekRankList($gift_order, $opts);
+        $time = fetch($opts, 'time');
+
+        $gift_id = $gift_order->gift_id;
+        $cond = [
+            'conditions' => 'gift_ids like :gift_ids: and status = :status: and start_at <= :start: and end_at >= :end:',
+            'bind' => ['gift_ids' => "%," . $gift_id . ",%", 'status' => STATUS_ON, 'start' => $time, 'end' => $time]
+        ];
+
+        $activities = Activities::find($cond);
+
+        if (count($activities) > 0) {
+
+            foreach ($activities as $activity) {
+
+                $key = $activity->getStatKey($gift_id);
+                $opts['key'] = $key;
+
+                if ($activity->isGiftMinuteList()) {
+                    self::activityGiftListStat($gift_order, $opts);
+                    continue;
+                }
+
+                if ($activity->isGiftDayList()) {
+                    self::activityGiftListStat($gift_order, $opts);
+                    continue;
+                }
+
+                if ($activity->isGiftWeekList()) {
+                    self::activityGiftListStat($gift_order, $opts);
+                    continue;
+                }
+            }
+
+        }
+    }
+
+    function isGiftDayList()
+    {
+        return 'gift_day_list' == $this->activity_type;
+    }
+
+    function isGiftWeekList()
+    {
+        return 'gift_week_list' == $this->activity_type;
+    }
+
+    function isGiftMinuteList()
+    {
+        return 'gift_minute_list' == $this->activity_type;
     }
 
     //礼物周榜活动
@@ -354,28 +406,65 @@ class Activities extends BaseModel
         }
     }
 
-    //小黄瓜活动统计
-    static function activityStat($gift_order, $opts)
+    static function activityGiftListStat($gift_order, $opts)
     {
-        $start = strtotime('2018-04-21 21:10:00');
-        $end = strtotime('2018-04-21 21:20:00');
-        $time = fetch($opts, 'time', time());
-        $gift_id = 26;
+        $start = fetch($opts, 'start');
+        $end = fetch($opts, 'end');
+        $key = fetch($opts, 'key');
+        $gift_id = $gift_order->gift_id;
 
-        if (isDevelopmentEnv()) {
-            $start = strtotime('2018-04-21 18:00:00');
-            $end = strtotime('2018-04-21 19:25:59');
-            $gift_id = 87;
-        }
+        info($gift_order->id, $gift_id, $opts);
 
-        if ($time >= $start && $time <= $end && $gift_id == $gift_order->gift_id) {
+        if ($gift_id) {
             $gift_num = $gift_order->gift_num;
             $sender_id = $gift_order->sender_id;
             $time = fetch($opts, 'time');
             $db = Users::getUserDb();
-            $key = "give_diamond_by_cucumber_activity_gift_id_" . $gift_id . "start_" . $start . "_end_" . $end;
             $db->zincrby($key, $gift_num, $sender_id);
             info($start, $end, $key, $gift_num, $sender_id, $time);
         }
+    }
+
+    function getStatKey($gift_id)
+    {
+        $key = '';
+
+        if ($this->isGiftMinuteList()) {
+            $key = "gift_minute_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
+        }
+
+        if ($this->isGiftDayList()) {
+            $key = "gift_day_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
+        }
+
+        if ($this->isGiftWeekList()) {
+            $start_at = date("Ymd", beginOfWeek($this->start_at));
+            $end_at = date("Ymd", endOfWeek($this->start_at));
+            $key = "gift_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start_at . "_end_" . $end_at;
+        }
+
+        return $key;
+    }
+
+    function getRanListUsers($gift_id, $num)
+    {
+        $key = $this->getStatKey($gift_id);
+        $user_db = \Users::getUserDb();
+        $datas = $user_db->zrevrange($key, 0, $num, 'withscores');
+        $data = [];
+        $user_ids = [];
+
+        foreach ($datas as $user_id => $gift_num) {
+            $data[$user_id] = $gift_num;
+            $user_ids[] = $user_id;
+        }
+
+        $users = \Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+            $user->gift_num = $data[$user->id];
+        }
+
+        return $users;
     }
 }

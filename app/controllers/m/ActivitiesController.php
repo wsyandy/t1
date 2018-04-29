@@ -400,7 +400,7 @@ class ActivitiesController extends BaseController
         $this->view->title = "疯狂送!送!送!";
     }
 
-    //送钻石活动 道具 小黄瓜
+    //送钻石活动 道具 小黄瓜 废弃
     function giveDiamondByCucumberActivityAction()
     {
         $this->view->title = "送1000钻";
@@ -459,7 +459,7 @@ class ActivitiesController extends BaseController
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
 
-    //送肥皂，社会猫，肥皂礼物
+    //送肥皂，社会猫，肥皂礼物 废弃
     function giftWeekRankActivityAction()
     {
         if ($this->request->isAjax()) {
@@ -505,5 +505,91 @@ class ActivitiesController extends BaseController
         $this->view->end_time = "2018/4/29 23:59:59";
 
         $this->view->title = "社会我Hi音";
+    }
+
+    //限时送礼物活动
+    function giftLatiaoActivityAction()
+    {
+        $this->view->title = "送1000钻";
+        $id = $this->params('id');
+
+        $activity = \Activities::findFirstById($id);
+
+        if (!$activity) {
+            echo "参数错误";
+            return false;
+        }
+
+        $start = $activity->start_at;
+        $end = $activity->end_at;
+
+        $gift_id = trim($activity->gift_ids, ',');
+        $gift = \Gifts::findFirstById(intval($gift_id));
+
+        if (!$gift) {
+            echo "参数错误$gift_id";
+            return false;
+        }
+
+        if ($end > time()) {
+            $users = $activity->getRanListUsers($gift_id, 3);
+        } else {
+            $users = $activity->getRanListUsers($gift_id, 9);
+        }
+
+
+        $end_time = $start < time() ? $end : $start;
+
+        $this->view->end = $end;
+        $this->view->end = $end;
+        $this->view->start = $start;
+        $this->view->gift = $gift;
+        $this->view->users = $users;
+        $this->view->is_end = $end > time() ? 0 : 1;
+        $this->view->is_start = $start < time() ? 1 : 0;
+        $this->view->end_time = date("Y/m/d H:i:s", $end_time);
+    }
+
+    //限时送礼物活动
+    function giftLaosijiActivityAction()
+    {
+        $this->view->title = "送1000钻";
+        $id = $this->params('id');
+
+        $activity = \Activities::findFirstById($id);
+
+        if (!$activity) {
+            echo "参数错误";
+            return false;
+        }
+
+        $start = $activity->start_at;
+        $end = $activity->end_at;
+
+        $gift_id = trim($activity->gift_ids, ',');
+        $gift = \Gifts::findFirstById(intval($gift_id));
+
+        if (!$gift) {
+            echo "参数错误$gift_id";
+            return false;
+        }
+
+        if ($end > time()) {
+            $users = $activity->getRanListUsers($gift_id, 3);
+        } else {
+            $users = $activity->getRanListUsers($gift_id, 9);
+        }
+
+
+        $end_time = $start < time() ? $end : $start;
+
+        $this->view->end = $end;
+        $this->view->end = $end;
+        $this->view->start = $start;
+        $this->view->gift = $gift;
+        $this->view->users = $users;
+        $this->view->is_end = $end > time() ? 0 : 1;
+        $this->view->is_start = $start < time() ? 1 : 0;
+        $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
 }
