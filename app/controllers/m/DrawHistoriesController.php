@@ -22,7 +22,17 @@ class DrawHistoriesController extends BaseController
 
         $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
 
+        $cond = ['conditions' => 'type=:type: and number >= 1000',
+            'bind' => ['type' => 'diamond'],
+            'order' => 'id desc'
+        ];
+
+        $max_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $max_res = $max_draw_histories->toJson('draw_histories', 'toSimpleJson');
+
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
+        $res['draw_histories'] = array_merge($max_res['draw_histories'], $res['draw_histories']);
+        shuffle($res['draw_histories']);
 
         $this->view->draw_histories = json_encode($res['draw_histories'], JSON_UNESCAPED_UNICODE);
     }
