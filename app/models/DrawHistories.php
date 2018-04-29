@@ -182,6 +182,12 @@ class DrawHistories extends BaseModel
                         continue;
                     }
 
+                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount < 1 && fetch($datum, 'number') > 100) {
+                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                        // 大于支出的2倍
+                        continue;
+                    }
+
                     return $datum;
                 }
             } else {
