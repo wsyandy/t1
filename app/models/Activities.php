@@ -330,6 +330,8 @@ class Activities extends BaseModel
                 $key = $activity->getStatKey($gift_id);
                 $opts['key'] = $key;
 
+                debug($key, $activity->activity_type);
+
                 if ($activity->isGiftMinuteList()) {
                     self::activityGiftListStat($gift_order, $opts);
                     continue;
