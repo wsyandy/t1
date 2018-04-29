@@ -128,7 +128,7 @@ class DrawHistories extends BaseModel
             }
 
             if ($total_pay_amount > $total_number && mt_rand(1, 100) < 75) {
-                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 200));
+                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 300));
             }
 
             info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
