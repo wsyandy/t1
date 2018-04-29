@@ -41,6 +41,9 @@ class ProductChannelsController extends BaseController
             if ($product_channel_id == 1) {
                 $detail_json['menu_config'][] = ['show' => true, 'title' => '测一测', 'url' => '/m/users/voice', 'icon' => $root . 'images/test.png'];
             }
+            if($this->currentUser() && $this->currentUser()->id == 575899){
+                $detail_json['menu_config'][] = ['show' => true, 'title' => '砸金蛋', 'url' => '/m/draw_histories', 'icon' => $root . 'images/test.png'];
+            }
         }
 
         $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity.png'];
