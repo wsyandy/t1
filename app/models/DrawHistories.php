@@ -175,7 +175,7 @@ class DrawHistories extends BaseModel
 
                     if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3
                             || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 5
-                            || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
+                            || $decr_num + fetch($datum, 'number') > $incr_num * 0.85)
                     ) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
