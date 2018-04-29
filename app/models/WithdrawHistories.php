@@ -263,6 +263,10 @@ EOF;
             $end = time();
         }
 
+        if (in_array($user->id, [153717])) {
+            return null;
+        }
+
         $withdraw_history = WithdrawHistories::findFirst(
             [
                 'conditions' => '(user_id = :user_id: and type = :type: and created_at >= :start: and created_at <= :end: and ' .
