@@ -1894,7 +1894,7 @@ class Users extends BaseModel
 //        if ($block_near_by_user_ids) {
 //            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
 //        }
-
+        
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
             $this->calDistance($users);
