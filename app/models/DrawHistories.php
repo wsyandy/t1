@@ -253,6 +253,12 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_' . $draw_history->type;
         $decr_num = $user_db->incrby($cache_decr_key, intval($draw_history->number));
 
+        if ($draw_history->type == 'diamond' && $draw_history->number == 100000) {
+            $cache_hit_10w_key = 'draw_history_hit_10w';
+            $hot_cache = Users::getHotWriteCache();
+            $hot_cache->setex($cache_hit_10w_key, 3600*25, $draw_history->id);
+        }
+
         return $draw_history;
     }
 
