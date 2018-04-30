@@ -659,10 +659,12 @@ class ActivitiesController extends BaseController
             if (isset($users[0])) {
                 $last_activity_rank_list_users[] = $users[0]->toRankListJson();
             }
+
+            debug($key);
         }
 
         $last_week_charm_rank_list_key = \Users::generateFieldRankListKey('week', 'charm', $opts);
-        echoLine($last_week_charm_rank_list_key);
+        debug($last_activity_rank_list_users, $last_week_charm_rank_list_key);
         $users = \Users::findFieldRankListByKey($last_week_charm_rank_list_key, 'charm', 1, 1);
 
         $last_week_charm_rank_list_user = [];
