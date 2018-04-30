@@ -160,7 +160,7 @@
             users: []
         },
         created: function () {
-            this.getUsers(0);
+            this.getUsers('{{ gifts[0].id }}');
         },
         methods: {
             getUsers: function (gift_id) {
