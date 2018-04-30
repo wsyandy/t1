@@ -107,10 +107,12 @@
             <span>总榜</span>
         </li>
         {% for index, gift in gifts %}
-            <li @click="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index==2&&'cur']"><img
-                        src="{{ gift.image_small_url }}"
-                        alt="icon"><span>{{ gift.name }}</span>
-            </li>
+            {% if index < 3 %}
+                <li @click="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index=={{ index + 2 }}&&'cur']"><img
+                            src="{{ gift.image_small_url }}"
+                            alt="icon"><span>{{ gift.name }}</span>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
     <div class="week_top_three" v-if="users.length">
@@ -158,7 +160,7 @@
             users: []
         },
         created: function () {
-            this.getUsers();
+            this.getUsers(0);
         },
         methods: {
             getUsers: function (gift_id) {

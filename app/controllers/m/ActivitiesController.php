@@ -605,6 +605,7 @@ class ActivitiesController extends BaseController
 
         if (!$activity) {
             echo "参数错误";
+            return false;
         }
 
         $last_activity_id = $activity->last_activity_id;
@@ -613,6 +614,7 @@ class ActivitiesController extends BaseController
 
         if (!$last_activity) {
             echo "参数错误";
+            return false;
         }
 
 
