@@ -4,6 +4,7 @@
 {{ f.input('code', [ 'label':'code' ,'width':'50%']) }}
 {{ f.select('activity_type',['label':'活动类型', 'collection': Activities.ACTIVITY_TYPE, 'width':'50%']) }}
 {{ f.input('gift_ids',['label':'活动礼物ID(多个用,分割)', 'width':'50%']) }}
+{{ f.input('last_activity_id',['label':'关联活动礼物ID', 'width':'100%']) }}
 {{ f.select('type',['label':'活动位置', 'collection': Activities.TYPE, 'width':'33%']) }}
 {{ f.input('rank',['label':'排序', 'width':'33%']) }}
 {{ f.select('status',['label':'状态', 'collection': Activities.STATUS, 'width':'33%']) }}

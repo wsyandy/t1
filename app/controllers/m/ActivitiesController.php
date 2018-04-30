@@ -585,4 +585,79 @@ class ActivitiesController extends BaseController
         $this->view->is_start = $start < time() ? 1 : 0;
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
+
+    //礼物周榜活动
+    function giftWeek20180430rankActivityAction()
+    {
+        $id = $this->params('id');
+        $last_activity_id = $this->params('last_activity_id');
+        $activity = \Activities::findFirstById($id);
+        $last_activity = \Activities::findFirstById($last_activity_id);
+
+        if (!$activity || !$last_activity) {
+            echo "参数错误";
+        }
+
+        if ($this->request->isAjax()) {
+
+            $gift_id = $this->params('gift_id');
+            $activity_start = date("Ymd", beginOfWeek($activity->start_at));
+            $activity_end = date("Ymd", endOfWeek($activity->start_at));
+            $opts = ['start' => $activity_start, 'end' => $activity_end];
+
+            if (!$gift_id) {
+                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+            } else {
+                $key = $activity->getStatKey($gift_id);
+            }
+
+            debug($key);
+
+            $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+
+            if (count($charm_users)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
+            }
+        }
+
+        $last_gift_ids_array = $last_activity->getGiftIdsArray();
+        $gift_ids_array = $activity->getGiftIdsArray();
+
+        $last_gifts = \Gifts::findByIds($last_gift_ids_array);
+        $gifts = \Gifts::findByIds($gift_ids_array);
+
+        $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
+        $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
+
+        $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
+        $last_activity_rank_list_users = [];
+
+        foreach ($last_gifts as $last_gift) {
+            $key = $last_activity->getStatKey($last_gift->id);
+            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 1);
+
+            if (isset($users[0])) {
+                $last_activity_rank_list_users[] = $users[0]->toRankListJson();
+            }
+        }
+
+        $last_week_charm_rank_list_key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+        echoLine($last_week_charm_rank_list_key);
+        $users = \Users::findFieldRankListByKey($last_week_charm_rank_list_key, 'charm', 1, 1);
+
+        $last_week_charm_rank_list_user = [];
+
+        if (isset($users[0])) {
+            $last_week_charm_rank_list_user = $users[0]->toRankListJson();
+        }
+
+        $this->view->last_week_charm_rank_list_user = $last_week_charm_rank_list_user;
+        $this->view->last_activity_rank_list_users = $last_activity_rank_list_users;
+        $this->view->last_gifts = $last_gifts;
+        $this->view->gifts = $gifts;
+        $this->view->start_time = date("Y/m/d H:i:s", $activity->start_at);
+        $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
+    }
 }

@@ -311,7 +311,6 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment
         ];
 
         if (isset($this->contributing_hi_conins)) {
