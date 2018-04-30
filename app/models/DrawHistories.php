@@ -104,7 +104,7 @@ class DrawHistories extends BaseModel
         $decr_num = $user_db->get($cache_decr_key);
 
 
-        $pool_rate = mt_rand(65, 80) / 100;
+        $pool_rate = mt_rand(65, 85) / 100;
         $can_hit_diamond = false;
         if ($incr_num * $pool_rate > $decr_num) {
             $can_hit_diamond = true;
