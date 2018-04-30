@@ -130,7 +130,7 @@ class Activities extends BaseModel
 
         debug($cond);
 
-        $activities = Activities::findForeach($cond);
+        $activities = Activities::find($cond);
 
         return $activities;
     }

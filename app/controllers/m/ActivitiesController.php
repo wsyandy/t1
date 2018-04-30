@@ -27,7 +27,7 @@ class ActivitiesController extends BaseController
 
                 if (file_exists($file_path)) {
                     $activity->code = $file_name;
-                };
+                }
             }
         }
 
