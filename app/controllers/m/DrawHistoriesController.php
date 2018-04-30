@@ -41,6 +41,16 @@ class DrawHistoriesController extends BaseController
         $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
+
+        $cond = ['conditions' => 'type=:type: and number >= 100000',
+            'bind' => ['type' => 'diamond'],
+            'order' => 'id desc'
+        ];
+
+        $wan10_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+        $wan10_res = $wan10_draw_histories->toJson('draw_histories', 'toSimpleJson');
+        $res['draw_histories'] = array_merge($wan10_res['draw_histories'], $res['draw_histories']);
+
         shuffle($res['draw_histories']);
 
         $this->view->draw_histories = json_encode($res['draw_histories'], JSON_UNESCAPED_UNICODE);
