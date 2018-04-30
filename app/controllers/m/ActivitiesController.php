@@ -601,13 +601,20 @@ class ActivitiesController extends BaseController
     function giftCharmWeek20180430rankActivityAction()
     {
         $id = $this->params('id');
-        $last_activity_id = $this->params('last_activity_id');
         $activity = \Activities::findFirstById($id);
-        $last_activity = \Activities::findFirstById($last_activity_id);
 
-        if (!$activity || !$last_activity) {
+        if (!$activity) {
             echo "参数错误";
         }
+
+        $last_activity_id = $activity->last_activity_id;
+
+        $last_activity = \Activities::findFirstById($last_activity_id);
+
+        if (!$last_activity) {
+            echo "参数错误";
+        }
+
 
         if ($this->request->isAjax()) {
 
