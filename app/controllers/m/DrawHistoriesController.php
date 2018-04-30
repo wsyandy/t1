@@ -81,11 +81,12 @@ class DrawHistoriesController extends BaseController
                     $draw_history = \DrawHistories::createHistory($this->currentUser(), ['pay_type' => 'diamond', 'pay_amount' => $amount]);
                 }
 
-                $draw_histories[] = $draw_history->toSimpleJson();
                 if ($draw_history->type == 'diamond') {
                     $hit_diamond_num++;
+                    array_unshift($draw_histories, $draw_history->toSimpleJson());
+                }else{
+                    $draw_histories[] = $draw_history->toSimpleJson();
                 }
-
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);
