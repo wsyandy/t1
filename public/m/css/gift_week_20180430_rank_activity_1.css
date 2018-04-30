@@ -242,6 +242,10 @@ html,body{
 .week_top_three_li p.three{
   font-size: .24rem;
   color: #F37F32;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 1.82rem
 }
 .week_top_three_li .header{
   padding-top: .36rem;
