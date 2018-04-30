@@ -237,7 +237,7 @@ html,body{
   overflow:hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 1rem
+  width: 0.5rem
 }
 .week_top_three_li p.two{
   color: #56B1E3;
@@ -245,7 +245,7 @@ html,body{
   overflow:hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 1rem
+  width: 0.5rem
 }
 
 .week_top_three_li p.three{
@@ -254,7 +254,7 @@ html,body{
   overflow:hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 1rem
+  width: 0.5rem
 }
 .week_top_three_li .header{
   padding-top: .36rem;
