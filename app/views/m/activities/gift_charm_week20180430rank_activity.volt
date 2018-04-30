@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/gift_week_20180430_rank_activity_1.css') }}
+{{ theme_css('/m/css/gift_week_20180430_rank_activity_2.css') }}
 {{ block_end() }}
 
 <script>
