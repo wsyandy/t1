@@ -20,35 +20,26 @@ class DrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $draw_histories = \DrawHistories::findPagination($cond, 1, 15);
+        $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
-        $cond = ['conditions' => 'type=:type: and number = 1000',
+        $cond = ['conditions' => 'type=:type: and number >= 1000',
             'bind' => ['type' => 'diamond'],
             'order' => 'id desc'
         ];
 
         $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
         $qian_res = $qian_draw_histories->toJson('draw_histories', 'toSimpleJson');
-        $res['draw_histories'] = array_merge($res['draw_histories'], $qian_res['draw_histories']);
+        $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
-        $cond = ['conditions' => 'type=:type: and number => 10000',
+        $cond = ['conditions' => 'type=:type: and number >= 10000',
             'bind' => ['type' => 'diamond'],
             'order' => 'id desc'
         ];
 
         $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
         $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
-        $res['draw_histories'] = array_merge($res['draw_histories'], $wan_res['draw_histories']);
-
-        $cond = ['conditions' => 'type=:type: and number > 10000',
-            'bind' => ['type' => 'diamond'],
-            'order' => 'id desc'
-        ];
-
-        $wan10_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
-        $wan10_res = $wan10_draw_histories->toJson('draw_histories', 'toSimpleJson');
-        $res['draw_histories'] = array_merge($res['draw_histories'], $wan10_res['draw_histories']);
+        $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
         shuffle($res['draw_histories']);
 
