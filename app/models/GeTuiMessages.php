@@ -246,7 +246,7 @@ class GeTuiMessages extends BaseModel
     {
         $payload = self::generatePushPayload($receiver, array('title' => $title, 'body' => $body));
         $context = $receiver->getPushContext();
-        $result =  \Pushers::push($context, $receiver->getPushReceiverContext(),
+        $result = \Pushers::push($context, $receiver->getPushReceiverContext(),
             array(
                 'title' => $title,
                 'body' => $body,
@@ -258,11 +258,11 @@ class GeTuiMessages extends BaseModel
         return $result;
     }
 
-    static function testGlobalPush($product_channel, $platform, $title, $body)
+    static function globalPush($product_channel, $platform, $title, $body)
     {
         debug("global_push: platform: " . $platform . ',title: ' . $title . ',body:' . $body);
-        
-        $payload = array('title' => $title, 'body' => $body);
+
+        $payload = ['title' => $title, 'body' => $body];
 
         $context = $product_channel->getPushContext($platform);
         debug("getui_context: " . json_encode($context, JSON_UNESCAPED_UNICODE));
