@@ -172,6 +172,21 @@ class DrawHistories extends BaseModel
 
         foreach ($data as $datum) {
             if ($can_hit_diamond) {
+
+                if(fetch($datum, 'number') == 100000 && $incr_history->total_pay_amount > 30000
+                    && $decr_num + fetch($datum, 'number') < $incr_num * 0.91){
+
+                    $cache_hit_10w_key = 'draw_history_hit_10w_user';
+                    $hot_cache = Users::getHotWriteCache();
+                    if($hot_cache->get($cache_hit_10w_key)){
+                        continue;
+                    }
+
+                    $hot_cache->setex($cache_hit_10w_key, 3600*25, $user->id);
+                    info('hit_10w', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                    return $datum;
+                }
+
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
                     if (fetch($datum, 'type') == 'diamond' && $total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * 4
