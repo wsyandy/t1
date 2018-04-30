@@ -92,7 +92,7 @@
             <p><span>1.</span><span>所有冠名权的时限均只有一周</span></p>
             <p><span>2.</span><span>用户在活动期间收到礼物，每收到1个钻石礼物，用户的魅力值+1</span></p>
             <p><span>3.</span><span>礼物榜按用户收到对应礼物（法拉利，寿司点心，金条）的个数进行排名</span></p>
-            <p><span>4.</span><span>活动时间为2018年4月30日17时——2018年5月6日24时</span></p>
+            <p><span>4.</span><span>活动时间为{{ activity.start_at_text }}——{{ activity.end_at_text }}</span></p>
             <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID作为冠名内容；</span></p>
         </div>
         <span class="week_rules_waves_iconr"></span>
