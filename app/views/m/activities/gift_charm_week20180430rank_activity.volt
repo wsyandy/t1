@@ -37,8 +37,8 @@
                         <span class="type">{{ last_gift.name }}</span>
                         <img src="{{ last_gift.image_small_url }}" alt="头像"/>
                         {% if last_activity_rank_list_users %}
-                            <span class="name">{{ last_activity_rank_list_users[index].nickanme }}</span>
-                            <span>魅力值：{{ last_activity_rank_list_users[index].charm_value }}万</span>
+                            <span class="name">{{ last_activity_rank_list_users[index]['nickanme'] }}</span>
+                            <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}万</span>
                         {% endif %}
                     </li>
                 {% endfor %}
