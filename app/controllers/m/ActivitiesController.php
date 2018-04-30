@@ -655,7 +655,7 @@ class ActivitiesController extends BaseController
         foreach ($last_gifts as $last_gift) {
 
             if ($last_activity < 16) {
-                $key = "week_charm_rank_list_gift_id_" . $last_gift->id . "_" . $last_activity_start . "_" . $last_activity_start;
+                $key = "week_charm_rank_list_gift_id_" . $last_gift->id . "_" . $last_activity_start . "_" . $last_activity_end;
             } else {
                 $key = $last_activity->getStatKey($last_gift->id);
             }
