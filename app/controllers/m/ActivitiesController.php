@@ -653,7 +653,13 @@ class ActivitiesController extends BaseController
         $last_activity_rank_list_users = [];
 
         foreach ($last_gifts as $last_gift) {
-            $key = $last_activity->getStatKey($last_gift->id);
+
+            if ($last_activity < 16) {
+                $key = "week_charm_rank_list_gift_id_" . $last_gift->id . "_" . $last_activity_start . "_" . $last_activity_start;
+            } else {
+                $key = $last_activity->getStatKey($last_gift->id);
+            }
+
             $users = \Users::findFieldRankListByKey($key, 'charm', 1, 1);
 
             if (isset($users[0])) {
