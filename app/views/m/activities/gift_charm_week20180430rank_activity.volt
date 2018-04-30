@@ -29,7 +29,7 @@
                         <span class="type">总榜</span>
                         <img src="/m/images/week_total_list.png" alt="头像"/>
                         <span class="name">{{ last_week_charm_rank_list_user['nickname'] }}</span>
-                        <span>魅力值：{{ last_week_charm_rank_list_user['charm_value'] }}万</span>
+                        <span>魅力值：{{ last_week_charm_rank_list_user['charm_value'] }}</span>
                     </li>
                 {% endif %}
                 {% for index, last_gift in last_gifts %}
@@ -38,7 +38,7 @@
                         <img src="{{ last_gift.image_small_url }}" alt="头像"/>
                         {% if last_activity_rank_list_users %}
                             <span class="name">{{ last_activity_rank_list_users[index]['nickname'] }}</span>
-                            <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}万</span>
+                            <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}</span>
                         {% endif %}
                     </li>
                 {% endfor %}
