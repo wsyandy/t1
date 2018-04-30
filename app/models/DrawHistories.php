@@ -178,7 +178,7 @@ class DrawHistories extends BaseModel
         foreach ($data as $datum) {
             if ($can_hit_diamond) {
 
-                if(fetch($datum, 'number') == 100000 && $incr_history->total_pay_amount > 30000
+                if(isDevelopmentEnv() && fetch($datum, 'number') == 100000 && $incr_history->total_pay_amount > 30000
                     && $decr_num + fetch($datum, 'number') < $incr_num * 0.91){
 
                     $cache_hit_10w_key = 'draw_history_hit_10w_user';
