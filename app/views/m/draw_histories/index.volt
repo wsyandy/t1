@@ -109,13 +109,15 @@
                 switch (num) {
                     case 1:
                         self.isLottery = !self.isLottery;
-                        self.isResultsToast = true;
                         break;
                     case 10:
                         self.isLottery = !self.isLottery;
-                        self.isResultsToast = true;
                         break;
                 }
+
+                setTimeout(function () {
+                    self.isResultsToast = true;
+                }, 2000);
 
                 setTimeout(function () {
                     self.isLottery = !self.isLottery;

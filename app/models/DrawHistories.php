@@ -26,10 +26,11 @@ class DrawHistories extends BaseModel
     {
 
         if ('diamond' == $this->type && $this->number >= 10000) {
+            info('全服', $this->id, $this->user_id, $this->number);
             $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
             Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
         } else {
-            
+
             if (isDevelopmentEnv()) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
@@ -98,9 +99,8 @@ class DrawHistories extends BaseModel
         $decr_num = $user_db->get($cache_decr_key);
 
 
-        $pool_rate = mt_rand(70, 80) / 100;
+        $pool_rate = mt_rand(65, 80) / 100;
         $can_hit_diamond = false;
-
         if ($incr_num * $pool_rate > $decr_num) {
             $can_hit_diamond = true;
         }
@@ -125,7 +125,7 @@ class DrawHistories extends BaseModel
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
                 $user_rate_multi = $total_pay_amount;
-                $pool_rate = 0.90;
+                $pool_rate = 0.9;
                 if ($incr_num * $pool_rate > $decr_num) {
                     $can_hit_diamond = true;
                 }
@@ -133,8 +133,8 @@ class DrawHistories extends BaseModel
             }
         } else {
             // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
-            $user_rate_multi = 10;
-            $pool_rate = 0.90;
+            $user_rate_multi = 5;
+            $pool_rate = 0.9;
             if ($incr_num * $pool_rate > $decr_num) {
                 $can_hit_diamond = true;
             }
@@ -154,11 +154,14 @@ class DrawHistories extends BaseModel
                 $total_number = intval($decr_history->total_number);
             }
 
-            if ($total_pay_amount > $total_number && ($total_pay_amount - $total_number) / $total_pay_amount > 0.3 && mt_rand(1, 100) < 75) {
-                $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(50, 300));
-            }
+            if ($total_pay_amount > $total_number) {
+                $decr_rate = ($total_pay_amount - $total_number) / $total_pay_amount;
+                if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
+                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(100, 300));
+                }
 
-            info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi);
+                info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi, 'rate', $decr_rate);
+            }
         }
 
 
@@ -166,14 +169,21 @@ class DrawHistories extends BaseModel
 
         $random = mt_rand(1, 1000);
         $data = self::getData();
+
         foreach ($data as $datum) {
             if ($can_hit_diamond) {
                 if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    if (fetch($datum, 'type') == 'diamond' && (fetch($datum, 'number') > $total_pay_amount * 3
-                            || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 5
-                            || $decr_num + fetch($datum, 'number') > $incr_num * $pool_rate)
+                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * 4
+                            || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 7
+                            || $decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.05))
                     ) {
+                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                        // 大于支出的2倍
+                        continue;
+                    }
+
+                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount < 1 && fetch($datum, 'number') > 100) {
                         info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
                         // 大于支出的2倍
                         continue;
