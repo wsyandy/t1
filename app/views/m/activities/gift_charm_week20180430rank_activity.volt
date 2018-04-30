@@ -103,12 +103,12 @@
         <span id="time_text">  活动未开始 </span>
     </div>
     <ul class="week_list_tab">
-        <li @click="selectTab(1, 0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png" alt="icon">
+        <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png" alt="icon">
             <span>总榜</span>
         </li>
         {% for index, gift in gifts %}
             {% if index < 3 %}
-                <li @click="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index=={{ index + 2 }}&&'cur']"><img
+                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index=={{ index + 2 }}&&'cur']"><img
                             src="{{ gift.image_small_url }}"
                             alt="icon"><span>{{ gift.name }}</span>
                 </li>
@@ -167,9 +167,10 @@
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
-                    gift_id: gift_id
+                    gift_id: gift_id,
+                    id: '{{ id }}'
                 };
-                $.authGet('/m/activities/gift_week20180430rank_activity', data, function (resp) {
+                $.authGet('/m/activities/gift_charm_week20180430rank_activity', data, function (resp) {
                     vm.users = [];
 
                     if (resp.error_code == 0) {
@@ -187,7 +188,7 @@
     };
 
     vm = XVue(opts);
-
+    
     $(function () {
 
         var end_time = "{{ end_time }}";
@@ -261,4 +262,5 @@
         n = n < 10 ? "0" + n : n
         return n
     }
+
 </script>

@@ -684,6 +684,7 @@ class ActivitiesController extends BaseController
         $this->view->last_week_charm_rank_list_user = $last_week_charm_rank_list_user;
         $this->view->last_activity_rank_list_users = $last_activity_rank_list_users;
         $this->view->last_gifts = $last_gifts;
+        $this->view->id = $id;
         $this->view->gifts = $gifts;
         $this->view->start_time = date("Y/m/d H:i:s", $activity->start_at);
         $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
