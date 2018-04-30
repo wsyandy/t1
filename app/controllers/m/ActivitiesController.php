@@ -20,6 +20,17 @@ class ActivitiesController extends BaseController
 
         $activities = \Activities::findActivities(['product_channel_id' => $product_channel_id, 'platform' => $platform]);
 
+        foreach ($activities as $activity) {
+            if ($activity->isGiftCharmWeekList()) {
+                $file_name = date("Ymd", $activity->start_at) . 'rank_activity';
+                $file_path = APP_ROOT . 'app/views/m/activities/gift_charm_week' . $file_name . '.volt';
+
+                if (file_exists($file_path)) {
+                    $activity->code = $file_name;
+                };
+            }
+        }
+
         $this->view->sid = $sid;
         $this->view->code = $code;
         $this->view->activities = $activities;
@@ -587,7 +598,7 @@ class ActivitiesController extends BaseController
     }
 
     //礼物周榜活动
-    function giftWeek20180430rankActivityAction()
+    function giftCharmWeek20180430rankActivityAction()
     {
         $id = $this->params('id');
         $last_activity_id = $this->params('last_activity_id');
