@@ -286,7 +286,7 @@ class ProductChannelsController extends BaseController
     {
          $product_channel = \ProductChannels::findById($this->params('id'));
          if ($this->request->isPost()) {
-             $result = \GeTuiMessages::testGlobalPush(
+             $result = \GeTuiMessages::globalPush(
                  $product_channel,
                  $this->params('platform'),
                  $this->params('title'),
