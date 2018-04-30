@@ -28,7 +28,7 @@ class DrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 15);
         $qian_res = $qian_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
@@ -37,7 +37,7 @@ class DrawHistoriesController extends BaseController
             'order' => 'id desc'
         ];
 
-        $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 20);
+        $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 15);
         $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
