@@ -262,6 +262,7 @@ class DrawHistories extends BaseModel
             $cache_hit_10w_key = 'draw_history_hit_10w';
             $hot_cache = Users::getHotWriteCache();
             $hot_cache->setex($cache_hit_10w_key, 3600*25, $draw_history->id);
+            info($cache_hit_10w_key, $draw_history->id);
         }
 
         return $draw_history;
