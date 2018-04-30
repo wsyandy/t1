@@ -29,7 +29,7 @@ class DrawTask extends \Phalcon\Cli\Task
         $hot_cache = Users::getHotWriteCache();
         $draw_history_id = $hot_cache->get($cache_hit_10w_key);
 
-        if ($draw_history_id) {
+        if (!$draw_history_id) {
             return;
         }
 
