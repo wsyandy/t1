@@ -87,7 +87,6 @@ class DrawHistoriesController extends BaseController
                 }else{
                     $draw_histories[] = $draw_history->toSimpleJson();
                 }
-
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['draw_histories' => $draw_histories]);

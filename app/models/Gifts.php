@@ -25,25 +25,6 @@ class Gifts extends BaseModel
     static $files = ['image' => APP_NAME . '/gifts/image/%s', 'big_image' => APP_NAME . '/gifts/big_image/%s',
         'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s'];
 
-    function isDiamondPayType()
-    {
-        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
-    }
-
-    function isGoldPayType()
-    {
-        return GIFT_PAY_TYPE_GOLD == $this->pay_type;
-    }
-
-    function isIGoldPayType()
-    {
-        return GIFT_PAY_TYPE_I_GOLD == $this->pay_type;
-    }
-
-    function isCar()
-    {
-        return GIFT_TYPE_CAR == $this->type;
-    }
 
     function beforeCreate()
     {
@@ -65,6 +46,26 @@ class Gifts extends BaseModel
             self::uploadLock();
             self::delay()->zipSvgaImage($this->id);
         }
+    }
+
+    function isDiamondPayType()
+    {
+        return GIFT_PAY_TYPE_DIAMOND == $this->pay_type;
+    }
+
+    function isGoldPayType()
+    {
+        return GIFT_PAY_TYPE_GOLD == $this->pay_type;
+    }
+
+    function isIGoldPayType()
+    {
+        return GIFT_PAY_TYPE_I_GOLD == $this->pay_type;
+    }
+
+    function isCar()
+    {
+        return GIFT_TYPE_CAR == $this->type;
     }
 
     static function uploadLock()
