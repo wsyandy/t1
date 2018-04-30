@@ -153,6 +153,8 @@ class Chats extends BaseModel
             $user->addUnreadMessagesNum();
         }
 
+        debug($user_id, $attrs);
+        
         return \Chats::createChat($attrs);
     }
 
