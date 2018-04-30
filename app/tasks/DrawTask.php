@@ -45,8 +45,10 @@ class DrawTask extends \Phalcon\Cli\Task
 
         $platforms = ['ios', 'android'];
 
-        foreach ($platforms as $platform) {
-            GeTuiMessages::globalPush($product_channel, $platform, $title, $body);
+        if (isProduction()) {
+            foreach ($platforms as $platform) {
+                GeTuiMessages::globalPush($product_channel, $platform, $title, $body);
+            }
         }
 
         $content = <<<EOF
