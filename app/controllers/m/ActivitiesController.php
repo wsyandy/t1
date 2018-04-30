@@ -22,8 +22,8 @@ class ActivitiesController extends BaseController
 
         foreach ($activities as $activity) {
             if ($activity->isGiftCharmWeekList()) {
-                $file_name = date("Ymd", $activity->start_at) . 'rank_activity';
-                $file_path = APP_ROOT . 'app/views/m/activities/gift_charm_week' . $file_name . '.volt';
+                $file_name = 'gift_charm_week' . date("Ymd", $activity->start_at) . 'rank_activity';
+                $file_path = APP_ROOT . 'app/views/m/activities/' . $file_name . '.volt';
 
                 if (file_exists($file_path)) {
                     $activity->code = $file_name;
