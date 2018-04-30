@@ -19,7 +19,8 @@ class Activities extends BaseModel
         6 => '小马驹座驾', 7 => '神秘礼物', 8 => '兰博基尼座驾'];
 
     //活动类型
-    static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_day_list' => '礼物日榜单', 'gift_week_list' => '礼物周榜单'];
+    static $ACTIVITY_TYPE = ['gift_minutes_list' => '礼物分钟榜单', 'gift_charm_day_list' => '礼物魅力日榜单',
+        'gift_charm_week_list' => '礼物魅力周榜单', 'gif_wealth_day_list' => '礼物财富日榜单', 'gift_wealth_week_list' => '礼物财富周榜单'];
 
     function getImageUrl()
     {
@@ -84,9 +85,9 @@ class Activities extends BaseModel
 
         foreach ($fields as $field) {
             $val = $this->$field;
-            if (isBlank($val)) {
-                return [ERROR_CODE_FAIL, $field . "不能为空"];
-            }
+//            if (isBlank($val)) {
+//                return [ERROR_CODE_FAIL, $field . "不能为空"];
+//            }
 
             if ($this->hasChanged($field)) {
                 $obj = self::findFirst([
@@ -315,8 +316,6 @@ class Activities extends BaseModel
     //礼物活动
     static function giftActivityStat($gift_order, $opts = [])
     {
-        //礼物周榜活动
-        self::giftWeekRankList($gift_order, $opts);
         $time = fetch($opts, 'time');
 
         $gift_id = $gift_order->gift_id;
@@ -343,13 +342,13 @@ class Activities extends BaseModel
                     continue;
                 }
 
-                if ($activity->isGiftDayList()) {
-                    self::activityGiftListStat($gift_order, $opts);
-                    continue;
-                }
+//                if ($activity->isGiftDayList()) {
+//                    self::activityGiftListStat($gift_order, $opts);
+//                    continue;
+//                }
 
                 if ($activity->isGiftWeekList()) {
-                    self::activityGiftListStat($gift_order, $opts);
+                    self::giftWeekCharmRankListStat($activity, $gift_order, $opts);
                     continue;
                 }
             }
@@ -359,14 +358,24 @@ class Activities extends BaseModel
         }
     }
 
-    function isGiftDayList()
+    function isGiftCharmDayList()
     {
-        return 'gift_day_list' == $this->activity_type;
+        return 'gift_charm_day_list' == $this->activity_type;
     }
 
-    function isGiftWeekList()
+    function isGiftCharmWeekList()
     {
-        return 'gift_week_list' == $this->activity_type;
+        return 'gift_charm_week_list' == $this->activity_type;
+    }
+
+    function isGiftWealthDayList()
+    {
+        return 'gift_wealth_day_list' == $this->activity_type;
+    }
+
+    function isGiftWealthWeekList()
+    {
+        return 'gift_wealth_week_list' == $this->activity_type;
     }
 
     function isGiftMinuteList()
@@ -375,41 +384,26 @@ class Activities extends BaseModel
     }
 
     //礼物周榜活动
-    static function giftWeekRankList($gift_order, $opts = [])
+    static function giftWeekCharmRankListStat($activity, $gift_order, $opts = [])
     {
+        $key = fetch($opts, 'key');
         $gift_id = $gift_order->gift_id;
 
-        debug($gift_id, $opts);
+        info($gift_order->id, $gift_id, $opts);
 
-        $gift_ids = [59, 60, 61];
-        if (isDevelopmentEnv()) {
-            $gift_ids = [123, 124, 125];
+        $amount = $gift_order->amount;
+        $user_id = $gift_order->user_id;
+        $sender_id = $gift_order->sender_id;
+
+        $db = Users::getUserDb();
+
+        if ($activity->isGiftCharmWeekList()) {
+            $db->zincrby($key, $amount, $user_id);
+        } else {
+            $db->zincrby($key, $amount, $sender_id);
         }
 
-        if (in_array($gift_id, $gift_ids)) {
-
-            $time = fetch($opts, 'time', time());
-            $user_id = $gift_order->user_id;
-            $amount = $gift_order->amount;
-            $activity_start = '2018-04-23 18:00:00';
-
-            if (isDevelopmentEnv()) {
-                $activity_start = '2018-04-23 14:50:00';
-            }
-
-            if ($time < strtotime($activity_start) || $time > strtotime('2018-04-29 23:59:59')) {
-                info("game_over", $gift_id, $user_id, $amount, $opts);
-                return;
-            }
-
-            info($gift_id, $user_id, $amount, $opts);
-
-            $start = fetch($opts, 'start', date("Ymd", beginOfWeek($time)));
-            $end = fetch($opts, 'end', date("Ymd", endOfWeek($time)));
-            $key = "week_charm_rank_list_gift_id_{$gift_id}_" . $start . "_" . $end;
-            $user_db = Users::getUserDb();
-            $user_db->zincrby($key, $amount, $user_id);
-        }
+        info($key, $gift_id, $amount, $user_id, $sender_id, $opts);
     }
 
     static function activityGiftListStat($gift_order, $opts)
@@ -437,14 +431,24 @@ class Activities extends BaseModel
             $key = "gift_minutes_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
         }
 
-        if ($this->isGiftDayList()) {
-            $key = "gift_day_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
+        if ($this->isGiftCharmDayList()) {
+            $key = "gift_charm_day_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
         }
 
-        if ($this->isGiftWeekList()) {
+        if ($this->isGiftCharmWeekList()) {
             $start_at = date("Ymd", beginOfWeek($this->start_at));
             $end_at = date("Ymd", endOfWeek($this->start_at));
-            $key = "gift_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start_at . "_end_" . $end_at;
+            $key = "gift_charm_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start_at . "_end_" . $end_at;
+        }
+
+        if ($this->isGiftWealthDayList()) {
+            $key = "gift_wealth_day_list_activity_stat_gift_id_" . $gift_id . "_start_" . $this->start_at . "_end_" . $this->end_at;
+        }
+
+        if ($this->isGiftWealthWeekList()) {
+            $start_at = date("Ymd", beginOfWeek($this->start_at));
+            $end_at = date("Ymd", endOfWeek($this->start_at));
+            $key = "gift_wealth_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start_at . "_end_" . $end_at;
         }
 
         return $key;
@@ -470,5 +474,18 @@ class Activities extends BaseModel
         }
 
         return $users;
+    }
+
+    function getGiftIdsArray()
+    {
+        $gift_ids = trim($this->gift_ids, ',');
+
+        if (!$gift_ids) {
+            return [];
+        }
+
+        $gift_ids = explode(",", $gift_ids);
+
+        return $gift_ids;
     }
 }
