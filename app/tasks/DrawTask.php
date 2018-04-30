@@ -43,7 +43,7 @@ class DrawTask extends \Phalcon\Cli\Task
         $title = '哇哦！' . $user->nickname . '刚刚砸出' . $draw_history->number . '钻大奖！还不快来砸金蛋，试试手气~';;
         $body = '';
 
-        $platforms = ['ios', 'platform'];
+        $platforms = ['ios', 'android'];
 
         foreach ($platforms as $platform) {
             GeTuiMessages::globalPush($product_channel, $platform, $title, $body);
