@@ -342,13 +342,8 @@ class Activities extends BaseModel
                     continue;
                 }
 
-//                if ($activity->isGiftDayList()) {
-//                    self::activityGiftListStat($gift_order, $opts);
-//                    continue;
-//                }
-
-                if ($activity->isGiftWeekList()) {
-                    self::giftWeekCharmRankListStat($activity, $gift_order, $opts);
+                if ($activity->isGiftCharmWeekList() || $activity->isGiftWealthWeekList() ) {
+                    self::giftWeekRankListStat($activity, $gift_order, $opts);
                     continue;
                 }
             }
@@ -384,7 +379,7 @@ class Activities extends BaseModel
     }
 
     //礼物周榜活动
-    static function giftWeekCharmRankListStat($activity, $gift_order, $opts = [])
+    static function giftWeekRankListStat($activity, $gift_order, $opts = [])
     {
         $key = fetch($opts, 'key');
         $gift_id = $gift_order->gift_id;
