@@ -52,7 +52,7 @@ class DrawTask extends \Phalcon\Cli\Task
         }
 
         $content = <<<EOF
-'哇哦！' . $user->nickname . '刚刚砸出' . $draw_history->number . '钻大奖！还不快来砸金蛋，试试手气~';
+哇哦！ {$user->nickname}刚刚砸出{$draw_history->number}钻大奖！还不快来砸金蛋，试试手气~;
 EOF;
 
         $users = Users::find([
