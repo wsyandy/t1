@@ -3387,4 +3387,40 @@ EOF;
         $user = Users::findFirstById(1);
         $room->pushTopTopicMessage($user, "哇哦！xxx刚刚砸出一万钻大奖！还不快来砸金蛋，试试手气~");
     }
+
+    function test28Action()
+    {
+        $payments = Payments::findByUserId(1275312);
+
+        foreach ($payments as $payment) {
+            $payment->user_id = 1296027;
+            $payment->update();
+        }
+
+        $account_history = AccountHistories::findFirstById(567972);
+        $account_history->user_id = 1296027;
+        $account_history->update();
+
+        $order = Orders::findFirstById(45334);
+        $order->user_id = 1296027;
+        $order->update();
+
+
+        $account_histories = AccountHistories::findByUserId(1296027);
+
+        foreach ($account_histories as $account_history) {
+            if ($account_history->id == 567972) {
+                continue;
+            }
+
+            $account_history->balance += 60;
+            $account_history->update();
+        }
+
+        $user = Users::findFirstById(1296027);
+        $user->diamond = 170;
+        $user->pay_amount = 66;
+        $user->update();
+    }
+
 }

@@ -534,7 +534,6 @@ class Unions extends BaseModel
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_ON],
             'id desc');
 
-        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
         if ($union_history) {
             $union_history->status = STATUS_PROGRESS;
             $union_history->apply_exit_at = time();
@@ -545,7 +544,6 @@ class Unions extends BaseModel
         if (!$db->zscore($this->generateNewUsersKey(), $user->id)) {
             $db->zadd($this->generateNewUsersKey(), time(), $user->id);
         }
-        info($db->zscore($this->generateNewUsersKey(), $user->id));
 
         $db->zadd($this->generateAllApplyExitUsersKey(), time(), $user->id);
         $db->zadd($this->generateApplyExitUsersKey(), time(), $user->id);
@@ -570,7 +568,6 @@ class Unions extends BaseModel
         $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $this->id, 'status' => STATUS_PROGRESS],
             'id desc');
 
-        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
         if ($union_history) {
             $union_history->status = STATUS_OFF;
             $union_history->exit_at = time();
@@ -594,7 +591,6 @@ class Unions extends BaseModel
         $content = ['agree' => "您的家族会长已同意您的退出家族申请", 'auto' => "您已经退出了{$this->name}家族"];
         Chats::sendTextSystemMessage($user->id, $content[$from]);
 
-        info('user_id', $user->id, 'union_id', $this->id);
         $user->update();
         return [ERROR_CODE_SUCCESS, '操作成功'];
 
@@ -627,7 +623,6 @@ class Unions extends BaseModel
         ];
 
         $union_history = UnionHistories::findFirst($cond);
-        info(['user_id' => $user->id, 'union_id' => $this->id, 'union_history' => $union_history->id]);
 
 
         $expire_at = time() - 86400 * 7;

@@ -325,8 +325,6 @@ class GiftOrders extends BaseModel
 
         $receivers = Users::findByIds($receiver_ids);
 
-        info($sender_id, $receiver_ids, $gift_id, $opts);
-
         foreach ($receivers as $receiver) {
 
             $receiver_id = $receiver->id;
@@ -376,8 +374,6 @@ class GiftOrders extends BaseModel
 
     function updateUserGiftData($gift, $opts = [])
     {
-        info($gift->id, $this->user->id, $opts);
-
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
@@ -401,8 +397,6 @@ class GiftOrders extends BaseModel
     function updateUserData($opts = [])
     {
         $time = $time = fetch($opts, 'time', time());
-
-        info($this->user->id, $opts);
 
         $params = ['time' => $time];
 

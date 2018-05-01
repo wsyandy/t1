@@ -372,8 +372,6 @@ class Rooms extends BaseModel
         //绑定用户的onlinetoken 长连接使用
         $online_token = $user->online_token;
 
-        info($online_token, $user->sid, $this->id);
-
         if ($online_token) {
             $hot_cache = Rooms::getHotWriteCache();
             $hot_cache->setex("room_token_" . $online_token, 7 * 24 * 3600, $this->id);
@@ -389,7 +387,6 @@ class Rooms extends BaseModel
         $hot_cache = Rooms::getHotWriteCache();
         $room_id = $hot_cache->get($room_online_token);
 
-        info($online_token, $user->sid, $this->id, 'user_room_id', $room_id);
         // 房间相同
         if ($online_token && $this->id == $room_id) {
             $hot_cache->del($room_online_token);
@@ -402,11 +399,8 @@ class Rooms extends BaseModel
         $hot_cache = Rooms::getHotWriteCache();
         $room_id = $hot_cache->get("room_token_" . $token);
         if (!$room_id) {
-            info('no room_id, token', $token);
             return null;
         }
-
-        info('room_id', $room_id, 'token', $token);
 
         $room = Rooms::findFirstById($room_id);
         return $room;
@@ -447,8 +441,6 @@ class Rooms extends BaseModel
         if (!$user->isSilent()) {
             Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
         }
-
-        info($this->id, $this->user_num, $user->sid, $user->current_room_seat_id);
     }
 
     function exitRoom($user, $unbind = true)
@@ -484,13 +476,10 @@ class Rooms extends BaseModel
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
-
-        info($this->id, $this->user_num, $user->sid, $current_room_seat_id);
     }
 
     function kickingRoom($user)
     {
-        info($this->user->sid, $user->sid);
         $this->exitRoom($user);
         $this->forbidEnter($user);
     }
@@ -532,7 +521,6 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
-            info("not silent", $user->sid, $this->id);
             $hot_cache->zadd($real_user_key, time(), $user->id);
         }
 
@@ -545,8 +533,6 @@ class Rooms extends BaseModel
         }
 
         $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
-
-        info($user->sid, $this->id, $key, $real_user_key);
 
         if ($this->user_num > 0 && $this->status == STATUS_OFF && !$this->isBlocked()) {
             $this->status = STATUS_ON;
@@ -566,7 +552,6 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
 
         if (!$user->isSilent()) {
-            info("not silent", $user->sid, $this->id);
             $hot_cache->zrem($real_user_key, $user->id);
         }
 
@@ -730,8 +715,6 @@ class Rooms extends BaseModel
 
         $key = "room_forbid_user_room{$this->id}_user{$user->id}";
 
-        info($key);
-
         $hot_cache->setex($key, $time, 1);
     }
 
@@ -779,7 +762,6 @@ class Rooms extends BaseModel
 
     function addManager($user_id, $duration)
     {
-        info($this->user->sid, $user_id, $this->id);
         $db = Rooms::getRoomDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
@@ -814,7 +796,6 @@ class Rooms extends BaseModel
             return;
         }
 
-        info($this->user->sid, $user_id, $this->id);
         $db = Rooms::getRoomDb();;
         $key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
@@ -840,7 +821,6 @@ class Rooms extends BaseModel
 
     function updateManager($user_id, $duration)
     {
-        info($this->user->sid, $user_id, $this->id);
         $db = Rooms::getRoomDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
@@ -867,7 +847,6 @@ class Rooms extends BaseModel
             return;
         }
 
-        info($this->user->sid, $manager_ids, $this->id);
         foreach ($manager_ids as $manager_id) {
             $this->deleteManager($manager_id);
         }
@@ -1021,7 +1000,6 @@ class Rooms extends BaseModel
         }
 
         $room_ids = $hot_cache->zrange($key, 0, -1);
-        info($room_ids);
         $rooms = Rooms::findByIds($room_ids);
         return $rooms;
     }
@@ -1050,8 +1028,6 @@ class Rooms extends BaseModel
             return false;
         }
 
-        info($room_id, $user->id);
-
         if ($user->isRoomHost($room)) {
             $room->addOnlineSilentRoom();
         } elseif ($room->isActive() && ($room->getRealUserNum() < 1 || $room->user_agreement_num < 1)) {
@@ -1072,7 +1048,6 @@ class Rooms extends BaseModel
 
     static function asyncExitSilentRoom($room_id, $user_id)
     {
-        info($room_id, $user_id);
         $room = Rooms::findFirstById($room_id);
         $user = Users::findFirstById($user_id);
 
@@ -1091,8 +1066,6 @@ class Rooms extends BaseModel
             info("Exce", $this->id, $user->sid);
             return false;
         }
-
-        info($this->id, $user->sid, $user->current_room_seat_id);
 
         $current_room_seat_id = $user->current_room_seat_id;
 
@@ -1386,7 +1359,6 @@ class Rooms extends BaseModel
         $filter_user_ids = Rooms::getWaitEnterSilentRoomUserIds();
 
         if (count($filter_user_ids) > 0) {
-            info($filter_user_ids);
             $cond['conditions'] .= " and id not in (" . implode(',', $filter_user_ids) . ')';
         }
 
@@ -1902,8 +1874,6 @@ class Rooms extends BaseModel
     {
         if ($income > 0) {
 
-            info($room_id, $income, $sender_id);
-
             $room = Rooms::findFirstById($room_id);
 
             if ($room) {
@@ -1925,7 +1895,6 @@ class Rooms extends BaseModel
     //按天统计房间进入人数
     static function statDayEnterRoomUser($room_id, $user_id)
     {
-        info($user_id, $room_id);
         $room_db = Rooms::getRoomDb();
         $room = Rooms::findFirstById($room_id);
 
@@ -1938,7 +1907,6 @@ class Rooms extends BaseModel
     static function statDayUserTime($action, $room_id, $time)
     {
         if ($time > 0) {
-            info($action, $room_id, $time);
             $room_db = Rooms::getRoomDb();
             $room = Rooms::findFirstById($room_id);
 
@@ -2040,27 +2008,22 @@ class Rooms extends BaseModel
         $user = $this->user;
 
         if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-            info("user_no_pay_amount", $user->id, $user->pay_amount, $this->id);
             return false;
         }
 
         if (!$this->checkRoomSeat()) {
-            info("room_seat_is_null", $this->id);
             return false;
         }
 
         if ($this->getUserNum() < $least_user_num) {
-            info("room_no_user", $this->id);
             return false;
         }
 
         if ($this->lock) {
-            info("room_seat_is_lock", $this->id);
             return false;
         }
 
         if ($this->isForbiddenHot()) {
-            info("isForbiddenHot", $this->id);
             return false;
         }
 
@@ -2159,7 +2122,7 @@ class Rooms extends BaseModel
             }
 
             Rooms::delUserIdInExitRoomByServerList($user_id);
-            info("user_re_connect", $user_id);
+
             return;
         }
 
@@ -2456,8 +2419,6 @@ class Rooms extends BaseModel
             }
         }
 
-        debug($cond);
-
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
         if (!isDevelopmentEnv() && $rooms->total_entries < 2) {
@@ -2466,8 +2427,6 @@ class Rooms extends BaseModel
                 'conditions' => 'online_status = ' . STATUS_ON . ' and status = ' . STATUS_ON,
                 'order' => 'last_at desc, user_type asc'
             ];
-
-            info("no_hot_rooms", $user->sid);
 
             $rooms = \Rooms::findPagination($cond, $page, $per_page);
         }

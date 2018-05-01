@@ -83,8 +83,6 @@ class SwooleUtils extends \BaseModel
 
         $hot_cache = SwooleUtils::getHotWriteCache();
         $total_num = $hot_cache->zincrby(SwooleUtils::$connection_list, $num, $ip);
-
-        info($ip, 'total_num', $total_num, 'num', $num);
     }
 
     static function clearConnectionNum()
@@ -150,8 +148,6 @@ class SwooleUtils extends \BaseModel
             info("Exce", $action, $ip, $port, $payload);
             return false;
         }
-
-        info($port, $ip, $action, $payload);
 
         try {
             $client = new SwooleClient($ip, $port, 3);

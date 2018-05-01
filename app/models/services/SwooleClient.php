@@ -128,7 +128,7 @@ class SwooleClient
             echo "Error: {$this->errMsg()}";
             return false;
         }
-        info($data);
+        //info($data);
         $this->buffer .= $data;
         $recv_data = $this->parseData($this->buffer);
         if ($recv_data) {

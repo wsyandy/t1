@@ -91,7 +91,6 @@ class AccountHistories extends BaseModel
             return $account_history;
         }
 
-        info($user->sid, $fee_type, $amount, $opts);
         return null;
     }
 

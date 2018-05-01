@@ -48,8 +48,6 @@ class UserGifts extends BaseModel
 
     static function updateGiftNum($gift_order_id)
     {
-        info($gift_order_id);
-
         $gift_order = \GiftOrders::findById($gift_order_id);
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
@@ -65,8 +63,6 @@ class UserGifts extends BaseModel
         $gift_amount = $gift->amount;
         $gift_num = $gift_order->gift_num;
 
-        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
-
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
         $user_gift->amount = $gift_amount;
@@ -75,8 +71,6 @@ class UserGifts extends BaseModel
         $user_gift->pay_type = $gift->pay_type;
         $user_gift->gift_type = $gift->type;
         $user_gift->save();
-
-        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
@@ -87,8 +81,6 @@ class UserGifts extends BaseModel
     static function updateGiftExpireAt($gift_order_id, $opts = [])
     {
         $content = fetch($opts,'content');
-
-        info($gift_order_id);
 
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -104,10 +96,7 @@ class UserGifts extends BaseModel
         $gift = \Gifts::findFirstById($gift_order->gift_id);
 
         $gift_amount = $gift->amount;
-        debug($gift_amount);
         $gift_num = $gift_order->gift_num;
-
-        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->gift_id = $gift->id;
         $user_gift->name = $gift->name;
@@ -136,7 +125,6 @@ class UserGifts extends BaseModel
         }
 
         $user_gift->save();
-        info($gift->id, $gift_order->id, $user_gift->id, $user_gift->num, $gift_amount, $gift_num);
 
         $user_gift->statSilentUserSendGiftNum($gift_order);
 
@@ -246,10 +234,7 @@ class UserGifts extends BaseModel
     {
         $sender = $gift_order->sender;
 
-        info($gift_order->user_id, $gift_order->sender_id, $this->id);
-
         if ($sender->isActive()) {
-            info("active_user_not_need_stat");
             return;
         }
 
@@ -257,8 +242,6 @@ class UserGifts extends BaseModel
         $hot_cache = self::getHotWriteCache();
 
         if ($current_room) {
-
-            info($current_room->id);
 
             $amount_day_key = $current_room->getStatGiftAmountKey();
             $amount_hour_key = $current_room->getStatGiftAmountKey(false);

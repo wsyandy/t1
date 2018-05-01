@@ -173,7 +173,6 @@ class Activities extends BaseModel
 
         //2018-0407 17点结束
         if (time() >= $activity->end_at) {
-            info($user_id, $opts);
             return;
         }
 
@@ -230,8 +229,6 @@ class Activities extends BaseModel
                 }
             }
         }
-
-        info($user_id, $opts, $num);
 
         if ($num > 0) {
 
@@ -384,8 +381,6 @@ class Activities extends BaseModel
         $key = fetch($opts, 'key');
         $gift_id = $gift_order->gift_id;
 
-        info($gift_order->id, $gift_id, $opts);
-
         $amount = $gift_order->amount;
         $user_id = $gift_order->user_id;
         $sender_id = $gift_order->sender_id;
@@ -397,8 +392,6 @@ class Activities extends BaseModel
         } else {
             $db->zincrby($key, $amount, $sender_id);
         }
-
-        info($key, $gift_id, $amount, $user_id, $sender_id, $opts);
     }
 
     static function activityGiftListStat($gift_order, $opts)
@@ -406,15 +399,12 @@ class Activities extends BaseModel
         $key = fetch($opts, 'key');
         $gift_id = $gift_order->gift_id;
 
-        info($gift_order->id, $gift_id, $opts);
-
         if ($gift_id) {
             $gift_num = $gift_order->gift_num;
             $sender_id = $gift_order->sender_id;
             $time = fetch($opts, 'time');
             $db = Users::getUserDb();
             $db->zincrby($key, $gift_num, $sender_id);
-            info($key, $gift_num, $sender_id, $time);
         }
     }
 

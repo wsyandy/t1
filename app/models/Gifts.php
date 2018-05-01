@@ -104,19 +104,17 @@ class Gifts extends BaseModel
         $dest_filenames = [];
 
         foreach ($gifts as $gift) {
-            debug($gift->id);
+
             if (!$gift->getSvgaImageUrl()) {
                 info("svga_image_not_exists", $gift->id);
                 continue;
             }
 
             try {
+
                 $dest_filename = httpSave($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
 
-                debug($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
-
                 if (!$dest_filename) {
-                    debug($dest_filename);
                     continue;
                 }
 
