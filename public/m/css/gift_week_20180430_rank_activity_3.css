@@ -134,11 +134,13 @@ html,body{
 .week_rules_box{
   position: relative;
   margin: .4rem auto 0;
-  padding: 0 .32rem;
+  /*padding: 0 .32rem;*/
   width: 7rem;
   padding: .1rem;
   justify-content: center;
+  -webkit-justify-content: center;
   flex-direction: column;
+  -webkit-flex-direction: column;
   background: #4F4CFF;
   border-radius: .08rem;
 }
@@ -183,6 +185,7 @@ html,body{
   padding-top: .4rem;
   height: 100%;
   flex-direction: column;
+  -webkit-flex-direction: column;
   border: 1px solid #fff;
   border-radius: .08rem;
 }
@@ -191,6 +194,7 @@ html,body{
   font-size: .24rem;
   color: #FFFFFF;
   display: flex;
+  display: -webkit-flex;
   margin-bottom: .2rem;
 }
 .week_rules_box p span{
@@ -322,6 +326,7 @@ html,body{
   margin: .5rem .36rem 0;
   background-color: white;
   flex-direction: column;
+  -webkit-flex-direction: column;
   border-radius: .12rem;
 }
 .week_list_content li{
