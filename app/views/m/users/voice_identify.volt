@@ -384,11 +384,11 @@
                 alert('android end');
                 // JsCallback.saveMusic
             }
+        }else{
+            $.authPost('/m/users/save_image', data, function (resp) {
+                alert(resp.error_reason);
+            });
         }
-
-        $.authPost('/m/users/save_image', data, function (resp) {
-               alert(resp.error_reason);
-        });
     }
 
 </script>
