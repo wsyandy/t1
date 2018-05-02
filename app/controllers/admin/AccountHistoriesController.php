@@ -53,7 +53,7 @@ class AccountHistoriesController extends BaseController
 
             $opts = ['remark' => $remark, 'mobile' => $user->mobile, 'operator_id' => $this->currentOperator()->id];
 
-            if ($amount > 10000 && isProduction()) {
+            if ($amount > 500000 && isProduction()) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '赠送数量超过限制');
             }
 
