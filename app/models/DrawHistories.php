@@ -70,7 +70,7 @@ class DrawHistories extends BaseModel
         return false;
     }
 
-    static function getData()
+    static function getData2()
     {
         $data = [];
         $data[] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1];
@@ -86,13 +86,33 @@ class DrawHistories extends BaseModel
         return $data;
     }
 
+    static function getData()
+    {
+        $data = [];
+        $data[0] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
+        $data[1] = ['type' => 'gift', 'name' => '梦境奇迹', 'number' => 68888, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
+        $data[2] = ['type' => 'gift', 'name' => 'UFO座驾', 'number' => 18888, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
+        $data[3] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
+        $data[4] = ['type' => 'gift', 'name' => '光电游侠座驾', 'number' => 8888, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
+        $data[5] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
+        $data[6] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
+        $data[7] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 7.7, 'day_limit_num' => 0];
+        $data[8] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15.7, 'day_limit_num' => 0];
+        $data[9] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 27.7, 'day_limit_num' => 0];
+        $data[10] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 57.7, 'day_limit_num' => 0];
+        $data[11] = ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100, 'day_limit_num' => 0];
+
+        return $data;
+    }
+
     // 计算奖品
     static function calculatePrize($user, $hit_diamond = false)
     {
 
+        $data = self::getData();
         // 必中钻石
         if ($hit_diamond) {
-            return ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 26.6];
+            return $data[9];
         }
 
         $user_db = Users::getUserDb();
@@ -103,8 +123,7 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
 
-
-        $pool_rate = mt_rand(65, 85) / 100;
+        $pool_rate = mt_rand(50, 80) / 100;
         $can_hit_diamond = false;
         if ($incr_num * $pool_rate > $decr_num) {
             $can_hit_diamond = true;
@@ -123,7 +142,6 @@ class DrawHistories extends BaseModel
 
         // 倍率
         $user_rate_multi = 1;
-
         $total_pay_amount = 0;
         if ($incr_history) {
             $total_pay_amount = intval($incr_history->total_pay_amount);
@@ -162,7 +180,7 @@ class DrawHistories extends BaseModel
             if ($total_pay_amount > $total_number) {
                 $decr_rate = ($total_pay_amount - $total_number) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
-                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(100, 300));
+                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(150, 400));
                 }
 
                 info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi, 'rate', $decr_rate);
@@ -173,33 +191,14 @@ class DrawHistories extends BaseModel
         info('cal', $user->id, '系统收入', $incr_num, '系统支出', $decr_num, 'user_rate_multi', $user_rate_multi);
 
         $random = mt_rand(1, 1000);
-        $data = self::getData();
 
         foreach ($data as $datum) {
-            if ($can_hit_diamond) {
 
-                if(isDevelopmentEnv() && fetch($datum, 'number') == 100000 && $incr_history->total_pay_amount > 30000
-                    && $decr_num + fetch($datum, 'number') < $incr_num * 0.91){
+            if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                    $cache_hit_10w_key = 'draw_history_hit_10w_user';
-                    $hot_cache = Users::getHotWriteCache();
-                    if($hot_cache->get($cache_hit_10w_key)){
-                        continue;
-                    }
+                if (fetch($datum, 'type') == 'diamond') {
 
-                    $hot_cache->setex($cache_hit_10w_key, 3600*25, $user->id);
-                    info('hit_10w', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
-                    return $datum;
-                }
-
-                if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
-
-                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * 4
-                            || fetch($datum, 'number') <= 10000 && fetch($datum, 'number') > $total_pay_amount * 7
-                            || $decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.03))
-                    ) {
-                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
-                        // 大于支出的2倍
+                    if (fetch($datum, 'number') == 100000) {
                         continue;
                     }
 
@@ -209,17 +208,29 @@ class DrawHistories extends BaseModel
                         continue;
                     }
 
-                    return $datum;
+                    // 奖金池控制
+                    if ($decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.01)) {
+                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                        continue;
+                    }
+
+                    $total_pay_amount_rate = mt_rand(3, 6);
+                } else {
+                    $total_pay_amount_rate = mt_rand(5, 10);
                 }
-            } else {
-                // 只能命中金币
-                if (fetch($datum, 'rate') * 10 > $random && fetch($datum, 'type') == 'gold') {
-                    return $datum;
+
+                if ($total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * $total_pay_amount_rate)) {
+                    info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                    // 大于支出的2倍
+                    continue;
                 }
+
+                return $datum;
             }
+
         }
 
-        return ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100];
+        return end($data);
     }
 
     static function createHistory($user, $opts = [])
@@ -228,8 +239,6 @@ class DrawHistories extends BaseModel
         $hit_diamond = fetch($opts, 'hit_diamond', false);
 
         $result = self::calculatePrize($user, $hit_diamond);
-
-        info($user->id, $result);
 
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
@@ -244,6 +253,9 @@ class DrawHistories extends BaseModel
             $remark = '抽奖获得' . $draw_history->number . '钻石';
             $opts['remark'] = $remark;
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+        } elseif ($draw_history->type == 'gift') {
+            // 送礼物
+
         } else {
             $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
@@ -259,9 +271,9 @@ class DrawHistories extends BaseModel
         $decr_num = $user_db->incrby($cache_decr_key, intval($draw_history->number));
 
         if ($draw_history->type == 'diamond' && $draw_history->number == 100000) {
-            $cache_hit_10w_key = 'draw_history_hit_10w';
+            $cache_hit_10w_key = 'draw_history_hit_all_notice';
             $hot_cache = Users::getHotWriteCache();
-            $hot_cache->setex($cache_hit_10w_key, 3600*25, $draw_history->id);
+            $hot_cache->setex($cache_hit_10w_key, 3600 * 25, $draw_history->id);
             info($cache_hit_10w_key, $draw_history->id);
         }
 

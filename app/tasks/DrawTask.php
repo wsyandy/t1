@@ -25,7 +25,7 @@ class DrawTask extends \Phalcon\Cli\Task
 
     function sendDrawHistoryMessageAction()
     {
-        $cache_hit_10w_key = 'draw_history_hit_10w';
+        $cache_hit_10w_key = 'draw_history_hit_all_notice';
         $hot_cache = Users::getHotWriteCache();
         $draw_history_id = $hot_cache->get($cache_hit_10w_key);
 
