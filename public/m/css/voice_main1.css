@@ -40,6 +40,13 @@ html, body {
     height: 94px;
     background: url(../images/sound_entry_bottombg.png) center no-repeat;
     background-size: 100% 94px;
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select:none;
+    -webkit-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
 }
 
 @media screen and (max-width: 320px) {
