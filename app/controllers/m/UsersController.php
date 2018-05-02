@@ -309,7 +309,11 @@ class UsersController extends BaseController
                         unlink($source_filename);
                     }
                     if ($res) {
-                        return $this->renderJSON(ERROR_CODE_SUCCESS, '图片已成功保存到Hi相册');
+                        $error_reason = '图片已成功保存到Hi相册';
+                        if (isDevelopmentEnv()) {
+                            $error_reason = '图片已成功保存到相册';
+                        }
+                        return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason);
                     } else {
                         return $this->renderJSON(ERROR_CODE_FAIL, '图片保存失败');
                     }
