@@ -331,7 +331,7 @@ class SourcesController extends \ApplicationController
     public function cgClickAction()
     {
         $attrs['source'] = 'cg';
-        $fields = ['code', 'fr', 'appid', 'idfa', 'callbackurl'];
+        $fields = ['code', 'fr', 'idfa', 'callbackurl'];
         $hot_cache = \Devices::getHotWriteCache();
 
         foreach ($fields as $key) {

@@ -28,7 +28,7 @@ class PartnerUrls extends BaseModel
         'ios_sina' => '/sources/sina_click?code=%s&fr2=%s&uuid={Uuid}&devid={User}&groupid={Groupid}&osversion={Osversion}',
         'ios_jp' => '/sources/jp_click?code=%s&fr=%s&source=jp&appid={appid}&idfa={idfa}&keywords={keywords}&callback={callback}',
         'ios_xztx' => '/sources/xztx_click?code=%s&fr=%s&appid={appid}&deviceid={deviceid}&source=adwalker&mac={mac}&idfa={idfa}&callback={callback}',
-        'ios_cg' => '/sources/cg_click?code=%s&fr=%s&appid={appid}&idfa={idfa}&callbackurl={callbackurl}'
+        'ios_cg' => '/sources/cg_click?code=%s&fr=%s&idfa={idfa}&callbackurl={callbackurl}'
     ];
 
     function mergeJson()
