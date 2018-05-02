@@ -665,9 +665,17 @@ class RoomsController extends BaseController
 
         if (!is_null($keyword)) {
 
-            $cond['conditions'] = 'name like :name:';
-            $cond['bind']['name'] = '%' . $keyword . '%';
-            $cond['bind']['room_category_names'] = '%' . $keyword . '%';
+            //临时兼容
+            $room_category = \RoomCategories::findFirstByName($keyword);
+
+            if ($room_category && $room_category->type) {
+                $cond['conditions'] = " room_category_types like :room_category_types:";
+                $cond['bind']['room_category_types'] = "%," . $room_category->type . ",%";
+            } else {
+                $cond['conditions'] = 'name like :name:';
+                $cond['bind']['name'] = '%' . $keyword . '%';
+                $cond['bind']['room_category_names'] = '%' . $keyword . '%';
+            }
 
         } elseif ($type) {
 
@@ -693,25 +701,6 @@ class RoomsController extends BaseController
                 $cond['order'] = 'last_at desc,user_type asc';
 
             } else {
-//                $search_type = '';
-
-//                foreach (\Rooms::$TYPES as $key => $value) {
-//
-//                    if ($type == $key) {
-//                        $search_type = $key;
-//                        break;
-//                    }
-//                }
-//
-//                if ($search_type) {
-//                    $room_category = \RoomCategories::findFirstByType($search_type);
-//
-//                    if ($room_category) {
-//                        $cond['conditions'] = " room_category_ids like :room_category_ids:";
-//                        $cond['bind']['room_category_ids'] = "%," . $room_category->id . ",%";
-//                    }
-//                }
-
                 $cond['conditions'] = " room_category_types like :room_category_types:";
                 $cond['bind']['room_category_types'] = "%," . $type . ",%";
             }
