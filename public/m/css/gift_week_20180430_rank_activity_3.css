@@ -143,6 +143,7 @@ html,body{
   -webkit-flex-direction: column;
   background: #4F4CFF;
   border-radius: .08rem;
+  min-height: 4.2rem;
 }
 .week_rules_waves_icon{
   position: absolute;
@@ -188,6 +189,7 @@ html,body{
   -webkit-flex-direction: column;
   border: 1px solid #fff;
   border-radius: .08rem;
+  min-height: 4.2rem;
 }
 .week_rules_box p{
   padding:0 .6rem;
