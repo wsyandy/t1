@@ -163,7 +163,10 @@ class UsersController extends BaseController
         $nickname = $this->params('nickname');
         $show_share = false;
 
-        if (isInternalIp($this->remoteIp())) {
+//        if (isInternalIp($this->remoteIp())) {
+//            $show_share = true;
+//        }
+        if (isDevelopmentEnv()) {
             $show_share = true;
         }
 
