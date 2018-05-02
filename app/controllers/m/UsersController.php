@@ -167,9 +167,9 @@ class UsersController extends BaseController
 //            $show_share = true;
 //        }
 
-        if ($this->isIos() && $user->version_code >= 19) {
+        if ($user->platform == 'ios' && $user->version_code >= 19) {
             $show_share = true;
-        } else if ($this->isAndroid() && $user->version_code >= 8) {
+        } else if ($user->platform == 'android' && $user->version_code >= 8) {
             $show_share = true;
         }
 
