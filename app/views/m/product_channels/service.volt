@@ -7,7 +7,7 @@
         我们将竭诚为您服务:</p>
     <h2>官方客服ID：10086</h2>
     <h2>官方客服微信：afair3</h2>
-    <h2>官方客服QQ：327041246</h2>
+    <h2>官方客服QQ：327041264</h2>
     <h2>工作时间：10:00-24:00 (周一至周日)</h2>
     <h2>全国统一客服电话:<a href="tel:{{ product_channel.service_phone }}">{{ product_channel.service_phone }}</a></h2>
     <h2>工作时间：10:00-19:00 (周一至周日)</h2>
