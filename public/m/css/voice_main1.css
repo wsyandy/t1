@@ -145,6 +145,7 @@ html,body{
     background: url(../images/sound_entry_bg.png) center no-repeat;
     background-size: 100% 603px;
     flex-direction: column;
+    position: relative;
 }
 .recording_title{
     margin: 0 auto;
