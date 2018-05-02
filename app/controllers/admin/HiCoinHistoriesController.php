@@ -40,8 +40,8 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $hi_coins = intval($this->params('hi_coin_history[hi_coins]'));
-            $remark = intval($this->params('hi_coin_history[remark]'));
-            $content = intval($this->params('hi_coin_history[content]'));
+            $remark = $this->params('hi_coin_history[remark]');
+            $content = $this->params('hi_coin_history[content]');
 
 
             if (!$remark) {
