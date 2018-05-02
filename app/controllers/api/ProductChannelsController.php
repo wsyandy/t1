@@ -43,8 +43,8 @@ class ProductChannelsController extends BaseController
             }
         }
 
-        $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity.png'];
-        $detail_json['menu_config'][] = ['show' => true, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union.png'];
+        $detail_json['menu_config'][] = ['show' => true, 'title' => '活动', 'url' => '/m/activities', 'icon' => $root . 'images/menu_activity_2.png'];
+        $detail_json['menu_config'][] = ['show' => true, 'title' => '家族', 'url' => '/m/unions', 'icon' => $root . 'images/menu_union_2.png'];
 
         $cond = [
             'conditions' => " status = :status: and product_channel_id = :product_channel_id:",
