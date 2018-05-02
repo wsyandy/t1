@@ -166,7 +166,10 @@ class UsersController extends BaseController
 //        if (isInternalIp($this->remoteIp())) {
 //            $show_share = true;
 //        }
-        if (isDevelopmentEnv()) {
+
+        if ($this->isIos() && $user->version_code > 19) {
+            $show_share = true;
+        } else if ($this->isAndroid() && $user->version_code >= 8) {
             $show_share = true;
         }
 
@@ -310,7 +313,9 @@ class UsersController extends BaseController
                     }
                     if ($res) {
                         $error_reason = '图片已成功保存到Hi相册';
-                        if (isDevelopmentEnv()) {
+                        if ($this->isIos() && $user->version_code > 19) {
+                            $error_reason = '图片已成功保存到相册';
+                        } else if ($this->isAndroid() && $user->version_code >= 8) {
                             $error_reason = '图片已成功保存到相册';
                         }
                         return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason);
