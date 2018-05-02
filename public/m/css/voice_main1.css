@@ -33,9 +33,6 @@ html, body {
 }
 
 .sound_entry_bottom_bg {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
     height: 94px;
     background: url(../images/sound_entry_bottombg.png) center no-repeat;
@@ -47,26 +44,6 @@ html, body {
     -webkit-user-select:none;
     -ms-user-select:none;
     user-select:none;
-}
-
-@media screen and (max-width: 320px) {
-    /*当屏幕尺寸小于320px时，应用下面的CSS样式*/
-    .recording {
-        padding-top: 96px;
-        width: 100%;
-        height: 603px;
-        background: url(../images/sound_entry_bg.png) center no-repeat;
-        background-size: 100% 603px;
-        flex-direction: column;
-        position: relative;
-    }
-
-    .sound_entry_bottom_bg {
-        width: 100%;
-        height: 94px;
-        background: url(../images/sound_entry_bottombg.png) center no-repeat;
-        background-size: 100% 94px;
-    }
 }
 
 .sound_entry_input {
