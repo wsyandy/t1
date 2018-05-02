@@ -313,9 +313,9 @@ class UsersController extends BaseController
                     }
                     if ($res) {
                         $error_reason = '图片已成功保存到Hi相册';
-                        if ($this->isIos() && $user->version_code > 19) {
+                        if ($user->platform == 'ios' && $user->version_code > 19) {
                             $error_reason = '图片已成功保存到相册';
-                        } else if ($this->isAndroid() && $user->version_code >= 8) {
+                        } else if ($user->platform == 'android' && $user->version_code >= 8) {
                             $error_reason = '图片已成功保存到相册';
                         }
                         return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason);
