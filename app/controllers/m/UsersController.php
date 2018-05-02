@@ -312,11 +312,11 @@ class UsersController extends BaseController
                         unlink($source_filename);
                     }
                     if ($res) {
-                        $error_reason = '图片已成功保存到Hi相册';
+                        $error_reason = '图片已存至Hi相册';
                         if ($user->platform == 'ios' && $user->version_code > 19) {
-                            $error_reason = '图片已成功保存到相册';
+                            $error_reason = '图片已存至手机相册';
                         } else if ($user->platform == 'android' && $user->version_code >= 8) {
-                            $error_reason = '图片已成功保存到相册';
+                            $error_reason = '图片已存至手机相册';
                         }
                         return $this->renderJSON(ERROR_CODE_SUCCESS, $error_reason);
                     } else {
