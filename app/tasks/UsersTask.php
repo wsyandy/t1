@@ -1499,5 +1499,14 @@ EOF;
             $hot_cache->zadd($key, time(), $silent_user->id);
         }
     }
+
+    function clearNllUsersAction()
+    {
+        $users = Users::findForeach(
+            [
+                'conditions' => 'id <= :max_user_id: and avatar_status != :avatar_status: and register_at < 1',
+                'bind' => ['max_user_id' => 1000000, 'avatar_status' => ]
+            ]);
+    }
 }
 
