@@ -18,11 +18,15 @@ class FollowersController extends BaseController
 
         $users = $this->currentUser()->followList($page, $per_page);
 
+        $opts = ['follow_num' => $this->currentUser()->followNum()];
+
         if (count($users)) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRelationJson'));
+            $res = $users->toJson('users', 'toRelationJson');
+            $opts = array_merge($res, $opts);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
         }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $opts);
     }
 
     //关注我的人

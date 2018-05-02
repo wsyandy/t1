@@ -18,6 +18,7 @@
     current_page  当前页数
     total_page   总页数
     total_entries   总记录数
+    follow_num 关注人的个数
     users:[
         {
             id int 对方用户的ID
