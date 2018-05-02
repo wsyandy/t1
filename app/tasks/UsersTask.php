@@ -1499,5 +1499,55 @@ EOF;
             $hot_cache->zadd($key, time(), $silent_user->id);
         }
     }
+
+    function clearNllUsersAction()
+    {
+        $max_user_id = 1000000;
+
+        for ($id = 27000; $id <= $max_user_id; $id += 1000) {
+
+            $max_user_id = 1000000;
+
+            $users = Users::find(
+                [
+                    'conditions' => 'avatar_status != :avatar_status: and (register_at < 1 or register_at is null) and (device_id < 1 or device_id is null)',
+                    'bind' => ['max_user_id' => $max_user_id, 'avatar_status' => AUTH_SUCCESS]
+                ]);
+            echoLine(count($users));
+
+            foreach ($users as $user) {
+                echoLine($user->id);
+                $user->delete();
+            }
+        }
+
+
+        $users = Users::find(
+            [
+                'conditions' => 'id < :max_user_id: and avatar_status = :avatar_status:',
+                'bind' => ['max_user_id' => 1000000, 'avatar_status' => AUTH_SUCCESS],
+                'columns' => 'id'
+            ]);
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+        echoLine(count($users));
+
+
+        $max_room_id = 1000000;
+
+        for ($id = 1000; $id <= $max_room_id; $id += 1000) {
+            $rooms = Rooms::find(['conditions' => 'id <= :id: and user_type = :user_type: and (user_id < 1 or user_id is null)',
+                'bind' => ['user_type' => USER_TYPE_SILENT, 'id' => $id]]);
+            echoLine(count($rooms));
+
+
+            foreach ($rooms as $room) {
+                echoLine($room->id);
+                $room->delete();
+            }
+        }
+    }
 }
 
