@@ -109,8 +109,8 @@ class UsersTask extends \Phalcon\Cli\Task
             return false;
         }
 
-        $user_id = 1206502;
-        $new_user_id = 100106;
+        $user_id = 1180808;
+        $new_user_id = 1301243;
 
         $user = Users::findFirstById($user_id);
         $new_user = Users::findFirstById($new_user_id);
@@ -130,7 +130,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $new_user->$k = $v;
         }
 
-        $new_user->uid = 100106;
+        $new_user->uid = 1353505;
         $new_user->save();
 
         $new_user->sid = $new_user->generateSid('d.');
