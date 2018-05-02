@@ -1,7 +1,7 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/voice_main1.css') }}
 {{ block_end() }}
-<div id="app">
+<div id="app" style="flex-direction: column;">
     <div class="sound_entry">
         <div class="sound_entry_input">
             <input type="text" :placeholder="nickname?nickname:'给自己起一个好听的名字'" v-model="nickname" maxlength="10"/>
