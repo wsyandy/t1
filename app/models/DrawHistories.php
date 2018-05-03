@@ -325,7 +325,7 @@ class DrawHistories extends BaseModel
 
         $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
         $total_gift_decr_diamond = $user_db->get($cache_gift_decr_key);
-        //$total_decr_diamond += $total_gift_decr_diamond;
+        $total_decr_diamond += $total_gift_decr_diamond;
 
 
         // 计算用户倍率
