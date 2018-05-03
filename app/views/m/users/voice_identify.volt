@@ -377,13 +377,12 @@
 //                    alert('ios end');
                 //window.webkit.messageHandlers.saveMusic.postMessage('parameter');
             } else {
-                alert('android begin');
 //                JsCallback.saveImage(params);
                 JsCallback.saveImageBase64(img_data);  //保存图片
 //                JsCallback.saveMusic(img_data);  //保存音乐
-                alert('android end');
                 // JsCallback.saveMusic
             }
+            alert('保存成功');
         }else{
             $.authPost('/m/users/save_image', data, function (resp) {
                 alert(resp.error_reason);
