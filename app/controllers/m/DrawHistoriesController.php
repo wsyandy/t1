@@ -121,27 +121,14 @@ class DrawHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $draw_histories->toJson('draw_histories', 'toSimpleJson'));
         }
 
-        $diamond_draw_history = \DrawHistories::findFirst([
-            'conditions' => 'user_id = :user_id: and type=:type:',
-            'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
+        $draw_history = \DrawHistories::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
-
-        $gold_draw_history = \DrawHistories::findFirst([
-            'conditions' => 'user_id = :user_id: and type=:type:',
-            'bind' => ['user_id' => $user->id, 'type' => 'gold'],
-            'order' => 'id desc']);
-
-        $car_gift_num = \DrawHistories::count([
-            'conditions' => 'gift_type = :gift_type: and user_id = :user_id:',
-            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'user_id' => $user->id],
-        ]);
-
-        $diamond_total_number = $diamond_draw_history ? $diamond_draw_history->total_number : 0;
-        $gold_total_number = $gold_draw_history ? $gold_draw_history->total_number : 0;
-
-        $this->view->gold_total_number = $gold_total_number;
-        $this->view->diamond_total_number = $diamond_total_number;
-        $this->view->car_gift_num = $car_gift_num;
+        
+        $this->view->total_gold = $draw_history->total_gold;
+        $this->view->total_diamond = $draw_history->total_diamond;
+        $this->view->car_gift_num = $draw_history->total_gift_num;;
     }
 
 

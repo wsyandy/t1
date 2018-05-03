@@ -44,7 +44,7 @@
         <span>3. 金币 x50、金币 x100</span>
         <p>活动规则：</p>
         <span>1. 10钻获得一次砸金蛋机会</span>
-        <span>2. 抽中的钻石数或金币数将会直接放入您的账户。</span>
+        <span>2. 抽中的钻石、金币、座驾将会直接放入您的账户。</span>
     </div>
     <p class="gold_egg_copyright">活动最终解释权归Hi语音官方团队</p>
     <div class="gold_eggmy_prize" @click="redirectAction('/m/draw_histories/list?sid=' + sid + '&code=' + code )">

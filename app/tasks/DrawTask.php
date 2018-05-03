@@ -9,19 +9,27 @@
 class DrawTask extends \Phalcon\Cli\Task
 {
 
-    function checkUserAction()
+    function delAction()
     {
 
-        $draw_histories = DrawHistories::find(['conditions' => 'total_pay_amount>:pay_amount:',
-            'bind' => ['pay_amount' => 50000], 'order' => 'id asc']);
+        $user_db = Users::getUserDb();
+        $cache_key = 'draw_history_total_amount_incr_diamond';
+        $total_decr_diamond = $user_db->set($cache_key, 1739330);
+        $cache_decr_key = 'draw_history_total_amount_decr_diamond';
+        $total_decr_diamond = $user_db->set($cache_decr_key, 1487120);
+        $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
+        $total_gift_decr_diamond = $user_db->del($cache_gift_decr_key);
 
-        $user_ids = [];
+        $user_db->del('draw_history_hit_num_20180503_2');
+        $user_db->del('draw_history_hit_num_20180503_3');
+        $user_db->del('draw_history_hit_num_20180503_5');
+
+        $draw_histories = DrawHistories::find(['conditions' => 'id>:id:',
+            'bind' => ['id' => 0], 'order' => 'id asc']);
+
         foreach ($draw_histories as $draw_history) {
-            $user_ids[] = $draw_history->user_id;
+            $draw_history->delete();
         }
-
-        $user_ids = array_unique($user_ids);
-        echoLine($user_ids);
     }
 
     function sendDrawHistoryMessageAction()
