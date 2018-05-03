@@ -233,6 +233,8 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
+            return  $total_pay_amount_rate = mt_rand(3, 6);
+            
             // 奖金池控制
             if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
                 info('continue2', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
@@ -347,15 +349,15 @@ class DrawHistories extends BaseModel
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
 
-//                $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
-//                if (!$total_pay_amount_rate) {
-//                    continue;
-//                }
-//
-//                if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
-//                    info('continue3', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
-//                    continue;
-//                }
+                $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
+                if (!$total_pay_amount_rate) {
+                    continue;
+                }
+
+                if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
+                    info('continue3', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                    continue;
+                }
 
                 if (self::isDayLimit($datum)) {
                     info('continue4', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
