@@ -38,7 +38,7 @@
     </div>
 
     <div class="exchange_footer">
-        <img src="/m/withdraw_histories/images/warn.png" alt="" class="ico_tips"><span class="exchange_foot_text">温馨提示：至少50R币才能兑换钻石</span>
+        <img src="/m/withdraw_histories/images/warn.png" alt="" class="ico_tips"><span class="exchange_foot_text">温馨提示：至少20R币才能兑换钻石</span>
     </div>
     <div class="get_btn" @click="customHiCoinAction()">
         <a>自定义金额</a>
@@ -76,7 +76,7 @@
             </div>
 
             <div class="less_hi_coin" v-show="less_hi_coin">
-                至少50R币才能兑换钻石
+                至少20R币才能兑换钻石
             </div>
 
             <div class="pupop_btn">
@@ -132,8 +132,8 @@
             },
             customChangeAction: function () {
                 this.cur_diamond = this.cur_hi_coin * this.hi_coin_diamond_rate;
-                this.no_hi_coin = this.cur_hi_coin < 50;
-                this.less_hi_coin = this.cur_hi_coin < 50;
+                this.no_hi_coin = this.cur_hi_coin < 20;
+                this.less_hi_coin = this.cur_hi_coin < 20;
             },
             cancelAction: function () {
                 this.product_id = null;
@@ -151,8 +151,8 @@
                 clearTimeout(isTipsTimer);
                 var post_data = {sid: vm.sid, code: vm.code, product_id: vm.product_id, hi_coins: this.cur_hi_coin};
 
-                //自定义兑换不能小于50
-                if (post_data.product_id == null && post_data.hi_coins < 50) {
+                //自定义兑换不能小于20
+                if (post_data.product_id == null && post_data.hi_coins < 20) {
                     this.less_hi_coin = true;
                     return;
                 }
