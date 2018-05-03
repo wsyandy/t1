@@ -22,11 +22,11 @@
     </thead>
 
     <tbody id="stat_list">
+    <tr id="sssss" class="row_line">
     {% for key, val in stats %}
-        <tr id="{{ key }}" class="row_line">
-            <th>{{ val }}</th>
-        </tr>
+        <th>{{ val }}</th>
     {% endfor %}
+    </tr>
     </tbody>
 </table>
 
