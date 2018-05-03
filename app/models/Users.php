@@ -2808,9 +2808,9 @@ class Users extends BaseModel
 
             if (!$user->isCompanyUser()) {
                 Users::updateFiledRankList($user->id, 'charm', $charm_value, ['time' => $time]);
-
-                Activities::giftActivityStat($gift_order, $opts);
             }
+
+            Activities::giftActivityStat($gift_order, $opts);
 
             $union = $user->union;
 
