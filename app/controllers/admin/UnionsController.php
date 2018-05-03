@@ -43,6 +43,14 @@ class UnionsController extends BaseController
         $union = \Unions::findFirstById($id);
         $this->assign($union, 'union');
 
+        if ($union->hasChanged('status') && $union->status == STATUS_OFF) {
+            list($error_code, $error_reason) = $union->dissolutionUnion($union->user);
+
+            if (ERROR_CODE_SUCCESS != $error_code) {
+                return renderJSON($error_code, $error_reason);
+            }
+        }
+
         if ($union->update()) {
             return renderJSON(ERROR_CODE_SUCCESS, '');
         }

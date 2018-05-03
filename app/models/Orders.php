@@ -33,7 +33,7 @@ class Orders extends BaseModel
      */
     private $_payment;
 
-    static $status = [
+    static $STATUS = [
         ORDER_STATUS_WAIT => '等待支付',
         ORDER_STATUS_SUCCESS => '支付成功',
         ORDER_STATUS_FAIL => '支付失败'
@@ -85,11 +85,6 @@ class Orders extends BaseModel
         }
 
         return [ERROR_CODE_FAIL, '创建订单失败,请稍后.', null];
-    }
-
-    function getStatusText()
-    {
-        return fetch(\Orders::$status, $this->status);
     }
 
     function toJson()
