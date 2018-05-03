@@ -228,7 +228,7 @@ class DrawHistories extends BaseModel
             }
 
             // 第一次抽奖限制100
-            if ($type == 'diamond' && $total_pay_amount < 1 && $number > 100) {
+            if ($total_pay_amount < 1 && $number > 100) {
                 info('continue1', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
                 return 0;
             }
