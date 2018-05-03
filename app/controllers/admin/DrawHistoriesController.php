@@ -47,11 +47,11 @@ class DrawHistoriesController extends BaseController
         $start_at = beginOfDay($stat_at);
         $end_at = endOfDay($stat_at);
 
-        $cache_key = 'draw_histories_day_stat_'.$stat_at;
+        $cache_key = 'draw_histories_day_stat_' . $start_at . '_' . $end_at;
         $hot_cache = \DrawHistories::getHotWriteCache();
 
         $stats = $hot_cache->get($cache_key);
-        if($stats){
+        if ($stats) {
             $stats = json_decode($stats, true);
             $this->view->stats = $stats;
             $this->view->stat_at = date('Y-m-d', $stat_at);
