@@ -94,7 +94,7 @@ class DrawHistoriesController extends BaseController
                 if ($draw_history->type == 'diamond') {
                     $hit_diamond_num++;
                     array_unshift($draw_histories, $draw_history->toSimpleJson());
-                }else{
+                } else {
                     $draw_histories[] = $draw_history->toSimpleJson();
                 }
             }
@@ -131,11 +131,17 @@ class DrawHistoriesController extends BaseController
             'bind' => ['user_id' => $user->id, 'type' => 'gold'],
             'order' => 'id desc']);
 
+        $car_gift_num = \DrawHistories::count([
+            'conditions' => 'gift_type = :gift_type: and user_id = :user_id:',
+            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'user_id' => $user->id],
+        ]);
+
         $diamond_total_number = $diamond_draw_history ? $diamond_draw_history->total_number : 0;
         $gold_total_number = $gold_draw_history ? $gold_draw_history->total_number : 0;
 
         $this->view->gold_total_number = $gold_total_number;
         $this->view->diamond_total_number = $diamond_total_number;
+        $this->view->car_gift_num = $car_gift_num;
     }
 
 
