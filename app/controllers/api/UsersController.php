@@ -603,6 +603,10 @@ class UsersController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
 
+        if ($per_page > 15) {
+            $per_page = 15;
+        }
+
         $users = $this->currentUser()->nearby($page, $per_page);
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
@@ -817,6 +821,10 @@ class UsersController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page', 12);
+
+        if ($per_page > 12) {
+            $per_page = 12;
+        }
 
         $users = $this->currentUser()->nearby($page, $per_page);
 

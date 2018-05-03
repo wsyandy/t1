@@ -40,11 +40,23 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $hi_coins = intval($this->params('hi_coin_history[hi_coins]'));
+            $remark = $this->params('hi_coin_history[remark]');
+            $content = $this->params('hi_coin_history[content]');
 
-            $opts = ['remark' => '房间流水奖励' . $hi_coins . '钻石', 'hi_coins' => $hi_coins, 'operator_id' => $this->currentOperator()->id];
+
+            if (!$remark) {
+                $remark = '房间流水奖励' . $hi_coins . 'hi币';
+            }
+
+            $opts = ['remark' => $remark, 'hi_coins' => $hi_coins, 'operator_id' => $this->currentOperator()->id];
 
             if ($hi_coins > 0) {
                 $hi_coin_history = \HiCoinHistories::createHistory($user->id, $opts);
+
+                if ($content) {
+                    \Chats::sendTextSystemMessage($user->id, $content);
+                }
+
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['hi_coin_history' => $hi_coin_history->toJson()]);
             }
 
