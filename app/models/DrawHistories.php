@@ -429,7 +429,7 @@ class DrawHistories extends BaseModel
         $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($draw_history->number));
 
         if ($draw_history->type == 'diamond' && $draw_history->number == 100000
-            || $draw_history->type == 'gift' && $draw_history->number > 30000
+            || $draw_history->type == 'gift' && $draw_history->gift_id == 73
         ) {
 
             $cache_hit_10w_key = 'draw_history_hit_all_notice';
