@@ -65,7 +65,7 @@ class DrawHistoriesController extends BaseController
             'bind' => ['pay_type' => 'diamond', 'start_at' => $start_at, 'end_at' => $end_at],
             'column' => 'pay_amount'
         ]);
-        $stats['total_pay_amount'] = $total_pay_amount;
+        $stats['total_pay_amount'] = intval($total_pay_amount);
 
         $total_diamond = \DrawHistories::sum([
             'conditions' => 'type = :type: and created_at>=:start_at: and created_at<=:end_at:',
@@ -97,7 +97,7 @@ class DrawHistoriesController extends BaseController
         $histories = \DrawHistories::find([
             'conditions' => 'created_at>=:start_at: and created_at<=:end_at:',
             'bind' => ['start_at' => $start_at, 'end_at' => $end_at],
-            'column' => 'distinct user_id'
+            'columns' => 'distinct user_id'
         ]);
         $total_hit_user_num = count($histories);
 
