@@ -4,6 +4,11 @@
         {{ options(product_channels,'','id','name') }}
     </select>
 
+    <label for="status_eq">状态</label>
+    <select name="order[status_eq]" id="status_eq">
+        {{ options(Orders.STATUS, status) }}
+    </select>
+
     <label for="id_eq">ID</label>
     <input name="order[id_eq]" type="text" id="id_eq"/>
 

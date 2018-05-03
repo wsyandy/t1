@@ -18,6 +18,8 @@ class OrdersController extends BaseController
         $total_page = 1;
         $total_entries = $per_page * $total_page;
 
+        $status = $this->params('order[status_eq]');
+
         $cond = $this->getConditions('order');
         $cond['order'] = 'id desc';
 
@@ -29,6 +31,7 @@ class OrdersController extends BaseController
 
         $orders = \Orders::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->orders = $orders;
+        $this->view->status = $status != "" ? intval($status) : "";
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 
