@@ -7,7 +7,6 @@ class Users extends BaseModel
     use UserAttrs;
     use UserAbilities;
     use UserWakeup;
-    use UserInternational;
 
     /**
      * @type ProductChannels
@@ -1894,7 +1893,7 @@ class Users extends BaseModel
 //        if ($block_near_by_user_ids) {
 //            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
 //        }
-        
+
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
             $this->calDistance($users);
@@ -2171,92 +2170,6 @@ class Users extends BaseModel
 
     }
 
-    //废弃
-    static function pushTopTopicMessage($user_id, $room_id)
-    {
-        $room = Rooms::findFirstById($room_id);
-        $user = Users::findFirstById($user_id);
-
-        if (!$room || !$user) {
-            return;
-        }
-
-        if (!$user->isInRoom($room)) {
-            return;
-        }
-
-        $room->pushTopTopicMessage($user);
-    }
-
-    //废弃
-    static function pushGiftMessage($user_id, $room_id)
-    {
-        $room = Rooms::findFirstById($room_id);
-        $user = Users::findFirstById($user_id);
-
-        if (!$room || !$user) {
-            return;
-        }
-
-        if (!$user->isInRoom($room)) {
-            return;
-        }
-
-        if ($room->getRealUserNum() > 0) {
-
-            $receiver = $room->findRandomUser([$user_id]);
-
-            if ($receiver) {
-
-                $gift_num = mt_rand(1, 15);
-                $gifts = Gifts::findBy(['status' => STATUS_ON]);
-                $gift_ids = [];
-
-                foreach ($gifts as $gift) {
-                    $gift_ids[] = $gift->id;
-                }
-
-                $index = array_rand($gift_ids);
-                $gift_id = $gift_ids[$index];
-                $gift = Gifts::findFirstById($gift_id);
-
-                if ($receiver->isActive()) {
-                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
-                    if ($give_result) {
-                        $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
-                    }
-                } else {
-                    $room->pushGiftMessage($user, $receiver, $gift, $gift_num);
-                }
-            }
-        }
-    }
-
-    //废弃
-    static function pushUpMessage($user_id, $room_id)
-    {
-        $room = Rooms::findFirstById($room_id);
-        $user = Users::findFirstById($user_id);
-
-        if (!$room || !$user) {
-            return;
-        }
-
-        if (!$user->isInRoom($room)) {
-            return;
-        }
-
-        if ($user->current_room_seat_id < 1) {
-
-            $room_seat = \RoomSeats::findFirst(['conditions' => 'room_id = ' . $room->id . " and (user_id = 0 or user_id is null) and status = " . STATUS_ON]);
-
-            if ($room_seat) {
-                $room_seat->up($user);
-                $room->pushUpMessage($user, $room_seat);
-            }
-        }
-    }
-
     //上麦
     static function upRoomSeat($user_id, $room_id)
     {
@@ -2320,7 +2233,7 @@ class Users extends BaseModel
                 $give_result = true;
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::giveTo($user->id, $receiver->id, $gift, $gift_num);
+                    $give_result = GiftOrders::sendGift($user, [$receiver->id], $gift, $gift_num);
                 }
 
                 if ($give_result) {
@@ -3573,7 +3486,9 @@ class Users extends BaseModel
             return;
         }
 
-        $give_result = \GiftOrders::giveTo($sender_id, [$user_id], $gift, 1, 1);
+        $sender_id = Users::findFirstById($sender_id);
+
+        $give_result = \GiftOrders::sendGift($sender_id, [$user_id], $gift, 1);
 
         if ($give_result) {
             $send_user = Users::findFirstById($sender_id);
