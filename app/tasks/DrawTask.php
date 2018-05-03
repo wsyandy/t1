@@ -12,7 +12,9 @@ class DrawTask extends \Phalcon\Cli\Task
     function checkUserAction()
     {
 
-        $draw_histories = DrawHistories::find(['conditions' => 'total_pay_amount>:pay_amount:', 'bind' => ['pay_amount' => 50000]]);
+        $draw_histories = DrawHistories::find(['conditions' => 'total_pay_amount>:pay_amount:',
+            'bind' => ['pay_amount' => 50000], 'order' => 'id asc']);
+        
         $user_ids = [];
         foreach ($draw_histories as $draw_history) {
             $user_ids[] = $draw_history->user_id;
