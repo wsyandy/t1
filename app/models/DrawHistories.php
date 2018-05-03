@@ -233,7 +233,7 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
-            return  $total_pay_amount_rate = mt_rand(3, 6);
+            return  $total_pay_amount_rate = mt_rand(30, 60);
 
             // 奖金池控制
             if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
