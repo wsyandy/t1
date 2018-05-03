@@ -183,8 +183,8 @@ class DrawHistories extends BaseModel
 
             //用户获得钻石
             $decr_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and type=:type:',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
+                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type_gift:)',
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type_gift' => 'gift'],
                 'order' => 'id desc']);
 
             $total_number = 0;
