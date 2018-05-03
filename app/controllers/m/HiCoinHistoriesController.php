@@ -46,8 +46,8 @@ class HiCoinHistoriesController extends BaseController
                 $coin_type_text = 'R币';
             }
 
-            if ($hi_coins < 30) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '至少30' . $coin_type_text . '才能兑换钻石');
+            if ($hi_coins < 20) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '至少20' . $coin_type_text . '才能兑换钻石');
             }
 
             info('product_id', $product_id, 'hi_coins', $hi_coins);
