@@ -570,4 +570,33 @@ class UsersController extends BaseController
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/users/blocked_nearby_user_list']);
     }
+
+    function resetUidAction()
+    {
+        if ($this->request->isPost()) {
+
+            $user = \Users::findFirstById($this->params('id'));
+            $uid = $this->params('uid');
+
+            if (isBlank($uid)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, 'id不能为空');
+            }
+
+            $exit_user = \Users::findFirstByUid($uid);
+
+            if ($exit_user) {
+                return $this->renderJSON(ERROR_CODE_FAIL, 'id已经被占用');
+            }
+
+            $user->uid = $uid;
+
+            \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);
+
+            $user->update();
+            $this->renderJSON(ERROR_CODE_SUCCESS, '操作成功');
+        } else {
+            $this->view->id = $this->params('id');
+        }
+    }
+
 }

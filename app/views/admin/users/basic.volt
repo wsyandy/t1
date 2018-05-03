@@ -2,15 +2,19 @@
     <caption>个人信息</caption>
     <tr>
         <td>sid: {{ user.sid }}</td>
+        <td>
+            {% if isAllowed('users', 'reset_uid') %}
+                <a href="/admin/users/reset_uid?id={{ user.id }}" class="modal_action">重置用户ID</a>
+            {% endif %}
+        </td>
         <td>注册时间: {{ user.created_at_text }}</td>
         <td>最后活跃时间: {{ user.last_at_text }}</td>
-        <td>状态: {{ user.user_status_text }} 登录方式: {{ user.login_type_text }}</td>
     </tr>
     <tr>
         <td>昵称:{{ user.nickname }}</td>
+        <td>状态: {{ user.user_status_text }} 登录方式: {{ user.login_type_text }}</td>
         <td>手机号码:{{ user.mobile }}</td>
         <td>第三方登录标识: {{ user.third_unionid }}</td>
-        <td>生日: {{ user.birthday_text }}, {{ user.age }}岁</td>
     </tr>
     <tr>
         <td>主持认证：{{ user.id_card_auth_text }}</td>
@@ -22,7 +26,7 @@
     <tr>
         <td>IP:{{ user.ip }}</td>
         <td>经纬度：{{ user.latitude }}，{{ user.longitude }}</td>
-        <td>国际版金币: <a href="/admin/i_gold_histories?user_id={{ user.id }}">{{ user.i_gold }}</a>
+        <td>
             钻石: <a href="/admin/account_histories?user_id={{ user.id }}">{{ user.diamond }}</a>
             hi币：{{ user.hi_coins }}
         </td>
@@ -51,7 +55,7 @@
     </tr>
     <tr>
         <td>被封原因:{{ user.blocked_reason }}</td>
-        <td></td>
+        <td>生日: {{ user.birthday_text }}, {{ user.age }}岁</td>
         <td></td>
         <td></td>
     </tr>
