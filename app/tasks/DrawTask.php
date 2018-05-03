@@ -100,4 +100,17 @@ EOF;
         }
     }
 
+    function fix2Action($params)
+    {
+        $min_id = $params[0];
+        $max_id = $params[1];
+
+        for($id = $min_id; $id <= $max_id; $id++){
+            $draw_history = DrawHistories::findFirstById($id);
+            if($draw_history){
+                $draw_history->fixData2();
+            }
+        }
+    }
+
 }
