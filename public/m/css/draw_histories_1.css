@@ -365,7 +365,13 @@ html,body{
   z-index: 102;
   flex-direction: column;
   align-items: center;
-} 
+}
+
+.winning_results_toast img {
+  width: 3.16rem;
+  height: 2.3rem;
+}
+
 .winning_results_toast .gold_bigicon{
   width: 5.4rem;
   height: 2.8rem;
@@ -434,6 +440,10 @@ html,body{
   font-size: .34rem;
   color: #FFF9C5;
   margin-bottom: .25rem;
+}
+.winning_results_ul li img{
+  width: 1rem;
+  height: .62rem;
 }
 .winning_results_ul li .gold{
   padding-right: .48rem;

@@ -1,0 +1,1 @@
+ALTER TABLE draw_histories add COLUMN gift_type INTEGER DEFAULT 0;

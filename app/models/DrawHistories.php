@@ -284,7 +284,9 @@ class DrawHistories extends BaseModel
             'number' => $this->number,
             'type' => $this->type,
             'type_text' => $this->type_text,
-            'user_nickname' => $this->user_nickname
+            'user_nickname' => $this->user_nickname,
+            'gift_image_small_url' => $this->gift->image_small_url,
+            'gift_name' => $this->gift->name,
         ];
     }
 }

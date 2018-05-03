@@ -1,6 +1,7 @@
 {{ block_begin('head') }}
     {{ theme_css('/m/css/draw_histories_1.css') }}
 {{ block_end() }}
+
 <script>
     (function (doc, win) {
         var docEl = doc.documentElement,
@@ -16,6 +17,7 @@
         doc.addEventListener('DOMContentLoaded', recalc, false);
     })(document, window);
 </script>
+
 <div id="app" class="winning_record">
     <div class="winning_record_number">
         <div class="winning_record_numberli">
@@ -30,7 +32,7 @@
         </div>
         <div class="winning_record_numberli">
             <span>座驾</span>
-            <b style="color: #F6B92A;">3</b>
+            <b style="color: #F6B92A;">{{ car_gift_num }}</b>
         </div>
     </div>
     <div class="winning_record_list">
@@ -38,7 +40,8 @@
         <ul class="winning_record_ul">
             <li v-for="draw_history in draw_histories">
                 <div class="winning_record_ul_left">
-                    <p>获得${draw_history.type_text}</p>
+                    <p v-if="draw_history.gift_type = 'gift'">获得${draw_history.gift_name}</p>
+                    <p v-else>获得${draw_history.type_text}</p>
                     <span>${draw_history.created_at_text}</span>
                 </div>
                 <div class="winning_record_ul_right" v-if="draw_history.type =='diamond' || draw_history.type =='gold'">
@@ -46,7 +49,7 @@
                     <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}"></span>
                 </div>
                 <div class="winning_record_ul_right" v-else>
-                    <img src='./images/sports_car_icon.png' />
+                    <img :src='draw_history.gift_image_small_url'/>
                 </div>
             </li>
         </ul>
