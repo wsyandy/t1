@@ -420,4 +420,37 @@ class DrawHistories extends BaseModel
 
         return $opts;
     }
+
+    function fixData()
+    {
+        $history = self::findFirst([
+            'conditions' => 'user_id = :user_id: and id<:cur_id:',
+            'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id],
+            'order' => 'id desc']);
+
+        $old_total_gold = 0;
+        $old_total_diamond = 0;
+        $old_total_gift_diamond = 0;
+        $old_total_gift_num = 0;
+        if ($history) {
+            $old_total_gold = $history->total_gold;
+            $old_total_diamond = $history->total_diamond;
+            $old_total_gift_diamond = $history->total_gift_diamond;
+            $old_total_gift_num = $history->total_gift_num;
+        }
+
+        if ($this->type == 'gold') {
+            $this->total_gold = $old_total_gold + $this->number;
+        }
+        if ($this->type == 'diamond') {
+            $this->total_diamond = $old_total_diamond + $this->number;
+        }
+        if ($this->type == 'gift') {
+            $this->total_gift_diamond = $old_total_gift_diamond + $this->number;
+            $this->total_gift_num = $old_total_gift_num + $this->gift_num;
+        }
+
+        $this->update();
+    }
+
 }

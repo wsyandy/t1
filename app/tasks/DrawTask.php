@@ -93,7 +93,7 @@ EOF;
         $draw_histories = DrawHistories::find(['conditions' => 'id>=:min_id: and id<=:max_id:',
             'bind' => ['min_id' => $min_id, 'max_id' => $max_id]]);
         foreach ($draw_histories as $draw_history) {
-            
+            $draw_history->fixData();
         }
     }
 
