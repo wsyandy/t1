@@ -14,7 +14,7 @@ class DrawTask extends \Phalcon\Cli\Task
 
         $draw_histories = DrawHistories::find(['conditions' => 'total_pay_amount>:pay_amount:',
             'bind' => ['pay_amount' => 50000], 'order' => 'id asc']);
-        
+
         $user_ids = [];
         foreach ($draw_histories as $draw_history) {
             $user_ids[] = $draw_history->user_id;
@@ -92,10 +92,11 @@ EOF;
         $min_id = $params[0];
         $max_id = $params[1];
 
-        $draw_histories = DrawHistories::find(['conditions' => 'id>=:min_id: and id<=:max_id:',
-            'bind' => ['min_id' => $min_id, 'max_id' => $max_id]]);
-        foreach ($draw_histories as $draw_history) {
-            $draw_history->fixData();
+        for($id = $min_id; $id <= $max_id; $id++){
+            $draw_history = DrawHistories::findFirstById($id);
+            if($draw_history){
+                $draw_history->fixData();
+            }
         }
     }
 
