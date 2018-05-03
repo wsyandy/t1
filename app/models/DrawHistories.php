@@ -163,7 +163,7 @@ class DrawHistories extends BaseModel
             }
 
             $decr_gift_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and (type=:type:',
+                'conditions' => 'user_id = :user_id: and type=:type:',
                 'bind' => ['user_id' => $user->id, 'type' => 'gift'],
                 'order' => 'id desc']);
             if ($decr_gift_history) {
