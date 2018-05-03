@@ -80,18 +80,18 @@ class DrawHistories extends BaseModel
         $this->total_pay_amount = $old_total_pay_amount + $this->pay_amount;
         if ($this->type == 'gold') {
             $this->total_gold = $old_total_gold + $this->number;
-        }else{
+        } else {
             $this->total_gold = $old_total_gold;
         }
         if ($this->type == 'diamond') {
             $this->total_diamond = $old_total_diamond + $this->number;
-        }else{
+        } else {
             $this->total_diamond = $old_total_diamond;
         }
         if ($this->type == 'gift') {
             $this->total_gift_diamond = $old_total_gift_diamond + $this->number;
             $this->total_gift_num = $old_total_gift_num + $this->gift_num;
-        }else{
+        } else {
             $this->total_gift_diamond = $old_total_gift_diamond;
             $this->total_gift_num = $old_total_gift_num;
         }
@@ -119,20 +119,20 @@ class DrawHistories extends BaseModel
     {
         $data = [];
         $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
-        if(isProduction()){
+        if (isProduction()) {
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 73, 'gift_num' => 1, 'day_limit_num' => 1];
-        }else{
+        } else {
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 142, 'gift_num' => 1, 'day_limit_num' => 1];
         }
-        if(isProduction()){
+        if (isProduction()) {
             $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 33, 'gift_num' => 1, 'day_limit_num' => 2];
-        }else{
+        } else {
             $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 61, 'gift_num' => 1, 'day_limit_num' => 2];
         }
         $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
-        if(isProduction()){
+        if (isProduction()) {
             $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 1.7, 'gift_id' => 57, 'gift_num' => 1, 'day_limit_num' => 3];
-        }else{
+        } else {
             $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 1.7, 'gift_id' => 63, 'gift_num' => 1, 'day_limit_num' => 3];
         }
         $data[5] = ['id' => 6, 'type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
@@ -197,6 +197,9 @@ class DrawHistories extends BaseModel
                 $decr_rate = ($total_pay_amount - $total_get_amount) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
                     $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(150, 400));
+                    if ($user_rate_multi > 100) {
+                        $user_rate_multi = 100;
+                    }
                 }
 
                 info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi, 'rate', $decr_rate);
@@ -479,7 +482,7 @@ class DrawHistories extends BaseModel
                 'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
                 'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => 'diamond'],
                 'order' => 'id desc']);
-            if($diamond_history){
+            if ($diamond_history) {
                 $this->total_diamond = $diamond_history->total_diamond;
             }
 
@@ -489,7 +492,7 @@ class DrawHistories extends BaseModel
                 'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
                 'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => 'gold'],
                 'order' => 'id desc']);
-            if($gold_history){
+            if ($gold_history) {
                 $this->total_gold = $gold_history->total_gold;
             }
         }
