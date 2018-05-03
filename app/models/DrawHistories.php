@@ -80,13 +80,20 @@ class DrawHistories extends BaseModel
         $this->total_pay_amount = $old_total_pay_amount + $this->pay_amount;
         if ($this->type == 'gold') {
             $this->total_gold = $old_total_gold + $this->number;
+        }else{
+            $this->total_gold = $old_total_gold;
         }
         if ($this->type == 'diamond') {
             $this->total_diamond = $old_total_diamond + $this->number;
+        }else{
+            $this->total_diamond = $old_total_diamond;
         }
         if ($this->type == 'gift') {
             $this->total_gift_diamond = $old_total_gift_diamond + $this->number;
             $this->total_gift_num = $old_total_gift_num + $this->gift_num;
+        }else{
+            $this->total_gift_diamond = $old_total_gift_diamond;
+            $this->total_gift_num = $old_total_gift_num;
         }
 
         return false;
