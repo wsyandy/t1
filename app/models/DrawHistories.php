@@ -245,6 +245,7 @@ class DrawHistories extends BaseModel
                 'order' => 'id desc']);
 
             if ($hit_num >= 3) {
+                info('continue hit_num', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
                 return 0;
             }
 
