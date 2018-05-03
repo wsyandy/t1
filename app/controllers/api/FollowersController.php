@@ -43,6 +43,10 @@ class FollowersController extends BaseController
     //关注
     function createAction()
     {
+        if ($this->currentUser()->id == $this->otherUser()->id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
+        }
+
         $this->currentUser()->follow($this->otherUser());
         return $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
     }
