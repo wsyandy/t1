@@ -197,8 +197,8 @@ class DrawHistories extends BaseModel
                 $decr_rate = ($total_pay_amount - $total_get_amount) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
                     $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(150, 400));
-                    if ($user_rate_multi > 100) {
-                        $user_rate_multi = 100;
+                    if ($user_rate_multi > 50) {
+                        $user_rate_multi = 50;
                     }
                 }
             }
@@ -281,10 +281,10 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
-            $total_pay_amount_rate = mt_rand(5, 15);
+            $total_pay_amount_rate = mt_rand(5, 10);
 
         } else {
-            $total_pay_amount_rate = mt_rand(5, 15);
+            $total_pay_amount_rate = mt_rand(3, 15);
         }
 
         return $total_pay_amount_rate;
