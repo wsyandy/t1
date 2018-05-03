@@ -172,6 +172,81 @@ class DrawHistories extends BaseModel
         return [$user_rate_multi, $total_pay_amount];
     }
 
+    static function calPayAmountRate($user, $datum, $opts)
+    {
+        $pool_rate = mt_rand(50, 75) / 100;
+        $user_rate_multi = fetch($opts, 'user_rate_multi');
+        $total_pay_amount = fetch($opts, 'total_pay_amount');
+        $total_incr_diamond = fetch($opts, 'total_incr_diamond');
+        $total_decr_diamond = fetch($opts, 'total_decr_diamond');
+
+        $type = fetch($datum, 'type');
+        $number = fetch($datum, 'number');
+
+        if ($type == 'diamond') {
+
+            // 10w钻过滤，后台控制是否爆
+            if ($number == 100000) {
+                return 0;
+            }
+
+            // 第一次抽奖限制100
+            if ($type == 'diamond' && $total_pay_amount < 1 && $number > 100) {
+                info('continue1', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                return 0;
+            }
+
+            // 奖金池控制
+            if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
+                info('continue2', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                return 0;
+            }
+
+            // 15分钟 倍率小于15倍，只能中一次1万钻
+            if ($user_rate_multi <= 15 && $number >= 10000) {
+                $hit_1w_history = self::findFirst([
+                    'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 900],
+                    'order' => 'id desc']);
+                if ($hit_1w_history) {
+                    info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                    return 0;
+                }
+            }
+
+            $total_pay_amount_rate = mt_rand(3, 6);
+
+        } elseif ($type == 'gift') {
+
+            $gift_id = fetch($datum, 'gift_id');
+            $gift_history = self::findFirst([
+                'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
+                'bind' => ['user_id' => $user->id, 'type' => 'gift', 'gift_id' => $gift_id],
+                'order' => 'id desc']);
+            if ($gift_history) {
+                info('continue gift', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
+                return 0;
+            }
+
+            // 最近1小时只爆一个礼物
+            $gift_hour_history = self::findFirst([
+                'conditions' => 'type=:type:  and created_at>=:start_at:',
+                'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
+                'order' => 'id desc']);
+            if ($gift_hour_history) {
+                info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
+                return 0;
+            }
+
+            $total_pay_amount_rate = mt_rand(5, 15);
+
+        } else {
+            $total_pay_amount_rate = mt_rand(5, 15);
+        }
+
+        return $total_pay_amount_rate;
+    }
+
     // 计算奖品
     static function calculatePrize($user, $hit_diamond = false)
     {
@@ -194,7 +269,6 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $total_decr_diamond = $user_db->get($cache_decr_key);
 
-        $pool_rate = mt_rand(50, 75) / 100;
         // 计算用户倍率
         list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user);
 
@@ -206,67 +280,15 @@ class DrawHistories extends BaseModel
 
             $type = fetch($datum, 'type');
             $number = fetch($datum, 'number');
-            if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
+            if (fetch($datum, 'rate') * 10 * $user_rate_multi >= $random) {
 
-                if ($type == 'diamond') {
+                $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
+                    'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
+                ];
 
-                    // 10w钻过滤，后台控制是否爆
-                    if ($number == 100000) {
-                        continue;
-                    }
-
-                    // 第一次抽奖限制100
-                    if ($type == 'diamond' && $total_pay_amount < 1 && $number > 100) {
-                        info('continue1', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
-                        continue;
-                    }
-
-                    // 奖金池控制
-                    if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
-                        info('continue2', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
-                        continue;
-                    }
-
-                    // 15分钟 倍率小于15倍，只能中一次1万钻
-                    if ($user_rate_multi <= 15 && $number >= 10000) {
-                        $hit_1w_history = self::findFirst([
-                            'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
-                            'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 900],
-                            'order' => 'id desc']);
-                        if ($hit_1w_history) {
-                            info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
-                            continue;
-                        }
-                    }
-
-                    $total_pay_amount_rate = mt_rand(3, 6);
-
-                } elseif ($type == 'gift') {
-
-                    $gift_id = fetch($datum, 'gift_id');
-                    $gift_history = self::findFirst([
-                        'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
-                        'bind' => ['user_id' => $user->id, 'type' => 'gift', 'gift_id' => $gift_id],
-                        'order' => 'id desc']);
-                    if ($gift_history) {
-                        info('continue gift', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
-                        continue;
-                    }
-
-                    // 最近1小时只爆一个礼物
-                    $gift_hour_history = self::findFirst([
-                        'conditions' => 'type=:type:  and created_at>=:start_at:',
-                        'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
-                        'order' => 'id desc']);
-                    if ($gift_hour_history) {
-                        info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
-                        continue;
-                    }
-                    
-                    $total_pay_amount_rate = mt_rand(5, 15);
-
-                } else {
-                    $total_pay_amount_rate = mt_rand(5, 15);
+                $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
+                if (!$total_pay_amount_rate) {
+                    continue;
                 }
 
                 if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
@@ -287,10 +309,9 @@ class DrawHistories extends BaseModel
 
                 return $datum;
             }
-
         }
 
-        return end($data);
+        return null;
     }
 
     static function createHistory($user, $opts = [])
@@ -299,6 +320,9 @@ class DrawHistories extends BaseModel
         $hit_diamond = fetch($opts, 'hit_diamond', false);
 
         $result = self::calculatePrize($user, $hit_diamond);
+        if (!$result) {
+            return null;
+        }
 
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
