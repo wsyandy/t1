@@ -15,16 +15,16 @@ class DrawHistoriesController extends BaseController
     function indexAction()
     {
 
-        $cond = ['conditions' => 'type=:type:',
-            'bind' => ['type' => 'diamond'],
+        $cond = ['conditions' => 'type=:type: or type=:type2:',
+            'bind' => ['type' => 'diamond', 'type2' => 'gift'],
             'order' => 'id desc'
         ];
 
         $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
-        $cond = ['conditions' => 'type=:type: and number >= 1000',
-            'bind' => ['type' => 'diamond'],
+        $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 1000',
+            'bind' => ['type' => 'diamond', 'type2' => 'gift'],
             'order' => 'id desc'
         ];
 
@@ -32,8 +32,8 @@ class DrawHistoriesController extends BaseController
         $qian_res = $qian_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
-        $cond = ['conditions' => 'type=:type: and number >= 10000',
-            'bind' => ['type' => 'diamond'],
+        $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 10000',
+            'bind' => ['type' => 'diamond', 'type2' => 'gift'],
             'order' => 'id desc'
         ];
 
