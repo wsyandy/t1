@@ -90,7 +90,7 @@
     </div>
     <div v-if="isHintToast || isResultsToast" class="mask_box"></div>
     <audio id="bgMusic">
-        <source src="/m/images/draw_bg_music.mp3" type="audio/mp3">
+        <source src="/m/images/draw_bg_music.ogg" type="audio/mp3">
     </audio>
 </div>
 
