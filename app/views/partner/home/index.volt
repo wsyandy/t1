@@ -6,7 +6,7 @@
             <div class="media media-y margin-big-bottom">
             </div>
             <div class="panel loginbox">
-                <div class="login_title"><h1>Hi语音公会-登录</h1></div>
+                <div class="login_title"><h1>Hi语音-登录</h1></div>
                 <div class="panel-body ">
                     <img src="{{ qrcode }}" class="login_qr" alt="">
                 </div>

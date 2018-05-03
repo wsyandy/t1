@@ -35,8 +35,13 @@ class HomeController extends BaseController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
+                debug('login_user_id', $user->id, $this->session->get('user_id'));
 
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions']);
+                if ($user->union && UNION_TYPE_PRIVATE == $user->union->type) {
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/private_unions/index']);
+                }
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions/index']);
             }
         }
 

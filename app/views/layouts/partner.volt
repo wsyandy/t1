@@ -21,7 +21,7 @@
     {{ block_holder('head') }}
 </head>
 <body>
-<div id="app" v-cloak="">
+<div id="app" v-cloak>
     {{ content() }}
 </div>
 </body>

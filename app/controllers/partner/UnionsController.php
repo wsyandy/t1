@@ -7,25 +7,6 @@ class UnionsController extends BaseController
     function indexAction()
     {
         $union = $this->currentUser()->union;
-
-        if (!$union) {
-            list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
-
-            if (ERROR_CODE_SUCCESS != $error_code) {
-                echo "登录失败";
-                return false;
-            }
-        }
-
-        if ($union->needUpdateProfile() || STATUS_PROGRESS == $union->status) {
-            $forward = [
-                "namespace" => "partner",
-                "controller" => "unions",
-                "action" => "update",
-                "params" => $this->params()
-            ];
-            $this->dispatcher->forward($forward);
-        }
     }
 
     function updateAction()
@@ -46,9 +27,13 @@ class UnionsController extends BaseController
 
             $params = ['name' => $name, 'id_name' => $id_name, 'id_no' => $id_no, 'alipay_account' => $alipay_account];
 
-            $this->currentUser()->union->updateProfile($params);
+            $union = $this->currentUser()->union;
+            $union->updateProfile($params);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions']);
+            $union->status = STATUS_ON;
+            $union->auth_status = AUTH_WAIT;
+            $union->update();
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions/index']);
         }
     }
 
@@ -65,90 +50,9 @@ class UnionsController extends BaseController
         $begin_at = beginOfDay(strtotime($stat_at));
         $end_at = endOfDay(strtotime($stat_at));
 
-        $this->currentUser()->audience_time = $this->currentUser()->getAudienceTimeByDate($begin_at);
-        $this->currentUser()->broadcaster_time = $this->currentUser()->getBroadcasterTimeByDate($begin_at);
-        $this->currentUser()->host_broadcaster_time = $this->currentUser()->getHostBroadcasterTimeByDate($begin_at);
-
         if ($this->request->isAjax()) {
-
-            $page = $this->params('page');
-            $per_page = 6;
-
-            $cond = [
-                'conditions' => 'sender_union_id = :sender_union_id: and created_at >= :begin_at: and created_at <= :end_at:',
-                'bind' => ['sender_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
-                'columns' => 'distinct sender_id'
-            ];
-
-            $cond2 = [
-                'conditions' => 'receiver_union_id = :receiver_union_id:and created_at >= :begin_at: and created_at <= :end_at:',
-                'bind' => ['receiver_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
-                'columns' => 'distinct user_id'
-            ];
-
-            $user_ids = [];
-            $sender_gift_orders = \GiftOrders::find($cond);
-            $user_gift_orders = \GiftOrders::find($cond2);
-
-            foreach ($user_gift_orders as $gift_order) {
-                $user_ids[] = $gift_order->user_id;
-            }
-
-            foreach ($sender_gift_orders as $gift_order) {
-                $user_ids[] = $gift_order->sender_id;
-            }
-
-            $user_ids = array_unique($user_ids);
-
-            if (count($user_ids) < 1) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => []]);
-            }
-
-            $cond = [
-                'conditions' => 'id <> :union_user_id: and id in (' . implode(',', $user_ids) . ')',
-                'bind' => ['union_user_id' => $union->user_id]
-            ];
-
-            $users = \Users::findPagination($cond, $page, $per_page);
-
-            foreach ($users as $user) {
-
-                $union_history = \UnionHistories::findFirstBy([
-                    'user_id' => $user->id, 'union_id' => $union->id
-                ], 'id desc');
-
-                $user->audience_time = $user->getAudienceTimeByDate($begin_at);
-                $user->broadcaster_time = $user->getBroadcasterTimeByDate($begin_at);
-                $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($begin_at);
-                
-                if ($union_history->join_at && $union_history->join_at > $begin_at) {
-                    $begin_at = $union_history->join_at;
-                }
-
-                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
-                    $end_at = $union_history->exit_at;
-                }
-
-                $user->income = $user->getDaysIncome($begin_at, $end_at);
-            }
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionStatJson'));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['users' => '']);
         }
-
-        $union_history = \UnionHistories::findFirstBy([
-            'user_id' => $this->currentUser()->id, 'union_id' => $union->id
-        ], 'id desc');
-
-        if ($union_history->join_at && $union_history->join_at > $begin_at) {
-            $begin_at = $union_history->join_at;
-        }
-
-        if ($union_history->exit_at && $union_history->exit_at < $end_at) {
-            $end_at = $union_history->exit_at;
-        }
-
-        $this->currentUser()->income = $this->currentUser()->getDaysIncome($begin_at, $end_at);
-        $this->view->stat_at = $stat_at;
     }
 
     function roomsAction()
@@ -157,55 +61,6 @@ class UnionsController extends BaseController
         $stat_at = $this->params('stat_at', date("Y-m-d"));
         $begin_at = beginOfDay(strtotime($stat_at));
         $end_at = endOfDay(strtotime($stat_at));
-
-        $cond = [
-            'conditions' => 'room_union_id = :room_union_id: and created_at >= :begin_at: and created_at <= :end_at:',
-            'bind' => ['room_union_id' => $union->id, 'begin_at' => $begin_at, 'end_at' => $end_at],
-            'columns' => 'distinct room_id'
-        ];
-
-        $room_ids = [];
-        $gift_orders = \GiftOrders::find($cond);
-
-        foreach ($gift_orders as $gift_order) {
-            $room_ids[] = $gift_order->room_id;
-        }
-
-        $total_amount = 0;
-
-        if (count($room_ids) < 1) {
-            $rooms = [];
-        } else {
-
-            $cond = [
-                'conditions' => 'id in (' . implode(',', $room_ids) . ')',
-            ];
-
-            $rooms = \Rooms::find($cond);
-
-            foreach ($rooms as $room) {
-
-                $union_history = \UnionHistories::findFirstBy([
-                    'user_id' => $room->user->id, 'union_id' => $union->id
-                ], 'id desc');
-
-                if ($union_history->join_at && $union_history->join_at > $begin_at) {
-                    $begin_at = $union_history->join_at;
-                }
-
-                if ($union_history->exit_at && $union_history->exit_at < $end_at) {
-                    $end_at = $union_history->exit_at;
-                }
-
-                $room->amount = $room->getDayAmount($begin_at, $end_at);
-                $total_amount += $room->amount;
-            }
-
-        }
-
-        $this->view->rooms = $rooms;
-        $this->view->total_amount = $total_amount;
-        $this->view->stat_at = $stat_at;
     }
 
     function incomeDetailsAction()
