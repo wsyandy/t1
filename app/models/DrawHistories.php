@@ -89,20 +89,35 @@ class DrawHistories extends BaseModel
     static function getData()
     {
         $data = [];
-        $data[0] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
-        $data[1] = ['type' => 'gift', 'name' => '梦境奇迹', 'number' => 68888, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
-        $data[2] = ['type' => 'gift', 'name' => 'UFO座驾', 'number' => 18888, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
-        $data[3] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
-        $data[4] = ['type' => 'gift', 'name' => '光电游侠座驾', 'number' => 8888, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
-        $data[5] = ['type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
-        $data[6] = ['type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
-        $data[7] = ['type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 7.7, 'day_limit_num' => 0];
-        $data[8] = ['type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15.7, 'day_limit_num' => 0];
-        $data[9] = ['type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 27.7, 'day_limit_num' => 0];
-        $data[10] = ['type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 57.7, 'day_limit_num' => 0];
-        $data[11] = ['type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100, 'day_limit_num' => 0];
+        $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
+        $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹', 'number' => 68888, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
+        $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 18888, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
+        $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
+        $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 8888, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
+        $data[5] = ['id' => 6, 'type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
+        $data[6] = ['id' => 7, 'type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
+        $data[7] = ['id' => 8, 'type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 7.7, 'day_limit_num' => 0];
+        $data[8] = ['id' => 9, 'type' => 'diamond', 'name' => '钻石', 'number' => 30, 'rate' => 15.7, 'day_limit_num' => 0];
+        $data[9] = ['id' => 10, 'type' => 'diamond', 'name' => '钻石', 'number' => 10, 'rate' => 27.7, 'day_limit_num' => 0];
+        $data[10] = ['id' => 11, 'type' => 'gold', 'name' => '金币', 'number' => 100, 'rate' => 57.7, 'day_limit_num' => 0];
+        $data[11] = ['id' => 12, 'type' => 'gold', 'name' => '金币', 'number' => 50, 'rate' => 100, 'day_limit_num' => 0];
 
         return $data;
+    }
+
+    static function isDayLimit($data)
+    {
+        $id = fetch($data, 'id');
+        $day_limit_num = fetch($data, 'day_limit_num');
+        $user_db = Users::getUserDb();
+        $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . $id;
+        $num = $user_db->get($cache_key);
+        if ($day_limit_num && $num >= $day_limit_num) {
+            info('limit', $cache_key, $num, $day_limit_num);
+            return true;
+        }
+
+        return false;
     }
 
     // 计算奖品
@@ -145,7 +160,7 @@ class DrawHistories extends BaseModel
         $total_pay_amount = 0;
         if ($incr_history) {
             $total_pay_amount = intval($incr_history->total_pay_amount);
-            // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
+            // 第一次抽奖5倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
                 $user_rate_multi = $total_pay_amount;
                 $pool_rate = 0.9;
@@ -155,7 +170,7 @@ class DrawHistories extends BaseModel
 
             }
         } else {
-            // 第一次抽奖10倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
+            // 第一次抽奖5倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             $user_rate_multi = 5;
             $pool_rate = 0.9;
             if ($incr_num * $pool_rate > $decr_num) {
@@ -194,36 +209,82 @@ class DrawHistories extends BaseModel
 
         foreach ($data as $datum) {
 
+            $type = fetch($datum, 'type');
+            $number = fetch($datum, 'number');
             if (fetch($datum, 'rate') * 10 * $user_rate_multi > $random) {
 
-                if (fetch($datum, 'type') == 'diamond') {
+                if ($type == 'diamond') {
 
-                    if (fetch($datum, 'number') == 100000) {
+                    // 10w钻过滤，后台控制是否爆
+                    if ($number == 100000) {
                         continue;
                     }
 
-                    if (fetch($datum, 'type') == 'diamond' && $total_pay_amount < 1 && fetch($datum, 'number') > 100) {
-                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
-                        // 大于支出的2倍
+                    // 第一次抽奖限制100
+                    if ($type == 'diamond' && $total_pay_amount < 1 && $number > 100) {
+                        info('continue1', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num);
                         continue;
                     }
 
                     // 奖金池控制
-                    if ($decr_num + fetch($datum, 'number') > $incr_num * ($pool_rate + 0.01)) {
-                        info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
+                    if ($decr_num + $number > $incr_num * ($pool_rate + 0.01)) {
+                        info('continue2', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num);
                         continue;
+                    }
+
+                    // 15分钟 倍率小于15倍，只能中一次1万钻
+                    if ($user_rate_multi <= 15 && $number >= 10000) {
+                        $hit_1w_history = self::findFirst([
+                            'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
+                            'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 900],
+                            'order' => 'id desc']);
+                        if ($hit_1w_history) {
+                            info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num);
+                            continue;
+                        }
                     }
 
                     $total_pay_amount_rate = mt_rand(3, 6);
                 } else {
-                    $total_pay_amount_rate = mt_rand(5, 10);
+                    $total_pay_amount_rate = mt_rand(5, 15);
+                    // 礼物不能重复中
+                    if ($type == 'gift') {
+                        $gift_id = fetch($datum, 'gift_id');
+                        $gift_history = self::findFirst([
+                            'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
+                            'bind' => ['user_id' => $user->id, 'type' => 'gift', 'gift_id' => $gift_id],
+                            'order' => 'id desc']);
+                        if ($gift_history) {
+                            info('continue gift', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num, 'gift', $gift_id);
+                            continue;
+                        }
+
+                        // 最近1小时只爆一个礼物
+                        $gift_hour_history = self::findFirst([
+                            'conditions' => 'type=:type:  and created_at>=:start_at:',
+                            'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
+                            'order' => 'id desc']);
+                        if ($gift_hour_history) {
+                            info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num, 'gift', $gift_id);
+                        }
+                    }
                 }
 
-                if ($total_pay_amount && (fetch($datum, 'number') > $total_pay_amount * $total_pay_amount_rate)) {
-                    info('continue', $user->id, fetch($datum, 'number'), $total_pay_amount, '支出', $decr_num + fetch($datum, 'number'), $incr_num);
-                    // 大于支出的2倍
+                if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
+                    info('continue3', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num);
                     continue;
                 }
+
+                if (self::isDayLimit($datum)) {
+                    info('continue4', $user->id, $number, $total_pay_amount, '支出', $decr_num + $number, $incr_num);
+                    continue;
+                }
+
+                $user_db = Users::getUserDb();
+                $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . fetch($datum, 'id', 0);
+                $user_db->incr($cache_key);
+                $cache_total_key = 'draw_history_hit_num_' . fetch($datum, 'id', 0);
+                $user_db->incr($cache_total_key);
 
                 return $datum;
             }
