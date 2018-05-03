@@ -321,6 +321,9 @@
                     {% if isAllowed('province_stats','days') %}
                         <li><a href="/admin/province_stats/days">省份统计</a></li>
                     {% endif %}
+                    {% if isAllowed('draw_histories','day_stat') %}
+                        <li><a href="/admin/draw_histories/day_stat">砸蛋统计</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

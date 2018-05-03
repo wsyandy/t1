@@ -255,7 +255,7 @@ class DrawHistories extends BaseModel
             if ($number >= 10000) {
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 600],
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 900],
                     'order' => 'id desc']);
                 if ($hit_1w_history) {
                     info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
@@ -286,14 +286,14 @@ class DrawHistories extends BaseModel
             // 最近1小时只爆一个礼物
             $gift_hour_history = self::findFirst([
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
-                'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
+                'bind' => ['type' => 'gift', 'start_at' => time() - 7200],
                 'order' => 'id desc']);
             if ($gift_hour_history) {
                 info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
                 return 0;
             }
 
-            $total_pay_amount_rate = mt_rand(5, 12);
+            $total_pay_amount_rate = mt_rand(3, 12);
 
         } else {
             $total_pay_amount_rate = mt_rand(3, 15);
