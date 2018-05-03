@@ -308,7 +308,9 @@ class DrawHistories extends BaseModel
         $draw_history->number = fetch($result, 'number');
         $draw_history->pay_type = fetch($opts, 'pay_type');
         $draw_history->pay_amount = fetch($opts, 'pay_amount');
-        $draw_history->save();
+        if (!$draw_history->save()) {
+            return null;
+        }
 
         if ($draw_history->type == 'diamond') {
             $remark = '抽奖获得' . $draw_history->number . '钻石';
