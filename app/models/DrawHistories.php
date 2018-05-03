@@ -201,10 +201,10 @@ class DrawHistories extends BaseModel
                         $user_rate_multi = 100;
                     }
                 }
-
-                info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi, 'rate', $decr_rate);
             }
         }
+
+        info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi);
 
         return [$user_rate_multi, $total_pay_amount];
     }
@@ -260,7 +260,7 @@ class DrawHistories extends BaseModel
                 info('continue1', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
                 return 0;
             }
-            
+
             $gift_id = fetch($datum, 'gift_id');
             $gift_history = self::findFirst([
                 'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
@@ -328,7 +328,7 @@ class DrawHistories extends BaseModel
             $type = fetch($datum, 'type');
             $number = fetch($datum, 'number');
             if (fetch($datum, 'rate') * 10 * $user_rate_multi >= $random) {
-
+                info('rate', $user->id, fetch($datum, 'rate') * 10 * $user_rate_multi, 'random', $random);
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
