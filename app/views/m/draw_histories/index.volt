@@ -89,9 +89,7 @@
         <div @click="closeResults" class="winning_results_buttom"><span>确定</span></div>
     </div>
     <div v-if="isHintToast || isResultsToast" class="mask_box"></div>
-    <audio id="bgMusic">
-        <source src="/m/images/draw_bg_music.mp3" type="audio/mp3">
-    </audio>
+    <video id="bgMusic" src="/m/images/draw_bg_music.mp3" type="audio/mp3" style="display: none"></video>
 </div>
 
 <script>
