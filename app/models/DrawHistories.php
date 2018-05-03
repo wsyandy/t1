@@ -255,6 +255,12 @@ class DrawHistories extends BaseModel
 
         } elseif ($type == 'gift') {
 
+            // 第一次抽奖限制100
+            if ($total_pay_amount < 1 && $number > 500) {
+                info('continue1', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                return 0;
+            }
+            
             $gift_id = fetch($datum, 'gift_id');
             $gift_history = self::findFirst([
                 'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
