@@ -286,7 +286,7 @@ class DrawHistories extends BaseModel
             // 最近1小时只爆一个礼物
             $gift_hour_history = self::findFirst([
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
-                'bind' => ['type' => 'gift', 'start_at' => time() - 7200],
+                'bind' => ['type' => 'gift', 'start_at' => time() - 3600 * 3],
                 'order' => 'id desc']);
             if ($gift_hour_history) {
                 info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
