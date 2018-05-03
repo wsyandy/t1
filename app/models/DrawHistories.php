@@ -195,7 +195,7 @@ class DrawHistories extends BaseModel
             // 根据损失钻石计算倍率
             if ($total_pay_amount > $total_get_amount) {
                 $decr_rate = ($total_pay_amount - $total_get_amount) / $total_pay_amount;
-                if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
+                if ($decr_rate * 100 > mt_rand(20, 45) && mt_rand(1, 100) < 75) {
                     $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(100, 400));
                     if ($user_rate_multi > 100) {
                         $user_rate_multi = 100;
