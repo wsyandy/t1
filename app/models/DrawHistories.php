@@ -95,10 +95,10 @@ class DrawHistories extends BaseModel
     {
         $data = [];
         $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
-        $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹', 'number' => 68888, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
-        $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 18888, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
+        $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹', 'number' => 30000, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
+        $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
         $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
-        $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 8888, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
+        $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
         $data[5] = ['id' => 6, 'type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
         $data[6] = ['id' => 7, 'type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
         $data[7] = ['id' => 8, 'type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 7.7, 'day_limit_num' => 0];
@@ -154,13 +154,20 @@ class DrawHistories extends BaseModel
 
             //用户获得钻石
             $decr_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type_gift:)',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type_gift' => 'gift'],
+                'conditions' => 'user_id = :user_id: and type=:type:',
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
                 'order' => 'id desc']);
-
             $total_number = 0;
             if ($decr_history) {
-                $total_number = intval($decr_history->total_number);
+                $total_number += intval($decr_history->total_number);
+            }
+
+            $decr_gift_history = self::findFirst([
+                'conditions' => 'user_id = :user_id: and (type=:type:',
+                'bind' => ['user_id' => $user->id, 'type' => 'gift'],
+                'order' => 'id desc']);
+            if ($decr_gift_history) {
+                $total_number += intval($decr_gift_history->total_number);
             }
 
             // 根据损失钻石计算倍率
