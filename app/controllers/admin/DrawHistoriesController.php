@@ -25,12 +25,14 @@ class DrawHistoriesController extends BaseController
         // 系统支出
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $decr_num = $user_db->get($cache_decr_key);
-
+        $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
+        $gift_decr_num = $user_db->get($cache_gift_decr_key);
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
         $this->view->total_incr_num = $incr_num;
         $this->view->total_decr_num = $decr_num;
+        $this->view->total_decr_gift_num = $gift_decr_num;
         $this->view->total_decr_gold_num = $decr_gold_num;
 
         $draw_histories = \DrawHistories::findPagination($conds, $page);
