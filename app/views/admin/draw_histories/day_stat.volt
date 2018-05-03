@@ -24,7 +24,7 @@
     <tbody id="stat_list">
     {% for key, val in stats %}
         <tr id="{{ key }}" class="row_line">
-            <td>{{ val }}</td>
+            <th>{{ val }}</th>
         </tr>
     {% endfor %}
     </tbody>
