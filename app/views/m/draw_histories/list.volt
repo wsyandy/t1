@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-    {{ theme_css('/m/css/draw_histories.css') }}
+    {{ theme_css('/m/css/draw_histories_1.css') }}
 {{ block_end() }}
 <script>
     (function (doc, win) {
@@ -26,6 +26,11 @@
         <div class="winning_record_numberli">
             <span>金币</span>
             <b style="color: #F6B92A;">{{ gold_total_number }}</b>
+            <span class="wire"></span>
+        </div>
+        <div class="winning_record_numberli">
+            <span>座驾</span>
+            <b style="color: #F6B92A;">3</b>
         </div>
     </div>
     <div class="winning_record_list">
@@ -36,9 +41,12 @@
                     <p>获得${draw_history.type_text}</p>
                     <span>${draw_history.created_at_text}</span>
                 </div>
-                <div class="winning_record_ul_right">
+                <div class="winning_record_ul_right" v-if="draw_history.type =='diamond' || draw_history.type =='gold'">
                     <span>＋${draw_history.number}</span>
                     <span :class="{'diamond': draw_history.type =='diamond','gold': draw_history.type =='gold'}"></span>
+                </div>
+                <div class="winning_record_ul_right" v-else>
+                    <img src='./images/sports_car_icon.png' />
                 </div>
             </li>
         </ul>

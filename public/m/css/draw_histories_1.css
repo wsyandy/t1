@@ -26,7 +26,7 @@ html,body{
 }
 .winning_record_numberli{
   position: relative;
-  width: 50%;
+  flex: 1;
   height: 2.06rem;
   flex-direction: column;
   justify-content: center;
@@ -89,6 +89,10 @@ html,body{
   color: #494949;
   margin-left: .06rem;
 }
+.winning_record_ul_right img {
+  width: 1rem;
+  height: .62rem;
+}
 .winning_record_ul_right .diamond{
   width: .3rem;
   height: .3rem;
@@ -101,10 +105,30 @@ html,body{
   background: url(../images/gold_icon.png) center no-repeat;
   background-size: .3rem;
 }
-
+.winning_record_ul_right .sports_car_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/sports_car_icon.png) center no-repeat;
+  background-size: cover;
+}
+.winning_record_ul_right .carriage_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/carriage_icon.png) center no-repeat;
+  background-size: cover;
+}
+.winning_record_ul_right .ufo_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/ufo_icon.png) center no-repeat;
+  background-size: cover;
+}
 .gold_egg{
   flex-direction: column;
-  background-color: #ff5845;
+  background: -webkit-linear-gradient(bottom, #733ffb , #270c4e); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(bottom, #733ffb, #270c4e); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(bottom, #733ffb, #270c4e); /* Firefox 3.6 - 15 */
+  background: linear-gradient(to bottom, #733ffb , #270c4e); /* 标准的语法 */
 }
 .gold_egg_banner{
   padding-top: 3.89rem;
@@ -112,6 +136,14 @@ html,body{
   height: 4.64rem;
   background: url(../images/gold_egg_banner_bg.png) center no-repeat;
   background-size: 7.5rem 4.64rem;
+  justify-content: center;
+}
+.gold_egg_banner2{
+  padding-top: 3.89rem;
+  width: 7.5rem;
+  height: 3.9rem;
+  background: url(../images/gold_egg_banner_bg2.png) center no-repeat;
+  background-size: 7.5rem 3.9rem;
   justify-content: center;
 }
 .gold_egg_banner span{
@@ -142,30 +174,33 @@ html,body{
 }
 .gold_egg_box{
   position: relative;
-  margin-bottom: .3rem;
   width: 7.5rem;
-  height: 7.7rem;
-  background: url(../images/gold_egg_box_bg.png) center bottom no-repeat;
-  background-size: 5.84rem 2.08rem;
+  height: 6.6rem;
+  background: url(../images/gold_egg_box_bg2.png) center bottom no-repeat;
+  background-size: 6.27rem 1.63rem;
 }
 .gold_egg_box_hint{
-  position: absolute;
-  bottom: .86rem;
-  left: 2.77rem;
-  width: 1.96rem;
-  height: .6rem;
-  border: 2px solid #FFCE11;
-  border-radius: .1rem;
-  background-color: #F6533E;
-  font-size: .26rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .32rem;
   color: #FFEF3B;
-  text-align: center;
-  line-height: .6rem;
+  margin-bottom: .45rem;
+}
+.gold_egg_box_hint span{
+  color: rgba(255,255,255,0.40);
+  margin-right: .2rem;
+}
+.gold_egg_box_hint .wire{
+  margin: 0 .3rem;
+  width: .52rem;
+  height: 1px;
+  background-color:rgba(255,255,255,0.50);
 }
 .egg_gif_start{
   position: absolute;
   left: 0;
-  bottom: .8rem;
+  bottom: .56rem;
   width: 7.5rem;
   height: 7.8rem;
   background:url(../images/gifbefore.gif) center no-repeat; 
@@ -183,23 +218,24 @@ html,body{
 .gold_egg_butboxli{
   width: 2.6rem;
   height: .88rem;
-  background: url(../images/egg_neo_buttom.png) center no-repeat;
+  background: url(../images/egg_neo_buttom2.png) center no-repeat;
   background-size: 2.6rem .88rem;
   font-size: .36rem;
-  color: #C72715;
+  color: #fff;
   justify-content: center;
   align-items: center;
 }
 .ten_buttom{
-  background: url(../images/egg_ten_buttom.png) center no-repeat;
+  color: #B32400;
+  background: url(../images/egg_ten_buttom2.png) center no-repeat;
   background-size: 2.6rem .88rem;
 }
 .gold_egg_rules{
-  margin-top: .96rem;
   flex-direction: column;
   margin-left: .4rem;
 }
 .gold_egg_rules p{
+  margin-top: .4rem;
   font-size: .28rem;
   color: #FFCD4C;
   margin-bottom: .2rem;
@@ -207,14 +243,14 @@ html,body{
 .gold_egg_rules span{
   margin-bottom: .1rem;
   font-size: .26rem;
-  color: #FFD264;
+  color: #CAACFF;
 }
 .gold_egg_marquee{
   position: relative;
-  margin-top: .46rem;
-  margin-left: .68rem;  
+  margin-top: .56rem;
+  margin-left: .4rem;  
   padding-top: .2rem;
-  width: 6.14rem;
+  width: 6.7rem;
   height: 2rem;
   background-color: rgba(255,255,255,0.12);
   border-radius: .2rem;
@@ -245,22 +281,29 @@ html,body{
 }
 .gold_eggmy_prize{
   position: fixed;
-  top: 5.82rem;
+  top: 3.82rem;
   right: 0;
-  width: 1.42rem;
-  height: 1.12rem;
+  width: 1.62rem;
+  height: .54rem;
+  align-items: center;
   justify-content: center;
   border: 2px solid #FBDB36;
   border-right: none;
   border-top-left-radius: .2rem;
   border-bottom-left-radius: .2rem;
-  background: url(../images/prize_icon.png) #D24600 center .14rem no-repeat;
-  background-size: .4rem;
+  background: url(../images/prize_icon.png) #5D30C8 .1rem .06rem no-repeat;
+  background-size: .32rem;
 }
-.gold_eggmy_prize span{
-  margin-top: .6rem;
-  font-size: .28rem;
+.gold_eggmy_prize span{  
+  margin-left: .44rem;
+  font-size: .24rem;
   color: #FFF200;
+}
+.gold_egg_copyright{
+  margin:.15rem 0;
+  text-align: center;
+  font-size: .22rem;
+  color: #916DCF;
 }
 .not_balance_toast{
   padding-top: .34rem;
@@ -335,6 +378,27 @@ html,body{
   background: url(../images/diamond_bigicon.png) center no-repeat;
   background-size: 5.4rem 2.8rem;
 }
+.winning_results_toast .carriage_bg{
+  margin-top: 1.2rem;
+  width: 3.16rem;
+  height: 2.3rem;
+  background: url(../images/carriage_bg.png) center no-repeat;
+  background-size: 3.16rem 2.3rem;
+}
+.winning_results_toast .sports_car_bg{
+  margin-top: 1.2rem;
+  width: 3.16rem;
+  height: 2.3rem;
+  background: url(../images/sports_car_bg.png) center no-repeat;
+  background-size: 3.16rem 2.3rem;
+}
+.winning_results_toast .ufo_bg{
+  margin-top: 1.2rem;
+  width: 3.16rem;
+  height: 2.3rem;
+  background: url(../images/ufo_bg.png) center no-repeat;
+  background-size: 3.16rem 2.3rem;
+}
 .winning_results_text{
   margin-top: .3rem;
   font-size: .32rem;
@@ -355,12 +419,15 @@ html,body{
 .winning_results_ulbox{
   width: 4.65rem;
   height: 3.52rem;
+  /* -moz-box-shadow:-5px -5px 5px #999 inset;           
+	-webkit-box-shadow:-5px -5px 5px #999 inset;         */
+  /* box-shadow:-0px -5px 6px rgba(0,0,0,0.2) inset;     */
   overflow-y: scroll;
 }
 .winning_results_ul{
   width: 4.65rem;
   height: 7.2rem;
-  flex-direction: column;
+  flex-direction: column;          
 }
 .winning_results_ul li{
   justify-content: space-between;
@@ -377,6 +444,24 @@ html,body{
   padding-right: .48rem;
   background: url(../images/diamond_icon.png) right center no-repeat;
   background-size: .38rem;
+}
+.winning_results_ul li .sports_car_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/sports_car_icon.png) center no-repeat;
+  background-size: cover;
+}
+.winning_results_ul li .carriage_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/carriage_icon.png) center no-repeat;
+  background-size: cover;
+}
+.winning_results_ul li .ufo_icon{
+  width: 1rem;
+  height: .62rem;
+  background: url(../images/ufo_icon.png) center no-repeat;
+  background-size: cover;
 }
 .mask_box{
   position: fixed;
