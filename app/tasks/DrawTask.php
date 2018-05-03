@@ -13,8 +13,10 @@ class DrawTask extends \Phalcon\Cli\Task
     {
 
         $user_db = Users::getUserDb();
+        $cache_key = 'draw_history_total_amount_incr_diamond';
+        $total_decr_diamond = $user_db->set($cache_key, 1739330);
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
-        $total_decr_diamond = $user_db->del($cache_decr_key);
+        $total_decr_diamond = $user_db->set($cache_decr_key, 1487120);
         $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
         $total_gift_decr_diamond = $user_db->del($cache_gift_decr_key);
 
