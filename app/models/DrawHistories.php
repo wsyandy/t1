@@ -340,20 +340,22 @@ class DrawHistories extends BaseModel
             $type = fetch($datum, 'type');
             $number = fetch($datum, 'number');
             if (fetch($datum, 'rate') * 10 * $user_rate_multi >= $random) {
+
                 info('rate', $user->id, fetch($datum, 'rate') * 10 * $user_rate_multi, 'random', $random);
+
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
 
-                $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
-                if (!$total_pay_amount_rate) {
-                    continue;
-                }
-
-                if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
-                    info('continue3', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
-                    continue;
-                }
+//                $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
+//                if (!$total_pay_amount_rate) {
+//                    continue;
+//                }
+//
+//                if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
+//                    info('continue3', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+//                    continue;
+//                }
 
                 if (self::isDayLimit($datum)) {
                     info('continue4', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
