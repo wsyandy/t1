@@ -84,4 +84,17 @@ EOF;
             }
         }
     }
+
+    function fixAction($params)
+    {
+        $min_id = $params[0];
+        $max_id = $params[1];
+
+        $draw_histories = DrawHistories::find(['conditions' => 'id>=:min_id: and id<=:max_id:',
+            'bind' => ['min_id' => $min_id, 'max_id' => $max_id]]);
+        foreach ($draw_histories as $draw_history) {
+            
+        }
+    }
+
 }
