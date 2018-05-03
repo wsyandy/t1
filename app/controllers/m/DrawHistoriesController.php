@@ -125,16 +125,10 @@ class DrawHistoriesController extends BaseController
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
-
-        $car_gift_num = \DrawHistories::count([
-            'conditions' => 'gift_type = :gift_type: and user_id = :user_id:',
-            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'user_id' => $user->id],
-        ]);
-
-
-        $this->view->gold_total_number = $draw_history->total_gold;
-        $this->view->diamond_total_number = $draw_history->total_diamond;
-        $this->view->car_gift_num = $car_gift_num;
+        
+        $this->view->total_gold = $draw_history->total_gold;
+        $this->view->total_diamond = $draw_history->total_diamond;
+        $this->view->car_gift_num = $draw_history->total_gift_num;;
     }
 
 
