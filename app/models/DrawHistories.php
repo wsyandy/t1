@@ -35,42 +35,59 @@ class DrawHistories extends BaseModel
     function afterCreate()
     {
 
-        if ('diamond' == $this->type && $this->number >= 10000) {
-            info('全服', $this->id, $this->user_id, $this->number);
-            $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
-            Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
-        } else {
+        if ($this->number >= 10000 || 'gift' == $this->type || isDevelopmentEnv()) {
 
-            if (isDevelopmentEnv()) {
+            $content = '';
+            if ('diamond' == $this->type) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
+            }
+
+            if ('gift' == $this->type) {
+                $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->gift->name . '大奖！还不快来砸金蛋，试试手气~';
+            }
+
+            if ($content) {
+                info('全服', $this->id, $this->type, $this->user_id, $this->number);
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
             }
         }
+
     }
 
     function checkBalance()
     {
-        $decr_history = self::findFirst([
-            'conditions' => 'user_id = :user_id: and type=:type:',
-            'bind' => ['user_id' => $this->user_id, 'type' => $this->type],
+        $history = self::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $this->user_id],
             'order' => 'id desc']);
 
         $old_total_number = 0;
-        if ($decr_history) {
-            $old_total_number = intval($decr_history->total_number);
-        }
-        $this->total_number = $old_total_number + $this->number;
-
-        $incr_history = self::findFirst([
-            'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
-            'bind' => ['user_id' => $this->user_id, 'pay_type' => $this->pay_type],
-            'order' => 'id desc']);
-
         $old_total_pay_amount = 0;
-        if ($incr_history) {
-            $old_total_pay_amount = intval($incr_history->total_pay_amount);
+        $old_total_gold = 0;
+        $old_total_diamond = 0;
+        $old_total_gift_diamond = 0;
+        $old_total_gift_num = 0;
+        if ($history) {
+            $old_total_number = $history->total_number;
+            $old_total_pay_amount = $history->total_pay_amount;
+            $old_total_gold = $history->total_gold;
+            $old_total_diamond = $history->total_diamond;
+            $old_total_gift_diamond = $history->total_gift_diamond;
+            $old_total_gift_num = $history->total_gift_num;
         }
+
+        $this->total_number = $old_total_number + $this->number;
         $this->total_pay_amount = $old_total_pay_amount + $this->pay_amount;
+        if ($this->type == 'gold') {
+            $this->total_gold = $old_total_gold + $this->number;
+        }
+        if ($this->type == 'diamond') {
+            $this->total_diamond = $old_total_diamond + $this->number;
+        }
+        if ($this->type == 'gift') {
+            $this->total_gift_diamond = $old_total_gift_diamond + $this->number;
+            $this->total_gift_num = $old_total_gift_num + $this->gift_num;
+        }
 
         return false;
     }
@@ -95,10 +112,10 @@ class DrawHistories extends BaseModel
     {
         $data = [];
         $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
-        $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹', 'number' => 30000, 'gift_id' => 1, 'rate' => 0.3, 'day_limit_num' => 1];
-        $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'gift_id' => 1, 'rate' => 0.6, 'day_limit_num' => 2];
+        $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 1, 'gift_num' => 1, 'day_limit_num' => 1];
+        $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 1, 'gift_num' => 1, 'day_limit_num' => 2];
         $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
-        $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'gift_id' => 1, 'rate' => 1.7, 'day_limit_num' => 3];
+        $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 1.7, 'gift_id' => 1, 'gift_num' => 1, 'day_limit_num' => 3];
         $data[5] = ['id' => 6, 'type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
         $data[6] = ['id' => 7, 'type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
         $data[7] = ['id' => 8, 'type' => 'diamond', 'name' => '钻石', 'number' => 100, 'rate' => 7.7, 'day_limit_num' => 0];
@@ -131,19 +148,23 @@ class DrawHistories extends BaseModel
         // 倍率
         $user_rate_multi = 1;
         $total_pay_amount = 0;
+        $total_get_amount = 0;
 
         //用户消耗钻石
-        $incr_history = self::findFirst([
-            'conditions' => 'user_id = :user_id: and pay_type=:pay_type:',
-            'bind' => ['user_id' => $user->id, 'pay_type' => 'diamond'],
+        $history = self::findFirst([
+            'conditions' => 'user_id = :user_id:',
+            'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
 
-        if ($incr_history) {
-            $total_pay_amount = intval($incr_history->total_pay_amount);
+        if ($history) {
+            $total_pay_amount = intval($history->total_pay_amount);
+            $total_get_amount = $history->total_diamond + $history->total_gift_diamond;
+
             // 第一次抽奖5倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
-            if ($total_pay_amount < 50 && $incr_history->total_number < 10) {
+            if ($total_pay_amount < 50 && $total_get_amount < 10) {
                 $user_rate_multi = $total_pay_amount;
             }
+
         } else {
             // 第一次抽奖5倍概率，开始抽奖的前5次，如果不中奖，每次增加10倍概率；
             $user_rate_multi = 5;
@@ -152,32 +173,14 @@ class DrawHistories extends BaseModel
         // 老用户
         if ($user_rate_multi <= 1) {
 
-            //用户获得钻石
-            $decr_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and type=:type:',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond'],
-                'order' => 'id desc']);
-            $total_number = 0;
-            if ($decr_history) {
-                $total_number += intval($decr_history->total_number);
-            }
-
-            $decr_gift_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and type=:type:',
-                'bind' => ['user_id' => $user->id, 'type' => 'gift'],
-                'order' => 'id desc']);
-            if ($decr_gift_history) {
-                $total_number += intval($decr_gift_history->total_number);
-            }
-
             // 根据损失钻石计算倍率
-            if ($total_pay_amount > $total_number) {
-                $decr_rate = ($total_pay_amount - $total_number) / $total_pay_amount;
+            if ($total_pay_amount > $total_get_amount) {
+                $decr_rate = ($total_pay_amount - $total_get_amount) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
-                    $user_rate_multi = ceil(($total_pay_amount - $total_number) / mt_rand(150, 400));
+                    $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(150, 400));
                 }
 
-                info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_number, '倍率', $user_rate_multi, 'rate', $decr_rate);
+                info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi, 'rate', $decr_rate);
             }
         }
 
@@ -281,6 +284,10 @@ class DrawHistories extends BaseModel
         $cache_decr_key = 'draw_history_total_amount_decr_diamond';
         $total_decr_diamond = $user_db->get($cache_decr_key);
 
+        $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
+        $total_gift_decr_diamond = $user_db->get($cache_gift_decr_key);
+        $total_decr_diamond += $total_gift_decr_diamond;
+
         // 计算用户倍率
         list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user);
 
@@ -336,6 +343,7 @@ class DrawHistories extends BaseModel
             return null;
         }
 
+        $gift = null;
         $draw_history = new DrawHistories();
         $draw_history->user_id = $user->id;
         $draw_history->product_channel_id = $user->product_channel_id;
@@ -343,6 +351,15 @@ class DrawHistories extends BaseModel
         $draw_history->number = fetch($result, 'number');
         $draw_history->pay_type = fetch($opts, 'pay_type');
         $draw_history->pay_amount = fetch($opts, 'pay_amount');
+
+        $draw_history->gift_id = fetch($result, 'gift_id', 0);
+        $draw_history->gift_num = fetch($result, 'gift_num', 0);
+        if ($draw_history->gift_id) {
+            $gift_id = fetch($result, 'gift_id', 0);
+            $gift = Gifts::findFirstById($gift_id);
+            $draw_history->gift_type = $gift->type;
+        }
+
         if (!$draw_history->save()) {
             return null;
         }
@@ -352,8 +369,9 @@ class DrawHistories extends BaseModel
             $opts['remark'] = $remark;
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         } elseif ($draw_history->type == 'gift') {
-            // 送礼物
-
+            if ($gift) {// 送礼物
+                GiftOrders::asyncCreateGiftOrder(SYSTEM_ID, [$user->id], $gift->id, ['remark' => '砸蛋赠送']);
+            }
         } else {
             $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
@@ -364,11 +382,14 @@ class DrawHistories extends BaseModel
         $cache_key = 'draw_history_total_amount_incr_' . $draw_history->pay_type;
         $total_incr_diamond = $user_db->incrby($cache_key, intval($draw_history->pay_amount));
 
-        // 系统支出
+        // 系统支出: 金币，钻石，礼物
         $cache_decr_key = 'draw_history_total_amount_decr_' . $draw_history->type;
         $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($draw_history->number));
 
-        if ($draw_history->type == 'diamond' && $draw_history->number == 100000) {
+        if ($draw_history->type == 'diamond' && $draw_history->number == 100000
+            || $draw_history->type == 'gift' && $draw_history->number > 30000
+        ) {
+
             $cache_hit_10w_key = 'draw_history_hit_all_notice';
             $hot_cache = Users::getHotWriteCache();
             $hot_cache->setex($cache_hit_10w_key, 3600 * 25, $draw_history->id);

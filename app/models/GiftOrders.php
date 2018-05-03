@@ -298,10 +298,10 @@ class GiftOrders extends BaseModel
 
         $sender = Users::findFirstById($sender_id);
         $gift = Gifts::findFirstById($gift_id);
-        $gift_num = fetch($opts, 'gift_num');
+        $gift_num = fetch($opts, 'gift_num', 1);
         $sender_current_room_id = fetch($opts, 'sender_current_room_id');
         $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
-        $time = fetch($opts, 'time');
+        $time = fetch($opts, 'time', time());
         $target_id = fetch($opts, 'target_id');
         $async_verify_data = fetch($opts, 'async_verify_data');
 

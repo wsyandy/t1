@@ -6,7 +6,6 @@
  * Date: 05/01/2018
  * Time: 15:17
  */
-
 class DrawTask extends \Phalcon\Cli\Task
 {
 
@@ -40,20 +39,25 @@ class DrawTask extends \Phalcon\Cli\Task
         $user = $draw_history->user;
         $product_channel = $draw_history->product_channel;
 
-        $title = '哇哦！' . $user->nickname . '刚刚砸出' . $draw_history->number . '钻大奖！还不快来砸金蛋，试试手气~';;
-        $body = '';
+        $content = <<<EOF
+哇哦！ {$user->nickname}刚刚砸出{$draw_history->number}钻大奖！还不快来砸金蛋，试试手气~;
+EOF;
 
+        if ($draw_history->gift_id) {
+            $content = <<<EOF
+哇哦！ {$user->nickname}刚刚砸出{$draw_history->gift->name}大奖！还不快来砸金蛋，试试手气~;
+EOF;
+        }
+
+        $body = '';
         $platforms = ['ios', 'android'];
 
         if (isProduction()) {
             foreach ($platforms as $platform) {
-                GeTuiMessages::globalPush($product_channel, $platform, $title, $body);
+                GeTuiMessages::globalPush($product_channel, $platform, $content, $body);
             }
         }
 
-        $content = <<<EOF
-哇哦！ {$user->nickname}刚刚砸出{$draw_history->number}钻大奖！还不快来砸金蛋，试试手气~;
-EOF;
 
         $users = Users::find([
             'conditions' => 'product_channel_id = :product_channel_id: and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
