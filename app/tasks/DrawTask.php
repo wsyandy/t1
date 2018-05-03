@@ -20,6 +20,10 @@ class DrawTask extends \Phalcon\Cli\Task
         $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
         $total_gift_decr_diamond = $user_db->del($cache_gift_decr_key);
 
+        $user_db->del('draw_history_hit_num_20180503_2');
+        $user_db->del('draw_history_hit_num_20180503_3');
+        $user_db->del('draw_history_hit_num_20180503_5');
+
         $draw_histories = DrawHistories::find(['conditions' => 'id>:id:',
             'bind' => ['id' => 0], 'order' => 'id asc']);
 

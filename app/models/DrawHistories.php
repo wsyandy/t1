@@ -277,7 +277,7 @@ class DrawHistories extends BaseModel
                 'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
                 'bind' => ['user_id' => $user->id, 'type' => 'gift', 'gift_id' => $gift_id],
                 'order' => 'id desc']);
-            if ($gift_history) {
+            if ($gift_history && isProduction()) {
                 info('continue gift', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
                 return 0;
             }
@@ -287,7 +287,7 @@ class DrawHistories extends BaseModel
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
                 'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
                 'order' => 'id desc']);
-            if ($gift_hour_history) {
+            if ($gift_hour_history && isProduction()) {
                 info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
                 return 0;
             }
