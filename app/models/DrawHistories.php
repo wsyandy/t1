@@ -249,7 +249,8 @@ class DrawHistories extends BaseModel
             }
 
             // 15分钟 倍率小于15倍，只能中一次1万钻
-            if ($number >= 10000 && $user_rate_multi < 30) {
+            // && $user_rate_multi < 30
+            if ($number >= 10000) {
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
                     'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 600],
