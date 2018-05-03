@@ -3322,7 +3322,7 @@ EOF;
 
         $start = date("Ymd", beginOfWeek());
         $end = date("Ymd", endOfWeek());
-        $gift_id = 70;
+        $gift_id = 72;
         $key = "gift_charm_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start . "_end_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrevrange($key, 0, -1, 'withscores');
@@ -3332,7 +3332,7 @@ EOF;
             $total_amount = GiftOrders::sum(
                 [
                     'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
-                    'bind' => ['user_id' => $user_id, 'gift_id' => 70],
+                    'bind' => ['user_id' => $user_id, 'gift_id' => 72],
                     'column' => 'amount'
                 ]);
 
@@ -3340,7 +3340,7 @@ EOF;
                 echoLine($user_id, $total_amount, $amount);
             }
 
-            //$user_db->zadd($key, $total_amount, $user_id);
+            $user_db->zadd($key, $total_amount, $user_id);
         }
 
         echoLine(count($user_db->zrange($key, 0, -1)));
