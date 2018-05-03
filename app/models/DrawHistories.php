@@ -424,8 +424,8 @@ class DrawHistories extends BaseModel
     function fixData()
     {
         $history = self::findFirst([
-            'conditions' => 'user_id = :user_id: and id<:cur_id:',
-            'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id],
+            'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
+            'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => $this->type],
             'order' => 'id desc']);
 
         $old_total_gold = 0;
