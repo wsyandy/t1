@@ -18,6 +18,11 @@ class DrawHistories extends BaseModel
      */
     private $_product_channel;
 
+    /**
+     * @type Gifts
+     */
+    private $_gift;
+
     static $TYPE = ['gold' => '金币', 'diamond' => '钻石', 'gift' => '礼物'];
 
     static $PAY_TYPE = ['gold' => '金币', 'diamond' => '钻石'];
@@ -354,7 +359,9 @@ class DrawHistories extends BaseModel
             'number' => $this->number,
             'type' => $this->type,
             'type_text' => $this->type_text,
-            'user_nickname' => $this->user_nickname
+            'user_nickname' => $this->user_nickname,
+            'gift_image_small_url' => $this->gift->image_small_url,
+            'gift_name' => $this->gift->name,
         ];
     }
 }
