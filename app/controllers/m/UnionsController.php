@@ -129,7 +129,7 @@ class UnionsController extends BaseController
         $union = \Unions::findFirstById($union_id);
         $president = $union->user;
 
-        if ($union->type != UNION_TYPE_PRIVATE ||
+        if ($union->status != STATUS_ON || $union->type != UNION_TYPE_PRIVATE ||
             ($union->id != $this->currentUser()->union_id && 'my_union' == $click_from)
         ) {
             return $this->response->redirect("/m/unions?sid=$sid&code=$code");
