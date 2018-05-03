@@ -122,18 +122,18 @@ class DrawHistories extends BaseModel
         if (isProduction()) {
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 73, 'gift_num' => 1, 'day_limit_num' => 1];
         } else {
-            $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 10, 'gift_id' => 142, 'gift_num' => 1, 'day_limit_num' => 1];
+            $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 142, 'gift_num' => 1, 'day_limit_num' => 1];
         }
         if (isProduction()) {
             $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 33, 'gift_num' => 1, 'day_limit_num' => 2];
         } else {
-            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 20, 'gift_id' => 61, 'gift_num' => 1, 'day_limit_num' => 2];
+            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 61, 'gift_num' => 1, 'day_limit_num' => 2];
         }
         $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
         if (isProduction()) {
             $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 1.7, 'gift_id' => 57, 'gift_num' => 1, 'day_limit_num' => 3];
         } else {
-            $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 30, 'gift_id' => 63, 'gift_num' => 1, 'day_limit_num' => 3];
+            $data[4] = ['id' => 5, 'type' => 'gift', 'name' => '光电游侠座驾', 'number' => 5000, 'rate' => 1.7, 'gift_id' => 63, 'gift_num' => 1, 'day_limit_num' => 3];
         }
         $data[5] = ['id' => 6, 'type' => 'diamond', 'name' => '钻石', 'number' => 1000, 'rate' => 2.7, 'day_limit_num' => 0];
         $data[6] = ['id' => 7, 'type' => 'diamond', 'name' => '钻石', 'number' => 500, 'rate' => 4.7, 'day_limit_num' => 0];
@@ -277,7 +277,7 @@ class DrawHistories extends BaseModel
                 'conditions' => 'user_id = :user_id: and type=:type: and gift_id=:gift_id:',
                 'bind' => ['user_id' => $user->id, 'type' => 'gift', 'gift_id' => $gift_id],
                 'order' => 'id desc']);
-            if ($gift_history && isProduction()) {
+            if ($gift_history) {
                 info('continue gift', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
                 return 0;
             }
@@ -287,12 +287,12 @@ class DrawHistories extends BaseModel
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
                 'bind' => ['type' => 'gift', 'start_at' => time() - 3600],
                 'order' => 'id desc']);
-            if ($gift_hour_history && isProduction()) {
+            if ($gift_hour_history) {
                 info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
                 return 0;
             }
 
-            $total_pay_amount_rate = mt_rand(500, 1000);
+            $total_pay_amount_rate = mt_rand(5, 12);
 
         } else {
             $total_pay_amount_rate = mt_rand(3, 15);
