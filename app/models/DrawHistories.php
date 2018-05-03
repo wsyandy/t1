@@ -380,7 +380,7 @@ class DrawHistories extends BaseModel
 
     function toSimpleJson()
     {
-        return [
+        $opts = [
             'created_at_text' => $this->created_at_text,
             'total_pay_amount' => $this->total_pay_amount,
             'pay_amount' => $this->pay_amount,
@@ -390,8 +390,13 @@ class DrawHistories extends BaseModel
             'type' => $this->type,
             'type_text' => $this->type_text,
             'user_nickname' => $this->user_nickname,
-            'gift_image_small_url' => $this->gift->image_small_url,
-            'gift_name' => $this->gift->name,
         ];
+
+        if ($this->gift) {
+            $opts['gift_image_small_url'] = $this->gift->image_small_url;
+            $opts['gift_name'] = $this->gift->name;
+        }
+
+        return $opts;
     }
 }
