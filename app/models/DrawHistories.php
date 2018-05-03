@@ -239,6 +239,15 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
+            $hit_num = self::count([
+                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type1:) and created_at>=:start_at:',
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type1' => 'gift', 'start_at' => time()],
+                'order' => 'id desc']);
+
+            if ($hit_num >= 3) {
+                return 0;
+            }
+
             // 15分钟 倍率小于15倍，只能中一次1万钻
             if ($number >= 10000) {
                 $hit_1w_history = self::findFirst([
