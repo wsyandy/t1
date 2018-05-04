@@ -401,7 +401,7 @@ class DrawHistories extends BaseModel
             $number = fetch($datum, 'number');
             if (fetch($datum, 'rate') * 10 * $user_rate_multi >= $random) {
 
-                info('rate', $user->id, fetch($datum, 'rate') * 10 * $user_rate_multi, 'random', $random);
+                info('rate', $user->id, fetch($datum, 'name'), fetch($datum, 'rate') * 10 * $user_rate_multi, 'random', $random);
 
                 // 此礼物不增加倍率
                 if (fetch($datum, 'gift_id') == 73 && fetch($datum, 'rate') * 10 < $random) {
