@@ -86,10 +86,10 @@ class Stats extends BaseModel
         'hi_coin_cost_user' => 'Hi币兑换钻石人数',
         'hi_coin_cost_user_average' => '人均Hi币兑换钻石金额',
 
-        'diamond_recharge_total' => '购买钻石总额',
+        'diamond_recharge_total' => '钻石新增总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
         'diamond_recharge_user' => '购买钻石人数',
-        'diamond_recharge_give_user' => '赠送钻石人数',
+        'diamond_recharge_give_user' => '钻石新增人数',
         'diamond_recharge_user_average' => '人均购买钻石数额',
         'diamond_recharge_give_user_average' => '人均赠送钻石数额',
 
