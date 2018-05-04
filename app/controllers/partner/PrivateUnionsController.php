@@ -67,12 +67,12 @@ class PrivateUnionsController extends BaseController
 
         if ($start_at_time) {
             $cond['conditions'] .= " and created_at >= :start:";
-            $cond['bind']['start'] = beginOfDay();
+            $cond['bind']['start'] = beginOfDay(strtotime($start_at_time));
         }
 
         if ($end_at_time) {
             $cond['conditions'] .= " and created_at <= :end:";
-            $cond['bind']['end'] = endOfDay();
+            $cond['bind']['end'] = endOfDay(strtotime($end_at_time));
         }
 
         $total_hi_coins = \HiCoinHistories::sum($cond);
