@@ -215,6 +215,7 @@ class DrawHistoriesController extends BaseController
             $result['avg_hit_diamond'] = $avg_hit_diamond;
 
             $stats[date("YmdH", $start_at)] = $result;
+            info(date("YmdH", $start_at), $result);
         }
 
         $hot_cache->setex($cache_key, 600, json_encode($stats, JSON_UNESCAPED_UNICODE));
