@@ -250,6 +250,8 @@ class DrawHistories extends BaseModel
             // 10w钻过滤，后台控制是否爆
             if ($number == 100000) {
 
+                info('检查10万钻', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate);
+
                 if (false) {
                     $user_hit_10w_history = self::findFirst([
                         'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
