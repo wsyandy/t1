@@ -9,4 +9,7 @@
 </form>
 <label for="stat_at_eq">累计{{ total_hi_coins }}</label>
 
-{{ simple_table(users, ['成员信息': 'nickname_link','魅力值':'charm_value','贡献值':'wealth_value',"hi币收益":"hi_coins"]) }}
+{%- macro icon_link(user) %}
+    <img src="{{ user.avatar_small_url }}" height="50" width="50"/>
+{%- endmacro %}
+{{ simple_table(users, ['成员信息': 'nickname','头像':'icon_link','魅力值':'charm_value','贡献值':'wealth_value',"hi币收益":"hi_coins"]) }}
