@@ -22,11 +22,19 @@
 
 <div class="admin-panel padding">
     <table class="table table-hover">
+
+        <tr class="cumulative">
+            <td>累计</td>
+            <td></td>
+            <td></td>
+            <td colspan="2">{{ total_hi_coins }}</td>
+        </tr>
+
         <thead>
         <tr>
             <th>成员信息</th>
             <th>魅力值</th>
-            <th>土豪值</th>
+            <th>贡献值</th>
             <th>hi币收益</th>
         </tr>
         </thead>

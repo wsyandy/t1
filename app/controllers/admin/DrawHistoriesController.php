@@ -18,6 +18,7 @@ class DrawHistoriesController extends BaseController
         $conds['order'] = 'id desc';
         $page = $this->params('page');
 
+
         $user_db = \Users::getUserDb();
         // 系统总收入
         $cache_key = 'draw_history_total_amount_incr_diamond';
@@ -30,6 +31,9 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num - $gift_decr_num)/$incr_num);
+
+        $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
         $this->view->total_decr_num = $decr_num;
         $this->view->total_decr_gift_num = $gift_decr_num;
@@ -41,6 +45,27 @@ class DrawHistoriesController extends BaseController
 
     function dayStatAction()
     {
+
+        $user_db = \Users::getUserDb();
+        // 系统总收入
+        $cache_key = 'draw_history_total_amount_incr_diamond';
+        $incr_num = $user_db->get($cache_key);
+        // 系统支出
+        $cache_decr_key = 'draw_history_total_amount_decr_diamond';
+        $decr_num = $user_db->get($cache_decr_key);
+        $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
+        $gift_decr_num = $user_db->get($cache_gift_decr_key);
+        $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
+        $decr_gold_num = $user_db->get($cache_decr_gold_key);
+
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num - $gift_decr_num)/$incr_num);
+
+        $this->view->pool_rate = $pool_rate;
+        $this->view->total_incr_num = $incr_num;
+        $this->view->total_decr_num = $decr_num;
+        $this->view->total_decr_gift_num = $gift_decr_num;
+        $this->view->total_decr_gold_num = $decr_gold_num;
+
 
         $stat_at = $this->params('stat_at', date('Y-m-d'));
         $stat_at = strtotime($stat_at);
@@ -131,6 +156,28 @@ class DrawHistoriesController extends BaseController
 
     function hourStatAction()
     {
+
+        $user_db = \Users::getUserDb();
+        // 系统总收入
+        $cache_key = 'draw_history_total_amount_incr_diamond';
+        $incr_num = $user_db->get($cache_key);
+        // 系统支出
+        $cache_decr_key = 'draw_history_total_amount_decr_diamond';
+        $decr_num = $user_db->get($cache_decr_key);
+        $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
+        $gift_decr_num = $user_db->get($cache_gift_decr_key);
+        $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
+        $decr_gold_num = $user_db->get($cache_decr_gold_key);
+
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num - $gift_decr_num)/$incr_num);
+
+        $this->view->pool_rate = $pool_rate;
+        $this->view->total_incr_num = $incr_num;
+        $this->view->total_decr_num = $decr_num;
+        $this->view->total_decr_gift_num = $gift_decr_num;
+        $this->view->total_decr_gold_num = $decr_gold_num;
+
+
         $stat_at = $this->params('stat_at', date('Y-m-d'));
         $stat_at = strtotime($stat_at);
         $stat_at = beginOfDay($stat_at);
