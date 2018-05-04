@@ -39,11 +39,11 @@ class PrivateUnionsController extends BaseController
                 $hi_coin_key = 'union_user_total_hi_coins_rank_list_union_id_' . $union->id;
             } elseif ($start_at == $end_at) {
                 $key = 'union_user_day_wealth_rank_list_' . $start_at . '_union_id_' . $union->id;
-                $charm_key = 'union_user_day_wealth_rank_list_' . $start_at . '_union_id_' . $union->id;
+                $charm_key = 'union_user_day_charm_rank_list_' . $start_at . '_union_id_' . $union->id;
                 $hi_coin_key = 'union_user_day_hi_coins_rank_list_' . $start_at . '_union_id_' . $union->id;
             } else {
-                $month_start = date('Ymd', beginOfMonth($start_at_time));
-                $month_end = date('Ymd', endOfMonth($start_at_time));
+                $month_start = date('Ymd', beginOfMonth(strtotime($start_at_time)));
+                $month_end = date('Ymd', endOfMonth(strtotime($start_at_time)));
                 $key = 'union_user_month_wealth_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
                 $charm_key = 'union_user_month_charm_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
                 $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
@@ -82,8 +82,8 @@ class PrivateUnionsController extends BaseController
         } elseif ($start_at == $end_at) {
             $key = 'union_room_day_amount_' . $start_at . '_union_id_' . $union->id;
         } else {
-            $month_start = date('Ymd', beginOfMonth($start_at_time));
-            $month_end = date('Ymd', endOfMonth($start_at_time));
+            $month_start = date('Ymd', beginOfMonth(strtotime($start_at_time)));
+            $month_end = date('Ymd', endOfMonth(strtotime($start_at_time)));
             $key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
         }
 
