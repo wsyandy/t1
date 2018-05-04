@@ -82,6 +82,7 @@ html,body{
   width: 100%;
   padding: 0 .42rem;
   justify-content: space-between;
+  z-index: 91;
 }
 .wishing_bouttom_box .refresh{
   width: 2rem;
@@ -342,6 +343,7 @@ html,body{
   top: 3.5rem;
   width: 5.2rem;
   height: 7rem;
+  z-index:90;
 }
 .not_balance_toast{
   padding-top: .34rem;

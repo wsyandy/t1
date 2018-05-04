@@ -113,7 +113,8 @@
             wish_histories: [],
             my_wish_text: '',
             my_wish_datas: [],
-            show_wish_histories: []
+            show_wish_histories: [],
+            is_guard: false
         },
         mounted: function () {
         },
@@ -130,9 +131,11 @@
                         vm.releaseWish = false;
                         break;
                     case 4:
-                        if (vm.releaseWishState == 2) {
+                        if (vm.releaseWishState == 2 && vm.is_guard) {
+                            vm.is_guard = false;
                             location.reload();
                         }
+
                         vm.myWishList = false;
                         break;
                 }
@@ -191,6 +194,7 @@
                 };
                 $.authPost('/m/wish_histories/guard_wish', data, function (resp) {
                     if (!resp.error_code) {
+                        vm.is_guard = true;
                         vm.show_wish_histories[index].guarded_number = resp.guarded_number;
                     }
                 })
