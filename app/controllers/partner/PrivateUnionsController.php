@@ -45,12 +45,12 @@ class PrivateUnionsController extends BaseController
                 $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
             }
 
-            $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
+            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page);
 
             info("union_stat", $key, $charm_key, $hi_coin_key);
 
             foreach ($users as $user) {
-                $user->charm = $user_db->zscore($charm_key, $user->id);
+                $user->wealth = $user_db->zscore($key, $user->id);
                 $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
                 $hi_coins = sprintf("%0.2f", $hi_coins / 1000);
                 $user->hi_coins = $hi_coins;
