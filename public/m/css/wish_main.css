@@ -1,0 +1,389 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+}
+
+.wishing_tree{
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  position: relative;
+  left: 0;
+  top: 0;
+  background: url(../images/wishing_tree_bg.png) center no-repeat;
+  background-size: cover;
+}
+.wishing_rules{
+  width: 1.99rem;
+  height: .84rem;
+  padding-left: .2rem;
+  position: absolute;
+  left:0;
+  top: .4rem;
+  align-items: center;
+  font-size: .3rem;
+  color: #FFFFFF;
+  background: url(../images/wishing_rules_bg.png) center no-repeat;
+  background-size: cover;
+}
+.wishing_music{
+  width: .66rem;
+  height: .66rem;
+  position: absolute;
+  top: .4rem;
+  right: .4rem;
+  background:url(../images/wishing_music.png) center no-repeat;
+  background-size: .66rem;
+  transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+  animation:4s linear 0s myrotate infinite;
+  -webkit-animation:4s linear 0s myrotate infinite;/* Safari and Chrome */
+  animation-fill-mode:forwards;/*动画播放完毕时停止，不回到初始状态*/
+  -webkit-animation-fill-mode:forwards;
+}
+.wishing_music_pause{
+  animation-play-state:paused;
+  -webkit-animation-play-state:paused; /* Safari 和 Chrome */
+}
+@keyframes myrotate{
+  form {transform:rotate(0deg);}    
+  to    {transform:rotate(360deg);}
+}
+@-webkit-keyframes myrotate{/* Safari and Chrome */
+  form {transform:rotate(0deg);}    
+  to    {transform:rotate(360deg);}
+}
+.wishing_share{
+  width: .66rem;
+  height: .66rem;
+  position: absolute;
+  top: 1.6rem;
+  right: .4rem;
+  background:url(../images/wishing_share.png) center no-repeat;
+  background-size: .66rem;
+}
+.wishing_bouttom_box{
+  position: absolute;
+  bottom: .7rem;
+  left: 0;
+  width: 100%;
+  padding: 0 .42rem;
+  justify-content: space-between;
+  z-index: 91;
+}
+.wishing_bouttom_box .refresh{
+  width: 2rem;
+  height: .84rem;
+  background:url(../images/refresh_buttom.png) center no-repeat;
+  background-size: cover;
+}
+.wishing_bouttom_box .makevow{
+  width: 2rem;
+  height: .84rem;
+  background: url(../images/makevow_buttom.png) center no-repeat;
+  background-size: cover;
+
+}
+.wishing_bouttom_box .mywish_buttom{
+  width: 2rem;
+  height: .84rem;
+  background: url(../images/mywish_buttom.png) center no-repeat;
+  background-size: cover;
+}
+.mask_background{
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, .4);
+  z-index: 100;
+}
+.wishing_share_toast{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  flex-direction: column;
+  z-index: 102;
+}
+.wishing_share_toast_ul{
+  height: 1.8rem;
+  background-color: #fff;
+  border-bottom: .1rem solid #F2F2F2;
+}
+.wishing_share_toast_ul li{
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: .22rem;
+  color: #717171;
+  flex-direction: column;
+}
+.wishing_share_toast_ul li img{
+  width: .74rem;
+  height: .74rem;
+  margin-bottom: .1rem;
+}
+.wishing_share_toast .cancel{
+  height: .8rem;
+  background-color: #fff;
+  line-height: .8rem;
+  text-align: center;
+  font-size: .28rem;
+  color: #858585;
+}
+.wishing_rules_toast{
+  position: absolute;
+  left: .33rem;
+  top: 2.4rem;
+  z-index: 101;
+  width: 6.74rem;
+  height: 5.98rem;
+  background: url(../images/wishing_rules_toast.png) center no-repeat;
+  background-size:  6.74rem 5.98rem;
+}
+.wishing_rules_toast ul{
+  flex-direction: column;
+  padding: 1.6rem 1rem 0 1rem;
+}
+.wishing_rules_toast ul li{
+  padding-left: .26rem;
+  position: relative;
+  font-size: .24rem;
+  color: #306305;
+  margin-bottom: .4rem;
+}
+@media only screen and (max-width: 362px) {
+  .wishing_rules_toast ul li{
+    margin-bottom: 0;
+  }
+}
+.wishing_rules_toast li .dot{
+  position: absolute;
+  left: 0;
+  top: .14rem;
+  width: .14rem;
+  height: .14rem;
+  border-radius: .07rem;
+  background-color: #356201;
+}
+.wishing_rules_toast .cancel_buttom{
+  position: absolute;
+  left: 3rem;
+  top: 6.8rem;
+  width: .86rem;
+  height: .86rem;
+  background: url(../images/cancel_buttom.png) center no-repeat;
+  background-size: .86rem;
+}
+.release_wish{
+  position: absolute;
+  top: 1.48rem;
+  left: 0;
+  width: 7.5rem;
+  height: 7.9rem;
+  z-index: 103;
+  padding-top: 1rem;
+  background: url(../images/wish_backround1.png) center no-repeat;
+  background-size: 4.8rem 7.9rem;
+  flex-direction: column;
+}
+.release_wish textarea{
+  margin: .54rem 2rem 0;
+  height:4.5rem;
+  background-color: transparent;
+  border: none;
+  font-size: .22rem;
+  color: #67450E;
+}
+.release_wish textarea::-webkit-input-placeholder{
+  color:rgba(0, 0, 0, .4);
+}
+.release_wish textarea:-moz-placeholder{
+  color:rgba(0, 0, 0, .4);
+}
+.release_wish textarea::-moz-placeholder{
+  color:rgba(0, 0, 0, .4);
+}
+.release_wish textarea:-ms-input-placeholder{
+  color:rgba(0, 0, 0, .4);
+}
+.release_wish_buttom{
+  margin: .4rem auto 0;
+  width: 2rem;
+  height: .64rem;
+  background: url(../images/release_wish_buttom.png) center no-repeat;
+  background-size: cover;
+}
+.release_wish_buttom2{
+  margin: .2rem auto 0;
+  width: 2rem;
+  height: .64rem;
+  background: url(../images/release_wish_buttom2.png) center no-repeat;
+  background-size: cover;
+}
+.release_wish_hint{
+  text-align: center;
+  font-size: .18rem;
+  color: #1C92F6;
+}
+.release_wish_user{
+  justify-content: center;
+  align-items: center;
+}
+.release_wish_user img{
+  width: .88rem;
+  height: .88rem;
+  border-radius: .44rem;
+}
+.release_wish_user_name{
+  margin-left: .2rem;
+  flex-direction: column;
+  font-size: .18rem;
+  color: #666666;
+}
+.release_wish_user_name span{
+  width: 2.3rem;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+.release_wish_text{
+  margin: .3rem 2rem 0;
+  height: 3.54rem;
+  font-size: .20rem;
+  color: #67450E;
+  overflow-y: auto;
+}
+.release_wish_heart{
+  justify-content: center;
+  font-size: .24rem;
+  color: #E8002F;
+  align-items: center;
+}
+.release_wish_heart .heart_icon{
+  margin-right: .15rem;
+  width: .37rem;
+  height: .41rem;
+  background: url(../images/heart_icon.png) center no-repeat;
+  background-size: .37rem .41rem;
+}
+.release_wish .cancel{
+  position: fixed;
+  left: 3.3rem;
+  bottom: 1.12rem;
+  width: .86rem;
+  height: .86rem;
+  background: url(../images/cancel_buttom2.png) center no-repeat;
+  background-size: .86rem;
+}
+.mywish_list{
+  width: 100%;
+  overflow-x: auto;
+  height: 7.9rem;
+  position: absolute;
+  left: 0;
+  top: 1.5rem;
+  z-index: 104;
+}
+.mywish_list ul{
+  width: auto;
+  padding:0 1.16rem;
+}
+.mywish_list ul li{
+  flex-direction: column;
+  padding: 1.54rem 1.1rem 0;
+  height: 7.9rem;
+  width: 5.4rem;
+  background:url(../images/wish_backround.png) center no-repeat;
+  background-size: 4.4rem 7.9rem;
+}
+.mywish_list ul .background2{
+  background:url(../images/wish_backround2.png) center no-repeat;
+  background-size: 4.4rem 7.9rem;
+}
+.mywish_list li p{
+  margin-top: .4rem;
+  height: 3.1rem;
+  overflow-y: auto;
+  color: #67450E;
+}
+.mywish_list .cancel{
+  position: fixed;
+  left: 3.4rem;
+  bottom: 1.12rem;
+  width: .86rem;
+  height: .86rem;
+  background: url(../images/cancel_buttom2.png) center no-repeat;
+  background-size: .86rem;
+}
+.view_wish{
+  position: absolute;
+  left: 1rem;
+  top: 3.5rem;
+  width: 5.2rem;
+  height: 7rem;
+  z-index:90;
+}
+.not_balance_toast{
+  padding-top: .34rem;
+  position: fixed;
+  top: 4.12rem;
+  left: 1rem;
+  width: 5.5rem;
+  height: 3.02rem;
+  background-color: #fff;
+  z-index: 101;
+  border-radius: .2rem;
+  flex-direction: column;
+  align-items: center;
+}
+.not_balance_box{
+  width: 100%;
+  padding: 0 .5rem;
+  justify-content: space-between;
+}
+.not_balance_toast .hint{
+  margin-top: .25rem;
+  margin-bottom: .52rem;
+  font-size: .28rem;
+  color: #595959;
+}
+.not_balance_toast b{
+  font-size: .34rem;
+  color: #565656;
+}
+.not_balance_box .cancel{
+  width: 2.1rem;
+  height: .76rem;
+  line-height: .76rem;
+  text-align: center;
+  border: 1px solid #DCDCDC;
+  border-radius: .38rem;
+  font-size: .30rem;
+  color: #969696;
+}
+.not_balance_box .topup{
+  width: 2.1rem;
+  height: .76rem;  
+  line-height: .76rem;
+  font-size: .30rem;
+  color: #FFFFFF;
+  text-align: center;
+  border-radius: .38rem;
+  background-color: #F45189;
+}
