@@ -246,7 +246,19 @@ class DrawHistories extends BaseModel
 
             // 10w钻过滤，后台控制是否爆
             if ($number == 100000) {
-                return 0;
+
+                if (false) {
+                    $user_hit_10w_history = self::findFirst([
+                        'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
+                        'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
+
+                    if ($user_hit_10w_history) {
+                        info('continue hit10w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                        return 0;
+                    }
+                } else {
+                    return 0;
+                }
             }
 
             // 第一次抽奖限制100
@@ -266,7 +278,7 @@ class DrawHistories extends BaseModel
                 'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type1' => 'gift', 'start_at' => time()],
                 'order' => 'id desc']);
 
-            if ($hit_num >= 4) {
+            if ($hit_num >= 3) {
                 info('continue hit_num', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
                 return 0;
             }
@@ -318,7 +330,7 @@ class DrawHistories extends BaseModel
             $interval_time = time() - 3600 * 3;
             $cur_hour = intval(date("H"));
             if ($cur_hour > 1 and $cur_hour < 9) {
-                $interval_time = time() - 3600 * 5;
+                $interval_time = time() - 3600 * 6;
             }
 
             // 最近1小时只爆一个礼物
