@@ -219,6 +219,9 @@ class DrawHistories extends BaseModel
 
                     if ($user_hit_diamond < 150 && mt_rand(1, 100) < 85) {
                         $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 50);
+                        if ($user_rate_multi > 10) {
+                            $user_rate_multi = 10;
+                        }
                     }
 
                     info('五分钟内倍率', $user->id, '$user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
