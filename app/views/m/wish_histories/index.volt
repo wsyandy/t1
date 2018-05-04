@@ -110,9 +110,7 @@
             releaseWishState: 1,
             sid: "{{ sid }}",
             code: "{{ code }}",
-            wish_histories: [],
             my_wish_text: '',
-            my_wish_datas: [],
             show_wish_histories: [],
             is_guard: false
         },
@@ -149,8 +147,6 @@
                         break;
                     case 4:
                         myWishHistories();
-                        vm.releaseWishState = 1;
-                        vm.myWishList = true;
                         break;
                 }
             },
@@ -224,9 +220,8 @@
         $.authPost('/m/wish_histories/refresh', data, function (resp) {
             if (!resp.error_code) {
                 $.each(resp.wish_histories, function (index, item) {
-                    vm.wish_histories.push(item);
+                    vm.show_wish_histories.push(item);
                 });
-                vm.show_wish_histories = vm.wish_histories;
             } else {
                 alert(resp.error_reason);
             }
@@ -240,11 +235,12 @@
         };
         $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
             if (!resp.error_code) {
-                if (resp.my_wish_datas) {
-                    vm.my_wish_datas = resp.my_wish_datas
-                    vm.show_wish_histories = vm.my_wish_datas;
-                } else {
-                    alert('您还没有发起愿望，快去许愿吧');
+                if (resp.my_wish_datas != '') {
+                    vm.show_wish_histories = resp.my_wish_datas;
+                    vm.releaseWishState = 1;
+                    vm.myWishList = true;
+                }else{
+                    alert('您还有没有发不过愿望呢，快去许愿吧！');
                 }
             }
         });
