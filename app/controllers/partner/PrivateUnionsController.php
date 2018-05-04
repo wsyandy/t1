@@ -51,6 +51,8 @@ class PrivateUnionsController extends BaseController
 
             $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
 
+            info("union_stat", $key, $charm_key, $hi_coin_key);
+
             foreach ($users as $user) {
                 $user->charm = $user_db->zscore($charm_key, $user->id);
                 $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
