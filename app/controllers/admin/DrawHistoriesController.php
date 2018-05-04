@@ -149,7 +149,7 @@ class DrawHistoriesController extends BaseController
 
         $stats = [];
         $hour = 23;
-        if (date("Y-m-d", strtotime($stat_at)) == date('Y-m-d')) {
+        if (date("Y-m-d", $stat_at) == date('Y-m-d')) {
             $hour = date('H');
         }
 
