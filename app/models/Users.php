@@ -3461,7 +3461,7 @@ class Users extends BaseModel
 
         $hot_cache = self::getHotWriteCache();
 
-        if ($hot_cache->set($wake_up_user_send_gift_lock_key, 1, ['NX', 'EX' => 2])) {
+        if (!$hot_cache->set($wake_up_user_send_gift_lock_key, 1, ['NX', 'EX' => 2])) {
             info("wake_up_user_send_gift_key_lock", $this->id);
             return null;
         }
@@ -3488,6 +3488,7 @@ class Users extends BaseModel
         $gift_id = fetch($data, 'gift_id');
 
         if (!$gift_id || !$sender_id) {
+            info($data, $gift_id, $sender_id);
             return;
         }
 
