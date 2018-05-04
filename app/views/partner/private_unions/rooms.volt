@@ -27,7 +27,16 @@
 
 <div class="admin-panel padding">
     <table class="table table-hover  tab-account">
+
+        <tr class="cumulative">
+            <td>累计</td>
+            <td></td>
+            <td></td>
+            <td colspan="2">{{ total_amount }}</td>
+        </tr>
+
         <thead>
+
         <tr>
             {#<th width="20%">日期</th>#}
             <th width="20%">房间名称</th>
@@ -49,14 +58,8 @@
         {% endfor %}
         </tbody>
 
-
         <tfoot>
-        <tr class="cumulative">
-            <td>累计</td>
-            <td></td>
-            <td></td>
-            <td colspan="2">{{ total_amount }}</td>
-        </tr>
+
         </tfoot>
     </table>
 </div>
