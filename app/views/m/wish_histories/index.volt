@@ -130,7 +130,9 @@
                         vm.releaseWish = false;
                         break;
                     case 4:
-                        location.reload();
+                        if (vm.releaseWishState == 2) {
+                            location.reload();
+                        }
                         vm.myWishList = false;
                         break;
                 }

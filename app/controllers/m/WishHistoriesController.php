@@ -11,14 +11,6 @@ class WishHistoriesController extends BaseController
 
     function refreshAction()
     {
-//        $params = $this->params();
-//        info('接收的全部参数', $params);
-//        $page = $this->params('page', 1);
-//        $per_page = 20;
-//        $cond['order'] = 'id desc';
-//        $wish_histories = \WishHistories::findPagination($cond, $page, $per_page);
-//        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $wish_histories->toJson('wish_histories', 'toSimpleJson'));
-
         $page = $this->params('page');
         $per_page = 20;
 
