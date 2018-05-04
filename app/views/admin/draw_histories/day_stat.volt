@@ -9,6 +9,7 @@
 <table class="table table-striped table-condensed">
     <thead>
     <tr>
+        <th>时间</th>
         <th>砸蛋钻石数</th>
         <th>中奖钻石数</th>
         <th>中奖金币数</th>
@@ -24,6 +25,7 @@
 
     {% for day, val in stats %}
     <tr id="{{ day }}" class="row_line">
+        <th>{{ day }}</th>
         <th>{{ val['total_pay_amount'] }}</th>
         <th>{{ val['total_diamond'] }}</th>
         <th>{{ val['total_gold'] }}</th>
