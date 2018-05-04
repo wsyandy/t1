@@ -25,10 +25,6 @@ class PrivateUnionsController extends BaseController
 
         if ($this->request->isAjax()) {
 
-            if ($end_at > $start_at) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-            }
-
             $page = $this->params('page');
             $per_page = 10;
             $user_db = \Users::getUserDb();
