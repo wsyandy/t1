@@ -407,8 +407,9 @@ class DrawHistories extends BaseModel
                     continue;
                 }
 
+                $hour = intval(date("H"));
                 // 爆10w钻
-                if ($type == 'diamond' && $number == 100000) {
+                if ($type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
 
                     if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
                         continue;
@@ -425,7 +426,13 @@ class DrawHistories extends BaseModel
 
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
 
-                    continue;
+                    $user_db = Users::getUserDb();
+                    $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . fetch($datum, 'id', 0);
+                    $user_db->incr($cache_key);
+                    $cache_total_key = 'draw_history_hit_num_' . fetch($datum, 'id', 0);
+                    $user_db->incr($cache_total_key);
+
+                    return $datum;
                 }
 
                 
