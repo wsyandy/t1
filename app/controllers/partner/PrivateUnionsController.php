@@ -59,8 +59,26 @@ class PrivateUnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionJson'));
         }
 
+        $cond = [
+            'conditions' => ['union_id = :union_id: and fee_type = :fee_type:'],
+            'bind' => ['union_id' => $union->id, 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        if ($start_at_time) {
+            $cond['conditions'] .= " and created_at >= :start:";
+            $cond['bind']['start'] = beginOfDay(strtotime($start_at_time));
+        }
+
+        if ($end_at_time) {
+            $cond['conditions'] .= " and created_at <= :end:";
+            $cond['bind']['end'] = endOfDay(strtotime($start_at_time));
+        }
+
+        $total_hi_coins = \HiCoinHistories::sum($cond);
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
+        $this->view->total_hi_coins = $total_hi_coins;
     }
 
     function roomsAction()
