@@ -117,7 +117,6 @@
             is_guard: false
         },
         mounted: function () {
-            this.refresh();
         },
         methods: {
             onCancelToast: function (index) {
@@ -132,11 +131,7 @@
                         vm.releaseWish = false;
                         break;
                     case 4:
-                        if (vm.releaseWishState == 2 && vm.is_guard) {
-                            vm.is_guard = false;
-                            location.reload();
-                        }
-
+                        location.reload();
                         vm.myWishList = false;
                         break;
                 }
@@ -153,7 +148,7 @@
                         vm.releaseWish = true;
                         break;
                     case 4:
-                        vm.myWishHistories();
+                        myWishHistories();
                         vm.releaseWishState = 1;
                         vm.myWishList = true;
                         break;
@@ -214,42 +209,44 @@
                 })
 
             }
-        },
-        myWishHistories: function () {
-            var data = {
-                sid: vm.sid,
-                code: vm.code
-            };
-            $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
-                if (!resp.error_code) {
-                    if (resp.my_wish_datas) {
-                        vm.my_wish_datas = resp.my_wish_datas
-                        vm.show_wish_histories = vm.my_wish_datas;
-                    } else {
-                        alert('您还没有发起愿望，快去许愿吧');
-                    }
-                }
-            });
-        },
-        refresh: function () {
-            var data = {
-                sid: vm.sid,
-                code: vm.code,
-                page: vm.page
-            };
-            vm.page++;
-            $.authPost('/m/wish_histories/refresh', data, function (resp) {
-                if (!resp.error_code) {
-                    $.each(resp.wish_histories, function (index, item) {
-                        vm.wish_histories.push(item);
-                    });
-                    vm.show_wish_histories = vm.wish_histories;
-                } else {
-                    alert(resp.error_reason);
-                }
-            });
         }
     };
     vm = XVue(opts);
+    refresh();
 
+    function refresh() {
+        var data = {
+            sid: vm.sid,
+            code: vm.code,
+            page: vm.page
+        };
+        vm.page++;
+        $.authPost('/m/wish_histories/refresh', data, function (resp) {
+            if (!resp.error_code) {
+                $.each(resp.wish_histories, function (index, item) {
+                    vm.wish_histories.push(item);
+                });
+                vm.show_wish_histories = vm.wish_histories;
+            } else {
+                alert(resp.error_reason);
+            }
+        });
+    }
+
+    function myWishHistories() {
+        var data = {
+            sid: vm.sid,
+            code: vm.code
+        };
+        $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
+            if (!resp.error_code) {
+                if (resp.my_wish_datas) {
+                    vm.my_wish_datas = resp.my_wish_datas
+                    vm.show_wish_histories = vm.my_wish_datas;
+                } else {
+                    alert('您还没有发起愿望，快去许愿吧');
+                }
+            }
+        });
+    }
 </script>
