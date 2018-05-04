@@ -53,7 +53,8 @@
         <tfoot>
         <tr class="cumulative">
             <td>累计</td>
-            {#<td></td>#}
+            <td></td>
+            <td></td>
             <td colspan="2">{{ total_amount }}</td>
         </tr>
         </tfoot>
