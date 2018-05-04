@@ -424,7 +424,7 @@ class UnionsController extends BaseController
             $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
             $hi_coins = sprintf("%0.2f", $hi_coins / 1000);
             $user->hi_coins = $hi_coins;
-            $user_datas[] = $user->toUnionJson();
+            $user_datas[] = json_encode($user->toUnionJson(),JSON_UNESCAPED_UNICODE);
         }
 
         $cond = [
