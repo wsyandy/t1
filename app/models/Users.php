@@ -3477,6 +3477,7 @@ class Users extends BaseModel
         info($user_id, $data);
 
         if (!$data) {
+            debug($data);
             return;
         }
 
