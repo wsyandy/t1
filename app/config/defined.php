@@ -140,6 +140,8 @@ define('ACCOUNT_TYPE_DISTRIBUTE_REGISTER', 21); //分销注册
 define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
 define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
+define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
+define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES',33);  //守护愿望支出
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到

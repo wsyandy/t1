@@ -36,7 +36,10 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
         ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值',
         ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
-        ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出'
+        ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
+        ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
+        ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出'
+
     ];
 
     function beforeCreate()
@@ -126,7 +129,8 @@ class AccountHistories extends BaseModel
     {
         return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
             || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES || $this->fee_type == ACCOUNT_TYPE_DEDUCT
-            || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES;
+            || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES || $this->fee_type == ACCOUNT_TYPE_RELEASE_WISH_EXPENSES
+            || $this->fee_type == ACCOUNT_TYPE_GUARD_WISH_EXPENSES;
     }
 
     function getStatActon()

@@ -1,39 +1,36 @@
-{#<form action="/admin/users/reserved" method="get" class="search_form" autocomplete="off" id="search_form">#}
-    {#<label for="id_eq">ID</label>#}
-    {#<input name="user[id_eq]" type="text" id="id_eq"/>#}
+<form action="/admin/users/reserved" method="get" class="search_form" autocomplete="off" id="search_form">
+    <label for="id">ID</label>
+    <input name="id" type="text" id="id"/>
 
-    {#<label for="uid_eq">UID</label>#}
-    {#<input name="user[uid_eq]" type="text" id="uid_eq"/>#}
+    <button type="submit" class="ui button">搜索</button>
+</form>
 
-    {#<button type="submit" class="ui button">搜索</button>#}
-{#</form>#}
+<a href="/admin/users/select_good_no_list">靓号筛选列表</a>
 
-{% macro avatar_image(user) %}
-    <img src="{{ user.avatar_small_url }}" height="50"/>
-{% endmacro %}
+{%- macro select_good_num(user) %}
+    <a href="#" class="add_good_num" data-good_num="{{ user.uid }}">添加至选择靓号列表</a>
+{%- endmacro %}
 
-{% macro product_channel_view(user) %}
-    产品渠道:{{ user.product_channel_name }}<br/>
-    FR:{{ user.fr }}<br/>
-    FR名称:{{ user.partner_name }}<br/>
-    平台:{{ user.platform }} 平台版本:{{ user.platform_version }}<br/>
-    版本名称:{{ user.version_name }} 软件版本号:{{ user.version_code }}<br/>
-    api协议版本: {{ user.api_version }}<br/>
-{% endmacro %}
+{{ simple_table(users, ['UID': 'uid', '添加至选择靓号列表':'select_good_num']) }}
 
-{{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image','类型':'user_type_text', '状态':"user_status_text"]) }}
+<script>
 
-<script type="text/template" id="user_tpl">
-    <tr id="user_${user.id}">
-        <td>${user.id}</td>
-        <td>${user.uid}</td>
-        <td><img src="${ user.avatar_small_url }" height="50"/></td>
-        <td>${user.user_type_text}</td>
-        <td>${user.user_status_text}</td>
-    </tr>
-</script>
+    $(function () {
 
+        $(".add_good_num").click(function (e) {
+            e.preventDefault();
 
-<script type="text/javascript">
+            var good_num = $(this).data('good_num');
+
+            $.post('/admin/users/add_select_good_num', {good_num: good_num}, function (resp) {
+
+                if (0 != resp.error_code) {
+                    alert(resp.error_reason);
+                    return;
+                }
+
+            })
+        })
+    })
 
 </script>
