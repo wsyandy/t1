@@ -178,6 +178,18 @@ class Users extends BaseModel
         if ($this->hasChanged('union_id') || $this->hasChanged('union_type')) {
             $this->bindRoomUnionId();
         }
+
+        if ($this->hasChanged('uid')) {
+            $this->clearUidInGoodNoList();
+        }
+    }
+
+    function clearUidInGoodNoList()
+    {
+        $user_db = Users::getUserDb();
+        $user_db->zrem('user_not_good_no_uid_list', $this->uid);
+        $user_db->zrem('user_good_no_uid_list', $this->uid);
+        $user_db->zrem('select_good_no_list', $this->uid);
     }
 
     static function getUserDb()
