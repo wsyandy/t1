@@ -272,7 +272,7 @@ class DrawHistories extends BaseModel
                 }
             }
 
-            $total_pay_amount_rate = mt_rand(3, 6);
+            $total_pay_amount_rate = mt_rand(3, 8);
 
         } elseif ($type == 'gift') {
 
@@ -308,10 +308,10 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
-            $total_pay_amount_rate = mt_rand(3, 12);
+            $total_pay_amount_rate = mt_rand(5, 15);
 
         } else {
-            $total_pay_amount_rate = mt_rand(3, 15);
+            $total_pay_amount_rate = mt_rand(5, 15);
         }
 
         return $total_pay_amount_rate;
