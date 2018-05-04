@@ -283,9 +283,9 @@ html,body{
   background-size: .37rem .41rem;
 }
 .release_wish .cancel{
-  position: absolute;
+  position: fixed;
   left: 3.3rem;
-  bottom: -2.12rem;
+  bottom: 1.12rem;
   width: .86rem;
   height: .86rem;
   background: url(../images/cancel_buttom2.png) center no-repeat;
@@ -306,21 +306,15 @@ html,body{
 }
 .mywish_list ul li{
   flex-direction: column;
-  padding: 1.54rem .6rem 0;
-  margin: 0 .5rem;
+  padding: 1.54rem 1.1rem 0;
   height: 7.9rem;
-  width: 4.4rem;
+  width: 5.4rem;
   background:url(../images/wish_backround.png) center no-repeat;
-  background-size: cover;
+  background-size: 4.4rem 7.9rem;
 }
 .mywish_list ul .background2{
-  flex-direction: column;
-  padding: 1.54rem .6rem 0;
-  margin: 0 .5rem;
-  height: 7.9rem;
-  width: 4.4rem;
   background:url(../images/wish_backround2.png) center no-repeat;
-  background-size: cover;
+  background-size: 4.4rem 7.9rem;
 }
 .mywish_list li p{
   margin-top: .4rem;
