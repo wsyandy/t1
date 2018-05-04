@@ -3488,6 +3488,7 @@ class Users extends BaseModel
         $gift_id = fetch($data, 'gift_id');
 
         if (!$gift_id || !$sender_id) {
+            info($data, $gift_id, $sender_id);
             return;
         }
 
