@@ -328,7 +328,7 @@ class DrawHistories extends BaseModel
             if ($rate < 10) {
                 return $data[7];
             }
-            if ($rate < 30) {
+            if ($rate < 40) {
                 return $data[8];
             }
 
