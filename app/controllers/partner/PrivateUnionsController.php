@@ -78,7 +78,7 @@ class PrivateUnionsController extends BaseController
         $total_hi_coins = \HiCoinHistories::sum($cond);
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
-        $this->view->total_hi_coins = $total_hi_coins;
+        $this->view->total_hi_coins = sprintf("%0.2f", $total_hi_coins);
     }
 
     function roomsAction()
