@@ -18,10 +18,10 @@
 
 <div class="admin">
     {% if 1 == union.status and 1 == union.auth_status %}
-        <iframe scrolling="auto" rameborder="0" src="/partner/unions/users" name="right" width="100%"
+        <iframe scrolling="auto" rameborder="0" src="/partner/private_unions/users" name="right" width="100%"
                 height="100%"></iframe>
     {% else %}
-        <iframe scrolling="auto" rameborder="0" src="/partner/unions/auth_wait" name="right" width="100%"
+        <iframe scrolling="auto" rameborder="0" src="/partner/private_unions/auth_wait" name="right" width="100%"
                 height="100%"></iframe>
     {% endif %}
 </div>

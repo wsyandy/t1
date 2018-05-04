@@ -34,7 +34,6 @@ class AccessTokens extends BaseModel
     static function checkToken($token)
     {
         $access_token = \AccessTokens::findFirstByToken($token);
-        debug($token, $access_token);
 
         if ($access_token && time() < $access_token->expired_at) {
             if ( AUTH_SUCCESS == $access_token->status) {
@@ -43,7 +42,6 @@ class AccessTokens extends BaseModel
         } else {
             return [ERROR_CODE_FORM, '验证码已过期，请刷新此页面', ''];
         }
-
         return [ERROR_CODE_FAIL, '', ''];
     }
 

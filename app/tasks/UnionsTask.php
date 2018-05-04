@@ -398,10 +398,11 @@ class UnionsTask extends \Phalcon\Cli\Task
         }
 
         $hi_conin_histories = HiCoinHistories::find([
-            'conditions' => 'created_at >= :start: and created_at <= :end: and union_id > 0',
+            'conditions' => 'created_at >= :start: and created_at <= :end: and union_id > 0 and fee_type = :fee_type:',
             'bind' => [
                 'start' => beginOfMonth(strtotime('2018-01-01')),
-                'end' => endOfMonth(strtotime('2018-04-30'))
+                'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT
             ],
             'columns' => 'id'
         ]);

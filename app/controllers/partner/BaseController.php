@@ -40,7 +40,7 @@ class BaseController extends \ApplicationController
     }
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'check_auth'],
+        'home' => ['index', 'check_auth', 'login'],
         'unions' => ['register', 'send_auth', 'login']
     ];
 

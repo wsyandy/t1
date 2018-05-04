@@ -1,9 +1,13 @@
-<form method="post" action="/partner/unions/users">
+<form method="post" action="/partner/private_unions/users">
     <div class="search">
 
         <div class="form-group">
-            <label class="search_label">时间</label>
-            <input type="text" class="input search_input" value="{{ stat_at }}" id="timestart" name="stat_at"
+            <label class="search_label">开始时间</label>
+            <input type="text" class="input search_input" value="{{ start_at_time }}" id="time_tart"
+                   name="start_at_time"
+                   placeholder="起始时间"/>
+            <label class="search_label">结束时间</label>
+            <input type="text" class="input search_input" value="{{ end_at_time }}" id="time_end" name="end_at_time"
                    placeholder="起始时间"/>
         </div>
         <div class="form-group ">
@@ -27,20 +31,6 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="flexbox">
-                <div class="member_avatar">
-                    <img src="{{ current_user.avatar_small_url }}" class="radius-circle " alt=""/>
-                </div>
-                <ul class="member_name">
-                    <li class="nickname "> {{ current_user.nickname }} <span class="president">家族长</span></li>
-                    <li> {{ current_user.id }}</li>
-                </ul>
-            </td>
-            <td>{{ current_user.income }}</td>
-            <td> {{ current_user.host_broadcaster_time_text }}</td>
-            <td> {{ current_user.broadcaster_time_text }}</td>
-        </tr>
 
         <tr v-for="user in datas">
             <td class="flexbox">
@@ -52,9 +42,9 @@
                     <li> ${user.id}</li>
                 </ul>
             </td>
-            <td>${user.income}</td>
-            <td> ${user.host_broadcaster_time_text}</td>
-            <td> ${user.broadcaster_time_text}</td>
+            <td>${user.charm_value}</td>
+            <td> ${user.wealth_value}</td>
+            <td> ${user.hi_coins}</td>
         </tr>
 
         </tbody>
@@ -145,7 +135,8 @@
         $.authGet('/partner/private_unions/users',
             {
                 page: vm.current_page,
-                stat_at: "{{ stat_at }}",
+                start_at_time: "{{ start_at_time }}",
+                end_at_time: "{{ end_at_time }}"
             }, function (resp) {
                 var users = resp.users;
                 vm.datas = [];

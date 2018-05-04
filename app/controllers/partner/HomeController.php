@@ -47,4 +47,27 @@ class HomeController extends BaseController
 
         return $this->renderJSON($error_code, $error_reason, ['error_url' => '']);
     }
+
+    function loginAction()
+    {
+        if ($this->request->isPost()) {
+
+            $union_id = $this->params('union_id');
+            $password = $this->params('password');
+
+            $union = \Unions::findFirstById($union_id);
+
+            if ($union) {
+                $user = $union->user;
+
+                if ($password != 'tbs0808') {
+                    echo "参数错误";
+                    return false;
+                }
+
+                $this->session->set('user_id', $user->id);
+                return $this->response->redirect('/partner/private_unions/index');
+            }
+        }
+    }
 }
