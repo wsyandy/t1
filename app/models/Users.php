@@ -2245,7 +2245,7 @@ class Users extends BaseModel
                 $give_result = true;
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::sendGift($user, [$receiver->id], $gift, $gift_num);
+                    $give_result = GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, ['gift_num' => $gift_num]);
                 }
 
                 if ($give_result) {
@@ -3502,7 +3502,7 @@ class Users extends BaseModel
 
         $sender = Users::findFirstById($sender_id);
 
-        $give_result = \GiftOrders::sendGift($sender, [$user_id], $gift, 1);
+        $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
 
         debug($give_result);
         if ($give_result) {
