@@ -40,7 +40,7 @@ class BaseController extends \ApplicationController
     }
 
     static $SKIP_ACTIONS = [
-        'home' => ['index', 'check_auth'],
+        'home' => ['index', 'check_auth', 'login'],
         'unions' => ['register', 'send_auth', 'login']
     ];
 
@@ -82,7 +82,7 @@ class BaseController extends \ApplicationController
         }
 
         if ($access_token && time() - $access_token->login_at > $expire_at || !$access_token) {
-            $this->session->set('user_id', null);
+//            $this->session->set('user_id', null);
         }
     }
 
@@ -110,28 +110,28 @@ class BaseController extends \ApplicationController
 
         $union = $this->currentUser()->union;
 
-        if ($union && $union->type == UNION_TYPE_PRIVATE) {
-            $this->clearLoginInfo();
-            echo "您已经加入其它家族, 不能进入工会";
-            return false;
-        }
+//        if ($union && $union->type == UNION_TYPE_PRIVATE) {
+//            $this->clearLoginInfo();
+//            echo "您已经加入其它家族, 不能进入工会";
+//            return false;
+//        }
 
         if ($union && !$this->currentUser()->isUnionHost($union)) {
             $this->clearLoginInfo();
-            echo "您不是公会会长,无权限登录";
+            echo "您无权限登录";
             return false;
         }
 
-        if (!$union) {
-
-            list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
-
-            if (ERROR_CODE_SUCCESS != $error_code) {
-                $this->clearLoginInfo();
-                echo "登录失败";
-                return false;
-            }
-        }
+//        if (!$union) {
+//
+//            list($error_code, $error_reason, $union) = \Unions::createPublicUnion($this->currentUser());
+//
+//            if (ERROR_CODE_SUCCESS != $error_code) {
+//                $this->clearLoginInfo();
+//                echo "登录失败";
+//                return false;
+//            }
+//        }
 
         if (!$union || $union->status == STATUS_BLOCKED || STATUS_OFF == $union->status) {
             $this->clearLoginInfo();

@@ -253,12 +253,21 @@ trait UserAttrs
             'union_wealth_value' => $this->union_wealth_value,
             'monologue' => $this->getMonologueText(),
             'current_room_id' => $this->current_room_id,
-            'is_exit_union' => $this->is_exit_union
+            'is_exit_union' => $this->is_exit_union,
+            'hi_coins' => $this->hi_coins
         ];
 
         if (isset($this->apply_status)) {
             $data['apply_status'] = $this->apply_status;
             $data['apply_status_text'] = $this->apply_status_text;
+        }
+
+        if (isset($this->charm)) {
+            $data['charm_value'] = valueToStr($this->charm);
+        }
+
+        if (isset($this->wealth)) {
+            $data['wealth_value'] = valueToStr($this->wealth);
         }
 
         if ($data['age'] === 0) {

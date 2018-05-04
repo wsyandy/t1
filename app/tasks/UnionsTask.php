@@ -312,4 +312,129 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         echoLine($num);
     }
+
+    function fixGiftOrderAction()
+    {
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'created_at >= :start: and created_at <= :end: and status = :status: and pay_type = :pay_type:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-01-01')),
+                'end' => endOfMonth(strtotime('2018-04-30')),
+                'status' => GIFT_ORDER_STATUS_SUCCESS,
+                'pay_type' => GIFT_PAY_TYPE_DIAMOND
+            ],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($gift_orders));
+
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+            $sender_union_id = $gift_order->sender_union_id;
+            $receiver_union_id = $gift_order->receiver_union_id;
+            $room_id = $gift_order->room_id;
+            $room_union_id = $gift_order->room_union_id;
+            $sender_id = $gift_order->sender_id;
+            $user_id = $gift_order->user_id;
+            $created_at = $gift_order->created_at;
+            $month_start = date("Ymd", beginOfMonth($created_at));
+            $month_end = date("Ymd", endOfMonth($created_at));
+            $day = date("Ymd", $created_at);
+            $amount = $gift_order->amount;
+
+            if ($room_id && $room_union_id && GIFT_TYPE_COMMON == $gift_order->gift_type) {
+                $total_key = 'union_room_total_amount_union_id_' . $room_union_id;
+                $month_key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $room_union_id;
+                $day_key = 'union_room_day_amount_' . $day . '_union_id_' . $room_union_id;
+
+                echoLine("room_union_id", $total_key, $month_key, $day_key, $gift_order->room_id, $gift_order->room_union_id);
+
+                $db->zincrby($total_key, $amount, $room_id);
+                $db->zincrby($month_key, $amount, $room_id);
+                $db->zincrby($day_key, $amount, $room_id);
+            }
+
+            if ($sender_union_id) {
+                $total_key = 'union_user_total_wealth_rank_list_union_id_' . $sender_union_id;
+                $month_key = 'union_user_month_wealth_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $sender_union_id;
+                $day_key = 'union_user_day_wealth_rank_list_' . $day . '_union_id_' . $sender_union_id;
+                echoLine('sender_union_id', $total_key, $month_key, $day_key);
+
+                $db->zincrby($total_key, $amount, $sender_id);
+                $db->zincrby($month_key, $amount, $sender_id);
+                $db->zincrby($day_key, $amount, $sender_id);
+            }
+
+            if ($receiver_union_id) {
+                $total_key = 'union_user_total_charm_rank_list_union_id_' . $receiver_union_id;
+                $month_key = 'union_user_month_charm_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $receiver_union_id;
+                $day_key = 'union_user_day_charm_rank_list_' . $day . '_union_id_' . $receiver_union_id;
+                echoLine('receiver_union_id', $total_key, $month_key, $day_key);
+
+                $db->zincrby($total_key, $amount, $user_id);
+                $db->zincrby($month_key, $amount, $user_id);
+                $db->zincrby($day_key, $amount, $user_id);
+            }
+        }
+    }
+
+    function fixHiCoinsAction()
+    {
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => GIFT_ORDER_STATUS_FREEZE
+            ],
+            'columns' => 'id'
+        ]);
+
+        $gift_order_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order_ids[] = $gift_order->id;
+        }
+
+        $hi_conin_histories = HiCoinHistories::find([
+            'conditions' => 'created_at >= :start: and created_at <= :end: and union_id > 0 and fee_type = :fee_type:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-01-01')),
+                'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT
+            ],
+            'columns' => 'id'
+        ]);
+        $db = Users::getUserDb();
+
+        foreach ($hi_conin_histories as $hi_conin_history) {
+
+            $hi_conin_history = HiCoinHistories::findFirstById($hi_conin_history->id);
+
+            if (in_array($hi_conin_history->gift_order_id, $gift_order_ids)) {
+                continue;
+            }
+
+            $created_at = $hi_conin_history->created_at;
+            $month_start = date("Ymd", beginOfMonth($created_at));
+            $month_end = date("Ymd", endOfMonth($created_at));
+            $day = date("Ymd", $created_at);
+            $hi_coins = intval($hi_conin_history->hi_coins * 1000);
+            $union_id = $hi_conin_history->union_id;
+            $user_id = $hi_conin_history->user_id;
+
+            $total_key = 'union_user_total_hi_coins_rank_list_union_id_' . $union_id;
+            $month_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union_id;
+            $day_key = 'union_user_day_hi_coins_rank_list_' . $day. '_union_id_' . $union_id;
+
+            $db->zincrby($total_key, $hi_coins, $user_id);
+            $db->zincrby($month_key, $hi_coins, $user_id);
+            $db->zincrby($day_key, $hi_coins, $user_id);
+
+            echoLine($hi_coins, $total_key, $month_key, $day_key, $hi_conin_history->id);
+
+        }
+        echoLine(count($hi_conin_histories));
+    }
 }
