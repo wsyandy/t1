@@ -86,7 +86,7 @@ class PrivateUnionsController extends BaseController
         }
 
         $room_ids = $user_db->zrange($key, 0, -1);
-        $rooms = [];
+        $data = [];
 
         if ($room_ids) {
 
@@ -101,10 +101,21 @@ class PrivateUnionsController extends BaseController
 
         foreach ($rooms as $room) {
             $room->amount = $user_db->zscore($key, $room->id);
+            $data[] = $room;
             $total_amount += $room->amount;
         }
 
-        $this->view->rooms = $rooms;
+
+        usort($data, function ($a, $b) {
+
+            if ($a->amount == $b->amount) {
+                return 0;
+            }
+
+            return $a->amount > $b->amount ? -1 : 1;
+        });
+
+        $this->view->rooms = $data;
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
         $this->view->total_amount = $total_amount;
