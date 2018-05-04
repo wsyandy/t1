@@ -3504,6 +3504,7 @@ class Users extends BaseModel
 
         $give_result = \GiftOrders::sendGift($sender_id, [$user_id], $gift, 1);
 
+        debug($give_result);
         if ($give_result) {
             $send_user = Users::findFirstById($sender_id);
             $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
