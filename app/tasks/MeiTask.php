@@ -3426,6 +3426,18 @@ EOF;
         echoLine(date("Ymd H:i:s", beginOfDay()));
         echoLine(date("Ymd H:i:s", endOfDay()));
         echoLine(date("Ymd H:i:s", strtotime('20180503 24:00:00')));
+
+        $user_db = Users::getUserDb();
+        $key = 'union_user_total_hi_coins_rank_list_union_id_' . 1068;
+        $user_ids = $user_db->zrange($key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
     }
 
 }
