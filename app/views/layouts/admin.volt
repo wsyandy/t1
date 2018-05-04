@@ -328,8 +328,8 @@
                                 {% if isAllowed('draw_histories','day_stat') %}
                                     <li><a href="/admin/draw_histories/day_stat">按天统计</a></li>
                                 {% endif %}
-                                {% if isAllowed('draw_histories','hout_stat') %}
-                                    <li><a href="/admin/draw_histories/hout_stat">小时统计</a></li>
+                                {% if isAllowed('draw_histories','hour_stat') %}
+                                    <li><a href="/admin/draw_histories/hour_stat">小时统计</a></li>
                                 {% endif %}
                             </ul>
                         </li>
