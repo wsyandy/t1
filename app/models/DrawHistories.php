@@ -214,7 +214,7 @@ class DrawHistories extends BaseModel
                     'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
                 ]);
 
-                if ($user_hit_num > 50) {
+                if ($user_hit_num > mt_rand(30, 50)) {
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'start_at' => time() - 300],
@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 83) / 100;
+        $pool_rate = mt_rand(65, 85) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
