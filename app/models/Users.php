@@ -3504,14 +3504,9 @@ class Users extends BaseModel
 
         $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
 
-        debug($give_result);
-        if ($give_result) {
-            $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-            info("send_gift_success", $content);
-            Chats::sendTextSystemMessage($user_id, $content);
-        } else {
-            info("send_gift_fail");
-        }
+        $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+        info("send_gift_success", $content);
+        Chats::sendTextSystemMessage($user_id, $content);
     }
 
     //获取屏蔽附近的人列表
