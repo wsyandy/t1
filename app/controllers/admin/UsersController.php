@@ -468,17 +468,23 @@ class UsersController extends BaseController
 
     function reservedAction()
     {
+        $good_no_uid = 'user_good_no_uid_list';
         $id = $this->params('id');
+        $user_db = \Users::getUserDb();
 
         if ($id) {
-            $user_ids[] = $id;
+
+            if (!$user_db->zscore($good_no_uid, $id)) {
+                $user_ids = [];
+            } else {
+                $user_ids[] = $id;
+            }
+
             $total_entries = count($user_ids);
+
         } else {
-            $good_no_uid = 'user_good_no_uid_list';
             $page = $this->params('page', 1);
             $per_page = $this->params('per_page', 100);
-
-            $user_db = \Users::getUserDb();
 
             $total_entries = $user_db->zcard($good_no_uid);
 
@@ -648,16 +654,21 @@ class UsersController extends BaseController
     function selectGoodNoListAction()
     {
         $id = $this->params('id');
+        $user_db = \Users::getUserDb();
+        $good_no_uid = 'select_good_no_list';
 
         if ($id) {
-            $user_ids[] = $id;
+
+            if (!$user_db->zscore($good_no_uid, $id)) {
+                $user_ids = [];
+            } else {
+                $user_ids[] = $id;
+            }
+
             $total_entries = count($user_ids);
         } else {
-            $good_no_uid = 'select_good_no_list';
             $page = $this->params('page', 1);
             $per_page = $this->params('per_page', 100);
-
-            $user_db = \Users::getUserDb();
 
             $total_entries = $user_db->zcard($good_no_uid);
 
