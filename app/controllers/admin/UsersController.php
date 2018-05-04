@@ -468,16 +468,36 @@ class UsersController extends BaseController
 
     function reservedAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page', 30);
+        $id = $this->params('id');
 
-        $cond = ['conditions' => 'id<:max_id: and (device_id < 1 or device_id is null)', 'bind' => ['max_id' => 1000000]];
-        $cond['order'] = 'id desc';
+        if ($id) {
+            $user_ids[] = $id;
+            $total_entries = count($user_ids);
+        } else {
+            $good_no_uid = 'user_good_no_uid_list';
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 100);
 
-        info($cond);
+            $user_db = \Users::getUserDb();
 
-        $users = \Users::findPagination($cond, $page, $per_page);
-        $this->view->users = $users;
+            $total_entries = $user_db->zcard($good_no_uid);
+
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($good_no_uid, $offset, $offset + $per_page - 1);
+        }
+
+        $objects = [];
+
+        foreach ($user_ids as $user_id) {
+            $user = new \Users();
+            $user->uid = $user_id;
+            $objects[] = $user;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        $this->view->users = $pagination;
     }
 
     //离线24小时用户唤醒统计
@@ -599,4 +619,63 @@ class UsersController extends BaseController
         }
     }
 
+    function addSelectGoodNumAction()
+    {
+        $goom_num = $this->params('good_num');
+
+        if (!$goom_num) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user_db = \Users::getUserDb();
+        $user_db->zadd("select_good_no_list", $goom_num, $goom_num);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function deleteSelectGoodNumAction()
+    {
+        $goom_num = $this->params('good_num');
+
+        if (!$goom_num) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user_db = \Users::getUserDb();
+        $user_db->zrem("select_good_no_list", $goom_num);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function selectGoodNoListAction()
+    {
+        $id = $this->params('id');
+
+        if ($id) {
+            $user_ids[] = $id;
+            $total_entries = count($user_ids);
+        } else {
+            $good_no_uid = 'select_good_no_list';
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 100);
+
+            $user_db = \Users::getUserDb();
+
+            $total_entries = $user_db->zcard($good_no_uid);
+
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($good_no_uid, $offset, $offset + $per_page - 1);
+        }
+
+        $objects = [];
+
+        foreach ($user_ids as $user_id) {
+            $user = new \Users();
+            $user->uid = $user_id;
+            $objects[] = $user;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        $this->view->users = $pagination;
+    }
 }
