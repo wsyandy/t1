@@ -3500,14 +3500,13 @@ class Users extends BaseModel
             return;
         }
 
-        $sender_id = Users::findFirstById($sender_id);
+        $sender = Users::findFirstById($sender_id);
 
-        $give_result = \GiftOrders::sendGift($sender_id, [$user_id], $gift, 1);
+        $give_result = \GiftOrders::sendGift($sender, [$user_id], $gift, 1);
 
         debug($give_result);
         if ($give_result) {
-            $send_user = Users::findFirstById($sender_id);
-            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+            $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
             info("send_gift_success", $content);
             Chats::sendTextSystemMessage($user_id, $content);
         } else {
