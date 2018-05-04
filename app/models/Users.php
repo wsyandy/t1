@@ -2245,7 +2245,7 @@ class Users extends BaseModel
                 $give_result = true;
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::sendGift($user, [$receiver->id], $gift, $gift_num);
+                    $give_result = GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, ['gift_num' => $gift_num]);
                 }
 
                 if ($give_result) {
@@ -3477,6 +3477,7 @@ class Users extends BaseModel
         info($user_id, $data);
 
         if (!$data) {
+            debug($data);
             return;
         }
 
@@ -3488,6 +3489,7 @@ class Users extends BaseModel
         $gift_id = fetch($data, 'gift_id');
 
         if (!$gift_id || !$sender_id) {
+            info($data, $gift_id, $sender_id);
             return;
         }
 
@@ -3498,18 +3500,13 @@ class Users extends BaseModel
             return;
         }
 
-        $sender_id = Users::findFirstById($sender_id);
+        $sender = Users::findFirstById($sender_id);
 
-        $give_result = \GiftOrders::sendGift($sender_id, [$user_id], $gift, 1);
+        $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
 
-        if ($give_result) {
-            $send_user = Users::findFirstById($sender_id);
-            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-            info("send_gift_success", $content);
-            Chats::sendTextSystemMessage($user_id, $content);
-        } else {
-            info("send_gift_fail");
-        }
+        $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+        info("send_gift_success", $content);
+        Chats::sendTextSystemMessage($user_id, $content);
     }
 
     //获取屏蔽附近的人列表
