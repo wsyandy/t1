@@ -196,7 +196,7 @@ class DrawHistories extends BaseModel
             if ($total_pay_amount > $total_get_amount) {
                 $decr_rate = ($total_pay_amount - $total_get_amount) / $total_pay_amount;
                 if ($decr_rate * 100 > mt_rand(20, 40) && mt_rand(1, 100) < 75) {
-                    $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(100, 400));
+                    $user_rate_multi = ceil(($total_pay_amount - $total_get_amount) / mt_rand(60, 360));
                     if ($user_rate_multi > 100) {
                         $user_rate_multi = 100;
                     }
