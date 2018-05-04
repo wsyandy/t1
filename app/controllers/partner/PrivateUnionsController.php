@@ -35,19 +35,27 @@ class PrivateUnionsController extends BaseController
 
             if (!$start_at_time && !$end_at_time) {
                 $key = 'union_user_total_wealth_rank_list_union_id_' . $union->id;
+                $charm_key = 'union_user_total_charm_rank_list_union_id_' . $union->id;
+                $hi_coin_key = 'union_user_total_hi_coins_rank_list_union_id_' . $union->id;
             } elseif ($start_at == $end_at) {
                 $key = 'union_user_day_wealth_rank_list_' . $start_at . '_union_id_' . $union->id;
+                $charm_key = 'union_user_day_wealth_rank_list_' . $start_at . '_union_id_' . $union->id;
+                $hi_coin_key = 'union_user_day_hi_coins_rank_list_' . $start_at . '_union_id_' . $union->id;
             } else {
                 $month_start = date('Ymd', beginOfMonth($start_at_time));
                 $month_end = date('Ymd', endOfMonth($start_at_time));
                 $key = 'union_user_month_wealth_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+                $charm_key = 'union_user_month_charm_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
+                $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
             }
 
             $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
 
             foreach ($users as $user) {
-                $user->charm = $user_db->zscore('union_user_total_charm_rank_list_union_id_' . $union->id, $user->id);
-                $user->hi_coins = $user_db->zscore('union_user_total_charm_rank_list_union_id_' . $union->id, $user->id);
+                $user->charm = $user_db->zscore($charm_key, $user->id);
+                $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
+                $hi_coins = sprintf("%0.2f", $hi_coins / 1000);
+                $user->hi_coins = $hi_coins;
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionJson'));
