@@ -30,7 +30,9 @@
         <thead>
         <tr>
             {#<th width="20%">日期</th>#}
-            <th width="20%">房间</th>
+            <th width="20%">房间名称</th>
+            <th width="20%">房主ID</th>
+            <th width="20%">房主名称</th>
             <th>金额</th>
 
         </tr>
@@ -40,6 +42,8 @@
             <tr>
                 {#<td>{{ stat_at }}</td>#}
                 <td>{{ room.name }}</td>
+                <td>{{ room.user.uid }}</td>
+                <td>{{ room.user.nickname }}</td>
                 <td>{{ room.amount }}</td>
             </tr>
         {% endfor %}
