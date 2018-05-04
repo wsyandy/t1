@@ -1,4 +1,4 @@
-<form action="/admin/draw_histories/day_stat" method="get" class="search_form" autocomplete="off" id="search_form">
+<form action="/admin/draw_histories/hour_stat" method="get" class="search_form" autocomplete="off" id="search_form">
 
     <label for="stat_at_eq">时间</label>
     <input name="stat_at" type="text" id="stat_at_eq" class="form_datetime" value="{{ stat_at }}"/>

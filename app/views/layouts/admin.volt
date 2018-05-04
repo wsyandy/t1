@@ -322,7 +322,17 @@
                         <li><a href="/admin/province_stats/days">省份统计</a></li>
                     {% endif %}
                     {% if isAllowed('draw_histories','day_stat') %}
-                        <li><a href="/admin/draw_histories/day_stat">砸蛋统计</a></li>
+                        <li class="dropdown-submenu">
+                            <a href="javascript:;" tabindex="-1">砸蛋统计</a>
+                            <ul class="dropdown-menu">
+                                {% if isAllowed('draw_histories','day_stat') %}
+                                    <li><a href="/admin/draw_histories/day_stat">按天统计</a></li>
+                                {% endif %}
+                                {% if isAllowed('draw_histories','hout_stat') %}
+                                    <li><a href="/admin/draw_histories/hout_stat">小时统计</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
                     {% endif %}
                 </ul>
             </li>

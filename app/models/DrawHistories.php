@@ -255,7 +255,7 @@ class DrawHistories extends BaseModel
             if ($number >= 10000) {
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - 900],
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(600, 900)],
                     'order' => 'id desc']);
                 if ($hit_1w_history) {
                     info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
@@ -264,7 +264,7 @@ class DrawHistories extends BaseModel
 
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 120],
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(60, 180)],
                     'order' => 'id desc']);
                 if ($hit_1w_history) {
                     info('continue hit1w_sys', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
