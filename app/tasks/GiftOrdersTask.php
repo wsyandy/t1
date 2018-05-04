@@ -43,19 +43,31 @@ class GiftOrdersTask extends \Phalcon\Cli\Task
 
     function fixGiftOrdersAction()
     {
-        $gift_order_ids = [289739, 289998, 303991, 304576, 307077, 310210,
-            309782, 310267, 322167, 323055, 324129, 325509, 325533, 326327, 330062, 334703, 210756, 221973,
-            232450, 241867, 212474, 134265, 112181, 129563, 192817, 264272, 264712, 269915, 272508, 278114, 281565, 284934,
-            349690, 356507, 360032, 187921, 202558, 208721, 171945, 156282, 366499, 367774
-        ];
 
+        $gift_order_ids = [362831, 303580, 339479, 340539, 340630, 86597, 65847, 72725, 83020, 75314, 64092];
         $gift_orders = GiftOrders::findByIds($gift_order_ids);
+
 
         foreach ($gift_orders as $gift_order) {
 
             $amount = $gift_order->amount;
             $user = $gift_order->user;
             $created_at = $gift_order->created_at;
+
+            $user_gift = UserGifts::findFirstBy(['user_id' => $user->id, 'gift_id' => $gift_order->gift_id]);
+
+            $num = GiftOrders::sum(
+                [
+                    'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
+                    'bind' => ['user_id' => $user->id, 'gift_id' => $gift_order->gift_id],
+                    'column' => 'gift_num'
+                ]);
+
+            if ($num != $user_gift->num) {
+                $user_gift->num = $num;
+                $user_gift->update();
+            }
+
 
             if ($user->isIdCardAuth()) {
 
@@ -145,5 +157,30 @@ class GiftOrdersTask extends \Phalcon\Cli\Task
 //                }
 //            }
         }
+
+
+        $unions = Unions::findForeach();
+        $db = Users::getUserDb();
+        $start = beginOfDay(strtotime('2018-01-01'));
+
+        foreach ($unions as $union) {
+            $room_union_id = $union->id;
+            $total_key = 'union_room_total_income_union_id_' . $room_union_id;
+            $month_key = 'union_room_month_income_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $room_union_id;
+            $day_key = 'union_room_day_income_' . $day . '_union_id_' . $room_union_id;
+        }
+
+        if ($room_id && $room_union_id && GIFT_TYPE_COMMON == $gift_order->gift_type) {
+            $total_key = 'union_room_total_income_union_id_' . $room_union_id;
+            $month_key = 'union_room_month_income_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $room_union_id;
+            $day_key = 'union_room_day_income_' . $day . '_union_id_' . $room_union_id;
+
+            echoLine("room_union_id", $total_key, $month_key, $day_key, $gift_order->room_id, $gift_order->room_union_id);
+
+            $db->zincrby($total_key, $amount, $room_id);
+            $db->zincrby($month_key, $amount, $room_id);
+            $db->zincrby($day_key, $amount, $room_id);
+        }
+
     }
 }
