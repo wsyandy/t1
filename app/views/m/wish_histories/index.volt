@@ -117,7 +117,7 @@
             is_guard: false
         },
         mounted: function () {
-            vm.refresh();
+            this.refresh();
         },
         methods: {
             onCancelToast: function (index) {
