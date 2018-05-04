@@ -169,7 +169,7 @@ textarea[name=content]{width:100%; height:500px; border:1px solid #ddd; border-r
     font-weight: 700;
 }
 .table tr.cumulative td{
-    border-top: 1px solid #FF8728;
+    border-bottom: 1px solid #FF8728;
 }
 
 [v-cloak] {
