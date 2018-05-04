@@ -25,10 +25,6 @@ class PrivateUnionsController extends BaseController
 
         if ($this->request->isAjax()) {
 
-            if ($end_at > $start_at) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-            }
-
             $page = $this->params('page');
             $per_page = 10;
             $user_db = \Users::getUserDb();
@@ -50,6 +46,8 @@ class PrivateUnionsController extends BaseController
             }
 
             $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
+
+            info("union_stat", $key, $charm_key, $hi_coin_key);
 
             foreach ($users as $user) {
                 $user->charm = $user_db->zscore($charm_key, $user->id);
