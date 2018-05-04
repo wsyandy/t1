@@ -150,6 +150,10 @@ class DrawHistories extends BaseModel
     {
         $id = fetch($data, 'id');
         $day_limit_num = fetch($data, 'day_limit_num');
+        if ($day_limit_num < 1) {
+            return false;
+        }
+
         $user_db = Users::getUserDb();
         $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . $id;
         $num = $user_db->get($cache_key);
@@ -250,21 +254,8 @@ class DrawHistories extends BaseModel
 
             // 10w钻过滤，后台控制是否爆
             if ($number == 100000) {
-
                 info('检查10万钻', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-
-                if (false) {
-                    $user_hit_10w_history = self::findFirst([
-                        'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
-                        'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
-
-                    if ($user_hit_10w_history) {
-                        info('continue hit10w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-                        return 0;
-                    }
-                } else {
-                    return 0;
-                }
+                return 0;
             }
 
             // 第一次抽奖限制100
@@ -400,15 +391,44 @@ class DrawHistories extends BaseModel
 
             $type = fetch($datum, 'type');
             $number = fetch($datum, 'number');
+
             if (fetch($datum, 'rate') * 10 * $user_rate_multi >= $random) {
 
                 info('rate', $user->id, fetch($datum, 'name'), fetch($datum, 'rate') * 10 * $user_rate_multi, 'random', $random);
 
-                // 此礼物不增加倍率
-                if (fetch($datum, 'gift_id') == 73 && fetch($datum, 'rate') * 10 < $random) {
+                if (self::isDayLimit($datum)) {
+                    info('continue 每天个数限制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                     continue;
                 }
 
+                // 此礼物不增加倍率
+                if (fetch($datum, 'gift_id') == 73 && fetch($datum, 'rate') * 10 < $random) {
+                    info('continue 此礼物不增加倍率', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                    continue;
+                }
+
+                // 爆10w钻
+                if ($type == 'diamond' && $number == 100000) {
+
+                    if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
+                        continue;
+                    }
+
+                    $user_hit_10w_history = self::findFirst([
+                        'conditions' => 'user_id = :user_id: and type=:type: and number=:number:',
+                        'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
+
+                    if ($user_hit_10w_history) {
+                        info('continue hit10w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        continue;
+                    }
+
+                    info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+
+                    continue;
+                }
+
+                
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
@@ -421,11 +441,6 @@ class DrawHistories extends BaseModel
 
                 if ($total_pay_amount && ($number > $total_pay_amount * $total_pay_amount_rate)) {
                     info('continue 累计钻石限制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
-                    continue;
-                }
-
-                if (self::isDayLimit($datum)) {
-                    info('continue 每天个数限制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                     continue;
                 }
 
