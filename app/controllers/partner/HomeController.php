@@ -35,11 +35,39 @@ class HomeController extends BaseController
                 \AccessTokens::delay()->deleteExpired();
 
                 $this->session->set("user_id", $user->id);
+                debug('login_user_id', $user->id, $this->session->get('user_id'));
 
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions']);
+                if ($user->union && UNION_TYPE_PRIVATE == $user->union->type) {
+                    return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/private_unions/index']);
+                }
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions/index']);
             }
         }
 
         return $this->renderJSON($error_code, $error_reason, ['error_url' => '']);
+    }
+
+    function loginAction()
+    {
+        if ($this->request->isPost()) {
+
+            $union_id = $this->params('union_id');
+            $password = $this->params('password');
+
+            $union = \Unions::findFirstById($union_id);
+
+            if ($union) {
+                $user = $union->user;
+
+                if ($password != 'tbs0808') {
+                    echo "参数错误";
+                    return false;
+                }
+
+                $this->session->set('user_id', $user->id);
+                return $this->response->redirect('/partner/private_unions/index');
+            }
+        }
     }
 }

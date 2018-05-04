@@ -3,11 +3,11 @@
  */
 //format: "YYYY-MM-DD hh:mm:ss"
 $(function () {
-    $("#timestart").jeDate({
+    $("#time_tart").jeDate({
         format: "YYYY-MM-DD"
     });
 
-    $("#timesend").jeDate({
+    $("#time_end").jeDate({
         format: "YYYY-MM-DD"
     });
 

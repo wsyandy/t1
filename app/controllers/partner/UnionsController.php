@@ -17,7 +17,7 @@ class UnionsController extends BaseController
             }
         }
 
-        if ($union->needUpdateProfile() || STATUS_PROGRESS == $union->status) {
+        if ($union->needUpdateProfile()) {
             $forward = [
                 "namespace" => "partner",
                 "controller" => "unions",
@@ -46,9 +46,13 @@ class UnionsController extends BaseController
 
             $params = ['name' => $name, 'id_name' => $id_name, 'id_no' => $id_no, 'alipay_account' => $alipay_account];
 
-            $this->currentUser()->union->updateProfile($params);
+            $union = $this->currentUser()->union;
+            $union->updateProfile($params);
 
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions']);
+            $union->status = STATUS_ON;
+            $union->auth_status = AUTH_WAIT;
+            $union->update();
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/partner/unions/index']);
         }
     }
 
@@ -120,7 +124,7 @@ class UnionsController extends BaseController
                 $user->audience_time = $user->getAudienceTimeByDate($begin_at);
                 $user->broadcaster_time = $user->getBroadcasterTimeByDate($begin_at);
                 $user->host_broadcaster_time = $user->getHostBroadcasterTimeByDate($begin_at);
-                
+
                 if ($union_history->join_at && $union_history->join_at > $begin_at) {
                     $begin_at = $union_history->join_at;
                 }
