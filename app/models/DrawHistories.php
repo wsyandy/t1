@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 82) / 100;
+        $pool_rate = mt_rand(65, 83) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -377,7 +377,7 @@ class DrawHistories extends BaseModel
 
         $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
         $total_gift_decr_diamond = $user_db->get($cache_gift_decr_key);
-        $total_decr_diamond += $total_gift_decr_diamond;
+        //$total_decr_diamond += $total_gift_decr_diamond;
 
 
         // 计算用户倍率
