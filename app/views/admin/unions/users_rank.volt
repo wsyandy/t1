@@ -9,4 +9,4 @@
 </form>
 <label for="stat_at_eq">累计{{ total_hi_coins }}</label>
 
-{{ simple_table(users, ['成员信息': 'nickname','魅力值':'charm_value','贡献值':'wealth_value',"hi币收益":"hi_coins"]) }}
+{{ simple_table(users, ['成员信息': 'nickname_link','魅力值':'charm_value','贡献值':'wealth_value',"hi币收益":"hi_coins"]) }}

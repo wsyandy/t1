@@ -418,13 +418,11 @@ class UnionsController extends BaseController
         $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page);
 
         info("union_stat", $key, $charm_key, $hi_coin_key);
-        $user_datas = [];
         foreach ($users as $user) {
             $user->wealth = $user_db->zscore($key, $user->id);
             $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
             $hi_coins = sprintf("%0.2f", $hi_coins / 1000);
             $user->hi_coins = $hi_coins;
-            $user_datas[] = json_encode($user->toUnionJson(),JSON_UNESCAPED_UNICODE);
         }
 
         $cond = [
@@ -444,7 +442,7 @@ class UnionsController extends BaseController
         }
 
         $total_hi_coins = \HiCoinHistories::sum($cond);
-        $this->view->users = $user_datas;
+        $this->view->users = $users;
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
         $this->view->total_hi_coins = sprintf("%0.2f", $total_hi_coins);
