@@ -424,6 +424,11 @@ class DrawHistories extends BaseModel
                         continue;
                     }
 
+                    if ($total_decr_diamond + $number > $total_incr_diamond) {
+                        info('超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        continue;
+                    }
+
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
 
                     $user_db = Users::getUserDb();
@@ -435,7 +440,7 @@ class DrawHistories extends BaseModel
                     return $datum;
                 }
 
-                
+
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
