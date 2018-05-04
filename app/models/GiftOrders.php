@@ -114,7 +114,7 @@ class GiftOrders extends BaseModel
     {
         return fetch(Gifts::$PAY_TYPE, $this->pay_type);
     }
-    
+
     /**
      * @param $sender_id
      * @param $receiver_ids
@@ -277,7 +277,7 @@ class GiftOrders extends BaseModel
             }
         }
 
-        if ($gift->isDiamondPayType()) {
+        if ($gift->isDiamondPayType() && !$this->sender->isSystemUser()) {
             $this->updateUserData($opts);
         }
     }
@@ -304,7 +304,6 @@ class GiftOrders extends BaseModel
                 Rooms::allNoticePush($this);
             }
         }
-
 
         \Users::delay()->updateExperience($this->id, $params);
         \Users::delay()->updateCharm($this->id, $params);
