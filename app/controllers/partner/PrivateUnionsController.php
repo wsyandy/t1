@@ -30,7 +30,7 @@ class PrivateUnionsController extends BaseController
             }
 
             $page = $this->params('page');
-            $per_page = 6;
+            $per_page = 10;
             $user_db = \Users::getUserDb();
 
             if (!$start_at_time && !$end_at_time) {
