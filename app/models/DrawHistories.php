@@ -212,7 +212,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(55, 80) / 100;
+        $pool_rate = mt_rand(55, 82) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -261,6 +261,15 @@ class DrawHistories extends BaseModel
                     info('continue hit1w', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
                     return 0;
                 }
+
+                $hit_1w_history = self::findFirst([
+                    'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 120],
+                    'order' => 'id desc']);
+                if ($hit_1w_history) {
+                    info('continue hit1w_sys', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond);
+                    return 0;
+                }
             }
 
             $total_pay_amount_rate = mt_rand(3, 6);
@@ -283,10 +292,16 @@ class DrawHistories extends BaseModel
                 return 0;
             }
 
+            $interval_time = time() - 3600 * 3;
+            $cur_hour = intval(date("H"));
+            if ($cur_hour > 1 and $cur_hour < 9) {
+                $interval_time = time() - 3600 * 5;
+            }
+
             // 最近1小时只爆一个礼物
             $gift_hour_history = self::findFirst([
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
-                'bind' => ['type' => 'gift', 'start_at' => time() - 3600 * 3],
+                'bind' => ['type' => 'gift', 'start_at' => $interval_time],
                 'order' => 'id desc']);
             if ($gift_hour_history) {
                 info('continue gift_hour', $user->id, $number, $total_pay_amount, '支出', $total_decr_diamond + $number, $total_incr_diamond, 'gift', $gift_id);
