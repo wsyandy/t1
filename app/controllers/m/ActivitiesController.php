@@ -618,11 +618,7 @@ class ActivitiesController extends BaseController
         }
 
 
-        $last_gift_ids_array = $last_activity->getGiftIdsArray();
-        $gift_ids_array = $activity->getGiftIdsArray();
-
-        $last_gifts = \Gifts::findByIds($last_gift_ids_array);
-        $gifts = \Gifts::findByIds($gift_ids_array);
+        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity,$activity);
 
         $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
         $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
@@ -669,12 +665,7 @@ class ActivitiesController extends BaseController
             return false;
         }
 
-
-        $last_gift_ids_array = $last_activity->getGiftIdsArray();
-        $gift_ids_array = $activity->getGiftIdsArray();
-
-        $last_gifts = \Gifts::findByIds($last_gift_ids_array);
-        $gifts = \Gifts::findByIds($gift_ids_array);
+        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity,$activity);
 
         $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
         $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
