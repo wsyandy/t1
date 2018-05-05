@@ -158,8 +158,8 @@
                     {% if isAllowed('orders', 'index') %}
                         <li><a href="/admin/orders">订单列表</a></li>
                     {% endif %}
-                    {% if isAllowed('hi_coin_histories', 'orders') %}
-                        <li><a href="/admin/hi_coin_histories/orders">Hi币订单列表</a></li>
+                    {% if isAllowed('hi_coin_histories', 'index') %}
+                        <li><a href="/admin/hi_coin_histories/index">Hi币明细列表</a></li>
                     {% endif %}
                     {% if isAllowed('payments', 'index') %}
                         <li><a href="/admin/payments">支付流水</a></li>
