@@ -300,7 +300,7 @@ class DrawHistories extends BaseModel
 
                 $user_hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - mt_rand(600, 1200)],
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 1200],
                     'order' => 'id desc']);
                 if ($user_hit_1w_history) {
                     info('continue hit1w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
