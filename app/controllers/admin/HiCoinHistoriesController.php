@@ -94,5 +94,86 @@ class HiCoinHistoriesController extends BaseController
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
     }
 
+    function indexAction()
+    {
+        $page = $this->params('page');
+        $per_page = $this->params('per_page', 20);
 
+        $user_uid = $this->params('user_uid');
+        $union_id = $this->params('union_id');
+        $start_at = $this->params('start_at');
+        $end_at = $this->params('end_at');
+        $fee_type = $this->params('fee_type');
+
+        if (endOfDay(strtotime($end_at)) - beginOfDay(strtotime($start_at)) > 30 * 86400) {
+            echo "时间跨度不能超过一个月";
+            return false;
+        }
+
+        $cond = [
+            'conditions' => 'id > 0',
+        ];
+
+        $user = null;
+        $union = null;
+
+        if ($user_uid) {
+
+            $user = \Users::findFirstByUid($user_uid);
+
+            if ($user) {
+                $cond['conditions'] .= " and user_id = :user_id:";
+                $cond['bind']['user_id'] = $user->id;
+            } else {
+                echo "用户不存在";
+                return false;
+            }
+        }
+
+        if ($fee_type) {
+            $cond['conditions'] .= " and fee_type = :fee_type:";
+            $cond['bind']['fee_type'] = $fee_type;
+        }
+
+        if ($union_id) {
+
+            $union = \Unions::findFirstById($union_id);
+
+            if (!$union) {
+                echo "家族不存在";
+                return false;
+            }
+
+            $cond['conditions'] .= " and union_id = :union_id:";
+            $cond['bind']['union_id'] = $union_id;
+        }
+
+        if ($start_at) {
+            $cond['conditions'] .= " and created_at >= :start_at:";
+            $cond['bind']['start_at'] = beginOfDay(strtotime($start_at));
+        }
+
+        if ($end_at) {
+            $cond['conditions'] .= " and created_at <= :end_at:";
+            $cond['bind']['end_at'] = endOfDay(strtotime($end_at));
+        }
+
+
+        $hi_coin_histories = \HiCoinHistories::findPagination($cond, $page, $per_page);
+        $total_hi_coins = '';
+
+        if ($user || $union) {
+            $cond['column'] = 'hi_coins';
+            $total_hi_coins = \HiCoinHistories::sum($cond);
+        }
+
+        $this->view->hi_coin_histories = $hi_coin_histories;
+        $this->view->start_at = $start_at;
+        $this->view->end_at = $end_at;
+        $this->view->user_uid = $user_uid;
+        $this->view->union_id = $union_id;
+        $this->view->fee_type = intval($fee_type);
+        $this->view->total_hi_coins = $total_hi_coins;
+
+    }
 }
