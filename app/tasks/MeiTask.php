@@ -3440,6 +3440,56 @@ EOF;
         echoLine($total);
 
         $cond = [
+            'conditions' => 'union_id = :union_id: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-01')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+
+        /*1068,1001,1189,1014,1011,1036,1186,1026,1098*/
+
+        $user_db = Users::getUserDb();
+        $day = 20180429;
+        $day_key = 'union_user_day_hi_coins_rank_list_' . $day . '_union_id_' . 1068;
+        $user_ids = $user_db->zrange($day_key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
+
+        $cond = [
+            'conditions' => 'union_id = :union_id: and created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => ['union_id' => 1042, 'start' => beginOfDay(strtotime('2018-04-29')), 'end' => endOfDay(strtotime('2018-04-29')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+        $user_db = Users::getUserDb();
+        $month_start = 20180401;
+        $month_end = 20180430;
+        $month_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . 1068;
+        $user_ids = $user_db->zrange($month_key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
+
+        $cond = [
             'conditions' => 'union_id = :union_id: and created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
             'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-01')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
             'column' => 'hi_coins'
@@ -3449,19 +3499,63 @@ EOF;
 
         echoLine($num);
 
-        $users = Users::find(
-            [
-                'conditions' => 'id < 1000000 and (device_id is null or device_id < 1)',
-                'column' => 'id'
-            ]);
-        echoLine(count($users));
 
-        $users = Users::find(
-            [
-                'conditions' => 'id < 1000000 and device_id > 1',
-                'column' => 'id'
-            ]);
-        echoLine(count($users));
     }
 
+    function get()
+    {
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => GIFT_ORDER_STATUS_FREEZE
+            ],
+            'columns' => 'id'
+        ]);
+
+        $ids = [];
+        foreach ($gift_orders as $gift_order) {
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+
+            echoLine($gift_order->amount, $gift_order->room_id, $gift_order->room_union_id);
+
+//            $hi_coin_history = HiCoinHistories::findFirstBy(['gift_order_id' => $gift_order->id]);
+//
+//            if($hi_coin_history) {
+//                //            echoLine($hi_coin_history->union_id);
+//                $hi_coin_history->hi_coins = 0;
+//                $hi_coin_history->remark = $hi_coin_history->remark . "异常收到礼物";
+//                $hi_coin_history->update();
+//
+//                echoLine($hi_coin_history->hi_coins, $hi_coin_history->union_id);
+//            }
+        }
+
+    }
+
+    function findUsers()
+    {
+        $user_db = Users::getUserDb();
+        $key = 'union_user_total_hi_coins_rank_list_union_id_' . 1068;
+        $user_ids = $user_db->zrange($key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+
+            $cond = [
+                'conditions' => 'union_id = :union_id: and user_id = :user_id: and created_at <= :end: and fee_type = :fee_type:',
+                'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')),
+                    'end' => endOfMonth(strtotime('2018-04-01')),
+                    'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT, 'user_id' => $user_id],
+                'column' => 'hi_coins'
+            ];
+
+            $num = HiCoinHistories::sum($cond);
+
+            if ($score != $num) {
+                echoLine($user_id, $score, $num);
+            }
+        }
+    }
 }
