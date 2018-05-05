@@ -597,8 +597,7 @@ class ActivitiesController extends BaseController
         $this->view->end_time = date("Y/m/d H:i:s", $end_time);
     }
 
-    //礼物周榜活动
-    function giftCharmWeek20180430rankActivityAction()
+    function giftCharmRankActivity()
     {
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
@@ -618,7 +617,7 @@ class ActivitiesController extends BaseController
         }
 
 
-        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity,$activity);
+        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity, $activity);
 
         $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
         $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
@@ -645,51 +644,16 @@ class ActivitiesController extends BaseController
         $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
     }
 
+    //礼物周榜活动
+    function giftCharmWeek20180430rankActivityAction()
+    {
+        $this->giftCharmRankActivity();
+    }
+
     //礼物周榜活动    2018-05-07
     function giftCharmWeek20180507rankActivityAction()
     {
-        $id = $this->params('id');
-        $activity = \Activities::findFirstById($id);
-
-        if (!$activity) {
-            echo "参数错误";
-            return false;
-        }
-
-        $last_activity_id = $activity->last_activity_id;
-
-        $last_activity = \Activities::findFirstById($last_activity_id);
-
-        if (!$last_activity) {
-            echo "参数错误";
-            return false;
-        }
-
-        list($last_gifts, $gifts) = \Gifts::getGiftsList($last_activity,$activity);
-
-        $last_activity_start = date("Ymd", beginOfWeek($last_activity->start_at));
-        $last_activity_end = date("Ymd", endOfWeek($last_activity->start_at));
-
-        $last_opts = [
-            'last_activity' => $last_activity,
-            'last_gifts' => $last_gifts,
-            'last_activity_start' => $last_activity_start,
-            'last_activity_end' => $last_activity_end
-        ];
-        $last_activity_rank_list_users = \Users::getLastActivityRankListUsers($last_opts);
-
-        $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
-        $last_week_charm_rank_list_user = \Users::getLastWeekCharmRankListUser($opts);
-
-
-        $this->view->last_week_charm_rank_list_user = $last_week_charm_rank_list_user;
-        $this->view->last_activity_rank_list_users = $last_activity_rank_list_users;
-        $this->view->last_gifts = $last_gifts;
-        $this->view->id = $id;
-        $this->view->gifts = $gifts;
-        $this->view->activity = $activity;
-        $this->view->start_time = date("Y/m/d H:i:s", $activity->start_at);
-        $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
+        $this->giftCharmRankActivity();
     }
 
     function getCurrentActivityRankListAction()
