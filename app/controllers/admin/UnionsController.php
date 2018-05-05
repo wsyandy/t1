@@ -70,19 +70,24 @@ class UnionsController extends BaseController
 
         $user_uids = trim(preg_replace('/，/', ',', $union->user_uids), ',');
 
-        $user_uids = explode(',', $user_uids);
-        $room_ids = [];
+        if ($user_uids) {
+            $user_uids = explode(',', $user_uids);
+            $room_ids = [];
 
-        foreach ($user_uids as $user_uid) {
-            $user = \Users::findFirstByUid($user_uid);
+            foreach ($user_uids as $user_uid) {
+                $user = \Users::findFirstByUid($user_uid);
 
-            if ($user && $user->room_id) {
-                $room_ids[] = $user->room_id;
+                if ($user && $user->room_id) {
+
+                    $room_ids[] = $user->room_id;
+                }
             }
-        }
 
-        if ($room_ids) {
-            $union->room_ids = implode(',', $room_ids);
+            if ($room_ids) {
+                $union->room_ids = implode(',', $room_ids);
+            } else {
+                $union->room_ids = '';
+            }
         } else {
             $union->room_ids = '';
         }

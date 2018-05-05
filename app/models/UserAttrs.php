@@ -244,6 +244,7 @@ trait UserAttrs
     {
         $data = [
             'id' => $this->id,
+            'uid' => $this->uid,
             'nickname' => $this->nickname,
             'age' => $this->age,
             'sex' => $this->sex,

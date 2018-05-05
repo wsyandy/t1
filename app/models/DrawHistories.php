@@ -221,14 +221,14 @@ class DrawHistories extends BaseModel
                         'column' => 'number'
                     ]);
 
-                    if ($user_hit_diamond < 150 && mt_rand(1, 100) < 85) {
-                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 50);
+                    if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 75) {
+                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 35);
                         if ($user_rate_multi > 10) {
                             $user_rate_multi = 10;
                         }
                     }
 
-                    info('五分钟内倍率', $user->id, '$user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
+                    info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
                 }
             }
         }
@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 85) / 100;
+        $pool_rate = mt_rand(65, 80) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -357,10 +357,10 @@ class DrawHistories extends BaseModel
         // 必中钻石
         if ($hit_diamond) {
             $rate = mt_rand(1, 100);
-            if ($rate < 10) {
+            if ($rate < 15) {
                 return $data[7];
             }
-            if ($rate < 40) {
+            if ($rate < 45) {
                 return $data[8];
             }
 
@@ -466,7 +466,12 @@ class DrawHistories extends BaseModel
             }
         }
 
-        return null;
+
+        if (mt_rand(1, 100) > 80) {
+            return $data[9];
+        }
+
+        return $data[11];
     }
 
     static function createHistory($user, $opts = [])
