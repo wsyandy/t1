@@ -222,7 +222,7 @@ class DrawHistories extends BaseModel
                     ]);
 
                     if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 75) {
-                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 50);
+                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 30);
                         if ($user_rate_multi > 10) {
                             $user_rate_multi = 10;
                         }
@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 82) / 100;
+        $pool_rate = mt_rand(65, 80) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
