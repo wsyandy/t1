@@ -71,15 +71,25 @@ class RoomStatsController extends BaseController
         $start_date = $this->params('start_date', date('Y-m-d'));
         $end_date = $this->params('end_date', date('Y-m-d'));
         $room_id = $this->params('room_id');
-        $user_id = $this->params('user_id');
+        $user_uid = $this->params('user_uid');
         $union_id = $this->params('union_id');
 
         $begin = beginOfDay(strtotime($start_date));
         $end = endOfDay(strtotime($end_date));
 
-        if ($end - $begin > 31 * 86400) {
-            echo "时间跨度不能超过一个月";
-            return false;
+        $user = \Users::findFirstByUid($user_uid);
+
+        if ($user) {
+            $user_id = $user->id;
+        }
+
+        if ($start_date != $end_date) {
+
+            if (!$room_id && !$user_id && !$union_id) {
+                echo "禁止跨天批量查询";
+                return false;
+            }
+
         }
 
         $stat_at = date("Ymd", strtotime($start_date));
@@ -150,6 +160,6 @@ class RoomStatsController extends BaseController
         $this->view->stat_fields = ['房间ID', '名称', '房主信息', '家族ID', '进入房间人数', '钻石流水', '送钻石礼物人数', '送钻石礼物个数',
             '人均送钻石礼物个数', '房主时长', '主播时长', '旁听时长'];
         $this->view->room_id = $room_id ? $room_id : '';
-        $this->view->user_id = $user_id ? $user_id : '';
+        $this->view->user_uid = $user_uid ? $user_uid : '';
     }
 }

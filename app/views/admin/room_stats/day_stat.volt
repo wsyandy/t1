@@ -5,8 +5,8 @@
     <label for="end_date">结束时间</label>
     <input type="text" name="end_date" class="form_datetime" id="end_date" value="{{ end_date }}" size="16">
 
-    <label for="user_id">房主ID</label>
-    <input type="text" name="user_id" id="user_id" value="{{ user_id }}">
+    <label for="user_uid">房主UID</label>
+    <input type="text" name="user_uid" id="user_uid" value="{{ user_uid }}">
 
     <label for="room_id">房间ID</label>
     <input type="text" name="room_id" id="room_id" value="{{ room_id }}">
