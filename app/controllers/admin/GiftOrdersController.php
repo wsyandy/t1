@@ -52,7 +52,7 @@ class GiftOrdersController extends BaseController
 
         if ($room_user_uid) {
 
-            $room_user = \Users::findFirstById($room_user_uid);
+            $room_user = \Users::findFirstByUid($room_user_uid);
 
             if ($room_user->room_id) {
                 $cond['conditions'] .= ' and room_id =:room_id:';
@@ -63,7 +63,7 @@ class GiftOrdersController extends BaseController
 
         if ($sender_uid) {
 
-            $sender = \Users::findFirstById($sender_uid);
+            $sender = \Users::findFirstByUid($sender_uid);
 
             if ($sender) {
                 $cond['conditions'] .= ' and sender_id =:sender_id:';
@@ -74,7 +74,7 @@ class GiftOrdersController extends BaseController
 
         if ($user_uid) {
 
-            $user = \Users::findFirstById($user_uid);
+            $user = \Users::findFirstByUid($user_uid);
 
             if ($user) {
                 $cond['conditions'] .= ' and user_id =:user_id:';
