@@ -466,7 +466,12 @@ class DrawHistories extends BaseModel
             }
         }
 
-        return null;
+
+        if (mt_rand(1, 100) > 80) {
+            return $data[9];
+        }
+
+        return $data[11];
     }
 
     static function createHistory($user, $opts = [])
