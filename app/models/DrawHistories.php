@@ -361,10 +361,10 @@ class DrawHistories extends BaseModel
         // 必中钻石
         if ($hit_diamond) {
             $rate = mt_rand(1, 100);
-            if ($rate < 15) {
+            if ($rate < 5) {
                 return $data[7];
             }
-            if ($rate < 45) {
+            if ($rate < 40) {
                 return $data[8];
             }
 
