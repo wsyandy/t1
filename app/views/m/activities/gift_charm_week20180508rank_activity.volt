@@ -33,14 +33,16 @@
                 </li>
             {% endif %}
             {% for index, last_gift in last_gifts %}
-                <li>
-                    <span class="type">{{ last_gift.name }}</span>
-                    <img src="{{ last_gift.image_small_url }}" alt="头像"/>
-                    {% if last_activity_rank_list_users %}
-                        <span class="name">{{ last_activity_rank_list_users[index]['nickname'] }}</span>
-                        <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}</span>
-                    {% endif %}
-                </li>
+                {% if index < 3 %}
+                    <li>
+                        <span class="type">{{ last_gift.name }}</span>
+                        <img src="{{ last_gift.image_small_url }}" alt="头像"/>
+                        {% if last_activity_rank_list_users %}
+                            <span class="name">{{ last_activity_rank_list_users[index]['nickname'] }}</span>
+                            <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}</span>
+                        {% endif %}
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
