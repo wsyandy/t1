@@ -22,7 +22,7 @@ html,body{
     background-color: #2A82FF ;
 }
 .week_activity_banner{
-    width: 7.5rem;
+    width: 100%;
     height: 4.1rem;
     background: url(../images/week_activity_banner_2.png) center no-repeat;
     background-size: cover;
@@ -97,9 +97,7 @@ html,body{
     margin-bottom: .04rem;
 }
 .week_charm_rewardul{
-    margin-top: .22rem;
-    margin-left: .25rem;
-    margin-bottom: .4rem;
+    margin: .22rem auto 0.4rem;
     width: 7rem;
     height: 4.5rem;
     padding-top: .64rem;
@@ -255,7 +253,7 @@ html,body{
     color: #595959;
 }
 .week_hint_text{
-    width: 7.5rem;
+    width: 100%;
     height: 1.54rem;
     line-height: 1.54rem;
     font-size: .22rem;
