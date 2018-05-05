@@ -103,7 +103,8 @@
         </li>
         {% for index, gift in gifts %}
             {% if index < 3 %}
-                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index=={{ index + 2 }}&&'cur']"><img
+                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})"
+                    :class="[tab_index=={{ index + 2 }}&&'cur']"><img
                             src="{{ gift.image_small_url }}"
                             alt="icon"><span>{{ gift.name }}</span>
                 </li>
@@ -112,7 +113,7 @@
     </ul>
     <ul class="week_list_content" v-if="users.length">
         <li v-for="user,index in users">
-            <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank}</span>
+            <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
             <img :src="user.avatar_small_url" alt="头像"/>
             <span class="name">${user.nickname}</span>
             <span>魅力值：${user.charm_value}</span>
