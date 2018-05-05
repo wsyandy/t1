@@ -649,8 +649,8 @@ class ActivitiesController extends BaseController
         $this->view->end_time = date("Y/m/d H:i:s", $activity->end_at);
     }
 
-    //礼物周榜活动    2018-05-08
-    function giftCharmWeek20180508rankActivityAction()
+    //礼物周榜活动    2018-05-07
+    function giftCharmWeek20180507rankActivityAction()
     {
         $id = $this->params('id');
         $activity = \Activities::findFirstById($id);
