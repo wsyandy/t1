@@ -1147,24 +1147,19 @@ class UsersTask extends \Phalcon\Cli\Task
 
         $product_channel_id = 1;
 
-        $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . '20180416';
-
         $user_db = Users::getUserDb();
-        $user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
 
         $cond = [
-            'conditions' => '(pay_amount < 1 or pay_amount is null) and register_at > 0 and last_at <= :last_at: and
+            'conditions' => '(pay_amount < 1 or pay_amount is null) and (hi_coins < 0.045 or hi_coins is null) and 
+            charm_value < 1 and register_at > 0 and last_at <= :last_at: and
              user_type = :user_type: and avatar_status = :avatar_status:',
             'bind' => ['last_at' => $last_at, 'user_type' => USER_TYPE_ACTIVE, 'avatar_status' => AUTH_SUCCESS],
             'order' => 'last_at desc',
             'columns' => 'id'
         ];
 
-        if ($user_ids) {
-            $cond['conditions'] .= " and id not in (" . implode(',', $user_ids) . ")";
-        }
-
         $users = Users::find($cond);
+
 
         echoLine(count($users));
 
@@ -1183,7 +1178,7 @@ class UsersTask extends \Phalcon\Cli\Task
             $silent_user_ids[] = $silent_user->id;
         }
 
-        $gift_ids = [7, 36];
+        $gift_ids = [66, 36];
 
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
@@ -1213,9 +1208,9 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_db->zadd($send_user_ids_key, time(), $user->id);
 
             $data = ['sender_id' => $send_user->id, 'gift_id' => $gift_id];
-            $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 3 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 7 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
 
-            $push_data = ['title' => $content, 'body' => $content];
+            $push_data = ['title' => $content, 'body' => ''];
             $delay = mt_rand(1, 1800);
 
             if (isDevelopmentEnv()) {
