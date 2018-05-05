@@ -17,3 +17,18 @@
 {%- endmacro %}
 
 {{ simple_table(rooms, ['房间名': 'name','房主ID':'room_owner_id','房主名称':'room_owner_nickname',"金额":"amount"]) }}
+
+
+<script type="text/javascript">
+    // $('.selectpicker').selectpicker();
+
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2
+    });
+</script>

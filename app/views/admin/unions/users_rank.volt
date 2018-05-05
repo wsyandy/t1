@@ -13,3 +13,18 @@
     <img src="{{ user.avatar_small_url }}" height="50" width="50"/>
 {%- endmacro %}
 {{ simple_table(users, ['成员信息': 'nickname','头像':'icon_link','魅力值':'charm_value','贡献值':'wealth_value',"hi币收益":"hi_coins"]) }}
+
+
+<script type="text/javascript">
+    // $('.selectpicker').selectpicker();
+
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2
+    });
+</script>
