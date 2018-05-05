@@ -362,7 +362,7 @@ class UsersController extends BaseController
         if ($avatar_file) {
             $md5_val = md5_file($avatar_file);
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
-                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $hot_cache->setex($cache_key . '_' . $md5_val, 600, time());
                 $user->updateAvatar($avatar_file);
             } else {
                 info('重复上传', $avatar_file);
@@ -397,7 +397,7 @@ class UsersController extends BaseController
         if ($avatar_file) {
             $md5_val = md5_file($avatar_file);
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
-                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $hot_cache->setex($cache_key . '_' . $md5_val, 600, time());
                 $user->updateAvatar($avatar_file);
             } else {
                 info('重复上传', $avatar_file);
