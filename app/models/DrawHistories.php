@@ -211,13 +211,13 @@ class DrawHistories extends BaseModel
 
                 $user_hit_num = \DrawHistories::count([
                     'conditions' => 'user_id = :user_id: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
+                    'bind' => ['user_id' => $user->id, 'start_at' => time() - 180]
                 ]);
 
                 if ($user_hit_num > mt_rand(35, 60)) {
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
-                        'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'start_at' => time() - 300],
+                        'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'start_at' => time() - 180],
                         'column' => 'number'
                     ]);
 
