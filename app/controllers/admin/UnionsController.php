@@ -51,6 +51,8 @@ class UnionsController extends BaseController
             }
         }
 
+        $union->room_ids = trim(preg_replace('/，/', ',', $union->room_ids), ',');
+
         if ($union->update()) {
             return renderJSON(ERROR_CODE_SUCCESS, '');
         }
@@ -447,5 +449,44 @@ class UnionsController extends BaseController
         $this->view->end_at_time = $end_at_time;
         $this->view->total_hi_coins = sprintf("%0.2f", $total_hi_coins);
         $this->view->id = $id;
+    }
+
+    function updatePermissionsAction()
+    {
+        $id = $this->params('id');
+        $union = \Unions::findFirstById($id);
+        $all_select_permissions = [];
+
+        if ($union->permissions) {
+            $all_select_permissions = explode(",", $union->permissions);
+        }
+
+        if ($this->request->isPost()) {
+
+            $permissions = $this->params('permissions', []);
+
+            if ($permissions) {
+                $permissions = implode(',', $permissions);
+            } else {
+                $permissions = '';
+            }
+
+            $union->permissions = $permissions;
+
+            if ($union->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '报存失败');
+        }
+
+        $this->view->union = $union;
+        $this->view->all_select_permissions = $all_select_permissions;
+        $this->view->permissions = \Unions::$PERMISSIONS;
+    }
+
+    function updateRoomIdsAction()
+    {
+        
     }
 }

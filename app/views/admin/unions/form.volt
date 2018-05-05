@@ -7,7 +7,8 @@
 {% endif %}
 
 {% if union.type == 2 %}
-    {{ f.select('recommend',['label':'推荐','collection':Unions.RECOMMEND,'width':'100%']) }}
+    {#{{ f.select('recommend',['label':'推荐','collection':Unions.RECOMMEND,'width':'50%']) }}#}
+    {{ f.input('room_ids',['label':'统计展示房间id(用,分割)','width':'100%']) }}
 {% endif %}
 
 {{ f.submit('保存') }}

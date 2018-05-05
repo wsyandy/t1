@@ -117,10 +117,20 @@ class PrivateUnionsController extends BaseController
 
         $total_amount = 0;
 
-        foreach ($rooms as $room) {
-            $room->amount = $user_db->zscore($key, $room->id);
-            $data[] = $room;
-            $total_amount += $room->amount;
+        if ($union->room_ids) {
+
+            $room_ids = explode(',', $union->room_ids);
+
+            foreach ($rooms as $room) {
+
+                if (!in_array($room->id, $room_ids)) {
+                    continue;
+                }
+
+                $room->amount = $user_db->zscore($key, $room->id);
+                $data[] = $room;
+                $total_amount += $room->amount;
+            }
         }
 
 
