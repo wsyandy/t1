@@ -77,15 +77,10 @@ class RoomStatsController extends BaseController
         $begin = beginOfDay(strtotime($start_date));
         $end = endOfDay(strtotime($end_date));
 
-        $user = \Users::findFirstByUid($user_uid);
-
-        if ($user) {
-            $user_id = $user->id;
-        }
 
         if ($start_date != $end_date) {
 
-            if (!$room_id && !$user_id && !$union_id) {
+            if (!$room_id && !$user_uid && !$union_id) {
                 echo "禁止跨天批量查询";
                 return false;
             }
@@ -94,8 +89,9 @@ class RoomStatsController extends BaseController
 
         $stat_at = date("Ymd", strtotime($start_date));
 
-        if ($user_id) {
-            $user = \Users::findFirstById($user_id);
+
+        if ($user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
 
             if ($user) {
                 $room_id = $user->room_id;
