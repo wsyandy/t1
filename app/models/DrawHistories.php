@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(70, 84) / 100;
+        $pool_rate = mt_rand(65, 85) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -271,8 +271,8 @@ class DrawHistories extends BaseModel
             }
 
             $hit_num = self::count([
-                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type1:) and created_at>=:start_at:',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type1' => 'gift', 'start_at' => time()],
+                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and created_at>=:start_at:',
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'start_at' => time()],
                 'order' => 'id desc']);
 
             if ($hit_num >= 3) {
@@ -286,7 +286,7 @@ class DrawHistories extends BaseModel
 
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(1, 60)],
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(5, 60)],
                     'order' => 'id desc']);
 
                 if ($hit_1w_history) {
@@ -295,8 +295,8 @@ class DrawHistories extends BaseModel
                 }
 
                 $user_hit_1w_history = self::findFirst([
-                    'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(600, 900)],
+                    'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and number>=:number: and created_at>=:start_at:',
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - mt_rand(600, 900)],
                     'order' => 'id desc']);
                 if ($user_hit_1w_history) {
                     info('continue hit1w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
