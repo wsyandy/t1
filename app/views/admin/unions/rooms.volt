@@ -9,7 +9,14 @@
 </form>
 <label for="stat_at_eq">累计{{ total_amount }}</label>
 
-{{ simple_table(rooms, ['房间名': 'name','房主UID':'room_user_uid','房主名称':'room_user_nickname',"金额":"amount"]) }}
+{%- macro room_user_id(room) %}
+   {{ room.user.uid }}
+{%- endmacro %}
+{%- macro room_user_nickname(room) %}
+    {{ room.user.nickname }}
+{%- endmacro %}
+
+{{ simple_table(rooms, ['房间名': 'name','房主UID':'room_user_id','房主名称':'room_user_nickname',"金额":"amount"]) }}
 
 
 <script type="text/javascript">
