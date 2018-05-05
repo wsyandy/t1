@@ -3322,7 +3322,7 @@ EOF;
 
         $start = date("Ymd", beginOfWeek());
         $end = date("Ymd", endOfWeek());
-        $gift_id = 69;
+        $gift_id = 70;
         $key = "gift_charm_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start . "_end_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrevrange($key, 0, -1, 'withscores');
@@ -3332,7 +3332,7 @@ EOF;
             $total_amount = GiftOrders::sum(
                 [
                     'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
-                    'bind' => ['user_id' => $user_id, 'gift_id' => 69],
+                    'bind' => ['user_id' => $user_id, 'gift_id' => 70],
                     'column' => 'amount'
                 ]);
 
@@ -3511,6 +3511,20 @@ EOF;
             ],
             'columns' => 'id'
         ]);
+
+        //1008720
+        $amount = GiftOrders::sum(
+            [
+                'conditions' => 'room_id = :room_id: and room_union_id = :room_union_id: and created_at >= :start: and 
+                created_at <= :end: and  status = :status: and gift_type = :gift_type: and pay_type = :pay_type:',
+                'bind' => ['room_id' => 1008720, 'room_union_id' => 1068, 'start' => beginOfDay(strtotime('2018-04-09')),
+                    'end' => endOfDay(strtotime('2018-04-09')), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                    'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
+            ]
+        );
+
+        echoLine($amount);
 
         $ids = [];
         foreach ($gift_orders as $gift_order) {
