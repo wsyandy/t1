@@ -424,12 +424,12 @@ class DrawHistories extends BaseModel
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
 
                     if ($user_hit_10w_history) {
-                        info('continue hit10w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        info('continue hit10w已命中', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
                     }
 
                     if ($total_decr_diamond + $number > $total_incr_diamond) {
-                        info('continue 超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        info('continue hit10w超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
                     }
 
@@ -442,7 +442,7 @@ class DrawHistories extends BaseModel
                         $total_pay_amount = intval($history->total_pay_amount);
                         $total_get_amount = $history->total_diamond + $history->total_gift_diamond;
                         if ($total_pay_amount < $total_get_amount) {
-                            info('continue 超出支出', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                            info('continue hit10w超出支出', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                             continue;
                         }
                     }
