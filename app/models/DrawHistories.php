@@ -413,7 +413,7 @@ class DrawHistories extends BaseModel
 
                 $hour = intval(date("H"));
                 // 爆10w钻
-                if (false && $type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
+                if ($type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
 
                     if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
                         continue;
@@ -429,8 +429,22 @@ class DrawHistories extends BaseModel
                     }
 
                     if ($total_decr_diamond + $number > $total_incr_diamond) {
-                        info('超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        info('continue 超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
+                    }
+
+                    $history = self::findFirst([
+                        'conditions' => 'user_id = :user_id:',
+                        'bind' => ['user_id' => $user->id],
+                        'order' => 'id desc']);
+
+                    if ($history) {
+                        $total_pay_amount = intval($history->total_pay_amount);
+                        $total_get_amount = $history->total_diamond + $history->total_gift_diamond;
+                        if ($total_pay_amount < $total_get_amount) {
+                            info('continue 超出支出', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                            continue;
+                        }
                     }
 
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
