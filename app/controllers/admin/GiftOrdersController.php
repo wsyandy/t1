@@ -89,8 +89,8 @@ class GiftOrdersController extends BaseController
         }
 
         if ($user_union_id) {
-            $cond['conditions'] .= ' and user_union_id =:user_union_id:';
-            $cond['bind']['user_union_id'] = $user_union_id;
+            $cond['conditions'] .= ' and receiver_union_id =:receiver_union_id:';
+            $cond['bind']['receiver_union_id'] = $user_union_id;
         }
 
 

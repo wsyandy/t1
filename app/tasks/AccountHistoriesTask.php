@@ -12,8 +12,8 @@ class AccountHistoriesTask extends \Phalcon\Cli\Task
     function testChangeBalanceAction()
     {
         $user = \Users::findLast();
-        $amount = 100;
-        $opts = array('remark' => '系统赠送100钻石');
+        $amount = 100000;
+        $opts = array('remark' => '系统赠送100000钻石');
         $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
         var_dump($result);
     }
