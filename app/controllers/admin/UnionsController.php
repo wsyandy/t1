@@ -371,8 +371,8 @@ class UnionsController extends BaseController
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
 
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
 
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
@@ -430,8 +430,8 @@ class UnionsController extends BaseController
     {
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 
@@ -456,7 +456,7 @@ class UnionsController extends BaseController
             $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
         }
 
-        $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page);
+        $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key));
 
         info("union_stat", $key, $charm_key, $hi_coin_key);
         foreach ($users as $user) {

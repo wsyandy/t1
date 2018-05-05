@@ -12,17 +12,23 @@
         {{ options(Gifts.PAY_TYPE, pay_type) }}
     </select>
 
-    <label for="sender_id_eq">发送方ID</label>
-    <input name="gift_order[sender_id_eq]" type="text" id="sender_id_eq" value="{{ sender_id }}"/>
+    <label for="sender_uid">发送方UID</label>
+    <input name="sender_uid" type="text" id="sender_uid" value="{{ sender_uid }}"/>
 
-    <label for="user_id_eq">接收方ID</label>
-    <input name="gift_order[user_id_eq]" type="text" id="user_id_eq" value="{{ user_id }}"/>
+    <label for="user_uid">接收方UID</label>
+    <input name="user_uid" type="text" id="user_uid" value="{{ user_uid }}"/>
 
     <label for="gift_id_eq">礼物ID</label>
     <input name="gift_order[gift_id_eq]" type="text" id="gift_id_eq" value="{{ gift_id }}"/>
 
-    <label for="room_user_id_eq">房主ID</label>
-    <input name="room_user_id" type="text" value="{{ room_user_id }}" id="room_user_id"/>
+    <label for="room_user_uid">房主UID</label>
+    <input name="room_user_uid" type="text" value="{{ room_user_uid }}" id="room_user_uid"/>
+
+    <label for="sender_union_id">发送方家族ID</label>
+    <input name="sender_union_id" type="text" id="sender_union_id" value="{{ sender_union_id }}"/>
+
+    <label for="user_union_id">接收方家族ID</label>
+    <input name="user_union_id" type="text" id="user_union_id" value="{{ user_union_id }}"/>
 
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>

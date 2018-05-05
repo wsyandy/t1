@@ -9,11 +9,19 @@
 </form>
 <label for="stat_at_eq">累计{{ total_amount }}</label>
 
-{%- macro room_owner_id(room) %}
-   {{ room.user.uid }}
-{%- endmacro %}
-{%- macro room_owner_nickname(room) %}
-    {{ room.user.nickname }}
-{%- endmacro %}
+{{ simple_table(rooms, ['房间名': 'name','房主UID':'room_user_uid','房主名称':'room_user_nickname',"金额":"amount"]) }}
 
-{{ simple_table(rooms, ['房间名': 'name','房主ID':'room_owner_id','房主名称':'room_owner_nickname',"金额":"amount"]) }}
+
+<script type="text/javascript">
+    // $('.selectpicker').selectpicker();
+
+    $(".form_datetime").datetimepicker({
+        language: "zh-CN",
+        format: 'yyyy-mm-dd',
+        autoclose: 1,
+        todayBtn: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2
+    });
+</script>
