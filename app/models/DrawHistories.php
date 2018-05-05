@@ -229,7 +229,7 @@ class DrawHistories extends BaseModel
                     }
 
                     if ($user_rate_multi > 2 && $total_get_amount > $total_pay_amount + 3000) {
-                        $user_rate_multi = 2;
+                        $user_rate_multi = 3;
                     }
 
                     info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
