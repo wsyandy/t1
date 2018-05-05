@@ -34,7 +34,7 @@
                 </div>
                 <ul class="member_name">
                     <li class="nickname "> {{ current_user.nickname }} <span class="president">会长</span></li>
-                    <li> {{ current_user.id }}</li>
+                    <li> {{ current_user.uid }}</li>
                 </ul>
             </td>
             <td>{{ current_user.income }}</td>
@@ -49,7 +49,7 @@
                 </div>
                 <ul class="member_name">
                     <li class="nickname"> ${user.nickname}</li>
-                    <li> ${user.id}</li>
+                    <li> ${user.uid}</li>
                 </ul>
             </td>
             <td>${user.income}</td>
