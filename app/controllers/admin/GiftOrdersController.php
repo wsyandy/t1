@@ -78,7 +78,7 @@ class GiftOrdersController extends BaseController
 
             if ($user) {
                 $cond['conditions'] .= ' and user_id =:user_id:';
-                $cond['bind']['sender_id'] = $user->id;
+                $cond['bind']['user_id'] = $user->id;
             }
 
         }
