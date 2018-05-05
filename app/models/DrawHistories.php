@@ -415,7 +415,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
 
-                    if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 50) {
+                    if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 60) {
                         continue;
                     }
 
