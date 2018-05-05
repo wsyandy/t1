@@ -116,7 +116,7 @@ class BaseController extends \ApplicationController
 //            return false;
 //        }
 
-        if ($union && (!$this->currentUser()->isUnionHost($union || !$union->canLoginBackstage()))) {
+        if ($union && (!$this->currentUser()->isUnionHost($union) || !$union->canLoginBackstage())) {
             $this->clearLoginInfo();
             echo "您无权限登录";
             return false;
