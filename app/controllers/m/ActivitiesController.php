@@ -628,10 +628,10 @@ class ActivitiesController extends BaseController
             'last_activity_start' => $last_activity_start,
             'last_activity_end' => $last_activity_end
         ];
-        $last_activity_rank_list_users = \Users::getLastActivityRankListUsers($last_opts);
+        $last_activity_rank_list_users = \Activities::getLastActivityRankListUsers($last_opts);
 
         $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
-        $last_week_charm_rank_list_user = \Users::getLastWeekCharmRankListUser($opts);
+        $last_week_charm_rank_list_user = \Activities::getLastWeekCharmRankListUser($opts);
 
 
         $this->view->last_week_charm_rank_list_user = $last_week_charm_rank_list_user;

@@ -1008,45 +1008,4 @@ trait UserAttrs
             return false;
         }
     }
-
-    static function getLastActivityRankListUsers($last_opts)
-    {
-        $last_gifts = fetch($last_opts,'last_gifts');
-        $last_activity = fetch($last_opts,'last_activity');
-        $last_activity_start = fetch($last_opts,'last_activity_start');
-        $last_activity_end = fetch($last_opts,'last_activity_end');
-
-        $last_activity_rank_list_users = [];
-        foreach ($last_gifts as $last_gift) {
-
-            if ($last_activity->id < 16) {
-                $key = "week_charm_rank_list_gift_id_" . $last_gift->id . "_" . $last_activity_start . "_" . $last_activity_end;
-            } else {
-                $key = $last_activity->getStatKey($last_gift->id);
-            }
-
-            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 1);
-
-            if (isset($users[0])) {
-                $last_activity_rank_list_users[] = $users[0]->toRankListJson();
-            }
-        }
-
-        return $last_activity_rank_list_users;
-    }
-
-    static function getLastWeekCharmRankListUser($opts)
-    {
-        $last_week_charm_rank_list_key = self::generateFieldRankListKey('week', 'charm', $opts);
-        $users = self::findFieldRankListByKey($last_week_charm_rank_list_key, 'charm', 1, 1);
-
-        $last_week_charm_rank_list_user = [];
-
-        if (isset($users[0])) {
-            $last_week_charm_rank_list_user = $users[0]->toRankListJson();
-        }
-
-        return $last_week_charm_rank_list_user;
-
-    }
 }
