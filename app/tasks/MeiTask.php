@@ -3572,4 +3572,38 @@ EOF;
             }
         }
     }
+
+    function fixRoomIncome1Action()
+    {
+        $start_at = beginOfDay(strtotime('2018-03-13'));
+        $room_db = Rooms::getRoomDb();
+
+        for ($day = $start_at; $day < beginOfDay(); $day += 86400) {
+
+            $stat_at = date("Ymd", $day);
+
+            $rooms = Rooms::dayStatRooms($stat_at);
+
+            foreach ($rooms as $room) {
+
+                $room_total_income = $room->getDayIncome($stat_at);
+
+                $amount = GiftOrders::sum(
+                    [
+                        'conditions' => 'room_id = :room_id: and created_at >= :start: and 
+                created_at <= :end: and  status = :status: and gift_type = :gift_type: and pay_type = :pay_type:',
+                        'bind' => ['room_id' => $room->id, 'start' => beginOfDay(strtotime($stat_at)),
+                            'end' => endOfDay(strtotime($stat_at)), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                            'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                        'column' => 'amount'
+                    ]
+                );
+
+                if ($amount != $room_total_income) {
+                    echoLine($amount, $room_total_income, $stat_at, $room->id);
+                    $room_db->zadd($room->generateStatIncomeDayKey($stat_at), $amount, $room->id);
+                }
+            }
+        }
+    }
 }

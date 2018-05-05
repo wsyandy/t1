@@ -289,13 +289,15 @@ class GiftOrders extends BaseModel
         $params = ['time' => $time];
 
         //统计房间收益
-        if ($this->room) {
+        $room = $this->room;
+
+        if ($room) {
 
             if (!$this->gift->isCar()) {
                 $this->room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, $params);
+                    Rooms::statDayIncome($room, $this->amount, $this->sender_id, $this->gift_num, $params);
                 }
             }
 
