@@ -47,7 +47,7 @@
                 </div>
                 <ul class="member_name">
                     <li class="nickname"> ${user.nickname}</li>
-                    <li> ${user.id}</li>
+                    <li> ${user.uid}</li>
                 </ul>
             </td>
             <td>${user.charm_value}</td>
