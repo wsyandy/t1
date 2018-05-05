@@ -23,6 +23,7 @@ class Unions extends BaseModel
     static $AUTH_STATUS = [AUTH_SUCCESS => '审核成功', AUTH_FAIL => '审核失败', AUTH_WAIT => '等待审核'];
     static $RECOMMEND = [STATUS_ON => '是', STATUS_OFF => '否'];
     static $NEED_APPLY = [STATUS_ON => '申请能加入', STATUS_OFF => '所有人可加入'];
+    static $PERMISSIONS = ['login_backstage' => '登录后台'];
 
     function afterCreate()
     {
@@ -808,18 +809,20 @@ class Unions extends BaseModel
     static function generateFameValueRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date('Ymd'));
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date('Ymd'));
 
-                $key = "total_union_fame_value_day_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "total_union_fame_value_" . $start . "_" . $end;
-                break;
-            }
+                    $key = "total_union_fame_value_day_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "total_union_fame_value_" . $start . "_" . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -1017,5 +1020,18 @@ class Unions extends BaseModel
         }
 
         return '';
+    }
+
+    function canLoginBackstage()
+    {
+        if (!$this->permissions) {
+            return false;
+        }
+
+        if (in_array('login_backstage', explode(',', $this->permissions))) {
+            return true;
+        }
+
+        return false;
     }
 }

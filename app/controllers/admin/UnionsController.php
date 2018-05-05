@@ -34,6 +34,23 @@ class UnionsController extends BaseController
     {
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
+        $room_ids = $union->room_ids;
+        $user_uids = [];
+
+        if ($room_ids) {
+
+            $room_ids = explode(',', $room_ids);
+
+            foreach ($room_ids as $room_id) {
+                $room = \Rooms::findFirstById($room_id);
+
+                if ($room) {
+                    $user_uids[] = $room->user->uid;
+                }
+            }
+        }
+
+        $union->user_uids = implode(',', $user_uids);
         $this->view->union = $union;
     }
 
@@ -51,8 +68,32 @@ class UnionsController extends BaseController
             }
         }
 
+        $user_uids = trim(preg_replace('/，/', ',', $union->user_uids), ',');
+
+        $user_uids = explode(',', $user_uids);
+        $room_ids = [];
+
+        foreach ($user_uids as $user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
+
+            if ($user && $user->room_id) {
+
+                if ($user->union_id != $union->id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, $user->uid . "非该家族成员");
+                }
+
+                $room_ids[] = $user->room_id;
+            }
+        }
+
+        if ($room_ids) {
+            $union->room_ids = implode(',', $room_ids);
+        } else {
+            $union->room_ids = '';
+        }
+
         if ($union->update()) {
-            return renderJSON(ERROR_CODE_SUCCESS, '');
+            return renderJSON(ERROR_CODE_SUCCESS, $room_ids);
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '');
@@ -447,5 +488,44 @@ class UnionsController extends BaseController
         $this->view->end_at_time = $end_at_time;
         $this->view->total_hi_coins = sprintf("%0.2f", $total_hi_coins);
         $this->view->id = $id;
+    }
+
+    function updatePermissionsAction()
+    {
+        $id = $this->params('id');
+        $union = \Unions::findFirstById($id);
+        $all_select_permissions = [];
+
+        if ($union->permissions) {
+            $all_select_permissions = explode(",", $union->permissions);
+        }
+
+        if ($this->request->isPost()) {
+
+            $permissions = $this->params('permissions', []);
+
+            if ($permissions) {
+                $permissions = implode(',', $permissions);
+            } else {
+                $permissions = '';
+            }
+
+            $union->permissions = $permissions;
+
+            if ($union->update()) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '报存失败');
+        }
+
+        $this->view->union = $union;
+        $this->view->all_select_permissions = $all_select_permissions;
+        $this->view->permissions = \Unions::$PERMISSIONS;
+    }
+
+    function updateRoomIdsAction()
+    {
+
     }
 }
