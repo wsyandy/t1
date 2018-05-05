@@ -77,6 +77,11 @@ class UnionsController extends BaseController
             $user = \Users::findFirstByUid($user_uid);
 
             if ($user && $user->room_id) {
+
+                if ($user->union_id != $union->id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, $user->uid . "非该家族成员");
+                }
+
                 $room_ids[] = $user->room_id;
             }
         }

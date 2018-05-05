@@ -13,4 +13,6 @@
 
 {{ f.submit('保存') }}
 
+<div class="error_reason" style="color: red"></div>
+
 {{ f.end }}
