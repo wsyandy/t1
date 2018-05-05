@@ -1,5 +1,5 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/gift_week_20180430_rank_activity_4.css') }}
+{{ theme_css('/m/css/gift_week_20180508_rank_activity.css') }}
 {{ block_end() }}
 
 <script>
@@ -20,19 +20,20 @@
 
 <div id="app" class="week_activity">
     <div class="week_activity_banner"></div>
-    <span class="week_title_type week_charm_top1"></span>
-    <div class="week_rules_box">
-        <div class="week_rules_box_border">
-            <ul class="week_charm_topul">
-                {% if last_week_charm_rank_list_user %}
-                    <li>
-                        <span class="type">总榜</span>
-                        <img src="/m/images/week_total_list.png" alt="头像"/>
-                        <span class="name">{{ last_week_charm_rank_list_user['nickname'] }}</span>
-                        <span>魅力值：{{ last_week_charm_rank_list_user['charm_value'] }}</span>
-                    </li>
-                {% endif %}
-                {% for index, last_gift in last_gifts %}
+    <span class="week_title_type"></span>
+    <div class="week_rules_box week_rules_background">
+
+        <ul class="week_charm_topul">
+            {% if last_week_charm_rank_list_user %}
+                <li>
+                    <span class="type">总榜</span>
+                    <img src="/m/images/week_total_list.png" alt="头像"/>
+                    <span class="name">{{ last_week_charm_rank_list_user['nickname'] }}</span>
+                    <span>魅力值：{{ last_week_charm_rank_list_user['charm_value'] }}</span>
+                </li>
+            {% endif %}
+            {% for index, last_gift in last_gifts %}
+                {% if index < 3 %}
                     <li>
                         <span class="type">{{ last_gift.name }}</span>
                         <img src="{{ last_gift.image_small_url }}" alt="头像"/>
@@ -41,64 +42,60 @@
                             <span>魅力值：{{ last_activity_rank_list_users[index]['charm_value'] }}</span>
                         {% endif %}
                     </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <span class="week_rules_waves_icon"></span>
-        <span class="week_rules_chair_icon"></span>
+                {% endif %}
+            {% endfor %}
+        </ul>
     </div>
-    <div class="week_rules_slogan"></div>
-    <span class="week_title_type week_charm_gift"></span>
-    <div class="week_rules_box">
-        <div class="week_rules_box_border">
-            <ul class="week_rules_giftul">
-                {% for gift in gifts %}
-                    <li>
-                        <img src="{{ gift.image_small_url }}" alt="">
-                        <span>{{ gift.name }}</span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <span class="week_rules_waves_iconr"></span>
-        <span class="week_rules_wire_icon"></span>
+    <div class="week_rules_slogan">
+        <span>我第一次看到她的时候，刚好上午11点22分</span>
+        <span>她看着我笑，眼里亮晶晶的，</span>
+        <span>手里轻轻晃动着奶茶</span>
     </div>
-    <span class="week_title_type charm_reward"></span>
+
+    <span class="week_title_type">本周新礼物上线</span>
+    <div class="week_rules_box week_rules_background">
+        <ul class="week_rules_giftul">
+            {% for gift in gifts %}
+                <li>
+                    <img src="{{ gift.image_small_url }}" alt="">
+                    <span>{{ gift.name }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <span class="week_title_type">魅力周榜奖励</span>
     <ul class="week_charm_rewardul">
         <li>
             <span class="type">本周总榜</span>
             <span class="center">第一名奖励</span>
-            <span class="behind">1000钻礼物冠名权</span>
+            <span class="behind">666钻礼物冠名权</span>
         </li>
         <li>
-            <span class="type">法拉利</span>
-            <span class="center">第一名奖励</span>
-            <span class="behind">500钻礼物冠名权</span>
-        </li>
-        <li>
-            <span class="type">寿司点心</span>
+            <span class="type">社会猫</span>
             <span class="center">第一名奖励</span>
             <span class="behind">100钻礼物冠名权</span>
         </li>
         <li>
-            <span class="type">金条</span>
+            <span class="type">小猪佩奇</span>
+            <span class="center">第一名奖励</span>
+            <span class="behind">100钻礼物冠名权</span>
+        </li>
+        <li>
+            <span class="type">肥皂</span>
             <span class="center">第一名奖励</span>
             <span class="behind">10钻礼物冠名权</span>
         </li>
     </ul>
-    <span class="week_title_type week_rules_tltle"></span>
-    <div class="week_rules_box">
-        <div class="week_rules_box_border">
-            <p><span>1.</span><span>所有冠名权的时限均只有一周</span></p>
-            <p><span>2.</span><span>用户在活动期间收到礼物，每收到1个钻石礼物，用户的魅力值+1</span></p>
-            <p><span>3.</span><span>礼物榜按用户收到对应礼物（法拉利，寿司点心，金条）的个数进行排名</span></p>
-            <p><span>4.</span><span>活动时间为{{ activity.start_at_text }}——{{ activity.end_at_text }}</span></p>
-            <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID作为冠名内容；</span></p>
-        </div>
-        <span class="week_rules_waves_iconr"></span>
-        <span class="week_rules_wire_icon"></span>
+    <span class="week_title_type">活动规则</span>
+    <div class="week_rules_box" style="height: 5.78rem;">
+        <p><span>1.</span><span>所有冠名权的时限均只有一周</span></p>
+        <p><span>2.</span><span>用户在活动期间收到礼物，每收到1个钻石，用户的魅力值+1，每送出一个1个钻石，贡献值+1</span></p>
+        <p><span>3.</span><span>礼物榜按用户收到对应礼物（星空裙，LV包包，花漾甜心，奶茶）的个数进行排名</span></p>
+        <p><span>4.</span><span>活动时间为{{ activity.start_at_text }}——{{ activity.end_at_text }}</span></p>
+        <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID作为冠名内容；</span></p>
+        <p><span>6.</span><span>活动结果将会在每周一12:00公布，请保持关注</span></p>
     </div>
-    <span class="week_title_type real_time"></span>
+    <span class="week_title_type">本周实时榜单</span>
     <div class="week_countdown">
         <span id="time_text">  活动未开始 </span>
     </div>
@@ -108,47 +105,22 @@
         </li>
         {% for index, gift in gifts %}
             {% if index < 3 %}
-                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})" :class="[tab_index=={{ index + 2 }}&&'cur']"><img
+                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})"
+                    :class="[tab_index=={{ index + 2 }}&&'cur']"><img
                             src="{{ gift.image_small_url }}"
                             alt="icon"><span>{{ gift.name }}</span>
                 </li>
             {% endif %}
         {% endfor %}
     </ul>
-    <div class="week_top_three" v-if="users.length">
-        <div class="week_top_three_li" v-if="users.length > 1">
-            <div class="header">
-                <span class="two"></span>
-                <img :src="users[1].avatar_small_url" alt="">
-            </div>
-            <p class="two">${users[1].nickname}</p>
-            <span>魅力值：${users[1].charm_value}</span>
-        </div>
-        <div class="week_top_three_li">
-            <div class="neo">
-                <span></span>
-                <img :src="users[0].avatar_small_url" alt=""></div>
-            <p>${users[0].nickname}</p>
-            <span>魅力值：${users[0].charm_value}</span>
-        </div>
-        <div class="week_top_three_li" v-if="users.length > 2">
-            <div class="header">
-                <span class="three"></span>
-                <img :src="users[2].avatar_small_url" alt="">
-            </div>
-            <p class="three">${users[2].nickname}</p>
-            <span>魅力值：${users[2].charm_value}</span>
-        </div>
-    </div>
-    <ul class="week_list_content" v-if="users.length > 3">
-        <li v-for="user in users.slice(3)">
-            <span class="level">${user.rank}</span>
+    <ul class="week_list_content" v-if="users.length">
+        <li v-for="user,index in users">
+            <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
             <img :src="user.avatar_small_url" alt="头像"/>
             <span class="name">${user.nickname}</span>
             <span>魅力值：${user.charm_value}</span>
         </li>
     </ul>
-
     <p class="week_hint_text">活动最终解释权归Hi语音官方团队</p>
 </div>
 
@@ -188,7 +160,7 @@
     };
 
     vm = XVue(opts);
-    
+
     $(function () {
 
         var end_time = "{{ end_time }}";

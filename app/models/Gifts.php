@@ -411,4 +411,15 @@ class Gifts extends BaseModel
 
         return $num;
     }
+
+    static function getGiftsList($last_activity, $activity)
+    {
+        $last_gift_ids_array = $last_activity->getGiftIdsArray();
+        $gift_ids_array = $activity->getGiftIdsArray();
+
+        $last_gifts = \Gifts::findByIds($last_gift_ids_array);
+        $gifts = \Gifts::findByIds($gift_ids_array);
+
+        return [$last_gifts, $gifts];
+    }
 }

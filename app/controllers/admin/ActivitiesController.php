@@ -67,11 +67,11 @@ class ActivitiesController extends BaseController
         $activity = \Activities::findFirstById($this->params('id'));
         $this->assign($activity, 'activity');
         $activity->operator_id = $this->currentOperator()->id;
-
-        list($error_code, $error_reason) = $activity->checkFields();
-        if ($error_code == ERROR_CODE_FAIL) {
-            return $this->renderJSON($error_code, $error_reason);
-        }
+//      暂时去除对活动code的判断
+//        list($error_code, $error_reason) = $activity->checkFields();
+//        if ($error_code == ERROR_CODE_FAIL) {
+//            return $this->renderJSON($error_code, $error_reason);
+//        }
 
         if ($activity->gift_ids) {
             $gift_ids = preg_replace('/，/', ',', $activity->gift_ids);
