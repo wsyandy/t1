@@ -34,6 +34,23 @@ class UnionsController extends BaseController
     {
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
+        $room_ids = $union->room_ids;
+        $user_uids = [];
+
+        if ($room_ids) {
+
+            $room_ids = explode(',', $room_ids);
+
+            foreach ($room_ids as $room_id) {
+                $room = \Rooms::findFirstById($room_id);
+
+                if ($room) {
+                    $user_uids[] = $room->user->uid;
+                }
+            }
+        }
+
+        $union->user_uids = implode(',', $user_uids);
         $this->view->union = $union;
     }
 
@@ -51,10 +68,27 @@ class UnionsController extends BaseController
             }
         }
 
-        $union->room_ids = trim(preg_replace('/，/', ',', $union->room_ids), ',');
+        $user_uids = trim(preg_replace('/，/', ',', $union->user_uids), ',');
+
+        $user_uids = explode(',', $user_uids);
+        $room_ids = [];
+
+        foreach ($user_uids as $user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
+
+            if ($user && $user->room_id) {
+                $room_ids[] = $user->room_id;
+            }
+        }
+
+        if ($room_ids) {
+            $union->room_ids = implode(',', $room_ids);
+        } else {
+            $union->room_ids = '';
+        }
 
         if ($union->update()) {
-            return renderJSON(ERROR_CODE_SUCCESS, '');
+            return renderJSON(ERROR_CODE_SUCCESS, $room_ids);
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '');
@@ -487,6 +521,6 @@ class UnionsController extends BaseController
 
     function updateRoomIdsAction()
     {
-        
+
     }
 }
