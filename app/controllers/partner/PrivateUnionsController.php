@@ -18,8 +18,8 @@ class PrivateUnionsController extends BaseController
     function usersAction()
     {
         $union = $this->currentUser()->union;
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 
@@ -85,8 +85,8 @@ class PrivateUnionsController extends BaseController
     {
         $union = $this->currentUser()->union;
 
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
 
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
