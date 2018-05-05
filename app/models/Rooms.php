@@ -1870,25 +1870,29 @@ class Rooms extends BaseModel
     }
 
     //按天统计房间收益和送礼物人数,送礼物个数
-    static function statDayIncome($room_id, $income, $sender_id, $gift_num, $opts = [])
+    static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
-        if ($income > 0) {
+        if ($income > 0 && $room) {
 
-            $room = Rooms::findFirstById($room_id);
-
-            if ($room) {
-                $room_db = Rooms::getRoomDb();
-                $time = fetch($opts, 'time', time());
-                $date = date("Ymd", $time);
-
-                $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room_id);
-                $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
-                $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room_id);
-
-                $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
-                $room_db->zincrby($room->generateRoomWealthRankListKey('week',
-                    ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
+            if (is_numeric($room)) {
+                $room = Rooms::findFirstById($room);
             }
+
+            if (!$room) {
+                return;
+            }
+
+            $room_db = Rooms::getRoomDb();
+            $time = fetch($opts, 'time', time());
+            $date = date("Ymd", $time);
+
+            $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room->id);
+            $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
+            $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room->id);
+
+            $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
+            $room_db->zincrby($room->generateRoomWealthRankListKey('week',
+                ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
         }
     }
 

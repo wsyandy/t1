@@ -86,11 +86,11 @@ class Stats extends BaseModel
         'hi_coin_cost_user' => 'Hi币兑换钻石人数',
         'hi_coin_cost_user_average' => '人均Hi币兑换钻石金额',
 
-        'diamond_recharge_total' => '钻石新增总额',
+        'diamond_recharge_total' => '新增钻石总额',
         'diamond_recharge_give_total' => '赠送钻石总额',
-        'diamond_recharge_user' => '购买钻石人数',
-        'diamond_recharge_give_user' => '钻石新增人数',
-        'diamond_recharge_user_average' => '人均购买钻石数额',
+        'diamond_recharge_user' => '新增钻石人数',
+        'diamond_recharge_give_user' => '赠送钻石人数',
+        'diamond_recharge_user_average' => '人均新增钻石数额',
         'diamond_recharge_give_user_average' => '人均赠送钻石数额',
 
         'diamond_cost_total' => '消耗钻石总额',
@@ -98,7 +98,7 @@ class Stats extends BaseModel
         'diamond_cost_user' => '消耗钻石人数',
         'diamond_cost_num_average' => '人均消耗钻石次数',
         'diamond_cost_user_average' => '人均消耗钻石数额',
-        'diamond_recharge_balance' => '购买钻石余额**',
+        'diamond_recharge_balance' => '钻石余额**',
 
         'new_create_order_num' => '新用户下单次数',
         'new_create_order_user' => '新用户下单人数',

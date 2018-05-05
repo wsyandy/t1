@@ -214,7 +214,7 @@ class DrawHistories extends BaseModel
                     'bind' => ['user_id' => $user->id, 'start_at' => time() - 300]
                 ]);
 
-                if ($user_hit_num > 50) {
+                if ($user_hit_num > mt_rand(35, 60)) {
                     $user_hit_diamond = \DrawHistories::sum([
                         'conditions' => 'user_id = :user_id: and type = :type: and created_at>=:start_at:',
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'start_at' => time() - 300],
@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 82) / 100;
+        $pool_rate = mt_rand(65, 85) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -377,7 +377,7 @@ class DrawHistories extends BaseModel
 
         $cache_gift_decr_key = 'draw_history_total_amount_decr_gift';
         $total_gift_decr_diamond = $user_db->get($cache_gift_decr_key);
-        $total_decr_diamond += $total_gift_decr_diamond;
+        //$total_decr_diamond += $total_gift_decr_diamond;
 
 
         // 计算用户倍率
@@ -407,8 +407,9 @@ class DrawHistories extends BaseModel
                     continue;
                 }
 
+                $hour = intval(date("H"));
                 // 爆10w钻
-                if ($type == 'diamond' && $number == 100000) {
+                if (false && $type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
 
                     if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
                         continue;
@@ -423,12 +424,23 @@ class DrawHistories extends BaseModel
                         continue;
                     }
 
+                    if ($total_decr_diamond + $number > $total_incr_diamond) {
+                        info('超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        continue;
+                    }
+
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
 
-                    continue;
+                    $user_db = Users::getUserDb();
+                    $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . fetch($datum, 'id', 0);
+                    $user_db->incr($cache_key);
+                    $cache_total_key = 'draw_history_hit_num_' . fetch($datum, 'id', 0);
+                    $user_db->incr($cache_total_key);
+
+                    return $datum;
                 }
 
-                
+
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount,
                     'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
                 ];
