@@ -45,7 +45,7 @@
             <td>{{ room.id }}</td>
             <td>{{ room.name }}</td>
             <td>
-                用户ID:{{ room.user_id }}<br/>
+                用户UID:{{ room.user.uid }}<br/>
                 姓名:{{ room.user_nickname }}<br/>
             </td>
             <td>{{ room.union_id }}</td>
