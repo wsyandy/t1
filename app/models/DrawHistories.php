@@ -228,8 +228,8 @@ class DrawHistories extends BaseModel
                         }
                     }
 
-                    if ($user_rate_multi > 2 && $total_get_amount > $total_pay_amount + 3000) {
-                        $user_rate_multi = 3;
+                    if ($user_rate_multi > 5 && $total_get_amount > $total_pay_amount + 3000) {
+                        $user_rate_multi = mt_rand(2, 4);
                     }
 
                     info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
@@ -300,7 +300,7 @@ class DrawHistories extends BaseModel
 
                 $user_hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 3600],
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 1800],
                     'order' => 'id desc']);
                 if ($user_hit_1w_history) {
                     info('continue hit1w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
