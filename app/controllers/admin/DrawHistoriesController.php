@@ -58,7 +58,7 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
-        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num - $gift_decr_num)/$incr_num);
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num)/$incr_num);
 
         $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
@@ -169,7 +169,7 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
-        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num - $gift_decr_num)/$incr_num);
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num)/$incr_num);
 
         $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
