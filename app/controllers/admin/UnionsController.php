@@ -485,29 +485,29 @@ class UnionsController extends BaseController
         $total_charm = 0;
         $total_wealth = 0;
 
-        if ($start_at_time && $end_at_time) {
-
-            $gift_order_cond['conditions'] = "gift_type = :gift_type: and pay_type = :pay_type: and created_at >= :start:
-             and created_at <= :end: and status = :status:";
-
-            $gift_order_cond['bind'] = [
-                'union_id' => $union->id, 'start' => beginOfDay(strtotime($start_at_time)), 'gift_type' => GIFT_TYPE_COMMON,
-                'end' => endOfDay(strtotime($end_at_time)), 'pay_type' => GIFT_PAY_TYPE_DIAMOND, 'status' => GIFT_ORDER_STATUS_SUCCESS];
-
-            $gift_order_cond['column'] = 'amount';
-
-            $charm_cond = $gift_order_cond;
-            $wealth_cond = $gift_order_cond;
-
-            $charm_cond['conditions'] .= " and receiver_union_id = :receiver_union_id:";
-            $charm_cond['bind']['receiver_union_id'] = $union->id;
-
-            $wealth_cond['conditions'] .= " and sender_union_id = :sender_union_id:";
-            $wealth_cond['bind']['sender_union_id'] = $union->id;
-
-            $total_charm = \GiftOrders::sum($charm_cond);
-            $total_wealth = \GiftOrders::sum($wealth_cond);
-        }
+//        if ($start_at_time && $end_at_time) {
+//
+//            $gift_order_cond['conditions'] = "gift_type = :gift_type: and pay_type = :pay_type: and created_at >= :start:
+//             and created_at <= :end: and status = :status:";
+//
+//            $gift_order_cond['bind'] = [
+//                'union_id' => $union->id, 'start' => beginOfDay(strtotime($start_at_time)), 'gift_type' => GIFT_TYPE_COMMON,
+//                'end' => endOfDay(strtotime($end_at_time)), 'pay_type' => GIFT_PAY_TYPE_DIAMOND, 'status' => GIFT_ORDER_STATUS_SUCCESS];
+//
+//            $gift_order_cond['column'] = 'amount';
+//
+//            $charm_cond = $gift_order_cond;
+//            $wealth_cond = $gift_order_cond;
+//
+//            $charm_cond['conditions'] .= " and receiver_union_id = :receiver_union_id:";
+//            $charm_cond['bind']['receiver_union_id'] = $union->id;
+//
+//            $wealth_cond['conditions'] .= " and sender_union_id = :sender_union_id:";
+//            $wealth_cond['bind']['sender_union_id'] = $union->id;
+//
+//            $total_charm = \GiftOrders::sum($charm_cond);
+//            $total_wealth = \GiftOrders::sum($wealth_cond);
+//        }
 
         $total_hi_coins = \HiCoinHistories::sum($cond);
         $this->view->users = $users;
