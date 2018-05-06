@@ -99,7 +99,7 @@
     <div class="week_countdown">
         <span id="time_text">  活动未开始 </span>
     </div>
-    {% if activity.start_at >= time() %}
+    {% if time() >= activity.start_at %}
         <ul class="week_list_tab">
             <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png"
                                                                             alt="icon">
