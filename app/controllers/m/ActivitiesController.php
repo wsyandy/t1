@@ -664,8 +664,7 @@ class ActivitiesController extends BaseController
             $activity = \Activities::findFirstById($id);
 
             if (!$activity) {
-                echo "参数错误";
-                return false;
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
             $activity_start = date("Ymd", beginOfWeek($activity->start_at));
