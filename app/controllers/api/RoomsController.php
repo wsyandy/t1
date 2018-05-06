@@ -668,6 +668,8 @@ class RoomsController extends BaseController
             //临时兼容
             $room_category = \RoomCategories::findFirstByName($keyword);
 
+            \SearchHistories::delay()->createHistory($keyword, 'room');
+
             if ($room_category && $room_category->type) {
                 $cond['conditions'] = " room_category_types like :room_category_types:";
                 $cond['bind']['room_category_types'] = "%," . $room_category->type . ",%";
