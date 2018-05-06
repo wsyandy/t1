@@ -3639,12 +3639,82 @@ EOF;
     function fixDrawCarAction()
     {
         $cond = [
-            'conditions' => 'gift_type = :gift_type: and type = :type:',
-            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW],
+            'conditions' => 'sender_id = :sender_id: and gift_type = :gift_type: and created_at >= :start: and created_at <= :end:',
+            'bind' => [
+                'sender_id' => SYSTEM_ID, 'gift_type' => GIFT_TYPE_CAR, 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW,
+                'start' => beginOfDay(strtotime('2018-05-04')), 'end' => strtotime('2018-05-04 14:27:43'),
+            ],
             'columns' => 'id'
         ];
         $gift_orders = GiftOrders::find($cond);
 
         echoLine(count($gift_orders));
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+
+            echoLine($gift_order->amount, $gift_order-$gift_order->user_id, $gift_order->receiver_union_id);
+
+            continue;
+            $user = $gift_order->user;
+            $amount = $gift_order->amount;
+            $charm_value = $amount;
+            $receiver_union_id = $gift_order->receiver_union_id;
+
+            $user->charm_value -= $charm_value;
+
+            $time = $gift_order->created_at;
+            $date = date("Ymd", $time);
+            $start = date("Ymd", beginOfWeek($time));
+            $end = date("Ymd", endOfWeek($time));
+            $field = 'charm';
+
+            $day_key = Users::generateFieldRankListKey('day', $field, ['date' => $date]);
+            $week_key = Users::generateFieldRankListKey('week', $field, ['start' => $start, 'end' => $end]);
+            $total_key = Users::generateFieldRankListKey('total', $field);
+
+
+            $db->zincrby($day_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($day_key, -$charm_value, $user_id);
+
+            $db->zincrby($week_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($week_key, -$charm_value, $user_id);
+
+            $db->zincrby($total_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($total_key, -$charm_value, $user_id);
+
+
+            $union = Unions::findFirstById($receiver_union_id);
+
+            if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
+
+                $user->union_charm_value -= $charm_value;
+
+                $lock_key = "update_union_fame_lock_" . $id;
+                $lock = tryLock($lock_key);
+                $union->fame_value -= $charm_value;
+                $union->update();
+
+                $date = date("Ymd", $time);
+                $start = date("Ymd", beginOfWeek($time));
+                $end = date("Ymd", endOfWeek($time));
+
+                $week_key = Unions::generateFameValueRankListKey('week', ['date' => $date]);
+                $day_key = Unions::generateFameValueRankListKey('day', ['start' => $start, 'end' => $end]);
+
+                $db->zincrby($day_key, -$charm_value, $union->id);
+                $db->zincrby($day_key . "_" . $union->product_channel_id, -$charm_value, $union->id);
+                $db->zincrby($week_key, -$charm_value, $union->id);
+                $db->zincrby($week_key . "_" . $union->product_channel_id, -$charm_value, $union->id);
+
+                $union->updateFameRankList($value, $opts);
+                unlock($lock);
+
+            }
+
+            $user->update();
+        }
     }
 }
