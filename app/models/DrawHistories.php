@@ -245,7 +245,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 84) / 100;
+        $pool_rate = mt_rand(65, 86) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -405,15 +405,16 @@ class DrawHistories extends BaseModel
                     continue;
                 }
 
+                $hour = intval(date("H"));
+
                 // 此礼物不增加倍率
-                if (fetch($datum, 'gift_id') == 73 && fetch($datum, 'rate') * 10 < $random) {
+                if (fetch($datum, 'gift_id') == 73 && fetch($datum, 'rate') * 10 < $random && mt_rand(1, 100) < 70) {
                     info('continue 此礼物不增加倍率', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                     continue;
                 }
 
-                $hour = intval(date("H"));
                 // 爆10w钻
-                if ($type == 'diamond' && $number == 100000 && $hour >= 17 && $hour <= 23) {
+                if ($type == 'diamond' && $number == 100000 && $hour >= 16 && $hour <= 23) {
 
                     if ($total_pay_amount < 15000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
                         info('continue hit10w没资格', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
