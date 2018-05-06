@@ -3635,4 +3635,16 @@ EOF;
         $charm_key = 'union_user_month_charm_rank_list_start_' . 20180401 . '_end_' . 20180430 . '_union_id_' . 1068;
         echoLine($user_db->zcard($charm_key));
     }
+
+    function fixDrawCarAction()
+    {
+        $cond = [
+            'conditions' => 'gift_type = :gift_type: and type = :type:',
+            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW],
+            'columns' => 'id'
+        ];
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+    }
 }

@@ -192,6 +192,7 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
         $target_id = fetch($opts, 'target_id');
         $async_verify_data = fetch($opts, 'async_verify_data');
+        $type = fetch($opts, 'type');
 
         if ($async_verify_data) {
 
@@ -238,10 +239,14 @@ class GiftOrders extends BaseModel
             $gift_order->target_id = $target_id;
             $gift_order->product_channel_id = $receiver->product_channel_id;
 
-            if ($sender_id == $receiver_id) {
-                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+            if (!$type) {
+                if ($sender_id == $receiver_id) {
+                    $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+                } else {
+                    $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+                }
             } else {
-                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+                $gift_order->type = $type;
             }
 
             // 在房间里送里面
