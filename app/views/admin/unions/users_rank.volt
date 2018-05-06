@@ -7,7 +7,9 @@
     <input type="hidden" name="id" id="id_eq" value="{{ id }}">
     <button type="submit" class="ui button">搜索</button>
 </form>
-<label for="stat_at_eq">累计{{ total_hi_coins }}</label>
+<label for="stat_at_eq">魅力值累计{{ total_charm }}</label>
+<label for="stat_at_eq">贡献值累计{{ total_wealth }}</label>
+<label for="stat_at_eq">hi币收益累计{{ total_hi_coins }}</label>
 
 {%- macro icon_link(user) %}
     <img src="{{ user.avatar_small_url }}" height="50" width="50"/>

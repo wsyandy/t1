@@ -16,7 +16,7 @@
     {{ room.user.nickname }}
 {%- endmacro %}
 
-{{ simple_table(rooms, ['房间名': 'name','房主UID':'room_user_id','房主名称':'room_user_nickname',"金额":"amount"]) }}
+{{ simple_table(rooms, ['房间名': 'name','房主UID':'room_user_id','房主名称':'room_user_nickname',"钻石数额":"amount"]) }}
 
 
 <script type="text/javascript">
