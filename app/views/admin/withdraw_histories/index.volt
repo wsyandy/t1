@@ -7,8 +7,8 @@
     <label for="id_eq">ID</label>
     <input name="withdraw_history[id_eq]" type="text" id="id_eq" value="{{ id }}"/>
 
-    <label for="user_id_eq">用户ID</label>
-    <input name="user_id" type="text" id="user_id_eq" value="{{ user_id }}"/>
+    <label for="user_uid">用户UID</label>
+    <input name="user_uid" type="text" id="user_uid" value="{{ user_uid }}"/>
 
     <label for="status_eq">提现状态</label>
     <select name="withdraw_history[status_eq]" id="status_eq">
@@ -73,7 +73,7 @@
 {%- endmacro %}
 
 {{ simple_table(withdraw_histories, [
-'日期': 'created_at_text',"ID": 'id', "用户ID": 'user_id', "账户": 'account_link','账户类型':'withdraw_account_type_text',
+'日期': 'created_at_text',"ID": 'id', "用户UID": 'user_uid', "账户": 'account_link','账户类型':'withdraw_account_type_text',
 '用户昵称': 'user_name','收款银行':'account_bank_name','收款支行':'withdraw_account_bank_account_location','地区':'area',
 '提现金额':'amount','提现状态': 'status_text','操作': 'oper_link'
 ]) }}
@@ -82,7 +82,7 @@
     <tr id="withdraw_history_${ withdraw_history.id }">
         <td>${withdraw_history.created_at_text}</td>
         <td>${withdraw_history.id}</td>
-        <td>${withdraw_history.user_id}</td>
+        <td>${withdraw_history.user_uid}</td>
         <td>{@if withdraw_history.account }
             ${ withdraw_history.account_text }
             {@else}
