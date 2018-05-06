@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1001315;
+        $user_id = 1103162;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 1822 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 1822, $opts);
+        $opts = ['remark' => '系统赠送' . 100000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 100000, $opts);
     }
 
     function createUnionAction()
@@ -3605,5 +3605,46 @@ EOF;
                 }
             }
         }
+    }
+
+    function exportAction()
+    {
+        $user_db = Users::getUserDb();
+        $month_key = 'union_user_month_hi_coins_rank_list_start_' . 20180401 . '_end_' . 20180430 . '_union_id_' . 1068;
+
+        $user_ids = $user_db->zrevrange($month_key, 0, -1, 'withscores');
+
+        $hi_coin = 0;
+
+        $titles = ['用户Id', "hi币收益"];
+
+        $data = [];
+
+        foreach ($user_ids as $user_id => $score) {
+            $score = sprintf("%0.2f", $score / 1000);
+            $hi_coin += $score;
+            $data[] = [$user_id, $score];
+        }
+
+        $file = APP_ROOT . "temp/hi_coins.xls";
+        $res = writeExcel($titles, $data, $file, true);
+
+        echoLine($res, StoreFile::getUrl($res));
+
+        $user_db = Users::getUserDb();
+        $charm_key = 'union_user_month_charm_rank_list_start_' . 20180401 . '_end_' . 20180430 . '_union_id_' . 1068;
+        echoLine($user_db->zcard($charm_key));
+    }
+
+    function fixDrawCarAction()
+    {
+        $cond = [
+            'conditions' => 'gift_type = :gift_type: and type = :type:',
+            'bind' => ['gift_type' => GIFT_TYPE_CAR, 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW],
+            'columns' => 'id'
+        ];
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
     }
 }

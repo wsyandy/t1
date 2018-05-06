@@ -42,7 +42,7 @@ class DrawHistoriesController extends BaseController
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
 
-        $cond = ['conditions' => 'type=:type: and number >= 100000',
+        $cond = ['conditions' => 'type=:type: and number >= 30000',
             'bind' => ['type' => 'diamond'],
             'order' => 'id desc'
         ];

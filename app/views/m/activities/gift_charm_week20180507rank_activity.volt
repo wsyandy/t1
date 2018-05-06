@@ -99,28 +99,31 @@
     <div class="week_countdown">
         <span id="time_text">  活动未开始 </span>
     </div>
-    <ul class="week_list_tab">
-        <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png" alt="icon">
-            <span>总榜</span>
-        </li>
-        {% for index, gift in gifts %}
-            {% if index < 3 %}
-                <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})"
-                    :class="[tab_index=={{ index + 2 }}&&'cur']"><img
-                            src="{{ gift.image_small_url }}"
-                            alt="icon"><span>{{ gift.name }}</span>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-    <ul class="week_list_content" v-if="users.length">
-        <li v-for="user,index in users">
-            <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
-            <img :src="user.avatar_small_url" alt="头像"/>
-            <span class="name">${user.nickname}</span>
-            <span>魅力值：${user.charm_value}</span>
-        </li>
-    </ul>
+    {% if time() >= activity.start_at %}
+        <ul class="week_list_tab">
+            <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png"
+                                                                            alt="icon">
+                <span>总榜</span>
+            </li>
+            {% for index, gift in gifts %}
+                {% if index < 3 %}
+                    <li @click.stop="selectTab({{ index + 2 }}, {{ gift.id }})"
+                        :class="[tab_index=={{ index + 2 }}&&'cur']"><img
+                                src="{{ gift.image_small_url }}"
+                                alt="icon"><span>{{ gift.name }}</span>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <ul class="week_list_content" v-if="users.length">
+            <li v-for="user,index in users">
+                <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
+                <img :src="user.avatar_small_url" alt="头像"/>
+                <span class="name">${user.nickname}</span>
+                <span>魅力值：${user.charm_value}</span>
+            </li>
+        </ul>
+    {% endif %}
     <p class="week_hint_text">活动最终解释权归Hi语音官方团队</p>
 </div>
 

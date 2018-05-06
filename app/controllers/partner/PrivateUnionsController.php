@@ -45,7 +45,7 @@ class PrivateUnionsController extends BaseController
                 $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
             }
 
-            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page);
+            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key));
 
             info("union_stat", $key, $charm_key, $hi_coin_key);
 

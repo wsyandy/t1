@@ -222,10 +222,14 @@ class DrawHistories extends BaseModel
                     ]);
 
                     if (($user_hit_num * 10 - $user_hit_diamond) / $user_hit_num * 10 > 0.5 && mt_rand(1, 100) < 75) {
-                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 35);
+                        $user_rate_multi = mt_rand(2, 5) * intval($user_hit_num / 40);
                         if ($user_rate_multi > 10) {
                             $user_rate_multi = 10;
                         }
+                    }
+
+                    if ($user_rate_multi > 5 && $total_get_amount > $total_pay_amount + 3000) {
+                        $user_rate_multi = mt_rand(2, 4);
                     }
 
                     info('五分钟内倍率', $user->id, 'user_hit_num', $user_hit_num, 'user_hit_diamond', $user_hit_diamond, '倍率', $user_rate_multi);
@@ -241,7 +245,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 80) / 100;
+        $pool_rate = mt_rand(65, 84) / 100;
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
@@ -271,8 +275,8 @@ class DrawHistories extends BaseModel
             }
 
             $hit_num = self::count([
-                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type1:) and created_at>=:start_at:',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type1' => 'gift', 'start_at' => time()],
+                'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and created_at>=:start_at:',
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'start_at' => time()],
                 'order' => 'id desc']);
 
             if ($hit_num >= 3) {
@@ -286,7 +290,7 @@ class DrawHistories extends BaseModel
 
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(1, 60)],
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(5, 60)],
                     'order' => 'id desc']);
 
                 if ($hit_1w_history) {
@@ -295,8 +299,8 @@ class DrawHistories extends BaseModel
                 }
 
                 $user_hit_1w_history = self::findFirst([
-                    'conditions' => 'user_id = :user_id: and type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 10000, 'start_at' => time() - mt_rand(600, 900)],
+                    'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and number>=:number: and created_at>=:start_at:',
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 1800],
                     'order' => 'id desc']);
                 if ($user_hit_1w_history) {
                     info('continue hit1w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
@@ -357,10 +361,10 @@ class DrawHistories extends BaseModel
         // 必中钻石
         if ($hit_diamond) {
             $rate = mt_rand(1, 100);
-            if ($rate < 15) {
+            if ($rate < 5) {
                 return $data[7];
             }
-            if ($rate < 45) {
+            if ($rate < 40) {
                 return $data[8];
             }
 
@@ -409,9 +413,10 @@ class DrawHistories extends BaseModel
 
                 $hour = intval(date("H"));
                 // 爆10w钻
-                if (false && $type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
+                if ($type == 'diamond' && $number == 100000 && $hour >= 17 && $hour <= 23) {
 
-                    if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
+                    if ($total_pay_amount < 20000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
+                        info('continue hit10w没资格', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
                     }
 
@@ -420,13 +425,27 @@ class DrawHistories extends BaseModel
                         'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'number' => 100000]]);
 
                     if ($user_hit_10w_history) {
-                        info('continue hit10w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        info('continue hit10w已命中', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
                     }
 
                     if ($total_decr_diamond + $number > $total_incr_diamond) {
-                        info('超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                        info('continue hit10w超出奖金池', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
+                    }
+
+                    $history = self::findFirst([
+                        'conditions' => 'user_id = :user_id:',
+                        'bind' => ['user_id' => $user->id],
+                        'order' => 'id desc']);
+
+                    if ($history) {
+                        $total_pay_amount = intval($history->total_pay_amount);
+                        $total_get_amount = $history->total_diamond + $history->total_gift_diamond;
+                        if ($total_pay_amount < $total_get_amount) {
+                            info('continue hit10w超出支出', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
+                            continue;
+                        }
                     }
 
                     info('命中10万', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
@@ -511,7 +530,7 @@ class DrawHistories extends BaseModel
             $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         } elseif ($draw_history->type == 'gift') {
             if ($gift) {// 送礼物
-                GiftOrders::asyncCreateGiftOrder(SYSTEM_ID, [$user->id], $gift->id, ['remark' => '砸蛋赠送']);
+                GiftOrders::asyncCreateGiftOrder(SYSTEM_ID, [$user->id], $gift->id, ['remark' => '砸蛋赠送', 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW]);
             }
         } else {
             $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
