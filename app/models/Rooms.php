@@ -1933,7 +1933,8 @@ class Rooms extends BaseModel
         $per_page = $total_entries;
         $page = 1;
         $offset = $per_page * ($page - 1);
-        $room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        //$room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $room_ids = $room_db->zrevrangebyscore($key, 100000000, 1000);
         $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
         $pagination->clazz = 'Rooms';
