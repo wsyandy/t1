@@ -413,9 +413,9 @@ class DrawHistories extends BaseModel
 
                 $hour = intval(date("H"));
                 // 爆10w钻
-                if (false && $type == 'diamond' && $number == 100000 && $hour >= 20 && $hour <= 23) {
+                if ($type == 'diamond' && $number == 100000 && $hour >= 17 && $hour <= 23) {
 
-                    if ($total_pay_amount < 30000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 20) {
+                    if ($total_pay_amount < 20000 || !$user->union_id || !$user->segment || mt_rand(1, 100) < 80) {
                         info('continue hit10w没资格', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'user_rate', $user_rate_multi);
                         continue;
                     }
