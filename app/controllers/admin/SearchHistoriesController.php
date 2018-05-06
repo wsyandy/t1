@@ -13,7 +13,7 @@ class SearchHistoriesController extends BaseController
     function indexAction()
     {
         $cond = [
-            'conditions' => 'type = room',
+            'conditions' => 'type = "room"',
             'order' => 'num desc'
         ];
 
