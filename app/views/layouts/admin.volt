@@ -123,6 +123,9 @@
                     {% if isAllowed('room_tags','index') %}
                         <li><a href="/admin/room_tags/index">房间标签</a></li>
                     {% endif %}
+                    {% if isAllowed('serach_histories','room') %}
+                        <li><a href="/admin/search_histories/room">房间搜索记录</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
