@@ -35,6 +35,7 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_DEDUCT => '系统扣除',
         ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
         ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值',
+        ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE =>'分销兑换',
         ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
         ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
         ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
@@ -167,7 +168,7 @@ class AccountHistories extends BaseModel
             $user = \Users::findFirst(['conditions' => 'share_parent_id=' . $this->user_id]);
             $nickname = $user->nickname;
             $avatar_url = $user->avatar_url;
-        } elseif ($this->fee_type == ACCOUNT_TYPE_DISTRIBUTE_PAY) {
+        } elseif ($this->fee_type == ACCOUNT_TYPE_DISTRIBUTE_PAY || $this->fee_type == ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE) {
             $sms_distribute_history =  \SmsDistributeHistories::findFirstById($this->target_id);
             $nickname = $sms_distribute_history->user->nickname;
             $avatar_url = $sms_distribute_history->user->avatar_url;

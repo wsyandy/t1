@@ -90,11 +90,15 @@ class SmsDistributeHistories extends BaseModel
                     return true;
                 case 'pay':
                     self::distributePayBonus($sms_distribute_history, $amount);
-                    info($type, 'pay=>', $mobile);
+                    info($type, '=>', $mobile);
+                    return true;
+                case 'exchange':
+                    self::distributeExchangeBonus($sms_distribute_history, $amount);
+                    info($type, '=>', $mobile);
                     return true;
             }
         }
-        info($type, 'pay=>', $mobile);
+        info($type, '=>', $mobile);
         return false;
     }
 
@@ -131,8 +135,28 @@ class SmsDistributeHistories extends BaseModel
                 $top_user = \Users::findFirstById($user->share_parent_id);
                 if (isPresent($top_user)) {
                     $bonus_amount = round($amount * 0.01);
-                    $opts = ['remark' => '底层分销充值奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
-                    \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+                    $last_opts = ['remark' => '底层分销充值奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
+                    \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $last_opts);
+                }
+            }
+        }
+    }
+
+    static function distributeExchangeBonus($sms_distribute_history, $amount)
+    {
+        $user_id = $sms_distribute_history->share_user_id;
+        $user = \Users::findFirstById($user_id);
+        if ($user) {
+            $bonus_amount = round($amount * 0.05);
+            $opts = ['remark' => '分销兑换奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
+            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
+
+            if ($user->share_parent_id) {
+                $top_user = \Users::findFirstById($user->share_parent_id);
+                if (isPresent($top_user)) {
+                    $bonus_amount = round($amount * 0.01);
+                    $last_opts = ['remark' => '底层分销兑换奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
+                    \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $last_opts);
                 }
             }
         }
