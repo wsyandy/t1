@@ -232,7 +232,7 @@ class SharesController extends ApplicationController
             $sms_sem_history->partner_id = $partner->id;
         }
 
-        if (strlen($password) > 6) {
+        if (strlen($password) < 6) {
             return $this->renderJSON(ERROR_CODE_FAIL, '密码不能小于6位');
         }
 
