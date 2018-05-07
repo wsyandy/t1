@@ -43,7 +43,8 @@
     {% if isAllowed('users','index') %}
         姓名:<a href="/admin/users?user[id_eq]={{ room.user_id }}">{{ room.user_nickname }}</a><br/>
     {% endif %}
-    用户ID:{{ room.user.id }}<br/>
+    房主ID:{{ room.user.id }}<br/>
+    房主UID:{{ room.user.uid }}<br/>
     性别:{{ room.user.sex_text }}<br/>
     手机号码:{{ room.user_mobile }}<br/>
 {% endmacro %}
@@ -82,8 +83,14 @@
     {% if isAllowed('rooms','delete_user_agreement') %}
         <a href="/admin/rooms/delete_user_agreement?id={{ room.id }}" id="delete_user_agreement">清除协议</a></br>
     {% endif %}
+    {% if isAllowed('rooms','types') %}
+        <a href="/admin/rooms/types?id={{ room.id }}" class="modal_action">类型配置</a></br>
+    {% endif %}
+    {% if isAllowed('rooms','shield_config') %}
+        <a href="/admin/rooms/shield_config?id=${ room.id }" class="modal_action">地区屏蔽配置</a></br>
+    {% endif %}
     {% if isAllowed('rooms','edit') %}
-        <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a></br>
+        <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a>
     {% endif %}
 {% endmacro %}
 
@@ -111,6 +118,7 @@
                 姓名:<a href="/admin/users?user[id_eq]=${ room.user_id }">${ room.user_nickname }</a><br/>
             {% endif %}
             用户ID:${ room.user_id }<br/>
+            房主UID:${ room.user_uid }<br/>
             性别:${ room.user_sex_text }<br/>
             手机号码:${ room.user_mobile }<br/>
         </td>
@@ -136,8 +144,14 @@
             {% if isAllowed('rooms','delete_user_agreement') %}
                 <a href="/admin/rooms/delete_user_agreement?id=${ room.id }" id="delete_user_agreement">清除协议</a></br>
             {% endif %}
+            {% if isAllowed('rooms','types') %}
+                <a href="/admin/rooms/types?id=${ room.id }" class="modal_action">类型配置</a>
+            {% endif %}
+            {% if isAllowed('rooms','shield_config') %}
+                <a href="/admin/rooms/shield_config?id=${ room.id }" class="modal_action">地区屏蔽配置</a></br>
+            {% endif %}
             {% if isAllowed('rooms','edit') %}
-                <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
+                <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a>
             {% endif %}
         </td>
     </tr>
