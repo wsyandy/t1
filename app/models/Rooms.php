@@ -2515,12 +2515,12 @@ class Rooms extends BaseModel
     {
         $menu_config = [];
         if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
         }
 
         if ($show_game && isDevelopmentEnv()) {
-            $menu_config[] = ['show' => true, 'title' => 'PK', 'icon' => $root . 'images/pk.png'];
-            $menu_config[] = ['show' => true, 'title' => '红包', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
         return $menu_config;
