@@ -940,3 +940,26 @@
     error_reason
 }
 ```
+
+### 33 pk记录
+
+> http-get ```/api/rooms/pk_histories```
+
+##### 33.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 33.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id int 记录id
+    winner_id int 胜利者id
+    type_text string pk类型
+    created_at_text string 创建时间
+    player_a_score string  用户a得分
+    player_b_score string  用户b得分
+}
+```
