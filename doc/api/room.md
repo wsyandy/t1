@@ -202,7 +202,7 @@
       menu_config : [ //房间详情菜单配置
              {
                  show boolean 是否展示 true/false
-                 type 类型 根据定义类型来判断是否跳H5
+                 type 类型 根据定义类型来判断是否跳H5(例如游戏:game,PK:pk,红包:red_packet)
                  title string 菜单名称
                  url string 跳转地址
                  icon string 图片地址
