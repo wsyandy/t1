@@ -121,6 +121,14 @@ class SmsDistributeHistories extends BaseModel
             $bonus_amount = intval($amount * 0.05);
             $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+
+            $top_sms_distribute_history = \SmsDistributeHistories::findFirstByMobile($user->product_channel_id, $user->mobile);
+            if ($sms_distribute_history && $top_sms_distribute_history->status == AUTH_SUCCESS) {
+                $top_user = \Users::findFirstById($top_sms_distribute_history->share_user_id);
+                $bonus_amount = intval($amount * 0.01);
+                $opts = ['remark' => '底层分销充值奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $top_sms_distribute_history->id];
+                \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+            }
         }
     }
 
