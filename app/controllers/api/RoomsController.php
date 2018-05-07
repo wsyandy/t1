@@ -857,10 +857,10 @@ class RoomsController extends BaseController
 
         $opts = ['player_a_id' => $player_a_id, 'player_b_id' => $player_b_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
 
-        $res = \PkHistories::createHistory($this->currentUser(), $opts);
+        $pk_history = \PkHistories::createHistory($this->currentUser(), $opts);
 
-        if ($res) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+        if ($pk_history) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $pk_history->toSimpleJson());
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');

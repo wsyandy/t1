@@ -937,6 +937,16 @@
 {
     error_code
     error_reason
+    id int 记录id
+    winner_id int 胜利者id
+    type_text string pk类型
+    created_at_text string 创建时间
+    player_a_nickname string  用户a昵称
+    player_a_nickname string  用户b昵称
+    player_a_score int  用户a得分
+    player_b_score int  用户b得分
+    player_a_id int  用户aID
+    player_b_id int  用户bID
 }
 ```
 
@@ -964,8 +974,8 @@
             created_at_text string 创建时间
             player_a_nickname string  用户a昵称
             player_a_nickname string  用户b昵称
-            player_a_score string  用户a得分
-            player_b_score string  用户b得分
+            player_a_score int  用户a得分
+            player_b_score int  用户b得分
         }
     ]
 }
