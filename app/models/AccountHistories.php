@@ -160,9 +160,19 @@ class AccountHistories extends BaseModel
 
     function getUserInfo()
     {
-        $sms_distribute = \SmsDistributeHistories::findFirstById($this->target_id);
-        $nickname = $sms_distribute->user->nickname;
-        $avatar_url = $sms_distribute->user->avatar_url;
+        $nickname = '';
+        $avatar_url = '';
+        if ($this->fee_type == ACCOUNT_TYPE_DISTRIBUTE_REGISTER) {
+            $cond['conditions'] = 'share_parent_id=:share_parent_id:';
+            $user = \Users::findFirst(['conditions' => 'share_parent_id=' . $this->user_id]);
+            $nickname = $user->nickname;
+            $avatar_url = $user->avatar_url;
+        } elseif ($this->fee_type == ACCOUNT_TYPE_DISTRIBUTE_PAY) {
+            $sms_distribute_history =  \SmsDistributeHistories::findFirstById($this->target_id);
+            $nickname = $sms_distribute_history->user->nickname;
+            $avatar_url = $sms_distribute_history->user->avatar_url;
+
+        }
         return [$nickname, $avatar_url];
     }
 
