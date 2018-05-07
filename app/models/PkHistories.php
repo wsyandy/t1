@@ -33,4 +33,16 @@ class PkHistories extends BaseModel
 
         return false;
     }
+
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'winner_id' => $this->winner_id,
+            'type_text' => $this->type_text,
+            'created_at_text' => $this->created_at_text,
+            'player_a_score' => $this->player_a_score,
+            'player_b_score' => $this->player_a_score,
+        ];
+    }
 }
