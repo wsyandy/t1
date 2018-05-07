@@ -241,7 +241,7 @@ class SharesController extends ApplicationController
         $sms_sem_history->soft_version_id = $soft_version_id;
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->status = AUTH_WAIT;
-        $sms_sem_history->password = $password;
+        $sms_sem_history->password = md5($password);
         $sms_sem_history->save();
 
         // 跳转应用宝地址
