@@ -2393,6 +2393,12 @@ class Rooms extends BaseModel
             'order' => 'last_at desc, user_type asc'
         ];
 
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
+        }
+
         if (count($filter_ids) > 0) {
             $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
             return \Rooms::findPagination($cond, $page, $per_page);
@@ -2433,11 +2439,6 @@ class Rooms extends BaseModel
             }
         }
 
-        $shield_room_ids = $user->getShieldRoomIds();
-
-        if ($shield_room_ids) {
-            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
-        }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
