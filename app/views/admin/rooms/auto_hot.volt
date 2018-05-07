@@ -87,7 +87,7 @@
         <a href="/admin/rooms/types?id={{ room.id }}" class="modal_action">类型配置</a></br>
     {% endif %}
     {% if isAllowed('rooms','shield_config') %}
-        <a href="/admin/rooms/shield_config?id=${ room.id }" class="modal_action">地区屏蔽配置</a></br>
+        <a href="/admin/rooms/shield_config?id={{ room.id }}" class="modal_action">地区屏蔽配置</a></br>
     {% endif %}
     {% if isAllowed('rooms','edit') %}
         <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a>
