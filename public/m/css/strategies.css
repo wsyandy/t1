@@ -35,11 +35,8 @@ table { border-collapse:collapse; }
 .question{
 	font-size: 15px;
 	color: #464646;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	overflow: hidden;
-	-o-text-overflow:ellipsis;
 	text-overflow:ellipsis;
 	white-space: nowrap;
 	padding: 17px 15px;
@@ -53,9 +50,6 @@ table { border-collapse:collapse; }
 	width: 13px;
 	height: 10px;
 	background: url(../images/down.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	right: 15px;
 	top: 50%;
@@ -67,16 +61,11 @@ table { border-collapse:collapse; }
 }
 .up_dot{
 	background: url(../images/up.png) no-repeat !important;
-	-webkit-background-size: 100% 100% !important;
-	-moz-background-size: 100% !important;
-	-o-background-size: 100% !important;
 	background-size: 100% !important;
 }
 .answer{
 	display: none;
 	position: relative;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
 	padding:30px 25px;
@@ -143,9 +132,6 @@ table { border-collapse:collapse; }
 	width: 14px;
 	height: 14px;
 	background: url(../images/edit.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	vertical-align: middle;
 }
@@ -154,9 +140,6 @@ table { border-collapse:collapse; }
 	width: 14px;
 	height: 14px;
 	background: url(../images/add.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	vertical-align: middle;
 }
@@ -165,9 +148,6 @@ table { border-collapse:collapse; }
 	width: 95px;
 	height: 32px;
 	background: url(../images/video.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	vertical-align: middle;
 	margin-top: 10px;
@@ -177,9 +157,6 @@ table { border-collapse:collapse; }
 	width: 12px;
 	height: 12px;
 	background: url(../images/getout.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	vertical-align: middle;
 }
@@ -196,9 +173,6 @@ table { border-collapse:collapse; }
 	width: 18px;
 	height: 18px;
 	background: url(../images/add01.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 	vertical-align: middle;
 }
@@ -207,9 +181,6 @@ table { border-collapse:collapse; }
 	width: 12px;
 	height: 12px;
 	background: url(../images/diandian.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 }
 .yinyue{
@@ -217,9 +188,6 @@ table { border-collapse:collapse; }
 	width: 115px;
 	height: 36px;
 	background: url(../images/yinyue.png) no-repeat;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size: 100%;
-	-o-background-size: 100%;
 	background-size: 100%;
 }
 
@@ -234,7 +202,6 @@ table { border-collapse:collapse; }
 	display: -ms-flexbox;
 	display: flex;
 	margin-bottom:15px;
-
 }
 .answer_list .number{
 	width: 40px;
@@ -250,6 +217,7 @@ table { border-collapse:collapse; }
 }
 .answer_list .imge{
 	width: 100%;
+
 }
 
 .imge_tit{
@@ -264,6 +232,14 @@ table { border-collapse:collapse; }
 	font-size: 14px;
 	color: #323232;
 }
+
+
+
+
+
+
+
+
 
 
 
