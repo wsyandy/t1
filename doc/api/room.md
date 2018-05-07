@@ -919,3 +919,24 @@
     id int 匹配到的房间id
 }
 ```
+
+### 32 发起pk
+
+> http-post ```/api/rooms/initiate_pk```
+
+##### 32.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|player_a_id|参与者a|int|否||
+|player_b_id|参与者b|int|否||
+|pk_type|pk类型|send_gift_user:按照送礼物人数;send_gift_amount:按照送礼物价值|否||
+|pk_time|pk时长|以秒为单位|否|||
+
+##### 32.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+}
+```
