@@ -484,7 +484,7 @@ class Activities extends BaseModel
         $last_activity_rank_list_users = [];
         foreach ($last_gifts as $last_gift) {
 
-            if ($last_activity->id < 16) {
+            if ($last_activity->id < 15) {
                 $key = "week_charm_rank_list_gift_id_" . $last_gift->id . "_" . $last_activity_start . "_" . $last_activity_end;
             } else {
                 $key = $last_activity->getStatKey($last_gift->id);
