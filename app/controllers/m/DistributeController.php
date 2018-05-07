@@ -54,11 +54,31 @@ class DistributeController extends BaseController
         $this->view->product_channel_name = $product_channel_name;
 
 
-
     }
+
     function detailAction()
     {
-        
+
     }
 
+    function distributeRegisterBonusAction()
+    {
+        if ($this->request->isAjax()) {
+            $cond['conditions'] = 'user_id=:user_id: and fee_type=:fee_type:';
+            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER];
+            $account_histories = \AccountHistories::find($cond);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$account_histories->toJson('account_histories','toSimpleJson') );
+        }
+
+    }
+    function distributePayBonusAction()
+    {
+        if ($this->request->isAjax()) {
+            $cond['conditions'] = 'user_id=:user_id: and fee_type=:fee_type:';
+            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_PAY];
+            $account_histories = \AccountHistories::find($cond);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$account_histories->toJson('account_histories','toSimpleJson') );
+        }
+
+    }
 }

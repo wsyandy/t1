@@ -66,6 +66,18 @@ class AccountHistories extends BaseModel
         \DataCollection::syncData('account_history', 'change_balance', ['account_history' => $this->toJson()]);
     }
 
+    function toSimpleJson()
+    {
+        list($nickname, $avatar_url) = $this->getUserInfo();
+        return [
+            'id' => $this->id,
+            'created_at' => $this->created_at_text,
+            'user_nickname' => $nickname,
+            'amount' => $this->amount,
+            'user_avatar_url' => $avatar_url
+        ];
+    }
+
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $user = Users::findFirstById($user_id);
@@ -144,6 +156,14 @@ class AccountHistories extends BaseModel
         }
 
         return "diamond_recharge";
+    }
+
+    function getUserInfo()
+    {
+        $sms_distribute = \SmsDistributeHistories::findFirstById($this->target_id);
+        $nickname = $sms_distribute->user->nickname;
+        $avatar_url = $sms_distribute->user->avatar_url;
+        return [$nickname, $avatar_url];
     }
 
 }

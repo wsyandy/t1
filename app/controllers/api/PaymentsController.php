@@ -48,6 +48,14 @@ class PaymentsController extends BaseController
         }
         $payment = \Payments::createPayment($this->currentUser(), $order, $payment_channel);
         if ($payment) {
+            $opts = [
+                'mobile' => $this->currentUser()->mobile,
+                'type' => 'pay',
+                'amount' => $order->amount,
+                'product_channel_id' => $payment_channel->id
+            ];
+            \SmsDistributeHistories::isUserForShare($opts);
+
             $result = $payment->validResult(array('data' => $this->params('data')), '');
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $result);
         }
