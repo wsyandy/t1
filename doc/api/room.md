@@ -939,7 +939,7 @@
     error_code
     error_reason
     id int 记录id
-    winner_id int 胜利者id
+    created_at int 创建时间 以秒为单位的时间戳
     type_text string pk类型
     created_at_text string 创建时间
     player_a_nickname string  用户a昵称
