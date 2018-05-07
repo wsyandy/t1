@@ -150,7 +150,7 @@ class Payments extends BaseModel
             $opts = [
                 'mobile' => $this->order->mobile,
                 'type' => 'pay',
-                'amount' => $this->paid_amount,
+                'amount' => $this->order->product->diamond,
                 'product_channel_id' => $this->order->product_channel_id
             ];
             \SmsDistributeHistories::isUserForShare($opts);
