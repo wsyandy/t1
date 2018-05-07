@@ -89,16 +89,16 @@ class Activities extends BaseModel
 //                return [ERROR_CODE_FAIL, $field . "不能为空"];
 //            }
 
-            if ($this->hasChanged($field)) {
-                $obj = self::findFirst([
-                    'conditions' => "$field  = :$field: and type = :type:",
-                    'bind' => [$field => $val, 'type' => $this->type]
-                ]);
-
-                if (isPresent($obj)) {
-                    return [ERROR_CODE_FAIL, $field . "不能重复"];
-                }
-            }
+//            if ($this->hasChanged($field)) {
+//                $obj = self::findFirst([
+//                    'conditions' => "$field  = :$field: and type = :type:",
+//                    'bind' => [$field => $val, 'type' => $this->type]
+//                ]);
+//
+////                if (isPresent($obj)) {
+////                    return [ERROR_CODE_FAIL, $field . "不能重复"];
+////                }
+//            }
         }
         return [ERROR_CODE_SUCCESS, ''];
     }
