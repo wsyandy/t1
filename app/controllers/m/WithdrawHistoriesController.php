@@ -65,7 +65,7 @@ class WithdrawHistoriesController extends BaseController
 
             $white_user_ids = [153717];
 
-            if (in_array($this->currentUser()->id, $white_user_ids)) {
+            if (in_array($this->currentUser()->uid, $white_user_ids)) {
                 if ($amount > 40000) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '超出单次体现金额');
                 }
