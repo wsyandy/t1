@@ -8,6 +8,17 @@
 
 class PkHistories extends BaseModel
 {
+    /**
+     * @type Users
+     */
+    private $player_a;
+
+    /**
+     * @type Users
+     */
+    private $player_b;
+
+
     static $STATUS = [STATUS_ON => '创建成功', STATUS_PROGRESS => 'PK中', STATUS_OFF => 'PK结束'];
 
     static function createHistory($user, $opts = [])
@@ -43,6 +54,8 @@ class PkHistories extends BaseModel
             'created_at_text' => $this->created_at_text,
             'player_a_score' => $this->player_a_score,
             'player_b_score' => $this->player_a_score,
+            'player_a_nickname' => $this->player_a_nickname,
+            'player_b_nickname' => $this->player_b_nickname
         ];
     }
 }
