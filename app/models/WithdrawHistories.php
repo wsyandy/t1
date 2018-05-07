@@ -144,7 +144,13 @@ EOF;
         $amount = fetch($opts, 'amount');
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
 
-        if ($amount > 20000) {
+        $white_user_ids = [153717];
+
+        if (in_array($user->uid, $white_user_ids)) {
+            if ($amount > 40000) {
+                return [ERROR_CODE_FAIL, '超出单次体现金额'];
+            }
+        } elseif ($amount > 20000) {
             return [ERROR_CODE_FAIL, '单次限额20000元'];
         }
 
