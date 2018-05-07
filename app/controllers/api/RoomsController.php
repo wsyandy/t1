@@ -722,13 +722,13 @@ class RoomsController extends BaseController
             $cond['order'] = 'last_at desc,user_type asc';
         }
 
-        debug($cond);
-
         $shield_room_ids = $this->currentUser()->getShieldRoomIds();
 
         if ($shield_room_ids) {
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
+
+        debug($cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
