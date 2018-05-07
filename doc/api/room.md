@@ -962,6 +962,8 @@
             winner_id int 胜利者id
             type_text string pk类型
             created_at_text string 创建时间
+            player_a_nickname string  用户a昵称
+            player_a_nickname string  用户b昵称
             player_a_score string  用户a得分
             player_b_score string  用户b得分
         }
