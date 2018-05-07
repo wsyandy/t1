@@ -24,6 +24,7 @@ class DistributeController extends BaseController
             'bind' => ['status' => AUTH_SUCCESS, 'share_user_id' => $user->id]
         ]);
 
+        $this->view->title = '有奖邀请';
         $this->view->total_amount = $total_amount;
         $this->view->user_num = $user_num;
     }
@@ -50,6 +51,8 @@ class DistributeController extends BaseController
 
         $qrcode = generateQrcode($share_url);
         $product_channel_name = $this->currentProductChannel()->name;
+
+        $this->view->title = '我的推广页';
         $this->view->qrcode = $qrcode;
         $this->view->product_channel_name = $product_channel_name;
 
