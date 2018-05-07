@@ -68,9 +68,15 @@ class DistributeController extends BaseController
     {
         if ($this->request->isAjax()) {
             $type = $this->params('type', 'register');
-            $fee_type = $type == 'register' ? ACCOUNT_TYPE_DISTRIBUTE_REGISTER : ACCOUNT_TYPE_DISTRIBUTE_PAY;
-            $cond['conditions'] = 'user_id=:user_id: and fee_type=:fee_type:';
-            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => $fee_type];
+            $cond['conditions'] = 'user_id=:user_id:';
+            if ($type == 'register') {
+                $cond['conditions'] .= ' and fee_type=:fee_type:';
+                $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER];
+            } else {
+                $cond['conditions'] .= ' and (fee_type=:fee_type1: or fee_type=:fee_type2:)';
+                $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE];
+            }
+            $cond['order'] = 'id desc';
             $account_histories = \AccountHistories::find($cond);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $account_histories->toJson('account_histories', 'toSimpleJson'));
         }
