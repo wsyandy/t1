@@ -728,7 +728,7 @@ class RoomsController extends BaseController
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
 
-        debug($cond);
+        debug("room_search_cond", $cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
