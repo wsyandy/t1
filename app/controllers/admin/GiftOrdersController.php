@@ -134,6 +134,7 @@ class GiftOrdersController extends BaseController
         $this->view->car_total_amount = $car_total_amount;
         $this->view->user_union_id = $user_union_id;
         $this->view->sender_union_id = $sender_union_id;
+        $this->view->room_union_id = $room_union_id;
     }
 
     function detailAction()
