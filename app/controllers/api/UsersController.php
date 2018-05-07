@@ -163,17 +163,19 @@ class UsersController extends BaseController
 
             if (!$user) {
                 $current_user = $this->currentUser();
+                if (isPresent($current_user->mobile) || $current_user->isThirdLogin()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '注册无效');
+                }
                 $opts = [
                     'mobile' => $mobile,
                     'product_channel_id' => $this->currentProductChannelId(),
                     'type' => 'register',
-                    'user_id'=>$current_user->id
+                    'user_id' => $current_user->id
                 ];
                 $is_have_sms_distribute_history = \SmsDistributeHistories::isUserForShare($opts);
                 if (!$is_have_sms_distribute_history) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
                 }
-
 
                 $current_user->mobile = $mobile;
                 $current_user->update();
