@@ -724,6 +724,12 @@ class RoomsController extends BaseController
 
         debug($cond);
 
+        $shield_room_ids = $this->currentUser()->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
+        }
+
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));

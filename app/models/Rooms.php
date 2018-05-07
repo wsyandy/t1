@@ -1552,8 +1552,8 @@ class Rooms extends BaseModel
 
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
 
-        if($shield_room_ids) {
-            $room_ids = array_diff($room_is, $shield_room_ids);
+        if ($shield_room_ids) {
+            $room_ids = array_diff($room_ids, $shield_room_ids);
         }
 
         $rooms = Rooms::findByIds($room_ids);
@@ -2094,6 +2094,7 @@ class Rooms extends BaseModel
 
         debug($cond);
 
+
         $rooms = Rooms::findPagination($cond, $page, $per_page);
 
         return $rooms;
@@ -2430,6 +2431,12 @@ class Rooms extends BaseModel
                 $cond['bind']['types'] = "%" . $search_type . "%";
 
             }
+        }
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
