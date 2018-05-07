@@ -92,7 +92,7 @@
         <p><span>2.</span><span>用户在活动期间收到礼物，每收到1个钻石，用户的魅力值+1，每送出一个1个钻石，贡献值+1</span></p>
         <p><span>3.</span><span>礼物榜按用户收到对应礼物（LV包包，花漾甜心，奶茶）的个数进行排名</span></p>
         <p><span>4.</span><span>活动时间为{{ activity.start_at_text }}——{{ activity.end_at_text }}</span></p>
-        <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID作为冠名内容；</span></p>
+        <p><span>5.</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID昵称作为冠名内容；</span></p>
         <p><span>6.</span><span>活动结果将会在每周一12:00公布，请保持关注</span></p>
     </div>
     <span class="week_title_type">本周实时榜单</span>
