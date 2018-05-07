@@ -2514,7 +2514,7 @@ class Rooms extends BaseModel
 
         if ($show_game && isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'icon' => $root . 'images/pk.png'];
-            $menu_config[] = ['show' => true, 'title' => '红包', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_racpet.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
         return $menu_config;
