@@ -835,4 +835,35 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id]);
     }
+
+    function initiatePkAction()
+    {
+        $room_id = $this->params('id');
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $player_a_id = $this->params('player_a_id');
+        $player_b_id = $this->params('player_b_id');
+        $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
+        $pk_time = $this->params('pk_time'); //
+
+        $opts = ['player_a_id' => $player_a_id, 'player_b_id' => $player_b_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
+
+        $res = \PkHistories::createHistory($this->currentUser(), $opts);
+
+        if ($res) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功');
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
+
+    }
 }
