@@ -49,6 +49,6 @@ class ProductChannelsController extends BaseController
 
     function strategiesAction()
     {
-        $this->view->title = '玩转Hi';
+        $this->view->title = 'Hi语音介绍';
     }
 }
