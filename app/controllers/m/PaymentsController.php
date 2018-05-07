@@ -118,14 +118,6 @@ class PaymentsController extends BaseController
         }
 
         if ($this->request->isAjax()) {
-            $opts = [
-                'mobile' => $this->currentUser()->mobile,
-                'type' => 'pay',
-                'amount' => $order->amount,
-                'product_channel_id' => $this->currentProductChannelId()
-            ];
-            \SmsDistributeHistories::isUserForShare($opts);
-
             $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pay_status' => $payment->pay_status]);
             return;
         }
