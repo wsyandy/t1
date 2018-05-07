@@ -1550,7 +1550,7 @@ class Rooms extends BaseModel
             $offset = $total_entries - 1;
         }
 
-        $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
         if ($shield_room_ids) {
             $room_ids = array_diff($room_ids, $shield_room_ids);
