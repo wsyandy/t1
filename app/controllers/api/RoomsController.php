@@ -765,7 +765,7 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $gang_up) {
-            $gang_up_rooms_json = \Rooms::searchGangUpRooms(1, 4);
+            $gang_up_rooms_json = \Rooms::searchGangUpRooms($this->currentUser(), 1, 4);
         }
 
         if (STATUS_ON == $gang_up_category) {
