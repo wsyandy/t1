@@ -690,9 +690,9 @@ class UsersController extends BaseController
         $this->view->users = $pagination;
     }
 
-    function deleteUserLoginInfo()
+    function deleteUserLoginInfoAction()
     {
-        $user_id = $this->params('user_id');
+        $user_id = $this->params('id');
 
         if (isBlank($user_id)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');

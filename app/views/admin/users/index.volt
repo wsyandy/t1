@@ -221,7 +221,7 @@
     });
     $('body').on('click', '#delete_user_login_info', function (e) {
         e.preventDefault();
-        if (confirm('确认清楚？')) {
+        if (confirm('确认清除？')) {
             var href = $(this).attr('href');
             $.post(href, '', function (resp) {
                 alert(resp.error_reason);
