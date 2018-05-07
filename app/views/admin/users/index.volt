@@ -101,6 +101,9 @@
     {% if isAllowed('users','join_company') %}
         <a href="/admin/users/join_company?id={{ user.id }} " id="join_company">加入公司内部成员</a><br/>
     {% endif %}
+    {% if isAllowed('users','delete_user_login_info') %}
+        <a href="/admin/users/delete_user_login_info?id={{ user.id }} " id="delete_user_login_info">清除用户登录信息</a><br/>
+    {% endif %}
 {% endmacro %}
 
 {{ simple_table(users,['id': 'id','uid': 'uid','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
@@ -164,6 +167,9 @@
             {% if isAllowed('users','join_company') %}
                 <a href="/admin/users/join_company?id=${ user.id }" id="join_company">加入公司内部成员</a><br/>
             {% endif %}
+            {% if isAllowed('users','delete_user_login_info') %}
+                <a href="/admin/users/delete_user_login_info?id={{ user.id }} " id="delete_user_login_info">清除用户登录信息</a><br/>
+            {% endif %}
         </td>
 
     </tr>
@@ -206,6 +212,16 @@
     $('body').on('click', '#join_company', function (e) {
         e.preventDefault();
         if (confirm('确认加入？')) {
+            var href = $(this).attr('href');
+            $.post(href, '', function (resp) {
+                alert(resp.error_reason);
+                location.reload(true)
+            });
+        }
+    });
+    $('body').on('click', '#delete_user_login_info', function (e) {
+        e.preventDefault();
+        if (confirm('确认清楚？')) {
             var href = $(this).attr('href');
             $.post(href, '', function (resp) {
                 alert(resp.error_reason);
