@@ -168,7 +168,7 @@
                 <a href="/admin/users/join_company?id=${ user.id }" id="join_company">加入公司内部成员</a><br/>
             {% endif %}
             {% if isAllowed('users','delete_user_login_info') %}
-                <a href="/admin/users/delete_user_login_info?id={{ user.id }} " id="delete_user_login_info">清除用户登录信息</a><br/>
+                <a href="/admin/users/delete_user_login_info?id=${ user.id }" id="delete_user_login_info">清除用户登录信息</a><br/>
             {% endif %}
         </td>
 
