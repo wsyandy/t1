@@ -972,6 +972,7 @@ trait UserAttrs
         }
         return $avatar_url;
     }
+
     static function getImageForShare($image_data)
     {
         $image_data = trim($image_data);
@@ -1007,5 +1008,46 @@ trait UserAttrs
             //文件错误
             return false;
         }
+    }
+
+    //获取屏蔽的房间id
+    function getShieldRoomIds()
+    {
+        $total_room_ids = [];
+
+        $province_id = $this->province_id;
+        $city_id = $this->city_id;
+        $ip_province_id = $this->ip_province_id;
+        $ip_city_id = $this->ip_city_id;
+        $geo_province_id = $this->geo_province_id;
+        $geo_city_id = $this->geo_city_id;
+
+        $province_ids = [$province_id, $ip_province_id, $geo_province_id];
+        $city_ids = [$city_id, $ip_city_id, $geo_city_id];
+
+        $province_ids = array_unique(array_filter($province_ids));
+        $city_ids = array_unique(array_filter($city_ids));
+
+        $hot_cache = self::getHotReadCache();
+
+        foreach ($province_ids as $province_id) {
+            $room_ids = $hot_cache->zrange('room_shield_province_id_' . $province_id, 0, -1);
+
+            if ($room_ids) {
+                $total_room_ids = array_merge($total_room_ids, $room_ids);
+            }
+        }
+
+        foreach ($city_ids as $city_id) {
+            $room_ids = $hot_cache->zrange('room_shield_city_id_' . $city_id, 0, -1);
+
+            if ($room_ids) {
+                $total_room_ids = array_merge($total_room_ids, $room_ids);
+            }
+        }
+
+        $total_room_ids = array_unique(array_filter($total_room_ids));
+
+        return $total_room_ids;
     }
 }

@@ -450,4 +450,57 @@ class RoomsController extends BaseController
         \Rooms::deleteGameWhiteList($id);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/game_white_list']);
     }
+
+
+    function shieldConfigAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_id = $this->params('id');
+        $shield_province_key = 'room_shield_provinces_room_id_' . $room_id;
+        $shield_city_key = 'room_shield_cities_room_id_' . $room_id;
+
+        $shield_province_ids = $hot_cache->zrange($shield_province_key, 0, -1);
+        $shield_city_ids = $hot_cache->zrange($shield_city_key, 0, -1);
+
+        if ($this->request->isPost()) {
+
+            $province_ids = $this->params('province_ids', []);
+            $city_ids = $this->params('city_ids', []);
+
+            $all_provinces = \Provinces::findForeach();
+            $all_cities = \Cities::findForeach();
+
+            foreach ($all_provinces as $all_province) {
+
+                $key = "room_shield_province_id_" . $all_province->id;
+
+                if (in_array($all_province->id, $province_ids)) {
+                    $hot_cache->zadd($key, time(), $room_id);
+                    $hot_cache->zadd($shield_province_key, time(), $all_province->id);
+                } else {
+                    $hot_cache->zrem($key, $room_id);
+                    $hot_cache->zrem($shield_province_key, $all_province->id);
+                }
+            }
+
+            foreach ($all_cities as $all_city) {
+
+                $key = "room_shield_city_id_" . $all_city->id;
+
+                if (in_array($all_city->id, $city_ids)) {
+                    $hot_cache->zadd($key, time(), $room_id);
+                    $hot_cache->zadd($shield_city_key, time(), $all_city->id);
+                } else {
+                    $hot_cache->zrem($key, $room_id);
+                    $hot_cache->zrem($shield_city_key, $all_city->id);
+                }
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        }
+
+        $this->view->provinces = \Cities::getAllCities();
+        $this->view->city_ids_list = $shield_city_ids;
+        $this->view->room_id = $room_id;
+    }
 }
