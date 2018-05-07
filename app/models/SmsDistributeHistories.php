@@ -134,7 +134,7 @@ class SmsDistributeHistories extends BaseModel
 
     static function findFirstByMobile($product_channel, $mobile)
     {
-        $user = \Users::findFirst([
+        $user = \SmsDistributeHistories::findFirst([
             'conditions' => 'product_channel_id = :product_channel_id: and mobile=:mobile:',
             'bind' => ['product_channel_id' => $product_channel->id, 'mobile' => $mobile],
             'order' => 'id desc'
