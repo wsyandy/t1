@@ -39,10 +39,10 @@ class PkHistories extends BaseModel
         $pk_history->status = STATUS_PROGRESS;
 
         if ($pk_history->save()) {
-            return true;
+            return $pk_history;
         }
 
-        return false;
+        return null;
     }
 
     function toSimpleJson()
@@ -51,11 +51,14 @@ class PkHistories extends BaseModel
             'id' => $this->id,
             'winner_id' => $this->winner_id,
             'type_text' => $this->type_text,
+            'created_at' => $this->created_at,
             'created_at_text' => $this->created_at_text,
             'player_a_score' => $this->player_a_score,
             'player_b_score' => $this->player_a_score,
             'player_a_nickname' => $this->player_a_nickname,
-            'player_b_nickname' => $this->player_b_nickname
+            'player_b_nickname' => $this->player_b_nickname,
+            'player_a_id' => $this->player_a_id,
+            'player_b_id' => $this->player_b_id
         ];
     }
 }
