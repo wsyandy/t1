@@ -3,15 +3,22 @@
 {{ theme_js('/m/js/swiperTab.js','/m/js/swiper.jquery.min.js') }}
 {{ block_end() }}
 <div id="app">
+    {#<ul class="swiperTab">#}
+    {#<li @click="cut('register')">#}
+    {#<span>已邀请的</span>#}
+    {#<span class="border"></span>#}
+    {#</li>#}
+    {#<li @click="cut('pay')">#}
+    {#<span>充值分成</span>#}
+    {#<span class="border"></span>#}
+    {#</li>#}
+    {#</ul>#}
     <ul class="swiperTab">
-        <li @click="cut('register')">
-            <span>已邀请的</span>
+        <li v-for="(item,index) in swiper_tab" :class="{'active':cur_index==index}" @click="selectTab(index)">
+            <span v-text="item"></span>
             <span class="border"></span>
         </li>
-        <li @click="cut('pay')">
-            <span>充值分成</span>
-            <span class="border"></span>
-        </li>
+
     </ul>
     <div class="swiper-container">
         <div class="swiper-wrapper">
@@ -60,18 +67,29 @@
 <script>
     /*swiper选项卡切换*/
     $(function () {
-        $('.swiperTab > li').eq(0).addClass('active');
-        tabs('.swiperTab > li', '.swiper-container', 'active');
+//        $('.swiperTab > li').eq(0).addClass('active');
+//        tabs('.swiperTab > li', '.swiper-container', 'active');
         distributeForBonus('register');
     });
     var opts = {
         data: {
-            account_histories: []
+            account_histories: [],
+            swiper_tab: ['已邀请的', '充值分成'],
+            cur_index: 0,
         },
 
         methods: {
-            cut: function (type) {
-                distributeForBonus(type);
+            selectTab: function (index) {
+                this.cur_index = index;
+                console.log(this.cur_index);
+                switch (this.cur_index) {
+                    case 0:
+                        distributeForBonus('register');
+                        break;
+                    case 1:
+                        distributeForBonus('pay');
+                        break;
+                }
             }
         }
     };
