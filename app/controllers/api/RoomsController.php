@@ -204,14 +204,15 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
+        $res['menu_config'] = $room->getRoomMenuConfig($show_game,$root,$room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}
 
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-            $res['menu_config'] = $menu_config;
-        }
+//        if ($show_game) {
+//            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+//            $res['menu_config'] = $menu_config;
+//        }
 
         $game_history = $room->getGameHistory();
 

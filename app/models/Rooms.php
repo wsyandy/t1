@@ -1797,19 +1797,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2505,5 +2503,20 @@ class Rooms extends BaseModel
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 
         return $gang_up_rooms_json;
+    }
+
+    function getRoomMenuConfig($show_game, $root, $room_id)
+    {
+        $menu_config = [];
+        if ($show_game) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+        }
+
+        if ($show_game && isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'icon' => $root . 'images/pk.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_racpet.png'];
+        }
+
+        return $menu_config;
     }
 }
