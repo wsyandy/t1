@@ -64,23 +64,15 @@ class DistributeController extends BaseController
 
     }
 
-    function distributeRegisterBonusAction()
+    function distributeBonusAction()
     {
         if ($this->request->isAjax()) {
+            $type = $this->params('type', 'register');
+            $fee_type = $type == 'register' ? ACCOUNT_TYPE_DISTRIBUTE_REGISTER : ACCOUNT_TYPE_DISTRIBUTE_PAY;
             $cond['conditions'] = 'user_id=:user_id: and fee_type=:fee_type:';
-            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER];
+            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => $fee_type];
             $account_histories = \AccountHistories::find($cond);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$account_histories->toJson('account_histories','toSimpleJson') );
-        }
-
-    }
-    function distributePayBonusAction()
-    {
-        if ($this->request->isAjax()) {
-            $cond['conditions'] = 'user_id=:user_id: and fee_type=:fee_type:';
-            $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_PAY];
-            $account_histories = \AccountHistories::find($cond);
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '',$account_histories->toJson('account_histories','toSimpleJson') );
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $account_histories->toJson('account_histories', 'toSimpleJson'));
         }
 
     }
