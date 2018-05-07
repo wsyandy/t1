@@ -26,8 +26,9 @@ class GiftOrdersController extends BaseController
         $gift_order = $this->params('gift_order');
         $id = fetch($gift_order, 'id_eq');
 
-        $cond['conditions'] = 'id > 0';
-
+        if (!isset($cond['conditions'])) {
+            $cond['conditions'] = 'id > 0';
+        }
 
         if (!$id) {
 
@@ -105,7 +106,7 @@ class GiftOrdersController extends BaseController
         $gold_total_amount = 0;
         $car_total_amount = 0;
 
-        if ($user_uid || $sender_uid || $room_user_uid || $sender_union_id || $user_union_id) {
+        if ($user_uid || $sender_uid || $room_user_uid || $sender_union_id || $user_union_id || $room_union_id) {
             $cond['column'] = 'amount';
             $cond['conditions'] .= ' and pay_type = :pay_type:';
             $cond['bind']['pay_type'] = GIFT_PAY_TYPE_DIAMOND;
