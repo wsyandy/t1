@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>wangEditor 菜单配置</title>
+</head>
+<body>
+<div id="editor">
+    <p>欢迎使用 wangEditor 富文本编辑器</p>
+</div>
+<button id="btn1">点击</button>
+<script type="text/javascript" src="./wangEditor.min.js"></script>
+<script type="text/javascript">
+    var E = window.wangEditor
+    var editor2 = new E('editor');
+    editor2.customConfig.uploadImgShowBase64 = true;
+    editor2.create()
+</script>

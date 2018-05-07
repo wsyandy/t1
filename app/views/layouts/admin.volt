@@ -443,6 +443,9 @@
                     {% if isAllowed('games','index') %}
                         <li><a href="/admin/games">游戏配置</a></li>
                     {% endif %}
+                    {% if isAllowed('hotSearch', 'index') %}
+                        <li><a href="/admin/hotSearch">热搜词配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
