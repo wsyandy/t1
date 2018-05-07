@@ -1507,6 +1507,7 @@ class Rooms extends BaseModel
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
+        $shield_room_ids = [];
 
         if (isPresent($user)) {
 
@@ -1524,6 +1525,8 @@ class Rooms extends BaseModel
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
             }
+
+            $shield_room_ids = $user->getShieldRoomIds();
         }
 
         $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
@@ -1548,6 +1551,11 @@ class Rooms extends BaseModel
         }
 
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
+
+        if($shield_room_ids) {
+            $room_ids = array_filter()
+        }
+
         $rooms = Rooms::findByIds($room_ids);
 
         $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
