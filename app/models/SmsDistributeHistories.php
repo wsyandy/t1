@@ -76,7 +76,7 @@ class SmsDistributeHistories extends BaseModel
         $mobile = fetch($opts, 'mobile');
         $type = fetch($opts, 'type', 'register');
         $amount = fetch($opts, 'amount');
-        $user_id = fetch($opts, 'user_id');
+        $current_user = fetch($opts, 'current_user');
         $status = $type == 'register' ? AUTH_WAIT : AUTH_SUCCESS;
         $conds = ['conditions' => 'product_channel_id = :product_channel_id: and status=:status: and mobile=:mobile:',
             'bind' => ['status' => $status, 'mobile' => $mobile, 'product_channel_id' => $product_channel_id],
@@ -85,7 +85,7 @@ class SmsDistributeHistories extends BaseModel
         if ($sms_distribute_history) {
             switch ($type) {
                 case 'register':
-                    self::distributeRegisterBonus($sms_distribute_history, $user_id);
+                    self::distributeRegisterBonus($sms_distribute_history, $current_user);
                     info($type, '=>', $mobile);
                     return true;
                 case 'pay':
@@ -98,11 +98,15 @@ class SmsDistributeHistories extends BaseModel
         return false;
     }
 
-    static function distributeRegisterBonus($sms_distribute_history, $user_id)
+    static function distributeRegisterBonus($sms_distribute_history, $current_user)
     {
-        $sms_distribute_history->user_id = $user_id;
+        $sms_distribute_history->user_id = $current_user->id;
         $sms_distribute_history->status = AUTH_SUCCESS;
         $sms_distribute_history->update();
+
+        $current_user->mobile = $sms_distribute_history->mobile;
+        $current_user->password = $sms_distribute_history->password;
+        $current_user->update();
 
         $user_id = $sms_distribute_history->share_user_id;
         $user = \Users::findFirstById($user_id);

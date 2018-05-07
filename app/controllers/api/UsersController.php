@@ -170,16 +170,12 @@ class UsersController extends BaseController
                     'mobile' => $mobile,
                     'product_channel_id' => $this->currentProductChannelId(),
                     'type' => 'register',
-                    'user_id' => $current_user->id
+                    'current_user' => $current_user
                 ];
                 $is_have_sms_distribute_history = \SmsDistributeHistories::isUserForShare($opts);
                 if (!$is_have_sms_distribute_history) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
                 }
-
-                $current_user->mobile = $mobile;
-                $current_user->update();
-
             }
 
             if ($user->isBlocked()) {

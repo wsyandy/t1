@@ -689,4 +689,20 @@ class UsersController extends BaseController
 
         $this->view->users = $pagination;
     }
+
+    function deleteUserLoginInfoAction()
+    {
+        $user_id = $this->params('id');
+
+        if (isBlank($user_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+        $user = \Users::findFirstById($user_id);
+        $user->mobile = '';
+        $user->login_type = '';
+        $user->third_name = '';
+        $user->third_unionid = '';
+        $user->update();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+    }
 }
