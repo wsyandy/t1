@@ -20,7 +20,7 @@
 
 <div id="app" class="week_activity">
     <div class="week_activity_banner"></div>
-    <span class="week_title_type"></span>
+    <span class="week_title_type">上周魅力周榜TOP1</span>
     <div class="week_rules_box week_rules_background">
 
         <ul class="week_charm_topul">
