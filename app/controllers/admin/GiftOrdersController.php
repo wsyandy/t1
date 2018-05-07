@@ -16,6 +16,7 @@ class GiftOrdersController extends BaseController
         $sender_uid = $this->params('sender_uid');
         $user_union_id = $this->params('user_union_id');
         $sender_union_id = $this->params('sender_union_id');
+        $room_union_id = $this->params('room_union_id');
         $user_uid = $this->params('user_uid');
         $cond = $this->getConditions('gift_order');
         $cond['order'] = 'id desc';
@@ -93,6 +94,10 @@ class GiftOrdersController extends BaseController
             $cond['bind']['receiver_union_id'] = $user_union_id;
         }
 
+        if ($room_union_id) {
+            $cond['conditions'] .= ' and room_union_id =:room_union_id:';
+            $cond['bind']['room_union_id'] = $room_union_id;
+        }
 
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
 
