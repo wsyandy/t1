@@ -987,7 +987,7 @@ trait UserAttrs
                 if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $image_data)))) {
                     $img_path = str_replace('../../..', '', $new_file);
                     $res = \StoreFile::upload($img_path, APP_NAME . '/users/voices/' . $file_name);
-                    $image_url = \StoreFile::getUrl($res);
+                    $image_url = \StoreFile::getUrl($res). '@!big';
                     if (file_exists($source_filename)) {
                         unlink($source_filename);
                     }
