@@ -8,7 +8,10 @@
         <img class="qr_code" :src="qrcode" alt="">
         <div class="extend_qr"> 识别图中二维码，加入{{ product_channel_name }}</div>
     </div>
-
+    <div class="extend_share_box">
+        <div class="extend_share_title">
+            <span>分享</span>
+        </div>
     <ul class="extend_share">
         <li>
             <img src="/m/images/share_weiChat.png" alt="" @click="share('wx_friend','image','distribute')">
@@ -23,6 +26,10 @@
             <span>QQ好友</span>
         </li>
         <li>
+            <img src="/m/images/share_qqzone.png" alt="" @click="share('qq_zone','image','distribute')">
+            <span>QQ空间</span>
+        </li>
+        <li>
             <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','distribute')">
             <span>微博</span>
         </li>
@@ -31,6 +38,7 @@
             <span>存至相册</span>
         </li>
     </ul>
+    </div>
     <div v-if="isShareSuccess" class="toast_text_box">
         <span class="toast_text">请稍后。。。</span>
     </div>
