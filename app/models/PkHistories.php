@@ -55,6 +55,9 @@ class PkHistories extends BaseModel
         return [
             'id' => $this->id,
             'pk_type' => $this->pk_type,
+            'expire_at' => $this->expire_at,
+            'created_at' => $this->created_at,
+            'created_at_text' => $this->created_at_text,
 
             'left_pk_user' => [
                 'id' => $left_pk_user->id,
