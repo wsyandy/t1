@@ -15,8 +15,8 @@ class DistributeController extends BaseController
     function indexAction()
     {
         $user = $this->currentUser();
-        $total_amount = \AccountHistories::sum(['conditions' => '(fee_type=:fee_type1: or fee_type=:fee_type2:) and user_id=:user_id:',
-            'bind' => ['fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'user_id' => $user->id],
+        $total_amount = \AccountHistories::sum(['conditions' => '(fee_type=:fee_type1: or fee_type=:fee_type2: or fee_type=:fee_type3:) and user_id=:user_id:',
+            'bind' => ['fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'fee_type3' => ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, 'user_id' => $user->id],
             'column' => 'amount'
         ]);
 
