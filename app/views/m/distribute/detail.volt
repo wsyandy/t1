@@ -81,7 +81,7 @@
         methods: {
             selectTab: function (index) {
                 this.cur_index = index;
-                console.log(this.cur_index);
+                tabSwiper.slideTo(index);/*滑动到对应的滑块*/
                 switch (this.cur_index) {
                     case 0:
                         distributeForBonus('register');
@@ -108,4 +108,10 @@
 
 
     vm = XVue(opts);
+    var tabSwiper = new Swiper('.swiper-container', {
+        initialSlide: 0, // 设定初始化时slide的索引
+        // effect : 'flip',//切换效果
+        speed : 500, //滑动速度，单位ms
+        // autoHeight: true, // 高度随内容变化
+    });
 </script>
