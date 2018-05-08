@@ -154,14 +154,13 @@ class Rooms extends BaseModel
 
     function isShieldRoom()
     {
-        if (!$this->types) {
-            return false;
-        }
 
-        $types = explode(",", $this->types);
+        if ($this->types) {
+            $types = explode(",", $this->types);
 
-        if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
-            return true;
+            if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+                return true;
+            }
         }
 
         $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
