@@ -4,7 +4,7 @@ html{
 .extend_box{
     position: relative;
     width: 6.1rem;
-    height: 9.3rem;
+    height: 10.85rem;
     margin: 0.34rem auto;
     border-radius: 0.1rem;
     overflow: hidden;
@@ -14,14 +14,14 @@ html{
     top:0;
     left: 0;
     width: 6.1rem;
-    height: 9.3rem;
+    height: 10.85rem;
 }
 .qr_code{
     position: absolute;
     bottom: 0.98rem;
-    left: 2.35rem;
-    width: 1.6rem;
-    height:  1.6rem;
+    left: 2.16rem;
+    width: 1.8rem;
+    height:  1.8rem;
 }
 
 .extend_qr{
