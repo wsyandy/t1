@@ -82,4 +82,12 @@ trait UserAbilities
 
         return $this->version_code >= 6;
     }
+
+    // 屏蔽热门房间
+    function isBlockHotRoom()
+    {
+        return $this->province_id == 2;
+    }
+
+
 }
