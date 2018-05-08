@@ -22,12 +22,9 @@ class UsersController extends BaseController
 
         $selected_product = $products[0];
         $selected_payment_channel = $payment_channels[0];
-        $is_show_distribute = false;
 
         $user = $this->currentUser();
-        if ($user->organisation == USER_ORGANISATION_COMPANY) {
-            $is_show_distribute = true;
-        }
+        $is_show_distribute = $user->isCompanyUser();
 
         $this->view->is_show_distribute = $is_show_distribute;
         $this->view->selected_product = $selected_product;
