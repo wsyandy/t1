@@ -23,7 +23,9 @@ class UsersController extends BaseController
         $selected_product = $products[0];
         $selected_payment_channel = $payment_channels[0];
         $is_show_distribute = false;
-        if (isInternalIp($this->remoteIp())) {
+
+        $user = $this->currentUser();
+        if ($user->organisation == USER_ORGANISATION_COMPANY) {
             $is_show_distribute = true;
         }
 
