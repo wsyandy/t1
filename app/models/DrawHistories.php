@@ -35,19 +35,38 @@ class DrawHistories extends BaseModel
     function afterCreate()
     {
 
+        // 汇总
+        $user_db = Users::getUserDb();
+        // 系统总收入
+        $cache_key = 'draw_history_total_amount_incr_' . $this->pay_type;
+        $total_incr_diamond = $user_db->incrby($cache_key, intval($this->pay_amount));
+        // 系统支出: 金币，钻石，礼物
+        $cache_decr_key = 'draw_history_total_amount_decr_' . $this->type;
+        $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($this->number));
+
+        // 全服通知：个推，系统消息，公屏消息
+        if ($this->type == 'diamond' && $this->number == 100000
+            || $this->type == 'gift' && $this->gift_id == 73
+        ) {
+            $cache_hit_10w_key = 'draw_history_hit_all_notice';
+            $hot_cache = Users::getHotWriteCache();
+            $hot_cache->setex($cache_hit_10w_key, 3600 * 25, $this->id);
+            info($cache_hit_10w_key, $this->id);
+        }
+
+        // 全服通知：公屏消息
         if ($this->number >= 10000 || 'gift' == $this->type || isDevelopmentEnv()) {
 
             $content = '';
             if ('diamond' == $this->type) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->number . '钻大奖！还不快来砸金蛋，试试手气~';
             }
-
             if ('gift' == $this->type) {
                 $content = '哇哦！' . $this->user->nickname . '刚刚砸出' . $this->gift->name . '大奖！还不快来砸金蛋，试试手气~';
             }
 
             if ($content) {
-                info('全服', $this->id, $this->type, $this->user_id, $this->number);
+                info('全服公屏消息', $this->id, $this->type, $this->user_id, $this->number);
                 Rooms::delay()->asyncAllNoticePush($content, ['type' => 'top_topic_message']);
             }
         }
@@ -133,7 +152,7 @@ class DrawHistories extends BaseModel
     static function isDayLimit($data)
     {
         $id = fetch($data, 'id');
-        $day_limit_num = fetch($data, 'day_limit_num');
+        $day_limit_num = fetch($data, 'day_limit_num', 0);
         if ($day_limit_num < 1) {
             return false;
         }
@@ -520,25 +539,6 @@ class DrawHistories extends BaseModel
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         }
 
-        $user_db = Users::getUserDb();
-        // 系统总收入
-        $cache_key = 'draw_history_total_amount_incr_' . $draw_history->pay_type;
-        $total_incr_diamond = $user_db->incrby($cache_key, intval($draw_history->pay_amount));
-
-        // 系统支出: 金币，钻石，礼物
-        $cache_decr_key = 'draw_history_total_amount_decr_' . $draw_history->type;
-        $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($draw_history->number));
-
-        if ($draw_history->type == 'diamond' && $draw_history->number == 100000
-            || $draw_history->type == 'gift' && $draw_history->gift_id == 73
-        ) {
-
-            $cache_hit_10w_key = 'draw_history_hit_all_notice';
-            $hot_cache = Users::getHotWriteCache();
-            $hot_cache->setex($cache_hit_10w_key, 3600 * 25, $draw_history->id);
-            info($cache_hit_10w_key, $draw_history->id);
-        }
-
         return $draw_history;
     }
 
@@ -566,60 +566,4 @@ class DrawHistories extends BaseModel
         return $opts;
     }
 
-    function fixData()
-    {
-        $history = self::findFirst([
-            'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
-            'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => $this->type],
-            'order' => 'id desc']);
-
-        $old_total_gold = 0;
-        $old_total_diamond = 0;
-        $old_total_gift_diamond = 0;
-        $old_total_gift_num = 0;
-        if ($history) {
-            $old_total_gold = $history->total_gold;
-            $old_total_diamond = $history->total_diamond;
-            $old_total_gift_diamond = $history->total_gift_diamond;
-            $old_total_gift_num = $history->total_gift_num;
-        }
-
-        if ($this->type == 'gold') {
-            $this->total_gold = $old_total_gold + $this->number;
-        }
-        if ($this->type == 'diamond') {
-            $this->total_diamond = $old_total_diamond + $this->number;
-        }
-        if ($this->type == 'gift') {
-            $this->total_gift_diamond = $old_total_gift_diamond + $this->number;
-            $this->total_gift_num = $old_total_gift_num + $this->gift_num;
-        }
-
-        $this->update();
-    }
-
-    function fixData2()
-    {
-        if ($this->type == 'gold') {
-            $diamond_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
-                'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => 'diamond'],
-                'order' => 'id desc']);
-            if ($diamond_history) {
-                $this->total_diamond = $diamond_history->total_diamond;
-            }
-
-        }
-        if ($this->type == 'diamond') {
-            $gold_history = self::findFirst([
-                'conditions' => 'user_id = :user_id: and id<:cur_id: and type=:type:',
-                'bind' => ['user_id' => $this->user_id, 'cur_id' => $this->id, 'type' => 'gold'],
-                'order' => 'id desc']);
-            if ($gold_history) {
-                $this->total_gold = $gold_history->total_gold;
-            }
-        }
-
-        $this->update();
-    }
 }
