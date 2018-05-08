@@ -111,7 +111,7 @@
                     {% if isAllowed('rooms','auto_hot') %}
                         <li><a href="/admin/rooms/auto_hot">热门房间</a></li>
                     {% endif %}
-                    {% if isAllowed('rooms','index') %}
+                    {% if isAllowed('rooms','fixed') %}
                         <li><a href="/admin/rooms?hot=1">固定热门房间</a></li>
                     {% endif %}
                     {% if isAllowed('broadcasts','index') %}
@@ -125,6 +125,9 @@
                     {% endif %}
                     {% if isAllowed('serach_histories','room') %}
                         <li><a href="/admin/search_histories/room">房间搜索记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('rooms','forbidden_to_hot_list') %}
+                        <li><a href="/admin/rooms/forbidden_to_hot_list">禁止上热门房间</a></li>
                     {% endif %}
                 </ul>
             </li>
