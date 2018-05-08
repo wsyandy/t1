@@ -96,13 +96,19 @@ trait UserAbilities
     function isShieldHotRoom()
     {
         $province_ids = [1, 2];
-        if (in_array($this->province_id, $province_ids) || in_array($this->ip_province_id, $province_ids) || in_array($this->geo_province_id, $province_ids)) {
+        if (in_array($this->province_id, $province_ids)
+            || in_array($this->ip_province_id, $province_ids) && isProduction()
+            || in_array($this->geo_province_id, $province_ids) && isProduction()) {
+            
             info($this->id, $this->province_id, $this->ip_province_id, $this->geo_province_id);
             return true;
         }
 
         $city_ids = [1, 2, 94, 192, 193];
-        if (in_array($this->city_id, $city_ids) || in_array($this->ip_city_id, $city_ids) || in_array($this->geo_city_id, $city_ids)) {
+        if (in_array($this->city_id, $city_ids)
+            || in_array($this->ip_city_id, $city_ids) && isProduction()
+            || in_array($this->geo_city_id, $city_ids) && isProduction()) {
+
             info($this->id, $this->city_id, $this->ip_city_id, $this->geo_city_id);
             return true;
         }
