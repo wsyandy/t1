@@ -51,7 +51,9 @@ class DistributeController extends BaseController
 
         $qrcode = generateQrcode($share_url);
         $product_channel_name = $this->currentProductChannel()->name;
+        $is_show_share = $user->canShareForH5();
 
+        $this->view->is_show_share = $is_show_share;
         $this->view->title = '我的推广页';
         $this->view->qrcode = $qrcode;
         $this->view->product_channel_name = $product_channel_name;

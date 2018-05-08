@@ -8,7 +8,7 @@
         <img class="qr_code" :src="qrcode" alt="">
         <div class="extend_qr"> 识别图中二维码，加入{{ product_channel_name }}</div>
     </div>
-    <div class="extend_share_box">
+    <div class="extend_share_box" v-if="is_show_share">
         <div class="extend_share_title">
             <span>分享</span>
         </div>
@@ -49,7 +49,8 @@
             qrcode: "{{ qrcode }}",
             isShareSuccess: false,
             sid: "{{ sid }}",
-            code: "{{ code }}"
+            code: "{{ code }}",
+            is_show_share : "{{ is_show_share }}"
         },
 
         methods: {
