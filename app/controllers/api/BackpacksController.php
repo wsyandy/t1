@@ -9,7 +9,7 @@ namespace api;
 
 class BackpacksController extends BaseController
 {
-    public function listAction()
+    public function indexAction()
     {
         $type = $this->params('type');
         $opt = [ 'type' => $type ];
@@ -22,5 +22,8 @@ class BackpacksController extends BaseController
     }
 
 
+    public function createAction()
+    {
 
+    }
 }

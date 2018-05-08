@@ -62,7 +62,21 @@ class Backpacks extends BaseModel
         return array(
             'id' => $this->id,
             'number' => $this->number,
-            'image_url' => StoreFile::getUrl($this->image)
+            'image_url' => $this->image_url
         );
+    }
+
+
+    /**
+     * @desc 背包 gift image 地址
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        if ($this->type == '1') {
+            $gift = Gifts::findFirstById($this->target_id);
+            return StoreFile::getUrl($gift->image);
+        }
+        return '';
     }
 }

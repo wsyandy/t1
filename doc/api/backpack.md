@@ -2,7 +2,7 @@
 
 ## 1 礼物背包
 
-> http-get ```/api/backpacks/list```
+> http-get ```/api/backpacks```
 
 
 ##### 请求参数说明
