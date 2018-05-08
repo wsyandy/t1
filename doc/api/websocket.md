@@ -324,6 +324,7 @@
     {
         action: red_packet 红包通知
         num int 红包个数
+        url 跳转地址
     }
 ```
 
