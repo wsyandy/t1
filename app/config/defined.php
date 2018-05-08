@@ -316,3 +316,7 @@ define('ACTIVITY_TYPE_ROOM', 2); //活动类型房间
 
 define('BIND_MOBILE_GOLD', 500); //绑定手机号码奖励金币数量
 define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
+
+
+// 背包类型
+define('BACKPACK_GIFT_TYPE', 1);

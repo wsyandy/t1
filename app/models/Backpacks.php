@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: admin
@@ -24,7 +25,7 @@ class Backpacks extends BaseModel
             $conditions['bind']['type'] = $opt['type'];
         }
 
-        // page set
+        // no page
         $page = 1;
         $per_page = 100;
 
@@ -38,11 +39,36 @@ class Backpacks extends BaseModel
      */
     public function toSimpleJson()
     {
+        if ($this->type == BACKPACK_GIFT_TYPE) {
+            // 礼物背包
+            $gift = $this->getGift();
+
+            return array(
+                'id' => $this->id,
+                'number' => $this->number,
+                'image_url' => $gift->getImageUrl(),
+                'svga_image_name' => $gift->getSvgaImageName(),
+                'render_type' => $gift->render_type,
+                'svga_image_url' => $gift->getImageSmallUrl(),
+                'expire_day' => $gift->expire_day,
+                'show_rank' => $gift->show_rank
+            );
+        }
         return array(
             'id' => $this->id,
-            'target_id' => $this->target_id,
-            'number' => $this->number,
-            'image' => $this->image
+            'number' => $this->number
         );
+
     }
+
+
+    /**
+     * @return object
+     */
+    public function getGift()
+    {
+        $gift = Gifts::findFirstById($this->target_id);
+        return $gift;
+    }
+
 }
