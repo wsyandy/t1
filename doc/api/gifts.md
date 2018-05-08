@@ -95,6 +95,7 @@
         amount 礼物金额
         show_rank int 礼物展示排序
         expire_time int 礼物过期时间
+        music_url 礼物音效
     }
 } 
 ````
