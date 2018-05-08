@@ -1,11 +1,30 @@
+.example {
+    display: -ms-grid;
+    display: grid;
+    -webkit-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(black));
+    background: -webkit-linear-gradient(top, white, black);
+    background: -moz-linear-gradient(top, white, black);
+    background: -o-linear-gradient(top, white, black);
+    background: linear-gradient(to bottom, white, black);
+}
 html{
     background-color:  #fff;
 }
 .extend_box{
     position: relative;
     width: 6.1rem;
-    height: 10.85rem;
+    height: 9.3rem;
     margin: 0.34rem auto;
+    -webkit-border-radius: 0.1rem;
+    -moz-border-radius: 0.1rem;
     border-radius: 0.1rem;
     overflow: hidden;
 }
@@ -14,14 +33,14 @@ html{
     top:0;
     left: 0;
     width: 6.1rem;
-    height: 10.85rem;
+    height: 9.3rem;
 }
 .qr_code{
     position: absolute;
-    top:8.05rem;
-    left: 2.16rem;
-    width: 1.8rem;
-    height:  1.8rem;
+    bottom: 0.98rem;
+    left: 2.35rem;
+    width: 1.6rem;
+    height:  1.6rem;
 }
 
 .extend_qr{
@@ -38,16 +57,25 @@ html{
 .extend_share_box{
     position: fixed;
     display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
     -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
     -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     bottom: 0;
@@ -56,6 +84,7 @@ html{
     padding-top: 0.3rem;
     background: #FFFFFF;
     -webkit-box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
+    -moz-box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
     box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
 }
 .extend_share_title{
@@ -63,12 +92,18 @@ html{
     width: 100%;
     height: 0.6rem;
     display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
     -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     font-size: 0.26rem;
@@ -91,24 +126,34 @@ html{
 .extend_share_title span:before{
     left:0;
     -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
     -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
     transform: translateX(-100%);
 }
 .extend_share_title span:after{
     right: 0;
     -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
     -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
     transform: translateX(100%);
 }
 
 .extend_share{
     display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
     -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     width: 100%;
@@ -117,19 +162,30 @@ html{
 }
 .extend_share li{
     -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
     -ms-flex: 1;
     flex: 1;
     display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
     display: -ms-flexbox;
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
     -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
     -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
     -ms-flex-align: center;
     align-items: center;
 }
@@ -145,14 +201,28 @@ html{
 .toast_text_box{
     top:50%;
     left:50%;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
     position: fixed;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center
 }
 .toast_text{
     padding: 7px 10px;
     background-color: rgba(0,0,0,0.6);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
     border-radius: 4px;
     font-size: 14px;
     color: #FFFFFF;

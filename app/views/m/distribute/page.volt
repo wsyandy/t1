@@ -4,7 +4,7 @@
 {{ block_end() }}
 <div id="app">
     <div class="extend_box">
-        <img class="extend_img" src="/m/images/page_img.png" alt="">
+        <img class="extend_img" src="/m/images/extend_img.png" alt="">
         <img class="qr_code" :src="qrcode" alt="">
         <div class="extend_qr"> 识别图中二维码，加入{{ product_channel_name }}</div>
     </div>
