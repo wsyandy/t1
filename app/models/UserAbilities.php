@@ -95,6 +95,11 @@ trait UserAbilities
     // 屏蔽热门房间
     function isShieldHotRoom()
     {
+
+        if($this->union_id || $this->isIdCardAuth()){
+            return false;
+        }
+
         $province_ids = [1, 2];
         if (in_array($this->province_id, $province_ids)
             || in_array($this->ip_province_id, $province_ids) && isProduction()
