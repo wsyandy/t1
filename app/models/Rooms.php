@@ -2382,6 +2382,14 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
+    function getPkHistory()
+    {
+        $game_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and expire_at>:current_time:',
+            'bind' => ['room_id' => $this->id, 'status' => STATUS_OFF, 'current_time' => time()], 'order' => 'id desc']);
+
+        return $game_history;
+    }
+
     static function search($user, $product_channel, $page, $per_page, $opts = [])
     {
         $new = intval(fetch($opts, 'new', 0));
