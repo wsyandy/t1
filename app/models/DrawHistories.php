@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
 
     static function isWhiteList($user)
     {
-        return in_array($user->id, [1121810]);
+        return false;
     }
 
     static function calPayAmountRate($user, $datum, $opts)
