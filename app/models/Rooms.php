@@ -1532,6 +1532,11 @@ class Rooms extends BaseModel
     static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+
+        if ($user->isShieldHotRoom()) {
+            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+        }
+
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
