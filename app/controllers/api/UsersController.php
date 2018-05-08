@@ -163,6 +163,7 @@ class UsersController extends BaseController
 
             if (!$user) {
                 $current_user = $this->currentUser();
+                info('当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
                 if (isPresent($current_user->mobile) || $current_user->isThirdLogin()) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '注册无效');
                 }
