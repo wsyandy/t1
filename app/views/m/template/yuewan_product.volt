@@ -55,7 +55,6 @@
         {% endfor %}
     </ul>
 </div>
-
 {% if !is_foreign_ip %}
 <div class="discount_tips">
     <img class="ico_rocket" src="/m/images/ico-rocket.png" alt="">
@@ -72,6 +71,16 @@
     <a href="/m/payments/create?sid={{ user.sid }}&payment_channel_id={{ selected_payment_channel.id }}&product_id={{ selected_product.id }}&payment_type={{ selected_payment_channel.payment_type }}&code={{ product_channel.code }}"
        id="pay_submit_btn" class="account_btn">确定</a>
 </div>
+{% if is_show_distribute %}
+<div class="mine_money">
+    <a href="/m/distribute?sid={{ user.sid }}&code={{ code }}" id="distribute">
+        <i class="icon_money"></i>
+        <span>免费赚钱</span>
+        <i class="icon_right"></i>
+    </a>
+</div>
+{% endif %}
+<div class="mine_text">充值问题咨询官方客服QQ：3407150190</div>
 <script type="text/javascript">
     function generatePayUrl() {
         var product_id = $(".selected").parent().data('product_id');
