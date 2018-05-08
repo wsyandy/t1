@@ -927,8 +927,8 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
-|player_a_id|参与者a|int|否||
-|player_b_id|参与者b|int|否||
+|left_pk_user_id|参与者a|int|否||
+|right_pk_user_id|参与者b|int|否||
 |pk_type|pk类型|send_gift_user:按照送礼物人数;send_gift_amount:按照送礼物价值|否||
 |pk_time|pk时长|以秒为单位|否|||
 
@@ -937,6 +937,24 @@
 {
     error_code
     error_reason
+    id int 记录id
+    created_at int 创建时间 以秒为单位的时间戳
+    expire_at int 过期时间戳
+    pk_type string pk类型
+   
+    left_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像   
+    }
+    
+    right_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像          
+    }
 }
 ```
 
@@ -947,20 +965,38 @@
 ##### 33.1 请求参数说明
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
-|id|房间id|int|否|||
+|id|房间id|int|否||
+|page|当前页码|int|否||
+|per_page|每页个数|int|否|||
 
 ##### 33.2 回应参数说明
 ```
 {
     error_code
     error_reason
-    pk_histories:{
-        id int 记录id
-        winner_id int 胜利者id
-        type_text string pk类型
-        created_at_text string 创建时间
-        player_a_score string  用户a得分
-        player_b_score string  用户b得分
-    }
+    pk_histories:[
+       
+        {
+            left_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url   
+            }
+            
+            right_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url                  
+            }
+            
+            pk_type pk类型
+            created_at_text 创建时间
+        }
+        
+       
+       .......
+    ]
 }
 ```
