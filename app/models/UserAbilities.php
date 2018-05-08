@@ -93,9 +93,9 @@ trait UserAbilities
     }
 
     // 屏蔽热门房间
-    function isBlockHotRoom()
+    function isShieldHotRoom()
     {
         return $this->province_id == 2;
     }
-    
+
 }
