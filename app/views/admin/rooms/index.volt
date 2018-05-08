@@ -94,6 +94,9 @@
     {% if isAllowed('rooms','shield_config') %}
         <a href="/admin/rooms/shield_config?id={{ room.id }}" class="modal_action">地区屏蔽配置</a></br>
     {% endif %}
+    {% if isAllowed('rooms','forbidden_to_hot') %}
+        <a href="/admin/rooms/forbidden_to_hot?id={{ room.id }}" class="modal_action">禁止上热门</a></br>
+    {% endif %}
     {% if isAllowed('rooms','edit') %}
         <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a>
     {% endif %}
@@ -156,6 +159,9 @@
             {% if isAllowed('rooms','shield_config') %}
                 <a href="/admin/rooms/shield_config?id=${ room.id }" class="modal_action">地区屏蔽配置</a></br>
             {% endif %}
+            {% if isAllowed('rooms','forbidden_to_hot') %}
+                <a href="/admin/rooms/forbidden_to_hot?id=${ room.id }" class="modal_action">禁止上热门</a></br>
+            {% endif %}
             {% if isAllowed('rooms','edit') %}
                 <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
             {% endif %}
@@ -173,4 +179,5 @@
             })
         }
     })
+
 </script>
