@@ -11,7 +11,7 @@ class BackpacksController extends BaseController
 {
     public function listAction()
     {
-        $type = $this->params('type');
+        $type = $this->params('type', 1);
         $opt = [ 'type' => $type ];
 
         \Backpacks::setDev();
