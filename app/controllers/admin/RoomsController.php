@@ -366,7 +366,21 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
-        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+        $hot_cache = \Users::getHotWriteCache();
+
+        $hot_room_list_key = \Rooms::generateHotRoomListKey();
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+
+        if ($room_ids) {
+            $cond = ['conditions' => 'id in (' . implode(',', $room_ids) . ")"];
+        } else {
+            $cond = ['conditions' => 'id < 1'];
+        }
+        
+        $rooms = \Rooms::findPagination($cond, $page, $per_page);
+
+        //$rooms = \Rooms::searchHotRooms(null, $page, $per_page);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
