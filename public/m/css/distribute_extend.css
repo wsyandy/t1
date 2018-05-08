@@ -18,7 +18,7 @@ html{
 }
 .qr_code{
     position: absolute;
-    bottom: 0.98rem;
+    top:8.05rem;
     left: 2.16rem;
     width: 1.8rem;
     height:  1.8rem;
