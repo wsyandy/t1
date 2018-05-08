@@ -42,7 +42,7 @@
 
             </div>
             <!--充值分成-->
-            <div class="swiper-slide">
+            <div class="swiper-slide swiper-no-swiping">
                 <ul class="invite_list" v-for="account_history in account_histories">
                     <li>
                         <img class="user_avatar" :src="account_history.user_avatar_url" alt="">

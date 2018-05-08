@@ -12,32 +12,32 @@
         <div class="extend_share_title">
             <span>分享</span>
         </div>
-    <ul class="extend_share">
-        <li>
-            <img src="/m/images/share_weiChat.png" alt="" @click="share('wx_friend','image','distribute')">
-            <span>微信好友</span>
-        </li>
-        <li>
-            <img src="/m/images/share_weiChatCircle.png" alt="" @click="share('wx_moments','image','distribute')">
-            <span>朋友圈</span>
-        </li>
-        <li>
-            <img src="/m/images/share_qq.png" alt="" @click="share('qq_friend','image','distribute')">
-            <span>QQ好友</span>
-        </li>
-        <li>
-            <img src="/m/images/share_qqzone.png" alt="" @click="share('qq_zone','image','distribute')">
-            <span>QQ空间</span>
-        </li>
-        <li>
-            <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','distribute')">
-            <span>微博</span>
-        </li>
-        <li @click="screenshotsImg('save')">
-            <img src="/m/images/share_download.png" alt="">
-            <span>存至相册</span>
-        </li>
-    </ul>
+        <ul class="extend_share">
+            <li>
+                <img src="/m/images/share_weiChat.png" alt="" @click="share('wx_friend','image','distribute')">
+                <span>微信好友</span>
+            </li>
+            <li>
+                <img src="/m/images/share_weiChatCircle.png" alt="" @click="share('wx_moments','image','distribute')">
+                <span>朋友圈</span>
+            </li>
+            <li>
+                <img src="/m/images/share_qq.png" alt="" @click="share('qq_friend','image','distribute')">
+                <span>QQ好友</span>
+            </li>
+            <li>
+                <img src="/m/images/share_qqzone.png" alt="" @click="share('qq_zone','image','distribute')">
+                <span>QQ空间</span>
+            </li>
+            <li>
+                <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','distribute')">
+                <span>微博</span>
+            </li>
+            <li @click="screenshotsImg('save')">
+                <img src="/m/images/share_download.png" alt="">
+                <span>存至相册</span>
+            </li>
+        </ul>
     </div>
     <div v-if="isShareSuccess" class="toast_text_box">
         <span class="toast_text">请稍后。。。</span>
