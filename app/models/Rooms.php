@@ -2542,6 +2542,19 @@ class Rooms extends BaseModel
         return $menu_config;
     }
 
+    static function remHotRoomList($room)
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
+        $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
+
+        $hot_cache = Users::getHotWriteCache();
+
+        $hot_cache->zrem($hot_room_list_key, $room->id);
+        $hot_cache->zrem($green_hot_room_list_key, $room->id);
+        $hot_cache->zrem($novice_hot_room_list_key, $room->id);
+    }
+
     static function addForbiddenList($room, $opts = [])
     {
         $forbidden_time = fetch($opts, 'forbidden_time');
@@ -2576,6 +2589,8 @@ class Rooms extends BaseModel
             $record = date("Y-m-d H:i:s", $time) . "禁止上热门原因:" . $forbidden_reason . ";操作者:" . $operator->username . ";禁止时长:永久禁止";
             $user_db->zadd($record_key, $time, $record);
         }
+
+        Rooms::remHotRoomList($room);
     }
 
     static function remForbiddenList($room, $opts = [])
