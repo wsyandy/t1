@@ -144,7 +144,7 @@ class MarketingController extends ApplicationController
                 'trace' => ['click_id' => $click_id]
             ]
         ];
-        $response = httpGet($url, $body);
+        $response = httpPost($url, $body);
         info('url', $url, 'body', $body, 'raw_body', $response->raw_body);
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '');
