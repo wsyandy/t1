@@ -245,11 +245,10 @@ class SharesController extends ApplicationController
         $sms_sem_history->save();
 
         // 跳转应用宝地址
-        $down_url = $soft_version->weixin_ur;
+        $down_url = $soft_version->weixin_url;
         if ($platform == 'ios') {
             $down_url = $soft_version->ios_down_url;
         }
-        info('跳转地址=>',$down_url);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $down_url]);
     }
