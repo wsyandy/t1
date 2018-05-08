@@ -3440,8 +3440,8 @@ EOF;
         echoLine($total);
 
         $cond = [
-            'conditions' => 'union_id = :union_id: and created_at <= :end: and fee_type = :fee_type:',
-            'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-01')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'conditions' => 'created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30'))],
             'column' => 'hi_coins'
         ];
 
@@ -3655,7 +3655,7 @@ EOF;
 
             $gift_order = GiftOrders::findFirstById($gift_order->id);
 
-            echoLine($gift_order->amount, $gift_order-$gift_order->user_id, $gift_order->receiver_union_id);
+            echoLine($gift_order->amount, $gift_order - $gift_order->user_id, $gift_order->receiver_union_id);
 
             continue;
             $user = $gift_order->user;
@@ -3716,5 +3716,157 @@ EOF;
 
             $user->update();
         }
+
+        $amount = GiftOrders::sum(
+            [
+                'conditions' => 'created_at >= :start: and created_at <= :end: and  status = :status: and 
+                gift_type = :gift_type: and pay_type = :pay_type:',
+                'bind' => ['start' => beginOfDay(strtotime('2018-04-01')),
+                    'end' => endOfDay(strtotime('2018-04-30')), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                    'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
+            ]
+        );
+
+        echoLine($amount);
+
+        $fee_types = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
+            HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励',
+            HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石', HI_COIN_FEE_TYPE_WITHDRAW_RETURN => '提现失败返还'];
+
+        $cost = 0;
+        $income = 0;
+        $withdraw = 0;
+
+
+        foreach ($fee_types as $fee_type => $text) {
+
+            $cond = [
+                'conditions' => 'created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+                'bind' => [
+                    'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                    'fee_type' => $fee_type
+                ],
+                'column' => 'hi_coins'
+            ];
+
+            $num = HiCoinHistories::sum($cond);
+
+            if (in_array($fee_type, [HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND])) {
+
+                $income += abs($num);
+
+            } else {
+
+                if (in_array($fee_type, [HI_COIN_FEE_TYPE_WITHDRAW_RETURN, HI_COIN_FEE_TYPE_WITHDRAW])) {
+                    $withdraw += $num;
+                } else {
+                    $cost += abs($num);
+                }
+            }
+
+            echoLine($text, $num);
+        }
+
+        $balance = $income - $cost;
+        echoLine($income, $cost, $balance, $withdraw);
+
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => $fee_type
+            ],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+        static $FEE_TYPE = [
+            ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
+            ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
+            ACCOUNT_TYPE_GIVE => '系统赠送',
+            ACCOUNT_TYPE_CREATE_UNION => '创建家族',
+            ACCOUNT_TYPE_CREATE_UNION_REFUND => '创建家族返还',
+            ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
+            ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
+            ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出',
+            ACCOUNT_TYPE_DEDUCT => '系统扣除',
+            ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
+            ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值',
+            ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
+            ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
+            ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
+            ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出'
+
+        ];
+
+        $cond = [
+            'conditions' => 'fee_type = :fee_type1: or fee_type = :fee_type2:',
+            'bind' => ['fee_type1' => ACCOUNT_TYPE_BUY_DIAMOND, 'fee_type2' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND]
+        ];
+
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => GIFT_ORDER_STATUS_FREEZE
+            ],
+            'columns' => 'id'
+        ]);
+
+        $gift_order_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order_ids[] = $gift_order->id;
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+        }
+
+        echoLine($gift_order_ids);
+
+        $user_ids = [1058027, 1060201, 1017233, 1060180, 1083050];
+
+        foreach ($user_ids as $user_id) {
+            $account_histories = AccountHistories::findByUserId($user_id);
+            echoLine(count($account_histories));
+
+            foreach ($account_histories as $account_history) {
+                $account_history->delete();
+            }
+        }
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and  created_at <= :end: ',
+            'bind' => ['start' => beginOfMonth(strtotime('2018-03-01')), 'end' => endOfMonth(strtotime('2018-03-31')), 'fee_type' => ACCOUNT_TYPE_DEDUCT],
+            'column' => 'amount'
+        ];
+
+
+        $amount = AccountHistories::sum($cond);
+        echoLine($amount);
+
+        $account_histories = AccountHistories::findByFeeType(ACCOUNT_TYPE_DEDUCT);
+
+        foreach ($account_histories as $account_history) {
+            echoLine($account_history->user_id);
+            $account_history->delete();
+        }
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT
+            ],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+        echoLine($num);
+
+        $id_card_auth = IdCardAuths::findFirstById(4927);
+        $id_card_auth->delete();
     }
 }

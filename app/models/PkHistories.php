@@ -50,7 +50,7 @@ class PkHistories extends BaseModel
         return [
             'id' => $this->id,
             'winner_id' => $this->winner_id,
-            'type_text' => $this->type_text,
+            'pk_type' => $this->pk_type,
             'created_at' => $this->created_at,
             'created_at_text' => $this->created_at_text,
             'player_a_score' => $this->player_a_score,
