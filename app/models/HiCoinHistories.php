@@ -239,7 +239,7 @@ class HiCoinHistories extends BaseModel
         $lock_key = "update_user_hi_coins_lock_" . $user->id;
         $lock = tryLock($lock_key);
 
-        $hi_coin_history = new HiCoinHistories();
+        $hi_coin_history = new \HiCoinHistories();
         $hi_coin_history->user_id = $user->id;
 
         $hi_coin_history->fee_type = HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND;
@@ -254,7 +254,6 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->union_type = $user->union_type;
 
         if ($hi_coin_history->save()) {
-
             $user->hi_coins = $hi_coin_history->balance;
             $user->update();
 
@@ -265,6 +264,15 @@ class HiCoinHistories extends BaseModel
             }
 
             if ($hi_coin_history->diamond > 0) {
+                //兑换成功之后,进行分销奖励
+                $opts = [
+                    'mobile' => $hi_coin_history->user->mobile,
+                    'type' => 'exchange',
+                    'amount' => $hi_coin_history->diamond,
+                    'product_channel_id' => $hi_coin_history->product_channel_id
+                ];
+                \SmsDistributeHistories::isUserForShare($opts);
+
                 \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
             }
         }

@@ -160,8 +160,23 @@ class UsersController extends BaseController
             }
 
             $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
+
             if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+                $current_user = $this->currentUser();
+                info('当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
+                if (isPresent($current_user->mobile) || $current_user->isThirdLogin()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '注册无效');
+                }
+                $opts = [
+                    'mobile' => $mobile,
+                    'product_channel_id' => $this->currentProductChannelId(),
+                    'type' => 'register',
+                    'current_user' => $current_user
+                ];
+                $is_have_sms_distribute_history = \SmsDistributeHistories::isUserForShare($opts);
+                if (!$is_have_sms_distribute_history) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+                }
             }
 
             if ($user->isBlocked()) {

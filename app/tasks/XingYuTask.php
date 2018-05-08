@@ -194,7 +194,7 @@ class XingYuTask extends \Phalcon\Cli\Task
             fclose($f_avatar);
             fclose($f_nickname);
         }
-
+        info('');
         echoLine($i);
     }
 }

@@ -41,7 +41,8 @@ class Rooms extends BaseModel
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台'];
+    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台',
+        'room_seat_sequence' => '麦序', 'male_gold' => '男女神', 'point_sing' => '点唱'];
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
@@ -69,8 +70,13 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
-            self::delay()->updateRoomTypes($this->id);
+        if ($this->hasChanged('name') || $this->hasChanged('types')) {
+
+            if ($this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                self::delay()->updateRoomTypes($this->id);
+            }
+
+            self::delay()->updateShieldRoomList($this->id);
         }
     }
 
@@ -144,6 +150,47 @@ class Rooms extends BaseModel
     function isGreenRoom()
     {
         return STATUS_ON == $this->green;
+    }
+
+    function isShieldRoom()
+    {
+
+        if ($this->types) {
+            $types = explode(",", $this->types);
+
+            if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+                return true;
+            }
+        }
+
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+
+        foreach ($keywords as $keyword) {
+
+            if (preg_match("/$keyword/i", $this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isInShieldRoomList()
+    {
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore($hot_shield_room_list_key, $this->id) > 0;
+    }
+
+    static function updateShieldRoomList($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room->isShieldRoom()) {
+            $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_cache = self::getHotWriteCache();
+            $hot_cache->zrem($hot_shield_room_list_key, $room->id);
+        }
     }
 
     function toSimpleJson()
@@ -1472,6 +1519,12 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+    //总的屏蔽热门房间列表
+    static function generateShieldHotRoomListKey()
+    {
+        return "hot_shield_room_list";
+    }
+
     //新手热门房间列表
     static function generateNoviceHotRoomListKey()
     {
@@ -1510,6 +1563,7 @@ class Rooms extends BaseModel
     static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1530,6 +1584,10 @@ class Rooms extends BaseModel
                 $hot_room_list_key = $green_hot_room_list_key;
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
+            }
+
+            if ($user->isShieldHotRoom()) {
+                $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
             }
 
             $shield_room_ids = $user->getShieldRoomIds();
@@ -2382,6 +2440,14 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
+    function getPkHistory()
+    {
+        $game_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and expire_at>:current_time:',
+            'bind' => ['room_id' => $this->id, 'status' => STATUS_OFF, 'current_time' => time()], 'order' => 'id desc']);
+
+        return $game_history;
+    }
+
     static function search($user, $product_channel, $page, $per_page, $opts = [])
     {
         $new = intval(fetch($opts, 'new', 0));
@@ -2517,6 +2583,21 @@ class Rooms extends BaseModel
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 
         return $gang_up_rooms_json;
+    }
+
+    function getRoomMenuConfig($show_game, $root, $room_id)
+    {
+        $menu_config = [];
+        if ($show_game) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+        }
+
+        if ($show_game && isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
+        }
+
+        return $menu_config;
     }
 
     static function remHotRoomList($room)

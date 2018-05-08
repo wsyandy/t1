@@ -138,6 +138,7 @@ define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 define('ACCOUNT_TYPE_DISTRIBUTE_REGISTER', 21); //分销注册
 define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
+define('ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE',23);  //分销兑换
 define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
 define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
@@ -315,3 +316,7 @@ define('ACTIVITY_TYPE_ROOM', 2); //活动类型房间
 
 define('BIND_MOBILE_GOLD', 500); //绑定手机号码奖励金币数量
 define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
+
+
+// 背包类型
+define('BACKPACK_GIFT_TYPE', 1);

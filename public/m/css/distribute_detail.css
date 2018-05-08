@@ -92,7 +92,7 @@ html{
 }
 
 .user_info{
-    width:3.92rem ;
+    width:3rem ;
     height: 100%;
     display: flex;
     flex-direction: column;

@@ -204,21 +204,26 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
+        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}
 
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-            $res['menu_config'] = $menu_config;
-        }
+//        if ($show_game) {
+//            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+//            $res['menu_config'] = $menu_config;
+//        }
 
         $game_history = $room->getGameHistory();
-
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
         }
 
+        $pk_history = $room->getPkHistory();
+        if (isDevelopmentEnv() && $pk_history) {
+            $res['pk_history'] = $pk_history->toSimpleJson();
+        }
+        
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 
@@ -834,5 +839,59 @@ class RoomsController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id]);
+    }
+
+    function initiatePkAction()
+    {
+        $room_id = $this->params('id');
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $left_pk_user_id = $this->params('left_pk_user_id');
+        $right_pk_user_id = $this->params('right_pk_user_id');
+        $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
+        $pk_time = $this->params('pk_time'); //
+
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
+
+        $pk_history = \PkHistories::createHistory($this->currentUser(), $opts);
+
+        if ($pk_history) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $pk_history->toSimpleJson());
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
+
+    }
+
+    function pkHistoriesAction()
+    {
+        $room_id = $this->params('id');
+
+        $room = \Rooms::findFirstById($room_id);
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $cond = [
+            'conditions' => 'room_id = :room_id:',
+            'bind' => ['room_id' => $room_id],
+            'order' => 'id desc'
+        ];
+
+        $pk_histories = \PkHistories::findPagination($cond, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $pk_histories->toJson('pk_histories', 'toSimpleJson'));
     }
 }

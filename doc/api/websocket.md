@@ -293,3 +293,55 @@
         client_url string 跳转地址 例app://rooms/detail?id=xxx
     }
 ```  
+
+   #### PK通知
+```
+    {
+        action: pk 房间发起pk通知信息
+        pk_history:{
+            id int pk记录id
+            created_at int 创建时间 以秒为单位的时间戳
+            expire_at int 过期时间戳
+            pk_type string pk类型
+            
+            left_pk_user : {
+                id 用户id 
+                nickname 用户昵称
+                score int 分值
+                avatar_small_url 用户头像   
+            }
+            
+            right_pk_user : {
+                id 用户id 
+                nickname 用户昵称
+                score int 分值
+                avatar_small_url 用户头像          
+            }
+      }
+    }
+```
+
+   #### 红包通知
+```
+    {
+        action: red_packet 红包通知
+        red_packet:{
+            num int 红包个数
+            url 跳转地址   
+        }
+    }
+```
+
+   #### 爆礼物
+```
+    {
+        action: blasting_gift 爆礼物
+        blasting_gift:{
+            expire_at int 结束时间
+            url string 跳转地址
+            svga_image_url string svga图片
+            total_value int 总值
+            current_value int 当前值
+        }
+    }
+```

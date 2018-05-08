@@ -115,7 +115,7 @@
                 <div class="text_left">
                     <div class="text m_right">
                         <h1>01 .</h1>
-                        <p>在“最新”界面，找到自己感兴趣的房间，点击进入</p>
+                        <p>在“最新上线”界面，找到自己感兴趣的房间，点击进入</p>
                     </div>
                     <div class="img">
                         <img src="/m/images/4_1.png">
@@ -187,8 +187,7 @@
                 <div class="text_left mr_top">
                     <div class="text m_right">
                         <h1>01 .</h1>
-                        <p>点击TA的头像</p>
-                        <p>送礼物</p>
+                        <p>点击礼物图标，弹出礼物弹框</p>
                     </div>
                     <div class="img">
                         <img src="/m/images/6_1.png">
@@ -200,7 +199,16 @@
                     </div>
                     <div class="text">
                         <h1>02 .</h1>
-                        <p>进入礼物商城，应有尽有，教你俘获TA的心</p>
+                        <p>选择某个用户或者全麦（全部麦位上的人）</p>
+                    </div>
+                </div>
+                <div class="text_left mr_top">
+                    <div class="text m_right">
+                        <h1>03 .</h1>
+                        <p>选择礼物和个数，就可以给TA送礼物了</p>
+                    </div>
+                    <div class="img">
+                        <img src="/m/images/6_3.png">
                     </div>
                 </div>
             </div>
@@ -386,7 +394,6 @@
                 </div>
             </div>
         </div>
-
         <div class="problem-box">
             <p class="question">
                 <span class="dot"></span>11. 如何在模拟器中玩Hi语音？
@@ -395,7 +402,7 @@
                 <div class="answer_list">
                     <div class="text_center">
                         <div class="number">01.</div>
-                        <div class="info">在电脑上下载模拟器，安装后，打开（支持天天、雷电、Mumu等模拟器）</div>
+                        <div class="info">在电脑上下载模拟器，安装后，打开（支持天天、多玩、雷电、Mumu等模拟器）</div>
                     </div>
                 </div>
 
@@ -423,7 +430,6 @@
 
             </div>
         </div>
-
         <div class="problem-box">
             <p class="question">
                 <span class="dot"></span>12. 如何触发礼物全服通知？
@@ -435,6 +441,7 @@
                         <div class="info_12">在Hi语音中送礼物或座驾至少52000钻石，会触发热门房间的礼物全服通知</div>
                     </div>
                 </div>
+
                 <div class="answer_list">
                     <div class="text_center">
                         <div class="number">02.</div>
@@ -443,9 +450,9 @@
                     <div class="imge_tit">爱Ta,让全世界见证！</div>
                     <img class="imge" src="/m/images/12_1.png" alt="">
                 </div>
+
             </div>
         </div>
-
     </div>
 </div>
 
@@ -458,13 +465,13 @@
             var allAnswer = $('.answer');
             var allDot = $('.dot');
 
-            if ($answer.is(':visible')) {
+            if($answer.is(':visible')){
                 $answer.hide();
                 $dot.removeClass('up_dot');
                 $('html,body').animate({
                     scrollTop: 0
                 }, 400);
-            } else {
+            }else{
                 allAnswer.hide();
                 $answer.show();
                 allDot.removeClass('up_dot');
@@ -472,8 +479,22 @@
                 $('html,body').animate({
                     scrollTop: 0
                 }, 400);
-
             }
+
+            // if($answer.is(':visible')){
+            //     $answer.hide();
+            //     $dot.removeClass('up_dot');
+            //     $('html,body').animate({
+            //         scrollTop: 0
+            //     }, 400);
+            // }else{
+            //     allAnswer.hide();
+            //     $answer.show();
+            //     $dot.addClass('up_dot');
+            //     $('html,body').animate({
+            //         scrollTop: 0
+            //     }, 400);
+            // }
         });
     })
 </script>

@@ -411,7 +411,8 @@ class Users extends BaseModel
 
         $product_channel = $current_user->product_channel;
         $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
-        if ($exist_user) {
+        $sms_distribute_history = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
+        if ($exist_user || $sms_distribute_history) {
             return [ERROR_CODE_FAIL, '用户已注册', null];
         }
 

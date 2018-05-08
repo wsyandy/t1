@@ -1,0 +1,1 @@
+ALTER TABLE users add COLUMN share_parent_id INTEGER ;
