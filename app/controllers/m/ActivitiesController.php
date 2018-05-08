@@ -688,4 +688,9 @@ class ActivitiesController extends BaseController
             }
         }
     }
+
+    function greenConventionAction()
+    {
+        $this->view->title = '绿色公约';
+    }
 }
