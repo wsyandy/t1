@@ -70,8 +70,15 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
-            self::delay()->updateRoomTypes($this->id);
+        if ($this->hasChanged('name') || $this->hasChanged('types')) {
+
+            if ($this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                self::delay()->updateRoomTypes($this->id);
+            }
+
+            if ($this->isInShieldRoomList()) {
+                self::delay()->updateShieldRoomList($this->id);
+            }
         }
     }
 
@@ -159,7 +166,34 @@ class Rooms extends BaseModel
             return true;
         }
 
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+
+        foreach ($keywords as $keyword) {
+
+            if (preg_match("/$keyword/i", $this->name)) {
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    function isInShieldRoomList()
+    {
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore($hot_shield_room_list_key, $this->id) > 0;
+    }
+
+    static function updateShieldRoomList($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room->isShieldRoom()) {
+            $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_cache = self::getHotWriteCache();
+            $hot_cache->zrem($hot_shield_room_list_key, $room->id);
+        }
     }
 
     function toSimpleJson()
