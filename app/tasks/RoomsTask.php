@@ -282,6 +282,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     function roomAutoToHotAction()
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
         $novice_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $green_room_list_key = Rooms::generateGreenHotRoomListKey();
 
@@ -308,6 +309,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         //总的热门房间
         $total_room_ids = [];
+        $shield_room_ids = [];
 
         //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
@@ -535,6 +537,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $novice_room_ids[] = $room->id;
             }
 
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[] = $room->id;
+            }
+
             //置顶房间
             if ($room->isTop()) {
                 $top_room_ids[] = $room->id;
@@ -561,13 +567,24 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($top_room_ids as $top_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+
+            if (!in_array($top_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $top_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $top_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $top_room_id);
         }
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
+
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+
+            if (!in_array($has_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $has_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $has_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $has_amount_room_id);
         }
@@ -575,6 +592,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($no_amount_room_ids as $no_amount_room_id => $user_num) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
+
+            if (!in_array($no_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $no_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $no_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $no_amount_room_id);
         }
@@ -603,6 +625,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($novice_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($green_room_list_key, 0, -1, true));
+        info($hot_cache->zrevrange($hot_shield_room_list_key, 0, -1, true));
 
         unlock($lock);
     }
