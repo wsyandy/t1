@@ -147,6 +147,21 @@ class Rooms extends BaseModel
         return STATUS_ON == $this->green;
     }
 
+    function isShieldRoom()
+    {
+        if (!$this->types) {
+            return false;
+        }
+
+        $types = explode(",", $this->types);
+
+        if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+            return true;
+        }
+
+        return false;
+    }
+
     function toSimpleJson()
     {
         $user = $this->user;
@@ -1471,6 +1486,12 @@ class Rooms extends BaseModel
     static function generateHotRoomListKey()
     {
         return "hot_room_list";
+    }
+
+    //总的屏蔽热门房间列表
+    static function generateShieldHotRoomListKey()
+    {
+        return "hot_shield_room_list";
     }
 
     //新手热门房间列表

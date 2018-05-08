@@ -611,6 +611,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     function hotRoomRankAction()
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
         $novice_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $green_room_list_key = Rooms::generateGreenHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -619,7 +620,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
-
+        $shield_room_ids = [];
         $start = time() - 61 * 60;
         $end = time() - 60;
         $least_user_num = 2;
@@ -703,6 +704,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[] = $room->id;
+            }
+
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
@@ -717,6 +722,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($top_room_ids as $top_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+
+            if (!in_array($top_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $top_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $top_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $top_room_id);
         }
@@ -724,6 +734,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+
+            if (!in_array($has_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $has_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $has_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $has_amount_room_id);
         }
@@ -731,6 +746,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($no_amount_room_ids as $no_amount_room_id => $income) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
+
+            if (!in_array($no_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $no_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $no_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $no_amount_room_id);
 
