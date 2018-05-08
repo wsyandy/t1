@@ -76,9 +76,7 @@ class Rooms extends BaseModel
                 self::delay()->updateRoomTypes($this->id);
             }
 
-            if ($this->isInShieldRoomList()) {
-                self::delay()->updateShieldRoomList($this->id);
-            }
+            self::delay()->updateShieldRoomList($this->id);
         }
     }
 
