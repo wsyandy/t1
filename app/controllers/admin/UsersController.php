@@ -535,21 +535,21 @@ class UsersController extends BaseController
     {
         if ($this->request->isPost()) {
 
-            $user_id = $this->params('user_id');
+            $user_uid = $this->params('user_uid');
 
-            if (!$user_id) {
+            if (!$user_uid) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
 
-            $user = \Users::findFirstById($user_id);
+            $user = \Users::findFirstByUid($user_uid);
 
             if ($user) {
                 $user->geo_hash = '';
                 $user->update();
                 $hot_cache = \Users::getHotWriteCache();
                 $key = "blocked_nearby_user_list";
-                $hot_cache->zadd($key, time(), $user_id);
+                $hot_cache->zadd($key, time(), $user->id);
             }
 
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');
@@ -564,24 +564,33 @@ class UsersController extends BaseController
         $key = "blocked_nearby_user_list";
 
         if ($user_id && $hot_cache->zscore($key, $user_id) > 0) {
-            $user_id_list = [$user_id];
+            $user_ids = [$user_id];
         } else {
-            $user_id_list = $hot_cache->zrange($key, 0, -1);
+            $user_ids = $hot_cache->zrange($key, 0, -1);
         }
-        $this->view->user_id_list = $user_id_list;
+
+        $page = $this->params('page');
+
+        if (!$user_ids) {
+            $cond = ['conditions' => 'id < 1'];
+        } else {
+            $cond = ['conditions' => 'id in (' . implode(',', $user_ids) . ")"];
+        }
+
+        $this->view->users = \Users::findPagination($cond, $page, 30);
     }
 
     function deleteBlockedNearbyUserAction()
     {
-        $user_id = $this->params('user_id');
+        $user_uid = $this->params('user_uid');
 
-        $user = \Users::findFirstById($user_id);
+        $user = \Users::findFirstByUid($user_uid);
 
         if ($user) {
 
             $hot_cache = \Users::getHotWriteCache();
             $key = "blocked_nearby_user_list";
-            $hot_cache->zrem($key, $user_id);
+            $hot_cache->zrem($key, $user->id);
 
             $geo_hash = new \geo\GeoHash();
             $hash = $geo_hash->encode($user->latitude, $user->longitude);
