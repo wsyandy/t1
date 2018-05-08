@@ -30,6 +30,9 @@
     <label for="user_union_id">接收方家族ID</label>
     <input name="user_union_id" type="text" id="user_union_id" value="{{ user_union_id }}"/>
 
+    <label for="room_union_id">房间家族ID</label>
+    <input name="room_union_id" type="text" id="room_union_id" value="{{ room_union_id }}"/>
+
     <label for="start_at_eq">开始时间</label>
     <input name="start_at" type="text" id="start_at_eq" class="form_datetime" value="{{ start_at }}"/>
     <label for="end_at_eq">结束时间</label>
@@ -62,7 +65,7 @@
 {{ simple_table(gift_orders, [
     '创建时间':'created_at_text','ID': 'id', '礼物名称': 'name', '赠送类型':'type_text', '支付记录ID':'target_id',
     '支付类型':'pay_type_text', '礼物类型':'gift_type_text', '礼物个数': 'gift_num','支付金额': 'amount',
-    '发送方': 'sender_link','接收方': 'user_link', '房间id':'room_id', '支付状态': 'status_text', '备注': 'remark'
+    '发送方': 'sender_link','接收方': 'user_link', '房间id':'room_id', '房间家族id':'room_union_id','支付状态': 'status_text', '备注': 'remark'
 ]) }}
 
 
