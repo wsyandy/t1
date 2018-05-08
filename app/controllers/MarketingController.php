@@ -125,24 +125,27 @@ class MarketingController extends ApplicationController
         if ($app_type == 'ios') {
             $user_action_set_id = $marketing_config->ios_user_action_set_id;
             $user_data = ['hash_idfa' => $muid];
+            $mobile_app_type = 'IOS';
         } else {
             $user_action_set_id = $marketing_config->android_user_action_set_id;
             $user_data = ['hash_imei' => $muid];
+            $mobile_app_type = 'ANDROID';
         }
 
         $body = [
             'account_id' => $marketing_config->gdt_account_id,
             'user_action_set_id' => $user_action_set_id,
             'actions' => [
+                'mobile_app_id' => $appid,
+                'mobile_app_type' => $mobile_app_type,
                 'action_time' => time(),
                 'user_id' => $user_data,
                 'action_type' => 'START_APP',
                 'trace' => ['click_id' => $click_id]
             ]
         ];
-
-        $response = httpPost($url, $body);
-        info($body, $response->raw_body);
+        $response = httpGet($url, $body);
+        info('url', $url, 'body', $body, 'raw_body', $response->raw_body);
 
         $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
