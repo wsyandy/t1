@@ -39,6 +39,7 @@ class Orders extends BaseModel
         ORDER_STATUS_FAIL => '支付失败'
     ];
 
+    static $BLOCKED_KEYWORDS = [];
     function afterUpdate()
     {
         if ($this->hasChanged('status') && $this->isPaid()) {
