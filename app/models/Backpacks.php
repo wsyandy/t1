@@ -8,16 +8,9 @@
 class Backpacks extends BaseModel
 {
 
-    /**
-     * @var bool 开发时使用，默认false
-     */
-    static private $development = false;
-
-
     static public function findListByUserId($user, $opt)
     {
-        // is or not in dev
-        if (self::$development) {
+        if (isDevelopmentEnv()) {
             $user = (object)['id' => 1];
         }
 
@@ -35,7 +28,7 @@ class Backpacks extends BaseModel
             $conditions['bind']['type'] = $opt['type'];
         }
 
-        // page set
+        // no page
         $page = 1;
         $per_page = 100;
 
@@ -45,38 +38,41 @@ class Backpacks extends BaseModel
 
 
     /**
-     * @desc 开发
-     */
-    static public function setDev()
-    {
-        self::$development = true;
-    }
-
-
-    /**
      * @todo 实际返回客户端的数据体
      * @return array
      */
     public function toSimpleJson()
     {
+        if ($this->type == BACKPACK_GIFT_TYPE) {
+            // 礼物背包
+            $gift = $this->getGift();
+
+            return array(
+                'id' => $this->id,
+                'number' => $this->number,
+                'image_url' => $gift->getImageUrl(),
+                'svga_image_name' => $gift->getSvgaImageName(),
+                'render_type' => $gift->render_type,
+                'svga_image_url' => $gift->getImageSmallUrl(),
+                'expire_day' => $gift->expire_day,
+                'show_rank' => $gift->show_rank
+            );
+        }
         return array(
             'id' => $this->id,
-            'number' => $this->number,
-            'image_url' => $this->image_url
+            'number' => $this->number
         );
+
     }
 
 
     /**
-     * @desc 背包 gift image 地址
-     * @return string
+     * @return object
      */
-    public function getImageUrl()
+    public function getGift()
     {
-        if ($this->type == '1') {
-            $gift = Gifts::findFirstById($this->target_id);
-            return StoreFile::getUrl($gift->image);
-        }
-        return '';
+        $gift = Gifts::findFirstById($this->target_id);
+        return $gift;
     }
+
 }

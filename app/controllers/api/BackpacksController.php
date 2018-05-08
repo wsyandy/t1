@@ -14,7 +14,6 @@ class BackpacksController extends BaseController
         $type = $this->params('type');
         $opt = [ 'type' => $type ];
 
-        \Backpacks::setDev();
         $list = \Backpacks::findListByUserId($this->currentUser(), $opt);
         $list = $list->toJson('backpacks', 'toSimpleJson');
 
