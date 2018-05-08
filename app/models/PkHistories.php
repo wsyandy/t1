@@ -25,7 +25,7 @@ class PkHistories extends BaseModel
     {
         $room_id = fetch($opts, 'room_id');
         $left_pk_user_id = fetch($opts, 'left_pk_user_id');
-        $right_pk_user_id = fetch($opts, 'left_pk_user_id');
+        $right_pk_user_id = fetch($opts, 'right_pk_user_id');
         $pk_type = fetch($opts, 'pk_type');
         $pk_time = fetch($opts, 'pk_time');
 
