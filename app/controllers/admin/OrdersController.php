@@ -23,11 +23,23 @@ class OrdersController extends BaseController
         $cond = $this->getConditions('order');
         $cond['order'] = 'id desc';
 
+
         $order_id = $this->params('id');
 
         if ($order_id) {
             $cond = ['conditions' => "id = " . $order_id];
         }
+
+        $uid = $this->params('uid');
+
+        if ($uid) {
+            $user = \Users::findFirst(array(
+                "uid = ".$uid
+            ));
+            $cond['conditions'] .= " user_id = :user_id:";
+            $cond['bind']['user_id'] = $user->id;
+        }
+
 
         $orders = \Orders::findPagination($cond, $page, $per_page, $total_entries);
         $this->view->orders = $orders;
