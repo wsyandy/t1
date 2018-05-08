@@ -202,7 +202,6 @@
       menu_config : [ //房间详情菜单配置
              {
                  show boolean 是否展示 true/false
-                 type 类型 根据定义类型来判断是否跳H5(例如游戏:game,PK:pk,红包:red_packet)
                  title string 菜单名称
                  url string 跳转地址
                  icon string 图片地址
@@ -928,8 +927,8 @@
 |参数|参数名称|类型|是否可空|备注
 |---|---|---|---|---
 |id|房间id|int|否||
-|player_a_id|参与者a|int|否||
-|player_b_id|参与者b|int|否||
+|left_pk_user_id|参与者a|int|否||
+|right_pk_user_id|参与者b|int|否||
 |pk_type|pk类型|send_gift_user:按照送礼物人数;send_gift_amount:按照送礼物价值|否||
 |pk_time|pk时长|以秒为单位|否|||
 
@@ -940,14 +939,22 @@
     error_reason
     id int 记录id
     created_at int 创建时间 以秒为单位的时间戳
+    expire_at int 过期时间戳
     pk_type string pk类型
-    created_at_text string 创建时间
-    player_a_nickname string  用户a昵称
-    player_a_nickname string  用户b昵称
-    player_a_score int  用户a得分
-    player_b_score int  用户b得分
-    player_a_id int  用户aID
-    player_b_id int  用户bID
+   
+    left_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像   
+    }
+    
+    right_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像          
+    }
 }
 ```
 
@@ -968,16 +975,28 @@
     error_code
     error_reason
     pk_histories:[
+       
         {
-            id int 记录id
-            winner_id int 胜利者id
-            pk_type string pk类型
-            created_at_text string 创建时间
-            player_a_nickname string  用户a昵称
-            player_b_nickname string  用户b昵称
-            player_a_score int  用户a得分
-            player_b_score int  用户b得分
+            left_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url   
+            }
+            
+            right_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url                  
+            }
+            
+            pk_type pk类型
+            created_at_text 创建时间
         }
+        
+       
+       .......
     ]
 }
 ```
