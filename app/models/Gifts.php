@@ -23,7 +23,8 @@ class Gifts extends BaseModel
 
     //图片文件
     static $files = ['image' => APP_NAME . '/gifts/image/%s', 'big_image' => APP_NAME . '/gifts/big_image/%s',
-        'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s'];
+        'dynamic_image' => APP_NAME . '/gifts/dynamic_image/%s', 'svga_image' => APP_NAME . '/gifts/svga_image/%s',
+        'music' => APP_NAME . '/gifts/music/%s'];
 
 
     function beforeCreate()
@@ -202,7 +203,8 @@ class Gifts extends BaseModel
             'svga_image_url' => $this->svga_image_url,
             'expire_day' => $this->expire_day,
             'show_rank' => $this->show_rank,
-            'expire_time' => $this->expire_time ? $this->expire_time : 180
+            'expire_time' => $this->expire_time ? $this->expire_time : 180,
+            'music_url' => $this->music_url
         ];
 
         if (isset($this->buy_status)) {
@@ -210,6 +212,15 @@ class Gifts extends BaseModel
         }
 
         return $opts;
+    }
+
+    function getMusicUrl()
+    {
+        if (isBlank($this->music)) {
+            return '';
+        }
+
+        return StoreFile::getUrl($this->music);
     }
 
     function getDynamicImageUrl()
