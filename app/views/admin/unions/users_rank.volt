@@ -14,7 +14,7 @@
 {%- macro icon_link(user) %}
     <img src="{{ user.avatar_small_url }}" height="50" width="50"/>
 {%- endmacro %}
-{{ simple_table(users, ['成员信息': 'nickname','头像':'icon_link','魅力值':'charm','贡献值':'wealth',"hi币收益":"hi_coins"]) }}
+{{ simple_table(users, ['成员信息': 'nickname','家族id':'union_id','头像':'icon_link','魅力值':'charm','贡献值':'wealth',"hi币收益":"hi_coins"]) }}
 
 
 <script type="text/javascript">
