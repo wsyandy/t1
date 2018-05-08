@@ -241,7 +241,7 @@ class DrawHistories extends BaseModel
 
     static function isWhiteList($user)
     {
-        return false;
+        return in_array($user->id, [1121810]);
     }
 
     static function calPayAmountRate($user, $datum, $opts)
@@ -343,11 +343,13 @@ class DrawHistories extends BaseModel
                         'columns' => 'user_id'
                     ]);
 
-                    foreach ($user_hit_10w_histories as $history) {
-                        $hit_user = Users::findFirstById($history->user_id);
-                        if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
-                            info('continue hit10w 同一个用户', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-                            return 0;
+                    if(!self::isWhiteList($user)){
+                        foreach ($user_hit_10w_histories as $history) {
+                            $hit_user = Users::findFirstById($history->user_id);
+                            if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
+                                info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                                return 0;
+                            }
                         }
                     }
 
