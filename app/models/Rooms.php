@@ -1533,10 +1533,6 @@ class Rooms extends BaseModel
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
 
-        if ($user->isShieldHotRoom()) {
-            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
-        }
-
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1557,6 +1553,10 @@ class Rooms extends BaseModel
                 $hot_room_list_key = $green_hot_room_list_key;
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
+            }
+
+            if ($user->isShieldHotRoom()) {
+                $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
             }
 
             $shield_room_ids = $user->getShieldRoomIds();
