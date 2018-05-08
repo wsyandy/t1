@@ -136,12 +136,13 @@ class MarketingController extends ApplicationController
             'account_id' => $marketing_config->gdt_account_id,
             'user_action_set_id' => $user_action_set_id,
             'actions' => [
-                'mobile_app_id' => $appid,
-                'mobile_app_type' => $mobile_app_type,
-                'action_time' => time(),
-                'user_id' => $user_data,
-                'action_type' => 'START_APP',
-                'trace' => ['click_id' => $click_id]
+                [
+                    'action_time' => time(),
+                    'user_id' => $user_data,
+                    'action_type' => 'START_APP',
+                    'action_param' => ['length_of_stay' => '1'],
+                    'trace' => ['click_id' => $click_id]
+                ]
             ]
         ];
         $response = httpPost($url, $body);
