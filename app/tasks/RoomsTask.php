@@ -561,6 +561,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache->zclear($hot_room_list_key);
         $hot_cache->zclear($novice_room_list_key);
         $hot_cache->zclear($green_room_list_key);
+        $hot_cache->zclear($hot_shield_room_list_key);
 
         $time = time();
 
@@ -625,7 +626,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($novice_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($green_room_list_key, 0, -1, true));
-        info($hot_cache->zrevrange($hot_shield_room_list_key, 0, -1, true));
+        info($shield_room_ids, $hot_cache->zrevrange($hot_shield_room_list_key, 0, -1, true));
 
         unlock($lock);
     }
