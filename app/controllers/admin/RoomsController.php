@@ -407,7 +407,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }
