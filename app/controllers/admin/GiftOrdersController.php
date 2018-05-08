@@ -16,6 +16,7 @@ class GiftOrdersController extends BaseController
         $sender_uid = $this->params('sender_uid');
         $user_union_id = $this->params('user_union_id');
         $sender_union_id = $this->params('sender_union_id');
+        $room_union_id = $this->params('room_union_id');
         $user_uid = $this->params('user_uid');
         $cond = $this->getConditions('gift_order');
         $cond['order'] = 'id desc';
@@ -25,8 +26,9 @@ class GiftOrdersController extends BaseController
         $gift_order = $this->params('gift_order');
         $id = fetch($gift_order, 'id_eq');
 
-        $cond['conditions'] = 'id > 0';
-
+        if (!isset($cond['conditions'])) {
+            $cond['conditions'] = 'id > 0';
+        }
 
         if (!$id) {
 
@@ -93,6 +95,10 @@ class GiftOrdersController extends BaseController
             $cond['bind']['receiver_union_id'] = $user_union_id;
         }
 
+        if ($room_union_id) {
+            $cond['conditions'] .= ' and room_union_id =:room_union_id:';
+            $cond['bind']['room_union_id'] = $room_union_id;
+        }
 
         $gift_orders = \GiftOrders::findPagination($cond, $page, $per_page);
 
@@ -100,7 +106,7 @@ class GiftOrdersController extends BaseController
         $gold_total_amount = 0;
         $car_total_amount = 0;
 
-        if ($user_uid || $sender_uid || $room_user_uid || $sender_union_id || $user_union_id) {
+        if ($user_uid || $sender_uid || $room_user_uid || $sender_union_id || $user_union_id || $room_union_id) {
             $cond['column'] = 'amount';
             $cond['conditions'] .= ' and pay_type = :pay_type:';
             $cond['bind']['pay_type'] = GIFT_PAY_TYPE_DIAMOND;
@@ -129,6 +135,7 @@ class GiftOrdersController extends BaseController
         $this->view->car_total_amount = $car_total_amount;
         $this->view->user_union_id = $user_union_id;
         $this->view->sender_union_id = $sender_union_id;
+        $this->view->room_union_id = $room_union_id;
     }
 
     function detailAction()
