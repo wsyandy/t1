@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/distribute_apple.css','/m/css/distribute_detail.css','/m/css/distribute_swiper.min.css') }}
-{{ theme_js('/m/js/swiperTab.js','/m/js/swiper.jquery.min.js') }}
+{{ theme_js('/m/js/resize.js','/m/js/swiper.jquery.min.js') }}
 {{ block_end() }}
 <div id="app">
     {#<ul class="swiperTab">#}
