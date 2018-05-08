@@ -63,12 +63,14 @@ class PkHistories extends BaseModel
                 'id' => $left_pk_user->id,
                 'nickname' => $left_pk_user->nickname,
                 'score' => $left_pk_user_score,
+                'avatar_small_url' => $left_pk_user->avatar_small_url
             ],
 
             'right_pk_user' => [
                 'id' => $right_pk_user->id,
                 'nickname' => $right_pk_user->nickname,
                 'score' => $right_pk_user_score,
+                'avatar_small_url' => $right_pk_user->avatar_small_url
             ]
         ];
     }
