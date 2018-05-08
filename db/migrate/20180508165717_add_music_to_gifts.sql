@@ -1,0 +1,1 @@
+ALTER TABLE gifts ADD COLUMN music VARCHAR (255);

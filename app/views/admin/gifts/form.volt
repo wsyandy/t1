@@ -18,6 +18,7 @@
 {{ f.file('big_image', ['label': '大图',  'width':'50%']) }}
 {{ f.file('dynamic_image', ['label': 'gif动态图', 'width':'50%']) }}
 {{ f.file('svga_image', ['label': 'svga动态图', 'width':'50%']) }}
+{{ f.file('music', ['label': '礼物音效']) }}
 {{ f.textarea('text_content',['label': '文本内容(昵称:%user_name%;礼物:%gift_name%)'|e ]) }}
 
 <div class="error_reason" style="color: red;"></div>
