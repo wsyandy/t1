@@ -33,7 +33,7 @@ class PkHistories extends BaseModel
         $pk_history->room_id = $room_id;
         $pk_history->user_id = $user->id;
         $pk_history->left_pk_user_id = $left_pk_user_id;
-        $pk_history->left_pk_user_id = $right_pk_user_id;
+        $pk_history->right_pk_user_id = $right_pk_user_id;
         $pk_history->pk_type = $pk_type;
         $pk_history->expire_at = time() + $pk_time;
         $pk_history->status = STATUS_PROGRESS;

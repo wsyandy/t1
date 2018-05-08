@@ -2382,6 +2382,14 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
+    function getPkHistory()
+    {
+        $game_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and expire_at>:current_time:',
+            'bind' => ['room_id' => $this->id, 'status' => STATUS_OFF, 'current_time' => time()], 'order' => 'id desc']);
+
+        return $game_history;
+    }
+
     static function search($user, $product_channel, $page, $per_page, $opts = [])
     {
         $new = intval(fetch($opts, 'new', 0));
@@ -2517,6 +2525,21 @@ class Rooms extends BaseModel
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 
         return $gang_up_rooms_json;
+    }
+    
+    function getRoomMenuConfig($show_game, $root, $room_id)
+    {
+        $menu_config = [];
+        if ($show_game) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+        }
+
+        if ($show_game && isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
+        }
+
+        return $menu_config;
     }
 
     static function remHotRoomList($room)

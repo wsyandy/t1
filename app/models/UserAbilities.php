@@ -82,4 +82,13 @@ trait UserAbilities
 
         return $this->version_code >= 6;
     }
+
+    function canShareForH5()
+    {
+        if ($this->isIos()) {
+            return $this->version_code >= 19;
+        }
+
+        return $this->version_code >= 8;
+    }
 }

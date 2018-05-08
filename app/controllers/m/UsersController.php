@@ -22,6 +22,11 @@ class UsersController extends BaseController
 
         $selected_product = $products[0];
         $selected_payment_channel = $payment_channels[0];
+
+        $user = $this->currentUser();
+        $is_show_distribute = $user->isCompanyUser();
+
+        $this->view->is_show_distribute = $is_show_distribute;
         $this->view->selected_product = $selected_product;
         $this->view->selected_payment_channel = $selected_payment_channel;
         $this->view->products = $products;
@@ -161,17 +166,7 @@ class UsersController extends BaseController
         $user = $this->currentUser();
         $sex = $this->params('sex');
         $nickname = $this->params('nickname');
-        $show_share = false;
-
-//        if (isInternalIp($this->remoteIp())) {
-//            $show_share = true;
-//        }
-
-        if ($user->platform == 'ios' && $user->version_code >= 19) {
-            $show_share = true;
-        } else if ($user->platform == 'android' && $user->version_code >= 8) {
-            $show_share = true;
-        }
+        $show_share = $user->canShareForH5();
 
         $this->view->sex = $sex;
         $this->view->nickname = $nickname;

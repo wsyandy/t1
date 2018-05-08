@@ -143,6 +143,7 @@ class SharesController extends ApplicationController
 
         $image_token = $this->params('image_token');
         $code = $this->params('code');
+        $password = $this->params('password', '');
 
         if (!$image_token) {
             info("image_token_error", $this->remoteIp(), $this->request->getUserAgent(), $this->headers());
@@ -169,9 +170,10 @@ class SharesController extends ApplicationController
         if (!isMobile($mobile)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '手机号码不正确');
         }
-        
+
         $user = \Users::findFirstByMobile($product_channel, $mobile);
-        if ($user) {
+        $share_user = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
+        if ($user || $share_user) {
             info('已注册', $share_history_id, $product_channel->code, $mobile, 'user_fr', $user->fr);
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '你已注册，请登录！');
         }
@@ -230,16 +232,25 @@ class SharesController extends ApplicationController
             $sms_sem_history->partner_id = $partner->id;
         }
 
+        if (strlen($password) < 6) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '密码不能小于6位');
+        }
+
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->product_channel_id =
         $sms_sem_history->soft_version_id = $soft_version_id;
         $sms_sem_history->product_channel_id = $product_channel->id;
         $sms_sem_history->status = AUTH_WAIT;
+        $sms_sem_history->password = md5($password);
         $sms_sem_history->save();
 
         // 跳转应用宝地址
+        $down_url = $soft_version->weixin_url;
+        if ($platform == 'ios') {
+            $down_url = $soft_version->ios_down_url;
+        }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $soft_version->weixin_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $down_url]);
     }
 
 }

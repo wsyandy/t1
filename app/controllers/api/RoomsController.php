@@ -204,21 +204,26 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
+        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}
 
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-            $res['menu_config'] = $menu_config;
-        }
+//        if ($show_game) {
+//            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+//            $res['menu_config'] = $menu_config;
+//        }
 
         $game_history = $room->getGameHistory();
-
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
         }
 
+        $pk_history = $room->getPkHistory();
+        if (isDevelopmentEnv() && $pk_history) {
+            $res['pk_history'] = $pk_history->toSimpleJson();
+        }
+        
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 

@@ -1,24 +1,44 @@
+.example {
+    display: -ms-grid;
+    display: grid;
+    -webkit-transition: all .5s;
+    -o-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(black));
+    background: -webkit-linear-gradient(top, white, black);
+    background: -moz-linear-gradient(top, white, black);
+    background: -o-linear-gradient(top, white, black);
+    background: linear-gradient(to bottom, white, black);
+}
 html{
     background-color:  #fff;
 }
 .extend_box{
     position: relative;
-    width: 5.94rem;
-    height: 10.08rem;
-    margin: 0.2rem auto;
+    width: 6.1rem;
+    height: 9.3rem;
+    margin: 0.34rem auto;
+    -webkit-border-radius: 0.1rem;
+    -moz-border-radius: 0.1rem;
+    border-radius: 0.1rem;
+    overflow: hidden;
 }
 .extend_img{
     position: absolute;
     top:0;
     left: 0;
-    width: 5.94rem;
-    height: 10.08rem;
+    width: 6.1rem;
+    height: 9.3rem;
 }
 .qr_code{
     position: absolute;
-    bottom: 1.18rem;
-    left: 50%;
-    margin-left: -0.8rem;
+    bottom: 0.98rem;
+    left: 2.35rem;
     width: 1.6rem;
     height:  1.6rem;
 }
@@ -28,52 +48,181 @@ html{
     bottom: 0;
     left: 0;
     width: 100%;
-    height:  0.9rem;
+    height:  0.7rem;
     text-align: center;
     font-size: 0.2rem;
     color: #FFFFFF;
 
 }
-.extend_share{
+.extend_share_box{
     position: fixed;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
     bottom: 0;
     left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
-    height: 1.8rem;
+    padding-top: 0.3rem;
     background: #FFFFFF;
+    -webkit-box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
+    -moz-box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
     box-shadow: 0 -8px 20px 0 rgba(0,0,0,0.04);
 }
-.extend_share li{
-    flex: 1;
+.extend_share_title{
+    position: relative;
+    width: 100%;
+    height: 0.6rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 0.26rem;
+    color: #6A6A6A;
+}
+.extend_share_title span{
+    position: relative;
+    padding: 0 0.3rem;
+}
+
+.extend_share_title span:before,.extend_share_title span:after {
+    content: '';
+    position: absolute;
+    top:50%;
+    width: 1.4rem;
+    height: 1px;
+    background-color: #E2E2E2;
+
+}
+.extend_share_title span:before{
+    left:0;
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
+.extend_share_title span:after{
+    right: 0;
+    -webkit-transform: translateX(100%);
+    -moz-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    -o-transform: translateX(100%);
+    transform: translateX(100%);
+}
+
+.extend_share{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
+    height: 1.5rem;
+    background: #FFFFFF;
+}
+.extend_share li{
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 .extend_share li img{
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 0.64rem;
+    height: 0.64rem;
 }
 .extend_share li span{
     font-size: 0.22rem;
     color: #7F7F7F;
     padding-top: 0.1rem;
 }
-
 .toast_text_box{
     top:50%;
     left:50%;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    -o-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
     position: fixed;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center
 }
 .toast_text{
     padding: 7px 10px;
     background-color: rgba(0,0,0,0.6);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
     border-radius: 4px;
     font-size: 14px;
     color: #FFFFFF;

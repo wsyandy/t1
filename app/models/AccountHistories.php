@@ -35,6 +35,7 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_DEDUCT => '系统扣除',
         ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
         ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值',
+        ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE => '分销兑换',
         ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
         ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
         ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
@@ -64,6 +65,18 @@ class AccountHistories extends BaseModel
 
         //钻石消费记录
         \DataCollection::syncData('account_history', 'change_balance', ['account_history' => $this->toJson()]);
+    }
+
+    function toSimpleJson()
+    {
+        list($nickname, $avatar_url) = $this->getUserInfo();
+        return [
+            'id' => $this->id,
+            'created_at' => $this->created_at_text,
+            'user_nickname' => $nickname,
+            'amount' => $this->amount,
+            'user_avatar_url' => $avatar_url
+        ];
     }
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
@@ -144,6 +157,16 @@ class AccountHistories extends BaseModel
         }
 
         return "diamond_recharge";
+    }
+
+    function getUserInfo()
+    {
+
+        $sms_distribute_history = \SmsDistributeHistories::findFirstById($this->target_id);
+        $nickname = $sms_distribute_history->user->nickname;
+        $avatar_url = $sms_distribute_history->user->avatar_url;
+        
+        return [$nickname, $avatar_url];
     }
 
 }

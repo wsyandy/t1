@@ -38,7 +38,7 @@ $(function () {
                 $cdCover.css('background-image', "url(" + musList[0].cov + ")");/*歌曲海报 */
                 $music.attr('src', musList[0].voi);          /* 歌曲链接 */
                 getTime();                                   /* 初始化第一个歌曲时长 */
-                // iplay()                                       /* 打开自动播放 */
+                iplay()                                       /* 打开自动播放 */
             },
             error:function(){
                 console.log((" ajax异步获取歌曲， 必须服务器支持才能打开，例如：wampserver ，MAMP 或者 webstorm 浏览器预览"));
