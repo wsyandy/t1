@@ -122,6 +122,12 @@ class Rooms extends BaseModel
 
     function isForbiddenHot()
     {
+        $hot_cache = self::getHotReadCache();
+
+        if ($hot_cache->get("room_forbidden_to_hot_room_id_" . $this->id) > 0) {
+            return true;
+        }
+
         return $this->hot == STATUS_FORBIDDEN;
     }
 
@@ -1797,17 +1803,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2510,7 +2518,7 @@ class Rooms extends BaseModel
 
         return $gang_up_rooms_json;
     }
-
+    
     function getRoomMenuConfig($show_game, $root, $room_id)
     {
         $menu_config = [];
@@ -2524,5 +2532,59 @@ class Rooms extends BaseModel
         }
 
         return $menu_config;
+    }
+
+    static function addForbiddenList($room, $opts = [])
+    {
+        $forbidden_time = fetch($opts, 'forbidden_time');
+        $forbidden_reason = fetch($opts, 'forbidden_reason');
+        $operator = fetch($opts, 'operator');
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_db = Users::getUserDb();
+        $key = "room_forbidden_to_hot_list";
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+        $time = time();
+
+        $hot_cache->zadd($key, $time, $room->id);
+
+        if ($forbidden_time) {
+
+            $expire = $forbidden_time * 3600;
+
+            if (isDevelopmentEnv()) {
+                $expire = $forbidden_time * 10;
+            }
+
+            $hot_cache->setex("room_forbidden_to_hot_room_id_{$room->id}", $expire, $time);
+
+            $record = date("Y-m-d H:i:s", $time) . "禁止上热门原因:" . $forbidden_reason . ";操作者:" . $operator->username . ";禁止时长:" . $forbidden_time . "小时";
+            $user_db->zadd($record_key, $time, $record);
+
+        } else {
+            $room->hot = STATUS_FORBIDDEN;
+            $room->update();
+
+            $record = date("Y-m-d H:i:s", $time) . "禁止上热门原因:" . $forbidden_reason . ";操作者:" . $operator->username . ";禁止时长:永久禁止";
+            $user_db->zadd($record_key, $time, $record);
+        }
+    }
+
+    static function remForbiddenList($room, $opts = [])
+    {
+        $operator = fetch($opts, 'operator');
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_db = Users::getUserDb();
+        $key = "room_forbidden_to_hot_list";
+        $time = time();
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+
+        $hot_cache->zrem($key, $room->id);
+
+        if ($operator) {
+            $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
+            $user_db->zadd($record_key, $time, $record);
+        }
     }
 }

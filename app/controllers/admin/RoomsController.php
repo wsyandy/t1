@@ -451,7 +451,6 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/game_white_list']);
     }
 
-
     function shieldConfigAction()
     {
         $hot_cache = \Rooms::getHotWriteCache();
@@ -502,5 +501,88 @@ class RoomsController extends BaseController
         $this->view->provinces = \Cities::getAllCities();
         $this->view->city_ids_list = $shield_city_ids;
         $this->view->room_id = $room_id;
+    }
+
+    function forbiddenToHotAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+
+
+        if ($this->request->isPost()) {
+
+            $forbidden_reason = $this->params('forbidden_reason');
+            $forbidden_time = $this->params('forbidden_time');
+
+            if (!$forbidden_reason) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '禁止原因不能为空');
+            }
+
+            $opts = ['forbidden_reason' => $forbidden_reason, 'forbidden_time' => $forbidden_time, 'operator' => $this->currentOperator()];
+            \Rooms::addForbiddenList($room, $opts);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '失败');
+        }
+
+        $this->view->room = $room;
+    }
+
+    function forbiddenToHotRecordsAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+        $user_db = \Users::getUserDb();
+        $records = $user_db->zrevrange($record_key, 0, -1, 'withscores');
+
+        $this->view->records = $records;
+    }
+
+    function forbiddenToHotListAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $key = "room_forbidden_to_hot_list";
+        $page = $this->params('page');
+
+        $room_ids = $hot_cache->zrange($key, 0, -1);
+
+        if ($room_ids) {
+
+            $rooms = \Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                if (!$room->isForbiddenHot()) {
+                    \Rooms::remForbiddenList($room);
+                }
+            }
+        }
+
+
+        if (count($room_ids) > 0) {
+            $cond = ['conditions' => 'id in (' . implode(',', $room_ids) . ")"];
+        } else {
+            $cond = ['conditions' => 'id < 1'];
+        }
+
+        $rooms = \Rooms::findPagination($cond, $page, 30);
+
+        $this->view->rooms = $rooms;
+    }
+
+    function remForbiddenListAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+
+
+        if ($this->request->isPost()) {
+
+            $opts = ['operator' => $this->currentOperator()];
+
+            \Rooms::remForbiddenList($room, $opts);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        }
     }
 }
