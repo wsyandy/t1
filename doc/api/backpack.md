@@ -18,24 +18,23 @@
     "error_code": 0,
     "error_reason": "",
     "error_url": "",
-    "now_at": 1525774604,
+    "now_at": 1525776665,
     "current_page": 1,
     "total_page": 1,
     "total_entries": 2,
     "backpacks": [
         {
             "id": 2,
-            "target_id": 1,
             "number": 1,
-            "image": "chance\/gifts\/image\/5ad9ba5f53488.png"
+            "image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5ad9ba5f53488.png"
         },
         {
             "id": 1,
-            "target_id": 1,
             "number": 1,
-            "image": "chance\/gifts\/image\/5ad5ff2c8ea9c.png"
+            "image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5ad5ff2c8ea9c.png"
         }
     ],
     "apple_stable_version": 19,
     "android_stable_version": 8
+}
 ```

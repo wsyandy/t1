@@ -338,7 +338,7 @@ class Gifts extends BaseModel
             }
         }
 
-        debug($conditions);
+        //debug($conditions);
 
         $gifts = \Gifts::findPagination($conditions, $page, $per_page);
 

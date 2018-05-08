@@ -61,9 +61,8 @@ class Backpacks extends BaseModel
     {
         return array(
             'id' => $this->id,
-            'target_id' => $this->target_id,
             'number' => $this->number,
-            'image' => $this->image
+            'image_url' => StoreFile::getUrl($this->image)
         );
     }
 }
