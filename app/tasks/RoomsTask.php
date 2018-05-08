@@ -295,8 +295,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         if (isProduction()) {
             $manual_hot_room_num = 10;
-            $total_num = 20;
-            $least_num = 8;
+            $total_num = 30;
+            $least_num = 9;
             $least_user_num = 3;
             $last = time() - 10 * 60;
         }
