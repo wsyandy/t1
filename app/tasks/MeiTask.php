@@ -3868,5 +3868,18 @@ EOF;
 
         $id_card_auth = IdCardAuths::findFirstById(4927);
         $id_card_auth->delete();
+
+        $gift_ids = [151, 146, 63, 147, 143];
+
+        foreach ($gift_ids as $gift_id) {
+            echoLine($gift_id);
+            $backpack = new Backpacks();
+            $backpack->target_id = $gift_id;
+            $backpack->user_id = 52;
+            $backpack->number = mt_rand(1, 10);
+            $backpack->status = STATUS_ON;
+            $backpack->type = 1;
+            $backpack->save();
+        }
     }
 }

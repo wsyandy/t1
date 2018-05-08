@@ -8,19 +8,8 @@
 class Backpacks extends BaseModel
 {
 
-    /**
-     * @var bool 开发时使用，默认false
-     */
-    static private $development = false;
-
-
     static public function findListByUserId($user, $opt)
     {
-        // is or not in dev
-        if (self::$development) {
-            $user = (object)['id' => 1];
-        }
-
         // search for where
         $conditions = [
             'conditions' => 'user_id = :user_id:',
@@ -42,16 +31,6 @@ class Backpacks extends BaseModel
         $list = \Backpacks::findPagination($conditions, $page, $per_page);
         return $list;
     }
-
-
-    /**
-     * @desc 开发
-     */
-    static public function setDev()
-    {
-        self::$development = true;
-    }
-
 
     /**
      * @todo 实际返回客户端的数据体
