@@ -249,6 +249,7 @@ class SharesController extends ApplicationController
         if ($platform == 'ios') {
             $down_url = $soft_version->ios_down_url;
         }
+        info('跳转地址=>',$down_url);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $down_url]);
     }
