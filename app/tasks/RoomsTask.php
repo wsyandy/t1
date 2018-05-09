@@ -820,7 +820,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     }
 
     //新热门逻辑
-    function generateHOtRoomsAction()
+    function generateHotRoomsAction()
     {
         $hot_cache = Users::getHotWriteCache();
         $rooms = Rooms::getActiveRoomsByTime();
