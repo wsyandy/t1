@@ -38,6 +38,7 @@ class GiftOrdersController extends BaseController
         $this->view->code = $code;
         $this->view->hi_coins = $this->currentUser()->getHiCoinText();
         $this->view->title = "我的礼物";
+        $this->view->is_ios_auth_version = $this->currentUser()->isIosAuthVersion();
     }
 
     //用户送出的礼物
