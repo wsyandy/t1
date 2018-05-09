@@ -3,7 +3,6 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
-    use RoomInternational;
 
     /**
      * @type ProductChannels
@@ -1958,13 +1957,27 @@ class Rooms extends BaseModel
             $time = fetch($opts, 'time', time());
             $date = date("Ymd", $time);
 
+            //房间流水统计
             $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room->id);
             $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
             $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room->id);
 
+            //房间流水贡献榜统计
             $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
             $room_db->zincrby($room->generateRoomWealthRankListKey('week',
                 ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
+
+
+            //统计时间段房间流水 10分钟为单位
+            $hot_cache = Users::getHotWriteCache();
+            $minutes = date("YmdHi");
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_stat_key, $income);
+            $hot_cache->expire($minutes_stat_key, 3600 * 3);
+            debug($minutes_stat_key);
         }
     }
 
