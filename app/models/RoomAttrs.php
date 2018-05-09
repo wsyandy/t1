@@ -78,7 +78,7 @@ trait RoomAttrs
     {
         $hot_cache = self::getHotWriteCache();
         $key = $this->getRealUserListKey();
-        $user_ids = $hot_cache->zrenge($key, 0, -1);
+        $user_ids = $hot_cache->zrange($key, 0, -1);
 
         $score = 0;
 
@@ -119,7 +119,7 @@ trait RoomAttrs
     {
         $hot_cache = self::getHotWriteCache();
         $key = $this->getRealUserListKey();
-        $user_ids = $hot_cache->zrenge($key, 0, -1);
+        $user_ids = $hot_cache->zrange($key, 0, -1);
 
         $score = 0;
 
