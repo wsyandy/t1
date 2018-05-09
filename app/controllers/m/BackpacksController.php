@@ -11,7 +11,16 @@ class BackpacksController extends BaseController
 {
     public function indexAction()
     {
+        $this->view->title = '爆礼物';
+        if (false) {
+            $this->response->redirect('/backpacks/desc');
+        }
+    }
 
+
+    public function descAction()
+    {
+        $this->view->title = '爆礼物';
     }
 
 
@@ -20,8 +29,20 @@ class BackpacksController extends BaseController
      */
     public function prizeAction()
     {
-        $gift_id =  \Gifts::randomGift();
-        return $gift_id;
+        $target = \Gifts::randomGift();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
+    }
+
+
+    /**
+     * @desc 领取历史记录
+     * @return bool
+     */
+    public function historyAction()
+    {
+        $list = \BoomHistories::topList();
+        $list = $list->toJson('boom', 'toSimpleJson');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $list);
     }
 
 
@@ -30,9 +51,21 @@ class BackpacksController extends BaseController
      */
     public function createAction()
     {
-        $target_id = $this->params('target_id', \Gifts::randomGift());
-        $type = $this->params('type', BACKPACK_GIFT_TYPE);
-        $number = mt_rand(1, 5);
+        $target = $this->params('target');
+
+        if (!is_array($target)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败');
+        }
+        foreach ($target as $value) {
+            $this->prepare($value['id'], $value['name']);
+        }
+        return $this->renderJSON(ERROR_CODE_SUCCESS);
+    }
+
+
+    protected function prepare($target_id, $number)
+    {
+        $type = BACKPACK_GIFT_TYPE;
 
         // target id
         if (empty($target_id))
@@ -41,14 +74,20 @@ class BackpacksController extends BaseController
         // 加入背包的数据
         $joining = array(
             'target_id' => $target_id,
+            'type' => $type,
             'number' => $number
         );
 
-        if (! \Backpacks::createTarget($this->currentUser(), $target_id, $number, $type)) {
+        if (!\Backpacks::createTarget($this->currentUser(), $target_id, $number, $type)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败');
         }
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack'=>$joining]);
+
+        // 记录爆礼物日志
+        (new \BoomHistories())->createBoom($this->currentUser(), $joining);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $joining]);
+
     }
+
 
 
 }

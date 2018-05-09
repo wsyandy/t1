@@ -436,36 +436,37 @@ class Gifts extends BaseModel
 
 
     /**
-     * @desc 随机一个礼物
+     * @desc 随机礼物
      * @return mixed
      */
     static public function randomGift()
     {
-        $conditions = [
-            'order' => 'id desc',
-            'columns' => 'id'
-        ];
-        $per_page = 20;
-        $count = Gifts::count();
-
-        // 随机的数字
-        $number = mt_rand(0, $count-1);
-
-        // 所在页数
-        $page = ceil($number/$per_page);
-        $page = $page<1 ? 1 : $page;
-
-        // 页数据
-        $list = Gifts::findPagination($conditions, $page, $per_page);
+        $list = Gifts::findByConditions([]);
         $list = $list->toJson('gifts');
 
-        // 查索引
-        $index = 1;
-        if ($number != 0) {
-            $index = abs($number-floor($number/$per_page)*$per_page);
+        // 随机三个索引
+        $number = array();
+        $n = mt_rand(1, 3);
+        for ($i=0; $i<$n; $i++) {
+            $number[] = mt_rand(0, count($list['gifts'])-1);
         }
 
-        $gift_id = $list['gifts'][$index-1]['id'];
-        return $gift_id;
+        // 匹配礼物
+        $gifts = array();
+        foreach ($number as $item=>$value) {
+            $gifts[] = $list['gifts'][$value];
+        }
+
+        // 随机数量
+        $data = array();
+        foreach ($gifts as $value) {
+            $data[] = array(
+                'id' => $value['id'],
+                'name' => $value['name'],
+                'image_url' => StoreFile::getUrl($value['image']),
+                'number' => mt_rand(1, 5)
+            );
+        }
+        return $data;
     }
 }
