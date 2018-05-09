@@ -827,18 +827,15 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_room_list_key = Rooms::getHotRoomListKey();
         $room_ids = [];
 
-
         foreach ($rooms as $room) {
 
-            if (!$room->canToHot()) {
+            if (!$room->canToHot(2)) {
                 continue;
             }
 
             $total_score = $room->getTotalScore();
             $room_ids[$room->id] = $total_score;
         }
-
-        echoLine($room_ids);
 
         $hot_cache->zclear($hot_room_list_key);
 
@@ -857,7 +854,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
-            if (!$room->canToHot()) {
+            if (!$room->canToHot(2)) {
                 $hot_cache->zrem($hot_room_list_key, $room->id);
             }
 
