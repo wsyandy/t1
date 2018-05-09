@@ -35,7 +35,7 @@
     <div class="register_box">
         <ul>
             <li>
-                <input class="input_phone" type="text" placeholder="手机号" value="" name="mobile"
+                <input class="input_phone" type="text" placeholder="请输入手机号" value="" name="mobile"
                        v-model="mobile">
             </li>
             <li >
