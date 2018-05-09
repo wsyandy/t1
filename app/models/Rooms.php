@@ -490,6 +490,8 @@ class Rooms extends BaseModel
         $this->save();
         $user->save();
 
+        $this->updateLastAt();
+
         if (!$user->isSilent()) {
             Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
         }
@@ -524,10 +526,32 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $this->updateLastAt();
+
         //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
+    }
+
+    function updateLastAt()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $hot_cache->zadd($key, time(), $this->id);
+
+        $total = $hot_cache->zcard($key);
+
+        if ($total >= 1000) {
+            $hot_cache->zremrangebyrank($key, 0, $total - 1000);
+        }
+    }
+
+    function getLastAtByCache()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $key = 'room_active_last_at_list';
+        return $hot_cache->zscore($key, $this->id);
     }
 
     function kickingRoom($user)
@@ -1979,6 +2003,11 @@ class Rooms extends BaseModel
             $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
             $hot_cache->incrby($minutes_stat_key, $income);
             $hot_cache->expire($minutes_stat_key, 3600 * 3);
+
+            $minutes_num_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_num_stat_key, 1);
+            $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
+
             debug($minutes_stat_key);
         }
     }

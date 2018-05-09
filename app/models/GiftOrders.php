@@ -255,6 +255,8 @@ class GiftOrders extends BaseModel
                 $gift_order->room_id = $sender_current_room_id;
                 $gift_order->room_union_id = $sender_current_room->union_id;
                 $gift_order->room_union_type = $sender_current_room->union_type;
+
+                $sender_current_room->updateLastAt();
             }
 
             if ($gift_order->create()) {
