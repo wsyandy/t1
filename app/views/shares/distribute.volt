@@ -126,7 +126,8 @@
                 };
                 $.authPost('/shares/mobile_auth', data, function (resp) {
                     if (resp.error_code == 0) {
-                        vm.redirectAction(resp.weixin_url);
+//                        vm.redirectAction(resp.weixin_url);
+                        window.location = resp.weixin_url;
                     } else {
                         $tips.show(10).delay(1000).fadeOut();
                         vm.error_text = resp.error_reason;
