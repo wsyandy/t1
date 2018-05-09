@@ -930,7 +930,8 @@
 |left_pk_user_id|参与者a|int|否||
 |right_pk_user_id|参与者b|int|否||
 |pk_type|pk类型|send_gift_user:按照送礼物人数;send_gift_amount:按照送礼物价值|否||
-|pk_time|pk时长|以秒为单位|否|||
+|pk_time|pk时长|以秒为单位|否||
+|cover|发起pk状态类型|int|是|默认为0，为正常发起pk，1为覆盖pk||
 
 ##### 32.2 回应参数说明
 ```

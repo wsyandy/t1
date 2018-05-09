@@ -818,4 +818,13 @@ class RoomsTask extends \Phalcon\Cli\Task
             Rooms::updateRoomTypes($room->id);
         }
     }
+
+    //新热门逻辑
+    function generateHOtRoomsAction()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key =
+        $rooms =
+        $device_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, ['limit' => [0, 1000000]]);
+    }
 }

@@ -3882,4 +3882,24 @@ EOF;
             $backpack->save();
         }
     }
+
+    function test22Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list_3';
+        $time = time();
+
+        for ($i = 1; $i <= 200; $i++) {
+
+            $hot_cache->zadd($key, $time--, $i);
+
+            $total = $hot_cache->zcard($key);
+        }
+
+        if ($total >= 100) {
+            $hot_cache->zremrangebyrank($key, 0, $total - 100);
+        }
+
+        echoLine($hot_cache->zrevrange($key, 0, -1), $hot_cache->zcard($key));
+    }
 }

@@ -180,11 +180,14 @@
         $getVerify.on('click',function () {
             var mobileNum = $tel.val();
             var isphone = isMobile(mobileNum);
-            settime(isphone)
+            setTimeout(function () {
+                settime(isphone)
+            },1000);
+
         })
         function settime(isphone) {
             clearTimeout(timer);
-            if(isphone){
+            if(isphone && vm.send_status){
                 if (countdown === 0) {
                     $getVerify.attr("disabled", false).val("获取验证码");
                     $verify.attr("disabled", true);

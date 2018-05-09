@@ -490,6 +490,8 @@ class Rooms extends BaseModel
         $this->save();
         $user->save();
 
+        $this->updateLastAt();
+
         if (!$user->isSilent()) {
             Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
         }
@@ -524,10 +526,32 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $this->updateLastAt();
+
         //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
+    }
+
+    function updateLastAt()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $hot_cache->zadd($key, time(), $this->id);
+
+        $total = $hot_cache->zcard($key);
+
+        if ($total >= 1000) {
+            $hot_cache->zremrangebyrank($key, 0, $total - 1000);
+        }
+    }
+
+    function getLastAtByCache()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $key = 'room_active_last_at_list';
+        return $hot_cache->zscore($key, $this->id);
     }
 
     function kickingRoom($user)
