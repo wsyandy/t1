@@ -210,7 +210,8 @@
             or isAllowed('wap_visits','index') or isAllowed('word_visits','days') or isAllowed('stats', 'stat_room_time') or
             isAllowed('users','day_rank_list') or  isAllowed('users','week_rank_list') or  isAllowed('users','total_rank_list') or
             isAllowed('unions','day_rank_list') or isAllowed('unions','week_rank_list') or isAllowed('activities', 'stat') or
-            isAllowed('gift_stats', 'days') or isAllowed('partner_datas','index')  or isAllowed('province_stats','days')%}
+            isAllowed('gift_stats', 'days') or isAllowed('partner_datas','index')  or isAllowed('province_stats','days')
+            or isAllowed('room_stats','total_stat') or  isAllowed('room_stats','day_stat') %}
 
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -346,7 +347,7 @@
 
         <!-- 系统 -->
         {% if isAllowed('operators','index') or isAllowed('partners','index') or isAllowed('sms_channels','index')
-            or isAllowed('provinces','index') or isAllowed('protocol_urls','index') or isAllowed('banners','index')
+            or isAllowed('provinces','index') or isAllowed('protocol_urls','index')
             or isAllowed('soft_versions','index') or isAllowed('sms_channels','index') or isAllowed('partner_urls','index')
             or isAllowed('marketing_configs','index') or isAllowed('cooperate', 'index') or isAllowed('payment_channels','index') %}
             <li class="dropdown">
