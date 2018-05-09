@@ -48,6 +48,7 @@ class Backpacks extends BaseModel
                 'id' => $this->id,
                 'number' => $this->number,
                 'image_url' => $gift->getImageUrl(),
+                'name' => $gift->name,
                 'svga_image_name' => $gift->getSvgaImageName(),
                 'render_type' => $gift->render_type,
                 'svga_image_url' => $gift->getImageSmallUrl(),
