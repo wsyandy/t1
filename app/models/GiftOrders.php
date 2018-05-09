@@ -293,6 +293,8 @@ class GiftOrders extends BaseModel
 
         $params = ['time' => $time];
 
+        debug($this->id, $this->room_id, $opts);
+
         //统计房间收益
         $room = $this->room;
 
