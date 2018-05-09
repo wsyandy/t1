@@ -70,8 +70,13 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
-            self::delay()->updateRoomTypes($this->id);
+        if ($this->hasChanged('name') || $this->hasChanged('types')) {
+
+            if ($this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                self::delay()->updateRoomTypes($this->id);
+            }
+
+            self::delay()->updateShieldRoomList($this->id);
         }
     }
 
@@ -145,6 +150,47 @@ class Rooms extends BaseModel
     function isGreenRoom()
     {
         return STATUS_ON == $this->green;
+    }
+
+    function isShieldRoom()
+    {
+
+        if ($this->types) {
+            $types = explode(",", $this->types);
+
+            if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+                return true;
+            }
+        }
+
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+
+        foreach ($keywords as $keyword) {
+
+            if (preg_match("/$keyword/i", $this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isInShieldRoomList()
+    {
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore($hot_shield_room_list_key, $this->id) > 0;
+    }
+
+    static function updateShieldRoomList($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room->isShieldRoom()) {
+            $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_cache = self::getHotWriteCache();
+            $hot_cache->zrem($hot_shield_room_list_key, $room->id);
+        }
     }
 
     function toSimpleJson()
@@ -1473,6 +1519,12 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+    //总的屏蔽热门房间列表
+    static function generateShieldHotRoomListKey()
+    {
+        return "hot_shield_room_list";
+    }
+
     //新手热门房间列表
     static function generateNoviceHotRoomListKey()
     {
@@ -1511,6 +1563,7 @@ class Rooms extends BaseModel
     static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1531,6 +1584,10 @@ class Rooms extends BaseModel
                 $hot_room_list_key = $green_hot_room_list_key;
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
+            }
+
+            if ($user->isShieldHotRoom()) {
+                $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
             }
 
             $shield_room_ids = $user->getShieldRoomIds();
