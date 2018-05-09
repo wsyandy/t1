@@ -1550,7 +1550,7 @@ class Rooms extends BaseModel
         $hot_room_list_key = Rooms::getHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
-
+        $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
         $pagination->clazz = 'Rooms';
 
