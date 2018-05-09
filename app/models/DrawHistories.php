@@ -266,7 +266,7 @@ class DrawHistories extends BaseModel
             }
 
             // 奖金池控制
-            if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
+            if ($number == 100000 && $total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
                 info('continue 奖金池控制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                 return 0;
             }
@@ -297,7 +297,7 @@ class DrawHistories extends BaseModel
 
                 $user_hit_1w_history = self::findFirst([
                     'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 1800],
+                    'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'number' => 10000, 'start_at' => time() - 900],
                     'order' => 'id desc']);
                 if ($user_hit_1w_history) {
                     info('continue hit1w', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
@@ -340,13 +340,17 @@ class DrawHistories extends BaseModel
                         $user_hit_10w_histories = self::find([
                             'conditions' => 'type=:type: and number=:number:',
                             'bind' => ['type' => 'diamond', 'number' => 100000],
-                            'columns' => 'user_id'
+                            'columns' => 'id,user_id,created_at'
                         ]);
 
                         foreach ($user_hit_10w_histories as $history) {
                             $hit_user = Users::findFirstById($history->user_id);
                             if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
                                 info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                                return 0;
+                            }
+                            if (time() - $history->created_at < 3600 * 5) {
+                                info('continue hit10w 短时间内不能爆10万', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                                 return 0;
                             }
                         }
