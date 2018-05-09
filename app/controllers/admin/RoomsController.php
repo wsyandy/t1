@@ -365,22 +365,13 @@ class RoomsController extends BaseController
     function autoHotAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 10);
+        $per_page = $this->params('per_page', 30);
         $hot_cache = \Users::getHotWriteCache();
 
         $hot_room_list_key = \Rooms::generateHotRoomListKey();
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
-
-        if ($room_ids) {
-            $cond = ['conditions' => 'id in (' . implode(',', $room_ids) . ")"];
-        } else {
-            $cond = ['conditions' => 'id < 1'];
-        }
-        
-        $rooms = \Rooms::findPagination($cond, $page, $per_page);
-
-        //$rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+        $rooms = \Rooms::findByIds($room_ids);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
@@ -390,8 +381,12 @@ class RoomsController extends BaseController
             }
         }
 
+        $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
-        $this->view->rooms = $rooms;
+        $this->view->rooms = $pagination;
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
     }

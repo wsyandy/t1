@@ -116,7 +116,7 @@ class SmsDistributeHistories extends BaseModel
         $user_id = $sms_distribute_history->share_user_id;
         $user = \Users::findFirstById($user_id);
         if ($user) {
-            $amount = 20;
+            $amount = 10;
             $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
         }
