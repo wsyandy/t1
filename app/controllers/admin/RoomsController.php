@@ -365,7 +365,7 @@ class RoomsController extends BaseController
     function autoHotAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 10);
+        $per_page = $this->params('per_page', 30);
         $hot_cache = \Users::getHotWriteCache();
 
         $hot_room_list_key = \Rooms::generateHotRoomListKey();
