@@ -744,6 +744,13 @@ class RoomsController extends BaseController
     {
         $keywords = ['球球', '王者', '绝地', '终结者', '处对象', '音乐', '电台', '第五人格', 'les', '关注'];
 
+        $hot_cache = \Rooms::getHotWriteCache();
+        $res = $hot_cache->zrevrange("room_hot_search_keywords_list", 0, -1);
+
+        if (count($res) > 2) {
+            $keywords = $res;
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['keywords' => $keywords]);
     }
 

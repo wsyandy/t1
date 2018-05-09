@@ -126,6 +126,9 @@
                     {% if isAllowed('serach_histories','room') %}
                         <li><a href="/admin/search_histories/room">房间搜索记录</a></li>
                     {% endif %}
+                    {% if isAllowed('rooms','hot_search_keywrods') %}
+                        <li><a href="/admin/rooms/hot_search_keywrods">房间热搜关键词</a></li>
+                    {% endif %}
                     {% if isAllowed('rooms','forbidden_to_hot_list') %}
                         <li><a href="/admin/rooms/forbidden_to_hot_list">禁止上热门房间</a></li>
                     {% endif %}
@@ -420,9 +423,6 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">资源配置<b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    {% if isAllowed('i_gifts', 'index') %}
-                        <li><a href="/admin/i_gifts">礼物配置(国际版)</a></li>
-                    {% endif %}
                     {% if isAllowed('gifts', 'index') %}
                         <li><a href="/admin/gifts">礼物配置</a></li>
                     {% endif %}
