@@ -1979,6 +1979,11 @@ class Rooms extends BaseModel
             $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
             $hot_cache->incrby($minutes_stat_key, $income);
             $hot_cache->expire($minutes_stat_key, 3600 * 3);
+
+            $minutes_num_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_num_stat_key, 1);
+            $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
+
             debug($minutes_stat_key);
         }
     }
