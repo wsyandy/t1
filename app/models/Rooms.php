@@ -3,7 +3,6 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
-    use RoomInternational;
 
     /**
      * @type ProductChannels
@@ -41,7 +40,8 @@ class Rooms extends BaseModel
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台'];
+    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台',
+        'room_seat_sequence' => '麦序', 'male_gold' => '男女神', 'point_sing' => '点唱'];
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
@@ -69,8 +69,13 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
-            self::delay()->updateRoomTypes($this->id);
+        if ($this->hasChanged('name') || $this->hasChanged('types')) {
+
+            if ($this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                self::delay()->updateRoomTypes($this->id);
+            }
+
+            self::delay()->updateShieldRoomList($this->id);
         }
     }
 
@@ -144,6 +149,47 @@ class Rooms extends BaseModel
     function isGreenRoom()
     {
         return STATUS_ON == $this->green;
+    }
+
+    function isShieldRoom()
+    {
+
+        if ($this->types) {
+            $types = explode(",", $this->types);
+
+            if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+                return true;
+            }
+        }
+
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+
+        foreach ($keywords as $keyword) {
+
+            if (preg_match("/$keyword/i", $this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isInShieldRoomList()
+    {
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore($hot_shield_room_list_key, $this->id) > 0;
+    }
+
+    static function updateShieldRoomList($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room->isShieldRoom()) {
+            $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_cache = self::getHotWriteCache();
+            $hot_cache->zrem($hot_shield_room_list_key, $room->id);
+        }
     }
 
     function toSimpleJson()
@@ -1472,6 +1518,12 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+    //总的屏蔽热门房间列表
+    static function generateShieldHotRoomListKey()
+    {
+        return "hot_shield_room_list";
+    }
+
     //新手热门房间列表
     static function generateNoviceHotRoomListKey()
     {
@@ -1510,6 +1562,7 @@ class Rooms extends BaseModel
     static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -1530,6 +1583,10 @@ class Rooms extends BaseModel
                 $hot_room_list_key = $green_hot_room_list_key;
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
+            }
+
+            if ($user->isShieldHotRoom()) {
+                $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
             }
 
             $shield_room_ids = $user->getShieldRoomIds();
@@ -1886,6 +1943,8 @@ class Rooms extends BaseModel
     //按天统计房间收益和送礼物人数,送礼物个数
     static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
+        debug($income, $sender_id, $gift_num, $opts);
+
         if ($income > 0 && $room) {
 
             if (is_numeric($room)) {
@@ -1900,13 +1959,27 @@ class Rooms extends BaseModel
             $time = fetch($opts, 'time', time());
             $date = date("Ymd", $time);
 
+            //房间流水统计
             $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room->id);
             $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
             $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room->id);
 
+            //房间流水贡献榜统计
             $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
             $room_db->zincrby($room->generateRoomWealthRankListKey('week',
                 ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
+
+
+            //统计时间段房间流水 10分钟为单位
+            $hot_cache = Users::getHotWriteCache();
+            $minutes = date("YmdHi");
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_stat_key, $income);
+            $hot_cache->expire($minutes_stat_key, 3600 * 3);
+            debug($minutes_stat_key);
         }
     }
 
@@ -2526,7 +2599,7 @@ class Rooms extends BaseModel
 
         return $gang_up_rooms_json;
     }
-    
+
     function getRoomMenuConfig($show_game, $root, $room_id)
     {
         $menu_config = [];

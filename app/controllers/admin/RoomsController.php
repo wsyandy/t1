@@ -365,8 +365,13 @@ class RoomsController extends BaseController
     function autoHotAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 10);
-        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+        $per_page = $this->params('per_page', 30);
+        $hot_cache = \Users::getHotWriteCache();
+
+        $hot_room_list_key = \Rooms::generateHotRoomListKey();
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        $rooms = \Rooms::findByIds($room_ids);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
@@ -376,8 +381,12 @@ class RoomsController extends BaseController
             }
         }
 
+        $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
-        $this->view->rooms = $rooms;
+        $this->view->rooms = $pagination;
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
     }
@@ -407,7 +416,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }

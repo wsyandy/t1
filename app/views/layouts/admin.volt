@@ -111,7 +111,7 @@
                     {% if isAllowed('rooms','auto_hot') %}
                         <li><a href="/admin/rooms/auto_hot">热门房间</a></li>
                     {% endif %}
-                    {% if isAllowed('rooms','index') %}
+                    {% if isAllowed('rooms','fixed') %}
                         <li><a href="/admin/rooms?hot=1">固定热门房间</a></li>
                     {% endif %}
                     {% if isAllowed('broadcasts','index') %}

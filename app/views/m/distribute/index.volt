@@ -27,7 +27,7 @@
         </div>
         <ul class="rules_list">
             <li>
-                1. A通过你的推广页注册账号后，你将会获得<span>20</span>钻石价值<span>2</span>元的奖励
+                1. A通过你的推广页注册账号后，你将会获得<span>10</span>钻石价值<span>1</span>元的奖励
             </li>
             <li>2. A通过你的推广页注册账号后，你将会获得A充值钻石的<span>5%</span>的奖励</li>
             <li>3. A通过你的推广页注册账号后，你将会获得A拉取的用户充值钻石的<span>1%</span>的奖励</li>

@@ -239,10 +239,15 @@ class DrawHistories extends BaseModel
         return [$user_rate_multi, $total_pay_amount];
     }
 
+    static function isWhiteList($user)
+    {
+        return false;
+    }
+
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 87) / 100;
+        $pool_rate = mt_rand(65, 85) / 100;
         $user_total_get_amount = fetch($opts, 'user_total_get_amount');
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
@@ -268,7 +273,7 @@ class DrawHistories extends BaseModel
 
             $hit_num = self::count([
                 'conditions' => 'user_id = :user_id: and (type=:type: or type=:type2:) and created_at>=:start_at:',
-                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'start_at' => time()],
+                'bind' => ['user_id' => $user->id, 'type' => 'diamond', 'type2' => 'gift', 'start_at' => time() - 1],
                 'order' => 'id desc']);
 
             if ($hit_num >= 3) {
@@ -330,17 +335,20 @@ class DrawHistories extends BaseModel
                         return 0;
                     }
 
-                    $user_hit_10w_histories = self::find([
-                        'conditions' => 'type=:type: and number=:number:',
-                        'bind' => ['type' => 'diamond', 'number' => 100000],
-                        'columns' => 'user_id'
-                    ]);
+                    if (!$user->isCompanyUser()) {
 
-                    foreach ($user_hit_10w_histories as $history) {
-                        $hit_user = Users::findFirstById($history->user_id);
-                        if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
-                            info('continue hit10w 同一个用户', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
-                            return 0;
+                        $user_hit_10w_histories = self::find([
+                            'conditions' => 'type=:type: and number=:number:',
+                            'bind' => ['type' => 'diamond', 'number' => 100000],
+                            'columns' => 'user_id'
+                        ]);
+
+                        foreach ($user_hit_10w_histories as $history) {
+                            $hit_user = Users::findFirstById($history->user_id);
+                            if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
+                                info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                                return 0;
+                            }
                         }
                     }
 

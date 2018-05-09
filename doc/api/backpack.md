@@ -2,14 +2,12 @@
 
 ## 1 礼物背包
 
-> http-get ```/api/backpacks/list```
+> http-get ```/api/backpacks```
 
 
 ##### 请求参数说明
 |参数|名称|值类型|是否可空|备注|
 |---|---|---|---|---|
-|page|页码|integer|否||
-|per_page|每页个数|integer|可空|空表示数量20
 |type|背包target的类型|integer|可空|礼物默认为1
 
 ##### 返回参数说明
@@ -18,24 +16,35 @@
     "error_code": 0,
     "error_reason": "",
     "error_url": "",
-    "now_at": 1525774604,
+    "now_at": 1525782941,
     "current_page": 1,
     "total_page": 1,
     "total_entries": 2,
     "backpacks": [
         {
             "id": 2,
-            "target_id": 1,
             "number": 1,
-            "image": "chance\/gifts\/image\/5ad9ba5f53488.png"
+            "image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5acf07d875095.png",
+            "name": "飞猪",
+            "svga_image_name": "",
+            "render_type": "gif",
+            "svga_image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5acf07d875095.png@!small",
+            "expire_day": 0,
+            "show_rank": 0
         },
         {
             "id": 1,
-            "target_id": 1,
             "number": 1,
-            "image": "chance\/gifts\/image\/5ad5ff2c8ea9c.png"
+            "image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5acf07d875095.png",
+            "name": "光电游侠",
+            "svga_image_name": "",
+            "render_type": "gif",
+            "svga_image_url": "http:\/\/mt-development.img-cn-hangzhou.aliyuncs.com\/chance\/gifts\/image\/5acf07d875095.png@!small",
+            "expire_day": 0,
+            "show_rank": 0
         }
     ],
     "apple_stable_version": 19,
     "android_stable_version": 8
+}
 ```

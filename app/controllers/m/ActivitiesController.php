@@ -693,4 +693,20 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = '绿色公约';
     }
+
+    function karaokeMasterAction()
+    {
+        $room_host_uid = 1162288;
+        $user = \Users::findFirstByUid($room_host_uid);
+        $room = \Rooms::findFirstByUserId($user->id);
+
+        $this->view->title = '麦霸挑战赛';
+        $this->view->room_id = $room->id;
+
+    }
+
+    function detailsAction()
+    {
+        $this->view->title = '比赛规则';
+    }
 }
