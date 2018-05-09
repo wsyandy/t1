@@ -299,7 +299,7 @@ class GiftOrders extends BaseModel
         if ($room) {
 
             if (!$this->gift->isCar()) {
-                $this->room->statIncome($this->amount);
+                $room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
                     Rooms::statDayIncome($room, $this->amount, $this->sender_id, $this->gift_num, $params);

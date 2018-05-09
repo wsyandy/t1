@@ -1943,6 +1943,8 @@ class Rooms extends BaseModel
     //按天统计房间收益和送礼物人数,送礼物个数
     static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
+        debug($income, $sender_id, $gift_num, $opts);
+
         if ($income > 0 && $room) {
 
             if (is_numeric($room)) {
