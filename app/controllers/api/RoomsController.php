@@ -223,7 +223,7 @@ class RoomsController extends BaseController
         if (isDevelopmentEnv() && $pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
-        
+
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 
@@ -743,6 +743,13 @@ class RoomsController extends BaseController
     function hotSearchAction()
     {
         $keywords = ['球球', '王者', '绝地', '终结者', '处对象', '音乐', '电台', '第五人格', 'les', '关注'];
+
+        $hot_cache = \Rooms::getHotWriteCache();
+        $res = $hot_cache->zrevrange("room_hot_search_keywords_list", 0, -1);
+
+        if (count($res) > 2) {
+            $keywords = $res;
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['keywords' => $keywords]);
     }

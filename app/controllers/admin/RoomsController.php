@@ -594,4 +594,64 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         }
     }
+
+    function hotSearchKeywrodsAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $key = 'room_hot_search_keywords_list';
+        $keywords = $hot_cache->zrange($key, 0, -1);
+        $total_entries = $hot_cache->zcard($key);
+        $objects = [];
+
+        foreach ($keywords as $keyword) {
+            $room = new \Rooms();
+            $room->keyword = $keyword;
+            $room->rank = $hot_cache->zscore($key, $keyword);
+            $objects[] = $room;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, 1, $total_entries);
+        $pagination->clazz = 'Rooms';
+
+        $this->view->rooms = $pagination;
+    }
+
+    function newHotSearchKeywrodsAction()
+    {
+        $keyword = $this->params('room[keyword]');
+        $rank = $this->params('room[rank]');
+        $hot_cache = \Rooms::getHotWriteCache();
+
+        if ($this->request->isPost()) {
+
+            $rank = intval($rank);
+
+            if (!$keyword) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '名称不能为空');
+            }
+
+            if (!$rank) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '排序不能为空');
+            }
+
+            $hot_cache->zadd("room_hot_search_keywords_list", $rank, $keyword);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
+        }
+
+        $room = new \Rooms();
+        $room->keyword = $keyword;
+        $room->rank = $hot_cache->zscore('room_hot_search_keywords_list', $keyword);
+        $this->view->room = $room;
+    }
+
+    function deleteSearchKeywrodsAction()
+    {
+        if ($this->request->isPost()) {
+            $hot_cache = \Rooms::getHotWriteCache();
+            $keyword = $this->params('room[keyword]');
+            $hot_cache->zrem("room_hot_search_keywords_list", $keyword);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
+        }
+    }
 }
