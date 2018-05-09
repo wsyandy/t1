@@ -823,8 +823,22 @@ class RoomsTask extends \Phalcon\Cli\Task
     function generateHOtRoomsAction()
     {
         $hot_cache = Users::getHotWriteCache();
-        $key =
-        $rooms =
-        $device_ids = $hot_cache->zrangebyscore($group_key, $begin_of_day, $end_of_day, ['limit' => [0, 1000000]]);
+        $rooms = Rooms::getActiveRoomsByTime();
+        $hot_room_list_key = Rooms::getHotRoomListKey();
+        $room_ids = [];
+
+
+        foreach ($rooms as $room) {
+            $total_score = $room->getTotalScore();
+            $room_ids[$room->id] = $total_score;
+        }
+
+        echoLine($room_ids);
+
+        $hot_cache->zclear($hot_room_list_key);
+
+        foreach ($room_ids as $room_id => $score) {
+            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+        }
     }
 }

@@ -3883,7 +3883,7 @@ EOF;
         }
     }
 
-    function test22Action()
+    function test40Action()
     {
         $hot_cache = Users::getHotWriteCache();
         $key = 'room_active_last_at_list_3';
@@ -3901,5 +3901,12 @@ EOF;
         }
 
         echoLine($hot_cache->zrevrange($key, 0, -1), $hot_cache->zcard($key));
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list_3';
+        $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
+        echoLine($user_num);
+
+        echoLine(array_diff([1,3,4],[1]));
     }
 }
