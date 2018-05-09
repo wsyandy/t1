@@ -2102,15 +2102,15 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-            return false;
-        }
+//        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
+//            return false;
+//        }
 
         if (!$this->checkRoomSeat()) {
             return false;
         }
 
-        if ($this->getUserNum() < $least_user_num) {
+        if ($this->getRealUserNum() < $least_user_num) {
             return false;
         }
 
