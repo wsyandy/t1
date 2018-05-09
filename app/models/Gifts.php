@@ -433,4 +433,39 @@ class Gifts extends BaseModel
 
         return [$last_gifts, $gifts];
     }
+
+
+    /**
+     * @desc 随机一个礼物
+     * @return mixed
+     */
+    static public function randomGift()
+    {
+        $conditions = [
+            'order' => 'id desc',
+            'columns' => 'id'
+        ];
+        $per_page = 20;
+        $count = Gifts::count();
+
+        // 随机的数字
+        $number = mt_rand(0, $count-1);
+
+        // 所在页数
+        $page = ceil($number/$per_page);
+        $page = $page<1 ? 1 : $page;
+
+        // 页数据
+        $list = Gifts::findPagination($conditions, $page, $per_page);
+        $list = $list->toJson('gifts');
+
+        // 查索引
+        $index = 1;
+        if ($number != 0) {
+            $index = abs($number-floor($number/$per_page)*$per_page);
+        }
+
+        $gift_id = $list['gifts'][$index-1]['id'];
+        return $gift_id;
+    }
 }

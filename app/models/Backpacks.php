@@ -73,4 +73,54 @@ class Backpacks extends BaseModel
         return $gift;
     }
 
+
+    /**
+     * @param $user
+     * @param $target
+     * @param $number
+     * @param int $type
+     * @param int $status
+     * @return bool
+     */
+    static public function createTarget($user, $target, $number, $type = BACKPACK_GIFT_TYPE, $status = STATUS_ON)
+    {
+        if (isDevelopmentEnv()) {
+            $user = (object)['id' => 1];
+        }
+
+        $conditions = [
+            'conditions' => 'user_id = :user_id: and target_id = :target_id:',
+            'bind' => [
+                'user_id' => $user->id,
+                'target_id' => $target
+            ]
+        ];
+
+        $backpack = new \Backpacks();
+
+        if (Backpacks::count($conditions) >= 1) {
+            // 更新数量
+            $item = Backpacks::findByConditions([
+                            'user_id' => $user->id,
+                            'target_id' => $target
+                        ]);
+             $item = $item->toJson('backpack');
+             $id = $item['backpack'][0]['id'];
+             $backpack->id = $id;
+             $backpack->increase('number', $number);
+             return true;
+        }
+
+        // 新增礼物进背包
+        $backpack->user_id = $user->id;
+        $backpack->target_id = $target;
+        $backpack->number = $number;
+        $backpack->type = $type;
+        $backpack->status = $status;
+        $backpack->created_at = time();
+        $backpack->updated_at = time();
+        $backpack->save();
+        return true;
+    }
+
 }
