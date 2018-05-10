@@ -54,9 +54,14 @@ class PkHistories extends BaseModel
                 return [null, ERROR_CODE_FORM, '创建失败'];
             }
         } else {
-            $pk_history = \PkHistories::findFirstByRoomId($room_id);
-            $pk_history->status = STATUS_OFF;
-            $pk_history->update();
+            $pk_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status !=:status:',
+                'bind' => ['room_id' => $room_id, 'status' => STATUS_OFF],
+                'order' => 'id desc'
+            ]);
+            if ($pk_history) {
+                $pk_history->status = STATUS_OFF;
+                $pk_history->update();
+            }
         }
 
         $pk_history = new PkHistories();

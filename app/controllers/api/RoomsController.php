@@ -879,7 +879,7 @@ class RoomsController extends BaseController
         $pk_time = $this->params('pk_time'); //
         $cover = $this->params('cover', 0);
 
-        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover];
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover, 'room_id' => $room_id];
 
         list($pk_history, $error_code, $error_reason) = \PkHistories::createHistory($this->currentUser(), $opts);
 
