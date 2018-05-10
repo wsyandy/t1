@@ -19,10 +19,9 @@
        sender_id: 1
        receiver_id: 2
        created_at: 1111
-       content: ''
        content_type: 'text/plain'
        title :标题
-       description: '描述'
+       content: '内容'
        url: 跳转地址 url://m/xxxx
        image_url : 图片地址 
     } // 扩展属性
@@ -55,10 +54,9 @@
         {
             id: ''
             content_type: ''
-            content: ''
             created_at: ''
             title :标题
-            description: '描述'
+            content: '内容'
             url: 跳转地址 url://m/xxxx
             image_url : 图片地址 
         }
