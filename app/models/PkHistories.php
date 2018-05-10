@@ -161,7 +161,7 @@ class PkHistories extends BaseModel
         $key = self::generatePkHistoryInfoKey($this->room_id);
         $body = ['left_pk_user_id' => $this->left_pk_user_id, 'right_pk_user_id' => $this->right_pk_user_id, $this->left_pk_user_id => 0, $this->right_pk_user_id => 0, 'pk_type' => $this->pk_type];
         $cache->hmset($key, $body);
-        info('初始化pk数据', $body);
+        info('初始化pk数据', $key, $body);
 
         $cache->expire($key, 60 * 60);
     }
@@ -195,9 +195,10 @@ class PkHistories extends BaseModel
             }
             $cache->hmset($key, [$receiver_id => $current_score]);
         }
+        $datas = $cache->hgetall($key);
+        info('更新pk记录', $key, $datas);
 
-
-        return $cache->hgetall($key);
+        return $datas;
     }
 
     function delPkHistoryInfo()
@@ -206,7 +207,7 @@ class PkHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
         $datas = $cache->hgetall($key);
-        info('pk_history_info=>', $datas);
+        info('pk_history_info=>', $datas,$key);
 
         $left_pk_user_score = $datas[$datas['left_pk_user_id']];
         $right_pk_user_score = $datas[$datas['right_pk_user_id']];
