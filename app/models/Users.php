@@ -2607,7 +2607,7 @@ class Users extends BaseModel
         $third_unionid = $third_unionid ? $third_unionid : $third_id;
 
         //其他账户的快捷登陆 重新注册新用户
-        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->login_type && !$user->isThirdLogin()) {
+        if ($user && $user->third_unionid && $user->third_unionid != $third_unionid || $user->login_type && !$user->isThirdLogin()) {
             $user = Users::registerForClientByDevice($device, true);
             if (!$user) {
                 return [ERROR_CODE_FAIL, '登录失败', $user];
