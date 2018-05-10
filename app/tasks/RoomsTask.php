@@ -848,7 +848,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             if (isDevelopmentEnv()) {
                 $room_score_key = "hot_room_score_list_room_id{$room->id}";
-                $hot_cache->zadd($room_score_key, time(), $total_score);
+                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
                 $hot_cache->expire($room_score_key, 3600 * 3);
             }
         }

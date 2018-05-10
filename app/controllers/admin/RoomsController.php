@@ -701,8 +701,6 @@ class RoomsController extends BaseController
 
         for ($i = 0; $i < 50; $i++) {
 
-            $time -= 600;
-
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
@@ -710,6 +708,8 @@ class RoomsController extends BaseController
             $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
             $amount = $hot_cache->get($minutes_stat_key);
             $scores[$minutes_start . "_" . $minutes_end] = $amount;
+
+            $time -= 600;
         }
 
         $this->view->scores = $scores;
@@ -726,8 +726,6 @@ class RoomsController extends BaseController
 
         for ($i = 0; $i < 50; $i++) {
 
-            $time -= 600;
-
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
@@ -735,6 +733,8 @@ class RoomsController extends BaseController
             $minutes_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
             $num = $hot_cache->get($minutes_stat_key);
             $scores[$minutes_start . "_" . $minutes_end] = $num;
+
+            $time -= 600;
         }
 
         $this->view->scores = $scores;
