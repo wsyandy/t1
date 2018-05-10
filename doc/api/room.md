@@ -235,6 +235,10 @@
                     'avatar_small_url': 右边pk者的头像
          ]
      ],
+     red_packet:[
+          'num': int 红包个数,
+          "url": string  跳转地址, 
+     ],
      game: {
              "url": string  跳转地址,
              "icon": string 图片地址

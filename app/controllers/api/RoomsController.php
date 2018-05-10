@@ -224,6 +224,11 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
+
+        if (isDevelopmentEnv()) {
+            $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
+        }
+
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 
