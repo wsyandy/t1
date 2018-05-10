@@ -690,4 +690,52 @@ class RoomsController extends BaseController
         $scores = $hot_cache->zrevrange($room_score_key, 0, -1, 'withscores');
         $this->view->scores = $scores;
     }
+
+    function hotRoomAmountScoreAction()
+    {
+        //统计时间段房间流水 10分钟为单位
+        $hot_cache = \Users::getHotWriteCache();
+
+        $time = time();
+        $scores = [];
+
+        for ($i = 0; $i < 50; $i++) {
+
+            $time -= 600;
+
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $this->id;
+            $amount = $hot_cache->get($minutes_stat_key);
+            $scores[$minutes_start . "_" . $minutes_end] = $amount;
+        }
+
+        $this->view->scores = $scores;
+    }
+
+    function hotRoomNumScoreAction()
+    {
+        //统计时间段房间流水 10分钟为单位
+        $hot_cache = \Users::getHotWriteCache();
+
+        $time = time();
+        $scores = [];
+
+        for ($i = 0; $i < 50; $i++) {
+
+            $time -= 600;
+
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $this->id;
+            $num = $hot_cache->get($minutes_stat_key);
+            $scores[$minutes_start . "_" . $minutes_end] = $num;
+        }
+
+        $this->view->scores = $scores;
+    }
 }
