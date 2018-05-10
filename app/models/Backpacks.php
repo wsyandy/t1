@@ -14,6 +14,9 @@ class Backpacks extends BaseModel
     static $GOLDIMG = '/m/images/gold.png'; // 金币图片
 
 
+    static $boomSVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
+
+
     /**
      * 背包礼物列表
      * @param $user
@@ -66,6 +69,12 @@ class Backpacks extends BaseModel
     }
 
 
+    /**
+     * 爆礼物推送
+     * @param $total_value
+     * @param $cur_value
+     * @param $room_id
+     */
     public function pushClientAboutBoom($total_value, $cur_value, $room_id)
     {
         $body = array(
@@ -73,7 +82,7 @@ class Backpacks extends BaseModel
             'blasting_gift' => [
                 'expire_at' => time(),
                 'url' => 'url://m/backpacks',
-                'svga_image_url' => '',
+                'svga_image_url' => self::$boomSVGA,
                 'total_value' => $total_value,
                 'current_value' => $cur_value
             ]
