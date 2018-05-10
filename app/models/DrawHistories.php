@@ -275,7 +275,7 @@ class DrawHistories extends BaseModel
             }
 
             $pool_rate = intval($pool_rate * 1000);
-            $hot_cache->setex($pool_rate_key, 300, $pool_rate);
+            $hot_cache->setex($pool_rate_key, 60, $pool_rate);
         }
 
         $pool_rate = $pool_rate / 1000;
