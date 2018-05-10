@@ -90,7 +90,7 @@ class MakiTask extends Phalcon\Cli\Task
 
             if ($value >= 2) {
                 // 需要推送消息的
-                Chats::sendSystemMessage($item, 'txt', $content);
+                Chats::sendSystemMessage($item, CHAT_CONTENT_TYPE_TEXT, $content);
 
                 // 个推
                 $user = Users::findFirstById($item);
