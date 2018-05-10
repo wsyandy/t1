@@ -161,8 +161,9 @@ class PkHistories extends BaseModel
         $key = self::generatePkHistoryInfoKey($this->room_id);
         $body = ['left_pk_user_id' => $this->left_pk_user_id, 'right_pk_user_id' => $this->right_pk_user_id, $this->left_pk_user_id => 0, $this->right_pk_user_id => 0, 'pk_type' => $this->pk_type];
         $cache->hmset($key, $body);
+        info('初始化pk数据', $key, $body);
 
-        $cache->expire($key, 3 * 65);
+        $cache->expire($key, 60 * 60);
     }
 
     static function generatePkHistoryInfoKey($room_id)
@@ -183,7 +184,7 @@ class PkHistories extends BaseModel
         $key = self::generatePkHistoryInfoKey($room_id);
         if ($cache->hexists($key, $receiver_id)) {
             $current_score = $cache->hget($key, $receiver_id);
-            $pk_type = $cache->hget($key, 'pay_type');
+            $pk_type = $cache->hget($key, 'pk_type');
             switch ($pk_type) {
                 case SEND_GIFT_USER:
                     $current_score = $current_score + 1;
@@ -194,9 +195,10 @@ class PkHistories extends BaseModel
             }
             $cache->hmset($key, [$receiver_id => $current_score]);
         }
+        $datas = $cache->hgetall($key);
+        info('更新pk记录', $key, $datas, $pk_type);
 
-
-        return $cache->hgetall($key);
+        return $datas;
     }
 
     function delPkHistoryInfo()
@@ -205,7 +207,7 @@ class PkHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
         $datas = $cache->hgetall($key);
-        info('pk_history_info=>', $datas);
+        info('pk_history_info=>', $datas, $key);
 
         $left_pk_user_score = $datas[$datas['left_pk_user_id']];
         $right_pk_user_score = $datas[$datas['right_pk_user_id']];
@@ -222,6 +224,7 @@ class PkHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $key = self::generatePkListKey();
         $score = $cache->zscore($key, $room_id);
+        info('所有pk房间', $cache->zrange($key, 0, -1), '当前房间ID', $room_id);
         if ($score) {
             return true;
         }

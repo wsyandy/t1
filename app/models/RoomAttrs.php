@@ -13,8 +13,6 @@ trait RoomAttrs
 
         for ($i = 0; $i < 12; $i++) {
 
-            $time -= 600;
-
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
@@ -31,6 +29,8 @@ trait RoomAttrs
             if ($amount > 0) {
                 $total_amount += $amount;
             }
+
+            $time -= 600;
 
             info($amount, $percent, $total_amount, $minutes_stat_key);
         }
@@ -105,8 +105,8 @@ trait RoomAttrs
         $day_charm_value = $user->getDayCharmValue();
         $day_wealth_value = $user->getDayWealthValue();
 
-        $wealth_score = intval($day_wealth_value / 50);
-        $charm_score = intval($day_charm_value / 100);
+        $wealth_score = $day_wealth_value / 50;
+        $charm_score = $day_charm_value / 100;
 
         $total_score = $wealth_score + $charm_score;
 
@@ -134,8 +134,8 @@ trait RoomAttrs
                 if ($user->isIdCardAuth()) {
                     $day_charm_value = $user->getDayCharmValue();
                     $day_wealth_value = $user->getDayWealthValue();
-                    $score += intval($day_wealth_value / 500);
-                    $score += intval($day_charm_value / 1000);
+                    $score += $day_wealth_value / 500;
+                    $score += $day_charm_value / 1000;
                 }
             }
         }
