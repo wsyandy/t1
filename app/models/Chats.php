@@ -60,7 +60,7 @@ class Chats extends BaseModel
         'receiver_id' => array('null' => '不能为空'),
         'content' => array('null' => '不能为空'),
         'id' => array('null' => '不能为空'),
-        'content_type' => array('null' => '不能为空', 'in' => [CHAT_CONTENT_TYPE_TEXT]),
+        'content_type' => array('null' => '不能为空', 'in' => [CHAT_CONTENT_TYPE_TEXT, CHAT_CONTENT_TYPE_TEXT_NEWS]),
     );
 
     function beforeCreate()

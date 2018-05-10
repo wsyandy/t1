@@ -3929,7 +3929,7 @@ EOF;
     function test41Action()
     {
 
-        $attrs = array(
+        $attrs = [
             'sender_id' => SYSTEM_ID,
             'receiver_id' => 196,
             'content' => 'dddd',
@@ -3937,10 +3937,11 @@ EOF;
             'image_url' => '',
             'title' => '测试',
             'url' => 'url://m/activities'
-        );
+        ];
 
         \Chats::createChat($attrs);
 
         return \Chats::createChat($attrs);
+
     }
 }
