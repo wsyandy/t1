@@ -9,8 +9,8 @@
 
     {% for score, time in scores %}
         <tr class="row_line">
+            <td>{{ date("Y-m-d H:i:s", time) }}</td>
             <td>{{ score }}</td>
-            <td>{{ date("Ymd H:i:s", time) }}</td>
         </tr>
     {% endfor %}
     </tbody>
