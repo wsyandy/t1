@@ -758,6 +758,7 @@
             age int 年龄
             monologue 个性签名
             online_status 0离线，1在线
+            has_red_packet int 是有红包 0没有 1有
             channel_name: string 房间唯一标识, 频道名称
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳
