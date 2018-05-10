@@ -1504,6 +1504,24 @@ class Rooms extends BaseModel
         return "total_hot_rooms_list";
     }
 
+    //新用户热门房间列表
+    static function getNewUserHotRoomListKey()
+    {
+        return "new_user_hot_rooms_list";
+    }
+
+    //老用户充值热门房间列表
+    static function getOldUserPayHotRoomListKey()
+    {
+        return "old_user_pay_hot_rooms_list";
+    }
+
+    //老用户未充值热门房间列表
+    static function getOldUserNoPayHotRoomListKey()
+    {
+        return "old_user_no_pay_hot_rooms_list";
+    }
+
     //总的屏蔽热门房间列表
     static function generateShieldHotRoomListKey()
     {
@@ -1547,9 +1565,49 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-        $hot_room_list_key = Rooms::getHotRoomListKey();
+
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+        }
+
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+
+        $register_time = time() - $user->register_at;
+        $time = 60 * 15;
+
+        if (isProduction()) {
+            $time = 86400;
+        }
+
+        if ($user->isShieldHotRoom()) {
+
+            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+
+        } else {
+
+            if ($register_time <= $time) {
+                $hot_room_list_key = $new_user_hot_rooms_list_key;
+            } else {
+
+                if ($user->pay_amount > 0) {
+                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
+                } else {
+                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
+                }
+            }
+        }
+
         $hot_cache = Users::getHotWriteCache();
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $room_ids = array_diff($room_ids, $shield_room_ids);
+        }
+        
         $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
         $pagination->clazz = 'Rooms';

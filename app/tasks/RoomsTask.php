@@ -824,8 +824,13 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $hot_cache = Users::getHotWriteCache();
         $rooms = Rooms::getActiveRoomsByTime();
-        $hot_room_list_key = Rooms::getHotRoomListKey();
+        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+
         $room_ids = [];
+        $shield_room_ids = [];
 
         foreach ($rooms as $room) {
 
@@ -834,14 +839,59 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
 
             $total_score = $room->getTotalScore();
-            $room_ids[$room->id] = $total_score;
+
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[$room->id] = $total_score;
+            } else {
+                $room_ids[$room->id] = $total_score;
+            }
         }
 
+        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+
+            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        echoLine($room_ids, $shield_room_ids);
+
+        $lock = tryLock($hot_room_list_key, 1000);
+
         $hot_cache->zclear($hot_room_list_key);
+        $hot_cache->zclear($new_user_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
 
         foreach ($room_ids as $room_id => $score) {
             $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
         }
+
+        $shield_room_ids = array_slice($shield_room_ids, 0, 5, true);
+
+        if (count($shield_room_ids) > 0) {
+
+            $i = 1;
+
+            foreach ($shield_room_ids as $shield_room_id => $score) {
+
+                if ($i <= 3) {
+                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
+                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
+                }
+
+                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+
+                $i++;
+            }
+        }
+
+        unlock($lock);
     }
 
     function generateNewHotRoomRankAction()
