@@ -15,7 +15,7 @@
     <img class="header_text" src="/wap/images/sem5/header_text.png" alt="">
     <img class="pie_chart" src="/wap/images/sem5/pie_chart.png" alt="">
     <a class="btn_test">
-        <img class="ico_microphone" src="/wap//wap/images/sem5/ico_microphone.png" alt="">
+        <img class="ico_microphone" src="/wap/images/sem5/ico_microphone.png" alt="">
         <span class="btn_txt" id="cliTest"">点我测试</span>
     </a>
 </div>
