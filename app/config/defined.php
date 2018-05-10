@@ -203,6 +203,7 @@ define('CALL_STATUS_HANG_UP', 5);//挂断
 define('CALL_STATUS_ANSWERED', 6);//接听
 
 define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
+define('CHAT_CONTENT_TYPE_TEXT_NEWS', 'text/news');
 
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 
