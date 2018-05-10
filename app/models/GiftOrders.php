@@ -251,6 +251,7 @@ class GiftOrders extends BaseModel
             if ($sender_current_room_id) {
                 $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
                 if ($result) {
+                    info('当前房间有pk正在进行');
                     \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id);
                 }
             }

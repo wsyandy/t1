@@ -161,8 +161,9 @@ class PkHistories extends BaseModel
         $key = self::generatePkHistoryInfoKey($this->room_id);
         $body = ['left_pk_user_id' => $this->left_pk_user_id, 'right_pk_user_id' => $this->right_pk_user_id, $this->left_pk_user_id => 0, $this->right_pk_user_id => 0, 'pk_type' => $this->pk_type];
         $cache->hmset($key, $body);
+        info('初始化pk数据',$body);
 
-        $cache->expire($key, 3 * 65);
+        $cache->expire($key, 10 * 60);
     }
 
     static function generatePkHistoryInfoKey($room_id)
