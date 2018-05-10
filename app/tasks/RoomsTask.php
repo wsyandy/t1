@@ -845,6 +845,10 @@ class RoomsTask extends \Phalcon\Cli\Task
             } else {
                 $room_ids[$room->id] = $total_score;
             }
+
+            $room_score_key = "hot_room_score_list_room_id{$room->id}";
+            $hot_cache->zadd($room_score_key, time(), $total_score);
+            $hot_cache->expire($room_score_key,  3600 * 3);
         }
 
         uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
