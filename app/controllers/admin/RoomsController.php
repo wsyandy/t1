@@ -654,4 +654,13 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
         }
     }
+
+    function hotRoomScoreAction()
+    {
+        $room_id = $this->params('id');
+        $hot_cache = \Users::getHotWriteCache();
+        $room_score_key = "hot_room_score_list_room_id{$room_id}";
+        $scores = $hot_cache->zrange($room_score_key, 0, -1);
+        $this->view->scores = $scores;
+    }
 }
