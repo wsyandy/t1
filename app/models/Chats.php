@@ -39,6 +39,21 @@ class Chats extends BaseModel
     /**
      * @type string
      */
+    private $_image_url;
+
+    /**
+     * @type string
+     */
+    private $_url;
+
+    /**
+     * @type string
+     */
+    private $_title;
+
+    /**
+     * @type string
+     */
     private $_content;
 
     /**

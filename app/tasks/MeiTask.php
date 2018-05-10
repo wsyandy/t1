@@ -3934,7 +3934,7 @@ EOF;
             'receiver_id' => 196,
             'content' => 'dddd',
             'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
-            'image_url' => '',
+            'image_url' => 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180404105ac4331fc4652.jpg',
             'title' => '测试',
             'url' => 'url://m/activities'
         ];
