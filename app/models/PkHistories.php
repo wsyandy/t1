@@ -196,7 +196,7 @@ class PkHistories extends BaseModel
             $cache->hmset($key, [$receiver_id => $current_score]);
         }
         $datas = $cache->hgetall($key);
-        info('更新pk记录', $key, $datas);
+        info('更新pk记录', $key, $datas,$pk_type);
 
         return $datas;
     }
