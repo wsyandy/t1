@@ -11,7 +11,11 @@ class MakiTask extends Phalcon\Cli\Task
     {
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');
-        echoLine($rooms);
+        foreach ($rooms['rooms'] as $value) {
+            $room = Rooms::findFirstById($value['id']);
+            $res = $room->getDayIncome(date('Ymd'));
+            echoLine($res);
+        }
     }
 
 
