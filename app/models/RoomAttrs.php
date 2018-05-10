@@ -186,7 +186,7 @@ trait RoomAttrs
         info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
             $id_card_auth_users_score, $ratio, $total_score);
 
-        return;
+        return $total_score;
     }
 
     //用户总人数
