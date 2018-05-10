@@ -290,6 +290,16 @@ class StatsController extends BaseController
 
         if ($export_data) {
 
+
+            usort($export_data, function ($a, $b) {
+
+                if ($a[5] == $b[5]) {
+                    return 0;
+                }
+                return $a[5] > $b[5] ? -1 : 1;
+            });
+
+
             $titles = ['产品渠道', "推广渠道", "fr", "激活设备数", "注册数量", "新用户充值"];
             $temp_name = 'export_fr_stat_' . date('Ymd', $start_at) . '_' . date('Ymd', $end_at) . '_' . time() . '.xls';
             $uri = writeExcel($titles, $export_data, $temp_name, true);
