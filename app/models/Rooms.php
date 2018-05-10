@@ -243,7 +243,8 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
-            'top_text' => $this->top_text
+            'top_text' => $this->top_text,
+            'user_uid' => $this->user_uid
         ];
 
         return array_merge($opts, $this->toJson());
@@ -1565,11 +1566,6 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-
-        if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
-        }
-
         $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
         $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
@@ -1583,7 +1579,7 @@ class Rooms extends BaseModel
 
         if ($user->isShieldHotRoom()) {
 
-            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_room_list_key = Rooms::getHotRoomListKey();
 
         } else {
 
@@ -1607,7 +1603,11 @@ class Rooms extends BaseModel
         if ($shield_room_ids) {
             $room_ids = array_diff($room_ids, $shield_room_ids);
         }
-        
+
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $room_ids]);
+        }
+
         $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
         $pagination->clazz = 'Rooms';
@@ -2743,5 +2743,21 @@ class Rooms extends BaseModel
             $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
             $user_db->zadd($record_key, $time, $record);
         }
+    }
+
+    function setHotRoomScoreRatio($ratio)
+    {
+        $ratio = intval($ratio);
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+
+        if (!$ratio) {
+
+            $user_db->del($key);
+
+            return;
+        }
+
+        $user_db->set($key, $ratio);
     }
 }

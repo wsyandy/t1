@@ -121,7 +121,11 @@ class DrawHistories extends BaseModel
     static function getData()
     {
         $data = [];
-        $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
+        if (date("Ymd") == '20180510') {
+            $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 2];
+        } else {
+            $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
+        }
         if (isProduction()) {
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 73, 'gift_num' => 1, 'day_limit_num' => 1];
         } else {
@@ -247,7 +251,7 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(65, 87) / 100;
+        $pool_rate = mt_rand(70, 88) / 100;
         $user_total_get_amount = fetch($opts, 'user_total_get_amount');
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
@@ -266,7 +270,7 @@ class DrawHistories extends BaseModel
             }
 
             // 奖金池控制
-            if ($total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
+            if ($number != 100000 && $total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
                 info('continue 奖金池控制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                 return 0;
             }

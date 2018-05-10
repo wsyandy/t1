@@ -59,11 +59,11 @@ html,body{
   -webkit-animation-play-state:paused; /* Safari 和 Chrome */
 }
 @keyframes myrotate{
-  form {transform:rotate(0deg);}    
+  form {transform:rotate(0deg);}
   to    {transform:rotate(360deg);}
 }
 @-webkit-keyframes myrotate{/* Safari and Chrome */
-  form {transform:rotate(0deg);}    
+  form {transform:rotate(0deg);}
   to    {transform:rotate(360deg);}
 }
 .wishing_share{
@@ -97,10 +97,10 @@ html,body{
   background-size: cover;
 
 }
-.wishing_bouttom_box .mywish_buttom{
+.wishing_bouttom_box .ranking{
   width: 2rem;
   height: .84rem;
-  background: url(../images/mywish_buttom.png) center no-repeat;
+  background: url(../images/ranking_button.png) center no-repeat;
   background-size: cover;
 }
 .mask_background{
@@ -149,28 +149,42 @@ html,body{
 .wishing_rules_toast{
   position: absolute;
   left: .33rem;
-  top: 2.4rem;
+  top: 1.7rem;
   z-index: 101;
-  width: 6.74rem;
-  height: 5.98rem;
+  width: 7.13rem;
+  height: 8.55rem;
+  padding: 1.9rem 1rem 1rem;
   background: url(../images/wishing_rules_toast.png) center no-repeat;
-  background-size:  6.74rem 5.98rem;
+  background-size:  7.13rem 8.55rem;
+}
+.wishing_rules_scroll{
+  overflow-y: scroll;
+  /* border-bottom: 1px solid #70A320;  */
+}
+.wishing_rules_scroll .wire{
+  position: absolute;
+  left: .6rem;
+  bottom: 1rem;
+  height: 1px;
+  width: 84%;
+  background: linear-gradient(
+          to right,
+          rgba(0,0,0,0) 0%,
+          #70A320 50%,
+          rgba(0,0,0,0) 100%)
 }
 .wishing_rules_toast ul{
   flex-direction: column;
-  padding: 1.6rem 1rem 0 1rem;
+  background-size: .3rem .26rem;
+  width: 5.92rem;
+  height: 11rem;
 }
 .wishing_rules_toast ul li{
   padding-left: .26rem;
   position: relative;
-  font-size: .24rem;
+  font-size: .2rem;
   color: #306305;
   margin-bottom: .4rem;
-}
-@media only screen and (max-width: 362px) {
-  .wishing_rules_toast ul li{
-    margin-bottom: 0;
-  }
 }
 .wishing_rules_toast li .dot{
   position: absolute;
@@ -182,33 +196,86 @@ html,body{
   background-color: #356201;
 }
 .wishing_rules_toast .cancel_buttom{
-  position: absolute;
-  left: 3rem;
-  top: 6.8rem;
+  position: fixed;
+  left: 3.32rem;
+  bottom: .98rem;
   width: .86rem;
   height: .86rem;
   background: url(../images/cancel_buttom.png) center no-repeat;
   background-size: .86rem;
 }
+.wishing_record{
+  top: 1.6rem;
+  background: url(../images/wishing_record_bg.png) center no-repeat;
+  background-size: cover;
+}
+/*.release_wish{*/
+  /*position: absolute;*/
+  /*top: 1.48rem;*/
+  /*left: 0;*/
+  /*width: 7.5rem;*/
+  /*height: 7.9rem;*/
+  /*z-index: 103;*/
+  /*padding-top: 1rem;*/
+  /*background: url(../images/wish_backround1.png) center no-repeat;*/
+  /*background-size: 4.8rem 7.9rem;*/
+  /*flex-direction: column;*/
+/*}*/
+/*.release_wish textarea{*/
+  /*margin: .54rem 2rem 0;*/
+  /*height:4.5rem;*/
+  /*background-color: transparent;*/
+  /*border: none;*/
+  /*font-size: .22rem;*/
+  /*color: #67450E;*/
+/*}*/
+
 .release_wish{
   position: absolute;
   top: 1.48rem;
   left: 0;
   width: 7.5rem;
-  height: 7.9rem;
   z-index: 103;
-  padding-top: 1rem;
+  overflow-x: scroll;
+}
+.release_wish ul{
+  width: auto;
+  padding: 0 1.22rem;
+}
+.release_wish ul li{
+  flex-direction: column;
+  padding: 1rem .68rem 0;
+  margin: 0 .44rem;
+  width: 4.4rem;
+  height: 7.9rem;
   background: url(../images/wish_backround1.png) center no-repeat;
   background-size: 4.8rem 7.9rem;
-  flex-direction: column;
+}
+.release_wish ul li.background{
+  background: url(../images/wish_backround.png) center no-repeat;
+  background-size: 4.8rem 7.9rem;
+}
+.release_wish li p{
+  margin-top: .3rem;
+  font-family:soundFont;
+  font-size: .22rem;
+  color: #67450E;
 }
 .release_wish textarea{
-  margin: .54rem 2rem 0;
   height:4.5rem;
   background-color: transparent;
   border: none;
+  resize: none;
   font-size: .22rem;
   color: #67450E;
+  font-family:soundFont;
+}
+.release_wish .text_length{
+  text-align: right;
+  font-size: .22rem;
+  color: #67450E;
+  opacity: .5;
+  font-family:soundFont;
 }
 .release_wish textarea::-webkit-input-placeholder{
   color:rgba(0, 0, 0, .4);
@@ -223,7 +290,7 @@ html,body{
   color:rgba(0, 0, 0, .4);
 }
 .release_wish_buttom{
-  margin: .4rem auto 0;
+  margin: .7rem auto 0;
   width: 2rem;
   height: .64rem;
   background: url(../images/release_wish_buttom.png) center no-repeat;
@@ -302,23 +369,26 @@ html,body{
 }
 .mywish_list ul{
   width: auto;
-  padding:0 1.16rem;
+  position:absolute;
+  left:0;
+  top:0;
+  /* width:2200px; */
+  padding:0 1.24rem;
 }
 .mywish_list ul li{
   flex-direction: column;
-  padding: 1.54rem 1.1rem 0;
+  padding: .94rem .6rem 0;
+  margin: 0 .5rem;
   height: 7.9rem;
-  width: 5.4rem;
-  background:url(../images/wish_backround.png) center no-repeat;
-  background-size: 4.4rem 7.9rem;
-}
-.mywish_list ul .background2{
+  width: 4.4rem;
   background:url(../images/wish_backround2.png) center no-repeat;
-  background-size: 4.4rem 7.9rem;
+  background-size: cover;
 }
 .mywish_list li p{
-  margin-top: .4rem;
-  height: 3.1rem;
+  margin-top: .31rem;
+  height: 3.68rem;
+  font-family:soundFont;
+  font-size: .22rem;
   overflow-y: auto;
   color: #67450E;
 }
@@ -333,12 +403,68 @@ html,body{
 }
 .view_wish{
   position: absolute;
-  left: 1rem;
-  top: 3.5rem;
+  left: 1.2rem;
+  top: 3.7rem;
   width: 5.2rem;
   height: 7rem;
-  z-index:90;
 }
+@media screen and (min-height:810px){
+  .view_wish{
+    position: absolute;
+    left: .5rem;
+    top: 4.7rem;
+    width: 6.5rem;
+    height: 8.5rem;
+  }
+}
+/*.mywish_list{*/
+  /*width: 100%;*/
+  /*overflow-x: auto;*/
+  /*height: 7.9rem;*/
+  /*position: absolute;*/
+  /*left: 0;*/
+  /*top: 1.5rem;*/
+  /*z-index: 104;*/
+/*}*/
+/*.mywish_list ul{*/
+  /*width: auto;*/
+  /*padding:0 1.16rem;*/
+/*}*/
+/*.mywish_list ul li{*/
+  /*flex-direction: column;*/
+  /*padding: 1.54rem 1.1rem 0;*/
+  /*height: 7.9rem;*/
+  /*width: 5.4rem;*/
+  /*background:url(../images/wish_backround.png) center no-repeat;*/
+  /*background-size: 4.4rem 7.9rem;*/
+/*}*/
+/*.mywish_list ul .background2{*/
+  /*background:url(../images/wish_backround2.png) center no-repeat;*/
+  /*background-size: 4.4rem 7.9rem;*/
+/*}*/
+/*.mywish_list li p{*/
+  /*margin-top: .4rem;*/
+  /*height: 3.1rem;*/
+  /*overflow-y: auto;*/
+  /*color: #67450E;*/
+/*}*/
+/*.mywish_list .cancel{*/
+  /*position: fixed;*/
+  /*left: 3.4rem;*/
+  /*bottom: 1.12rem;*/
+  /*width: .86rem;*/
+  /*height: .86rem;*/
+  /*background: url(../images/cancel_buttom2.png) center no-repeat;*/
+  /*background-size: .86rem;*/
+/*}*/
+/*.view_wish{*/
+  /*position: absolute;*/
+  /*left: 1rem;*/
+  /*top: 3.5rem;*/
+  /*width: 5.2rem;*/
+  /*height: 7rem;*/
+  /*z-index:90;*/
+/*}*/
 .not_balance_toast{
   padding-top: .34rem;
   position: fixed;
@@ -379,7 +505,7 @@ html,body{
 }
 .not_balance_box .topup{
   width: 2.1rem;
-  height: .76rem;  
+  height: .76rem;
   line-height: .76rem;
   font-size: .30rem;
   color: #FFFFFF;

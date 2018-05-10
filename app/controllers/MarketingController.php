@@ -104,15 +104,19 @@ class MarketingController extends ApplicationController
         $appid = $this->params('appid');//Android应用为应用宝移动应用的id，或者iOS应用在Apple App Store的id；创建转化时，需填入此appid
         $advertiser_id = $this->params('advertiser_id');//广告主在腾讯社交广告（e.qq.com）的账户id
 
+        if (!$advertiser_id || !$muid || !$click_id || !$app_type) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '', ["ret" => ERROR_CODE_FAIL, 'msg' => '参数错误！']);
+        }
+
         $marketing_config = \MarketingConfigs::findFirstByGdtAccountId($advertiser_id);
         if (!$marketing_config) {
             info('false no marketing_config', $this->params());
-            return;
+            return $this->renderJSON(ERROR_CODE_FAIL, '', ["ret" => ERROR_CODE_FAIL, 'msg' => '广告主在腾讯社交广告账户ID不能为空！']);
         }
 
         if (!Devices::getMarketingStartAppMuid($muid)) {
             info('false muid no has', $muid, 'app_type', $app_type);
-            return;
+            return $this->renderJSON(ERROR_CODE_FAIL, '', ["ret" => ERROR_CODE_FAIL, 'msg' => '设备ID没找到']);
         }
 
 
@@ -147,8 +151,14 @@ class MarketingController extends ApplicationController
         ];
         $response = httpPost($url, $body);
         info('url', $url, 'body', $body, 'raw_body', $response->raw_body);
+        $resp = json_decode($response->raw_body, true);
 
-        $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        if (isset($resp['code']) && $resp['code'] == 0) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['ret' => ERROR_CODE_SUCCESS, 'msg' => '上报成功！']);
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '', ['ret' => ERROR_CODE_FAIL, 'msg' => '上报失败！']);
+
     }
 
 }

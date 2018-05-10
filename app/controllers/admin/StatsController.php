@@ -272,11 +272,11 @@ class StatsController extends BaseController
                 if ($export) {
                     $new_stat->data_hash = json_decode($new_stat->data, true);
                     if ($product_channel) {
-                        $export_data[] = [$product_channel->name, $partner->name, $partner->fr, $new_stat->data_hash['device_active_num'], $new_stat->data_hash['subscribe_num'],
-                            $new_stat->data_hash['register_num'], $new_stat->data_hash['register_rate']];
+                        $export_data[] = [$product_channel->name, $partner->name, $partner->fr, $new_stat->data_hash['device_active_num'],
+                            $new_stat->data_hash['register_num'], $new_stat->data_hash['new_payment_success_total']];
                     } else {
-                        $export_data[] = ['全部', $partner->name, $partner->fr, $new_stat->data_hash['device_active_num'], $new_stat->data_hash['subscribe_num'],
-                            $new_stat->data_hash['register_num'], $new_stat->data_hash['register_rate']];
+                        $export_data[] = ['全部', $partner->name, $partner->fr, $new_stat->data_hash['device_active_num'],
+                            $new_stat->data_hash['register_num'], $new_stat->data_hash['new_payment_success_total']];
                     }
                 }
 
@@ -289,7 +289,18 @@ class StatsController extends BaseController
         }
 
         if ($export_data) {
-            $titles = ['产品渠道', "推广渠道", "fr", "激活设备数", "微信关注数", "注册数量", "注册率%"];
+
+
+            usort($export_data, function ($a, $b) {
+
+                if ($a[5] == $b[5]) {
+                    return 0;
+                }
+                return $a[5] > $b[5] ? -1 : 1;
+            });
+
+
+            $titles = ['产品渠道', "推广渠道", "fr", "激活设备数", "注册数量", "新用户充值"];
             $temp_name = 'export_fr_stat_' . date('Ymd', $start_at) . '_' . date('Ymd', $end_at) . '_' . time() . '.xls';
             $uri = writeExcel($titles, $export_data, $temp_name, true);
 

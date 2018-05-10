@@ -12,6 +12,13 @@
     <label for="stat_at">结束时间</label>
     <input type="text" name="end_stat_at" class="form_datetime" id="stat_at" value="{{ end_stat_at }}" size="16">
 
+    <label for="export">
+        导出
+    </label>
+    <select name="export" id="export">
+        {{ options(export_status, export) }}
+    </select>
+
     <button class="ui button" type="submit">搜索</button>
 </form>
 

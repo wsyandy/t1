@@ -32,7 +32,7 @@ trait RoomAttrs
 
             $time -= 600;
 
-            info($amount, $percent, $total_amount, $minutes_stat_key);
+            info($this->id, $amount, $percent, $total_amount, $minutes_stat_key);
         }
 
         return $total_amount;
@@ -68,7 +68,7 @@ trait RoomAttrs
                 $total_num += $num;
             }
 
-            info($num, $percent, $total_num, $minutes_num_stat_key);
+            info($this->id, $num, $percent, $total_num, $minutes_num_stat_key);
         }
 
         return $total_num;
@@ -94,7 +94,7 @@ trait RoomAttrs
             $score += $no_pay_user_num * 1;
         }
 
-        info($score);
+        info($this->id, $score);
 
         return $score;
     }
@@ -110,7 +110,7 @@ trait RoomAttrs
 
         $total_score = $wealth_score + $charm_score;
 
-        info($total_score);
+        info($this->id, $total_score);
 
         return $total_score;
     }
@@ -140,6 +140,7 @@ trait RoomAttrs
             }
         }
 
+        info($this->id, $score);
         return $score;
     }
 
@@ -150,6 +151,8 @@ trait RoomAttrs
         $key = $this->getRealUserListKey();
 
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
+
+        info($this->id, $user_num);
 
         return intval($user_num);
     }
@@ -172,10 +175,18 @@ trait RoomAttrs
                 $real_user_stay_time_score * 0.1 + $room_host_score * 0.1 + $id_card_auth_users_score * 0.05;
         }
 
-        info($send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
-            $id_card_auth_users_score, $total_score);
+        $total_score = intval($total_score);
 
-        return intval($total_score);
+        $ratio = $this->getHotRoomScoreRatio();
+
+        if ($ratio) {
+            $total_score = $total_score * $ratio;
+        }
+
+        info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
+            $id_card_auth_users_score, $ratio, $total_score);
+
+        return $total_score;
     }
 
     //用户总人数
@@ -199,5 +210,13 @@ trait RoomAttrs
     {
         $num = $this->getUserNum() - $this->getRealUserNum();
         return $num;
+    }
+
+    //获取房间扶持分值
+    function getHotRoomScoreRatio()
+    {
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+        return intval($user_db->get($key));
     }
 }
