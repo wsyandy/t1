@@ -205,6 +205,7 @@ class PkHistories extends BaseModel
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
         $datas = $cache->hgetall($key);
+        info('pk_history_info=>', $datas);
 
         $left_pk_user_score = $datas[$datas['left_pk_user_id']];
         $right_pk_user_score = $datas[$datas['right_pk_user_id']];
