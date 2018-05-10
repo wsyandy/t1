@@ -2,9 +2,11 @@
 
 <ul class="nav nav-tabs" id="room_menus">
     <li role="presentation" class="active"><a href="/admin/rooms/online_users?id={{ room.id }}">在线用户</a></li>
-    <li role="presentation"><a href="/admin/rooms/room_seats?id={{ room.id }}">麦位</a> </li>
-    <li role="presentation"><a href="/admin/rooms/forbidden_to_hot_records?id={{ room.id }}">禁止上热门记录</a> </li>
-    <li role="presentation"><a href="/admin/rooms/hot_room_score?id={{ room.id }}">热门分值记录</a> </li>
+    <li role="presentation"><a href="/admin/rooms/room_seats?id={{ room.id }}">麦位</a></li>
+    <li role="presentation"><a href="/admin/rooms/forbidden_to_hot_records?id={{ room.id }}">禁止上热门记录</a></li>
+    <li role="presentation"><a href="/admin/rooms/hot_room_score?id={{ room.id }}">热门房间总分值记录</a></li>
+    <li role="presentation"><a href="/admin/rooms/hot_room_score?id={{ room.id }}">热门房间送礼物价值分值记录</a></li>
+    <li role="presentation"><a href="/admin/rooms/hot_room_score?id={{ room.id }}">热门房间送礼物次数分值记录</a></li>
 </ul>
 
 <div id="room_content" class="ajax_content">
