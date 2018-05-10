@@ -695,7 +695,7 @@ class RoomsController extends BaseController
     {
         //统计时间段房间流水 10分钟为单位
         $hot_cache = \Users::getHotWriteCache();
-
+        $room_id = $this->params('id');
         $time = time();
         $scores = [];
 
@@ -707,7 +707,7 @@ class RoomsController extends BaseController
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
             $minutes_end = $minutes + (10 - $interval);
-            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $this->id;
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
             $amount = $hot_cache->get($minutes_stat_key);
             $scores[$minutes_start . "_" . $minutes_end] = $amount;
         }
@@ -731,7 +731,7 @@ class RoomsController extends BaseController
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
             $minutes_end = $minutes + (10 - $interval);
-            $minutes_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $this->id;
+            $minutes_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
             $num = $hot_cache->get($minutes_stat_key);
             $scores[$minutes_start . "_" . $minutes_end] = $num;
         }
