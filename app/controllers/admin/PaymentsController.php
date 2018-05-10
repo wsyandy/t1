@@ -12,7 +12,7 @@ class PaymentsController extends BaseController
 {
     function indexAction()
     {
-        
+
         $page = 1;
         $per_page = 60;
         $total_page = 1;
@@ -49,7 +49,9 @@ class PaymentsController extends BaseController
     function updateAction()
     {
         if (isProduction()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '线上不支持修改');
+            if (!$this->currentOperator()->isSuperOperator()) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '线上不支持修改');
+            }
         }
 
         $payment = \Payments::findById($this->params('id'));
@@ -79,14 +81,14 @@ class PaymentsController extends BaseController
         $stats = [];
         $total_amount = 0;
         $payment_types = \PaymentChannels::$PAYMENT_TYPE;
-        foreach ($payment_types as $payment_type){
+        foreach ($payment_types as $payment_type) {
             $amount = \Payments::sum([
                 'conditions' => 'pay_status = :pay_status: and payment_type = :payment_type: and created_at>=:start_at: and created_at<=:end_at:',
                 'bind' => ['pay_status' => PAYMENT_PAY_STATUS_SUCCESS, 'payment_type' => $payment_type, 'start_at' => $start_at, 'end_at' => $end_at],
                 'column' => 'amount'
             ]);
 
-            if($amount > 0){
+            if ($amount > 0) {
                 $stats[$payment_type] = $amount;
                 $total_amount += $amount;
             }

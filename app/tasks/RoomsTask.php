@@ -282,6 +282,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     function roomAutoToHotAction()
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
         $novice_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $green_room_list_key = Rooms::generateGreenHotRoomListKey();
 
@@ -294,8 +295,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         if (isProduction()) {
             $manual_hot_room_num = 10;
-            $total_num = 20;
-            $least_num = 8;
+            $total_num = 30;
+            $least_num = 9;
             $least_user_num = 3;
             $last = time() - 10 * 60;
         }
@@ -308,6 +309,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         //总的热门房间
         $total_room_ids = [];
+        $shield_room_ids = [];
 
         //固定活跃房间
         $manual_hot_rooms = Rooms::find($cond);
@@ -535,6 +537,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $novice_room_ids[] = $room->id;
             }
 
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[] = $room->id;
+            }
+
             //置顶房间
             if ($room->isTop()) {
                 $top_room_ids[] = $room->id;
@@ -555,19 +561,31 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache->zclear($hot_room_list_key);
         $hot_cache->zclear($novice_room_list_key);
         $hot_cache->zclear($green_room_list_key);
+        $hot_cache->zclear($hot_shield_room_list_key);
 
         $time = time();
 
         foreach ($top_room_ids as $top_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+
+            if (!in_array($top_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $top_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $top_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $top_room_id);
         }
 
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
+
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+
+            if (!in_array($has_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $has_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $has_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $has_amount_room_id);
         }
@@ -575,6 +593,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($no_amount_room_ids as $no_amount_room_id => $user_num) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
+
+            if (!in_array($no_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $no_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $no_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $no_amount_room_id);
         }
@@ -603,6 +626,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($novice_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($green_room_list_key, 0, -1, true));
+        info($shield_room_ids, $hot_cache->zrevrange($hot_shield_room_list_key, 0, -1, true));
 
         unlock($lock);
     }
@@ -611,6 +635,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     function hotRoomRankAction()
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
         $novice_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $green_room_list_key = Rooms::generateGreenHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
@@ -619,7 +644,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
         $total_room_ids = [];
-
+        $shield_room_ids = [];
         $start = time() - 61 * 60;
         $end = time() - 60;
         $least_user_num = 2;
@@ -703,6 +728,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[] = $room->id;
+            }
+
             if ($income > 0) {
                 $has_amount_room_ids[] = $room_id;
             } else {
@@ -717,6 +746,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($top_room_ids as $top_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $top_room_id);
+
+            if (!in_array($top_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $top_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $top_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $top_room_id);
         }
@@ -724,6 +758,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($has_amount_room_ids as $has_amount_room_id) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $has_amount_room_id);
+
+            if (!in_array($has_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $has_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $has_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $has_amount_room_id);
         }
@@ -731,6 +770,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         foreach ($no_amount_room_ids as $no_amount_room_id => $income) {
             $time -= 100;
             $hot_cache->zadd($hot_room_list_key, $time, $no_amount_room_id);
+
+            if (!in_array($no_amount_room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_shield_room_list_key, $time, $no_amount_room_id);
+            }
+
             $hot_cache->zadd($green_room_list_key, $time, $no_amount_room_id);
             $hot_cache->zadd($novice_room_list_key, $time, $no_amount_room_id);
 
@@ -760,6 +804,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         info($hot_cache->zrevrange($hot_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($novice_room_list_key, 0, -1, true));
         info($hot_cache->zrevrange($green_room_list_key, 0, -1, true));
+        info($hot_cache->zrevrange($hot_shield_room_list_key, 0, -1, true));
 
         unlock($lock);
     }
@@ -771,6 +816,98 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
             Rooms::updateRoomTypes($room->id);
+        }
+    }
+
+    //新热门逻辑
+    function generateHotRoomsAction()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $rooms = Rooms::getActiveRoomsByTime();
+        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+
+        $room_ids = [];
+        $shield_room_ids = [];
+
+        foreach ($rooms as $room) {
+
+            if (!$room->canToHot(2)) {
+                continue;
+            }
+
+            $total_score = $room->getTotalScore();
+
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[$room->id] = $total_score;
+            } else {
+                $room_ids[$room->id] = $total_score;
+            }
+        }
+
+        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+
+            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        echoLine($room_ids, $shield_room_ids);
+
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+        $hot_cache->zclear($new_user_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
+
+        foreach ($room_ids as $room_id => $score) {
+            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
+        }
+
+        $shield_room_ids = array_slice($shield_room_ids, 0, 5, true);
+
+        if (count($shield_room_ids) > 0) {
+
+            $i = 1;
+
+            foreach ($shield_room_ids as $shield_room_id => $score) {
+
+                if ($i <= 3) {
+                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
+                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
+                }
+
+                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+
+                $i++;
+            }
+        }
+
+        unlock($lock);
+    }
+
+    function generateNewHotRoomRankAction()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $hot_room_list_key = Rooms::getHotRoomListKey();
+        $room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
+
+        $rooms = Rooms::findByIds($room_ids);
+
+        foreach ($rooms as $room) {
+
+            if (!$room->canToHot(2)) {
+                $hot_cache->zrem($hot_room_list_key, $room->id);
+            }
+
         }
     }
 }

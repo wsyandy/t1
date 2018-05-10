@@ -114,7 +114,7 @@ class GiftOrders extends BaseModel
     {
         return fetch(Gifts::$PAY_TYPE, $this->pay_type);
     }
-    
+
     /**
      * @param $sender_id
      * @param $receiver_ids
@@ -156,6 +156,9 @@ class GiftOrders extends BaseModel
             }
 
             $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
+            if ($target) {
+                \PkHistories::updatePkHistories($sender,$total_amount,$receiver_ids);
+            }
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
@@ -163,7 +166,6 @@ class GiftOrders extends BaseModel
         }
 
         if ($target) {
-
             $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
                 'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => $target->created_at];
 
@@ -192,6 +194,7 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
         $target_id = fetch($opts, 'target_id');
         $async_verify_data = fetch($opts, 'async_verify_data');
+        $type = fetch($opts, 'type');
 
         if ($async_verify_data) {
 
@@ -238,10 +241,14 @@ class GiftOrders extends BaseModel
             $gift_order->target_id = $target_id;
             $gift_order->product_channel_id = $receiver->product_channel_id;
 
-            if ($sender_id == $receiver_id) {
-                $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+            if (!$type) {
+                if ($sender_id == $receiver_id) {
+                    $gift_order->type = GIFT_ORDER_TYPE_USER_BUY;
+                } else {
+                    $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+                }
             } else {
-                $gift_order->type = GIFT_ORDER_TYPE_USER_SEND;
+                $gift_order->type = $type;
             }
 
             // 在房间里送里面
@@ -250,6 +257,8 @@ class GiftOrders extends BaseModel
                 $gift_order->room_id = $sender_current_room_id;
                 $gift_order->room_union_id = $sender_current_room->union_id;
                 $gift_order->room_union_type = $sender_current_room->union_type;
+
+                $sender_current_room->updateLastAt();
             }
 
             if ($gift_order->create()) {
@@ -277,7 +286,7 @@ class GiftOrders extends BaseModel
             }
         }
 
-        if ($gift->isDiamondPayType()) {
+        if ($gift->isDiamondPayType() && !$this->sender->isSystemUser()) {
             $this->updateUserData($opts);
         }
     }
@@ -288,14 +297,19 @@ class GiftOrders extends BaseModel
 
         $params = ['time' => $time];
 
+        debug($this->id, $this->room_id, $opts);
+
         //统计房间收益
-        if ($this->room) {
+        $room = $this->room;
+
+        if ($room) {
 
             if (!$this->gift->isCar()) {
-                $this->room->statIncome($this->amount);
+                $room->statIncome($this->amount);
 
                 if (!$this->sender->isSilent()) {
-                    Rooms::delay()->statDayIncome($this->room_id, $this->amount, $this->sender_id, $this->gift_num, $params);
+                    debug($this->amount, $this->sender_id, $this->gift_num, $params);
+                    Rooms::statDayIncome($room, $this->amount, $this->sender_id, $this->gift_num, $params);
                 }
             }
 
@@ -304,7 +318,6 @@ class GiftOrders extends BaseModel
                 Rooms::allNoticePush($this);
             }
         }
-
 
         \Users::delay()->updateExperience($this->id, $params);
         \Users::delay()->updateCharm($this->id, $params);

@@ -8,8 +8,7 @@
         <p :class="{select_gift:!receive}" @click.stop="receive=false">送出</p>
     </div>
 
-    {#国际版屏蔽此入口#}
-    <div class="gift_money" v-if="receive && code!='sala'"
+    <div class="gift_money" v-if="receive && !is_ios_auth_version"
          @click.stop="redirectAction('/m/withdraw_histories?sid={{ sid }}&code={{ code }}')">
         <h3>我的收益</h3>
         <p><span>{{ hi_coins }}</span> {{ coin_name }}币 <img src="/m/images/gift_icon.png"></p>
@@ -70,7 +69,8 @@
             per_page: 8,
             total_page: 1,
             loading: false,
-            receive: true
+            receive: true,
+            is_ios_auth_version: '{{ is_ios_auth_version }}'
         },
         watch: {
             receive: function () {

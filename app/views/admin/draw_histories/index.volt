@@ -1,4 +1,5 @@
 <ol class="breadcrumb">
+    <li class="active">奖池预留率: {{ pool_rate }}</li>
     <li class="active">钻石总收入: {{ total_incr_num }}</li>
     <li class="active">钻石总支出: {{ total_decr_num }}</li>
     <li class="active">礼物钻石总支出: {{ total_decr_gift_num }}</li>

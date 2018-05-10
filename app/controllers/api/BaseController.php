@@ -221,7 +221,7 @@ class BaseController extends ApplicationController
 
     function beforeAction($dispatcher)
     {
-        if (!$this->isHttps()) {
+        /*if (!$this->isHttps()) {
             info('no_https', $this->getFullUrl());
         }
 
@@ -301,7 +301,7 @@ class BaseController extends ApplicationController
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
-        }
+        }*/
     }
 
     function fixOldUser()

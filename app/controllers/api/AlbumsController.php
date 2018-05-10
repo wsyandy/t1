@@ -47,7 +47,7 @@ class AlbumsController extends BaseController
                 continue;
             }
 
-            $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+            $hot_cache->setex($cache_key . '_' . $md5_val, 600, time());
             $image_files[] = $image_file;
         }
 

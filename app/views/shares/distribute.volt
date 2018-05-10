@@ -23,7 +23,7 @@
             <!--暂停/播放按钮-->
             <div class="btn_play btn_pause"></div>
         </div>
-        <audio id="music" src="" >
+            <audio  id="music"  autoplay src="/shares/distribute_register.mp3">
             Your browser does not support HTML5 audio.
         </audio>
     </div>
@@ -35,7 +35,7 @@
     <div class="register_box">
         <ul>
             <li>
-                <input class="input_phone" type="text" placeholder="手机号" value="" name="mobile"
+                <input class="input_phone" type="text" placeholder="请输入手机号" value="" name="mobile"
                        v-model="mobile">
             </li>
             <li >
@@ -69,8 +69,7 @@
 <!--旋转动画插件-->
 <script src="/shares/js/jquery.rotate.min.js"></script>
 <!--音频播放器-->
-<script src="/shares/js/audio_player.js"></script>
-
+{#<script src="/shares/js/audio_player.js"></script>#}
 
 <script src="/js/vue/2.0.5/vue.min.js"></script>
 <!--倒计时-->
@@ -126,7 +125,8 @@
                 };
                 $.authPost('/shares/mobile_auth', data, function (resp) {
                     if (resp.error_code == 0) {
-                        vm.redirectAction(resp.weixin_url);
+//                        vm.redirectAction(resp.weixin_url);
+                        window.location = resp.weixin_url;
                     } else {
                         $tips.show(10).delay(1000).fadeOut();
                         vm.error_text = resp.error_reason;
@@ -170,6 +170,7 @@
     };
     var vm = XVue(opts);
     $(function () {
+        iplay();
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
@@ -180,11 +181,14 @@
         $getVerify.on('click',function () {
             var mobileNum = $tel.val();
             var isphone = isMobile(mobileNum);
-            settime(isphone)
+            setTimeout(function () {
+                settime(isphone)
+            },1000);
+
         })
         function settime(isphone) {
             clearTimeout(timer);
-            if(isphone){
+            if(isphone && vm.send_status){
                 if (countdown === 0) {
                     $getVerify.attr("disabled", false).val("获取验证码");
                     $verify.attr("disabled", true);
@@ -230,6 +234,42 @@
         }
 
         return true;
+    }
+    var rotatetimer,    /* 旋转定时器 */
+        isPlay = true, /* 播放状态 */
+        angle = 0,      /* 旋转角度 */
+        $cdControllerArm = $('.cdControllerArm'),
+        $cover = $('.audio_cover'),
+        $btnPlay= $('.btn_play'),
+        $music=$('#music'),
+        music = $music.get(0);          /* jQuery对象 转换为 DOM对象 以便于操作 Audio 对象*/
+
+
+    /*播放*/
+    $btnPlay.on('click', function() {
+        isPlay ? nplay() : iplay() ;
+    });
+    /*播放状态*/
+    function iplay() {
+        clearInterval(rotatetimer);
+        $btnPlay.removeClass('btn_pause');
+        music.play();
+
+        isPlay = true;
+        $cdControllerArm.addClass("cd_play");
+        /* jquery.rotate 旋转动画插件  */
+        rotatetimer = setInterval(function() {
+            angle += 1;
+            $cover.rotate(angle);
+        }, 20);
+    }
+    /*暂停状态*/
+    function nplay() {
+        clearInterval(rotatetimer);     /* 清除选择动画 */
+        music.pause();
+        isPlay = false;
+        $btnPlay.addClass('btn_pause'); /* 添加暂停按钮 */
+        $cdControllerArm.removeClass("cd_play");
     }
 </script>
 </body>

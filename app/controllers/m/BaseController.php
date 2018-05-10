@@ -177,7 +177,7 @@ class BaseController extends \ApplicationController
     function beforeAction($dispatcher)
     {
 
-        if (!$this->currentProductChannel()) {
+        /*if (!$this->currentProductChannel()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道非法');
         }
 
@@ -220,7 +220,7 @@ class BaseController extends \ApplicationController
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '请登录');
         }
 
-        $this->view->current_user = $this->currentUser();
+        $this->view->current_user = $this->currentUser();*/
     }
 
 

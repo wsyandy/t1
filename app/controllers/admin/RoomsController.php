@@ -365,8 +365,13 @@ class RoomsController extends BaseController
     function autoHotAction()
     {
         $page = $this->params('page', 1);
-        $per_page = $this->params('per_page', 10);
-        $rooms = \Rooms::searchHotRooms(null, $page, $per_page);
+        $per_page = $this->params('per_page', 30);
+        $hot_cache = \Users::getHotWriteCache();
+
+        $hot_room_list_key = \Rooms::generateHotRoomListKey();
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        $rooms = \Rooms::findByIds($room_ids);
 
         foreach ($rooms as $room) {
             if ($room->hot == STATUS_ON) {
@@ -376,8 +381,12 @@ class RoomsController extends BaseController
             }
         }
 
+        $pagination = new \PaginationModel($rooms, $hot_cache->zcard($hot_room_list_key), $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+
         $this->view->product_channels = \ProductChannels::find(['order' => 'id desc']);
-        $this->view->rooms = $rooms;
+        $this->view->rooms = $pagination;
         $this->view->total_entries = $rooms->total_entries;
         $this->view->hot = 1;
     }
@@ -407,7 +416,7 @@ class RoomsController extends BaseController
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms']);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '配置失败');
         }
@@ -449,5 +458,200 @@ class RoomsController extends BaseController
         $id = $this->params('id');
         \Rooms::deleteGameWhiteList($id);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/game_white_list']);
+    }
+
+    function shieldConfigAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $room_id = $this->params('id');
+        $shield_province_key = 'room_shield_provinces_room_id_' . $room_id;
+        $shield_city_key = 'room_shield_cities_room_id_' . $room_id;
+
+        $shield_province_ids = $hot_cache->zrange($shield_province_key, 0, -1);
+        $shield_city_ids = $hot_cache->zrange($shield_city_key, 0, -1);
+
+        if ($this->request->isPost()) {
+
+            $province_ids = $this->params('province_ids', []);
+            $city_ids = $this->params('city_ids', []);
+
+            $all_provinces = \Provinces::findForeach();
+            $all_cities = \Cities::findForeach();
+
+            foreach ($all_provinces as $all_province) {
+
+                $key = "room_shield_province_id_" . $all_province->id;
+
+                if (in_array($all_province->id, $province_ids)) {
+                    $hot_cache->zadd($key, time(), $room_id);
+                    $hot_cache->zadd($shield_province_key, time(), $all_province->id);
+                } else {
+                    $hot_cache->zrem($key, $room_id);
+                    $hot_cache->zrem($shield_province_key, $all_province->id);
+                }
+            }
+
+            foreach ($all_cities as $all_city) {
+
+                $key = "room_shield_city_id_" . $all_city->id;
+
+                if (in_array($all_city->id, $city_ids)) {
+                    $hot_cache->zadd($key, time(), $room_id);
+                    $hot_cache->zadd($shield_city_key, time(), $all_city->id);
+                } else {
+                    $hot_cache->zrem($key, $room_id);
+                    $hot_cache->zrem($shield_city_key, $all_city->id);
+                }
+            }
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        }
+
+        $this->view->provinces = \Cities::getAllCities();
+        $this->view->city_ids_list = $shield_city_ids;
+        $this->view->room_id = $room_id;
+    }
+
+    function forbiddenToHotAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+
+
+        if ($this->request->isPost()) {
+
+            $forbidden_reason = $this->params('forbidden_reason');
+            $forbidden_time = $this->params('forbidden_time');
+
+            if (!$forbidden_reason) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '禁止原因不能为空');
+            }
+
+            $opts = ['forbidden_reason' => $forbidden_reason, 'forbidden_time' => $forbidden_time, 'operator' => $this->currentOperator()];
+            \Rooms::addForbiddenList($room, $opts);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '失败');
+        }
+
+        $this->view->room = $room;
+    }
+
+    function forbiddenToHotRecordsAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+        $user_db = \Users::getUserDb();
+        $records = $user_db->zrevrange($record_key, 0, -1, 'withscores');
+
+        $this->view->records = $records;
+    }
+
+    function forbiddenToHotListAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $key = "room_forbidden_to_hot_list";
+        $page = $this->params('page');
+
+        $room_ids = $hot_cache->zrange($key, 0, -1);
+
+        if ($room_ids) {
+
+            $rooms = \Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                if (!$room->isForbiddenHot()) {
+                    \Rooms::remForbiddenList($room);
+                }
+            }
+        }
+
+
+        if (count($room_ids) > 0) {
+            $cond = ['conditions' => 'id in (' . implode(',', $room_ids) . ")"];
+        } else {
+            $cond = ['conditions' => 'id < 1'];
+        }
+
+        $rooms = \Rooms::findPagination($cond, $page, 30);
+
+        $this->view->rooms = $rooms;
+    }
+
+    function remForbiddenListAction()
+    {
+        $id = $this->params('id');
+        $room = \Rooms::findFirstById($id);
+
+
+        if ($this->request->isPost()) {
+
+            $opts = ['operator' => $this->currentOperator()];
+
+            \Rooms::remForbiddenList($room, $opts);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        }
+    }
+
+    function hotSearchKeywrodsAction()
+    {
+        $hot_cache = \Rooms::getHotWriteCache();
+        $key = 'room_hot_search_keywords_list';
+        $keywords = $hot_cache->zrange($key, 0, -1);
+        $total_entries = $hot_cache->zcard($key);
+        $objects = [];
+
+        foreach ($keywords as $keyword) {
+            $room = new \Rooms();
+            $room->keyword = $keyword;
+            $room->rank = $hot_cache->zscore($key, $keyword);
+            $objects[] = $room;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, 1, $total_entries);
+        $pagination->clazz = 'Rooms';
+
+        $this->view->rooms = $pagination;
+    }
+
+    function newHotSearchKeywrodsAction()
+    {
+        $keyword = $this->params('room[keyword]');
+        $rank = $this->params('room[rank]');
+        $hot_cache = \Rooms::getHotWriteCache();
+
+        if ($this->request->isPost()) {
+
+            $rank = intval($rank);
+
+            if (!$keyword) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '名称不能为空');
+            }
+
+            if (!$rank) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '排序不能为空');
+            }
+
+            $hot_cache->zadd("room_hot_search_keywords_list", $rank, $keyword);
+
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
+        }
+
+        $room = new \Rooms();
+        $room->keyword = $keyword;
+        $room->rank = $hot_cache->zscore('room_hot_search_keywords_list', $keyword);
+        $this->view->room = $room;
+    }
+
+    function deleteSearchKeywrodsAction()
+    {
+        if ($this->request->isPost()) {
+            $hot_cache = \Rooms::getHotWriteCache();
+            $keyword = $this->params('room[keyword]');
+            $hot_cache->zrem("room_hot_search_keywords_list", $keyword);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
+        }
     }
 }

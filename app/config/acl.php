@@ -5,7 +5,7 @@ return [
     'editor' => ['dashboard' => '*', 'weixin_menu_templates' => '*', 'push_messages' => '*', 'weixin_template_messages' => '*'],
 
     'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar'], 'id_card_auths' => '*',
-        'withdraw_histories' => ['index']
+        'withdraw_histories' => ['index'], 'rooms' => ['index', 'forbidden_to_hot'], 'complaints' => ['index']
     ],
 
     'tester' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update', 'white_list', 'add_white_list', 'delete_white_list'],
@@ -32,13 +32,19 @@ return [
         'room_tags' => '*', 'room_categories' => '*'
     ],
 
+    'product_activity_operator' => ['dashboard' => '*', 'users' => ['index', 'day_rank_list', 'week_rank_list', 'total_rank_list'],
+        'rooms' => ['index', 'auto_hot'], 'push_messages' => '*', 'unions' => ['day_rank_list', 'week_rank_list'],
+        'draw_histories' => ['day_stat', 'hour_stat'], 'gift_stats' => 'days', 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
+        'activities' => '*'],
+
     'product_operator' => ['dashboard' => '*', 'users' => '*', 'devices' => ['index', 'edit', 'update'],
         'product_channels' => '*', 'products' => '*', 'push_messages' => '*', 'export_histories' => ['download'],
         'channel_soft_versions' => '*', 'word_visit_histories' => '*',
         'weixin_kefu_messages' => '*', 'weixin_template_messages' => '*', 'ge_tui_messages' => '*',
         'weixin_menu_templates' => '*', 'weixin_menus' => '*', 'weixin_sub_menus' => '*', 'id_card_auths' => '*',
         'unions' => ['day_rank_list', 'week_rank_list', 'index', 'edit', 'update', 'family'], 'gifts' => '*', 'emoticon_images' => '*', 'banners' => '*',
-        'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update'],
+        'activities' => '*', 'rooms' => ['index', 'auto_hot', 'detail', 'add_user_agreement', 'delete_user_agreement', 'edit', 'update',
+            'types', 'update_types'], 'room_stats' => ['day_stat'],
         'room_themes' => '*', 'broadcasts' => '*', 'albums' => '*', 'account_histories' => ['index'], 'gold_histories' => ['index'],
         'gift_orders' => ['detail'], 'user_gifts' => ['index'], 'voice_calls' => ['index'], 'union_histories' => ['basic'], 'hi_coin_histories' => ['basic'],
         'withdraw_histories' => ['basic'], 'activity_histories' => ['basic'], 'withdraw_accounts' => ['index'],

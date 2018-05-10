@@ -18,8 +18,8 @@ class PrivateUnionsController extends BaseController
     function usersAction()
     {
         $union = $this->currentUser()->union;
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 
@@ -45,12 +45,12 @@ class PrivateUnionsController extends BaseController
                 $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
             }
 
-            $users = \Users::findFieldRankListByKey($key, 'wealth', $page, $per_page);
+            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key));
 
             info("union_stat", $key, $charm_key, $hi_coin_key);
 
             foreach ($users as $user) {
-                $user->charm = $user_db->zscore($charm_key, $user->id);
+                $user->wealth = $user_db->zscore($key, $user->id);
                 $hi_coins = $user_db->zscore($hi_coin_key, $user->id);
                 $hi_coins = sprintf("%0.2f", $hi_coins / 1000);
                 $user->hi_coins = $hi_coins;
@@ -59,16 +59,34 @@ class PrivateUnionsController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toUnionJson'));
         }
 
+        $cond = [
+            'conditions' => 'union_id = :union_id: and fee_type = :fee_type:',
+            'bind' => ['union_id' => $union->id, 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        if ($start_at_time) {
+            $cond['conditions'] .= " and created_at >= :start:";
+            $cond['bind']['start'] = beginOfDay(strtotime($start_at_time));
+        }
+
+        if ($end_at_time) {
+            $cond['conditions'] .= " and created_at <= :end:";
+            $cond['bind']['end'] = endOfDay(strtotime($end_at_time));
+        }
+
+        $total_hi_coins = \HiCoinHistories::sum($cond);
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
+        $this->view->total_hi_coins = sprintf("%0.2f", $total_hi_coins);
     }
 
     function roomsAction()
     {
         $union = $this->currentUser()->union;
 
-        $start_at_time = $this->params('start_at_time', '');
-        $end_at_time = $this->params('end_at_time', '');
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
 
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
@@ -86,7 +104,7 @@ class PrivateUnionsController extends BaseController
         }
 
         $room_ids = $user_db->zrange($key, 0, -1);
-        $rooms = [];
+        $data = [];
 
         if ($room_ids) {
 
@@ -99,12 +117,33 @@ class PrivateUnionsController extends BaseController
 
         $total_amount = 0;
 
-        foreach ($rooms as $room) {
-            $room->amount = $user_db->zscore($key, $room->id);
-            $total_amount += $room->amount;
+        if ($union->room_ids) {
+
+            $room_ids = explode(',', $union->room_ids);
+
+            foreach ($rooms as $room) {
+
+                if (!in_array($room->id, $room_ids)) {
+                    continue;
+                }
+
+                $room->amount = $user_db->zscore($key, $room->id);
+                $data[] = $room;
+                $total_amount += $room->amount;
+            }
         }
 
-        $this->view->rooms = $rooms;
+
+        usort($data, function ($a, $b) {
+
+            if ($a->amount == $b->amount) {
+                return 0;
+            }
+
+            return $a->amount > $b->amount ? -1 : 1;
+        });
+
+        $this->view->rooms = $data;
         $this->view->start_at_time = $start_at_time;
         $this->view->end_at_time = $end_at_time;
         $this->view->total_amount = $total_amount;

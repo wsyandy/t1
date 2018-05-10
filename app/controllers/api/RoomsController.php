@@ -204,19 +204,29 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
+        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}
 
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-            $res['menu_config'] = $menu_config;
-        }
+//        if ($show_game) {
+//            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+//            $res['menu_config'] = $menu_config;
+//        }
 
         $game_history = $room->getGameHistory();
-
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
+        }
+
+        $pk_history = $room->getPkHistory();
+        if (isDevelopmentEnv() && $pk_history) {
+            $res['pk_history'] = $pk_history->toSimpleJson();
+        }
+
+
+        if (isDevelopmentEnv()) {
+            $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
         }
 
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
@@ -668,6 +678,8 @@ class RoomsController extends BaseController
             //临时兼容
             $room_category = \RoomCategories::findFirstByName($keyword);
 
+            \SearchHistories::delay()->createHistory($keyword, 'room');
+
             if ($room_category && $room_category->type) {
                 $cond['conditions'] = " room_category_types like :room_category_types:";
                 $cond['bind']['room_category_types'] = "%," . $room_category->type . ",%";
@@ -720,7 +732,13 @@ class RoomsController extends BaseController
             $cond['order'] = 'last_at desc,user_type asc';
         }
 
-        debug($cond);
+        $shield_room_ids = $this->currentUser()->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
+        }
+
+        debug("room_search_cond", $cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
@@ -730,6 +748,13 @@ class RoomsController extends BaseController
     function hotSearchAction()
     {
         $keywords = ['球球', '王者', '绝地', '终结者', '处对象', '音乐', '电台', '第五人格', 'les', '关注'];
+
+        $hot_cache = \Rooms::getHotWriteCache();
+        $res = $hot_cache->zrevrange("room_hot_search_keywords_list", 0, -1);
+
+        if (count($res) > 2) {
+            $keywords = $res;
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['keywords' => $keywords]);
     }
@@ -752,12 +777,18 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+
+            if (isDevelopmentEnv()) {
+                $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
+            } else {
+                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            }
+
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
         if (STATUS_ON == $gang_up) {
-            $gang_up_rooms_json = \Rooms::searchGangUpRooms(1, 4);
+            $gang_up_rooms_json = \Rooms::searchGangUpRooms($this->currentUser(), 1, 4);
         }
 
         if (STATUS_ON == $gang_up_category) {
@@ -826,5 +857,60 @@ class RoomsController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['id' => $room->id]);
+    }
+
+    function initiatePkAction()
+    {
+        $room_id = $this->params('id');
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if (!$this->currentUser()->isRoomHost($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您无此权限');
+        }
+
+        $left_pk_user_id = $this->params('left_pk_user_id');
+        $right_pk_user_id = $this->params('right_pk_user_id');
+        $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
+        $pk_time = $this->params('pk_time'); //
+        $cover = $this->params('cover', 0);
+
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover];
+
+        list($pk_history, $error_code, $error_reason) = \PkHistories::createHistory($this->currentUser(), $opts);
+
+        if ($pk_history) {
+            return $this->renderJSON($error_code, $error_reason, $pk_history->toSimpleJson());
+        }
+
+        return $this->renderJSON($error_code, $error_reason);
+
+    }
+
+    function pkHistoriesAction()
+    {
+        $room_id = $this->params('id');
+
+        $room = \Rooms::findFirstById($room_id);
+        $page = $this->params('page');
+        $per_page = $this->params('per_page');
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $cond = [
+            'conditions' => 'room_id = :room_id:',
+            'bind' => ['room_id' => $room_id],
+            'order' => 'id desc'
+        ];
+
+        $pk_histories = \PkHistories::findPagination($cond, $page, $per_page);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $pk_histories->toJson('pk_histories', 'toSimpleJson'));
     }
 }

@@ -3,7 +3,7 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
-    use RoomInternational;
+    use RoomAttrs;
 
     /**
      * @type ProductChannels
@@ -41,7 +41,8 @@ class Rooms extends BaseModel
     static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
     static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
     static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台'];
+    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台',
+        'room_seat_sequence' => '麦序', 'male_gold' => '男女神', 'point_sing' => '点唱'];
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
@@ -69,8 +70,13 @@ class Rooms extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('name') && $this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
-            self::delay()->updateRoomTypes($this->id);
+        if ($this->hasChanged('name') || $this->hasChanged('types')) {
+
+            if ($this->theme_type != ROOM_THEME_TYPE_BROADCAST) {
+                self::delay()->updateRoomTypes($this->id);
+            }
+
+            self::delay()->updateShieldRoomList($this->id);
         }
     }
 
@@ -122,6 +128,12 @@ class Rooms extends BaseModel
 
     function isForbiddenHot()
     {
+        $hot_cache = self::getHotReadCache();
+
+        if ($hot_cache->get("room_forbidden_to_hot_room_id_" . $this->id) > 0) {
+            return true;
+        }
+
         return $this->hot == STATUS_FORBIDDEN;
     }
 
@@ -138,6 +150,47 @@ class Rooms extends BaseModel
     function isGreenRoom()
     {
         return STATUS_ON == $this->green;
+    }
+
+    function isShieldRoom()
+    {
+
+        if ($this->types) {
+            $types = explode(",", $this->types);
+
+            if (in_array('room_seat_sequence', $types) || in_array('male_gold', $types)) {
+                return true;
+            }
+        }
+
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+
+        foreach ($keywords as $keyword) {
+
+            if (preg_match("/$keyword/i", $this->name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isInShieldRoomList()
+    {
+        $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore($hot_shield_room_list_key, $this->id) > 0;
+    }
+
+    static function updateShieldRoomList($room_id)
+    {
+        $room = Rooms::findFirstById($room_id);
+
+        if ($room->isShieldRoom()) {
+            $hot_shield_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_cache = self::getHotWriteCache();
+            $hot_cache->zrem($hot_shield_room_list_key, $room->id);
+        }
     }
 
     function toSimpleJson()
@@ -201,42 +254,6 @@ class Rooms extends BaseModel
         return ['id' => $this->id, 'uid' => $this->uid, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
     }
 
-    function toInternationalDetailJson()
-    {
-
-        $user = $this->user;
-
-        $user_info = [
-            'id' => $user->id,
-            'uid' => $user->uid,
-            'nickname' => $user->nickname,
-            'avatar_small_url' => $user->avatar_small_url,
-            'sex' => $user->sex,
-            'age' => $user->age,
-            'monologue' => $user->monologue
-        ];
-
-        return [
-            'id' => $this->id,
-            'uid' => $this->uid,
-            'name' => $this->name,
-            'topic' => $this->topic,
-            'chat' => $this->chat,
-            'online_status' => $this->online_status,
-            'channel_name' => $this->channel_name,
-            'lock' => $this->lock,
-            'created_at' => $this->created_at,
-            'last_at' => $this->last_at,
-            'user_num' => $this->user_num,
-            'theme_type' => $this->theme_type,
-            'audio_id' => $this->audio_id,
-            'theme_image_url' => $this->theme_image_url,
-            'room_theme_id' => $this->room_theme_id,
-            'user_info' => $user_info,
-            'room_seats' => $this->roomSeats(),
-            'managers' => $this->findManagers()
-        ];
-    }
 
     function roomSeats()
     {
@@ -438,6 +455,8 @@ class Rooms extends BaseModel
         $this->save();
         $user->save();
 
+        $this->updateLastAt();
+
         if (!$user->isSilent()) {
             Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
         }
@@ -472,10 +491,43 @@ class Rooms extends BaseModel
             $this->save();
         }
 
+        $this->updateLastAt();
+
         //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
+    }
+
+    function updateLastAt()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $hot_cache->zadd($key, time(), $this->id);
+
+        $total = $hot_cache->zcard($key);
+
+        if ($total >= 1000) {
+            $hot_cache->zremrangebyrank($key, 0, $total - 1000);
+        }
+    }
+
+    static function getActiveRoomsByTime($minutes = 15)
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $time = time();
+        $room_ids = $hot_cache->zrangebyscore($key, $time - $minutes * 60, $time, ['limit' => [0, 200]]);
+        $rooms = Rooms::findByIds($room_ids);
+
+        return $rooms;
+    }
+
+    function getLastAtByCache()
+    {
+        $hot_cache = Users::getHotReadCache();
+        $key = 'room_active_last_at_list';
+        return $hot_cache->zscore($key, $this->id);
     }
 
     function kickingRoom($user)
@@ -492,26 +544,6 @@ class Rooms extends BaseModel
     function getRealUserListKey()
     {
         return 'room_real_user_list_' . $this->id;
-    }
-
-    function getUserNum()
-    {
-        $hot_cache = self::getHotWriteCache();
-        $key = $this->getUserListKey();
-        return $hot_cache->zcard($key);
-    }
-
-    function getRealUserNum()
-    {
-        $hot_cache = self::getHotWriteCache();
-        $key = $this->getRealUserListKey();
-        return $hot_cache->zcard($key);
-    }
-
-    function getSilentUserNum()
-    {
-        $num = $this->getUserNum() - $this->getRealUserNum();
-        return $num;
     }
 
     function addUser($user)
@@ -1466,6 +1498,36 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+    //新的热门房间列表
+    static function getHotRoomListKey()
+    {
+        return "total_hot_rooms_list";
+    }
+
+    //新用户热门房间列表
+    static function getNewUserHotRoomListKey()
+    {
+        return "new_user_hot_rooms_list";
+    }
+
+    //老用户充值热门房间列表
+    static function getOldUserPayHotRoomListKey()
+    {
+        return "old_user_pay_hot_rooms_list";
+    }
+
+    //老用户未充值热门房间列表
+    static function getOldUserNoPayHotRoomListKey()
+    {
+        return "old_user_no_pay_hot_rooms_list";
+    }
+
+    //总的屏蔽热门房间列表
+    static function generateShieldHotRoomListKey()
+    {
+        return "hot_shield_room_list";
+    }
+
     //新手热门房间列表
     static function generateNoviceHotRoomListKey()
     {
@@ -1501,12 +1563,66 @@ class Rooms extends BaseModel
         return false;
     }
 
+    static function newSearchHotRooms($user, $page, $per_page)
+    {
+
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+        }
+
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+
+        $register_time = time() - $user->register_at;
+        $time = 60 * 15;
+
+        if (isProduction()) {
+            $time = 86400;
+        }
+
+        if ($user->isShieldHotRoom()) {
+
+            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+
+        } else {
+
+            if ($register_time <= $time) {
+                $hot_room_list_key = $new_user_hot_rooms_list_key;
+            } else {
+
+                if ($user->pay_amount > 0) {
+                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
+                } else {
+                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
+                }
+            }
+        }
+
+        $hot_cache = Users::getHotWriteCache();
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $room_ids = array_diff($room_ids, $shield_room_ids);
+        }
+        
+        $rooms = Rooms::findByIds($room_ids);
+        $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
+
     static function searchHotRooms($user, $page, $per_page)
     {
         $hot_room_list_key = Rooms::generateHotRoomListKey();
+
         $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
         $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
         $hot_cache = Users::getHotWriteCache();
+        $shield_room_ids = [];
 
         if (isPresent($user)) {
 
@@ -1524,6 +1640,12 @@ class Rooms extends BaseModel
             } elseif ($register_time > $start_at && $register_time <= $end_at) {
                 $hot_room_list_key = $novice_hot_room_list_key;
             }
+
+            if ($user->isShieldHotRoom()) {
+                $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+            }
+
+            $shield_room_ids = $user->getShieldRoomIds();
         }
 
         $total_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
@@ -1547,7 +1669,12 @@ class Rooms extends BaseModel
             $offset = $total_entries - 1;
         }
 
-        $room_ids = $hot_cache->zrevrange($hot_room_list_key, $offset, $offset + $per_page - 1);
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        if ($shield_room_ids) {
+            $room_ids = array_diff($room_ids, $shield_room_ids);
+        }
+
         $rooms = Rooms::findByIds($room_ids);
 
         $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
@@ -1870,25 +1997,50 @@ class Rooms extends BaseModel
     }
 
     //按天统计房间收益和送礼物人数,送礼物个数
-    static function statDayIncome($room_id, $income, $sender_id, $gift_num, $opts = [])
+    static function statDayIncome($room, $income, $sender_id, $gift_num, $opts = [])
     {
-        if ($income > 0) {
+        debug($income, $sender_id, $gift_num, $opts);
 
-            $room = Rooms::findFirstById($room_id);
+        if ($income > 0 && $room) {
 
-            if ($room) {
-                $room_db = Rooms::getRoomDb();
-                $time = fetch($opts, 'time', time());
-                $date = date("Ymd", $time);
-
-                $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room_id);
-                $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
-                $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room_id);
-
-                $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
-                $room_db->zincrby($room->generateRoomWealthRankListKey('week',
-                    ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
+            if (is_numeric($room)) {
+                $room = Rooms::findFirstById($room);
             }
+
+            if (!$room) {
+                return;
+            }
+
+            $room_db = Rooms::getRoomDb();
+            $time = fetch($opts, 'time', time());
+            $date = date("Ymd", $time);
+
+            //房间流水统计
+            $room_db->zincrby($room->generateStatIncomeDayKey($date), $income, $room->id);
+            $room_db->zadd($room->generateSendGiftUserDayKey($date), time(), $sender_id);
+            $room_db->zincrby($room->generateSendGiftNumDayKey($date), $gift_num, $room->id);
+
+            //房间流水贡献榜统计
+            $room_db->zincrby($room->generateRoomWealthRankListKey('day', ['date' => $date]), $income, $sender_id);
+            $room_db->zincrby($room->generateRoomWealthRankListKey('week',
+                ['start' => date("Ymd", beginOfWeek($time)), 'end' => date("Ymd", endOfWeek($time))]), $income, $sender_id);
+
+
+            //统计时间段房间流水 10分钟为单位
+            $hot_cache = Users::getHotWriteCache();
+            $minutes = date("YmdHi");
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_stat_key, $income);
+            $hot_cache->expire($minutes_stat_key, 3600 * 3);
+
+            $minutes_num_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room->id;
+            $hot_cache->incrby($minutes_num_stat_key, 1);
+            $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
+
+            debug($minutes_stat_key);
         }
     }
 
@@ -1929,7 +2081,8 @@ class Rooms extends BaseModel
         $per_page = $total_entries;
         $page = 1;
         $offset = $per_page * ($page - 1);
-        $room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        //$room_ids = $room_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $room_ids = $room_db->zrevrangebyscore($key, 100000000, 1000);
         $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
         $pagination->clazz = 'Rooms';
@@ -2007,15 +2160,15 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-            return false;
-        }
+//        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
+//            return false;
+//        }
 
         if (!$this->checkRoomSeat()) {
             return false;
         }
 
-        if ($this->getUserNum() < $least_user_num) {
+        if ($this->getRealUserNum() < $least_user_num) {
             return false;
         }
 
@@ -2080,6 +2233,7 @@ class Rooms extends BaseModel
         }
 
         debug($cond);
+
 
         $rooms = Rooms::findPagination($cond, $page, $per_page);
 
@@ -2362,6 +2516,14 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
+    function getPkHistory()
+    {
+        $game_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and expire_at>:current_time:',
+            'bind' => ['room_id' => $this->id, 'status' => STATUS_OFF, 'current_time' => time()], 'order' => 'id desc']);
+
+        return $game_history;
+    }
+
     static function search($user, $product_channel, $page, $per_page, $opts = [])
     {
         $new = intval(fetch($opts, 'new', 0));
@@ -2378,6 +2540,12 @@ class Rooms extends BaseModel
             'bind' => ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'user_id' => $user_id],
             'order' => 'last_at desc, user_type asc'
         ];
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
+        }
 
         if (count($filter_ids) > 0) {
             $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
@@ -2418,6 +2586,7 @@ class Rooms extends BaseModel
 
             }
         }
+
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
 
@@ -2472,17 +2641,107 @@ class Rooms extends BaseModel
         return [];
     }
 
-    static function searchGangUpRooms($page, $per_page)
+    static function searchGangUpRooms($user, $page, $per_page)
     {
         $cond['conditions'] = "online_status = :online_status: and status = :status: and room_category_types like 
         :room_category_types: and lock = :lock:";
         $cond['bind'] = ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'room_category_types' => "%,gang_up,%", 'lock' => 'false'];
         $cond['order'] = 'last_at desc';
 
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
+        }
+
         $gang_up_rooms = \Rooms::findPagination($cond, $page, $per_page);
 
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 
         return $gang_up_rooms_json;
+    }
+
+    function getRoomMenuConfig($show_game, $root, $room_id)
+    {
+        $menu_config = [];
+        if ($show_game) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+        }
+
+        if ($show_game && isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
+        }
+
+        return $menu_config;
+    }
+
+    static function remHotRoomList($room)
+    {
+        $hot_room_list_key = Rooms::generateHotRoomListKey();
+        $green_hot_room_list_key = Rooms::generateGreenHotRoomListKey();
+        $novice_hot_room_list_key = Rooms::generateNoviceHotRoomListKey();
+
+        $hot_cache = Users::getHotWriteCache();
+
+        $hot_cache->zrem($hot_room_list_key, $room->id);
+        $hot_cache->zrem($green_hot_room_list_key, $room->id);
+        $hot_cache->zrem($novice_hot_room_list_key, $room->id);
+    }
+
+    static function addForbiddenList($room, $opts = [])
+    {
+        $forbidden_time = fetch($opts, 'forbidden_time');
+        $forbidden_reason = fetch($opts, 'forbidden_reason');
+        $operator = fetch($opts, 'operator');
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_db = Users::getUserDb();
+        $key = "room_forbidden_to_hot_list";
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+        $time = time();
+
+        $hot_cache->zadd($key, $time, $room->id);
+
+        if ($forbidden_time) {
+
+            $expire = $forbidden_time * 3600;
+
+            if (isDevelopmentEnv()) {
+                $expire = $forbidden_time * 10;
+            }
+
+            $hot_cache->setex("room_forbidden_to_hot_room_id_{$room->id}", $expire, $time);
+
+            $record = date("Y-m-d H:i:s", $time) . "禁止上热门原因:" . $forbidden_reason . ";操作者:" . $operator->username . ";禁止时长:" . $forbidden_time . "小时";
+            $user_db->zadd($record_key, $time, $record);
+
+        } else {
+            $room->hot = STATUS_FORBIDDEN;
+            $room->update();
+
+            $record = date("Y-m-d H:i:s", $time) . "禁止上热门原因:" . $forbidden_reason . ";操作者:" . $operator->username . ";禁止时长:永久禁止";
+            $user_db->zadd($record_key, $time, $record);
+        }
+
+        Rooms::remHotRoomList($room);
+    }
+
+    static function remForbiddenList($room, $opts = [])
+    {
+        $operator = fetch($opts, 'operator');
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_db = Users::getUserDb();
+        $key = "room_forbidden_to_hot_list";
+        $time = time();
+        $record_key = "room_forbidden_records_room_id_" . $room->id;
+
+        $hot_cache->zrem($key, $room->id);
+
+        if ($operator) {
+            $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
+            $user_db->zadd($record_key, $time, $record);
+        }
     }
 }

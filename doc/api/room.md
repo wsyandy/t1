@@ -216,6 +216,29 @@
              }
              ...
          ],
+     pk_history:[
+        "id": int PK记录ID,
+        'pk_type': string pk类型,
+        'expire_at': int 过期时间,
+        'created_at': int 创建时间戳,
+        'created_at_text': string 创建时间,
+        'left_pk_user':[
+            'id' : 左边pk者的id
+            'nickname':左边pk者的昵称
+            'score':左边pk者的分数
+            'avatar_small_url': 左边pk者的头像
+        ],
+        'right_pk_user':[
+                    'id' : 右边pk者的id
+                    'nickname':右边pk者的昵称
+                    'score':右边pk者的分数
+                    'avatar_small_url': 右边pk者的头像
+         ]
+     ],
+     red_packet:[
+          'num': int 红包个数,
+          "url": string  跳转地址, 
+     ],
      game: {
              "url": string  跳转地址,
              "icon": string 图片地址
@@ -735,6 +758,7 @@
             age int 年龄
             monologue 个性签名
             online_status 0离线，1在线
+            has_red_packet int 是有红包 0没有 1有
             channel_name: string 房间唯一标识, 频道名称
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳
@@ -916,5 +940,88 @@
     error_code
     error_reason
     id int 匹配到的房间id
+}
+```
+
+### 32 发起pk
+
+> http-post ```/api/rooms/initiate_pk```
+
+##### 32.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|left_pk_user_id|参与者a|int|否||
+|right_pk_user_id|参与者b|int|否||
+|pk_type|pk类型|send_gift_user:按照送礼物人数;send_gift_amount:按照送礼物价值|否||
+|pk_time|pk时长|以秒为单位|否||
+|cover|发起pk状态类型|int|是|默认为0，为正常发起pk，1为覆盖pk||
+
+##### 32.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    id int 记录id
+    created_at int 创建时间 以秒为单位的时间戳
+    expire_at int 过期时间戳
+    pk_type string pk类型
+   
+    left_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像   
+    }
+    
+    right_pk_user : {
+        id 用户id 
+        nickname 用户昵称
+        score int 分值
+        avatar_small_url 用户头像          
+    }
+}
+```
+
+### 33 pk记录
+
+> http-get ```/api/rooms/pk_histories```
+
+##### 33.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否||
+|page|当前页码|int|否||
+|per_page|每页个数|int|否|||
+
+##### 33.2 回应参数说明
+```
+{
+    error_code
+    error_reason
+    pk_histories:[
+       
+        {
+            left_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url   
+            }
+            
+            right_pk_user : {
+                id 
+                nickname
+                score:30
+                avatar_small_url                  
+            }
+            
+            pk_type pk类型
+            created_at_text 创建时间
+        }
+        
+       
+       .......
+    ]
 }
 ```

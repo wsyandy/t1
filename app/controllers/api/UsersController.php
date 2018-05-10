@@ -160,8 +160,23 @@ class UsersController extends BaseController
             }
 
             $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
+
             if (!$user) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+                $current_user = $this->currentUser();
+                info('当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
+                if (isPresent($current_user->mobile) || $current_user->isThirdLogin()) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '注册无效');
+                }
+                $opts = [
+                    'mobile' => $mobile,
+                    'product_channel_id' => $this->currentProductChannelId(),
+                    'type' => 'register',
+                    'current_user' => $current_user
+                ];
+                $is_have_sms_distribute_history = \SmsDistributeHistories::isUserForShare($opts);
+                if (!$is_have_sms_distribute_history) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+                }
             }
 
             if ($user->isBlocked()) {
@@ -362,7 +377,7 @@ class UsersController extends BaseController
         if ($avatar_file) {
             $md5_val = md5_file($avatar_file);
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
-                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $hot_cache->setex($cache_key . '_' . $md5_val, 600, time());
                 $user->updateAvatar($avatar_file);
             } else {
                 info('重复上传', $avatar_file);
@@ -397,7 +412,7 @@ class UsersController extends BaseController
         if ($avatar_file) {
             $md5_val = md5_file($avatar_file);
             if (!$hot_cache->get($cache_key . '_' . $md5_val)) {
-                $hot_cache->setex($cache_key . '_' . $md5_val, 3600 * 12, time());
+                $hot_cache->setex($cache_key . '_' . $md5_val, 600, time());
                 $user->updateAvatar($avatar_file);
             } else {
                 info('重复上传', $avatar_file);

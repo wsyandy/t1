@@ -3,45 +3,54 @@
 {{ theme_js('/m/js/resize.js','/m/js/html2canvas.min') }}
 {{ block_end() }}
 <div id="app">
-<div class="extend_box">
-    <img class="extend_img" src="/m/images/extend_img.png" alt="">
-    <img class="qr_code" :src="qrcode" alt="">
-    <div class="extend_qr"> 识别图中二维码，加入{{ product_channel_name }}</div>
-</div>
-
-<ul class="extend_share">
-    <li>
-        <img src="/m/images/share_weiChat.png" alt=""  @click="share('wx_friend','image','distribute')">
-        <span>微信好友</span>
-    </li>
-    <li>
-        <img src="/m/images/share_weiChatCircle.png" alt="" @click="share('wx_moments','image','distribute')">
-        <span>朋友圈</span>
-    </li>
-    <li>
-        <img src="/m/images/share_qq.png" alt="" @click="share('qq_friend','image','distribute')">
-        <span>QQ好友</span>
-    </li>
-    <li>
-        <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','distribute')">
-        <span>微博</span>
-    </li>
-    <li @click="screenshotsImg('save')">
-        <img src="/m/images/share_download.png" alt="">
-        <span>存至相册</span>
-    </li>
-</ul>
-<div v-if="isShareSuccess" class="toast_text_box">
-    <span class="toast_text">请稍后。。。</span>
-</div>
+    <div class="extend_box">
+        <img class="extend_img" src="/m/images/extend_img.png" alt="">
+        <img class="qr_code" :src="qrcode" alt="">
+        <div class="extend_qr"> 识别图中二维码，加入{{ product_channel_name }}</div>
+    </div>
+    <div class="extend_share_box" v-if="is_show_share">
+        <div class="extend_share_title">
+            <span>分享</span>
+        </div>
+        <ul class="extend_share">
+            <li>
+                <img src="/m/images/share_weiChat.png" alt="" @click="share('wx_friend','image','distribute')">
+                <span>微信好友</span>
+            </li>
+            <li>
+                <img src="/m/images/share_weiChatCircle.png" alt="" @click="share('wx_moments','image','distribute')">
+                <span>朋友圈</span>
+            </li>
+            <li>
+                <img src="/m/images/share_qq.png" alt="" @click="share('qq_friend','image','distribute')">
+                <span>QQ好友</span>
+            </li>
+            <li>
+                <img src="/m/images/share_qqzone.png" alt="" @click="share('qq_zone','image','distribute')">
+                <span>QQ空间</span>
+            </li>
+            <li>
+                <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','distribute')">
+                <span>微博</span>
+            </li>
+            <li @click="screenshotsImg('save')">
+                <img src="/m/images/share_download.png" alt="">
+                <span>存至相册</span>
+            </li>
+        </ul>
+    </div>
+    <div v-if="isShareSuccess" class="toast_text_box">
+        <span class="toast_text">请稍后。。。</span>
+    </div>
 </div>
 <script>
     var opts = {
         data: {
             qrcode: "{{ qrcode }}",
-            isShareSuccess:false,
+            isShareSuccess: false,
             sid: "{{ sid }}",
-            code: "{{ code }}"
+            code: "{{ code }}",
+            is_show_share : "{{ is_show_share }}"
         },
 
         methods: {
@@ -54,6 +63,7 @@
                 });
             },
             share: function (platform, type, share_source) {
+                vm.isShareSuccess = true;
                 html2canvas(document.querySelector(".extend_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
@@ -69,10 +79,7 @@
                     };
 
                     $.authPost('/m/shares/create', data, function (resp) {
-                        vm.isShareSuccess = true;
-                        setTimeout(function () {
-                            vm.isShareSuccess = false;
-                        }, 3000);
+                        vm.isShareSuccess = false;
                         vm.redirect_url = resp.test_url;
                         console.log(vm.redirect_url);
                         location.href = vm.redirect_url;

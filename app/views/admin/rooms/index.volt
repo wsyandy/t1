@@ -88,11 +88,17 @@
     {% if isAllowed('rooms','delete_user_agreement') %}
         <a href="/admin/rooms/delete_user_agreement?id={{ room.id }}" id="delete_user_agreement">清除协议</a></br>
     {% endif %}
-    {% if isAllowed('rooms','edit') %}
-        <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a></br>
-    {% endif %}
     {% if isAllowed('rooms','types') %}
-        <a href="/admin/rooms/types?id={{ room.id }}" class="modal_action">类型配置</a>
+        <a href="/admin/rooms/types?id={{ room.id }}" class="modal_action">类型配置</a></br>
+    {% endif %}
+    {% if isAllowed('rooms','shield_config') %}
+        <a href="/admin/rooms/shield_config?id={{ room.id }}" class="modal_action">地区屏蔽配置</a></br>
+    {% endif %}
+    {% if isAllowed('rooms','forbidden_to_hot') %}
+        <a href="/admin/rooms/forbidden_to_hot?id={{ room.id }}" class="modal_action">禁止上热门</a></br>
+    {% endif %}
+    {% if isAllowed('rooms','edit') %}
+        <a href="/admin/rooms/edit?id={{ room.id }}" class="modal_action">编辑</a>
     {% endif %}
 {% endmacro %}
 
@@ -147,11 +153,17 @@
             {% if isAllowed('rooms','delete_user_agreement') %}
                 <a href="/admin/rooms/delete_user_agreement?id=${ room.id }" id="delete_user_agreement">清除协议</a></br>
             {% endif %}
-            {% if isAllowed('rooms','edit') %}
-                <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
-            {% endif %}
             {% if isAllowed('rooms','types') %}
                 <a href="/admin/rooms/types?id=${ room.id }" class="modal_action">类型配置</a>
+            {% endif %}
+            {% if isAllowed('rooms','shield_config') %}
+                <a href="/admin/rooms/shield_config?id=${ room.id }" class="modal_action">地区屏蔽配置</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','forbidden_to_hot') %}
+                <a href="/admin/rooms/forbidden_to_hot?id=${ room.id }" class="modal_action">禁止上热门</a></br>
+            {% endif %}
+            {% if isAllowed('rooms','edit') %}
+                <a href="/admin/rooms/edit?id=${ room.id }" class="modal_action">编辑</a></br>
             {% endif %}
         </td>
     </tr>
@@ -167,4 +179,5 @@
             })
         }
     })
+
 </script>

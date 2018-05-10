@@ -178,6 +178,18 @@ class Users extends BaseModel
         if ($this->hasChanged('union_id') || $this->hasChanged('union_type')) {
             $this->bindRoomUnionId();
         }
+
+        if ($this->hasChanged('uid')) {
+            $this->clearUidInGoodNoList();
+        }
+    }
+
+    function clearUidInGoodNoList()
+    {
+        $user_db = Users::getUserDb();
+        $user_db->zrem('user_not_good_no_uid_list', $this->uid);
+        $user_db->zrem('user_good_no_uid_list', $this->uid);
+        $user_db->zrem('select_good_no_list', $this->uid);
     }
 
     static function getUserDb()
@@ -399,7 +411,8 @@ class Users extends BaseModel
 
         $product_channel = $current_user->product_channel;
         $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
-        if ($exist_user) {
+        $sms_distribute_history = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
+        if ($exist_user || $sms_distribute_history) {
             return [ERROR_CODE_FAIL, '用户已注册', null];
         }
 
@@ -2233,7 +2246,7 @@ class Users extends BaseModel
                 $give_result = true;
 
                 if ($receiver->isActive()) {
-                    $give_result = GiftOrders::sendGift($user, [$receiver->id], $gift, $gift_num);
+                    $give_result = GiftOrders::asyncCreateGiftOrder($user->id, [$receiver->id], $gift->id, ['gift_num' => $gift_num]);
                 }
 
                 if ($give_result) {
@@ -3449,7 +3462,7 @@ class Users extends BaseModel
 
         $hot_cache = self::getHotWriteCache();
 
-        if ($hot_cache->set($wake_up_user_send_gift_lock_key, 1, ['NX', 'EX' => 2])) {
+        if (!$hot_cache->set($wake_up_user_send_gift_lock_key, 1, ['NX', 'EX' => 2])) {
             info("wake_up_user_send_gift_key_lock", $this->id);
             return null;
         }
@@ -3465,6 +3478,7 @@ class Users extends BaseModel
         info($user_id, $data);
 
         if (!$data) {
+            debug($data);
             return;
         }
 
@@ -3476,6 +3490,7 @@ class Users extends BaseModel
         $gift_id = fetch($data, 'gift_id');
 
         if (!$gift_id || !$sender_id) {
+            info($data, $gift_id, $sender_id);
             return;
         }
 
@@ -3486,18 +3501,13 @@ class Users extends BaseModel
             return;
         }
 
-        $sender_id = Users::findFirstById($sender_id);
+        $sender = Users::findFirstById($sender_id);
 
-        $give_result = \GiftOrders::sendGift($sender_id, [$user_id], $gift, 1);
+        $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
 
-        if ($give_result) {
-            $send_user = Users::findFirstById($sender_id);
-            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-            info("send_gift_success", $content);
-            Chats::sendTextSystemMessage($user_id, $content);
-        } else {
-            info("send_gift_fail");
-        }
+        $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+        info("send_gift_success", $content);
+        Chats::sendTextSystemMessage($user_id, $content);
     }
 
     //获取屏蔽附近的人列表

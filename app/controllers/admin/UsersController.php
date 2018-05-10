@@ -468,16 +468,42 @@ class UsersController extends BaseController
 
     function reservedAction()
     {
-        $page = $this->params('page');
-        $per_page = $this->params('per_page', 30);
+        $good_no_uid = 'user_good_no_uid_list';
+        $id = $this->params('id');
+        $user_db = \Users::getUserDb();
 
-        $cond = ['conditions' => 'id<:max_id: and (device_id < 1 or device_id is null)', 'bind' => ['max_id' => 1000000]];
-        $cond['order'] = 'id desc';
+        if ($id) {
 
-        info($cond);
+            if (!$user_db->zscore($good_no_uid, $id)) {
+                $user_ids = [];
+            } else {
+                $user_ids[] = $id;
+            }
 
-        $users = \Users::findPagination($cond, $page, $per_page);
-        $this->view->users = $users;
+            $total_entries = count($user_ids);
+
+        } else {
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 100);
+
+            $total_entries = $user_db->zcard($good_no_uid);
+
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($good_no_uid, $offset, $offset + $per_page - 1);
+        }
+
+        $objects = [];
+
+        foreach ($user_ids as $user_id) {
+            $user = new \Users();
+            $user->uid = $user_id;
+            $objects[] = $user;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        $this->view->users = $pagination;
     }
 
     //离线24小时用户唤醒统计
@@ -509,21 +535,21 @@ class UsersController extends BaseController
     {
         if ($this->request->isPost()) {
 
-            $user_id = $this->params('user_id');
+            $user_uid = $this->params('user_uid');
 
-            if (!$user_id) {
+            if (!$user_uid) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
 
-            $user = \Users::findFirstById($user_id);
+            $user = \Users::findFirstByUid($user_uid);
 
             if ($user) {
                 $user->geo_hash = '';
                 $user->update();
                 $hot_cache = \Users::getHotWriteCache();
                 $key = "blocked_nearby_user_list";
-                $hot_cache->zadd($key, time(), $user_id);
+                $hot_cache->zadd($key, time(), $user->id);
             }
 
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');
@@ -538,24 +564,33 @@ class UsersController extends BaseController
         $key = "blocked_nearby_user_list";
 
         if ($user_id && $hot_cache->zscore($key, $user_id) > 0) {
-            $user_id_list = [$user_id];
+            $user_ids = [$user_id];
         } else {
-            $user_id_list = $hot_cache->zrange($key, 0, -1);
+            $user_ids = $hot_cache->zrange($key, 0, -1);
         }
-        $this->view->user_id_list = $user_id_list;
+
+        $page = $this->params('page');
+
+        if (!$user_ids) {
+            $cond = ['conditions' => 'id < 1'];
+        } else {
+            $cond = ['conditions' => 'id in (' . implode(',', $user_ids) . ")"];
+        }
+
+        $this->view->users = \Users::findPagination($cond, $page, 30);
     }
 
     function deleteBlockedNearbyUserAction()
     {
-        $user_id = $this->params('user_id');
+        $user_uid = $this->params('user_uid');
 
-        $user = \Users::findFirstById($user_id);
+        $user = \Users::findFirstByUid($user_uid);
 
         if ($user) {
 
             $hot_cache = \Users::getHotWriteCache();
             $key = "blocked_nearby_user_list";
-            $hot_cache->zrem($key, $user_id);
+            $hot_cache->zrem($key, $user->id);
 
             $geo_hash = new \geo\GeoHash();
             $hash = $geo_hash->encode($user->latitude, $user->longitude);
@@ -599,4 +634,84 @@ class UsersController extends BaseController
         }
     }
 
+    function addSelectGoodNumAction()
+    {
+        $goom_num = $this->params('good_num');
+
+        if (!$goom_num) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user_db = \Users::getUserDb();
+        $user_db->zadd("select_good_no_list", $goom_num, $goom_num);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function deleteSelectGoodNumAction()
+    {
+        $goom_num = $this->params('good_num');
+
+        if (!$goom_num) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $user_db = \Users::getUserDb();
+        $user_db->zrem("select_good_no_list", $goom_num);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+    }
+
+    function selectGoodNoListAction()
+    {
+        $id = $this->params('id');
+        $user_db = \Users::getUserDb();
+        $good_no_uid = 'select_good_no_list';
+
+        if ($id) {
+
+            if (!$user_db->zscore($good_no_uid, $id)) {
+                $user_ids = [];
+            } else {
+                $user_ids[] = $id;
+            }
+
+            $total_entries = count($user_ids);
+        } else {
+            $page = $this->params('page', 1);
+            $per_page = $this->params('per_page', 100);
+
+            $total_entries = $user_db->zcard($good_no_uid);
+
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($good_no_uid, $offset, $offset + $per_page - 1);
+        }
+
+        $objects = [];
+
+        foreach ($user_ids as $user_id) {
+            $user = new \Users();
+            $user->uid = $user_id;
+            $objects[] = $user;
+        }
+
+        $pagination = new \PaginationModel($objects, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Users';
+
+        $this->view->users = $pagination;
+    }
+
+    function deleteUserLoginInfoAction()
+    {
+        $user_id = $this->params('id');
+
+        if (isBlank($user_id)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+        $user = \Users::findFirstById($user_id);
+        $user->mobile = '';
+        $user->login_type = '';
+        $user->third_name = '';
+        $user->third_unionid = '';
+        $user->update();
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+    }
 }

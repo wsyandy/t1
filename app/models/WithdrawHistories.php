@@ -110,8 +110,11 @@ EOF;
             'account_text' => $this->account_text,
             'bank_account_location' => $this->withdraw_account_bank_account_location,
             'account_type_text' => $this->withdraw_account_type_text,
+            'user_uid' => $this->user->uid
         ];
+
         $withdraw_account = $this->withdraw_account;
+
         if ($withdraw_account) {
             $data['area'] = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
             $data['account_bank_name'] = $withdraw_account->account_bank_name;
@@ -141,7 +144,13 @@ EOF;
         $amount = fetch($opts, 'amount');
         $withdraw_account_id = fetch($opts, 'withdraw_account_id');
 
-        if ($amount > 20000) {
+        $white_user_ids = [153717];
+
+        if (in_array($user->uid, $white_user_ids)) {
+            if ($amount > 40000) {
+                return [ERROR_CODE_FAIL, '超出单次体现金额'];
+            }
+        } elseif ($amount > 20000) {
             return [ERROR_CODE_FAIL, '单次限额20000元'];
         }
 
@@ -301,7 +310,7 @@ EOF;
     {
         debug($cond);
         $withdraw_histories = self::find($cond);
-        $titles = ['日期', '用户id', '姓名', '账户', '账户类型', '收款银行', '收款支行', '收款地区', '提现金额'];
+        $titles = ['日期', '用户uid', '姓名', '账户', '账户类型', '收款银行', '收款支行', '收款地区', '提现金额'];
         $data = [];
         foreach ($withdraw_histories as $withdraw_history) {
 
@@ -323,7 +332,7 @@ EOF;
                 $bank_account_location = $withdraw_account->bank_account_location;
                 $area = $withdraw_account->province_name . ',' . $withdraw_account->city_name;
             }
-            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_id, $user_name,
+            $data[] = [$withdraw_history->created_at_text, $withdraw_history->user_uid, $user_name,
                 " " . $account . " ", $withdraw_history->withdraw_account_type_text,
                 $account_bank_name, $bank_account_location, $area, $withdraw_history->amount];
         }

@@ -24,6 +24,12 @@
     {% if isAllowed('users','index') %}
         <a href="/admin/users/index?user[union_id_eq]={{ union.id }}">家族成员</a><br/>
     {% endif %}
+    {% if isAllowed('unions','update_permissions') %}
+        <a href="/admin/unions/update_permissions/{{ union.id }}" class="modal_action">家族权限</a><br/>
+    {% endif %}
+    {#{% if isAllowed('unions','update_room_ids') %}#}
+        {#<a href="/admin/unions/update_room_ids/{{ union.id }}" class="modal_action">查看房间权限</a><br/>#}
+    {#{% endif %}#}
     {% if isAllowed('unions','auth') and union.auth_status == 3 %}
         <a href="/admin/unions/auth/{{ union.id }}" class="modal_action">审核</a><br/>
     {% endif %}

@@ -22,7 +22,7 @@ class WithdrawHistoriesController extends BaseController
         }
 
         $show_withdraw = true;
-        
+
         $this->view->is_height_version = $is_height_version;
         $this->view->user = $user;
         $this->view->code = $this->params('code');
@@ -63,7 +63,13 @@ class WithdrawHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '请输入正确的提现金额');
             }
 
-            if ($amount > 20000) {
+            $white_user_ids = [153717];
+
+            if (in_array($this->currentUser()->uid, $white_user_ids)) {
+                if ($amount > 40000) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '超出单次体现金额');
+                }
+            } elseif ($amount > 20000) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '单次限额20000元');
             }
 

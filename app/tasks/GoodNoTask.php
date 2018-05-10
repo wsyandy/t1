@@ -133,4 +133,34 @@ class GoodNoTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
+    function addGoodNumAction()
+    {
+        $users = Users::find(
+            [
+                'conditions' => 'id < 1000000 and device_id > 1',
+                'column' => 'id'
+            ]);
+
+        $user_ids = [];
+
+        foreach ($users as $user) {
+            $user_ids[] = $user->id;
+        }
+
+        $user_db = Users::getUserDb();
+
+        for ($i = 2; $i < 1000000; $i++) {
+
+            if (in_array($i, $user_ids)) {
+                continue;
+            }
+
+            echoLine($i);
+
+            $good_no_uid = 'user_good_no_uid_list';
+            $user_db->zadd($good_no_uid, $i, $i);
+        }
+
+        echoLine(count($users));
+    }
 }

@@ -15,8 +15,8 @@ class DistributeController extends BaseController
     function indexAction()
     {
         $user = $this->currentUser();
-        $total_amount = \AccountHistories::sum(['conditions' => '(fee_type=:fee_type1: or fee_type=:fee_type2:) and user_id=:user_id:',
-            'bind' => ['fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'user_id' => $user->id],
+        $total_amount = \AccountHistories::sum(['conditions' => '(fee_type=:fee_type1: or fee_type=:fee_type2: or fee_type=:fee_type3:) and user_id=:user_id:',
+            'bind' => ['fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'fee_type3' => ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, 'user_id' => $user->id],
             'column' => 'amount'
         ]);
 
@@ -24,6 +24,7 @@ class DistributeController extends BaseController
             'bind' => ['status' => AUTH_SUCCESS, 'share_user_id' => $user->id]
         ]);
 
+        $this->view->title = '有奖邀请';
         $this->view->total_amount = $total_amount;
         $this->view->user_num = $user_num;
     }
@@ -50,15 +51,37 @@ class DistributeController extends BaseController
 
         $qrcode = generateQrcode($share_url);
         $product_channel_name = $this->currentProductChannel()->name;
+        $is_show_share = $user->canShareForH5();
+
+        $this->view->is_show_share = $is_show_share;
+        $this->view->title = '我的推广页';
         $this->view->qrcode = $qrcode;
         $this->view->product_channel_name = $product_channel_name;
 
 
-
     }
+
     function detailAction()
     {
-        
+
     }
 
+    function distributeBonusAction()
+    {
+        if ($this->request->isAjax()) {
+            $type = $this->params('type', 'register');
+            $cond['conditions'] = 'user_id=:user_id:';
+            if ($type == 'register') {
+                $cond['conditions'] .= ' and fee_type=:fee_type:';
+                $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER];
+            } else {
+                $cond['conditions'] .= ' and (fee_type=:fee_type1: or fee_type=:fee_type2:)';
+                $cond['bind'] = ['user_id' => $this->currentUserId(), 'fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_PAY, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE];
+            }
+            $cond['order'] = 'id desc';
+            $account_histories = \AccountHistories::find($cond);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $account_histories->toJson('account_histories', 'toSimpleJson'));
+        }
+
+    }
 }

@@ -71,21 +71,27 @@ class RoomStatsController extends BaseController
         $start_date = $this->params('start_date', date('Y-m-d'));
         $end_date = $this->params('end_date', date('Y-m-d'));
         $room_id = $this->params('room_id');
-        $user_id = $this->params('user_id');
+        $user_uid = $this->params('user_uid');
         $union_id = $this->params('union_id');
 
         $begin = beginOfDay(strtotime($start_date));
         $end = endOfDay(strtotime($end_date));
 
-        if ($end - $begin > 31 * 86400) {
-            echo "时间跨度不能超过一个月";
-            return false;
+
+        if ($start_date != $end_date) {
+
+            if (!$room_id && !$user_uid && !$union_id) {
+                echo "禁止跨天批量查询";
+                return false;
+            }
+
         }
 
         $stat_at = date("Ymd", strtotime($start_date));
 
-        if ($user_id) {
-            $user = \Users::findFirstById($user_id);
+
+        if ($user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
 
             if ($user) {
                 $room_id = $user->room_id;
@@ -95,7 +101,7 @@ class RoomStatsController extends BaseController
         if ($room_id) {
             $rooms = \Rooms::findPagination(['conditions' => 'id = ' . $room_id], 1, 1);
         } elseif ($union_id) {
-            $rooms = \Rooms::findPagination(['conditions' => 'union_id = ' . $union_id], 1, 500);
+            $rooms = \Rooms::findPagination(['conditions' => 'union_id = ' . $union_id], 1, 100);
         } else {
             $rooms = \Rooms::dayStatRooms($stat_at);
         }
@@ -150,6 +156,6 @@ class RoomStatsController extends BaseController
         $this->view->stat_fields = ['房间ID', '名称', '房主信息', '家族ID', '进入房间人数', '钻石流水', '送钻石礼物人数', '送钻石礼物个数',
             '人均送钻石礼物个数', '房主时长', '主播时长', '旁听时长'];
         $this->view->room_id = $room_id ? $room_id : '';
-        $this->view->user_id = $user_id ? $user_id : '';
+        $this->view->user_uid = $user_uid ? $user_uid : '';
     }
 }

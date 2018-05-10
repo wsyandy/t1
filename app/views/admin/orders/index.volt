@@ -12,8 +12,8 @@
     <label for="id_eq">ID</label>
     <input name="order[id_eq]" type="text" id="id_eq"/>
 
-    <label for="user_id_eq">用户ID</label>
-    <input name="order[user_id_eq]" type="text" id="user_id_eq"/>
+    <label for="user_id_eq">用户UID</label>
+    <input name="uid" type="text" id="uid"/>
 
     <label for="mobile">手机号</label>
     <input name="order[mobile_eq]" type="text" id="mobile"/>
@@ -33,6 +33,7 @@
 
 {% macro user_info(object) %}
     ID:<a href="/admin/users/detail?id={{ object.user_id }}">{{ object.user_id }}</a><br>
+    UID:{{ object.user.uid }} <br/>
     姓名:{{ object.user.nickname }} <br/>
     性别:{{ object.user.sex_text }}<br/>
     手机号码:{{ object.user.mobile }}<br/>

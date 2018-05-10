@@ -14,9 +14,6 @@
     {% if isAllowed('payments','index') %}
         <li role="presentation"><a href="/admin/payments?user_id={{ user.id }}">支付信息</a></li>
     {% endif %}
-    {% if isAllowed('i_gold_histories','index') %}
-        <li role="presentation"><a href="/admin/i_gold_histories?user_id={{ user.id }}">国际金币记录</a></li>
-    {% endif %}
     {% if isAllowed('account_histories','index') %}
         <li role="presentation"><a href="/admin/account_histories?user_id={{ user.id }}">钻石消费记录</a></li>
     {% endif %}
@@ -55,6 +52,9 @@
     {% endif %}
     {% if isAllowed('withdraw_accounts','index') %}
         <li role="presentation"><a href="/admin/withdraw_accounts/index?user_id={{ user.id }}">收款账户</a></li>
+    {% endif %}
+    {% if isAllowed('backpacks','index') %}
+        <li role="presentation"><a href="/admin/backpacks/index?user_id={{ user.id }}">收到的背包</a></li>
     {% endif %}
 </ul>
 

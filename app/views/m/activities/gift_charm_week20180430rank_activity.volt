@@ -170,7 +170,7 @@
                     gift_id: gift_id,
                     id: '{{ id }}'
                 };
-                $.authGet('/m/activities/gift_charm_week20180430rank_activity', data, function (resp) {
+                $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
 
                     if (resp.error_code == 0) {

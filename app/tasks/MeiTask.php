@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1001315;
+        $user_id = 1351483;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 1822 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 1822, $opts);
+        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()
@@ -3322,7 +3322,7 @@ EOF;
 
         $start = date("Ymd", beginOfWeek());
         $end = date("Ymd", endOfWeek());
-        $gift_id = 69;
+        $gift_id = 70;
         $key = "gift_charm_week_list_activity_stat_gift_id_" . $gift_id . "_start_" . $start . "_end_" . $end;
         $user_db = Users::getUserDb();
         $data = $user_db->zrevrange($key, 0, -1, 'withscores');
@@ -3332,7 +3332,7 @@ EOF;
             $total_amount = GiftOrders::sum(
                 [
                     'conditions' => 'user_id = :user_id: and gift_id = :gift_id:',
-                    'bind' => ['user_id' => $user_id, 'gift_id' => 69],
+                    'bind' => ['user_id' => $user_id, 'gift_id' => 70],
                     'column' => 'amount'
                 ]);
 
@@ -3426,6 +3426,503 @@ EOF;
         echoLine(date("Ymd H:i:s", beginOfDay()));
         echoLine(date("Ymd H:i:s", endOfDay()));
         echoLine(date("Ymd H:i:s", strtotime('20180503 24:00:00')));
+
+        $user_db = Users::getUserDb();
+        $key = 'union_user_total_hi_coins_rank_list_union_id_' . 1068;
+        $user_ids = $user_db->zrange($key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30'))],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+
+        /*1068,1001,1189,1014,1011,1036,1186,1026,1098*/
+
+        $user_db = Users::getUserDb();
+        $day = 20180429;
+        $day_key = 'union_user_day_hi_coins_rank_list_' . $day . '_union_id_' . 1068;
+        $user_ids = $user_db->zrange($day_key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
+
+        $cond = [
+            'conditions' => 'union_id = :union_id: and created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => ['union_id' => 1042, 'start' => beginOfDay(strtotime('2018-04-29')), 'end' => endOfDay(strtotime('2018-04-29')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+        $user_db = Users::getUserDb();
+        $month_start = 20180401;
+        $month_end = 20180430;
+        $month_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . 1068;
+        $user_ids = $user_db->zrange($month_key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+        }
+
+        echoLine($total);
+
+        $cond = [
+            'conditions' => 'union_id = :union_id: and created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-01')), 'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+
     }
 
+    function get()
+    {
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => GIFT_ORDER_STATUS_FREEZE
+            ],
+            'columns' => 'id'
+        ]);
+
+        //1008720
+        $amount = GiftOrders::sum(
+            [
+                'conditions' => 'room_id = :room_id: and room_union_id = :room_union_id: and created_at >= :start: and 
+                created_at <= :end: and  status = :status: and gift_type = :gift_type: and pay_type = :pay_type:',
+                'bind' => ['room_id' => 1008720, 'room_union_id' => 1068, 'start' => beginOfDay(strtotime('2018-04-09')),
+                    'end' => endOfDay(strtotime('2018-04-09')), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                    'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
+            ]
+        );
+
+        echoLine($amount);
+
+        $ids = [];
+        foreach ($gift_orders as $gift_order) {
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+
+            echoLine($gift_order->amount, $gift_order->room_id, $gift_order->room_union_id);
+
+//            $hi_coin_history = HiCoinHistories::findFirstBy(['gift_order_id' => $gift_order->id]);
+//
+//            if($hi_coin_history) {
+//                //            echoLine($hi_coin_history->union_id);
+//                $hi_coin_history->hi_coins = 0;
+//                $hi_coin_history->remark = $hi_coin_history->remark . "异常收到礼物";
+//                $hi_coin_history->update();
+//
+//                echoLine($hi_coin_history->hi_coins, $hi_coin_history->union_id);
+//            }
+        }
+
+    }
+
+    function findUsers()
+    {
+        $user_db = Users::getUserDb();
+        $key = 'union_user_total_hi_coins_rank_list_union_id_' . 1068;
+        $user_ids = $user_db->zrange($key, 0, -1, 'withscores');
+
+        $total = 0;
+
+        foreach ($user_ids as $user_id => $score) {
+            $total += $score;
+
+            $cond = [
+                'conditions' => 'union_id = :union_id: and user_id = :user_id: and created_at <= :end: and fee_type = :fee_type:',
+                'bind' => ['union_id' => 1068, 'start' => beginOfMonth(strtotime('2018-04-01')),
+                    'end' => endOfMonth(strtotime('2018-04-01')),
+                    'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT, 'user_id' => $user_id],
+                'column' => 'hi_coins'
+            ];
+
+            $num = HiCoinHistories::sum($cond);
+
+            if ($score != $num) {
+                echoLine($user_id, $score, $num);
+            }
+        }
+    }
+
+    function fixRoomIncome1Action()
+    {
+        $start_at = beginOfDay(strtotime('2018-03-13'));
+        $room_db = Rooms::getRoomDb();
+
+        for ($day = $start_at; $day < beginOfDay(); $day += 86400) {
+
+            $stat_at = date("Ymd", $day);
+
+            $rooms = Rooms::dayStatRooms($stat_at);
+
+            foreach ($rooms as $room) {
+
+                $room_total_income = $room->getDayIncome($stat_at);
+
+                $amount = GiftOrders::sum(
+                    [
+                        'conditions' => 'room_id = :room_id: and created_at >= :start: and 
+                created_at <= :end: and  status = :status: and gift_type = :gift_type: and pay_type = :pay_type:',
+                        'bind' => ['room_id' => $room->id, 'start' => beginOfDay(strtotime($stat_at)),
+                            'end' => endOfDay(strtotime($stat_at)), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                            'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                        'column' => 'amount'
+                    ]
+                );
+
+                if ($amount != $room_total_income) {
+                    echoLine($amount, $room_total_income, $stat_at, $room->id);
+                    $room_db->zadd($room->generateStatIncomeDayKey($stat_at), $amount, $room->id);
+                }
+            }
+        }
+    }
+
+    function exportAction()
+    {
+        $user_db = Users::getUserDb();
+        $month_key = 'union_user_month_hi_coins_rank_list_start_' . 20180401 . '_end_' . 20180430 . '_union_id_' . 1068;
+
+        $user_ids = $user_db->zrevrange($month_key, 0, -1, 'withscores');
+
+        $hi_coin = 0;
+
+        $titles = ['用户Id', "hi币收益"];
+
+        $data = [];
+
+        foreach ($user_ids as $user_id => $score) {
+            $score = sprintf("%0.2f", $score / 1000);
+            $hi_coin += $score;
+            $data[] = [$user_id, $score];
+        }
+
+        $file = APP_ROOT . "temp/hi_coins.xls";
+        $res = writeExcel($titles, $data, $file, true);
+
+        echoLine($res, StoreFile::getUrl($res));
+
+        $user_db = Users::getUserDb();
+        $charm_key = 'union_user_month_charm_rank_list_start_' . 20180401 . '_end_' . 20180430 . '_union_id_' . 1068;
+        echoLine($user_db->zcard($charm_key));
+    }
+
+    function fixDrawCarAction()
+    {
+        $cond = [
+            'conditions' => 'sender_id = :sender_id: and gift_type = :gift_type: and created_at >= :start: and created_at <= :end:',
+            'bind' => [
+                'sender_id' => SYSTEM_ID, 'gift_type' => GIFT_TYPE_CAR, 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW,
+                'start' => beginOfDay(strtotime('2018-05-04')), 'end' => strtotime('2018-05-04 14:27:43'),
+            ],
+            'columns' => 'id'
+        ];
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+        $db = Users::getUserDb();
+
+        foreach ($gift_orders as $gift_order) {
+
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+
+            echoLine($gift_order->amount, $gift_order - $gift_order->user_id, $gift_order->receiver_union_id);
+
+            continue;
+            $user = $gift_order->user;
+            $amount = $gift_order->amount;
+            $charm_value = $amount;
+            $receiver_union_id = $gift_order->receiver_union_id;
+
+            $user->charm_value -= $charm_value;
+
+            $time = $gift_order->created_at;
+            $date = date("Ymd", $time);
+            $start = date("Ymd", beginOfWeek($time));
+            $end = date("Ymd", endOfWeek($time));
+            $field = 'charm';
+
+            $day_key = Users::generateFieldRankListKey('day', $field, ['date' => $date]);
+            $week_key = Users::generateFieldRankListKey('week', $field, ['start' => $start, 'end' => $end]);
+            $total_key = Users::generateFieldRankListKey('total', $field);
+
+
+            $db->zincrby($day_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($day_key, -$charm_value, $user_id);
+
+            $db->zincrby($week_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($week_key, -$charm_value, $user_id);
+
+            $db->zincrby($total_key . "_" . $user->product_channel_id, -$charm_value, $user_id);
+            $db->zincrby($total_key, -$charm_value, $user_id);
+
+
+            $union = Unions::findFirstById($receiver_union_id);
+
+            if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
+
+                $user->union_charm_value -= $charm_value;
+
+                $lock_key = "update_union_fame_lock_" . $id;
+                $lock = tryLock($lock_key);
+                $union->fame_value -= $charm_value;
+                $union->update();
+
+                $date = date("Ymd", $time);
+                $start = date("Ymd", beginOfWeek($time));
+                $end = date("Ymd", endOfWeek($time));
+
+                $week_key = Unions::generateFameValueRankListKey('week', ['date' => $date]);
+                $day_key = Unions::generateFameValueRankListKey('day', ['start' => $start, 'end' => $end]);
+
+                $db->zincrby($day_key, -$charm_value, $union->id);
+                $db->zincrby($day_key . "_" . $union->product_channel_id, -$charm_value, $union->id);
+                $db->zincrby($week_key, -$charm_value, $union->id);
+                $db->zincrby($week_key . "_" . $union->product_channel_id, -$charm_value, $union->id);
+
+                $union->updateFameRankList($value, $opts);
+                unlock($lock);
+
+            }
+
+            $user->update();
+        }
+
+        $amount = GiftOrders::sum(
+            [
+                'conditions' => 'created_at >= :start: and created_at <= :end: and  status = :status: and 
+                gift_type = :gift_type: and pay_type = :pay_type:',
+                'bind' => ['start' => beginOfDay(strtotime('2018-04-01')),
+                    'end' => endOfDay(strtotime('2018-04-30')), 'status' => GIFT_ORDER_STATUS_SUCCESS, 'gift_type' => GIFT_TYPE_COMMON,
+                    'pay_type' => GIFT_PAY_TYPE_DIAMOND],
+                'column' => 'amount'
+            ]
+        );
+
+        echoLine($amount);
+
+        $fee_types = [HI_COIN_FEE_TYPE_RECEIVE_GIFT => '接收礼物', HI_COIN_FEE_TYPE_HOST_REWARD => '主播奖励',
+            HI_COIN_FEE_TYPE_UNION_HOST_REWARD => '家族长奖励', HI_COIN_FEE_TYPE_WITHDRAW => '提现', HI_COIN_FEE_TYPE_ROOM_REWARD => '房间流水奖励',
+            HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石', HI_COIN_FEE_TYPE_WITHDRAW_RETURN => '提现失败返还'];
+
+        $cost = 0;
+        $income = 0;
+        $withdraw = 0;
+
+
+        foreach ($fee_types as $fee_type => $text) {
+
+            $cond = [
+                'conditions' => 'created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+                'bind' => [
+                    'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                    'fee_type' => $fee_type
+                ],
+                'column' => 'hi_coins'
+            ];
+
+            $num = HiCoinHistories::sum($cond);
+
+            if (in_array($fee_type, [HI_COIN_FEE_TYPE_HI_COIN_EXCHANGE_DIAMOND])) {
+
+                $income += abs($num);
+
+            } else {
+
+                if (in_array($fee_type, [HI_COIN_FEE_TYPE_WITHDRAW_RETURN, HI_COIN_FEE_TYPE_WITHDRAW])) {
+                    $withdraw += $num;
+                } else {
+                    $cost += abs($num);
+                }
+            }
+
+            echoLine($text, $num);
+        }
+
+        $balance = $income - $cost;
+        echoLine($income, $cost, $balance, $withdraw);
+
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => $fee_type
+            ],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+
+        echoLine($num);
+
+        static $FEE_TYPE = [
+            ACCOUNT_TYPE_BUY_DIAMOND => '购买钻石',
+            ACCOUNT_TYPE_BUY_GIFT => '购买礼物',
+            ACCOUNT_TYPE_GIVE => '系统赠送',
+            ACCOUNT_TYPE_CREATE_UNION => '创建家族',
+            ACCOUNT_TYPE_CREATE_UNION_REFUND => '创建家族返还',
+            ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND => 'Hi币兑钻石',
+            ACCOUNT_TYPE_GAME_INCOME => '游戏收入',
+            ACCOUNT_TYPE_GAME_EXPENSES => '游戏支出',
+            ACCOUNT_TYPE_DEDUCT => '系统扣除',
+            ACCOUNT_TYPE_DISTRIBUTE_REGISTER => '分销注册',
+            ACCOUNT_TYPE_DISTRIBUTE_PAY => '分销充值',
+            ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
+            ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
+            ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
+            ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出'
+
+        ];
+
+        $cond = [
+            'conditions' => 'fee_type = :fee_type1: or fee_type = :fee_type2:',
+            'bind' => ['fee_type1' => ACCOUNT_TYPE_BUY_DIAMOND, 'fee_type2' => ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND]
+        ];
+
+        $gift_orders = GiftOrders::find([
+            'conditions' => 'status = :status:',
+            'bind' => [
+                'status' => GIFT_ORDER_STATUS_FREEZE
+            ],
+            'columns' => 'id'
+        ]);
+
+        $gift_order_ids = [];
+
+        foreach ($gift_orders as $gift_order) {
+            $gift_order_ids[] = $gift_order->id;
+            $gift_order = GiftOrders::findFirstById($gift_order->id);
+        }
+
+        echoLine($gift_order_ids);
+
+        $user_ids = [1058027, 1060201, 1017233, 1060180, 1083050];
+
+        foreach ($user_ids as $user_id) {
+            $account_histories = AccountHistories::findByUserId($user_id);
+            echoLine(count($account_histories));
+
+            foreach ($account_histories as $account_history) {
+                $account_history->delete();
+            }
+        }
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and  created_at <= :end: ',
+            'bind' => ['start' => beginOfMonth(strtotime('2018-03-01')), 'end' => endOfMonth(strtotime('2018-03-31')), 'fee_type' => ACCOUNT_TYPE_DEDUCT],
+            'column' => 'amount'
+        ];
+
+
+        $amount = AccountHistories::sum($cond);
+        echoLine($amount);
+
+        $account_histories = AccountHistories::findByFeeType(ACCOUNT_TYPE_DEDUCT);
+
+        foreach ($account_histories as $account_history) {
+            echoLine($account_history->user_id);
+            $account_history->delete();
+        }
+
+        $cond = [
+            'conditions' => 'created_at >= :start: and created_at <= :end: and fee_type = :fee_type:',
+            'bind' => [
+                'start' => beginOfMonth(strtotime('2018-04-01')), 'end' => endOfMonth(strtotime('2018-04-30')),
+                'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT
+            ],
+            'column' => 'hi_coins'
+        ];
+
+        $num = HiCoinHistories::sum($cond);
+        echoLine($num);
+
+        $id_card_auth = IdCardAuths::findFirstById(4927);
+        $id_card_auth->delete();
+
+        $gift_ids = [151, 146, 63, 147, 143];
+
+        foreach ($gift_ids as $gift_id) {
+            echoLine($gift_id);
+            $backpack = new Backpacks();
+            $backpack->target_id = $gift_id;
+            $backpack->user_id = 52;
+            $backpack->number = mt_rand(1, 10);
+            $backpack->status = STATUS_ON;
+            $backpack->type = 1;
+            $backpack->save();
+        }
+    }
+
+    function test40Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list_3';
+        $time = time();
+
+        for ($i = 1; $i <= 200; $i++) {
+
+            $hot_cache->zadd($key, $time--, $i);
+
+            $total = $hot_cache->zcard($key);
+        }
+
+        if ($total >= 100) {
+            $hot_cache->zremrangebyrank($key, 0, $total - 100);
+        }
+
+        echoLine($hot_cache->zrevrange($key, 0, -1), $hot_cache->zcard($key));
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list_3';
+        $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
+        echoLine($user_num);
+
+        echoLine(array_diff([1,3,4],[1]));
+
+        $hot_room_ids = [1000 => 12, 10001 => 13, 10004 => 14, 1005 => 11];
+
+        uksort($hot_room_ids, function ($a, $b) use ($hot_room_ids) {
+
+            if ($hot_room_ids[$a] > $hot_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        $hot_room_ids = array_slice($hot_room_ids, 0, 5, true);
+
+        print_r($hot_room_ids);
+
+    }
 }
