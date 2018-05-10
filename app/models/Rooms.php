@@ -1565,11 +1565,6 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-
-        if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
-        }
-
         $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
         $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
@@ -1607,7 +1602,11 @@ class Rooms extends BaseModel
         if ($shield_room_ids) {
             $room_ids = array_diff($room_ids, $shield_room_ids);
         }
-        
+
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $room_ids]);
+        }
+
         $rooms = Rooms::findByIds($room_ids);
         $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
         $pagination->clazz = 'Rooms';
