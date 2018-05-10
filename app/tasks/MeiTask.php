@@ -3907,7 +3907,7 @@ EOF;
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
         echoLine($user_num);
 
-        echoLine(array_diff([1,3,4],[1]));
+        echoLine(array_diff([1, 3, 4], [1]));
 
         $hot_room_ids = [1000 => 12, 10001 => 13, 10004 => 14, 1005 => 11];
 
@@ -3924,5 +3924,23 @@ EOF;
 
         print_r($hot_room_ids);
 
+    }
+
+    function test41Action()
+    {
+
+        $attrs = array(
+            'sender_id' => SYSTEM_ID,
+            'receiver_id' => 196,
+            'content' => 'dddd',
+            'content_type' => 'text/news',
+            'image_url' => '',
+            'title' => '测试',
+            'url' => 'url://m/activities'
+        );
+
+        \Chats::createChat($attrs);
+
+        return \Chats::createChat($attrs);
     }
 }
