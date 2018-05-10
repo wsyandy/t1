@@ -1578,7 +1578,7 @@ class Rooms extends BaseModel
 
         if ($user->isShieldHotRoom()) {
 
-            $hot_room_list_key = Rooms::generateShieldHotRoomListKey();
+            $hot_room_list_key = Rooms::getHotRoomListKey();
 
         } else {
 
