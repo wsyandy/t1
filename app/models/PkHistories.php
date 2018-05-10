@@ -163,7 +163,7 @@ class PkHistories extends BaseModel
         $cache->hmset($key, $body);
         info('初始化pk数据',$body);
 
-        $cache->expire($key, 10 * 60);
+        $cache->expire($key, 60 * 60);
     }
 
     static function generatePkHistoryInfoKey($room_id)
