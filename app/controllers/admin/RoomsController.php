@@ -89,6 +89,10 @@ class RoomsController extends BaseController
     {
         $room = \Rooms::findFirstById($this->params('id'));
         $this->assign($room, 'room');
+
+        $hot_room_score_ratio = $this->params('room[hot_room_score_ratio]');
+        $room->setHotRoomScoreRatio($hot_room_score_ratio);
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);

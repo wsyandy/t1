@@ -175,10 +175,18 @@ trait RoomAttrs
                 $real_user_stay_time_score * 0.1 + $room_host_score * 0.1 + $id_card_auth_users_score * 0.05;
         }
 
-        info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
-            $id_card_auth_users_score, $total_score);
+        $total_score = intval($total_score);
 
-        return intval($total_score);
+        $ratio = $this->getHotRoomScoreRatio();
+
+        if ($ratio) {
+            $total_score = $total_score * $ratio;
+        }
+
+        info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
+            $id_card_auth_users_score, $ratio, $total_score);
+
+        return;
     }
 
     //用户总人数
@@ -202,5 +210,13 @@ trait RoomAttrs
     {
         $num = $this->getUserNum() - $this->getRealUserNum();
         return $num;
+    }
+
+    //获取房间扶持分值
+    function getHotRoomScoreRatio()
+    {
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+        return intval($user_db->get($key));
     }
 }
