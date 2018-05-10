@@ -56,9 +56,9 @@
             </div>
         </li>#}
     </ul>
-    <a class="btn" href="javascript:;" @click="createBackpack()">
+    {#<a class="btn" href="javascript:;">
         立即领取
-    </a>
+    </a>#}
 
 </div>
 
@@ -120,8 +120,8 @@
 
         </div>
         <div class="popup_bottom">
-            <a class="btn_popup" href="javascript:;">
-                确定
+            <a class="btn_popup" href="javascript:;" @click="createBackpack()">
+                确定领取
             </a>
 
         </div>
@@ -165,7 +165,8 @@
             code: "{{ code }}",
             target_list: [],
             history_list: [],
-            cache_list: []
+            cache_list: [],
+            get_boom: false
         },
 
         methods: {
@@ -196,12 +197,17 @@
             
             createBackpack: function () {
 
+                if (vm.get_boom) {
+                    console.log('领取过!');
+                    return ;
+                }
                 $.authPost('/m/backpacks/create', {
                     sid: vm.sid,
                     code: vm.code,
                     target: vm.cache_list
                 }, function (resp) {
                     console.log(resp);
+                    vm.get_boom = true;
                 })
             }
 

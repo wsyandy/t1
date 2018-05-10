@@ -36,13 +36,19 @@ class BoomHistories extends BaseModel
 
     public function toSimpleJson()
     {
-        $gift = Gifts::findFirstById($this->target_id);
+        if ($this->type == BACKPACK_DIAMOND_TYPE) {
+            $target = (object)['name'=>'钻石', 'image_url'=>Backpacks::getDiamondImage()];
+        } elseif ($this->type == BACKPACK_GOLD_TYPE) {
+            $target = (object)['name'=>'金币', 'image_url'=>Backpacks::getGoldImage()];
+        } else
+            $target = Gifts::findFirstById($this->target_id);
+
         $user = Users::findFirstById($this->user_id);
         return array(
             'user' => $user->nickname,
-            'name' => $gift->name,
+            'name' => $target->name,
             'number' => $this->number,
-            'image_url' => $gift->getImageUrl(),
+            'image_url' => $target->image_url,
         );
     }
 }

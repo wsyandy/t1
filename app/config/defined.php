@@ -321,4 +321,6 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 
 
 // 背包类型
-define('BACKPACK_GIFT_TYPE', 1);
+define('BACKPACK_GIFT_TYPE', 1); // 礼物
+define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
+define('BACKPACK_GOLD_TYPE', 3); // 金币
