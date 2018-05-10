@@ -9,8 +9,9 @@ class MakiTask extends Phalcon\Cli\Task
 {
     public function testxAction()
     {
-        $value = Backpacks::turnoverValue();
-        echoLine($value);
+        $rooms = Rooms::dayStatRooms();
+        $rooms = $rooms->toJson('rooms');
+        echoLine($rooms);
     }
 
 
