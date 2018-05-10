@@ -878,7 +878,15 @@ class RoomsTask extends \Phalcon\Cli\Task
             $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
         }
 
-        $shield_room_ids = array_slice($shield_room_ids, 0, 5, true);
+        $shield_room_num = 5;
+        $new_user_shield_room_num = 3;
+
+        if (isDevelopmentEnv()) {
+            $shield_room_num = 2;
+            $new_user_shield_room_num = 1;
+        }
+
+        $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
 
         if (count($shield_room_ids) > 0) {
 
@@ -886,7 +894,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             foreach ($shield_room_ids as $shield_room_id => $score) {
 
-                if ($i <= 3) {
+                if ($i <= $new_user_shield_room_num) {
                     $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
                     $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
                 }
