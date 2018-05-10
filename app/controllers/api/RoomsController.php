@@ -872,16 +872,17 @@ class RoomsController extends BaseController
         $right_pk_user_id = $this->params('right_pk_user_id');
         $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
         $pk_time = $this->params('pk_time'); //
+        $cover = $this->params('cover', 0);
 
-        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover];
 
-        $pk_history = \PkHistories::createHistory($this->currentUser(), $opts);
+        list($pk_history, $error_code, $error_reason) = \PkHistories::createHistory($this->currentUser(), $opts);
 
         if ($pk_history) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $pk_history->toSimpleJson());
+            return $this->renderJSON($error_code, $error_reason, $pk_history->toSimpleJson());
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
+        return $this->renderJSON($error_code, $error_reason);
 
     }
 
