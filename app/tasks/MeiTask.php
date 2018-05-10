@@ -3933,7 +3933,7 @@ EOF;
             'sender_id' => SYSTEM_ID,
             'receiver_id' => 196,
             'content' => 'dddd',
-            'content_type' => 'text/news',
+            'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
             'image_url' => '',
             'title' => '测试',
             'url' => 'url://m/activities'

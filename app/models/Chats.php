@@ -154,14 +154,14 @@ class Chats extends BaseModel
         }
 
         debug($user_id, $attrs);
-        
+
         return \Chats::createChat($attrs);
     }
 
     static function createChat($attrs)
     {
         $chat = new \Chats();
-        foreach (['sender_id', 'receiver_id', 'content', 'content_type'] as $column) {
+        foreach (['sender_id', 'receiver_id', 'content', 'title', 'image_url', 'content_type', 'url'] as $column) {
             $chat->$column = fetch($attrs, $column);
         }
         if ($chat->create()) {
@@ -199,7 +199,10 @@ class Chats extends BaseModel
             'created_at' => $this->created_at,
             'content_type' => $this->content_type,
             'content' => $this->content,
-            'created_at_text' => $this->created_at_text
+            'created_at_text' => $this->created_at_text,
+            'title' => $this->title,
+            'image_url' => $this->image_url,
+            'url' => $this->url
         );
     }
 
