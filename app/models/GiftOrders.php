@@ -41,16 +41,16 @@ class GiftOrders extends BaseModel
 
     function afterCreate()
     {
-
-    }
-
-    function afterUpdate()
-    {
         if ($this->hasChanged('status') && $this->status == GIFT_ORDER_STATUS_SUCCESS && $this->pay_type == GIFT_PAY_TYPE_DIAMOND) {
 
             //当礼物订单状态为支付成功，并且礼物订单类型为钻石支付的时候，才进行推送
             \DataCollection::syncData('gift_order', 'give_to_success', ['gift_order' => $this->toPushDataJson()]);
         }
+    }
+
+    function afterUpdate()
+    {
+
     }
 
     function toDetailJson()
