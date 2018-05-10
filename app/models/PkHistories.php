@@ -20,6 +20,8 @@ class PkHistories extends BaseModel
 
 
     static $STATUS = [STATUS_ON => '创建成功', STATUS_PROGRESS => 'PK中', STATUS_OFF => 'PK结束'];
+    //send_gift_user send_gift_amount
+    static $PK_TYPE = [SEND_GIFT_USER => '按赠送礼物人数', SEND_GIFT_AMOUNT => '按赠送礼物价值总数'];
 
     function beforeCreate()
     {
@@ -115,9 +117,9 @@ class PkHistories extends BaseModel
         ];
     }
 
-    static function updatePkHistories($sender, $total_amount, $receiver_ids)
+    static function updatePkHistories($sender, $total_amount, $receiver_id)
     {
-        $pk_history_datas = self::updatePkHistoryInfo($sender->room_id, $total_amount, $receiver_ids);
+        $pk_history_datas = self::updatePkHistoryInfo($sender->current_room_id, $total_amount, $receiver_id);
 
         if (isPresent($pk_history_datas)) {
             $body = ['action' => 'pk', 'pk_history' => [
@@ -157,7 +159,7 @@ class PkHistories extends BaseModel
     {
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($this->room_id);
-        $body = ['left_pk_user_id' => $this->left_pk_user_id, 'right_pk_user_id' => $this->right_pk_user_id, $this->left_pk_user_id => 0, $this->right_pk_user_id => 0];
+        $body = ['left_pk_user_id' => $this->left_pk_user_id, 'right_pk_user_id' => $this->right_pk_user_id, $this->left_pk_user_id => 0, $this->right_pk_user_id => 0, 'pk_type' => $this->pk_type];
         $cache->hmset($key, $body);
 
         $cache->expire($key, 3 * 65);
@@ -175,19 +177,24 @@ class PkHistories extends BaseModel
         return $cache->hget($key, 'room_id');
     }
 
-    static function updatePkHistoryInfo($room_id, $total_amount, $receiver_ids)
+    static function updatePkHistoryInfo($room_id, $total_amount, $receiver_id)
     {
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
-
-        foreach ($receiver_ids as $receiver_id) {
-
-            if ($cache->hexists($key, $receiver_id)) {
-                $score = $cache->hget($key, $receiver_id);
-                $current_score = $score + $total_amount;
-                $cache->hmset($key, [$receiver_id => $current_score]);
+        if ($cache->hexists($key, $receiver_id)) {
+            $current_score = $cache->hget($key, $receiver_id);
+            $pk_type = $cache->hget($key, 'pay_type');
+            switch ($pk_type) {
+                case SEND_GIFT_USER:
+                    $current_score = $current_score + 1;
+                    break;
+                case SEND_GIFT_AMOUNT:
+                    $current_score = $current_score + $total_amount;
+                    break;
             }
+            $cache->hmset($key, [$receiver_id => $current_score]);
         }
+
 
         return $cache->hgetall($key);
     }
@@ -207,5 +214,16 @@ class PkHistories extends BaseModel
         if ($this->update()) {
             $cache->del($key);
         }
+    }
+
+    static function checkPkHistoryForUser($room_id)
+    {
+        $cache = self::getHotWriteCache();
+        $key = self::generatePkListKey();
+        $score = $cache->zscore($key, $room_id);
+        if ($score) {
+            return true;
+        }
+        return false;
     }
 }

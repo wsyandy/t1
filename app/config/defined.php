@@ -138,7 +138,7 @@ define('ACCOUNT_TYPE_GAME_INCOME', 10); //游戏收入
 define('ACCOUNT_TYPE_GAME_EXPENSES', 11); //游戏支出
 define('ACCOUNT_TYPE_DISTRIBUTE_REGISTER', 21); //分销注册
 define('ACCOUNT_TYPE_DISTRIBUTE_PAY', 22); //分销充值
-define('ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE',23);  //分销兑换
+define('ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE', 23);  //分销兑换
 define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
 define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
@@ -324,3 +324,7 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 define('BACKPACK_GIFT_TYPE', 1); // 礼物
 define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
 define('BACKPACK_GOLD_TYPE', 3); // 金币
+
+//PK类型
+define('SEND_GIFT_USER', 'send_gift_user'); //按照赠送礼物人数PK
+define('SEND_GIFT_AMOUNT', 'send_gift_amount');   //按照赠送礼物价值总数PK
