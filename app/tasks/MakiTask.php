@@ -9,9 +9,8 @@ class MakiTask extends Phalcon\Cli\Task
 {
     public function testxAction()
     {
-        $url = 'http://test.momoyuedu.cn/api/backpacks';
-        $res = httpGet($url);
-        echoLine($res);
+        $value = Backpacks::turnoverValue();
+        echoLine($value);
     }
 
 

@@ -48,9 +48,11 @@ class Backpacks extends BaseModel
     /**
      * @desc 爆礼物房间流水值
      */
-    public function turnoverValue()
+    static public function turnoverValue()
     {
-
+        $rooms = Rooms::dayStatRooms();
+        $rooms = $rooms->toJson('rooms');
+        return $rooms;
     }
 
 
