@@ -156,9 +156,6 @@ class GiftOrders extends BaseModel
             }
 
             $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
-            if ($target) {
-                \PkHistories::updatePkHistories($sender,$total_amount,$receiver_ids);
-            }
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
@@ -259,6 +256,8 @@ class GiftOrders extends BaseModel
                 $gift_order->room_union_type = $sender_current_room->union_type;
 
                 $sender_current_room->updateLastAt();
+
+
             }
 
             if ($gift_order->create()) {
