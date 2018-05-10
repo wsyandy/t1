@@ -9,6 +9,10 @@ namespace api;
 
 class BackpacksController extends BaseController
 {
+    /**
+     * @desc 背包列表
+     * @return bool
+     */
     public function indexAction()
     {
         $type = $this->params('type', 1);
@@ -21,8 +25,12 @@ class BackpacksController extends BaseController
     }
 
 
-    public function createAction()
+    /**
+     * @desc 返回爆礼物活动入口
+     * @return bool
+     */
+    public function BoomAction()
     {
-
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_url' => 'url://m/backpacks']);
     }
 }
