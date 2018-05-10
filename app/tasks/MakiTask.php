@@ -77,6 +77,7 @@ class MakiTask extends Phalcon\Cli\Task
         }
 
         if (empty($count)) return ;
+        $count[41792] = 4;
 
         $content = '尊敬用户：你好！请问您是否在支付的时候遇到了问题？如有疑问请联系官方客服中心400-018-7755解决。';
         $push_data = [
