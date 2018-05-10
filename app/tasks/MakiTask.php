@@ -23,7 +23,7 @@ class MakiTask extends Phalcon\Cli\Task
             echoLine($room);
             echoLine($noun);
             if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun);
+                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
             }
         }
     }

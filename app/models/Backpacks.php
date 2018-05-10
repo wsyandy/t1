@@ -66,19 +66,21 @@ class Backpacks extends BaseModel
     }
 
 
-    public function pushClientAboutBoom($total_value, $cur_value)
+    public function pushClientAboutBoom($total_value, $cur_value, $room_id)
     {
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => (int)date('Ymd'),
+                'expire_at' => time(),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => '',
                 'total_value' => $total_value,
                 'current_value' => $cur_value
             ]
         );
-        (new Rooms())->push($body);
+
+        $room = Rooms::findFirstById($room_id);
+        $room->push($body);
     }
 
 
