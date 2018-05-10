@@ -243,7 +243,8 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
-            'top_text' => $this->top_text
+            'top_text' => $this->top_text,
+            'user_uid' => $this->user_uid
         ];
 
         return array_merge($opts, $this->toJson());
@@ -2742,5 +2743,21 @@ class Rooms extends BaseModel
             $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
             $user_db->zadd($record_key, $time, $record);
         }
+    }
+
+    function setHotRoomScoreRatio($ratio)
+    {
+        $ratio = intval($ratio);
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+
+        if (!$ratio) {
+
+            $user_db->del($key);
+
+            return;
+        }
+
+        $user_db->set($key, $ratio);
     }
 }
