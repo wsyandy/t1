@@ -7,6 +7,13 @@
  */
 class BoomHistories extends BaseModel
 {
+
+    /**
+     * 生成爆礼物数据
+     * @param $user
+     * @param $opt
+     * @return bool
+     */
     public function createBoom($user, $opt)
     {
         if (isDevelopmentEnv()) {
@@ -23,7 +30,10 @@ class BoomHistories extends BaseModel
     }
 
 
-
+    /**
+     * 爆礼物排行榜
+     * @return PaginationModel
+     */
     static public function topList()
     {
         $conditions = array(
@@ -37,14 +47,26 @@ class BoomHistories extends BaseModel
     public function toSimpleJson()
     {
         if ($this->type == BACKPACK_DIAMOND_TYPE) {
-            $target = (object)['name'=>'钻石', 'image_url'=>Backpacks::getDiamondImage()];
+
+            $target = (object)[
+                'name'=>'钻石',
+                'image_url'=> Backpacks::getDiamondImage()
+            ];
         } elseif ($this->type == BACKPACK_GOLD_TYPE) {
-            $target = (object)['name'=>'金币', 'image_url'=>Backpacks::getGoldImage()];
+
+            $target = (object)[
+                'name'=>'金币',
+                'image_url'=> Backpacks::getGoldImage()
+            ];
         } else
             $target = Gifts::findFirstById($this->target_id);
 
+        // 获取用户信息
         $user = Users::findFirstById($this->user_id);
+
+        // 返回的数据
         return array(
+            // 'id' => $this->id,
             'user' => $user->nickname,
             'name' => $target->name,
             'number' => $this->number,

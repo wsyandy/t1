@@ -11,16 +11,14 @@ class BackpacksController extends BaseController
 {
     public function indexAction()
     {
-        $this->view->title = '爆礼物';
-        if (false) {
-            $this->response->redirect('/backpacks/desc');
-        }
-    }
+        $sid = $this->params('sid');
+        $code = $this->params('code');
+        $start = $this->params('start', false);
 
-
-    public function descAction()
-    {
         $this->view->title = '爆礼物';
+        $this->view->start = $start;
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
 
@@ -29,25 +27,15 @@ class BackpacksController extends BaseController
      */
     public function prizeAction()
     {
-        $arr = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
-        $one = array_rand($arr);
-        if ($arr[$one] == BACKPACK_GIFT_TYPE) {
+        $list = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
+        $type = array_rand($list);
+        $boom_type = $list[$type];
+
+        if ($boom_type == BACKPACK_GIFT_TYPE) {
+
             $target = \Gifts::randomGift();
-        } elseif ($arr[$one] == BACKPACK_DIAMOND_TYPE) {
-            $target[] = [
-                'id' => 0,
-                'name' => '钻石',
-                'image_url' => \Backpacks::getDiamondImage(),
-                'number' => mt_rand(10, 1000)
-            ];
-        } elseif ($arr[$one] == BACKPACK_GOLD_TYPE) {
-            $target[] = [
-                'id' => 0,
-                'name' => '金币',
-                'image_url' => \Backpacks::getGoldImage(),
-                'number' => mt_rand(500, 2000)
-            ];
-        }
+        } else
+            $target = \Backpacks::boomValue($boom_type);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
