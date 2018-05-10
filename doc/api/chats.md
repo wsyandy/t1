@@ -21,6 +21,10 @@
        created_at: 1111
        content: ''
        content_type: 'text/plain'
+       title :标题
+       description: '描述'
+       url: 跳转地址 url://m/xxxx
+       image_url : 图片地址 
     } // 扩展属性
 }
 ```
@@ -53,6 +57,10 @@
             content_type: ''
             content: ''
             created_at: ''
+            title :标题
+            description: '描述'
+            url: 跳转地址 url://m/xxxx
+            image_url : 图片地址 
         }
         ...
     ]
@@ -94,4 +102,11 @@
     error_reason: ''
    
 }
+```
+### 5 消息类型备注
+
+```
+文本类型:text/plain, 文本json: text/json, 文本html: text/html,文本emoji:text/emoji, 
+普通图片类型:image/image, gif图片类型:image/gif, 礼物: goods/gift, 音频mp3: audio/mp3, 
+视频mp4: video/mp4 图文消息: text/news
 ```

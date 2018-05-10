@@ -433,4 +433,40 @@ class Gifts extends BaseModel
 
         return [$last_gifts, $gifts];
     }
+
+
+    /**
+     * @desc 随机礼物
+     * @return mixed
+     */
+    static public function randomGift()
+    {
+        $list = Gifts::findByConditions([]);
+        $list = $list->toJson('gifts');
+
+        // 随机三个索引
+        $number = array();
+        $n = mt_rand(1, 3);
+        for ($i=0; $i<$n; $i++) {
+            $number[] = mt_rand(0, count($list['gifts'])-1);
+        }
+
+        // 匹配礼物
+        $gifts = array();
+        foreach ($number as $item=>$value) {
+            $gifts[] = $list['gifts'][$value];
+        }
+
+        // 随机数量
+        $data = array();
+        foreach ($gifts as $value) {
+            $data[] = array(
+                'id' => $value['id'],
+                'name' => $value['name'],
+                'image_url' => StoreFile::getUrl($value['image']),
+                'number' => mt_rand(1, 5)
+            );
+        }
+        return $data;
+    }
 }

@@ -31,9 +31,10 @@
             </li>
             <li>2. A通过你的推广页注册账号后，你将会获得A充值钻石的<span>5%</span>的奖励</li>
             <li>3. A通过你的推广页注册账号后，你将会获得A拉取的用户充值钻石的<span>1%</span>的奖励</li>
-
+            <li>4. 如发现恶意操作行为，hi语音将回收奖励</li>
         </ul>
     </div>
+    <div class="mine_text">活动最终解释权归Hi语音所有</div>
 </div>
 <script>
     var opts = {
