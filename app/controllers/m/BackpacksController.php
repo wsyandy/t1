@@ -15,6 +15,19 @@ class BackpacksController extends BaseController
         $code = $this->params('code');
         $start = $this->params('start', false);
 
+        // 用户信息
+        $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)['id' => 1];
+        }
+
+        // cache
+        $cache = \Backpacks::getHotWriteCache();
+        $cache_name = $this->getCacheName($user->id);
+        if ($cache->exists($cache_name)) {
+            $start = false;
+        }
+
         $this->view->title = '爆礼物';
         $this->view->start = $start;
         $this->view->sid = $sid;
@@ -27,15 +40,35 @@ class BackpacksController extends BaseController
      */
     public function prizeAction()
     {
+        // 用户信息
+        $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)['id' => 1];
+        }
+
+        // cache
+        $cache = \Backpacks::getHotWriteCache();
+        $cache_name = $this->getCacheName($user->id);
+
+        // 用户抽奖状态
+        if ($cache->exists($cache_name)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
+        }
+
+        // 随机爆类型
         $list = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
         $type = array_rand($list);
-        $boom_type = $list[$type];
+        $type = $list[$type];
 
-        if ($boom_type == BACKPACK_GIFT_TYPE) {
+        // 爆礼品
+        if ($type == BACKPACK_GIFT_TYPE) {
 
             $target = \Gifts::randomGift();
         } else
-            $target = \Backpacks::boomValue($boom_type);
+            $target = \Backpacks::boomValue($type);
+
+        // 倒计时3分钟领取
+        $cache->set($this->getCacheName($user->id), json_encode($target), 180);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -58,11 +91,22 @@ class BackpacksController extends BaseController
      */
     public function createAction()
     {
-        $target = $this->params('target');
-
-        if (!is_array($target)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败');
+        $type = $this->params('type', BACKPACK_GIFT_TYPE);
+        $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)['id' => 1];
         }
+
+        // 缓存3分钟
+        $cache = \Backpacks::getHotWriteCache();
+        $cache_name = $this->getCacheName($user->id);
+        $target = $cache->get($cache_name);
+
+        if (empty($target)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '三分钟超时！');
+        }
+
+        // 写礼物
         foreach ($target as $value) {
             $this->prepare($value['id'], $value['number']);
         }
@@ -116,6 +160,12 @@ class BackpacksController extends BaseController
 
     }
 
+
+
+    protected function getCacheName($user_id)
+    {
+        return 'boom_target_user:'.$user_id;
+    }
 
 
 }

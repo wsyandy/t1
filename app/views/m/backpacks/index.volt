@@ -172,9 +172,8 @@
         //打开窗口
         $btn.on('click',function (e) {
             e.preventDefault();
-            //$cover.addClass('is-visible');
+            $cover.addClass('is-visible');
         });
-        $cover.addClass('is-visible');
 
         //关闭窗口
         $cover.on('click', function(e){
@@ -185,7 +184,6 @@
             }
         });
 
-        vm.boomHistories();
     });
 
     var opts = {
@@ -205,10 +203,15 @@
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
-                    $.each(resp.target, function (index, item) {
-                        vm.target_list.push(item);
-                        vm.cache_list[index] = {'id':item.id, 'number':item.number};
-                    })
+                    if (resp.error_code == 0) {
+                        $.each(resp.target, function (index, item) {
+                            vm.target_list.push(item);
+                            vm.cache_list[index] = {'id':item.id, 'number':item.number};
+                        })
+                        $('.cover').addClass('is-visible');
+                    }
+                    return ;
+
                 })
 
             },
@@ -244,6 +247,7 @@
     };
     vm = XVue(opts);
     vm.targetList();
+    vm.boomHistories();
 
     // 公告滚动 封装函数
     function noticeUp(obj,top,time) {

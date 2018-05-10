@@ -9,12 +9,19 @@ class MakiTask extends Phalcon\Cli\Task
 {
     public function testxAction()
     {
+        $line = 1000; // 初始值
+        $total = 10000; // 流水上线
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');
+
+        $backpack = new Backpacks();
+
         foreach ($rooms['rooms'] as $value) {
             $room = Rooms::findFirstById($value['id']);
-            $res = $room->getDayIncome(date('Ymd'));
-            echoLine($res);
+            $noun = $room->getDayIncome(date('Ymd'));
+            if ($noun >= $line) {
+                $backpack->pushClientAboutBoom($total, $noun);
+            }
         }
     }
 

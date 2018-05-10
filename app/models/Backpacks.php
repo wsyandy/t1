@@ -50,9 +50,35 @@ class Backpacks extends BaseModel
      */
     static public function turnoverValue()
     {
+        $line = 1000; // 初始值
+        $total = 10000; // 流水上线
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');
-        return $rooms;
+
+        $backpack = new Backpacks();
+
+        foreach ($rooms['rooms'] as $value) {
+            $room = Rooms::findFirstById($value['id']);
+            $noun = $room->getDayIncome(date('Ymd'));
+
+            $backpack->pushClientAboutBoom($total, $noun);
+        }
+    }
+
+
+    public function pushClientAboutBoom($total_value, $cur_value)
+    {
+        $body = array(
+            'action' => 'blasting_gift',
+            'blasting_gift' => [
+                'expire_at' => (int)date('Ymd'),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => '',
+                'total_value' => $total_value,
+                'current_value' => $cur_value
+            ]
+        );
+        (new Rooms())->push($body);
     }
 
 
