@@ -717,6 +717,7 @@ class RoomsController extends BaseController
 
     function hotRoomNumScoreAction()
     {
+        $room_id = $this->params('id');
         //统计时间段房间流水 10分钟为单位
         $hot_cache = \Users::getHotWriteCache();
 
