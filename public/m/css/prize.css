@@ -1,0 +1,398 @@
+html{
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#670157), to(#7A0682));
+    background-image: -webkit-linear-gradient(top, #670157 0%, #7A0682 100%);
+    background-image: -o-linear-gradient(top, #670157 0%, #7A0682 100%);
+    background-image: linear-gradient(-180deg, #670157 0%, #7A0682 100%);
+}
+.banner{
+    width: 100%;
+}
+.rules_box{
+    position: relative;
+    width: 7.3rem;
+    height: 8.54rem;
+    margin: 0 auto;
+    padding: 0.14rem 0.48rem;
+}
+.rules_bg{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 7.3rem;
+    height: 8.54rem;
+}
+
+.rules_list{
+    position: relative;
+    padding: 0.4rem 0.3rem 0 0.3rem;;
+
+}
+.rules_list li{
+    font-size: 0.28rem;
+    color: #333333;
+    padding-bottom: 0.3rem;
+}
+.gift_type{
+    position: relative;
+    padding:0  0.3rem;
+    font-size: 0.28rem;
+    color: #333333;
+
+}
+.gift_type dt{
+    color: #333333;
+    font-weight: bold;
+    padding:  0.15rem 0;
+}
+.footer{
+    position: relative;
+    width: 100%;
+    text-align: center;
+    padding:0.6rem 0;
+    font-size: 0.28rem;
+    color: #fff;
+}
+.notice_box {
+    width: 7.47rem;
+    height: 2.37rem;
+    background-image: url("../images/notice_bg.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    padding: 0.64rem  1rem;
+}
+/*滚动公告*/
+.notice {
+    width: 5.6rem;
+    height: 0.64rem;
+    overflow: hidden;
+}
+.notice ul li {
+    line-height: 0.64rem;
+    font-size: 0.28rem;
+    color: #fff;
+    display: block;
+    white-space: nowrap;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.notice ul li  .highlight{
+    font-size: 0.4rem;
+    color: #00F3FF;
+    padding: 0 0.1rem;
+}
+/*已抽中奖品*/
+.gift_box{
+    position: relative;
+    width: 6.9rem;
+    height: 5.06rem;
+    margin: 0.4rem auto 0.8rem auto;
+    background: #FFAA36;
+    -webkit-box-shadow: 0 5px 20px 0 #3C0040;
+    box-shadow: 0 5px 20px 0 #3C0040;
+    border-radius: 16px;
+}
+/*标题*/
+.title{
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 100%;
+    height: 1.4rem;
+}
+.dot_left{
+    position: relative;
+    display: block;
+    width: 0.1rem;
+    height: 0.1rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+}
+.dot_left:before{
+    content: "";
+    display: block;
+    position: absolute;
+    top:50%;
+    left: 0;
+    -webkit-transform: translate(-200%,-50%);
+    -ms-transform: translate(-200%,-50%);
+    transform: translate(-200%,-50%);
+    width: 0.06rem;
+    height: 0.06rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+}
+.title_text{
+    font-size: 0.5rem;
+    color: #FFFEFF;
+    padding: 0 0.15rem;
+}
+.dot_right{
+    position: relative;
+    display: block;
+    width: 0.1rem;
+    height: 0.1rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+}
+.dot_right:before{
+    content: "";
+    display: block;
+    position: absolute;
+    top:50%;
+    right: 0;
+    -webkit-transform: translate(200%,-50%);
+    -ms-transform: translate(200%,-50%);
+    transform: translate(200%,-50%);
+    width: 0.06rem;
+    height: 0.06rem;
+    background-color: #ffffff;
+    border-radius: 50%;
+}
+.gift_list{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding: 0.3rem 0.15rem;
+}
+.gift_list li{
+    width: 33%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin-bottom: 0.3rem;
+}
+.list_img{
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 0.16rem;
+    background-color: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.list_img img{
+    max-width: 100%;
+    max-height: 100%;
+}
+.list_txt{
+    padding-top: 0.3rem;
+    font-size: 0.32rem;
+    color: #FFFEFF;
+}
+.btn{
+    display: block;
+    margin: 0 auto;
+    width: 5.84rem;
+    height:1.47rem;
+    background-image: url("../images/btn_bg.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    font-size: 0.36rem;
+    color: #AA0101;
+    text-align: center;
+    line-height: 1.47rem;
+}
+/*弹框样式*/
+.cover{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    -o-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    z-index:9999;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.cover.is-visible {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: opacity 0.3s 0s, visibility 0s 0s;
+    -o-transition: opacity 0.3s 0s, visibility 0s 0s;
+    transition: opacity 0.3s 0s, visibility 0s 0s;
+}
+
+
+.popup{
+    position: relative;
+    width: 5.9rem;
+    min-height: 6rem;
+    background-image: -webkit-radial-gradient(51% 120%, #FF2E62 45%, #FF5431 100%);
+    background-image: -o-radial-gradient(51% 120%, #FF2E62 45%, #FF5431 100%);
+    background-image: radial-gradient(51% 120%, #FF2E62 45%, #FF5431 100%);
+    -webkit-box-shadow: inset 0 -0.11rem 0.3rem 0 #F88922;
+    box-shadow: inset 0 -0.11rem 0.3rem 0 #F88922;
+    border-radius: 0.5rem;
+}
+.popup_top{
+    position: absolute;
+    left: 0.18rem;
+    bottom:0;
+    width: 5.54rem;
+    min-height: 6.8rem;
+    background-image: url("../images/popup_bg.png");
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% ;
+
+    padding: 0.8rem 0.6rem 3rem 0.6rem  ;
+}
+.popup_head{
+    position: relative;
+    width: 100%;
+    padding-bottom: 0.3rem;
+}
+.popup_head img{
+    width: 3.81rem;
+    height: 0.46rem;
+}
+
+.popup_bottom{
+    width: 100%;
+    height: 3.89rem;
+    position: absolute;
+    bottom:0;
+    left:0;
+    background-image: url("../images/popup_bottom.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+}
+.btn_popup{
+    display: block;
+    margin: 1.8rem auto  0.8rem auto;
+    width: 5.66rem;
+    height:1.47rem;
+    background-image: url("../images/btn_popup.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    font-size: 0.36rem;
+    color: #AA0101;
+    text-align: center;
+    line-height: 1.47rem;
+}
+/*单个奖品列表*/
+.prize_box{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    font-size: 0.34rem;
+    color: #fff;
+}
+.prize{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+}
+.ico{
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-right: 0.1rem;
+}
+/*多个奖品列表*/
+.prizes_body{
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+.prizes_body .prize{
+    width: 100%;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding:  0.3rem 0 0.45rem 0;
+}
+.prizes_list{
+    width: 33%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.prizes_img{
+    width: 1.21rem;
+    height:1.24rem;
+    background-image: url("../images/prizes_img.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.prizes_img img{
+    margin: 0;
+}

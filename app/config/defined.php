@@ -143,6 +143,7 @@ define('ACCOUNT_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
 define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
 define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES',33);  //守护愿望支出
+define('ACCOUNT_TYPE_IN_BOOM', 34); //爆礼物获得
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到
@@ -157,6 +158,7 @@ define('GOLD_TYPE_ACTIVITY_LUCKY_DRAW', 12); //活动抽奖赠送
 define('GOLD_TYPE_BIND_MOBILE', 13); //绑定手机赠送
 define('GOLD_TYPE_DRAW_INCOME', 30); //转盘抽奖收入
 define('GOLD_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
+define('GOLD_TYPE_IN_BOOM', 32); // 爆礼物获得
 
 
 // 兑换比例
@@ -319,4 +321,6 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 
 
 // 背包类型
-define('BACKPACK_GIFT_TYPE', 1);
+define('BACKPACK_GIFT_TYPE', 1); // 礼物
+define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
+define('BACKPACK_GOLD_TYPE', 3); // 金币

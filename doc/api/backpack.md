@@ -48,3 +48,25 @@
     "android_stable_version": 8
 }
 ```
+
+
+
+## 2 礼物背包入口
+
+> http-get ```/api/backpacks/boom```
+
+
+##### 请求参数说明
+|参数|名称|值类型|是否可空|备注|
+|---|---|---|---|---|
+
+##### 返回参数说明
+```
+{
+    "error_code": 0,
+    "error_reason": "",
+    "error_url": "",
+    "now_at": 1525915810,
+    "boom_url": "url:\/\/m\/backpacks"
+}
+```

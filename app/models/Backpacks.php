@@ -9,7 +9,17 @@
 class Backpacks extends BaseModel
 {
 
+    static $DIAMONDIMG = '/m/images/ico.png'; // 钻石图片
 
+    static $GOLDIMG = '/m/images/gold.png'; // 金币图片
+
+
+    /**
+     * 背包礼物列表
+     * @param $user
+     * @param $opt
+     * @return PaginationModel
+     */
     static public function findListByUserId($user, $opt)
     {
         // search for where
@@ -34,8 +44,102 @@ class Backpacks extends BaseModel
         return $list;
     }
 
+
     /**
-     * @todo 实际返回客户端的数据体
+     * @desc 爆礼物房间流水值
+     */
+    static public function turnoverValue()
+    {
+        $rooms = Rooms::dayStatRooms();
+        $rooms = $rooms->toJson('rooms');
+        return $rooms;
+    }
+
+
+    /**
+     * 数据写入背包
+     * @param $user
+     * @param $target 当类型为钻石或金币时，值为0
+     * @param $number
+     * @param int $type
+     * @param int $status
+     * @return bool
+     */
+    static public function createTarget($user, $target, $number, $type = BACKPACK_GIFT_TYPE, $status = STATUS_ON)
+    {
+        if (isDevelopmentEnv()) {
+            $user = (object)['id' => 1];
+        }
+
+        $backpack = new \Backpacks();
+
+        // 礼物类型
+        if ($type == BACKPACK_GIFT_TYPE) {
+
+            $conditions = [
+                'conditions' => 'user_id = :user_id: and target_id = :target_id:',
+                'bind' => [
+                    'user_id' => $user->id,
+                    'target_id' => $target
+                ]
+            ];
+
+            // 已经爆过的礼物更新数量
+            if (Backpacks::count($conditions) >= 1) {
+                $item = Backpacks::findByConditions([
+                    'user_id' => $user->id,
+                    'target_id' => $target
+                ]);
+                $item = $item->toJson('backpack');
+                $id = $item['backpack'][0]['id'];
+                $backpack->id = $id;
+                $backpack->increase('number', $number);
+                return true;
+            }
+        }
+
+        // 新增礼物进背包
+        $backpack->user_id = $user->id;
+        $backpack->target_id = $target;
+        $backpack->number = $number;
+        $backpack->type = $type;
+        $backpack->status = $status;
+        $backpack->created_at = time();
+        $backpack->updated_at = time();
+        $backpack->save();
+        return true;
+    }
+
+
+    /**
+     * 爆除礼物外的其他东西
+     * @param int $type
+     * @return array
+     */
+    static public function boomValue($type)
+    {
+        if ($type == BACKPACK_DIAMOND_TYPE) {
+
+            $target[] = [
+                'id' => 0,
+                'name' => '钻石',
+                'image_url' => \Backpacks::getDiamondImage(),
+                'number' => mt_rand(10, 1000)
+            ];
+        } else {
+
+            $target[] = [
+                'id' => 0,
+                'name' => '金币',
+                'image_url' => \Backpacks::getGoldImage(),
+                'number' => mt_rand(500, 2000)
+            ];
+        }
+        return $target;
+    }
+
+
+    /**
      * @return array
      */
     public function toSimpleJson()
@@ -65,6 +169,7 @@ class Backpacks extends BaseModel
 
 
     /**
+     * 返回礼物对象
      * @return object
      */
     public function getGift()
@@ -73,4 +178,21 @@ class Backpacks extends BaseModel
         return $gift;
     }
 
+
+    /**
+     * @return string
+     */
+    static function getDiamondImage()
+    {
+        return self::$DIAMONDIMG;
+    }
+
+
+    /**
+     * @return string
+     */
+    static function getGoldImage()
+    {
+        return self::$GOLDIMG;
+    }
 }
