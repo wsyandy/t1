@@ -48,31 +48,6 @@
                     {% endif %}
                 {% endfor %}
 
-                {#<li>
-                    <span class="type">总榜</span>
-                    <img src="./images/m_zong.png" alt="头像" />
-                    <span class="name">tm.卡卡帝王套齐</span>
-                    <span>魅力值：6.6万</span>
-                </li>
-                <li>
-                    <span class="type">社会猫</span>
-                    <img src="images/m_bao.png" alt="头像" />
-                    <span class="name">tm.卡卡帝王套齐了</span>
-                    <span>魅力值：6.6万</span>
-                </li>
-                <li>
-                    <span class="type">小猪佩奇</span>
-                    <img src="images/m_dior.png" alt="头像" />
-                    <span class="name">tm.卡卡帝王套齐</span>
-                    <span>魅力值：6.6万</span>
-                </li>
-                <li>
-                    <span class="type">肥皂</span>
-                    <img src="images/m_tea.png" alt="头像" />
-                    <span class="name">tm.卡卡帝王套齐了</span>
-                    <span>魅力值：6.6万</span>
-                </li>#}
-
             </ul>
         </div>
         <div class="week_rules_slogan">
@@ -91,20 +66,6 @@
                         <span>{{ gift.name }}</span>
                     </li>
                 {% endfor %}
-
-
-                {#<li>
-                    <img src="./images/gift_meigui.png" alt="">
-                </li>
-                <li>
-                    <img src="./images/gift_love.png" alt="">
-                </li>
-                <li>
-                    <img src="./images/gift_m.png" alt="">
-                </li>
-                <li>
-                    <img src="./images/gift_merry.png" alt="">
-                </li>#}
 
             </ul>
         </div>
@@ -172,86 +133,6 @@
             </ul>
         {% endif %}
 
-        {#<ul class="week_list_tab">
-            <li>
-                <img src="./images/week_zong.png" alt="icon">
-                <span>总榜</span>
-            </li>
-            <li>
-                <img src="./images/week_love.png" alt="icon">
-                <span>水晶项链</span>
-            </li>
-            <li>
-                <img src="./images/week_marry.png" alt="icon">
-                <span>YSL口红</span>
-            </li>
-            <li>
-                <img src="./images/week_meigui.png" alt="icon">
-                <span>金粉玫瑰</span>
-            </li>
-        </ul>
-        <ul class="week_list_content">
-            <li>
-                <span class="neo"></span>
-                <img src="images/s_bg.png" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="two"></span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族追光者家族追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="three"></span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">4</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">5</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">6</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">7</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">8</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">9</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-            <li>
-                <span class="level">10</span>
-                <img src="" alt="头像" />
-                <span class="name">追光者家族</span>
-                <span>魅力值：2.2万</span>
-            </li>
-        </ul>#}
 
         <p class="week_hint_text">活动最终解释权归Hi语音官方团队</p>
     </div>
