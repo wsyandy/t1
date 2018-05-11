@@ -2790,6 +2790,10 @@ class Rooms extends BaseModel
 
             $total_score = $room->getTotalScore();
 
+            if ($total_score < 1) {
+                continue;
+            }
+
             if ($room->isShieldRoom()) {
                 $shield_room_ids[$room->id] = $total_score;
             } else {
