@@ -18,10 +18,9 @@
     })(document, window);
 </script>
 
-<div id="app" class="week_activity">
 
     <div class="week_activity_banner"></div>
-    <div id="week_activity" class="week_activity">
+    <div id="app" class="week_activity">
         <span class="week_title_type one_title_type"><img src="/m/images/title_meili_20180514.png"></span>
         <div class="week_rules_box week_rules_background">
             <ul class="week_charm_topul">
@@ -137,7 +136,6 @@
         <p class="week_hint_text">活动最终解释权归Hi语音官方团队</p>
     </div>
 
-</div>
 
 <script>
 
