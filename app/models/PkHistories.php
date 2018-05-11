@@ -120,7 +120,7 @@ class PkHistories extends BaseModel
     static function updatePkHistories($sender, $total_amount, $receiver_id, $pay_type)
     {
         $pk_history_datas = self::updatePkHistoryInfo($sender, $total_amount, $receiver_id, $pay_type);
-
+        info('更新',$sender, $total_amount, $receiver_id, $pay_type);
         if (isPresent($pk_history_datas)) {
             $body = ['action' => 'pk', 'pk_history' => [
                 'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
