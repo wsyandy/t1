@@ -232,4 +232,55 @@ class Backpacks extends BaseModel
     {
         return self::$GOLDIMG;
     }
+
+    function isGift()
+    {
+        return BACKPACK_GIFT_TYPE == $this->type;
+    }
+
+    function sendGift($user, $user_id, $gift_num, $opt = [])
+    {
+        $receiver_ids = explode(',', $user_id);
+
+        if ($this->isGift()) {
+            return [ERROR_CODE_FAIL, '赠送失败', null];
+        }
+
+        $gift = $this->getGift();
+
+        if (!$gift) {
+            return [ERROR_CODE_FAIL, '赠送失败', null];
+        }
+
+        if ($this->number < count($receiver_ids) * $gift_num) {
+            return [ERROR_CODE_FAIL, '赠送失败', null];
+        }
+
+        $give_result = \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
+        $notify_type = fetch($opt, 'notify_type');
+
+        if ($give_result) {
+
+            $notify_data = \ImNotify::generateNotifyData(
+                'gifts',
+                'give',
+                $notify_type,
+                [
+                    'gift' => $gift,
+                    'gift_num' => $gift_num,
+                    'sender' => $user,
+                    'user_id' => $receiver_ids[0]
+                ]
+            );
+
+            $gift_amount = count($receiver_ids) * $gift->amount;
+            $res = array_merge($notify_data, ['diamond' => $user->diamond, 'gold' => $user->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
+
+            $error_reason = "赠送成功";
+
+            return [ERROR_CODE_SUCCESS, $error_reason, $res];
+        } else {
+            return [ERROR_CODE_FAIL, '赠送失败', null];
+        }
+    }
 }
