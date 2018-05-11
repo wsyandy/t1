@@ -24,9 +24,9 @@
                 <p class="prize_tit" v-text="prize.tit"></p>
                 <p class="prize_txt" v-text="prize.txt"></p>
                 <p class="prize_tip" v-text="prize.tip" v-if="prize.tip"></p>
-                <p v-if="prize.info" class="prize_info_box" >
-                    <span class="prize_info"  v-text="prize.info"></span>
-                    <span class="prize_bubble"  v-text="prize.bubble"></span>
+                <p v-if="prize.info" class="prize_info_box">
+                    <span class="prize_info" v-text="prize.info"></span>
+                    <span class="prize_bubble" v-text="prize.bubble"></span>
                 </p>
             </li>
         </ul>
@@ -145,8 +145,8 @@
                 {
                     tit: '第一名',
                     txt: '现金999元+9999钻石+猎影15天',
-                    info:'官方主办冠军专属演唱会',
-                    bubble:'顶级资源位',
+                    info: '官方主办冠军专属演唱会',
+                    bubble: '顶级资源位',
                 },
                 {
                     tit: '第二名',
@@ -228,11 +228,11 @@
             },
             share: function (platform, type) {
                 var data = {
-                    code: vm.code,
-                    sid: vm.sid,
+                    code: code,
+                    sid: sid,
                     platform: platform,
                     type: type,
-                    share_source:'match_sing'
+                    share_source: 'match_sing'
                 };
 
                 $.authPost('/m/shares/create', data, function (resp) {
@@ -241,7 +241,7 @@
                 })
 
             },
-            }
-        };
+        }
+    };
     vm = XVue(opts);
 </script>
