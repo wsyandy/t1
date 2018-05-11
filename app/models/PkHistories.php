@@ -20,8 +20,6 @@ class PkHistories extends BaseModel
 
 
     static $STATUS = [STATUS_ON => '创建成功', STATUS_PROGRESS => 'PK中', STATUS_OFF => 'PK结束'];
-    //send_gift_user send_gift_amount
-    static $PK_TYPE = [SEND_GIFT_USER => '按赠送礼物人数', SEND_GIFT_AMOUNT => '按赠送礼物价值总数'];
 
     function beforeCreate()
     {
@@ -186,10 +184,10 @@ class PkHistories extends BaseModel
             $current_score = $cache->hget($key, $receiver_id);
             $pk_type = $cache->hget($key, 'pk_type');
             switch ($pk_type) {
-                case SEND_GIFT_USER:
+                case 'send_gift_user':
                     $current_score = self::checkSendGiftUser($sender, $receiver_id, $current_score);
                     break;
-                case SEND_GIFT_AMOUNT:
+                case 'send_gift_amount':
                     if ($pay_type == GIFT_PAY_TYPE_DIAMOND) {
                         $current_score = $current_score + $total_amount;
                     }
