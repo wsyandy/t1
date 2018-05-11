@@ -219,7 +219,7 @@ class PkHistories extends BaseModel
         $this->right_pk_user_score = $right_pk_user_score;
         if ($this->update()) {
             $cache->del($key);
-            $cache->del($send_gift_user_key);
+            $cache->expire($send_gift_user_key, 0);
         }
     }
 
