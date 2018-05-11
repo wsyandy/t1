@@ -298,8 +298,6 @@
                     vm.show_wish_histories = resp.my_wish_datas;
                     vm.releaseWishState = 1;
                     vm.myWishList = true;
-                }else{
-                    alert('您还有没有发不过愿望呢，快去许愿吧！');
                 }
             }
         });
@@ -316,8 +314,6 @@
                     vm.my_wish_datas = resp.my_wish_datas;
                     vm.releaseWishState = 1;
                     vm.releaseWish = true;
-                }else{
-                    alert('您还有没有发不过愿望呢，快去许愿吧！');
                 }
             }
         });
