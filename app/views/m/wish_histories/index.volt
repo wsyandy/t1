@@ -249,7 +249,8 @@
                     code: vm.code,
                     sid: vm.sid,
                     platform: platform,
-                    type: type
+                    type: type,
+                    share_source:'gold_works'
                 };
 
                 $.authPost('/m/shares/create', data, function (resp) {
