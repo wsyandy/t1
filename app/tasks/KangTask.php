@@ -763,8 +763,8 @@ EOF;
             $user_ids[] = $user->id;
 
             if ($num >= 50) {
-                Chats::delay(mt_rand(1, 1800))->batchSendTextSystemMessage($user_ids, $content);
-                $delay += 2;
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay = mt_rand(1, 3600);
                 $user_ids = [];
                 $num = 0;
             }
