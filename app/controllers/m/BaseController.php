@@ -49,14 +49,6 @@ class BaseController extends \ApplicationController
      */
     function currentUser($force = false)
     {
-        // 开发环境默认 user_id 来测试
-        /*if (isDevelopmentEnv()) {
-            $user = (object)array(
-                'id' => 1
-            );
-            return $user;
-        }*/
-
         $user_id = $this->currentUserId();
 
         if (isBlank($user_id)) {
