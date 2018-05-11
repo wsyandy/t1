@@ -3971,7 +3971,14 @@ EOF;
         $room_ids = [90, 91, 92, 95, 115, 117, 111, 122, 180, 107];
 
         $hot_cache = Rooms::getHotWriteCache();
-        $res = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+        $room_ids = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+
+        foreach ($room_ids as $room_id) {
+            $room = Rooms::findFirstById($room_id);
+            $room->online_status = STATUS_ON;
+            $room->update();
+        }
+
         echoLine($res);
         foreach ($room_ids as $id) {
             $hot_cache->zadd('ios_auth_room_list', time(), $id);
