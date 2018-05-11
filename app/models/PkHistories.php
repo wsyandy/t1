@@ -117,9 +117,9 @@ class PkHistories extends BaseModel
         ];
     }
 
-    static function updatePkHistories($sender, $total_amount, $receiver_id)
+    static function updatePkHistories($sender, $total_amount, $receiver_id, $pay_type)
     {
-        $pk_history_datas = self::updatePkHistoryInfo($sender->current_room_id, $total_amount, $receiver_id);
+        $pk_history_datas = self::updatePkHistoryInfo($sender->current_room_id, $total_amount, $receiver_id, $pay_type);
 
         if (isPresent($pk_history_datas)) {
             $body = ['action' => 'pk', 'pk_history' => [
@@ -178,7 +178,7 @@ class PkHistories extends BaseModel
         return $cache->hget($key, 'room_id');
     }
 
-    static function updatePkHistoryInfo($room_id, $total_amount, $receiver_id)
+    static function updatePkHistoryInfo($room_id, $total_amount, $receiver_id, $pay_type)
     {
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
@@ -190,13 +190,15 @@ class PkHistories extends BaseModel
                     $current_score = $current_score + 1;
                     break;
                 case SEND_GIFT_AMOUNT:
-                    $current_score = $current_score + $total_amount;
+                    if ($pay_type == GIFT_PAY_TYPE_DIAMOND) {
+                        $current_score = $current_score + $total_amount;
+                    }
                     break;
             }
             $cache->hmset($key, [$receiver_id => $current_score]);
         }
         $datas = $cache->hgetall($key);
-        info('更新pk记录', $key, $datas, $pk_type);
+        info('更新pk记录', $key, $datas, $current_score);
 
         return $datas;
     }
