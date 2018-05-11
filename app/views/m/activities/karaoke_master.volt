@@ -6,7 +6,6 @@
     <img class="bg" src="images/bg.png" alt="">
     <div class="header">
         <img class="headerbg" src="images/headerbg.png" alt="">
-        <p class="headertxt">快用你的歌声来征服我们！</p>
     </div>
     <div class="room_box">
         <img class="roombg" src="images/roombg.png" alt="">
@@ -25,6 +24,10 @@
                 <p class="prize_tit" v-text="prize.tit"></p>
                 <p class="prize_txt" v-text="prize.txt"></p>
                 <p class="prize_tip" v-text="prize.tip" v-if="prize.tip"></p>
+                <p v-if="prize.info" class="prize_info_box" >
+                    <span class="prize_info"  v-text="prize.info"></span>
+                    <span class="prize_bubble"  v-text="prize.bubble"></span>
+                </p>
             </li>
         </ul>
     </div>
@@ -56,23 +59,23 @@
         <div class="sign_step">
             <ul class="step_left">
                 <li>
-                    <p class="step_time">2018年5月17日</p>
+                    <p class="step_time">2018年5月20日</p>
                     <p class="step_title">海选</p>
                 </li>
                 <li class="step2">
-                    <p class="step_time">2018年5月19日</p>
+                    <p class="step_time">2018年5月22日</p>
                     <p class="step_title">第二轮</p>
                 </li>
             </ul>
             <ul class="step_right">
                 <li class="step1">
                     <p class="step_title">第一轮</p>
-                    <p class="step_time">2018年5月18日</p>
+                    <p class="step_time">2018年5月21日</p>
                 </li>
                 <li class="step4">
                     <p class="step_title">
                         半决赛<br>总决赛</p>
-                    <p class="step_time">2018年5月20日</p>
+                    <p class="step_time">2018年5月26日</p>
                 </li>
             </ul>
         </div>
@@ -92,6 +95,23 @@
     <div class="btn" @click="karaokeMasterApply()">
         <img class="btn_bg" src="images/btn_bg.png" alt="">
         <span>点击报名</span>
+    </div>
+    <div class="share_box" @click="openShare()">
+        <img class="btn_share" src="images/btn_share.png" alt="">
+        <span>分享</span>
+    </div>
+    <!-- 分享 -->
+    <div v-if="isShareToast" class="share_toast">
+        <ul class="share_toast_ul">
+            <li @click="share('wx_friend','web_page')"><img src="/m/images/weixin_icon.png" alt=""/><span>微信</span></li>
+            <li @click="share('wx_moments','web_page')"><img src="/m/images/friends_icon.png" alt=""/><span>朋友圈</span>
+            </li>
+            <li @click="share('qq_friend','web_page')"><img src="/m/images/qq_icon.png" alt=""/><span>QQ</span></li>
+            <li @click="share('qq_zone','web_page')"><img src="/m/images/kongjian_icon.png" alt=""/><span>QQ空间</span>
+            </li>
+            <li @click="share('sinaweibo','web_page')"><img src="/m/images/weibo_icon.png" alt=""/><span>微博</span></li>
+        </ul>
+        <span @click="cancelShare()" class="cancel">取消</span>
     </div>
     {#密码弹框#}
     <div class="room_cover">
@@ -116,6 +136,7 @@
     code = "{{ code }}";
     var opts = {
         data: {
+            isShareToast: false,
             room: {
                 id: '房主ID：1009978',
                 sponsor: '(本次比赛由SH.恋爱家族主办）'
@@ -123,7 +144,9 @@
             prizes: [
                 {
                     tit: '第一名',
-                    txt: '现金999元+9999钻石+猎影15天'
+                    txt: '现金999元+9999钻石+猎影15天',
+                    info:'官方主办冠军专属演唱会',
+                    bubble:'顶级资源位',
                 },
                 {
                     tit: '第二名',
@@ -153,7 +176,7 @@
                 }
             ],
             sign: {
-                time: '2018年5月9日00：00—5月16日23:59结束',
+                time: '2018年5月11日00:00—5月19日23:59结束',
                 consult: '每日报名咨询时间10:00—18:00',
                 way: [
                     {
@@ -196,7 +219,28 @@
                         location.href = "app://rooms/detail?id=" + vm.room_id;
                     }
                 });
-            }
+            },
+            openShare: function () {
+                vm.isShareToast = true;
+            },
+            cancelShare: function () {
+                vm.isShareToast = false;
+            },
+            share: function (platform, type) {
+                var data = {
+                    code: vm.code,
+                    sid: vm.sid,
+                    platform: platform,
+                    type: type,
+                    share_source:'match_sing'
+                };
+
+                $.authPost('/m/shares/create', data, function (resp) {
+                    vm.redirect_url = resp.test_url;
+                    location.href = vm.redirect_url;
+                })
+
+            },
             }
         };
     vm = XVue(opts);

@@ -709,7 +709,7 @@ class ActivitiesController extends BaseController
         $user = \Users::findFirstByUid($room_host_uid);
         $room = \Rooms::findFirstByUserId($user->id);
 
-        $this->view->title = '麦霸挑战赛';
+        $this->view->title = 'HI语音歌神争霸';
         $this->view->room_id = $room->id;
 
     }
