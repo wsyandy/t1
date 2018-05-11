@@ -141,7 +141,7 @@ class Chats extends BaseModel
 
     static function batchSendTextSystemMessage($user_ids, $content = '')
     {
-        return;
+        
         if (!$content) {
             info("content_error", $content);
             return false;
