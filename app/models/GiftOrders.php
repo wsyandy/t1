@@ -247,7 +247,8 @@ class GiftOrders extends BaseModel
             } else {
                 $gift_order->type = $type;
             }
-
+            
+            debug('判断前赠送者当前房间ID',$sender_current_room_id);
             if ($sender_current_room_id) {
                 debug('赠送者当前房间ID',$sender_current_room_id);
                 $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
