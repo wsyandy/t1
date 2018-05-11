@@ -208,6 +208,7 @@ class PkHistories extends BaseModel
         $room_id = $this->room_id;
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
+        $send_gift_user_key = self::generatePkForUserInRoom($room_id, $this->user_id);
         $datas = $cache->hgetall($key);
         info('pk_history_info=>', $datas, $key);
 
@@ -218,6 +219,7 @@ class PkHistories extends BaseModel
         $this->right_pk_user_score = $right_pk_user_score;
         if ($this->update()) {
             $cache->del($key);
+            $cache->del($send_gift_user_key);
         }
     }
 
@@ -242,7 +244,8 @@ class PkHistories extends BaseModel
     {
         $cache = self::getHotWriteCache();
         $key = self::generatePkForUserInRoom($sender->current_room_id, $receiver_id);
-        $ids = $cache->zrange($key, 0. - 1);
+        $ids = $cache->zrange($key, 0, -1);
+        info('赠送者ID', $sender->id, '曾经送过的ID', $ids);
         if (!in_array($sender->id, $ids)) {
             $cache->zadd($key, time(), $sender->id);
             return $current_score + 1;
