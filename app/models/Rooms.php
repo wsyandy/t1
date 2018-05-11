@@ -2549,17 +2549,6 @@ class Rooms extends BaseModel
             'order' => 'last_at desc, user_type asc'
         ];
 
-        $shield_room_ids = $user->getShieldRoomIds();
-
-        if ($shield_room_ids) {
-            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
-        }
-
-        if (count($filter_ids) > 0) {
-            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
-            return \Rooms::findPagination($cond, $page, $per_page);
-        }
-
         if (STATUS_ON == $broadcast) {
             $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
             $cond['conditions'] .= " and theme_type in ($theme_types)";
@@ -2593,6 +2582,17 @@ class Rooms extends BaseModel
                 $cond['bind']['types'] = "%" . $search_type . "%";
 
             }
+        }
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $filter_ids = array_unique(array_merge($filter_ids, $shield_room_ids));
+        }
+
+        if (count($filter_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
+            return \Rooms::findPagination($cond, $page, $per_page);
         }
 
 
