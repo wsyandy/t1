@@ -219,6 +219,14 @@ trait RoomAttrs
         return $total_score;
     }
 
+    function getTotalScoreByCache()
+    {
+        $user_db = Users::getUserDb();
+        $total_score = $user_db->hegt("hot_room_score_record_room_id_{$this->id}", 'total_score');
+
+        return intval($total_score);
+    }
+
     //用户总人数
     function getUserNum()
     {
