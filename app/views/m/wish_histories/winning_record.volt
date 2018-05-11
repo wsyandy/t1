@@ -16,36 +16,19 @@
             doc.addEventListener('DOMContentLoaded', recalc, false);
         })(document, window);
     </script>
-<body>
-<div class="wishing_rules wishing_record wishing_back" onclick="javascrtpt:history.back(-1);">
-    <span>返回上级</span>
-</div>
-<div id="app" class="winning_record">
+<div id="app" class="winning_record">、
+    <div class="wishing_rules wishing_record wishing_back" onclick="javascrtpt:history.back(-1);">
+        <span>返回上级</span>
+    </div>
     <ul class="winning_record_ul">
-        {% for val in lucky_names %}
+        {% for lucky_name in lucky_names %}
         <li>
             <img src="" alt="">
             <div class="winning_record_box">
-                <span>{{ val }}</span>
+                <span>{{ lucky_name }}</span>
                 <p>获得 <span> 3000元机械手表</span></p>
             </div>
         </li>
         {% endfor %}
     </ul>
 </div>
-<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-
-        },
-        mounted:function(){
-
-        },
-        methods: {
-
-        }
-    })
-</script>
-</body>
-</html>

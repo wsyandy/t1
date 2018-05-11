@@ -15,7 +15,7 @@ html,body{
     width: 100%;
     height: 100%;
 }
-@font-face {font-family:soundFont; src: url("./方正喵呜体的副本.ttf")}
+@font-face {font-family:soundFont; src: url("../mw.ttf")}
 
 .wishing_tree{
     width: 100%;

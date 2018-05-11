@@ -47,6 +47,7 @@ class WishHistoriesController extends BaseController
         if ($result) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功！');
         }
+        return $this->renderJSON(ERROR_CODE_FAIL, '发布失败');
     }
 
     function myWishHistoriesAction()
@@ -59,8 +60,8 @@ class WishHistoriesController extends BaseController
             $num_text = [];
             $guard_number = \WishHistories::getGuardedNumber($product_channel_id, $my_wish_history->id);
             $wish_text = $my_wish_history->wish_text;
-            array_push($num_text,$guard_number,$wish_text);
-            array_push($my_wish_datas,$num_text);
+            array_push($num_text, $guard_number, $wish_text);
+            array_push($my_wish_datas, $num_text);
         }
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['my_wish_datas' => $my_wish_datas]);
     }
@@ -90,8 +91,7 @@ class WishHistoriesController extends BaseController
     function winningRecordAction()
     {
         $product_channel_id = $this->currentProductChannelId();
-        $key = \WishHistories::getGuardWishKey($product_channel_id);
-        $lucky_names = \WishHistories::getRand($key);
+        $lucky_names = \WishHistories::getLuckyUserList($product_channel_id);
 
         $this->view->lucky_names = $lucky_names;
     }
@@ -100,39 +100,29 @@ class WishHistoriesController extends BaseController
     {
         $product_channel_id = $this->currentProductChannelId();
         $key = \WishHistories::getGuardWishKey($product_channel_id);
-        $UserIdGuardeds = \WishHistories::getUserIdGuarded($key, 20);
-
-        $tree_list = [];
-        foreach ($UserIdGuardeds as $UserIdGuarded) {
-            $user = \Users::findById($UserIdGuarded['user_id']);
-            $tree_list[] = array(
-                'user_id' => $UserIdGuarded['user_id'],
-                'guarded_number' => $UserIdGuarded['guarded_number'],
-                'sex' => $user->sex == 1 ? "man" : "woman" ,
-                'avatar' =>$user->avatar_url,
-                'nickname' => $user->nickname,
-                'age' => $user->age,
-            );
+        $user_db = \Users::getUserDb();
+        $res = $user_db->zrevrange($key, 0, 19, 'withscores');
+        $ids = array_keys($res);
+        $wish_history_lists = \WishHistories::findByIds($ids);
+        $wish_histories = [];
+        foreach ($wish_history_lists as $wish_history_list) {
+            $wish_histories[] = $wish_history_list->toSimpleJson();
         }
-        //return $this->renderJSON(ERROR_CODE_SUCCESS, '守护成功', ['tree_list' => $tree_list]);
-        $this->view->tree_list = $tree_list;
+
+        $this->view->wish_histories = json_encode($wish_histories, JSON_UNESCAPED_UNICODE);
     }
 
     function searchUserAction()
     {
-        $uid = $this->params('param');
-        $user = \Users::findByConditions(array('uid'=>$uid));
-        $user = $user->toJson('user');
-        $user = $user['user'][0];
+        $uid = $this->params('uid');
+        $user = \Users::findFirstBy(['uid' => $uid]);
 
-        $wish_histories = \WishHistories::findByConditions(array('user_id'=>$user['id']));
-        $wish_histories = $wish_histories->toJson('$wish_histories');
-        //$wish_histories = $wish_histories['$wish_histories'][0];
+        $show_wish_histories = \WishHistories::findBy(['user_id' => $user->id]);
+        if ($show_wish_histories) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $show_wish_histories->toJson('show_wish_histories', 'toSimpleJson'));
+        }
 
-
-
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['wish_histories' => $wish_histories]);
-
+        return $this->renderJSON(ERROR_CODE_FAIL, '当前用户暂时还没好友发布愿望哦！');
     }
 
 }
