@@ -169,11 +169,16 @@ class WishHistories extends BaseModel
     {
         $db = \Users::getUserDb();
         $lucky_user_key = self::generateLuckyUserList($product_channel_id);
-        $start_at = strtotime(date('Y-m-d 23:59:59', time()));
+        $start_at = strtotime(date('Y-m-d 19:59:59', time()));
 //        $start_at = endOfHour(strtotime('Y-m-d 19:59:59'));
         $stop_at = strtotime(date('Y-m-d 19:59:59', time() + 24 * 60 * 60));
 //        $stop_at = endOfHour(strtotime('Y-m-d 19:59:59', '+1 day'));
         $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
+        if (isBlank($lucky_user_ids)) {
+            $start_at = strtotime(date('Y-m-d 19:59:59', time() - 24 * 60 * 60));
+            $stop_at = strtotime(date('Y-m-d 19:59:59', time()));
+            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
+        }
 
         $lucky_users = \Users::findByIds($lucky_user_ids);
         $lucky_names = [];

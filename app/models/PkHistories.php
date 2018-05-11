@@ -74,10 +74,20 @@ class PkHistories extends BaseModel
         $pk_history->status = STATUS_PROGRESS;
 
         if ($pk_history->save()) {
+
+            self::delay($pk_time)->asyncFinishPk($pk_history);
             return [$pk_history, ERROR_CODE_SUCCESS, '创建成功'];
         }
 
         return [null, ERROR_CODE_FAIL, '创建失败'];
+    }
+
+    static function asyncFinishPk($pk_history)
+    {
+        if (isPresent($pk_history) && $pk_history->status != STATUS_OFF) {
+            $pk_history->status = STATUS_OFF;
+            $pk_history->update();
+        }
     }
 
     static function generatePkListKey()
@@ -118,7 +128,7 @@ class PkHistories extends BaseModel
     static function updatePkHistories($sender, $total_amount, $receiver_id, $pay_type)
     {
         $pk_history_datas = self::updatePkHistoryInfo($sender, $total_amount, $receiver_id, $pay_type);
-        info('更新',$sender, $total_amount, $receiver_id, $pay_type);
+        info('更新', $sender, $total_amount, $receiver_id, $pay_type);
         if (isPresent($pk_history_datas)) {
             $body = ['action' => 'pk', 'pk_history' => [
                 'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
@@ -161,7 +171,7 @@ class PkHistories extends BaseModel
         $cache->hmset($key, $body);
         info('初始化pk数据', $key, $body);
 
-        $cache->expire($key, 60 * 60);
+        $cache->expire($key, $this->expire_at - time() + 60);
     }
 
     static function generatePkHistoryInfoKey($room_id)
