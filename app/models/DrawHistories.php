@@ -268,7 +268,7 @@ class DrawHistories extends BaseModel
 
         info('draw_history_pool_rate', $pool_rate);
 
-        $pool_rate = mt_rand(70, 91) / 100;
+        //$pool_rate = mt_rand(70, 91) / 100;
 
         if ($type == 'diamond') {
 
