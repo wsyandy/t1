@@ -208,7 +208,6 @@ class PkHistories extends BaseModel
         $room_id = $this->room_id;
         $cache = self::getHotWriteCache();
         $key = self::generatePkHistoryInfoKey($room_id);
-        $send_gift_user_key = self::generatePkForUserInRoom($room_id, $this->user_id);
         $datas = $cache->hgetall($key);
         info('pk_history_info=>', $datas, $key);
 
@@ -217,9 +216,13 @@ class PkHistories extends BaseModel
 
         $this->left_pk_user_score = $left_pk_user_score;
         $this->right_pk_user_score = $right_pk_user_score;
+
+        $send_gift_left_user_key = self::generatePkForUserInRoom($room_id, $datas['left_pk_user_id']);
+        $send_gift_right_user_key = self::generatePkForUserInRoom($room_id, $datas['right_pk_user_id']);
         if ($this->update()) {
             $cache->del($key);
-            $cache->del($send_gift_user_key);
+            $cache->del($send_gift_left_user_key);
+            $cache->del($send_gift_right_user_key);
         }
     }
 
