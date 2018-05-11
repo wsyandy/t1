@@ -265,6 +265,10 @@ class SharesController extends ApplicationController
 
         $share_history->increase('view_num');
         $user = $share_history->user;
+        $union_name = '';
+        if ($user->union_id) {
+            $union_name = $user->union->name;
+        }
 
         $user_agent = $this->request->getUserAgent();
         debug($user_agent);
@@ -293,6 +297,7 @@ class SharesController extends ApplicationController
             $data = json_decode($data, true);
         }
 
+        $this->view->union_name = $union_name;
         $this->view->user = $user;
         $this->view->soft_version_id = $soft_version_id;
 
