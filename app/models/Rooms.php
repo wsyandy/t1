@@ -2589,7 +2589,7 @@ class Rooms extends BaseModel
             }
 
             if ($search_type) {
-                $cond['conditions'] .= " and types like :types:";
+                $cond['conditions'] .= " and room_category_types like :types:";
                 $cond['bind']['types'] = "%" . $search_type . "%";
 
             }
