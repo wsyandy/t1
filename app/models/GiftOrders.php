@@ -41,16 +41,16 @@ class GiftOrders extends BaseModel
 
     function afterCreate()
     {
-
-    }
-
-    function afterUpdate()
-    {
         if ($this->hasChanged('status') && $this->status == GIFT_ORDER_STATUS_SUCCESS && $this->pay_type == GIFT_PAY_TYPE_DIAMOND) {
 
             //当礼物订单状态为支付成功，并且礼物订单类型为钻石支付的时候，才进行推送
             \DataCollection::syncData('gift_order', 'give_to_success', ['gift_order' => $this->toPushDataJson()]);
         }
+    }
+
+    function afterUpdate()
+    {
+
     }
 
     function toDetailJson()
@@ -163,7 +163,6 @@ class GiftOrders extends BaseModel
         }
 
         if ($target) {
-
             $opts = ['gift_num' => $gift_num, 'sender_current_room_id' => $sender->current_room_id,
                 'receiver_current_room_id' => $receiver->current_room_id, 'target_id' => $target->id, 'time' => $target->created_at];
 
@@ -249,6 +248,13 @@ class GiftOrders extends BaseModel
                 $gift_order->type = $type;
             }
 
+            if ($sender_current_room_id) {
+                $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
+                if ($result) {
+                    info('当前房间有pk正在进行');
+                    \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id);
+                }
+            }
             // 在房间里送里面
             if ($sender_current_room_id && $receiver_current_room_id && $sender_current_room_id == $receiver_current_room_id) {
                 $sender_current_room = Rooms::findFirstById($sender_current_room_id);
@@ -257,6 +263,8 @@ class GiftOrders extends BaseModel
                 $gift_order->room_union_type = $sender_current_room->union_type;
 
                 $sender_current_room->updateLastAt();
+
+
             }
 
             if ($gift_order->create()) {

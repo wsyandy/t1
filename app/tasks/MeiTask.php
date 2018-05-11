@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1103162;
+        $user_id = 1351483;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 100000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 100000, $opts);
+        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()
@@ -3883,7 +3883,7 @@ EOF;
         }
     }
 
-    function test22Action()
+    function test40Action()
     {
         $hot_cache = Users::getHotWriteCache();
         $key = 'room_active_last_at_list_3';
@@ -3901,5 +3901,80 @@ EOF;
         }
 
         echoLine($hot_cache->zrevrange($key, 0, -1), $hot_cache->zcard($key));
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list_3';
+        $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
+        echoLine($user_num);
+
+        echoLine(array_diff([1, 3, 4], [1]));
+
+        $hot_room_ids = [1000 => 12, 10001 => 13, 10004 => 14, 1005 => 11];
+
+        uksort($hot_room_ids, function ($a, $b) use ($hot_room_ids) {
+
+            if ($hot_room_ids[$a] > $hot_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        $hot_room_ids = array_slice($hot_room_ids, 0, 5, true);
+
+        print_r($hot_room_ids);
+
+    }
+
+    function test41Action()
+    {
+
+        $attrs = [
+            'sender_id' => SYSTEM_ID,
+            'receiver_id' => 196,
+            'content' => 'dddd',
+            'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
+            'image_url' => 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180404105ac4331fc4652.jpg',
+            'title' => '测试',
+            'url' => 'url://m/activities'
+        ];
+
+        \Chats::createChat($attrs);
+
+        //return \Chats::createChat($attrs);
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $cond = ['conditions' => 'user_type = :user_type: and status = :status: and online_status = :online_status: 
+        and theme_type = :theme_type: and user_id > 0',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'status' => STATUS_OFF, 'online_status' => STATUS_OFF,
+                'theme_type' => ROOM_THEME_TYPE_NORMAL
+            ],
+            'order' => 'last_at desc', 'limit' => 100];
+
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+
+            if (!$room->user) {
+                continue;
+            }
+
+            echoLine($room->id);
+            $room->enterRoom($room->user);
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->update();
+            $hot_cache->zadd('ios_auth_room_list', time(), $room->id);
+        }
+        echoLine(count($rooms));
+
+        $room_ids = [90, 91, 92, 95, 115, 117, 111, 122, 180, 107];
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $res = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+        echoLine($res);
+        foreach ($room_ids as $id) {
+            $hot_cache->zadd('ios_auth_room_list', time(), $id);
+        }
     }
 }

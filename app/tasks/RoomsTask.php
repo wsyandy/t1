@@ -17,6 +17,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             //$key = $room->getRealUserListKey();
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
@@ -92,6 +96,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($online_silent_rooms as $online_silent_room) {
 
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
+
             $users = $online_silent_room->findSilentUsers();
 
             foreach ($users as $user) {
@@ -131,6 +139,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             $user = $room->user;
 
             if (!$user) {
@@ -163,6 +176,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($online_silent_rooms as $online_silent_room) {
+
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
@@ -207,6 +224,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             Rooms::delay()->activeRoom($room->id);
         }
     }
@@ -816,6 +838,45 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
             Rooms::updateRoomTypes($room->id);
+        }
+    }
+
+    //新热门逻辑
+    function generateHotRoomsAction()
+    {
+        $rooms = Rooms::getActiveRoomsByTime();
+        Rooms::updateHotRoomList($rooms);
+    }
+
+    function generateNewHotRoomRankAction()
+    {
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
+        $hot_cache = Users::getHotWriteCache();
+        $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
+
+        if (count($room_ids) > 0) {
+            $rooms = Rooms::findByIds($room_ids);
+            Rooms::updateHotRoomList($rooms);
+        }
+    }
+
+
+    function boomTargetAction()
+    {
+        $line = 1000; // 初始值
+        $total = 10000; // 流水上线
+        $rooms = Rooms::dayStatRooms();
+        $rooms = $rooms->toJson('rooms');
+
+        $backpack = new Backpacks();
+
+        foreach ($rooms['rooms'] as $value) {
+            $room = Rooms::findFirstById($value['id']);
+            $noun = $room->getDayIncome(date('Ymd'));
+
+            if ($noun >= $line) {
+                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            }
         }
     }
 }

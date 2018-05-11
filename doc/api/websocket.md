@@ -298,24 +298,15 @@
 ```
     {
         action: pk 房间发起pk通知信息
-        pk_history:{
-            id int pk记录id
-            created_at int 创建时间 以秒为单位的时间戳
-            expire_at int 过期时间戳
-            pk_type string pk类型
-            
+        pk_history:{        
             left_pk_user : {
                 id 用户id 
-                nickname 用户昵称
                 score int 分值
-                avatar_small_url 用户头像   
             }
             
             right_pk_user : {
                 id 用户id 
-                nickname 用户昵称
                 score int 分值
-                avatar_small_url 用户头像          
             }
       }
     }

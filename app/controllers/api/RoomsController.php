@@ -41,11 +41,27 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
 
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
+        }
+
+        $follow = $this->params('follow');
+
+        if (STATUS_ON == $follow) {
+
+            $user_ids = $this->currentUser()->followUserIds();
+
+            if (count($user_ids) < 1) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
+            }
         }
 
         $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
@@ -222,6 +238,11 @@ class RoomsController extends BaseController
         $pk_history = $room->getPkHistory();
         if (isDevelopmentEnv() && $pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
+        }
+
+
+        if (isDevelopmentEnv()) {
+            $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
         }
 
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
@@ -658,6 +679,11 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
         $keyword = $this->params('keyword', null);
         $type = $this->params('type');
 
@@ -772,7 +798,13 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+
+            if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser()) {
+                $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
+            } else {
+                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            }
+
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
@@ -866,16 +898,17 @@ class RoomsController extends BaseController
         $right_pk_user_id = $this->params('right_pk_user_id');
         $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
         $pk_time = $this->params('pk_time'); //
+        $cover = $this->params('cover', 0);
 
-        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover, 'room_id' => $room_id];
 
-        $pk_history = \PkHistories::createHistory($this->currentUser(), $opts);
+        list($pk_history, $error_code, $error_reason) = \PkHistories::createHistory($this->currentUser(), $opts);
 
         if ($pk_history) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $pk_history->toSimpleJson());
+            return $this->renderJSON($error_code, $error_reason, $pk_history->toSimpleJson());
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
+        return $this->renderJSON($error_code, $error_reason);
 
     }
 
