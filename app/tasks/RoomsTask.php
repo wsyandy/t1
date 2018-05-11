@@ -828,23 +828,12 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function generateNewHotRoomRankAction()
     {
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
         $hot_cache = Users::getHotWriteCache();
-        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
 
-        $hot_room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
-        $new_user_hot_room_ids = $hot_cache->zrange($new_user_hot_rooms_list_key, 0, -1);
-        $old_user_pay_hot_room_ids = $hot_cache->zrange($old_user_pay_hot_rooms_list_key, 0, -1);
-        $old_user_no_pay_hot_room_ids = $hot_cache->zrange($old_user_no_pay_hot_rooms_list_key, 0, -1);
-
-        $total_room_ids = array_merge($hot_room_ids, $new_user_hot_room_ids, $old_user_pay_hot_room_ids, $old_user_no_pay_hot_room_ids);
-
-        $total_room_ids = array_unique($total_room_ids);
-
-        if (count($total_room_ids) > 0) {
-            $rooms = Rooms::findByIds($total_room_ids);
+        if (count($room_ids) > 0) {
+            $rooms = Rooms::findByIds($room_ids);
             Rooms::updateHotRoomList($rooms);
         }
     }

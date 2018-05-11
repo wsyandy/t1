@@ -236,8 +236,24 @@ class UsersController extends BaseController
         $user = \Users::findById($this->params('id'));
         if ($this->request->isPost()) {
             $content = $this->params('content');
-            $content_type = CHAT_CONTENT_TYPE_TEXT;
-            $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
+            $title = $this->params('title');
+            $image_url = $this->params('image_url');
+            $content_type = $this->params('content_type');
+            $url = $this->params('url');
+
+            $attrs = [
+                'sender_id' => SYSTEM_ID,
+                'receiver_id' => $user->id,
+                'content' => $content,
+                'content_type' => $content_type,
+                'image_url' => $image_url,
+                'title' => $title,
+                'url' => $url
+            ];
+
+            $chat = \Chats::createChat($attrs);
+
+            //$chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
             if ($chat) {
                 return $this->renderJSON(
                     ERROR_CODE_SUCCESS, '发送成功',

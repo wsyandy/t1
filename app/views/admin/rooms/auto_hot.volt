@@ -66,6 +66,7 @@
     是否加锁: {{ room.lock_text }}<br/>
     是否热门: {{ room.hot_text }}|是否置顶: {{ room.top_text }}<br/>
     协议: {{ intval(room.user_agreement_num) }}<br/>
+    热门总分值: {{ room.total_score_by_cache }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>
@@ -129,6 +130,7 @@
             是否加锁: ${ room.lock_text }<br/>
             是否热门: ${ room.hot_text }|是否置顶: ${ room.top_text }<br/>
             协议: ${room.user_agreement_num}<br/>
+            热门总分值: ${ room.total_score_by_cache }<br/>
             {@if room.union_id }
             公会: ${ room.union_name }<br/>
             公会类型: ${ room.union_type_text }<br/>

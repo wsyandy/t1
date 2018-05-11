@@ -244,7 +244,8 @@ class Rooms extends BaseModel
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
             'top_text' => $this->top_text,
-            'user_uid' => $this->user_uid
+            'user_uid' => $this->user_uid,
+            'total_score_by_cache' => $this->total_score_by_cache
         ];
 
         return array_merge($opts, $this->toJson());
@@ -1497,6 +1498,13 @@ class Rooms extends BaseModel
     static function generateHotRoomListKey()
     {
         return "hot_room_list";
+    }
+
+
+    //新总的房间列表
+    static function getTotalRoomListKey()
+    {
+        return "total_new_hot_room_list";
     }
 
     //新的热门房间列表
@@ -2769,6 +2777,8 @@ class Rooms extends BaseModel
         $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
         $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
         $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
+
         $room_ids = [];
         $shield_room_ids = [];
 
@@ -2793,6 +2803,15 @@ class Rooms extends BaseModel
             }
         }
 
+        uksort($room_ids, function ($a, $b) use ($room_ids) {
+
+            if ($room_ids[$a] > $room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
         uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
 
             if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
@@ -2802,21 +2821,8 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        $lock = tryLock($hot_room_list_key, 1000);
-
-        $hot_cache->zclear($hot_room_list_key);
-        $hot_cache->zclear($new_user_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
-
-        foreach ($room_ids as $room_id => $score) {
-            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
-        }
-
         $shield_room_num = 5;
+        $total_room_num = 30;
         $new_user_shield_room_num = 3;
 
         if (isDevelopmentEnv()) {
@@ -2825,6 +2831,24 @@ class Rooms extends BaseModel
         }
 
         $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
+        $room_ids = array_slice($room_ids, 0, $total_room_num, true);
+
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+        $hot_cache->zclear($new_user_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
+        $hot_cache->zclear($total_new_hot_room_list_key);
+
+        foreach ($room_ids as $room_id => $score) {
+            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
+        }
+
 
         if (count($shield_room_ids) > 0) {
 
@@ -2838,6 +2862,7 @@ class Rooms extends BaseModel
                 }
 
                 $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+                $hot_cache->zadd($total_new_hot_room_list_key, $score, $shield_room_id);
 
                 $i++;
             }
