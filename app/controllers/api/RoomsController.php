@@ -778,7 +778,7 @@ class RoomsController extends BaseController
 
         if (STATUS_ON == $hot) {
 
-            if (isDevelopmentEnv()) {
+            if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser()) {
                 $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
             } else {
                 $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
