@@ -294,11 +294,11 @@
         };
         $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
             if (!resp.error_code) {
-                if (resp.my_wish_datas != '') {
+//                if (resp.my_wish_datas != '') {
                     vm.show_wish_histories = resp.my_wish_datas;
                     vm.releaseWishState = 1;
                     vm.myWishList = true;
-                }
+//                }
             }
         });
     }
@@ -310,11 +310,11 @@
         };
         $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
             if (!resp.error_code) {
-                if (resp.my_wish_datas != '') {
+//                if (resp.my_wish_datas != '') {
                     vm.my_wish_datas = resp.my_wish_datas;
                     vm.releaseWishState = 1;
                     vm.releaseWish = true;
-                }
+//                }
             }
         });
     }
