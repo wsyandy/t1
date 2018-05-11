@@ -656,6 +656,15 @@ class ActivitiesController extends BaseController
         $this->giftCharmRankActivity();
     }
 
+    // 礼物周榜活动
+    function giftCharmWeek20180514rankActivityAction()
+    {
+        $this->view->title = '等待玩家';
+        $this->view->sid = $this->params('sid', '');
+        $this->view->code = $this->params('code', '');
+        $this->giftCharmRankActivity();
+    }
+
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
@@ -677,10 +686,13 @@ class ActivitiesController extends BaseController
                 $key = $activity->getStatKey($gift_id);
             }
 
-            debug($key);
+            var_dump($key);
+            //debug($key);
 
             $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+            print_r($charm_users);
 
+            return ;
             if (count($charm_users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
             } else {

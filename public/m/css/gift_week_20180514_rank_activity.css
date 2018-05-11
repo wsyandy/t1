@@ -1,0 +1,285 @@
+html,body,p,div,ul,li{
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+    display: flex;
+    box-sizing: border-box;
+}
+ul,li{
+    list-style: none;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+}
+/* 周榜活动 */
+.week_activity{
+    overflow: hidden;
+    flex-direction: column;
+    width: 7.5rem;
+    height: 46.46rem;
+    background: url(../images/bg_20180514.png) no-repeat;
+    background-size: 100%;
+    margin-top: -0.7rem;
+}
+.week_activity_banner{
+    width: 7.5rem;
+    height: 2rem;
+    background: url(../images/week_activity_banner_20180514.png) center no-repeat;
+    background-size: cover;
+    margin:0 auto;
+}
+.one_title_type{
+    padding-top: 1.2rem;
+}
+.week_title_type{
+    width: 7.5rem;
+    padding-bottom: 0.3rem;
+}
+.week_title_type img{
+    width: 7.5rem;
+}
+.week_charm_topul{
+    flex-direction: column;
+}
+.week_charm_topul li{
+    font-size: .24rem;
+    color: #FE7088;
+    align-items: center;
+    margin-bottom: .3rem;
+}
+.week_charm_topul li:first-child{
+    margin-top: 0.2rem;
+}
+.week_charm_topul li .type{
+    width: 1.26rem;
+    margin-left: 0.3rem;
+}
+.week_charm_topul li .name{
+    color: #FE7088;
+    font-size: .26rem;
+    margin-left: .22rem;
+    margin-right: .27rem;
+    width: 2.3rem;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.week_charm_topul li img{
+    width: 0.48rem;
+    height: 0.48rem;
+}
+.week_rules_slogan{
+    margin:.6rem auto;
+    width: 5.98rem;
+    height: 1.5rem;
+    font-size: 0.26rem;
+    color: #FFFFFF;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+.week_rules_slogan span{
+    margin-top: 0.1rem;
+}
+.week_rules_giftul{
+    flex-wrap: wrap;
+    padding-bottom: .24rem;
+}
+.week_rules_giftul li{
+    justify-content: center;
+    align-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-direction: column;
+    background: url(../images/xin_bg_20180514.png) no-repeat;
+    background-size: 100%;
+}
+.week_rules_giftul li img{
+    width: 2.02rem;
+    height: 2.02rem;
+}
+.week_charm_rewardul{
+    color: #FE7088;
+}
+.week_charm_rewardul li{
+    margin-bottom: .52rem;
+    font-size: .26rem;
+    color: #333333;
+    justify-content: center;
+}
+.week_charm_rewardul li:first-child{
+    margin-top: 0.6rem;
+}
+.week_charm_rewardul li{
+    color: #FE7088;
+}
+.week_charm_rewardul li .type{
+    width: 1.76rem;
+}
+.week_charm_rewardul li .center{
+    margin-right: .6rem;
+}
+.week_charm_rewardul li .behind{
+    width: 110px;
+}
+.title_z{
+    margin-top: 0.6rem;
+}
+.week_rules_box{
+    width: 6.9rem;
+    height: 3.8rem;
+    position: relative;
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: column;
+    background: url(../images/one_thiree_bg_20180514.png) no-repeat;
+    background-size: 6.9rem 3.64rem;
+}
+.week_rules_bg{
+    width: 6.9rem;
+    height: 5.4rem;
+    background: url(../images/week_rules_bg_20180514.png) no-repeat;
+    background-size: 6.9rem 5.4rem;
+}
+.new_rules_background{
+    width: 6.9rem;
+    height: 6.9rem;
+    background: url(../images/week_rules_background1_20180514.png) center no-repeat;
+    background-size: 6.9rem 6.9rem;
+}
+.new_rules_background ul li{
+    margin-left: 0.7rem;
+}
+.new_rules_background ul li:nth-child(1){
+    margin-top: 0.2rem;
+}
+.new_rules_background ul li:nth-child(2){
+    margin-top: 0.2rem;
+}
+.new_rules_background ul li:nth-child(3){
+    margin-top: 0.5rem;
+}
+.new_rules_background ul li:nth-child(4){
+    margin-top: 0.5rem;
+}
+.week_rules_box p{
+    padding:0 .6rem;
+    font-size: .26rem;
+    color: #FFFFFF;
+    display: flex;
+    margin-bottom: .2rem;
+}
+.week_rules_box p span{
+    line-height: .3rem;
+}
+.week_countdown{
+    font-size: .26rem;
+    color: #FFFFFF;
+    justify-content: center;
+}
+.week_list_tab{
+    /*  margin: .4rem .36rem 0;
+      height: .7rem;
+      background: #1676FF;
+      box-shadow: inset 0 0 25px 0 rgba(255,255,255,0.50);
+      border-radius: .1rem;*/
+    margin-top: 0.52rem;
+}
+.week_list_tab li {
+    width: 1.56rem;
+    height: 1.56rem;
+    background: url(../images/s_bg_20180514.png) no-repeat;
+    background-size: 1.56rem 1.56rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-direction: column;
+    margin-left: 0.24rem;
+}
+.week_list_tab li span{
+    color: #FE7088;
+    font-size: 0.26rem;
+    margin-top: 0.1rem;
+}
+.week_list_tab li img{
+    width: 0.6rem;
+    height: 0.6rem;
+}
+.week_list_content{
+    margin: .7rem .36rem 0;
+    background-color: white;
+    flex-direction: column;
+    border-radius: .16rem;
+}
+.week_list_content li{
+    width: 100%;
+    height: 1.2rem;
+    align-items: center;
+    border-bottom: 1px solid #EFEFEF;
+}
+.week_list_content li:last-child{
+    border: none;
+}
+.week_list_content li .level{
+    font-size: 0.26rem;
+    color: #FE7088;
+    width: .8rem;
+    text-align: center;
+    margin-right: 0.16rem;
+}
+.week_list_content li .neo{
+    width: 0.48rem;
+    height: 0.48rem;
+    background: url(../images/list_neo_icon_20180514.png) center no-repeat;
+    background-size:.46rem .48rem;
+    margin-right: 0.3rem;
+    margin-left: 0.15rem;
+}
+.week_list_content li .two{
+    width: 0.48rem;
+    height: 0.48rem;
+    background: url(../images/list_two_icon_20180514.png) center no-repeat;
+    background-size:.46rem .48rem;
+    margin-right: 0.3rem;
+    margin-left: 0.15rem;
+}
+.week_list_content li .three{
+    width: 0.48rem;
+    height: 0.48rem;
+    background: url(../images/list_three_icon_20180514.png) center no-repeat;
+    background-size:.46rem .48rem;
+    margin-right: 0.3rem;
+    margin-left: 0.15rem;
+}
+.week_list_content li img{
+    width: .6rem;
+    height: .6rem;
+    border-radius: 50%;
+}
+.week_list_content li .name{
+    margin-left: .36rem;
+    width: 2.8rem;
+    margin-right: .12rem;
+    font-size: 0.26rem;
+    color: #FE7088;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.week_list_content li span{
+    font-size: 0.26rem;
+    color: #FE7088;
+}
+.week_hint_text{
+    width: 7.5rem;
+    height: 1.54rem;
+    line-height: 1.54rem;
+    font-size: 0.26rem;
+    color: #FFFFFF;
+    text-align: center;
+}
