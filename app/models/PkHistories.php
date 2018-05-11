@@ -119,7 +119,7 @@ class PkHistories extends BaseModel
 
     static function updatePkHistories($sender, $total_amount, $receiver_id, $pay_type)
     {
-        $pk_history_datas = self::updatePkHistoryInfo($sender->current_room_id, $total_amount, $receiver_id, $pay_type);
+        $pk_history_datas = self::updatePkHistoryInfo($sender, $total_amount, $receiver_id, $pay_type);
 
         if (isPresent($pk_history_datas)) {
             $body = ['action' => 'pk', 'pk_history' => [
@@ -178,16 +178,16 @@ class PkHistories extends BaseModel
         return $cache->hget($key, 'room_id');
     }
 
-    static function updatePkHistoryInfo($room_id, $total_amount, $receiver_id, $pay_type)
+    static function updatePkHistoryInfo($sender, $total_amount, $receiver_id, $pay_type)
     {
         $cache = self::getHotWriteCache();
-        $key = self::generatePkHistoryInfoKey($room_id);
+        $key = self::generatePkHistoryInfoKey($sender->current_room_id);
         if ($cache->hexists($key, $receiver_id)) {
             $current_score = $cache->hget($key, $receiver_id);
             $pk_type = $cache->hget($key, 'pk_type');
             switch ($pk_type) {
                 case SEND_GIFT_USER:
-                    $current_score = $current_score + 1;
+                    $current_score = self::checkSendGiftUser($sender, $receiver_id, $current_score);
                     break;
                 case SEND_GIFT_AMOUNT:
                     if ($pay_type == GIFT_PAY_TYPE_DIAMOND) {
@@ -231,5 +231,21 @@ class PkHistories extends BaseModel
             return true;
         }
         return false;
+    }
+
+    static function generatePkForUserInRoom($room_id, $receiver_id)
+    {
+        return 'pk_send_gift_user_for_' . $receiver_id . '_in_' . $room_id;
+    }
+
+    static function checkSendGiftUser($sender, $receiver_id, $current_score)
+    {
+        $cache = self::getHotWriteCache();
+        $key = self::generatePkForUserInRoom($sender->current_room_id, $receiver_id);
+        $ids = $cache->zrange($key, 0. - 1);
+        if (!in_array($sender->id, $ids)) {
+            $cache->zadd($key, time(), $sender->id);
+            return $current_score + 1;
+        }
     }
 }
