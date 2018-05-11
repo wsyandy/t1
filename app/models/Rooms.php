@@ -519,7 +519,7 @@ class Rooms extends BaseModel
         $hot_cache = Users::getHotWriteCache();
         $key = 'room_active_last_at_list';
         $time = time();
-        $room_ids = $hot_cache->zrangebyscore($key, $time - $minutes * 60, $time, ['limit' => [0, 200]]);
+        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
         $rooms = Rooms::findByIds($room_ids);
 
         return $rooms;
