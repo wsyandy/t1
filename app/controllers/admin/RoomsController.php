@@ -397,9 +397,15 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
+        $new = $this->params('new', 0);
         $hot_cache = \Users::getHotWriteCache();
 
         $hot_room_list_key = \Rooms::generateHotRoomListKey();
+
+        if ($new) {
+            $hot_room_list_key = \Rooms::getTotalRoomListKey();
+        }
+
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
         $rooms = \Rooms::findByIds($room_ids);
@@ -688,13 +694,6 @@ class RoomsController extends BaseController
 
     function hotRoomScoreAction()
     {
-        $data = [
-            'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
-            'real_user_pay_score' => $real_user_pay_score, 'real_user_stay_time_score' => $real_user_stay_time_score,
-            'room_host_score' => $room_host_score, 'id_card_auth_users_score' => $id_card_auth_users_score, 'total_score' => $total_score,
-            'is_shield' => $is_shield, 'time' => time()
-        ];
-
         $room_id = $this->params('id');
         $user_db = \Users::getUserDb();
         $key = 'hot_room_score_record_room_id_' . $room_id;
