@@ -686,13 +686,10 @@ class ActivitiesController extends BaseController
                 $key = $activity->getStatKey($gift_id);
             }
 
-            var_dump($key);
-            //debug($key);
+            debug($key);
 
             $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
-            print_r($charm_users);
 
-            return ;
             if (count($charm_users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
             } else {
