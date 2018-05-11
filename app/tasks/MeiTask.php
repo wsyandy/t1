@@ -3929,18 +3929,19 @@ EOF;
     function test41Action()
     {
 
-        $attrs = array(
+        $attrs = [
             'sender_id' => SYSTEM_ID,
             'receiver_id' => 196,
             'content' => 'dddd',
-            'content_type' => 'text/news',
-            'image_url' => '',
+            'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
+            'image_url' => 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180404105ac4331fc4652.jpg',
             'title' => '测试',
             'url' => 'url://m/activities'
-        );
+        ];
 
         \Chats::createChat($attrs);
 
         return \Chats::createChat($attrs);
+
     }
 }

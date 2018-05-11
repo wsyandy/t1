@@ -30,17 +30,16 @@ class PaymentsController extends BaseController
 
         if ($payment_channel->isApple()) {
 
-            $apple_pay_total_amount = $this->currentUser()->device->getTodayApplePayAmount();
+            $device = $this->currentUser()->device;
 
-            info("apple_pay_total_amount", $apple_pay_total_amount);
+            $apple_pay_today_amount = $device->getTodayApplePayAmount();
+            $apple_pay_total_amount = $device->getTotalApplePayAmount();
 
-            if ($apple_pay_total_amount >= 500) {
-                info("apple_pay_total_amount_500", $this->currentUser()->sid, $this->currentUser()->device_id, $apple_pay_total_amount);
+            info("apple_pay_total_amount", $apple_pay_today_amount, $apple_pay_total_amount);
+
+            if ($apple_pay_today_amount >= 30 || $apple_pay_total_amount >= 100) {
+                info("apple_pay_total_amount_30", $this->currentUser()->sid, $this->currentUser()->device_id, $apple_pay_today_amount, $apple_pay_total_amount);
                 return $this->renderJSON(ERROR_CODE_FAIL, '苹果支付异常');
-            }
-
-            if ($apple_pay_total_amount >= 300) {
-                info("apple_pay_total_amount_300", $this->currentUser()->sid, $this->currentUser()->device_id, $apple_pay_total_amount);
             }
         }
 

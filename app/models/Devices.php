@@ -515,4 +515,12 @@ class Devices extends BaseModel
         $key = "stat_apple_day_total_pay_amount_list_" . date("Ymd");
         return intval($hot_cache->zscore($key, $this->id));
     }
+
+    function getTotalApplePayAmount()
+    {
+        $user_db = Users::getUserDb();
+        $total_key = "stat_apple_total_pay_amount_device_id_" . $this->id;
+
+        return intval($user_db->get($total_key));
+    }
 }
