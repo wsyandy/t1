@@ -61,6 +61,7 @@
 |参数|名称|值类型|是否可空|备注|
 |---|---|---|---|---|
 |gift_id|礼物ID|integer|否||
+|backpack_id|背包ID|integer|是||
 |gift_num|礼物数量|integer|可空|空表示数量是1
 |user_id|接收方ID 自己买座驾不需要传此参数|integer|是||
 |src|来源|string|可|默认是room
