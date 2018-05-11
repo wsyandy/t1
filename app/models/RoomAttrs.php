@@ -160,27 +160,39 @@ trait RoomAttrs
     //热门房间总分值
     function getTotalScore()
     {
-        $send_gift_amount_score = $this->getRoomSendGiftAmountScore();
-        $send_gift_num_score = $this->getRoomSendGiftNumScore();
-        $real_user_pay_score = $this->getRealUserPayScore();
-        $real_user_stay_time_score = $this->getRealUserStayTimeScore();
-        $room_host_score = $this->getRoomHostScore();
-        $id_card_auth_users_score = $this->getIdCardAuthUsersScore();
         $is_shield = 0;
 
         if ($this->isShieldRoom()) {
 
             $is_shield = 1;
 
-            $total_score = $send_gift_amount_score * 0.7 + $send_gift_num_score * 0.05 + $real_user_pay_score * 0.1
-                + $real_user_stay_time_score * 0.05 + $room_host_score * 0.05 + $id_card_auth_users_score * 0.05;
+            $send_gift_amount_score_rate = 0.7;
+            $send_gift_num_score_rate = 0.05;
+            $real_user_pay_score_rate = 0.1;
+            $real_user_stay_time_score_rate = 0.05;
+            $room_host_score_rate = 0.05;
+            $id_card_auth_users_score_rate = 0.05;
 
         } else {
 
-            $total_score = $send_gift_amount_score * 0.1 + $send_gift_num_score * 0.05 + $real_user_pay_score * 0.6 +
-                $real_user_stay_time_score * 0.1 + $room_host_score * 0.1 + $id_card_auth_users_score * 0.05;
-
+            $send_gift_amount_score_rate = 0.1;
+            $send_gift_num_score_rate = 0.05;
+            $real_user_pay_score_rate = 0.6;
+            $real_user_stay_time_score_rate = 0.1;
+            $room_host_score_rate = 0.1;
+            $id_card_auth_users_score_rate = 0.05;
         }
+
+        $send_gift_amount_score = $this->getRoomSendGiftAmountScore() * $send_gift_amount_score_rate;
+        $send_gift_num_score = $this->getRoomSendGiftNumScore() * $send_gift_num_score_rate;
+        $real_user_pay_score = $this->getRealUserPayScore() * $real_user_pay_score_rate;
+        $real_user_stay_time_score = $this->getRealUserStayTimeScore() * $real_user_stay_time_score_rate;
+        $room_host_score = $this->getRoomHostScore() * $room_host_score_rate;
+        $id_card_auth_users_score = $this->getIdCardAuthUsersScore() * $id_card_auth_users_score_rate;
+
+
+        $total_score = $send_gift_amount_score + $send_gift_num_score + $real_user_pay_score + $real_user_stay_time_score
+            + $room_host_score + $id_card_auth_users_score;
 
         $total_score = intval($total_score);
 
