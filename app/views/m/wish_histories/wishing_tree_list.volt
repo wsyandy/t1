@@ -78,7 +78,7 @@
             </div>
         </li>
     </ul>
-    <span @click="searchShow" class="search_button"></span>
+    <span @click="searchShow" class="search_button">搜索</span>
     <div class="my_ranking_toast">
         <span>暂未上榜</span>
     </div>
@@ -150,7 +150,6 @@
                     };
                     console.log(data);
                     $.authPost('/m/wish_histories/search_user', data, function (resp) {
-                        console.log(resp);
                         if (!resp.error_code) {
                             vm.myWishList = true;
                             vm.show_wish_histories = resp.show_wish_histories;
