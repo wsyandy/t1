@@ -747,7 +747,7 @@ EOF;
 
         $users = Users::find([
             'conditions' => 'product_channel_id = :product_channel_id: and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['product_channel_id' => 1, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 30 * 86400],
+            'bind' => ['product_channel_id' => 1, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
             'columns' => 'id'
         ]);
 
