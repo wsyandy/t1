@@ -109,7 +109,7 @@
 
         {% if time() >= activity.start_at %}
             <ul class="week_list_tab">
-                <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_total_list.png"
+                <li @click="selectTab(1,0)" :class="[tab_index==1&&'cur']"><img src="/m/images/week_zong_20180514.png"
                                                                                 alt="icon">
                     <span>总榜</span>
                 </li>
