@@ -99,8 +99,8 @@ class PkHistories extends BaseModel
     {
         $left_pk_user = $this->left_pk_user;
         $right_pk_user = $this->right_pk_user;
-        $left_pk_user_score = $this->left_pk_user_score;
-        $right_pk_user_score = $this->right_pk_user_score;
+        $left_pk_user_score = $this->getPkUserScore($left_pk_user->id);
+        $right_pk_user_score = $this->getPkUserScore($right_pk_user->id);
 
         return [
             'id' => $this->id,
@@ -262,5 +262,13 @@ class PkHistories extends BaseModel
             return $current_score + 1;
         }
         return $current_score;
+    }
+
+    function getPkUserScore($user_id)
+    {
+        $cache = self::getHotWriteCache();
+        $key = self::generatePkHistoryInfoKey($this->room_id);
+        $score = $cache->hget($key, $user_id);
+        return $score;
     }
 }
