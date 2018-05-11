@@ -182,7 +182,7 @@
                     {
                         ico: 'images/ico_qq.png',
                         tit: 'QQ报名',
-                        txt: '添加QQ157413797',
+                        txt: '添加QQ1574139797',
                         tip: '(备注报名）'
                     },
                     {
