@@ -1668,7 +1668,8 @@ class Rooms extends BaseModel
         }
 
         if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+            $rooms = \Rooms::iosAuthVersionRooms($user, $page, $per_page);
+            return $rooms;
         }
 
         $total_entries = $hot_cache->zcard($hot_room_list_key);
@@ -2872,5 +2873,38 @@ class Rooms extends BaseModel
         }
 
         unlock($lock);
+    }
+
+    static function iosAuthVersionRooms($user, $page, $per_page)
+    {
+        $key = Rooms::generateIosAuthRoomListKey();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $room_ids = $hot_cache->zrevrange($key, 0, -1);
+
+        $cond['conditions'] = " (room_category_types like :room_category_types: and online_status = :online_status: 
+        and status = :status:)";
+
+        $cond['bind'] = ['room_category_types' => "%,broadcast,%", 'online_status' => STATUS_ON,
+            'status' => STATUS_ON
+        ];
+
+        if ($room_ids) {
+            $cond['conditions'] .= " or id in (" . implode(",", $room_ids) . ")";
+        }
+
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+        return $rooms;
+    }
+
+    static function generateIosAuthRoomListKey()
+    {
+        return "ios_auth_room_list";
+    }
+
+    function isIosAuthRoom()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 }

@@ -117,8 +117,8 @@
                 </div>
             </li>
         </ul>
-        <span @click="onCancelToast(4)" class="cancel"></span>
     </div>
+    <span v-if="myWishList" @click="onCancelToast()" class="toast_cancel"></span>
     <div v-if="myWishList" class="mask_background"></div>
 </div>
 <script>

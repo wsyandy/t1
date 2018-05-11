@@ -61,13 +61,9 @@
                 <p>${my_wish_data[1]}</p>
             </li>
         </ul>
-        {#<textarea v-if="releaseWishState==1" placeholder="✏️许下一个小小的愿望，万一实现了呢…" v-model="my_wish_text"></textarea>#}
-        {#<div class="release_wish_buttom" @click="myReleaseWish"></div>#}
-
-
-
-        <span @click="onCancelToast(3)" class="cancel"></span>
     </div>
+    <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
+    <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
         <ul>
@@ -89,26 +85,7 @@
                     <span class="release_wish_buttom2"></span>
                 </div>
             </li>
-            {#<li v-if="false" :class="[releaseWishState==2&&'background2']">#}
-                {#<!-- 状态2查看别人愿望 -->#}
-                {#<div v-if="releaseWishState==2" class="release_wish_user">#}
-                    {#<img :src="show_wish_history.user_avatar_url" alt="">#}
-                    {#<div class="release_wish_user_name">#}
-                        {#<span>昵称:${show_wish_history.user_nickname}</span>#}
-                        {#<span>ID：${show_wish_history.user_uid}</span>#}
-                    {#</div>#}
-                {#</div>#}
-                {#<p>${releaseWishState==2?show_wish_history.wish_text:show_wish_history}</p>#}
-
-                {#<!-- <p v-if="releaseWishState==2" class="release_wish_text">每个人的心目中都会有一些美好的愿望，我的心中梦寐以求的愿望便是养一只可爱的小白狗。因为，有一次在伊通河边我看到了一只小白狗，它毛茸茸的，全身雪白雪白的，样子非常可爱。</p> -->#}
-                {#<div v-if="releaseWishState==2" class="release_wish_heart"><span#}
-                            {#class="heart_icon"></span><span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>#}
-                {#</div>#}
-                {#<div v-if="releaseWishState==2" class="release_wish_buttom2"#}
-                     {#@click="guardWish(show_wish_history.id,index)"></div>#}
-            {#</li>#}
         </ul>
-        <span @click="onCancelToast(4)" class="cancel"></span>
     </div>
     <!-- 分享 -->
     <div v-if="isShareToast" class="wishing_share_toast">
@@ -134,7 +111,7 @@
     </div>
 
     <!-- 背景遮罩 -->
-    <div v-if="isShareToast||isrulesToast||releaseWish||myWishList||isHintToast" class="mask_background"></div>
+    <div v-if="isShareToast||isrulesToast||releaseWish||myWishList||isHintToast" class="mask_background" @click="onCancelToast(3)"></div>
     <audio id="playbgm" autoplay loop src="/m/css/59ffe5e4e8717.mp3"></audio>
 
     <div @click="showOthersWish" class="view_wish"></div>

@@ -188,7 +188,7 @@
                     {
                         ico: 'images/ico_weChat.png',
                         tit: '微信报名',
-                        txt: '添加微信号kaolaedu365',
+                        txt: '添加微信号kaolaedu365或ai1574139797',
                         tip: '(备注报名）'
                     },
                     {

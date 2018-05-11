@@ -392,14 +392,14 @@ html,body{
     overflow-y: auto;
     color: #67450E;
 }
-.mywish_list .cancel{
-    z-index: 105;
+.toast_cancel{
     position: fixed;
+    z-index:120;
     left: 3.4rem;
     bottom: 1.12rem;
     width: .86rem;
     height: .86rem;
-    background: url(../images/cancel_buttom2.png) #f40 center no-repeat;
+    background: url(../images/cancel_buttom2.png) center no-repeat;
     background-size: .86rem;
 }
 .view_wish{

@@ -17,6 +17,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             //$key = $room->getRealUserListKey();
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
@@ -92,6 +96,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($online_silent_rooms as $online_silent_room) {
 
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
+
             $users = $online_silent_room->findSilentUsers();
 
             foreach ($users as $user) {
@@ -131,6 +139,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             $user = $room->user;
 
             if (!$user) {
@@ -163,6 +176,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($online_silent_rooms as $online_silent_room) {
+
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
@@ -207,6 +224,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             Rooms::delay()->activeRoom($room->id);
         }
     }

@@ -41,6 +41,11 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
 
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
@@ -673,6 +678,11 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
+
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
 
         $keyword = $this->params('keyword', null);
         $type = $this->params('type');
