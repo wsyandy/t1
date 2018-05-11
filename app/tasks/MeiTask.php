@@ -3907,7 +3907,7 @@ EOF;
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
         echoLine($user_num);
 
-        echoLine(array_diff([1,3,4],[1]));
+        echoLine(array_diff([1, 3, 4], [1]));
 
         $hot_room_ids = [1000 => 12, 10001 => 13, 10004 => 14, 1005 => 11];
 
@@ -3924,5 +3924,64 @@ EOF;
 
         print_r($hot_room_ids);
 
+    }
+
+    function test41Action()
+    {
+
+        $attrs = [
+            'sender_id' => SYSTEM_ID,
+            'receiver_id' => 196,
+            'content' => 'dddd',
+            'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
+            'image_url' => 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180404105ac4331fc4652.jpg',
+            'title' => '测试',
+            'url' => 'url://m/activities'
+        ];
+
+        \Chats::createChat($attrs);
+
+        //return \Chats::createChat($attrs);
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $cond = ['conditions' => 'user_type = :user_type: and status = :status: and online_status = :online_status: 
+        and theme_type = :theme_type: and user_id > 0',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'status' => STATUS_OFF, 'online_status' => STATUS_OFF,
+                'theme_type' => ROOM_THEME_TYPE_NORMAL
+            ],
+            'order' => 'last_at desc', 'limit' => 100];
+
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+
+            if (!$room->user) {
+                continue;
+            }
+
+            echoLine($room->id);
+            $room->enterRoom($room->user);
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->update();
+            $hot_cache->zadd('ios_auth_room_list', time(), $room->id);
+        }
+        echoLine(count($rooms));
+
+        $room_ids = [90, 91, 92, 95, 115, 117, 111, 122, 180, 107];
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_ids = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+
+        foreach ($room_ids as $room_id) {
+            $room = Rooms::findFirstById($room_id);
+            $room->online_status = STATUS_ON;
+            $room->update();
+        }
+
+        echoLine($res);
+        foreach ($room_ids as $id) {
+            $hot_cache->zadd('ios_auth_room_list', time(), $id);
+        }
     }
 }

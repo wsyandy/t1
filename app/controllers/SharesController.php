@@ -253,4 +253,49 @@ class SharesController extends ApplicationController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $down_url]);
     }
 
+    function matchSingAction()
+    {
+        $share_history = \ShareHistories::findFirstById($this->params('share_history_id', 0));
+        $code = $this->params('code');
+
+        if (!$share_history) {
+            echo "参数错误";
+            return false;
+        }
+
+        $share_history->increase('view_num');
+        $user = $share_history->user;
+
+        $user_agent = $this->request->getUserAgent();
+        debug($user_agent);
+
+        $platform = 'android';
+        if (preg_match('/ios|iphone|ipad/i', $user_agent)) {
+            $platform = 'ios';
+        }
+
+        $soft_version = \SoftVersions::findFirst([
+            'conditions' => 'product_channel_id=:product_channel_id: and platform=:platform: and channel_package = 0 and status = :status:',
+            'bind' => ['product_channel_id' => $user->product_channel_id, 'platform' => $platform, 'status' => SOFT_VERSION_STATUS_ON],
+            'order' => 'id asc'
+        ]);
+
+        $soft_version_id = 0;
+
+        if ($soft_version) {
+            $soft_version_id = $soft_version->id;
+        }
+
+        $data = $share_history->data;
+        $room_id = '';
+
+        if ($data) {
+            $data = json_decode($data, true);
+        }
+
+        $this->view->user = $user;
+        $this->view->soft_version_id = $soft_version_id;
+
+    }
+
 }

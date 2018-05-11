@@ -243,7 +243,9 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
-            'top_text' => $this->top_text
+            'top_text' => $this->top_text,
+            'user_uid' => $this->user_uid,
+            'total_score_by_cache' => $this->total_score_by_cache
         ];
 
         return array_merge($opts, $this->toJson());
@@ -517,7 +519,7 @@ class Rooms extends BaseModel
         $hot_cache = Users::getHotWriteCache();
         $key = 'room_active_last_at_list';
         $time = time();
-        $room_ids = $hot_cache->zrangebyscore($key, $time - $minutes * 60, $time, ['limit' => [0, 200]]);
+        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
         $rooms = Rooms::findByIds($room_ids);
 
         return $rooms;
@@ -1202,6 +1204,7 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
+
     function push($body, $check_user_version = false)
     {
         $users = $this->findTotalRealUsers();
@@ -1498,6 +1501,13 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+
+    //新总的房间列表
+    static function getTotalRoomListKey()
+    {
+        return "total_new_hot_room_list";
+    }
+
     //新的热门房间列表
     static function getHotRoomListKey()
     {
@@ -1658,7 +1668,8 @@ class Rooms extends BaseModel
         }
 
         if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+            $rooms = \Rooms::iosAuthVersionRooms($user, $page, $per_page);
+            return $rooms;
         }
 
         $total_entries = $hot_cache->zcard($hot_room_list_key);
@@ -1915,19 +1926,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2540,17 +2549,6 @@ class Rooms extends BaseModel
             'order' => 'last_at desc, user_type asc'
         ];
 
-        $shield_room_ids = $user->getShieldRoomIds();
-
-        if ($shield_room_ids) {
-            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
-        }
-
-        if (count($filter_ids) > 0) {
-            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
-            return \Rooms::findPagination($cond, $page, $per_page);
-        }
-
         if (STATUS_ON == $broadcast) {
             $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
             $cond['conditions'] .= " and theme_type in ($theme_types)";
@@ -2580,10 +2578,21 @@ class Rooms extends BaseModel
             }
 
             if ($search_type) {
-                $cond['conditions'] .= " and types like :types:";
+                $cond['conditions'] .= " and room_category_types like :types:";
                 $cond['bind']['types'] = "%" . $search_type . "%";
 
             }
+        }
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $filter_ids = array_unique(array_merge($filter_ids, $shield_room_ids));
+        }
+
+        if (count($filter_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
+            return \Rooms::findPagination($cond, $page, $per_page);
         }
 
 
@@ -2660,16 +2669,16 @@ class Rooms extends BaseModel
         return $gang_up_rooms_json;
     }
 
-    function getRoomMenuConfig($show_game, $root, $room_id)
+    function getRoomMenuConfig($current_user_role, $show_game, $root, $room_id)
     {
         $menu_config = [];
         if ($show_game) {
             $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
-        if ($show_game && isDevelopmentEnv()) {
+        if ($show_game && isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
-            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
         return $menu_config;
@@ -2742,5 +2751,160 @@ class Rooms extends BaseModel
             $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
             $user_db->zadd($record_key, $time, $record);
         }
+    }
+
+    function setHotRoomScoreRatio($ratio)
+    {
+        $ratio = intval($ratio);
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+
+        if (!$ratio) {
+
+            $user_db->del($key);
+
+            return;
+        }
+
+        $user_db->set($key, $ratio);
+    }
+
+    static function updateHotRoomList($rooms, $opts = [])
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
+
+        $room_ids = [];
+        $shield_room_ids = [];
+
+        foreach ($rooms as $room) {
+
+            if (!$room->canToHot(2)) {
+                continue;
+            }
+
+            $total_score = $room->getTotalScore();
+
+            if ($total_score < 1) {
+                continue;
+            }
+
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[$room->id] = $total_score;
+            } else {
+                $room_ids[$room->id] = $total_score;
+            }
+
+            if (isDevelopmentEnv()) {
+                $room_score_key = "hot_room_score_list_room_id{$room->id}";
+                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
+                $hot_cache->expire($room_score_key, 3600 * 3);
+            }
+        }
+
+        uksort($room_ids, function ($a, $b) use ($room_ids) {
+
+            if ($room_ids[$a] > $room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+
+            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        $shield_room_num = 5;
+        $total_room_num = 30;
+        $new_user_shield_room_num = 3;
+
+        if (isDevelopmentEnv()) {
+            $shield_room_num = 2;
+            $new_user_shield_room_num = 1;
+        }
+
+        $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
+        $room_ids = array_slice($room_ids, 0, $total_room_num, true);
+
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+        $hot_cache->zclear($new_user_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
+        $hot_cache->zclear($total_new_hot_room_list_key);
+
+        foreach ($room_ids as $room_id => $score) {
+            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
+        }
+
+
+        if (count($shield_room_ids) > 0) {
+
+            $i = 1;
+
+            foreach ($shield_room_ids as $shield_room_id => $score) {
+
+                if ($i <= $new_user_shield_room_num) {
+                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
+                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
+                }
+
+                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+                $hot_cache->zadd($total_new_hot_room_list_key, $score, $shield_room_id);
+
+                $i++;
+            }
+        }
+
+        unlock($lock);
+    }
+
+    static function iosAuthVersionRooms($user, $page, $per_page)
+    {
+        $key = Rooms::generateIosAuthRoomListKey();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $room_ids = $hot_cache->zrevrange($key, 0, -1);
+
+        $cond['conditions'] = " (room_category_types like :room_category_types: and online_status = :online_status: 
+        and status = :status:)";
+
+        $cond['bind'] = ['room_category_types' => "%,broadcast,%", 'online_status' => STATUS_ON,
+            'status' => STATUS_ON
+        ];
+
+        if ($room_ids) {
+            $cond['conditions'] .= " or id in (" . implode(",", $room_ids) . ")";
+        }
+
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+        return $rooms;
+    }
+
+    static function generateIosAuthRoomListKey()
+    {
+        return "ios_auth_room_list";
+    }
+
+    function isIosAuthRoom()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 }

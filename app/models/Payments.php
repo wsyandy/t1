@@ -165,8 +165,15 @@ class Payments extends BaseModel
     {
         if ($this->user->device) {
             $hot_cache = Payments::getHotWriteCache();
+            $user_db = Users::getUserDb();
+
+            $user = $this->user;
+
             $key = "stat_apple_day_total_pay_amount_list_" . date("Ymd");
-            $hot_cache->zincrby($key, $this->amount, $this->user->device_id);
+            $total_key = "stat_apple_total_pay_amount_device_id_" . $user->device_id;
+
+            $user_db->incrby($total_key, $this->amount);
+            $hot_cache->zincrby($key, $this->amount, $user->device_id);
             $hot_cache->expire($key, endOfDay() - time());
         }
     }

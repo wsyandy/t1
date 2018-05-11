@@ -41,11 +41,27 @@ class RoomsController extends BaseController
         $per_page = $this->params('per_page', 8);
         $hot = intval($this->params('hot', 0));
 
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
+        }
+
+        $follow = $this->params('follow');
+
+        if (STATUS_ON == $follow) {
+
+            $user_ids = $this->currentUser()->followUserIds();
+
+            if (count($user_ids) < 1) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
+            }
         }
 
         $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
@@ -204,7 +220,7 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
-        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}
@@ -663,6 +679,11 @@ class RoomsController extends BaseController
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 10);
 
+        if ($this->currentUser()->isIosAuthVersion()) {
+            $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
+        }
+
         $keyword = $this->params('keyword', null);
         $type = $this->params('type');
 
@@ -778,7 +799,7 @@ class RoomsController extends BaseController
 
         if (STATUS_ON == $hot) {
 
-            if (isDevelopmentEnv()) {
+            if (isInternalIp($this->remoteIp()) || $this->currentUser()->isCompanyUser()) {
                 $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
             } else {
                 $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);

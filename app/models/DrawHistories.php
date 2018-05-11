@@ -251,7 +251,6 @@ class DrawHistories extends BaseModel
     static function calPayAmountRate($user, $datum, $opts)
     {
 
-        $pool_rate = mt_rand(70, 91) / 100;
         $user_total_get_amount = fetch($opts, 'user_total_get_amount');
         $user_rate_multi = fetch($opts, 'user_rate_multi');
         $total_pay_amount = fetch($opts, 'total_pay_amount');
@@ -260,6 +259,16 @@ class DrawHistories extends BaseModel
 
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
+
+        $pool_rate = sprintf("%0.3f", $total_decr_diamond / $total_incr_diamond);
+        $rate = mt_rand(1, 100);
+        if ($rate < 80) {
+            $pool_rate = $pool_rate - 0.011;
+        }
+
+        info('draw_history_pool_rate', $pool_rate);
+
+        $pool_rate = mt_rand(70, 91) / 100;
 
         if ($type == 'diamond') {
 

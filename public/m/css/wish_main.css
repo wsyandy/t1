@@ -209,29 +209,9 @@ html,body{
   background: url(../images/wishing_record_bg.png) center no-repeat;
   background-size: cover;
 }
-/*.release_wish{*/
-  /*position: absolute;*/
-  /*top: 1.48rem;*/
-  /*left: 0;*/
-  /*width: 7.5rem;*/
-  /*height: 7.9rem;*/
-  /*z-index: 103;*/
-  /*padding-top: 1rem;*/
-  /*background: url(../images/wish_backround1.png) center no-repeat;*/
-  /*background-size: 4.8rem 7.9rem;*/
-  /*flex-direction: column;*/
-/*}*/
-/*.release_wish textarea{*/
-  /*margin: .54rem 2rem 0;*/
-  /*height:4.5rem;*/
-  /*background-color: transparent;*/
-  /*border: none;*/
-  /*font-size: .22rem;*/
-  /*color: #67450E;*/
-/*}*/
 
 .release_wish{
-  position: absolute;
+  position: fixed;
   top: 1.48rem;
   left: 0;
   width: 7.5rem;
@@ -349,20 +329,12 @@ html,body{
   background: url(../images/heart_icon.png) center no-repeat;
   background-size: .37rem .41rem;
 }
-.release_wish .cancel{
-  position: fixed;
-  left: 3.3rem;
-  bottom: 1.12rem;
-  width: .86rem;
-  height: .86rem;
-  background: url(../images/cancel_buttom2.png) center no-repeat;
-  background-size: .86rem;
-}
+
 .mywish_list{
   width: 100%;
   overflow-x: auto;
   height: 7.9rem;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 1.5rem;
   z-index: 104;
@@ -392,8 +364,9 @@ html,body{
   overflow-y: auto;
   color: #67450E;
 }
-.mywish_list .cancel{
+.toatst_cancel{
   position: fixed;
+  z-index:120;
   left: 3.4rem;
   bottom: 1.12rem;
   width: .86rem;
@@ -417,54 +390,6 @@ html,body{
     height: 8.5rem;
   }
 }
-/*.mywish_list{*/
-  /*width: 100%;*/
-  /*overflow-x: auto;*/
-  /*height: 7.9rem;*/
-  /*position: absolute;*/
-  /*left: 0;*/
-  /*top: 1.5rem;*/
-  /*z-index: 104;*/
-/*}*/
-/*.mywish_list ul{*/
-  /*width: auto;*/
-  /*padding:0 1.16rem;*/
-/*}*/
-/*.mywish_list ul li{*/
-  /*flex-direction: column;*/
-  /*padding: 1.54rem 1.1rem 0;*/
-  /*height: 7.9rem;*/
-  /*width: 5.4rem;*/
-  /*background:url(../images/wish_backround.png) center no-repeat;*/
-  /*background-size: 4.4rem 7.9rem;*/
-/*}*/
-/*.mywish_list ul .background2{*/
-  /*background:url(../images/wish_backround2.png) center no-repeat;*/
-  /*background-size: 4.4rem 7.9rem;*/
-/*}*/
-/*.mywish_list li p{*/
-  /*margin-top: .4rem;*/
-  /*height: 3.1rem;*/
-  /*overflow-y: auto;*/
-  /*color: #67450E;*/
-/*}*/
-/*.mywish_list .cancel{*/
-  /*position: fixed;*/
-  /*left: 3.4rem;*/
-  /*bottom: 1.12rem;*/
-  /*width: .86rem;*/
-  /*height: .86rem;*/
-  /*background: url(../images/cancel_buttom2.png) center no-repeat;*/
-  /*background-size: .86rem;*/
-/*}*/
-/*.view_wish{*/
-  /*position: absolute;*/
-  /*left: 1rem;*/
-  /*top: 3.5rem;*/
-  /*width: 5.2rem;*/
-  /*height: 7rem;*/
-  /*z-index:90;*/
-/*}*/
 .not_balance_toast{
   padding-top: .34rem;
   position: fixed;

@@ -197,4 +197,10 @@ class XingYuTask extends \Phalcon\Cli\Task
         info('');
         echoLine($i);
     }
+
+    function wishWinnerAction()
+    {
+        $product_channel_id = 1;
+        \WishHistories::getRand($product_channel_id);
+    }
 }

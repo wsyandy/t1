@@ -51,6 +51,9 @@ class ShareHistories extends BaseModel
         if ($this->isDistribute()) {
             return $root . 'shares/distribute?share_history_id=' . $this->id . '&code=' . $code;
         }
+        if ($this->isMatchSing()) {
+            return $root . 'shares/match_sing?share_history_id=' . $this->id . '&code=' . $code;
+        }
 
         return $root . 'shares?share_history_id=' . $this->id . '&code=' . $code;
     }
@@ -61,7 +64,21 @@ class ShareHistories extends BaseModel
             return "我正在" . $product_channel_name . "，快来一起嗨吧！";
         }
 
+        if ($this->isMatchSing()) {
+            return "Hi语音<歌神争霸赛>，赛场见!";
+        }
+
         return $nickname . "正在这个房间玩，快来一起连麦嗨！";
+    }
+
+    function getShareDescription($product_channel_name)
+    {
+
+        if ($this->isMatchSing()) {
+            return "Hi语音“歌神争霸赛”，现金、大奖送不停，专属演唱会high翻天。";
+        }
+
+        return $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
     }
 
     function result($opts)
@@ -104,6 +121,11 @@ class ShareHistories extends BaseModel
     function isDistribute()
     {
         return $this->share_source == 'distribute';
+    }
+
+    function isMatchSing()
+    {
+        return $this->share_source == 'match_sing';
     }
 
 }

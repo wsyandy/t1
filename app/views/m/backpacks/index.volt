@@ -66,29 +66,7 @@
             </div>
         </li>
 
-        {#<li>
-            <div class="list_img">
-                <img src="/m/images/banner.png" alt="">
-            </div>
-            <div class="list_txt">
-                <span>吃土</span>
-                <span>x2</span>
-            </div>
-        </li>
-        <li>
-            <div class="list_img">
-                <img src="/m/images/rules_bg.png" alt="">
-            </div>
-            <div class="list_txt">
-                <span>黄瓜</span>
-                <span>x2</span>
-            </div>
-        </li>#}
     </ul>
-    {#<a class="btn" href="javascript:;">
-        立即领取
-    </a>#}
-
 </div>
 
 <div class="rules_box">

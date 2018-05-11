@@ -203,6 +203,7 @@ define('CALL_STATUS_HANG_UP', 5);//挂断
 define('CALL_STATUS_ANSWERED', 6);//接听
 
 define('CHAT_CONTENT_TYPE_TEXT', 'text/plain');
+define('CHAT_CONTENT_TYPE_TEXT_NEWS', 'text/news');
 
 define('MAX_OFFLINE_TASK_HANG_UP_TIME', 48 * 60 * 60);
 
@@ -324,7 +325,3 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 define('BACKPACK_GIFT_TYPE', 1); // 礼物
 define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
 define('BACKPACK_GOLD_TYPE', 3); // 金币
-
-//PK类型
-define('SEND_GIFT_USER', 'send_gift_user'); //按照赠送礼物人数PK
-define('SEND_GIFT_AMOUNT', 'send_gift_amount');   //按照赠送礼物价值总数PK

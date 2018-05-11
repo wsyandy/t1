@@ -42,8 +42,8 @@ class SharesController extends BaseController
         }
         $product_channel_name = $this->currentProductChannel()->name;
 
-        $description = $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
-
+        //$description = $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
+        $description = $share_history->getShareDescription($product_channel_name);
         $url = $share_history->getShareUrl($this->getRoot(), $code);
         $title = $share_history->getShareTitle($user->nickname, $product_channel_name);
 

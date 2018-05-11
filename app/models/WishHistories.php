@@ -22,7 +22,8 @@ class WishHistories extends BaseModel
             'user_nickname' => $this->user_nickname,
             'user_uid' => $this->user->uid,
             'user_avatar_url' => $this->user->avatar_url,
-            'guarded_number' => $guarded_number
+            'guarded_number' => $guarded_number,
+            'age' => $this->user->age
         ];
     }
 
@@ -47,6 +48,16 @@ class WishHistories extends BaseModel
             $user_db = \Users::getUserDb();
             $guard_wish_key = \WishHistories::getGuardWishKey($product_channel_id);
             $user_db->zadd($guard_wish_key, 0, $wish_histories->id);
+
+            $lucky_user_key = self::generateLuckyUserList($product_channel_id);
+            $lucky_user_ids = $user_db->zrange($lucky_user_key, 0, -1);
+
+            //如果发布愿望的用户已经在幸运用户集合当中，即中过奖，则不在加入集合中
+            if (!in_array($wish_histories->user_id, $lucky_user_ids)) {
+                $guard_wish_user_list_key = \WishHistories::generateNoLuckyUserList($product_channel_id);
+                $user_db->zadd($guard_wish_user_list_key, time(), $wish_histories->user_id);
+            }
+
             return $wish_histories->id;
         }
     }
@@ -54,6 +65,11 @@ class WishHistories extends BaseModel
     static function getGuardWishKey($product_channel_id)
     {
         return 'guarded_wish_for_product_channel_' . $product_channel_id;
+    }
+
+    static function generateNoLuckyUserList($product_channel_id)
+    {
+        return 'no_lucky_user_list_' . $product_channel_id;
     }
 
     //获取愿望分页列表
@@ -64,7 +80,6 @@ class WishHistories extends BaseModel
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
         $wish_history_ids = [];
-        info('全部数据', $res);
         foreach ($res as $wish_history_id => $guarded_number) {
             $wish_history_ids[] = $wish_history_id;
         }
@@ -110,28 +125,66 @@ class WishHistories extends BaseModel
         return $wish_history_info;
     }
 
-    static function getRand($relations_key)
+    static function getRand($product_channel_id)
     {
         $user_db = \Users::getUserDb();
-        $res = $user_db->zrevrange($relations_key,0,-1);
-        shuffle($res);
-        $lucky_names = [];
-        if(6 > count($res)) {
-            foreach ($res as $id) {
-                $re = \WishHistories::findFirstById($id);
-                $users = \Users::findFirstById($re->user_id);
-                $lucky_names[] = $users->nickname;
+        $key = self::generateNoLuckyUserList($product_channel_id);
+        $ids = $user_db->zrange($key, 0, -1);
+        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
+
+        if (6 > count($ids)) {
+            foreach ($ids as $id) {
+                self::afterWin($key, $lucky_user_key, $id);
             }
-            return $lucky_names;
         }
 
-        $ids = array_rand($res,5);
-        foreach ($ids as $id) {
-            $re = \WishHistories::findFirstById($id);
-            $users = \Users::findFirstById($re->user_id);
-            $lucky_names[] = $users->nickname;
+        $lucky_ids = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $index = array_rand($ids);
+            $lucky_ids[] = $ids[$index];
+            unset($ids[$index]);
+        }
+        info($lucky_ids);
+        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
+        //中奖的用户加入幸运用户集合中，并从no_lucky的集合中删除
+        foreach ($lucky_ids as $lucky_id) {
+            self::afterWin($key, $lucky_user_key, $lucky_id);
+        }
+    }
+
+    static function generateLuckyUserList($product_channel_id)
+    {
+        return 'lucky_user_list_' . $product_channel_id;
+    }
+
+    static function afterWin($key, $lucky_user_key, $lucky_id)
+    {
+        $user_db = \Users::getUserDb();
+        $user_db->zrem($key, $lucky_id);
+        $user_db->zadd($lucky_user_key, time(), $lucky_id);
+    }
+
+    static function getLuckyUserList($product_channel_id)
+    {
+        $db = \Users::getUserDb();
+        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
+        $start_at = strtotime(date('Y-m-d 19:59:59', time()));
+//        $start_at = endOfHour(strtotime('Y-m-d 19:59:59'));
+        $stop_at = strtotime(date('Y-m-d 19:59:59', time() + 24 * 60 * 60));
+//        $stop_at = endOfHour(strtotime('Y-m-d 19:59:59', '+1 day'));
+        $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
+        if (isBlank($lucky_user_ids)) {
+            $start_at = strtotime(date('Y-m-d 19:59:59', time() - 24 * 60 * 60));
+            $stop_at = strtotime(date('Y-m-d 19:59:59', time()));
+            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
         }
 
+        $lucky_users = \Users::findByIds($lucky_user_ids);
+        $lucky_names = [];
+        foreach ($lucky_users as $lucky_user) {
+            $lucky_names[] = $lucky_user->nickname;
+        }
         return $lucky_names;
     }
 }

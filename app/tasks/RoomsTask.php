@@ -17,6 +17,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms as $room) {
 
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             //$key = $room->getRealUserListKey();
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
@@ -92,6 +96,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($online_silent_rooms as $online_silent_room) {
 
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
+
             $users = $online_silent_room->findSilentUsers();
 
             foreach ($users as $user) {
@@ -131,6 +139,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             $user = $room->user;
 
             if (!$user) {
@@ -163,6 +176,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($online_silent_rooms as $online_silent_room) {
+
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
@@ -207,6 +224,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             Rooms::delay()->activeRoom($room->id);
         }
     }
@@ -822,106 +844,19 @@ class RoomsTask extends \Phalcon\Cli\Task
     //新热门逻辑
     function generateHotRoomsAction()
     {
-        $hot_cache = Users::getHotWriteCache();
         $rooms = Rooms::getActiveRoomsByTime();
-        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
-
-        $room_ids = [];
-        $shield_room_ids = [];
-
-        foreach ($rooms as $room) {
-
-            if (!$room->canToHot(2)) {
-                continue;
-            }
-
-            $total_score = $room->getTotalScore();
-
-            if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
-            } else {
-                $room_ids[$room->id] = $total_score;
-            }
-
-            if (isDevelopmentEnv()) {
-                $room_score_key = "hot_room_score_list_room_id{$room->id}";
-                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
-                $hot_cache->expire($room_score_key, 3600 * 3);
-            }
-        }
-
-        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
-
-            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                return -1;
-            }
-
-            return 1;
-        });
-
-        echoLine($room_ids, $shield_room_ids);
-
-        $lock = tryLock($hot_room_list_key, 1000);
-
-        $hot_cache->zclear($hot_room_list_key);
-        $hot_cache->zclear($new_user_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
-
-        foreach ($room_ids as $room_id => $score) {
-            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
-        }
-
-        $shield_room_num = 5;
-        $new_user_shield_room_num = 3;
-
-        if (isDevelopmentEnv()) {
-            $shield_room_num = 2;
-            $new_user_shield_room_num = 1;
-        }
-
-        $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
-
-        if (count($shield_room_ids) > 0) {
-
-            $i = 1;
-
-            foreach ($shield_room_ids as $shield_room_id => $score) {
-
-                if ($i <= $new_user_shield_room_num) {
-                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
-                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
-                }
-
-                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
-
-                $i++;
-            }
-        }
-
-        unlock($lock);
+        Rooms::updateHotRoomList($rooms);
     }
 
     function generateNewHotRoomRankAction()
     {
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
         $hot_cache = Users::getHotWriteCache();
-        $hot_room_list_key = Rooms::getHotRoomListKey();
-        $room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
+        $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
 
-        $rooms = Rooms::findByIds($room_ids);
-
-        foreach ($rooms as $room) {
-
-            if (!$room->canToHot(2)) {
-                $hot_cache->zrem($hot_room_list_key, $room->id);
-            }
-
+        if (count($room_ids) > 0) {
+            $rooms = Rooms::findByIds($room_ids);
+            Rooms::updateHotRoomList($rooms);
         }
     }
 

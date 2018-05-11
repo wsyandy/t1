@@ -723,4 +723,52 @@ class KangTask extends \Phalcon\Cli\Task
 
     }
 
+    function sendMsgAction()
+    {
+
+        $product_channel = ProductChannels::findFirstById(1);
+
+        $content = <<<EOF
+系统通知：
+2018年5月15日0点将停止荣耀等级特权赠送ID活动；
+5月15日之前升级段位的用户，平台按现有活动赠送标准给予特权ID奖励；
+5月15日0点之后升级段位的用户，平台将不再给予特权ID奖励；
+请把各位用户把握住机会噢！
+EOF;
+
+        $body = '';
+        $platforms = ['ios', 'android'];
+
+        if (isProduction()) {
+            foreach ($platforms as $platform) {
+                GeTuiMessages::globalPush($product_channel, $platform, $content, $body);
+            }
+        }
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = :product_channel_id: and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['product_channel_id' => 1, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 15 * 86400],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                Chats::delay(mt_rand(1, 1800))->batchSendTextSystemMessage($user_ids, $content);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
+            }
+        }
+    }
+
 }

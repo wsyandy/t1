@@ -15,7 +15,7 @@ html,body{
     width: 100%;
     height: 100%;
 }
-@font-face {font-family:soundFont; src: url("./方正喵呜体的副本.ttf")}
+@font-face {font-family:soundFont; src: url("../mw.ttf")}
 
 .wishing_tree{
     width: 100%;
@@ -114,7 +114,7 @@ html,body{
 .mask_background{
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     background-color: rgba(0, 0, 0, .4);
@@ -362,7 +362,7 @@ html,body{
     width: 100%;
     overflow-x: auto;
     height: 7.9rem;
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 1.5rem;
     z-index: 104;
@@ -392,8 +392,9 @@ html,body{
     overflow-y: auto;
     color: #67450E;
 }
-.mywish_list .cancel{
+.toast_cancel{
     position: fixed;
+    z-index:120;
     left: 3.4rem;
     bottom: 1.12rem;
     width: .86rem;
@@ -602,6 +603,9 @@ html,body{
     top: .55rem;
     width: 1.31rem;
     height: .72rem;
+    line-height:.76rem;
+    text-indent:.6rem;
+    color: #fff;
     background: url(../images/search_button.png) center no-repeat;
     background-size: 1.31rem .72rem;
 }
