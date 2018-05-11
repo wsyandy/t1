@@ -115,7 +115,7 @@ class WishHistoriesController extends BaseController
     function searchUserAction()
     {
         $uid = $this->params('uid');
-        $user = \Users::findFirstBy(['uid' => $uid]);
+        $user = \Users::findFirstByUid($uid);
 
         $show_wish_histories = \WishHistories::findBy(['user_id' => $user->id]);
         if ($show_wish_histories) {
