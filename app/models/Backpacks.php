@@ -242,7 +242,7 @@ class Backpacks extends BaseModel
     {
         $receiver_ids = explode(',', $user_id);
 
-        if ($this->isGift()) {
+        if (!$this->isGift()) {
             return [ERROR_CODE_FAIL, '赠送失败', null];
         }
 

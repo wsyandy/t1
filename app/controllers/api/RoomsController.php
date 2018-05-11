@@ -204,7 +204,7 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
-        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}

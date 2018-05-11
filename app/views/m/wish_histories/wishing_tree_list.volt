@@ -87,8 +87,8 @@
             <span class="title">搜索</span>
             <input class="input_text" v-model="uid" placeholder="请输入查询ID" type="text"/>
             {#<p class="results">#}
-                {#<span v-if="searchResults">昵称：黑芝麻</span>#}
-                {#<span v-if="!searchResults" class="error">用户不存在</span>#}
+            {#<span v-if="searchResults">昵称：黑芝麻</span>#}
+            {#<span v-if="!searchResults" class="error">用户不存在</span>#}
             {#</p>#}
             <div class="search_toast_action">
                 <span @click="searchConfrm(0)" class="cancel">取消</span>
@@ -98,7 +98,7 @@
     </div>
     <div v-if="myWishList" class="mywish_list">
         <ul>
-            <li v-for="show_wish_history,index in show_wish_histories" >
+            <li v-for="show_wish_history,index in show_wish_histories">
                 <div class="release_wish_heart">
                     <span class="heart_icon"></span>
                     <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
@@ -129,9 +129,9 @@
             searchToast: false,
             wish_histories:{{ wish_histories }},
             myWishList: false,
-            show_wish_histories:[],
-            sid:"{{ sid }}",
-            code:"{{ code }}"
+            show_wish_histories: [],
+            sid: "{{ sid }}",
+            code: "{{ code }}"
         },
         mounted: function () {
 
@@ -153,6 +153,8 @@
                         if (!resp.error_code) {
                             vm.myWishList = true;
                             vm.show_wish_histories = resp.show_wish_histories;
+                        } else {
+                            alert(resp.error_reason);
                         }
                     })
                 } else {
