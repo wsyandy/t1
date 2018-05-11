@@ -216,6 +216,29 @@
              }
              ...
          ],
+     pk_history:[
+        "id": int PK记录ID,
+        'pk_type': string pk类型,
+        'expire_at': int 过期时间,
+        'created_at': int 创建时间戳,
+        'created_at_text': string 创建时间,
+        'left_pk_user':[
+            'id' : 左边pk者的id
+            'nickname':左边pk者的昵称
+            'score':左边pk者的分数
+            'avatar_small_url': 左边pk者的头像
+        ],
+        'right_pk_user':[
+                    'id' : 右边pk者的id
+                    'nickname':右边pk者的昵称
+                    'score':右边pk者的分数
+                    'avatar_small_url': 右边pk者的头像
+         ]
+     ],
+     red_packet:[
+          'num': int 红包个数,
+          "url": string  跳转地址, 
+     ],
      game: {
              "url": string  跳转地址,
              "icon": string 图片地址
@@ -735,6 +758,7 @@
             age int 年龄
             monologue 个性签名
             online_status 0离线，1在线
+            has_red_packet int 是有红包 0没有 1有
             channel_name: string 房间唯一标识, 频道名称
             lock boole加锁状态, true是加锁
             created_at int 创建时间戳

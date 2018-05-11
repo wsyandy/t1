@@ -1050,4 +1050,20 @@ trait UserAttrs
 
         return $total_room_ids;
     }
+
+    function getDayCharmValue()
+    {
+        $user_db = Users::getUserDb();
+        $key = Users::generateFieldRankListKey('day', 'charm');
+
+        return intval($user_db->zscore($key, $this->id));
+    }
+
+    function getDayWealthValue()
+    {
+        $user_db = Users::getUserDb();
+        $key = Users::generateFieldRankListKey('day', 'wealth');
+
+        return intval($user_db->zscore($key, $this->id));
+    }
 }

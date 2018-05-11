@@ -97,3 +97,9 @@ html{
     padding-bottom: 0.2rem;
 }
 .rules_list li span{ color:#ff6c26}
+.mine_text{
+    text-align: center;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #888888;
+}

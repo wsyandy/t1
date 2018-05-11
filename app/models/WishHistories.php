@@ -89,4 +89,49 @@ class WishHistories extends BaseModel
         info('当前愿望的守护数', $guarded_number);
         return $guarded_number;
     }
+
+    static function getUserIdGuarded($relations_key, $limit)
+    {
+        $user_db = \Users::getUserDb();
+
+        $res = $user_db->zrevrange($relations_key, 0, $limit - 1, 'withscores');
+        $wish_history_info = [];
+        foreach ($res as $wish_history_id => $guarded_number) {
+            $info = self::findById($wish_history_id);
+            $wish_history_info[] = array(
+                'user_id' => $info->user_id,
+                'guarded_number' => $guarded_number
+            );
+        }
+        if (!$wish_history_info) {
+            return null;
+        }
+
+        return $wish_history_info;
+    }
+
+    static function getRand($relations_key)
+    {
+        $user_db = \Users::getUserDb();
+        $res = $user_db->zrevrange($relations_key,0,-1);
+        shuffle($res);
+        $lucky_names = [];
+        if(6 > count($res)) {
+            foreach ($res as $id) {
+                $re = \WishHistories::findFirstById($id);
+                $users = \Users::findFirstById($re->user_id);
+                $lucky_names[] = $users->nickname;
+            }
+            return $lucky_names;
+        }
+
+        $ids = array_rand($res,5);
+        foreach ($ids as $id) {
+            $re = \WishHistories::findFirstById($id);
+            $users = \Users::findFirstById($re->user_id);
+            $lucky_names[] = $users->nickname;
+        }
+
+        return $lucky_names;
+    }
 }

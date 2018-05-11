@@ -1,0 +1,81 @@
+
+/* css reset */
+body, div, p, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, a, input, button, textarea, table, th, tr, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+}
+a{
+    text-decoration: none;
+}
+.extend_box{
+    padding-top: 0.2rem;
+    width: 100%;
+    height: 13.34rem;
+    background-image: url("../images/bg.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-position: center top;
+}
+.logo{
+    display: block;
+    width: 1.16rem;
+    height: 1.16rem;
+    margin: 0.7rem auto;
+}
+.header_text{
+    display: block;
+    width: 6.79rem;
+    height: 2.44rem;
+    margin: 0 auto;
+}
+.pie_chart{
+    display: block;
+    width: 7rem;
+    height: 4.62rem;
+    margin: 0.7rem auto;
+}
+.btn_test{
+    width: 3.8rem;
+    height: 0.88rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border: 0.02rem solid #F83FAE;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
+    border-radius: 1rem;
+    margin: 0 auto;
+}
+.ico_microphone{
+    width: 0.38rem;
+    height: 0.6rem;
+    margin-right: 0.4rem;
+}
+.btn_txt{
+    font-size: 0.36rem;
+    color: #F82AA4;
+    letter-spacing: 0.02rem;
+}

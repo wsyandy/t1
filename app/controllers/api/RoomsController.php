@@ -224,6 +224,11 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
+
+        if (isDevelopmentEnv()) {
+            $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
+        }
+
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
 
@@ -772,7 +777,13 @@ class RoomsController extends BaseController
         }
 
         if (STATUS_ON == $hot) {
-            $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+
+            if (isDevelopmentEnv()) {
+                $hot_rooms = \Rooms::newSearchHotRooms($this->currentUser(), 1, 9);
+            } else {
+                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
+            }
+
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
@@ -866,16 +877,17 @@ class RoomsController extends BaseController
         $right_pk_user_id = $this->params('right_pk_user_id');
         $pk_type = $this->params('pk_type'); //send_gift_user send_gift_amount
         $pk_time = $this->params('pk_time'); //
+        $cover = $this->params('cover', 0);
 
-        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time];
+        $opts = ['left_pk_user_id' => $left_pk_user_id, 'right_pk_user_id' => $right_pk_user_id, 'pk_type' => $pk_type, 'pk_time' => $pk_time, 'cover' => $cover, 'room_id' => $room_id];
 
-        $pk_history = \PkHistories::createHistory($this->currentUser(), $opts);
+        list($pk_history, $error_code, $error_reason) = \PkHistories::createHistory($this->currentUser(), $opts);
 
         if ($pk_history) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '创建成功', $pk_history->toSimpleJson());
+            return $this->renderJSON($error_code, $error_reason, $pk_history->toSimpleJson());
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '创建失败');
+        return $this->renderJSON($error_code, $error_reason);
 
     }
 

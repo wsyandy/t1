@@ -3,6 +3,7 @@
 class Rooms extends BaseModel
 {
     use RoomEnumerations;
+    use RoomAttrs;
 
     /**
      * @type ProductChannels
@@ -242,7 +243,8 @@ class Rooms extends BaseModel
             'union_name' => $this->union_name,
             'type_text' => $this->union_type_text,
             'theme_type' => $this->theme_type,
-            'top_text' => $this->top_text
+            'top_text' => $this->top_text,
+            'user_uid' => $this->user_uid
         ];
 
         return array_merge($opts, $this->toJson());
@@ -253,42 +255,6 @@ class Rooms extends BaseModel
         return ['id' => $this->id, 'uid' => $this->uid, 'lock' => $this->lock, 'channel_name' => $this->channel_name, 'name' => $this->name];
     }
 
-    function toInternationalDetailJson()
-    {
-
-        $user = $this->user;
-
-        $user_info = [
-            'id' => $user->id,
-            'uid' => $user->uid,
-            'nickname' => $user->nickname,
-            'avatar_small_url' => $user->avatar_small_url,
-            'sex' => $user->sex,
-            'age' => $user->age,
-            'monologue' => $user->monologue
-        ];
-
-        return [
-            'id' => $this->id,
-            'uid' => $this->uid,
-            'name' => $this->name,
-            'topic' => $this->topic,
-            'chat' => $this->chat,
-            'online_status' => $this->online_status,
-            'channel_name' => $this->channel_name,
-            'lock' => $this->lock,
-            'created_at' => $this->created_at,
-            'last_at' => $this->last_at,
-            'user_num' => $this->user_num,
-            'theme_type' => $this->theme_type,
-            'audio_id' => $this->audio_id,
-            'theme_image_url' => $this->theme_image_url,
-            'room_theme_id' => $this->room_theme_id,
-            'user_info' => $user_info,
-            'room_seats' => $this->roomSeats(),
-            'managers' => $this->findManagers()
-        ];
-    }
 
     function roomSeats()
     {
@@ -547,6 +513,17 @@ class Rooms extends BaseModel
         }
     }
 
+    static function getActiveRoomsByTime($minutes = 15)
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $time = time();
+        $room_ids = $hot_cache->zrangebyscore($key, $time - $minutes * 60, $time, ['limit' => [0, 200]]);
+        $rooms = Rooms::findByIds($room_ids);
+
+        return $rooms;
+    }
+
     function getLastAtByCache()
     {
         $hot_cache = Users::getHotReadCache();
@@ -568,26 +545,6 @@ class Rooms extends BaseModel
     function getRealUserListKey()
     {
         return 'room_real_user_list_' . $this->id;
-    }
-
-    function getUserNum()
-    {
-        $hot_cache = self::getHotWriteCache();
-        $key = $this->getUserListKey();
-        return $hot_cache->zcard($key);
-    }
-
-    function getRealUserNum()
-    {
-        $hot_cache = self::getHotWriteCache();
-        $key = $this->getRealUserListKey();
-        return $hot_cache->zcard($key);
-    }
-
-    function getSilentUserNum()
-    {
-        $num = $this->getUserNum() - $this->getRealUserNum();
-        return $num;
     }
 
     function addUser($user)
@@ -1542,6 +1499,30 @@ class Rooms extends BaseModel
         return "hot_room_list";
     }
 
+    //新的热门房间列表
+    static function getHotRoomListKey()
+    {
+        return "total_hot_rooms_list";
+    }
+
+    //新用户热门房间列表
+    static function getNewUserHotRoomListKey()
+    {
+        return "new_user_hot_rooms_list";
+    }
+
+    //老用户充值热门房间列表
+    static function getOldUserPayHotRoomListKey()
+    {
+        return "old_user_pay_hot_rooms_list";
+    }
+
+    //老用户未充值热门房间列表
+    static function getOldUserNoPayHotRoomListKey()
+    {
+        return "old_user_no_pay_hot_rooms_list";
+    }
+
     //总的屏蔽热门房间列表
     static function generateShieldHotRoomListKey()
     {
@@ -1581,6 +1562,57 @@ class Rooms extends BaseModel
             return true;
         }
         return false;
+    }
+
+    static function newSearchHotRooms($user, $page, $per_page)
+    {
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+
+        $register_time = time() - $user->register_at;
+        $time = 60 * 15;
+
+        if (isProduction()) {
+            $time = 86400;
+        }
+
+        if ($user->isShieldHotRoom()) {
+
+            $hot_room_list_key = Rooms::getHotRoomListKey();
+
+        } else {
+
+            if ($register_time <= $time) {
+                $hot_room_list_key = $new_user_hot_rooms_list_key;
+            } else {
+
+                if ($user->pay_amount > 0) {
+                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
+                } else {
+                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
+                }
+            }
+        }
+
+        $hot_cache = Users::getHotWriteCache();
+        $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $room_ids = array_diff($room_ids, $shield_room_ids);
+        }
+
+        if ($user && $user->isIosAuthVersion()) {
+            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $room_ids]);
+        }
+
+        $rooms = Rooms::findByIds($room_ids);
+        $pagination = new PaginationModel($rooms, count($room_ids), $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
     }
 
     static function searchHotRooms($user, $page, $per_page)
@@ -2128,15 +2160,15 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
 
-        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
-            return false;
-        }
+//        if (!$this->isBroadcast() && !$user->isIdCardAuth() && $user->pay_amount < 1) {
+//            return false;
+//        }
 
         if (!$this->checkRoomSeat()) {
             return false;
         }
 
-        if ($this->getUserNum() < $least_user_num) {
+        if ($this->getRealUserNum() < $least_user_num) {
             return false;
         }
 
@@ -2711,5 +2743,106 @@ class Rooms extends BaseModel
             $record = date("Y-m-d H:i:s", $time) . "取消禁止上热门;操作者:" . $operator->username;
             $user_db->zadd($record_key, $time, $record);
         }
+    }
+
+    function setHotRoomScoreRatio($ratio)
+    {
+        $ratio = intval($ratio);
+        $user_db = Rooms::getRoomDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+
+        if (!$ratio) {
+
+            $user_db->del($key);
+
+            return;
+        }
+
+        $user_db->set($key, $ratio);
+    }
+
+    static function updateHotRoomList($rooms, $opts = [])
+    {
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
+        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        $room_ids = [];
+        $shield_room_ids = [];
+
+        foreach ($rooms as $room) {
+
+            if (!$room->canToHot(2)) {
+                continue;
+            }
+
+            $total_score = $room->getTotalScore();
+
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[$room->id] = $total_score;
+            } else {
+                $room_ids[$room->id] = $total_score;
+            }
+
+            if (isDevelopmentEnv()) {
+                $room_score_key = "hot_room_score_list_room_id{$room->id}";
+                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
+                $hot_cache->expire($room_score_key, 3600 * 3);
+            }
+        }
+
+        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+
+            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                return -1;
+            }
+
+            return 1;
+        });
+
+        $lock = tryLock($hot_room_list_key, 1000);
+
+        $hot_cache->zclear($hot_room_list_key);
+        $hot_cache->zclear($new_user_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
+        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
+
+        foreach ($room_ids as $room_id => $score) {
+            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
+            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
+        }
+
+        $shield_room_num = 5;
+        $new_user_shield_room_num = 3;
+
+        if (isDevelopmentEnv()) {
+            $shield_room_num = 2;
+            $new_user_shield_room_num = 1;
+        }
+
+        $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
+
+        if (count($shield_room_ids) > 0) {
+
+            $i = 1;
+
+            foreach ($shield_room_ids as $shield_room_id => $score) {
+
+                if ($i <= $new_user_shield_room_num) {
+                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
+                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
+                }
+
+                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+
+                $i++;
+            }
+        }
+
+        unlock($lock);
     }
 }

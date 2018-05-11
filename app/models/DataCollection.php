@@ -49,8 +49,6 @@ class DataCollection extends BaseModel
 
     static function syncData($model, $action, $opts = [])
     {
-        return;
-
         if (isProduction()) {
             return;
         }
