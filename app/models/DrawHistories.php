@@ -266,9 +266,9 @@ class DrawHistories extends BaseModel
         if (!$pool_rate) {
             $cur_pool_rate = sprintf("%0.3f", $total_decr_diamond / $total_incr_diamond);
             $rate = mt_rand(1, 100);
-            if ($rate < 60) {
+            if ($rate < 70) {
                 $pool_rate = $cur_pool_rate - 0.011;
-            } elseif ($rate < 30) {
+            } elseif ($rate < 92) {
                 $pool_rate = $cur_pool_rate;
             } else {
                 $pool_rate = $cur_pool_rate + 0.011;
