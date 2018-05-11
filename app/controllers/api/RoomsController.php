@@ -48,6 +48,17 @@ class RoomsController extends BaseController
 
         }
 
+        $follow = $this->params('follow');
+
+        if (STATUS_ON == $follow) {
+
+            $user_ids = $this->currentUser()->followUserIds();
+
+            if (count($user_ids) < 1) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
+            }
+        }
+
         $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
@@ -204,7 +215,7 @@ class RoomsController extends BaseController
 
         $show_game = true;
 
-        $res['menu_config'] = $room->getRoomMenuConfig($show_game, $root, $room_id);
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
         //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
         //  $show_game = true;
         //}

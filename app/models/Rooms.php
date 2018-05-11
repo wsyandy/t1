@@ -519,7 +519,7 @@ class Rooms extends BaseModel
         $hot_cache = Users::getHotWriteCache();
         $key = 'room_active_last_at_list';
         $time = time();
-        $room_ids = $hot_cache->zrangebyscore($key, $time - $minutes * 60, $time, ['limit' => [0, 200]]);
+        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
         $rooms = Rooms::findByIds($room_ids);
 
         return $rooms;
@@ -1203,6 +1203,7 @@ class Rooms extends BaseModel
 
         $this->push($body);
     }
+
 
     function push($body, $check_user_version = false)
     {
@@ -1924,19 +1925,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2549,17 +2548,6 @@ class Rooms extends BaseModel
             'order' => 'last_at desc, user_type asc'
         ];
 
-        $shield_room_ids = $user->getShieldRoomIds();
-
-        if ($shield_room_ids) {
-            $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
-        }
-
-        if (count($filter_ids) > 0) {
-            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
-            return \Rooms::findPagination($cond, $page, $per_page);
-        }
-
         if (STATUS_ON == $broadcast) {
             $theme_types = ROOM_THEME_TYPE_BROADCAST . ',' . ROOM_THEME_TYPE_USER_BROADCAST;
             $cond['conditions'] .= " and theme_type in ($theme_types)";
@@ -2589,10 +2577,21 @@ class Rooms extends BaseModel
             }
 
             if ($search_type) {
-                $cond['conditions'] .= " and types like :types:";
+                $cond['conditions'] .= " and room_category_types like :types:";
                 $cond['bind']['types'] = "%" . $search_type . "%";
 
             }
+        }
+
+        $shield_room_ids = $user->getShieldRoomIds();
+
+        if ($shield_room_ids) {
+            $filter_ids = array_unique(array_merge($filter_ids, $shield_room_ids));
+        }
+
+        if (count($filter_ids) > 0) {
+            $cond['conditions'] .= " and id not in (" . implode(',', $filter_ids) . ")";
+            return \Rooms::findPagination($cond, $page, $per_page);
         }
 
 
@@ -2669,16 +2668,16 @@ class Rooms extends BaseModel
         return $gang_up_rooms_json;
     }
 
-    function getRoomMenuConfig($show_game, $root, $room_id)
+    function getRoomMenuConfig($current_user_role, $show_game, $root, $room_id)
     {
         $menu_config = [];
         if ($show_game) {
             $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
-        if ($show_game && isDevelopmentEnv()) {
+        if ($show_game && isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
-            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url:///m/distribute', 'icon' => $root . 'images/red_packet.png'];
         }
 
         return $menu_config;
@@ -2790,6 +2789,10 @@ class Rooms extends BaseModel
 
             $total_score = $room->getTotalScore();
 
+            if ($total_score < 1) {
+                continue;
+            }
+
             if ($room->isShieldRoom()) {
                 $shield_room_ids[$room->id] = $total_score;
             } else {
@@ -2869,5 +2872,34 @@ class Rooms extends BaseModel
         }
 
         unlock($lock);
+    }
+
+    static function iosAuthVersionRooms($page, $per_page)
+    {
+        $key = Rooms::generateIosAuthRoomListKey();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $total_entries = $hot_cache->zcard($key);
+
+        $offset = $per_page * ($page - 1);
+
+        $room_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
+
+    static function generateIosAuthRoomListKey()
+    {
+        return "ios_auth_room_list";
+    }
+
+    function isIosAuthRoom()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 }

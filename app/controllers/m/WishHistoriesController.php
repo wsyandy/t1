@@ -116,6 +116,9 @@ class WishHistoriesController extends BaseController
     {
         $uid = $this->params('uid');
         $user = \Users::findFirstByUid($uid);
+        if (!$user) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '没有这个用户哦！');
+        }
 
         $show_wish_histories = \WishHistories::findBy(['user_id' => $user->id]);
         if ($show_wish_histories) {

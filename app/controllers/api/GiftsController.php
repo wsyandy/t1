@@ -45,17 +45,32 @@ class GiftsController extends BaseController
         }
 
         $gift_num = $this->params('gift_num', 1);
-        $renew = $this->params('renew', 0);
+        $backpack_id = $this->params('backpack_id');
+        $user_id = $this->params('user_id');
         $src = $this->params('src', 'room');
+
+        $notify_type = $src == 'room' ? 'bc' : 'ptp';
+
+        if ($backpack_id) {
+
+            $backpack = \Backpacks::findFirstById($backpack_id);
+
+            if (!$backpack) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            }
+
+            $res = $backpack->sendGift($this->currentUser(), $user_id, $gift_num, ['notify_type' => $notify_type]);
+            list($error_code, $error_reason, $opts) = $res;
+
+            return $this->renderJSON($error_code, $error_reason, $opts);
+        }
+
+        $renew = $this->params('renew', 0);
         $gift = \Gifts::findById($this->params('gift_id'));
 
         if (isBlank($gift) || $gift->isInvalid()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
         }
-
-        $notify_type = $src == 'room' ? 'bc' : 'ptp';
-
-        $user_id = $this->params('user_id');
 
         if (!$user_id) {
             if ($gift->isCar()) {
