@@ -186,10 +186,10 @@ class PkHistories extends BaseModel
             $current_score = $cache->hget($key, $receiver_id);
             $pk_type = $cache->hget($key, 'pk_type');
             switch ($pk_type) {
-                case SEND_GIFT_USER:
+                case 'send_gift_user':
                     $current_score = self::checkSendGiftUser($sender, $receiver_id, $current_score);
                     break;
-                case SEND_GIFT_AMOUNT:
+                case 'send_gift_amount':
                     if ($pay_type == GIFT_PAY_TYPE_DIAMOND) {
                         $current_score = $current_score + $total_amount;
                     }
