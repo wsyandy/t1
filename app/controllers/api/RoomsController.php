@@ -48,6 +48,17 @@ class RoomsController extends BaseController
 
         }
 
+        $follow = $this->params('follow');
+
+        if (STATUS_ON == $follow) {
+
+            $user_ids = $this->currentUser()->followUserIds();
+
+            if (count($user_ids) < 1) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['rooms' => []]);
+            }
+        }
+
         $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));

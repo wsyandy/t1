@@ -260,26 +260,13 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $hot_cache = self::getHotWriteCache();
-        $pool_rate_key = 'draw_history_pool_rate';
-        $pool_rate = $hot_cache->get($pool_rate_key);
-        if (!$pool_rate) {
-            $cur_pool_rate = sprintf("%0.3f", $total_decr_diamond / $total_incr_diamond);
-            $rate = mt_rand(1, 100);
-            if ($rate < 60) {
-                $pool_rate = $cur_pool_rate - 0.011;
-            } elseif ($rate < 30) {
-                $pool_rate = $cur_pool_rate;
-            } else {
-                $pool_rate = $cur_pool_rate + 0.011;
-            }
-
-            $pool_rate = intval($pool_rate * 1000);
-            $hot_cache->setex($pool_rate_key, 60, $pool_rate);
+        $pool_rate = sprintf("%0.3f", $total_decr_diamond / $total_incr_diamond);
+        $rate = mt_rand(1, 100);
+        if ($rate < 80) {
+            $pool_rate = $pool_rate - 0.011;
         }
 
-        $pool_rate = $pool_rate / 1000;
-        info($pool_rate_key, $pool_rate);
+        info('draw_history_pool_rate', $pool_rate);
 
         $pool_rate = mt_rand(70, 91) / 100;
 
