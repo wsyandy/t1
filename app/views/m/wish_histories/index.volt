@@ -113,13 +113,13 @@
     <!-- 分享 -->
     <div v-if="isShareToast" class="wishing_share_toast">
         <ul class="wishing_share_toast_ul">
-            <li @click="share('wx_friend','web_page')"><img src="/m/images/weixin_icon.png" alt=""/><span>微信</span></li>
-            <li @click="share('wx_moments','web_page')"><img src="/m/images/friends_icon.png" alt=""/><span>朋友圈</span>
+            <li @click="share('wx_friend','web_page','share_source')"><img src="/m/images/weixin_icon.png" alt=""/><span>微信</span></li>
+            <li @click="share('wx_moments','web_page','share_source')"><img src="/m/images/friends_icon.png" alt=""/><span>朋友圈</span>
             </li>
-            <li @click="share('qq_friend','web_page')"><img src="/m/images/qq_icon.png" alt=""/><span>QQ</span></li>
-            <li @click="share('qq_zone','web_page')"><img src="/m/images/kongjian_icon.png" alt=""/><span>QQ空间</span>
+            <li @click="share('qq_friend','web_page','share_source')"><img src="/m/images/qq_icon.png" alt=""/><span>QQ</span></li>
+            <li @click="share('qq_zone','web_page','share_source')"><img src="/m/images/kongjian_icon.png" alt=""/><span>QQ空间</span>
             </li>
-            <li @click="share('sinaweibo','web_page')"><img src="/m/images/weibo_icon.png" alt=""/><span>微博</span></li>
+            <li @click="share('sinaweibo','web_page','share_source')"><img src="/m/images/weibo_icon.png" alt=""/><span>微博</span></li>
         </ul>
         <span @click="onCancelToast(2)" class="cancel">取消</span>
     </div>
@@ -164,7 +164,7 @@
         },
         methods: {
             descInput:function(){
-                var txtVal = this.desc.length;
+                var txtVal = this.my_wish_text.length;
                 if(txtVal<=100){
                     this.remnant = txtVal;
                 }
@@ -244,12 +244,13 @@
                     }
                 })
             },
-            share: function (platform, type) {
+            share: function (platform, type,share_source) {
                 var data = {
                     code: vm.code,
                     sid: vm.sid,
                     platform: platform,
-                    type: type
+                    type: type,
+                    share_source:share_source
                 };
 
                 $.authPost('/m/shares/create', data, function (resp) {
