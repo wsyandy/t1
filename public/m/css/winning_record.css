@@ -392,7 +392,7 @@ html,body{
     overflow-y: auto;
     color: #67450E;
 }
-.toatst_cancel{
+.toast_cancel{
     position: fixed;
     z-index:120;
     left: 3.4rem;
