@@ -141,14 +141,15 @@ class Chats extends BaseModel
 
     static function batchSendTextSystemMessage($user_ids, $content = '')
     {
+        
         if (!$content) {
             info("content_error", $content);
             return false;
         }
 
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-
         foreach ($user_ids as $user_id) {
+            debug($user_id, $content);
             \Chats::sendSystemMessage($user_id, $content_type, $content);
         }
     }

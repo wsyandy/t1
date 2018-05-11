@@ -95,19 +95,15 @@ class Backpacks extends BaseModel
 
     /**
      * 数据写入背包
-     * @param $user
-     * @param $target 当类型为钻石或金币时，值为0
+     * @param $user_id
+     * @param $target_id 当类型为钻石或金币时，值为0
      * @param $number
      * @param int $type
      * @param int $status
      * @return bool
      */
-    static public function createTarget($user, $target, $number, $type = BACKPACK_GIFT_TYPE, $status = STATUS_ON)
+    static public function createTarget($user_id, $target_id, $number, $type, $status = STATUS_ON)
     {
-        if (isDevelopmentEnv()) {
-            $user = (object)['id' => 1];
-        }
-
         $backpack = new \Backpacks();
 
         // 礼物类型
@@ -116,16 +112,16 @@ class Backpacks extends BaseModel
             $conditions = [
                 'conditions' => 'user_id = :user_id: and target_id = :target_id:',
                 'bind' => [
-                    'user_id' => $user->id,
-                    'target_id' => $target
+                    'user_id' => $user_id,
+                    'target_id' => $target_id
                 ]
             ];
 
             // 已经爆过的礼物更新数量
             if (Backpacks::count($conditions) >= 1) {
                 $item = Backpacks::findByConditions([
-                    'user_id' => $user->id,
-                    'target_id' => $target
+                    'user_id' => $user_id,
+                    'target_id' => $target_id
                 ]);
                 $item = $item->toJson('backpack');
                 $id = $item['backpack'][0]['id'];
@@ -136,8 +132,8 @@ class Backpacks extends BaseModel
         }
 
         // 新增礼物进背包
-        $backpack->user_id = $user->id;
-        $backpack->target_id = $target;
+        $backpack->user_id = $user_id;
+        $backpack->target_id = $target_id;
         $backpack->number = $number;
         $backpack->type = $type;
         $backpack->status = $status;
@@ -149,29 +145,34 @@ class Backpacks extends BaseModel
 
 
     /**
-     * 爆除礼物外的其他东西
+     * 爆钻石或金币
      * @param int $type
      * @return array
      */
-    static public function boomValue($type)
+    static public function getBoomDiamondOrGold($type)
     {
+
         if ($type == BACKPACK_DIAMOND_TYPE) {
 
-            $target[] = [
-                'id' => 0,
-                'name' => '钻石',
-                'image_url' => \Backpacks::getDiamondImage(),
-                'number' => mt_rand(10, 1000)
-            ];
+            $name = '钻石';
+            $image = \Backpacks::getDiamondImage();
+            $number = mt_rand(10, 1000);
         } else {
 
-            $target[] = [
-                'id' => 0,
-                'name' => '金币',
-                'image_url' => \Backpacks::getGoldImage(),
-                'number' => mt_rand(500, 2000)
-            ];
+            $name = '金币';
+            $image = \Backpacks::getGoldImage();
+            $number = mt_rand(500, 2000);
         }
+
+        // 嵌套array 返回接口固定结构数据
+        $target = array(
+            [
+                'id' => 0,
+                'name' => $name,
+                'image_url' => $image,
+                'number' => $number
+            ]
+        );
         return $target;
     }
 

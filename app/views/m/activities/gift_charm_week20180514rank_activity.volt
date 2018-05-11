@@ -57,7 +57,7 @@
             <li>
                 <span class="type">本周总榜</span>
                 <span class="center">第一名奖励</span>
-                <span class="behind">666钻礼物冠名权</span>
+                <span class="behind">1000钻礼物冠名权</span>
             </li>
             <li>
                 <span class="type">社会猫</span>
@@ -79,7 +79,7 @@
         <div class="week_rules_box week_rules_bg">
             <p style="margin-top:0.3rem;"><span>1、</span><span>所有冠名权的时限均为一周</span></p>
             <p><span>2、</span><span>用户在活动期间收到礼物，每收到1个钻石，用户的魅力值+1</span></p>
-            <p><span>3、</span><span>礼物榜按用户收到对应礼物（水晶项链，YSL口红，金粉玫瑰）的个数进行排名</span></p>
+            <p><span>3、</span><span>礼物榜按用户收到对应礼物（求婚，love，金粉玫瑰）的个数进行排名</span></p>
             <p><span>4、</span><span>活动时间为2018-05-14 17:00至2018-05-21 00:00</span></p>
             <p><span>5、</span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190逾时按获奖ID昵称作为冠名内容 </span></p>
             <p><span>6、</span><span>活动结果将于每周一12:00公布，请保持关注</span></p>

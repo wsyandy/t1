@@ -5,28 +5,33 @@
  * Date: 2018/5/9
  * Time: 19:45
  */
+
 class BoomHistories extends BaseModel
 {
 
-    /**
-     * 生成爆礼物数据
-     * @param $user
-     * @param $opt
-     * @return bool
-     */
-    public function createBoom($user, $opt)
-    {
-        if (isDevelopmentEnv()) {
-            $user = (object)['id' => 1];
-        }
 
-        $this->user_id = $user->id;
-        $this->target_id = $opt['target_id'];
-        $this->type = $opt['type'];
-        $this->number = $opt['number'];
+    /**
+     * 新增爆礼物日志
+     * @param $user_id
+     * @param $target_id
+     * @param $type
+     * @param $number
+     * @return bool|null
+     */
+    public function createBoomHistories($user_id, $target_id, $type, $number)
+    {
+        if (empty($type) || empty($number))
+            return null;
+
+        if (empty($target_id) && $type == BACKPACK_GIFT_TYPE)
+            return null;
+
+        $this->user_id = $user_id;
+        $this->target_id = $target_id;
+        $this->type = $type;
+        $this->number = $number;
         $this->created_at = time();
-        $this->save();
-        return true;
+        return $this->save();
     }
 
 

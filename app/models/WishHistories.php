@@ -146,7 +146,6 @@ class WishHistories extends BaseModel
             unset($ids[$index]);
         }
         info($lucky_ids);
-        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
         //中奖的用户加入幸运用户集合中，并从no_lucky的集合中删除
         foreach ($lucky_ids as $lucky_id) {
             self::afterWin($key, $lucky_user_key, $lucky_id);
@@ -163,22 +162,34 @@ class WishHistories extends BaseModel
         $user_db = \Users::getUserDb();
         $user_db->zrem($key, $lucky_id);
         $user_db->zadd($lucky_user_key, time(), $lucky_id);
+
+        $time = date('Ymd195959');
+        $current_day_lucky_key = self::generateCurrentLuckyKey($time);
+        $user_db->zadd($current_day_lucky_key, time(), $lucky_id);
+    }
+
+    static function generateCurrentLuckyKey($time)
+    {
+        return 'current_day_lucky_user_list_' . $time;
     }
 
     static function getLuckyUserList($product_channel_id)
     {
         $db = \Users::getUserDb();
-        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
-        $start_at = strtotime(date('Y-m-d 19:59:59', time()));
-//        $start_at = endOfHour(strtotime('Y-m-d 19:59:59'));
-        $stop_at = strtotime(date('Y-m-d 19:59:59', time() + 24 * 60 * 60));
-//        $stop_at = endOfHour(strtotime('Y-m-d 19:59:59', '+1 day'));
-        $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
-        if (isBlank($lucky_user_ids)) {
-            $start_at = strtotime(date('Y-m-d 19:59:59', time() - 24 * 60 * 60));
-            $stop_at = strtotime(date('Y-m-d 19:59:59', time()));
-            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
-        }
+        $time = time() < strtotime(date('Y-m-d 19:59:59')) ? date('Ymd195959', time() - 24 * 3600) : date('Ymd195959');
+        $lucky_user_key = self::generateCurrentLuckyKey($time);
+        $lucky_user_ids = $db->zrange($lucky_user_key, 0, -1);
+//        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
+//        $start_at = strtotime(date('Y-m-d 19:59:59', time()));
+////        $start_at = endOfHour(strtotime('Y-m-d 19:59:59'));
+//        $stop_at = strtotime(date('Y-m-d 19:59:59', time() + 24 * 60 * 60));
+////        $stop_at = endOfHour(strtotime('Y-m-d 19:59:59', '+1 day'));
+//        $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
+//        if (isBlank($lucky_user_ids)) {
+//            $start_at = strtotime(date('Y-m-d 19:59:59', time() - 24 * 60 * 60));
+//            $stop_at = strtotime(date('Y-m-d 19:59:59', time()));
+//            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
+//        }
 
         $lucky_users = \Users::findByIds($lucky_user_ids);
         $lucky_names = [];

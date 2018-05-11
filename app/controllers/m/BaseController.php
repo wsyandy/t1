@@ -49,6 +49,11 @@ class BaseController extends \ApplicationController
      */
     function currentUser($force = false)
     {
+        if (!empty(getenv('ENVIRONMENT')) && getenv('ENVIRONMENT') == 'development') {
+            $user = (object)['id' => 1];
+            return $user;
+        }
+
         $user_id = $this->currentUserId();
 
         if (isBlank($user_id)) {
