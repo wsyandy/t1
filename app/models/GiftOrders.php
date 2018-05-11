@@ -249,10 +249,13 @@ class GiftOrders extends BaseModel
             }
 
             if ($sender_current_room_id) {
+                debug('赠送者当前房间ID',$sender_current_room_id);
                 $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
                 if ($result) {
                     info('当前房间有pk正在进行',$gift_order->amount);
                     \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id,$gift_order->pay_type);
+                }else{
+                    info('当前房间没有pk');
                 }
             }
             // 在房间里送里面
