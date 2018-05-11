@@ -250,5 +250,6 @@ class PkHistories extends BaseModel
             $cache->zadd($key, time(), $sender->id);
             return $current_score + 1;
         }
+        return $current_score;
     }
 }
