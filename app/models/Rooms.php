@@ -1667,7 +1667,8 @@ class Rooms extends BaseModel
         }
 
         if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $total_room_ids]);
+            $rooms = \Rooms::iosAuthVersionRooms($user, $page, $per_page);
+            return $rooms;
         }
 
         $total_entries = $hot_cache->zcard($hot_room_list_key);
@@ -2875,22 +2876,26 @@ class Rooms extends BaseModel
         unlock($lock);
     }
 
-    static function iosAuthVersionRooms($page, $per_page)
+    static function iosAuthVersionRooms($user, $page, $per_page)
     {
         $key = Rooms::generateIosAuthRoomListKey();
         $hot_cache = Rooms::getHotWriteCache();
 
-        $total_entries = $hot_cache->zcard($key);
+        $room_ids = $hot_cache->zrevrange($key, 0, -1);
 
-        $offset = $per_page * ($page - 1);
+        $cond['conditions'] = " (room_category_types like :room_category_types: and online_status = :online_status: 
+        and status = :status:)";
 
-        $room_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
-        $rooms = Rooms::findByIds($room_ids);
+        $cond['bind'] = ['room_category_types' => "%,broadcast,%", 'online_status' => STATUS_ON,
+            'status' => STATUS_ON
+        ];
 
-        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
-        $pagination->clazz = 'Rooms';
+        if ($room_ids) {
+            $cond['conditions'] .= " or id in (" . implode(",", $room_ids) . ")";
+        }
 
-        return $pagination;
+        $rooms = Rooms::findPagination($cond, $page, $per_page);
+        return $rooms;
     }
 
     static function generateIosAuthRoomListKey()
