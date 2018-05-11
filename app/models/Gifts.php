@@ -436,37 +436,35 @@ class Gifts extends BaseModel
 
 
     /**
-     * @desc 随机礼物
-     * @return mixed
+     * 随机n个礼物
+     * @param int $max
+     * @return array
      */
-    static public function randomGift()
+    static public function getNGift($max = 3)
     {
-        $list = Gifts::findByConditions([]);
-        $list = $list->toJson('gifts');
+        // 获取伪索引
+        $total = Gifts::count()-1;
+        if ($max >= $total) $max = 3;
 
-        // 随机三个索引
-        $number = array();
-        $n = mt_rand(1, 3);
-        for ($i=0; $i<$n; $i++) {
-            $number[] = mt_rand(0, count($list['gifts'])-1);
-        }
+        // 随机 $max 个索引
+        $keys = array_rand(range(0, $total), mt_rand(1, $max));
+        $keys = !is_array($keys) ? [$keys] : $keys;
 
-        // 匹配礼物
-        $gifts = array();
-        foreach ($number as $item=>$value) {
-            $gifts[] = $list['gifts'][$value];
-        }
+        // 查询礼物
+        $gifts = Gifts::findByIds($keys);
+        $gifts = $gifts->toJson('gifts')['gifts'];
 
-        // 随机数量
-        $data = array();
+        // 返回的礼物列表
+        $list = array();
         foreach ($gifts as $value) {
-            $data[] = array(
+            $list[] = array(
                 'id' => $value['id'],
                 'name' => $value['name'],
                 'image_url' => StoreFile::getUrl($value['image']),
                 'number' => mt_rand(1, 5)
             );
         }
-        return $data;
+
+        return $list;
     }
 }
