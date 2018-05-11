@@ -112,7 +112,7 @@
                         <li><a href="/admin/rooms/auto_hot">热门房间</a></li>
                     {% endif %}
                     {% if isAllowed('rooms','auto_hot') %}
-                        <li><a href="/admin/rooms/auto_hot?new=1">热门房间</a></li>
+                        <li><a href="/admin/rooms/auto_hot?new=1">新热门房间</a></li>
                     {% endif %}
                     {% if isAllowed('rooms','fixed') %}
                         <li><a href="/admin/rooms?hot=1">固定热门房间</a></li>
