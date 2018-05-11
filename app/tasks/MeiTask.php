@@ -3943,15 +3943,38 @@ EOF;
 
         //return \Chats::createChat($attrs);
 
-        $cond = ['conditions' => 'user_type = :user_type:',
-            'bind' => ['user_type' => USER_TYPE_SILENT],
-            'order' => 'last_at desc'];
+        $hot_cache = Rooms::getHotWriteCache();
+        $cond = ['conditions' => 'user_type = :user_type: and status = :status: and online_status = :online_status: 
+        and theme_type = :theme_type: and user_id > 0',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'status' => STATUS_OFF, 'online_status' => STATUS_OFF,
+                'theme_type' => ROOM_THEME_TYPE_NORMAL
+            ],
+            'order' => 'last_at desc', 'limit' => 100];
 
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
+
+            if (!$room->user) {
+                continue;
+            }
+
             echoLine($room->id);
+            $room->enterRoom($room->user);
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->update();
+            $hot_cache->zadd('ios_auth_room_list', time(), $room->id);
         }
         echoLine(count($rooms));
+
+        $room_ids = [90, 91, 92, 95, 115, 117, 111, 122, 180, 107];
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $res = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+        echoLine($res);
+        foreach ($room_ids as $id) {
+            $hot_cache->zadd('ios_auth_room_list', time(), $id);
+        }
     }
 }
