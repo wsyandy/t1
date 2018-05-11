@@ -2874,4 +2874,33 @@ class Rooms extends BaseModel
 
         unlock($lock);
     }
+
+    static function iosAuthVersionRooms($page, $per_page)
+    {
+        $key = Rooms::generateIosAuthRoomListKey();
+        $hot_cache = Rooms::getHotWriteCache();
+
+        $total_entries = $hot_cache->zcard($key);
+
+        $offset = $per_page * ($page - 1);
+
+        $room_ids = $hot_cache->zrevrange($key, $offset, $offset + $per_page - 1);
+        $rooms = Rooms::findByIds($room_ids);
+
+        $pagination = new PaginationModel($rooms, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Rooms';
+
+        return $pagination;
+    }
+
+    static function generateIosAuthRoomListKey()
+    {
+        return "ios_auth_room_list";
+    }
+
+    function isIosAuthRoom()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
+    }
 }

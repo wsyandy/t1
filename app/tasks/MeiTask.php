@@ -3941,7 +3941,17 @@ EOF;
 
         \Chats::createChat($attrs);
 
-        return \Chats::createChat($attrs);
+        //return \Chats::createChat($attrs);
 
+        $cond = ['conditions' => 'user_type = :user_type:',
+            'bind' => ['user_type' => USER_TYPE_SILENT],
+            'order' => 'last_at desc'];
+
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+            echoLine($room->id);
+        }
+        echoLine(count($rooms));
     }
 }
