@@ -1102,10 +1102,10 @@ class Users extends BaseModel
         $geohash = new \geo\GeoHash();
         $prefix = substr($this->geo_hash, 0, 5);
         $neighbors = $geohash->neighbors($prefix);
-        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
-            . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
-            . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
-            . '_' . fetch($neighbors, 'top');
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
         $user_db = Users::getUserDb();
 
         $user_db->zadd();
