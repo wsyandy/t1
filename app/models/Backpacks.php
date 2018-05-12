@@ -17,6 +17,9 @@ class Backpacks extends BaseModel
     static $boomSVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
 
 
+    static $totalValue = '10000'; // 爆礼物总值
+
+
     /**
      * 背包礼物列表
      * @param $user
@@ -236,6 +239,25 @@ class Backpacks extends BaseModel
     {
         return self::$GOLDIMG;
     }
+
+
+    /**
+     * @return string
+     */
+    static function getSvgaImageUrl()
+    {
+        return self::$boomSVGA;
+    }
+
+
+    /**
+     * @return string
+     */
+    static function getTotalBoomValue()
+    {
+        return self::$totalValue;
+    }
+
 
     function isGift()
     {
