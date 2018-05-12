@@ -1021,7 +1021,7 @@ class Users extends BaseModel
                 self::delay()->sendOfflineSendGift($this->id, $send_gift_data);
             }
 
-
+            $this->updateGeoHashRank();
         }
 
         debug($this->id, $fresh_attrs);
@@ -1088,17 +1088,13 @@ class Users extends BaseModel
         return false;
     }
 
-    function updateNearbyRank()
+    function updateGeoHashRank()
     {
         if (!$this->geo_hash) {
             return;
         }
 
-        $geo_hash_5 = substr($this->geo_hash, 0, 5);
-        $geo_hash_4 = substr($this->geo_hash, 0, 4);
-
         //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
-
         $geohash = new \geo\GeoHash();
         $prefix = substr($this->geo_hash, 0, 5);
         $neighbors = $geohash->neighbors($prefix);
@@ -1107,8 +1103,8 @@ class Users extends BaseModel
             . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
 
         $user_db = Users::getUserDb();
-
-        $user_db->zadd();
+        $user_db->zadd($cache_key, time(), $this->id);
+        info($cache_key, $this->id);
 
     }
 
