@@ -26,11 +26,32 @@ class BackpacksController extends BaseController
 
 
     /**
-     * @desc 返回爆礼物活动入口
+     * 背包送礼物
      * @return bool
      */
-    public function BoomAction()
+    public function sendGiftAction()
     {
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_url' => 'url://m/backpacks']);
+        if (isBlank($this->params('gift_id'))) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '礼物错误');
+        }
+
+        $gift_num = $this->params('gift_num', 1);
+        $backpack_id = $this->params('backpack_id');
+        $user_id = $this->params('user_id');
+        $src = $this->params('src', 'room');
+
+        $notify_type = $src == 'room' ? 'bc' : 'ptp';
+
+
+        $backpack = \Backpacks::findFirstById($backpack_id);
+
+        if (!$backpack) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $res = $backpack->sendGift($this->currentUser(), $user_id, $gift_num, ['notify_type' => $notify_type]);
+        list($error_code, $error_reason, $opts) = $res;
+
+        return $this->renderJSON($error_code, $error_reason, $opts);
     }
 }
