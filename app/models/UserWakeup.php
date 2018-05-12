@@ -475,6 +475,11 @@ trait UserWakeup
             return false;
         }
 
+        if (time() - $this->lastLoginAt() < 10 * 60) {
+            info('last_at user_id', $this->id);
+            return false;
+        }
+
         $hot_cache = \Users::getHotWriteCache();
         $cache_key = 'push_online_or_into_room_remind_' . $this->id;
         if ($hot_cache->get($cache_key)) {
