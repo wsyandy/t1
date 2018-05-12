@@ -263,9 +263,9 @@ class RoomsController extends BaseController
         $res['blasting_gift'] = array(
             'expire_at' => time(),
             'url' => 'url://m/backpacks',
-            'svga_image_url' => (int)\Backpacks::getSvgaImageUrl(),
+            'svga_image_url' => \Backpacks::getSvgaImageUrl(),
             'total_value' => (int)\Backpacks::getTotalBoomValue(),
-            'current_value' => $noun
+            'current_value' => (int)$noun
         );
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
