@@ -157,7 +157,7 @@
                         vm.releaseWish = false;
                         break;
                     case 4:
-                        location.reload();
+//                        location.reload();
                         vm.myWishList = false;
                         break;
                 }
