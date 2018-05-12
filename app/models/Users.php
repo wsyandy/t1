@@ -1940,8 +1940,48 @@ class Users extends BaseModel
         }
     }
 
-    // 附近人
     function nearby($page, $per_page, $opts = [])
+    {
+
+        if (!$this->geo_hash) {
+            $users = \Users::search($this, $page, $per_page, $opts);
+            $this->calDistance($users);
+            return $users;
+        }
+
+        $geohash = new \geo\GeoHash();
+        //$hash = $geohash->encode($latitude, $longitude);
+        $hash = $this->geo_hash;
+        //取前缀，前缀约长范围越小
+        $prefix = substr($this->geo_hash, 0, 5);
+        //取出相邻八个区域
+        $neighbors = $geohash->neighbors($prefix);
+
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $total_entries = $user_db->zcard($cache_key);
+
+        if ($total_entries < 3) {
+            $users = \Users::search($this, $page, $per_page, $opts);
+        }else{
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
+            $users = Users::findByIds($user_ids);
+            $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+            $pagination->clazz = 'Users';
+        }
+
+        // 计算距离
+        $this->calDistance($users);
+
+        return $users;
+    }
+
+    // 附近人
+    function nearby2($page, $per_page, $opts = [])
     {
 
         if (!$this->geo_hash) {
