@@ -83,6 +83,17 @@ class Users extends BaseModel
     public $distance;
 
 
+    static function getCacheEndpoint($id)
+    {
+        return self::config('user_db_endpoints');
+    }
+
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
+
     function beforeCreate()
     {
         $this->uid = $this->generateUid();
@@ -190,12 +201,6 @@ class Users extends BaseModel
         $user_db->zrem('user_not_good_no_uid_list', $this->uid);
         $user_db->zrem('user_good_no_uid_list', $this->uid);
         $user_db->zrem('select_good_no_list', $this->uid);
-    }
-
-    static function getUserDb()
-    {
-        $endpoint = self::config('user_db_endpoints');
-        return XRedis::getInstance($endpoint);
     }
 
     function getPushContext()
@@ -2143,7 +2148,7 @@ class Users extends BaseModel
     function isManager($room)
     {
         $room->freshManagerNum();
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $room->generateManagerListKey();
         return $db->zscore($manager_list_key, $this->id) > 0;
     }
@@ -2151,7 +2156,7 @@ class Users extends BaseModel
     //是否为房间永久的管理员
     function isPermanentManager($room)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $room->generateManagerListKey();
         return $db->zscore($manager_list_key, $this->id) - time() > 86400 * 300;
     }

@@ -1754,7 +1754,7 @@ class MeiTask extends \Phalcon\Cli\Task
         ];
 
         $gift_orders = GiftOrders::findForeach($cond);
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         foreach ($gift_orders as $gift_order) {
 
@@ -1801,7 +1801,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         $room_ids = [];
 
@@ -3576,7 +3576,7 @@ EOF;
     function fixRoomIncome1Action()
     {
         $start_at = beginOfDay(strtotime('2018-03-13'));
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         for ($day = $start_at; $day < beginOfDay(); $day += 86400) {
 

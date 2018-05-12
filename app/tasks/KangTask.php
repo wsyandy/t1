@@ -772,4 +772,38 @@ EOF;
         }
     }
 
+    public function slowSqlAction()
+    {
+
+        $this->db = Users::di('db');
+        $sql = "select pid, query, query_start from pg_stat_activity where state='active'";
+        $result = $this->db->query($sql);
+
+        $max_diff = 2;
+        $results = array();
+        $kill_sql = array();
+        $now = time();
+        while ($body = $result->fetch()) {
+            $results[md5($body['query'])][] = $body['pid'];
+            $diff = $now - strtotime($body['query_start']);
+            echoLine($diff, $body);
+            if ($diff >= $max_diff) {
+                $kill_sql[] = md5($body['query']);
+            }
+        }
+
+        if (count($kill_sql) > 0) {
+            foreach ($kill_sql as $key) {
+                $value = $results[$key];
+                // 进程数大于等于5, 如果有一个sql超出时间
+                if ($value && count($value) >= 2) {
+                    foreach ($value as $k => $v) {
+                        echoLine($k, $v);
+                    }
+                }
+            }
+
+        }
+    }
+    
 }
