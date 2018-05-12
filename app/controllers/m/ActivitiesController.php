@@ -718,4 +718,13 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = '比赛规则';
     }
+
+    function wishHistoriesAction()
+    {
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+        $this->view->title = '许愿墙';
+        $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
+
+    }
 }
