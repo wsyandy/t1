@@ -134,4 +134,15 @@ class WishHistoriesController extends BaseController
         return $this->renderJSON(ERROR_CODE_FAIL, '当前用户暂时还没好友发布愿望哦！');
     }
 
+    function showWishAction()
+    {
+        $id = $this->params('id');
+        $wish_history = \WishHistories::findByIds($id);
+        if ($wish_history) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $wish_history->toJson('show_wish_histories', 'toSimpleJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+    }
+
 }

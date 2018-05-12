@@ -20,7 +20,7 @@
 <div id="app" class="wishing_tree_list">
     <div class="wishing_list_neo">
         <span class="ranking_icon"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[0].id)">
             <span class="header_bg"></span>
             <img :src="wish_histories[0].user_avatar_url" alt="">
         </div>
@@ -33,7 +33,7 @@
     </div>
     <div class="wishing_list_two">
         <span class="ranking_icon"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[1].id)">
             <span class="header_bg"></span>
             <img :src="wish_histories[1].user_avatar_url" alt="">
         </div>
@@ -48,7 +48,7 @@
     </div>
     <div class="wishing_list_two">
         <span class="ranking_icon_three"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[2].id)">
             <span class="header_bg2"></span>
             <img :src="wish_histories[2].user_avatar_url" alt="">
         </div>
@@ -65,7 +65,7 @@
     <ul class="wishing_list_ul">
         <li v-for="wish_history,index in wish_histories" v-if="index>2">
             <span class="ranking_icon">${index+1}</span>
-            <div class="header">
+            <div class="header" @click="showWish(wish_history.id)">
                 <img :src="wish_history.user_avatar_url" alt="">
             </div>
             <div class="wishing_list_box">
@@ -176,8 +176,24 @@
             },
             onCancelToast: function () {
                 vm.myWishList = false;
+            },
+            showWish:function (id) {
+                var data = {
+                    id: id,
+                    sid: vm.sid,
+                    code: vm.code,
+                };
+                $.authPost('/m/wish_histories/show_wish', data, function (resp) {
+                    if (!resp.error_code) {
+                        vm.show_wish_histories = [];
+                        vm.myWishList = true;
+                        vm.show_wish_histories = resp.show_wish_histories;
+                        console.log(vm.show_wish_histories);
+                    } else {
+                        alert(resp.error_reason);
+                    }
+                })
             }
-
         }
     };
 
