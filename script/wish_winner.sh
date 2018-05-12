@@ -3,4 +3,4 @@ source /etc/profile
 
 cd /usr/local/system/chance_php
 
-/usr/local/bin/php cli.php xing_yu wish_winner
+/usr/local/bin/php cli.php activities wish_winner
