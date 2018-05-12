@@ -29,7 +29,7 @@ class WishHistoriesController extends BaseController
         $user = $this->currentUser();
         $wish_text = $this->params('my_wish_text');
         if (!$wish_text) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            return $this->renderJSON(ERROR_CODE_FAIL, '请添加您的愿望！');
         }
 
         $product_channel_id = $this->currentProductChannelId();
