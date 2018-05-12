@@ -221,10 +221,7 @@ class BaseController extends ApplicationController
 
     function beforeAction($dispatcher)
     {
-        if (\m\BaseController::getLocalSign()) {
-            return true;
-        }
-
+        
         if (!$this->isHttps()) {
             info('no_https', $this->getFullUrl());
         }
