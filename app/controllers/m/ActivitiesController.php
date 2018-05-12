@@ -721,9 +721,10 @@ class ActivitiesController extends BaseController
 
     function wishHistoriesAction()
     {
+        $code = $this->params('code');
+        $sid = $this->params('sid');
         $this->view->title = '许愿墙';
-        $this->pick('m/wish_histories');
-        return;
+        $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
 
     }
 }
