@@ -809,12 +809,12 @@ EOF;
     function fixGeoAction($params)
     {
 
-        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id: and uid < 0', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
         echoLine($cond);
         $users = Users::findForeach($cond);
         foreach ($users as $user) {
             $user->updateGeoHashRank();
         }
     }
-    
+
 }
