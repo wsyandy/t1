@@ -570,6 +570,17 @@ class DrawHistories extends BaseModel
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         }
 
+        $hot_cache = DrawHistories::getHotWriteCache();
+        if($draw_history->number >= 1000 && $draw_history->number < 10000){
+            $hot_cache->zadd('draw_histories_1000', time(), $draw_history->id);
+        }
+        if($draw_history->number >= 10000 && $draw_history->number < 100000){
+            $hot_cache->zadd('draw_histories_10000', time(), $draw_history->id);
+        }
+        if($draw_history->number >= 100000){
+            $hot_cache->zadd('draw_histories_100000', time(), $draw_history->id);
+        }
+
         return $draw_history;
     }
 
