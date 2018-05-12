@@ -1965,10 +1965,10 @@ class Users extends BaseModel
         if ($total_entries >= 3) {
             $offset = $per_page * ($page - 1);
             $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
-            $users = Users::findByIds($user_ids);
-            $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
-            $pagination->clazz = 'Users';
-            info($this->id, $cache_key, $total_entries);
+            $cache_users = Users::findByIds($user_ids);
+            $users = new PaginationModel($cache_users, $total_entries, $page, $per_page);
+            $users->clazz = 'Users';
+            info($this->id, $cache_key, $total_entries, $page, $per_page);
         }else{
             $users = \Users::search($this, $page, $per_page, $opts);
         }
