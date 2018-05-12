@@ -263,8 +263,8 @@ class RoomsController extends BaseController
         $res['blasting_gift'] = array(
             'expire_at' => time(),
             'url' => 'url://m/backpacks',
-            'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-            'total_value' => \Backpacks::getTotalBoomValue(),
+            'svga_image_url' => (int)\Backpacks::getSvgaImageUrl(),
+            'total_value' => (int)\Backpacks::getTotalBoomValue(),
             'current_value' => $noun
         );
 
