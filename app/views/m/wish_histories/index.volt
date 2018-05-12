@@ -112,7 +112,6 @@
 
     <!-- 背景遮罩 -->
     <div v-if="isShareToast||isrulesToast||releaseWish||myWishList||isHintToast" class="mask_background" @click="onCancelToast(3)"></div>
-    <audio id="playbgm" autoplay loop src="/m/css/59ffe5e4e8717.mp3"></audio>
 
     <div @click="showOthersWish" class="view_wish"></div>
 </div>
@@ -193,7 +192,6 @@
 //                vm.isPaly = !vm.isPaly;
 //            },
             myReleaseWish: function () {
-                console.log(1);
                 var data = {
                     sid: vm.sid,
                     code: vm.code,
@@ -256,11 +254,13 @@
         vm.page++;
         $.authPost('/m/wish_histories/refresh', data, function (resp) {
             if (!resp.error_code) {
+                vm.show_wish_histories= [];
                 $.each(resp.wish_histories, function (index, item) {
                     vm.show_wish_histories.push(item);
                 });
             } else {
                 alert(resp.error_reason);
+                location.reload();
             }
         });
     }
