@@ -23,7 +23,7 @@
     <div class="wishing_rules wishing_record" @click="toA()">
         <span>中奖纪录</span>
     </div>
-    <span @click="onPaly" class="wishing_music" :class="[!isPaly&&'wishing_music_pause']"></span>
+    {#<span @click="onPaly" class="wishing_music" :class="[!isPaly&&'wishing_music_pause']"></span>#}
     <span @click="openToast(2)" class="wishing_share"></span>
     <div class="wishing_bouttom_box">
         <div class="ranking" @click="toRanking"></div>
@@ -183,15 +183,15 @@
                 vm.releaseWishState = 2;
                 vm.myWishList = true;
             },
-            onPaly: function () {
-                vm.playbgm = document.getElementById('playbgm');
-                if (vm.isPaly) {
-                    vm.playbgm.pause();
-                } else {
-                    vm.playbgm.play();
-                }
-                vm.isPaly = !vm.isPaly;
-            },
+//            onPaly: function () {
+//                vm.playbgm = document.getElementById('playbgm');
+//                if (vm.isPaly) {
+//                    vm.playbgm.pause();
+//                } else {
+//                    vm.playbgm.play();
+//                }
+//                vm.isPaly = !vm.isPaly;
+//            },
             myReleaseWish: function () {
                 console.log(1);
                 var data = {
