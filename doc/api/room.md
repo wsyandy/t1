@@ -256,6 +256,7 @@
          svga_image_url string svga图片
          total_value int 总值
          current_value int 当前值
+         diff_picture string 爆礼物图片的值 green orange blue
      }
 }
 ```
