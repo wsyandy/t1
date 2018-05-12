@@ -562,7 +562,6 @@ trait UserWakeup
             $users = $this->friendList($page, $per_page, 0);
             foreach ($users as $user) {
 
-                info('friend user_id', $user->id);
                 if (!$user->canReceiveRemindOnline()) {
                     info('friend user_id', $user->id);
                     continue;
@@ -601,7 +600,6 @@ trait UserWakeup
 
             foreach ($users as $user) {
 
-                info('followed user_id', $user->id);
                 if (!$user->canReceiveRemindOnline()) {
                     info('followed user_id', $user->id);
                     continue;
@@ -687,16 +685,12 @@ trait UserWakeup
     //关注好友 开播提醒 每个人一个小时内只能收到一条
     function pushFriendIntoRoomRemind()
     {
-        info('user_id', $this->id);
-
         $data = [
             "{$this->nickname}开播啦，精彩瞬间别错过！",
             "{$this->nickname}开播就想你，不打开看看吗？"
         ];
 
         $body = $data[mt_rand(0, 1)];
-
-//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
         $opts = ['title' => '好友上线开播提醒', 'body' => $body];
 
         $per_page = 200;
@@ -707,16 +701,12 @@ trait UserWakeup
             return;
         }
 
-
         $total_pages = ceil($friend_num / $per_page);
-
         for ($page = 1; $page <= $total_pages; $page++) {
 
             $users = $this->friendList($page, $per_page, 0);
-
             foreach ($users as $user) {
 
-                info('friend user_id', $this->id);
                 if (!$user->canReceiveRemindIntoRoom()) {
                     info('friend user_id', $this->id);
                     continue;
@@ -732,8 +722,6 @@ trait UserWakeup
         }
 
         return;
-
-
     }
 
     //关注上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）
@@ -758,14 +746,10 @@ trait UserWakeup
         }
 
         $total_pages = ceil($followed_num / $per_page);
-
         for ($page = 1; $page <= $total_pages; $page++) {
 
             $users = $this->followedList($page, $per_page);
-
             foreach ($users as $user) {
-
-                info('followed user_id', $user->id);
                 if (!$user->canReceiveRemindIntoRoom()) {
                     info('followed user_id', $this->id);
                     continue;
@@ -781,8 +765,6 @@ trait UserWakeup
         }
 
         return;
-
-
     }
 
     // 进入房间推送
@@ -833,5 +815,5 @@ trait UserWakeup
             Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
         }
     }
-    
+
 }
