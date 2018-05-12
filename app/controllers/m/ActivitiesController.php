@@ -718,4 +718,12 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = '比赛规则';
     }
+
+    function wishHistoriesAction()
+    {
+        $this->view->title = '许愿墙';
+        $this->pick('m/wish_histories');
+        return;
+
+    }
 }
