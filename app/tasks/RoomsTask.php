@@ -266,7 +266,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     //刷新管理员
     function freshManagersAction()
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $total_room_key = Rooms::generateTotalManagerKey();
         $keys = $db->zrange($total_room_key, 0, -1);
 

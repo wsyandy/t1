@@ -319,7 +319,7 @@ class ActivitiesController extends BaseController
 
         $key = "room_stats_income_day_" . $stat_at;
 
-        $db = \Rooms::getRoomDb();
+        $db = \Users::getUserDb();
 
         $res = $db->zrevrange($key, 0, $max, 'withscores');
 
@@ -376,7 +376,7 @@ class ActivitiesController extends BaseController
 
         if ($activity_state > 0) {
             $key = "room_stats_income_day_" . date('Ymd', $start_at);
-            $db = \Rooms::getRoomDb();
+            $db = \Users::getUserDb();
             $res = $db->zrevrange($key, 0, $max, 'withscores');
 
             $room_ids = [];

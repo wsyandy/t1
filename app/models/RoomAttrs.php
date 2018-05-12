@@ -253,7 +253,7 @@ trait RoomAttrs
     //获取房间扶持分值
     function getHotRoomScoreRatio()
     {
-        $user_db = Rooms::getRoomDb();
+        $user_db = Users::getUserDb();
         $key = "hot_room_score_ratio_room_id_{$this->id}";
         return intval($user_db->get($key));
     }
