@@ -182,6 +182,7 @@
                         vm.is_guard = true;
                         vm.show_wish_histories[index].guarded_number = resp.guarded_number;
                     }else{
+                        vm.myWishList = false;
                         vm.isHintToast = true;
                     }
                 })
