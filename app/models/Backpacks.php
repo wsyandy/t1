@@ -49,6 +49,7 @@ class Backpacks extends BaseModel
 
 
     /**
+     * Task任务
      * @desc 爆礼物房间流水值
      */
     static public function turnoverValue()
@@ -64,7 +65,9 @@ class Backpacks extends BaseModel
             $room = Rooms::findFirstById($value['id']);
             $noun = $room->getDayIncome(date('Ymd'));
 
-            $backpack->pushClientAboutBoom($total, $noun);
+            if ($noun >= $line) {
+                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            }
         }
     }
 
