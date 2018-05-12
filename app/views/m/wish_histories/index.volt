@@ -51,7 +51,7 @@
     <div v-if="releaseWish" class="release_wish">
         <ul>
             <li>
-                <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text"></textarea>
+                <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text" maxlength="100"></textarea>
                 <span class="text_length">${remnant}/100</span>
                 <div class="release_wish_buttom" @click="myReleaseWish"></div>
                 <span @click="onCancelToast(3)" class="cancel_release"></span>

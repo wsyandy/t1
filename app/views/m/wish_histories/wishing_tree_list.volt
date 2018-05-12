@@ -85,7 +85,7 @@
     <div v-if="searchToast" class="search_toast">
         <div class="search_toast_box">
             <span class="title">搜索</span>
-            <input class="input_text" v-model="uid" placeholder="请输入查询ID" type="text"/>
+            <input class="input_text" v-model="uid" placeholder="请输入查询ID" type="number"/>
             {#<p class="results">#}
             {#<span v-if="searchResults">昵称：黑芝麻</span>#}
             {#<span v-if="!searchResults" class="error">用户不存在</span>#}
