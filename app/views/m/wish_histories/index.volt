@@ -125,7 +125,7 @@
             releaseWish: false,
             myWishList: false,
             isHintToast: false,
-            isPaly: true,
+//            isPaly: true,
             // 状态：1我的愿望、2查看他人愿望
             releaseWishState: 1,
             sid: "{{ sid }}",
