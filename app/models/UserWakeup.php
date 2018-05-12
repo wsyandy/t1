@@ -486,6 +486,13 @@ trait UserWakeup
             return false;
         }
 
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
+        if ($hot_cache->get($cache_key)) {
+            return false;
+        }
+
+        $hot_cache->setex($cache_key, 1800, time());
 
         return true;
     }
@@ -551,13 +558,10 @@ trait UserWakeup
     function pushOnlineRemindMessage()
     {
 
-        $hot_cache = \Users::getHotWriteCache();
-        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
-        if ($hot_cache->get($cache_key)) {
+        if (!$this->canSendRemindOnline()) {
+            info('user_id can not send', $this->id);
             return;
         }
-
-        $hot_cache->setex($cache_key, 1800, time());
 
         \Users::delay()->pushOnlineRemind($this->id);
     }
@@ -578,11 +582,6 @@ trait UserWakeup
     function pushFriendOnlineRemind()
     {
         $this->delSendRemindOnlineKey();
-
-        if (!$this->canSendRemindOnline()) {
-            info('user_id can not send', $this->id);
-            return;
-        }
 
         $body = "你的{$this->nickname}好友已上线，赶紧去唠唠！";
         $opts = ['title' => '好友上线提醒', 'body' => $body];
@@ -624,13 +623,6 @@ trait UserWakeup
     //只发送一条
     function pushFollowedOnlineRemind()
     {
-        info('user_id', $this->id);
-
-        if (!$this->canSendRemindOnline()) {
-            info('user_id can not send', $this->id);
-            return;
-        }
-
         $body = "你关注{$this->nickname}已上线，赶紧去唠唠！";
         $opts = ['title' => '关注的人上线提醒', 'body' => $body];
 
@@ -687,6 +679,14 @@ trait UserWakeup
             info('user_id', $this->id, 'not in room');
             return false;
         }
+
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
+        if ($hot_cache->get($cache_key)) {
+            return false;
+        }
+
+        $hot_cache->setex($cache_key, 1800, time());
 
         return true;
     }
@@ -757,11 +757,6 @@ trait UserWakeup
     {
         info('user_id', $this->id);
 
-        if (!$this->canSendRemindIntoRoom()) {
-            info('user_id can not send', $this->id);
-            return;
-        }
-
         $data = [
             "{$this->nickname}开播啦，精彩瞬间别错过！",
             "{$this->nickname}开播就想你，不打开看看吗？"
@@ -815,21 +810,12 @@ trait UserWakeup
     //关注好友 开播提醒 每个人一个小时内只能收到一条
     function pushFollowedIntoRoomRemind()
     {
-        info('user_id', $this->id);
-
-        if (!$this->canSendRemindIntoRoom()) {
-            info('user_id can not send', $this->id);
-            return;
-        }
-
         $data = [
             "{$this->nickname}开播啦，精彩瞬间别错过！",
             "{$this->nickname}开播就想你，不打开看看吗？"
         ];
 
         $body = $data[mt_rand(0, 1)];
-
-//        $client_url = "app://rooms/detail?id={$this->current_room_id}";
         $opts = ['title' => '关注的人开播提醒', 'body' => $body];
 
         $per_page = 200;
@@ -872,13 +858,12 @@ trait UserWakeup
     // 进入房间推送
     function pushIntoRoomRemindMessage()
     {
-        $hot_cache = \Users::getHotWriteCache();
-        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
-        if ($hot_cache->get($cache_key)) {
+
+        if (!$this->canSendRemindIntoRoom()) {
+            info('user_id can not send', $this->id);
             return;
         }
 
-        $hot_cache->setex($cache_key, 1800, time());
         \Users::delay()->pushIntoRoomRemind($this->id);
     }
 
