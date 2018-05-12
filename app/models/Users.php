@@ -1017,10 +1017,11 @@ class Users extends BaseModel
             $this->pushOnlineRemindMessage();
 
             $send_gift_data = $this->hasOfflineGift();
-
             if ($send_gift_data) {
                 self::delay()->sendOfflineSendGift($this->id, $send_gift_data);
             }
+
+
         }
 
         debug($this->id, $fresh_attrs);
@@ -1085,6 +1086,30 @@ class Users extends BaseModel
 
         debug('do not need update geo', $this->id);
         return false;
+    }
+
+    function updateNearbyRank()
+    {
+        if (!$this->geo_hash) {
+            return;
+        }
+
+        $geo_hash_5 = substr($this->geo_hash, 0, 5);
+        $geo_hash_4 = substr($this->geo_hash, 0, 4);
+
+        //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
+
+        $geohash = new \geo\GeoHash();
+        $prefix = substr($this->geo_hash, 0, 5);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
+            . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
+            . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'top')
+            . '_' . fetch($neighbors, 'top');
+        $user_db = Users::getUserDb();
+
+        $user_db->zadd();
+
     }
 
     static function asyncUpdateGeoLocation($user_id)
@@ -1898,19 +1923,6 @@ class Users extends BaseModel
     // 附近人
     function nearby($page, $per_page, $opts = [])
     {
-        $cal_start = microtime(true);
-
-//        $filter_ids = fetch($opts, 'filter_ids', []);
-//
-//        if (!is_array($filter_ids)) {
-//            $filter_ids = explode(',', $filter_ids);
-//        }
-//
-//        //屏蔽公司内部账号
-//        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-//        if ($block_near_by_user_ids) {
-//            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
-//        }
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1960,11 +1972,6 @@ class Users extends BaseModel
             }
         }
 
-//        if (count($filter_ids) > 0) {
-//            $filter_ids = implode(',', $filter_ids);
-//            $condition .= " and id not in ({$filter_ids})";
-//        }
-
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $condition .= " and organisation = :organisation:";
@@ -1992,10 +1999,6 @@ class Users extends BaseModel
 
         // 计算距离
         $this->calDistance($users);
-
-        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
-
-        info("nearby_search_execute_time", $execute_time);
 
         return $users;
     }
@@ -2940,20 +2943,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3080,21 +3086,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
