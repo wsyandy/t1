@@ -11,12 +11,11 @@ class WishHistoriesController extends BaseController
 
     function refreshAction()
     {
-        $page = $this->params('page');
         $per_page = 20;
-
         $product_channel_id = $this->currentProductChannelId();
         $key = \WishHistories::getGuardWishKey($product_channel_id);
-        $wish_histories = \WishHistories::findByRelationsForWish($key, $page, $per_page);
+
+        $wish_histories = \WishHistories::findByRelationsForWish($key, $per_page);
         if (!$wish_histories) {
             return $this->renderJSON(ERROR_CODE_FAIL, '没有更多的愿望哦，快来许愿吧！');
         }

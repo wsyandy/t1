@@ -120,11 +120,21 @@
     </div>
     <span v-if="myWishList" @click="onCancelToast()" class="toast_cancel"></span>
     <div v-if="myWishList" class="mask_background"></div>
+    <!-- 余额不足 -->
+    <div v-if="isHintToast" class="not_balance_toast">
+        <b>提示</b>
+        <span class="hint">您的钻石余额不足，请先充值</span>
+        <div class="not_balance_box">
+            <span @click="topupBalance(false)" class="cancel">取消</span>
+            <span @click="topupBalance(true)" class="topup">充值</span>
+        </div>
+    </div>
 </div>
 <script>
     var opts = {
         data: {
             uid: "",
+            isHintToast:false,
             searchResults: true,
             searchToast: false,
             wish_histories:{{ wish_histories }},
@@ -171,6 +181,8 @@
                     if (!resp.error_code) {
                         vm.is_guard = true;
                         vm.show_wish_histories[index].guarded_number = resp.guarded_number;
+                    }else{
+                        vm.isHintToast = true;
                     }
                 })
             },
@@ -192,6 +204,14 @@
                         alert(resp.error_reason);
                     }
                 })
+            },
+            topupBalance: function (show) {
+                if (show) {
+                    var url = '/m/products?sid=' + vm.sid + '&code=' + vm.code;
+                    location.href = url;
+                } else {
+                    vm.isHintToast = false;
+                }
             }
         }
     };
