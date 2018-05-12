@@ -46,6 +46,18 @@ class Rooms extends BaseModel
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
+
+    static function getCacheEndpoint($id)
+    {
+        return self::config('room_db');
+    }
+
+    static function getRoomDb()
+    {
+        $endpoint = self::config('room_db');
+        return XRedis::getInstance($endpoint);
+    }
+
     function beforeCreate()
     {
         $this->uid = $this->generateUid();

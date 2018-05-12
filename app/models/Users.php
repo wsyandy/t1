@@ -83,6 +83,17 @@ class Users extends BaseModel
     public $distance;
 
 
+    static function getCacheEndpoint($id)
+    {
+        return self::config('user_db_endpoints');
+    }
+
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
+
     function beforeCreate()
     {
         $this->uid = $this->generateUid();
@@ -190,12 +201,6 @@ class Users extends BaseModel
         $user_db->zrem('user_not_good_no_uid_list', $this->uid);
         $user_db->zrem('user_good_no_uid_list', $this->uid);
         $user_db->zrem('select_good_no_list', $this->uid);
-    }
-
-    static function getUserDb()
-    {
-        $endpoint = self::config('user_db_endpoints');
-        return XRedis::getInstance($endpoint);
     }
 
     function getPushContext()
