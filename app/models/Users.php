@@ -1014,7 +1014,7 @@ class Users extends BaseModel
             $this->addActiveList();
 
             // 线上提醒
-            self::delay()->pushOnlineRemind($this->id);
+           $this->pushOnlineRemindMessage();
 
             $send_gift_data = $this->hasOfflineGift();
 
