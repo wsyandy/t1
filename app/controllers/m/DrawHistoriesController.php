@@ -23,31 +23,51 @@ class DrawHistoriesController extends BaseController
         $draw_histories = \DrawHistories::findPagination($cond, 1, 20);
         $res = $draw_histories->toJson('draw_histories', 'toSimpleJson');
 
-        $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 1000',
-            'bind' => ['type' => 'diamond', 'type2' => 'gift'],
-            'order' => 'id desc'
-        ];
 
-        $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 15);
+        $hot_cache = \DrawHistories::getHotWriteCache();
+        $ids = $hot_cache->zrevrange('draw_histories_1000', 0, 10);
+        if($ids){
+            $qian_draw_histories = \DrawHistories::findByIds($ids);
+        }else{
+            $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 1000',
+                'bind' => ['type' => 'diamond', 'type2' => 'gift'],
+                'order' => 'id desc'
+            ];
+            $qian_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+        }
+
         $qian_res = $qian_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
-        $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 10000',
-            'bind' => ['type' => 'diamond', 'type2' => 'gift'],
-            'order' => 'id desc'
-        ];
 
-        $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 15);
+        $ids = $hot_cache->zrevrange('draw_histories_10000', 0, 10);
+        if($ids){
+            $wan_draw_histories = \DrawHistories::findByIds($ids);
+        }else{
+            $cond = ['conditions' => '(type=:type: or type=:type2:) and number >= 10000',
+                'bind' => ['type' => 'diamond', 'type2' => 'gift'],
+                'order' => 'id desc'
+            ];
+
+            $wan_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+        }
+
         $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
 
-        $cond = ['conditions' => 'type=:type: and number >= 30000',
-            'bind' => ['type' => 'diamond'],
-            'order' => 'id desc'
-        ];
+        $ids = $hot_cache->zrevrange('draw_histories_100000', 0, 10);
+        if($ids){
+            $wan10_draw_histories = \DrawHistories::findByIds($ids);
+        }else{
+            $cond = ['conditions' => 'type=:type: and number >= 30000',
+                'bind' => ['type' => 'diamond'],
+                'order' => 'id desc'
+            ];
 
-        $wan10_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+            $wan10_draw_histories = \DrawHistories::findPagination($cond, 1, 10);
+        }
+
         $wan10_res = $wan10_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($wan10_res['draw_histories'], $res['draw_histories']);
 
