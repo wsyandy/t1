@@ -11,12 +11,11 @@ class WishHistoriesController extends BaseController
 
     function refreshAction()
     {
-        $page = $this->params('page');
         $per_page = 20;
-
         $product_channel_id = $this->currentProductChannelId();
         $key = \WishHistories::getGuardWishKey($product_channel_id);
-        $wish_histories = \WishHistories::findByRelationsForWish($key, $page, $per_page);
+
+        $wish_histories = \WishHistories::findByRelationsForWish($key, $per_page);
         if (!$wish_histories) {
             return $this->renderJSON(ERROR_CODE_FAIL, '没有更多的愿望哦，快来许愿吧！');
         }
@@ -132,6 +131,17 @@ class WishHistoriesController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '当前用户暂时还没好友发布愿望哦！');
+    }
+
+    function showWishAction()
+    {
+        $id = $this->params('id');
+        $wish_history = \WishHistories::findByIds($id);
+        if ($wish_history) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $wish_history->toJson('show_wish_histories', 'toSimpleJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
     }
 
 }

@@ -51,13 +51,15 @@
     <div v-if="releaseWish" class="release_wish">
         <ul>
             <li>
-                <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text" maxlength="100"></textarea>
+                <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text"
+                          maxlength="100"></textarea>
                 <span class="text_length">${remnant}/100</span>
                 <div class="release_wish_buttom" @click="myReleaseWish"></div>
                 <span @click="onCancelToast(3)" class="cancel_release"></span>
             </li>
             <li v-for="my_wish_data,index in my_wish_datas">
-                <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span> </div>
+                <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span>
+                </div>
                 <p>${my_wish_data[1]}</p>
             </li>
         </ul>
@@ -67,7 +69,7 @@
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
         <ul>
-            <li v-for="show_wish_history,index in show_wish_histories" >
+            <li v-for="show_wish_history,index in show_wish_histories">
                 <div class="release_wish_heart">
                     <span class="heart_icon"></span>
                     <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
@@ -90,13 +92,18 @@
     <!-- 分享 -->
     <div v-if="isShareToast" class="wishing_share_toast">
         <ul class="wishing_share_toast_ul">
-            <li @click="share('wx_friend','web_page','share_source')"><img src="/m/images/weixin_icon.png" alt=""/><span>微信</span></li>
-            <li @click="share('wx_moments','web_page','share_source')"><img src="/m/images/friends_icon.png" alt=""/><span>朋友圈</span>
+            <li @click="share('wx_friend','web_page','share_source')"><img src="/m/images/weixin_icon.png"
+                                                                           alt=""/><span>微信</span></li>
+            <li @click="share('wx_moments','web_page','share_source')"><img src="/m/images/friends_icon.png"
+                                                                            alt=""/><span>朋友圈</span>
             </li>
-            <li @click="share('qq_friend','web_page','share_source')"><img src="/m/images/qq_icon.png" alt=""/><span>QQ</span></li>
-            <li @click="share('qq_zone','web_page','share_source')"><img src="/m/images/kongjian_icon.png" alt=""/><span>QQ空间</span>
+            <li @click="share('qq_friend','web_page','share_source')"><img src="/m/images/qq_icon.png"
+                                                                           alt=""/><span>QQ</span></li>
+            <li @click="share('qq_zone','web_page','share_source')"><img src="/m/images/kongjian_icon.png"
+                                                                         alt=""/><span>QQ空间</span>
             </li>
-            <li @click="share('sinaweibo','web_page','share_source')"><img src="/m/images/weibo_icon.png" alt=""/><span>微博</span></li>
+            <li @click="share('sinaweibo','web_page','share_source')"><img src="/m/images/weibo_icon.png" alt=""/><span>微博</span>
+            </li>
         </ul>
         <span @click="onCancelToast(2)" class="cancel">取消</span>
     </div>
@@ -111,7 +118,8 @@
     </div>
 
     <!-- 背景遮罩 -->
-    <div v-if="isShareToast||isrulesToast||releaseWish||myWishList||isHintToast" class="mask_background" @click="onCancelToast(3)"></div>
+    <div v-if="isShareToast||isrulesToast||releaseWish||myWishList||isHintToast" class="mask_background"
+         @click="onCancelToast(3)"></div>
 
     <div @click="showOthersWish" class="view_wish"></div>
 </div>
@@ -131,17 +139,17 @@
             code: "{{ code }}",
             my_wish_text: '',
             show_wish_histories: [],
-            my_wish_datas:[],
+            my_wish_datas: [],
             is_guard: false,
             remnant: 0,
-            desc:'',
+            desc: '',
         },
         mounted: function () {
         },
         methods: {
-            descInput:function(){
+            descInput: function () {
                 var txtVal = this.my_wish_text.length;
-                if(txtVal<=100){
+                if (txtVal <= 100) {
                     this.remnant = txtVal;
                 }
             },
@@ -179,6 +187,7 @@
                 }
             },
             showOthersWish: function () {
+                refresh();
                 vm.releaseWishState = 2;
                 vm.myWishList = true;
             },
@@ -216,18 +225,19 @@
                     if (!resp.error_code) {
                         vm.is_guard = true;
                         vm.show_wish_histories[index].guarded_number = resp.guarded_number;
-                    }else{
-                        alert(resp.error_reason);
+                    } else {
+                        vm.myWishList = false;
+                        vm.isHintToast = true;
                     }
                 })
             },
-            share: function (platform, type,share_source) {
+            share: function (platform, type, share_source) {
                 var data = {
                     code: vm.code,
                     sid: vm.sid,
                     platform: platform,
                     type: type,
-                    share_source:'gold_works'
+                    share_source: 'gold_works'
                 };
 
                 $.authPost('/m/shares/create', data, function (resp) {
@@ -236,11 +246,19 @@
                 })
 
             },
-            toA:function () {
-                location.href = '/m/wish_histories/winning_record?sid='+vm.sid+'&code='+vm.code
+            toA: function () {
+                location.href = '/m/wish_histories/winning_record?sid=' + vm.sid + '&code=' + vm.code
             },
-            toRanking:function () {
-                location.href = '/m/wish_histories/wishing_tree_list?sid='+vm.sid+'&code='+vm.code
+            toRanking: function () {
+                location.href = '/m/wish_histories/wishing_tree_list?sid=' + vm.sid + '&code=' + vm.code
+            },
+            topupBalance: function (show) {
+                if (show) {
+                    var url = '/m/products?sid=' + vm.sid + '&code=' + vm.code;
+                    location.href = url;
+                } else {
+                    vm.isHintToast = false;
+                }
             }
         }
     };
@@ -251,12 +269,12 @@
         var data = {
             sid: vm.sid,
             code: vm.code,
-            page: vm.page
+//            page: vm.page
         };
-        vm.page++;
+//        vm.page++;
         $.authPost('/m/wish_histories/refresh', data, function (resp) {
             if (!resp.error_code) {
-                vm.show_wish_histories= [];
+                vm.show_wish_histories = [];
                 $.each(resp.wish_histories, function (index, item) {
                     vm.show_wish_histories.push(item);
                 });
@@ -275,9 +293,9 @@
         $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
             if (!resp.error_code) {
 //                if (resp.my_wish_datas != '') {
-                    vm.show_wish_histories = resp.my_wish_datas;
-                    vm.releaseWishState = 1;
-                    vm.myWishList = true;
+                vm.show_wish_histories = resp.my_wish_datas;
+                vm.releaseWishState = 1;
+                vm.myWishList = true;
 //                }
             }
         });
@@ -291,9 +309,9 @@
         $.authPost('/m/wish_histories/my_wish_histories', data, function (resp) {
             if (!resp.error_code) {
 //                if (resp.my_wish_datas != '') {
-                    vm.my_wish_datas = resp.my_wish_datas;
-                    vm.releaseWishState = 1;
-                    vm.releaseWish = true;
+                vm.my_wish_datas = resp.my_wish_datas;
+                vm.releaseWishState = 1;
+                vm.releaseWish = true;
 //                }
             }
         });
