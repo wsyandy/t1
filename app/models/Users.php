@@ -1950,8 +1950,6 @@ class Users extends BaseModel
         }
 
         $geohash = new \geo\GeoHash();
-        //$hash = $geohash->encode($latitude, $longitude);
-        $hash = $this->geo_hash;
         //取前缀，前缀约长范围越小
         $prefix = substr($this->geo_hash, 0, 5);
         //取出相邻八个区域
@@ -1964,14 +1962,15 @@ class Users extends BaseModel
         $user_db = Users::getUserDb();
         $total_entries = $user_db->zcard($cache_key);
 
-        if ($total_entries < 3) {
-            $users = \Users::search($this, $page, $per_page, $opts);
-        }else{
+        if ($total_entries >= 3) {
             $offset = $per_page * ($page - 1);
             $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
             $users = Users::findByIds($user_ids);
             $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
             $pagination->clazz = 'Users';
+            info($this->id, $cache_key, $total_entries);
+        }else{
+            $users = \Users::search($this, $page, $per_page, $opts);
         }
 
         // 计算距离
