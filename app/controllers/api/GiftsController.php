@@ -13,7 +13,7 @@ class GiftsController extends BaseController
 
     function indexAction()
     {
-        $gift_type = $this->params('gift_type', 1);
+        $gift_type = $this->params('gift_type', GIFT_TYPE_COMMON);
 
         $opts = ['gift_type' => $gift_type];
 

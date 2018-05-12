@@ -284,15 +284,13 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
-            \UserGifts::delay()->updateGiftExpireAt($this->id);
+            \UserGifts::updateGiftExpireAt($this->id);
         } else {
-            \UserGifts::delay()->updateGiftNum($this->id);
+            \UserGifts::updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
-                //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time, 'async_verify_data' => 1]);
+                \HiCoinHistories::createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
             }
         }
 
