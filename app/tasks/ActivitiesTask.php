@@ -85,7 +85,11 @@ class ActivitiesTask extends \Phalcon\Cli\Task
     //许愿墙中奖人选
     function wishWinnerAction()
     {
-        $product_channel_id = 1;
-        \WishHistories::getRand($product_channel_id);
+        $date = '2018-05-12';
+        if (time() > endOfDay(strtotime($date))) {
+            $product_channel_id = 1;
+            \WishHistories::getRand($product_channel_id);
+        }
+
     }
 }
