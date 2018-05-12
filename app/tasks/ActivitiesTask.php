@@ -81,4 +81,11 @@ class ActivitiesTask extends \Phalcon\Cli\Task
             $cache->set($key, $num);
         }
     }
+
+    //许愿墙中奖人选
+    function wishWinnerAction()
+    {
+        $product_channel_id = 1;
+        \WishHistories::getRand($product_channel_id);
+    }
 }
