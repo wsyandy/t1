@@ -548,6 +548,20 @@ trait UserWakeup
         $user_db->del($receive_friend_online_remind_online_key);
     }
 
+    function pushOnlineRemindMessage()
+    {
+
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
+        if ($hot_cache->get($cache_key)) {
+            return;
+        }
+
+        $hot_cache->setex($cache_key, 1800, time());
+
+        \Users::delay()->pushOnlineRemind($this->id);
+    }
+
     static function pushOnlineRemind($user_id)
     {
 
@@ -563,8 +577,6 @@ trait UserWakeup
     //只发送一条
     function pushFriendOnlineRemind()
     {
-        info('user_id', $this->id);
-
         $this->delSendRemindOnlineKey();
 
         if (!$this->canSendRemindOnline()) {
@@ -857,6 +869,19 @@ trait UserWakeup
 
     }
 
+    // 进入房间推送
+    function pushIntoRoomRemindMessage()
+    {
+        $hot_cache = \Users::getHotWriteCache();
+        $cache_key = 'push_online_or_into_room_remind_' . $this->id;
+        if ($hot_cache->get($cache_key)) {
+            return;
+        }
+
+        $hot_cache->setex($cache_key, 1800, time());
+        \Users::delay()->pushIntoRoomRemind($this->id);
+    }
+
     static function pushIntoRoomRemind($user_id)
     {
 
@@ -890,7 +915,7 @@ trait UserWakeup
             }
 
             $push_data = ['title' => $title, 'body' => $body, 'client_url' => $client_url];
-            \Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
+            Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
         }
     }
 }

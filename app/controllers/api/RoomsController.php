@@ -196,12 +196,9 @@ class RoomsController extends BaseController
         $app_id = $this->currentProductChannel()->getImAppId();
         $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
 
-        $hot_cache = \Users::getHotWriteCache();
-        $cache_key = 'push_into_room_remind_' . $this->currentUser()->id;
-        if (!$hot_cache->get($cache_key)) {
-            $hot_cache->setex($cache_key, 300, time());
-            \Users::delay()->pushIntoRoomRemind($this->currentUser()->id);
-        }
+        // 进入房间推送
+        $this->currentUser()->pushIntoRoomRemindMessage();
+
 
         $res = $room->toJson();
         $res['channel_key'] = $key;
@@ -221,15 +218,6 @@ class RoomsController extends BaseController
         $show_game = true;
 
         $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
-        //if ($room->user->isCompanyUser() || in_array($room->id, \Rooms::getGameWhiteList())) {
-        //  $show_game = true;
-        //}
-
-//        if ($show_game) {
-//            $menu_config[] = ['show' => true, 'title' => '游戏', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-//            $res['menu_config'] = $menu_config;
-//        }
-
         $game_history = $room->getGameHistory();
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
