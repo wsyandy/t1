@@ -185,7 +185,6 @@
                 };
                 $.authPost('/m/wish_histories/show_wish', data, function (resp) {
                     if (!resp.error_code) {
-                        vm.show_wish_histories = [];
                         vm.myWishList = true;
                         vm.show_wish_histories = resp.show_wish_histories;
                         console.log(vm.show_wish_histories);
