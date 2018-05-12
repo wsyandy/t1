@@ -49,7 +49,7 @@ class BaseController extends \ApplicationController
      */
     function currentUser($force = false)
     {
-        if (!empty(getenv('ENVIRONMENT')) && getenv('ENVIRONMENT') == 'development') {
+        if (self::getLocalSign()) {
             $user = (object)['id' => 1];
             return $user;
         }
@@ -181,6 +181,9 @@ class BaseController extends \ApplicationController
 
     function beforeAction($dispatcher)
     {
+        if (self::getLocalSign()) {
+            return true;
+        }
 
         if (!$this->currentProductChannel()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道非法');
@@ -278,6 +281,19 @@ class BaseController extends \ApplicationController
                 return true;
             }
             return false;
+        }
+        return false;
+    }
+
+
+    /**
+     * 标示本地环境
+     * @return bool
+     */
+    static public function getLocalSign()
+    {
+        if (!empty(getenv('ENVIRONMENT')) && getenv('ENVIRONMENT') == 'development') {
+            return true;
         }
         return false;
     }

@@ -147,13 +147,18 @@ class RoomsController extends BaseController
             $gift_id = $this->params('gift_id');
             $content = $this->params('content');
             $red_packet_num = $this->params('num');
-            $red_packet_url = $this->params('url');
+            $url = $this->params('url');
             $left_pk_user_id = $this->params('left_pk_user_id');
             $left_pk_user_score = $this->params('left_pk_user_score');
             $right_pk_user_id = $this->params('right_pk_user_id');
             $right_pk_user_score = $this->params('right_pk_user_score');
+            $expire_at = $this->params('expire_at');
+            $svga_image_url = $this->params('svga_image_url');
+            $total_value = $this->params('total_value');
+            $current_value = $this->params('current_value');
+            $content_type = $this->params('content_type');
 
-            debug($action, $sender_id, $gift_id, $red_packet_num, $red_packet_url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score);
+            debug($action, $sender_id, $gift_id, $red_packet_num, $url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score);
 
             $sender = \Users::findById($sender_id);
             if (!$sender) {
@@ -180,11 +185,14 @@ class RoomsController extends BaseController
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
-
-                $body = ['action' => $action, 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
+                $body = ['action' => $action, 'user_id' => $sender->id, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'content' => $content,
-                    'channel_name' => $room->channel_name
+                    'channel_name' => $room->channel_name, 'content_type' => $content_type
                 ];
+
+                if ($content_type == 'personage') {
+                    $body = array_merge($body, ['nickname' => $sender->nickname]);
+                }
             }
 
             if ($action == 'send_gift') {
@@ -285,7 +293,7 @@ class RoomsController extends BaseController
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
-                $body = ['action' => $action, 'red_packet' => ['num' => $red_packet_num, 'url' => $red_packet_url]];
+                $body = ['action' => $action, 'red_packet' => ['num' => $red_packet_num, 'url' => $url]];
             }
 
             if ($action == 'pk') {
@@ -296,6 +304,13 @@ class RoomsController extends BaseController
                     'left_pk_user' => ['id' => $left_pk_user_id, 'score' => $left_pk_user_score],
                     'right_pk_user' => ['id' => $right_pk_user_id, 'score' => $right_pk_user_score]
                 ]
+                ];
+            }
+
+            if ($action == 'blasting_gift') {
+
+                $body = ['action' => $action, 'blasting_gift' => ['expire_at' => strtotime($expire_at), 'url' => $url, 'svga_image_url' => $svga_image_url,
+                    'total_value' => $total_value, 'current_value' => $current_value]
                 ];
             }
 
@@ -310,8 +325,9 @@ class RoomsController extends BaseController
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
             'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知', 'red_packet' => '红包',
-            'pk' => 'pk'
+            'pk' => 'pk', 'blasting_gift' => '爆礼物'
         ];
+        $this->view->content_types = ['personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
         $this->view->room = $room;
     }
 

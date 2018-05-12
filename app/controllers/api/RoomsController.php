@@ -258,6 +258,16 @@ class RoomsController extends BaseController
             }
         }
 
+        // 爆礼物
+        $noun = $room->getDayIncome(date('Ymd'));
+        $res['blasting_gift'] = array(
+            'expire_at' => time(),
+            'url' => 'url://m/backpacks',
+            'svga_image_url' => \Backpacks::getSvgaImageUrl(),
+            'total_value' => (int)\Backpacks::getTotalBoomValue(),
+            'current_value' => (int)$noun
+        );
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 
