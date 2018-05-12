@@ -467,17 +467,6 @@ trait UserWakeup
         return true;
     }
 
-    function delSendRemindOnlineKey()
-    {
-        //登陆就删除自己的接受消息数量
-        //好友上线提醒
-        $this->delReceiveOnlineRemindOnline();
-
-        //好友进自己房间提醒
-        $this->delReceiveIntoRoomRemindOnline();
-
-    }
-
     function canSendRemindOnline()
     {
         $cur_hour = intval(date('H'));
@@ -512,47 +501,21 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->getReceiveOnlineRemindOnline()) {
-            info('receive_online_remind_on_line user_id', $this->id);
-            return false;
-        }
-
         return true;
     }
 
     function getReceiveOnlineRemindHour()
     {
-        $user_db = Users::getUserDb();
+        $cache = Users::getHotWriteCache();
         $receive_online_remind_hour_key = 'receive_online_remind_hour_' . $this->id;
-        return $user_db->get($receive_online_remind_hour_key);
+        return $cache->get($receive_online_remind_hour_key);
     }
 
     function setReceiveOnlineRemindHour()
     {
-        $user_db = Users::getUserDb();
+        $cache = Users::getHotWriteCache();
         $receive_online_remind_hour_key = 'receive_online_remind_hour_' . $this->id;
-        $user_db->setex($receive_online_remind_hour_key, 60 * 60, $this->id);
-    }
-
-    function getReceiveOnlineRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_online_remind_online_key = 'receive_online_remind_online_' . $this->id;
-        return $user_db->get($receive_online_remind_online_key);
-    }
-
-    function setReceiveOnlineRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_online_remind_online_key = 'receive_online_remind_online_' . $this->id;
-        $user_db->setex($receive_online_remind_online_key, 30 * 24 * 60 * 60, $this->id);
-    }
-
-    function delReceiveOnlineRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_friend_online_remind_online_key = 'receive_online_remind_online_' . $this->id;
-        $user_db->del($receive_friend_online_remind_online_key);
+        $cache->setex($receive_online_remind_hour_key, 60 * 60, $this->id);
     }
 
     function pushOnlineRemindMessage()
@@ -581,7 +544,6 @@ trait UserWakeup
     //只发送一条
     function pushFriendOnlineRemind()
     {
-        $this->delSendRemindOnlineKey();
 
         $body = "你的{$this->nickname}好友已上线，赶紧去唠唠！";
         $opts = ['title' => '好友上线提醒', 'body' => $body];
@@ -594,7 +556,6 @@ trait UserWakeup
         }
 
         $total_pages = ceil($friend_num / $per_page);
-
 
         for ($page = 1; $page <= $total_pages; $page++) {
 
@@ -609,7 +570,6 @@ trait UserWakeup
 
                 //记录消息发送数量
                 $user->setReceiveOnlineRemindHour();
-                $user->setReceiveOnlineRemindOnline();
 
                 info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                 $user->push($opts);
@@ -650,7 +610,6 @@ trait UserWakeup
 
                 //记录消息发送数量
                 $user->setReceiveOnlineRemindHour();
-                $user->setReceiveOnlineRemindOnline();
 
                 info('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                 $user->push($opts);
@@ -706,48 +665,21 @@ trait UserWakeup
             return false;
         }
 
-        if ($this->getReceiveIntoRoomRemindOnline()) {
-            info('receive_into_room_remind_on_line user_id', $this->id);
-            return false;
-        }
-
         return true;
     }
 
     function getReceiveIntoRoomRemindHour()
     {
-        $user_db = Users::getUserDb();
+        $cache = Users::getHotWriteCache();
         $receive_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $this->id;
-        return $user_db->get($receive_into_room_remind_hour_key);
+        return $cache->get($receive_into_room_remind_hour_key);
     }
-
-    function getReceiveIntoRoomRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_into_room_remind_on_line_key = 'receive_into_room_remind_on_line_' . $this->id;
-        return $user_db->get($receive_into_room_remind_on_line_key);
-    }
-
 
     function setReceiveIntoRoomRemindHour()
     {
-        $user_db = Users::getUserDb();
+        $cache = Users::getHotWriteCache();
         $receive_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $this->id;
-        $user_db->setex($receive_into_room_remind_hour_key, 60 * 60, $this->id);
-    }
-
-    function setReceiveIntoRoomRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_into_room_remind_on_line_key = 'receive_into_room_remind_on_line_' . $this->id;
-        $user_db->setex($receive_into_room_remind_on_line_key, 30 * 24 * 60 * 60, $this->id);
-    }
-
-    function delReceiveIntoRoomRemindOnline()
-    {
-        $user_db = Users::getUserDb();
-        $receive_into_room_remind_on_line_key = 'receive_into_room_remind_on_line_' . $this->id;
-        $user_db->del($receive_into_room_remind_on_line_key);
+        $cache->setex($receive_into_room_remind_hour_key, 60 * 60, $this->id);
     }
 
     //好友上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）
@@ -792,7 +724,6 @@ trait UserWakeup
 
                 //记录消息发送数量
                 $user->setReceiveIntoRoomRemindHour();
-                $user->setReceiveIntoRoomRemindOnline();
 
                 info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                 $user->push($opts);
@@ -842,7 +773,6 @@ trait UserWakeup
 
                 //记录消息发送数量
                 $user->setReceiveIntoRoomRemindHour();
-                $user->setReceiveIntoRoomRemindOnline();
 
                 info('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                 $user->push($opts);
@@ -903,4 +833,5 @@ trait UserWakeup
             Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
         }
     }
+    
 }
