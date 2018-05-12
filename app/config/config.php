@@ -19,6 +19,8 @@ return new \Phalcon\Config([
     'room_db' => env('room_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'redlock_endpoints' => env('redlock_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
 
+    'search_endpoints' => env('search_endpoints', 'http://127.0.0.1:9200/'),
+
     'emchat' => [
         'client_id' => env('emchat_client_id', 'YXA60kgNMPEEEeenxnECtCKVLw'),
         'client_secret' => env('emchat_client_secret', 'YXA6tyk2jtQevpgBdPhzJnhD2Ifu0Q0'),

@@ -338,6 +338,32 @@ trait UserAttrs
         return $data;
     }
 
+    // es json
+//    function toSearchJson()
+//    {
+//        $data = ['id' => $this->id, 'uid' => $this->uid,
+//            'nickname' => $this->nickname, 'province_id' => $this->province_id, 'city_id' => $this->city_id,
+//            'ip_province_id' => $this->ip_province_id, 'ip_city_id' => $this->ip_city_id,
+//            'geo_province_id' => $this->geo_province_id, 'geo_city_id' => $this->geo_city_id,
+//            'user_type' => $this->user_type, 'avatar_status' => $this->avatar_status, 'user_status' => $this->user_status,
+//            'created_at' => $this->created_at, 'register_at' => $this->register_at, 'last_at' => $this->last_at,
+//            'third_name' => $this->third_name, 'login_type' => $this->login_type, 'mobile' => $this->mobile, 'login_name' => $this->login_name,
+//            'platform' => $this->platform, 'product_channel_id' => $this->product_channel_id, 'partner_id' => $this->partner_id,
+//            'sex' => $this->sex, 'ip' => $this->ip, 'device_id' => $this->device_id, 'room_id' => $this->room_id,
+//            'user_role' => $this->user_role, 'current_room_id' => $this->current_room_id, 'geo_hash' => $this->geo_hash, 'level' => $this->level,
+//            'union_id' => $this->union_id, 'id_card_auth' => $this->id_card_auth, 'organisation' => $this->organisation, 'share_parent_id' => $this->share_parent_id,
+//        ];
+//
+//        if ($this->geo_hash) {
+//            $data['geo_hash_7'] = substr($this->geo_hash, 0, 7);
+//            $data['geo_hash_6'] = substr($this->geo_hash, 0, 6);
+//            $data['geo_hash_5'] = substr($this->geo_hash, 0, 5);
+//            $data['geo_hash_4'] = substr($this->geo_hash, 0, 4);
+//        }
+//
+//        return $data;
+//    }
+
     function isSilent()
     {
         return USER_TYPE_SILENT == $this->user_type;
