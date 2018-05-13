@@ -1111,7 +1111,7 @@ class Users extends BaseModel
 
     function updateGeoHashRank()
     {
-        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS) {
+        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS || $this->isCompanyUser()) {
             return;
         }
 
