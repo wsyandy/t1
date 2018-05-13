@@ -1629,7 +1629,7 @@ class Rooms extends BaseModel
         }
 
         if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $room_ids]);
+            return Rooms::search($user, $page, $per_page, ['filter_ids' => $room_ids]);
         }
 
         $rooms = Rooms::findByIds($room_ids);
@@ -2546,15 +2546,15 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
-    static function search($user, $product_channel, $page, $per_page, $opts = [])
+    static function search($user, $page, $per_page, $opts = [])
     {
+        $user_id = $user->id;
         $new = intval(fetch($opts, 'new', 0));
         $broadcast = intval(fetch($opts, 'broadcast', 0));
         $follow = intval(fetch($opts, 'follow', 0));
         $filter_ids = fetch($opts, 'filter_ids', []);
-        $user_id = $user->id;
 
-        debug($user->sid, $opts);
+        debug($user->id, $page, $per_page, $opts);
 
         //限制搜索条件
         $cond = [
@@ -2571,11 +2571,9 @@ class Rooms extends BaseModel
         if (STATUS_ON == $follow) {
 
             $user_ids = $user->followUserIds();
-
             if (count($user_ids) > 0) {
                 $cond['conditions'] .= " and user_id in (" . implode(',', $user_ids) . ") ";
             }
-
         }
 
         if (!$new && !$broadcast && !$follow) {
@@ -2599,7 +2597,6 @@ class Rooms extends BaseModel
         }
 
         $shield_room_ids = $user->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $filter_ids = array_unique(array_merge($filter_ids, $shield_room_ids));
         }

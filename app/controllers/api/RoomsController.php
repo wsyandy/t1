@@ -64,7 +64,7 @@ class RoomsController extends BaseController
             }
         }
 
-        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
+        $rooms = \Rooms::search($this->currentUser(), $page, $per_page, $this->params());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
@@ -833,7 +833,7 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page', 12);
-        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page);
+        $rooms = \Rooms::search($this->currentUser(), $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
