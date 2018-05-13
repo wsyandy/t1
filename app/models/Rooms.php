@@ -2114,7 +2114,8 @@ class Rooms extends BaseModel
     function getDayIncome($stat_at)
     {
         $room_db = Users::getUserDb();
-        return $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+        $val = $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+        return intval($val);
     }
 
     //按天的进入房间人数

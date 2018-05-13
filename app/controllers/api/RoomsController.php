@@ -206,11 +206,6 @@ class RoomsController extends BaseController
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
         $root_host = $this->getRoot();
-        //活动列表
-        $product_channel_id = $this->currentProductChannelId();
-        $platform = $this->context('platform');
-        $platform = 'client_' . $platform;
-
         // 菜单
         $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
 
@@ -232,12 +227,15 @@ class RoomsController extends BaseController
         }
 
         // 房间活动
-        $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
-            'type' => ACTIVITY_TYPE_ROOM]);
+        //活动列表
+        $platform = $this->context('platform');
+        $platform = 'client_' . $platform;
+        $activities = \Activities::findRoomActivities($this->currentUser(), ['platform' => $platform]);
         if ($activities) {
             $res['activities'] = $activities;
         }
 
+        // 座驾
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
@@ -245,25 +243,22 @@ class RoomsController extends BaseController
 
         //房间分类信息
         $room_tag_ids = $room->room_tag_ids;
-
         $res['room_tag_ids'] = [];
         if (isPresent($room_tag_ids)) {
-
             $room_tag_ids = explode(',', $room_tag_ids);
-
             foreach ($room_tag_ids as $room_tag_id) {
                 $res['room_tag_ids'][] = intval($room_tag_id);
             }
         }
 
         // 爆礼物
-        $noun = $room->getDayIncome(date('Ymd'));
+        $day_income = $room->getDayIncome(date('Ymd'));
         $res['blasting_gift'] = array(
             'expire_at' => time(),
             'url' => 'url://m/backpacks',
             'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-            'total_value' => (int)\Backpacks::getTotalBoomValue(),
-            'current_value' => (int)$noun
+            'total_value' => \Backpacks::getTotalBoomValue(),
+            'current_value' => $day_income
         );
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
