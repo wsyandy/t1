@@ -106,11 +106,11 @@ class Rooms extends BaseModel
             $lock_key = 'lock_generate_room_uid_' . $uid;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->setnx($lock_key, $uid)) {
-                info('加锁失败', $lock_key);
+                debug('加锁失败', $lock_key);
                 continue;
             }
             $hot_cache->expire($lock_key, 3);
-            info('加锁成功', $lock_key);
+            debug('加锁成功', $lock_key);
 
             return $uid;
         }
@@ -608,9 +608,6 @@ class Rooms extends BaseModel
         }
 
         $hot_cache->zrem($key, $user->id);
-
-        info($user->sid, $this->id, $key, $real_user_key);
-
         if ($this->user_num < 1) {
             $hot_cache->zrem(Rooms::getTotalRoomUserNumListKey(), $this->id);
 
@@ -1032,7 +1029,7 @@ class Rooms extends BaseModel
         }
 
         $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
-        info($room_ids);
+
         $rooms = Rooms::findByIds($room_ids);
         return $rooms;
     }
@@ -1234,7 +1231,7 @@ class Rooms extends BaseModel
                 debug($this->user->sid);
             }
 
-            info("no_users", $body, $this->id);
+            info("no_users", $this->id, $body);
             return;
         }
 
@@ -1351,7 +1348,6 @@ class Rooms extends BaseModel
     function addSilentUsers()
     {
         if ($this->lock) {
-            info("room_is_lock", $this->id);
             return;
         }
 
@@ -1749,10 +1745,8 @@ class Rooms extends BaseModel
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
-        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time, 'content' => $content
-            , 'client_url' => $client_url];
-
-        info($body, $this->id, $this->user->sid);
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time,
+            'content' => $content, 'client_url' => $client_url];
 
         $this->push($body, true);
     }

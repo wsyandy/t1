@@ -471,7 +471,7 @@ trait UserWakeup
     {
         $cur_hour = intval(date('H'));
         if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            info('0点-8点不推送', date('YmdHis'));
+            //info('0点-8点不推送', date('YmdHis'));
             return false;
         }
 
@@ -495,7 +495,7 @@ trait UserWakeup
     {
         //离线状态客户端没上报(活跃时间超过10分钟没更新默认为离线)
         if (time() - $this->lastLoginAt() < 10 * 60) {
-            info('user_id', $this->id);
+            info('last_at user_id', $this->id);
             return false;
         }
 
@@ -527,7 +527,7 @@ trait UserWakeup
     {
 
         if (!$this->canSendRemindOnline()) {
-            info('user_id can not send', $this->id);
+            debug('user_id can not send', $this->id);
             return;
         }
 
@@ -575,7 +575,7 @@ trait UserWakeup
                 //记录消息发送数量
                 $user->setReceiveOnlineRemindHour();
 
-                info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
+                debug('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                 $user->push($opts);
 
             }
@@ -606,7 +606,7 @@ trait UserWakeup
             foreach ($users as $user) {
 
                 if (!$user->canReceiveRemindOnline()) {
-                    info('followed user_id', $user->id);
+                    //info('followed user_id', $user->id);
                     continue;
                 }
 
@@ -614,7 +614,7 @@ trait UserWakeup
                 //记录消息发送数量
                 $user->setReceiveOnlineRemindHour();
 
-                info('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
+                debug('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                 $user->push($opts);
 
             }
@@ -628,7 +628,7 @@ trait UserWakeup
     {
         $cur_hour = intval(date('H'));
         if (time() > strtotime(date('Ymd 22:30:00')) || $cur_hour < 8) {
-            info('0点-8点不推送', date('YmdHis'));
+            //info('0点-8点不推送', date('YmdHis'));
             return false;
         }
 
@@ -657,7 +657,7 @@ trait UserWakeup
     {
         //离线状态客户端没上报(活跃时间超过10分钟没更新默认为离线)
         if (time() - $this->lastLoginAt() < 10 * 60) {
-            info('user_id', $this->id);
+            info('last_at user_id', $this->id);
             return false;
         }
 
@@ -698,11 +698,10 @@ trait UserWakeup
         $body = $data[mt_rand(0, 1)];
         $opts = ['title' => '好友上线开播提醒', 'body' => $body];
 
-        $per_page = 200;
+        $per_page = 100;
         $friend_num = $this->friendNum();
-
         if ($friend_num < 1) {
-            info('user_id', $this->id, 'friend num is 0');
+            //info('user_id', $this->id, 'friend num is 0');
             return;
         }
 
@@ -713,14 +712,14 @@ trait UserWakeup
             foreach ($users as $user) {
 
                 if (!$user->canReceiveRemindIntoRoom()) {
-                    info('friend user_id', $this->id);
+                    //info('friend user_id', $this->id);
                     continue;
                 }
 
                 //记录消息发送数量
                 $user->setReceiveIntoRoomRemindHour();
 
-                info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
+                //info('receive_friend user_id', $user->id, $opts, 'friend_num', $friend_num);
                 $user->push($opts);
 
             }
@@ -742,11 +741,11 @@ trait UserWakeup
         $body = $data[mt_rand(0, 1)];
         $opts = ['title' => '关注的人开播提醒', 'body' => $body];
 
-        $per_page = 200;
+        $per_page = 100;
         $followed_num = $this->followedNum();
 
         if ($followed_num < 1) {
-            info('user_id', $this->id, 'followed num is 0');
+            debug('user_id', $this->id, 'followed num is 0');
             return;
         }
 
@@ -763,7 +762,7 @@ trait UserWakeup
                 //记录消息发送数量
                 $user->setReceiveIntoRoomRemindHour();
 
-                info('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
+                debug('receive_followed user_id', $user->id, $opts, 'followed_num', $followed_num);
                 $user->push($opts);
 
             }
@@ -777,7 +776,7 @@ trait UserWakeup
     {
 
         if (!$this->canSendRemindIntoRoom()) {
-            info('user_id can not send', $this->id);
+            debug('user_id can not send', $this->id);
             return;
         }
 
