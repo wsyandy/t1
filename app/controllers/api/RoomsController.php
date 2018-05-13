@@ -211,25 +211,29 @@ class RoomsController extends BaseController
         $platform = $this->context('platform');
         $platform = 'client_' . $platform;
 
-
+        // 菜单
         $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+
+        // 发起游戏
         $game_history = $room->getGameHistory();
         if ($game_history) {
             $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
         }
 
+        // 发起pk
         $pk_history = $room->getPkHistory();
         if (isDevelopmentEnv() && $pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
+        // 房间红包
         if (isDevelopmentEnv()) {
             $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
         }
 
+        // 房间活动
         $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
             'type' => ACTIVITY_TYPE_ROOM]);
-
         if ($activities) {
             $res['activities'] = $activities;
         }

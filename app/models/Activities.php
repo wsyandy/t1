@@ -135,6 +135,7 @@ class Activities extends BaseModel
         return $activities;
     }
 
+    // 房间活动
     static function findRoomActivities($user, $opts)
     {
         if (!$user->canShowRoomActivity()) {

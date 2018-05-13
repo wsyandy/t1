@@ -1,0 +1,1 @@
+create index expire_at_on_user_gifts on user_gifts(expire_at);
