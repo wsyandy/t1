@@ -582,13 +582,11 @@ class UsersController extends BaseController
             $cond['uid'] = intval($uid);
         }
 
-
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
-        info($this->params());
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 

@@ -226,6 +226,7 @@ class BaseController extends ApplicationController
             info('no_https', $this->getFullUrl());
         }
 
+        // 为啥要限制
         if (in_array($this->remoteIp(), ['112.1.160.168'])) {
             info("ip_illegal", $this->context(), $this->params());
             return $this->renderJSON(ERROR_CODE_FAIL, '请求非法');
@@ -316,7 +317,6 @@ class BaseController extends ApplicationController
         }
 
         $device = $this->currentDevice();
-
         if ($device) {
             return \Users::registerForClientByDevice($device);
         }
