@@ -66,7 +66,7 @@ class GiftsController extends BaseController
         }
 
         $renew = $this->params('renew', 0);
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (isBlank($gift) || $gift->isInvalid()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
@@ -157,7 +157,7 @@ class GiftsController extends BaseController
     {
         $gift_id = $this->params('gift_id');
 
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (!$gift) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
@@ -188,7 +188,7 @@ class GiftsController extends BaseController
     {
         $gift_id = $this->params('gift_id');
 
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (!$gift) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
