@@ -1105,7 +1105,7 @@ class Users extends BaseModel
 
         $user_db = Users::getUserDb();
         $user_db->zrem($cache_key, $this->id);
-        //info($cache_key, $this->id);
+        info($cache_key, $this->id);
 
     }
 
@@ -1125,7 +1125,7 @@ class Users extends BaseModel
 
         $user_db = Users::getUserDb();
         $user_db->zadd($cache_key, time(), $this->id);
-        //info($cache_key, $this->id);
+        debug($cache_key, $this->id);
 
     }
 
