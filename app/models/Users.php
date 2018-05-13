@@ -1494,9 +1494,7 @@ class Users extends BaseModel
     {
         $follow_key = 'follow_list_user_id' . $this->id;
         $users = self::findByRelations($follow_key, $page, $per_page);
-
         foreach ($users as $user) {
-
             $user->friend_note = $this->getFriendNote($user->id);
         }
 
@@ -1517,9 +1515,7 @@ class Users extends BaseModel
     {
         $followed_key = 'followed_list_user_id' . $this->id;
         $users = self::findByRelations($followed_key, $page, $per_page);
-
         foreach ($users as $user) {
-
             $user->friend_note = $this->getFriendNote($user->id);
         }
 
@@ -1538,9 +1534,7 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
         $friend_note = $db->hget($friend_note_key, $user_id);
-
         if (is_null($friend_note)) {
             return '';
         }
@@ -1552,7 +1546,6 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
         if ($friend_note) {
             $db->hset($friend_note_key, $user_id, $friend_note);
         }

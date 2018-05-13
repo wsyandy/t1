@@ -476,22 +476,19 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
-
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
     function otherDetailAction()
     {
-        //房间是否加锁
-        $other_current_room = $this->otherUser()->current_room;
+        $other_user = $this->otherUser();
+        $current_user = $this->currentUser();
         $current_room_lock = false;
-
+        //房间是否加锁
+        $other_current_room = $other_user->current_room;
         if ($other_current_room) {
             $current_room_lock = $other_current_room->lock;
         }
-
-        $other_user = $this->otherUser();
-        $current_user = $this->currentUser();
 
         $detail_json = $other_user->toDetailJson();
         $detail_json['is_friend'] = $current_user->isFriend($other_user);
@@ -728,10 +725,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $product_channel_id = $this->currentProductChannelId();
-
         $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
-
         $res = $users->toJson('users', 'toRankListJson');
 
         if ($page == 1) {

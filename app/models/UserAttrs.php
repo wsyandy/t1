@@ -41,7 +41,6 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond
@@ -54,7 +53,7 @@ trait UserAttrs
         }
 
         if (isPresent($this->experience)) {
-            $data['experience'] = $this->experience;
+            $data['experience'] = intval($this->experience);
         } else {
             $data['experience'] = 0;
         }
