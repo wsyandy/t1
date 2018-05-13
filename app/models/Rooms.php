@@ -2682,19 +2682,24 @@ class Rooms extends BaseModel
         return $gang_up_rooms_json;
     }
 
-    function getRoomMenuConfig($current_user_role, $show_game, $root, $room_id)
+    function getRoomMenuConfig($user, $opts = [])
     {
+
+        $root_host = fetch($opts, 'root_host');
+        $current_user_role = $user->user_role;
         $menu_config = [];
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-
-        }
-        if ($show_game && isDevelopmentEnv()) {
-            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url://m/distribute', 'icon' => $root . 'images/red_packet.png'];
+        if (true) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
-        if ($show_game && isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
-            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+        if (isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
+                'url' => 'url://m/distribute', 'icon' => $root_host . 'images/red_packet.png'];
+        }
+
+        if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
         }
 
         return $menu_config;

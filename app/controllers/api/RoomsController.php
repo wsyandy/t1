@@ -176,6 +176,7 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
+
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
@@ -192,42 +193,35 @@ class RoomsController extends BaseController
 
         $room->enterRoom($this->currentUser());
 
-        $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
-        $app_id = $this->currentProductChannel()->getImAppId();
-        $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
-
         // 进入房间推送
         $this->currentUser()->pushIntoRoomRemindMessage();
 
-
         $res = $room->toJson();
-        $res['channel_key'] = $key;
-        $res['signaling_key'] = $signaling_key;
-        $res['app_id'] = $app_id;
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['app_id'] = $this->currentProductChannel()->getImAppId();
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
-        $root = $this->getRoot();
+        $root_host = $this->getRoot();
         //活动列表
         $product_channel_id = $this->currentProductChannelId();
         $platform = $this->context('platform');
         $platform = 'client_' . $platform;
 
-        $show_game = true;
 
-        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
         $game_history = $room->getGameHistory();
         if ($game_history) {
-            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
+            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
         }
 
         $pk_history = $room->getPkHistory();
         if (isDevelopmentEnv() && $pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
-
 
         if (isDevelopmentEnv()) {
             $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
