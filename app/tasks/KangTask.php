@@ -817,4 +817,14 @@ EOF;
         }
     }
 
+    function fixGeo2Action(){
+
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+        $users = Users::findByIds($block_near_by_user_ids);
+
+        foreach($users as $user){
+            $user->delGeoHashRank();
+        }
+
+    }
 }
