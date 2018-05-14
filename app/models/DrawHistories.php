@@ -39,23 +39,16 @@ class DrawHistories extends BaseModel
         $user_db = Users::getUserDb();
         // 系统总收入
         $cache_key = 'draw_history_total_amount_incr_' . $this->pay_type;
-        $total_incr_diamond = $user_db->incrby($cache_key, intval($this->pay_amount));
+        $user_db->incrby($cache_key, intval($this->pay_amount));
 
         // 系统支出: 金币，钻石，礼物
         $cache_decr_key = 'draw_history_total_amount_decr_' . $this->type;
-        $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($this->number));
+        $user_db->incrby($cache_decr_key, intval($this->number));
 
-        $new_cache_decr_key = 'new_draw_history_total_amount_decr_' . $this->type;
+        $new_cache_key = 'new_v2_draw_history_total_amount_incr_' . $this->pay_type;
+        $new_cache_decr_key = 'new_v2_draw_history_total_amount_decr_' . $this->type;
+        $new_total_incr_diamond = $user_db->incrby($new_cache_key, intval($this->pay_amount));
         $new_total_decr_diamond = $user_db->incrby($new_cache_decr_key, intval($this->number));
-
-        if ($new_total_decr_diamond == $this->number) {
-            $new_cache_key = 'new_draw_history_total_amount_incr_' . $this->pay_type;
-            $num = $total_incr_diamond - $total_decr_diamond;
-            $new_total_incr_diamond = $user_db->incrby($new_cache_key, $num);
-        } else {
-            $new_cache_key = 'new_draw_history_total_amount_incr_' . $this->pay_type;
-            $new_total_incr_diamond = $user_db->incrby($new_cache_key, intval($this->pay_amount));
-        }
 
         info($new_cache_key, $new_total_incr_diamond, $new_total_decr_diamond);
 
