@@ -254,7 +254,7 @@
             },
             topupBalance: function (show) {
                 if (show) {
-                    var url = '/m/products?sid=' + vm.sid + '&code=' + vm.code;
+                    var url = '/m/users/account?sid=' + vm.sid + '&code=' + vm.code;
                     location.href = url;
                 } else {
                     vm.isHintToast = false;
