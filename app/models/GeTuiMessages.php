@@ -242,18 +242,10 @@ class GeTuiMessages extends BaseModel
         return $payload;
     }
 
-    static function testPush($receiver, $title, $body, $client_url = null)
+    static function testPush($receiver, $opts = [])
     {
-        $payload = self::generatePushPayload($receiver, array('title' => $title, 'body' => $body));
         $context = $receiver->getPushContext();
-        $result = \Pushers::push($context, $receiver->getPushReceiverContext(),
-            array(
-                'title' => $title,
-                'body' => $body,
-                'client_url' => $client_url,
-                'payload' => $payload
-            )
-        );
+        $result = \Pushers::push($context, $receiver->getPushReceiverContext(), $opts);
         debug("result: " . $result);
         return $result;
     }

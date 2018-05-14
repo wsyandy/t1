@@ -272,9 +272,15 @@ class UsersController extends BaseController
     function getuiAction()
     {
         $receiver = \Users::findById($this->params('receiver_id'));
+        $title = $this->params('title');
+        $body = $this->params('body');
+        $client_url = $this->params('client_url');
+        $show_type = $this->params('show_type', '');
+
+        $opts = ['title' => $title, 'body' => $body, 'client_url' => $client_url, 'show_type' => $show_type];
+
         if ($this->request->isPost()) {
-            $result = \GeTuiMessages::testPush($receiver, $this->params('title'), $this->params('body'),
-                $this->params('client_url'));
+            $result = \GeTuiMessages::testPush($receiver, $opts);
             if ($result) {
                 $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
             } else {
