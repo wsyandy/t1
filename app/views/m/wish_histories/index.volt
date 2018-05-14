@@ -241,7 +241,7 @@
             },
             toRanking:function () {
                 location.href = '/m/wish_histories/wishing_tree_list?sid='+vm.sid+'&code='+vm.code
-            }
+            },
             toReLoad:function () {
                 location.reload();
             }
