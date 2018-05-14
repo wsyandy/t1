@@ -52,7 +52,7 @@
 
 ## 2 赠送背包礼物
 
-> http-post /api/backpacks/sendGift
+> http-post /api/backpacks/send_gift
 
 ##### 请求参数说明
 |参数|名称|值类型|是否可空|备注|
