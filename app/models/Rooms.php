@@ -2092,8 +2092,30 @@ class Rooms extends BaseModel
             $hot_cache->incrby($minutes_num_stat_key, 1);
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
+            // 爆礼物
+            self::statBoomIncome($income, $room->id);
+
             debug($minutes_stat_key);
         }
+    }
+
+
+    // 爆礼物流水值记录
+    static function statBoomIncome($income, $room_id)
+    {
+        // 爆礼物流水值
+        $cache = self::getHotWriteCache();
+        $cache_name = self::getBoomValueCacheName($room_id);
+        $cache_room_name = Backpacks::getBoomRoomCacheName($room_id);
+
+        $time = 180;
+
+        $value = $cache->get($cache_name);
+        if ($value > 0) {
+            $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
+        } else
+            $cache->setex($cache_name, $time, ($value+$income));
+
     }
 
     //按天统计房间进入人数
@@ -2959,5 +2981,10 @@ class Rooms extends BaseModel
     {
         $hot_cache = Rooms::getHotReadCache();
         return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
+    }
+
+    static public function getBoomValueCacheName($room_id)
+    {
+        return 'boom_target_value_room_'.$room_id;
     }
 }

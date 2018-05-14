@@ -25,9 +25,12 @@ class BackpacksController extends BaseController
         // 用户信息
         $user = $this->currentUser();
 
+        // 获取当前房间ID
+        $room_id = $this->getCurrentRoomId($user->id);
+
         // cache
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id);
+        $cache_name = $this->getCacheName($user->id, $room_id);
         if ($cache->exists($cache_name)) {
             $start = false;
         }
@@ -46,12 +49,24 @@ class BackpacksController extends BaseController
     public function prizeAction()
     {
         $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)array('id' => 1);
+        }
+
+        // 获取当前房间ID
+        $room_id = $this->getCurrentRoomId($user->id);
 
         // cache
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id);
+        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
+        $cache_name = $this->getCacheName($user->id, $room_id);
 
-        // 用户抽奖状态
+        // 房间爆礼物进行中
+        if (!$cache->exists($cache_room_name)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间爆礼物活动已结束！');
+        }
+
+        // 用户未抽奖
         if ($cache->exists($cache_name)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
         }
@@ -72,7 +87,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->set($this->getCacheName($user->id), json_encode($json), 180);
+        $cache->set($cache_name, json_encode($json), 180);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -97,10 +112,11 @@ class BackpacksController extends BaseController
     public function createAction()
     {
         $user = $this->currentUser();
+        $room_id = $this->getCurrentRoomId($user->id);
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id);
+        $cache_name = $this->getCacheName($user->id, $room_id);
 
         $json = $cache->get($cache_name);
 
@@ -118,6 +134,7 @@ class BackpacksController extends BaseController
             $this->doCreate($value['id'], $value['number'], $type);
         }
 
+        $cache->del($cache_name);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
@@ -136,7 +153,7 @@ class BackpacksController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-1');
 
         } elseif ($type != BACKPACK_GIFT_TYPE)
-            $target_id  = 0;
+            $target_id = 0;
 
         $user = $this->currentUser();
 
@@ -158,25 +175,26 @@ class BackpacksController extends BaseController
         (new \BoomHistories())->createBoomHistories($user->id, $target_id, $type, $number);
 
         // 处理爆礼物
-        if ($type == BACKPACK_GIFT_TYPE && (! \Backpacks::createTarget($user->id, $target_id, $number, $type))) {
+        if ($type == BACKPACK_GIFT_TYPE && (!\Backpacks::createTarget($user->id, $target_id, $number, $type))) {
 
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-2');
 
         } else
             $this->$function($user->id, $number);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack'=>$list]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $list]);
     }
 
 
     /**
      * 爆礼物缓存名称
      * @param $user_id
+     * @param $room_id
      * @return string
      */
-    protected function getCacheName($user_id)
+    protected function getCacheName($user_id, $room_id)
     {
-        return 'boom_target_user:'.$user_id;
+        return 'boom_target_room:' . $room_id . '_user:' . $user_id;
     }
 
 
@@ -188,7 +206,7 @@ class BackpacksController extends BaseController
      */
     protected function boomGetDiamond($user_id, $number)
     {
-        $opts['remark'] = '爆礼物获得'.$number.'钻石';
+        $opts['remark'] = '爆礼物获得' . $number . '钻石';
         \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
         return true;
     }
@@ -202,9 +220,22 @@ class BackpacksController extends BaseController
      */
     protected function boomGetGold($user_id, $number)
     {
-        $opts['remark'] = '爆礼物获得'.$number.'金币';
+        $opts['remark'] = '爆礼物获得' . $number . '金币';
         \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
         return true;
     }
 
+
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    public function getCurrentRoomId($user_id)
+    {
+        // 获取当前房间ID
+        $user_info = \Users::findFirstById($user_id);
+        $user_info = $user_info->toJson();
+        $room_id = $user_info['current_room_id'];
+        return $room_id;
+    }
 }

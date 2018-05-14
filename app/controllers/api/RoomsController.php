@@ -294,15 +294,19 @@ class RoomsController extends BaseController
 
 
         // 爆礼物
-        $day_income = $room->getDayIncome(date('Ymd'));
+        $cache = \Backpacks::getHotWriteCache();
+        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
+        if ($cache->exists($cache_room_name)) {
+            $day_income = $room->getDayIncome(date('Ymd'));
 
-        $res['blasting_gift'] = [
-            'expire_at' => time(),
-            'url' => 'url://m/backpacks',
-            'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-            'total_value' => \Backpacks::getTotalBoomValue(),
-            'current_value' => $day_income
-        ];
+            $res['blasting_gift'] = [
+                'expire_at' => (int)\Backpacks::getExpireAt($room_id),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => \Backpacks::getSvgaImageUrl(),
+                'total_value' => \Backpacks::getTotalBoomValue(),
+                'current_value' => $day_income
+            ];
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
@@ -379,7 +383,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-// 公屏设置
+    // 公屏设置
     function openChatAction()
     {
         $room_id = $this->params('id', 0);
@@ -436,7 +440,7 @@ class RoomsController extends BaseController
     }
 
 
-// 踢出房间
+    // 踢出房间
     function kickingAction()
     {
         $room_id = $this->params('id', 0);
@@ -695,7 +699,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
 
-//发公屏消息上报
+    //发公屏消息上报
     function sendMessageAction()
     {
         $content = $this->params('content');

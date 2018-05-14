@@ -525,7 +525,7 @@ ol, ul, li {
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
-    display: none;
+
 }
 .get_style_bg .get_style_box{
     position: absolute;

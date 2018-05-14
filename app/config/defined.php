@@ -144,6 +144,8 @@ define('ACCOUNT_TYPE_DRAW_EXPENSES', 31); //转盘抽奖支出
 define('ACCOUNT_TYPE_RELEASE_WISH_EXPENSES',32);    //发布愿望支出
 define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES',33);  //守护愿望支出
 define('ACCOUNT_TYPE_IN_BOOM', 34); //爆礼物获得
+define('ACCOUNT_TYPE_RED_PACKET_EXPENSES',35);  //红包支出
+define('ACCOUNT_TYPE_RED_PACKET_INCOME',36);    //红包收入
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到

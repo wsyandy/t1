@@ -5,6 +5,7 @@
  * Date: 2018/5/8
  * Time: 13:43
  */
+
 namespace api;
 
 class BackpacksController extends BaseController
@@ -16,7 +17,7 @@ class BackpacksController extends BaseController
     public function indexAction()
     {
         $type = $this->params('type', 1);
-        $opt = [ 'type' => $type ];
+        $opt = ['type' => $type];
 
         $list = \Backpacks::findListByUserId($this->currentUser(), $opt);
         $list = $list->toJson('backpacks', 'toSimpleJson');

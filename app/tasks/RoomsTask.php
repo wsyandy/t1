@@ -872,10 +872,10 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rooms['rooms'] as $value) {
             $room = Rooms::findFirstById($value['id']);
-            $noun = $room->getDayIncome(date('Ymd'));
+            $day_income = $room->getDayIncome(date('Ymd'));
 
-            if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            if ($day_income >= $line) {
+                $backpack->pushClientAboutBoom($total, $day_income, $value['id']);
             }
         }
     }

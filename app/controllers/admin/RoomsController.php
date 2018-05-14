@@ -152,13 +152,13 @@ class RoomsController extends BaseController
             $left_pk_user_score = $this->params('left_pk_user_score');
             $right_pk_user_id = $this->params('right_pk_user_id');
             $right_pk_user_score = $this->params('right_pk_user_score');
-            $expire_at = $this->params('expire_at');
+            $expire_at = $this->params('expire_at', date('Y-m-d H:i:s', strtotime('+3 minutes')));
             $svga_image_url = $this->params('svga_image_url');
             $total_value = $this->params('total_value');
             $current_value = $this->params('current_value');
             $content_type = $this->params('content_type');
 
-            debug($action, $sender_id, $gift_id, $red_packet_num, $url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score);
+            debug($action, $sender_id, $gift_id, $red_packet_num, $url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score, $expire_at);
 
             $sender = \Users::findById($sender_id);
             if (!$sender) {
