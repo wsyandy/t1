@@ -306,8 +306,6 @@ class RoomsController extends BaseController
                 'total_value' => \Backpacks::getTotalBoomValue(),
                 'current_value' => $day_income
             ];
-        } else {
-            $res['blasting_gift'] = [];
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
