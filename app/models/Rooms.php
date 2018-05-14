@@ -1949,17 +1949,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2823,11 +2825,13 @@ class Rooms extends BaseModel
                 continue;
             }
 
-            if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
-            } else {
-                $room_ids[$room->id] = $total_score;
-            }
+//            if ($room->isShieldRoom()) {
+//                $shield_room_ids[$room->id] = $total_score;
+//            } else {
+//                $room_ids[$room->id] = $total_score;
+//            }
+
+            $room_ids[$room->id] = $total_score;
 
             if (isDevelopmentEnv()) {
                 $room_score_key = "hot_room_score_list_room_id{$room->id}";
@@ -2845,17 +2849,20 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+        if (count($shield_room_ids) > 0) {
 
-            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                return -1;
-            }
+            uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
 
-            return 1;
-        });
+                if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                    return -1;
+                }
+
+                return 1;
+            });
+        }
 
         $shield_room_num = 5;
-        $total_room_num = 30;
+        $total_room_num = 25;
         $new_user_shield_room_num = 3;
 
         if (isDevelopmentEnv()) {
