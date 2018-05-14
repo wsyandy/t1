@@ -1220,6 +1220,16 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
+    function pushPkMessage($pk_history_datas)
+    {
+        $body = ['action' => 'pk', 'pk_history' => [
+            'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
+            'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
+        ]
+        ];
+        $this->push($body);
+    }
+
 
     function push($body, $check_user_version = false)
     {
@@ -2693,7 +2703,7 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/distribute', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
