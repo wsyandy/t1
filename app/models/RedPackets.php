@@ -49,6 +49,11 @@ class RedPackets extends BaseModel
      */
     private $_red_packet_type;
 
+    /**
+     * @type integer
+     */
+    private $_nearby_distance;
+
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
         'user_id' => ['null' => '不能为空'],
@@ -59,7 +64,7 @@ class RedPackets extends BaseModel
         'red_packet_type' => ['null' => '不能为空']
     ];
 
-    static $RED_PACKET_STATUS = [STATUS_WAIT => '等待中', STATUS_ON => '进行中', STATUS_OFF => '结束'];
+    static $RED_PACKET_STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
     static $RED_PACKET_TYPE = ['all' => '都可以领取', 'attention' => '关注房主才能领取', 'stay_at_room' => '在房间满3分钟才能领取', 'nearby' => '附近的人才能领取'];
     static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
@@ -99,7 +104,7 @@ class RedPackets extends BaseModel
     {
         info('全部参数', $opts);
         $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex'] as $column) {
+        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
@@ -130,7 +135,7 @@ class RedPackets extends BaseModel
 
     function toSimpleJson()
     {
-        $start_at = $this->created_at + 3 * 60;
+        $start_at = date('Y-m-d H:i:s', $this->created_at + 3 * 60);
 
         return [
             'id' => $this->id,
@@ -140,7 +145,7 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'status_text' => $this->status_text,
             'created_at_text' => $this->created_at_text,
-            'start_at_text' => date('Y-m-d H:i:s', $start_at)
+            'start_at_text' => $start_at
         ];
     }
 

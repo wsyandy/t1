@@ -27,6 +27,7 @@ class RedPacketHistoriesController extends BaseController
         $num = $this->params('num');
         $sex = $this->params('sex', USER_SEX_COMMON);
         $red_packet_type = $this->params('red_packet_type');
+        $nearby_distance = $this->params('nearby_distance', 0);
         if ($diamond < 100 || $num < 10) {
             return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
         }
@@ -46,7 +47,8 @@ class RedPacketHistoriesController extends BaseController
             'user_id' => $user->id,
             'current_room_id' => $user->current_room_id,
             'sex' => $sex,
-            'red_packet_type' => $red_packet_type
+            'red_packet_type' => $red_packet_type,
+            'nearby_distance' => $nearby_distance
         ];
 
         //创建红包
@@ -78,9 +80,8 @@ class RedPacketHistoriesController extends BaseController
         $pre_page = 10;
 
         $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
-        info('红包列表',$red_packets);
         if ($red_packets) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表',$red_packets->toJson('red_packets','toSimpleJson'));
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包消息');
