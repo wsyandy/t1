@@ -50,7 +50,6 @@ class BaseController extends \ApplicationController
     function currentUser($force = false)
     {
         $user_id = $this->currentUserId();
-
         if (isBlank($user_id)) {
             return null;
         }
@@ -59,7 +58,7 @@ class BaseController extends \ApplicationController
         if (!isset($this->_current_user) && $user_id || $force) {
             $user = \Users::findFirstById($user_id);
             if ($user) {
-                $user->product_channel = $this->currentProductChannel();
+                $user->product_channel = $this->_current_product_channel;
             }
 
             $this->_current_user = $user;
@@ -96,7 +95,7 @@ class BaseController extends \ApplicationController
         if (!isset($this->_other_user) && $other_user_id || $force) {
             $other_user = \Users::findFirstById($other_user_id);
             if ($other_user) {
-                $other_user->product_channel = $this->currentProductChannel();
+                $other_user->product_channel = $this->_current_product_channel;
             }
 
             $this->_other_user = $other_user;
