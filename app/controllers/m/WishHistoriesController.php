@@ -84,7 +84,7 @@ class WishHistoriesController extends BaseController
         }
 
         //守护愿望只加经验，段位和财富值
-        \Users::delay()->updateExperienceForWish($user, $amount, $wish_history_id);
+        $this->currentUser()->updateExperienceForWish($amount);
 
         $product_channel_id = $this->currentProductChannelId();
         $user_db = \Users::getUserDb();
