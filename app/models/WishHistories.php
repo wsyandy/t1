@@ -162,6 +162,11 @@ class WishHistories extends BaseModel
         $time = date('Ymd195959');
         $current_day_lucky_key = self::generateCurrentLuckyKey($time);
         $user_db->zadd($current_day_lucky_key, time(), $lucky_id);
+
+        $user = \Users::findFirstById($lucky_id);
+        $push_data = ['title' => '恭喜你，中奖啦！', 'body' => '恭喜您获得价值3000元手表一块，请联系客服QQ：3407150190'];
+        info($user->getPushContext(), $user->getPushReceiverContext());
+        \Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
     }
 
     static function generateCurrentLuckyKey($time)

@@ -99,8 +99,8 @@ class PkHistories extends BaseModel
     {
         $left_pk_user = $this->left_pk_user;
         $right_pk_user = $this->right_pk_user;
-        $left_pk_user_score = $this->getPkUserScore($left_pk_user->id);
-        $right_pk_user_score = $this->getPkUserScore($right_pk_user->id);
+        $left_pk_user_score = $this->getPkUserScore($left_pk_user->id) ? $this->getPkUserScore($left_pk_user->id) : $this->left_pk_user_score;
+        $right_pk_user_score = $this->getPkUserScore($right_pk_user->id) ? $this->getPkUserScore($right_pk_user->id) : $this->right_pk_user_score;
 
         return [
             'id' => $this->id,
@@ -128,22 +128,12 @@ class PkHistories extends BaseModel
     static function updatePkHistories($sender, $total_amount, $receiver_id, $pay_type)
     {
         $pk_history_datas = self::updatePkHistoryInfo($sender, $total_amount, $receiver_id, $pay_type);
+        $room = \Rooms::findFirstById($sender->current_room_id);
+
         info('更新', $sender, $total_amount, $receiver_id, $pay_type);
         if (isPresent($pk_history_datas)) {
-            $body = ['action' => 'pk', 'pk_history' => [
-                'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
-                'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
-            ]
-            ];
-
-            $intranet_ip = $sender->getIntranetIp();
-            $receiver_fd = $sender->getUserFd();
-
-            $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-
-            info('推送结果:', $result, '主体信息：', $body);
+            $room->pushPkMessage($pk_history_datas);
         }
-
     }
 
     function updatePkHistoryListForCache($type)
