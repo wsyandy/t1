@@ -83,7 +83,7 @@ class Backpacks extends BaseModel
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => time(),
+                'expire_at' => strtotime('+3 minutes', time()),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => self::getSvgaImageUrl(),
                 'total_value' => $total_value,
