@@ -32,7 +32,7 @@
                 <td>${ glory.name }</td>
                 <td>
                     <p>${ glory.name }荣耀勋章</p>
-                    <p class="glory_reward">${ glory.reward?glory.reward:''}</p>
+                    {#<p class="glory_reward">${ glory.reward?glory.reward:''}</p>#}
                 </td>
             </tr>
         </table>
