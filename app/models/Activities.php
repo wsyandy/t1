@@ -135,11 +135,15 @@ class Activities extends BaseModel
         return $activities;
     }
 
+    // 房间活动
     static function findRoomActivities($user, $opts)
     {
         if (!$user->canShowRoomActivity()) {
             return [];
         }
+
+        $opts['product_channel_id'] = $user->product_channel_id;
+        $opts['type'] = ACTIVITY_TYPE_ROOM;
 
         $activities = self::findActivities($opts);
         $res = [];
@@ -149,7 +153,6 @@ class Activities extends BaseModel
             foreach ($activities as $activity) {
 
                 $url = 'url://m/activities/' . $activity->code . '?id=' . $activity->id;
-
                 if ('gold_eggs_draw' == $activity->code) {
                     $url = 'url://m/draw_histories';
                 }

@@ -114,7 +114,6 @@ class Gifts extends BaseModel
             try {
 
                 $dest_filename = httpSave($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
-
                 if (!$dest_filename) {
                     continue;
                 }
@@ -443,7 +442,7 @@ class Gifts extends BaseModel
     static public function getNGift($max = 3)
     {
         // 获取伪索引
-        $total = Gifts::count()-1;
+        $total = Gifts::count() - 1;
         if ($max >= $total) $max = 3;
 
         // 随机 $max 个索引

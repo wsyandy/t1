@@ -64,7 +64,7 @@ class RoomsController extends BaseController
             }
         }
 
-        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page, $this->params());
+        $rooms = \Rooms::search($this->currentUser(), $page, $per_page, $this->params());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
@@ -176,6 +176,7 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
+
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
         if (!$room) {
@@ -192,54 +193,49 @@ class RoomsController extends BaseController
 
         $room->enterRoom($this->currentUser());
 
-        $key = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
-        $app_id = $this->currentProductChannel()->getImAppId();
-        $signaling_key = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
-
         // 进入房间推送
         $this->currentUser()->pushIntoRoomRemindMessage();
 
-
         $res = $room->toJson();
-        $res['channel_key'] = $key;
-        $res['signaling_key'] = $signaling_key;
-        $res['app_id'] = $app_id;
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['app_id'] = $this->currentProductChannel()->getImAppId();
         $res['user_chat'] = $this->currentUser()->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
 
         //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
-        $root = $this->getRoot();
-        //活动列表
-        $product_channel_id = $this->currentProductChannelId();
-        $platform = $this->context('platform');
-        $platform = 'client_' . $platform;
+        $root_host = $this->getRoot();
+        // 菜单
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
 
-        $show_game = true;
-
-        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser()->user_role,$show_game, $root, $room_id);
+        // 发起游戏
         $game_history = $room->getGameHistory();
         if ($game_history) {
-            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root . 'images/go_game.png'];
+            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
         }
 
+        // 发起pk
         $pk_history = $room->getPkHistory();
         if (isDevelopmentEnv() && $pk_history) {
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-
+        // 房间红包
         if (isDevelopmentEnv()) {
             $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
         }
 
-        $activities = \Activities::findRoomActivities($this->currentUser(), ['product_channel_id' => $product_channel_id, 'platform' => $platform,
-            'type' => ACTIVITY_TYPE_ROOM]);
-
+        // 房间活动
+        //活动列表
+        $platform = $this->context('platform');
+        $platform = 'client_' . $platform;
+        $activities = \Activities::findRoomActivities($this->currentUser(), ['platform' => $platform]);
         if ($activities) {
             $res['activities'] = $activities;
         }
 
+        // 座驾
         $user_car_gift = $this->currentUser()->getUserCarGift();
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
@@ -247,25 +243,22 @@ class RoomsController extends BaseController
 
         //房间分类信息
         $room_tag_ids = $room->room_tag_ids;
-
         $res['room_tag_ids'] = [];
         if (isPresent($room_tag_ids)) {
-
             $room_tag_ids = explode(',', $room_tag_ids);
-
             foreach ($room_tag_ids as $room_tag_id) {
                 $res['room_tag_ids'][] = intval($room_tag_id);
             }
         }
 
         // 爆礼物
-        $noun = $room->getDayIncome(date('Ymd'));
+        $day_income = $room->getDayIncome(date('Ymd'));
         $res['blasting_gift'] = array(
             'expire_at' => time(),
             'url' => 'url://m/backpacks',
             'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-            'total_value' => (int)\Backpacks::getTotalBoomValue(),
-            'current_value' => (int)$noun
+            'total_value' => \Backpacks::getTotalBoomValue(),
+            'current_value' => $day_income
         );
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
@@ -840,7 +833,7 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page', 12);
-        $rooms = \Rooms::search($this->currentUser(), $this->currentProductChannel(), $page, $per_page);
+        $rooms = \Rooms::search($this->currentUser(), $page, $per_page);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 

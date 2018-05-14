@@ -14,8 +14,8 @@ class RoomSeatsController extends BaseController
 
     function upAction()
     {
-        $room_seat_id = $this->params('id', 0);
 
+        $room_seat_id = $this->params('id', 0);
         if (!$room_seat_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -28,13 +28,13 @@ class RoomSeatsController extends BaseController
         $room_seat_user_lock_key = "room_seat_user_lock{$current_user_id}";
         $room_seat_up_user_lock_key = "room_seat_up_user_lock{$current_user_id}";
 
+        // 报用户上麦
         if ($other_user_id) {
             $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
             $room_seat_up_user_lock_key = "room_seat_up_user_lock{$other_user_id}";
         }
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
-
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
@@ -71,14 +71,13 @@ class RoomSeatsController extends BaseController
 
     function downAction()
     {
-        $room_seat_id = $this->params('id', 0);
 
+        $room_seat_id = $this->params('id', 0);
         if (!$room_seat_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
-
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }

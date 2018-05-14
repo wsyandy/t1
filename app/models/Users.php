@@ -227,11 +227,11 @@ class Users extends BaseModel
             $lock_key = 'lock_generate_user_uid_' . $uid;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->setnx($lock_key, $uid)) {
-                info('加锁失败', $lock_key);
+                debug('加锁失败', $lock_key);
                 continue;
             }
             $hot_cache->expire($lock_key, 3);
-            info('加锁成功', $lock_key);
+            debug('加锁成功', $lock_key);
 
             return $uid;
         }
@@ -354,6 +354,7 @@ class Users extends BaseModel
                 Rooms::delay()->statDayUserTime($action, $current_room_id, $duration);
             }
         }
+
         info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
     }
 
@@ -1017,10 +1018,11 @@ class Users extends BaseModel
             $this->pushOnlineRemindMessage();
 
             $send_gift_data = $this->hasOfflineGift();
-
             if ($send_gift_data) {
                 self::delay()->sendOfflineSendGift($this->id, $send_gift_data);
             }
+
+            $this->updateGeoHashRank();
         }
 
         debug($this->id, $fresh_attrs);
@@ -1087,6 +1089,46 @@ class Users extends BaseModel
         return false;
     }
 
+    function delGeoHashRank()
+    {
+        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS) {
+            return;
+        }
+
+        //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
+        $geohash = new \geo\GeoHash();
+        $prefix = substr($this->geo_hash, 0, 5);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zrem($cache_key, $this->id);
+        info($cache_key, $this->id);
+
+    }
+
+    function updateGeoHashRank()
+    {
+        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS || $this->isCompanyUser() && isProduction()) {
+            return;
+        }
+
+        //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
+        $geohash = new \geo\GeoHash();
+        $prefix = substr($this->geo_hash, 0, 5);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($cache_key, time(), $this->id);
+        debug($cache_key, $this->id);
+
+    }
+
     static function asyncUpdateGeoLocation($user_id)
     {
 
@@ -1128,7 +1170,7 @@ class Users extends BaseModel
         $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
 
         if (count($block_near_by_user_ids) > 0 && in_array($user_id, $block_near_by_user_ids)) {
-            info("屏蔽附近的人", $block_near_by_user_ids, $user_id);
+            info("屏蔽附近的人", $user_id, $block_near_by_user_ids);
             $user->update();
             return;
         }
@@ -1136,8 +1178,11 @@ class Users extends BaseModel
         // 计算geo hash值
         $geo_hash = new \geo\GeoHash();
         $hash = $geo_hash->encode($latitude, $longitude);
-        info($user->id, $latitude, $longitude, $hash);
         if ($hash) {
+            if ($user->geo_hash && $user->geo_hash != $hash) {
+                $user->delGeoHashRank();
+            }
+
             $user->geo_hash = $hash;
         }
 
@@ -1249,7 +1294,7 @@ class Users extends BaseModel
             }
 
             if ($this->$k == $v) {
-                info('未修改', $this->id, $k, $this->$k, $v);
+                //info('未修改', $this->id, $k, $this->$k, $v);
                 continue;
             }
 
@@ -1340,8 +1385,6 @@ class Users extends BaseModel
 
         if (!$user_db->zscore($black_key, $other_user->id)) {
 
-            info("black success", $black_key, $blacked_key);
-
             $user_db->zadd($black_key, time(), $other_user->id);
             $user_db->zadd($blacked_key, time(), $this->id);
         }
@@ -1355,9 +1398,6 @@ class Users extends BaseModel
         $blacked_key = "blacked_list_user_id" . $other_user->id;
 
         if ($user_db->zscore($black_key, $other_user->id)) {
-
-            info("unblack success", $black_key, $blacked_key);
-
             $user_db->zrem($black_key, $other_user->id);
             $user_db->zrem($blacked_key, $this->id);
         }
@@ -1454,9 +1494,7 @@ class Users extends BaseModel
     {
         $follow_key = 'follow_list_user_id' . $this->id;
         $users = self::findByRelations($follow_key, $page, $per_page);
-
         foreach ($users as $user) {
-
             $user->friend_note = $this->getFriendNote($user->id);
         }
 
@@ -1477,9 +1515,7 @@ class Users extends BaseModel
     {
         $followed_key = 'followed_list_user_id' . $this->id;
         $users = self::findByRelations($followed_key, $page, $per_page);
-
         foreach ($users as $user) {
-
             $user->friend_note = $this->getFriendNote($user->id);
         }
 
@@ -1498,9 +1534,7 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
         $friend_note = $db->hget($friend_note_key, $user_id);
-
         if (is_null($friend_note)) {
             return '';
         }
@@ -1512,7 +1546,6 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
         if ($friend_note) {
             $db->hset($friend_note_key, $user_id, $friend_note);
         }
@@ -1835,7 +1868,7 @@ class Users extends BaseModel
             ' or user_status = ' . USER_STATUS_LOGOUT . ')';
         $cond['order'] = 'last_at desc,id desc';
 
-        info($user->id, $cond);
+        debug($user->id, $cond);
 
         $users = Users::findPagination($cond, $page, $per_page);
 
@@ -1895,22 +1928,53 @@ class Users extends BaseModel
         }
     }
 
-    // 附近人
     function nearby($page, $per_page, $opts = [])
     {
-        $cal_start = microtime(true);
 
-//        $filter_ids = fetch($opts, 'filter_ids', []);
-//
-//        if (!is_array($filter_ids)) {
-//            $filter_ids = explode(',', $filter_ids);
-//        }
-//
-//        //屏蔽公司内部账号
-//        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-//        if ($block_near_by_user_ids) {
-//            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
-//        }
+        if (!$this->geo_hash) {
+            $users = \Users::search($this, $page, $per_page, $opts);
+            $this->calDistance($users);
+            return $users;
+        }
+
+        $geohash = new \geo\GeoHash();
+        //取前缀，前缀约长范围越小
+        $prefix = substr($this->geo_hash, 0, 5);
+        //取出相邻八个区域
+        $neighbors = $geohash->neighbors($prefix);
+
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $total_entries = $user_db->zcard($cache_key);
+
+        if ($total_entries >= 3) {
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
+            $index = array_search($this->id, $user_ids);
+            if (false !== $index) {
+                unset($user_ids[$index]);
+            }
+
+            $cache_users = Users::findByIds($user_ids);
+            $users = new PaginationModel($cache_users, $total_entries, $page, $per_page);
+            $users->clazz = 'Users';
+            info($this->id, $cache_key, $total_entries, $page, $per_page);
+        } else {
+            $users = \Users::search($this, $page, $per_page, $opts);
+        }
+
+        // 计算距离
+        $this->calDistance($users);
+
+        return $users;
+    }
+
+    // 附近人
+    function nearby2($page, $per_page, $opts = [])
+    {
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1960,11 +2024,6 @@ class Users extends BaseModel
             }
         }
 
-//        if (count($filter_ids) > 0) {
-//            $filter_ids = implode(',', $filter_ids);
-//            $condition .= " and id not in ({$filter_ids})";
-//        }
-
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $condition .= " and organisation = :organisation:";
@@ -1975,8 +2034,6 @@ class Users extends BaseModel
         $conds['order'] = 'last_at desc,id desc';
 
         $users = Users::findPagination($conds, $page, $per_page);
-        info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
-
         if ($users->total_entries < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
         }
@@ -1992,10 +2049,6 @@ class Users extends BaseModel
 
         // 计算距离
         $this->calDistance($users);
-
-        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
-
-        info("nearby_search_execute_time", $execute_time);
 
         return $users;
     }
@@ -2024,7 +2077,7 @@ class Users extends BaseModel
                     $user->distance = $geo_distance . 'km';
                 }
 
-                info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
+                debug('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             } else {
 
                 $geo_distance = abs($this->id - $user->id) % 1000;
@@ -2035,7 +2088,7 @@ class Users extends BaseModel
 
                 $user->distance = $geo_distance . 'km';
 
-                info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
+                debug('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
     }
@@ -2298,7 +2351,7 @@ class Users extends BaseModel
 
         $rand_num = mt_rand(1, 100);
 
-        info($rand_num, $this->id, $room->id);
+        info($this->id, $room->id, 'num', $rand_num);
 
         if (isProduction()) {
             if ($room->isSilent()) {
@@ -3355,7 +3408,6 @@ class Users extends BaseModel
             'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
         ];
 
-        info($push_data);
         \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
     }
 
@@ -3474,10 +3526,8 @@ class Users extends BaseModel
     //离线送礼物
     static function sendOfflineSendGift($user_id, $data)
     {
-        info($user_id, $data);
 
         if (!$data) {
-            debug($data);
             return;
         }
 
@@ -3494,18 +3544,16 @@ class Users extends BaseModel
         }
 
         $gift = Gifts::findFirstById($gift_id);
-
         if (!$gift) {
-            info("gift is null");
+            info("gift is null", $user_id, $data);
             return;
         }
 
         $sender = Users::findFirstById($sender_id);
 
-        $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
+        GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
 
         $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-        info("send_gift_success", $content);
         Chats::sendTextSystemMessage($user_id, $content);
     }
 

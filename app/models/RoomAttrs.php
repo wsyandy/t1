@@ -94,8 +94,6 @@ trait RoomAttrs
             $score += $no_pay_user_num * 1;
         }
 
-        info($this->id, $score);
-
         return $score;
     }
 

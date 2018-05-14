@@ -1,0 +1,1 @@
+create index created_at_on_game_histories on game_histories(created_at);

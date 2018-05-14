@@ -131,7 +131,7 @@ class Chats extends BaseModel
     static function sendTextSystemMessage($user_id, $content = '')
     {
         if (!$content) {
-            info("content_error", $user_id, $content);
+            info("Exce content_error", $user_id);
             return false;
         }
 
@@ -143,7 +143,7 @@ class Chats extends BaseModel
     {
         
         if (!$content) {
-            info("content_error", $content);
+            info("Exce content_error", $user_ids);
             return false;
         }
 

@@ -57,19 +57,18 @@ class IGoldHistories extends BaseModel
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $user = Users::findFirstById($user_id);
-
         if (!$user) {
-            info($user_id);
+            info('Exce', $user_id);
             return false;
         }
 
         if (!in_array($fee_type, array_keys(self::$FEE_TYPE))) {
-            info($user_id, 'fee_type is false', $fee_type);
+            info('Exce', $user_id, 'fee_type is false', $fee_type);
             return false;
         }
 
         if ($amount <= 0) {
-            info($user_id, 'amount is false', $amount);
+            info('Exce', $user_id, 'amount is false', $amount);
             return false;
         }
 

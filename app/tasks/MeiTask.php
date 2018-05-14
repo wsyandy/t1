@@ -3120,7 +3120,7 @@ EOF;
 
         echoLine($data);
 
-        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+        $temp_file =  'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
         echoLine($uri);
     }
@@ -3626,7 +3626,7 @@ EOF;
             $data[] = [$user_id, $score];
         }
 
-        $file = APP_ROOT . "temp/hi_coins.xls";
+        $file = "hi_coins.xls";
         $res = writeExcel($titles, $data, $file, true);
 
         echoLine($res, StoreFile::getUrl($res));

@@ -66,9 +66,12 @@ class WishHistories extends BaseModel
     }
 
     //获取愿望分页列表
-    static function findByRelationsForWish($relations_key, $page, $per_page)
+    static function findByRelationsForWish($relations_key, $per_page)
     {
         $user_db = \Users::getUserDb();
+        $total_entries = $user_db->zcard($relations_key);
+        $total_page = ceil($total_entries/$per_page);
+        $page = mt_rand(1,$total_page);
 
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');

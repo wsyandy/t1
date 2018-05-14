@@ -82,9 +82,8 @@ class AccountHistories extends BaseModel
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $user = Users::findFirstById($user_id);
-
         if (!$user) {
-            info($user_id);
+            info('Exce', $user_id);
             return null;
         }
 
@@ -141,9 +140,9 @@ class AccountHistories extends BaseModel
     function isCostDiamond()
     {
         return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
-            || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES || $this->fee_type == ACCOUNT_TYPE_DEDUCT
-            || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES || $this->fee_type == ACCOUNT_TYPE_RELEASE_WISH_EXPENSES
-            || $this->fee_type == ACCOUNT_TYPE_GUARD_WISH_EXPENSES;
+        || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES || $this->fee_type == ACCOUNT_TYPE_DEDUCT
+        || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES || $this->fee_type == ACCOUNT_TYPE_RELEASE_WISH_EXPENSES
+        || $this->fee_type == ACCOUNT_TYPE_GUARD_WISH_EXPENSES;
     }
 
     function getStatActon()
@@ -165,7 +164,7 @@ class AccountHistories extends BaseModel
         $sms_distribute_history = \SmsDistributeHistories::findFirstById($this->target_id);
         $nickname = $sms_distribute_history->user->nickname;
         $avatar_url = $sms_distribute_history->user->avatar_url;
-        
+
         return [$nickname, $avatar_url];
     }
 

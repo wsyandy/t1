@@ -82,23 +82,22 @@ class SmsDistributeHistories extends BaseModel
             'bind' => ['status' => $status, 'mobile' => $mobile, 'product_channel_id' => $product_channel_id],
             'order' => 'id desc'];
         $sms_distribute_history = self::findFirst($conds);
+        info($type, '=>', $mobile);
+
         if ($sms_distribute_history) {
             switch ($type) {
                 case 'register':
                     self::distributeRegisterBonus($sms_distribute_history, $current_user);
-                    info($type, '=>', $mobile);
                     return true;
                 case 'pay':
                     self::distributePayBonus($sms_distribute_history, $amount);
-                    info($type, '=>', $mobile);
                     return true;
                 case 'exchange':
                     self::distributeExchangeBonus($sms_distribute_history, $amount);
-                    info($type, '=>', $mobile);
                     return true;
             }
         }
-        info($type, '=>', $mobile);
+        
         return false;
     }
 
