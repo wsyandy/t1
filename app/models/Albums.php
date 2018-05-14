@@ -72,7 +72,7 @@ class Albums extends BaseModel
             return '';
         }
 
-        return StoreFile::getUrl($this->image) . '@!small';
+        return StoreFile::getUrl($this->image) . '@!100x100';
     }
 
     function getImageBigUrl()

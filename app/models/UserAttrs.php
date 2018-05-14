@@ -64,7 +64,7 @@ trait UserAttrs
     function mergeJson()
     {
         return [
-            'avatar_small_url' => $this->getAvatarSmallUrl(),
+            'avatar_small_url' => $this->avatar_small_url,
             'avatar_url' => $this->getAvatarUrl(),
             'product_channel_name' => $this->product_channel_name,
             'partner_name' => $this->partner_name,
@@ -439,7 +439,7 @@ trait UserAttrs
             return $this->getDefaultAvatar();
         }
 
-        return StoreFile::getUrl($this->avatar) . '@!small';
+        return StoreFile::getUrl($this->avatar) . '@!100x100';
     }
 
     function getAvatarBigUrl()
