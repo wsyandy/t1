@@ -379,7 +379,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-// 公屏设置
+    // 公屏设置
     function openChatAction()
     {
         $room_id = $this->params('id', 0);
@@ -436,7 +436,7 @@ class RoomsController extends BaseController
     }
 
 
-// 踢出房间
+    // 踢出房间
     function kickingAction()
     {
         $room_id = $this->params('id', 0);
@@ -695,7 +695,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
 
-//发公屏消息上报
+    //发公屏消息上报
     function sendMessageAction()
     {
         $content = $this->params('content');
