@@ -50,7 +50,7 @@ class DrawHistories extends BaseModel
         $new_total_incr_diamond = $user_db->incrby($new_cache_key, intval($this->pay_amount));
         $new_total_decr_diamond = $user_db->incrby($new_cache_decr_key, intval($this->number));
 
-        info($new_cache_key, $new_total_incr_diamond, $new_total_decr_diamond);
+        info($new_cache_key, $new_total_incr_diamond, $new_cache_decr_key, $new_total_decr_diamond);
 
         // 全服通知：个推，系统消息，公屏消息
         if ($this->type == 'diamond' && $this->number == 100000
