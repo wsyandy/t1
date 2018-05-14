@@ -9,13 +9,13 @@
 class Backpacks extends BaseModel
 {
 
-    static $DIAMONDIMG = '/m/images/ico.png'; // 钻石图片
+    static $DIAMOND_IMG = '/m/images/ico.png'; // 钻石图片
 
-    static $GOLDIMG = '/m/images/gold.png'; // 金币图片
+    static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boomSVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
+    static $boom_SVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
 
-    static $totalValue = 10000; // 爆礼物总值
+    static $total_value = 10000; // 爆礼物总值
 
     /**
      * 背包礼物列表
@@ -85,7 +85,7 @@ class Backpacks extends BaseModel
             'blasting_gift' => [
                 'expire_at' => time(),
                 'url' => 'url://m/backpacks',
-                'svga_image_url' => self::$boomSVGA,
+                'svga_image_url' => self::getSvgaImageUrl(),
                 'total_value' => $total_value,
                 'current_value' => $cur_value
             ]
@@ -225,7 +225,7 @@ class Backpacks extends BaseModel
      */
     static function getDiamondImage()
     {
-        return self::$DIAMONDIMG;
+        return self::$DIAMOND_IMG;
     }
 
 
@@ -234,7 +234,7 @@ class Backpacks extends BaseModel
      */
     static function getGoldImage()
     {
-        return self::$GOLDIMG;
+        return self::$GOLD_IMG;
     }
 
 
@@ -243,7 +243,7 @@ class Backpacks extends BaseModel
      */
     static function getSvgaImageUrl()
     {
-        return self::$boomSVGA;
+        return self::$boom_SVGA;
     }
 
 
@@ -252,7 +252,7 @@ class Backpacks extends BaseModel
      */
     static function getTotalBoomValue()
     {
-        return self::$totalValue;
+        return self::$total_value;
     }
 
 

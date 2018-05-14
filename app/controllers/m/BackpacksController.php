@@ -10,7 +10,7 @@ namespace m;
 class BackpacksController extends BaseController
 {
 
-    static $boomType = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
+    static $boom_type = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
 
 
     /**
@@ -57,7 +57,7 @@ class BackpacksController extends BaseController
         }
 
         // 1 随机类型
-        $type = array_rand(array_flip(self::$boomType));
+        $type = array_rand(array_flip(self::$boom_type));
 
         // 2 爆礼品
         if ($type == BACKPACK_GIFT_TYPE)
