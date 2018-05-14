@@ -24,7 +24,9 @@ class BaseController extends ApplicationController
         'banners' => ['index'],
         'devices' => '*',
         'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status', 'third_login'],
-        'soft_versions' => '*'
+        'soft_versions' => '*',
+        'product_channels' => ['boot_config'],
+        'product_menus' => ['index']
     ];
 
     static $CHECK_LOGIN_STATUS_ACTIONS = [
@@ -221,7 +223,7 @@ class BaseController extends ApplicationController
 
     function beforeAction($dispatcher)
     {
-        
+
         if (!$this->isHttps()) {
             info('no_https', $this->getFullUrl());
         }
