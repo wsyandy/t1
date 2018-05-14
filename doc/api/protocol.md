@@ -74,5 +74,5 @@ share_history_id 分享记录的id
  action      对应的动作类型     view进入查看,logout退出  
  client_url  跳转地址    
  icon_url    图标地址
- type   int  消息类型 1 红包消息     
+ show_type int 消息展示类型 1 下沉格式展示     
  ```
