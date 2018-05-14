@@ -476,6 +476,11 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
+
+        if (isDevelopmentEnv()) {
+            $detail_json['medal_image_url'] = $this->getRoot() . "m/images/level_11.png";
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
@@ -527,6 +532,11 @@ class UsersController extends BaseController
         $basic_json['signaling_key'] = $signaling_key;
         $basic_json['app_id'] = $app_id;
         $basic_json['im_password'] = $this->currentUser()->im_password;
+
+        if (isDevelopmentEnv()) {
+            $basic_json['medal_image_url'] = $this->getRoot() . "m/images/level_11.png";
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 

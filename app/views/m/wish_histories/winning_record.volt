@@ -21,14 +21,24 @@
         <span>返回上级</span>
     </div>
     <ul class="winning_record_ul">
-        {% for lucky_name in lucky_names %}
-        <li>
+        <li v-for="lucky_name in lucky_names">
             <img src="" alt="">
             <div class="winning_record_box">
-                <span>{{ lucky_name }}</span>
+                <span>${ lucky_name.nickname } ID:${ lucky_name.uid }</span>
                 <p>获得 <span> 3000元机械手表</span></p>
             </div>
         </li>
-        {% endfor %}
     </ul>
 </div>
+<script>
+    var opts = {
+        data: {
+            sid: "{{ sid }}",
+            code: "{{ code }}",
+            lucky_names:{{ lucky_names }}
+        },
+
+        methods: {}
+    };
+    vm = XVue(opts);
+</script>

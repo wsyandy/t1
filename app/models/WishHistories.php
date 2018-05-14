@@ -70,8 +70,8 @@ class WishHistories extends BaseModel
     {
         $user_db = \Users::getUserDb();
         $total_entries = $user_db->zcard($relations_key);
-        $total_page = ceil($total_entries/$per_page);
-        $page = mt_rand(1,$total_page);
+        $total_page = ceil($total_entries / $per_page);
+        $page = mt_rand(1, $total_page);
 
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
@@ -188,10 +188,12 @@ class WishHistories extends BaseModel
 //            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
 //        }
         info($time, $lucky_user_key, $lucky_user_ids);
+        $lucky_user_ids = [257, 256, 117, 118, 119];
         $lucky_users = \Users::findByIds($lucky_user_ids);
         $lucky_names = [];
-        foreach ($lucky_users as $lucky_user) {
-            $lucky_names[] = $lucky_user->nickname;
+        foreach ($lucky_users as $index => $lucky_user) {
+            $lucky_names[$index]['uid'] = $lucky_user->uid;
+            $lucky_names[$index]['nickname'] = $lucky_user->nickname;
         }
         return $lucky_names;
     }
