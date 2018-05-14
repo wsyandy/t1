@@ -7,7 +7,23 @@
     height: 100%;
 }
 
-
+.share_tips{
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    width: 3.4rem;
+    height: 0.84rem;
+    font-size: 0.24rem;
+    color: #000000;
+    background-image: url("../images/share_tips_bg.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    text-align: center;
+    line-height: 1rem;
+}
 .share_box{
     position: relative;
     width: 6rem;
@@ -125,4 +141,8 @@
     -moz-border-radius: 1rem;
     border-radius: 1rem;
 
+}
+
+.none{
+    display: none;
 }
