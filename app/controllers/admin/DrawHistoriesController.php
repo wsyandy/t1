@@ -77,6 +77,12 @@ class DrawHistoriesController extends BaseController
         $stats = $hot_cache->get($cache_key);
         if ($stats) {
             $stats = json_decode($stats, true);
+            if ($hot_cache->get($cache_key . '_run')) {
+                $this->view->stats = $stats;
+                $this->view->stat_at = date('Y-m-d', $stat_at);
+                return;
+            }
+
             $loop_num = 0;
             if (date('Y-m-d', $stat_at) == date("Y-m-d")) {
                 $loop_num = 1;
@@ -85,6 +91,8 @@ class DrawHistoriesController extends BaseController
             $loop_num = 7;
             $stats = [];
         }
+
+        $hot_cache->setex($cache_key . '_run', 300, 1);
 
         for ($i = 0; $i < $loop_num; $i++) {
 
@@ -190,6 +198,12 @@ class DrawHistoriesController extends BaseController
         $stats = $hot_cache->get($cache_key);
         if ($stats) {
             $stats = json_decode($stats, true);
+            if ($hot_cache->get($cache_key . '_run')) {
+                $this->view->stats = $stats;
+                $this->view->stat_at = date('Y-m-d', $stat_at);
+                return;
+            }
+
         } else {
             $stats = [];
         }
@@ -198,6 +212,8 @@ class DrawHistoriesController extends BaseController
         if (date("Y-m-d", $stat_at) == date('Y-m-d')) {
             $hour = date('H');
         }
+
+        $hot_cache->setex($cache_key . '_run', 300, 1);
 
         $first = 0;
         for ($i = $hour; $i >= 0; $i--) {
