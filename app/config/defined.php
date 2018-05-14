@@ -325,3 +325,10 @@ define('CREATE_UNION_AMOUNT', 1000); //创建家族所需钻石
 define('BACKPACK_GIFT_TYPE', 1); // 礼物
 define('BACKPACK_DIAMOND_TYPE', 2); // 钻石
 define('BACKPACK_GOLD_TYPE', 3); // 金币
+
+//红包领取类型
+define('RED_PACKET_TYPE_ALL','all');    //都可以领取
+define('RED_PACKET_TYPE_ATTENTION','attention');    //关注房主才能领取
+define('RED_PACKET_TYPE_STAY_AT_ROOM','stay_at_room');    //在房间满3分钟才能领取
+define('RED_PACKET_TYPE_NEARBY','nearby');    //附近的人才能领取
+

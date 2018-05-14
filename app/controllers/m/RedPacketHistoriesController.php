@@ -11,6 +11,7 @@ class RedPacketHistoriesController extends BaseController
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
             unset($red_packet_type['nearby']);
         }
+        info('类型',$red_packet_type);
 
         $diamond = $user->diamond;
         $this->view->diamond = $diamond;
@@ -69,12 +70,16 @@ class RedPacketHistoriesController extends BaseController
 
     function grabRedPacketsAction()
     {
+        $user = $this->currentUser();
+        $red_packet_id = $this->params('red_packet_id');
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '抢红包');
     }
 
     function redPacketListAction()
     {
+        $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $page = $this->params('page', 1);
         $pre_page = 10;
@@ -87,6 +92,9 @@ class RedPacketHistoriesController extends BaseController
         return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包消息');
     }
 
-//    function
+    function detailAction()
+    {
+        $this->view->title = '红包详情';
+    }
 
 }
