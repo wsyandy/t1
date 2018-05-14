@@ -54,6 +54,11 @@ class RedPackets extends BaseModel
      */
     private $_nearby_distance;
 
+    /**
+     * @type integer
+     */
+    private $_balance_diamond;
+
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
         'user_id' => ['null' => '不能为空'],
@@ -82,6 +87,11 @@ class RedPackets extends BaseModel
 
     }
 
+    function afterUpdate()
+    {
+
+    }
+
     //生成房间红包列表key
     static function generateRedPacketListKey($current_room_id)
     {
@@ -103,12 +113,20 @@ class RedPackets extends BaseModel
     static function createReadPacket($room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance'] as $column) {
+        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_diamond'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
             $url = self::generateRedPacketUrl($send_red_packet_history->user_id);
             $room->pushRedPacketMessage($send_red_packet_history->num, $url);
+
+            $opts = [
+                'current_room_id' => $send_red_packet_history->current_room_id,
+                'user_id' => $send_red_packet_history->user_id,
+                'balance_diamond' => $send_red_packet_history->balance_diamond
+            ];
+
+            self::saveRedPacketForRoom($opts);
             return $send_red_packet_history;
         }
         return null;
@@ -147,5 +165,58 @@ class RedPackets extends BaseModel
             'start_at_text' => $start_at
         ];
     }
+
+    static function grabRedPacket($current_room_id, $user, $red_packet_type)
+    {
+        switch ($red_packet_type) {
+            case RED_PACKET_TYPE_ALL:
+                \RedPackets::getRedPacketDiamond($current_room_id, $user);
+                break;
+            case RED_PACKET_TYPE_ATTENTION:
+                break;
+            case RED_PACKET_TYPE_STAY_AT_ROOM:
+                break;
+            case RED_PACKET_TYPE_NEARBY:
+                break;
+        }
+    }
+
+    static function getRedPacketDiamond($current_room_id, $user)
+    {
+        $cache = \Users::getHotWriteCache();
+        $key = self::generateRedPacketForRoomKey($current_room_id);
+        $balance_diamond = $cache->zscore($key, $user->id);
+        if ($balance_diamond) {
+
+        }
+
+        return false;
+
+    }
+
+    static function saveRedPacketForRoom($opts)
+    {
+        $user_id = fetch($opts, 'user_id');
+        $current_room_id = fetch($opts, 'current_room_id');
+        $balance_diamond = fetch($opts, 'balance_diamond');
+
+        $cache = \Users::getHotWriteCache();
+        $key = self::generateRedPacketForRoomKey($current_room_id);
+        $cache->zadd($key, $balance_diamond, $user_id);
+    }
+
+    static function generateRedPacketForRoomKey($room_id)
+    {
+        return 'red_packet_for_room_' . $room_id;
+    }
+
+    static function checkRedPacketInfoForRoom($current_room_id, $user_id)
+    {
+        $cache = \Users::getHotWriteCache();
+        $key = self::generateRedPacketForRoomKey($current_room_id);
+        $balance_diamond = $cache->zscore($key, $user_id);
+        return $balance_diamond;
+    }
+
 
 }

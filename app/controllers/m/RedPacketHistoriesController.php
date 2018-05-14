@@ -11,7 +11,7 @@ class RedPacketHistoriesController extends BaseController
         if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
             unset($red_packet_type['nearby']);
         }
-        info('类型',$red_packet_type);
+        info('类型', $red_packet_type);
 
         $diamond = $user->diamond;
         $this->view->diamond = $diamond;
@@ -49,7 +49,8 @@ class RedPacketHistoriesController extends BaseController
             'current_room_id' => $user->current_room_id,
             'sex' => $sex,
             'red_packet_type' => $red_packet_type,
-            'nearby_distance' => $nearby_distance
+            'nearby_distance' => $nearby_distance,
+            'balance_diamond' => $diamond
         ];
 
         //创建红包
@@ -72,9 +73,23 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $red_packet_id = $this->params('red_packet_id');
-        $red_packet = \RedPackets::findFirstById($red_packet_id);
+        $red_packet_type = $this->params('red_packet_type');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '抢红包');
+        $balance_diamond = \RedPackets::checkRedPacketInfoForRoom($user->current_room_id, $user->id);
+
+        //回头还要有个是否已经抢过的判断
+
+        if ($balance_diamond <= 0) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
+        }
+
+        list($error_code, $error_reason) = \RedPackets::grabRedPacket($red_packet_id, $user, $red_packet_type);
+        if (!$error_code) {
+            return $this->renderJSON($error_code, $error_reason);
+        }
+
+        return $this->renderJSON($error_code, $error_reason);
+
     }
 
     function redPacketListAction()
