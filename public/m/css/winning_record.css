@@ -579,23 +579,23 @@ html,body{
 }
 .wishing_list_name .man{
     margin-left: .1rem;
-    width: .74rem;
+    width: .36rem;
     color: #FFFFFF;
     height: .36rem;
     line-height: .36rem;
     text-indent: .34rem;
-    background: url(../images/man_icon.png) center no-repeat;
-    background-size: .74rem .36rem;
+    background: url(../images/man.png) center no-repeat;
+    background-size: .36rem;
 }
 .wishing_list_name .woman{
     margin-left: .1rem;
-    width: .74rem;
+    width: .36rem;
     color: #FFFFFF;
     height: .36rem;
     line-height: .36rem;
     text-indent: .34rem;
-    background: url(../images/woman_icon.png) center no-repeat;
-    background-size: .74rem .36rem;
+    background: url(../images/woman.png) center no-repeat;
+    background-size: .36rem;
 }
 .wishing_tree_list .search_button{
     position: absolute;
