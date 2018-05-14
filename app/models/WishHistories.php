@@ -29,16 +29,9 @@ class WishHistories extends BaseModel
 
     static function createWishHistories($opts)
     {
-        $amount = fetch($opts, 'amount');
         $user_id = fetch($opts, 'user_id');
         $wish_text = fetch($opts, 'wish_text');
         $product_channel_id = fetch($opts, 'product_channel_id');
-
-        $opts = ['remark' => '发布愿望消耗' . $amount . '钻石'];
-        $result = \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_RELEASE_WISH_EXPENSES, $amount, $opts);
-        if (!$result) {
-            return null;
-        }
 
         $wish_histories = new \WishHistories();
         $wish_histories->user_id = $user_id;
@@ -73,9 +66,12 @@ class WishHistories extends BaseModel
     }
 
     //获取愿望分页列表
-    static function findByRelationsForWish($relations_key, $page, $per_page)
+    static function findByRelationsForWish($relations_key, $per_page)
     {
         $user_db = \Users::getUserDb();
+        $total_entries = $user_db->zcard($relations_key);
+        $total_page = ceil($total_entries/$per_page);
+        $page = mt_rand(1,$total_page);
 
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
@@ -173,10 +169,11 @@ class WishHistories extends BaseModel
         return 'current_day_lucky_user_list_' . $time;
     }
 
-    static function getLuckyUserList($product_channel_id)
+    static function getLuckyUserList()
     {
         $db = \Users::getUserDb();
         $time = time() < strtotime(date('Y-m-d 19:59:59')) ? date('Ymd195959', time() - 24 * 3600) : date('Ymd195959');
+
         $lucky_user_key = self::generateCurrentLuckyKey($time);
         $lucky_user_ids = $db->zrange($lucky_user_key, 0, -1);
 //        $lucky_user_key = self::generateLuckyUserList($product_channel_id);
@@ -190,7 +187,7 @@ class WishHistories extends BaseModel
 //            $stop_at = strtotime(date('Y-m-d 19:59:59', time()));
 //            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
 //        }
-
+        info($time, $lucky_user_key, $lucky_user_ids);
         $lucky_users = \Users::findByIds($lucky_user_ids);
         $lucky_names = [];
         foreach ($lucky_users as $lucky_user) {

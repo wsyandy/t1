@@ -245,7 +245,7 @@ class WithdrawAccountsController extends BaseController
             'bind' => ['province_id' => $province_id], 'order' => 'id asc'];
         $cities = \Cities::find($cond);
         $cities_json = [];
-        info($cities);
+
         foreach ($cities as $city) {
             $cities_json[] = ['text' => $city->name, 'value' => $city->id];
         }

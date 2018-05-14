@@ -1,0 +1,1 @@
+create index stat_at_on_province_stats on province_stats(stat_at);

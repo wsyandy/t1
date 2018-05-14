@@ -1,0 +1,3 @@
+create index user_id_on_activity_histories on activity_histories(user_id);
+create index activity_id_on_activity_histories on activity_histories(activity_id);
+create index gift_id_on_activity_histories on activity_histories(gift_id);

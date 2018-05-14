@@ -249,7 +249,15 @@
             3 ,  房间分类的id
             4 ,  房间分类的id
             ...
-     ]
+     ],
+     blasting_gift:{
+         expire_at int 结束时间
+         url string 跳转地址
+         svga_image_url string svga图片
+         total_value int 总值
+         current_value int 当前值
+         diff_picture string 爆礼物图片的值 green orange blue
+     }
 }
 ```
 

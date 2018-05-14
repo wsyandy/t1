@@ -20,7 +20,7 @@ class Albums extends BaseModel
     {
 
         if (count($filenames) < 1) {
-            info("文件为空");
+            info("Exce 文件为空", $user->id);
             return false;
         }
 

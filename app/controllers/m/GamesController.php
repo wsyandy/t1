@@ -67,7 +67,8 @@ class GamesController extends BaseController
 
             // 房主再次发起游戏，不是等待状态
             if ($game_history && $game_history->user_id == $this->currentUser()->id
-                && $total_user_num <= 1 && $game_history->status != GAME_STATUS_WAIT || time() - $game_history->created_at > 1800) {
+                && $total_user_num <= 1 && $game_history->status != GAME_STATUS_WAIT || time() - $game_history->created_at > 1800
+            ) {
                 $game_history_id = 0;
                 $game_history->status = GAME_STATUS_END;
                 $game_history->save();
@@ -107,8 +108,6 @@ class GamesController extends BaseController
     // 提交入场费
     function feeAction()
     {
-        info($this->params());
-
         $current_user = $this->currentUser();
         $room_id = $current_user->current_room_id;
         $game_history_id = $this->params('game_history_id');
@@ -146,9 +145,6 @@ class GamesController extends BaseController
             $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
         }
 
-
-        info($this->currentUser()->id, 'role', $this->currentUser()->user_role, $game_history->start_data);
-
         if ($pay_type == PAY_TYPE_DIAMOND && $current_user->diamond < $amount) {
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
         }
@@ -184,7 +180,7 @@ class GamesController extends BaseController
 
     function waitAction()
     {
-        info($this->params());
+
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
 
@@ -215,7 +211,7 @@ class GamesController extends BaseController
             $url = 'http://tyt.momoyuedu.cn/?' . $str;
         }
 
-        info($this->currentUser()->id, 'url', $url);
+        info('url', $this->currentUser()->id, 'url', $url);
 
         $this->view->url = $url;
         $this->view->current_user = $this->currentUser();
@@ -225,7 +221,7 @@ class GamesController extends BaseController
 
     function startAction()
     {
-        info($this->params());
+
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
         $start_data = json_decode($game_history->start_data, true);
@@ -268,7 +264,6 @@ class GamesController extends BaseController
 
     function enterAction()
     {
-        info($this->params());
 
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
@@ -289,8 +284,6 @@ class GamesController extends BaseController
         $users = \Users::findByIds($user_ids);
 
         $data = $users->toJson('users', 'toSimpleJson');
-
-        info($this->currentUser()->id, $game_history, $data);
 
         if ($game_history->status == GAME_STATUS_WAIT) {
             $data['can_enter'] = 0;
@@ -335,7 +328,6 @@ class GamesController extends BaseController
 
     function exitAction()
     {
-        info($this->params());
 
         $game_history_id = $this->params('game_history_id');
         $game_history = \GameHistories::findFirstById($game_history_id);
@@ -362,7 +354,6 @@ class GamesController extends BaseController
 
     function backAction()
     {
-        info($this->params());
 
         $current_user = $this->currentUser();
 
@@ -383,7 +374,7 @@ class GamesController extends BaseController
             // 主动退出
             if ($this->params('quit')) {
                 $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
-                info('主动退出', $this->params(), $game_history);
+                info('主动退出', $this->params(), $game_history->id);
                 $hot_cache->zadd($room_user_quit_key, time(), $current_user->id);
             }
         }
@@ -400,11 +391,10 @@ class GamesController extends BaseController
             }
         }
 
-        info($this->currentUser()->id, $game_history->end_data, 'user_info', $user_datas);
-
         $start_data = json_decode($game_history->start_data, true);
         $amount = fetch($start_data, 'amount');
         $pay_type = fetch($start_data, 'pay_type');
+
         info('入场费为=>', $amount, '游戏人数：' . $total_user_num);
         $this->view->current_user = $this->currentUser();
         $this->view->pay_type = $pay_type;
@@ -417,7 +407,6 @@ class GamesController extends BaseController
 
     function notifyAction()
     {
-        info($this->params());
 
         $rank1 = $this->params('rank1');
         $rank2 = $this->params('rank2');
@@ -578,7 +567,6 @@ class GamesController extends BaseController
         $intranet_ip = $current_user->getIntranetIp();
         $receiver_fd = $current_user->getUserFd();
 
-        info($current_user->sid, $body);
         \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
 
         echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';

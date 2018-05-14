@@ -11,12 +11,11 @@ class WishHistoriesController extends BaseController
 
     function refreshAction()
     {
-        $page = $this->params('page');
         $per_page = 20;
-
         $product_channel_id = $this->currentProductChannelId();
         $key = \WishHistories::getGuardWishKey($product_channel_id);
-        $wish_histories = \WishHistories::findByRelationsForWish($key, $page, $per_page);
+
+        $wish_histories = \WishHistories::findByRelationsForWish($key, $per_page);
         if (!$wish_histories) {
             return $this->renderJSON(ERROR_CODE_FAIL, '没有更多的愿望哦，快来许愿吧！');
         }
@@ -29,20 +28,24 @@ class WishHistoriesController extends BaseController
         $user = $this->currentUser();
         $wish_text = $this->params('my_wish_text');
         if (!$wish_text) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-        }
-        $amount = 5;
-        if ($user->diamond < $amount) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
+            return $this->renderJSON(ERROR_CODE_FAIL, '请添加您的愿望！');
         }
 
         $product_channel_id = $this->currentProductChannelId();
         $opts = [
             'user_id' => $user->id,
-            'amount' => $amount,
             'wish_text' => $wish_text,
             'product_channel_id' => $product_channel_id
         ];
+
+        $cond = ['conditions' => 'user_id=:user_id: and product_channel_id=:product_channel_id:',
+            'bind' => ['user_id' => $user->id, 'product_channel_id' => $product_channel_id]
+        ];
+        $wish_history_num = \WishHistories::count($cond);
+        if ($wish_history_num >= 3) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '每个人只能许三个愿望，不能太贪心哦！');
+        }
+
         $result = \WishHistories::createWishHistories($opts);
         if ($result) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功！');
@@ -80,6 +83,9 @@ class WishHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_SUCCESS, '参数错误');
         }
 
+        //守护愿望只加经验，段位和财富值
+        \Users::delay()->updateExperienceForWish($user, $amount, $wish_history_id);
+
         $product_channel_id = $this->currentProductChannelId();
         $user_db = \Users::getUserDb();
         $guard_wish_key = \WishHistories::getGuardWishKey($product_channel_id);
@@ -90,8 +96,7 @@ class WishHistoriesController extends BaseController
 
     function winningRecordAction()
     {
-        $product_channel_id = $this->currentProductChannelId();
-        $lucky_names = \WishHistories::getLuckyUserList($product_channel_id);
+        $lucky_names = \WishHistories::getLuckyUserList();
 
         $this->view->lucky_names = $lucky_names;
     }
@@ -126,6 +131,17 @@ class WishHistoriesController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_FAIL, '当前用户暂时还没好友发布愿望哦！');
+    }
+
+    function showWishAction()
+    {
+        $id = $this->params('id');
+        $wish_history = \WishHistories::findByIds($id);
+        if ($wish_history) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $wish_history->toJson('show_wish_histories', 'toSimpleJson'));
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
     }
 
 }

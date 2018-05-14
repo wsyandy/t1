@@ -113,6 +113,10 @@ class GeoHash
         $type = (strlen($srcHash) % 2) ? 'odd' : 'even';
         $base = substr($srcHash, 0, strlen($srcHash) - 1);
 
+        if(!isset($this->borders[$dir][$type])){
+            return '';
+        }
+
         if (strpos($this->borders[$dir][$type], $lastChr) !== false) {
 
             $base = $this->calculateAdjacent($base, $dir);

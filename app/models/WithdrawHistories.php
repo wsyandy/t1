@@ -339,7 +339,8 @@ EOF;
                 " " . $account . " ", $withdraw_history->withdraw_account_type_text,
                 $account_bank_name, $bank_account_location, $area, $withdraw_history->amount];
         }
-        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+
+        $temp_file = 'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
 
         if ($uri) {

@@ -51,7 +51,6 @@ class DrawHistories extends BaseModel
             $cache_hit_10w_key = 'draw_history_hit_all_notice';
             $hot_cache = Users::getHotWriteCache();
             $hot_cache->setex($cache_hit_10w_key, 3600 * 25, $this->id);
-            info($cache_hit_10w_key, $this->id);
         }
 
         // 全服通知：公屏消息
@@ -165,7 +164,7 @@ class DrawHistories extends BaseModel
         $cache_key = 'draw_history_hit_num_' . date('Ymd') . '_' . $id;
         $num = $user_db->get($cache_key);
         if ($day_limit_num && $num >= $day_limit_num) {
-            info('limit', $cache_key, $num, $day_limit_num);
+            //info('limit', $cache_key, $num, $day_limit_num);
             return true;
         }
 
@@ -238,7 +237,7 @@ class DrawHistories extends BaseModel
             }
         }
 
-        info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi);
+        //info($user->id, '用户消耗', $total_pay_amount, '用户获得', $total_get_amount, '倍率', $user_rate_multi);
 
         return [$user_rate_multi, $total_pay_amount];
     }
@@ -260,15 +259,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = sprintf("%0.3f", $total_decr_diamond / $total_incr_diamond);
-        $rate = mt_rand(1, 100);
-        if ($rate < 80) {
-            $pool_rate = $pool_rate - 0.011;
-        }
-
-        info('draw_history_pool_rate', $pool_rate);
-
-        $pool_rate = mt_rand(70, 91) / 100;
+        $pool_rate = mt_rand(70, 92) / 100;
 
         if ($type == 'diamond') {
 
@@ -321,7 +312,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($number == 100000) {
 
-                    if ($hour <= 10) {
+                    if ($hour <= 18) {
                         return 0;
                     }
 
@@ -568,6 +559,17 @@ class DrawHistories extends BaseModel
         } else {
             $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
             $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+        }
+
+        $hot_cache = DrawHistories::getHotWriteCache();
+        if($draw_history->number >= 1000 && $draw_history->number < 10000){
+            $hot_cache->zadd('draw_histories_1000', time(), $draw_history->id);
+        }
+        if($draw_history->number >= 10000 && $draw_history->number < 100000){
+            $hot_cache->zadd('draw_histories_10000', time(), $draw_history->id);
+        }
+        if($draw_history->number >= 100000){
+            $hot_cache->zadd('draw_histories_100000', time(), $draw_history->id);
         }
 
         return $draw_history;

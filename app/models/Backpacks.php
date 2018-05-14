@@ -13,9 +13,9 @@ class Backpacks extends BaseModel
 
     static $GOLDIMG = '/m/images/gold.png'; // 金币图片
 
-
     static $boomSVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
 
+    static $totalValue = 10000; // 爆礼物总值
 
     /**
      * 背包礼物列表
@@ -49,6 +49,7 @@ class Backpacks extends BaseModel
 
 
     /**
+     * Task任务
      * @desc 爆礼物房间流水值
      */
     static public function turnoverValue()
@@ -64,7 +65,9 @@ class Backpacks extends BaseModel
             $room = Rooms::findFirstById($value['id']);
             $noun = $room->getDayIncome(date('Ymd'));
 
-            $backpack->pushClientAboutBoom($total, $noun);
+            if ($noun >= $line) {
+                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            }
         }
     }
 
@@ -233,6 +236,25 @@ class Backpacks extends BaseModel
     {
         return self::$GOLDIMG;
     }
+
+
+    /**
+     * @return string
+     */
+    static function getSvgaImageUrl()
+    {
+        return self::$boomSVGA;
+    }
+
+
+    /**
+     * @return string
+     */
+    static function getTotalBoomValue()
+    {
+        return self::$totalValue;
+    }
+
 
     function isGift()
     {

@@ -40,11 +40,5 @@
             startView: 2,
             minView: 2
         });
-
-        {% for product_channel in product_channels %}
-        {% if product_channel.status != 1 %}
-        $("#product_channel_{{ product_channel.id }}").css({"background-color": "grey"});
-        {% endif %}
-        {% endfor %}
     });
 </script>

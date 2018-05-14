@@ -213,8 +213,6 @@ class ActivitiesController extends BaseController
                     break;
             }
 
-            info($this->currentUser()->sid, $random, $type);
-
             //每天五位号，六位号，兰博基尼座驾，小马驹座驾各限定10份 神秘礼物限定100份,金币不限量
             if (in_array($type, [2, 4, 6, 7, 8])) {
 
@@ -226,7 +224,6 @@ class ActivitiesController extends BaseController
                 $num = $cache->get($key);
 
                 if ($num < 1) {
-                    info('prize', $this->currentUser()->sid, $type);
                     $new_types = [1, 3, 5];
                     $type = $new_types[array_rand($new_types)];
                 } else {
@@ -319,7 +316,7 @@ class ActivitiesController extends BaseController
 
         $key = "room_stats_income_day_" . $stat_at;
 
-        $db = \Rooms::getRoomDb();
+        $db = \Users::getUserDb();
 
         $res = $db->zrevrange($key, 0, $max, 'withscores');
 
@@ -376,7 +373,7 @@ class ActivitiesController extends BaseController
 
         if ($activity_state > 0) {
             $key = "room_stats_income_day_" . date('Ymd', $start_at);
-            $db = \Rooms::getRoomDb();
+            $db = \Users::getUserDb();
             $res = $db->zrevrange($key, 0, $max, 'withscores');
 
             $room_ids = [];
@@ -717,5 +714,14 @@ class ActivitiesController extends BaseController
     function detailsAction()
     {
         $this->view->title = '比赛规则';
+    }
+
+    function wishHistoriesAction()
+    {
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+        $this->view->title = '许愿墙';
+        $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
+
     }
 }

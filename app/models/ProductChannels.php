@@ -299,7 +299,7 @@ class ProductChannels extends BaseModel
     }
 
     // Signaling Key 用于登录信令系统; 有效期1小时
-    function getSignalingKey($uid, $valid_timeIn_seconds = 86400)
+    function getSignalingKey($user_id, $valid_timeIn_seconds = 86400)
     {
         //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
@@ -314,13 +314,13 @@ class ProductChannels extends BaseModel
         array_push($token_items, $sdk_version);
         array_push($token_items, $app_id);
         array_push($token_items, $expired_time);
-        array_push($token_items, md5($uid . $app_id . $app_certificate . $expired_time));
+        array_push($token_items, md5($user_id . $app_id . $app_certificate . $expired_time));
 
         return join(":", $token_items);
     }
 
     //Channel Key 用于加入频道; 有效期3小时
-    function getChannelKey($channel_name, $uid)
+    function getChannelKey($channel_name, $user_id)
     {
         //$app_id = '4b00a7416f75498093bfd7ad09cb31e9';
         //$app_certificate = '7b73afdb080244da8d66a41b97e1d5d9';
@@ -329,11 +329,11 @@ class ProductChannels extends BaseModel
         $app_id = $config->agora_app_id;
         $app_certificate = $config->agora_app_certificate;
 
-        //return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, 1);
-        return $this->generateDynamicKey4($app_id, $app_certificate, $channel_name, $uid, 'ACS');
+        //return $this->generateDynamicKey($app_id, $app_certificate, $channel_name, $user_id, 1);
+        return $this->generateDynamicKey4($app_id, $app_certificate, $channel_name, $user_id, 'ACS');
     }
 
-    private function generateDynamicKey($app_id, $app_certificate, $channel_name, $uid, $serviceType, $extra = [])
+    private function generateDynamicKey($app_id, $app_certificate, $channel_name, $user_id, $serviceType, $extra = [])
     {
         $ts = time();
         $random_int = mt_rand();
@@ -341,13 +341,13 @@ class ProductChannels extends BaseModel
         $expired_ts = 0; // 不限制服务时间
         $version = '005';
 
-        $signature = $this->generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $random_int, $expired_ts, $extra);
+        $signature = $this->generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $user_id, $ts, $random_int, $expired_ts, $extra);
         $content = $this->packContent($serviceType, $signature, hex2bin($app_id), $ts, $random_int, $expired_ts, $extra);
 
         return $version . base64_encode($content);
     }
 
-    private function generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $uid, $ts, $salt, $expired_ts, $extra)
+    private function generateSignature($serviceType, $app_id, $app_certificate, $channel_name, $user_id, $ts, $salt, $expired_ts, $extra)
     {
         $raw_app_id = hex2bin($app_id);
         $raw_app_certificate = hex2bin($app_certificate);
@@ -357,7 +357,7 @@ class ProductChannels extends BaseModel
         $buffer .= pack("I", $ts);
         $buffer .= pack("I", $salt);
         $buffer .= pack("S", strlen($channel_name)) . $channel_name;
-        $buffer .= pack("I", $uid);
+        $buffer .= pack("I", $user_id);
         $buffer .= pack("I", $expired_ts);
 
         $buffer .= pack("S", count($extra));
@@ -392,9 +392,9 @@ class ProductChannels extends BaseModel
         return pack("S", strlen($value)) . $value;
     }
 
-    function generateDynamicKey4($appID, $appCertificate, $channelName, $uid, $serviceType)
+    function generateDynamicKey4($appID, $appCertificate, $channelName, $user_id, $serviceType)
     {
-        //$uid = 0;
+        //$user_id = 0;
         $ts = time();
         $randomInt = mt_rand();
         //$expired_ts = time() + 3 * 3600; // 3小时服务时间
@@ -404,20 +404,20 @@ class ProductChannels extends BaseModel
         $randomStr = "00000000" . dechex($randomInt);
         $randomStr = substr($randomStr, -8);
 
-        $uidStr = "0000000000" . $uid;
-        $uidStr = substr($uidStr, -10);
+        $user_id_str = "0000000000" . $user_id;
+        $user_id_str = substr($user_id_str, -10);
 
         $expiredStr = "0000000000" . $expiredTs;
         $expiredStr = substr($expiredStr, -10);
 
-        $signature = $this->generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType);
+        $signature = $this->generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $user_id_str, $expiredStr, $serviceType);
 
         return $version . $signature . $appID . $ts . $randomStr . $expiredStr;
     }
 
-    function generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $uidStr, $expiredStr, $serviceType)
+    function generateSignature4($appID, $appCertificate, $channelName, $ts, $randomStr, $user_id_str, $expiredStr, $serviceType)
     {
-        $concat = $serviceType . $appID . $ts . $randomStr . $channelName . $uidStr . $expiredStr;
+        $concat = $serviceType . $appID . $ts . $randomStr . $channelName . $user_id_str . $expiredStr;
         return hash_hmac('sha1', $concat, $appCertificate);
     }
 

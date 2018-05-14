@@ -46,6 +46,18 @@ class Rooms extends BaseModel
     static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
     static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
 
+
+    static function getCacheEndpoint($id)
+    {
+        return self::config('room_db');
+    }
+
+    static function getRoomDb()
+    {
+        $endpoint = self::config('room_db');
+        return XRedis::getInstance($endpoint);
+    }
+
     function beforeCreate()
     {
         $this->uid = $this->generateUid();
@@ -94,11 +106,11 @@ class Rooms extends BaseModel
             $lock_key = 'lock_generate_room_uid_' . $uid;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->setnx($lock_key, $uid)) {
-                info('加锁失败', $lock_key);
+                debug('加锁失败', $lock_key);
                 continue;
             }
             $hot_cache->expire($lock_key, 3);
-            info('加锁成功', $lock_key);
+            debug('加锁成功', $lock_key);
 
             return $uid;
         }
@@ -163,7 +175,13 @@ class Rooms extends BaseModel
             }
         }
 
-        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花'];
+        $keywords = ['男神', '女神', '男模', '女模', '野模', '捕鱼', '牛牛', '百捕', '千捕', '打地鼠', '金花', '赌', '嫖',
+            '骚', '嫖娼', '黄片', '毛片', '聊骚', '涉黄', '阴毛', '性爱', '做爱', '交配', '阴道', '口交', '鸡巴', '性交',
+            '性高潮', 'SM', '多P', '群交', '月经', '成人', '色情', '犯罪', '诈骗', '传销', '棋牌', '彩票', '假钞', '政治',
+            '妈', '爸', '干你娘', '办理', '国家', '跪舔', '小婊砸', '我日', '超赚', '领导人', '作弊', '毒品', '淫秽', '异性',
+            '私交', '涉嫌', '欺诈', '抢购', '招人', '跪求嫖', '艹', '操B', '艹B', '淫荡', '嫩模', '警察', '喘', '毒', '赌厅',
+            '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情'
+        ];
 
         foreach ($keywords as $keyword) {
 
@@ -590,9 +608,6 @@ class Rooms extends BaseModel
         }
 
         $hot_cache->zrem($key, $user->id);
-
-        info($user->sid, $this->id, $key, $real_user_key);
-
         if ($this->user_num < 1) {
             $hot_cache->zrem(Rooms::getTotalRoomUserNumListKey(), $this->id);
 
@@ -760,11 +775,6 @@ class Rooms extends BaseModel
         return $hot_cache->get($key) > 0;
     }
 
-    static function getRoomDb()
-    {
-        $user_db = Users::getUserDb();
-        return $user_db;
-    }
 
     function generateManagerListKey()
     {
@@ -789,14 +799,14 @@ class Rooms extends BaseModel
     function getManagerNum()
     {
         $this->freshManagerNum();
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $key = $this->generateManagerListKey();
         return $db->zcard($key);
     }
 
     function addManager($user_id, $duration)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
@@ -830,7 +840,7 @@ class Rooms extends BaseModel
             return;
         }
 
-        $db = Rooms::getRoomDb();;
+        $db = Users::getUserDb();;
         $key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
@@ -855,7 +865,7 @@ class Rooms extends BaseModel
 
     function updateManager($user_id, $duration)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
@@ -873,7 +883,7 @@ class Rooms extends BaseModel
 
     function freshManagerNum()
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $manager_ids = $db->zrangebyscore($manager_list_key, '-inf', time());
 
@@ -889,7 +899,7 @@ class Rooms extends BaseModel
     function findManagers()
     {
         $this->freshManagerNum();
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $user_ids = $db->zrevrange($manager_list_key, 0, -1);
         $users = Users::findByIds($user_ids);
@@ -905,7 +915,7 @@ class Rooms extends BaseModel
 
     function initRoomManagerInfo($users)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
 
         foreach ($users as $user) {
@@ -927,7 +937,7 @@ class Rooms extends BaseModel
 
     function calculateUserDeadline($user_id)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $this->generateManagerListKey();
         $deadline = $db->zscore($manager_list_key, $user_id);
         return $deadline;
@@ -1019,7 +1029,7 @@ class Rooms extends BaseModel
         }
 
         $room_ids = $hot_cache->zrangebyscore($key, '-inf', time());
-        info($room_ids);
+
         $rooms = Rooms::findByIds($room_ids);
         return $rooms;
     }
@@ -1221,7 +1231,7 @@ class Rooms extends BaseModel
                 debug($this->user->sid);
             }
 
-            info("no_users", $body, $this->id);
+            info("no_users", $this->id, $body);
             return;
         }
 
@@ -1338,7 +1348,6 @@ class Rooms extends BaseModel
     function addSilentUsers()
     {
         if ($this->lock) {
-            info("room_is_lock", $this->id);
             return;
         }
 
@@ -1563,14 +1572,14 @@ class Rooms extends BaseModel
 
     function addFilterUser($user_id)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $expire = 2;
         $db->setex($this->generateFilterUserKey($user_id), $expire, time());
     }
 
     function checkFilterUser($user_id)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
 
         $key = $this->generateFilterUserKey($user_id);
         if ($db->get($key)) {
@@ -1620,7 +1629,7 @@ class Rooms extends BaseModel
         }
 
         if ($user && $user->isIosAuthVersion()) {
-            return Rooms::search($user, $user->product_channel, $page, $per_page, ['filter_ids' => $room_ids]);
+            return Rooms::search($user, $page, $per_page, ['filter_ids' => $room_ids]);
         }
 
         $rooms = Rooms::findByIds($room_ids);
@@ -1736,10 +1745,8 @@ class Rooms extends BaseModel
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
-        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time, 'content' => $content
-            , 'client_url' => $client_url];
-
-        info($body, $this->id, $this->user->sid);
+        $body = ['action' => 'room_notice', 'channel_name' => $this->channel_name, 'expire_time' => $expire_time,
+            'content' => $content, 'client_url' => $client_url];
 
         $this->push($body, true);
     }
@@ -2025,7 +2032,7 @@ class Rooms extends BaseModel
                 return;
             }
 
-            $room_db = Rooms::getRoomDb();
+            $room_db = Users::getUserDb();
             $time = fetch($opts, 'time', time());
             $date = date("Ymd", $time);
 
@@ -2061,7 +2068,7 @@ class Rooms extends BaseModel
     //按天统计房间进入人数
     static function statDayEnterRoomUser($room_id, $user_id)
     {
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         $room = Rooms::findFirstById($room_id);
 
         if ($room) {
@@ -2073,7 +2080,7 @@ class Rooms extends BaseModel
     static function statDayUserTime($action, $room_id, $time)
     {
         if ($time > 0) {
-            $room_db = Rooms::getRoomDb();
+            $room_db = Users::getUserDb();
             $room = Rooms::findFirstById($room_id);
 
             if ($room) {
@@ -2089,7 +2096,7 @@ class Rooms extends BaseModel
             $stat_at = date('Ymd');
         }
 
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         $key = "room_stats_income_day_" . $stat_at;
         $total_entries = $room_db->zcard($key);
         $per_page = $total_entries;
@@ -2106,14 +2113,15 @@ class Rooms extends BaseModel
     //按天的流水
     function getDayIncome($stat_at)
     {
-        $room_db = Rooms::getRoomDb();
-        return $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+        $room_db = Users::getUserDb();
+        $val = $room_db->zscore($this->generateStatIncomeDayKey($stat_at), $this->id);
+        return intval($val);
     }
 
     //按天的进入房间人数
     function getDayEnterRoomUser($stat_at)
     {
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         return $room_db->zcard($this->generateStatEnterRoomUserDayKey($stat_at));
     }
 
@@ -2121,14 +2129,14 @@ class Rooms extends BaseModel
     //按天的送礼物人数
     function getDaySendGiftUser($stat_at)
     {
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         return $room_db->zcard($this->generateSendGiftUserDayKey($stat_at));
     }
 
     //按天的送礼物个数
     function getDaySendGiftNum($stat_at)
     {
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         return $room_db->zscore($this->generateSendGiftNumDayKey($stat_at), $this->id);
     }
 
@@ -2136,7 +2144,7 @@ class Rooms extends BaseModel
     //按天的主播时长 action audience broadcaster host_broadcaster
     function getDayUserTime($action, $stat_at)
     {
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
         return $room_db->zscore($this->generateStatTimeDayKey($action, $stat_at), $this->id);
     }
 
@@ -2538,15 +2546,15 @@ class Rooms extends BaseModel
         return $game_history;
     }
 
-    static function search($user, $product_channel, $page, $per_page, $opts = [])
+    static function search($user, $page, $per_page, $opts = [])
     {
+        $user_id = $user->id;
         $new = intval(fetch($opts, 'new', 0));
         $broadcast = intval(fetch($opts, 'broadcast', 0));
         $follow = intval(fetch($opts, 'follow', 0));
         $filter_ids = fetch($opts, 'filter_ids', []);
-        $user_id = $user->id;
 
-        debug($user->sid, $opts);
+        debug($user->id, $page, $per_page, $opts);
 
         //限制搜索条件
         $cond = [
@@ -2563,11 +2571,9 @@ class Rooms extends BaseModel
         if (STATUS_ON == $follow) {
 
             $user_ids = $user->followUserIds();
-
             if (count($user_ids) > 0) {
                 $cond['conditions'] .= " and user_id in (" . implode(',', $user_ids) . ") ";
             }
-
         }
 
         if (!$new && !$broadcast && !$follow) {
@@ -2591,7 +2597,6 @@ class Rooms extends BaseModel
         }
 
         $shield_room_ids = $user->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $filter_ids = array_unique(array_merge($filter_ids, $shield_room_ids));
         }
@@ -2675,19 +2680,24 @@ class Rooms extends BaseModel
         return $gang_up_rooms_json;
     }
 
-    function getRoomMenuConfig($current_user_role, $show_game, $root, $room_id)
+    function getRoomMenuConfig($user, $opts = [])
     {
+
+        $root_host = fetch($opts, 'root_host');
+        $current_user_role = $user->user_role;
         $menu_config = [];
-        if ($show_game) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game', 'url' => 'url://m/games?room_id=' . $room_id, 'icon' => $root . 'images/room_menu_game.png'];
-
-        }
-        if ($show_game && isDevelopmentEnv()) {
-            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet', 'url' => 'url://m/distribute', 'icon' => $root . 'images/red_packet.png'];
+        if (true) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
-        if ($show_game && isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
-            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root . 'images/pk.png'];
+        if (isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
+                'url' => 'url://m/distribute', 'icon' => $root_host . 'images/red_packet.png'];
+        }
+
+        if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
+            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
         }
 
         return $menu_config;
@@ -2765,7 +2775,7 @@ class Rooms extends BaseModel
     function setHotRoomScoreRatio($ratio)
     {
         $ratio = intval($ratio);
-        $user_db = Rooms::getRoomDb();
+        $user_db = Users::getUserDb();
         $key = "hot_room_score_ratio_room_id_{$this->id}";
 
         if (!$ratio) {

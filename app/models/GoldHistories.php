@@ -52,9 +52,8 @@ class GoldHistories extends BaseModel
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
         $user = Users::findFirstById($user_id);
-
-        if (isBlank($user)) {
-            info($user_id);
+        if (!$user) {
+            info('Exce', $user_id);
             return null;
         }
 
@@ -123,7 +122,7 @@ class GoldHistories extends BaseModel
     function isCostGold()
     {
         return $this->fee_type == GOLD_TYPE_BUY_GIFT || $this->fee_type == GOLD_TYPE_GAME_EXPENSES
-            || $this->fee_type == GOLD_TYPE_DRAW_EXPENSES;
+        || $this->fee_type == GOLD_TYPE_DRAW_EXPENSES;
     }
 
     /**

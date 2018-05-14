@@ -36,35 +36,44 @@ class BoomHistories extends BaseModel
 
 
     /**
-     * 爆礼物排行榜
+     * 爆礼物id 倒叙日志排行
+     * @param int $per_page
      * @return PaginationModel
      */
-    static public function topList()
+    static public function historiesTopList($per_page = 10)
     {
         $conditions = array(
             'order' => 'id desc',
         );
-        $list = BoomHistories::findPagination($conditions, 1, 10);
+        $list = BoomHistories::findPagination($conditions, 1, $per_page);
         return $list;
     }
 
 
+    /**
+     * @return array
+     */
     public function toSimpleJson()
     {
-        if ($this->type == BACKPACK_DIAMOND_TYPE) {
 
-            $target = (object)[
-                'name'=>'钻石',
-                'image_url'=> Backpacks::getDiamondImage()
-            ];
-        } elseif ($this->type == BACKPACK_GOLD_TYPE) {
+        if ($this->type != BACKPACK_GIFT_TYPE) {
 
-            $target = (object)[
-                'name'=>'金币',
-                'image_url'=> Backpacks::getGoldImage()
-            ];
+            if ($this->type == BACKPACK_DIAMOND_TYPE) {
+                $name = '钻石';
+                $image = Backpacks::getDiamondImage();
+            } else {
+                $name = '金币';
+                $image = Backpacks::getGoldImage();
+            }
+
+            $target = (object)array(
+                'name' => $name,
+                'image_url' => $image
+            );
+
         } else
             $target = Gifts::findFirstById($this->target_id);
+
 
         // 获取用户信息
         $user = Users::findFirstById($this->user_id);

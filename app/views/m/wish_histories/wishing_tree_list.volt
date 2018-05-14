@@ -20,7 +20,7 @@
 <div id="app" class="wishing_tree_list">
     <div class="wishing_list_neo">
         <span class="ranking_icon"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[0].id)">
             <span class="header_bg"></span>
             <img :src="wish_histories[0].user_avatar_url" alt="">
         </div>
@@ -33,7 +33,7 @@
     </div>
     <div class="wishing_list_two">
         <span class="ranking_icon"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[1].id)">
             <span class="header_bg"></span>
             <img :src="wish_histories[1].user_avatar_url" alt="">
         </div>
@@ -48,7 +48,7 @@
     </div>
     <div class="wishing_list_two">
         <span class="ranking_icon_three"></span>
-        <div class="header">
+        <div class="header" @click="showWish(wish_histories[2].id)">
             <span class="header_bg2"></span>
             <img :src="wish_histories[2].user_avatar_url" alt="">
         </div>
@@ -65,7 +65,7 @@
     <ul class="wishing_list_ul">
         <li v-for="wish_history,index in wish_histories" v-if="index>2">
             <span class="ranking_icon">${index+1}</span>
-            <div class="header">
+            <div class="header" @click="showWish(wish_history.id)">
                 <img :src="wish_history.user_avatar_url" alt="">
             </div>
             <div class="wishing_list_box">
@@ -85,7 +85,7 @@
     <div v-if="searchToast" class="search_toast">
         <div class="search_toast_box">
             <span class="title">搜索</span>
-            <input class="input_text" v-model="uid" placeholder="请输入查询ID" type="text"/>
+            <input class="input_text" v-model="uid" placeholder="请输入查询ID" type="number"/>
             {#<p class="results">#}
             {#<span v-if="searchResults">昵称：黑芝麻</span>#}
             {#<span v-if="!searchResults" class="error">用户不存在</span>#}
@@ -120,11 +120,21 @@
     </div>
     <span v-if="myWishList" @click="onCancelToast()" class="toast_cancel"></span>
     <div v-if="myWishList" class="mask_background"></div>
+    <!-- 余额不足 -->
+    <div v-if="isHintToast" class="not_balance_toast">
+        <b>提示</b>
+        <span class="hint">您的钻石余额不足，请先充值</span>
+        <div class="not_balance_box">
+            <span @click="topupBalance(false)" class="cancel">取消</span>
+            <span @click="topupBalance(true)" class="topup">充值</span>
+        </div>
+    </div>
 </div>
 <script>
     var opts = {
         data: {
             uid: "",
+            isHintToast:false,
             searchResults: true,
             searchToast: false,
             wish_histories:{{ wish_histories }},
@@ -171,13 +181,39 @@
                     if (!resp.error_code) {
                         vm.is_guard = true;
                         vm.show_wish_histories[index].guarded_number = resp.guarded_number;
+                    }else{
+                        vm.myWishList = false;
+                        vm.isHintToast = true;
                     }
                 })
             },
             onCancelToast: function () {
                 vm.myWishList = false;
+            },
+            showWish:function (id) {
+                var data = {
+                    id: id,
+                    sid: vm.sid,
+                    code: vm.code,
+                };
+                $.authPost('/m/wish_histories/show_wish', data, function (resp) {
+                    if (!resp.error_code) {
+                        vm.myWishList = true;
+                        vm.show_wish_histories = resp.show_wish_histories;
+                        console.log(vm.show_wish_histories);
+                    } else {
+                        alert(resp.error_reason);
+                    }
+                })
+            },
+            topupBalance: function (show) {
+                if (show) {
+                    var url = '/m/products?sid=' + vm.sid + '&code=' + vm.code;
+                    location.href = url;
+                } else {
+                    vm.isHintToast = false;
+                }
             }
-
         }
     };
 

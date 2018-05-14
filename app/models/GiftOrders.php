@@ -247,16 +247,14 @@ class GiftOrders extends BaseModel
             } else {
                 $gift_order->type = $type;
             }
-            
-            debug('判断前赠送者当前房间ID',$sender_current_room_id);
+
+            debug('判断前赠送者当前房间ID', $sender_current_room_id);
             if ($sender_current_room_id) {
-                debug('赠送者当前房间ID',$sender_current_room_id);
+                debug('赠送者当前房间ID', $sender_current_room_id);
                 $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
                 if ($result) {
-                    info('当前房间有pk正在进行',$gift_order->amount);
-                    \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id,$gift_order->pay_type);
-                }else{
-                    info('当前房间没有pk');
+                    info('当前房间有pk正在进行', $gift_order->amount);
+                    \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id, $gift_order->pay_type);
                 }
             }
             // 在房间里送里面
@@ -267,8 +265,6 @@ class GiftOrders extends BaseModel
                 $gift_order->room_union_type = $sender_current_room->union_type;
 
                 $sender_current_room->updateLastAt();
-
-
             }
 
             if ($gift_order->create()) {
@@ -284,15 +280,13 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
-            \UserGifts::delay()->updateGiftExpireAt($this->id);
+            \UserGifts::updateGiftExpireAt($this->id);
         } else {
-            \UserGifts::delay()->updateGiftNum($this->id);
+            \UserGifts::updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
-                //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time, 'async_verify_data' => 1]);
+                \HiCoinHistories::createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
             }
         }
 
