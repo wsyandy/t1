@@ -195,6 +195,10 @@ trait RoomAttrs
 
         $user_db = Users::getUserDb();
 
+        if (!$is_shield) {
+            $total_score = $total_score * 1.5;
+        }
+
         $data = [
             'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
             'real_user_pay_score' => $real_user_pay_score, 'real_user_stay_time_score' => $real_user_stay_time_score,
@@ -206,10 +210,6 @@ trait RoomAttrs
 
         info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
             $id_card_auth_users_score, $ratio, $total_score);
-
-        if (!$is_shield) {
-            $total_score = $total_score * 1.5;
-        }
 
         return $total_score;
     }
