@@ -188,7 +188,6 @@ class WishHistories extends BaseModel
 //            $lucky_user_ids = $db->zrangebyscore($lucky_user_key, $start_at, $stop_at);
 //        }
         info($time, $lucky_user_key, $lucky_user_ids);
-        $lucky_user_ids = [257, 256, 117, 118, 119];
         $lucky_users = \Users::findByIds($lucky_user_ids);
         $lucky_names = [];
         foreach ($lucky_users as $index => $lucky_user) {
