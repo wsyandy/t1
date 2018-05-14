@@ -60,17 +60,17 @@
                 <span class="behind">1000钻礼物冠名权</span>
             </li>
             <li>
-                <span class="type">社会猫</span>
+                <span class="type">求婚</span>
                 <span class="center">第一名奖励</span>
                 <span class="behind">500钻礼物冠名权</span>
             </li>
             <li>
-                <span class="type">小猪佩奇</span>
+                <span class="type">love</span>
                 <span class="center">第一名奖励</span>
                 <span class="behind">100钻礼物冠名权</span>
             </li>
             <li>
-                <span class="type">肥皂</span>
+                <span class="type">金玫瑰</span>
                 <span class="center">第一名奖励</span>
                 <span class="behind">10钻礼物冠名权</span>
             </li>
