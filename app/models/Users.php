@@ -3583,6 +3583,10 @@ class Users extends BaseModel
         $this->wealth_value += $wealth_value;
         $this->update();
 
+        if (!$this->isCompanyUser()) {
+            Users::updateFiledRankList($this->id, 'wealth', $wealth_value, ['time' => time()]);
+        }
+        
         unlock($lock);
     }
 }
