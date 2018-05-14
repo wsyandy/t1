@@ -31,12 +31,8 @@ class BackpacksController extends BaseController
      */
     public function sendGiftAction()
     {
-        if (isBlank($this->params('gift_id'))) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '礼物错误');
-        }
-
         $gift_num = $this->params('gift_num', 1);
-        $backpack_id = $this->params('backpack_id');
+        $backpack_id = $this->params('id');
         $user_id = $this->params('user_id');
         $src = $this->params('src', 'room');
 
