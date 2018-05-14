@@ -534,11 +534,27 @@ class Rooms extends BaseModel
 
     static function getActiveRoomsByTime($minutes = 15)
     {
-        $hot_cache = Users::getHotWriteCache();
-        $key = 'room_active_last_at_list';
-        $time = time();
-        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
-        info($room_ids);
+//        $hot_cache = Users::getHotWriteCache();
+//        $key = 'room_active_last_at_list';
+//        $time = time();
+//        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
+//        info($room_ids);
+//
+        $start = time() - 7200;
+        $end = time();
+        $room_ids = [];
+
+        $cond = [
+            'conditions' => 'room_id > 0 and created_at >= :start: and created_at <= :end:',
+            'bind' => ['start' => $start, 'end' => $end],
+            'columns' => 'distinct room_id'];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        foreach ($gift_orders as $gift_order) {
+            $room_ids[] = $gift_order->room_id;
+        }
+
         $rooms = Rooms::findByIds($room_ids);
 
         return $rooms;
