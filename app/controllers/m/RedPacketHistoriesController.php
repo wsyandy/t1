@@ -54,7 +54,7 @@ class RedPacketHistoriesController extends BaseController
         ];
 
         //创建红包
-        $send_red_packet_history = \RedPackets::createReadPacket($room, $opts);
+        $send_red_packet_history = \RedPackets::createReadPacket($user, $room, $opts);
 
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
@@ -74,25 +74,50 @@ class RedPacketHistoriesController extends BaseController
         $user = $this->currentUser();
         $red_packet_id = $this->params('red_packet_id');
         $red_packet_type = $this->params('red_packet_type');
+        $sex = $this->params('sex');
 
-        $balance_diamond = \RedPackets::checkRedPacketInfoForRoom($user->current_room_id, $user->id);
+        list($balance_diamond, $num) = \RedPackets::checkRedPacketInfoForRoom($user->current_room_id, $user->id, $red_packet_id);
 
-        //回头还要有个是否已经抢过的判断
+        $cache = \Users::getHotWriteCache();
+        $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
+        $score = $cache->zscore($key, $red_packet_id);
+        if ($score) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
+        }
 
-        if ($balance_diamond <= 0) {
+        //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离
+
+        if ($balance_diamond <= 0 || $num <= 0) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
         }
 
-        list($error_code, $error_reason) = \RedPackets::grabRedPacket($red_packet_id, $user, $red_packet_type);
+        if ($sex != USER_SEX_COMMON) {
+            if ($sex != $user->sex) {
+                $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
+                return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
+            }
+        }
+
+
+        list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_type, $red_packet_id);
         if (!$error_code) {
-            return $this->renderJSON($error_code, $error_reason);
+            //在这里增加钻石
+            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+            \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $get_diamond, $opts);
+
+            return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON($error_code, $error_reason);
 
     }
 
-    function redPacketListAction()
+    function redPacketsListAction()
+    {
+        $this->view->title = '红包列表';
+    }
+
+    function getRedPacketsAction()
     {
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
@@ -103,8 +128,7 @@ class RedPacketHistoriesController extends BaseController
         if ($red_packets) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
         }
-
-        return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包消息');
+        $this->view->red_packets = $red_packets;
     }
 
     function detailAction()
