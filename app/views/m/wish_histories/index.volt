@@ -28,7 +28,7 @@
     <div class="wishing_bouttom_box">
         <div class="ranking" @click="toRanking"></div>
         <div @click="openToast(3)" class="makevow"></div>
-        <div class="refresh" @click="refresh()"></div>
+        <div class="refresh" @click="reLoad"></div>
     </div>
     <!-- 规则弹窗 -->
     <div v-if="isrulesToast" class="wishing_rules_toast">
@@ -241,6 +241,9 @@
             },
             toRanking:function () {
                 location.href = '/m/wish_histories/wishing_tree_list?sid='+vm.sid+'&code='+vm.code
+            }
+            reLoad:function () {
+                location.reload();
             }
         }
     };
