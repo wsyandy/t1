@@ -259,7 +259,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(70, 92) / 100;
+        $pool_rate = mt_rand(700, 925) / 1000;
 
         if ($type == 'diamond') {
 
@@ -270,7 +270,7 @@ class DrawHistories extends BaseModel
             }
 
             // 奖金池控制
-            if ($number != 100000 && $total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.01)) {
+            if ($number != 100000 && $total_pay_amount > 50 && $total_decr_diamond + $number > $total_incr_diamond * ($pool_rate + 0.011)) {
                 info('continue 奖金池控制', $user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
                 return 0;
             }
