@@ -55,19 +55,19 @@ class BaseController extends \ApplicationController
             return null;
         }
 
-        //强制重新查用户
-        if ($force) {
+        //$force 强制重新查用户
+        if (!isset($this->_current_user) && $user_id || $force) {
             $user = \Users::findFirstById($user_id);
-            return $user;
-        }
+            if ($user) {
+                $user->product_channel = $this->currentProductChannel();
+            }
 
-        if (!isset($this->_current_user) && $user_id) {
-            $user = \Users::findFirstById($user_id);
             $this->_current_user = $user;
         }
 
         return $this->_current_user;
     }
+
 
     function otherUserId()
     {
@@ -89,27 +89,22 @@ class BaseController extends \ApplicationController
     function otherUser($force = false)
     {
         $other_user_id = $this->otherUserId();
-
         if (isBlank($other_user_id)) {
             return null;
         }
 
-        //强制重新查用户
-        if ($force) {
-            $user = \Users::findFirstById($other_user_id);
-            return $user;
-        }
-
-        if (!isset($this->_other_user) && $other_user_id) {
+        if (!isset($this->_other_user) && $other_user_id || $force) {
             $other_user = \Users::findFirstById($other_user_id);
             if ($other_user) {
-                $this->_other_user = $other_user;
+                $other_user->product_channel = $this->currentProductChannel();
             }
+
+            $this->_other_user = $other_user;
         }
 
         return $this->_other_user;
     }
-
+    
     function currentDeviceId()
     {
         $user = $this->currentUser();
