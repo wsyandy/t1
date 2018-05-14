@@ -259,7 +259,7 @@
                 } else {
                     vm.isHintToast = false;
                 }
-            }
+            },
             toReLoad:function () {
                 location.reload();
             }
@@ -320,3 +320,4 @@
         });
     }
 </script>
+No newline at end of file
