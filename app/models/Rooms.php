@@ -1600,9 +1600,9 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        //$new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        //$old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        //$old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
 
         $register_time = time() - $user->register_at;
         $time = 60 * 15;
@@ -1617,16 +1617,18 @@ class Rooms extends BaseModel
 
         } else {
 
-            if ($register_time <= $time) {
-                $hot_room_list_key = $new_user_hot_rooms_list_key;
-            } else {
+            $hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
 
-                if ($user->pay_amount > 0) {
-                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
-                } else {
-                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
-                }
-            }
+//            if ($register_time <= $time) {
+//                $hot_room_list_key = $new_user_hot_rooms_list_key;
+//            } else {
+//
+//                if ($user->pay_amount > 0) {
+//                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
+//                } else {
+//                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
+//                }
+//            }
         }
 
         $hot_cache = Users::getHotWriteCache();
@@ -1949,17 +1951,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2867,17 +2871,20 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
+        if (count($shield_room_ids) > 0) {
 
-            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                return -1;
-            }
+            uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
 
-            return 1;
-        });
+                if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
+                    return -1;
+                }
 
-        $shield_room_num = 5;
-        $total_room_num = 30;
+                return 1;
+            });
+        }
+
+        $shield_room_num = 15;
+        $total_room_num = 15;
         $new_user_shield_room_num = 3;
 
         if (isDevelopmentEnv()) {
