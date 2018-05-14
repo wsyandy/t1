@@ -40,9 +40,24 @@ class DrawHistories extends BaseModel
         // 系统总收入
         $cache_key = 'draw_history_total_amount_incr_' . $this->pay_type;
         $total_incr_diamond = $user_db->incrby($cache_key, intval($this->pay_amount));
+
         // 系统支出: 金币，钻石，礼物
         $cache_decr_key = 'draw_history_total_amount_decr_' . $this->type;
         $total_decr_diamond = $user_db->incrby($cache_decr_key, intval($this->number));
+
+        $new_cache_decr_key = 'new_draw_history_total_amount_decr_' . $this->type;
+        $new_total_decr_diamond = $user_db->incrby($new_cache_decr_key, intval($this->number));
+
+        if ($new_total_decr_diamond == $this->number) {
+            $new_cache_key = 'new_draw_history_total_amount_incr_' . $this->pay_type;
+            $num = $total_incr_diamond - $total_decr_diamond;
+            $new_total_incr_diamond = $user_db->incrby($new_cache_key, $num);
+        } else {
+            $new_cache_key = 'new_draw_history_total_amount_incr_' . $this->pay_type;
+            $new_total_incr_diamond = $user_db->incrby($new_cache_key, intval($this->pay_amount));
+        }
+
+        info($new_cache_key, $new_total_incr_diamond, $new_total_decr_diamond);
 
         // 全服通知：个推，系统消息，公屏消息
         if ($this->type == 'diamond' && $this->number == 100000
@@ -131,9 +146,9 @@ class DrawHistories extends BaseModel
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 142, 'gift_num' => 1, 'day_limit_num' => 1];
         }
         if (isProduction()) {
-            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 33, 'gift_num' => 1, 'day_limit_num' => 2];
+            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 33, 'gift_num' => 1, 'day_limit_num' => 1];
         } else {
-            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 61, 'gift_num' => 1, 'day_limit_num' => 2];
+            $data[2] = ['id' => 3, 'type' => 'gift', 'name' => 'UFO座驾', 'number' => 12000, 'rate' => 0.6, 'gift_id' => 61, 'gift_num' => 1, 'day_limit_num' => 1];
         }
         $data[3] = ['id' => 4, 'type' => 'diamond', 'name' => '10000钻石', 'number' => 10000, 'rate' => 1.1, 'day_limit_num' => 0];
         if (isProduction()) {
@@ -390,6 +405,8 @@ class DrawHistories extends BaseModel
                 $interval_time = time() - 3600 * 6 - mt_rand(1, 1800);
             }
 
+            $interval_time = beginOfDay();
+
             // 最近1小时只爆一个礼物
             $gift_hour_history = self::findFirst([
                 'conditions' => 'type=:type:  and created_at>=:start_at:',
@@ -550,9 +567,9 @@ class DrawHistories extends BaseModel
             if ($gift) {// 送礼物
                 // 赠送权时间
                 $giving_time = fetch($result, 'giving_time', 0);
-                if($giving_time){
-                    
-                }else{
+                if ($giving_time) {
+
+                } else {
                     GiftOrders::asyncCreateGiftOrder(SYSTEM_ID, [$user->id], $gift->id, ['remark' => '砸蛋赠送', 'type' => GIFT_ORDER_TYPE_ACTIVITY_LUCKY_DRAW]);
                 }
             }
@@ -562,13 +579,13 @@ class DrawHistories extends BaseModel
         }
 
         $hot_cache = DrawHistories::getHotWriteCache();
-        if($draw_history->number >= 1000 && $draw_history->number < 10000){
+        if ($draw_history->number >= 1000 && $draw_history->number < 10000) {
             $hot_cache->zadd('draw_histories_1000', time(), $draw_history->id);
         }
-        if($draw_history->number >= 10000 && $draw_history->number < 100000){
+        if ($draw_history->number >= 10000 && $draw_history->number < 100000) {
             $hot_cache->zadd('draw_histories_10000', time(), $draw_history->id);
         }
-        if($draw_history->number >= 100000){
+        if ($draw_history->number >= 100000) {
             $hot_cache->zadd('draw_histories_100000', time(), $draw_history->id);
         }
 
