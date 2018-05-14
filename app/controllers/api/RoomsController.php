@@ -176,13 +176,12 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
-
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
+
         if (!$room) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
-
 
         //如果进入其他房间时 用户身上有房间 先退出房间
         $current_room = $this->currentUser()->current_room;
@@ -204,62 +203,105 @@ class RoomsController extends BaseController
         $res['system_tips'] = $this->currentProductChannel()->system_news;
         $res['user_role'] = $this->currentUser()->user_role;
 
-        //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
-        $root_host = $this->getRoot();
-        // 菜单
-        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
-
-        // 发起游戏
-        $game_history = $room->getGameHistory();
-        if ($game_history) {
-            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-        }
-
-        // 发起pk
-        $pk_history = $room->getPkHistory();
-        if (isDevelopmentEnv() && $pk_history) {
-            $res['pk_history'] = $pk_history->toSimpleJson();
-        }
-
-        // 房间红包
-        if (isDevelopmentEnv()) {
-            $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
-        }
-
-        // 房间活动
-        //活动列表
-        $platform = $this->context('platform');
-        $platform = 'client_' . $platform;
-        $activities = \Activities::findRoomActivities($this->currentUser(), ['platform' => $platform]);
-        if ($activities) {
-            $res['activities'] = $activities;
-        }
-
         // 座驾
         $user_car_gift = $this->currentUser()->getUserCarGift();
+
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
         }
 
         //房间分类信息
         $room_tag_ids = $room->room_tag_ids;
+
         $res['room_tag_ids'] = [];
+
         if (isPresent($room_tag_ids)) {
+
             $room_tag_ids = explode(',', $room_tag_ids);
-            foreach ($room_tag_ids as $room_tag_id) {
-                $res['room_tag_ids'][] = intval($room_tag_id);
+            $res['room_tag_ids'] = $room_tag_ids;
+
+        }
+
+        //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
+        $root_host = $this->getRoot();
+
+        // 菜单
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+
+        if (isProduction()) {
+
+            // 发起游戏
+            $game_history = $room->getGameHistory();
+
+            if ($game_history) {
+                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+            }
+
+            //房间活动列表
+            $platform = $this->context('platform');
+            $platform = 'client_' . $platform;
+
+            $activities = \Activities::findRoomActivities($this->currentUser(), ['platform' => $platform]);
+
+            if ($activities) {
+                $res['activities'] = $activities;
             }
         }
 
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
+    }
+
+    function activitiesAction()
+    {
+        $room_id = $this->params('id', 0);
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $root_host = $this->getRoot();
+
+        $res = [];
+
+        // 发起游戏
+        $game_history = $room->getGameHistory();
+
+        if ($game_history) {
+            $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+        }
+
+        //房间活动列表
+        $platform = $this->context('platform');
+        $platform = 'client_' . $platform;
+
+        $activities = \Activities::findRoomActivities($this->currentUser(), ['platform' => $platform]);
+
+        if ($activities) {
+            $res['activities'] = $activities;
+        }
+
+        // 发起pk
+        $pk_history = $room->getPkHistory();
+
+        if ($pk_history) {
+            $res['pk_history'] = $pk_history->toSimpleJson();
+        }
+
+        // 房间红包
+        $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
+
         // 爆礼物
         $day_income = $room->getDayIncome(date('Ymd'));
-        $res['blasting_gift'] = array(
+
+        $res['blasting_gift'] = [
             'expire_at' => time(),
             'url' => 'url://m/backpacks',
             'svga_image_url' => \Backpacks::getSvgaImageUrl(),
             'total_value' => \Backpacks::getTotalBoomValue(),
             'current_value' => $day_income
-        );
+        ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
