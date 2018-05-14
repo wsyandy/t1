@@ -9,14 +9,14 @@
             <img class="glory_tit_img" src="/m/images/glory_tit_right.png" alt="">
         </div>
         <div class="glory_top_info">
-            荣耀等级是您在Hi上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，送靓号，快来体验吧～
+            荣耀等级是您在Hi上尊贵身份的象征，不同的等级，在昵称前面有不同的荣耀勋章。通过赠送礼物可以快速提高您的等级，等级越高，特权越高，例如公屏消息前的等级勋章，快来体验吧～
         </div>
-        <div class="glory_top_info">
-            送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！
-        </div>
-        <div class="glory_top_info" v-if="is_activity_show">
-            获取赠送ID，请联系<span style="color: #ff8000">官方QQ：3407150190</span>
-        </div>
+        {#<div class="glory_top_info">#}
+            {#送靓号（靓号分为普通号、靓号、高级靓号3类）活动时间有限，先到先得，快去升级吧！#}
+        {#</div>#}
+        {#<div class="glory_top_info" v-if="is_activity_show">#}
+            {#获取赠送ID，请联系<span style="color: #ff8000">官方QQ：3407150190</span>#}
+        {#</div>#}
     </div>
     <div class="glory_privilege">以下是Hi荣耀等级对应的名称和特权：</div>
 
@@ -32,7 +32,7 @@
                 <td>${ glory.name }</td>
                 <td>
                     <p>${ glory.name }荣耀勋章</p>
-                    <p class="glory_reward">${ glory.reward?glory.reward:''}</p>
+                    {#<p class="glory_reward">${ glory.reward?glory.reward:''}</p>#}
                 </td>
             </tr>
         </table>

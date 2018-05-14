@@ -1,0 +1,1 @@
+CREATE index created_at_on_orders on orders(created_at);
