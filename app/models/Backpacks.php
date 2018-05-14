@@ -83,7 +83,7 @@ class Backpacks extends BaseModel
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => strtotime('+3 minutes', time()),
+                'expire_at' => self::getExpireAt(),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => self::getSvgaImageUrl(),
                 'total_value' => $total_value,
@@ -256,6 +256,15 @@ class Backpacks extends BaseModel
     static function getTotalBoomValue()
     {
         return self::$total_value;
+    }
+
+
+    /**
+     * @return false|int
+     */
+    static function getExpireAt()
+    {
+        return strtotime('+3 minutes', time());
     }
 
 

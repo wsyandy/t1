@@ -296,7 +296,7 @@ class RoomsController extends BaseController
         $day_income = $room->getDayIncome(date('Ymd'));
 
         $res['blasting_gift'] = [
-            'expire_at' => time(),
+            'expire_at' => \Backpacks::getExpireAt(),
             'url' => 'url://m/backpacks',
             'svga_image_url' => \Backpacks::getSvgaImageUrl(),
             'total_value' => \Backpacks::getTotalBoomValue(),
