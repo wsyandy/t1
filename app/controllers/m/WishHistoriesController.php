@@ -98,7 +98,7 @@ class WishHistoriesController extends BaseController
     {
         $lucky_names = \WishHistories::getLuckyUserList();
 
-        $this->view->lucky_names = $lucky_names;
+        $this->view->lucky_names = json_encode($lucky_names,JSON_UNESCAPED_UNICODE);
     }
 
     function wishingTreeListAction()
