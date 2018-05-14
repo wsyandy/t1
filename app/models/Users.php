@@ -2993,20 +2993,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3133,21 +3136,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
@@ -3298,7 +3304,7 @@ class Users extends BaseModel
 
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
-        
+
         $db->setex($key, $expire, $times);
         return $res;
     }
@@ -3562,24 +3568,21 @@ class Users extends BaseModel
     }
 
     //守护愿望只更新用户自身经验，段位和财富值
-    static function updateExperienceForWish($user, $amount, $wish_history_id)
+    function updateExperienceForWish($amount)
     {
-        $wish_history = \WishHistories::findFirstById($wish_history_id);
-        if (isBlank($wish_history)) {
-            return false;
-        }
+        $lock_key = "update_user_level_lock_" . $this->id;
 
-        $lock_key = "update_user_level_lock_" . $user->id;
         $lock = tryLock($lock_key);
 
         $user_experience = 0.02 * $amount;
         $wealth_value = $amount;
-        $user->experience += $user_experience;
-        $user_level = $user->calculateLevel();
-        $user->level = $user_level;
-        $user->segment = $user->calculateSegment();
-        $user->wealth_value += $wealth_value;
-        $user->update();
+        $this->experience += $user_experience;
+        $user_level = $this->calculateLevel();
+        $this->level = $user_level;
+        $this->segment = $this->calculateSegment();
+        $this->wealth_value += $wealth_value;
+        $this->update();
+
         unlock($lock);
     }
 }
