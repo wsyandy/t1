@@ -1,6 +1,6 @@
 <?php
 
-class SendRedPacketHistories extends BaseModel
+class RedPackets extends BaseModel
 {
     static $_only_cache = true;
 
@@ -44,16 +44,24 @@ class SendRedPacketHistories extends BaseModel
      */
     private $_current_room_id;
 
+    /**
+     * @type string
+     */
+    private $_red_packet_type;
+
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
         'user_id' => ['null' => '不能为空'],
         'num' => ['null' => '不能为空'],
         'diamond' => ['null' => '不能为空'],
         'status' => ['null' => '不能为空'],
-        'current_room_id' => ['null' => '不能为空']
+        'current_room_id' => ['null' => '不能为空'],
+        'red_packet_type' => ['null' => '不能为空']
     ];
 
     static $RED_PACKET_STATUS = [STATUS_WAIT => '等待中', STATUS_ON => '进行中', STATUS_OFF => '结束'];
+    static $RED_PACKET_TYPE = ['all' => '都可以领取', 'attention' => '关注房主才能领取', 'stay_at_room' => '在房间满3分钟才能领取', 'nearby' => '附近的人才能领取'];
+    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
 
     function beforeCreate()
     {
@@ -84,13 +92,14 @@ class SendRedPacketHistories extends BaseModel
 
     function generateId()
     {
-        return 'send_red_packet' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
+        return 'red_packet_for_user_' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
     }
 
     static function createReadPacket($room, $opts)
     {
-        $send_red_packet_history = new \SendRedPacketHistories();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id'] as $column) {
+        info('全部参数', $opts);
+        $send_red_packet_history = new \RedPackets();
+        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
@@ -98,7 +107,7 @@ class SendRedPacketHistories extends BaseModel
             $room->pushRedPacketMessage($send_red_packet_history->num, $url);
             return $send_red_packet_history;
         }
-        return false;
+        return null;
     }
 
     static function generateRedPacketUrl($user_id)
@@ -113,21 +122,25 @@ class SendRedPacketHistories extends BaseModel
 
         $total = $cache_db->zcard($key);
         $offset = ($page - 1) * $per_page;
-        $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
-        $chats = \SendRedPacketHistories::findByIds($chat_ids);
+        $red_packet_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $red_packets = \RedPackets::findByIds($red_packet_ids);
 
-        return new \PaginationModel($chats, $total, $page, $per_page);
+        return new \PaginationModel($red_packets, $total, $page, $per_page);
     }
 
     function toSimpleJson()
     {
+        $start_at = $this->created_at + 3 * 60;
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'user_nickanme' => $this->user->nickname,
             'diamond' => $this->diamond,
-            'count' => $this->count,
-            'status' => $this->status_text,
-            'created_at_text' => $this->created_at_text
+            'num' => $this->num,
+            'status_text' => $this->status_text,
+            'created_at_text' => $this->created_at_text,
+            'start_at_text' => date('Y-m-d H:i:s', $start_at)
         ];
     }
 
