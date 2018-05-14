@@ -25,7 +25,7 @@
             <img :src="wish_histories[0].user_avatar_url" alt="">
         </div>
         <div class="wishing_list_name"><span style="color: #F45189;">${wish_histories[0].user_nickname}</span><span
-                    class="man">${wish_histories[0].age?wish_histories[0].age:''}</span></div>
+                    class="man"></span></div>
         <div class="wishing_list_heart">
             <span class="heart"></span>
             <span>X${wish_histories[0].guarded_number}</span>
@@ -39,7 +39,7 @@
         </div>
         <div class="wishing_list_box">
             <div class="wishing_list_name"><span style="color: #56B1E3;">${wish_histories[1].user_nickname}</span><span
-                        class="woman">${wish_histories[1].age?wish_histories[1].age:''}</span></div>
+                        class="woman"></span></div>
             <div class="wishing_list_heart">
                 <span class="heart"></span>
                 <span>X${wish_histories[1].guarded_number}</span>
@@ -54,7 +54,7 @@
         </div>
         <div class="wishing_list_box">
             <div class="wishing_list_name"><span style="color: #F37F32;">${wish_histories[2].user_nickname}</span><span
-                        class="man">${wish_histories[2].age?wish_histories[2].age:''}</span></div>
+                        class="man"></span></div>
             <div class="wishing_list_heart">
                 <span class="heart"></span>
                 <span>X${wish_histories[2].guarded_number}</span>
@@ -69,7 +69,7 @@
                 <img :src="wish_history.user_avatar_url" alt="">
             </div>
             <div class="wishing_list_box">
-                <div class="wishing_list_name"><span>${wish_history.user_nickname}</span><span class="man">${wish_history.age?wish_history.age:''}</span>
+                <div class="wishing_list_name"><span>${wish_history.user_nickname}</span><span class="man"></span>
                 </div>
                 <div class="wishing_list_heart">
                     <span class="heart"></span>
