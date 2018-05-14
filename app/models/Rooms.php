@@ -2091,9 +2091,9 @@ class Rooms extends BaseModel
 
         $value = $cache->get($cache_name);
         if ($value > 0) {
-            $cache->exists($cache_room_name) && $cache->set($cache_name, 0, $time);
+            $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
         } else
-            $cache->set($cache_name, ($value+$income), $time);
+            $cache->setex($cache_name, $time, ($value+$income));
 
     }
 
