@@ -100,7 +100,7 @@ class PkHistories extends BaseModel
         $left_pk_user = $this->left_pk_user;
         $right_pk_user = $this->right_pk_user;
         $left_pk_user_score = $this->getPkUserScore($left_pk_user->id) ? $this->getPkUserScore($left_pk_user->id) : $this->left_pk_user_score;
-        $right_pk_user_score = $this->getPkUserScore($right_pk_user->id) ? $this->getPkUserScore($right_pk_user->id) : $this->left_pk_user_score;
+        $right_pk_user_score = $this->getPkUserScore($right_pk_user->id) ? $this->getPkUserScore($right_pk_user->id) : $this->right_pk_user_score;
 
         return [
             'id' => $this->id,
