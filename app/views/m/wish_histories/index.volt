@@ -259,7 +259,7 @@
                 } else {
                     vm.isHintToast = false;
                 }
-            }
+            },
             toReLoad:function () {
                 location.reload();
             }
