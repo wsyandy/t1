@@ -656,7 +656,7 @@ class ActivitiesController extends BaseController
     // 礼物周榜活动
     function giftCharmWeek20180514rankActivityAction()
     {
-        $this->view->title = '等待玩家';
+        $this->view->title = '玫瑰情人节';
         $this->view->sid = $this->params('sid', '');
         $this->view->code = $this->params('code', '');
         $this->giftCharmRankActivity();
