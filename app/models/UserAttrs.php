@@ -439,21 +439,13 @@ trait UserAttrs
             return $this->getDefaultAvatar();
         }
 
-        if (isDevelopmentEnv()) {
-            return StoreFile::getUrl($this->avatar) . '@!100x100';
-        }
-
-        return StoreFile::getUrl($this->avatar) . '@!small';
+        return StoreFile::getUrl($this->avatar) . '@!100x100';
     }
 
     function getAvatarBigUrl()
     {
         if (isBlank($this->avatar)) {
             return $this->getDefaultAvatar();
-        }
-
-        if (isDevelopmentEnv()) {
-            //return StoreFile::getUrl($this->avatar) . '@!big_webp';
         }
 
         return StoreFile::getUrl($this->avatar) . '@!big';

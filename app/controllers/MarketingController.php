@@ -93,7 +93,7 @@ class MarketingController extends ApplicationController
         $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    //次日留存
+    //次日留存(废弃)
     function startAppAction()
     {
 

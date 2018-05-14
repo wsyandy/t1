@@ -28,7 +28,7 @@ class PaymentsController extends BaseController
 
         $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
 
-        if ($payment_channel->isApple()) {
+        if ($payment_channel->isApple() && isProduction()) {
 
             $device = $this->currentUser()->device;
 
