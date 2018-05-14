@@ -79,19 +79,12 @@ trait RoomAttrs
         $hot_cache = self::getHotWriteCache();
         $key = $this->getRealUserListKey();
         $user_ids = $hot_cache->zrange($key, 0, -1);
-
+        $user_num = count($user_ids);
         $score = 0;
 
         //可优化
-        if (count($user_ids) > 0) {
-            $pay_user_num = Users::count([
-                'conditions' => '(pay_amount > 0 or pay_amount is not null) and id in (' . implode(',', $user_ids) . ")",
-                'columns' => 'id']);
-
-            $no_pay_user_num = $this->getRealUserNum() - $pay_user_num;
-
-            $score += $pay_user_num * 10;
-            $score += $no_pay_user_num * 1;
+        if ($user_num > 0) {
+            $score = $user_num * 10;
         }
 
         return $score;
