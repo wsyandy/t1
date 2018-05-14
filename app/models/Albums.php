@@ -73,7 +73,7 @@ class Albums extends BaseModel
         }
 
         if (isDevelopmentEnv()) {
-            return  StoreFile::getUrl($this->image) . '@!small_webp';
+            //return  StoreFile::getUrl($this->image) . '@!small_webp';
         }
 
         return StoreFile::getUrl($this->image) . '@!small';
@@ -86,7 +86,7 @@ class Albums extends BaseModel
         }
 
         if (isDevelopmentEnv()) {
-            return  StoreFile::getUrl($this->image) . '@!big_webp';
+            //return  StoreFile::getUrl($this->image) . '@!big_webp';
         }
 
         return StoreFile::getUrl($this->image) . '@!big';
