@@ -171,9 +171,9 @@ class BaseController extends \ApplicationController
     function beforeAction($dispatcher)
     {
 
-        if (!$this->currentProductChannel()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道非法');
-        }
+//        if (!$this->currentProductChannel()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '产品渠道非法');
+//        }
 
         $controller_name = $dispatcher->getControllerName();
         $action_name = $dispatcher->getActionName();
