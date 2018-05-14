@@ -25,10 +25,11 @@
             <img src="" alt="">
             <div class="winning_record_box">
                 <span>${ lucky_name.nickname } ID:${ lucky_name.uid }</span>
-                <p>获得 <span> 3000元机械手表</span></p>
+                <p>获得 <span> 价值3000元机械手表</span></p>
             </div>
         </li>
     </ul>
+    <p class="record_qq">中奖用户请联系客服QQ：3407150190</p>
 </div>
 <script>
     var opts = {

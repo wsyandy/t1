@@ -42,6 +42,7 @@
                 <li><span class="dot"></span> 参与者许下的愿望将经过审核后方可上墙；许愿内容不允许出现色情暴力，人身攻击等不文明言语，如若出现，平台将有权不予上许愿墙</li>
                 <li><span class="dot"></span> 活动开始时间5.13零点开始至6.17二十四点止；另对于中奖者，官方后台将会主动联系</li>
                 <li><span class="dot"></span> 本活动最终解释权归Hi语音所有</li>
+                <li><span class="dot"></span> 中奖用户请联系客服QQ：3407150190</li>
             </ul>
             <span class="wire"></span>
         </div>

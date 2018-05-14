@@ -528,6 +528,15 @@ html,body{
     text-overflow:ellipsis;
     white-space: nowrap;
 }
+.record_qq{
+    position: absolute;
+    left:0;
+    bottom: .2rem;
+    width: 100%;
+    text-align: center;
+    font-size: .24rem;
+    color: #FFFFFF;
+}
 
 /* 排行榜 */
 .wishing_tree_list{
