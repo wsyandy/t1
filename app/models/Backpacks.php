@@ -27,9 +27,10 @@ class Backpacks extends BaseModel
     {
         // search for where
         $conditions = [
-            'conditions' => 'user_id = :user_id:',
+            'conditions' => 'user_id = :user_id: and number > :number:',
             'bind' => [
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'number' => 0
             ],
             'order' => 'id desc'
         ];
@@ -83,13 +84,19 @@ class Backpacks extends BaseModel
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => self::getExpireAt(),
+                'expire_at' => self::getExpireAt($room_id),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => self::getSvgaImageUrl(),
                 'total_value' => $total_value,
                 'current_value' => $cur_value
             ]
         );
+
+        if ($cur_value >= $total_value) {
+            $cache = self::getHotWriteCache();
+            $cache_name = self::getBoomRoomCacheName($room_id);
+            $cache->set($cache_name, time(), 180);
+        }
 
         if (isDevelopmentEnv()) {
             Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
@@ -260,11 +267,31 @@ class Backpacks extends BaseModel
 
 
     /**
+     * @param $room_id
      * @return false|int
      */
-    static function getExpireAt()
+    static function getExpireAt($room_id)
     {
-        return strtotime('+3 minutes', time());
+        $cache = self::getHotWriteCache();
+        $cache_room_name = self::getBoomRoomCacheName($room_id);
+        $time = $cache->get($cache_room_name);
+
+        if (empty($time)) {
+            return 0;
+        }
+
+        $time = strtotime('+3 minutes', $time);
+        return $time;
+    }
+
+
+    /**
+     * @param $room_id
+     * @return string
+     */
+    static function getBoomRoomCacheName($room_id)
+    {
+        return 'boom_target_room:'.$room_id;
     }
 
 

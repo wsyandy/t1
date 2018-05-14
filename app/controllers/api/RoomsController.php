@@ -293,15 +293,21 @@ class RoomsController extends BaseController
         $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
 
         // 爆礼物
-        $day_income = $room->getDayIncome(date('Ymd'));
+        $cache = \Backpacks::getHotWriteCache();
+        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
+        if ($cache->exists($cache_room_name)) {
+            $day_income = $room->getDayIncome(date('Ymd'));
 
-        $res['blasting_gift'] = [
-            'expire_at' => \Backpacks::getExpireAt(),
-            'url' => 'url://m/backpacks',
-            'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-            'total_value' => \Backpacks::getTotalBoomValue(),
-            'current_value' => $day_income
-        ];
+            $res['blasting_gift'] = [
+                'expire_at' => (int)\Backpacks::getExpireAt($room_id),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => \Backpacks::getSvgaImageUrl(),
+                'total_value' => \Backpacks::getTotalBoomValue(),
+                'current_value' => $day_income
+            ];
+        } else {
+            $res['blasting_gift'] = [];
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
