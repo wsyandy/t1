@@ -15,11 +15,18 @@ class MakiTask extends Phalcon\Cli\Task
         $rooms = $rooms->toJson('rooms');
 
         $backpack = new Backpacks();
+        $cache = Rooms::getHotWriteCache();
 
         foreach ($rooms['rooms'] as $value) {
             $room = Rooms::findFirstById($value['id']);
             $noun = $room->getDayIncome(date('Ymd'));
 
+            // 流水
+            $cache_name = Rooms::getBoomValueCacheName($value['id']);
+            $value = $cache->get($cache_name);
+
+            echoLine($cache_name);
+            echoLine($value);
             echoLine($room);
             echoLine($noun);
             if ($noun >= $line) {
