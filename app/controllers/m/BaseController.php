@@ -57,11 +57,11 @@ class BaseController extends \ApplicationController
         //$force 强制重新查用户
         if (!isset($this->_current_user) && $user_id || $force) {
             $user = \Users::findFirstById($user_id);
-            if ($user) {
-                $user->product_channel = $this->_current_product_channel;
-            }
-
             $this->_current_user = $user;
+        }
+
+        if ($this->_current_user && $this->_current_product_channel) {
+            $this->_current_user->product_channel = $this->_current_product_channel;
         }
 
         return $this->_current_user;
@@ -94,11 +94,11 @@ class BaseController extends \ApplicationController
 
         if (!isset($this->_other_user) && $other_user_id || $force) {
             $other_user = \Users::findFirstById($other_user_id);
-            if ($other_user) {
-                $other_user->product_channel = $this->_current_product_channel;
-            }
-
             $this->_other_user = $other_user;
+        }
+
+        if ($this->_other_user && $this->_current_product_channel) {
+            $this->_other_user->product_channel = $this->_current_product_channel;
         }
 
         return $this->_other_user;
