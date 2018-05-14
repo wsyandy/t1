@@ -25,6 +25,11 @@ class DrawHistoriesController extends BaseController
 
 
         $hot_cache = \DrawHistories::getHotWriteCache();
+        $num = $hot_cache->zcard('draw_histories_1000');
+        if($num > 1000){
+            $hot_cache->zremrangebyrank('draw_histories_1000', 0, $num - 800);
+        }
+
         $ids = $hot_cache->zrevrange('draw_histories_1000', 0, 10);
         if($ids){
             $qian_draw_histories = \DrawHistories::findByIds($ids);
@@ -40,6 +45,10 @@ class DrawHistoriesController extends BaseController
         $res['draw_histories'] = array_merge($qian_res['draw_histories'], $res['draw_histories']);
 
 
+        $num = $hot_cache->zcard('draw_histories_10000');
+        if($num > 1000){
+            $hot_cache->zremrangebyrank('draw_histories_10000', 0, $num - 800);
+        }
         $ids = $hot_cache->zrevrange('draw_histories_10000', 0, 10);
         if($ids){
             $wan_draw_histories = \DrawHistories::findByIds($ids);
@@ -55,7 +64,10 @@ class DrawHistoriesController extends BaseController
         $wan_res = $wan_draw_histories->toJson('draw_histories', 'toSimpleJson');
         $res['draw_histories'] = array_merge($wan_res['draw_histories'], $res['draw_histories']);
 
-
+        $num = $hot_cache->zcard('draw_histories_100000');
+        if($num > 1000){
+            $hot_cache->zremrangebyrank('draw_histories_100000', 0, $num - 800);
+        }
         $ids = $hot_cache->zrevrange('draw_histories_100000', 0, 10);
         if($ids){
             $wan10_draw_histories = \DrawHistories::findByIds($ids);

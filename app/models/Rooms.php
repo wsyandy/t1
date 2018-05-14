@@ -1600,9 +1600,9 @@ class Rooms extends BaseModel
 
     static function newSearchHotRooms($user, $page, $per_page)
     {
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
+        //$new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
+        //$old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
+        //$old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
 
         $register_time = time() - $user->register_at;
         $time = 60 * 15;
@@ -1617,16 +1617,18 @@ class Rooms extends BaseModel
 
         } else {
 
-            if ($register_time <= $time) {
-                $hot_room_list_key = $new_user_hot_rooms_list_key;
-            } else {
+            $hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
 
-                if ($user->pay_amount > 0) {
-                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
-                } else {
-                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
-                }
-            }
+//            if ($register_time <= $time) {
+//                $hot_room_list_key = $new_user_hot_rooms_list_key;
+//            } else {
+//
+//                if ($user->pay_amount > 0) {
+//                    $hot_room_list_key = $old_user_pay_hot_rooms_list_key;
+//                } else {
+//                    $hot_room_list_key = $old_user_no_pay_hot_rooms_list_key;
+//                }
+//            }
         }
 
         $hot_cache = Users::getHotWriteCache();
@@ -2847,13 +2849,11 @@ class Rooms extends BaseModel
                 continue;
             }
 
-//            if ($room->isShieldRoom()) {
-//                $shield_room_ids[$room->id] = $total_score;
-//            } else {
-//                $room_ids[$room->id] = $total_score;
-//            }
-
-            $room_ids[$room->id] = $total_score;
+            if ($room->isShieldRoom()) {
+                $shield_room_ids[$room->id] = $total_score;
+            } else {
+                $room_ids[$room->id] = $total_score;
+            }
 
             if (isDevelopmentEnv()) {
                 $room_score_key = "hot_room_score_list_room_id{$room->id}";
@@ -2883,8 +2883,8 @@ class Rooms extends BaseModel
             });
         }
 
-        $shield_room_num = 5;
-        $total_room_num = 25;
+        $shield_room_num = 15;
+        $total_room_num = 15;
         $new_user_shield_room_num = 3;
 
         if (isDevelopmentEnv()) {
