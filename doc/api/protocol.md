@@ -73,5 +73,6 @@ share_history_id 分享记录的id
  model       对应的模块        例如 user, room 客户端遇到不能处理的model，就直接忽略    
  action      对应的动作类型     view进入查看,logout退出  
  client_url  跳转地址    
- icon_url    图标地址    
+ icon_url    图标地址
+ type   int  消息类型 1 红包消息     
  ```
