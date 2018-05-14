@@ -31,7 +31,7 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
-        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num)/$incr_num);
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num) / $incr_num);
 
         $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
@@ -58,7 +58,7 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
-        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num)/$incr_num);
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num) / $incr_num);
 
         $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
@@ -77,14 +77,16 @@ class DrawHistoriesController extends BaseController
         $stats = $hot_cache->get($cache_key);
         if ($stats) {
             $stats = json_decode($stats, true);
-            $this->view->stats = $stats;
-            $this->view->stat_at = date('Y-m-d', $stat_at);
-            return;
+            $loop_num = 0;
+            if (date('Y-m-d', $stat_at) == date("Y-m-d")) {
+                $loop_num = 1;
+            }
+        } else {
+            $loop_num = 7;
+            $stats = [];
         }
 
-
-        $stats = [];
-        for ($i = 0; $i < 7; $i++) {
+        for ($i = 0; $i < $loop_num; $i++) {
 
             $start_at = beginOfDay($stat_at - $i * 24 * 3600);
             $end_at = endOfDay($stat_at - $i * 24 * 3600);
@@ -148,7 +150,7 @@ class DrawHistoriesController extends BaseController
             $stats[date("Ymd", $start_at)] = $result;
         }
 
-        $hot_cache->setex($cache_key, 600, json_encode($stats, JSON_UNESCAPED_UNICODE));
+        $hot_cache->setex($cache_key, 7 * 3600 * 24, json_encode($stats, JSON_UNESCAPED_UNICODE));
 
         $this->view->stats = $stats;
         $this->view->stat_at = date('Y-m-d', $stat_at);
@@ -169,7 +171,7 @@ class DrawHistoriesController extends BaseController
         $cache_decr_gold_key = 'draw_history_total_amount_decr_gold';
         $decr_gold_num = $user_db->get($cache_decr_gold_key);
 
-        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num)/$incr_num);
+        $pool_rate = sprintf("%0.3f", ($incr_num - $decr_num) / $incr_num);
 
         $this->view->pool_rate = $pool_rate;
         $this->view->total_incr_num = $incr_num;
@@ -188,22 +190,27 @@ class DrawHistoriesController extends BaseController
         $stats = $hot_cache->get($cache_key);
         if ($stats) {
             $stats = json_decode($stats, true);
-            $this->view->stats = $stats;
-            $this->view->stat_at = date('Y-m-d', $stat_at);
-            return;
+        } else {
+            $stats = [];
         }
 
-
-        $stats = [];
         $hour = 23;
         if (date("Y-m-d", $stat_at) == date('Y-m-d')) {
             $hour = date('H');
         }
 
+        $first = 0;
         for ($i = $hour; $i >= 0; $i--) {
 
             $start_at = $stat_at + $i * 3600;
             $end_at = $stat_at + ($i + 1) * 3600;
+
+            if (isset($stats[date("YmdH", $start_at)])) {
+                $first++;
+                if ($first > 1) {
+                    continue;
+                }
+            }
 
             $result = [];
             $total_pay_amount = \DrawHistories::sum([
@@ -262,7 +269,6 @@ class DrawHistoriesController extends BaseController
             $result['avg_hit_diamond'] = $avg_hit_diamond;
 
             $stats[date("YmdH", $start_at)] = $result;
-            info(date("YmdH", $start_at), $result);
         }
 
         $hot_cache->setex($cache_key, 600, json_encode($stats, JSON_UNESCAPED_UNICODE));
