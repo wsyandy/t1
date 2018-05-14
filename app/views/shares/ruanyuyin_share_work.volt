@@ -11,6 +11,7 @@
 <body>
 <div class="vueBox">
     <img class="bg" src="/shares/images/bg.png" alt="">
+    <div class="none share_tips" id="open_in_browser_tip">戳右上角，在浏览器中打开</div>
     <div class="share_box">
         <div class="share_avatar">
             <img src="{{ user.avatar_url }}" alt="">
@@ -22,7 +23,7 @@
         </div>
         <img class="logo_hi" src="/shares/images/ruanyuyin_logo_hi.png" alt="">
         <div class="logo_hi_txt">软语音-好玩的语音直播软件</div>
-        <span  id="down_load" class="share_download">立即下载</span>
+        <span id="down_load" class="share_download">立即下载</span>
     </div>
 
 </div>
@@ -33,18 +34,22 @@
 <script>
 
     $(document).ready(function () {
-        $("#down_load").click(function (e) {
-            e.preventDefault();
+        if ($.isWeixinClient() || $.isWeiboClient()) {
+            $("#open_in_browser_tip").removeClass('none');
+        } else {
 
-            var app_url = '{{ user.product_channel.code }}' + '://';
+            $("#down_load").click(function (e) {
+                e.preventDefault();
 
-            window.location = app_url;
+                var app_url = '{{ user.product_channel.code }}' + '://';
 
-            if ({{ soft_version_id }}) {
-                setTimeout(Download, 2000);
-            }
-        });
+                window.location = app_url;
 
+                if ({{ soft_version_id }}) {
+                    setTimeout(Download, 2000);
+                }
+            });
+        }
     });
 
     function Download() {
