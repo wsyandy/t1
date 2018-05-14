@@ -53,7 +53,8 @@
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
                 game_id: "{{ game.id }}",
-                current_user:{{ current_user }}
+                current_user:{{ current_user }},
+                code: '{{ code }}'
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -91,11 +92,12 @@
 
                 go_game: function () {
                     var data = {
-                        'user_id': vm.game_host_user_id,
-                        'pay_type': vm.pay_type,
-                        'amount': vm.amount,
-                        'game_id': vm.game_id,
-                        'sid': vm.sid
+                        user_id: vm.game_host_user_id,
+                        pay_type: vm.pay_type,
+                        amount: vm.amount,
+                        game_id: vm.game_id,
+                        sid: vm.sid,
+                        code: vm.code
                     };
 
                     if (vm.pay_type == 'free' && vm.amount > 0) {
