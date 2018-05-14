@@ -476,6 +476,11 @@ class UsersController extends BaseController
     function detailAction()
     {
         $detail_json = $this->currentUser()->toDetailJson();
+
+        if (isDevelopmentEnv()) {
+            $detail_json['medal_image_url'] = $this->getRoot() . "m/images/level_11.png";
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
