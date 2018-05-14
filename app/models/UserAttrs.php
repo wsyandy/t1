@@ -440,7 +440,7 @@ trait UserAttrs
         }
 
         if (isDevelopmentEnv()) {
-            //return StoreFile::getUrl($this->avatar) . '@!small_webp';
+            return StoreFile::getUrl($this->avatar) . '@!100x100';
         }
 
         return StoreFile::getUrl($this->avatar) . '@!small';

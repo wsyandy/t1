@@ -73,7 +73,7 @@ class Albums extends BaseModel
         }
 
         if (isDevelopmentEnv()) {
-            //return  StoreFile::getUrl($this->image) . '@!small_webp';
+            return  StoreFile::getUrl($this->image) . '@!100x100';
         }
 
         return StoreFile::getUrl($this->image) . '@!small';
