@@ -164,21 +164,21 @@ trait RoomAttrs
 
             $is_shield = 1;
 
-            $send_gift_amount_score_rate = 0.7;
-            $send_gift_num_score_rate = 0.05;
-            $real_user_pay_score_rate = 0.1;
-            $real_user_stay_time_score_rate = 0.05;
-            $room_host_score_rate = 0.05;
-            $id_card_auth_users_score_rate = 0.05;
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
 
         } else {
 
-            $send_gift_amount_score_rate = 0.1;
-            $send_gift_num_score_rate = 0.05;
-            $real_user_pay_score_rate = 0.6;
-            $real_user_stay_time_score_rate = 0.1;
-            $room_host_score_rate = 0.1;
-            $id_card_auth_users_score_rate = 0.05;
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
         }
 
         $send_gift_amount_score = $this->getRoomSendGiftAmountScore() * $send_gift_amount_score_rate;
@@ -213,6 +213,10 @@ trait RoomAttrs
 
         info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
             $id_card_auth_users_score, $ratio, $total_score);
+
+        if (!$is_shield) {
+            $total_score = $total_score * 1.5;
+        }
 
         return $total_score;
     }
