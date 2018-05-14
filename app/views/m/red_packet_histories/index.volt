@@ -86,7 +86,7 @@
         <div class="zuan_less_box less_show">
             <i class="less_close"></i>
             <p>您的钻石余额不足，请充值后再发红包</p>
-            <a href="/m/products?sid={{ sid }}&code={{ code }}" class="less_btn">去充值</a>
+            <a href="/m/users/account?sid={{ sid }}&code={{ code }}" class="less_btn">去充值</a>
         </div>
     </div>
 
