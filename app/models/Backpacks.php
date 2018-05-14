@@ -91,6 +91,9 @@ class Backpacks extends BaseModel
             ]
         );
 
+        if (isDevelopmentEnv()) {
+            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
+        }
         $room = Rooms::findFirstById($room_id);
         $room->push($body);
     }
@@ -275,12 +278,20 @@ class Backpacks extends BaseModel
             return [ERROR_CODE_FAIL, '赠送失败', null];
         }
 
-        if ($this->number < count($receiver_ids) * $gift_num) {
+        // 赠送的数量
+        $send_number = count($receiver_ids) * $gift_num;
+
+        if ($this->number < $send_number) {
             return [ERROR_CODE_FAIL, '赠送失败', null];
         }
 
-        $give_result = \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
+        // 背包减去数量
+        $this->number = $this->number - $send_number;
+        $give_result = $this->save();
+
         $notify_type = fetch($opt, 'notify_type');
+
+        \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
 
         if ($give_result) {
 
