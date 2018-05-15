@@ -82,6 +82,7 @@ class RedPackets extends BaseModel
     function afterCreate()
     {
         $cache = \Users::getUserDb();
+        //当前房间对应红包id集合
         $send_red_packet_list_key = $this->generateRedPacketListKey($this->current_room_id);
         $cache->zadd($send_red_packet_list_key, time(), $this->id);
 
@@ -110,20 +111,28 @@ class RedPackets extends BaseModel
         return 'red_packet_for_user_' . strval($this->user_id) . '_' . time() . mt_rand(1000, 10000);
     }
 
-    static function createReadPacket($room, $opts)
+    static function createReadPacket($user, $room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
         foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_diamond'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
+            //红包socket
             $url = self::generateRedPacketUrl($send_red_packet_history->user_id);
             $room->pushRedPacketMessage($send_red_packet_history->num, $url);
+
+            //红包公屏socket
+            $content = $user->nickname . '发了个大红包，快来抢啊！！！';
+            $room->pushpushTopTopicMessage($user, $content);
 
             $opts = [
                 'current_room_id' => $send_red_packet_history->current_room_id,
                 'user_id' => $send_red_packet_history->user_id,
-                'balance_diamond' => $send_red_packet_history->balance_diamond
+                'balance_diamond' => $send_red_packet_history->balance_diamond,
+                'num' => $send_red_packet_history->num,
+                'id' => $send_red_packet_history->id,
+                'user_nickname' => $send_red_packet_history->user->nickname
             ];
 
             self::saveRedPacketForRoom($opts);
@@ -153,7 +162,6 @@ class RedPackets extends BaseModel
     function toSimpleJson()
     {
         $start_at = date('Y-m-d H:i:s', $this->created_at + 3 * 60);
-
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -166,31 +174,42 @@ class RedPackets extends BaseModel
         ];
     }
 
-    static function grabRedPacket($current_room_id, $user, $red_packet_type)
+    static function grabRedPacket($current_room_id, $user, $red_packet_type, $red_packet_id)
     {
-        switch ($red_packet_type) {
-            case RED_PACKET_TYPE_ALL:
-                \RedPackets::getRedPacketDiamond($current_room_id, $user);
-                break;
-            case RED_PACKET_TYPE_ATTENTION:
-                break;
-            case RED_PACKET_TYPE_STAY_AT_ROOM:
-                break;
-            case RED_PACKET_TYPE_NEARBY:
-                break;
+        list($user_nickname, $get_diamond) = \RedPackets::getRedPacketDiamondByAll($current_room_id, $user, $red_packet_id);
+
+        if ($get_diamond) {
+            $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
+            $room = \Rooms::findFirstById($current_room_id);
+            $room->pushpushTopTopicMessage($user, $content);
+
+            return [ERROR_CODE_SUCCESS, '抢到' . $user_nickname . '发的钻石红包', $get_diamond];
         }
+
+        return [ERROR_CODE_SUCCESS, '手慢了，红包抢完了！', null];
     }
 
-    static function getRedPacketDiamond($current_room_id, $user)
+    static function getRedPacketDiamondByAll($current_room_id, $user, $red_packet_id)
     {
         $cache = \Users::getHotWriteCache();
-        $key = self::generateRedPacketForRoomKey($current_room_id);
-        $balance_diamond = $cache->zscore($key, $user->id);
-        if ($balance_diamond) {
+        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user->id, $red_packet_id);
+        //房间内对应抢到红包的用户的红包ID的集合
+        $key = self::generateRedPacketForRoomKey($current_room_id, $user->id);
 
+        $balance_diamond = $cache->hget($red_packet_key, 'balance_diamond');
+        $num = $cache->hget($red_packet_key, 'num');
+        $user_nickname = $cache->hget($red_packet_key, 'user_nickname');
+        if ($balance_diamond && $num) {
+            $usable_balance_diamond = $balance_diamond - ($num - 1);
+            $get_diamond = mt_rand(1, $usable_balance_diamond);
+            $body = ['num' => $num - 1, 'balance_diamond' => $balance_diamond - $get_diamond];
+            $cache->hmset($red_packet_key, $body);
+            $cache->zadd($key, time(), $red_packet_id);
+
+            return [$user_nickname, $get_diamond];
         }
 
-        return false;
+        return null;
 
     }
 
@@ -199,23 +218,37 @@ class RedPackets extends BaseModel
         $user_id = fetch($opts, 'user_id');
         $current_room_id = fetch($opts, 'current_room_id');
         $balance_diamond = fetch($opts, 'balance_diamond');
+        $num = fetch($opts, 'num');
+        $id = fetch($opts, 'id');
+        $user_nickname = fetch($opts, 'user_nickname');
 
         $cache = \Users::getHotWriteCache();
-        $key = self::generateRedPacketForRoomKey($current_room_id);
-        $cache->zadd($key, $balance_diamond, $user_id);
+
+        //初始化红包数据
+        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user_id, $id);
+        $body = ['id' => $id, 'num' => $num, 'balance_diamond' => $balance_diamond, 'user_id' => $user_id, 'user_nickname' => $user_nickname];
+        $cache->hmset($red_packet_key, $body);
+
     }
 
-    static function generateRedPacketForRoomKey($room_id)
+    static function generateRedPacketForRoomKey($room_id, $user_id)
     {
-        return 'red_packet_for_room_' . $room_id;
+        return 'get_red_packet_in_room_' . $room_id . '_for_user_' . $user_id;
     }
 
-    static function checkRedPacketInfoForRoom($current_room_id, $user_id)
+    static function generateRedPacketInRoomForUserKey($room_id, $user_id, $id)
+    {
+        return 'red_packet_in_room_' . $room_id . '_for_user_' . $user_id . '_by_' . $id;
+    }
+
+
+    static function checkRedPacketInfoForRoom($current_room_id, $user_id, $red_packet_id)
     {
         $cache = \Users::getHotWriteCache();
-        $key = self::generateRedPacketForRoomKey($current_room_id);
-        $balance_diamond = $cache->zscore($key, $user_id);
-        return $balance_diamond;
+        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user_id, $red_packet_id);
+        $balance_diamond = $cache->hget($red_packet_key, 'balance_diamond');
+        $num = $cache->hget($red_packet_key, 'num');
+        return [$balance_diamond, $num];
     }
 
 

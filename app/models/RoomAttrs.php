@@ -79,19 +79,12 @@ trait RoomAttrs
         $hot_cache = self::getHotWriteCache();
         $key = $this->getRealUserListKey();
         $user_ids = $hot_cache->zrange($key, 0, -1);
-
+        $user_num = count($user_ids);
         $score = 0;
 
         //可优化
-        if (count($user_ids) > 0) {
-            $pay_user_num = Users::count([
-                'conditions' => '(pay_amount > 0 or pay_amount is not null) and id in (' . implode(',', $user_ids) . ")",
-                'columns' => 'id']);
-
-            $no_pay_user_num = $this->getRealUserNum() - $pay_user_num;
-
-            $score += $pay_user_num * 10;
-            $score += $no_pay_user_num * 1;
+        if ($user_num > 0) {
+            $score = $user_num * 10;
         }
 
         return $score;
@@ -164,21 +157,21 @@ trait RoomAttrs
 
             $is_shield = 1;
 
-            $send_gift_amount_score_rate = 0.7;
-            $send_gift_num_score_rate = 0.05;
-            $real_user_pay_score_rate = 0.1;
-            $real_user_stay_time_score_rate = 0.05;
-            $room_host_score_rate = 0.05;
-            $id_card_auth_users_score_rate = 0.05;
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
 
         } else {
 
-            $send_gift_amount_score_rate = 0.1;
-            $send_gift_num_score_rate = 0.05;
-            $real_user_pay_score_rate = 0.6;
-            $real_user_stay_time_score_rate = 0.1;
-            $room_host_score_rate = 0.1;
-            $id_card_auth_users_score_rate = 0.05;
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
         }
 
         $send_gift_amount_score = $this->getRoomSendGiftAmountScore() * $send_gift_amount_score_rate;
@@ -201,6 +194,10 @@ trait RoomAttrs
         }
 
         $user_db = Users::getUserDb();
+
+        if (!$is_shield) {
+            $total_score = $total_score * 1.5;
+        }
 
         $data = [
             'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
