@@ -163,14 +163,14 @@
                 if(this.sex == "男女皆可"){
                     data.sex = 2;
                 }
-                //console.log(data);
+                console.log(data);
                 if(vm.amount > this.myDiamond ){
                     vm.less_zuan_input = true;
                     return;
                 }
                 $.authPost('/m/red_packet_histories/create', data, function (resp) {
+                    console.log(resp);
                     if (!resp.error_code) {
-                        //console.log(resp);
                         location.href = 'app://rooms/detail?id='+ resp.send_red_packet_history.current_room_id;
                     }
                 });
