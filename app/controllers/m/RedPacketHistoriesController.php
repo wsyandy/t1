@@ -112,7 +112,7 @@ class RedPacketHistoriesController extends BaseController
             if (!$error_code) {
                 //在这里增加钻石
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-                \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $get_diamond, $opts);
+                \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
 
                 return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
             }
