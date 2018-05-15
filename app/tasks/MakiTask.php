@@ -33,6 +33,18 @@ class MakiTask extends Phalcon\Cli\Task
     }
 
 
+    public function t1Action()
+    {
+        $room_id = 137039;
+        $body = [
+            'action' => 'blasting_gift',
+            'blasting_gift' => 'test'
+        ];
+        $room = Rooms::findFirstById($room_id);
+        $room->push($body);
+    }
+
+
     public function dataAction()
     {
         // 查用户id
