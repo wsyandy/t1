@@ -8,7 +8,7 @@
         <div class="wait_red wait_red_guanzhu">
             <div id="hide">
                 <div class="pic">
-                    <img src="">
+                    <img src="{{ user_avatar_url }}">
                 </div>
                 <h4>{{ user_nickname }}</h4>
                 <h3>发了一个红包</h3>
