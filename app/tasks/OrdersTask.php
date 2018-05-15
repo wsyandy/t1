@@ -77,42 +77,49 @@ class OrdersTask extends \Phalcon\Cli\Task
     {
         $time = strtotime('-1 hour', time());
 
-        $conditions = array(
+        $conditions = [
             'conditions' => 'status = :status: and created_at >= :created_at:',
             'bind' => [
-                'status' => STATUS_OFF,
+                'status' => ORDER_STATUS_WAIT,
                 'created_at' => $time
             ],
             'columns' => 'user_id'
-        );
-        $order = Orders::find($conditions);
+        ];
 
-        $count = array(); // 计数器
-        foreach ($order as $value) {
-            if (isset($count[$value->user_id])) {
-                $count[$value->user_id] += 1;
-            } else
-                $count[$value->user_id] = 1;
+        $orders = Orders::find($conditions);
+
+        $user_ids = []; // 计数器
+
+        foreach ($orders as $order) {
+
+            if (isset($user_ids[$order->user_id])) {
+                $user_ids[$order->user_id] += 1;
+            } else {
+                $user_ids[$order->user_id] = 1;
+            }
         }
 
-        if (empty($count)) return;
-        //$count[41792] = 4;
+        if (empty($user_ids)) return;
 
         $content = '尊敬用户：您好！请问您是否在支付的时候遇到了问题？如有疑问请联系官方客服中心400-018-7755解决。';
+
         $push_data = [
             'title' => '系统充值通知',
             'body' => $content
         ];
 
         // 次数大于2的user_id
-        foreach ($count as $item => $value) {
+        foreach ($user_ids as $user_id => $num) {
 
-            if ($value >= 2) {
+            if ($num >= 2) {
+
+                info($user_id, $num);
+
                 // 需要推送消息的
-                Chats::sendSystemMessage($item, CHAT_CONTENT_TYPE_TEXT, $content);
+                Chats::sendSystemMessage($user_id, CHAT_CONTENT_TYPE_TEXT, $content);
 
                 // 个推
-                $user = Users::findFirstById($item);
+                $user = Users::findFirstById($user_id);
                 Pushers::push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
             }
         }
