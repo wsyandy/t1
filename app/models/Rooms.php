@@ -2141,11 +2141,11 @@ class Rooms extends BaseModel
         $room_id = $this->id;
 
         // 单位周期 房间当前流水值
-        $cur_income_cache_name = self::getBoomValueCacheName($room_id);
+        $cur_income_cache_name = self::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_cache_name);
 
         // 房间爆礼物结束倒计时
-        $room_cache_name = Backpacks::getBoomRoomCacheName($room_id);
+        $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
 
         $expire = endOfDay() - $time;
         if (isDevelopmentEnv()) {
@@ -2155,7 +2155,7 @@ class Rooms extends BaseModel
         $total_income = Backpacks::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
-        if ($cache->exists($room_cache_name)) {
+        if ($cache->exists($room_sign_key)) {
 
             ($cur_income != 0) && $cache->setex($cur_income_cache_name, $expire, 0);
 
@@ -2166,7 +2166,7 @@ class Rooms extends BaseModel
 
             if ($cur_total_income >= $total_income) {
                 // 爆礼物
-                $cache->setex($room_cache_name, 180, $time);
+                $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_cache_name, $expire, 0);
             }
             $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
@@ -3033,7 +3033,7 @@ class Rooms extends BaseModel
         return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 
-    static public function getBoomValueCacheName($room_id)
+    static public function generateBoomCurIncomeKey($room_id)
     {
         return 'boom_target_value_room_' . $room_id;
     }

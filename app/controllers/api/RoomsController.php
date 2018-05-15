@@ -295,7 +295,7 @@ class RoomsController extends BaseController
 
         // 爆礼物
         $cache = \Backpacks::getHotWriteCache();
-        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
+        $cache_room_name = \Backpacks::generateBoomRoomSignKey($room_id);
         if ($cache->exists($cache_room_name)) {
             $day_income = $room->getDayIncome(date('Ymd'));
 

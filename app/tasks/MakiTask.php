@@ -16,7 +16,7 @@ class MakiTask extends Phalcon\Cli\Task
         $cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
-            $cur_income_cache_name = Rooms::getBoomValueCacheName($room->id);
+            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
             $cur_income = $cache->get($cur_income_cache_name);
 
             if ($cur_income >= $line) {

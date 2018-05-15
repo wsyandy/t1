@@ -233,8 +233,8 @@ class Backpacks extends BaseModel
     static function getExpireAt($room_id)
     {
         $cache = self::getHotWriteCache();
-        $room_cache_name = self::getBoomRoomCacheName($room_id);
-        $time = $cache->get($room_cache_name);
+        $room_sign_key = self::generateBoomRoomSignKey($room_id);
+        $time = $cache->get($room_sign_key);
 
         if (empty($time)) {
             return 0;
@@ -249,7 +249,7 @@ class Backpacks extends BaseModel
      * @param $room_id
      * @return string
      */
-    static function getBoomRoomCacheName($room_id)
+    static function generateBoomRoomSignKey($room_id)
     {
         return 'boom_target_room_'.$room_id;
     }

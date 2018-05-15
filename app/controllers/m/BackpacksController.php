@@ -42,7 +42,7 @@ class BackpacksController extends BaseController
         $room_id = $this->getCurrentRoomId($user->id);
 
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id, $room_id);
+        $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
         $value = $cache->get($cache_name);
         if ($value == 1) {
@@ -103,7 +103,7 @@ class BackpacksController extends BaseController
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id, $room_id);
+        $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
         $json = $cache->get($cache_name);
 
@@ -177,7 +177,7 @@ class BackpacksController extends BaseController
      * @param $room_id
      * @return string
      */
-    protected function getCacheName($user_id, $room_id)
+    protected function generateUserSignKey($user_id, $room_id)
     {
         return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
