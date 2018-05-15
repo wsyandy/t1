@@ -44,8 +44,13 @@ class BackpacksController extends BaseController
         $cache = \Backpacks::getHotWriteCache();
         $cache_name = $this->getCacheName($user->id, $room_id);
 
+        $value = $cache->get($cache_name);
+        if ($value == 1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！');
+        }
+
         // 用户未领取
-        if ($cache->exists($cache_name)) {
+        if ($cache->exists($cache_name) && $value!=1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
         }
 
@@ -65,7 +70,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->set($cache_name, json_encode($json), 180);
+        $cache->setex($cache_name, 180, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -116,7 +121,7 @@ class BackpacksController extends BaseController
             $this->doCreate($value['id'], $value['number'], $type);
         }
 
-        $cache->del($cache_name);
+        $cache->set($cache_name, 1);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
