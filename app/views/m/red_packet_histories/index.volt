@@ -10,7 +10,7 @@
                 <div class="give_box">
                     <h3>红包个数</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="number" v-model="number">
+                        <input type="text" name="" placeholder="" v-model="number">
                         <span>个</span>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="give_box">
                     <h3>红包金额</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="amount"  v-model="amount">
+                        <input type="text" name="" placeholder=""  v-model="amount">
                         <i class="zuan"></i>
                     </div>
                 </div>
