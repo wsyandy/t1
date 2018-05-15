@@ -11,6 +11,8 @@ class MakiTask extends Phalcon\Cli\Task
     {
         $line = 0; // 初始值
         $total = 10000; // 流水上线
+
+        // 房间
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');
 
@@ -18,19 +20,14 @@ class MakiTask extends Phalcon\Cli\Task
         $cache = Rooms::getHotWriteCache();
 
         foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $noun = $room->getDayIncome(date('Ymd'));
+            $cur_income_cache_name = Rooms::getBoomValueCacheName($value['id']);
+            $cur_income = $cache->get($cur_income_cache_name);
 
-            // 流水
-            $cache_name = Rooms::getBoomValueCacheName($value['id']);
-            $value = $cache->get($cache_name);
-
-            echoLine($cache_name);
-            echoLine($value);
-            echoLine($room);
-            echoLine($noun);
-            if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            echoLine($value['id']);
+            echoLine($cur_income_cache_name);
+            echoLine($cur_income);
+            if ($cur_income >= $line) {
+                $backpack->pushClientAboutBoom($total, $cur_income, $value['id']);
             }
         }
     }

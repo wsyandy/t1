@@ -2117,7 +2117,7 @@ class Rooms extends BaseModel
             $expire = 180;
         }
 
-        $total_income = 50000;
+        $total_income = Backpacks::getTotalBoomValue();
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_cache_name)) {

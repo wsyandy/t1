@@ -13,7 +13,7 @@ class Backpacks extends BaseModel
 
     static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boom_SVGA = '/m/images/boom_animation_1.svga';
+    static $boom_SVGA = 'http://test.momoyuedu.cn/m/images/boom_animation_1.svga';
 
     static $total_value = 50000; // 爆礼物总值
 
@@ -93,7 +93,7 @@ class Backpacks extends BaseModel
         );
 
         if (isDevelopmentEnv()) {
-            // Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
+            //Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
         }
         $room = Rooms::findFirstById($room_id);
         $room->push($body);
