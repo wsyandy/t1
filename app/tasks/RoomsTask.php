@@ -863,19 +863,21 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function boomTargetAction()
     {
-        $line = 1000; // 初始值
-        $total = 10000; // 流水上线
+        $line = 1000;
+        $total = Backpacks::getTotalBoomValue();
+
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');
 
         $backpack = new Backpacks();
+        $cache = Rooms::getHotWriteCache();
 
         foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $day_income = $room->getDayIncome(date('Ymd'));
+            $cur_income_cache_name = Rooms::getBoomValueCacheName($value['id']);
+            $cur_income = $cache->get($cur_income_cache_name);
 
-            if ($day_income >= $line) {
-                $backpack->pushClientAboutBoom($total, $day_income, $value['id']);
+            if ($cur_income >= $line) {
+                $backpack->pushClientAboutBoom($total, $cur_income, $value['id']);
             }
         }
     }
