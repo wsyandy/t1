@@ -867,17 +867,14 @@ class RoomsTask extends \Phalcon\Cli\Task
         $total = Backpacks::getBoomTotalValue();
 
         $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
-
-        $backpack = new Backpacks();
         $cache = Rooms::getHotWriteCache();
 
-        foreach ($rooms['rooms'] as $value) {
-            $cur_income_cache_name = Rooms::getBoomValueCacheName($value['id']);
+        foreach ($rooms as $room) {
+            $cur_income_cache_name = Rooms::getBoomValueCacheName($room->id);
             $cur_income = $cache->get($cur_income_cache_name);
 
             if ($cur_income >= $line) {
-                $backpack->pushClientAboutBoom($total, $cur_income, $value['id']);
+                $room->pushBoomIncomeMessage($total, $cur_income, $room->id);
             }
         }
     }

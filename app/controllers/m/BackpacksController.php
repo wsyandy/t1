@@ -20,23 +20,8 @@ class BackpacksController extends BaseController
     {
         $sid = $this->params('sid');
         $code = $this->params('code');
-        $start = $this->params('start', true);
-
-        /*// 用户信息
-        $user = $this->currentUser();
-
-        // 获取当前房间ID
-        $room_id = $this->getCurrentRoomId($user->id);
-
-        // cache
-        $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id, $room_id);
-        if ($cache->exists($cache_name)) {
-            $start = false;
-        }*/
 
         $this->view->title = '爆礼物';
-        $this->view->start = $start;
         $this->view->sid = $sid;
         $this->view->code = $code;
     }
@@ -58,13 +43,7 @@ class BackpacksController extends BaseController
 
         // cache
         $cache = \Backpacks::getHotWriteCache();
-        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
         $cache_name = $this->getCacheName($user->id, $room_id);
-
-        // 房间爆礼物进行中
-        if (!$cache->exists($cache_room_name)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间爆礼物活动已结束！');
-        }
 
         // 用户未抽奖
         if ($cache->exists($cache_name)) {

@@ -8,7 +8,7 @@
 {{ block_end() }}
 
 
-{% if start!=true %}
+{% if !true %}
 
     <!-- 活动未开始 -->
     <img class="banner" src="/m/images/banner_prize.png" alt="">
@@ -36,6 +36,7 @@
     </div>
 
 {% else %}
+
 <img class="banner" src="/m/images/banner_prize.png" alt="">
 <div id="app">
 <!--滚动公告-->
