@@ -15,7 +15,7 @@ class Backpacks extends BaseModel
 
     static $boom_SVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
 
-    static $total_value = 10000; // 爆礼物总值
+    static $total_value = 50000; // 爆礼物总值
 
     /**
      * 背包礼物列表
@@ -92,14 +92,8 @@ class Backpacks extends BaseModel
             ]
         );
 
-        if ($cur_value >= $total_value) {
-            $cache = self::getHotWriteCache();
-            $cache_name = self::getBoomRoomCacheName($room_id);
-            $cache->set($cache_name, time(), 180);
-        }
-
         if (isDevelopmentEnv()) {
-            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
+            // Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
         }
         $room = Rooms::findFirstById($room_id);
         $room->push($body);
