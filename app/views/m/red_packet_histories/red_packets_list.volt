@@ -4,7 +4,7 @@
 {{ block_end() }}
 <div class="detail_list red_list" id="app">
     <ul>
-        <li v-for="v,i in red_packets_list" v-if="v.red_packet_type == 'all'" @click="toGrabRedPacket(v.id,v.red_packet_type)">
+        <li v-for="v,i in red_packets_list">
             <div class="pic">
                 <img :src="v.user_avatar_url">
             </div>
@@ -13,7 +13,7 @@
                     <h3>${v.user_nickname}</h3>
                     <p>发了一个红包</p>
                 </div>
-                <div class="num red_list_style red_list_qiang" v-if="v.is_grab">抢</div>
+                <div class="num red_list_style red_list_qiang" v-if="v.is_grab" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢</div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
             </div>
         </li>
@@ -84,7 +84,7 @@
                 };
 //console.log(data);
                 $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
-                    console.log(resp);
+//console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
                     $.each(resp.red_packets, function (index, val) {
@@ -100,6 +100,7 @@
                     });
 
                 });
+                console.log(vm.red_packets_list);
 
                 vm.page++;
             },

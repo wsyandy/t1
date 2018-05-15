@@ -1,27 +1,29 @@
 {{ block_begin('head') }}
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
-{{ theme_js('/m/js/address.js','/m/js/font_rem.js') }}
+{{ theme_js('/m/js/font_rem.js') }}
 {{ block_end() }}
-<div class="get_hongbao_box" id="app">
-    <div class="hongbao_box">
+<div id="app">
+    <div class="get_hongbao_box" >
+        <div class="hongbao_box">
         <div class="wait_red wait_red_guanzhu">
-            <div class="pic">
-                <img src="">
-            </div>
-            <h4>{{ user_nickname }}</h4>
-            <h3>发了一个红包</h3>
-            {% if  red_packet_type == "all" %}
-            <div id="start_time">
-                <p>倒计时结束后可以抢</p>
-                <div class="daojishi" id="time"></div>
-            </div>
-            <div id="end_time">
-                <p>发了一个红包，关注房主可领取</p>
-                <div class="qiang_red" @click="getRedPacket"></div>
-            </div>
+            <div id="hide">
+                <div class="pic">
+                    <img src="">
+                </div>
+                <h4>{{ user_nickname }}</h4>
+                <h3>发了一个红包</h3>
 
-            {%  endif %}
+                <div id="start_time">
+                    <p>倒计时结束后可以抢</p>
+                    <div class="daojishi" id="time"></div>
+                </div>
+                <div id="end_time">
+                    <p>发了一个红包，关注房主可领取</p>
+                    <div class="qiang_red" @click="getRedPacket"></div>
+                </div>
 
+
+            </div>
                 {#<h3>发了一个红包，关注房主可领取</h3>#}
                 {#<div class="qiang_red"></div>#}
 
@@ -32,7 +34,24 @@
                     {#<p>已收到我的帐户，可用于送礼物</p>#}
                     {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
                 {#</div>#}
-
+        <div v-if="getRed">
+            <div class="get_hongbao_box">
+                <div class="hongbao_box">
+                    <div class="red_get" v-if="congratulation">
+                        <img src="/m/images/gongxi.png">
+                        <h3>${res}</h3>
+                        <div class="red_get_num"><i></i>${getDiamond}</div>
+                        <p>已收到我的帐户，可用于送礼物</p>
+                        <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
+                    </div>
+                    <div class="red_over" v-if="pity">
+                        <img src="/m/images/yihan.png">
+                        <h3>${res}</h3>
+                        <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
             </div>
         </div>
@@ -55,24 +74,40 @@
         data: {
             sid: "{{ sid }}",
             code: "{{ code }}",
-            red_packet_id: "{{ red_packet_id }}",
-            red_packet_type: "{{ red_packet_type }}",
-
-
+            red_packet_id: "{{ red_packet.id }}",
+            red_packet_type: "{{ red_packet.red_packet_type }}",
+            getRed:false,
+            congratulation:false,
+            pity:false,
+            res:"",
+            getDiamond:"",
         },
         methods: {
-            getRedPacket: function(){
+            getRedPacket: function () {
                 var data = {
                     sid: this.sid,
                     code: this.code,
-                    red_packet_id: this.red_packet_id,
-                    red_packet_type: this.red_packet_type,
+                    red_packet_id: vm.red_packet_id,
+                    red_packet_type: vm.red_packet_type,
                 }
                 $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
                     console.log(resp);
-                    alert(resp.error_reason);
+                    vm.getRed = true;
+                    vm.res = resp.error_reason;
+                    if(!resp.error_code){
+                        vm.getDiamond = resp.get_diamond;
+                        vm.congratulation = true;
+                    }else{
+                        vm.pity = true;
+                    }
+                    hide_grab();
+
 
                 });
+            },
+            toDetail: function () {
+                var url = "/m/red_packet_histories/detail?sid="+this.sid+"&code="+this.code+"&id="+vm.red_packet_id;
+                location.href = url;
             }
         }
     }
@@ -111,6 +146,11 @@
 
 
     });
+
+    function hide_grab(){
+        $("#hide").hide();
+
+    }
 //    $(function () {
 //        $('.qiang_red').click(function () {
 //            $('.guanzhu_qiang_box').fadeIn(1000);
