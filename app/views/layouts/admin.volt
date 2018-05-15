@@ -96,6 +96,9 @@
                     {% if isAllowed('draw_histories','index') %}
                         <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
                     {% endif %}
+                    {% if isAllowed('draw_histories','index') %}
+                        <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
+                    {% endif %}
 
                 </ul>
             </li>

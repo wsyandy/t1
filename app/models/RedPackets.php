@@ -165,7 +165,7 @@ class RedPackets extends BaseModel
 
     function toSimpleJson()
     {
-        $start_at = date('Y-m-d H:i:s', $this->created_at + 3 * 60);
+        $distance_start_at = $this->created_at + 3 * 60 - time();
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -174,9 +174,9 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'status_text' => $this->status_text,
             'created_at_text' => $this->created_at_text,
-            'start_at_text' => $start_at,
+            'distance_start_at' => $distance_start_at,
             'user_avatar_url' => $this->user->avatar_url,
-            'red_packet_type'=>$this->red_packet_type
+            'red_packet_type' => $this->red_packet_type
         ];
     }
 
@@ -295,7 +295,7 @@ class RedPackets extends BaseModel
         return [$balance_diamond, $balance_num];
     }
 
-    static function UserGetRedPacketIds($room_id,$user_id)
+    static function UserGetRedPacketIds($room_id, $user_id)
     {
         $cache = \Users::getUserDb();
         $key = self::generateRedPacketForRoomKey($room_id, $user_id);
