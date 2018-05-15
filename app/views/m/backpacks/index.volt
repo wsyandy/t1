@@ -187,7 +187,7 @@
                             vm.target_list.push(item);
                             vm.cache_list[index] = {'id':item.id, 'number':item.number};
                         })
-                        $('.cover').addClass('is-visible');
+                        if (resp.error_code == 0) $('.cover').addClass('is-visible');
                     }
                     return ;
 
