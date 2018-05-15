@@ -20,9 +20,9 @@ class BackpacksController extends BaseController
     {
         $sid = $this->params('sid');
         $code = $this->params('code');
-        $start = $this->params('start', false);
+        $start = $this->params('start', true);
 
-        // 用户信息
+        /*// 用户信息
         $user = $this->currentUser();
 
         // 获取当前房间ID
@@ -33,7 +33,7 @@ class BackpacksController extends BaseController
         $cache_name = $this->getCacheName($user->id, $room_id);
         if ($cache->exists($cache_name)) {
             $start = false;
-        }
+        }*/
 
         $this->view->title = '爆礼物';
         $this->view->start = $start;
