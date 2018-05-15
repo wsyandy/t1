@@ -78,8 +78,10 @@ class RedPacketHistoriesController extends BaseController
         $user = $this->currentUser();
         $red_packet_id = $this->params('red_packet_id');
         $red_packet_type = $this->params('red_packet_type');
+        $sex = $this->params('sex');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
+
         $distance_start_at = $red_packet->created_at + 3 * 60 - time();
         $user_nickname = $red_packet->user->nickname;
         $user_avatar_url = $red_packet->user->avatar_url;
@@ -92,9 +94,9 @@ class RedPacketHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
             }
 
-            if ($distance_start_at > 0) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，还没到时间哦！');
-            }
+//            if ($distance_start_at > 0) {
+//                return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，还没到时间哦！');
+//            }
 
             list($balance_diamond, $balance_num) = \RedPackets::checkRedPacketInfoForRoom($red_packet_id);
             if ($balance_diamond <= 0 || $balance_num <= 0) {
@@ -105,11 +107,11 @@ class RedPacketHistoriesController extends BaseController
             if ($red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
                 $room = \Rooms::findFirstById($user->current_room_id);
                 $time = $room->getTimeForUserInRoom($user->id);
-                if (time() - $time < 180) {
+                if (!$time || time() - $time < 180) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您好没有待满三分钟哦！');
                 }
             }
-
+            
             //当类型为附近的人的时候才会对用户性别有要求
             if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
                 //未做=>距离的判断

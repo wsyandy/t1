@@ -3037,4 +3037,13 @@ class Rooms extends BaseModel
     {
         return 'boom_target_value_room_' . $room_id;
     }
+
+    function getTimeForUserInRoom($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $real_user_key = $this->getRealUserListKey();
+        $time = $hot_cache->zscore($real_user_key, $user_id);
+        return $time;
+    }
+
 }
