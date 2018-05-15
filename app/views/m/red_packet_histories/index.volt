@@ -169,7 +169,7 @@
                 $.authPost('/m/red_packet_histories/create', data, function (resp) {
                     console.log(resp);
                     if (!resp.error_code) {
-                        location.href = 'app://rooms/detail?id='+ resp.send_red_packet_history.current_room_id;
+                        location.href = 'app://back';
                     }
                 });
 
