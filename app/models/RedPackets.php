@@ -176,7 +176,8 @@ class RedPackets extends BaseModel
             'status_text' => $this->status_text,
             'created_at_text' => $this->created_at_text,
             'start_at_text' => $start_at,
-            'user_avatar_url' => $this->user->avatar_url
+            'user_avatar_url' => $this->user->avatar_url,
+            'red_packet_type'=>$this->red_packet_type
         ];
     }
 
