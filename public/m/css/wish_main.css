@@ -41,23 +41,23 @@ html,body{
   background-size: cover;
 }
 /*.wishing_music{*/
-  /*width: .66rem;*/
-  /*height: .66rem;*/
-  /*position: absolute;*/
-  /*top: .4rem;*/
-  /*right: .4rem;*/
-  /*background:url(../images/wishing_music.png) center no-repeat;*/
-  /*background-size: .66rem;*/
-  /*transform-origin: 50% 50%;*/
-  /*-webkit-transform-origin: 50% 50%;*/
-  /*animation:4s linear 0s myrotate infinite;*/
-  /*-webkit-animation:4s linear 0s myrotate infinite;!* Safari and Chrome *!*/
-  /*animation-fill-mode:forwards;!*动画播放完毕时停止，不回到初始状态*!*/
-  /*-webkit-animation-fill-mode:forwards;*/
+/*width: .66rem;*/
+/*height: .66rem;*/
+/*position: absolute;*/
+/*top: .4rem;*/
+/*right: .4rem;*/
+/*background:url(../images/wishing_music.png) center no-repeat;*/
+/*background-size: .66rem;*/
+/*transform-origin: 50% 50%;*/
+/*-webkit-transform-origin: 50% 50%;*/
+/*animation:4s linear 0s myrotate infinite;*/
+/*-webkit-animation:4s linear 0s myrotate infinite;!* Safari and Chrome *!*/
+/*animation-fill-mode:forwards;!*动画播放完毕时停止，不回到初始状态*!*/
+/*-webkit-animation-fill-mode:forwards;*/
 /*}*/
 /*.wishing_music_pause{*/
-  /*animation-play-state:paused;*/
-  /*-webkit-animation-play-state:paused; !* Safari 和 Chrome *!*/
+/*animation-play-state:paused;*/
+/*-webkit-animation-play-state:paused; !* Safari 和 Chrome *!*/
 /*}*/
 @keyframes myrotate{
   form {transform:rotate(0deg);}
@@ -217,6 +217,11 @@ html,body{
   left: 0;
   width: 7.5rem;
   z-index: 103;
+  /*overflow-x: scroll;*/
+}
+.release_wish_scroll{
+  width: 100%;
+  z-index: 103;
   overflow-x: scroll;
 }
 .release_wish ul{
@@ -333,18 +338,20 @@ html,body{
 
 .mywish_list{
   width: 100%;
-  overflow-x: auto;
   height: 7.9rem;
   position: fixed;
   left: 0;
   top: 1.5rem;
   z-index: 104;
 }
+.mywish_list_scroll{
+  width: 100%;
+  z-index: 104;
+  overflow-x: scroll;
+}
 .mywish_list ul{
   width: auto;
-  position:absolute;
-  left:0;
-  top:0;
+
   /* width:2200px; */
   padding:0 1.24rem;
 }
@@ -365,7 +372,7 @@ html,body{
   overflow-y: auto;
   color: #67450E;
 }
-.toatst_cancel{
+/*.toatst_cancel{
   position: fixed;
   z-index:120;
   left: 3.4rem;
@@ -374,6 +381,17 @@ html,body{
   height: .86rem;
   background: url(../images/cancel_buttom2.png) center no-repeat;
   background-size: .86rem;
+}*/
+.toatst_cancel{
+  position: absolute;
+  z-index:120;
+  left: 50%;
+  bottom: -1rem;
+  width: .86rem;
+  height: .86rem;
+  background: url(../images/cancel_buttom2.png) center no-repeat;
+  background-size: .86rem;
+  margin-left: -0.43rem;
 }
 .view_wish{
   position: absolute;
