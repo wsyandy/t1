@@ -2,67 +2,68 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
 {{ theme_js('/m/js/address.js','/m/js/font_rem.js') }}
 {{ block_end() }}
-<div class="detail_list red_list">
+<div class="detail_list red_list" id="app">
     <ul>
-        <li>
+        <li v-for="v,i in red_packets_list" href="/m/red_packets_histories/grab_red_packets">
             <div class="pic">
-                <img src="">
+                <img :src="v.user_avatar_url">
             </div>
             <div class="list_text">
                 <div class="name">
-                    <h3>橙子的颜色</h3>
+                    <h3>${v.user_nickanme}</h3>
                     <p>发了一个红包</p>
                 </div>
                 <div class="num red_list_style red_list_qiang">抢</div>
             </div>
         </li>
-        <li>
-            <div class="pic">
-                <img src="">
-            </div>
-            <div class="list_text">
-                <div class="name">
-                    <h3>橙子的颜色</h3>
-                    <p>发了一个红包</p>
-                </div>
-                <div class="num red_list_style red_list_time" id="time"></div>
-            </div>
-        </li>
-        <li>
-            <div class="pic">
-                <img src="">
-            </div>
-            <div class="list_text">
-                <div class="name">
-                    <h3>橙子的颜色</h3>
-                    <p>发了一个红包</p>
-                </div>
-                <div class="num red_list_style red_list_get_red">已抢过</div>
-            </div>
-        </li>
-        <li>
-            <div class="pic">
-                <img src="">
-            </div>
-            <div class="list_text">
-                <div class="name">
-                    <h3>橙子的颜色</h3>
-                    <p>发了一个红包</p>
-                </div>
-                <div class="num red_list_style red_list_fangzhu">关注房主可抢</div>
-            </div>
-        </li>
+        {#<li>#}
+            {#<div class="pic">#}
+                {#<img src="">#}
+            {#</div>#}
+            {#<div class="list_text">#}
+                {#<div class="name">#}
+                    {#<h3>橙子的颜色</h3>#}
+                    {#<p>发了一个红包</p>#}
+                {#</div>#}
+                {#<div class="num red_list_style red_list_time" id="time"></div>#}
+            {#</div>#}
+        {#</li>#}
+        {#<li>#}
+            {#<div class="pic">#}
+                {#<img src="">#}
+            {#</div>#}
+            {#<div class="list_text">#}
+                {#<div class="name">#}
+                    {#<h3>橙子的颜色</h3>#}
+                    {#<p>发了一个红包</p>#}
+                {#</div>#}
+                {#<div class="num red_list_style red_list_get_red">已抢过</div>#}
+            {#</div>#}
+        {#</li>#}
+        {#<li>#}
+            {#<div class="pic">#}
+                {#<img src="">#}
+            {#</div>#}
+            {#<div class="list_text">#}
+                {#<div class="name">#}
+                    {#<h3>橙子的颜色</h3>#}
+                    {#<p>发了一个红包</p>#}
+                {#</div>#}
+                {#<div class="num red_list_style red_list_fangzhu">关注房主可抢</div>#}
+            {#</div>#}
+        {#</li>#}
     </ul>
 </div>
-<script type="text/javascript">
+<script>
     var opts = {
         data: {
             sid: "{{ sid }}",
             code: "{{ code }}",
             page: 1,
-            per_page:10,
+            per_page:3,
             total_page: 1,
-            red_packets_list: []
+            red_packets_list: [],
+            room_id: "{{ room_id }}",
         },
 
         methods: {
@@ -76,6 +77,7 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
+                    room_id:172,
 
                 }
 //console.log(data);
@@ -85,17 +87,18 @@
                     $.each(resp.red_packets, function (index, val) {
                         vm.red_packets_list.push(val);
                     })
+                    console.log(vm.red_packets_list);
                 })
 
                 vm.page++;
-            },
-            select_game: function (game) {
-                if(!game.url){
-                    alert('url无效');
-                    return;
-                }
-                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
             }
+//            select_game: function (game) {
+//                if(!game.url){
+//                    alert('url无效');
+//                    return;
+//                }
+//                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
+//            }
 
         }
     };

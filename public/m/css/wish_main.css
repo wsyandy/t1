@@ -217,6 +217,11 @@ html,body{
   left: 0;
   width: 7.5rem;
   z-index: 103;
+  /*overflow-x: scroll;*/
+}
+.release_wish_list{
+  width: 100%;
+  z-index: 103;
   overflow-x: scroll;
 }
 .release_wish ul{
@@ -365,7 +370,7 @@ html,body{
   overflow-y: auto;
   color: #67450E;
 }
-.toatst_cancel{
+/*.toatst_cancel{
   position: fixed;
   z-index:120;
   left: 3.4rem;
@@ -374,6 +379,17 @@ html,body{
   height: .86rem;
   background: url(../images/cancel_buttom2.png) center no-repeat;
   background-size: .86rem;
+}*/
+.toatst_cancel{
+  position: absolute;
+  z-index:120;
+  left: 50%;
+  bottom: -1rem;
+  width: .86rem;
+  height: .86rem;
+  background: url(../images/cancel_buttom2.png) center no-repeat;
+  background-size: .86rem;
+  margin-left: -0.43rem;
 }
 .view_wish{
   position: absolute;
