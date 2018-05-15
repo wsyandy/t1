@@ -75,9 +75,8 @@ class RedPackets extends BaseModel
         'balance_num' => ['null' => '不能为空']
     ];
 
-    static $RED_PACKET_STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
     static $RED_PACKET_TYPE = [RED_PACKET_TYPE_ALL => '都可以领取', RED_PACKET_TYPE_ATTENTION => '关注房主才能领取', RED_PACKET_TYPE_STAY_AT_ROOM => '在房间满3分钟才能领取', RED_PACKET_TYPE_NEARBY => '附近的人才能领取'];
-    static $STATUS = [STATUS_ON => '有效', STATUS_OFF => '无效'];
+    static $STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
 
     function beforeCreate()
     {
