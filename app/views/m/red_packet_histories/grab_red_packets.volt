@@ -90,6 +90,7 @@
                     red_packet_id: vm.red_packet_id,
                     red_packet_type: vm.red_packet_type,
                 }
+
                 $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
                     console.log(resp);
                     vm.getRed = true;
@@ -106,7 +107,8 @@
                 });
             },
             toDetail: function () {
-                var url = "/m/red_packet_histories/detail?sid="+this.sid+"&code="+this.code+"&id="+vm.red_packet_id;
+                var url = "/m/red_packet_histories/detail?sid="+this.sid+"&code="+this.code+"&red_packet_id="+this.red_packet_id;
+
                 location.href = url;
             }
         }
