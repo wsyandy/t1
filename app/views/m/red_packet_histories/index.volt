@@ -46,7 +46,6 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
             <div class="give_list">
                 <div class="give_box">
                     <h3>性别筛选</h3>
@@ -56,6 +55,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
             <div class="give_number">
                 <h5>钻石余额： <span>{{ diamond }}</span></h5>
                 <a href="/m/products?sid={{ sid }}&code={{ code }}">充值 <i class="icon_right"></i></a>
