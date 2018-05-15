@@ -2884,7 +2884,7 @@ class Rooms extends BaseModel
             $room_ids[$room->id] = $total_score;
 
             if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
+                $shield_room_ids[] = $room->id;
             }
 
             if (isDevelopmentEnv()) {
