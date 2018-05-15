@@ -4,7 +4,7 @@
 {{ block_end() }}
 <div class="detail_list red_list" id="app">
     <ul>
-        <li v-for="v,i in red_packets_list" href="/m/red_packets_histories/grab_red_packets">
+        <li v-for="v,i in red_packets_list" href="/m/red_packets_histories/grab_red_packets?red_packet_id=${id}&red_packet_type=${red_packet_type}&sex=${sex}">
             <div class="pic">
                 <img :src="v.user_avatar_url">
             </div>

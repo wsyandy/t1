@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <div class="give_list" v-if="">
+            <div class="give_list" v-if="type == 'nearby'">
                 <div class="give_box">
                     <h3>位置／范围</h3>
                     <div class="give_input">
@@ -46,7 +46,7 @@
                     </div>
                 </div>
             </div>
-            <div class="give_list">
+            <div class="give_list" v-if="type == 'nearby'">
                 <div class="give_box">
                     <h3>性别筛选</h3>
                     <div class="give_input">
@@ -124,10 +124,8 @@
             isSex:true,
         },
 
-
         methods: {
             selectType:function (i,v) {
-
                 this.red_packet_type_cur = v;
                 this.type = i;
                 vm.isGiveStyle = false;
