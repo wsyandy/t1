@@ -1166,6 +1166,9 @@ class Rooms extends BaseModel
                 'current_value' => (int)$cur_income
             ]
         );
+        if (isDevelopmentEnv() && $this->id == 137039) {
+            $body['room_137039'] = 'test';
+        }
         $this->push($body);
     }
 
