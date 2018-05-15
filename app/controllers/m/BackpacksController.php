@@ -51,6 +51,7 @@ class BackpacksController extends BaseController
 
         $room_sign_key = \Backpacks::generateBoomRoomSignKey($room_id);
         $expire = $cache->get($room_sign_key);
+        debug(date('Ymd H:i:s', $expire));
         $receive_time = strtotime('+3 minutes', $expire) - time();
         if ($receive_time > 180) $receive_time = 180;
 
