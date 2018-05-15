@@ -40,7 +40,8 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
         ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出',
         ACCOUNT_TYPE_RED_PACKET_EXPENSES => '红包支出',
-        ACCOUNT_TYPE_RED_PACKET_INCOME => '红包收入'
+        ACCOUNT_TYPE_RED_PACKET_INCOME => '红包收入',
+        ACCOUNT_TYPE_RED_PACKET_RESTORATION=>'红包余额返还'
 
     ];
 

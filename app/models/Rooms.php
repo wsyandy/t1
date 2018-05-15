@@ -2003,19 +2003,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -3047,6 +3045,16 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
         $time = $hot_cache->zscore($real_user_key, $user_id);
         return $time;
+    }
+
+    function getUnderwayRedPacket()
+    {
+        $cache = \Users::getUserDb();
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->id);
+        $ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+        $room_red_packets = \RedPackets::findByIds($ids);
+
+        return $room_red_packets;
     }
 
 }

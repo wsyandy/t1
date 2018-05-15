@@ -290,7 +290,8 @@ class RoomsController extends BaseController
         }
 
         // 房间红包
-        $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
+        $underway_red_packet = $room->getUnderwayRedPacket();
+        $res['red_packet'] = ['num' => count($underway_red_packet), 'url' => 'url://m/red_packet_histories/red_packets_list?room_id=' . $this->id];
 
 
         // 爆礼物

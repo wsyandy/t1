@@ -88,14 +88,24 @@ class RedPackets extends BaseModel
     {
         $cache = \Users::getUserDb();
         //当前房间对应红包id集合
-        $send_red_packet_list_key = $this->generateRedPacketListKey($this->current_room_id);
+        $send_red_packet_list_key = self::generateRedPacketListKey($this->current_room_id);
+        //当前正在进行中的红包id集合
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->current_room_id);
+
+        //generateUnderwayRedPacketListKey
         $cache->zadd($send_red_packet_list_key, time(), $this->id);
+        $cache->zadd($underway_red_packet_list_key, time(), $this->id);
+
 
     }
 
     function afterUpdate()
     {
-
+        if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
+            $cache = \Users::getUserDb();
+            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->current_room_id);
+            $cache->zrem($underway_red_packet_list_key, time(), $this->id);
+        }
     }
 
     //生成房间红包列表key
@@ -103,6 +113,13 @@ class RedPackets extends BaseModel
     {
         return 'send_red_packet_list_for_' . $current_room_id;
     }
+
+    //正在进行中的红包
+    static function generateUnderwayRedPacketListKey($current_room_id)
+    {
+        return 'underway_red_packet_list_for_' . $current_room_id;
+    }
+
 
     static function getCacheEndPoint()
     {
@@ -138,10 +155,22 @@ class RedPackets extends BaseModel
                 'id' => $send_red_packet_history->id
             ];
 
+            self::delay(24 * 60 * 60)->asyncFinishRedPacket($send_red_packet_history->id);
+
             self::saveRedPacketForRoom($opts);
             return $send_red_packet_history;
         }
         return null;
+    }
+
+    static function asyncFinishRedPacket($red_packet_id)
+    {
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
+        list($balance_diamond, $balance_num) = self::getBalance($red_packet_id);
+        if ($balance_diamond > 0) {
+            $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile];
+            \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $balance_diamond, $opts);
+        }
     }
 
     static function generateRedPacketUrl($room_id)
@@ -151,12 +180,12 @@ class RedPackets extends BaseModel
 
     static function findRedPacketList($current_room_id, $page, $per_page)
     {
-        $key = self::generateRedPacketListKey($current_room_id);
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($current_room_id);
         $cache_db = \Users::getUserDb();
 
-        $total = $cache_db->zcard($key);
+        $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
-        $red_packet_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
+        $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 
         return new \PaginationModel($red_packets, $total, $page, $per_page);
@@ -182,7 +211,7 @@ class RedPackets extends BaseModel
 
     function toBasicJson()
     {
-        list($balance_diamond, $balance_num) = $this->getBalance($this->id);
+        list($balance_diamond, $balance_num) = self::getBalance($this->id);
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -195,7 +224,7 @@ class RedPackets extends BaseModel
         ];
     }
 
-    function getBalance($red_packet_id)
+    static function getBalance($red_packet_id)
     {
         $cache = \Users::getUserDb();
         $red_packet_key = self::generateRedPacketInfoKey($red_packet_id);
@@ -216,6 +245,10 @@ class RedPackets extends BaseModel
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
+
+        $red_packet = self::findFirstById($red_packet_id);
+        $red_packet->status = STATUS_OFF;
+        $red_packet->update();
 
         return [ERROR_CODE_SUCCESS, null];
     }
@@ -240,7 +273,7 @@ class RedPackets extends BaseModel
             $body = ['balance_num' => $balance_num - 1, 'balance_diamond' => $balance_diamond - $get_diamond];
             $cache->hmset($red_packet_key, $body);
 
-            $cache->zadd($key, time(), $red_packet_id);
+            $cache->zadd($key, $get_diamond, $red_packet_id);
 
             $cache->zadd($user_key, $get_diamond, $user_id);
 
