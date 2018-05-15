@@ -185,13 +185,11 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
+        info('房间id',$room_id);
         $red_packet_id = $this->params('red_packet_id');
         $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
         $ids = $cache->zrange($key, 0, -1);
-        if (isDevelopmentEnv()) {
-            $ids = [257, 117];
-        }
 
         $users = \Users::findByIds($ids);
 
@@ -199,6 +197,7 @@ class RedPacketHistoriesController extends BaseController
         foreach ($users as $index => $user) {
             $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
             $get_diamond = $cache->zscore($key, $user->id);
+            info('获取的钻石',$get_diamond,$key);
             $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
         }
 

@@ -41,7 +41,8 @@
             sid: "{{ sid }}",
             code:"{{ code }}",
             getRedPacketUsers:[],
-            red_packet_id:"{{red_packet['id']}}"
+            red_packet_id:"{{red_packet['id']}}",
+            room_id:"{{ red_packet['current_room_id'] }}"
         },
 
         created:function() {
@@ -49,6 +50,7 @@
                 sid:this.sid,
                 code:this.code,
                 red_packet_id:this.red_packet_id,
+                room_id:this.room_id
             }
             $.authGet('/m/red_packet_histories/get_red_packet_users', data, function (resp) {
                 console.log(resp);

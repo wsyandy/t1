@@ -220,7 +220,8 @@ class RedPackets extends BaseModel
             'diamond' => $this->diamond,
             'num' => $this->num,
             'balance_diamond' => $balance_diamond,
-            'balance_num' => $balance_num
+            'balance_num' => $balance_num,
+            'current_room_id'=>$this->current_room_id
         ];
     }
 
