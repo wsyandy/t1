@@ -2150,6 +2150,8 @@ class Rooms extends BaseModel
                 $cache->setex($cur_income_cache_name, $expire, 0);
             }
             $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
+
+            (new Backpacks())->pushClientAboutBoom($total_income, $cur_total_income, $room_id);
         }
     }
 
