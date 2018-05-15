@@ -199,7 +199,7 @@ trait RoomAttrs
             $total_score = $total_score * 1.5;
         }
 
-        if (preg_match("/broadcast/i", 'broadcast')) {
+        if (preg_match("/broadcast/i", $this->types)) {
             $total_score = $total_score * 5;
         }
 

@@ -80,9 +80,12 @@ class RedPacketHistoriesController extends BaseController
         $red_packet_type = $this->params('red_packet_type');
         $sex = $this->params('sex');
 
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
         $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
         $user_nickname = $cache->hget($key, 'user_nickname');
+
+        $distance_start_at = $red_packet->created_at + 3 * 60 - time();
 
         if ($this->request->isAjax()) {
             list($balance_diamond, $balance_num) = \RedPackets::checkRedPacketInfoForRoom($red_packet_id);
@@ -93,6 +96,11 @@ class RedPacketHistoriesController extends BaseController
             if ($score) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
             }
+
+            if ($distance_start_at > 0) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，还没到时间哦！');
+            }
+
 
             //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离还有是否需要关注房主
 
@@ -123,6 +131,7 @@ class RedPacketHistoriesController extends BaseController
         $this->view->red_packet_id = $red_packet_id;
         $this->view->red_packet_type = $red_packet_type;
         $this->view->user_nickname = $user_nickname;
+        $this->view->distance_start_at = $distance_start_at;
     }
 
     function redPacketsListAction()

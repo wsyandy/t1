@@ -738,4 +738,19 @@ class UsersController extends BaseController
         $user->update();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
     }
+
+    //许愿墙中奖记录
+    function wishLuckHistoriesAction()
+    {
+        $product_channel_id = $this->params('user[product_channel_id_eq]', 1);
+        info('产品渠道ID',$product_channel_id);
+        $page = $this->params('page', 1);
+        $wish_luck_histories = \WishHistories::generateLuckyUserList($product_channel_id);
+        $per_page = 20;
+        $wish_luck_users = \Users::findByUsersListForWish($wish_luck_histories, $page, $per_page);
+        $this->view->wish_luck_users = $wish_luck_users;
+        $this->view->all_product_channels = \ProductChannels::find(['order' => 'id asc', 'columns' => 'id,name']);
+
+    }
+
 }

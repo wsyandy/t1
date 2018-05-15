@@ -180,7 +180,7 @@ class Rooms extends BaseModel
             '性高潮', 'SM', '多P', '群交', '月经', '成人', '色情', '犯罪', '诈骗', '传销', '棋牌', '彩票', '假钞', '政治',
             '妈', '爸', '干你娘', '办理', '国家', '跪舔', '小婊砸', '我日', '超赚', '领导人', '作弊', '毒品', '淫秽', '异性',
             '私交', '涉嫌', '欺诈', '抢购', '招人', '跪求嫖', '艹', '操B', '艹B', '淫荡', '嫩模', '警察', '喘', '毒', '赌厅',
-            '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情'
+            '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情', '系统小助手'
         ];
 
         foreach ($keywords as $keyword) {
@@ -1152,6 +1152,21 @@ class Rooms extends BaseModel
         }
 
         $this->pushExitRoomMessage($user, $current_room_seat_id);
+    }
+
+    function pushBoomIncomeMessage($total_income, $cur_income, $room_id)
+    {
+        $body = array(
+            'action' => 'blasting_gift',
+            'blasting_gift' => [
+                'expire_at' => Backpacks::getExpireAt($room_id),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => Backpacks::getSvgaImageUrl(),
+                'total_value' => (int)$total_income,
+                'current_value' => (int)$cur_income
+            ]
+        );
+        $this->push($body);
     }
 
     function pushEnterRoomMessage($user)
@@ -2150,6 +2165,8 @@ class Rooms extends BaseModel
                 $cache->setex($cur_income_cache_name, $expire, 0);
             }
             $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
+
+            self::pushBoomIncomeMessage($total_income, $cur_total_income, $room_id);
         }
     }
 
@@ -2904,7 +2921,7 @@ class Rooms extends BaseModel
             $room_ids[$room->id] = $total_score;
 
             if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
+                $shield_room_ids[] = $room->id;
             }
 
             if (isDevelopmentEnv()) {
@@ -2923,17 +2940,6 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        if (count($shield_room_ids) > 0) {
-
-            uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
-
-                if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                    return -1;
-                }
-
-                return 1;
-            });
-        }
 
         $shield_room_num = 30;
         $total_room_num = 30;
@@ -2955,6 +2961,8 @@ class Rooms extends BaseModel
         $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
         $hot_cache->zclear($total_new_hot_room_list_key);
         $i = 1;
+
+        echoLine($shield_room_ids, $room_ids);
 
         foreach ($room_ids as $room_id => $score) {
 

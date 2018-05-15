@@ -1107,6 +1107,15 @@ class Users extends BaseModel
         $user_db->zrem($cache_key, $this->id);
         info($cache_key, $this->id);
 
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zrem($cache_key, $this->id);
+        info($cache_key, $this->id);
     }
 
     function updateGeoHashRank()
@@ -1125,8 +1134,17 @@ class Users extends BaseModel
 
         $user_db = Users::getUserDb();
         $user_db->zadd($cache_key, time(), $this->id);
-        debug($cache_key, $this->id);
+        info($cache_key, $this->id);
 
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($cache_key, time(), $this->id);
+        info($cache_key, $this->id);
     }
 
     static function asyncUpdateGeoLocation($user_id)
@@ -2993,23 +3011,20 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                    break;
-                }
-            case 'week':
-                {
-                    $start = date("Ymd", beginOfWeek());
-                    $end = date("Ymd", endOfWeek());
-                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "user_hi_coin_rank_list_" . $this->id;
-                    break;
-                }
+            case 'day': {
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                break;
+            }
+            case 'week': {
+                $start = date("Ymd", beginOfWeek());
+                $end = date("Ymd", endOfWeek());
+                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "user_hi_coin_rank_list_" . $this->id;
+                break;
+            }
             default:
                 return [];
         }
@@ -3136,24 +3151,21 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "day_" . $field . "_rank_list_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                    break;
-                }
-            case 'total':
-                {
-                    $key = "total_" . $field . "_rank_list";
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "day_" . $field . "_rank_list_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                break;
+            }
+            case 'total': {
+                $key = "total_" . $field . "_rank_list";
+                break;
+            }
             default:
                 return '';
         }
@@ -3586,7 +3598,41 @@ class Users extends BaseModel
         if (!$this->isCompanyUser()) {
             Users::updateFiledRankList($this->id, 'wealth', $wealth_value, ['time' => time()]);
         }
-        
+
         unlock($lock);
     }
+
+    //获取许愿墙用户分页列表
+    static function findByUsersListForWish($relations_key, $page, $per_page)
+    {
+        $user_db = \Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
+        $wish_history_ids = [];
+
+        /*if (isDevelopmentEnv()) {
+            $res = [257 => '1526366848', 117 => '1526363248'];
+        }*/
+        foreach ($res as $wish_history_id => $wish_luck_at) {
+            $wish_history_ids[] = $wish_history_id;
+        }
+        if (!$wish_history_ids) {
+            return null;
+        }
+
+        $wish_luck_users = self::findByIds($wish_history_ids);
+
+        foreach ($wish_luck_users as $wish_luck_user) {
+            $wish_luck_user->winner_at = $res[$wish_luck_user->id];
+        }
+
+        $total_entries = $user_db->zcard($relations_key);
+        $pagination = new PaginationModel($wish_luck_users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'WishLuckUserlist';
+
+        return $pagination;
+    }
+
+
 }

@@ -9,25 +9,18 @@ class MakiTask extends Phalcon\Cli\Task
 {
     public function testxAction()
     {
-        $line = 0; // 初始值
-        $total = Backpacks::getBoomTotalValue(); // 流水上线
+        $line = 0;
+        $total = Backpacks::getBoomTotalValue();
 
-        // 房间
         $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
-
-        $backpack = new Backpacks();
         $cache = Rooms::getHotWriteCache();
 
-        foreach ($rooms['rooms'] as $value) {
-            $cur_income_cache_name = Rooms::getBoomValueCacheName($value['id']);
+        foreach ($rooms as $room) {
+            $cur_income_cache_name = Rooms::getBoomValueCacheName($room->id);
             $cur_income = $cache->get($cur_income_cache_name);
 
-            echoLine($value['id']);
-            echoLine($cur_income_cache_name);
-            echoLine($cur_income);
             if ($cur_income >= $line) {
-                $backpack->pushClientAboutBoom($total, $cur_income, $value['id']);
+                $room->pushBoomIncomeMessage($total, $cur_income, $room->id);
             }
         }
     }

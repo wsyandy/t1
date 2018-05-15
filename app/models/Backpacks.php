@@ -94,10 +94,10 @@ class Backpacks extends BaseModel
             ]
         );
 
-        if (isDevelopmentEnv() && $room_id == 137039) {
+        /*if (isDevelopmentEnv() && $room_id == 137039) {
             $body['room_id'] = 137039;
             Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
-        }
+        }*/
         $room = Rooms::findFirstById($room_id);
         $room->push($body);
     }
