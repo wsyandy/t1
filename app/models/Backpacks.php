@@ -13,7 +13,7 @@ class Backpacks extends BaseModel
 
     static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boom_SVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
+    static $boom_SVGA = '/m/images/boom_animation_1.svga';
 
     static $total_value = 50000; // 爆礼物总值
 
