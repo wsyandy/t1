@@ -179,7 +179,7 @@ class BackpacksController extends BaseController
      */
     protected function getCacheName($user_id, $room_id)
     {
-        return 'boom_target_room:' . $room_id . '_user:' . $user_id;
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
 
 

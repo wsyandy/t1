@@ -251,7 +251,7 @@ class Backpacks extends BaseModel
      */
     static function getBoomRoomCacheName($room_id)
     {
-        return 'boom_target_room:'.$room_id;
+        return 'boom_target_room_'.$room_id;
     }
 
 
