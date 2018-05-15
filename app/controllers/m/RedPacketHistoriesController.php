@@ -95,7 +95,7 @@ class RedPacketHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
             }
 
-            //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离
+            //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离还有是否需要关注房主
 
             if ($balance_diamond <= 0 || $balance_num <= 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
@@ -126,31 +126,28 @@ class RedPacketHistoriesController extends BaseController
         $this->view->user_nickname = $user_nickname;
     }
 
-    function redPacketListAction()
+    function redPacketsListAction()
     {
-        $room_id = $this->params('room_id');
-        $page = $this->params('page', 1);
-        $pre_page = 10;
+        if ($this->request->isAjax()) {
+            $room_id = $this->params('room_id');
+            $page = $this->params('page', 1);
+            $pre_page = $this->params('pre_page', 10);
 
-        $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
-        if ($red_packets) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
+            $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
+            if ($red_packets) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
+            }
+
+            return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包信息');
         }
-
-        return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包信息');
+        $this->view->titile = '红包列表';
     }
 
     function detailAction()
     {
         $red_packet_id = $this->params('id');
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-
-        if ($red_packet) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['red_packet' => $red_packet->toBasicJson()]);
-        }
-
-        return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
-
+        $this->view->red_packet = $red_packet->toBasicJson();
     }
 
     function getRedPacketUsersAction()
