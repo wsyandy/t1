@@ -1159,9 +1159,9 @@ class Rooms extends BaseModel
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => self::getExpireAt($room_id),
+                'expire_at' => Backpacks::getExpireAt($room_id),
                 'url' => 'url://m/backpacks',
-                'svga_image_url' => self::getSvgaImageUrl(),
+                'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
                 'current_value' => (int)$cur_income
             ]
