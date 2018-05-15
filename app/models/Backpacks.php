@@ -27,7 +27,6 @@ class Backpacks extends BaseModel
      */
     static public function findListByUserId($user, $opt)
     {
-        // search for where
         $conditions = [
             'conditions' => 'user_id = :user_id: and number > :number:',
             'bind' => [
@@ -42,64 +41,11 @@ class Backpacks extends BaseModel
             $conditions['bind']['type'] = $opt['type'];
         }
 
-        // no page
         $page = 1;
         $per_page = 100;
 
         $list = \Backpacks::findPagination($conditions, $page, $per_page);
         return $list;
-    }
-
-
-    /**
-     * Task任务
-     * @desc 爆礼物房间流水值
-     */
-    static public function turnoverValue()
-    {
-        $line = 1000; // 初始值
-        $total = 10000; // 流水上线
-        $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
-
-        $backpack = new Backpacks();
-
-        foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $noun = $room->getDayIncome(date('Ymd'));
-
-            if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
-            }
-        }
-    }
-
-
-    /**
-     * 爆礼物推送
-     * @param $total_value
-     * @param $cur_value
-     * @param $room_id
-     */
-    public function pushClientAboutBoom($total_value, $cur_value, $room_id)
-    {
-        $body = array(
-            'action' => 'blasting_gift',
-            'blasting_gift' => [
-                'expire_at' => self::getExpireAt($room_id),
-                'url' => 'url://m/backpacks',
-                'svga_image_url' => self::getSvgaImageUrl(),
-                'total_value' => (int)$total_value,
-                'current_value' => (int)$cur_value
-            ]
-        );
-
-        /*if (isDevelopmentEnv() && $room_id == 137039) {
-            $body['room_id'] = 137039;
-            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
-        }*/
-        $room = Rooms::findFirstById($room_id);
-        $room->push($body);
     }
 
 
@@ -287,8 +233,8 @@ class Backpacks extends BaseModel
     static function getExpireAt($room_id)
     {
         $cache = self::getHotWriteCache();
-        $room_cache_name = self::getBoomRoomCacheName($room_id);
-        $time = $cache->get($room_cache_name);
+        $room_sign_key = self::generateBoomRoomSignKey($room_id);
+        $time = $cache->get($room_sign_key);
 
         if (empty($time)) {
             return 0;
@@ -303,9 +249,9 @@ class Backpacks extends BaseModel
      * @param $room_id
      * @return string
      */
-    static function getBoomRoomCacheName($room_id)
+    static function generateBoomRoomSignKey($room_id)
     {
-        return 'boom_target_room:'.$room_id;
+        return 'boom_target_room_'.$room_id;
     }
 
 

@@ -20,23 +20,8 @@ class BackpacksController extends BaseController
     {
         $sid = $this->params('sid');
         $code = $this->params('code');
-        $start = $this->params('start', true);
-
-        /*// 用户信息
-        $user = $this->currentUser();
-
-        // 获取当前房间ID
-        $room_id = $this->getCurrentRoomId($user->id);
-
-        // cache
-        $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id, $room_id);
-        if ($cache->exists($cache_name)) {
-            $start = false;
-        }*/
 
         $this->view->title = '爆礼物';
-        $this->view->start = $start;
         $this->view->sid = $sid;
         $this->view->code = $code;
     }
@@ -56,18 +41,16 @@ class BackpacksController extends BaseController
         // 获取当前房间ID
         $room_id = $this->getCurrentRoomId($user->id);
 
-        // cache
         $cache = \Backpacks::getHotWriteCache();
-        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
-        $cache_name = $this->getCacheName($user->id, $room_id);
+        $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
-        // 房间爆礼物进行中
-        if (!$cache->exists($cache_room_name)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '房间爆礼物活动已结束！');
+        $value = $cache->get($cache_name);
+        if ($value == 1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！');
         }
 
-        // 用户未抽奖
-        if ($cache->exists($cache_name)) {
+        // 用户未领取
+        if ($cache->exists($cache_name) && $value!=1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
         }
 
@@ -87,7 +70,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->set($cache_name, json_encode($json), 180);
+        $cache->setex($cache_name, 180, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -112,11 +95,15 @@ class BackpacksController extends BaseController
     public function createAction()
     {
         $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)array('id' => 1);
+        }
+        
         $room_id = $this->getCurrentRoomId($user->id);
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->getCacheName($user->id, $room_id);
+        $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
         $json = $cache->get($cache_name);
 
@@ -134,7 +121,7 @@ class BackpacksController extends BaseController
             $this->doCreate($value['id'], $value['number'], $type);
         }
 
-        $cache->del($cache_name);
+        $cache->setex($cache_name, $cache->ttl($cache_name),1);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
@@ -164,23 +151,21 @@ class BackpacksController extends BaseController
             'number' => $number
         );
 
-        // 钻石、金币 类型
-        $arr = array(
-            BACKPACK_DIAMOND_TYPE => 'boomGetDiamond',
-            BACKPACK_GOLD_TYPE => 'boomGetGold'
-        );
-        $function = $arr[$type];
-
         // 记录日志
         (new \BoomHistories())->createBoomHistories($user->id, $target_id, $type, $number);
 
-        // 处理爆礼物
+        // 爆礼物类型
         if ($type == BACKPACK_GIFT_TYPE && (!\Backpacks::createTarget($user->id, $target_id, $number, $type))) {
 
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-2');
 
-        } else
-            $this->$function($user->id, $number);
+        }
+
+        if ($type == BACKPACK_DIAMOND_TYPE) {
+            $this->boomGetDiamond($user->id, $number);
+        } elseif ($type == BACKPACK_GOLD_TYPE) {
+            $this->boomGetGold($user->id, $number);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $list]);
     }
@@ -192,9 +177,9 @@ class BackpacksController extends BaseController
      * @param $room_id
      * @return string
      */
-    protected function getCacheName($user_id, $room_id)
+    protected function generateUserSignKey($user_id, $room_id)
     {
-        return 'boom_target_room:' . $room_id . '_user:' . $user_id;
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
 
 

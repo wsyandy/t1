@@ -10,21 +10,28 @@
             </div>
             <h4>{{ user_nickname }}</h4>
             <h3>发了一个红包</h3>
-
-            {#<p>倒计时结束后可以抢</p>#}
-            {#<div class="daojishi" id="time">#}
-
-            {#<h3>发了一个红包，关注房主可领取</h3>#}
-            {#<div class="qiang_red"></div>#}
-
-            <div class="red_get">
-                <img src="images/gongxi.png">
-                <h3>抢到橘子发的钻石红包</h3>
-                <div class="red_get_num"><i></i>100</div>
-                <p>已收到我的帐户，可用于送礼物</p>
-                <a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>
+            {% if  red_packet_type == "all" %}
+            <div id="start_time">
+                <p>倒计时结束后可以抢</p>
+                <div class="daojishi" id="time"></div>
+            </div>
+            <div id="end_time">
+                <p>发了一个红包，关注房主可领取</p>
+                <div class="qiang_red" @click="getRedPacket"></div>
             </div>
 
+            {%  endif %}
+
+                {#<h3>发了一个红包，关注房主可领取</h3>#}
+                {#<div class="qiang_red"></div>#}
+
+                {#<div class="red_get">#}
+                    {#<img src="images/gongxi.png">#}
+                    {#<h3>抢到橘子发的钻石红包</h3>#}
+                    {#<div class="red_get_num"><i></i>100</div>#}
+                    {#<p>已收到我的帐户，可用于送礼物</p>#}
+                    {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
+                {#</div>#}
 
 
             </div>
@@ -44,7 +51,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    var opts={
+    var opts = {
         data: {
             sid: "{{ sid }}",
             code: "{{ code }}",
@@ -54,39 +61,67 @@
 
         },
         methods: {
+            getRedPacket: function(){
+                var data = {
+                    sid: this.sid,
+                    code: this.code,
+                    red_packet_id: this.red_packet_id,
+                    red_packet_type: this.red_packet_type,
+                }
+                $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
+                    console.log(resp);
+                    alert(resp.error_reason);
 
+                });
+            }
         }
     }
 
-    $(function(){
-        var m=3;
-        var s=0;
-        setInterval(function(){
-            if(s<10){
-                //如果秒数少于10在前面加上0
-                $('#time').html(m+':0'+s);
-            }else{
-                $('#time').html(m+':'+s);
-            }
-            s--;
-            if(s<0){
-                //如果秒数少于0就变成59秒
-                s=59;
-                m--;
-            }
-        },1000)
-    });
-    $(function(){
-        $('.qiang_red').click(function(){
-            $('.guanzhu_qiang_box').fadeIn(1000);
-            setTimeout(function(){
-                $('.gz_fangzhu').addClass('show');
-            },10);
+    vm = XVue(opts);
 
-            $('.close').click(function(){
-                $('.gz_fangzhu').removeClass('show');
-                $('.guanzhu_qiang_box').fadeOut(1000);
-            })
-        })
-    })
+    $(function () {
+        var t = {{ distance_start_at }};
+        var m = parseInt(t/60);
+        var s = t%60;
+        if( t > 0 ){
+            $("#end_time").hide();
+            setInterval(function () {
+                if (s < 10) {
+                    //如果秒数少于10在前面加上0
+                    $('#time').html(m + ':0' + s);
+                } else {
+                    $('#time').html(m + ':' + s);
+                }
+                s--;
+                if (s < 0 ) {
+                    //如果秒数少于0就变成59秒
+                    s = 59;
+                    m--;
+                }
+                if(m <= 0 && s <= 0){
+                    $("#end_time").show();
+                    $("#start_time").hide();
+                    clearInterval();
+                }
+            }, 1000);
+        }else{
+            $("#end_time").show();
+            $("#start_time").hide();
+        }
+
+
+    });
+//    $(function () {
+//        $('.qiang_red').click(function () {
+//            $('.guanzhu_qiang_box').fadeIn(1000);
+//            setTimeout(function () {
+//                $('.gz_fangzhu').addClass('show');
+//            }, 10);
+//
+//            $('.close').click(function () {
+//                $('.gz_fangzhu').removeClass('show');
+//                $('.guanzhu_qiang_box').fadeOut(1000);
+//            })
+//        })
+//    })
 </script>

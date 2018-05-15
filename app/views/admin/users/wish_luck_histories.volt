@@ -1,8 +1,8 @@
 <form action="/admin/users/wish_luck_histories" method="get" class="search_form" autocomplete="off">
 
     <label for="name_eq">产品渠道名称</label>
-    <select name="user[product_channel_id_eq]" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
-        {{ options(all_product_channels, '', 'id', 'name') }}
+    <select name="product_channel_id" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
+        {{ options(all_product_channels, product_channel_id, 'id', 'name') }}
     </select>
 
     <button type="submit" class="ui button">搜索</button>

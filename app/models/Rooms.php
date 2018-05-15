@@ -1156,6 +1156,24 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
+    function pushBoomIncomeMessage($total_income, $cur_income)
+    {
+        $body = array(
+            'action' => 'blasting_gift',
+            'blasting_gift' => [
+                'expire_at' => Backpacks::getExpireAt($this->id),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => Backpacks::getSvgaImageUrl(),
+                'total_value' => (int)$total_income,
+                'current_value' => (int)$cur_income
+            ]
+        );
+        if (isDevelopmentEnv() && $this->id == 137039) {
+            $body['room_137039'] = 'test';
+        }
+        $this->push($body);
+    }
+
     function pushEnterRoomMessage($user)
     {
 
@@ -2110,7 +2128,9 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            self::statBoomIncome($income, $room->id);
+            if (isDevelopmentEnv()) {
+                $room->statBoomIncome($income, $time);
+            }
 
             debug($minutes_stat_key);
         }
@@ -2118,21 +2138,44 @@ class Rooms extends BaseModel
 
 
     // 爆礼物流水值记录
-    static function statBoomIncome($income, $room_id)
+    public function statBoomIncome($income, $time)
     {
-        // 爆礼物流水值
         $cache = self::getHotWriteCache();
-        $cache_name = self::getBoomValueCacheName($room_id);
-        $cache_room_name = Backpacks::getBoomRoomCacheName($room_id);
+        $room_id = $this->id;
 
-        $time = 180;
+        // 单位周期 房间当前流水值
+        $cur_income_key = self::generateBoomCurIncomeKey($room_id);
+        $cur_income = $cache->get($cur_income_key);
 
-        $value = $cache->get($cache_name);
-        if ($value > 0) {
-            $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
-        } else
-            $cache->setex($cache_name, $time, ($value + $income));
+        // 房间爆礼物结束倒计时
+        $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
 
+        $expire = endOfDay() - $time;
+        if (isDevelopmentEnv()) {
+            $expire = 180;
+        }
+
+        $total_income = Backpacks::getBoomTotalValue();
+
+        // 判断房间是否在进行爆礼物活动
+        if ($cache->exists($room_sign_key)) {
+
+            ($cur_income != 0) && $cache->setex($cur_income_key, $expire, 0);
+
+        } else {
+
+            // 单位周期 截止目前房间总流水
+            $cur_total_income = $cur_income + $income;
+
+            if ($cur_total_income >= $total_income) {
+                // 爆礼物
+                $cache->setex($room_sign_key, 180, $time);
+                $cache->setex($cur_income_key, $expire, 0);
+            }
+            $cache->setex($cur_income_key, $expire, $cur_total_income);
+
+            $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+        }
     }
 
     //按天统计房间进入人数
@@ -2993,8 +3036,17 @@ class Rooms extends BaseModel
         return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 
-    static public function getBoomValueCacheName($room_id)
+    static public function generateBoomCurIncomeKey($room_id)
     {
         return 'boom_target_value_room_' . $room_id;
     }
+
+    function getTimeForUserInRoom($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $real_user_key = $this->getRealUserListKey();
+        $time = $hot_cache->zscore($real_user_key, $user_id);
+        return $time;
+    }
+
 }
