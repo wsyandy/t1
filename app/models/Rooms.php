@@ -2072,7 +2072,7 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            self::statBoomIncome($income, $room->id);
+            self::statBoomIncome($income, $room->id, $time);
 
             debug($minutes_stat_key);
         }
@@ -2080,20 +2080,31 @@ class Rooms extends BaseModel
 
 
     // 爆礼物流水值记录
-    static function statBoomIncome($income, $room_id)
+    static function statBoomIncome($income, $room_id, $time)
     {
         // 爆礼物流水值
         $cache = self::getHotWriteCache();
-        $cache_name = self::getBoomValueCacheName($room_id);
-        $cache_room_name = Backpacks::getBoomRoomCacheName($room_id);
+        $cur_income_cache_name = self::getBoomValueCacheName($room_id);
+        $room_cache_name = Backpacks::getBoomRoomCacheName($room_id);
 
-        $time = 180;
+        $expire = 180;
+        $total_income = 50000;
 
-        $value = $cache->get($cache_name);
-        if ($value > 0) {
-            $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
-        } else
-            $cache->setex($cache_name, $time, ($value+$income));
+        // 判断房间是否在进行爆礼物活动
+        if ($cache->exists($room_cache_name)) {
+
+            $cache->setex($cur_income_cache_name, $expire, 0);
+        } else {
+            $cur_income = $cache->get($cur_income_cache_name);
+            $cur_total_income = $cur_income + $income; // 截止目前的房间流水值
+
+            if ($cur_total_income >= $total_income ) {
+                // 可以爆礼物
+                $cache->setex($room_cache_name, 180, $time);
+                $cache->setex($cur_income_cache_name, $expire, 0);
+            }
+            $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
+        }
 
     }
 
