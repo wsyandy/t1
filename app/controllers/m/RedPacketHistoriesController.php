@@ -111,7 +111,7 @@ class RedPacketHistoriesController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您好没有待满三分钟哦！');
                 }
             }
-            
+
             //当类型为附近的人的时候才会对用户性别有要求
             if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
                 //未做=>距离的判断
@@ -213,10 +213,13 @@ class RedPacketHistoriesController extends BaseController
         if ($user->id == $this->otherUser()->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
         }
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         $user->follow($this->otherUser());
-        list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
-        if (!$get_diamond) {
+        list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+        $error_reason = '手慢了，红包抢完了！';
+        if ($get_diamond) {
+            $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
             //在这里增加钻石
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
             \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
