@@ -49,22 +49,26 @@
     </div>
     <!-- 发布愿望弹窗 -->
     <div v-if="releaseWish" class="release_wish">
-        <ul>
-            <li>
+        <div  class="release_wish_list">
+            <ul>
+                <li>
                 <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text"
                           maxlength="100"></textarea>
-                <span class="text_length">${remnant}/100</span>
-                <div class="release_wish_buttom" @click="myReleaseWish"></div>
-                <span @click="onCancelToast(3)" class="cancel_release"></span>
-            </li>
-            <li v-for="my_wish_data,index in my_wish_datas">
-                <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span>
-                </div>
-                <p>${my_wish_data[1]}</p>
-            </li>
-        </ul>
+                    <span class="text_length">${remnant}/100</span>
+                    <div class="release_wish_buttom" @click="myReleaseWish"></div>
+                    <span @click="onCancelToast(3)" class="cancel_release"></span>
+                </li>
+                <li v-for="my_wish_data,index in my_wish_datas">
+                    <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span>
+                    </div>
+                    <p>${my_wish_data[1]}</p>
+                </li>
+            </ul>
+        </div>
+
+        <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
     </div>
-    <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
+    {#<span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>#}
     <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
