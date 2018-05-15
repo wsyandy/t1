@@ -303,7 +303,7 @@ class RoomsController extends BaseController
                 'expire_at' => (int)\Backpacks::getExpireAt($room_id),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-                'total_value' => \Backpacks::getTotalBoomValue(),
+                'total_value' => \Backpacks::getBoomTotalValue(),
                 'current_value' => $day_income
             ];
         }

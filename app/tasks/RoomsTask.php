@@ -863,8 +863,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function boomTargetAction()
     {
-        $line = 1000;
-        $total = Backpacks::getTotalBoomValue();
+        $line = Backpacks::getBoomStartLine();
+        $total = Backpacks::getBoomTotalValue();
 
         $rooms = Rooms::dayStatRooms();
         $rooms = $rooms->toJson('rooms');

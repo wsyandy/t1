@@ -17,6 +17,8 @@ class Backpacks extends BaseModel
 
     static $total_value = 50000; // 爆礼物总值
 
+    static $start_value = 2500;
+
     /**
      * 背包礼物列表
      * @param $user
@@ -253,11 +255,28 @@ class Backpacks extends BaseModel
 
 
     /**
-     * @return string
+     * @return int
      */
-    static function getTotalBoomValue()
+    static function getBoomTotalValue()
     {
-        return self::$total_value;
+        $value = self::$total_value;
+        if (isDevelopmentEnv()) {
+            $value = 5000;
+        }
+        return $value;
+    }
+
+
+    /**
+     * @return int
+     */
+    static function getBoomStartLine()
+    {
+        $value = self::$start_value;
+        if (isDevelopmentEnv()) {
+            $value = 1000;
+        }
+        return $value;
     }
 
 
