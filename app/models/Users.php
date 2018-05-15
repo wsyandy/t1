@@ -1112,8 +1112,7 @@ class Users extends BaseModel
         $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
             . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
             . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
-
-        $user_db = Users::getUserDb();
+        
         $user_db->zrem($cache_key, $this->id);
         info($cache_key, $this->id);
     }
@@ -1142,7 +1141,6 @@ class Users extends BaseModel
             . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
             . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
 
-        $user_db = Users::getUserDb();
         $user_db->zadd($cache_key, time(), $this->id);
         info($cache_key, $this->id);
     }
