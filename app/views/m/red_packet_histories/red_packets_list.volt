@@ -4,16 +4,17 @@
 {{ block_end() }}
 <div class="detail_list red_list" id="app">
     <ul>
-        <li v-for="v,i in red_packets_list" href="/m/red_packets_histories/grab_red_packets?red_packet_id=${id}&red_packet_type=${red_packet_type}&sex=${sex}">
+        <li v-for="v,i in red_packets_list" v-if="v.red_packet_type == 'all'" @click="toGrabRedPacket(v.id,v.red_packet_type)">
             <div class="pic">
                 <img :src="v.user_avatar_url">
             </div>
             <div class="list_text">
                 <div class="name">
-                    <h3>${v.user_nickanme}</h3>
+                    <h3>${v.user_nickname}</h3>
                     <p>发了一个红包</p>
                 </div>
-                <div class="num red_list_style red_list_qiang">抢</div>
+                <div class="num red_list_style red_list_qiang" v-if="v.is_grab">抢</div>
+                <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
             </div>
         </li>
         {#<li>#}
@@ -37,7 +38,7 @@
         {#<h3>橙子的颜色</h3>#}
         {#<p>发了一个红包</p>#}
         {#</div>#}
-        {#<div class="num red_list_style red_list_get_red">已抢过</div>#}
+
         {#</div>#}
         {#</li>#}
         {#<li>#}
@@ -90,8 +91,10 @@
                         var index = $.inArray(val.id, vm.user_get_red_packet_ids);
                         if (index != -1) {
                             val.is_grabbed = true;
+                            val.is_grab = false;
                         } else {
                             val.is_grabbed = false;
+                            val.is_grab = true;
                         }
                         vm.red_packets_list.push(val);
                     });
@@ -99,14 +102,12 @@
                 });
 
                 vm.page++;
-            }
-//            select_game: function (game) {
-//                if(!game.url){
-//                    alert('url无效');
-//                    return;
-//                }
-//                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
-//            }
+            },
+            toGrabRedPacket: function (id , type) {
+                var url = "/m/red_packet_histories/grab_red_packets?sid="+this.sid+"&code="+this.code+"&red_packet_id="+id+"&red_packet_type="+type;
+
+                location.href = url;
+            },
 
         }
     };

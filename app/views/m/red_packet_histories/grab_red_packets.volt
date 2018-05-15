@@ -10,21 +10,28 @@
             </div>
             <h4>{{ user_nickname }}</h4>
             <h3>发了一个红包</h3>
-
-            {#<p>倒计时结束后可以抢</p>#}
-            {#<div class="daojishi" id="time">#}
-
-            {#<h3>发了一个红包，关注房主可领取</h3>#}
-            {#<div class="qiang_red"></div>#}
-
-            <div class="red_get">
-                <img src="images/gongxi.png">
-                <h3>抢到橘子发的钻石红包</h3>
-                <div class="red_get_num"><i></i>100</div>
-                <p>已收到我的帐户，可用于送礼物</p>
-                <a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>
+            {% if  red_packet_type == "all" %}
+            <div id="start_time">
+                <p>倒计时结束后可以抢</p>
+                <div class="daojishi" id="time"></div>
+            </div>
+            <div id="end_time">
+                <p>发了一个红包，关注房主可领取</p>
+                <div class="qiang_red" ></div>
             </div>
 
+            {%  endif %}
+
+                {#<h3>发了一个红包，关注房主可领取</h3>#}
+                {#<div class="qiang_red"></div>#}
+
+                {#<div class="red_get">#}
+                    {#<img src="images/gongxi.png">#}
+                    {#<h3>抢到橘子发的钻石红包</h3>#}
+                    {#<div class="red_get_num"><i></i>100</div>#}
+                    {#<p>已收到我的帐户，可用于送礼物</p>#}
+                    {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
+                {#</div>#}
 
 
             </div>
@@ -44,7 +51,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    var opts={
+    var opts = {
         data: {
             sid: "{{ sid }}",
             code: "{{ code }}",
@@ -53,37 +60,43 @@
 
 
         },
-        methods: {
-
-        }
+        methods: {}
     }
 
-    $(function(){
-        var m=3;
-        var s=0;
-        setInterval(function(){
-            if(s<10){
+    $(function () {
+        var t = 5;
+        var m = parseInt(t/60);
+        var s = t%60;
+        $("#end_time").hide();
+        setInterval(function () {
+            if (s < 10) {
                 //如果秒数少于10在前面加上0
-                $('#time').html(m+':0'+s);
-            }else{
-                $('#time').html(m+':'+s);
+                $('#time').html(m + ':0' + s);
+            } else {
+                $('#time').html(m + ':' + s);
             }
             s--;
-            if(s<0){
+            if (s < 0 ) {
                 //如果秒数少于0就变成59秒
-                s=59;
+                s = 59;
                 m--;
             }
-        },1000)
-    });
-    $(function(){
-        $('.qiang_red').click(function(){
-            $('.guanzhu_qiang_box').fadeIn(1000);
-            setTimeout(function(){
-                $('.gz_fangzhu').addClass('show');
-            },10);
+            if(m <= 0 && s <= 0){
+                $("#end_time").show();
+                $("#start_time").hide();
+                clearInterval();
+            }
+        }, 1000);
 
-            $('.close').click(function(){
+    });
+    $(function () {
+        $('.qiang_red').click(function () {
+            $('.guanzhu_qiang_box').fadeIn(1000);
+            setTimeout(function () {
+                $('.gz_fangzhu').addClass('show');
+            }, 10);
+
+            $('.close').click(function () {
                 $('.gz_fangzhu').removeClass('show');
                 $('.guanzhu_qiang_box').fadeOut(1000);
             })

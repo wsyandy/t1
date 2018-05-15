@@ -298,7 +298,7 @@ ol, ul, li {
     margin:0 auto;
     background: url(../images/qiang.png) no-repeat;
     background-size: 100%;
-    margin-top: 1.6rem;
+    margin-top: 0.5rem;
 }
 .guanzhu_qiang_box{
     position: fixed;
