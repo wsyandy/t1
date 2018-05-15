@@ -122,6 +122,10 @@ class BackpacksController extends BaseController
         $type = $json['type'];
         $target = $json['target'];
 
+        if (empty($target)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
+        }
+
         // 执行写入
         foreach ($target as $value) {
             $this->doCreate($value['id'], $value['number'], $type);
