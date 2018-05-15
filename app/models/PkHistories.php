@@ -75,7 +75,7 @@ class PkHistories extends BaseModel
 
         if ($pk_history->save()) {
 
-            self::delay($pk_time)->asyncFinishPk($pk_history);
+            self::delay($pk_time)->asyncFinishPk($pk_history->id);
             return [$pk_history, ERROR_CODE_SUCCESS, '创建成功'];
         }
 
@@ -83,8 +83,9 @@ class PkHistories extends BaseModel
     }
 
 
-    static function asyncFinishPk($pk_history)
+    static function asyncFinishPk($pk_history_id)
     {
+        $pk_history = \PkHistories::findFirstById($pk_history_id);
         if (isPresent($pk_history) && $pk_history->status != STATUS_OFF) {
             $pk_history->status = STATUS_OFF;
             $pk_history->update();
