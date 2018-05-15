@@ -199,9 +199,9 @@ trait RoomAttrs
             $total_score = $total_score * 1.5;
         }
 
-        if (preg_match("/broadcast/i", $this->types)) {
-            $total_score = $total_score * 5;
-        }
+//        if (preg_match("/broadcast/i", $this->types)) {
+//            $total_score = $total_score * 5;
+//        }
 
         $data = [
             'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
