@@ -45,7 +45,7 @@ class BackpacksController extends BaseController
         $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
         $boom_histories = \BoomHistories::historiesTopList(3);
-        $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson');
+        $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
 
 
         $value = $cache->get($cache_name);
