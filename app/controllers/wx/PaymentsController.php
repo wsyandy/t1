@@ -45,11 +45,10 @@ class PaymentsController extends BaseController
 
     function createAction()
     {
-        $user_id = $this->params('user_id');
         $user = null;
-
-        if ($user_id) {
-            $user = \Users::findFirstByUid($user_id);
+        $uid = $this->params('user_id', 0);
+        if ($uid) {
+            $user = \Users::findFirstByUid($uid);
         }
 
         if (!$user || $user->isSilent()) {
