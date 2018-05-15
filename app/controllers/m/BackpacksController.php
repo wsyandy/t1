@@ -147,11 +147,13 @@ class BackpacksController extends BaseController
         );
 
         // 钻石、金币 类型
-        $arr = array(
-            BACKPACK_DIAMOND_TYPE => 'boomGetDiamond',
-            BACKPACK_GOLD_TYPE => 'boomGetGold'
-        );
-        $function = $arr[$type];
+        if ($type != BACKPACK_GIFT_TYPE) {
+            $arr = array(
+                BACKPACK_DIAMOND_TYPE => 'boomGetDiamond',
+                BACKPACK_GOLD_TYPE => 'boomGetGold'
+            );
+            $function = $arr[$type];
+        }
 
         // 记录日志
         (new \BoomHistories())->createBoomHistories($user->id, $target_id, $type, $number);
