@@ -121,7 +121,7 @@ class BackpacksController extends BaseController
             $this->doCreate($value['id'], $value['number'], $type);
         }
 
-        $cache->getset($cache_name, 1);
+        $cache->setex($cache_name, $cache->expire($cache_name),1);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
