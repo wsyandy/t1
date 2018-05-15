@@ -23,7 +23,6 @@ class RedPacketHistoriesController extends BaseController
     function createAction()
     {
         $user = $this->currentUser();
-        info('当前用户房间',$user->current_room_id);
         $diamond = $this->params('diamond');
         $num = $this->params('num');
         $sex = $this->params('sex', USER_SEX_COMMON);
@@ -59,7 +58,7 @@ class RedPacketHistoriesController extends BaseController
 
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $diamond, $opts);
+            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
 
             $room = $user->current_room;
             $room->has_red_packet = STATUS_ON;
@@ -128,6 +127,7 @@ class RedPacketHistoriesController extends BaseController
 
     function redPacketsListAction()
     {
+        $user_id = $this->currentUserId();
         $room_id = $this->params('room_id');
         if ($this->request->isAjax()) {
             $page = $this->params('page', 1);
@@ -135,7 +135,10 @@ class RedPacketHistoriesController extends BaseController
 
             $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
             if ($red_packets) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
+                $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room_id, $user_id);
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
+                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids])
+                );
             }
 
             return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包信息');
