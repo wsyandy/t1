@@ -965,8 +965,8 @@ class RoomsController extends BaseController
         }
 
         $cond = [
-            'conditions' => 'room_id = :room_id:',
-            'bind' => ['room_id' => $room_id],
+            'conditions' => 'room_id = :room_id: and status=:status:',
+            'bind' => ['room_id' => $room_id, 'status' => STATUS_OFF],
             'order' => 'id desc'
         ];
 

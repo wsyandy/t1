@@ -176,7 +176,8 @@ class RedPackets extends BaseModel
             'created_at_text' => $this->created_at_text,
             'distance_start_at' => $distance_start_at,
             'user_avatar_url' => $this->user->avatar_url,
-            'red_packet_type' => $this->red_packet_type
+            'red_packet_type' => $this->red_packet_type,
+            'sex'=>$this->sex
         ];
     }
 
@@ -212,7 +213,7 @@ class RedPackets extends BaseModel
         if ($get_diamond) {
             $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
             $room = \Rooms::findFirstById($current_room_id);
-            $room->pushpushTopTopicMessage($user, $content);
+            $room->pushTopTopicMessage($user, $content);
 
             return [ERROR_CODE_SUCCESS, '抢到' . $user_nickname . '发的钻石红包', $get_diamond];
         }

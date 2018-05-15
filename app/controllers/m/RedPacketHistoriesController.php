@@ -25,7 +25,7 @@ class RedPacketHistoriesController extends BaseController
         $user = $this->currentUser();
         $diamond = $this->params('diamond');
         $num = $this->params('num');
-        $sex = $this->params('sex', USER_SEX_COMMON);
+        $sex = $this->params('sex');
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
         if ($diamond < 100 || $num < 10) {
@@ -78,7 +78,6 @@ class RedPacketHistoriesController extends BaseController
         $user = $this->currentUser();
         $red_packet_id = $this->params('red_packet_id');
         $red_packet_type = $this->params('red_packet_type');
-        $sex = $this->params('sex');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         $cache = \Users::getUserDb();
@@ -98,7 +97,7 @@ class RedPacketHistoriesController extends BaseController
             if ($distance_start_at > 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，还没到时间哦！');
             }
-            
+
             list($balance_diamond, $balance_num) = \RedPackets::checkRedPacketInfoForRoom($red_packet_id);
             if ($balance_diamond <= 0 || $balance_num <= 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
@@ -145,8 +144,7 @@ class RedPacketHistoriesController extends BaseController
             return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
         }
 
-        $this->view->red_packet_id = $red_packet_id;
-        $this->view->red_packet_type = $red_packet_type;
+        $this->view->red_packet = $red_packet;
         $this->view->user_nickname = $user_nickname;
         $this->view->distance_start_at = $distance_start_at;
     }
