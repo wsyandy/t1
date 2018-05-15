@@ -1154,6 +1154,21 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
+    function pushBoomIncomeMessage($total_income, $cur_income, $room_id)
+    {
+        $body = array(
+            'action' => 'blasting_gift',
+            'blasting_gift' => [
+                'expire_at' => self::getExpireAt($room_id),
+                'url' => 'url://m/backpacks',
+                'svga_image_url' => self::getSvgaImageUrl(),
+                'total_value' => (int)$total_income,
+                'current_value' => (int)$cur_income
+            ]
+        );
+        $this->push($body);
+    }
+
     function pushEnterRoomMessage($user)
     {
 
@@ -2151,7 +2166,7 @@ class Rooms extends BaseModel
             }
             $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
 
-            (new Backpacks())->pushClientAboutBoom($total_income, $cur_total_income, $room_id);
+            self::pushBoomIncomeMessage($total_income, $cur_total_income, $room_id);
         }
     }
 
