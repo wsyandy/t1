@@ -267,7 +267,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(700, 925) / 1000;
+        $pool_rate = mt_rand(700, 926) / 1000;
 
         $hour = intval(date("H"));
 
@@ -301,7 +301,7 @@ class DrawHistories extends BaseModel
 
                 $hit_1w_history = self::findFirst([
                     'conditions' => 'type=:type: and number>=:number: and created_at>=:start_at:',
-                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 300],
+                    'bind' => ['type' => 'diamond', 'number' => 10000, 'start_at' => time() - 180],
                     'order' => 'id desc']);
 
                 if ($hit_1w_history) {
@@ -321,7 +321,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($number == 100000) {
 
-                    if ($hour <= 18) {
+                    if ($hour <= 20) {
                         return 0;
                     }
 
