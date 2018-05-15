@@ -2118,6 +2118,9 @@ class Rooms extends BaseModel
         }
 
         $total_income = Backpacks::getTotalBoomValue();
+        if (isDevelopmentEnv()) {
+            $total_income = 500;
+        }
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_cache_name)) {

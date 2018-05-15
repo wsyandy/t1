@@ -268,8 +268,8 @@ class Backpacks extends BaseModel
     static function getExpireAt($room_id)
     {
         $cache = self::getHotWriteCache();
-        $cache_room_name = self::getBoomRoomCacheName($room_id);
-        $time = $cache->get($cache_room_name);
+        $room_cache_name = self::getBoomRoomCacheName($room_id);
+        $time = $cache->get($room_cache_name);
 
         if (empty($time)) {
             return 0;
