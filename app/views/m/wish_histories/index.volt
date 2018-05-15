@@ -49,45 +49,52 @@
     </div>
     <!-- 发布愿望弹窗 -->
     <div v-if="releaseWish" class="release_wish">
-        <ul>
-            <li>
+        <div  class="release_wish_scroll">
+            <ul>
+                <li>
                 <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text"
                           maxlength="100"></textarea>
-                <span class="text_length">${remnant}/100</span>
-                <div class="release_wish_buttom" @click="myReleaseWish"></div>
-                <span @click="onCancelToast(3)" class="cancel_release"></span>
-            </li>
-            <li v-for="my_wish_data,index in my_wish_datas">
-                <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span>
-                </div>
-                <p>${my_wish_data[1]}</p>
-            </li>
-        </ul>
+                    <span class="text_length">${remnant}/100</span>
+                    <div class="release_wish_buttom" @click="myReleaseWish"></div>
+                    <span @click="onCancelToast(3)" class="cancel_release"></span>
+                </li>
+                <li v-for="my_wish_data,index in my_wish_datas">
+                    <div class="release_wish_heart"><span class="heart_icon"></span><span>X${my_wish_data[0] ? my_wish_data[0] : 0}</span>
+                    </div>
+                    <p>${my_wish_data[1]}</p>
+                </li>
+            </ul>
+        </div>
+
+        <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
     </div>
-    <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
-    <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
+    {#<span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>#}
+
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
-        <ul>
-            <li v-for="show_wish_history,index in show_wish_histories">
-                <div class="release_wish_heart">
-                    <span class="heart_icon"></span>
-                    <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
-                </div>
-                <!-- 状态2查看别人愿望 -->
-                <div class="release_wish_user">
-                    <img :src="show_wish_history.user_avatar_url" alt="">
-                    <div class="release_wish_user_name">
-                        <span>昵称:${show_wish_history.user_nickname}</span>
-                        <span>ID：${show_wish_history.user_uid}</span>
+        <div  class="mywish_list_scroll">
+            <ul>
+                <li v-for="show_wish_history,index in show_wish_histories">
+                    <div class="release_wish_heart">
+                        <span class="heart_icon"></span>
+                        <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
                     </div>
-                </div>
-                <p>${show_wish_history.wish_text}</p>
-                <div @click="guardWish(show_wish_history.id,index)" class="release_wish_box">
-                    <span class="release_wish_buttom2"></span>
-                </div>
-            </li>
-        </ul>
+                    <!-- 状态2查看别人愿望 -->
+                    <div class="release_wish_user">
+                        <img :src="show_wish_history.user_avatar_url" alt="">
+                        <div class="release_wish_user_name">
+                            <span>昵称:${show_wish_history.user_nickname}</span>
+                            <span>ID：${show_wish_history.user_uid}</span>
+                        </div>
+                    </div>
+                    <p>${show_wish_history.wish_text}</p>
+                    <div @click="guardWish(show_wish_history.id,index)" class="release_wish_box">
+                        <span class="release_wish_buttom2"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
     </div>
     <!-- 分享 -->
     <div v-if="isShareToast" class="wishing_share_toast">
@@ -320,4 +327,3 @@
         });
     }
 </script>
-No newline at end of file
