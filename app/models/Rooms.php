@@ -551,9 +551,24 @@ class Rooms extends BaseModel
 
         $gift_orders = GiftOrders::find($cond);
 
+        $broadcast_room_cond = [
+            "conditions" => 'types like :types: and online_status = :online_status: and status = :status:',
+            'bind' => ['types' => "%broadcast%", 'online_status' => STATUS_ON, 'status' => STATUS_ON],
+            'columns' => 'id'
+        ];
+
+        $broadcast_rooms = Rooms::find($broadcast_room_cond);
+
+        foreach ($broadcast_rooms as $broadcast_room) {
+            $room_ids[] = $broadcast_room->id;
+        }
+
+
         foreach ($gift_orders as $gift_order) {
             $room_ids[] = $gift_order->room_id;
         }
+
+        $room_ids = array_unique($room_ids);
 
         $rooms = Rooms::findByIds($room_ids);
 
@@ -2114,7 +2129,7 @@ class Rooms extends BaseModel
         if ($value > 0) {
             $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
         } else
-            $cache->setex($cache_name, $time, ($value+$income));
+            $cache->setex($cache_name, $time, ($value + $income));
 
     }
 
@@ -2866,10 +2881,10 @@ class Rooms extends BaseModel
                 continue;
             }
 
+            $room_ids[$room->id] = $total_score;
+
             if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
-            } else {
-                $room_ids[$room->id] = $total_score;
+                $shield_room_ids[] = $room->id;
             }
 
             if (isDevelopmentEnv()) {
@@ -2888,20 +2903,9 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        if (count($shield_room_ids) > 0) {
 
-            uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
-
-                if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                    return -1;
-                }
-
-                return 1;
-            });
-        }
-
-        $shield_room_num = 15;
-        $total_room_num = 15;
+        $shield_room_num = 30;
+        $total_room_num = 30;
         $new_user_shield_room_num = 3;
 
         if (isDevelopmentEnv()) {
@@ -2909,7 +2913,7 @@ class Rooms extends BaseModel
             $new_user_shield_room_num = 1;
         }
 
-        $shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
+        //$shield_room_ids = array_slice($shield_room_ids, 0, $shield_room_num, true);
         $room_ids = array_slice($room_ids, 0, $total_room_num, true);
 
         $lock = tryLock($hot_room_list_key, 1000);
@@ -2919,33 +2923,37 @@ class Rooms extends BaseModel
         $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
         $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
         $hot_cache->zclear($total_new_hot_room_list_key);
+        $i = 1;
+
+        echoLine($shield_room_ids, $room_ids);
 
         foreach ($room_ids as $room_id => $score) {
-            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
+
+            if (!in_array($room_id, $shield_room_ids)) {
+                $hot_cache->zadd($hot_room_list_key, $score, $room_id);
+            }
+
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
         }
 
 
-        if (count($shield_room_ids) > 0) {
-
-            $i = 1;
-
-            foreach ($shield_room_ids as $shield_room_id => $score) {
-
-                if ($i <= $new_user_shield_room_num) {
-                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
-                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
-                }
-
-                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
-                $hot_cache->zadd($total_new_hot_room_list_key, $score, $shield_room_id);
-
-                $i++;
-            }
-        }
+//        if (count($shield_room_ids) > 0) {
+//
+//            $i = 1;
+//
+//            foreach ($shield_room_ids as $shield_room_id => $score) {
+//
+//                if ($i <= $new_user_shield_room_num) {
+//                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
+//                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
+//                }
+//
+//                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
+//                $hot_cache->zadd($total_new_hot_room_list_key, $score, $shield_room_id);
+//
+//                $i++;
+//            }
+//        }
 
         unlock($lock);
     }
@@ -2985,6 +2993,6 @@ class Rooms extends BaseModel
 
     static public function getBoomValueCacheName($room_id)
     {
-        return 'boom_target_value_room_'.$room_id;
+        return 'boom_target_value_room_' . $room_id;
     }
 }
