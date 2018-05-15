@@ -487,6 +487,10 @@ class UsersController extends BaseController
     function otherDetailAction()
     {
         $other_user = $this->otherUser();
+        if ($other_user->id == SYSTEM_ID) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '系统小助手');
+        }
+
         $current_user = $this->currentUser();
         $current_room_lock = false;
         //房间是否加锁
@@ -585,7 +589,7 @@ class UsersController extends BaseController
 
         }
 
-        if ($uid) {
+        if ($uid && $uid != SYSTEM_ID) {
             $cond['uid'] = intval($uid);
         }
 
