@@ -14,8 +14,8 @@
         </div>
     </div>
     <div class="detail_get">
-        <span>已领取{{ red_packet['num']-red_packet['balance_num'] ?  red_packet['balance_num'] : 0 }}/{{ red_packet['num'] }}</span>
-        <span>共{{red_packet['diamond']- red_packet['balance_diamond'] ? red_packet['balance_diamond'] : 0}}／{{ red_packet['diamond'] }}钻</span>
+        <span>已领取{{red_packet['num']- red_packet['balance_num']  }}/{{ red_packet['num'] }}</span>
+        <span>共{{red_packet['diamond']- red_packet['balance_diamond']}}／{{ red_packet['diamond'] }}钻</span>
     </div>
     <div class="detail_list">
         <ul>
