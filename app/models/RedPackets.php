@@ -125,12 +125,12 @@ class RedPackets extends BaseModel
         }
         if ($send_red_packet_history->create()) {
             //红包socket
-            $url = self::generateRedPacketUrl($send_red_packet_history->user_id);
+            $url = self::generateRedPacketUrl($user, $send_red_packet_history->current_room_id);
             $room->pushRedPacketMessage($send_red_packet_history->num, $url);
 
             //红包公屏socket
             $content = $user->nickname . '发了个大红包，快来抢啊！！！';
-            $room->pushpushTopTopicMessage($user, $content);
+            $room->pushTopTopicMessage($user, $content);
 
             $opts = [
                 'user_id' => $send_red_packet_history->user_id,
@@ -146,9 +146,9 @@ class RedPackets extends BaseModel
         return null;
     }
 
-    static function generateRedPacketUrl($user_id)
+    static function generateRedPacketUrl($user, $room_id)
     {
-        return 'url://m/games';
+        return 'url://m/red_packet_histories/red_packets_list?sid=' . $user->sid . '&code=' . $user->product_channel->code . '&room_id=' . $room_id;
     }
 
     static function findRedPacketList($current_room_id, $page, $per_page)
@@ -242,6 +242,7 @@ class RedPackets extends BaseModel
             $cache->hmset($red_packet_key, $body);
 
             $cache->zadd($key, time(), $red_packet_id);
+
             $cache->zadd($user_key, $get_diamond, $user_id);
 
             return [$user_nickname, $get_diamond];

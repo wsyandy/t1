@@ -128,8 +128,8 @@ class RedPacketHistoriesController extends BaseController
 
     function redPacketsListAction()
     {
+        $room_id = $this->params('room_id');
         if ($this->request->isAjax()) {
-            $room_id = $this->params('room_id');
             $page = $this->params('page', 1);
             $pre_page = $this->params('pre_page', 10);
 
@@ -141,6 +141,7 @@ class RedPacketHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包信息');
         }
         $this->view->titile = '红包列表';
+        $this->view->room_id = $room_id;
     }
 
     function detailAction()
