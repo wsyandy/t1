@@ -122,9 +122,14 @@ class GiftsController extends BaseController
 
                 $current_user = $this->currentUser(true);
 
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
+                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold,
+                    'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
                 $error_reason = "购买成功";
+
+                if (isDevelopmentEnv()) {
+                    $res['gift_effect_image_url'] = $this->getRoot() . "images/gift_effect_image" . mt_rand(1, 2) . ".png";
+                }
 
                 if (!in_array($this->currentUser()->id, $receiver_ids)) {
                     $error_reason = "赠送成功";
