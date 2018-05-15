@@ -874,7 +874,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $cur_income = $cache->get($cur_income_cache_name);
 
             if ($cur_income >= $line) {
-                $room->pushBoomIncomeMessage($total, $cur_income, $room->id);
+                $room->pushBoomIncomeMessage($total, $cur_income);
             }
         }
     }

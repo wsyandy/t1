@@ -1154,12 +1154,12 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income, $room_id)
+    function pushBoomIncomeMessage($total_income, $cur_income)
     {
         $body = array(
             'action' => 'blasting_gift',
             'blasting_gift' => [
-                'expire_at' => Backpacks::getExpireAt($room_id),
+                'expire_at' => Backpacks::getExpireAt($this->id),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
@@ -1998,17 +1998,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2121,7 +2123,7 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            self::statBoomIncome($income, $room->id, $time);
+            $room->statBoomIncome($income, $time);
 
             debug($minutes_stat_key);
         }
@@ -2129,9 +2131,10 @@ class Rooms extends BaseModel
 
 
     // 爆礼物流水值记录
-    static public function statBoomIncome($income, $room_id, $time)
+    public function statBoomIncome($income, $time)
     {
         $cache = self::getHotWriteCache();
+        $room_id = $this->id;
 
         // 单位周期 房间当前流水值
         $cur_income_cache_name = self::getBoomValueCacheName($room_id);
@@ -2164,7 +2167,7 @@ class Rooms extends BaseModel
             }
             $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
 
-            self::pushBoomIncomeMessage($total_income, $cur_total_income, $room_id);
+            $this->pushBoomIncomeMessage($total_income, $cur_total_income);
         }
     }
 
@@ -3029,13 +3032,5 @@ class Rooms extends BaseModel
     static public function getBoomValueCacheName($room_id)
     {
         return 'boom_target_value_room_' . $room_id;
-    }
-
-    function getTimeForUserInRoom($user_id)
-    {
-        $hot_cache = self::getHotWriteCache();
-        $real_user_key = $this->getRealUserListKey();
-        $time = $hot_cache->zscore($real_user_key, $user_id);
-        return $time;
     }
 }
