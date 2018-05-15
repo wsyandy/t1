@@ -73,26 +73,26 @@
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
         <div  class="mywish_list_scroll">
-        <ul>
-            <li v-for="show_wish_history,index in show_wish_histories">
-                <div class="release_wish_heart">
-                    <span class="heart_icon"></span>
-                    <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
-                </div>
-                <!-- 状态2查看别人愿望 -->
-                <div class="release_wish_user">
-                    <img :src="show_wish_history.user_avatar_url" alt="">
-                    <div class="release_wish_user_name">
-                        <span>昵称:${show_wish_history.user_nickname}</span>
-                        <span>ID：${show_wish_history.user_uid}</span>
+            <ul>
+                <li v-for="show_wish_history,index in show_wish_histories">
+                    <div class="release_wish_heart">
+                        <span class="heart_icon"></span>
+                        <span id="guarded_number">X${show_wish_history.guarded_number?show_wish_history.guarded_number:0}</span>
                     </div>
-                </div>
-                <p>${show_wish_history.wish_text}</p>
-                <div @click="guardWish(show_wish_history.id,index)" class="release_wish_box">
-                    <span class="release_wish_buttom2"></span>
-                </div>
-            </li>
-        </ul>
+                    <!-- 状态2查看别人愿望 -->
+                    <div class="release_wish_user">
+                        <img :src="show_wish_history.user_avatar_url" alt="">
+                        <div class="release_wish_user_name">
+                            <span>昵称:${show_wish_history.user_nickname}</span>
+                            <span>ID：${show_wish_history.user_uid}</span>
+                        </div>
+                    </div>
+                    <p>${show_wish_history.wish_text}</p>
+                    <div @click="guardWish(show_wish_history.id,index)" class="release_wish_box">
+                        <span class="release_wish_buttom2"></span>
+                    </div>
+                </li>
+            </ul>
         </div>
         <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
     </div>

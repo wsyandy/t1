@@ -41,23 +41,23 @@ html,body{
   background-size: cover;
 }
 /*.wishing_music{*/
-  /*width: .66rem;*/
-  /*height: .66rem;*/
-  /*position: absolute;*/
-  /*top: .4rem;*/
-  /*right: .4rem;*/
-  /*background:url(../images/wishing_music.png) center no-repeat;*/
-  /*background-size: .66rem;*/
-  /*transform-origin: 50% 50%;*/
-  /*-webkit-transform-origin: 50% 50%;*/
-  /*animation:4s linear 0s myrotate infinite;*/
-  /*-webkit-animation:4s linear 0s myrotate infinite;!* Safari and Chrome *!*/
-  /*animation-fill-mode:forwards;!*动画播放完毕时停止，不回到初始状态*!*/
-  /*-webkit-animation-fill-mode:forwards;*/
+/*width: .66rem;*/
+/*height: .66rem;*/
+/*position: absolute;*/
+/*top: .4rem;*/
+/*right: .4rem;*/
+/*background:url(../images/wishing_music.png) center no-repeat;*/
+/*background-size: .66rem;*/
+/*transform-origin: 50% 50%;*/
+/*-webkit-transform-origin: 50% 50%;*/
+/*animation:4s linear 0s myrotate infinite;*/
+/*-webkit-animation:4s linear 0s myrotate infinite;!* Safari and Chrome *!*/
+/*animation-fill-mode:forwards;!*动画播放完毕时停止，不回到初始状态*!*/
+/*-webkit-animation-fill-mode:forwards;*/
 /*}*/
 /*.wishing_music_pause{*/
-  /*animation-play-state:paused;*/
-  /*-webkit-animation-play-state:paused; !* Safari 和 Chrome *!*/
+/*animation-play-state:paused;*/
+/*-webkit-animation-play-state:paused; !* Safari 和 Chrome *!*/
 /*}*/
 @keyframes myrotate{
   form {transform:rotate(0deg);}

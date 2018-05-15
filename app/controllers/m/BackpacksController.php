@@ -41,11 +41,10 @@ class BackpacksController extends BaseController
         // 获取当前房间ID
         $room_id = $this->getCurrentRoomId($user->id);
 
-        // cache
         $cache = \Backpacks::getHotWriteCache();
         $cache_name = $this->getCacheName($user->id, $room_id);
 
-        // 用户未抽奖
+        // 用户未领取
         if ($cache->exists($cache_name)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
         }
@@ -91,6 +90,10 @@ class BackpacksController extends BaseController
     public function createAction()
     {
         $user = $this->currentUser();
+        if (isDevelopmentEnv()) {
+            $user = (object)array('id' => 1);
+        }
+        
         $room_id = $this->getCurrentRoomId($user->id);
 
         // 拿缓存
