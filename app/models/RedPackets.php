@@ -58,6 +58,10 @@ class RedPackets extends BaseModel
      * @type integer
      */
     private $_balance_diamond;
+    /**
+     * @type integer
+     */
+    private $_balance_num;
 
     static $VALIDATES = [
         'id' => ['null' => '不能为空'],
@@ -66,7 +70,9 @@ class RedPackets extends BaseModel
         'diamond' => ['null' => '不能为空'],
         'status' => ['null' => '不能为空'],
         'current_room_id' => ['null' => '不能为空'],
-        'red_packet_type' => ['null' => '不能为空']
+        'red_packet_type' => ['null' => '不能为空'],
+        'balance_diamond' => ['null' => '不能为空'],
+        'balance_num' => ['null' => '不能为空']
     ];
 
     static $RED_PACKET_STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
@@ -114,7 +120,7 @@ class RedPackets extends BaseModel
     static function createReadPacket($user, $room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_diamond'] as $column) {
+        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_num', 'balance_diamond'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
@@ -127,10 +133,9 @@ class RedPackets extends BaseModel
             $room->pushpushTopTopicMessage($user, $content);
 
             $opts = [
-                'current_room_id' => $send_red_packet_history->current_room_id,
                 'user_id' => $send_red_packet_history->user_id,
-                'balance_diamond' => $send_red_packet_history->balance_diamond,
-                'num' => $send_red_packet_history->num,
+                'balance_diamond' => $send_red_packet_history->diamond,
+                'balance_num' => $send_red_packet_history->num,
                 'id' => $send_red_packet_history->id,
                 'user_nickname' => $send_red_packet_history->user->nickname
             ];
@@ -170,13 +175,39 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'status_text' => $this->status_text,
             'created_at_text' => $this->created_at_text,
-            'start_at_text' => $start_at
+            'start_at_text' => $start_at,
+            'user_avatar_url' => $this->user->avatar_url
         ];
     }
 
-    static function grabRedPacket($current_room_id, $user, $red_packet_type, $red_packet_id)
+    function toBasicJson()
     {
-        list($user_nickname, $get_diamond) = \RedPackets::getRedPacketDiamondByAll($current_room_id, $user, $red_packet_id);
+        list($balance_diamond, $balance_num) = $this->getBalance($this->id);
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'user_avatar_url' => $this->user->avatar_url,
+            'user_nickanme' => $this->user->nickname,
+            'diamond' => $this->diamond,
+            'num' => $this->num,
+            'balance_diamond' => $balance_diamond,
+            'balance_num' => $balance_num
+        ];
+    }
+
+    function getBalance($red_packet_id)
+    {
+        $cache = \Users::getUserDb();
+        $red_packet_key = self::generateRedPacketInfo($red_packet_id);
+        $balance_diamond = $cache->hget($red_packet_key, 'balance_diamond');
+        $balance_num = $cache->hget($red_packet_key, 'balance_num');
+        return [$balance_diamond, $balance_num];
+
+    }
+
+    static function grabRedPacket($current_room_id, $user, $red_packet_id)
+    {
+        list($user_nickname, $get_diamond) = \RedPackets::getRedPacketDiamond($current_room_id, $user->id, $red_packet_id);
 
         if ($get_diamond) {
             $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
@@ -189,22 +220,29 @@ class RedPackets extends BaseModel
         return [ERROR_CODE_SUCCESS, '手慢了，红包抢完了！', null];
     }
 
-    static function getRedPacketDiamondByAll($current_room_id, $user, $red_packet_id)
+    static function getRedPacketDiamond($current_room_id, $user_id, $red_packet_id)
     {
-        $cache = \Users::getHotWriteCache();
-        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user->id, $red_packet_id);
+        $cache = \Users::getUserDb();
+        //红包内容
+        $red_packet_key = self::generateRedPacketInfo($red_packet_id);
+
         //房间内对应抢到红包的用户的红包ID的集合
-        $key = self::generateRedPacketForRoomKey($current_room_id, $user->id);
+        $key = self::generateRedPacketForRoomKey($current_room_id, $user_id);
+
+        //对应的抢到这个红包的用户ID集合
+        $user_key = self::generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id);
 
         $balance_diamond = $cache->hget($red_packet_key, 'balance_diamond');
-        $num = $cache->hget($red_packet_key, 'num');
+        $balance_num = $cache->hget($red_packet_key, 'balance_num');
         $user_nickname = $cache->hget($red_packet_key, 'user_nickname');
-        if ($balance_diamond && $num) {
-            $usable_balance_diamond = $balance_diamond - ($num - 1);
+        if ($balance_diamond && $balance_num) {
+            $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
             $get_diamond = mt_rand(1, $usable_balance_diamond);
-            $body = ['num' => $num - 1, 'balance_diamond' => $balance_diamond - $get_diamond];
+            $body = ['balance_num' => $balance_num - 1, 'balance_diamond' => $balance_diamond - $get_diamond];
             $cache->hmset($red_packet_key, $body);
+
             $cache->zadd($key, time(), $red_packet_id);
+            $cache->zadd($user_key, $get_diamond, $user_id);
 
             return [$user_nickname, $get_diamond];
         }
@@ -213,20 +251,25 @@ class RedPackets extends BaseModel
 
     }
 
+    static function generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id)
+    {
+        return 'get_red_packet_in_room_' . $current_room_id . '_for_red_packet_' . $red_packet_id;
+    }
+
+
     static function saveRedPacketForRoom($opts)
     {
         $user_id = fetch($opts, 'user_id');
-        $current_room_id = fetch($opts, 'current_room_id');
         $balance_diamond = fetch($opts, 'balance_diamond');
-        $num = fetch($opts, 'num');
+        $balance_num = fetch($opts, 'balance_num');
         $id = fetch($opts, 'id');
         $user_nickname = fetch($opts, 'user_nickname');
 
-        $cache = \Users::getHotWriteCache();
+        $cache = \Users::getUserDb();
 
         //初始化红包数据
-        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user_id, $id);
-        $body = ['id' => $id, 'num' => $num, 'balance_diamond' => $balance_diamond, 'user_id' => $user_id, 'user_nickname' => $user_nickname];
+        $red_packet_key = self::generateRedPacketInfo($id);
+        $body = ['id' => $id, 'balance_num' => $balance_num, 'balance_diamond' => $balance_diamond, 'user_id' => $user_id, 'user_nickname' => $user_nickname];
         $cache->hmset($red_packet_key, $body);
 
     }
@@ -236,19 +279,19 @@ class RedPackets extends BaseModel
         return 'get_red_packet_in_room_' . $room_id . '_for_user_' . $user_id;
     }
 
-    static function generateRedPacketInRoomForUserKey($room_id, $user_id, $id)
+    static function generateRedPacketInfo($id)
     {
-        return 'red_packet_in_room_' . $room_id . '_for_user_' . $user_id . '_by_' . $id;
+        return 'red_packet_info_' . $id;
     }
 
 
-    static function checkRedPacketInfoForRoom($current_room_id, $user_id, $red_packet_id)
+    static function checkRedPacketInfoForRoom($red_packet_id)
     {
-        $cache = \Users::getHotWriteCache();
-        $red_packet_key = self::generateRedPacketInRoomForUserKey($current_room_id, $user_id, $red_packet_id);
+        $cache = \Users::getUserDb();
+        $red_packet_key = self::generateRedPacketInfo($red_packet_id);
         $balance_diamond = $cache->hget($red_packet_key, 'balance_diamond');
-        $num = $cache->hget($red_packet_key, 'num');
-        return [$balance_diamond, $num];
+        $balance_num = $cache->hget($red_packet_key, 'balance_num');
+        return [$balance_diamond, $balance_num];
     }
 
 
