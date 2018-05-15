@@ -96,7 +96,7 @@
     <div class="cover" v-if="isSex">
         <div class="popup_sex">
             <ul class="sec_tabs">
-                <li v-for="v in allSex" @click="selectSex(v)">
+                <li v-for="(v,i) in allSex" @click="selectSex(i)">
                     <div class="ico_sex male"></div>
                     <span>${v}</span>
                 </li>
@@ -114,8 +114,8 @@
             myDiamond: {{ diamond }},
             number: 10,
             amount: 100,
-            allSex:['男生','女生','男女皆可'],
-            sex:'男女皆可',
+            allSex:['女生','男生','男女皆可'],
+            sex:"男女皆可",
             red_packet_type:"{{ red_packet_type }}",
             red_packet_type_cur:'{{ red_packet_type['all'] }}',
             type:'all',
@@ -133,9 +133,9 @@
                 vm.isGiveStyle = false;
 
             },
-            selectSex:function (v) {
+            selectSex:function (i) {
                 vm.isSex = true;
-                this.sex = v;
+                this.sex = i;
             },
             getStyle: function () {
                 vm.isGiveStyle = true;
@@ -155,11 +155,15 @@
                 var data = {
                     sid:this.sid,
                     code:this.code,
-                    num:vm.number,
-                    diamond:vm.amount,
-                    sex:vm.sex,
-                    red_packet_type:vm.type
+                    num:this.number,
+                    diamond:this.amount,
+                    sex:this.sex,
+                    red_packet_type:this.type
                 }
+                if(this.sex == "男女皆可"){
+                    data.sex = 2;
+                }
+                //console.log(data);
                 if(vm.amount > this.myDiamond ){
                     vm.less_zuan_input = true;
                     return;
