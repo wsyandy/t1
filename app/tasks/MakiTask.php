@@ -10,7 +10,7 @@ class MakiTask extends Phalcon\Cli\Task
     public function testxAction()
     {
         $line = 0; // 初始值
-        $total = 10000; // 流水上线
+        $total = Backpacks::getTotalBoomValue(); // 流水上线
 
         // 房间
         $rooms = Rooms::dayStatRooms();
