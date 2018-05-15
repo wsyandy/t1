@@ -551,9 +551,24 @@ class Rooms extends BaseModel
 
         $gift_orders = GiftOrders::find($cond);
 
+        $broadcast_room_cond = [
+            "conditions" => 'types like :types: and online_status = :online_status: and status = :status:',
+            'bind' => ['types' => "%broadcast%", 'online_status' => STATUS_ON, 'status' => STATUS_ON],
+            'columns' => 'id'
+        ];
+
+        $broadcast_rooms = Rooms::find($broadcast_room_cond);
+
+        foreach ($broadcast_rooms as $broadcast_room) {
+            $room_ids[] = $broadcast_room->id;
+        }
+
+
         foreach ($gift_orders as $gift_order) {
             $room_ids[] = $gift_order->room_id;
         }
+
+        $room_ids = array_unique($room_ids);
 
         $rooms = Rooms::findByIds($room_ids);
 
