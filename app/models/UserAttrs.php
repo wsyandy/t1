@@ -21,7 +21,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'friend_num' => $this->friend_num,
@@ -43,19 +43,14 @@ trait UserAttrs
             'segment_text' => $this->segment_text,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
-            'diamond' => $this->diamond
+            'diamond' => $this->diamond,
+            'experience' => intval($this->experience)
         ];
 
         if (isPresent($this->union)) {
             $data['union_name'] = $this->union->name;
         } else {
             $data['union_name'] = '';
-        }
-
-        if (isPresent($this->experience)) {
-            $data['experience'] = intval($this->experience);
-        } else {
-            $data['experience'] = 0;
         }
 
         return $data;
@@ -133,7 +128,7 @@ trait UserAttrs
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
@@ -180,7 +175,7 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'current_room_lock' => $this->current_room_lock,
             'user_role' => $this->user_role,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'distance' => $this->distance,
             'age' => $this->age,
             'level' => $this->level,
@@ -251,7 +246,7 @@ trait UserAttrs
             'avatar_small_url' => $this->avatar_small_url,
             'union_charm_value' => $this->union_charm_value,
             'union_wealth_value' => $this->union_wealth_value,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'current_room_id' => $this->current_room_id,
             'is_exit_union' => $this->is_exit_union,
             'hi_coins' => $this->hi_coins
@@ -286,7 +281,7 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'current_room_id' => $this->current_room_id,
             'tags' => $this->tags,
             'recommend_tip' => $this->recommend_tip
