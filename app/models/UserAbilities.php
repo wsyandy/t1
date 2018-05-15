@@ -107,10 +107,6 @@ trait UserAbilities
             return true;
         }
 
-        if (1432490 == $this->id) {
-            return false;
-        }
-
         $province_ids = [1, 2];
         if (in_array($this->province_id, $province_ids)
             || in_array($this->ip_province_id, $province_ids) && isProduction()
