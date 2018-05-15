@@ -3050,7 +3050,7 @@ class Rooms extends BaseModel
     function getUnderwayRedPacket()
     {
         $cache = \Users::getUserDb();
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->id);
+        $underway_red_packet_list_key = \RedPackets::generateUnderwayRedPacketListKey($this->id);
         $ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
         $room_red_packets = \RedPackets::findByIds($ids);
 
