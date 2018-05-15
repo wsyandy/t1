@@ -78,9 +78,9 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
-                    room_id: 172,
+                    room_id: 172
 
-                }
+                };
 //console.log(data);
                 $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
                     console.log(resp);
@@ -96,7 +96,7 @@
                         vm.red_packets_list.push(val);
                     });
 
-                }
+                });
 
                 vm.page++;
             }
@@ -119,7 +119,6 @@
             }
         });
     })
-    vm.RedPacketsList();
 
     $(function () {
         var m = 3;
