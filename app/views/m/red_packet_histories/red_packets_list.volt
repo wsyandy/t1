@@ -119,7 +119,7 @@
             }
         });
     })
-
+    vm.RedPacketsList();
     $(function () {
         var m = 3;
         var s = 0;
