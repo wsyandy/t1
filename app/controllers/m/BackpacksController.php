@@ -44,20 +44,20 @@ class BackpacksController extends BaseController
         $cache = \Backpacks::getHotWriteCache();
         $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
+        $boom_histories = \BoomHistories::historiesTopList(3);
+        $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson');
+
+
         $value = $cache->get($cache_name);
         if ($value == 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', ['target' => $boom_histories]);
         }
 
-        $room_sign_key = \Backpacks::generateBoomRoomSignKey($room_id);
-        $expire = $cache->get($room_sign_key);
-        debug(date('Ymd H:i:s', $expire));
-        $receive_time = strtotime('+3 minutes', $expire) - time();
-        if ($receive_time > 180) $receive_time = 180;
+        $receive_time = 180;
 
         // 用户未领取
         if ($cache->exists($cache_name) && $value!=1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
         }
 
         // 1 随机类型
