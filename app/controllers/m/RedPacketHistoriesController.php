@@ -23,7 +23,7 @@ class RedPacketHistoriesController extends BaseController
     function createAction()
     {
         $user = $this->currentUser();
-
+        info('当前用户房间',$user->current_room_id);
         $diamond = $this->params('diamond');
         $num = $this->params('num');
         $sex = $this->params('sex', USER_SEX_COMMON);
