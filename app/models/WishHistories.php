@@ -148,6 +148,7 @@ class WishHistories extends BaseModel
         }
     }
 
+    //中奖人数
     static function generateLuckyUserList($product_channel_id)
     {
         return 'lucky_user_list_' . $product_channel_id;
@@ -201,4 +202,5 @@ class WishHistories extends BaseModel
         }
         return $lucky_names;
     }
+
 }
