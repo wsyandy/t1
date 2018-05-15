@@ -295,5 +295,12 @@ class RedPackets extends BaseModel
         return [$balance_diamond, $balance_num];
     }
 
+    static function UserGetRedPacketIds($room_id,$user_id)
+    {
+        $cache = \Users::getUserDb();
+        $key = self::generateRedPacketForRoomKey($room_id, $user_id);
+        $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
+        return $user_get_red_packet_ids;
+    }
 
 }
