@@ -78,6 +78,7 @@
     model: 'gifts'
     action: 'give'
     notify_type: 'bc/ptp'
+    gift_effect_image_url: 'http://gift_effect_image_url'
     timestamp: 1515142608
     data: {
         id: 1
