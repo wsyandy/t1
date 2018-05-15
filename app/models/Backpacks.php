@@ -13,7 +13,7 @@ class Backpacks extends BaseModel
 
     static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boom_SVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
+    static $boom_SVGA = 'http://test.momoyuedu.cn/m/images/boom_animation_1.svga';
 
     static $total_value = 50000; // 爆礼物总值
 
@@ -87,13 +87,14 @@ class Backpacks extends BaseModel
                 'expire_at' => self::getExpireAt($room_id),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => self::getSvgaImageUrl(),
-                'total_value' => $total_value,
-                'current_value' => $cur_value
+                'total_value' => (int)$total_value,
+                'current_value' => (int)$cur_value
             ]
         );
 
-        if (isDevelopmentEnv()) {
-            // Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
+        if (isDevelopmentEnv() && $room_id == 137039) {
+            $body['room_id'] = 137039;
+            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
         }
         $room = Rooms::findFirstById($room_id);
         $room->push($body);

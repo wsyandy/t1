@@ -70,7 +70,9 @@ class RedPackets extends BaseModel
         'diamond' => ['null' => '不能为空'],
         'status' => ['null' => '不能为空'],
         'current_room_id' => ['null' => '不能为空'],
-        'red_packet_type' => ['null' => '不能为空']
+        'red_packet_type' => ['null' => '不能为空'],
+        'balance_diamond' => ['null' => '不能为空'],
+        'balance_num' => ['null' => '不能为空']
     ];
 
     static $RED_PACKET_STATUS = [STATUS_ON => '进行中', STATUS_OFF => '结束'];
@@ -118,7 +120,7 @@ class RedPackets extends BaseModel
     static function createReadPacket($user, $room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance','balance_num','balance_diamond'] as $column) {
+        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_num', 'balance_diamond'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
