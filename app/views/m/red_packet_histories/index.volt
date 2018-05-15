@@ -116,7 +116,7 @@
             amount: 100,
             allSex:['女生','男生','男女皆可'],
             sex:"男女皆可",
-            red_packet_type:"{{ red_packet_type }}",
+            red_packet_type:{{ red_packet_type }},
             red_packet_type_cur:'{{ red_packet_type['all'] }}',
             type:'all',
             isGiveStyle: false,
