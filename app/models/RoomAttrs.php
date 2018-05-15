@@ -199,6 +199,10 @@ trait RoomAttrs
             $total_score = $total_score * 1.5;
         }
 
+        if (preg_match("/broadcast/i", 'broadcast')) {
+            $total_score = $total_score * 5;
+        }
+
         $data = [
             'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
             'real_user_pay_score' => $real_user_pay_score, 'real_user_stay_time_score' => $real_user_stay_time_score,

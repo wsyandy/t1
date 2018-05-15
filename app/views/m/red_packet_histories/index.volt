@@ -35,8 +35,8 @@
                     </div>
                 </div>
             </div>
-            {% if  red_packet_type.nearby %}
-            <div class="give_list">
+
+            <div class="give_list" v-if="">
                 <div class="give_box">
                     <h3>位置／范围</h3>
                     <div class="give_input">
@@ -55,7 +55,7 @@
                     </div>
                 </div>
             </div>
-            {% endif %}
+
             <div class="give_number">
                 <h5>钻石余额： <span>{{ diamond }}</span></h5>
                 <a href="/m/products?sid={{ sid }}&code={{ code }}">充值 <i class="icon_right"></i></a>
