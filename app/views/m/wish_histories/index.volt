@@ -49,7 +49,7 @@
     </div>
     <!-- 发布愿望弹窗 -->
     <div v-if="releaseWish" class="release_wish">
-        <div  class="release_wish_list">
+        <div  class="release_wish_scroll">
             <ul>
                 <li>
                 <textarea placeholder="✏️许下一个小小的愿望，万一实现了呢…" @input="descInput" v-model="my_wish_text"
@@ -69,9 +69,10 @@
         <span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>
     </div>
     {#<span v-if="releaseWish" @click="onCancelToast(3)" class="toatst_cancel"></span>#}
-    <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
+
     <!-- 我的愿望列表弹窗 -->
     <div v-if="myWishList" class="mywish_list">
+        <div  class="mywish_list_scroll">
         <ul>
             <li v-for="show_wish_history,index in show_wish_histories">
                 <div class="release_wish_heart">
@@ -92,6 +93,8 @@
                 </div>
             </li>
         </ul>
+        </div>
+        <span v-if="myWishList" @click="onCancelToast(4)" class="toatst_cancel"></span>
     </div>
     <!-- 分享 -->
     <div v-if="isShareToast" class="wishing_share_toast">

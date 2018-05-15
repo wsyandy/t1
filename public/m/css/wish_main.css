@@ -219,7 +219,7 @@ html,body{
   z-index: 103;
   /*overflow-x: scroll;*/
 }
-.release_wish_list{
+.release_wish_scroll{
   width: 100%;
   z-index: 103;
   overflow-x: scroll;
@@ -338,18 +338,20 @@ html,body{
 
 .mywish_list{
   width: 100%;
-  overflow-x: auto;
   height: 7.9rem;
   position: fixed;
   left: 0;
   top: 1.5rem;
   z-index: 104;
 }
+.mywish_list_scroll{
+  width: 100%;
+  z-index: 104;
+  overflow-x: scroll;
+}
 .mywish_list ul{
   width: auto;
-  position:absolute;
-  left:0;
-  top:0;
+
   /* width:2200px; */
   padding:0 1.24rem;
 }
