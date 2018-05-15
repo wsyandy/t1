@@ -49,6 +49,11 @@ class BackpacksController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已领取！');
         }
 
+        $room_sign_key = \Backpacks::generateBoomRoomSignKey($room_id);
+        $expire = $cache->get($room_sign_key);
+        $receive_time = strtotime('+3 minutes', $expire) - time();
+        if ($receive_time > 180) $receive_time = 180;
+
         // 用户未领取
         if ($cache->exists($cache_name) && $value!=1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
@@ -70,7 +75,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->setex($cache_name, 180, json_encode($json));
+        $cache->setex($cache_name, $receive_time, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
