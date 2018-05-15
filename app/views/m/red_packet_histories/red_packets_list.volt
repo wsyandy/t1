@@ -55,6 +55,61 @@
     </ul>
 </div>
 <script type="text/javascript">
+    var opts = {
+        data: {
+            sid: "{{ sid }}",
+            code: "{{ code }}",
+            page: 1,
+            per_page:10,
+            total_page: 1,
+            red_packets_list: []
+        },
+
+        methods: {
+            RedPacketsList: function () {
+
+                if (vm.page > vm.total_page) {
+                    return;
+                }
+                var data = {
+                    page: vm.page,
+                    per_page: vm.per_page,
+                    sid: vm.sid,
+                    code: vm.code,
+
+                }
+//console.log(data);
+                $.authGet('/m/red_packet_histories/red_packets_list', data , function (resp) {
+                    console.log(resp);
+                    vm.total_page = resp.total_page;
+                    $.each(resp.red_packets, function (index, val) {
+                        vm.red_packets_list.push(val);
+                    })
+                })
+
+                vm.page++;
+            },
+            select_game: function (game) {
+                if(!game.url){
+                    alert('url无效');
+                    return;
+                }
+                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
+            }
+
+        }
+    };
+    vm = XVue(opts);
+
+    $(function () {
+        $(window).scroll(function () {
+            if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+                vm.RedPacketsList();
+            }
+        });
+    })
+    vm.RedPacketsList();
+
     $(function(){
         var m=3;
         var s=0;
