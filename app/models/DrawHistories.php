@@ -128,7 +128,7 @@ class DrawHistories extends BaseModel
     static function getData()
     {
         $data = [];
-        if (date("Ymd") == '20180510') {
+        if (date("Ymd") == '20180515') {
             $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 2];
         } else {
             $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
