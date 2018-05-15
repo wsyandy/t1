@@ -80,11 +80,9 @@ class RedPacketHistoriesController extends BaseController
         $red_packet_type = $this->params('red_packet_type');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-        $cache = \Users::getUserDb();
-        $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
-        $user_nickname = $cache->hget($key, 'user_nickname');
-
         $distance_start_at = $red_packet->created_at + 3 * 60 - time();
+        $user_nickname = $red_packet->user->nickname;
+        $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
             $cache = \Users::getUserDb();
@@ -134,8 +132,10 @@ class RedPacketHistoriesController extends BaseController
                 }
             }
 
-            list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
-            if (!$get_diamond) {
+            list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+            $error_reason = '手慢了，红包抢完了！';
+            if ($get_diamond) {
+                $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
                 \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
@@ -146,6 +146,7 @@ class RedPacketHistoriesController extends BaseController
 
         $this->view->red_packet = $red_packet;
         $this->view->user_nickname = $user_nickname;
+        $this->view->user_avatar_url = $user_avatar_url;
         $this->view->distance_start_at = $distance_start_at;
     }
 
@@ -173,7 +174,7 @@ class RedPacketHistoriesController extends BaseController
 
     function detailAction()
     {
-        $red_packet_id = $this->params('id');
+        $red_packet_id = $this->params('red_packet_id');
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         $this->view->red_packet = $red_packet->toBasicJson();
     }
@@ -205,11 +206,20 @@ class RedPacketHistoriesController extends BaseController
     //关注房主并领取红包
     function followersAction()
     {
-        if ($this->currentUser()->id == $this->otherUser()->id) {
+        $red_packet_id = $this->params('red_packet_id');
+        $user = $this->currentUser();
+        if ($user->id == $this->otherUser()->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
         }
 
-        $this->currentUser()->follow($this->otherUser());
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '关注成功');
+        $user->follow($this->otherUser());
+        list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+        if (!$get_diamond) {
+            //在这里增加钻石
+            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+            \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+        }
+
+        return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
     }
 }
