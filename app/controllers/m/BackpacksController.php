@@ -146,25 +146,21 @@ class BackpacksController extends BaseController
             'number' => $number
         );
 
-        // 钻石、金币 类型
-        if ($type != BACKPACK_GIFT_TYPE) {
-            $arr = array(
-                BACKPACK_DIAMOND_TYPE => 'boomGetDiamond',
-                BACKPACK_GOLD_TYPE => 'boomGetGold'
-            );
-            $function = $arr[$type];
-        }
-
         // 记录日志
         (new \BoomHistories())->createBoomHistories($user->id, $target_id, $type, $number);
 
-        // 处理爆礼物
+        // 爆礼物类型
         if ($type == BACKPACK_GIFT_TYPE && (!\Backpacks::createTarget($user->id, $target_id, $number, $type))) {
 
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-2');
 
-        } else
-            $this->$function($user->id, $number);
+        }
+
+        if ($type == BACKPACK_DIAMOND_TYPE) {
+            $this->boomGetDiamond($user->id, $number);
+        } elseif ($type == BACKPACK_GOLD_TYPE) {
+            $this->boomGetGold($user->id, $number);
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $list]);
     }
