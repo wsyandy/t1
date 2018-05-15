@@ -2141,8 +2141,8 @@ class Rooms extends BaseModel
         $room_id = $this->id;
 
         // 单位周期 房间当前流水值
-        $cur_income_cache_name = self::generateBoomCurIncomeKey($room_id);
-        $cur_income = $cache->get($cur_income_cache_name);
+        $cur_income_key = self::generateBoomCurIncomeKey($room_id);
+        $cur_income = $cache->get($cur_income_key);
 
         // 房间爆礼物结束倒计时
         $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
@@ -2157,7 +2157,7 @@ class Rooms extends BaseModel
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_sign_key)) {
 
-            ($cur_income != 0) && $cache->setex($cur_income_cache_name, $expire, 0);
+            ($cur_income != 0) && $cache->setex($cur_income_key, $expire, 0);
 
         } else {
 
@@ -2167,9 +2167,9 @@ class Rooms extends BaseModel
             if ($cur_total_income >= $total_income) {
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
-                $cache->setex($cur_income_cache_name, $expire, 0);
+                $cache->setex($cur_income_key, $expire, 0);
             }
-            $cache->setex($cur_income_cache_name, $expire, $cur_total_income);
+            $cache->setex($cur_income_key, $expire, $cur_total_income);
 
             $this->pushBoomIncomeMessage($total_income, $cur_total_income);
         }
