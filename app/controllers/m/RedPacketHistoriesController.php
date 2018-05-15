@@ -50,7 +50,8 @@ class RedPacketHistoriesController extends BaseController
             'sex' => $sex,
             'red_packet_type' => $red_packet_type,
             'nearby_distance' => $nearby_distance,
-            'balance_diamond' => $diamond
+            'balance_diamond' => $diamond,
+            'balance_num' => $num
         ];
 
         //创建红包
@@ -59,6 +60,10 @@ class RedPacketHistoriesController extends BaseController
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
             \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $diamond, $opts);
+
+            $room = $user->current_room;
+            $room->has_red_packet = STATUS_ON;
+            $room->update();
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
@@ -76,50 +81,53 @@ class RedPacketHistoriesController extends BaseController
         $red_packet_type = $this->params('red_packet_type');
         $sex = $this->params('sex');
 
-        list($balance_diamond, $num) = \RedPackets::checkRedPacketInfoForRoom($user->current_room_id, $user->id, $red_packet_id);
-
-        $cache = \Users::getHotWriteCache();
+        $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
-        $score = $cache->zscore($key, $red_packet_id);
-        if ($score) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
-        }
+        $user_nickname = $cache->hget($key, 'user_nickname');
 
-        //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离
+        if ($this->request->isAjax()) {
+            list($balance_diamond, $balance_num) = \RedPackets::checkRedPacketInfoForRoom($red_packet_id);
 
-        if ($balance_diamond <= 0 || $num <= 0) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
-        }
-
-        if ($sex != USER_SEX_COMMON) {
-            if ($sex != $user->sex) {
-                $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
-                return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
+            $cache = \Users::getUserDb();
+            $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
+            $score = $cache->zscore($key, $red_packet_id);
+            if ($score) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
             }
+
+            //未做=>还要加个一个用户在房主房间待的时长的和如果是有附近人的限制的话，判断其距离
+
+            if ($balance_diamond <= 0 || $balance_num <= 0) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
+            }
+
+            if ($sex != USER_SEX_COMMON) {
+                if ($sex != $user->sex) {
+                    $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
+                    return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
+                }
+            }
+
+
+            list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+            if (!$error_code) {
+                //在这里增加钻石
+                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+                \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $get_diamond, $opts);
+
+                return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
+            }
+
+            return $this->renderJSON($error_code, $error_reason);
         }
 
-
-        list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_type, $red_packet_id);
-        if (!$error_code) {
-            //在这里增加钻石
-            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-            \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $get_diamond, $opts);
-
-            return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
-        }
-
-        return $this->renderJSON($error_code, $error_reason);
-
+        $this->view->red_packet_id = $red_packet_id;
+        $this->view->red_packet_type = $red_packet_type;
+        $this->view->user_nickname = $user_nickname;
     }
 
-    function redPacketsListAction()
+    function redPacketListAction()
     {
-        $this->view->title = '红包列表';
-    }
-
-    function getRedPacketsAction()
-    {
-        $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $page = $this->params('page', 1);
         $pre_page = 10;
@@ -128,12 +136,42 @@ class RedPacketHistoriesController extends BaseController
         if ($red_packets) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', $red_packets->toJson('red_packets', 'toSimpleJson'));
         }
-        $this->view->red_packets = $red_packets;
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '暂无红包信息');
     }
 
     function detailAction()
     {
-        $this->view->title = '红包详情';
+        $red_packet_id = $this->params('id');
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
+
+        if ($red_packet) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['red_packet' => $red_packet->toBasicJson()]);
+        }
+
+        return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+
+    }
+
+    function getRedPacketUsersAction()
+    {
+        $user = $this->currentUser();
+        $room_id = $this->params('room_id');
+        $red_packet_id = $this->params('red_packet_id');
+        $cache = \Users::getUserDb();
+        $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
+        $ids = $cache->zrange($key, 0, -1);
+        $ids = [257, 117];
+        $users = \Users::findByIds($ids);
+
+        $get_red_packet_users = [];
+        foreach ($users as $index => $user) {
+            $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
+            $get_diamond = $cache->zscore($key, $user->id);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);
     }
 
 }
