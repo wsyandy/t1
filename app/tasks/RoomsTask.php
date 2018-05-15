@@ -880,13 +880,5 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $backpack->pushClientAboutBoom($total, $cur_income, $value['id']);
             }
         }
-
-        $gifts = Gifts::find(['conditions' => 'amount < 1']);
-        echoLine(count($gifts));
-
-        foreach ($gifts as $gift) {
-            $gift->amount = mt_rand(10, 100);
-            $gift->update();
-        }
     }
 }
