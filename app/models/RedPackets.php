@@ -188,7 +188,7 @@ class RedPackets extends BaseModel
             'id' => $this->id,
             'user_id' => $this->user_id,
             'user_avatar_url' => $this->user->avatar_url,
-            'user_nickanme' => $this->user->nickname,
+            'user_nickname' => $this->user->nickname,
             'diamond' => $this->diamond,
             'num' => $this->num,
             'balance_diamond' => $balance_diamond,
