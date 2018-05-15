@@ -159,7 +159,10 @@ class RedPacketHistoriesController extends BaseController
         $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
         $ids = $cache->zrange($key, 0, -1);
-        $ids = [257, 117];
+        if (isDevelopmentEnv()) {
+            $ids = [257, 117];
+        }
+
         $users = \Users::findByIds($ids);
 
         $get_red_packet_users = [];
