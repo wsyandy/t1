@@ -2903,17 +2903,6 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        if (count($shield_room_ids) > 0) {
-
-            uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
-
-                if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                    return -1;
-                }
-
-                return 1;
-            });
-        }
 
         $shield_room_num = 30;
         $total_room_num = 30;
@@ -2935,6 +2924,8 @@ class Rooms extends BaseModel
         $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
         $hot_cache->zclear($total_new_hot_room_list_key);
         $i = 1;
+
+        echoLine($shield_room_ids, $room_ids);
 
         foreach ($room_ids as $room_id => $score) {
 

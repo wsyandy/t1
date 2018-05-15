@@ -3983,5 +3983,11 @@ EOF;
         foreach ($room_ids as $id) {
             $hot_cache->zadd('ios_auth_room_list', time(), $id);
         }
+
+        $room = Rooms::findFirstById(1027722);
+
+        if ($room->isShieldRoom()) {
+            echoLine("sss");
+        }
     }
 }
