@@ -291,7 +291,9 @@ class RoomsController extends BaseController
 
         // 房间红包
         $underway_red_packet = $room->getUnderwayRedPacket();
-        $res['red_packet'] = ['num' => count($underway_red_packet), 'url' => 'url://m/red_packet_histories/red_packets_list?room_id=' . $room_id];
+        if ($underway_red_packet) {
+            $res['red_packet'] = ['num' => count($underway_red_packet), 'url' => 'url://m/red_packet_histories/red_packets_list?room_id=' . $room_id];
+        }
 
 
         // 爆礼物
