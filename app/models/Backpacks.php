@@ -87,13 +87,14 @@ class Backpacks extends BaseModel
                 'expire_at' => self::getExpireAt($room_id),
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => self::getSvgaImageUrl(),
-                'total_value' => $total_value,
-                'current_value' => $cur_value
+                'total_value' => (int)$total_value,
+                'current_value' => (int)$cur_value
             ]
         );
 
-        if (isDevelopmentEnv()) {
-            //Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
+        if (isDevelopmentEnv() && $room_id == 137039) {
+            $body['room_id'] = 137039;
+            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
         }
         $room = Rooms::findFirstById($room_id);
         $room->push($body);
