@@ -277,11 +277,9 @@ class UsersController extends BaseController
         $client_url = $this->params('client_url');
         $show_type = $this->params('show_type', '');
 
-        $opts = ['title' => $title, 'body' => $body, 'client_url' => $client_url, 'payload' => ['show_type' => $show_type]];
-
+        $opts = ['title' => $title, 'body' => $body, 'client_url' => $client_url, 'show_type' => $show_type];
 
         if ($this->request->isPost()) {
-
             $result = \GeTuiMessages::testPush($receiver, $opts);
             if ($result) {
                 $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');

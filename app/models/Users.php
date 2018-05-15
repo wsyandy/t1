@@ -3592,10 +3592,6 @@ class Users extends BaseModel
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
         $wish_history_ids = [];
-
-        /*if (isDevelopmentEnv()) {
-            $res = [257 => '1526366848', 117 => '1526363248'];
-        }*/
         foreach ($res as $wish_history_id => $wish_luck_at) {
             $wish_history_ids[] = $wish_history_id;
         }
