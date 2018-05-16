@@ -3310,7 +3310,7 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
@@ -3399,7 +3399,7 @@ class Users extends BaseModel
 
         $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
 
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SHARE_WORK, $gold, $opts);
 
         $db->setex($key, endOfDay() - time(), time());
     }

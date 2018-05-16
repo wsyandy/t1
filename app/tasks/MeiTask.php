@@ -550,7 +550,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $user = Users::findFirstById($user_id);
         $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, 20000, $opts);
     }
 
     function createUnionAction()

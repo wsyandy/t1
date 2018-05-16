@@ -135,7 +135,7 @@ class Unions extends BaseModel
         $union->save();
 
         $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
-        $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
+        $res = AccountHistories::changeBalance($user, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 
         if ($res) {
 
