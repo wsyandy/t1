@@ -8,9 +8,9 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
-        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-            unset($red_packet_type['nearby']);
-        }
+//        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+//            unset($red_packet_type['nearby']);
+//        }
         info('类型', $red_packet_type);
 
         $diamond = $user->diamond;
