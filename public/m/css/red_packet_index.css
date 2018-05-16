@@ -343,7 +343,6 @@ ol, ul, li {
     -ms-flex-pack: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
-    display: none;
 }
 .guanzhu_qiang_box .gz_fangzhu{
     text-align: center;

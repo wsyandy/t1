@@ -200,7 +200,8 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'medal_image_url' => $this->medal_image_url,
-            'followed_num' => $this->followed_num
+            'followed_num' => $this->followed_num,
+            'has_red_packet'=>$this->has_red_packet
         ];
 
         return $data;

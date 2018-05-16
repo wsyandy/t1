@@ -2013,19 +2013,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -3126,7 +3124,7 @@ class Rooms extends BaseModel
         return $time;
     }
 
-    function getNotDrawRedPacket($user_id)
+    function getNotDrawRedPacket($user)
     {
         $cache = \Users::getUserDb();
         //当前房间所有还在进行中的红包ids
@@ -3134,9 +3132,8 @@ class Rooms extends BaseModel
         $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
 
         //当前用户领取过的红包ids
-        $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user_id);
+        $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user->id);
         $ids = array_diff($underway_ids, $user_get_red_packet_ids);
-
         $room_red_packets = \RedPackets::findByIds($ids);
 
         return $room_red_packets;
