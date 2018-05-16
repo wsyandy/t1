@@ -2936,6 +2936,10 @@ class Rooms extends BaseModel
 
         $total_num = count($all_room_ids);
         $per_page = 100;
+        if(isDevelopmentEnv()){
+            $per_page = 3;
+        }
+
         $loop_num = ceil($total_num / $per_page);
         $offset = 0;
 
