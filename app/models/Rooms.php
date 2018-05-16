@@ -2166,7 +2166,7 @@ class Rooms extends BaseModel
             $expire = 180;
         }
 
-        $boom_list_key = 'disappear_rocket';
+        $boom_list_key = 'boom_gifts_list';
         $total_income = Backpacks::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
