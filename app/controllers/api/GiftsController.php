@@ -111,8 +111,8 @@ class GiftsController extends BaseController
 
                 $error_reason = "购买成功";
 
-                if (isDevelopmentEnv()) {
-                    $res['gift_effect_image_url'] = $this->getRoot() . "images/gift_effect_image" . mt_rand(1, 2) . ".png";
+                if ($this->currentUser()->canReceiveBoomGiftMessage()) {
+                    $res['gift_effect_image_url'] = $gift->getEffectImageUrl($this->getRoot(), $gift_num, $gift_amount);
                 }
 
                 if (!in_array($this->currentUser()->id, $receiver_ids)) {
