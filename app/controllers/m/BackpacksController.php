@@ -34,9 +34,6 @@ class BackpacksController extends BaseController
     public function prizeAction()
     {
         $user = $this->currentUser();
-        if (isDevelopmentEnv()) {
-            $user = (object)array('id' => 1);
-        }
 
         $room_id = $user->current_room_id;
 
