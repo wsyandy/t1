@@ -19,6 +19,8 @@ trait UserAttrs
             'city_name' => $this->city_name,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
             'monologue' => $this->monologue_text,
@@ -60,6 +62,8 @@ trait UserAttrs
     {
         return [
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'avatar_url' => $this->getAvatarUrl(),
             'product_channel_name' => $this->product_channel_name,
             'partner_name' => $this->partner_name,
@@ -92,6 +96,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
@@ -122,6 +128,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
             'room_id' => $this->room_id,
@@ -165,6 +173,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
@@ -226,6 +236,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'is_permanent' => $this->is_permanent, //是否为永久管理员
             'deadline' => $this->deadline //管理员有效期截止时间,
@@ -244,6 +256,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'union_charm_value' => $this->union_charm_value,
             'union_wealth_value' => $this->union_wealth_value,
             'monologue' => $this->monologue_text,
@@ -281,6 +295,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'monologue' => $this->monologue_text,
             'current_room_id' => $this->current_room_id,
             'tags' => $this->tags,
@@ -311,6 +327,8 @@ trait UserAttrs
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
@@ -428,10 +446,33 @@ trait UserAttrs
         return StoreFile::getUrl($this->avatar);
     }
 
+    function getAvatar60x60Url()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!60x60';
+    }
+
+    function getAvatar100x100Url()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!100x100';
+    }
+
+
     function getAvatarSmallUrl()
     {
         if (isBlank($this->avatar)) {
             return $this->getDefaultAvatar();
+        }
+
+        if(isDevelopmentEnv()){
+            return StoreFile::getUrl($this->avatar) . '@!small';
         }
 
         return StoreFile::getUrl($this->avatar) . '@!100x100';

@@ -52,6 +52,8 @@ class Albums extends BaseModel
             'id' => $this->id,
             'user_id' => $this->user_id,
             'image_url' => $this->image_url,
+            'image_60x60_url' => $this->image_60x60_url,
+            'image_100x100_url' => $this->image_100x100_url,
             'image_small_url' => $this->image_small_url,
             'image_big_url' => $this->image_big_url
         ];
@@ -66,10 +68,32 @@ class Albums extends BaseModel
         return StoreFile::getUrl($this->image);
     }
 
+    function getImage60x60Url()
+    {
+        if (isBlank($this->image)) {
+            return '';
+        }
+
+        return StoreFile::getUrl($this->image) . '@!60x60';
+    }
+
+    function getImage100x100Url()
+    {
+        if (isBlank($this->image)) {
+            return '';
+        }
+
+        return StoreFile::getUrl($this->image) . '@!100x100';
+    }
+
     function getImageSmallUrl()
     {
         if (isBlank($this->image)) {
             return '';
+        }
+
+        if(isDevelopmentEnv()){
+            return StoreFile::getUrl($this->image) . '@!small';
         }
 
         return StoreFile::getUrl($this->image) . '@!100x100';
