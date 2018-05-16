@@ -892,6 +892,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
         foreach ($rocket_set as $room_id) {
 
+            $room->id = $room_id;
             $cur_income_key = Rooms::generateBoomCurIncomeKey($room_id);
             $cur_income = $cache->get($cur_income_key);
 
