@@ -199,7 +199,7 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
+            'medal_image_url' => $this->medal_image_url,
             'followed_num' => $this->followed_num
         ];
 
