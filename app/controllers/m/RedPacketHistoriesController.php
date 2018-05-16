@@ -142,8 +142,8 @@ class RedPacketHistoriesController extends BaseController
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
-                    $error_url = '/m/red_packet_histories/followers';
-                    return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['error_url' => $error_url]);
+                    $client_url = '/m/red_packet_histories/followers';
+                    return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
 
