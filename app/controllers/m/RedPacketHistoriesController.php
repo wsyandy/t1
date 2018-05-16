@@ -111,7 +111,7 @@ class RedPacketHistoriesController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您好没有待满三分钟哦！');
                 }
             }
-            
+
             //当类型为附近的人的时候才会对用户性别有要求
             if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
                 //未做=>距离的判断
@@ -185,13 +185,11 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
+        info('房间id',$room_id);
         $red_packet_id = $this->params('red_packet_id');
         $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
         $ids = $cache->zrange($key, 0, -1);
-        if (isDevelopmentEnv()) {
-            $ids = [257, 117];
-        }
 
         $users = \Users::findByIds($ids);
 
@@ -199,6 +197,7 @@ class RedPacketHistoriesController extends BaseController
         foreach ($users as $index => $user) {
             $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
             $get_diamond = $cache->zscore($key, $user->id);
+            info('获取的钻石',$get_diamond,$key);
             $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
         }
 
@@ -213,10 +212,13 @@ class RedPacketHistoriesController extends BaseController
         if ($user->id == $this->otherUser()->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '不能关注自己哦');
         }
+        $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         $user->follow($this->otherUser());
-        list($error_code, $error_reason, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
-        if (!$get_diamond) {
+        list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+        $error_reason = '手慢了，红包抢完了！';
+        if ($get_diamond) {
+            $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
             //在这里增加钻石
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
             \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);

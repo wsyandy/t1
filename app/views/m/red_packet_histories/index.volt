@@ -10,7 +10,7 @@
                 <div class="give_box">
                     <h3>红包个数</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="number" v-model="number">
+                        <input type="text" name="" placeholder="" v-model="number">
                         <span>个</span>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                 <div class="give_box">
                     <h3>红包金额</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder="amount"  v-model="amount">
+                        <input type="text" name="" placeholder=""  v-model="amount">
                         <i class="zuan"></i>
                     </div>
                 </div>
@@ -116,7 +116,6 @@
             amount: 100,
             allSex:['女生','男生','男女皆可'],
             sex:"男女皆可",
-            red_packet_type:"{{ red_packet_type }}",
             red_packet_type_cur:'{{ red_packet_type['all'] }}',
             type:'all',
             isGiveStyle: false,
@@ -169,7 +168,7 @@
                 $.authPost('/m/red_packet_histories/create', data, function (resp) {
                     console.log(resp);
                     if (!resp.error_code) {
-                        location.href = 'app://rooms/detail?id='+ resp.send_red_packet_history.current_room_id;
+                        location.href = 'app://back';
                     }
                 });
 

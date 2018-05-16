@@ -1168,9 +1168,13 @@ class Rooms extends BaseModel
                 'current_value' => (int)$cur_income
             ]
         );
+
         if (isDevelopmentEnv() && $this->id == 137039) {
             $body['room_137039'] = 'test';
         }
+
+        debug($this->id, $body);
+
         $this->push($body);
     }
 
@@ -1269,6 +1273,7 @@ class Rooms extends BaseModel
     function pushRedPacketMessage($num, $url)
     {
         $body = ['action' => 'red_packet', 'num' => $num, 'url' => $url];
+        info('推送红包信息',$body);
         $this->push($body);
     }
 
@@ -2003,19 +2008,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -3047,6 +3050,16 @@ class Rooms extends BaseModel
         $real_user_key = $this->getRealUserListKey();
         $time = $hot_cache->zscore($real_user_key, $user_id);
         return $time;
+    }
+
+    function getUnderwayRedPacket()
+    {
+        $cache = \Users::getUserDb();
+        $underway_red_packet_list_key = \RedPackets::generateUnderwayRedPacketListKey($this->id);
+        $ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+        $room_red_packets = \RedPackets::findByIds($ids);
+
+        return $room_red_packets;
     }
 
 }

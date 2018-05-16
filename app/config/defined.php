@@ -146,6 +146,7 @@ define('ACCOUNT_TYPE_GUARD_WISH_EXPENSES',33);  //守护愿望支出
 define('ACCOUNT_TYPE_IN_BOOM', 34); //爆礼物获得
 define('ACCOUNT_TYPE_RED_PACKET_EXPENSES',35);  //红包支出
 define('ACCOUNT_TYPE_RED_PACKET_INCOME',36);    //红包收入
+define('ACCOUNT_TYPE_RED_PACKET_RESTORATION',37);   //红包余额返还
 
 //金币
 define('GOLD_TYPE_SIGN_IN', 1); //用户签到

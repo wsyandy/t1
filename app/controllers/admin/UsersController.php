@@ -740,8 +740,13 @@ class UsersController extends BaseController
     //许愿墙中奖记录
     function wishLuckHistoriesAction()
     {
+<<<<<<< HEAD
         $product_channel_id = $this->params('product_channel_id',1);
         info('产品渠道ID',$product_channel_id);
+=======
+        $product_channel_id = $this->params('product_channel_id', 1);
+        info('产品渠道ID', $product_channel_id);
+>>>>>>> dev
         $page = $this->params('page', 1);
         $wish_luck_histories = \WishHistories::generateLuckyUserList($product_channel_id);
         $per_page = 20;
@@ -749,6 +754,7 @@ class UsersController extends BaseController
         $this->view->wish_luck_users = $wish_luck_users;
         $this->view->product_channel_id = $product_channel_id;
         $this->view->all_product_channels = \ProductChannels::find(['order' => 'id asc', 'columns' => 'id,name']);
+        $this->view->product_channel_id = $product_channel_id;
 
     }
 

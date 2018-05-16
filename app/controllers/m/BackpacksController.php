@@ -44,14 +44,20 @@ class BackpacksController extends BaseController
         $cache = \Backpacks::getHotWriteCache();
         $cache_name = $this->generateUserSignKey($user->id, $room_id);
 
+        $boom_histories = \BoomHistories::historiesTopList(3);
+        $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
+
+
         $value = $cache->get($cache_name);
         if ($value == 1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', ['target' => $boom_histories]);
         }
+
+        $receive_time = 180;
 
         // 用户未领取
         if ($cache->exists($cache_name) && $value!=1) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！');
+            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
         }
 
         // 1 随机类型
@@ -70,7 +76,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->setex($cache_name, 180, json_encode($json));
+        $cache->setex($cache_name, $receive_time, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -115,6 +121,10 @@ class BackpacksController extends BaseController
         $json = json_decode($json, true);
         $type = $json['type'];
         $target = $json['target'];
+
+        if (empty($target)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
+        }
 
         // 执行写入
         foreach ($target as $value) {
