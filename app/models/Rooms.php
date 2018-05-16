@@ -1228,7 +1228,12 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
-        $this->push($body);
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
     }
 
     function pushUpMessage($user, $current_room_seat)
@@ -2812,7 +2817,7 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {

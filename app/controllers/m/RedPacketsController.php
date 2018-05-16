@@ -2,7 +2,7 @@
 
 namespace m;
 
-class RedPacketHistoriesController extends BaseController
+class RedPacketsController extends BaseController
 {
     function indexAction()
     {
@@ -145,7 +145,7 @@ class RedPacketHistoriesController extends BaseController
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
-                    $client_url = '/m/red_packet_histories/followers';
+                    $client_url = '/m/red_packets/followers';
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
@@ -158,7 +158,7 @@ class RedPacketHistoriesController extends BaseController
                 }
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
-                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
                 \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
             unlock($lock);
@@ -183,7 +183,7 @@ class RedPacketHistoriesController extends BaseController
             $room = \Rooms::findFirstById($room_id);
             $time = $room->getTimeForUserInRoom($user_id);
             //具体用户进房间3分钟的剩余时间，小于零代表时间已到
-            $distance_start_at = 1;
+            $distance_start_at = 180;
             if ($time) {
                 $distance_start_at = $time + 3 * 60 - time();
             }
@@ -253,7 +253,7 @@ class RedPacketHistoriesController extends BaseController
             }
             $error_reason = '抢到' . $user_nickname . '发的钻石红包';
             //在这里增加钻石
-            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
             \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
         }
 

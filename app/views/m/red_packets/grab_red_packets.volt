@@ -96,7 +96,7 @@
                 }
 
 
-                $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
+                $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
                     //console.log(resp);
                     vm.getRed = true;
                     if (!resp.error_code) {
@@ -121,7 +121,7 @@
                 });
             },
             toDetail: function () {
-                var url = "/m/red_packet_histories/detail?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + this.red_packet_id;
+                var url = "/m/red_packets/detail?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + this.red_packet_id;
 
                 location.href = url;
             },
