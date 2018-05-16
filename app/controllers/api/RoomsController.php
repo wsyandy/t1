@@ -307,13 +307,14 @@ class RoomsController extends BaseController
         if ($cur_income > \Backpacks::getBoomStartLine()) {
             //$day_income = $room->getDayIncome(date('Ymd'));
 
-            $res['blasting_gift'] = [
+            $res['boom_gift'] = [
                 'expire_at' => (int)\Backpacks::getExpireAt($room_id),
-                'url' => 'url://m/backpacks',
+                'client_url' => 'url://m/backpacks',
                 'svga_image_url' => \Backpacks::getSvgaImageUrl(),
                 'total_value' => \Backpacks::getBoomTotalValue(),
                 'current_value' => $cur_income,
                 'show_rank' => 1000000,
+                'render_type' => 'svga'
             ];
         }
 

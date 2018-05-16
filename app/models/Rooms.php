@@ -1159,14 +1159,15 @@ class Rooms extends BaseModel
     function pushBoomIncomeMessage($total_income, $cur_income)
     {
         $body = array(
-            'action' => 'blasting_gift',
-            'blasting_gift' => [
+            'action' => 'boom_gift',
+            'boom_gift' => [
                 'expire_at' => Backpacks::getExpireAt($this->id),
-                'url' => 'url://m/backpacks',
+                'client_url' => 'url://m/backpacks',
                 'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
                 'show_rank' => 1000000,
-                'current_value' => (int)$cur_income
+                'current_value' => (int)$cur_income,
+                'render_type' => 'svga'
             ]
         );
 
