@@ -263,6 +263,7 @@ class DrawHistories extends BaseModel
         $total_pay_amount = fetch($opts, 'total_pay_amount');
         $total_incr_diamond = fetch($opts, 'total_incr_diamond');
         $total_decr_diamond = fetch($opts, 'total_decr_diamond');
+        $is_block_user = fetch($opts, 'is_block_user', false);
 
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
@@ -270,6 +271,10 @@ class DrawHistories extends BaseModel
         $pool_rate = mt_rand(700, 926) / 1000;
 
         $hour = intval(date("H"));
+
+        if ($number > 1000 && $is_block_user) {
+            return 0;
+        }
 
         if ($type == 'diamond') {
 
@@ -432,6 +437,7 @@ class DrawHistories extends BaseModel
 
     static function isBlockUser($user)
     {
+        return false;
         $hot_cache = DrawHistories::getHotWriteCache();
         $score = $hot_cache->zscore('draw_histories_block_user_ids', $user->id);
 
@@ -453,6 +459,7 @@ class DrawHistories extends BaseModel
                 'order' => 'id desc']);
 
             if ($last_history) {
+                info($user->id, '已有', $device_user->id);
                 $hot_cache->zadd('draw_histories_block_user_ids', time(), $user->id);
                 break;
             }
@@ -497,12 +504,20 @@ class DrawHistories extends BaseModel
             'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
 
+        $total_pay_amount = 0;
         if (!$last_history) {
             self::checkUser($user);
+        } else {
+            $total_pay_amount = intval($last_history->total_pay_amount);
         }
 
-        // 计算用户倍率
-        list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user, $last_history);
+        $is_block_user = self::isBlockUser($user);
+        if ($is_block_user) {
+            $user_rate_multi = 1;
+        } else {
+            // 计算用户倍率
+            list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user, $last_history);
+        }
 
         info('cal', $user->id, '系统收入', $total_incr_diamond, '系统支出', $total_decr_diamond, 'user_rate_multi', $user_rate_multi);
 
@@ -534,7 +549,7 @@ class DrawHistories extends BaseModel
                 }
 
                 $opts = ['user_rate_multi' => $user_rate_multi, 'total_pay_amount' => $total_pay_amount, 'user_total_get_amount' => $user_total_get_amount,
-                    'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond
+                    'total_incr_diamond' => $total_incr_diamond, 'total_decr_diamond' => $total_decr_diamond, 'is_block_user' => $is_block_user
                 ];
 
                 $total_pay_amount_rate = self::calPayAmountRate($user, $datum, $opts);
@@ -665,6 +680,7 @@ class DrawHistories extends BaseModel
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1);
         return $res;
     }
+
     //删除屏蔽用户
     static function deleteBlockUser($user_id)
     {
