@@ -4,7 +4,6 @@
 {{ block_end() }}
 <div id="app">
     <div class="detail_red_top">
-        <div class="nav_top"><i class="back" onclick="javascrtpt:history.back(-1);"></i>红包详情</div>
         <div class="top_person">
             <div class="pic">
                 <img src="{{ red_packet['user_avatar_url'] }}">
@@ -52,7 +51,7 @@
                 red_packet_id:this.red_packet_id,
                 room_id:this.room_id
             }
-            $.authGet('/m/red_packet_histories/get_red_packet_users', data, function (resp) {
+            $.authGet('/m/red_packets/get_red_packet_users', data, function (resp) {
                 console.log(resp);
                 if(!resp.error_code){
                     vm.getRedPacketUsers = resp.get_red_packet_users;

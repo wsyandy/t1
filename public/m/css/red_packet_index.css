@@ -17,6 +17,7 @@ body {
     color: #333;
     font-family: PingFangSC-Regular;
     width: 100%;
+    height: 100%;
     background: #FFFFFF;
 }
 
@@ -40,6 +41,10 @@ img {
 
 ol, ul, li {
     list-style: none;
+}
+.grab{
+    width: 10.0rem;
+    height: 100%;
 }
 
 /*红包详情*/
@@ -152,12 +157,19 @@ ol, ul, li {
 .detail_list .list_text .num{
     font-size: 0.373333rem;
     color: #565656;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
 }
 .detail_list .list_text .num i{
     display: inline-block;
     width: 0.453333rem;
     height: 0.453333rem;
     background: url(../images/detail_zuan.png) no-repeat;
+    background-position: 0 -0.066667rem;
     background-size: 100%;
     margin-left: 0.133333rem;
 }
@@ -171,17 +183,25 @@ ol, ul, li {
 /*抢红包*/
 .get_hongbao_box{
     width: 10.0rem;
-    height: 21.786667rem;
+    height: 100%;
     margin:0 auto;
-    background: url(../images/big_bg.png) no-repeat;
+    /*background: url(../images/big_bg.png) no-repeat;*/
+    background-image: url(../images/big_bg.png);
+    background-repeat: no-repeat;
     background-size: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .get_hongbao_box .hongbao_box{
     width: 10.0rem;
-    height: 17.786667rem;
+    height: 12.373333rem;
     background: url(../images/hongbao_bg.png) no-repeat;
     background-size: 100%;
 }
@@ -208,7 +228,7 @@ ol, ul, li {
     display: inline-block;
     width: 0.293333rem;
     height: 0.293333rem;
-    background: url(../images/icon_right_2.png) no-repeat;
+    background: url(../images/icon_right.png) no-repeat;
     background-size: 100%;
 }
 .red_get{
@@ -243,7 +263,7 @@ ol, ul, li {
     margin-top: 1.466667rem;
 }
 .red_get a{
-    margin-top: 0.333333rem;
+    margin-top: 0.7rem;
 }
 .wait_red{
     text-align: center;
@@ -284,8 +304,14 @@ ol, ul, li {
     background: rgba(0,0,0,0.10);
     border-radius: 1.333333rem;
     margin-top: 1.8rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     font-size: 0.373333rem;
     color: #FFDB4A;
@@ -299,7 +325,7 @@ ol, ul, li {
     margin:0 auto;
     background: url(../images/qiang.png) no-repeat;
     background-size: 100%;
-    margin-top: 0.5rem;
+    margin-top: 1.6rem;
 }
 .guanzhu_qiang_box{
     position: fixed;
@@ -307,12 +333,17 @@ ol, ul, li {
     right: 0;
     top: 0;
     bottom: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
-    z-index: 2;
-    /*display: none;*/
+    display: none;
 }
 .guanzhu_qiang_box .gz_fangzhu{
     text-align: center;
@@ -326,10 +357,14 @@ ol, ul, li {
     top: 50%;
     left: 50%;
     margin:0 auto;
+    -webkit-transform: translate(-50%,-50%) scale3d(0,0,0);
     transform: translate(-50%,-50%) scale3d(0,0,0);
+    -webkit-transition:1s;
+    -o-transition:1s;
     transition:1s;
 }
 .guanzhu_qiang_box .show{
+    -webkit-transform: translate(-50%,-50%) scale3d(1,1,1);
     transform: translate(-50%,-50%) scale3d(1,1,1);
 }
 .guanzhu_qiang_box .gz_fangzhu .close{
@@ -352,6 +387,8 @@ ol, ul, li {
     position: absolute;
     left: 50%;
     top: -0.933333rem;
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
     transform: translateX(-50%);
 }
 .guanzhu_qiang_box .gz_fangzhu .pic img{
@@ -375,8 +412,14 @@ ol, ul, li {
     border-radius: 1.333333rem;
     font-size: 0.426667rem;
     color: #FFFFFF;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     margin-top: 0.293333rem;
 }
@@ -404,8 +447,14 @@ ol, ul, li {
 .give_red_box .give_box{
     background: #FFFFFF;
     border-radius: 0.186667rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
     width: 9.066667rem;
     height: 1.173333rem;
@@ -420,8 +469,14 @@ ol, ul, li {
 }
 .give_red_box .give_box .give_input{
     padding-right: 0.266667rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
     justify-content: flex-end;
 }
 .give_red_box .give_box .give_input input{
@@ -460,8 +515,14 @@ ol, ul, li {
 }
 .give_number{
     margin-top: 1.626667rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .give_number h5{
@@ -481,7 +542,7 @@ ol, ul, li {
     display: inline-block;
     width: 0.293333rem;
     height: 0.293333rem;
-    background: url(../images/icon_right_2.png) no-repeat;
+    background: url(../images/icon_right.png) no-repeat;
     background-size: 100%;
 }
 .give_btn{
@@ -490,8 +551,14 @@ ol, ul, li {
     background: url(../images/give_btn.png) no-repeat;
     background-size: 100%;
     margin:0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     margin-top: 0.4rem;
 }
@@ -514,7 +581,7 @@ ol, ul, li {
     margin-top: 0.16rem;
 }
 .fang_give_text{
-    margin-top: 2rem !important;
+    margin-top: 2.666667rem !important;
 }
 /*领取方式弹框*/
 .get_style_bg{
@@ -527,7 +594,7 @@ ol, ul, li {
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
-
+    display: none;
 }
 .get_style_bg .get_style_box{
     position: absolute;
@@ -543,8 +610,14 @@ ol, ul, li {
     text-align: center;
     font-size: 0.4rem;
     color: #303030;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .get_style_bg .get_style_box ul li:last-child{
@@ -560,8 +633,14 @@ ol, ul, li {
     width: 10.0rem;
     font-size: 0.4rem;
     color: #303030;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 /*红包说明*/
@@ -613,8 +692,14 @@ ol, ul, li {
     right: 0;
     top: 0;
     bottom: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
     display: none;
@@ -628,6 +713,8 @@ ol, ul, li {
     top: 50%;
     left: 50%;
     margin:0 auto;
+    -webkit-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
 }
 .zuan_less_box .less_close{
@@ -655,8 +742,14 @@ ol, ul, li {
     font-size: 0.426667rem;
     color: #FFFFFF;
     margin:0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .red_list ul li{
@@ -682,8 +775,14 @@ ol, ul, li {
     height: 0.8rem;
     border-radius: 1.333333rem;
     font-size: 0.373333rem !important;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 .red_list_time{

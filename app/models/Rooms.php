@@ -219,7 +219,7 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at, 'has_red_packet' => $this->has_red_packet
         ];
 
         $data['room_tag_names'] = $this->getRoomTagNamesText();
@@ -1228,7 +1228,12 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
-        $this->push($body);
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
     }
 
     function pushUpMessage($user, $current_room_seat)
@@ -2814,7 +2819,7 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
