@@ -47,7 +47,8 @@ trait UserAttrs
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
             'diamond' => $this->diamond,
-            'experience' => intval($this->experience)
+            'experience' => intval($this->experience),
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isPresent($this->union)) {
@@ -118,7 +119,8 @@ trait UserAttrs
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'gold' => $this->gold,
-            'diamond' => $this->diamond
+            'diamond' => $this->diamond,
+            'medal_image_url' => $this->medal_image_url
         ];
 
         return $data;
@@ -145,7 +147,8 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'followed' => $this->followed
+            'followed' => $this->followed,
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isset($this->friend_status)) {
@@ -342,6 +345,7 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isset($this->contributing_hi_conins)) {
@@ -480,7 +484,7 @@ trait UserAttrs
             return $this->getDefaultAvatar();
         }
 
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             return StoreFile::getUrl($this->avatar) . '@!small';
         }
 
@@ -1135,5 +1139,14 @@ trait UserAttrs
         $key = Users::generateFieldRankListKey('day', 'wealth');
 
         return intval($user_db->zscore($key, $this->id));
+    }
+
+    function getMedalImageUrl()
+    {
+        if (isProduction()) {
+            return '';
+        }
+
+        return "http://test.momoyuedu.cn/m/images/level_1.png";
     }
 }
