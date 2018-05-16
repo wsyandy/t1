@@ -184,7 +184,7 @@ class RedPackets extends BaseModel
             ];
             $time = 24 * 60 * 60;
             if (isDevelopmentEnv()) {
-                $time = 3 * 60;
+                $time = 5 * 60;
             }
 
             self::delay($time)->asyncFinishRedPacket($send_red_packet_history->id);
