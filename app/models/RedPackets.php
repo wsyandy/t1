@@ -140,15 +140,8 @@ class RedPackets extends BaseModel
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
-            //红包socket
-            $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
-            $room->pushRedPacketMessage($send_red_packet_history->num, $url);
 
-            //红包公屏socket
-            $content = $user->nickname . '发了个大红包，快来抢啊！！！';
-            $content_type = 'red_packet';
-            $system_user = \Users::getSysTemUser();
-            $room->pushTopTopicMessage($system_user, $content, $content_type);
+            self::sendSocketForRedpacket($send_red_packet_history, $user, $room);
 
             $opts = [
                 'user_id' => $send_red_packet_history->user_id,
@@ -244,7 +237,9 @@ class RedPackets extends BaseModel
         if ($get_diamond) {
             $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
             $room = \Rooms::findFirstById($current_room_id);
-            $room->pushTopTopicMessage($user, $content);
+            $content_type = 'red_packet';
+            $system_user = \Users::getSysTemUser();
+            $room->pushTopTopicMessage($system_user, $content, $content_type);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
@@ -337,6 +332,19 @@ class RedPackets extends BaseModel
         $key = self::generateRedPacketForRoomKey($room_id, $user_id);
         $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
         return $user_get_red_packet_ids;
+    }
+
+    static function sendSocketForRedpacket($send_red_packet_history, $user, $room)
+    {
+        //红包socket
+        $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
+        $room->pushRedPacketMessage($send_red_packet_history->num, $url);
+
+        //红包公屏socket
+        $content = $user->nickname . '发了个大红包，快来抢啊！！！';
+        $content_type = 'red_packet';
+        $system_user = \Users::getSysTemUser();
+        $room->pushTopTopicMessage($system_user, $content, $content_type);
     }
 
 }
