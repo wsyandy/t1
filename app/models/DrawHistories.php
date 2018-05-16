@@ -321,7 +321,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($number == 100000) {
 
-                    if ($hour <= 20) {
+                    if ($hour < 10) {
                         return 0;
                     }
 
