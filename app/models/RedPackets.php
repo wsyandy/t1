@@ -90,11 +90,13 @@ class RedPackets extends BaseModel
         //当前正在进行中的红包id集合
         $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->current_room_id);
 
+        //当前用户发过的红包id集合
+        $user_send_red_packets_key = self::generateUserSendRedPacketsKey($this->user_id);
+
         //generateUnderwayRedPacketListKey
         $cache->zadd($send_red_packet_list_key, time(), $this->id);
         $cache->zadd($underway_red_packet_list_key, time(), $this->id);
-
-
+        $cache->zadd($user_send_red_packets_key, time(), $this->id);
     }
 
     function afterUpdate()
@@ -144,12 +146,17 @@ class RedPackets extends BaseModel
         return 'send_red_packet_list_for_' . $current_room_id;
     }
 
-    //正在进行中的红包
+    //正在进行中的红包的key
     static function generateUnderwayRedPacketListKey($current_room_id)
     {
         return 'underway_red_packet_list_for_' . $current_room_id;
     }
 
+    //用户发过的红包的key
+    static function generateUserSendRedPacketsKey($user_id)
+    {
+        return 'user_send_red_packets_' . $user_id;
+    }
 
     static function getCacheEndPoint()
     {
