@@ -890,7 +890,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $boom_list_key = 'disappear_rocket';
 
         $cache = Rooms::getHotWriteCache();
-        $rocket_set = $cache->sMembers($boom_list_key);
+        $rocket_set = $cache->zrange($boom_list_key, 0, -1);
 
         foreach ($rocket_set as $room_id) {
 
@@ -899,7 +899,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $cur_income = $cache->get($cur_income_key);
 
             $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
-            $cache->srem($boom_list_key, $room_id);
+            $cache->zrem($boom_list_key, $room_id);
         }
     }
 }
