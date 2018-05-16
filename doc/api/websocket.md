@@ -344,5 +344,6 @@
         action: sink_notice 下沉通知
         title: string 标题
         content: string 内容
+        client_url string 跳转地址 例app://rooms/detail?id=xxx
     }
 ```
