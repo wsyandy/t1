@@ -172,6 +172,9 @@ class RedPackets extends BaseModel
             $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile];
             \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $balance_diamond, $opts);
         }
+
+        $red_packet->status = STATUS_OFF;
+        $red_packet->update();
     }
 
     static function generateRedPacketUrl($room_id)
@@ -342,7 +345,7 @@ class RedPackets extends BaseModel
     {
         //红包socket
         $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
-        $underway_red_packet = $room->getUnderwayRedPacket();
+        $underway_red_packet = $room->getNotDrawRedPacket($user->id);
         $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
         //红包公屏socket
