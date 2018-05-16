@@ -900,6 +900,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
             $cache->zrem($boom_list_key, $room_id);
+            $cache->del($cur_income_key);
         }
     }
 }
