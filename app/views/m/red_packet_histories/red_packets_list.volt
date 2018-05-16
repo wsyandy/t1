@@ -47,9 +47,7 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
-                    //room_id: vm.room_id
-                    room_id:172
-
+                    room_id: vm.room_id
                 };
                 $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
                     console.log(resp);
