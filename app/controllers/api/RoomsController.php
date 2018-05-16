@@ -306,7 +306,7 @@ class RoomsController extends BaseController
             $res['boom_gift'] = [
                 'expire_at' => (int)\Rooms::getExpireAt($room_id),
                 'client_url' => 'url://m/backpacks',
-                'svga_image_url' => \Backpacks::getSvgaImageUrl(),
+                'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
                 'total_value' => \BoomHistories::getBoomTotalValue(),
                 'current_value' => $cur_income,
                 'show_rank' => 1000000,
