@@ -301,7 +301,7 @@ class RoomsController extends BaseController
         $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
-        if ($cur_income > \Backpacks::getBoomStartLine()) {
+        if ($cur_income >= \Backpacks::getBoomStartLine()) {
 
             $res['boom_gift'] = [
                 'expire_at' => (int)\Backpacks::getExpireAt($room_id),
