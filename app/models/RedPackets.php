@@ -254,6 +254,11 @@ class RedPackets extends BaseModel
             $system_user = \Users::getSysTemUser();
             $room->pushTopTopicMessage($system_user, $content, $content_type);
 
+            //红包socket
+            $url = self::generateRedPacketUrl($current_room_id);
+            $underway_red_packet = $room->getNotDrawRedPacket($user->id);
+            $room->pushRedPacketMessage(count($underway_red_packet), $url);
+
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
 

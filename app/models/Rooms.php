@@ -219,7 +219,7 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at, 'has_red_packet' => $this->has_red_packet
         ];
 
         $data['room_tag_names'] = $this->getRoomTagNamesText();

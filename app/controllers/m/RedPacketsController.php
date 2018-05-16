@@ -103,7 +103,7 @@ class RedPacketsController extends BaseController
             $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
             $score = $cache->zscore($key, $red_packet_id);
             if ($score) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '已抢过');
+                return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
             }
 
             if ($distance_start_at > 0) {
