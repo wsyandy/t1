@@ -318,23 +318,24 @@
         action: red_packet 红包通知
         red_packet:{
             num int 红包个数
-            url 跳转地址   
+            client_url 跳转地址   
         }
     }
 ```
 
-   #### 爆礼物
+ #### 爆礼物
 ```
     {
-        action: blasting_gift 爆礼物
-        blasting_gift:{
+        action: boom_gift 爆礼物
+        boom_gift:{
             expire_at int 结束时间
-            url string 跳转地址
+            client_url string 跳转地址
             svga_image_url string svga图片
+            render_type string svga
+            show_rank int 1000000 等级排序
             total_value int 总值
             current_value int 当前值
-            show_rank int 1000000 等级排序
-            diff_picture string 爆礼物图片的值 green orange blue
+            image_color string 爆礼物图片的值 green orange blue
         }
     }
 ```
