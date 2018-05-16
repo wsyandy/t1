@@ -488,8 +488,6 @@ class Rooms extends BaseModel
     {
         $this->remUser($user);
 
-        $current_room_seat_id = $user->current_room_seat_id;
-
         // 房间相同才清除用户信息
         if ($this->id == $user->current_room_id) {
 
