@@ -2180,7 +2180,7 @@ class Rooms extends BaseModel
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
 
-            if ($cur_income >= Backpacks::getBoomStartLine()) {
+            if ($cur_total_income >= Backpacks::getBoomStartLine()) {
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
