@@ -456,6 +456,9 @@
                     {% if isAllowed('games','index') %}
                         <li><a href="/admin/games">游戏配置</a></li>
                     {% endif %}
+                    {% if isAllowed('draw_configs','index') %}
+                        <li><a href="/admin/draw_configs">砸金蛋配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

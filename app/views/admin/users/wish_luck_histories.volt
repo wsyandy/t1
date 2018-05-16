@@ -1,11 +1,8 @@
 <form action="/admin/users/wish_luck_histories" method="get" class="search_form" autocomplete="off">
 
     <label for="name_eq">产品渠道名称</label>
-<<<<<<< HEAD
     <select name="product_channel_id" id="product_channel_id_eq" class="selectpicker" data-live-search="true">
-=======
-    <select name="product_channel_id" id="product_channel_id" class="selectpicker" data-live-search="true">
->>>>>>> dev
+
         {{ options(all_product_channels, product_channel_id, 'id', 'name') }}
     </select>
 
