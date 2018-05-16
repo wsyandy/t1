@@ -2132,6 +2132,7 @@ class Rooms extends BaseModel
 
             // 爆礼物
             if (isDevelopmentEnv()) {
+                debug('boom_expire_at_time:'.$time);
                 $room->statBoomIncome($income, $time);
             }
 
