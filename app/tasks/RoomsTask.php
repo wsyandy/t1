@@ -901,7 +901,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         $total = count($total_room_ids);
         $per_page = 100;
         $offset = 0;
-        $total_page = intval($total / $per_page);
+        $total_page = ceil($total / $per_page);
 
         for ($page = 1; $page <= $total_page; $page++) {
 
@@ -914,7 +914,6 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 $cur_income_key = Rooms::generateBoomCurIncomeKey($room->id);
                 $cur_income = $cache->get($cur_income_key);
-
                 if (!$cur_income) {
                     $cache->zrem($boom_list_key, $room->id);
                     $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
