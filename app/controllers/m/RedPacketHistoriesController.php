@@ -197,22 +197,22 @@ class RedPacketHistoriesController extends BaseController
 
     function getRedPacketUsersAction()
     {
-        $user = $this->currentUser();
         $room_id = $this->params('room_id');
         info('房间id', $room_id);
         $red_packet_id = $this->params('red_packet_id');
         $cache = \Users::getUserDb();
-        $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
-        $ids = $cache->zrange($key, 0, -1);
+        $user_key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
+        $ids = $cache->zrange($user_key, 0, -1);
 
         $users = \Users::findByIds($ids);
 
         $get_red_packet_users = [];
         foreach ($users as $index => $user) {
-            $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
-            $get_diamond = $cache->zscore($key, $user->id);
-            info('获取的钻石', $get_diamond, $key);
-            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
+            $key = \RedPackets::generateRedPacketForRoomKey($room_id, $user->id);
+            $get_diamond_at = $cache->zscore($user_key, $user->id);
+            $get_diamond = $cache->zscore($key, $red_packet_id);
+            info('获取的钻石的时间', $get_diamond_at, $user_key);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => $get_diamond_at, 'get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);

@@ -2804,10 +2804,6 @@ class Rooms extends BaseModel
         $root_host = fetch($opts, 'root_host');
         $current_user_role = $user->user_role;
         $menu_config = [];
-        if (true) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
-        }
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
@@ -2816,6 +2812,11 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+        }
+        
+        if (true) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
         return $menu_config;

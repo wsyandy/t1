@@ -273,7 +273,7 @@ class RedPackets extends BaseModel
 
             $cache->zadd($key, $get_diamond, $red_packet_id);
 
-            $cache->zadd($user_key, $get_diamond, $user_id);
+            $cache->zadd($user_key, time(), $user_id);
 
             return $get_diamond;
         }
