@@ -1,0 +1,4 @@
+create index apply_exit_at_on_union_histories on union_histories(apply_exit_at);
+
+DROP INDEX status_on_union_histories;
+DROP INDEX union_type_on_union_histories;

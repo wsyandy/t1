@@ -1154,7 +1154,7 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income)
+    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
     {
         $body = array(
             'action' => 'boom_gift',
@@ -1166,7 +1166,7 @@ class Rooms extends BaseModel
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
                 'render_type' => 'svga',
-                'status' => STATUS_ON
+                'status' => $status
             ]
         );
 
@@ -1228,7 +1228,12 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
-        $this->push($body);
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
     }
 
     function pushUpMessage($user, $current_room_seat)
@@ -2151,6 +2156,7 @@ class Rooms extends BaseModel
         $cur_income_key = self::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
+        tryLock($cur_income_key);
         // 房间爆礼物结束倒计时
         $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
 
@@ -2176,15 +2182,17 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
-
+                $cache->srem($boom_list_key, $room_id);
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-
             if ($cur_total_income >= Backpacks::getBoomStartLine()) {
+
+                $cache->sadd($boom_list_key, $room_id);
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
+        unlock($cur_income_key);
     }
 
     //按天统计房间进入人数
@@ -2811,7 +2819,7 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {

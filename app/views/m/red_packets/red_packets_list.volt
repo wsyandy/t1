@@ -49,7 +49,7 @@
                     code: vm.code,
                     room_id: vm.room_id
                 };
-                $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
+                $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
                     console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
@@ -85,7 +85,7 @@
                 vm.page++;
             },
             toGrabRedPacket: function (id, type) {
-                var url = "/m/red_packet_histories/grab_red_packets?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + id + "&red_packet_type=" + type;
+                var url = "/m/red_packets/grab_red_packets?sid=" + this.sid + "&code=" + this.code + "&red_packet_id=" + id + "&red_packet_type=" + type;
 
                 location.href = url;
             },

@@ -149,8 +149,12 @@ class RedPackets extends BaseModel
                 'balance_num' => $send_red_packet_history->num,
                 'id' => $send_red_packet_history->id
             ];
+            $time = 24 * 60 * 60;
+            if (isDevelopmentEnv()) {
+                $time = 3 * 60;
+            }
 
-            self::delay(24 * 60 * 60)->asyncFinishRedPacket($send_red_packet_history->id);
+            self::delay($time)->asyncFinishRedPacket($send_red_packet_history->id);
 
             self::saveRedPacketForRoom($opts);
 
@@ -169,17 +173,19 @@ class RedPackets extends BaseModel
         $red_packet = \RedPackets::findFirstById($red_packet_id);
         list($balance_diamond, $balance_num) = self::getBalance($red_packet_id);
         if ($balance_diamond > 0) {
-            $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile];
+            $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
             \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $balance_diamond, $opts);
         }
 
-        $red_packet->status = STATUS_OFF;
-        $red_packet->update();
+        if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
+            $red_packet->status = STATUS_OFF;
+            $red_packet->update();
+        }
     }
 
     static function generateRedPacketUrl($room_id)
     {
-        return 'url://m/red_packet_histories/red_packets_list?room_id=' . $room_id;
+        return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
     static function findRedPacketList($current_room_id, $page, $per_page)

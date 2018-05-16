@@ -47,8 +47,9 @@ class StatTask extends \Phalcon\Cli\Task
 
         foreach ($conds as $cond) {
 
-            $hour_conds = ['time_type' => STAT_HOUR, 'stat_at' => $stat_at, 'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
-                'province_id' => $cond['province_id'], 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
+            $hour_conds = ['stat_at' => $stat_at, 'time_type' => STAT_HOUR, 'province_id' => $cond['province_id'],
+                'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
+                 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
 
             $stat = Stats::findFirstBy($hour_conds);
             if (!$stat) {
@@ -93,8 +94,9 @@ class StatTask extends \Phalcon\Cli\Task
 
         foreach ($conds as $cond) {
 
-            $day_conds = ['time_type' => STAT_DAY, 'stat_at' => $stat_at, 'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
-                'province_id' => $cond['province_id'], 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
+            $day_conds = ['stat_at' => $stat_at, 'time_type' => STAT_DAY, 'province_id' => $cond['province_id'],
+                'platform' => $cond['platform'], 'version_code' => $cond['version_code'],
+                 'product_channel_id' => $cond['product_channel_id'], 'partner_id' => $cond['partner_id'], 'sex' => $cond['sex']];
 
             $stat = Stats::findFirstBy($day_conds);
 
