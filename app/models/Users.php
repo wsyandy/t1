@@ -3632,5 +3632,12 @@ class Users extends BaseModel
         return $pagination;
     }
 
+    //获取系统用户
+    static function getSysTemUser()
+    {
+        $id = SYSTEM_ID;
+        $system_user = \Users::findFirstById($id);
+        return $system_user;
+    }
 
 }

@@ -186,14 +186,10 @@ class RoomsController extends BaseController
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
-                $body = ['action' => $action, 'user_id' => $sender->id, 'sex' => $sender->sex,
+                $body = ['action' => $action, 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'content' => $content,
                     'channel_name' => $room->channel_name, 'content_type' => $content_type
                 ];
-
-                if ($content_type == 'personage') {
-                    $body = array_merge($body, ['nickname' => $sender->nickname]);
-                }
             }
 
             if ($action == 'send_gift') {

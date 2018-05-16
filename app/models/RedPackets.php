@@ -146,7 +146,9 @@ class RedPackets extends BaseModel
 
             //红包公屏socket
             $content = $user->nickname . '发了个大红包，快来抢啊！！！';
-            $room->pushTopTopicMessage($user, $content);
+            $content_type = 'red_packet';
+            $system_user = \Users::getSysTemUser();
+            $room->pushTopTopicMessage($system_user, $content, $content_type);
 
             $opts = [
                 'user_id' => $send_red_packet_history->user_id,
@@ -221,7 +223,7 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'balance_diamond' => $balance_diamond,
             'balance_num' => $balance_num,
-            'current_room_id'=>$this->current_room_id
+            'current_room_id' => $this->current_room_id
         ];
     }
 
