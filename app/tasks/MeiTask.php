@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1351483;
+        $user_id = 1103162;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        $opts = ['remark' => '系统赠送' . 60000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 60000, $opts);
     }
 
     function createUnionAction()
