@@ -3120,7 +3120,7 @@ EOF;
 
         echoLine($data);
 
-        $temp_file =  'export_withdraw_history_' . date('Ymd') . '.xls';
+        $temp_file = 'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
         echoLine($uri);
     }
@@ -3979,9 +3979,15 @@ EOF;
             $room->update();
         }
 
-        echoLine($res);
         foreach ($room_ids as $id) {
             $hot_cache->zadd('ios_auth_room_list', time(), $id);
         }
+    }
+
+    function test42Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $res = $hot_cache->setex("key_test_get", 13, 23);
+        echoLine($res);
     }
 }
