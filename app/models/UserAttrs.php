@@ -354,10 +354,12 @@ trait UserAttrs
 
         if (isset($this->charm)) {
             $data['charm_value'] = valueToStr($this->charm);
+            $data['charm_value_text'] = $this->charm_value_text;
         }
 
         if (isset($this->wealth)) {
             $data['wealth_value'] = valueToStr($this->wealth);
+            $data['wealth_value_text'] = $this->wealth_value_text;
         }
 
         return $data;
@@ -1148,5 +1150,15 @@ trait UserAttrs
         }
 
         return "http://test.momoyuedu.cn/m/images/level_1.png";
+    }
+
+    function getCharmValueText()
+    {
+        return "魅力: " . valueToStr($this->charm);
+    }
+
+    function getWealthValueText()
+    {
+        return "财富: " . valueToStr($this->wealth);
     }
 }
