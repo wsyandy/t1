@@ -1154,7 +1154,7 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income)
+    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
     {
         $body = array(
             'action' => 'boom_gift',
@@ -1165,7 +1165,8 @@ class Rooms extends BaseModel
                 'total_value' => (int)$total_income,
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
-                'render_type' => 'svga'
+                'render_type' => 'svga',
+                'status' => $status
             ]
         );
 
@@ -1175,7 +1176,7 @@ class Rooms extends BaseModel
 
         debug($this->id, $body);
 
-        $this->push($body);
+        $this->push($body, true);
     }
 
     function pushEnterRoomMessage($user)
@@ -1227,7 +1228,12 @@ class Rooms extends BaseModel
             'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
-        $this->push($body);
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
     }
 
     function pushUpMessage($user, $current_room_seat)
@@ -1274,7 +1280,7 @@ class Rooms extends BaseModel
     {
         $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
         info('推送红包信息', $body);
-        $this->push($body);
+        $this->push($body, true);
     }
 
     function pushPkMessage($pk_history_datas)
@@ -1284,7 +1290,7 @@ class Rooms extends BaseModel
             'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
         ]
         ];
-        $this->push($body);
+        $this->push($body, true);
     }
 
 
@@ -1305,7 +1311,7 @@ class Rooms extends BaseModel
         foreach ($users as $user) {
 
             //推送校验新版本
-            if ($check_user_version && !$user->canShowGoldGift()) {
+            if ($check_user_version && !$user->canReceiveBoomGiftMessage()) {
                 info("old_version_user", $user->sid);
                 continue;
             }
@@ -2130,7 +2136,6 @@ class Rooms extends BaseModel
             $hot_cache->incrby($minutes_num_stat_key, 1);
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
-            debug('boom_expire_at_time:'.$time);
             // 爆礼物
             if (isDevelopmentEnv()) {
                 $room->statBoomIncome($income, $time);
@@ -2151,6 +2156,7 @@ class Rooms extends BaseModel
         $cur_income_key = self::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
+        tryLock($cur_income_key);
         // 房间爆礼物结束倒计时
         $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
 
@@ -2159,6 +2165,7 @@ class Rooms extends BaseModel
             $expire = 180;
         }
 
+        $boom_list_key = 'disappear_rocket';
         $total_income = Backpacks::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
@@ -2175,14 +2182,17 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
+                $cache->srem($boom_list_key, $room_id);
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
+            if ($cur_total_income >= Backpacks::getBoomStartLine()) {
 
-            if ($cur_income >= Backpacks::getBoomStartLine()) {
+                $cache->sadd($boom_list_key, $room_id);
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
+        unlock($cur_income_key);
     }
 
     //按天统计房间进入人数
@@ -2809,13 +2819,13 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
         }
-        
+
         if (true) {
             $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
                 'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
@@ -3058,11 +3068,17 @@ class Rooms extends BaseModel
         return $time;
     }
 
-    function getUnderwayRedPacket()
+    function getNotDrawRedPacket($user_id)
     {
         $cache = \Users::getUserDb();
+        //当前房间所有还在进行中的红包ids
         $underway_red_packet_list_key = \RedPackets::generateUnderwayRedPacketListKey($this->id);
-        $ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+        $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+
+        //当前用户领取过的红包ids
+        $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user_id);
+        $ids = array_diff($underway_ids, $user_get_red_packet_ids);
+
         $room_red_packets = \RedPackets::findByIds($ids);
 
         return $room_red_packets;

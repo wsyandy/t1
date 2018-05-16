@@ -144,6 +144,7 @@
     im_password 即时通信密码(声网，环信)
     app_id string 信令应用id
     signaling_key string 信令token
+    medal_image_url 勋章图片地址
 }
 ```
 
@@ -783,6 +784,7 @@
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
             charm_value string 榜单魅力值
+            charm_value_text string 榜单魅力文本 例 魅力: 500万 
         }
         ...
     ]
@@ -820,6 +822,7 @@
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
             wealth_value string 榜单财富值
+            wealth_value_text string 榜单财富文本 例 财富: 500万 
         }
         ...
     ]

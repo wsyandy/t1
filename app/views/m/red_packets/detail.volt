@@ -52,7 +52,7 @@
                 red_packet_id:this.red_packet_id,
                 room_id:this.room_id
             }
-            $.authGet('/m/red_packet_histories/get_red_packet_users', data, function (resp) {
+            $.authGet('/m/red_packets/get_red_packet_users', data, function (resp) {
                 console.log(resp);
                 if(!resp.error_code){
                     vm.getRedPacketUsers = resp.get_red_packet_users;

@@ -40,8 +40,8 @@
                     <div class="give_box">
                         <h3>位置／范围</h3>
                         <div class="give_input">
-                            <!-- <div class="get_font get_address">5km</div> -->
-                            <input type="text" class="get_address" v-model="nearby_distance" value=""/>
+                             <div class="get_font get_address">5km</div>
+                            {#<input type="text" class="get_address" v-model="nearby_distance" value=""/>#}
                             <i class="give_right"></i>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                 <span>发红包</span>
             </div>
             <div class="give_text fang_give_text">
-                <a href="/m/red_packet_histories/state?sid={{ sid }}&code={{ code }}">红包说明 <i
+                <a href="/m/red_packets/state?sid={{ sid }}&code={{ code }}">红包说明 <i
                             class="icon_right"></i></a>
                 <p>未领取的红包，将于24小时后退至我的帐户</p>
             </div>
@@ -171,7 +171,7 @@
                     vm.less_zuan_input = true;
                     return;
                 }
-                $.authPost('/m/red_packet_histories/create', data, function (resp) {
+                $.authPost('/m/red_packets/create', data, function (resp) {
                     console.log(resp);
                     if (!resp.error_code) {
                         location.href = 'app://back';

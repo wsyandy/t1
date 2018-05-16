@@ -2,15 +2,15 @@
 
 namespace m;
 
-class RedPacketHistoriesController extends BaseController
+class RedPacketsController extends BaseController
 {
     function indexAction()
     {
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
-//        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-//            unset($red_packet_type['nearby']);
-//        }
+        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+            unset($red_packet_type['nearby']);
+        }
         info('类型', $red_packet_type);
 
         $diamond = $user->diamond;
@@ -33,10 +33,17 @@ class RedPacketHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于5个');
             }
         } else {
-            if ($diamond < 100 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            if ($red_packet_type == RED_PACKET_TYPE_NEARBY && $user->user_role == USER_ROLE_HOST_BROADCASTER) {
+                if ($diamond < 1000 || $num < 10) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于1000钻或者个数不得小于10个');
+                }
+            } else {
+                if ($diamond < 100 || $num < 10) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+                }
             }
         }
+
 
         if ($user->diamond < $diamond) {
             $to_pay_url = '';
@@ -66,10 +73,6 @@ class RedPacketHistoriesController extends BaseController
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
             \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
-
-            $room = $user->current_room;
-            $room->has_red_packet = STATUS_ON;
-            $room->update();
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
@@ -142,7 +145,7 @@ class RedPacketHistoriesController extends BaseController
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
-                    $client_url = '/m/red_packet_histories/followers';
+                    $client_url = '/m/red_packets/followers';
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
@@ -150,9 +153,12 @@ class RedPacketHistoriesController extends BaseController
             list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
+                if (mb_strlen($user_nickname) > 5) {
+                    $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
+                }
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
-                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+                $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
                 \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
             unlock($lock);
@@ -173,12 +179,20 @@ class RedPacketHistoriesController extends BaseController
         if ($this->request->isAjax()) {
             $page = $this->params('page', 1);
             $pre_page = $this->params('pre_page', 10);
+            //用户进来的时间
+            $room = \Rooms::findFirstById($room_id);
+            $time = $room->getTimeForUserInRoom($user_id);
+            //具体用户进房间3分钟的剩余时间，小于零代表时间已到
+            $distance_start_at = 180;
+            if ($time) {
+                $distance_start_at = $time + 3 * 60 - time();
+            }
 
             $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
             if ($red_packets) {
                 $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room_id, $user_id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
-                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids])
+                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids, 'distance_start_at' => $distance_start_at])
                 );
             }
 
@@ -213,7 +227,7 @@ class RedPacketHistoriesController extends BaseController
             $get_diamond = $cache->zscore($key, $red_packet_id);
             info('获取的钻石的时间', $get_diamond_at, $user_key);
             info('获取的钻石', $get_diamond, $key);
-            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i',$get_diamond_at), 'get_diamond' => $get_diamond]);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i', $get_diamond_at), 'get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);
@@ -233,9 +247,13 @@ class RedPacketHistoriesController extends BaseController
         list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {
-            $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
+            $user_nickname = $red_packet->user->nickname;
+            if (mb_strlen($user_nickname) > 5) {
+                $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
+            }
+            $error_reason = '抢到' . $user_nickname . '发的钻石红包';
             //在这里增加钻石
-            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
+            $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile, 'target_id' => $red_packet_id];
             \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
         }
 

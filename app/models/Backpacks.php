@@ -49,6 +49,43 @@ class Backpacks extends BaseModel
     }
 
 
+    public function doCreate($user_id, $target_id, $number, $type)
+    {
+        $prize = array(
+            'target_id' => $target_id,
+            'type' => $type,
+            'number' => $number
+        );
+
+        $boom_histories = new BoomHistories();
+        $boom_histories->createBoomHistories($user_id, $target_id, $type, $number);
+
+
+        if ($type == BACKPACK_GIFT_TYPE) {
+
+            if (empty($target_id))
+                return [ERROR_CODE_FAIL, '', null];
+
+            if (!self::createTarget($user_id, $target_id, $number, BACKPACK_GIFT_TYPE))
+                return [ERROR_CODE_FAIL, '', null];
+
+        } elseif ($type == BACKPACK_DIAMOND_TYPE) {
+
+            $opts['remark'] = '爆礼物获得' . $number . '钻石';
+            \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
+
+        } elseif ($type == BACKPACK_GOLD_TYPE) {
+
+            $opts['remark'] = '爆礼物获得' . $number . '金币';
+            \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
+
+        }
+
+        return [ERROR_CODE_SUCCESS, '', $prize];
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $prize]);
+    }
+
+
     /**
      * 数据写入背包
      * @param $user_id
@@ -236,6 +273,7 @@ class Backpacks extends BaseModel
         $room_sign_key = self::generateBoomRoomSignKey($room_id);
         $time = $cache->get($room_sign_key);
 
+        debug('boom_test', $room_id, $room_sign_key, $time);
         if (empty($time)) {
             return 0;
         }
@@ -246,12 +284,25 @@ class Backpacks extends BaseModel
 
 
     /**
+     * 记录爆礼物开始时间
      * @param $room_id
      * @return string
      */
     static function generateBoomRoomSignKey($room_id)
     {
         return 'boom_target_room_'.$room_id;
+    }
+
+
+    /**
+     * 记录爆礼物抽中的奖品
+     * @param $user_id
+     * @param $room_id
+     * @return string
+     */
+    public function generateBoomUserSignKey($user_id, $room_id)
+    {
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
 
 

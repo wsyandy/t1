@@ -34,11 +34,7 @@ class BackpacksController extends BaseController
     public function prizeAction()
     {
         $user = $this->currentUser();
-        if (isDevelopmentEnv()) {
-            $user = (object)array('id' => 1);
-        }
-
-        $room_id = $this->getCurrentRoomId($user->id);
+        $room_id = $user->current_room_id;
 
         // 前三排行
         $boom_histories = \BoomHistories::historiesTopList(3);
@@ -46,7 +42,6 @@ class BackpacksController extends BaseController
 
         // 没爆礼物不抽奖
         $expire = \Backpacks::getExpireAt($room_id);
-        debug('boom_expire_at:'.$expire);
         if (empty($expire)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
@@ -111,11 +106,7 @@ class BackpacksController extends BaseController
     public function createAction()
     {
         $user = $this->currentUser();
-        if (isDevelopmentEnv()) {
-            $user = (object)array('id' => 1);
-        }
-        
-        $room_id = $this->getCurrentRoomId($user->id);
+        $room_id = $user->current_room_id;
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();

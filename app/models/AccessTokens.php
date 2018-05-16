@@ -34,7 +34,6 @@ class AccessTokens extends BaseModel
     static function checkToken($token)
     {
         $access_token = \AccessTokens::findFirstByToken($token);
-
         if ($access_token && time() < $access_token->expired_at) {
             if ( AUTH_SUCCESS == $access_token->status) {
                 return [ERROR_CODE_SUCCESS, '', $access_token];
@@ -79,7 +78,7 @@ class AccessTokens extends BaseModel
         $hot_cache->setex($key, 1800, 1);
 
         $access_tokens = self::findForeach(['conditions' => 'expired_at<:expired_at: and status=:status:',
-            'bind' => ['expired_at' => time(), 'status' => AUTH_WAIT]]);
+            'bind' => ['expired_at' => time() - 1, 'status' => AUTH_WAIT]]);
 
         foreach ($access_tokens as $access_token) {
             $access_token->delete();
