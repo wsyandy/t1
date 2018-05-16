@@ -117,4 +117,13 @@ class MakiTask extends Phalcon\Cli\Task
         }
 
     }
+
+
+    public function m2Action()
+    {
+        $cache = Rooms::getHotWriteCache();
+        //$cache->sadd('test_set', 2);
+        $res = $cache->sMembers('test_set');
+        echoLine($res);
+    }
 }
