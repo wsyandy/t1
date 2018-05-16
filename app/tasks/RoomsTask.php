@@ -895,7 +895,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $room = new Rooms();
         $total_income = Backpacks::getBoomTotalValue();
-        $boom_list_key = 'disappear_rocket';
+        $boom_list_key = 'boom_gifts_list';
 
         $cache = Rooms::getHotWriteCache();
         $rocket_set = $cache->zrange($boom_list_key, 0, -1);
