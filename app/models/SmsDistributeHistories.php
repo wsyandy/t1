@@ -117,7 +117,7 @@ class SmsDistributeHistories extends BaseModel
         if ($user) {
             $amount = 10;
             $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
         }
     }
 
@@ -128,14 +128,14 @@ class SmsDistributeHistories extends BaseModel
         if ($user) {
             $bonus_amount = round($amount * 0.05);
             $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
 
             if ($user->share_parent_id) {
                 $top_user = \Users::findFirstById($user->share_parent_id);
                 if (isPresent($top_user)) {
                     $bonus_amount = round($amount * 0.01);
                     $last_opts = ['remark' => '底层分销充值奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
-                    \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $last_opts);
+                    \AccountHistories::changeBalance($top_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $last_opts);
                 }
             }
         }
@@ -148,14 +148,14 @@ class SmsDistributeHistories extends BaseModel
         if ($user) {
             $bonus_amount = round($amount * 0.05);
             $opts = ['remark' => '分销兑换奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
 
             if ($user->share_parent_id) {
                 $top_user = \Users::findFirstById($user->share_parent_id);
                 if (isPresent($top_user)) {
                     $bonus_amount = round($amount * 0.01);
                     $last_opts = ['remark' => '底层分销兑换奖励钻石' . $bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
-                    \AccountHistories::changeBalance($top_user->id, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $last_opts);
+                    \AccountHistories::changeBalance($top_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $last_opts);
                 }
             }
         }

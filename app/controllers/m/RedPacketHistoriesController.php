@@ -28,9 +28,16 @@ class RedPacketHistoriesController extends BaseController
         $sex = $this->params('sex');
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
-        if ($diamond < 100 || $num < 10) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+        if (isDevelopmentEnv()) {
+            if ($diamond < 100 || $num < 5) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于5个');
+            }
+        } else {
+            if ($diamond < 100 || $num < 10) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            }
         }
+
         if ($user->diamond < $diamond) {
             $to_pay_url = '';
             return $this->renderJSON(ERROR_CODE_FAIL, '余额不足', ['to_pay_url' => $to_pay_url]);
@@ -58,7 +65,7 @@ class RedPacketHistoriesController extends BaseController
 
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
 
             $room = $user->current_room;
             $room->has_red_packet = STATUS_ON;
@@ -87,6 +94,8 @@ class RedPacketHistoriesController extends BaseController
         $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
+            $lock_key = 'grab_red_packet_' . $red_packet_id;
+            $lock = tryLock($lock_key);
             $cache = \Users::getUserDb();
             $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
             $score = $cache->zscore($key, $red_packet_id);
@@ -108,7 +117,7 @@ class RedPacketHistoriesController extends BaseController
                 $room = \Rooms::findFirstById($user->current_room_id);
                 $time = $room->getTimeForUserInRoom($user->id);
                 if (!$time || time() - $time < 180) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您好没有待满三分钟哦！');
+                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
                 }
             }
 
@@ -126,11 +135,15 @@ class RedPacketHistoriesController extends BaseController
             //是否关注房主
             if ($red_packet_type == RED_PACKET_TYPE_ATTENTION) {
                 $room = \Rooms::findFirstById($user->current_room_id);
+                info('房主id', $room->user_id);
+                if ($room->user_id == $user->id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
+                }
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
-                    $error_url = '/m/red_packet_histories/followers';
-                    return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['error_url' => $error_url]);
+                    $client_url = '/m/red_packet_histories/followers';
+                    return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }
 
@@ -140,8 +153,9 @@ class RedPacketHistoriesController extends BaseController
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-                \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+                \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
+            unlock($lock);
 
             return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
         }
@@ -183,22 +197,23 @@ class RedPacketHistoriesController extends BaseController
 
     function getRedPacketUsersAction()
     {
-        $user = $this->currentUser();
         $room_id = $this->params('room_id');
-        info('房间id',$room_id);
+        info('房间id', $room_id);
         $red_packet_id = $this->params('red_packet_id');
         $cache = \Users::getUserDb();
-        $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
-        $ids = $cache->zrange($key, 0, -1);
+        $user_key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
+        $ids = $cache->zrange($user_key, 0, -1);
 
         $users = \Users::findByIds($ids);
 
         $get_red_packet_users = [];
         foreach ($users as $index => $user) {
-            $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
-            $get_diamond = $cache->zscore($key, $user->id);
-            info('获取的钻石',$get_diamond,$key);
-            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
+            $key = \RedPackets::generateRedPacketForRoomKey($room_id, $user->id);
+            $get_diamond_at = $cache->zscore($user_key, $user->id);
+            $get_diamond = $cache->zscore($key, $red_packet_id);
+            info('获取的钻石的时间', $get_diamond_at, $user_key);
+            info('获取的钻石', $get_diamond, $key);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i:s',$get_diamond_at), 'get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);
@@ -221,7 +236,7 @@ class RedPacketHistoriesController extends BaseController
             $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
             //在这里增加钻石
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-            \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+            \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
         }
 
         return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);

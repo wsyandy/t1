@@ -34,7 +34,6 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $user = \Users::findFirstById($user_id);
-
             if (!$user) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '失败');
             }
@@ -54,7 +53,7 @@ class HiCoinHistoriesController extends BaseController
                 $hi_coin_history = \HiCoinHistories::createHistory($user->id, $opts);
 
                 if ($content) {
-                    \Chats::sendTextSystemMessage($user->id, $content);
+                    \Chats::sendTextSystemMessage($user, $content);
                 }
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['hi_coin_history' => $hi_coin_history->toJson()]);

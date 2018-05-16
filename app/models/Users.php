@@ -1317,7 +1317,7 @@ class Users extends BaseModel
             if ('nickname' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
                 }
 
                 $this->nickname = $v;
@@ -1327,7 +1327,7 @@ class Users extends BaseModel
             if ('monologue' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的个性签名违反规则,请及时修改");
                 }
 
                 $this->monologue = $v;
@@ -1968,7 +1968,7 @@ class Users extends BaseModel
 
         if ($total_entries >= 3) {
             $offset = $per_page * ($page - 1);
-            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
+            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page - 1);
             $index = array_search($this->id, $user_ids);
             if (false !== $index) {
                 unset($user_ids[$index]);
@@ -3310,7 +3310,7 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
@@ -3399,7 +3399,7 @@ class Users extends BaseModel
 
         $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
 
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SHARE_WORK, $gold, $opts);
 
         $db->setex($key, endOfDay() - time(), time());
     }
@@ -3632,5 +3632,12 @@ class Users extends BaseModel
         return $pagination;
     }
 
+    //获取系统用户
+    static function getSysTemUser()
+    {
+        $id = SYSTEM_ID;
+        $system_user = \Users::findFirstById($id);
+        return $system_user;
+    }
 
 }

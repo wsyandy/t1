@@ -128,7 +128,7 @@ class DrawHistories extends BaseModel
     static function getData()
     {
         $data = [];
-        if (date("Ymd") == '20180510') {
+        if (date("Ymd") == '20180515') {
             $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 2];
         } else {
             $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
@@ -321,7 +321,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($number == 100000) {
 
-                    if ($hour <= 20) {
+                    if ($hour < 10) {
                         return 0;
                     }
 
@@ -566,7 +566,7 @@ class DrawHistories extends BaseModel
         if ($draw_history->type == 'diamond') {
             $remark = '抽奖获得' . $draw_history->number . '钻石';
             $opts['remark'] = $remark;
-            $target = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+            $target = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         } elseif ($draw_history->type == 'gift') {
             if ($gift) {// 送礼物
                 // 赠送权时间
@@ -579,7 +579,7 @@ class DrawHistories extends BaseModel
             }
         } else {
             $opts = ['remark' => '抽奖获得' . $draw_history->number . '金币'];
-            $target = \GoldHistories::changeBalance($user->id, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
+            $target = \GoldHistories::changeBalance($user, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         }
 
         $hot_cache = DrawHistories::getHotWriteCache();
