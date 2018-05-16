@@ -8,9 +8,9 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
-        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-            unset($red_packet_type['nearby']);
-        }
+//        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+//            unset($red_packet_type['nearby']);
+//        }
         info('类型', $red_packet_type);
 
         $diamond = $user->diamond;
@@ -87,6 +87,8 @@ class RedPacketHistoriesController extends BaseController
         $user_avatar_url = $red_packet->user->avatar_url;
 
         if ($this->request->isAjax()) {
+            $lock_key = 'grab_red_packet_' . $red_packet_id;
+            $lock = tryLock($lock_key);
             $cache = \Users::getUserDb();
             $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
             $score = $cache->zscore($key, $red_packet_id);
@@ -108,7 +110,7 @@ class RedPacketHistoriesController extends BaseController
                 $room = \Rooms::findFirstById($user->current_room_id);
                 $time = $room->getTimeForUserInRoom($user->id);
                 if (!$time || time() - $time < 180) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您好没有待满三分钟哦！');
+                    return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
                 }
             }
 
@@ -126,6 +128,10 @@ class RedPacketHistoriesController extends BaseController
             //是否关注房主
             if ($red_packet_type == RED_PACKET_TYPE_ATTENTION) {
                 $room = \Rooms::findFirstById($user->current_room_id);
+                info('房主id',$room->user_id);
+                if ($room->user_id == $user->id) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
+                }
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
@@ -142,6 +148,7 @@ class RedPacketHistoriesController extends BaseController
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
                 \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
+            unlock($lock);
 
             return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);
         }
@@ -185,7 +192,7 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
-        info('房间id',$room_id);
+        info('房间id', $room_id);
         $red_packet_id = $this->params('red_packet_id');
         $cache = \Users::getUserDb();
         $key = \RedPackets::generateRedPacketInRoomForUserKey($user->current_room_id, $red_packet_id);
@@ -197,7 +204,7 @@ class RedPacketHistoriesController extends BaseController
         foreach ($users as $index => $user) {
             $key = \RedPackets::generateRedPacketInRoomForUserKey($room_id, $red_packet_id);
             $get_diamond = $cache->zscore($key, $user->id);
-            info('获取的钻石',$get_diamond,$key);
+            info('获取的钻石', $get_diamond, $key);
             $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond' => $get_diamond]);
         }
 

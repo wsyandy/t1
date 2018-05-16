@@ -20,6 +20,7 @@
 {{ f.input('svga_image_url', ['label': 'sva图片路径']) }}
 
 {{ f.input('content',['label':'消息内容']) }}
+{{ f.input('title',['label':'标题']) }}
 {{ f.select('content_type',['label':'消息内容类型','collection': content_types,'width':'100%']) }}
 
 <div class="error_reason" style="color: red;"></div>

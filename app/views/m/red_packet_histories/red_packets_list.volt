@@ -13,8 +13,10 @@
                     <h3>${v.user_nickname}</h3>
                     <p>发了一个红包</p>
                 </div>
-                <div class="num red_list_style red_list_qiang" v-if="v.is_grab" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢</div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
+                <div class="num red_list_style red_list_qiang" v-if="v.is_grab" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢</div>
+                {#<div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">附近的人可抢</div>#}
+                {#<div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">关注房主可抢</div>#}
             </div>
         </li>
         {#<li>#}
@@ -79,7 +81,8 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
-                    room_id: vm.room_id
+                    //room_id: vm.room_id
+                    room_id:'172'
 
                 };
 //console.log(data);
@@ -91,10 +94,15 @@
                         var index = $.inArray(val.id, vm.user_get_red_packet_ids);
                         if (index != -1) {
                             val.is_grabbed = true;
-                            val.is_grab = false;
                         } else {
-                            val.is_grabbed = false;
                             val.is_grab = true;
+                        }
+
+                        if(val.red_packet_type == 'nearby'){
+                            val.is_nearby = true;
+                        }
+                        if(val.red_packet_type == 'attention'){
+                            val.is_attention = true;
                         }
                         vm.red_packets_list.push(val);
                     });

@@ -1215,7 +1215,7 @@ class Rooms extends BaseModel
         }
     }
 
-    function pushTopTopicMessage($user, $content = "")
+    function pushTopTopicMessage($user, $content = "", $content_type = '')
     {
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
@@ -1224,7 +1224,7 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'send_topic_msg', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'content' => $content,
-            'channel_name' => $this->channel_name
+            'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
         $this->push($body);
@@ -1272,8 +1272,8 @@ class Rooms extends BaseModel
 
     function pushRedPacketMessage($num, $url)
     {
-        $body = ['action' => 'red_packet', 'num' => $num, 'url' => $url];
-        info('推送红包信息',$body);
+        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'url' => $url]];
+        info('推送红包信息', $body);
         $this->push($body);
     }
 
