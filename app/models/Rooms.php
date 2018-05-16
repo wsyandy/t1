@@ -1274,7 +1274,7 @@ class Rooms extends BaseModel
 
     function pushRedPacketMessage($num, $url)
     {
-        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'url' => $url]];
+        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
         info('推送红包信息', $body);
         $this->push($body);
     }
