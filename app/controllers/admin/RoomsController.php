@@ -157,6 +157,7 @@ class RoomsController extends BaseController
             $total_value = $this->params('total_value');
             $current_value = $this->params('current_value');
             $content_type = $this->params('content_type');
+            $title = $this->params('title');
 
             debug($action, $sender_id, $gift_id, $red_packet_num, $url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score, $expire_at);
 
@@ -273,6 +274,15 @@ class RoomsController extends BaseController
                 $body = ['action' => $action, 'channel_name' => $room->channel_name, 'content' => $content];
             }
 
+            if ($action == 'sink_notice') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                $body = ['action' => $action, 'title' => $title, 'content' => $content, 'client_url' => $url];
+            }
+
             if ($action == 'hang_up') {
 
                 if (!$sender->isCalling()) {
@@ -325,7 +335,7 @@ class RoomsController extends BaseController
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
             'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知', 'red_packet' => '红包',
-            'pk' => 'pk', 'blasting_gift' => '爆礼物'
+            'pk' => 'pk', 'blasting_gift' => '爆礼物', 'sink_notice' => '下沉通知'
         ];
         $this->view->content_types = ['personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
         $this->view->room = $room;
