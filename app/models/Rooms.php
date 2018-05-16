@@ -1177,7 +1177,7 @@ class Rooms extends BaseModel
 
         debug($this->id, $body);
 
-        $this->push($body);
+        $this->push($body, true);
     }
 
     function pushEnterRoomMessage($user)
@@ -1307,7 +1307,7 @@ class Rooms extends BaseModel
         foreach ($users as $user) {
 
             //推送校验新版本
-            if ($check_user_version && !$user->canShowGoldGift()) {
+            if ($check_user_version && !$user->canBoomGift()) {
                 info("old_version_user", $user->sid);
                 continue;
             }
