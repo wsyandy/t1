@@ -546,11 +546,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1351483;
+        $user_id = 1103162;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        $opts = ['remark' => '系统赠送' . 60000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 60000, $opts);
     }
 
     function createUnionAction()
@@ -3120,7 +3120,7 @@ EOF;
 
         echoLine($data);
 
-        $temp_file =  'export_withdraw_history_' . date('Ymd') . '.xls';
+        $temp_file = 'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
         echoLine($uri);
     }
@@ -3979,9 +3979,15 @@ EOF;
             $room->update();
         }
 
-        echoLine($res);
         foreach ($room_ids as $id) {
             $hot_cache->zadd('ios_auth_room_list', time(), $id);
         }
+    }
+
+    function test42Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $res = $hot_cache->setex("key_test_get", 13, 23);
+        echoLine($res);
     }
 }
