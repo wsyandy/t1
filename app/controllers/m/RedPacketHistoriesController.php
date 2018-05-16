@@ -8,9 +8,9 @@ class RedPacketHistoriesController extends BaseController
     {
         $user = $this->currentUser();
         $red_packet_type = \RedPackets::$RED_PACKET_TYPE;
-//        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
-//            unset($red_packet_type['nearby']);
-//        }
+        if ($user->user_role != USER_ROLE_HOST_BROADCASTER) {
+            unset($red_packet_type['nearby']);
+        }
         info('类型', $red_packet_type);
 
         $diamond = $user->diamond;
@@ -33,10 +33,17 @@ class RedPacketHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于5个');
             }
         } else {
-            if ($diamond < 100 || $num < 10) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            if ($red_packet_type == RED_PACKET_TYPE_NEARBY && $user->user_role == USER_ROLE_HOST_BROADCASTER) {
+                if ($diamond < 1000 || $num < 10) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于1000钻或者个数不得小于10个');
+                }
+            } else {
+                if ($diamond < 100 || $num < 10) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+                }
             }
         }
+
 
         if ($user->diamond < $diamond) {
             $to_pay_url = '';
@@ -66,10 +73,6 @@ class RedPacketHistoriesController extends BaseController
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
             \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
-
-            $room = $user->current_room;
-            $room->has_red_packet = STATUS_ON;
-            $room->update();
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发布成功', ['send_red_packet_history' => $send_red_packet_history->toJson()]);
@@ -213,7 +216,7 @@ class RedPacketHistoriesController extends BaseController
             $get_diamond = $cache->zscore($key, $red_packet_id);
             info('获取的钻石的时间', $get_diamond_at, $user_key);
             info('获取的钻石', $get_diamond, $key);
-            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i',$get_diamond_at), 'get_diamond' => $get_diamond]);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i', $get_diamond_at), 'get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);

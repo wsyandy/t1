@@ -153,6 +153,12 @@ class RedPackets extends BaseModel
             self::delay(24 * 60 * 60)->asyncFinishRedPacket($send_red_packet_history->id);
 
             self::saveRedPacketForRoom($opts);
+
+            if ($send_red_packet_history->diamond >= 1000) {
+                $room = $user->current_room;
+                $room->has_red_packet = STATUS_ON;
+                $room->update();
+            }
             return $send_red_packet_history;
         }
         return null;
@@ -342,26 +348,28 @@ class RedPackets extends BaseModel
         $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
         //红包公屏socket
-        $content = $user->nickname . '发了个大红包，快来抢啊！！！';
+        $content = $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧';
         $content_type = 'red_packet';
         $system_user = \Users::getSysTemUser();
         $room->pushTopTopicMessage($system_user, $content, $content_type);
 
         //首页下沉通知
         if (isDevelopmentEnv()) {
-            $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-                'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
-            ];
+            //这里还没有做是否符合附近人的条件
+            if ($send_red_packet_history->red_packet_type == RED_PACKET_TYPE_NEARBY) {
+                $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
+                    'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
+                ];
+                $client_url = 'app://rooms/detail?id=' . $room->id;
+                $users = \Users::find($cond);
+                foreach ($users as $user) {
+                    $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+                    $intranet_ip = $user->getIntranetIp();
+                    $receiver_fd = $user->getUserFd();
 
-            $client_url = 'app://rooms/detail?id=' . $room->id;
-            $users = \Users::find($cond);
-            foreach ($users as $user) {
-                $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
-                $intranet_ip = $user->getIntranetIp();
-                $receiver_fd = $user->getUserFd();
-
-                $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-                info('推送结果=>', $result, '结构=>', $body);
+                    $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+                    info('推送结果=>', $result, '结构=>', $body);
+                }
             }
         }
     }

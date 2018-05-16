@@ -1274,7 +1274,7 @@ class Rooms extends BaseModel
     {
         $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
         info('推送红包信息', $body);
-        $this->push($body);
+        $this->push($body, true);
     }
 
     function pushPkMessage($pk_history_datas)
@@ -1284,7 +1284,7 @@ class Rooms extends BaseModel
             'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
         ]
         ];
-        $this->push($body);
+        $this->push($body, true);
     }
 
 
@@ -1305,7 +1305,7 @@ class Rooms extends BaseModel
         foreach ($users as $user) {
 
             //推送校验新版本
-            if ($check_user_version && !$user->canBoomGift()) {
+            if ($check_user_version && !$user->canReceiveBoomGiftMessage()) {
                 info("old_version_user", $user->sid);
                 continue;
             }
@@ -2008,17 +2008,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2814,7 +2816,7 @@ class Rooms extends BaseModel
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
         }
-        
+
         if (true) {
             $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
                 'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
