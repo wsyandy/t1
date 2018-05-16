@@ -2162,6 +2162,8 @@ class Rooms extends BaseModel
         $boom_list_key = 'disappear_rocket';
         $total_income = Backpacks::getBoomTotalValue();
 
+        tryLock($boom_list_key);
+
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_sign_key)) {
 
@@ -2186,6 +2188,7 @@ class Rooms extends BaseModel
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
+        unlock($boom_list_key);
     }
 
     //按天统计房间进入人数
