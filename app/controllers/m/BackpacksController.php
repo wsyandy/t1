@@ -38,27 +38,34 @@ class BackpacksController extends BaseController
             $user = (object)array('id' => 1);
         }
 
-        // 获取当前房间ID
         $room_id = $this->getCurrentRoomId($user->id);
 
-        $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->generateUserSignKey($user->id, $room_id);
-
+        // 前三排行
         $boom_histories = \BoomHistories::historiesTopList(3);
         $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
 
+        // 没爆礼物不抽奖
+        $expire = \Backpacks::getExpireAt($room_id);
+        if (empty($expire)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
+        }
 
-        $value = $cache->get($cache_name);
-        if ($value == 1) {
+        // 抽奖物品保存至爆礼物结束时间
+        $expire = $expire - time();
+        $expire = $expire > 180 ? 180 : ($expire < 0 ? 1 : $expire);
+
+        // 爆出的礼物从缓存拿到
+        $cache = \Backpacks::getHotWriteCache();
+        $user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $user_sign = $cache->get($user_sign_key);
+
+        // 领取后缓存值为1
+        if ($user_sign == 1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', ['target' => $boom_histories]);
         }
 
-        $expire = \Backpacks::getExpireAt($room_id);
-        $expire = $expire - time();
-        $expire = $expire>180 ? 180 : ($expire<0 ? 1 : $expire);
-
-        // 用户未领取
-        if ($cache->exists($cache_name) && $value!=1) {
+        // 未领取不抽奖
+        if ($cache->exists($user_sign_key) && $user_sign!=1) {
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
         }
 
@@ -78,7 +85,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->setex($cache_name, $expire, json_encode($json));
+        $cache->setex($user_sign_key, $expire, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
@@ -111,29 +118,29 @@ class BackpacksController extends BaseController
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->generateUserSignKey($user->id, $room_id);
-
-        $json = $cache->get($cache_name);
+        $user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $expire = $cache->ttl($user_sign_key);
+        $user_sign = $cache->get($user_sign_key);
 
         // 超三分钟未领取礼物
-        if (empty($json))
-            return $this->renderJSON(ERROR_CODE_FAIL, '三分钟内未领取！');
+        if (empty($user_sign))
+            return $this->renderJSON(ERROR_CODE_FAIL, '爆礼物3分钟内未领取！');
 
-        // json 解析
-        $json = json_decode($json, true);
+        // 抽奖的奖品
+        $json = json_decode($user_sign, true);
         $type = $json['type'];
-        $target = $json['target'];
+        $prizes = $json['target'];
 
-        if (empty($target)) {
+        if (empty($prizes)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
         }
 
         // 执行写入
-        foreach ($target as $value) {
-            $this->doCreate($value['id'], $value['number'], $type);
+        foreach ($prizes as $prize) {
+            $this->doCreate($prize['id'], $prize['number'], $type);
         }
 
-        $cache->setex($cache_name, $cache->ttl($cache_name),1);
+        $cache->setex($user_sign_key, $expire, 1);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
