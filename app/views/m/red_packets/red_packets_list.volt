@@ -70,8 +70,8 @@
                         }
 
                         if (val.red_packet_type == 'nearby') {
-                            val.text = "附近的人可抢";
-                            val.class = "";
+                            val.text = "附近人可抢";
+                            val.class = "red_list_fangzhu";
                         }
                         if (val.red_packet_type == 'attention') {
                             val.text = "关注房主可抢";

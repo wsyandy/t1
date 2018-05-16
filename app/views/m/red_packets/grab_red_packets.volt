@@ -13,8 +13,8 @@
                     <h4>{{ user_nickname }}</h4>
                     <h3>发了一个红包</h3>
 
-                    <div id="start_time">
-                        <p>倒计时结束后可以抢</p>
+                    <div id="start_time" v-if="red_packet_type == 'stay_at_room'">
+                        <p v-if="red_packet_type == 'stay_at_room'">倒计时结束后可以抢</p>
                         <div class="daojishi" id="time"></div>
                     </div>
                     <div id="end_time">
@@ -44,9 +44,9 @@
                         <p>已收到我的帐户，可用于送礼物</p>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
-                    <div class="red_over" v-if="pity">
+                    <div class="red_over" style="margin-top: 3rem" v-if="pity">
                         <img src="/m/images/yihan.png" v-if="grabbed">
-                        <h3 bind:class="${hide_yihan}">${res}</h3>
+                        <h3>${res}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
 
@@ -85,7 +85,6 @@
             getDiamond: "",
             user_id: "{{ red_packet.user_id }}",
             grabbed:true,
-            hide_yihan:"",
 
         },
         methods: {
@@ -112,7 +111,6 @@
                         vm.attentionHost = true;
                         vm.attentionUrl = resp.client_url;
                     } else if (resp.error_code == -101) {
-                        vm.hide_yihan = "hide_yihan";
                         vm.res = resp.error_reason;
                         vm.pity = true;
                         vm.grabbed = false;
