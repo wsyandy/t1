@@ -2,7 +2,7 @@
 {{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
 {{ theme_js('/m/js/font_rem.js') }}
 {{ block_end() }}
-<div id="app">
+<div id="app" class="grab">
     <div class="get_hongbao_box">
         <div class="hongbao_box">
             <div class="wait_red wait_red_guanzhu">
@@ -45,7 +45,7 @@
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
                     <div class="red_over" v-if="pity">
-                        <img src="/m/images/yihan.png">
+                        <img src="/m/images/yihan.png" v-if="grabbed">
                         <h3>${res}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
@@ -83,7 +83,8 @@
             attentionUrl: "",
             res: "",
             getDiamond: "",
-            user_id: "{{ red_packet.user_id }}"
+            user_id: "{{ red_packet.user_id }}",
+            grabbed:true,
 
         },
         methods: {
@@ -97,14 +98,20 @@
 
 
                 $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
-                    //console.log(resp);
+                    console.log(resp);
                     vm.getRed = true;
                     if (!resp.error_code) {
 
                         vm.res = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
-                        vm.congratulation = true;
+                        console.log(resp);
+                        if(resp.get_diamond == 0){
+                            vm.pity = true;
+                            vm.grabbed == false;
 
+                        }
+                        vm.congratulation = true;
+                        console.log(vm.grabbed);
                     } else if (resp.error_code == -400) {
 
                         vm.attentionHost = true;
@@ -116,6 +123,7 @@
                         vm.pity = true;
 
                     }
+                    //console.log(vm.grabbed);
                     hide_grab();
 
                 });
