@@ -19,6 +19,7 @@
                 </div>
                 <div id="end_time">
                     <p v-if="red_packet_type == 'attention'">发了一个红包，关注房主可领取</p>
+                    <p v-if="red_packet_type == 'stay_at_room'">进入房间3分钟后可领取</p>
                     <div class="qiang_red" @click="getRedPacket"></div>
                 </div>
 
@@ -35,8 +36,7 @@
                     {#<a href="javascript:;" class="look_detail">查看领取详情 <i></i></a>#}
                 {#</div>#}
         <div v-if="getRed">
-            <div class="get_hongbao_box">
-                <div class="hongbao_box">
+
                     <div class="red_get" v-if="congratulation">
                         <img src="/m/images/gongxi.png">
                         <h3>${res}</h3>
@@ -49,26 +49,26 @@
                         <h3>${res}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
-                </div>
-            </div>
+
         </div>
 
             </div>
         </div>
     </div>
-</div>
-
-<div class="guanzhu_qiang_box" v-if="attentionHost">
-    <div class="gz_fangzhu">
-        <i class="close"></i>
-        <div class="pic">
-            <img src="{{ user_avatar_url }}">
+    <div class="guanzhu_qiang_box" v-if="attentionHost">
+        <div class="gz_fangzhu show">
+            <i class="close" @click="closeAttention()"></i>
+            <div class="pic">
+                <img src="{{ user_avatar_url }}">
+            </div>
+            <h3>{{ user_nickname }}</h3>
+            <p>是否关注房主，领取红包</p>
+            <div class="gz_btn" @click="toAttention()">关注并领取</div>
         </div>
-        <h3>{{ user_nickname }}</h3>
-        <p>是否关注房主，领取红包</p>
-        <div class="gz_btn" @click="toAttention()">关注并领取</div>
     </div>
 </div>
+
+
 <script type="text/javascript">
     var opts = {
         data: {
@@ -107,7 +107,7 @@
                     }else if(resp.error_code == -400){
 
                         vm.attentionHost = true;
-                        vm.attentionUrl = resp.error_url;
+                        vm.attentionUrl = resp.client_url;
 
                     }else{
 
@@ -116,7 +116,6 @@
 
                     }
                     hide_grab();
-
 
                 });
             },
@@ -133,7 +132,27 @@
                 }
                 $.authGet(vm.attentionUrl, data, function (resp) {
                     console.log(resp);
+                    vm.getRed = true;
+                    if(!resp.error_code) {
+
+                        vm.res = resp.error_reason;
+                        vm.getDiamond = resp.get_diamond;
+                        vm.congratulation = true;
+
+                    }else{
+
+                        vm.res = resp.error_reason;
+                        vm.pity = true;
+
+                    }
+                    vm.attentionHost = false;
+                    hide_grab();
                 })
+            },
+            closeAttention: function () {
+                vm.attentionHost = false;
+                $("#hide").show();
+
             }
         }
     }
@@ -177,17 +196,5 @@
         $("#hide").hide();
 
     }
-//    $(function () {
-//        $('.qiang_red').click(function () {
-//            $('.guanzhu_qiang_box').fadeIn(1000);
-//            setTimeout(function () {
-//                $('.gz_fangzhu').addClass('show');
-//            }, 10);
-//
-//            $('.close').click(function () {
-//                $('.gz_fangzhu').removeClass('show');
-//                $('.guanzhu_qiang_box').fadeOut(1000);
-//            })
-//        })
-//    })
+
 </script>
