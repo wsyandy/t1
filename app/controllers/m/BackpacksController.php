@@ -118,29 +118,29 @@ class BackpacksController extends BaseController
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $cache_name = $this->generateUserSignKey($user->id, $room_id);
-
-        $json = $cache->get($cache_name);
+        $user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $expire = $cache->ttl($user_sign_key);
+        $user_sign = $cache->get($user_sign_key);
 
         // 超三分钟未领取礼物
-        if (empty($json))
-            return $this->renderJSON(ERROR_CODE_FAIL, '三分钟内未领取！');
+        if (empty($user_sign))
+            return $this->renderJSON(ERROR_CODE_FAIL, '爆礼物3分钟内未领取！');
 
-        // json 解析
-        $json = json_decode($json, true);
+        // 抽奖的奖品
+        $json = json_decode($user_sign, true);
         $type = $json['type'];
-        $target = $json['target'];
+        $prizes = $json['target'];
 
-        if (empty($target)) {
+        if (empty($prizes)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
         }
 
         // 执行写入
-        foreach ($target as $value) {
-            $this->doCreate($value['id'], $value['number'], $type);
+        foreach ($prizes as $prize) {
+            $this->doCreate($prize['id'], $prize['number'], $type);
         }
 
-        $cache->setex($cache_name, $cache->ttl($cache_name),1);
+        $cache->setex($user_sign_key, $expire, 1);
         return $this->renderJSON(ERROR_CODE_SUCCESS);
     }
 
