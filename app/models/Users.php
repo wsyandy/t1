@@ -1968,7 +1968,7 @@ class Users extends BaseModel
 
         if ($total_entries >= 3) {
             $offset = $per_page * ($page - 1);
-            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page);
+            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page - 1);
             $index = array_search($this->id, $user_ids);
             if (false !== $index) {
                 unset($user_ids[$index]);
