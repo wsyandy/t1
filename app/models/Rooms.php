@@ -1154,7 +1154,7 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income)
+    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
     {
         $body = array(
             'action' => 'boom_gift',
@@ -1166,7 +1166,7 @@ class Rooms extends BaseModel
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
                 'render_type' => 'svga',
-                'status' => STATUS_ON
+                'status' => $status
             ]
         );
 
@@ -2176,13 +2176,13 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
-                $cache->srem($boom_list_key, $room_sign_key);
+                $cache->srem($boom_list_key, $room_id);
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
             if ($cur_total_income >= Backpacks::getBoomStartLine()) {
 
-                $cache->sadd($boom_list_key, $room_sign_key);
+                $cache->sadd($boom_list_key, $room_id);
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }

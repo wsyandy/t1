@@ -880,4 +880,22 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+
+    function disappearBoomGiftRocketAction()
+    {
+        $room = new Rooms();
+        $total_income = Backpacks::getBoomTotalValue();
+
+        $cache = Rooms::getHotWriteCache();
+        $rocket_set = $cache->sMembers('disappear_rocket');
+
+        foreach ($rocket_set as $room_id) {
+
+            $cur_income_key = Rooms::generateBoomCurIncomeKey($room_id);
+            $cur_income = $cache->get($cur_income_key);
+
+            $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
+        }
+    }
 }
