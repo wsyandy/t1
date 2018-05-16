@@ -1042,14 +1042,15 @@
              "url": string  跳转地址,
              "icon": string 图片地址
          },
-     blasting_gift:{
-         expire_at int 结束时间
-         url string 跳转地址
-         svga_image_url string svga图片
-         total_value int 总值
-         current_value int 当前值
-         show_rank int 1000000 等级排序
-         diff_picture string 爆礼物图片的值 green orange blue
+     boom_gift:{
+        expire_at int 结束时间
+        client_url string 跳转地址
+        svga_image_url string svga图片
+        render_type string svga
+        show_rank int 1000000 等级排序
+        total_value int 总值
+        current_value int 当前值
+        image_color string 爆礼物图片的值 green orange blue
      }
 }
 ```

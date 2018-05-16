@@ -313,10 +313,11 @@ class RoomsController extends BaseController
                 ];
             }
 
-            if ($action == 'blasting_gift') {
+            if ($action == 'boom_gift') {
 
-                $body = ['action' => $action, 'blasting_gift' => ['expire_at' => strtotime($expire_at), 'url' => $url, 'svga_image_url' => $svga_image_url,
-                    'total_value' => $total_value, 'current_value' => $current_value]
+                $body = ['action' => $action, 'boom_gift' => ['expire_at' => strtotime($expire_at), 'client_url' => $url, 'svga_image_url' => $svga_image_url,
+                    'total_value' => $total_value, 'current_value' => $current_value, 'show_rank' => 1000000, 'render_type' => 'svga',
+                    'image_color' => 'orange']
                 ];
             }
 
@@ -331,7 +332,7 @@ class RoomsController extends BaseController
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
             'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知', 'red_packet' => '红包',
-            'pk' => 'pk', 'blasting_gift' => '爆礼物', 'sink_notice' => '下沉通知'
+            'pk' => 'pk', 'boom_gift' => '爆礼物', 'sink_notice' => '下沉通知'
         ];
         $this->view->content_types = ['personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
         $this->view->room = $room;
