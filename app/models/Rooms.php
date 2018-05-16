@@ -2151,6 +2151,7 @@ class Rooms extends BaseModel
         $cur_income_key = self::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
+        tryLock($cur_income_key);
         // 房间爆礼物结束倒计时
         $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
 
@@ -2161,8 +2162,6 @@ class Rooms extends BaseModel
 
         $boom_list_key = 'disappear_rocket';
         $total_income = Backpacks::getBoomTotalValue();
-
-        tryLock($boom_list_key);
 
         // 判断房间是否在进行爆礼物活动
         if ($cache->exists($room_sign_key)) {
@@ -2188,7 +2187,7 @@ class Rooms extends BaseModel
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
-        unlock($boom_list_key);
+        unlock($cur_income_key);
     }
 
     //按天统计房间进入人数
