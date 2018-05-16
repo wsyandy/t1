@@ -310,7 +310,8 @@ class RoomsController extends BaseController
                 'total_value' => \Backpacks::getBoomTotalValue(),
                 'current_value' => $cur_income,
                 'show_rank' => 1000000,
-                'render_type' => 'svga'
+                'render_type' => 'svga',
+                'status' => STATUS_OFF
             ];
         }
 

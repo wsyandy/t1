@@ -1165,7 +1165,8 @@ class Rooms extends BaseModel
                 'total_value' => (int)$total_income,
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
-                'render_type' => 'svga'
+                'render_type' => 'svga',
+                'status' => STATUS_ON
             ]
         );
 
@@ -2160,6 +2161,7 @@ class Rooms extends BaseModel
             $expire = 180;
         }
 
+        $boom_list_key = 'disappear_rocket';
         $total_income = Backpacks::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
@@ -2176,6 +2178,7 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
+
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
