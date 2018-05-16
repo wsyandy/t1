@@ -46,7 +46,6 @@ class BackpacksController extends BaseController
 
         // 没爆礼物不抽奖
         $expire = \Backpacks::getExpireAt($room_id);
-        debug('boom_expire_at:'.$expire);
         if (empty($expire)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
