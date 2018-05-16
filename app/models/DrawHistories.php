@@ -430,6 +430,36 @@ class DrawHistories extends BaseModel
         return $total_pay_amount_rate;
     }
 
+    static function isBlockUser($user)
+    {
+        $hot_cache = DrawHistories::getHotWriteCache();
+        $score = $hot_cache->zscore('draw_histories_block_user_ids', $user->id);
+
+        return $score > 0;
+    }
+
+    static function checkUser($user)
+    {
+
+        $hot_cache = DrawHistories::getHotWriteCache();
+
+        $device_users = Users::find(['conditions' => 'device_id = :device_id: and id!=:user_id:',
+            'bind' => ['device_id' => $user->device_id, 'user_id' => $user->id]]);
+        foreach ($device_users as $device_user) {
+
+            $last_history = self::findFirst([
+                'conditions' => 'user_id = :user_id:',
+                'bind' => ['user_id' => $device_user->id],
+                'order' => 'id desc']);
+
+            if ($last_history) {
+                $hot_cache->zadd('draw_histories_block_user_ids', time(), $user->id);
+                break;
+            }
+        }
+
+    }
+
     // 计算奖品
     static function calculatePrize($user, $hit_diamond = false)
     {
@@ -466,6 +496,10 @@ class DrawHistories extends BaseModel
             'conditions' => 'user_id = :user_id:',
             'bind' => ['user_id' => $user->id],
             'order' => 'id desc']);
+
+        if (!$last_history) {
+            self::checkUser($user);
+        }
 
         // 计算用户倍率
         list($user_rate_multi, $total_pay_amount) = self::calUserRateMulti($user, $last_history);
@@ -582,6 +616,7 @@ class DrawHistories extends BaseModel
             $target = \GoldHistories::changeBalance($user, GOLD_TYPE_DRAW_INCOME, $draw_history->number, $opts);
         }
 
+
         $hot_cache = DrawHistories::getHotWriteCache();
         if ($draw_history->number >= 1000 && $draw_history->number < 10000) {
             $hot_cache->zadd('draw_histories_1000', time(), $draw_history->id);
@@ -618,6 +653,25 @@ class DrawHistories extends BaseModel
         }
 
         return $opts;
+    }
+
+
+    //获取屏蔽用户分页列表
+    static function findBlockUsersList($page, $per_page)
+    {
+        $user_db = DrawHistories::getHotWriteCache();
+        $relations_key = 'draw_histories_block_user_ids';
+        $offset = $per_page * ($page - 1);
+        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1);
+        return $res;
+    }
+    //删除屏蔽用户
+    static function deleteBlockUser($user_id)
+    {
+        if ($user_id) {
+            $hot_cache = DrawHistories::getHotWriteCache();
+            $hot_cache->zrem("draw_histories_block_user_ids", $user_id);
+        }
     }
 
 }

@@ -293,4 +293,20 @@ class DrawHistoriesController extends BaseController
         $this->view->stat_at = date('Y-m-d', $stat_at);
     }
 
+    //砸金蛋屏蔽用户列表
+    function blockUsersListAction()
+    {
+        $block_users_list = \DrawHistories::findBlockUsersList(1, 100);
+        $this->view->block_users_list = $block_users_list;
+    }
+
+    //删除屏蔽用户
+    function deleteBlockUserAction()
+    {
+        $id = $this->params('id');
+        \DrawHistories::deleteBlockUser($id);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/draw_histories/block_users_list']);
+    }
+
+
 }
