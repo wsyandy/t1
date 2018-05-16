@@ -92,7 +92,14 @@ class RedPacketsController extends BaseController
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
 
-        $distance_start_at = $red_packet->created_at + 3 * 60 - time();
+        //用户进来的时间
+        $room = \Rooms::findFirstById($user->current_room_id);
+        $time = $room->getTimeForUserInRoom($user->id);
+        //具体用户进房间3分钟的剩余时间，小于零代表时间已到
+        $distance_start_at = 180;
+        if ($time) {
+            $distance_start_at = $time + 3 * 60 - time();
+        }
         $user_nickname = $red_packet->user->nickname;
         $user_avatar_url = $red_packet->user->avatar_url;
 
