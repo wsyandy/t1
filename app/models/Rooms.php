@@ -2178,12 +2178,13 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
-
+                $cache->srem($boom_list_key, $room_sign_key);
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-
             if ($cur_total_income >= Backpacks::getBoomStartLine()) {
+
+                $cache->sadd($boom_list_key, $room_sign_key);
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
