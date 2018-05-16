@@ -1056,7 +1056,6 @@ trait UserAttrs
         //data:image/octet-stream;base64
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
             $type = $result[2];
-            echoLine($type);
             if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
                 $file_name = 'voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
                 $new_file = $source_filename = APP_ROOT . 'temp/' . $file_name;
