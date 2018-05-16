@@ -3092,17 +3092,9 @@ class Rooms extends BaseModel
         //当前用户领取过的红包ids
         $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user->id);
         $ids = array_diff($underway_ids, $user_get_red_packet_ids);
-
         $room_red_packets = \RedPackets::findByIds($ids);
 
-        $screen_red_packets = [];
-        foreach ($room_red_packets as $room_red_packet) {
-            //这里以后还要加距离限制
-            if ($room_red_packet->red_packet_type != 'nearby' || ($room_red_packet->red_packet_type == 'nearby' && ($room_red_packet->sex == USER_SEX_COMMON || $room_red_packet->sex == $user->sex))) {
-                $screen_red_packets[] = $room_red_packet;
-            }
-        }
-        return $screen_red_packets;
+        return $room_red_packets;
     }
 
 }
