@@ -63,7 +63,7 @@ class GoldHistories extends BaseModel
         }
 
         $gold_history = new GoldHistories();
-        $gold_history->user_id = $user_id;
+        $gold_history->user_id = $user->id;
         $gold_history->product_channel_id = $user->product_channel_id;
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;

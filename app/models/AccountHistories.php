@@ -95,7 +95,7 @@ class AccountHistories extends BaseModel
         }
 
         $account_history = new \AccountHistories();
-        $account_history->user_id = $user_id;
+        $account_history->user_id = $user->id;
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
         $account_history->union_id = $user->union_id;
