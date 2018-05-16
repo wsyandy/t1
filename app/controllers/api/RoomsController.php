@@ -297,15 +297,11 @@ class RoomsController extends BaseController
 
 
         // 爆礼物
-        //$cache = \Backpacks::getHotWriteCache();
         $cache = \Rooms::getHotWriteCache();
         $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
-        //$room_sign_key = \Backpacks::generateBoomRoomSignKey($room_id);
-        //if ($cache->exists($room_sign_key)) {
         if ($cur_income > \Backpacks::getBoomStartLine()) {
-            //$day_income = $room->getDayIncome(date('Ymd'));
 
             $res['boom_gift'] = [
                 'expire_at' => (int)\Backpacks::getExpireAt($room_id),
