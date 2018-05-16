@@ -153,6 +153,9 @@ class RedPacketHistoriesController extends BaseController
             list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
+                if (mb_strlen($user_nickname) > 5) {
+                    $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
+                }
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
@@ -241,7 +244,11 @@ class RedPacketHistoriesController extends BaseController
         list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {
-            $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
+            $user_nickname = $red_packet->user->nickname;
+            if (mb_strlen($user_nickname) > 5) {
+                $user_nickname = mb_substr($user_nickname, 0, 5) . '...';
+            }
+            $error_reason = '抢到' . $user_nickname . '发的钻石红包';
             //在这里增加钻石
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
             \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
