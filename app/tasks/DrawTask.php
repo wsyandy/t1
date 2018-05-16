@@ -71,7 +71,7 @@ EOF;
 
         $users = Users::find([
             'conditions' => 'product_channel_id = :product_channel_id: and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['product_channel_id' => $product_channel->id, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 5 * 86400],
+            'bind' => ['product_channel_id' => $product_channel->id, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 3 * 86400],
             'columns' => 'id'
         ]);
 
@@ -86,7 +86,7 @@ EOF;
             $num++;
             $user_ids[] = $user->id;
 
-            if ($num >= 50) {
+            if ($num >= 100) {
                 Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
                 $delay += 2;
                 $user_ids = [];

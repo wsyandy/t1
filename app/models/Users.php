@@ -1317,7 +1317,7 @@ class Users extends BaseModel
             if ('nickname' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
                 }
 
                 $this->nickname = $v;
@@ -1327,7 +1327,7 @@ class Users extends BaseModel
             if ('monologue' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的个性签名违反规则,请及时修改");
                 }
 
                 $this->monologue = $v;

@@ -40,9 +40,8 @@ class AccountHistoriesController extends BaseController
             }
 
             $user = \Users::findFirstById($user_id);
-
             if ($content) {
-                \Chats::sendTextSystemMessage($user_id, $content);
+                \Chats::sendTextSystemMessage($user, $content);
             }
 
             $amount = intval($this->params('diamond'));
