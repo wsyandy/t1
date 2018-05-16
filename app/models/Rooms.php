@@ -2130,9 +2130,9 @@ class Rooms extends BaseModel
             $hot_cache->incrby($minutes_num_stat_key, 1);
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
+            debug('boom_expire_at_time:'.$time);
             // 爆礼物
             if (isDevelopmentEnv()) {
-                debug('boom_expire_at_time:'.$time);
                 $room->statBoomIncome($income, $time);
             }
 
