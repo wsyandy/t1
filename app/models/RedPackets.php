@@ -273,7 +273,7 @@ class RedPackets extends BaseModel
 
             $cache->zadd($key, $get_diamond, $red_packet_id);
 
-            $cache->zadd($user_key, $get_diamond, $user_id);
+            $cache->zadd($user_key, time(), $user_id);
 
             return $get_diamond;
         }
@@ -338,7 +338,8 @@ class RedPackets extends BaseModel
     {
         //红包socket
         $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
-        $room->pushRedPacketMessage($send_red_packet_history->num, $url);
+        $underway_red_packet = $room->getUnderwayRedPacket();
+        $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
         //红包公屏socket
         $content = $user->nickname . '发了个大红包，快来抢啊！！！';
