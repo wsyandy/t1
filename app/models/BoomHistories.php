@@ -36,13 +36,13 @@ class BoomHistories extends BaseModel
     }
 
 
-    public function getGift()
+    public function getGiftName()
     {
         if ($this->target_id == 0) {
             return null;
         }
         $gifts = Gifts::findFirstById($this->target_id);
-        return $gifts;
+        return $gifts->name;
     }
 
 

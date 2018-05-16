@@ -3,6 +3,6 @@
 
 {{ simple_table(boom_histories, [
 
-'ID': 'id', '用户ID': 'user_id', '礼物ID': 'target_id', '类型': 'type_text', '数量': 'number', '创建时间': 'created_at_text'
+'ID': 'id', '用户ID': 'user_id', '礼物ID': 'gift_name', '类型': 'type_text', '数量': 'number', '创建时间': 'created_at_text'
 
 ]) }}
