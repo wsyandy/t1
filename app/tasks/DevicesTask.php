@@ -55,13 +55,13 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-        $date = ['2018-05-13', '2018-05-14', '2018-05-15'];
+        $date = ['2018-05-01', '2018-05-02', '2018-05-10'];
 
         foreach ($date as $stat_at) {
 
             $devices = Devices::find(
                 [
-                    'conditions' => 'partner_id = 28 and created_at >= :start: and created_at <= :end:',
+                    'conditions' => 'partner_id = 27 and created_at >= :start: and created_at <= :end:',
                     'bind' => ['start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
@@ -86,7 +86,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
             $users = Users::find(
                 [
                     'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
-                    'bind' => ['partner_id' => 28, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
             $res1 = [];
