@@ -4,7 +4,6 @@
 {{ block_end() }}
 <div id="app">
     <div class="detail_red_top">
-        <div class="nav_top"><i class="back" onclick="javascrtpt:history.back(-1);"></i>红包详情</div>
         <div class="top_person">
             <div class="pic">
                 <img src="{{ red_packet['user_avatar_url'] }}">
