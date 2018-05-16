@@ -18,7 +18,7 @@
                     <div class="daojishi" id="time"></div>
                 </div>
                 <div id="end_time">
-                    <p>发了一个红包，关注房主可领取</p>
+                    <p v-if="red_packet_type == 'attention'">发了一个红包，关注房主可领取</p>
                     <div class="qiang_red" @click="getRedPacket"></div>
                 </div>
 
@@ -58,15 +58,15 @@
     </div>
 </div>
 
-<div class="guanzhu_qiang_box">
+<div class="guanzhu_qiang_box" v-if="attentionHost">
     <div class="gz_fangzhu">
         <i class="close"></i>
         <div class="pic">
-            <img src="">
+            <img src="{{ user_avatar_url }}">
         </div>
-        <h3>橘子</h3>
+        <h3>{{ user_nickname }}</h3>
         <p>是否关注房主，领取红包</p>
-        <div class="gz_btn">关注并领取</div>
+        <div class="gz_btn" @click="toAttention()">关注并领取</div>
     </div>
 </div>
 <script type="text/javascript">
@@ -79,8 +79,11 @@
             getRed:false,
             congratulation:false,
             pity:false,
+            attentionHost:false,
+            attentionUrl:"",
             res:"",
             getDiamond:"",
+
         },
         methods: {
             getRedPacket: function () {
@@ -91,15 +94,26 @@
                     red_packet_type: vm.red_packet_type,
                 }
 
+
                 $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
-                    console.log(resp);
+                    //console.log(resp);
                     vm.getRed = true;
-                    vm.res = resp.error_reason;
-                    if(!resp.error_code){
+                    if(!resp.error_code) {
+
+                        vm.res = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
                         vm.congratulation = true;
+
+                    }else if(resp.error_code == -400){
+
+                        vm.attentionHost = true;
+                        vm.attentionUrl = resp.error_url;
+
                     }else{
+
+                        vm.res = resp.error_reason;
                         vm.pity = true;
+
                     }
                     hide_grab();
 
@@ -110,6 +124,16 @@
                 var url = "/m/red_packet_histories/detail?sid="+this.sid+"&code="+this.code+"&red_packet_id="+this.red_packet_id;
 
                 location.href = url;
+            },
+            toAttention: function () {
+                var data = {
+                    sid: this.sid,
+                    code: this.code,
+                    red_packet_id:vm.red_packet_id,
+                }
+                $.authGet(vm.attentionUrl, data, function (resp) {
+                    console.log(resp);
+                })
             }
         }
     }

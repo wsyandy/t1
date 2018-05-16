@@ -14,9 +14,10 @@
                     <p>发了一个红包</p>
                 </div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
-                <div class="num red_list_style red_list_qiang" v-if="v.is_grab" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢</div>
+
                 {#<div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">附近的人可抢</div>#}
-                {#<div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">关注房主可抢</div>#}
+                <div class="num red_list_style" v-bind:class="v.class" v-if="v.is_grab" @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}</div>
+                {#<div class="num red_list_style red_list_time time" onload="time(111)"></div>#}
             </div>
         </li>
         {#<li>#}
@@ -96,13 +97,21 @@
                             val.is_grabbed = true;
                         } else {
                             val.is_grab = true;
+                            val.text = "抢";
+                            val.class = "red_list_qiang";
                         }
 
                         if(val.red_packet_type == 'nearby'){
-                            val.is_nearby = true;
+                            val.text = "附近的人可抢";
+                            val.class = "";
                         }
                         if(val.red_packet_type == 'attention'){
-                            val.is_attention = true;
+                            val.text = "关注房主可抢";
+                            val.class = "red_list_fangzhu";
+                        }
+                        if(val.red_packet_type == 'stay_at_room'){
+                            val.text = "3分钟";
+                            val.class = "";
                         }
                         vm.red_packets_list.push(val);
                     });
@@ -130,9 +139,11 @@
         });
     })
     vm.RedPacketsList();
-    $(function () {
-        var m = 3;
-        var s = 0;
+
+    function time(t){
+
+        var m = parseInt(t/60);
+        var s = t%60;
         setInterval(function () {
             if (s < 10) {
                 //如果秒数少于10在前面加上0
@@ -147,5 +158,5 @@
                 m--;
             }
         }, 1000)
-    })
+    }
 </script>
