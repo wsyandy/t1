@@ -57,7 +57,7 @@
         <li role="presentation"><a href="/admin/backpacks/index?user_id={{ user.id }}">收到的背包</a></li>
     {% endif %}
     {% if isAllowed('boomHistories','index') %}
-        <li role="presentation"><a href="/admin/boomHistories/index?user_id={{ user.id }}">爆礼物历史</a></li>
+        <li role="presentation"><a href="/admin/boom_histories/index?user_id={{ user.id }}">爆礼物历史</a></li>
     {% endif %}
 </ul>
 
