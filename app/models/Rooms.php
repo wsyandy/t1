@@ -3031,6 +3031,7 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    // ios 审核期间队列
     static function generateIosAuthRoomListKey()
     {
         return "ios_auth_room_list";
