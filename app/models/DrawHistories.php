@@ -365,6 +365,8 @@ class DrawHistories extends BaseModel
                             $hit_user = Users::findFirstById($history->user_id);
                             if ($hit_user && ($hit_user->device_id == $user->device_id || $hit_user->ip == $user->ip)) {
                                 info('continue hit10w 同一个用户', $user->id, $hit_user->id, '支付', $total_pay_amount, $number, fetch($datum, 'name'), 'pool_rate', $pool_rate, 'user_rate', $user_rate_multi);
+                                $user_db = Users::getUserDb();
+                                $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
                                 return 0;
                             }
                             if (time() - $history->created_at < 3600 * 5) {
@@ -438,16 +440,14 @@ class DrawHistories extends BaseModel
     static function isBlockUser($user)
     {
         return false;
-        $hot_cache = DrawHistories::getHotWriteCache();
-        $score = $hot_cache->zscore('draw_histories_block_user_ids', $user->id);
+        $user_db = Users::getUserDb();
+        $score = $user_db->zscore('draw_histories_block_user_ids', $user->id);
 
         return $score > 0;
     }
 
     static function checkUser($user)
     {
-
-        $hot_cache = DrawHistories::getHotWriteCache();
 
         $device_users = Users::find(['conditions' => 'device_id = :device_id: and id!=:user_id:',
             'bind' => ['device_id' => $user->device_id, 'user_id' => $user->id]]);
@@ -460,7 +460,8 @@ class DrawHistories extends BaseModel
 
             if ($last_history) {
                 info($user->id, '已有', $device_user->id);
-                $hot_cache->zadd('draw_histories_block_user_ids', time(), $user->id);
+                $user_db = Users::getUserDb();
+                $user_db->zadd('draw_histories_block_user_ids', time(), $user->id);
                 break;
             }
         }
