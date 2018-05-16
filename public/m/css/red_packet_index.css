@@ -325,7 +325,7 @@ ol, ul, li {
     margin:0 auto;
     background: url(../images/qiang.png) no-repeat;
     background-size: 100%;
-    margin-top: 1.6rem;
+    margin-top: 0.6rem;
 }
 .guanzhu_qiang_box{
     position: fixed;
@@ -594,7 +594,6 @@ ol, ul, li {
     align-items: center;
     justify-content: center;
     background: rgba(0,0,0,.50);
-    display: none;
 }
 .get_style_bg .get_style_box{
     position: absolute;
@@ -804,9 +803,6 @@ ol, ul, li {
     color: #FE4646 !important;
 }
 
-.hide_yihan{
-    margin-top: 4rem;
-}
 
 
 
