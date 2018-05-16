@@ -1159,7 +1159,7 @@ class Rooms extends BaseModel
             'boom_gift' => [
                 'expire_at' => Rooms::getExpireAt($this->id),
                 'client_url' => 'url://m/backpacks',
-                'svga_image_url' => Backpacks::getSvgaImageUrl(),
+                'svga_image_url' => BoomHistories::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
