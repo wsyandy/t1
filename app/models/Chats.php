@@ -125,7 +125,13 @@ class Chats extends BaseModel
     {
         $content = \Chats::welcomeMessage();
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        return \Chats::sendSystemMessage($user_id, $content_type, $content);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
+        return \Chats::sendSystemMessage($user, $content_type, $content);
     }
 
     static function sendTextSystemMessage($user_id, $content = '')
@@ -135,41 +141,56 @@ class Chats extends BaseModel
             return false;
         }
 
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        return \Chats::sendSystemMessage($user_id, $content_type, $content);
+        return \Chats::sendSystemMessage($user, $content_type, $content);
     }
 
     static function batchSendTextSystemMessage($user_ids, $content = '')
     {
-        
+
         if (!$content) {
             info("Exce content_error", $user_ids);
             return false;
         }
 
+        $users = Users::findByIds($user_ids);
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        foreach ($user_ids as $user_id) {
-            debug($user_id, $content);
-            \Chats::sendSystemMessage($user_id, $content_type, $content);
+        foreach ($users as $user) {
+            debug($user->id, $content);
+            \Chats::sendSystemMessage($user, $content_type, $content);
         }
     }
 
-    static function sendSystemMessage($user_id, $content_type, $content)
+    static function sendSystemMessage($receiver_id, $content_type, $content)
     {
+        if (is_numeric($receiver_id)) {
+            $user = Users::findFirstById($receiver_id);
+        } else {
+            $user = $receiver_id;
+            $receiver_id = $user->id;
+        }
+
+        if (!$user) {
+            info("Exce no user", $receiver_id);
+            return null;
+        }
+
         $attrs = array(
             'sender_id' => SYSTEM_ID,
-            'receiver_id' => $user_id,
+            'receiver_id' => $receiver_id,
             'content' => $content,
             'content_type' => $content_type
         );
 
-        $user = Users::findFirstById($user_id);
+        $user->addUnreadMessagesNum();
 
-        if ($user) {
-            $user->addUnreadMessagesNum();
-        }
-
-        debug($user_id, $attrs);
+        debug($receiver_id, $attrs);
 
         return \Chats::createChat($attrs);
     }
@@ -236,7 +257,7 @@ class Chats extends BaseModel
         $offset = ($page - 1) * $per_page;
         $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
         $chats = \Chats::findByIds($chat_ids);
-        //$results = \Chats::sortByCreatedAt($chats);
+
         return new \PaginationModel($chats, $total, $page, $per_page);
     }
 

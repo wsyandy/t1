@@ -56,7 +56,7 @@ class GoldHistoriesController extends BaseController
                     $content = '系统小助手送你' . $amount . '金币，感谢你的支持！';
                 }
 
-                \Chats::sendTextSystemMessage($user_id, $content);
+                \Chats::sendTextSystemMessage($user, $content);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/gold_histories?user_id=' . $user_id]);
