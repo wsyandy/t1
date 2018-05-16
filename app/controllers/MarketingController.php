@@ -144,7 +144,7 @@ class MarketingController extends ApplicationController
                     'action_time' => time(),
                     'user_id' => $user_data,
                     'action_type' => 'START_APP',
-                    'action_param' => ['length_of_stay' => '1'],
+                    'action_param' => ['length_of_stay' => 1],
                     'trace' => ['click_id' => $click_id]
                 ]
             ]
