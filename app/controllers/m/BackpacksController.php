@@ -38,7 +38,7 @@ class BackpacksController extends BaseController
             $user = (object)array('id' => 1);
         }
 
-        $room_id = $this->getCurrentRoomId($user->id);
+        $room_id = $user->current_room_id;
 
         // 前三排行
         $boom_histories = \BoomHistories::historiesTopList(3);
