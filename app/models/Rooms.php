@@ -1166,7 +1166,8 @@ class Rooms extends BaseModel
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
                 'render_type' => 'svga',
-                'status' => $status
+                'status' => $status,
+                'image_color' => 'blue'
             ]
         );
 
