@@ -2185,7 +2185,7 @@ class Rooms extends BaseModel
         $cur_income_key = self::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
-        tryLock($cur_income_key);
+        $lock = tryLock($cur_income_key);
 
         // 房间爆礼物结束倒计时
         $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
@@ -2217,7 +2217,7 @@ class Rooms extends BaseModel
 
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
 
-                unlock($cur_income_key);
+                unlock($lock);
 
                 return;
             }
@@ -2233,7 +2233,7 @@ class Rooms extends BaseModel
             }
         }
 
-        unlock($cur_income_key);
+        unlock($lock);
     }
 
     //按天统计房间进入人数
