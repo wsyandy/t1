@@ -254,7 +254,7 @@ class RedPackets extends BaseModel
 
             //红包socket
             $url = self::generateRedPacketUrl($current_room_id);
-            $underway_red_packet = $room->getNotDrawRedPacket($user->id);
+            $underway_red_packet = $room->getNotDrawRedPacket($user);
             $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
@@ -321,7 +321,7 @@ class RedPackets extends BaseModel
     {
         //红包socket
         $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
-        $underway_red_packet = $room->getNotDrawRedPacket($user->id);
+        $underway_red_packet = $room->getNotDrawRedPacket($user);
         $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
         //红包公屏socket
