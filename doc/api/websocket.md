@@ -333,6 +333,7 @@
             svga_image_url string svga图片
             total_value int 总值
             current_value int 当前值
+            show_rank int 1000000 等级排序
             diff_picture string 爆礼物图片的值 green orange blue
         }
     }

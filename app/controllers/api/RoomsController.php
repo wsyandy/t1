@@ -312,7 +312,8 @@ class RoomsController extends BaseController
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => \Backpacks::getSvgaImageUrl(),
                 'total_value' => \Backpacks::getBoomTotalValue(),
-                'current_value' => $cur_income
+                'current_value' => $cur_income,
+                'show_rank' => 1000000,
             ];
         }
 

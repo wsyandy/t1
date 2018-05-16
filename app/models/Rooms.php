@@ -1165,6 +1165,7 @@ class Rooms extends BaseModel
                 'url' => 'url://m/backpacks',
                 'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
+                'show_rank' => 1000000,
                 'current_value' => (int)$cur_income
             ]
         );
