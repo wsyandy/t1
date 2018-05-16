@@ -213,7 +213,7 @@ class RedPacketHistoriesController extends BaseController
             $get_diamond = $cache->zscore($key, $red_packet_id);
             info('获取的钻石的时间', $get_diamond_at, $user_key);
             info('获取的钻石', $get_diamond, $key);
-            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i:s',$get_diamond_at), 'get_diamond' => $get_diamond]);
+            $get_red_packet_users[] = array_merge($user->toChatJson(), ['get_diamond_at' => date('H:i',$get_diamond_at), 'get_diamond' => $get_diamond]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['get_red_packet_users' => $get_red_packet_users]);
