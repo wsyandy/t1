@@ -183,7 +183,10 @@ class RedPacketHistoriesController extends BaseController
             $room = \Rooms::findFirstById($room_id);
             $time = $room->getTimeForUserInRoom($user_id);
             //具体用户进房间3分钟的剩余时间，小于零代表时间已到
-            $distance_start_at = $time + 3 * 60 - time();
+            $distance_start_at = 1;
+            if ($time) {
+                $distance_start_at = $time + 3 * 60 - time();
+            }
 
             $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
             if ($red_packets) {
