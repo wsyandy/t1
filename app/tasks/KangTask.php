@@ -573,7 +573,7 @@ class KangTask extends \Phalcon\Cli\Task
         }
     }
 
-    
+
     function isGoodNum($num)
     {
         // 由3个以内数字组成的号码
@@ -607,7 +607,7 @@ class KangTask extends \Phalcon\Cli\Task
         }
 
         //AABB
-        if(preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)){
+        if (preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)) {
             //echoLine('AABB ',$num);
             return true;
         }
@@ -644,7 +644,7 @@ class KangTask extends \Phalcon\Cli\Task
         $min_max = $params[1];
 
         $user = Users::findLast();
-        if($min_id < $user->id + 10000){
+        if ($min_id < $user->id + 10000) {
             $min_id = $user->id + 10000;
         }
 
@@ -667,7 +667,8 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
-    function testUidAction(){
+    function testUidAction()
+    {
 
         $user = Users::findFirstById(1);
         $user->generateUid2();
@@ -693,7 +694,8 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
-    function fixThirdNameAction(){
+    function fixThirdNameAction()
+    {
 
         $third_name = 'sina';
         $new_third_name = 'sinaweibo';
@@ -704,7 +706,7 @@ class KangTask extends \Phalcon\Cli\Task
 
         $users = Users::findForeach($cond);
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $user->third_name = $new_third_name;
             $user->save();
             echoLine($user->id, $user->third_name);
@@ -715,7 +717,7 @@ class KangTask extends \Phalcon\Cli\Task
         $cond['order'] = 'id desc';
         $third_auths = ThirdAuths::findForeach($cond);
 
-        foreach ($third_auths as $third_auth){
+        foreach ($third_auths as $third_auth) {
             $third_auth->third_name = $new_third_name;
             $third_auth->save();
             echoLine($third_auth->id, $third_auth->third_name);
@@ -817,14 +819,38 @@ EOF;
         }
     }
 
-    function fixGeo2Action(){
+    function fixGeo2Action()
+    {
 
         $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
         $users = Users::findByIds($block_near_by_user_ids);
 
-        foreach($users as $user){
+        foreach ($users as $user) {
             $user->delGeoHashRank();
         }
 
     }
+
+    function sliceAction()
+    {
+
+        $room_ids = [12, 15, 18, 19, 30, 40, 58, 78, 98];
+
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
+        }
+
+        $per_page = 2;
+        $loop_num = ceil($total_num / $per_page);
+        $offset = 0;
+
+        for ($i = 0; $i < $loop_num; $i++) {
+            $slice_ids = array_slice($room_ids, $offset, $per_page);
+            $offset += $per_page;
+            echoLine($slice_ids);
+        }
+    }
+
 }

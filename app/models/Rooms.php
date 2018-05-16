@@ -532,9 +532,10 @@ class Rooms extends BaseModel
         }
     }
 
-    static function getActiveRoomsByTime($minutes = 15)
+    static function getActiveRoomIdsByTime()
     {
-//        $hot_cache = Users::getHotWriteCache();
+
+        //        $hot_cache = Users::getHotWriteCache();
 //        $key = 'room_active_last_at_list';
 //        $time = time();
 //        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
@@ -569,10 +570,7 @@ class Rooms extends BaseModel
         }
 
         $room_ids = array_unique($room_ids);
-
-        $rooms = Rooms::findByIds($room_ids);
-
-        return $rooms;
+        return $room_ids;
     }
 
     function getLastAtByCache()
@@ -2014,17 +2012,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2919,8 +2919,9 @@ class Rooms extends BaseModel
         $user_db->set($key, $ratio);
     }
 
-    static function updateHotRoomList($rooms, $opts = [])
+    static function updateHotRoomList($all_room_ids, $opts = [])
     {
+
         $hot_cache = Rooms::getHotWriteCache();
 
         $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
@@ -2932,28 +2933,39 @@ class Rooms extends BaseModel
         $room_ids = [];
         $shield_room_ids = [];
 
-        foreach ($rooms as $room) {
+        $total_num = count($all_room_ids);
+        $per_page = 100;
+        $loop_num = ceil($total_num / $per_page);
+        $offset = 0;
 
-            if (!$room->canToHot(2)) {
-                continue;
-            }
+        for ($i = 0; $i < $loop_num; $i++) {
 
-            $total_score = $room->getTotalScore();
+            $slice_ids = array_slice($all_room_ids, $offset, $per_page);
+            info($total_num, $offset, $per_page, $slice_ids);
+            $offset += $per_page;
+            $rooms = Rooms::findByIds($slice_ids);
 
-            if ($total_score < 1) {
-                continue;
-            }
+            foreach ($rooms as $room) {
 
-            $room_ids[$room->id] = $total_score;
+                if (!$room->canToHot(2)) {
+                    continue;
+                }
 
-            if ($room->isShieldRoom()) {
-                $shield_room_ids[] = $room->id;
-            }
+                $total_score = $room->getTotalScore();
+                if ($total_score < 1) {
+                    continue;
+                }
 
-            if (isDevelopmentEnv()) {
-                $room_score_key = "hot_room_score_list_room_id{$room->id}";
-                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
-                $hot_cache->expire($room_score_key, 3600 * 3);
+                $room_ids[$room->id] = $total_score;
+                if ($room->isShieldRoom()) {
+                    $shield_room_ids[] = $room->id;
+                }
+
+                if (isDevelopmentEnv()) {
+                    $room_score_key = "hot_room_score_list_room_id{$room->id}";
+                    $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
+                    $hot_cache->expire($room_score_key, 3600 * 3);
+                }
             }
         }
 

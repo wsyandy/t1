@@ -847,8 +847,14 @@ class RoomsTask extends \Phalcon\Cli\Task
     //新热门逻辑
     function generateHotRoomsAction()
     {
-        $rooms = Rooms::getActiveRoomsByTime();
-        Rooms::updateHotRoomList($rooms);
+        $room_ids = Rooms::getActiveRoomIdsByTime();
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
+        }
+
+        Rooms::updateHotRoomList($room_ids);
     }
 
     function generateNewHotRoomRankAction()
@@ -856,11 +862,13 @@ class RoomsTask extends \Phalcon\Cli\Task
         $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
         $hot_cache = Users::getHotWriteCache();
         $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
-
-        if (count($room_ids) > 0) {
-            $rooms = Rooms::findByIds($room_ids);
-            Rooms::updateHotRoomList($rooms);
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
         }
+
+        Rooms::updateHotRoomList($room_ids);
     }
 
 
