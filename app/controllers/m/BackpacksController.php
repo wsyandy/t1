@@ -34,7 +34,6 @@ class BackpacksController extends BaseController
     public function prizeAction()
     {
         $user = $this->currentUser();
-
         $room_id = $user->current_room_id;
 
         // 前三排行
@@ -107,11 +106,7 @@ class BackpacksController extends BaseController
     public function createAction()
     {
         $user = $this->currentUser();
-        if (isDevelopmentEnv()) {
-            $user = (object)array('id' => 1);
-        }
-        
-        $room_id = $this->getCurrentRoomId($user->id);
+        $room_id = $user->current_room_id;
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
