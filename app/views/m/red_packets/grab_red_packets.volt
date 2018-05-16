@@ -46,7 +46,7 @@
                     </div>
                     <div class="red_over" v-if="pity">
                         <img src="/m/images/yihan.png" v-if="grabbed">
-                        <h3>${res}</h3>
+                        <h3 bind:class="${hide_yihan}">${res}</h3>
                         <a @click="toDetail()" class="look_detail">查看领取详情 <i></i></a>
                     </div>
 
@@ -85,6 +85,7 @@
             getDiamond: "",
             user_id: "{{ red_packet.user_id }}",
             grabbed:true,
+            hide_yihan:"",
 
         },
         methods: {
@@ -98,25 +99,23 @@
 
 
 
-                $.authGet('/m/red_packet_histories/grab_red_packets', data, function (resp) {
+                $.authGet('/m/red_packets/grab_red_packets', data, function (resp) {
                     console.log(resp);
                     vm.getRed = true;
                     if (!resp.error_code) {
 
                         vm.res = resp.error_reason;
                         vm.getDiamond = resp.get_diamond;
-                        console.log(resp);
-                        if(resp.get_diamond == 0){
-                            vm.pity = true;
-                            vm.grabbed == false;
-
-                        }
                         vm.congratulation = true;
-                        console.log(vm.grabbed);
                     } else if (resp.error_code == -400) {
 
                         vm.attentionHost = true;
                         vm.attentionUrl = resp.client_url;
+                    } else if (resp.error_code == -101) {
+                        vm.hide_yihan = "hide_yihan";
+                        vm.res = resp.error_reason;
+                        vm.pity = true;
+                        vm.grabbed = false;
 
                     } else {
 

@@ -53,13 +53,9 @@
                     code: vm.code,
                     room_id: vm.room_id
                 };
-<<<<<<< HEAD:app/views/m/red_packets/red_packets_list.volt
+
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
                     console.log(resp);
-=======
-                $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
-                    //console.log(resp);
->>>>>>> xuxiaosong:app/views/m/red_packet_histories/red_packets_list.volt
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
                     vm.distance_start_at = resp.distance_start_at;
