@@ -2999,9 +2999,8 @@ class Rooms extends BaseModel
         $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
         $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
         $hot_cache->zclear($total_new_hot_room_list_key);
-        $i = 1;
 
-        echoLine($shield_room_ids, $room_ids);
+        info($shield_room_ids, $room_ids);
 
         foreach ($room_ids as $room_id => $score) {
 
@@ -3012,7 +3011,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
         }
 
-
+//        $i = 1;
 //        if (count($shield_room_ids) > 0) {
 //
 //            $i = 1;
