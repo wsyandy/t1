@@ -45,33 +45,16 @@ ol, ul, li {
 /*红包详情*/
 .detail_red_top{
     width: 10.0rem;
-    height: 3.946667rem;
+    height: 2.24rem;
     margin:0 auto;
     background: url(../images/detail_bg.png) no-repeat;
-    background-size: 100%;
-}
-.detail_red_top .nav_top{
-    font-family: PingFangSC-Regular;
-    font-size: 0.48rem;
-    color: #FFFFFF;
-    text-align: center;
-    padding-top: 0.786667rem;
-    position: relative;
-}
-.detail_red_top .nav_top i{
-    position: absolute;
-    left: 0.4rem;
-    top: 0.813333rem;
-    display: inline-block;
-    width: 0.586667rem;
-    height: 0.586667rem;
-    background: url(../images/detail_back.png) no-repeat;
     background-size: 100%;
 }
 .top_person{
     width: 10.0rem;
     margin:0 auto;
     text-align: center;
+    padding-top: 0.693333rem;
 }
 .top_person .pic{
     width: 2.133333rem;
@@ -80,7 +63,6 @@ ol, ul, li {
     overflow: hidden;
     margin:0 auto;
     background: #EEEEEE;
-    margin-top: 0.946667rem;
 }
 .top_person .pic img{
     width: 2.133333rem;
@@ -94,6 +76,7 @@ ol, ul, li {
     font-size: 0.346667rem;
     color: #767676;
     margin-top: 0.133333rem;
+    padding-bottom: 0.4rem;
 }
 .detail_get{
     padding:0 0.4rem;
@@ -102,8 +85,14 @@ ol, ul, li {
     height: 1.173333rem;
     background: #F6F6F6;
     margin-top: 2.0rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
 }
 .detail_get span{
@@ -119,7 +108,11 @@ ol, ul, li {
     padding-right: 0.4rem;
     height: 1.6rem;
     border-bottom: 1px solid #EEEEEE;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 .detail_list .pic{
@@ -134,9 +127,17 @@ ol, ul, li {
 }
 .detail_list .list_text{
     margin-left: 0.266667rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
     flex: 1;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
 }
 .detail_list .list_text .name h3{
@@ -242,7 +243,7 @@ ol, ul, li {
     margin-top: 1.466667rem;
 }
 .red_get a{
-    margin-top: 1.333333rem;
+    margin-top: 0.333333rem;
 }
 .wait_red{
     text-align: center;

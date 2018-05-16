@@ -40,8 +40,8 @@
                     <div class="give_box">
                         <h3>位置／范围</h3>
                         <div class="give_input">
-                            <!-- <div class="get_font get_address">5km</div> -->
-                            <input type="text" class="get_address" v-model="nearby_distance" value=""/>
+                             <div class="get_font get_address">5km</div>
+                            {#<input type="text" class="get_address" v-model="nearby_distance" value=""/>#}
                             <i class="give_right"></i>
                         </div>
                     </div>

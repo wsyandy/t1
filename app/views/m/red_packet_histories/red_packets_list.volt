@@ -19,7 +19,7 @@
                 <div class="num red_list_style" v-bind:class="v.class" v-if="v.is_grab"
                      @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
                 </div>
-                {#<div class="num red_list_style red_list_time time" onload="time(111)"></div>#}
+                {#<div class="num red_list_style red_list_time daojishi"></div>#}
             </div>
         </li>
     </ul>
@@ -36,7 +36,6 @@
             room_id: "{{ room_id }}",
             user_get_red_packet_ids: []
         },
-
         methods: {
             RedPacketsList: function () {
 
@@ -48,12 +47,12 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
-                    room_id: vm.room_id
-                    //room_id:172
+                    //room_id: vm.room_id
+                    room_id:172
 
                 };
                 $.authGet('/m/red_packet_histories/red_packets_list', data, function (resp) {
-
+                    console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
                     $.each(resp.red_packets, function (index, val) {
@@ -75,6 +74,7 @@
                             val.class = "red_list_fangzhu";
                         }
                         if (val.red_packet_type == 'stay_at_room') {
+
                             val.text = "3分钟";
                             val.class = "";
                         }
@@ -82,7 +82,7 @@
                     });
 
                 });
-                console.log(vm.red_packets_list);
+
 
                 vm.page++;
             },
@@ -91,7 +91,6 @@
 
                 location.href = url;
             },
-
         }
     };
     vm = XVue(opts);
