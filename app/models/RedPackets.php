@@ -108,6 +108,39 @@ class RedPackets extends BaseModel
         }
     }
 
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'user_nickname' => $this->user->nickname,
+            'diamond' => $this->diamond,
+            'num' => $this->num,
+            'status_text' => $this->status_text,
+            'created_at_text' => $this->created_at_text,
+            'user_avatar_url' => $this->user->avatar_url,
+            'red_packet_type' => $this->red_packet_type,
+            'sex' => $this->sex
+        ];
+    }
+
+    function toBasicJson()
+    {
+        list($balance_diamond, $balance_num) = self::getBalance($this->id);
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'user_avatar_url' => $this->user->avatar_url,
+            'user_nickname' => $this->user->nickname,
+            'diamond' => $this->diamond,
+            'num' => $this->num,
+            'balance_diamond' => $balance_diamond,
+            'balance_num' => $balance_num,
+            'current_room_id' => $this->current_room_id
+        ];
+    }
+
+
     //生成房间红包列表key
     static function generateRedPacketListKey($current_room_id)
     {
@@ -188,7 +221,7 @@ class RedPackets extends BaseModel
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
-    static function findRedPacketList($current_room_id, $page, $per_page)
+    static function findRedPacketList($current_room_id, $page, $per_page, $user)
     {
         $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($current_room_id);
         $cache_db = \Users::getUserDb();
@@ -197,40 +230,21 @@ class RedPackets extends BaseModel
         $offset = ($page - 1) * $per_page;
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
+        $screen_red_packets = self::getScreenRedPackets($red_packets, $user);
 
-        return new \PaginationModel($red_packets, $total, $page, $per_page);
+        return new \PaginationModel($screen_red_packets, $total, $page, $per_page);
     }
 
-    function toSimpleJson()
+    static function getScreenRedPackets($red_packets, $user)
     {
-        return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'user_nickname' => $this->user->nickname,
-            'diamond' => $this->diamond,
-            'num' => $this->num,
-            'status_text' => $this->status_text,
-            'created_at_text' => $this->created_at_text,
-            'user_avatar_url' => $this->user->avatar_url,
-            'red_packet_type' => $this->red_packet_type,
-            'sex' => $this->sex
-        ];
-    }
-
-    function toBasicJson()
-    {
-        list($balance_diamond, $balance_num) = self::getBalance($this->id);
-        return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'user_avatar_url' => $this->user->avatar_url,
-            'user_nickname' => $this->user->nickname,
-            'diamond' => $this->diamond,
-            'num' => $this->num,
-            'balance_diamond' => $balance_diamond,
-            'balance_num' => $balance_num,
-            'current_room_id' => $this->current_room_id
-        ];
+        $screen_red_packets = [];
+        foreach ($red_packets as $red_packet) {
+            //这里以后还要加距离限制
+            if ($red_packet->red_packet_type != 'nearby' || ($red_packet->red_packet_type == 'nearby' && ($red_packet->sex == USER_SEX_COMMON || $red_packet->sex == $user->sex))) {
+                $screen_red_packets[] = $red_packet;
+            }
+        }
+        return $screen_red_packets;
     }
 
     static function getBalance($red_packet_id)
@@ -375,12 +389,14 @@ class RedPackets extends BaseModel
                 $client_url = 'app://rooms/detail?id=' . $room->id;
                 $users = \Users::find($cond);
                 foreach ($users as $user) {
-                    $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
-                    $intranet_ip = $user->getIntranetIp();
-                    $receiver_fd = $user->getUserFd();
+                    if ($send_red_packet_history->red_packet_type == $user->sex) {
+                        $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+                        $intranet_ip = $user->getIntranetIp();
+                        $receiver_fd = $user->getUserFd();
 
-                    $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-                    info('推送结果=>', $result, '结构=>', $body);
+                        $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+                        info('推送结果=>', $result, '结构=>', $body);
+                    }
                 }
             }
         }
