@@ -78,7 +78,7 @@ class WishHistoriesController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
         }
         $opts = ['remark' => '守护愿望消耗' . $amount . '钻石', 'target_id' => $wish_history_id];
-        $result = \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GUARD_WISH_EXPENSES, $amount, $opts);
+        $result = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GUARD_WISH_EXPENSES, $amount, $opts);
         if (!$result) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '参数错误');
         }

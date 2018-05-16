@@ -449,7 +449,7 @@ class KangTask extends \Phalcon\Cli\Task
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => 1];
 
             if ($amount > 0) {
-                \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, $amount, $opts);
             }
         }
     }

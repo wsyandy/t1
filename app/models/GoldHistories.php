@@ -51,14 +51,19 @@ class GoldHistories extends BaseModel
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
-        $user = Users::findFirstById($user_id);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
         if (!$user) {
             info('Exce', $user_id);
             return null;
         }
 
         $gold_history = new GoldHistories();
-        $gold_history->user_id = $user_id;
+        $gold_history->user_id = $user->id;
         $gold_history->product_channel_id = $user->product_channel_id;
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
@@ -122,7 +127,7 @@ class GoldHistories extends BaseModel
     function isCostGold()
     {
         return $this->fee_type == GOLD_TYPE_BUY_GIFT || $this->fee_type == GOLD_TYPE_GAME_EXPENSES
-        || $this->fee_type == GOLD_TYPE_DRAW_EXPENSES;
+            || $this->fee_type == GOLD_TYPE_DRAW_EXPENSES;
     }
 
     /**

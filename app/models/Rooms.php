@@ -488,8 +488,6 @@ class Rooms extends BaseModel
     {
         $this->remUser($user);
 
-        $current_room_seat_id = $user->current_room_seat_id;
-
         // 房间相同才清除用户信息
         if ($this->id == $user->current_room_id) {
 
@@ -1159,13 +1157,15 @@ class Rooms extends BaseModel
     function pushBoomIncomeMessage($total_income, $cur_income)
     {
         $body = array(
-            'action' => 'blasting_gift',
-            'blasting_gift' => [
+            'action' => 'boom_gift',
+            'boom_gift' => [
                 'expire_at' => Backpacks::getExpireAt($this->id),
-                'url' => 'url://m/backpacks',
+                'client_url' => 'url://m/backpacks',
                 'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
-                'current_value' => (int)$cur_income
+                'show_rank' => 1000000,
+                'current_value' => (int)$cur_income,
+                'render_type' => 'svga'
             ]
         );
 
@@ -1215,7 +1215,7 @@ class Rooms extends BaseModel
         }
     }
 
-    function pushTopTopicMessage($user, $content = "")
+    function pushTopTopicMessage($user, $content = "", $content_type = '')
     {
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
@@ -1224,7 +1224,7 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'send_topic_msg', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'content' => $content,
-            'channel_name' => $this->channel_name
+            'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
         $this->push($body);
@@ -1272,8 +1272,8 @@ class Rooms extends BaseModel
 
     function pushRedPacketMessage($num, $url)
     {
-        $body = ['action' => 'red_packet', 'num' => $num, 'url' => $url];
-        info('推送红包信息',$body);
+        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
+        info('推送红包信息', $body);
         $this->push($body);
     }
 
@@ -2132,6 +2132,7 @@ class Rooms extends BaseModel
 
             // 爆礼物
             if (isDevelopmentEnv()) {
+                debug('boom_expire_at_time:'.$time);
                 $room->statBoomIncome($income, $time);
             }
 
@@ -2177,7 +2178,10 @@ class Rooms extends BaseModel
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-            $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+
+            if ($cur_income >= Backpacks::getBoomStartLine()) {
+                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+            }
         }
     }
 
@@ -2802,10 +2806,6 @@ class Rooms extends BaseModel
         $root_host = fetch($opts, 'root_host');
         $current_user_role = $user->user_role;
         $menu_config = [];
-        if (true) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
-        }
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
@@ -2814,6 +2814,11 @@ class Rooms extends BaseModel
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+        }
+        
+        if (true) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
         return $menu_config;
@@ -3028,6 +3033,7 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    // ios 审核期间队列
     static function generateIosAuthRoomListKey()
     {
         return "ios_auth_room_list";

@@ -11,7 +11,10 @@ class RoomsTask extends \Phalcon\Cli\Task
     //检查用户是否在房间
     function checkUserRoomAction()
     {
-        $cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]];
+
+        $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 180]];
+
         $rooms = Rooms::findForeach($cond);
         $hot_cache = Rooms::getHotWriteCache();
 
@@ -21,7 +24,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            //$key = $room->getRealUserListKey();
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {

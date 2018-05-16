@@ -208,6 +208,7 @@
         avatar_small_url 发送消息的用户头像小图
         content 消息内容
         channel_name 房间频道
+        content_type 消息类型 例如红包：red_packet
     }
 ```  
     
@@ -318,22 +319,34 @@
         action: red_packet 红包通知
         red_packet:{
             num int 红包个数
-            url 跳转地址   
+            client_url 跳转地址   
         }
     }
 ```
 
-   #### 爆礼物
+ #### 爆礼物
 ```
     {
-        action: blasting_gift 爆礼物
-        blasting_gift:{
+        action: boom_gift 爆礼物
+        boom_gift:{
             expire_at int 结束时间
-            url string 跳转地址
+            client_url string 跳转地址
             svga_image_url string svga图片
+            render_type string svga
+            show_rank int 1000000 等级排序
             total_value int 总值
             current_value int 当前值
-            diff_picture string 爆礼物图片的值 green orange blue
+            image_color string 爆礼物图片的值 green orange blue
         }
+    }
+```
+
+   #### 下沉通知
+```
+    {
+        action: sink_notice 下沉通知
+        title: string 标题
+        content: string 内容
+        client_url string 跳转地址 例app://rooms/detail?id=xxx
     }
 ```

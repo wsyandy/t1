@@ -481,6 +481,10 @@ class UsersController extends BaseController
             $detail_json['medal_image_url'] = $this->getRoot() . "m/images/level_11.png";
         }
 
+        if ($this->currentUser()->isIdCardAuth()) {
+            $detail_json['broadcaster_image_url'] = $this->getRoot() . "m/images/broadcaster.png";
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
@@ -508,6 +512,14 @@ class UsersController extends BaseController
         if (!$this->otherUser()->isActive()) {
             $detail_json['province_name'] = $current_user->province_name;
             $detail_json['city_name'] = $current_user->city_name;
+        }
+
+        if (isDevelopmentEnv()) {
+            $detail_json['medal_image_url'] = $this->getRoot() . "m/images/level_11.png";
+        }
+
+        if ($this->otherUser()->isIdCardAuth()) {
+            $detail_json['broadcaster_image_url'] = $this->getRoot() . "m/images/broadcaster.png";
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);

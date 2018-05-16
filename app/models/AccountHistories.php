@@ -41,7 +41,7 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出',
         ACCOUNT_TYPE_RED_PACKET_EXPENSES => '红包支出',
         ACCOUNT_TYPE_RED_PACKET_INCOME => '红包收入',
-        ACCOUNT_TYPE_RED_PACKET_RESTORATION=>'红包余额返还'
+        ACCOUNT_TYPE_RED_PACKET_RESTORATION => '红包余额返还'
 
     ];
 
@@ -83,14 +83,19 @@ class AccountHistories extends BaseModel
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
-        $user = Users::findFirstById($user_id);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
         if (!$user) {
             info('Exce', $user_id);
             return null;
         }
 
         $account_history = new \AccountHistories();
-        $account_history->user_id = $user_id;
+        $account_history->user_id = $user->id;
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
         $account_history->union_id = $user->union_id;

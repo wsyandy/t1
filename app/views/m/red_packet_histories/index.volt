@@ -20,7 +20,7 @@
                 <div class="give_box">
                     <h3>红包金额</h3>
                     <div class="give_input">
-                        <input type="text" name="" placeholder=""  v-model="amount">
+                        <input type="text" name="" placeholder="" v-model="amount">
                         <i class="zuan"></i>
                     </div>
                 </div>
@@ -35,23 +35,24 @@
                     </div>
                 </div>
             </div>
-
-            <div class="give_list" v-if="type == 'nearby'">
-                <div class="give_box">
-                    <h3>位置／范围</h3>
-                    <div class="give_input">
-                        <!-- <div class="get_font get_address">5km</div> -->
-                        <input type="text" class="get_address"  value="5km"/>
-                        <i class="give_right"></i>
+            <div v-show="type == 'nearby'">
+                <div class="give_list">
+                    <div class="give_box">
+                        <h3>位置／范围</h3>
+                        <div class="give_input">
+                            <!-- <div class="get_font get_address">5km</div> -->
+                            <input type="text" class="get_address" v-model="nearby_distance" value=""/>
+                            <i class="give_right"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="give_list" v-if="type == 'nearby'">
-                <div class="give_box">
-                    <h3>性别筛选</h3>
-                    <div class="give_input">
-                        <div class="get_font sex_btn" v-model="sex">${sex}</div>
-                        <i class="give_right"></i>
+                <div class="give_list">
+                    <div class="give_box">
+                        <h3>性别筛选</h3>
+                        <div class="give_input">
+                            <div class="get_font sex_btn" v-model="sex">${sex}</div>
+                            <i class="give_right"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,7 +76,7 @@
         <div class="get_style_box">
             <ul>
                 {% for index,val in red_packet_type %}
-                <li  @click="selectType('{{ index }}','{{val}}')">{{val}} </li>
+                    <li @click="selectType('{{ index }}','{{ val }}')">{{ val }} </li>
                 {% endfor %}
                 {#<li class="border_none">附近人才能领取</li>#}
             </ul>
@@ -114,29 +115,33 @@
             myDiamond: {{ diamond }},
             number: 10,
             amount: 100,
-            allSex:['女生','男生','男女皆可'],
-            sex:"男女皆可",
-            red_packet_type_cur:'{{ red_packet_type['all'] }}',
-            type:'all',
+            nearby_distance: '5km',
+            allSex: ['女生', '男生', '男女皆可'],
+            sex: "男女皆可",
+            red_packet_type_cur: '{{ red_packet_type['all'] }}',
+            type: 'all',
             isGiveStyle: false,
             less_zuan_input: false,
-            isSex:true,
+            isSex: true,
         },
 
         methods: {
-            selectType:function (i,v) {
+            selectType: function (i, v) {
                 this.red_packet_type_cur = v;
                 this.type = i;
                 vm.isGiveStyle = false;
 
             },
-            selectSex:function (i) {
+            selectSex: function (i) {
                 vm.isSex = true;
                 this.sex = i;
             },
             getStyle: function () {
                 vm.isGiveStyle = true;
 
+            },
+            openSex: function () {
+                vm.isSex = true;
             },
             cancel: function (index) {
                 switch (index) {
@@ -150,18 +155,19 @@
             },
             sendRedPacket: function () {
                 var data = {
-                    sid:this.sid,
-                    code:this.code,
-                    num:this.number,
-                    diamond:this.amount,
-                    sex:this.sex,
-                    red_packet_type:this.type
+                    sid: this.sid,
+                    code: this.code,
+                    num: this.number,
+                    diamond: this.amount,
+                    sex: this.sex,
+                    red_packet_type: this.type,
+                    nearby_distance: this.nearby_distance
                 }
-                if(this.sex == "男女皆可"){
+                if (this.sex == "男女皆可") {
                     data.sex = 2;
                 }
                 console.log(data);
-                if(vm.amount > this.myDiamond ){
+                if (vm.amount > this.myDiamond) {
                     vm.less_zuan_input = true;
                     return;
                 }
@@ -171,7 +177,6 @@
                         location.href = 'app://back';
                     }
                 });
-
 
 
             }

@@ -4,7 +4,7 @@
 {{ block_end() }}
 <div id="app">
     <div class="detail_red_top">
-        <div class="nav_top"><i class="back"></i>红包详情</div>
+        <div class="nav_top"><i class="back" onclick="javascrtpt:history.back(-1);"></i>红包详情</div>
         <div class="top_person">
             <div class="pic">
                 <img src="{{ red_packet['user_avatar_url'] }}">
@@ -26,7 +26,7 @@
                 <div class="list_text">
                     <div class="name">
                         <h3>${v.nickname}</h3>
-                        <p>12:00</p>
+                        <p>${v.get_diamond_at}</p>
                     </div>
                     <div class="num">${v.get_diamond ? v.get_diamond : 0 }<i></i></div>
                 </div>

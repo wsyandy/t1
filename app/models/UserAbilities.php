@@ -95,16 +95,23 @@ trait UserAbilities
     // 屏蔽热门房间
     function isShieldHotRoom()
     {
-
-        if($this->union_id || $this->isIdCardAuth()){
+        if ($this->union_id || $this->isIdCardAuth()) {
             return false;
+        }
+
+        $partner_id = 14;
+
+        if (time() - $this->register_at <= 86400 && $partner_id == $this->partner_id &&
+            $this->register_at >= strtotime('2018-05-15 23:30:00')) {
+
+            return true;
         }
 
         $province_ids = [1, 2];
         if (in_array($this->province_id, $province_ids)
             || in_array($this->ip_province_id, $province_ids) && isProduction()
             || in_array($this->geo_province_id, $province_ids) && isProduction()) {
-            
+
             info($this->id, $this->province_id, $this->ip_province_id, $this->geo_province_id);
             return true;
         }

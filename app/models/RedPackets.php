@@ -140,13 +140,8 @@ class RedPackets extends BaseModel
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
-            //红包socket
-            $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
-            $room->pushRedPacketMessage($send_red_packet_history->num, $url);
 
-            //红包公屏socket
-            $content = $user->nickname . '发了个大红包，快来抢啊！！！';
-            $room->pushTopTopicMessage($user, $content);
+            self::sendSocketForRedpacket($send_red_packet_history, $user, $room);
 
             $opts = [
                 'user_id' => $send_red_packet_history->user_id,
@@ -221,7 +216,7 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'balance_diamond' => $balance_diamond,
             'balance_num' => $balance_num,
-            'current_room_id'=>$this->current_room_id
+            'current_room_id' => $this->current_room_id
         ];
     }
 
@@ -242,7 +237,9 @@ class RedPackets extends BaseModel
         if ($get_diamond) {
             $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
             $room = \Rooms::findFirstById($current_room_id);
-            $room->pushTopTopicMessage($user, $content);
+            $content_type = 'red_packet';
+            $system_user = \Users::getSysTemUser();
+            $room->pushTopTopicMessage($system_user, $content, $content_type);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
@@ -276,7 +273,7 @@ class RedPackets extends BaseModel
 
             $cache->zadd($key, $get_diamond, $red_packet_id);
 
-            $cache->zadd($user_key, $get_diamond, $user_id);
+            $cache->zadd($user_key, time(), $user_id);
 
             return $get_diamond;
         }
@@ -335,6 +332,38 @@ class RedPackets extends BaseModel
         $key = self::generateRedPacketForRoomKey($room_id, $user_id);
         $user_get_red_packet_ids = $cache->zrange($key, 0, -1);
         return $user_get_red_packet_ids;
+    }
+
+    static function sendSocketForRedpacket($send_red_packet_history, $user, $room)
+    {
+        //红包socket
+        $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
+        $underway_red_packet = $room->getUnderwayRedPacket();
+        $room->pushRedPacketMessage(count($underway_red_packet), $url);
+
+        //红包公屏socket
+        $content = $user->nickname . '发了个大红包，快来抢啊！！！';
+        $content_type = 'red_packet';
+        $system_user = \Users::getSysTemUser();
+        $room->pushTopTopicMessage($system_user, $content, $content_type);
+
+        //首页下沉通知
+        if (isDevelopmentEnv()) {
+            $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
+                'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
+            ];
+
+            $client_url = 'app://rooms/detail?id=' . $room->id;
+            $users = \Users::find($cond);
+            foreach ($users as $user) {
+                $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
+                $intranet_ip = $user->getIntranetIp();
+                $receiver_fd = $user->getUserFd();
+
+                $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+                info('推送结果=>', $result, '结构=>', $body);
+            }
+        }
     }
 
 }

@@ -149,8 +149,10 @@ html,body{
 }
 .wishing_rules_toast{
   position: absolute;
-  left: .33rem;
-  top: 1.7rem;
+  left: 50%;
+  top: 50%;
+  margin-left: -3.565rem;
+  margin-top: -4.275rem;
   z-index: 101;
   width: 7.13rem;
   height: 8.55rem;
@@ -197,9 +199,10 @@ html,body{
   background-color: #356201;
 }
 .wishing_rules_toast .cancel_buttom{
-  position: fixed;
-  left: 3.32rem;
-  bottom: .98rem;
+  position: absolute;
+  left: 50%;
+  margin-left: -0.43rem;
+  bottom: -1rem;
   width: .86rem;
   height: .86rem;
   background: url(../images/cancel_buttom.png) center no-repeat;
