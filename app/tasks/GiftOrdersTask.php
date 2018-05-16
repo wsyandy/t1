@@ -2,9 +2,16 @@
 
 class GiftOrdersTask extends \Phalcon\Cli\Task
 {
-    function checkHiCoinsAction()
+
+    function checkHiCoinsAction($params)
     {
-        $user_id = 1012820;
+
+        $user_id = $params[0];
+        $user = Users::findFirstById($user_id);
+        if (!$user) {
+            echoLine('error', $params);
+            return;
+        }
 
         $gift_orders = GiftOrders::find([
             'conditions' => 'user_id = :user_id: and status = :status: and gift_type = :gift_type: and pay_type = :pay_type:',
@@ -183,4 +190,5 @@ class GiftOrdersTask extends \Phalcon\Cli\Task
         }
 
     }
+
 }
