@@ -50,10 +50,11 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '余额不足', ['to_pay_url' => $to_pay_url]);
         }
 
-        $room = \Rooms::findFirstById($user->current_room_id);
-        if (!$room) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '当前房间不存在');
+        if (isBlank($user->current_room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
+        $room = $user->current_room;
+
         $opts = [
             'diamond' => $diamond,
             'num' => $num,
@@ -93,7 +94,10 @@ class RedPacketsController extends BaseController
         $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         //用户进来的时间
-        $room = \Rooms::findFirstById($user->current_room_id);
+        if (isBlank($user->current_room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
+        }
+        $room = $user->current_room;
         $time = $room->getTimeForUserInRoom($user->id);
         //具体用户进房间3分钟的剩余时间，小于零代表时间已到
         $distance_start_at = 180;
@@ -119,7 +123,6 @@ class RedPacketsController extends BaseController
 
             //时间限制
             if ($red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
-                $room = \Rooms::findFirstById($user->current_room_id);
                 $time = $room->getTimeForUserInRoom($user->id);
                 if (!$time || time() - $time < 180) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
@@ -139,7 +142,6 @@ class RedPacketsController extends BaseController
 
             //是否关注房主
             if ($red_packet_type == RED_PACKET_TYPE_ATTENTION) {
-                $room = \Rooms::findFirstById($user->current_room_id);
                 info('房主id', $room->user_id);
                 if ($room->user_id == $user->id) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
@@ -152,7 +154,7 @@ class RedPacketsController extends BaseController
                 }
             }
 
-            list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+            list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user, $room, $red_packet_id);
             $error_reason = '手慢了，红包抢完了！';
             if ($get_diamond) {
                 if (mb_strlen($user_nickname) > 5) {
@@ -182,7 +184,10 @@ class RedPacketsController extends BaseController
             $page = $this->params('page', 1);
             $pre_page = $this->params('pre_page', 10);
             //用户进来的时间
-            $room = \Rooms::findFirstById($room_id);
+            if (isBlank($user->current_room)) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
+            }
+            $room = $user->current_room;
             $time = $room->getTimeForUserInRoom($user->id);
             //具体用户进房间3分钟的剩余时间，小于零代表时间已到
             $distance_start_at = 180;
@@ -190,7 +195,7 @@ class RedPacketsController extends BaseController
                 $distance_start_at = $time + 3 * 60 - time();
             }
 
-            $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page,$user);
+            $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page, $user);
             if ($red_packets) {
                 $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room_id, $user->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
@@ -246,7 +251,12 @@ class RedPacketsController extends BaseController
         $red_packet = \RedPackets::findFirstById($red_packet_id);
 
         $user->follow($this->otherUser());
-        list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user->current_room_id, $user, $red_packet_id);
+
+        if (isBlank($user->current_room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
+        }
+
+        list($error_code, $get_diamond) = \RedPackets::grabRedPacket($user, $user->current_room, $red_packet_id);
         $error_reason = '手慢了，红包抢完了！';
         if ($get_diamond) {
             $user_nickname = $red_packet->user->nickname;
