@@ -227,42 +227,6 @@ class Backpacks extends BaseModel
         return self::$GOLD_IMG;
     }
 
-
-    /**
-     * @return string
-     */
-    static function getSvgaImageUrl()
-    {
-        return self::$boom_SVGA;
-    }
-
-
-    /**
-     * @return int
-     */
-    static function getBoomTotalValue()
-    {
-        $value = self::$total_value;
-        if (isDevelopmentEnv()) {
-            $value = 5000;
-        }
-        return $value;
-    }
-
-
-    /**
-     * @return int
-     */
-    static function getBoomStartLine()
-    {
-        $value = self::$start_value;
-        if (isDevelopmentEnv()) {
-            $value = 1000;
-        }
-        return $value;
-    }
-
-
     /**
      * @param $room_id
      * @return false|int

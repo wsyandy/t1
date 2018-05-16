@@ -301,13 +301,13 @@ class RoomsController extends BaseController
         $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
         $cur_income = $cache->get($cur_income_key);
 
-        if ($cur_income >= \Backpacks::getBoomStartLine()) {
+        if ($cur_income >= \BoomHistories::getBoomStartLine()) {
 
             $res['boom_gift'] = [
-                'expire_at' => (int)\Backpacks::getExpireAt($room_id),
+                'expire_at' => (int)\Rooms::getExpireAt($room_id),
                 'client_url' => 'url://m/backpacks',
                 'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-                'total_value' => \Backpacks::getBoomTotalValue(),
+                'total_value' => \BoomHistories::getBoomTotalValue(),
                 'current_value' => $cur_income,
                 'show_rank' => 1000000,
                 'render_type' => 'svga',

@@ -874,8 +874,8 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function boomTargetAction()
     {
-        $line = Backpacks::getBoomStartLine();
-        $total = Backpacks::getBoomTotalValue();
+        $line = BoomHistories::getBoomStartLine();
+        $total = BoomHistories::getBoomTotalValue();
 
         $rooms = Rooms::dayStatRooms();
         $cache = Rooms::getHotWriteCache();
@@ -894,7 +894,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     function disappearBoomGiftRocketAction()
     {
         $room = new Rooms();
-        $total_income = Backpacks::getBoomTotalValue();
+        $total_income = BoomHistories::getBoomTotalValue();
         $boom_list_key = 'boom_gifts_list';
 
         $cache = Rooms::getHotWriteCache();

@@ -1157,7 +1157,7 @@ class Rooms extends BaseModel
         $body = array(
             'action' => 'boom_gift',
             'boom_gift' => [
-                'expire_at' => Backpacks::getExpireAt($this->id),
+                'expire_at' => Rooms::getExpireAt($this->id),
                 'client_url' => 'url://m/backpacks',
                 'svga_image_url' => Backpacks::getSvgaImageUrl(),
                 'total_value' => (int)$total_income,
@@ -2146,6 +2146,36 @@ class Rooms extends BaseModel
         }
     }
 
+    /**
+     * @param $room_id
+     * @return false|int
+     */
+    static function getExpireAt($room_id)
+    {
+        $cache = self::getHotWriteCache();
+        $room_sign_key = self::generateRoomBoomGiftSignKey($room_id);
+        $time = $cache->get($room_sign_key);
+
+        debug('boom_test', $room_id, $room_sign_key, $time);
+
+        if (empty($time)) {
+            return 0;
+        }
+
+        $time = strtotime('+3 minutes', $time);
+        return $time;
+    }
+
+
+    /**
+     * 记录爆礼物开始时间
+     * @param $room_id
+     * @return string
+     */
+    static function generateRoomBoomGiftSignKey($room_id)
+    {
+        return 'room_boom_gift' . $room_id;
+    }
 
     // 爆礼物流水值记录
     public function statBoomIncome($income, $time)
@@ -2158,21 +2188,23 @@ class Rooms extends BaseModel
         $cur_income = $cache->get($cur_income_key);
 
         tryLock($cur_income_key);
+
         // 房间爆礼物结束倒计时
-        $room_sign_key = Backpacks::generateBoomRoomSignKey($room_id);
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
 
         $expire = endOfDay() - $time;
+
         if (isDevelopmentEnv()) {
             $expire = 180;
         }
 
         $boom_list_key = 'boom_gifts_list';
-        $total_income = Backpacks::getBoomTotalValue();
+        $total_income = BoomHistories::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
-        if ($cache->exists($room_sign_key)) {
+        if ($cache->exists($room_boon_gift_sign_key)) {
 
-            ($cur_income != 0) && $cache->setex($cur_income_key, $expire, 0);
+            ($cur_income != 0) && $cache->del($cur_income_key);
 
         } else {
 
@@ -2181,18 +2213,28 @@ class Rooms extends BaseModel
 
             if ($cur_total_income >= $total_income) {
                 // 爆礼物
-                $cache->setex($room_sign_key, 180, $time);
-                $cache->setex($cur_income_key, $expire, 0);
+                $cache->setex($room_boon_gift_sign_key, 180, $time);
+                $cache->del($cur_income_key);
                 $cache->zrem($boom_list_key, $room_id);
+
+                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+
+                unlock($cur_income_key);
+
+                return;
             }
-            $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-            if ($cur_total_income >= Backpacks::getBoomStartLine()) {
+            $res = $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-                $cache->zadd($boom_list_key, time(), $room_id);
+            if ($res && $cur_total_income >= BoomHistories::getBoomStartLine()) {
+
+                if (!$cache->zscore($boom_list_key, $room_id)) {
+                    $cache->zadd($boom_list_key, time(), $room_id);
+                }
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
+
         unlock($cur_income_key);
     }
 
@@ -2936,7 +2978,7 @@ class Rooms extends BaseModel
 
         $total_num = count($all_room_ids);
         $per_page = 100;
-        if(isDevelopmentEnv()){
+        if (isDevelopmentEnv()) {
             $per_page = 3;
         }
 

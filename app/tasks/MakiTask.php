@@ -10,7 +10,7 @@ class MakiTask extends Phalcon\Cli\Task
     public function testxAction()
     {
         $line = 0;
-        $total = Backpacks::getBoomTotalValue();
+        $total = BoomHistories::getBoomTotalValue();
 
         $rooms = Rooms::dayStatRooms();
         $cache = Rooms::getHotWriteCache();

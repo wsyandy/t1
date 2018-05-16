@@ -41,7 +41,8 @@ class BackpacksController extends BaseController
         $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
 
         // 没爆礼物不抽奖
-        $expire = \Backpacks::getExpireAt($room_id);
+        $expire = \Rooms::getExpireAt($room_id);
+
         if (empty($expire)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
