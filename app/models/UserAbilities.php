@@ -92,7 +92,7 @@ trait UserAbilities
         return $this->version_code >= 8;
     }
 
-    function canBoomGift()
+    function canReceiveBoomGiftMessage()
     {
         if ($this->isIos()) {
             return $this->version_code > 19;
