@@ -231,7 +231,7 @@ class GamesController extends BaseController
         //扣除入场费
         if ($pay_type == PAY_TYPE_DIAMOND) {
             $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
-            $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+            $result = \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
             if (!$result) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
             }
@@ -239,7 +239,7 @@ class GamesController extends BaseController
 
         if ($pay_type == PAY_TYPE_GOLD) {
             $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
-            $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+            $result = \GoldHistories::changeBalance($this->currentUser(), GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
             if (!$result) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
             }
@@ -299,7 +299,7 @@ class GamesController extends BaseController
 
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏支出钻石' . $amount, 'mobile' => $this->currentUser()->mobile];
-                $result = \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
+                $result = \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_GAME_EXPENSES, $amount, $opts);
                 if (!$result) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '钻石不足');
                 }
@@ -307,7 +307,7 @@ class GamesController extends BaseController
 
             if ($pay_type == PAY_TYPE_GOLD) {
                 $opts = ['remark' => '游戏支出金币' . $amount, 'mobile' => $this->currentUser()->mobile];
-                $result = \GoldHistories::changeBalance($this->currentUser()->id, GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
+                $result = \GoldHistories::changeBalance($this->currentUser(), GOLD_TYPE_GAME_EXPENSES, $amount, $opts);
                 if (!$result) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '金币不足');
                 }
@@ -526,11 +526,11 @@ class GamesController extends BaseController
         if ($rank1_user && intval($rank1_amount)) {
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏收入钻石' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \AccountHistories::changeBalance($rank1_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                $result = \AccountHistories::changeBalance($rank1_user, ACCOUNT_TYPE_GAME_INCOME, $rank1_amount, $opts);
             }
             if ($pay_type == PAY_TYPE_GOLD) {
                 $opts = ['remark' => '游戏收入金币' . $rank1_amount, 'mobile' => $rank1_user->mobile];
-                $result = \GoldHistories::changeBalance($rank1_user->id, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
+                $result = \GoldHistories::changeBalance($rank1_user, GOLD_TYPE_GAME_INCOME, $rank1_amount, $opts);
             }
         }
 
@@ -539,11 +539,11 @@ class GamesController extends BaseController
 
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏收入钻石' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \AccountHistories::changeBalance($rank2_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                $result = \AccountHistories::changeBalance($rank2_user, ACCOUNT_TYPE_GAME_INCOME, $rank2_amount, $opts);
             }
             if ($pay_type == PAY_TYPE_GOLD) {
                 $opts = ['remark' => '游戏收入金币' . $rank2_amount, 'mobile' => $rank2_user->mobile];
-                $result = \GoldHistories::changeBalance($rank2_user->id, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
+                $result = \GoldHistories::changeBalance($rank2_user, GOLD_TYPE_GAME_INCOME, $rank2_amount, $opts);
             }
         }
 
@@ -552,11 +552,11 @@ class GamesController extends BaseController
 
             if ($pay_type == PAY_TYPE_DIAMOND) {
                 $opts = ['remark' => '游戏收入钻石' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                $result = \AccountHistories::changeBalance($rank3_user->id, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
+                $result = \AccountHistories::changeBalance($rank3_user, ACCOUNT_TYPE_GAME_INCOME, $rank3_amount, $opts);
             }
             if ($pay_type == PAY_TYPE_GOLD) {
                 $opts = ['remark' => '游戏收入金币' . $rank3_amount, 'mobile' => $rank3_user->mobile];
-                $result = \GoldHistories::changeBalance($rank3_user->id, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
+                $result = \GoldHistories::changeBalance($rank3_user, GOLD_TYPE_GAME_INCOME, $rank3_amount, $opts);
             }
         }
 

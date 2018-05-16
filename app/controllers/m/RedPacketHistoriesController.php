@@ -65,7 +65,7 @@ class RedPacketHistoriesController extends BaseController
 
         if ($send_red_packet_history) {
             $opts = ['remark' => '发送红包扣除' . $diamond, 'mobile' => $user->mobile, 'target_id' => $send_red_packet_history->id];
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
+            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_RED_PACKET_EXPENSES, $diamond, $opts);
 
             $room = $user->current_room;
             $room->has_red_packet = STATUS_ON;
@@ -153,7 +153,7 @@ class RedPacketHistoriesController extends BaseController
                 $error_reason = '抢到' . $user_nickname . '发的钻石红包';
                 //在这里增加钻石
                 $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-                \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+                \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
             }
             unlock($lock);
 
@@ -235,7 +235,7 @@ class RedPacketHistoriesController extends BaseController
             $error_reason = '抢到' . $red_packet->user->nickname . '发的钻石红包';
             //在这里增加钻石
             $opts = ['remark' => '红包获取钻石' . $get_diamond, 'mobile' => $this->currentUser()->mobile];
-            \AccountHistories::changeBalance($this->currentUser()->id, ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
+            \AccountHistories::changeBalance($this->currentUser(), ACCOUNT_TYPE_RED_PACKET_INCOME, $get_diamond, $opts);
         }
 
         return $this->renderJSON($error_code, $error_reason, ['get_diamond' => $get_diamond]);

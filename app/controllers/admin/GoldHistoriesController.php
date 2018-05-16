@@ -50,7 +50,7 @@ class GoldHistoriesController extends BaseController
             }
 
             if ($amount > 0) {
-                \GoldHistories::changeBalance($user_id, GOLD_TYPE_GIVE, $amount, $opts);
+                \GoldHistories::changeBalance($user, GOLD_TYPE_GIVE, $amount, $opts);
 
                 if (isBlank($content)) {
                     $content = '系统小助手送你' . $amount . '金币，感谢你的支持！';

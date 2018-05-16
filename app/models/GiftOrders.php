@@ -155,11 +155,11 @@ class GiftOrders extends BaseModel
                 $sender->addCompanyUserSendNumber($total_amount);
             }
 
-            $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
+            $target = \AccountHistories::changeBalance($sender, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
-            $target = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
+            $target = \GoldHistories::changeBalance($sender, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
         }
 
         if ($target) {
