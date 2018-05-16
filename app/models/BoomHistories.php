@@ -9,6 +9,7 @@
 class BoomHistories extends BaseModel
 {
 
+    static $TYPE = [1 => '礼物', 2 => '钻石', 3 => '金币'];
 
     /**
      * 新增爆礼物日志
@@ -32,6 +33,16 @@ class BoomHistories extends BaseModel
         $this->number = $number;
         $this->created_at = time();
         return $this->save();
+    }
+
+
+    public function getGift()
+    {
+        if ($this->target_id == 0) {
+            return null;
+        }
+        $gifts = Gifts::findFirstById($this->target_id);
+        return $gifts;
     }
 
 
