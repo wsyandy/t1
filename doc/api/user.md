@@ -144,6 +144,7 @@
     im_password 即时通信密码(声网，环信)
     app_id string 信令应用id
     signaling_key string 信令token
+    medal_image_url 勋章图片地址
 }
 ```
 
