@@ -74,7 +74,7 @@
                             val.class = "red_list_fangzhu";
                         }
                         if (val.red_packet_type == 'attention') {
-                            val.text = "关注房主可抢";
+                            val.text = "关注可抢";
                             val.class = "red_list_fangzhu";
                         }
                         if (val.red_packet_type == 'stay_at_room') {

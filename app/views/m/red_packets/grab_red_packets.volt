@@ -110,6 +110,7 @@
 
                         vm.attentionHost = true;
                         vm.attentionUrl = resp.client_url;
+
                     } else if (resp.error_code == -101) {
                         vm.res = resp.error_reason;
                         vm.pity = true;
@@ -121,7 +122,7 @@
                         vm.pity = true;
 
                     }
-                    //console.log(vm.grabbed);
+
                     hide_grab();
 
                 });
