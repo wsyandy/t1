@@ -28,9 +28,16 @@ class RedPacketHistoriesController extends BaseController
         $sex = $this->params('sex');
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
-        if ($diamond < 100 || $num < 10) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+        if (isDevelopmentEnv()) {
+            if ($diamond < 100 || $num < 5) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于5个');
+            }
+        } else {
+            if ($diamond < 100 || $num < 10) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于10个');
+            }
         }
+
         if ($user->diamond < $diamond) {
             $to_pay_url = '';
             return $this->renderJSON(ERROR_CODE_FAIL, '余额不足', ['to_pay_url' => $to_pay_url]);
@@ -128,7 +135,7 @@ class RedPacketHistoriesController extends BaseController
             //是否关注房主
             if ($red_packet_type == RED_PACKET_TYPE_ATTENTION) {
                 $room = \Rooms::findFirstById($user->current_room_id);
-                info('房主id',$room->user_id);
+                info('房主id', $room->user_id);
                 if ($room->user_id == $user->id) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
                 }

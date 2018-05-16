@@ -81,8 +81,7 @@
                     per_page: vm.per_page,
                     sid: vm.sid,
                     code: vm.code,
-                    //room_id: vm.room_id
-                    room_id:'172'
+                    room_id: vm.room_id
 
                 };
 //console.log(data);
