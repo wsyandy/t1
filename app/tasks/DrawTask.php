@@ -93,6 +93,11 @@ EOF;
                 $num = 0;
             }
         }
+
+        if($user_ids){
+            Chats::delay()->batchSendTextSystemMessage($user_ids, $content);
+        }
+
     }
 
     function fixAction($params)
