@@ -299,7 +299,7 @@ class RoomsController extends BaseController
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
-                $body = ['action' => $action, 'red_packet' => ['num' => $red_packet_num, 'url' => $url]];
+                $body = ['action' => $action, 'red_packet' => ['num' => $red_packet_num, 'client_url' => $url]];
             }
 
             if ($action == 'pk') {
