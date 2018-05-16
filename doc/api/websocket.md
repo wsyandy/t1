@@ -208,6 +208,7 @@
         avatar_small_url 发送消息的用户头像小图
         content 消息内容
         channel_name 房间频道
+        content_type 消息类型 例如红包：red_packet
     }
 ```  
     
