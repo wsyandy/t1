@@ -99,8 +99,8 @@ class PkHistories extends BaseModel
 
     function toSimpleJson()
     {
-        $left_pk_user = $this->left_pk_user;
-        $right_pk_user = $this->right_pk_user;
+        $left_pk_user = \Users::findFirstById($this->left_pk_user_id);
+        $right_pk_user = \Users::findFirstById($this->right_pk_user_id);
         $left_pk_user_score = $this->getPkUserScore($left_pk_user->id) ? $this->getPkUserScore($left_pk_user->id) : $this->left_pk_user_score;
         $right_pk_user_score = $this->getPkUserScore($right_pk_user->id) ? $this->getPkUserScore($right_pk_user->id) : $this->right_pk_user_score;
 

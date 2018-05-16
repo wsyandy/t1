@@ -176,12 +176,17 @@ class RedPacketHistoriesController extends BaseController
         if ($this->request->isAjax()) {
             $page = $this->params('page', 1);
             $pre_page = $this->params('pre_page', 10);
+            //用户进来的时间
+            $room = \Rooms::findFirstById($room_id);
+            $time = $room->getTimeForUserInRoom($user_id);
+            //具体用户进房间3分钟的剩余时间，小于零代表时间已到
+            $distance_start_at = $time + 3 * 60 - time();
 
             $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page);
             if ($red_packets) {
                 $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room_id, $user_id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
-                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids])
+                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids, 'distance_start_at' => $distance_start_at])
                 );
             }
 
