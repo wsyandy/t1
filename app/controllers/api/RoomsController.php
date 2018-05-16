@@ -311,7 +311,7 @@ class RoomsController extends BaseController
                 'current_value' => $cur_income,
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
-                'status' => STATUS_OFF
+                'status' => STATUS_ON
             ];
         }
 
