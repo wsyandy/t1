@@ -113,10 +113,6 @@ class RedPacketsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
             }
 
-            if ($distance_start_at > 0) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，还没到时间哦！');
-            }
-
             list($balance_diamond, $balance_num) = \RedPackets::checkRedPacketInfoForRoom($red_packet_id);
             if ($balance_diamond <= 0 || $balance_num <= 0) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
