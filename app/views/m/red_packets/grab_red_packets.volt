@@ -170,6 +170,11 @@
 
     $(function () {
         var t = {{ distance_start_at }};
+
+        if(vm.red_packet_type != "stay_at_room"){
+             t = t-180;
+        }
+
         var m = parseInt(t / 60);
         var s = t % 60;
         if (t > 0) {
