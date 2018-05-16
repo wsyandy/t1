@@ -53,7 +53,9 @@ class BackpacksController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', ['target' => $boom_histories]);
         }
 
-        $receive_time = 180;
+        $expire = \Backpacks::getExpireAt($room_id);
+        $expire = $expire - time();
+        $expire = $expire>180 ? 180 : ($expire<0 ? 1 : $expire);
 
         // 用户未领取
         if ($cache->exists($cache_name) && $value!=1) {
@@ -76,7 +78,7 @@ class BackpacksController extends BaseController
         );
 
         // 领取时间三分钟
-        $cache->setex($cache_name, $receive_time, json_encode($json));
+        $cache->setex($cache_name, $expire, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
