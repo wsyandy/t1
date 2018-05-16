@@ -1154,7 +1154,7 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
-    function pushBoomIncomeMessage($total_income, $cur_income)
+    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
     {
         $body = array(
             'action' => 'boom_gift',
@@ -1165,7 +1165,8 @@ class Rooms extends BaseModel
                 'total_value' => (int)$total_income,
                 'show_rank' => 1000000,
                 'current_value' => (int)$cur_income,
-                'render_type' => 'svga'
+                'render_type' => 'svga',
+                'status' => $status
             ]
         );
 
@@ -2008,19 +2009,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2160,6 +2159,7 @@ class Rooms extends BaseModel
             $expire = 180;
         }
 
+        $boom_list_key = 'disappear_rocket';
         $total_income = Backpacks::getBoomTotalValue();
 
         // 判断房间是否在进行爆礼物活动
@@ -2176,11 +2176,13 @@ class Rooms extends BaseModel
                 // 爆礼物
                 $cache->setex($room_sign_key, 180, $time);
                 $cache->setex($cur_income_key, $expire, 0);
+                $cache->srem($boom_list_key, $room_id);
             }
             $cache->setex($cur_income_key, $expire, $cur_total_income);
 
-
             if ($cur_total_income >= Backpacks::getBoomStartLine()) {
+
+                $cache->sadd($boom_list_key, $room_id);
                 $this->pushBoomIncomeMessage($total_income, $cur_total_income);
             }
         }
@@ -3059,11 +3061,17 @@ class Rooms extends BaseModel
         return $time;
     }
 
-    function getUnderwayRedPacket()
+    function getNotDrawRedPacket($user_id)
     {
         $cache = \Users::getUserDb();
+        //当前房间所有还在进行中的红包ids
         $underway_red_packet_list_key = \RedPackets::generateUnderwayRedPacketListKey($this->id);
-        $ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+        $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+
+        //当前用户领取过的红包ids
+        $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user_id);
+        $ids = array_diff($underway_ids, $user_get_red_packet_ids);
+
         $room_red_packets = \RedPackets::findByIds($ids);
 
         return $room_red_packets;

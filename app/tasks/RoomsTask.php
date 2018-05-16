@@ -120,6 +120,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                 'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON]
             ]);
 
+        echoLine('room_num', $room_num);
+
         if ($room_num >= 15) {
             info("room_num", $room_num);
             return;
@@ -128,7 +130,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         $num = 5;
-
         if (isDevelopmentEnv()) {
             $num = 30;
         }
@@ -220,7 +221,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
          (status = :status: and user_type = :user_type1:)',
-            'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
+            'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'status' => STATUS_ON, 'user_type1' => USER_TYPE_ACTIVE],
             'order' => 'last_at desc', 'limit' => 60];
 
         $rooms = Rooms::find($cond);
@@ -231,7 +232,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            Rooms::delay()->activeRoom($room->id);
+            Rooms::activeRoom($room->id);
         }
     }
 
@@ -878,6 +879,24 @@ class RoomsTask extends \Phalcon\Cli\Task
             if ($cur_income >= $line) {
                 $room->pushBoomIncomeMessage($total, $cur_income);
             }
+        }
+    }
+
+
+    function disappearBoomGiftRocketAction()
+    {
+        $room = new Rooms();
+        $total_income = Backpacks::getBoomTotalValue();
+
+        $cache = Rooms::getHotWriteCache();
+        $rocket_set = $cache->sMembers('disappear_rocket');
+
+        foreach ($rocket_set as $room_id) {
+
+            $cur_income_key = Rooms::generateBoomCurIncomeKey($room_id);
+            $cur_income = $cache->get($cur_income_key);
+
+            $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
         }
     }
 }
