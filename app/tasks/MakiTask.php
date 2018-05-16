@@ -38,6 +38,15 @@ class MakiTask extends Phalcon\Cli\Task
     }
 
 
+    public function t2Action()
+    {
+        $expire = strtotime('+3 minutes', 1526441555);
+        $time = $expire - time();
+        echoLine($expire);
+        echoLine($time);
+    }
+
+
     public function dataAction()
     {
         // 查用户id
