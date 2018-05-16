@@ -1154,7 +1154,7 @@ class Rooms extends BaseModel
 
     function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
     {
-        $body = array(
+        $body = [
             'action' => 'boom_gift',
             'boom_gift' => [
                 'expire_at' => Rooms::getExpireAt($this->id),
@@ -1167,7 +1167,7 @@ class Rooms extends BaseModel
                 'status' => $status,
                 'image_color' => 'blue'
             ]
-        );
+        ];
 
         if (isDevelopmentEnv() && $this->id == 137039) {
             $body['room_137039'] = 'test';
@@ -2013,17 +2013,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
