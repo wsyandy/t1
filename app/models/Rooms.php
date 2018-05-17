@@ -2367,6 +2367,10 @@ class Rooms extends BaseModel
             return false;
         }
 
+        if ($this->isTop()) {
+            return false;
+        }
+
         if ($this->lock) {
             return false;
         }
