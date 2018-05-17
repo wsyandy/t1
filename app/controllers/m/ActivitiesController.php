@@ -704,10 +704,9 @@ class ActivitiesController extends BaseController
     {
         $room_host_uid = 1162288;
         $user = \Users::findFirstByUid($room_host_uid);
-        $room = \Rooms::findFirstByUserId($user->id);
 
         $this->view->title = 'HI语音歌神争霸';
-        $this->view->room_id = $room->id;
+        $this->view->room_id = $user->room_id;
 
     }
 
