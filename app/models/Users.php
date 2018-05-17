@@ -2356,8 +2356,9 @@ class Users extends BaseModel
     }
 
     //启动房间互动
-    function activeRoom($room)
+    function autoActiveRoom($room)
     {
+
         if (!$room) {
             info("Exce", $this->id, $room->id);
             return;

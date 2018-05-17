@@ -524,12 +524,6 @@ class Rooms extends BaseModel
     static function getActiveRoomIdsByTime()
     {
 
-        //        $hot_cache = Users::getHotWriteCache();
-//        $key = 'room_active_last_at_list';
-//        $time = time();
-//        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
-//        info($room_ids);
-//
         $start = time() - 1800;
         $end = time();
         $room_ids = [];
@@ -1382,18 +1376,18 @@ class Rooms extends BaseModel
         return true;
     }
 
-    static function activeRoom($room_id)
+    static function autoActiveRoom($room_id)
     {
+
         $room = Rooms::findFirstById($room_id);
         if (!$room) {
             return;
         }
 
         $silent_users = $room->findSilentUsers();
-
         if (count($silent_users) > 0) {
             foreach ($silent_users as $silent_user) {
-                $silent_user->activeRoom($room);
+                $silent_user->autoActiveRoom($room);
             }
         }
 

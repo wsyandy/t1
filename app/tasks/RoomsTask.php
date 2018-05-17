@@ -232,7 +232,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            Rooms::activeRoom($room->id);
+            Rooms::autoActiveRoom($room->id);
         }
     }
 
