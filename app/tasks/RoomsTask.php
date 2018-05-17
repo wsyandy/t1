@@ -893,22 +893,32 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function disappearBoomGiftRocketAction()
     {
-        $room = new Rooms();
         $total_income = BoomHistories::getBoomTotalValue();
         $boom_list_key = 'boom_gifts_list';
 
         $cache = Rooms::getHotWriteCache();
-        $rocket_set = $cache->zrange($boom_list_key, 0, -1);
+        $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
+        $total = count($total_room_ids);
+        $per_page = 100;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
 
-        foreach ($rocket_set as $room_id) {
+        for ($page = 1; $page <= $total_page; $page++) {
 
-            $room->id = $room_id;
-            $cur_income_key = Rooms::generateBoomCurIncomeKey($room_id);
-            $cur_income = $cache->get($cur_income_key);
+            $room_ids = array_slice($total_room_ids, $offset, $per_page);
+            $offset += $per_page;
 
-            $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
-            $cache->zrem($boom_list_key, $room_id);
-            $cache->del($cur_income_key);
+            $rooms = Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                $cur_income_key = Rooms::generateBoomCurIncomeKey($room->id);
+                $cur_income = $cache->get($cur_income_key);
+                if (!$cur_income) {
+                    $cache->zrem($boom_list_key, $room->id);
+                    $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
+                }
+            }
         }
     }
 }

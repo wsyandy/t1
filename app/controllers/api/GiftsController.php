@@ -111,7 +111,7 @@ class GiftsController extends BaseController
 
                 $error_reason = "购买成功";
 
-                if ($this->currentUser()->canReceiveBoomGiftMessage()) {
+                if ($this->currentUser()->canReceiveBoomGiftMessage() && $gift->isDiamondPayType()) {
                     $res['gift_effect_image_url'] = $gift->getEffectImageUrl($this->getRoot(), $gift_num, $gift_amount);
                 }
 

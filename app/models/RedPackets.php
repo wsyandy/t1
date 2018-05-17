@@ -248,19 +248,18 @@ class RedPackets extends BaseModel
         return $screen_red_packets;
     }
 
-    static function grabRedPacket($current_room_id, $user, $red_packet_id)
+    static function grabRedPacket($user, $room, $red_packet_id)
     {
-        $get_diamond = \RedPackets::getRedPacketDiamond($current_room_id, $user->id, $red_packet_id);
+        $get_diamond = \RedPackets::getRedPacketDiamond($user->current_room_id, $user->id, $red_packet_id);
 
         if ($get_diamond) {
             $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
-            $room = \Rooms::findFirstById($current_room_id);
             $content_type = 'red_packet';
             $system_user = \Users::getSysTemUser();
             $room->pushTopTopicMessage($system_user, $content, $content_type);
 
             //红包socket
-            $url = self::generateRedPacketUrl($current_room_id);
+            $url = self::generateRedPacketUrl($user->current_room_id);
             $underway_red_packet = $room->getNotDrawRedPacket($user);
             $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
