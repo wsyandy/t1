@@ -18,8 +18,8 @@ class GamesController extends BaseController
             $page = $this->params('page');
             $per_page = $this->params('per_page', 8);
 
-            $conds = ['conditions' => 'status = ' . STATUS_ON];
-            $conds['order'] = 'rank desc,id desc';
+            $conds = ['conditions' => 'status=:status:', 'bind' => ['status' => STATUS_ON]];
+            $conds['order'] = 'rank desc';
 
             $games = \Games::findPagination($conds, $page, $per_page);
 
