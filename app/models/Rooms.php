@@ -2232,6 +2232,28 @@ class Rooms extends BaseModel
         unlock($lock);
     }
 
+    function getCurrentBoomGiftValue()
+    {
+        $cache = \Rooms::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey($this->id);
+        $cur_income = $cache->get($cur_income_key);
+
+        return $cur_income;
+    }
+
+    function hasBoomGift()
+    {
+        $cache = \Rooms::getHotWriteCache();
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+        $cur_income = $this->getCurrentBoomGiftValue();
+
+        if ($cur_income >= \BoomHistories::getBoomStartLine() || $cache->exists($room_boon_gift_sign_key)) {
+            return true;
+        }
+
+        return false;
+    }
+
     //按天统计房间进入人数
     static function statDayEnterRoomUser($room_id, $user_id)
     {
