@@ -109,11 +109,13 @@
         });
     })
     vm.RedPacketsList();
+
     distanceStartAt();
 
     function distanceStartAt() {
-        var t = 3;
+        var t = 180;
         console.log(t);
+
         var m = parseInt(t / 60);
         var s = t % 60;
         if (t > 0) {
