@@ -113,8 +113,8 @@
     distanceStartAt();
 
     function distanceStartAt() {
-        var t = 180;
-        console.log(t);
+        var t = 5;
+        //console.log(t);
 
         var m = parseInt(t / 60);
         var s = t % 60;
