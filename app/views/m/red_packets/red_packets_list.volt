@@ -81,9 +81,8 @@
                         if (val.red_packet_type == 'stay_at_room') {
                             val.is_stay = true;
                             val.is_grab = false;
+                            val.is_grabbed = false;
                             val.is_stay_show = false;
-                            //val.text = "三分后抢";
-                            //val.class = "red_list_time";
                         }
                         vm.red_packets_list.push(val);
                     });
