@@ -541,7 +541,7 @@ class Rooms extends BaseModel
 //        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
 //        info($room_ids);
 //
-        $start = time() - 1800;
+        $start = time() - 3600;
         $end = time();
         $room_ids = [];
 
