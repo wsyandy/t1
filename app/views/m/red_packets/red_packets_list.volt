@@ -20,10 +20,12 @@
                      @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
                 </div>
 
-                {#<div class="num red_list_style daojishi" v-bind:class="v.class" v-if="v.is_attention" onload="distanceStartAt()"></div>#}
-                {#<div class="num red_list_style red_list_qiang daojishiJS" style="display:none" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢#}
-                {#</div>#}
-            </div>
+                <div class="num red_list_style red_list_time daojishi" v-if="v.is_stay"
+                     @click="toGrabRedPacket(v.id,v.red_packet_type)"></div>
+                <div class="num red_list_style red_list_qiang daojishiJS" style="display: none;"
+                     v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢
+                    {#</div>#}
+                </div>
         </li>
     </ul>
 </div>
@@ -37,8 +39,7 @@
             total_page: 1,
             red_packets_list: [],
             room_id: "{{ room_id }}",
-            user_get_red_packet_ids: [],
-            distance_start_at:"",
+            user_get_red_packet_ids: []
         },
         methods: {
             RedPacketsList: function () {
@@ -58,7 +59,6 @@
                     console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
-                    vm.distance_start_at = resp.distance_start_at;
                     $.each(resp.red_packets, function (index, val) {
                         var index = $.inArray(val.id, vm.user_get_red_packet_ids);
                         if (index != -1) {
@@ -78,9 +78,10 @@
                             val.class = "red_list_fangzhu";
                         }
                         if (val.red_packet_type == 'stay_at_room') {
-
-                            val.text = "三分后抢";
-                            val.class = "red_list_time";
+                            val.is_stay = true;
+                            val.is_grab = false;
+                            val.is_grabbed = false;
+                            val.is_stay_show = false;
                         }
                         vm.red_packets_list.push(val);
                     });
@@ -109,38 +110,40 @@
     })
     vm.RedPacketsList();
 
-//    setTimeout(function(){
-//        distanceStartAt();
-//    },500);
-//
-//  function distanceStartAt(){
-//      var t = vm.distance_start_at;
-//      var m = parseInt(t / 60);
-//      var s = t % 60;
-//      if (t > 0) {
-//          //$("#end_time").hide();
-//          setInterval(function () {
-//              if (s < 10) {
-//                  //如果秒数少于10在前面加上0
-//                  $('.daojishi').html(m + ':0' + s);
-//              } else {
-//                  $('.daojishi').html(m + ':' + s);
-//              }
-//              s--;
-//              if (s < 0) {
-//                  //如果秒数少于0就变成59秒
-//                  s = 59;
-//                  m--;
-//              }
-//              if (m <= 0 && s <= 0) {
-//                $(".daojishi").hide();
-//                $(".daojishiJS").show();
-//              }
-//          }, 1000);
-//      }
-//
-//  }
+    distanceStartAt();
 
+    function distanceStartAt() {
+        var t = 180;
+        console.log(t);
+
+        var m = parseInt(t / 60);
+        var s = t % 60;
+        if (t > 0) {
+            //$("#end_time").hide();
+            setInterval(function () {
+                if (s < 10) {
+                    //如果秒数少于10在前面加上0
+                    $('.daojishi').html(m + ':0' + s);
+                } else {
+                    $('.daojishi').html(m + ':' + s);
+                }
+                s--;
+                if (s < 0) {
+                    //如果秒数少于0就变成59秒
+                    s = 59;
+                    m--;
+                }
+                if (m <= 0 && s <= 0) {
+
+                    $(".daojishiJS").show();
+                    $(".daojishi").hide();
+
+
+                }
+            }, 1000);
+        }
+
+    }
 
 
 </script>

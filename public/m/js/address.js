@@ -274,15 +274,15 @@ $(function(){
             $.each($listUl, function(index, ele) {
                 var $active = $(ele).find('.active');
                 str =  $active.text();
-              /*
-               var splitStr = index === 0 ? '' : self.options.splitStr;
-                if ($active.length > 0) {
-                    index = index + 1;
-                    self.container.data('value' + index, $active.data('value'));
-                    self.container.data('id' + index, $active.data('id'));
-                    // str += splitStr + $active.text();
-                }
-                */
+                /*
+                 var splitStr = index === 0 ? '' : self.options.splitStr;
+                  if ($active.length > 0) {
+                      index = index + 1;
+                      self.container.data('value' + index, $active.data('value'));
+                      self.container.data('id' + index, $active.data('id'));
+                      // str += splitStr + $active.text();
+                  }
+                  */
             });
             self.container.val(str);
             self.hidePicker(self.options.confirm);
@@ -292,7 +292,7 @@ $(function(){
             var self=this;
             self.hidePicker(self.options.cancel);
         },
-         /**
+        /**
          *  事件
          *  取消，确定，点击遮罩，列表滑动事件
          */
@@ -620,8 +620,8 @@ $(function(){
         return result;
     }
 
-     $.fn.mPicker = function(options) {
-       return this.each(function () {
+    $.fn.mPicker = function(options) {
+        return this.each(function () {
             new MPicker($(this), options);
         });
     };

@@ -13,11 +13,6 @@ class Backpacks extends BaseModel
 
     static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boom_SVGA = 'http://test.momoyuedu.cn/m/images/boom_animation_1.svga';
-
-    static $total_value = 50000; // 爆礼物总值
-
-    static $start_value = 2500;
 
     /**
      * 背包礼物列表
@@ -51,7 +46,14 @@ class Backpacks extends BaseModel
     }
 
 
-    public function doCreate($user_id, $target_id, $number, $type)
+    /**
+     * @param $user_id
+     * @param $target_id
+     * @param $number
+     * @param $type
+     * @return array
+     */
+    static public function doCreate($user_id, $target_id, $number, $type)
     {
         $prize = array(
             'target_id' => $target_id,
@@ -62,14 +64,14 @@ class Backpacks extends BaseModel
         $boom_histories = new BoomHistories();
         $boom_histories->createBoomHistories($user_id, $target_id, $type, $number);
 
-
         if ($type == BACKPACK_GIFT_TYPE) {
 
             if (empty($target_id))
                 return [ERROR_CODE_FAIL, '', null];
 
+
             if (!self::createTarget($user_id, $target_id, $number, BACKPACK_GIFT_TYPE))
-                return [ERROR_CODE_FAIL, '', null];
+                return [ERROR_CODE_FAIL, '加入背包失败', null];
 
         } elseif ($type == BACKPACK_DIAMOND_TYPE) {
 
@@ -84,7 +86,6 @@ class Backpacks extends BaseModel
         }
 
         return [ERROR_CODE_SUCCESS, '', $prize];
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $prize]);
     }
 
 
@@ -229,25 +230,6 @@ class Backpacks extends BaseModel
         return self::$GOLD_IMG;
     }
 
-    /**
-     * @param $room_id
-     * @return false|int
-     */
-    static function getExpireAt($room_id)
-    {
-        $cache = self::getHotWriteCache();
-        $room_sign_key = self::generateBoomRoomSignKey($room_id);
-        $time = $cache->get($room_sign_key);
-
-        debug('boom_test', $room_id, $room_sign_key, $time);
-        if (empty($time)) {
-            return 0;
-        }
-
-        $time = strtotime('+3 minutes', $time);
-        return $time;
-    }
-
 
     /**
      * 记录爆礼物开始时间
@@ -266,7 +248,7 @@ class Backpacks extends BaseModel
      * @param $room_id
      * @return string
      */
-    public function generateBoomUserSignKey($user_id, $room_id)
+    static public function generateBoomUserSignKey($user_id, $room_id)
     {
         return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
