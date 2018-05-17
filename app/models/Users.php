@@ -1115,7 +1115,7 @@ class Users extends BaseModel
         $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
             . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
             . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
-        
+
         $user_db->zrem($cache_key, $this->id);
         info($cache_key, $this->id);
     }
@@ -3012,20 +3012,23 @@ class Users extends BaseModel
         $db = Users::getUserDb();
 
         switch ($list_type) {
-            case 'day': {
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
-                break;
-            }
-            case 'week': {
-                $start = date("Ymd", beginOfWeek());
-                $end = date("Ymd", endOfWeek());
-                $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "user_hi_coin_rank_list_" . $this->id;
-                break;
-            }
+            case 'day':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . date("Ymd");
+                    break;
+                }
+            case 'week':
+                {
+                    $start = date("Ymd", beginOfWeek());
+                    $end = date("Ymd", endOfWeek());
+                    $key = "user_hi_coin_rank_list_" . $this->id . "_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "user_hi_coin_rank_list_" . $this->id;
+                    break;
+                }
             default:
                 return [];
         }
@@ -3152,21 +3155,24 @@ class Users extends BaseModel
     static function generateFieldRankListKey($list_type, $field, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "day_" . $field . "_rank_list_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
-                break;
-            }
-            case 'total': {
-                $key = "total_" . $field . "_rank_list";
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "day_" . $field . "_rank_list_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "week_" . $field . "_rank_list_" . $start . "_" . $end;
+                    break;
+                }
+            case 'total':
+                {
+                    $key = "total_" . $field . "_rank_list";
+                    break;
+                }
             default:
                 return '';
         }
@@ -3469,17 +3475,26 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canSendToUser($user_id, $gift_amount)
+    function canSendToUser($receiver_ids, $gift_amount)
     {
-        //$user = \Users::findFirstById($user_id);
         if (!$this->isWhiteListUser()) {
             if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
                 $send_number = $hot_cache->zscore($key, $this->id);
                 $plan_number = $gift_amount + $send_number;
+
                 if ($plan_number > 100) {
-                    return false;
+
+                    if (count($receiver_ids) > 1) {
+                        return false;
+                    } else {
+                        $user = Users::findFirstById($receiver_ids[0]);
+
+                        if (!$user->isCompanyUser()) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
