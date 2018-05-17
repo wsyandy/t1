@@ -2855,24 +2855,21 @@ class Rooms extends BaseModel
 
     function getRoomMenuConfig($user, $opts = [])
     {
-
         $root_host = fetch($opts, 'root_host');
-        $current_user_role = $user->user_role;
         $menu_config = [];
 
         if ($user->canReceiveBoomGiftMessage()) {
+
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
                 'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
+
+            if ($user->isRoomHost($this)) {
+                $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+            }
         }
 
-        if ($user->canReceiveBoomGiftMessage() && $user->isRoomHost($this)) {
-            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
-        }
-
-        if (true) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
-        }
+        $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+            'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
 
         return $menu_config;
     }
