@@ -1159,10 +1159,6 @@ class Rooms extends BaseModel
             ]
         ];
 
-        if (isDevelopmentEnv() && $this->id == 137039) {
-            $body['room_137039'] = 'test';
-        }
-
         debug($this->id, $body);
 
         $this->push($body, true);
@@ -2184,9 +2180,7 @@ class Rooms extends BaseModel
 
         $expire = endOfDay() - $time;
 
-        if (isDevelopmentEnv()) {
-            $expire = 180;
-        }
+        $expire = 180;
 
         $boom_list_key = 'boom_gifts_list';
         $total_income = BoomHistories::getBoomTotalValue();
@@ -2226,6 +2220,34 @@ class Rooms extends BaseModel
         }
 
         unlock($lock);
+    }
+
+    function getCurrentBoomGiftValue()
+    {
+        $cache = \Rooms::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey($this->id);
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+
+        if ($cache->exists($room_boon_gift_sign_key)) {
+            return \BoomHistories::getBoomTotalValue();
+        }
+
+        $cur_income = $cache->get($cur_income_key);
+
+        return $cur_income;
+    }
+
+    function hasBoomGift()
+    {
+        $cache = \Rooms::getHotWriteCache();
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+        $cur_income = $this->getCurrentBoomGiftValue();
+
+        if ($cur_income >= \BoomHistories::getBoomStartLine() || $cache->exists($room_boon_gift_sign_key)) {
+            return true;
+        }
+
+        return false;
     }
 
     //按天统计房间进入人数

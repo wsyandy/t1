@@ -200,7 +200,7 @@
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
-                    $.each(resp.boom, function (index, item) {
+                    $.each(resp.boom_histories, function (index, item) {
                         vm.history_list.push(item);
                     })
                 })

@@ -3478,6 +3478,7 @@ class Users extends BaseModel
     function canSendToUser($receiver_ids, $gift_amount)
     {
         if (!$this->isWhiteListUser()) {
+
             if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
@@ -3486,18 +3487,20 @@ class Users extends BaseModel
 
                 if ($plan_number > 100) {
 
-                    if (count($receiver_ids) > 1) {
-                        return false;
-                    } else {
-                        $user = Users::findFirstById($receiver_ids[0]);
+                    //内部账号使用
 
-                        if (!$user->isCompanyUser()) {
+                    $receivers = Users::findByIds($receiver_ids);
+
+                    foreach ($receivers as $receiver) {
+
+                        if (!$receiver->isCompanyUser()) {
                             return false;
                         }
                     }
                 }
             }
         }
+
         return true;
     }
 

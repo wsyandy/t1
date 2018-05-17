@@ -95,9 +95,9 @@ class BackpacksController extends BaseController
      */
     public function historyAction()
     {
-        $list = \BoomHistories::historiesTopList();
-        $list = $list->toJson('boom', 'toSimpleJson');
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $list);
+        $boom_histories = \BoomHistories::historiesTopList();
+        $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $boom_histories);
     }
 
 
