@@ -27,6 +27,10 @@ class Backpacks extends BaseModel
      */
     static public function findListByUserId($user, $opt)
     {
+
+        $page = 1;
+        $per_page = 100;
+
         $conditions = [
             'conditions' => 'user_id = :user_id: and number > :number:',
             'bind' => [
@@ -36,13 +40,11 @@ class Backpacks extends BaseModel
             'order' => 'id desc'
         ];
 
-        if (!empty($opt)) {
+        $type = fetch($opt, 'type');
+        if ($type) {
             $conditions['conditions'] .= ' and type = :type:';
-            $conditions['bind']['type'] = $opt['type'];
+            $conditions['bind']['type'] = $type;
         }
-
-        $page = 1;
-        $per_page = 100;
 
         $list = \Backpacks::findPagination($conditions, $page, $per_page);
         return $list;
@@ -254,7 +256,7 @@ class Backpacks extends BaseModel
      */
     static function generateBoomRoomSignKey($room_id)
     {
-        return 'boom_target_room_'.$room_id;
+        return 'boom_target_room_' . $room_id;
     }
 
 
