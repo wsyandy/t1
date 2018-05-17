@@ -13,6 +13,10 @@ class RedPackets extends BaseModel
      * @type Users
      */
     private $_user;
+    /**
+     * @type Rooms
+     */
+    private $_room;
 
     /**
      * @type integer
@@ -42,7 +46,7 @@ class RedPackets extends BaseModel
     /**
      * @type integer
      */
-    private $_current_room_id;
+    private $_room_id;
 
     /**
      * @type string
@@ -86,9 +90,10 @@ class RedPackets extends BaseModel
     {
         $cache = \Users::getUserDb();
         //当前房间对应红包id集合
-        $send_red_packet_list_key = self::generateRedPacketListKey($this->current_room_id);
+        $send_red_packet_list_key = self::generateRedPacketListKey($this->room_id);
         //当前正在进行中的红包id集合
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->current_room_id);
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
+        info('添加', $underway_red_packet_list_key);
 
         //当前用户发过的红包id集合
         $user_send_red_packets_key = self::generateUserSendRedPacketsKey($this->user_id);
@@ -101,11 +106,13 @@ class RedPackets extends BaseModel
 
     function afterUpdate()
     {
-        if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
-            $cache = \Users::getUserDb();
-            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->current_room_id);
-            $cache->zrem($underway_red_packet_list_key, time(), $this->id);
-        }
+//        info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
+//        if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
+//            info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
+//            $cache = \Users::getUserDb();
+//            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
+//            $cache->zrem($underway_red_packet_list_key, $this->id);
+//        }
     }
 
     function toSimpleJson()
@@ -135,7 +142,7 @@ class RedPackets extends BaseModel
             'num' => $this->num,
             'balance_diamond' => $this->balance_diamond,
             'balance_num' => $this->balance_num,
-            'current_room_id' => $this->current_room_id
+            'current_room_id' => $this->room_id
         ];
     }
 
@@ -173,12 +180,15 @@ class RedPackets extends BaseModel
     static function createReadPacket($user, $room, $opts)
     {
         $send_red_packet_history = new \RedPackets();
-        foreach (['user_id', 'diamond', 'num', 'status', 'current_room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_num', 'balance_diamond'] as $column) {
+        foreach (['user_id', 'diamond', 'num', 'status', 'room_id', 'red_packet_type', 'sex', 'nearby_distance', 'balance_num', 'balance_diamond'] as $column) {
             $send_red_packet_history->$column = fetch($opts, $column);
         }
         if ($send_red_packet_history->create()) {
-
-            self::sendSocketForRedpacket($send_red_packet_history, $user, $room);
+            $opts = [
+                'type' => 'create',
+                'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧'
+            ];
+            self::sendSocketForRedpacket($user, $room, $opts);
             $time = 24 * 60 * 60;
             if (isDevelopmentEnv()) {
                 $time = 5 * 60;
@@ -190,7 +200,6 @@ class RedPackets extends BaseModel
                 $user->has_red_packet = STATUS_ON;
                 $user->update();
 
-                $room = $user->current_room;
                 $room->has_red_packet = STATUS_ON;
                 $room->update();
             }
@@ -210,10 +219,16 @@ class RedPackets extends BaseModel
         }
 
         if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
+            info('回收红包', $red_packet->balance_diamond);
             $red_packet->balance_diamond = 0;
             $red_packet->balance_num = 0;
             $red_packet->status = STATUS_OFF;
             $red_packet->update();
+
+            $cache = \Users::getUserDb();
+            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($red_packet->room_id);
+            debug('将要删除的key', $underway_red_packet_list_key, $red_packet->id);
+            $cache->zrem($underway_red_packet_list_key, $red_packet->id);
         }
     }
 
@@ -251,22 +266,18 @@ class RedPackets extends BaseModel
     static function grabRedPacket($user, $room, $red_packet_id)
     {
         $get_diamond = \RedPackets::getRedPacketDiamond($user->current_room_id, $user->id, $red_packet_id);
-
+        $red_packet = self::findFirstById($red_packet_id);
         if ($get_diamond) {
-            $content = '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石';
-            $content_type = 'red_packet';
-            $system_user = \Users::getSysTemUser();
-            $room->pushTopTopicMessage($system_user, $content, $content_type);
-
-            //红包socket
-            $url = self::generateRedPacketUrl($user->current_room_id);
-            $underway_red_packet = $room->getNotDrawRedPacket($user);
-            $room->pushRedPacketMessage(count($underway_red_packet), $url);
+            $opts = [
+                'type' => 'update',
+                'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
+            ];
+            self::sendSocketForRedpacket($user, $room, $opts);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
 
-        $red_packet = self::findFirstById($red_packet_id);
+
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
 
@@ -323,21 +334,22 @@ class RedPackets extends BaseModel
         return $user_get_red_packet_ids;
     }
 
-    static function sendSocketForRedpacket($send_red_packet_history, $user, $room)
+    static function sendSocketForRedpacket($user, $room, $opts)
     {
+        $type = fetch($opts, 'type');
+        $content = fetch($opts, 'content');
         //红包socket
-        $url = self::generateRedPacketUrl($send_red_packet_history->current_room_id);
+        $url = self::generateRedPacketUrl($room->id);
         $underway_red_packet = $room->getNotDrawRedPacket($user);
         $room->pushRedPacketMessage(count($underway_red_packet), $url);
 
         //红包公屏socket
-        $content = $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧';
         $content_type = 'red_packet';
         $system_user = \Users::getSysTemUser();
         $room->pushTopTopicMessage($system_user, $content, $content_type);
 
         //首页下沉通知
-        if (isDevelopmentEnv()) {
+        if (isDevelopmentEnv() && $type == 'create') {
             //这里还没有做是否符合附近人的条件
             $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
                 'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
