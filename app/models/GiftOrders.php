@@ -257,6 +257,10 @@ class GiftOrders extends BaseModel
                     \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id, $gift_order->pay_type);
                 }
             }
+
+            info("sender_id:", $sender->id, "receiver_id:", $receiver->id, "sender_room_id:", $sender_current_room_id,
+                "receiver_room_id:", $receiver_current_room_id, "gift_id:", $gift_id);
+
             // 在房间里送里面
             if ($sender_current_room_id && $receiver_current_room_id && $sender_current_room_id == $receiver_current_room_id) {
                 $sender_current_room = Rooms::findFirstById($sender_current_room_id);
