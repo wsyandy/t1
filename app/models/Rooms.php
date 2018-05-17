@@ -229,11 +229,7 @@ class Rooms extends BaseModel
 
     function mergeJson()
     {
-        $room_seats = RoomSeats::find(['conditions' => 'room_id=:room_id:', 'bind' => ['room_id' => $this->id], 'order' => 'rank asc']);
-        $room_seat_datas = [];
-        foreach ($room_seats as $room_seat) {
-            $room_seat_datas[] = $room_seat->to_json;
-        }
+        $room_seat_datas = $this->roomSeats();
 
         $user = $this->user;
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
@@ -278,12 +274,9 @@ class Rooms extends BaseModel
 
     function roomSeats()
     {
-        $room_seats = RoomSeats::find([
-            'conditions' => 'room_id=:room_id:',
-            'bind' => ['room_id' => $this->id],
-            'order' => 'rank asc'
-        ]);
-
+        $room_seats = RoomSeats::findPagination(['conditions' => 'room_id=:room_id:',
+            'bind' => ['room_id' => $this->id], 'order' => 'rank asc'], 1, 8, 8);
+        
         $data = $room_seats->toJson('room_seats', 'toJson');
         return $data['room_seats'];
     }
@@ -300,11 +293,8 @@ class Rooms extends BaseModel
         if (isPresent($room_tag_ids)) {
 
             $room_tags = RoomTags::findByIds($room_tag_ids);
-
             if (count($room_tags)) {
                 $room->room_tag_ids = $room_tag_ids;
-
-
                 $room_tag_names = [];
                 foreach ($room_tags as $room_tag) {
                     $room_tag_names[] = $room_tag->name;
@@ -312,7 +302,6 @@ class Rooms extends BaseModel
 
                 $room->room_tag_names = implode(',', $room_tag_names);
             }
-
         }
 
 
@@ -337,9 +326,10 @@ class Rooms extends BaseModel
             $room_seat->room_id = $room->id;
             $room_seat->status = STATUS_ON;
             $room_seat->rank = $i;
-            $room_seat->country_id = $user->country_id;
+            $room_seat->microphone = true;
             $room_seat->save();
         }
+
         return $room;
     }
 
