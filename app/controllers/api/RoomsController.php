@@ -289,25 +289,27 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        // 房间红包
-        $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
-        if ($underway_red_packet) {
-            $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
-        }
+        if (isInternalIp($this->remoteIp())) {
+            // 房间红包
+            $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
+            if ($underway_red_packet) {
+                $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
+            }
 
-        if ($room->hasBoomGift()) {
+            if ($room->hasBoomGift()) {
 
-            $res['boom_gift'] = [
-                'expire_at' => \Rooms::getExpireAt($room_id),
-                'client_url' => 'url://m/backpacks',
-                'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
-                'total_value' => \BoomHistories::getBoomTotalValue(),
-                'current_value' => $room->getCurrentBoomGiftValue(),
-                'show_rank' => 1000000,
-                'render_type' => 'svga',
-                'status' => STATUS_ON,
-                'image_color' => 'blue'
-            ];
+                $res['boom_gift'] = [
+                    'expire_at' => (int)\Rooms::getExpireAt($room_id),
+                    'client_url' => 'url://m/backpacks',
+                    'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
+                    'total_value' => \BoomHistories::getBoomTotalValue(),
+                    'current_value' => $room->getCurrentBoomGiftValue(),
+                    'show_rank' => 1000000,
+                    'render_type' => 'svga',
+                    'status' => STATUS_ON,
+                    'image_color' => 'blue'
+                ];
+            }
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);

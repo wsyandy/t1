@@ -2880,8 +2880,12 @@ class Rooms extends BaseModel
 
         if ($user->canReceiveBoomGiftMessage()) {
 
-            $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
+            if (isInternalIp($user->ip)) {
+
+                $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
+                    'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
+
+            }
 
             if ($user->isRoomHost($this)) {
                 $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
