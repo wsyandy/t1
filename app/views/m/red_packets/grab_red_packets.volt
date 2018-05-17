@@ -171,7 +171,7 @@
 
     $(function () {
         var t = {{ distance_start_at }};
-
+console.log(t);
         if(vm.red_packet_type != "stay_at_room"){
              t = t-180;
         }

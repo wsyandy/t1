@@ -40,7 +40,7 @@
                     <div class="give_box">
                         <h3>位置／范围</h3>
                         <div class="give_input">
-                             <div class="get_font get_address">5km</div>
+                             <div class="get_font select-value">5km</div>
                             {#<input type="text" class="get_address" v-model="nearby_distance" value=""/>#}
                             <i class="give_right"></i>
                         </div>
@@ -215,32 +215,36 @@
 
         // 距离选择
         // 弹出层数据
-        var dataJson = [
-            {
-                "name": '附近',
-                "value": '1',
-                "child": [
-                    {"name": '1km', "value": '1',},
-                    {"name": '3km', "value": '3',},
-                    {"name": '5km', "value": '5',},
-                    {"name": '10km', "value": '10',},
-                    {"name": '20km', "value": '20',},
-                    {"name": '50km', "value": '50',}
-                ]
-            }
-        ];
-        /**
-         * 联动的picker
-         * 两级
-         */
-        $('.get_address').mPicker({
-            level: 2,
-            dataJson: dataJson,
-            Linkage: true,
-            rows: 6,
-            idDefault: true,
-            splitStr: '-',
-        })
+
+            // 弹出层数据
+            var dataJson=[
+                {  "name":'附近',
+                    "value":'1',
+                    "child":[
+                        { "name":'1km', "value":'1',  },
+                        { "name":'3km', "value":'3',  },
+                        { "name":'5km', "value":'5',  },
+                        { "name":'10km', "value":'10',  },
+                        { "name":'20km', "value":'20',  },
+                        { "name":'50km', "value":'50',  }
+                    ]
+                }
+            ];
+            /**
+             * 联动的picker
+             * 两级
+             */
+            $('.select-value').mPicker({
+                level:2,
+                dataJson:dataJson,
+                Linkage:true,
+                rows:6,
+                idDefault:true,
+                splitStr:'-',
+            })
+
+
+
 
 
         // 性别弹出层
