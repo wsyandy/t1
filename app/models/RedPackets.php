@@ -275,6 +275,12 @@ class RedPackets extends BaseModel
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
 
+
+        //红包抢完公屏socket
+        $content = $red_packet->user->nickname.'发的红包已抢完';
+        $content_type = 'red_packet';
+        $system_user = \Users::getSysTemUser();
+        $room->pushTopTopicMessage($system_user, $content, $content_type);
         return [ERROR_CODE_SUCCESS, null];
     }
 
