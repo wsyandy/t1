@@ -2860,12 +2860,12 @@ class Rooms extends BaseModel
         $current_user_role = $user->user_role;
         $menu_config = [];
 
-        if (isDevelopmentEnv() || isInternalIp($user->ip)) {
+        if ($user->canReceiveBoomGiftMessage()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
                 'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
-        if ((isDevelopmentEnv() || isInternalIp($user->ip)) && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
+        if ($user->canReceiveBoomGiftMessage() && $user->isRoomHost($this)) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
         }
 
