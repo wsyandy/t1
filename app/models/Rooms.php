@@ -523,8 +523,8 @@ class Rooms extends BaseModel
 
     static function getActiveRoomIdsByTime()
     {
+        $start = time() - 3600;
 
-        $start = time() - 1800;
         $end = time();
         $room_ids = [];
 
