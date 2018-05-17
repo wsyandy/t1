@@ -33,7 +33,9 @@
 
         {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
             or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
-            isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') or isAllowed('users','blocked_nearby_user_list') %}
+            isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') or isAllowed('users','blocked_nearby_user_list')
+            or isAllowed('users', 'wish_luck_histories')
+        %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -96,7 +98,7 @@
                     {% if isAllowed('draw_histories','index') %}
                         <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
                     {% endif %}
-                    {% if isAllowed('draw_histories','index') %}
+                    {% if isAllowed('users','wish_luck_histories') %}
                         <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
                     {% endif %}
 
