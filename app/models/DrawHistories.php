@@ -268,7 +268,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(700, 926) / 1000;
+        $pool_rate = mt_rand(700, 932) / 1000;
 
         $hour = intval(date("H"));
 
