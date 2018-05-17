@@ -37,7 +37,7 @@ class BackpacksController extends BaseController
         $room_id = $user->current_room_id;
 
         // 前三排行
-        $boom_histories = \BoomHistories::historiesTopList(3);
+        $boom_histories = \BoomHistories::historiesTopList($user->id,3);
         $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
 
         // 没爆礼物不抽奖
