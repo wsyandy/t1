@@ -8,7 +8,7 @@
 {{ block_end() }}
 
 
-{% if start!=true %}
+{% if !true %}
 
     <!-- 活动未开始 -->
     <img class="banner" src="/m/images/banner_prize.png" alt="">
@@ -36,6 +36,7 @@
     </div>
 
 {% else %}
+
 <img class="banner" src="/m/images/banner_prize.png" alt="">
 <div id="app">
 <!--滚动公告-->
@@ -181,12 +182,12 @@
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
-                    if (resp.error_code == 0) {
+                    if (resp.error_code != undefined) {
                         $.each(resp.target, function (index, item) {
                             vm.target_list.push(item);
                             vm.cache_list[index] = {'id':item.id, 'number':item.number};
                         })
-                        $('.cover').addClass('is-visible');
+                        if (resp.error_code == 0) $('.cover').addClass('is-visible');
                     }
                     return ;
 

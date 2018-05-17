@@ -341,6 +341,7 @@
            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
+            medal_image_url 勋章图片地址
         },
         ...
     ]
@@ -1042,13 +1043,15 @@
              "url": string  跳转地址,
              "icon": string 图片地址
          },
-     blasting_gift:{
-         expire_at int 结束时间
-         url string 跳转地址
-         svga_image_url string svga图片
-         total_value int 总值
-         current_value int 当前值
-         diff_picture string 爆礼物图片的值 green orange blue
+     boom_gift:{
+        expire_at int 结束时间
+        client_url string 跳转地址
+        svga_image_url string svga图片
+        render_type string svga
+        show_rank int 1000000 等级排序
+        total_value int 总值
+        current_value int 当前值
+        image_color string 爆礼物图片的值 green orange blue
      }
 }
 ```

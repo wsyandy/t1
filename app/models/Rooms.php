@@ -219,7 +219,7 @@ class Rooms extends BaseModel
             'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
             'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
-            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at
+            'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at, 'has_red_packet' => $this->has_red_packet
         ];
 
         $data['room_tag_names'] = $this->getRoomTagNamesText();
@@ -488,8 +488,6 @@ class Rooms extends BaseModel
     {
         $this->remUser($user);
 
-        $current_room_seat_id = $user->current_room_seat_id;
-
         // 房间相同才清除用户信息
         if ($this->id == $user->current_room_id) {
 
@@ -534,9 +532,10 @@ class Rooms extends BaseModel
         }
     }
 
-    static function getActiveRoomsByTime($minutes = 15)
+    static function getActiveRoomIdsByTime()
     {
-//        $hot_cache = Users::getHotWriteCache();
+
+        //        $hot_cache = Users::getHotWriteCache();
 //        $key = 'room_active_last_at_list';
 //        $time = time();
 //        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
@@ -571,10 +570,7 @@ class Rooms extends BaseModel
         }
 
         $room_ids = array_unique($room_ids);
-
-        $rooms = Rooms::findByIds($room_ids);
-
-        return $rooms;
+        return $room_ids;
     }
 
     function getLastAtByCache()
@@ -1156,6 +1152,32 @@ class Rooms extends BaseModel
         $this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
+    function pushBoomIncomeMessage($total_income, $cur_income, $status = STATUS_ON)
+    {
+        $body = [
+            'action' => 'boom_gift',
+            'boom_gift' => [
+                'expire_at' => Rooms::getExpireAt($this->id),
+                'client_url' => 'url://m/backpacks',
+                'svga_image_url' => BoomHistories::getSvgaImageUrl(),
+                'total_value' => (int)$total_income,
+                'show_rank' => 1000000,
+                'current_value' => (int)$cur_income,
+                'render_type' => 'svga',
+                'status' => $status,
+                'image_color' => 'blue'
+            ]
+        ];
+
+        if (isDevelopmentEnv() && $this->id == 137039) {
+            $body['room_137039'] = 'test';
+        }
+
+        debug($this->id, $body);
+
+        $this->push($body, true);
+    }
+
     function pushEnterRoomMessage($user)
     {
 
@@ -1193,7 +1215,7 @@ class Rooms extends BaseModel
         }
     }
 
-    function pushTopTopicMessage($user, $content = "")
+    function pushTopTopicMessage($user, $content = "", $content_type = '')
     {
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
@@ -1202,10 +1224,15 @@ class Rooms extends BaseModel
 
         $body = ['action' => 'send_topic_msg', 'user_id' => $user->id, 'nickname' => $user->nickname, 'sex' => $user->sex,
             'avatar_url' => $user->avatar_url, 'avatar_small_url' => $user->avatar_small_url, 'content' => $content,
-            'channel_name' => $this->channel_name
+            'channel_name' => $this->channel_name, 'content_type' => $content_type
         ];
 
-        $this->push($body);
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
     }
 
     function pushUpMessage($user, $current_room_seat)
@@ -1250,8 +1277,9 @@ class Rooms extends BaseModel
 
     function pushRedPacketMessage($num, $url)
     {
-        $body = ['action' => 'red_packet', 'num' => $num, 'url' => $url];
-        $this->push($body);
+        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
+        info('推送红包信息', $body);
+        $this->push($body, true);
     }
 
     function pushPkMessage($pk_history_datas)
@@ -1261,7 +1289,7 @@ class Rooms extends BaseModel
             'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
         ]
         ];
-        $this->push($body);
+        $this->push($body, true);
     }
 
 
@@ -1282,7 +1310,7 @@ class Rooms extends BaseModel
         foreach ($users as $user) {
 
             //推送校验新版本
-            if ($check_user_version && !$user->canShowGoldGift()) {
+            if ($check_user_version && !$user->canReceiveBoomGiftMessage()) {
                 info("old_version_user", $user->sid);
                 continue;
             }
@@ -2110,29 +2138,104 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            self::statBoomIncome($income, $room->id);
+            if (isDevelopmentEnv()) {
+                $room->statBoomIncome($income, $time);
+            }
 
             debug($minutes_stat_key);
         }
     }
 
+    /**
+     * @param $room_id
+     * @return false|int
+     */
+    static function getExpireAt($room_id)
+    {
+        $cache = self::getHotWriteCache();
+        $room_sign_key = self::generateRoomBoomGiftSignKey($room_id);
+        $time = $cache->get($room_sign_key);
+
+        debug('boom_test', $room_id, $room_sign_key, $time);
+
+        if (empty($time)) {
+            return 0;
+        }
+
+        $time = strtotime('+3 minutes', $time);
+        return $time;
+    }
+
+
+    /**
+     * 记录爆礼物开始时间
+     * @param $room_id
+     * @return string
+     */
+    static function generateRoomBoomGiftSignKey($room_id)
+    {
+        return 'room_boom_gift' . $room_id;
+    }
 
     // 爆礼物流水值记录
-    static function statBoomIncome($income, $room_id)
+    public function statBoomIncome($income, $time)
     {
-        // 爆礼物流水值
         $cache = self::getHotWriteCache();
-        $cache_name = self::getBoomValueCacheName($room_id);
-        $cache_room_name = Backpacks::getBoomRoomCacheName($room_id);
+        $room_id = $this->id;
 
-        $time = 180;
+        // 单位周期 房间当前流水值
+        $cur_income_key = self::generateBoomCurIncomeKey($room_id);
+        $cur_income = $cache->get($cur_income_key);
 
-        $value = $cache->get($cache_name);
-        if ($value > 0) {
-            $cache->exists($cache_room_name) && $cache->setex($cache_name, $time, 0);
-        } else
-            $cache->setex($cache_name, $time, ($value + $income));
+        $lock = tryLock($cur_income_key);
 
+        // 房间爆礼物结束倒计时
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+
+        $expire = endOfDay() - $time;
+
+        if (isDevelopmentEnv()) {
+            $expire = 180;
+        }
+
+        $boom_list_key = 'boom_gifts_list';
+        $total_income = BoomHistories::getBoomTotalValue();
+
+        // 判断房间是否在进行爆礼物活动
+        if ($cache->exists($room_boon_gift_sign_key)) {
+
+            ($cur_income != 0) && $cache->del($cur_income_key);
+
+        } else {
+
+            // 单位周期 截止目前房间总流水
+            $cur_total_income = $cur_income + $income;
+
+            if ($cur_total_income >= $total_income) {
+                // 爆礼物
+                $cache->setex($room_boon_gift_sign_key, 180, $time);
+                $cache->del($cur_income_key);
+                $cache->zrem($boom_list_key, $room_id);
+
+                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+
+                unlock($lock);
+
+                return;
+            }
+
+            $res = $cache->setex($cur_income_key, $expire, $cur_total_income);
+
+            if ($res && $cur_total_income >= BoomHistories::getBoomStartLine()) {
+
+                if (!$cache->zscore($boom_list_key, $room_id)) {
+                    $cache->zadd($boom_list_key, time(), $room_id);
+                }
+                $this->pushBoomIncomeMessage($total_income, $cur_total_income);
+            }
+        }
+
+        unlock($lock);
     }
 
     //按天统计房间进入人数
@@ -2756,18 +2859,19 @@ class Rooms extends BaseModel
         $root_host = fetch($opts, 'root_host');
         $current_user_role = $user->user_role;
         $menu_config = [];
-        if (true) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
-        }
 
         if (isDevelopmentEnv()) {
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                'url' => 'url://m/red_packet_histories', 'icon' => $root_host . 'images/red_packet.png'];
+                'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
         }
 
         if (isDevelopmentEnv() && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
             $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+        }
+
+        if (true) {
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
         return $menu_config;
@@ -2858,8 +2962,9 @@ class Rooms extends BaseModel
         $user_db->set($key, $ratio);
     }
 
-    static function updateHotRoomList($rooms, $opts = [])
+    static function updateHotRoomList($all_room_ids, $opts = [])
     {
+
         $hot_cache = Rooms::getHotWriteCache();
 
         $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
@@ -2871,28 +2976,43 @@ class Rooms extends BaseModel
         $room_ids = [];
         $shield_room_ids = [];
 
-        foreach ($rooms as $room) {
+        $total_num = count($all_room_ids);
+        $per_page = 100;
+        if (isDevelopmentEnv()) {
+            $per_page = 3;
+        }
 
-            if (!$room->canToHot(2)) {
-                continue;
-            }
+        $loop_num = ceil($total_num / $per_page);
+        $offset = 0;
 
-            $total_score = $room->getTotalScore();
+        for ($i = 0; $i < $loop_num; $i++) {
 
-            if ($total_score < 1) {
-                continue;
-            }
+            $slice_ids = array_slice($all_room_ids, $offset, $per_page);
+            info($total_num, $offset, $per_page, $slice_ids);
+            $offset += $per_page;
+            $rooms = Rooms::findByIds($slice_ids);
 
-            $room_ids[$room->id] = $total_score;
+            foreach ($rooms as $room) {
 
-            if ($room->isShieldRoom()) {
-                $shield_room_ids[] = $room->id;
-            }
+                if (!$room->canToHot(2)) {
+                    continue;
+                }
 
-            if (isDevelopmentEnv()) {
-                $room_score_key = "hot_room_score_list_room_id{$room->id}";
-                $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
-                $hot_cache->expire($room_score_key, 3600 * 3);
+                $total_score = $room->getTotalScore();
+                if ($total_score < 1) {
+                    continue;
+                }
+
+                $room_ids[$room->id] = $total_score;
+                if ($room->isShieldRoom()) {
+                    $shield_room_ids[] = $room->id;
+                }
+
+                if (isDevelopmentEnv()) {
+                    $room_score_key = "hot_room_score_list_room_id{$room->id}";
+                    $hot_cache->zadd($room_score_key, time(), date("Y-m-d Hi") . "得分:" . $total_score);
+                    $hot_cache->expire($room_score_key, 3600 * 3);
+                }
             }
         }
 
@@ -2925,9 +3045,8 @@ class Rooms extends BaseModel
         $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
         $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
         $hot_cache->zclear($total_new_hot_room_list_key);
-        $i = 1;
 
-        echoLine($shield_room_ids, $room_ids);
+        info($shield_room_ids, $room_ids);
 
         foreach ($room_ids as $room_id => $score) {
 
@@ -2938,7 +3057,7 @@ class Rooms extends BaseModel
             $hot_cache->zadd($total_new_hot_room_list_key, $score, $room_id);
         }
 
-
+//        $i = 1;
 //        if (count($shield_room_ids) > 0) {
 //
 //            $i = 1;
@@ -2982,6 +3101,7 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
+    // ios 审核期间队列
     static function generateIosAuthRoomListKey()
     {
         return "ios_auth_room_list";
@@ -2993,8 +3113,32 @@ class Rooms extends BaseModel
         return intval($hot_cache->zscore(Rooms::generateIosAuthRoomListKey(), $this->id)) > 0;
     }
 
-    static public function getBoomValueCacheName($room_id)
+    static public function generateBoomCurIncomeKey($room_id)
     {
         return 'boom_target_value_room_' . $room_id;
     }
+
+    function getTimeForUserInRoom($user_id)
+    {
+        $hot_cache = self::getHotWriteCache();
+        $real_user_key = $this->getRealUserListKey();
+        $time = $hot_cache->zscore($real_user_key, $user_id);
+        return $time;
+    }
+
+    function getNotDrawRedPacket($user)
+    {
+        $cache = \Users::getUserDb();
+        //当前房间所有还在进行中的红包ids
+        $underway_red_packet_list_key = \RedPackets::generateUnderwayRedPacketListKey($this->id);
+        $underway_ids = $cache->zrange($underway_red_packet_list_key, 0, -1);
+
+        //当前用户领取过的红包ids
+        $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($this->id, $user->id);
+        $ids = array_diff($underway_ids, $user_get_red_packet_ids);
+        $room_red_packets = \RedPackets::findByIds($ids);
+
+        return $room_red_packets;
+    }
+
 }

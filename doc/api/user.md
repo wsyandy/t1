@@ -144,6 +144,7 @@
     im_password 即时通信密码(声网，环信)
     app_id string 信令应用id
     signaling_key string 信令token
+    medal_image_url 勋章图片地址
 }
 ```
 
@@ -195,6 +196,7 @@
     id_card_auth 主持认证状态  1已认证
     diamond 钻石余额 
     medal_image_url 勋章图片地址
+    broadcaster_image_url 主持图片地址
     albums:[
         {
             id,
@@ -260,6 +262,8 @@
     experience 当前经验值
     union_name 家族名，不存在为空字符
     id_card_auth 主持认证状态  1已认证
+    medal_image_url 勋章图片地址
+    broadcaster_image_url 主持图片地址
     albums:[
         {
             id,
@@ -483,6 +487,7 @@
             segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
+            has_red_packet int 是有红包 0没有 1有
         }
     ]               
 }
@@ -780,6 +785,7 @@
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
             charm_value string 榜单魅力值
+            charm_value_text string 榜单魅力文本 例 魅力: 500万 
         }
         ...
     ]
@@ -817,6 +823,7 @@
                 (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
             wealth_value string 榜单财富值
+            wealth_value_text string 榜单财富文本 例 财富: 500万 
         }
         ...
     ]

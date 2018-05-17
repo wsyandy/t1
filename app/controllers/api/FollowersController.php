@@ -15,7 +15,7 @@ class FollowersController extends BaseController
     {
         $page = $this->params('page');
         $per_page = $this->params('per_page', 10);
-
+        $per_page = 10;
         $users = $this->currentUser()->followList($page, $per_page);
 
         $opts = ['follow_num' => $this->currentUser()->followNum()];

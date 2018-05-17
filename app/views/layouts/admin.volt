@@ -347,6 +347,9 @@
                                 {% if isAllowed('draw_histories','hour_stat') %}
                                     <li><a href="/admin/draw_histories/hour_stat">小时统计</a></li>
                                 {% endif %}
+                                {% if isAllowed('draw_histories','block_users_list') %}
+                                    <li><a href="/admin/draw_histories/block_users_list">屏蔽用户</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     {% endif %}
@@ -455,6 +458,9 @@
                     {% endif %}
                     {% if isAllowed('games','index') %}
                         <li><a href="/admin/games">游戏配置</a></li>
+                    {% endif %}
+                    {% if isAllowed('draw_configs','index') %}
+                        <li><a href="/admin/draw_configs">砸金蛋配置</a></li>
                     {% endif %}
                 </ul>
             </li>

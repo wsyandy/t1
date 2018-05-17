@@ -502,6 +502,7 @@ html,body{
 .winning_record_ul li {
     align-items: center;
     margin-bottom: .3rem;
+    margin-left: 0.5rem;
 }
 .winning_record_ul li img{
     width: .88rem;

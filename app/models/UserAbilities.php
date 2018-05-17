@@ -92,6 +92,15 @@ trait UserAbilities
         return $this->version_code >= 8;
     }
 
+    function canReceiveBoomGiftMessage()
+    {
+        if ($this->isIos()) {
+            return $this->version_code > 19;
+        }
+
+        return $this->version_code > 8;
+    }
+
     // 屏蔽热门房间
     function isShieldHotRoom()
     {

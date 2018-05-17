@@ -1110,6 +1110,14 @@ class Users extends BaseModel
         $user_db->zrem($cache_key, $this->id);
         info($cache_key, $this->id);
 
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+        
+        $user_db->zrem($cache_key, $this->id);
+        info($cache_key, $this->id);
     }
 
     function updateGeoHashRank()
@@ -1128,8 +1136,16 @@ class Users extends BaseModel
 
         $user_db = Users::getUserDb();
         $user_db->zadd($cache_key, time(), $this->id);
-        debug($cache_key, $this->id);
+        info($cache_key, $this->id);
 
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db->zadd($cache_key, time(), $this->id);
+        info($cache_key, $this->id);
     }
 
     static function asyncUpdateGeoLocation($user_id)
@@ -1304,7 +1320,7 @@ class Users extends BaseModel
             if ('nickname' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
                 }
 
                 $this->nickname = $v;
@@ -1314,7 +1330,7 @@ class Users extends BaseModel
             if ('monologue' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的个性签名违反规则,请及时修改");
                 }
 
                 $this->monologue = $v;
@@ -3297,7 +3313,7 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
@@ -3386,7 +3402,7 @@ class Users extends BaseModel
 
         $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
 
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SHARE_WORK, $gold, $opts);
 
         $db->setex($key, endOfDay() - time(), time());
     }
@@ -3595,10 +3611,6 @@ class Users extends BaseModel
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
         $wish_history_ids = [];
-
-        /*if (isDevelopmentEnv()) {
-            $res = [257 => '1526366848', 117 => '1526363248'];
-        }*/
         foreach ($res as $wish_history_id => $wish_luck_at) {
             $wish_history_ids[] = $wish_history_id;
         }
@@ -3619,5 +3631,12 @@ class Users extends BaseModel
         return $pagination;
     }
 
+    //获取系统用户
+    static function getSysTemUser()
+    {
+        $id = SYSTEM_ID;
+        $system_user = \Users::findFirstById($id);
+        return $system_user;
+    }
 
 }

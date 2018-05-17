@@ -466,4 +466,26 @@ class Gifts extends BaseModel
 
         return $list;
     }
+
+    function isSvga()
+    {
+        return 'svga' == $this->render_type;
+    }
+
+    function getEffectImageUrl($root, $gift_num, $gift_amount)
+    {
+        if ($this->isSvga()) {
+            return '';
+        }
+
+        if ($gift_amount < 500 || $gift_num < 66) {
+            return '';
+        }
+
+        if ($gift_amount < 1000) {
+            return $root . "images/gift_effect_image1.png";
+        }
+
+        return $root . "images/gift_effect_image2.png";
+    }
 }

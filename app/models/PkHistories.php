@@ -54,13 +54,13 @@ class PkHistories extends BaseModel
                 return [null, ERROR_CODE_FORM, '创建失败'];
             }
         } else {
-            $pk_history = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status !=:status:',
+            $pk_history_existed = \PkHistories::findFirst(['conditions' => 'room_id=:room_id: and status !=:status:',
                 'bind' => ['room_id' => $room_id, 'status' => STATUS_OFF],
                 'order' => 'id desc'
             ]);
-            if ($pk_history) {
-                $pk_history->status = STATUS_OFF;
-                $pk_history->update();
+            if ($pk_history_existed) {
+                $pk_history_existed->status = STATUS_OFF;
+                $pk_history_existed->update();
             }
         }
 
@@ -75,15 +75,17 @@ class PkHistories extends BaseModel
 
         if ($pk_history->save()) {
 
-            self::delay($pk_time)->asyncFinishPk($pk_history);
+            self::delay($pk_time)->asyncFinishPk($pk_history->id);
             return [$pk_history, ERROR_CODE_SUCCESS, '创建成功'];
         }
 
         return [null, ERROR_CODE_FAIL, '创建失败'];
     }
 
-    static function asyncFinishPk($pk_history)
+
+    static function asyncFinishPk($pk_history_id)
     {
+        $pk_history = \PkHistories::findFirstById($pk_history_id);
         if (isPresent($pk_history) && $pk_history->status != STATUS_OFF) {
             $pk_history->status = STATUS_OFF;
             $pk_history->update();
@@ -97,8 +99,8 @@ class PkHistories extends BaseModel
 
     function toSimpleJson()
     {
-        $left_pk_user = $this->left_pk_user;
-        $right_pk_user = $this->right_pk_user;
+        $left_pk_user = \Users::findFirstById($this->left_pk_user_id);
+        $right_pk_user = \Users::findFirstById($this->right_pk_user_id);
         $left_pk_user_score = $this->getPkUserScore($left_pk_user->id) ? $this->getPkUserScore($left_pk_user->id) : $this->left_pk_user_score;
         $right_pk_user_score = $this->getPkUserScore($right_pk_user->id) ? $this->getPkUserScore($right_pk_user->id) : $this->right_pk_user_score;
 

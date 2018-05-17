@@ -257,7 +257,7 @@ class HiCoinHistories extends BaseModel
             $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id, 'target_id' => $hi_coin_history->id];
 
             if ($hi_coin_history->gold > 0) {
-                \GoldHistories::changeBalance($user->id, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
+                \GoldHistories::changeBalance($user, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
             }
 
             if ($hi_coin_history->diamond > 0) {
@@ -270,7 +270,7 @@ class HiCoinHistories extends BaseModel
                 ];
                 \SmsDistributeHistories::isUserForShare($opts);
 
-                \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
+                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
             }
         }
 

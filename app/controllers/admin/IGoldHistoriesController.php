@@ -46,7 +46,7 @@ class IGoldHistoriesController extends BaseController
             }
 
             if ($i_gold > 0) {
-                \IGoldHistories::changeBalance($user_id, I_GOLD_HISTORY_FEE_TYPE_GIVE, $i_gold, $opts);
+                \IGoldHistories::changeBalance($user, I_GOLD_HISTORY_FEE_TYPE_GIVE, $i_gold, $opts);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/i_gold_histories?user_id=' . $user_id]);

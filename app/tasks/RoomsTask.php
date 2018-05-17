@@ -11,7 +11,10 @@ class RoomsTask extends \Phalcon\Cli\Task
     //检查用户是否在房间
     function checkUserRoomAction()
     {
-        $cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]];
+
+        $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 180]];
+
         $rooms = Rooms::findForeach($cond);
         $hot_cache = Rooms::getHotWriteCache();
 
@@ -21,7 +24,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            //$key = $room->getRealUserListKey();
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
@@ -118,6 +120,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                 'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON]
             ]);
 
+        echoLine('room_num', $room_num);
+
         if ($room_num >= 15) {
             info("room_num", $room_num);
             return;
@@ -126,7 +130,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         $num = 5;
-
         if (isDevelopmentEnv()) {
             $num = 30;
         }
@@ -218,7 +221,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
          (status = :status: and user_type = :user_type1:)',
-            'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
+            'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'status' => STATUS_ON, 'user_type1' => USER_TYPE_ACTIVE],
             'order' => 'last_at desc', 'limit' => 60];
 
         $rooms = Rooms::find($cond);
@@ -229,7 +232,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            Rooms::delay()->activeRoom($room->id);
+            Rooms::activeRoom($room->id);
         }
     }
 
@@ -844,8 +847,14 @@ class RoomsTask extends \Phalcon\Cli\Task
     //新热门逻辑
     function generateHotRoomsAction()
     {
-        $rooms = Rooms::getActiveRoomsByTime();
-        Rooms::updateHotRoomList($rooms);
+        $room_ids = Rooms::getActiveRoomIdsByTime();
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
+        }
+
+        Rooms::updateHotRoomList($room_ids);
     }
 
     function generateNewHotRoomRankAction()
@@ -853,29 +862,62 @@ class RoomsTask extends \Phalcon\Cli\Task
         $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
         $hot_cache = Users::getHotWriteCache();
         $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
-
-        if (count($room_ids) > 0) {
-            $rooms = Rooms::findByIds($room_ids);
-            Rooms::updateHotRoomList($rooms);
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
         }
+
+        Rooms::updateHotRoomList($room_ids);
     }
 
 
     function boomTargetAction()
     {
-        $line = 1000; // 初始值
-        $total = 10000; // 流水上线
+        $line = BoomHistories::getBoomStartLine();
+        $total = BoomHistories::getBoomTotalValue();
+
         $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
+        $cache = Rooms::getHotWriteCache();
 
-        $backpack = new Backpacks();
+        foreach ($rooms as $room) {
+            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
+            $cur_income = $cache->get($cur_income_cache_name);
 
-        foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $day_income = $room->getDayIncome(date('Ymd'));
+            if ($cur_income >= $line) {
+                $room->pushBoomIncomeMessage($total, $cur_income);
+            }
+        }
+    }
 
-            if ($day_income >= $line) {
-                $backpack->pushClientAboutBoom($total, $day_income, $value['id']);
+
+    function disappearBoomGiftRocketAction()
+    {
+        $total_income = BoomHistories::getBoomTotalValue();
+        $boom_list_key = 'boom_gifts_list';
+
+        $cache = Rooms::getHotWriteCache();
+        $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
+        $total = count($total_room_ids);
+        $per_page = 100;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
+
+        for ($page = 1; $page <= $total_page; $page++) {
+
+            $room_ids = array_slice($total_room_ids, $offset, $per_page);
+            $offset += $per_page;
+
+            $rooms = Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                $cur_income_key = Rooms::generateBoomCurIncomeKey($room->id);
+                $cur_income = $cache->get($cur_income_key);
+                if (!$cur_income) {
+                    $cache->zrem($boom_list_key, $room->id);
+                    $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
+                }
             }
         }
     }

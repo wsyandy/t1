@@ -13,9 +13,11 @@ class Backpacks extends BaseModel
 
     static $GOLD_IMG = '/m/images/gold.png'; // 金币图片
 
-    static $boom_SVGA = 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/gifts/svga_image/5aead4de04d35.svga';
+    static $boom_SVGA = 'http://test.momoyuedu.cn/m/images/boom_animation_1.svga';
 
-    static $total_value = 10000; // 爆礼物总值
+    static $total_value = 50000; // 爆礼物总值
+
+    static $start_value = 2500;
 
     /**
      * 背包礼物列表
@@ -25,7 +27,6 @@ class Backpacks extends BaseModel
      */
     static public function findListByUserId($user, $opt)
     {
-        // search for where
         $conditions = [
             'conditions' => 'user_id = :user_id: and number > :number:',
             'bind' => [
@@ -40,7 +41,6 @@ class Backpacks extends BaseModel
             $conditions['bind']['type'] = $opt['type'];
         }
 
-        // no page
         $page = 1;
         $per_page = 100;
 
@@ -49,60 +49,40 @@ class Backpacks extends BaseModel
     }
 
 
-    /**
-     * Task任务
-     * @desc 爆礼物房间流水值
-     */
-    static public function turnoverValue()
+    public function doCreate($user_id, $target_id, $number, $type)
     {
-        $line = 1000; // 初始值
-        $total = 10000; // 流水上线
-        $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
-
-        $backpack = new Backpacks();
-
-        foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $noun = $room->getDayIncome(date('Ymd'));
-
-            if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
-            }
-        }
-    }
-
-
-    /**
-     * 爆礼物推送
-     * @param $total_value
-     * @param $cur_value
-     * @param $room_id
-     */
-    public function pushClientAboutBoom($total_value, $cur_value, $room_id)
-    {
-        $body = array(
-            'action' => 'blasting_gift',
-            'blasting_gift' => [
-                'expire_at' => self::getExpireAt($room_id),
-                'url' => 'url://m/backpacks',
-                'svga_image_url' => self::getSvgaImageUrl(),
-                'total_value' => $total_value,
-                'current_value' => $cur_value
-            ]
+        $prize = array(
+            'target_id' => $target_id,
+            'type' => $type,
+            'number' => $number
         );
 
-        if ($cur_value >= $total_value) {
-            $cache = self::getHotWriteCache();
-            $cache_name = self::getBoomRoomCacheName($room_id);
-            $cache->set($cache_name, time(), 180);
+        $boom_histories = new BoomHistories();
+        $boom_histories->createBoomHistories($user_id, $target_id, $type, $number);
+
+
+        if ($type == BACKPACK_GIFT_TYPE) {
+
+            if (empty($target_id))
+                return [ERROR_CODE_FAIL, '', null];
+
+            if (!self::createTarget($user_id, $target_id, $number, BACKPACK_GIFT_TYPE))
+                return [ERROR_CODE_FAIL, '', null];
+
+        } elseif ($type == BACKPACK_DIAMOND_TYPE) {
+
+            $opts['remark'] = '爆礼物获得' . $number . '钻石';
+            \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
+
+        } elseif ($type == BACKPACK_GOLD_TYPE) {
+
+            $opts['remark'] = '爆礼物获得' . $number . '金币';
+            \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
+
         }
 
-        if (isDevelopmentEnv()) {
-            Chats::sendSystemMessage(41792, CHAT_CONTENT_TYPE_TEXT, json_encode($body));
-        }
-        $room = Rooms::findFirstById($room_id);
-        $room->push($body);
+        return [ERROR_CODE_SUCCESS, '', $prize];
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $prize]);
     }
 
 
@@ -247,25 +227,6 @@ class Backpacks extends BaseModel
         return self::$GOLD_IMG;
     }
 
-
-    /**
-     * @return string
-     */
-    static function getSvgaImageUrl()
-    {
-        return self::$boom_SVGA;
-    }
-
-
-    /**
-     * @return string
-     */
-    static function getTotalBoomValue()
-    {
-        return self::$total_value;
-    }
-
-
     /**
      * @param $room_id
      * @return false|int
@@ -273,9 +234,10 @@ class Backpacks extends BaseModel
     static function getExpireAt($room_id)
     {
         $cache = self::getHotWriteCache();
-        $cache_room_name = self::getBoomRoomCacheName($room_id);
-        $time = $cache->get($cache_room_name);
+        $room_sign_key = self::generateBoomRoomSignKey($room_id);
+        $time = $cache->get($room_sign_key);
 
+        debug('boom_test', $room_id, $room_sign_key, $time);
         if (empty($time)) {
             return 0;
         }
@@ -286,12 +248,25 @@ class Backpacks extends BaseModel
 
 
     /**
+     * 记录爆礼物开始时间
      * @param $room_id
      * @return string
      */
-    static function getBoomRoomCacheName($room_id)
+    static function generateBoomRoomSignKey($room_id)
     {
-        return 'boom_target_room:'.$room_id;
+        return 'boom_target_room_'.$room_id;
+    }
+
+
+    /**
+     * 记录爆礼物抽中的奖品
+     * @param $user_id
+     * @param $room_id
+     * @return string
+     */
+    public function generateBoomUserSignKey($user_id, $room_id)
+    {
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
 
 

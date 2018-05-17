@@ -9,30 +9,41 @@ class MakiTask extends Phalcon\Cli\Task
 {
     public function testxAction()
     {
-        $line = 0; // 初始值
-        $total = 10000; // 流水上线
-        $rooms = Rooms::dayStatRooms();
-        $rooms = $rooms->toJson('rooms');
+        $line = 0;
+        $total = BoomHistories::getBoomTotalValue();
 
-        $backpack = new Backpacks();
+        $rooms = Rooms::dayStatRooms();
         $cache = Rooms::getHotWriteCache();
 
-        foreach ($rooms['rooms'] as $value) {
-            $room = Rooms::findFirstById($value['id']);
-            $noun = $room->getDayIncome(date('Ymd'));
+        foreach ($rooms as $room) {
+            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
+            $cur_income = $cache->get($cur_income_cache_name);
 
-            // 流水
-            $cache_name = Rooms::getBoomValueCacheName($value['id']);
-            $value = $cache->get($cache_name);
-
-            echoLine($cache_name);
-            echoLine($value);
-            echoLine($room);
-            echoLine($noun);
-            if ($noun >= $line) {
-                $backpack->pushClientAboutBoom($total, $noun, $value['id']);
+            if ($cur_income >= $line) {
+                $room->pushBoomIncomeMessage($total, $cur_income, $room->id);
             }
         }
+    }
+
+
+    public function t1Action()
+    {
+        $room_id = 137039;
+        $body = [
+            'action' => 'blasting_gift',
+            'blasting_gift' => 'test'
+        ];
+        $room = Rooms::findFirstById($room_id);
+        $room->push($body);
+    }
+
+
+    public function t2Action()
+    {
+        $expire = strtotime('+3 minutes', 1526441555);
+        $time = $expire - time();
+        echoLine($expire);
+        echoLine($time);
     }
 
 
@@ -105,5 +116,14 @@ class MakiTask extends Phalcon\Cli\Task
             }
         }
 
+    }
+
+
+    public function m2Action()
+    {
+        $cache = Rooms::getHotWriteCache();
+        //$cache->sadd('test_set', 2);
+        $res = $cache->sMembers('test_set');
+        echoLine($res);
     }
 }

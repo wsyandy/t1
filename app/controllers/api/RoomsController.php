@@ -228,7 +228,7 @@ class RoomsController extends BaseController
         // 菜单
         $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
 
-        if (isProduction()) {
+        if (isProduction() && !$this->currentUser()->canReceiveBoomGiftMessage()) {
 
             // 发起游戏
             $game_history = $room->getGameHistory();
@@ -290,21 +290,29 @@ class RoomsController extends BaseController
         }
 
         // 房间红包
-        $res['red_packet'] = ['num' => 2, 'url' => 'url://m/games'];
+        $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
+        if ($underway_red_packet) {
+            $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
+        }
 
 
         // 爆礼物
-        $cache = \Backpacks::getHotWriteCache();
-        $cache_room_name = \Backpacks::getBoomRoomCacheName($room_id);
-        if ($cache->exists($cache_room_name)) {
-            $day_income = $room->getDayIncome(date('Ymd'));
+        $cache = \Rooms::getHotWriteCache();
+        $cur_income_key = \Rooms::generateBoomCurIncomeKey($room_id);
+        $cur_income = $cache->get($cur_income_key);
 
-            $res['blasting_gift'] = [
-                'expire_at' => (int)\Backpacks::getExpireAt($room_id),
-                'url' => 'url://m/backpacks',
-                'svga_image_url' => \Backpacks::getSvgaImageUrl(),
-                'total_value' => \Backpacks::getTotalBoomValue(),
-                'current_value' => $day_income
+        if ($cur_income >= \BoomHistories::getBoomStartLine()) {
+
+            $res['boom_gift'] = [
+                'expire_at' => (int)\Rooms::getExpireAt($room_id),
+                'client_url' => 'url://m/backpacks',
+                'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
+                'total_value' => \BoomHistories::getBoomTotalValue(),
+                'current_value' => $cur_income,
+                'show_rank' => 1000000,
+                'render_type' => 'svga',
+                'status' => STATUS_ON,
+                'image_color' => 'blue'
             ];
         }
 
@@ -965,8 +973,8 @@ class RoomsController extends BaseController
         }
 
         $cond = [
-            'conditions' => 'room_id = :room_id:',
-            'bind' => ['room_id' => $room_id],
+            'conditions' => 'room_id = :room_id: and status=:status:',
+            'bind' => ['room_id' => $room_id, 'status' => STATUS_OFF],
             'order' => 'id desc'
         ];
 
