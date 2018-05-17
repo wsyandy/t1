@@ -3478,7 +3478,7 @@ class Users extends BaseModel
     function canSendToUser($receiver_ids, $gift_amount)
     {
         if (!$this->isWhiteListUser()) {
-            
+
             if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
