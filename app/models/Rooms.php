@@ -312,7 +312,6 @@ class Rooms extends BaseModel
         $room->user_type = $user->user_type;
         $room->union_id = $user->union_id;
         $room->union_type = $user->union_type;
-        $room->country_id = $user->country_id;
         $room->last_at = time();
         $room->chat = true;
         $room->save();
