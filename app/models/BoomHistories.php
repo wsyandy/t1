@@ -55,13 +55,19 @@ class BoomHistories extends BaseModel
      * @param int $per_page
      * @return PaginationModel
      */
-    static public function historiesTopList($user_id, $per_page = 10)
+    static public function historiesTopList($user_id = null, $per_page = 10)
     {
         $conditions = array(
-            'conditions' => ' user_id = :user_id:',
-            'bind' => ['user_id' => $user_id],
             'order' => 'id desc',
         );
+
+        if (!empty($user_id)) {
+            $conditions = array(
+                'conditions' => ' user_id = :user_id:',
+                'bind' => ['user_id' => $user_id],
+            );
+        }
+
         $list = BoomHistories::findPagination($conditions, 1, $per_page);
         return $list;
     }
