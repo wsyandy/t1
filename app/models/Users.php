@@ -1555,6 +1555,7 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
+        info($friend_note_key, $user_id);
         $friend_note = $db->hget($friend_note_key, $user_id);
         if (is_null($friend_note)) {
             return '';
@@ -1607,8 +1608,9 @@ class Users extends BaseModel
         }
 
         //没有在对方总队列里面添加 此时要做通知
-        if (!$user_db->zscore($other_total_key, $this->id)) {
-        }
+//        if (!$user_db->zscore($other_total_key, $this->id)) {
+//
+//        }
 
         $time = time();
         $user_db->zadd($add_key, $time, $other_user->id);
@@ -1679,6 +1681,7 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        info($user_introduce_key, $other_user->id);
         $self_introduce = $user_db->hget($user_introduce_key, $other_user->id);
         return $self_introduce;
     }
