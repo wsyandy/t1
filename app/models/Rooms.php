@@ -2513,7 +2513,9 @@ class Rooms extends BaseModel
             $room_seat->down($user);
         }
 
-        $room->exitRoom($user);
+        info($user->sid, $room_id, $user->current_room_id);
+
+        //$room->exitRoom($user);
         //$room->pushExitRoomMessage($user, $current_room_seat_id);
         Rooms::delUserIdInExitRoomByServerList($user_id);
         unlock($exce_exit_room_lock);
