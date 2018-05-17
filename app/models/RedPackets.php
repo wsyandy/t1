@@ -127,7 +127,7 @@ class RedPackets extends BaseModel
             'user_avatar_url' => $this->user->avatar_url,
             'red_packet_type' => $this->red_packet_type,
             'sex' => $this->sex,
-            'distance_start_at'=>$this->distance_start_at
+            'distance_start_at' => $this->distance_start_at
         ];
     }
 
@@ -378,9 +378,9 @@ class RedPackets extends BaseModel
         $time = $room->getTimeForUserInRoom($user_id);
 
         //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
-        $distance_start_at = $time + 3 * 60 - time();
+        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0 ;
         if ($time <= $this->created_at) {
-            $distance_start_at = $this->created_at + 3 * 60 - time();
+            $distance_start_at = $this->created_at + 3 * 60 - time() > 0 ? $this->created_at + 3 * 60 - time() : 0;
         }
 
         return $distance_start_at;
