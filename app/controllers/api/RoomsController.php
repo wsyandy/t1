@@ -308,7 +308,7 @@ class RoomsController extends BaseController
                 'client_url' => 'url://m/backpacks',
                 'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
                 'total_value' => \BoomHistories::getBoomTotalValue(),
-                'current_value' => $cur_income,
+                'current_value' => (int)$cur_income,
                 'show_rank' => 1000000,
                 'render_type' => 'svga',
                 'status' => STATUS_ON,
