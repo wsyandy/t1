@@ -69,9 +69,6 @@ class Partners extends BaseModel
         $hot_cache = self::getHotWriteCache();
         $muid = self::generateMuid($attributes);
 
-        // 次日留存
-        Devices::setMarketingStartAppMuid($muid);
-
         info($attributes['code'], $attributes['platform'], $attributes['fr'], $muid);
 
         $click_key = 'new_click_ad_event_' . $attributes['code'] . '_muid_' . $muid;
@@ -355,10 +352,16 @@ class Partners extends BaseModel
     static function notifyGdt($data)
     {
 
-        self::appStart($data);
-
         $notify_url = self::generateNotifyUrl($data);
         if ($notify_url) {
+
+            // 次日留存
+            $hot_cache = self::getHotWriteCache();
+            $marketing_start_app_key = 'marketing_api_start_app_' . $data['code'] . '_muid_' . $data['muid'];
+            info('marketing_start_app_key', $marketing_start_app_key, 'data', json_encode($data, JSON_UNESCAPED_UNICODE));
+            $hot_cache->setex($marketing_start_app_key, 60 * 60 * 72, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+
             $resp = httpGet($notify_url);
             info("IOS|NOTIFY|{$notify_url}|{$resp->raw_body}", $data);
             $result = json_decode($resp->raw_body, true);

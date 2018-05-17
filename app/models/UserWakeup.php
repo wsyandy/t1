@@ -820,4 +820,24 @@ trait UserWakeup
         }
     }
 
+    function appStart()
+    {
+        $device = $this->device;
+
+        $code = $this->product_channel->code;
+        $muid = Partners::generateMuid(['idfa' => $device->idfa, 'imei' => $device->imei]);
+
+        $hot_cache = self::getHotWriteCache();
+        $marketing_start_app_key = 'marketing_api_start_app_' . $code . '_muid_' . $muid;
+
+        $data = $hot_cache->get($marketing_start_app_key);
+        info('user_id', $this->id, 'data', $data, 'muid', $muid, 'marketing_start_app_key', $marketing_start_app_key);
+        if ($data && date('Ymd') == date('Ymd', strtotime('+1 day', $this->created_at))) {
+            $data = json_decode($data, true);
+            $hot_cache->del($marketing_start_app_key);
+
+            \Partners::delay()->appStart($data);
+
+        };
+    }
 }
