@@ -91,6 +91,14 @@
             <a href="/m/users/account?sid={{ sid }}&code={{ code }}" class="less_btn">去充值</a>
         </div>
     </div>
+    <!-- 其他弹框 -->
+    <div v-if="error_input">
+        <div class="zuan_less_box less_show">
+            <i class="less_close" @click="cancel(3)"></i>
+            <p v-text="error_reason"></p>
+            <a href="#" class="less_btn">取消</a>
+        </div>
+    </div>
 
     <!-- 性别弹出层 -->
     <div class="cover" v-if="isSex">
@@ -122,6 +130,8 @@
             isGiveStyle: false,
             less_zuan_input: false,
             isSex: true,
+            error_input: false,
+            error_reason: ''
         },
 
         methods: {
@@ -150,6 +160,9 @@
                     case 2:
                         vm.less_zuan_input = false;
                         break;
+                    case 3:
+                        vm.error_input = false;
+                        break;
                 }
             },
             sendRedPacket: function () {
@@ -160,7 +173,7 @@
                     diamond: this.amount,
                     sex: this.sex,
                     red_packet_type: this.type,
-                    nearby_distance: parseInt(this.nearby_distance)*1000,
+                    nearby_distance: parseInt(this.nearby_distance) * 1000,
                 }
                 if (this.sex == "男女皆可") {
                     data.sex = 2;
@@ -172,6 +185,8 @@
                 }
                 $.authPost('/m/red_packets/create', data, function (resp) {
                     console.log(resp);
+                    vm.error_reason = resp.error_reason;
+                    vm.error_input = true;
                     if (!resp.error_code) {
                         location.href = 'app://back';
                     }
@@ -199,7 +214,6 @@
         $('.quxiao').click(function () {
             $('.get_style_bg').hide();
         })
-
 
 
         // 性别弹出层
@@ -282,8 +296,8 @@
         data: [data1, data2]
     });
     picker2.on('picker.select', function (selectedVal, selectedIndex) {
-        picker2El.innerText =   data2[selectedIndex[1]].text;
-        vm.nearby_distance =    data2[selectedIndex[1]].text;
+        picker2El.innerText = data2[selectedIndex[1]].text;
+        vm.nearby_distance = data2[selectedIndex[1]].text;
     });
 
     picker2.on('picker.change', function (index, selectedIndex) {
