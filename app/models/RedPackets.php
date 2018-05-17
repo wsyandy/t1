@@ -106,13 +106,12 @@ class RedPackets extends BaseModel
 
     function afterUpdate()
     {
-//        info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
-//        if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
-//            info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
-//            $cache = \Users::getUserDb();
-//            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
-//            $cache->zrem($underway_red_packet_list_key, $this->id);
-//        }
+        if ($this->hasChanged('status') && $this->status == STATUS_OFF) {
+            info('红包已经结束回收，删除对应进行中的红包id', $this->id, $this->status);
+            $cache = \Users::getUserDb();
+            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
+            $cache->zrem($underway_red_packet_list_key, $this->id);
+        }
     }
 
     function toSimpleJson()
@@ -224,11 +223,6 @@ class RedPackets extends BaseModel
             $red_packet->balance_num = 0;
             $red_packet->status = STATUS_OFF;
             $red_packet->update();
-
-            $cache = \Users::getUserDb();
-            $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($red_packet->room_id);
-            debug('将要删除的key', $underway_red_packet_list_key, $red_packet->id);
-            $cache->zrem($underway_red_packet_list_key, $red_packet->id);
         }
     }
 
