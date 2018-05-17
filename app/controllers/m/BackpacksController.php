@@ -53,7 +53,8 @@ class BackpacksController extends BaseController
 
         // 爆出的礼物从缓存拿到
         $cache = \Backpacks::getHotWriteCache();
-        $user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $user_sign_key = \Backpacks::generateBoomUserSignKey($user->id, $room_id);
+        //$user_sign_key = $this->generateUserSignKey($user->id, $room_id);
         $user_sign = $cache->get($user_sign_key);
 
         // 领取后缓存值为1
@@ -111,7 +112,8 @@ class BackpacksController extends BaseController
 
         // 拿缓存
         $cache = \Backpacks::getHotWriteCache();
-        $user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $user_sign_key = \Backpacks::generateBoomUserSignKey($user->id, $room_id);
+        //$user_sign_key = $this->generateUserSignKey($user->id, $room_id);
         $expire = $cache->ttl($user_sign_key);
         $user_sign = $cache->get($user_sign_key);
 
@@ -130,11 +132,17 @@ class BackpacksController extends BaseController
 
         // 执行写入
         foreach ($prizes as $prize) {
-            $this->doCreate($prize['id'], $prize['number'], $type);
+
+            $res = \Backpacks::doCreate($user->id, $prize['id'], $prize['number'], $type);
+            list($code, $reason, $prize_list) = $res;
+
+            if ($code == ERROR_CODE_FAIL) {
+                return $this->renderJSON($code, $reason);
+            }
         }
 
         $cache->setex($user_sign_key, $expire, 1);
-        return $this->renderJSON(ERROR_CODE_SUCCESS);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $prize_list]);
     }
 
 
