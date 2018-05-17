@@ -111,6 +111,9 @@ class RedPackets extends BaseModel
             $cache = \Users::getUserDb();
             $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
             $cache->zrem($underway_red_packet_list_key, $this->id);
+
+            //红包回收和红包抢完后仍然发一个socket通知
+            self::pushRedPacketMessage($this->room, $this->user);
         }
     }
 
@@ -279,11 +282,9 @@ class RedPackets extends BaseModel
         $red_packet->update();
 
 
-        //红包抢完公屏socket
+        //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
         $content = $red_packet->user->nickname . '发的红包已抢完';
-        $content_type = 'red_packet';
-        $system_user = \Users::getSysTemUser();
-        $room->pushTopTopicMessage($system_user, $content, $content_type);
+        self::pushRedPacketTopTopicMessage($room, $content);
         return [ERROR_CODE_SUCCESS, null];
     }
 
@@ -342,14 +343,10 @@ class RedPackets extends BaseModel
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
         //红包socket
-        $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet = $room->getNotDrawRedPacket($user);
-        $room->pushRedPacketMessage(count($underway_red_packet), $url);
+        self::pushRedPacketMessage($room, $user);
 
         //红包公屏socket
-        $content_type = 'red_packet';
-        $system_user = \Users::getSysTemUser();
-        $room->pushTopTopicMessage($system_user, $content, $content_type);
+        self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
         if (isDevelopmentEnv() && $type == 'create') {
@@ -382,6 +379,31 @@ class RedPackets extends BaseModel
         }
 
         return $distance_start_at;
+    }
+
+    //红包的公屏socket
+    static function pushRedPacketTopTopicMessage($room, $content)
+    {
+        $content_type = 'red_packet';
+        $system_user = \Users::getSysTemUser();
+        $room->pushTopTopicMessage($system_user, $content, $content_type);
+    }
+
+    //红包的socket，推给个人
+    static function pushRedPacketMessage($room, $user)
+    {
+        if ($user->canReceiveBoomGiftMessage()) {
+            $url = self::generateRedPacketUrl($room->id);
+            $underway_red_packet = $room->getNotDrawRedPacket($user);
+//        $room->pushRedPacketMessage(count($underway_red_packet), $url);
+            $body = ['action' => 'red_packet', 'red_packet' => ['num' => count($underway_red_packet), 'client_url' => $url]];
+            $intranet_ip = $user->getIntranetIp();
+            $receiver_fd = $user->getUserFd();
+
+            $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+            info('推送结果=>', $result, '推送内容=>', $body);
+        }
+
     }
 
 }
