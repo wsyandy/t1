@@ -20,7 +20,8 @@
                      @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
                 </div>
 
-                <div class="num red_list_style red_list_time daojishi" v-if="v.is_stay" @click="toGrabRedPacket(v.id,v.red_packet_type)"></div>
+                <div class="num red_list_style red_list_time daojishi" v-if="v.is_stay"
+                     @click="toGrabRedPacket(v.id,v.red_packet_type)"></div>
                 <div class="num red_list_style red_list_qiang daojishiJS" style="display: none;"
                      v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢
                     {#</div>#}
@@ -38,8 +39,7 @@
             total_page: 1,
             red_packets_list: [],
             room_id: "{{ room_id }}",
-            user_get_red_packet_ids: [],
-            distance_start_at: "",
+            user_get_red_packet_ids: []
         },
         methods: {
             RedPacketsList: function () {
@@ -59,7 +59,6 @@
                     console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
-                    vm.distance_start_at = resp.distance_start_at;
                     $.each(resp.red_packets, function (index, val) {
                         var index = $.inArray(val.id, vm.user_get_red_packet_ids);
                         if (index != -1) {
@@ -110,13 +109,10 @@
         });
     })
     vm.RedPacketsList();
-
-    setTimeout(function () {
-        distanceStartAt();
-    }, 500);
+    distanceStartAt();
 
     function distanceStartAt() {
-        var t = vm.distance_start_at;
+        var t = 3;
         console.log(t);
         var m = parseInt(t / 60);
         var s = t % 60;
