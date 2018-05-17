@@ -82,6 +82,7 @@ class RoomsController extends BaseController
     function editAction()
     {
         $room = \Rooms::findFirstById($this->params('id'));
+        $room->getHotRoomScoreRatio();
         $this->view->room = $room;
     }
 

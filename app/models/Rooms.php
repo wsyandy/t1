@@ -2945,7 +2945,7 @@ class Rooms extends BaseModel
 
     function setHotRoomScoreRatio($ratio)
     {
-        $ratio = intval($ratio);
+        $ratio = floatval($ratio);
         $user_db = Users::getUserDb();
         $key = "hot_room_score_ratio_room_id_{$this->id}";
 
@@ -2957,6 +2957,17 @@ class Rooms extends BaseModel
         }
 
         $user_db->set($key, $ratio);
+    }
+
+    function getHotRoomScoreRatio()
+    {
+        $user_db = Users::getUserDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+        $ratio = $user_db->get($key);
+        if (!$ratio) {
+            return 0;
+        }
+        return $ratio;
     }
 
     static function updateHotRoomList($all_room_ids, $opts = [])
