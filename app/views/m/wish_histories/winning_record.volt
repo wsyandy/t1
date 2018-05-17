@@ -25,7 +25,7 @@
             <img src="" alt="">
             <div class="winning_record_box">
                 <span>${ lucky_name.nickname } ID:${ lucky_name.uid }</span>
-                <p>获得 <span> 价值3000元机械手表</span></p>
+                <p>获得 <span> 价值3000元高档手表</span></p>
             </div>
         </li>
     </ul>
