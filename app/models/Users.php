@@ -504,6 +504,8 @@ class Users extends BaseModel
             $user->device = $device;
             $user->device_id = $device->id;
             $user->device_no = $device->device_no;
+            $user->speaker = true;
+            $user->microphone = true;
 
             foreach ($fields as $field) {
                 $user->$field = $device->$field;
