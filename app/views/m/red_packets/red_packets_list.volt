@@ -113,11 +113,10 @@
 
     setTimeout(function () {
         distanceStartAt();
-    }, 500);
+    }, 100);
 
     function distanceStartAt() {
         var t = vm.distance_start_at;
-        console.log(t);
         var m = parseInt(t / 60);
         var s = t % 60;
         if (t > 0) {
