@@ -2236,6 +2236,12 @@ class Rooms extends BaseModel
     {
         $cache = \Rooms::getHotWriteCache();
         $cur_income_key = \Rooms::generateBoomCurIncomeKey($this->id);
+        $room_boon_gift_sign_key = Rooms::generateRoomBoomGiftSignKey($this->id);
+
+        if ($cache->exists($room_boon_gift_sign_key)) {
+            return \BoomHistories::getBoomTotalValue();
+        }
+
         $cur_income = $cache->get($cur_income_key);
 
         return $cur_income;
