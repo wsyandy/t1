@@ -228,7 +228,7 @@ class RoomsController extends BaseController
         // 菜单
         $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
 
-        if (isProduction()) {
+        if (isProduction() && !$this->currentUser()->canReceiveBoomGiftMessage()) {
 
             // 发起游戏
             $game_history = $room->getGameHistory();
