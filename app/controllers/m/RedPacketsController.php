@@ -98,12 +98,8 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
         }
         $room = $user->current_room;
-        $time = $room->getTimeForUserInRoom($user->id);
-        //具体用户进房间3分钟的剩余时间，小于零代表时间已到
-        $distance_start_at = 180;
-        if ($time) {
-            $distance_start_at = $time + 3 * 60 - time();
-        }
+        $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
+
         $user_nickname = $red_packet->user->nickname;
         $user_avatar_url = $red_packet->user->avatar_url;
 
@@ -123,8 +119,8 @@ class RedPacketsController extends BaseController
 
             //时间限制
             if ($red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
-                $time = $room->getTimeForUserInRoom($user->id);
-                if (!$time || time() - $time < 180) {
+                $time = $red_packet->getDistanceStartTime($room, $user->id);
+                if ($time > 0) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
                 }
             }
@@ -188,19 +184,11 @@ class RedPacketsController extends BaseController
             if (isBlank($room)) {
                 $room = \Rooms::findFirstById($room_id);
             }
-
-            $time = $room->getTimeForUserInRoom($user->id);
-            //具体用户进房间3分钟的剩余时间，小于零代表时间已到
-            $distance_start_at = 180;
-            if ($time) {
-                $distance_start_at = $time + 3 * 60 - time();
-            }
-
             $red_packets = \RedPackets::findRedPacketList($room->id, $page, $pre_page, $user);
             if ($red_packets) {
                 $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room->id, $user->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
-                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids, 'distance_start_at' => $distance_start_at])
+                        $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids])
                 );
             }
 

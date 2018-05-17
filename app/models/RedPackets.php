@@ -126,7 +126,8 @@ class RedPackets extends BaseModel
             'created_at_text' => $this->created_at_text,
             'user_avatar_url' => $this->user->avatar_url,
             'red_packet_type' => $this->red_packet_type,
-            'sex' => $this->sex
+            'sex' => $this->sex,
+            'distance_start_at'=>$this->distance_start_at
         ];
     }
 
@@ -241,6 +242,10 @@ class RedPackets extends BaseModel
         $red_packet_ids = $cache_db->zrevrange($underway_red_packet_list_key, $offset, $offset + $per_page - 1);
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 //        $screen_red_packets = self::getScreenRedPackets($red_packets, $user);
+        foreach ($red_packets as $red_packet) {
+            $distance_start_at = $red_packet->getDistanceStartTime($user->current_room, $user->id);
+            $red_packet->distance_start_at = $distance_start_at;
+        }
 
         return new \PaginationModel($red_packets, $total, $page, $per_page);
     }
@@ -277,7 +282,7 @@ class RedPackets extends BaseModel
 
 
         //红包抢完公屏socket
-        $content = $red_packet->user->nickname.'发的红包已抢完';
+        $content = $red_packet->user->nickname . '发的红包已抢完';
         $content_type = 'red_packet';
         $system_user = \Users::getSysTemUser();
         $room->pushTopTopicMessage($system_user, $content, $content_type);
@@ -365,6 +370,20 @@ class RedPackets extends BaseModel
                 info('推送结果=>', $result, '结构=>', $body);
             }
         }
+    }
+
+    function getDistanceStartTime($room, $user_id)
+    {
+        //获取用户进房间的时间
+        $time = $room->getTimeForUserInRoom($user_id);
+
+        //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
+        $distance_start_at = $time + 3 * 60 - time();
+        if ($time <= $this->created_at) {
+            $distance_start_at = $this->created_at + 3 * 60 - time();
+        }
+
+        return $distance_start_at;
     }
 
 }
