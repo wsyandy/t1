@@ -723,4 +723,9 @@ class ActivitiesController extends BaseController
         $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
 
     }
+    function cpActivitiesAction()
+    {
+        $this->view->title = '我愿守护你一生一世';
+    }
+
 }
