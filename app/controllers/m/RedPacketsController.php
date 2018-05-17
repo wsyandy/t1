@@ -29,11 +29,11 @@ class RedPacketsController extends BaseController
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
         if (isDevelopmentEnv()) {
-            if ($diamond < 100 || $num < 5) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于5个');
+            if ($diamond < 100 || $num < 2) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于2个');
             }
         } else {
-            if ($red_packet_type == RED_PACKET_TYPE_NEARBY && $user->user_role == USER_ROLE_HOST_BROADCASTER) {
+            if ($red_packet_type == RED_PACKET_TYPE_NEARBY) {
                 if ($diamond < 1000 || $num < 10) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于1000钻或者个数不得小于10个');
                 }
@@ -60,7 +60,7 @@ class RedPacketsController extends BaseController
             'num' => $num,
             'status' => STATUS_ON,
             'user_id' => $user->id,
-            'current_room_id' => $user->current_room_id,
+            'room_id' => $user->current_room_id,
             'sex' => $sex,
             'red_packet_type' => $red_packet_type,
             'nearby_distance' => $nearby_distance,
@@ -117,7 +117,7 @@ class RedPacketsController extends BaseController
                 return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
             }
 
-            if ($red_packet->balance_diamond <= 0 || $red_packet->balance_num <= 0) {
+            if ($red_packet->status == STATUS_OFF) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
             }
 
@@ -184,10 +184,11 @@ class RedPacketsController extends BaseController
             $page = $this->params('page', 1);
             $pre_page = $this->params('pre_page', 10);
             //用户进来的时间
-            if (isBlank($user->current_room)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
-            }
             $room = $user->current_room;
+            if (isBlank($room)) {
+                $room = \Rooms::findFirstById($room_id);
+            }
+
             $time = $room->getTimeForUserInRoom($user->id);
             //具体用户进房间3分钟的剩余时间，小于零代表时间已到
             $distance_start_at = 180;
@@ -195,9 +196,9 @@ class RedPacketsController extends BaseController
                 $distance_start_at = $time + 3 * 60 - time();
             }
 
-            $red_packets = \RedPackets::findRedPacketList($room_id, $page, $pre_page, $user);
+            $red_packets = \RedPackets::findRedPacketList($room->id, $page, $pre_page, $user);
             if ($red_packets) {
-                $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room_id, $user->id);
+                $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room->id, $user->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(
                         $red_packets->toJson('red_packets', 'toSimpleJson'), ['user_get_red_packet_ids' => $user_get_red_packet_ids, 'distance_start_at' => $distance_start_at])
                 );

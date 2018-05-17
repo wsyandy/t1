@@ -2138,7 +2138,7 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            if (isDevelopmentEnv()) {
+            if (in_array($room->id, Rooms::getGameWhiteList())) {
                 $room->statBoomIncome($income, $time);
             }
 
@@ -2855,24 +2855,21 @@ class Rooms extends BaseModel
 
     function getRoomMenuConfig($user, $opts = [])
     {
-
         $root_host = fetch($opts, 'root_host');
-        $current_user_role = $user->user_role;
         $menu_config = [];
 
-        if (isDevelopmentEnv() || isInternalIp($user->ip)) {
+        if ($user->canReceiveBoomGiftMessage()) {
+
             $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
                 'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
+
+            if ($user->isRoomHost($this)) {
+                $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+            }
         }
 
-        if ((isDevelopmentEnv() || isInternalIp($user->ip)) && $current_user_role == USER_ROLE_HOST_BROADCASTER) {
-            $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
-        }
-
-        if (true) {
-            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
-        }
+        $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+            'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
 
         return $menu_config;
     }
@@ -2948,7 +2945,7 @@ class Rooms extends BaseModel
 
     function setHotRoomScoreRatio($ratio)
     {
-        $ratio = intval($ratio);
+        $ratio = floatval($ratio);
         $user_db = Users::getUserDb();
         $key = "hot_room_score_ratio_room_id_{$this->id}";
 
@@ -2960,6 +2957,17 @@ class Rooms extends BaseModel
         }
 
         $user_db->set($key, $ratio);
+    }
+
+    function getHotRoomScoreRatio()
+    {
+        $user_db = Users::getUserDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+        $ratio = $user_db->get($key);
+        if (!$ratio) {
+            return 0;
+        }
+        return $ratio;
     }
 
     static function updateHotRoomList($all_room_ids, $opts = [])
