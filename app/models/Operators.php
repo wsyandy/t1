@@ -125,7 +125,7 @@ class Operators extends BaseModel
             return true;
         }
 
-        if (in_array($this->id, [2, 11])) {
+        if (in_array($this->id, [11, 46])) {
             return true;
         }
 

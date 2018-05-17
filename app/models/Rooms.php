@@ -1169,10 +1169,6 @@ class Rooms extends BaseModel
             ]
         ];
 
-        if (isDevelopmentEnv() && $this->id == 137039) {
-            $body['room_137039'] = 'test';
-        }
-
         debug($this->id, $body);
 
         $this->push($body, true);
@@ -2194,9 +2190,7 @@ class Rooms extends BaseModel
 
         $expire = endOfDay() - $time;
 
-        if (isDevelopmentEnv()) {
-            $expire = 180;
-        }
+        $expire = 180;
 
         $boom_list_key = 'boom_gifts_list';
         $total_income = BoomHistories::getBoomTotalValue();
