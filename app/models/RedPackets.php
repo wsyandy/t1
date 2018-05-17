@@ -211,14 +211,13 @@ class RedPackets extends BaseModel
     static function asyncFinishRedPacket($red_packet_id)
     {
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-        $balance_diamond = $red_packet->balance_diamond;
-
-        if ($balance_diamond > 0) {
-            $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
-            \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $balance_diamond, $opts);
-        }
 
         if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
+            if ($red_packet->balance_diamond > 0) {
+                $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
+                \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
+            }
+
             info('回收红包', $red_packet->balance_diamond);
             $red_packet->balance_diamond = 0;
             $red_packet->balance_num = 0;
@@ -275,7 +274,6 @@ class RedPackets extends BaseModel
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
-
 
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
@@ -378,7 +376,7 @@ class RedPackets extends BaseModel
         $time = $room->getTimeForUserInRoom($user_id);
 
         //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
-        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0 ;
+        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
         if ($time <= $this->created_at) {
             $distance_start_at = $this->created_at + 3 * 60 - time() > 0 ? $this->created_at + 3 * 60 - time() : 0;
         }
