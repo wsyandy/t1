@@ -50,7 +50,7 @@ ol, ul, li {
 /*红包详情*/
 .detail_red_top{
     width: 10.0rem;
-    height: 2.24rem;
+    height: 2.64rem;
     margin:0 auto;
     background: url(../images/detail_bg.png) no-repeat;
     background-size: 100%;
@@ -80,7 +80,7 @@ ol, ul, li {
 .top_person p{
     font-size: 0.346667rem;
     color: #767676;
-    margin-top: 0.133333rem;
+    margin-top: 0.13333rem;
     padding-bottom: 0.4rem;
 }
 .detail_get{
@@ -317,7 +317,7 @@ ol, ul, li {
     color: #FFDB4A;
 }
 .wait_red_guanzhu h3{
-    font-size: 0.48rem;
+    font-size: 0.4rem;
 }
 .qiang_red{
     width: 2.453333rem;
@@ -800,6 +800,9 @@ ol, ul, li {
     background: #FFDDDD !important;
     font-size: 0.293333rem !important;
     color: #FE4646 !important;
+}
+.is_stay_hide{
+    display:none;
 }
 
 
