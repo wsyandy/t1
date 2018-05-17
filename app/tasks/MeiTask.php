@@ -8,6 +8,16 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test44Action()
+    {
+        $gift_order = GiftOrders::findFirstById(1957528);
+        $amount = $gift_order->amount;
+        echoLine($amount);
+        $gift_order->room_id = 1008720;
+        $gift_order->room_union_id = 1068;
+        $gift_order->save();
+    }
+
     function freshRoomUserIdAction()
     {
         $cond = [
