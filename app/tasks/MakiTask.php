@@ -126,4 +126,45 @@ class MakiTask extends Phalcon\Cli\Task
         $res = $cache->sMembers('test_set');
         echoLine($res);
     }
+
+
+    function u1Action()
+    {
+
+        for ($i=0; $i<=10; $i++) {
+            Users::updateUserCharmAndWealthRank(mt_rand(1, 9), mt_rand(20, 29), mt_rand(10, 500));
+        }
+
+    }
+
+
+    function u2Action()
+    {
+        $user_ids = Users::findUserCharmAndWealthRank();
+        $user_flip = array_flip($user_ids);
+
+        $conditions = array(
+            'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
+            'columns' => 'id'
+        );
+        $users = Users::find($conditions);
+
+        $user_online = [];
+        foreach ($users as $user) {
+            if (in_array($user->id, $user_ids)) {
+                $user_online[$user_flip[$user->id]] = $user->id;
+                unset($user_flip[$user->id]);
+            }
+        }
+        ksort($user_online);
+
+        $user_offline = array_values(array_flip($user_flip));
+
+        // 已经排序好
+        $user_ids = array_merge(array_values($user_online), $user_offline);
+
+        $users = Users::findByIds($user_ids);
+        $users = $users->toJson('users', 'toSimpleJson');
+        debug($users['users']);
+    }
 }

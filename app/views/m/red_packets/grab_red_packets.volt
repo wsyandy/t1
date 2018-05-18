@@ -83,7 +83,7 @@
             attentionUrl: "",
             res: "",
             getDiamond: "",
-            user_id: "{{ red_packet.user_id }}",
+            user_id: "{{ user_id }}",
             grabbed:true,
 
         },

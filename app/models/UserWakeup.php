@@ -486,7 +486,7 @@ trait UserWakeup
             return false;
         }
 
-        $hot_cache->setex($cache_key, 1800, time());
+        $hot_cache->setex($cache_key, 3600, time());
 
         return true;
     }
@@ -520,7 +520,7 @@ trait UserWakeup
     {
         $cache = Users::getHotWriteCache();
         $receive_online_remind_hour_key = 'receive_online_remind_hour_' . $this->id;
-        $cache->setex($receive_online_remind_hour_key, 60 * 60, $this->id);
+        $cache->setex($receive_online_remind_hour_key, 2 * 60 * 60, $this->id);
     }
 
     function pushOnlineRemindMessage()
@@ -648,7 +648,7 @@ trait UserWakeup
             return false;
         }
 
-        $hot_cache->setex($cache_key, 1800, time());
+        $hot_cache->setex($cache_key, 3600, time());
 
         return true;
     }
@@ -682,7 +682,7 @@ trait UserWakeup
     {
         $cache = Users::getHotWriteCache();
         $receive_into_room_remind_hour_key = 'receive_into_room_remind_hour_' . $this->id;
-        $cache->setex($receive_into_room_remind_hour_key, 60 * 60, $this->id);
+        $cache->setex($receive_into_room_remind_hour_key, 2 * 60 * 60, $this->id);
     }
 
     //好友上线开播提醒 每次提醒（同一个用户一个小时之内只提醒一次）

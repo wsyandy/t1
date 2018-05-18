@@ -840,7 +840,42 @@ class UsersController extends BaseController
             $per_page = 12;
         }
 
-        $users = $this->currentUser()->nearby($page, $per_page);
+        if (isDevelopmentEnv()) {
+
+            $user_ids = \Users::findUserCharmAndWealthRank(time(), $per_page);
+            if (empty($user_ids)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            $user_flip = array_flip($user_ids);
+
+            $conditions = array(
+                'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
+                'columns' => 'id'
+            );
+            $users = \Users::find($conditions);
+
+            $user_online = [];
+            foreach ($users as $user) {
+                if (in_array($user->id, $user_ids)) {
+                    $user_online[$user_flip[$user->id]] = $user->id;
+                    unset($user_flip[$user->id]);
+                }
+            }
+            ksort($user_online);
+
+            $user_offline = array_values(array_flip($user_flip));
+
+            // 已经排序好
+            $user_ids = array_merge(array_values($user_online), $user_offline);
+
+            $users = \Users::findByIds($user_ids);
+//            $users = $users->toJson('users', 'toSimpleJson');
+
+        } else {
+            $users = $this->currentUser()->nearby($page, $per_page);
+//            $users = $users->toJson('users', 'toSimpleJson');
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
 

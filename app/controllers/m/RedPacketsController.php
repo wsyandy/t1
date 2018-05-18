@@ -47,7 +47,7 @@ class RedPacketsController extends BaseController
 
         if ($user->diamond < $diamond) {
             $to_pay_url = '';
-            return $this->renderJSON(ERROR_CODE_FAIL, '余额不足', ['to_pay_url' => $to_pay_url]);
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包', ['to_pay_url' => $to_pay_url]);
         }
 
         if (isBlank($user->current_room)) {
@@ -170,6 +170,7 @@ class RedPacketsController extends BaseController
         $this->view->user_nickname = $user_nickname;
         $this->view->user_avatar_url = $user_avatar_url;
         $this->view->distance_start_at = $distance_start_at;
+        $this->view->user_id = $room->user_id;
     }
 
     function redPacketsListAction()

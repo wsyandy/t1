@@ -181,7 +181,7 @@ class Rooms extends BaseModel
             '妈', '爸', '干你娘', '办理', '国家', '跪舔', '小婊砸', '我日', '超赚', '领导人', '作弊', '毒品', '淫秽', '异性',
             '私交', '涉嫌', '欺诈', '抢购', '招人', '跪求嫖', '艹', '操B', '艹B', '淫荡', '嫩模', '警察', '喘', '毒', '赌厅',
             '调情', '介绍所', '囚禁', '虐待', '包邮', '出售', '官方', '服务', '屁股', '搞基', '约炮', 'sao', '磕炮', '偷情',
-            '系统小助手', '系统'
+            '系统小助手', '系统', '嫖'
         ];
 
         foreach ($keywords as $keyword) {
@@ -229,11 +229,7 @@ class Rooms extends BaseModel
 
     function mergeJson()
     {
-        $room_seats = RoomSeats::find(['conditions' => 'room_id=:room_id:', 'bind' => ['room_id' => $this->id], 'order' => 'rank asc']);
-        $room_seat_datas = [];
-        foreach ($room_seats as $room_seat) {
-            $room_seat_datas[] = $room_seat->to_json;
-        }
+        $room_seat_datas = $this->roomSeats();
 
         $user = $this->user;
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
@@ -278,11 +274,8 @@ class Rooms extends BaseModel
 
     function roomSeats()
     {
-        $room_seats = RoomSeats::find([
-            'conditions' => 'room_id=:room_id:',
-            'bind' => ['room_id' => $this->id],
-            'order' => 'rank asc'
-        ]);
+        $room_seats = RoomSeats::findPagination(['conditions' => 'room_id=:room_id:',
+            'bind' => ['room_id' => $this->id], 'order' => 'rank asc'], 1, 8, 8);
 
         $data = $room_seats->toJson('room_seats', 'toJson');
         return $data['room_seats'];
@@ -300,11 +293,8 @@ class Rooms extends BaseModel
         if (isPresent($room_tag_ids)) {
 
             $room_tags = RoomTags::findByIds($room_tag_ids);
-
             if (count($room_tags)) {
                 $room->room_tag_ids = $room_tag_ids;
-
-
                 $room_tag_names = [];
                 foreach ($room_tags as $room_tag) {
                     $room_tag_names[] = $room_tag->name;
@@ -312,7 +302,6 @@ class Rooms extends BaseModel
 
                 $room->room_tag_names = implode(',', $room_tag_names);
             }
-
         }
 
 
@@ -323,7 +312,6 @@ class Rooms extends BaseModel
         $room->user_type = $user->user_type;
         $room->union_id = $user->union_id;
         $room->union_type = $user->union_type;
-        $room->country_id = $user->country_id;
         $room->last_at = time();
         $room->chat = true;
         $room->save();
@@ -337,9 +325,10 @@ class Rooms extends BaseModel
             $room_seat->room_id = $room->id;
             $room_seat->status = STATUS_ON;
             $room_seat->rank = $i;
-            $room_seat->country_id = $user->country_id;
+            $room_seat->microphone = true;
             $room_seat->save();
         }
+
         return $room;
     }
 
@@ -534,14 +523,8 @@ class Rooms extends BaseModel
 
     static function getActiveRoomIdsByTime()
     {
-
-        //        $hot_cache = Users::getHotWriteCache();
-//        $key = 'room_active_last_at_list';
-//        $time = time();
-//        $room_ids = $hot_cache->zrevrangebyscore($key, $time, $time - $minutes * 60, ['limit' => [0, 200]]);
-//        info($room_ids);
-//
         $start = time() - 3600;
+
         $end = time();
         $room_ids = [];
 
@@ -1271,11 +1254,13 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function pushRedPacketMessage($num, $url)
+    function pushRedPacketMessage($user, $num, $url, $notify_type = 'ptp')
     {
-        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
+        $body = ['action' => 'red_packet', 'notify_type' => $notify_type, 'red_packet' => ['num' => $num, 'client_url' => $url]];
         info('推送红包信息', $body);
-        $this->push($body, true);
+        if ($user->canReceiveBoomGiftMessage()) {
+            $this->pushToUser($user, $body);
+        }
     }
 
     function pushPkMessage($pk_history_datas)
@@ -1393,18 +1378,18 @@ class Rooms extends BaseModel
         return true;
     }
 
-    static function activeRoom($room_id)
+    static function autoActiveRoom($room_id)
     {
+
         $room = Rooms::findFirstById($room_id);
         if (!$room) {
             return;
         }
 
         $silent_users = $room->findSilentUsers();
-
         if (count($silent_users) > 0) {
             foreach ($silent_users as $silent_user) {
-                $silent_user->activeRoom($room);
+                $silent_user->autoActiveRoom($room);
             }
         }
 
@@ -2020,19 +2005,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2145,7 +2128,7 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            if (in_array($room->id, Rooms::getGameWhiteList())) {
+            if (isDevelopmentEnv() || in_array($room->id, Rooms::getGameWhiteList())) {
                 $room->statBoomIncome($income, $time);
             }
 

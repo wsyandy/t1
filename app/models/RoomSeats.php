@@ -20,25 +20,15 @@ class RoomSeats extends BaseModel
 
     static $STATUS = [STATUS_OFF => '封闭', STATUS_ON => '解封'];
 
-
-    function beforeCreate()
+    static function getCacheEndpoint($id)
     {
-
+        return self::config('room_db');
     }
 
-    function afterCreate()
+    static function getRoomDb()
     {
-
-    }
-
-    function beforeUpdate()
-    {
-
-    }
-
-    function afterUpdate()
-    {
-
+        $endpoint = self::config('room_db');
+        return XRedis::getInstance($endpoint);
     }
 
     function getCanPlayMusicText()

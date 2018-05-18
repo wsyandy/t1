@@ -317,6 +317,7 @@
 ```
     {
         action: red_packet 红包通知
+        notify_type bc 通知类型bc广播 ptp点对点
         red_packet:{
             num int 红包个数
             client_url 跳转地址   
