@@ -1067,8 +1067,6 @@ class Users extends BaseModel
         $online_key = 'online_user_list_' . date('YmdHi', $interval);
         $stat_db = Stats::getStatDb();
         $stat_db->zadd($online_key, time(), $this->id);
-        $num = $stat_db->zcard($online_key);
-        info($online_key, $num);
 
     }
 
