@@ -2410,7 +2410,7 @@ class Rooms extends BaseModel
 
     static function searchRooms($opts, $page, $per_page)
     {
-        $country_id = fetch($opts, 'country_id');
+
         $product_channel_id = fetch($opts, 'product_channel_id');
         $uid = fetch($opts, 'uid');
         $name = fetch($opts, 'name');
@@ -2423,11 +2423,6 @@ class Rooms extends BaseModel
             'bind' => ['product_channel_id' => $product_channel_id],
             'order' => 'last_at desc, user_type asc'
         ];
-
-        if ($country_id) {
-            $cond['conditions'] .= " and country_id = :country_id: ";
-            $cond['bind']['country_id'] = $country_id;
-        }
 
         if ($new == STATUS_ON) {
             $cond['conditions'] .= " and new = " . STATUS_ON;

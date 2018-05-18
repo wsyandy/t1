@@ -67,7 +67,6 @@ class GoldHistories extends BaseModel
         $gold_history->product_channel_id = $user->product_channel_id;
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
-        $gold_history->country_id = $user->country_id;
 
         foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id', 'target_id'] as $column) {
 
