@@ -558,14 +558,11 @@ class UsersController extends BaseController
         if ($this->request->isPost()) {
 
             $user_uid = $this->params('user_uid');
-
             if (!$user_uid) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
-
             $user = \Users::findFirstByUid($user_uid);
-
             if ($user) {
                 $user->geo_hash = '';
                 $user->update();
@@ -580,13 +577,14 @@ class UsersController extends BaseController
 
     function blockedNearbyUserListAction()
     {
-        $user_id = $this->params('user_id');
-        $hot_cache = \Users::getHotWriteCache();
+        $user_uid = $this->params('user_uid');
+        $user = \Users::findFirstByUid($user_uid);
 
+        $hot_cache = \Users::getHotWriteCache();
         $key = "blocked_nearby_user_list";
 
-        if ($user_id && $hot_cache->zscore($key, $user_id) > 0) {
-            $user_ids = [$user_id];
+        if ($user && $hot_cache->zscore($key, $user->id) > 0) {
+            $user_ids = [$user->id];
         } else {
             $user_ids = $hot_cache->zrange($key, 0, -1);
         }
@@ -604,10 +602,9 @@ class UsersController extends BaseController
 
     function deleteBlockedNearbyUserAction()
     {
+
         $user_uid = $this->params('user_uid');
-
         $user = \Users::findFirstByUid($user_uid);
-
         if ($user) {
 
             $hot_cache = \Users::getHotWriteCache();
