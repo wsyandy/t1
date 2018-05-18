@@ -31,7 +31,8 @@ class BaseController extends ApplicationController
 
     static $CHECK_LOGIN_STATUS_ACTIONS = [
         'users' => ['register', 'login', 'client_status', 'third_login', 'update', 'send_auth'],
-        'rooms' => '*'
+        'rooms' => '*',
+        'room_seats' => ['up', 'down']
     ];
 
     static $CHECK_OTHER_USER_ACTIONS = [
