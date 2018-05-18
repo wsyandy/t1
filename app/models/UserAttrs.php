@@ -103,24 +103,24 @@ trait UserAttrs
             'avatar_100x100_url' => $this->avatar_100x100_url,
             'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
-            'province_name' => $this->province_name,
-            'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'im_password' => $this->im_password,
-            'followed_num' => $this->followed_num,
-            'follow_num' => $this->follow_num,
-            'current_channel_name' => $this->current_channel_name,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'gold' => $this->gold,
             'diamond' => $this->diamond,
-            'medal_image_url' => $this->medal_image_url
+            'medal_image_url' => $this->medal_image_url,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'followed_num' => $this->followed_num,
+            'follow_num' => $this->follow_num
         ];
 
         return $data;
@@ -162,11 +162,9 @@ trait UserAttrs
         }
 
         $current_room_lock = false;
-
         if ($this->current_room_id) {
             $current_room_lock = $this->current_room->lock;
         }
-
         $data['current_room_lock'] = $current_room_lock;
 
         return $data;

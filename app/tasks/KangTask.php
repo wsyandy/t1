@@ -9,6 +9,17 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
+    function hmAction(){
+        $sd = Users::getUserDb();
+        $sd->hset('hsxxx', 10, 11);
+        $sd->hset('hsxxx', 20, 22);
+        $sd->hset('hsxxx', 30, 33);
+        $sd->hset('hsxxx', 40, 44);
+
+        $data = $sd->hmget('hsxxx', [40,20,30]);
+        echoLine($data);
+    }
+
     function commonBody()
     {
         $body = array(
