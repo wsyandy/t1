@@ -685,6 +685,10 @@ class ActivitiesController extends BaseController
 
             if (!$gift_id) {
                 $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+                if (time() > strtotime(date('2018-05-21')) && time() < strtotime(date('2018-05-27 23:59:59'))) {
+                    $key = \Users::generateFieldRankListKey('week', 'wealth', $opts);
+                }
+
             } else {
                 $key = $activity->getStatKey($gift_id);
             }
@@ -729,9 +733,11 @@ class ActivitiesController extends BaseController
         $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
 
     }
+
     function cpActivitiesAction()
     {
         $this->view->title = '我愿守护你一生一世';
     }
+
 
 }

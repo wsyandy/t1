@@ -133,10 +133,10 @@
         },
         methods: {
             getUsers: function (gift_id) {
-                if(gift_id == 0){
-                    this.getWealth();
-                    return;
-                }
+//                if(gift_id == 0){
+//                    this.getWealth();
+//                    return;
+//                }
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
@@ -156,26 +156,6 @@
             selectTab: function (index, gift_id) {
                 this.tab_index = index;
                 this.getUsers(gift_id);
-            },
-            getWealth: function () {
-                var data = {
-                    sid: '{{ sid }}',
-                    code: '{{ code }}',
-                    list_type: "week",
-                    per_page:"10",
-                    page:"1",
-                    id: '{{ id }}',
-                    //debug:1
-                };
-                $.authGet('/api/users/wealth_rank_list', data, function (resp) {
-                    vm.wealth = [];
-                    console.log(resp);
-                    if (resp.error_code == 0) {
-                        $.each(resp.users, function (index, item) {
-                            vm.wealth.push(item);
-                        });
-                    }
-                });
             }
         }
     };
