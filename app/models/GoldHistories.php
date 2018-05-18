@@ -55,6 +55,7 @@ class GoldHistories extends BaseModel
             $user = Users::findFirstById($user_id);
         } else {
             $user = $user_id;
+            $user_id = $user->id;
         }
 
         if (!$user) {
@@ -68,8 +69,7 @@ class GoldHistories extends BaseModel
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
 
-        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id', 'target_id'] as $column) {
-
+        foreach (['remark', 'operator_id', 'target_id'] as $column) {
             $value = fetch($opts, $column);
             if ($value) {
                 $gold_history->$column = $value;
