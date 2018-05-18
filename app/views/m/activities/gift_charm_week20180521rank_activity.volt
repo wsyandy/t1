@@ -101,7 +101,7 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <ul class="week_list_content" v-if="wealth.length">
+        <ul class="week_list_content" v-if="wealth.length && is_wealth_show">
             <li v-for="val,index in wealth">
                 <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${val.rank>3?val.rank:''}</span>
                 <img :src="val.avatar_small_url" alt="头像" />
@@ -109,7 +109,7 @@
                 <span>贡献值：${val.wealth_value}</span>
             </li>
         </ul>
-        <ul class="week_list_content" v-if="users.length">
+        <ul class="week_list_content" v-if="users.length && is_charm_show">
             <li v-for="user,index in users">
                 <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
                 <img :src="user.avatar_small_url" alt="头像"/>
@@ -126,7 +126,9 @@
         data: {
             tab_index: 2,
             users: [],
-            wealth:[]
+            wealth:[],
+            is_charm_show:true,
+            is_wealth_show:false
         },
         created: function () {
             this.getUsers('{{ gifts[0].id }}');
@@ -145,6 +147,8 @@
                 };
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
+                    this.is_charm_show = true;
+                    this.is_wealth_show = false;
 
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
@@ -169,7 +173,8 @@
                 };
                 $.authGet('/m/activities/wealth_rank_list', data, function (resp) {
                     vm.wealth = [];
-                    console.log(resp);
+                    this.is_charm_show = false;
+                    this.is_wealth_show = true;
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.wealth.push(item);
