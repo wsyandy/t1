@@ -169,7 +169,7 @@
                 };
                 $.authGet('/api/users/wealth_rank_list', data, function (resp) {
                     vm.wealth = [];
-
+                    console.log(resp);
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.wealth.push(item);
