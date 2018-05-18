@@ -3670,6 +3670,23 @@ class Users extends BaseModel
         return $res;
     }
 
+    static function randomSilentUser()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_key";
+        $silent_user_num = $hot_cache->zcard($key);
+        $offset = mt_rand(0, $silent_user_num - 1);
+        $user_id = $hot_cache->zrange($key, $offset, $offset);
+
+        if (!$user_id) {
+            return null;
+        }
+
+        $user = Users::findFirstById($user_id);
+
+        return $user;
+    }
+
     //离线送礼物
     static function sendOfflineSendGift($user_id, $data)
     {
@@ -3682,23 +3699,24 @@ class Users extends BaseModel
             $data = json_decode($data, true);
         }
 
-        $sender_id = fetch($data, 'sender_id');
-        $gift_id = fetch($data, 'gift_id');
+        $gift_ids = [66, 76];
 
-        if (!$gift_id || !$sender_id) {
-            info($data, $gift_id, $sender_id);
+        $gift_id = $gift_ids[array_rand($gift_ids)];
+        $sender = Users::randomSilentUser();
+
+        if (!$gift_id || !$sender) {
+            info($data, $gift_id);
             return;
         }
 
         $gift = Gifts::findFirstById($gift_id);
+
         if (!$gift) {
             info("gift is null", $user_id, $data);
             return;
         }
 
-        $sender = Users::findFirstById($sender_id);
-
-        GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
+        GiftOrders::asyncCreateGiftOrder($sender, [$user_id], $gift, 1);
 
         $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
         Chats::sendTextSystemMessage($user_id, $content);
