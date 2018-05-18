@@ -662,6 +662,12 @@ class ActivitiesController extends BaseController
         $this->giftCharmRankActivity();
     }
 
+    //礼物周榜活动    2018-05-21
+    function giftCharmWeek20180521rankActivityAction()
+    {
+        $this->giftCharmRankActivity();
+    }
+
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {

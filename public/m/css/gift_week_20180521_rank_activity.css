@@ -1,0 +1,294 @@
+html,body,p,div,ul,li{
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+  display: flex;
+  box-sizing: border-box;
+}
+ul,li{
+  list-style: none;
+}
+html,body{
+  width: 100%;
+  height: 100%;
+}
+/* 周榜活动 */
+.week_activity{
+  overflow: hidden;
+  flex-direction: column;
+  padding-top: 10.39rem;
+  background: url(../images/week_activity_bg/bg1.png) center top no-repeat,url(../images/week_activity_bg/bg2.png) center 18rem no-repeat,
+  url(../images/week_activity_bg/bg3.png) center 36rem no-repeat,url(../images/week_activity_bg/bg4.png) center 54rem no-repeat;
+  background-size: 7.5rem 18rem,7.5rem 18rem,7.5rem 18rem,7.5rem 16rem;
+}
+
+.week_title_type{
+  margin: 0 auto;
+  width: 3.8rem;
+  height: .68rem;
+  text-align: center;
+  line-height: .68rem;
+  font-size: .34rem;
+  color: #FFFFFF;
+  background: url(../images/week_charm_bg.png) center no-repeat;
+  background-size: cover;
+}
+.week_title_new_gift{
+  margin-bottom: .6rem;
+  background: url(../images/week_title_new_gift.png) center no-repeat;
+  background-size: cover;
+}
+.week_title_charm{
+  margin-top: 1.4rem;
+  background: url(../images/week_title_charm.png) center no-repeat;
+  background-size: cover;
+}
+.week_charm_topul{
+  flex-direction: column;
+  margin-left: .2rem;
+}
+.week_charm_topul li{
+  font-size: .24rem;
+  color: #FFFEE8;
+  align-items: center;
+  margin-bottom: .34rem;
+}
+.week_charm_topul li .type{
+  width: 1.26rem;
+}
+.week_charm_topul li .name{
+  color: #FFFEE8;
+  font-size: .26rem;
+  margin-left: .24rem;
+  margin-right: .3rem;
+  width: 2.3rem;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap; 
+}
+.week_charm_topul li img{
+  width: .44rem;
+  height: .44rem;
+  border-radius: .35rem;
+}
+.week_rules_slogan{
+  margin:.2rem auto .6rem;
+  width: 5.98rem;
+  height: 1.5rem;
+  font-size: .24rem;
+  color: #FFDF5D;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.week_rules_giftul{
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 .72rem .24rem;
+}
+.week_rules_giftul li{
+  margin-top: .78rem;
+  justify-content: center;
+  align-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: .32rem;
+  color: #FFFFFF;
+  flex-direction: column;
+}
+.week_rules_giftul li img{
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-bottom: .04rem;
+}
+.week_charm_rewardul{
+  margin-top: .22rem;
+  margin-left: .25rem;
+  margin-bottom: .4rem;
+  width: 7rem;
+  height: 4.5rem;
+  padding-top: .64rem;
+  flex-direction: column;
+  background: url(../images/week_charm_rewardul.png) center no-repeat;
+  background-size: cover;
+}
+.week_charm_rewardul li{
+  margin-top: .2rem;
+  margin-bottom: .32rem;
+  font-size: .24rem;
+  color: #FFFEE8;
+  justify-content: center;
+}
+.week_charm_rewardul li .type{
+  width: 1.76rem;
+}
+.week_charm_rewardul li .center{
+  margin-right: .6rem;
+}
+.week_charm_rewardul li .behind{
+  width: 110px;
+}
+.week_rules_box{
+  position: relative;
+  margin: .4rem auto .46rem;
+  padding: 0 .32rem;
+  width: 7rem;
+  height: 4.74rem;
+  padding: .1rem;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #405AFF;
+  border-radius: .2rem;
+}
+.week_charm_ranking{
+  background: url(../images/week_charm_ranking.png) center no-repeat;
+  background-size: 6.82rem 4.01rem;
+}
+.new_gift_bg{
+  justify-content: flex-start;
+  height: 7.01rem;
+  background: url(../images/new_gift_bg.png) center no-repeat;
+  background-size: 6.82rem 7.01rem;
+}
+.week_rules_background{
+  background: url(../images/week_rules_background1.png) center no-repeat;
+  background-size: 7rem 4.74rem;
+}
+.week_rules_bg{
+  margin-top: .8rem;
+  margin-bottom: 1rem;
+  height: 6.52rem;
+  background: url(../images/week_rules_bg.png) center no-repeat;
+  background-size: 6.8rem 6.52rem;
+}
+.week_rules_bg_title{
+  margin: .34rem auto;
+  font-size: .32rem;
+  color: #FFF204;
+  padding: 0 .62rem;
+  height: .6rem;
+  background: url(../images/week_rules_tittle_left.png) left center no-repeat,url(../images/week_rules_title_right.png) right center no-repeat;
+  background-size: .32rem .24rem;
+}
+.week_rules_box p{
+  padding:0 .6rem;
+  font-size: .24rem;
+  color: #FFFEE8;
+  display: flex;
+}
+.week_rules_box p .point::before{
+  content: "•";
+  font-size: .26rem;
+  margin-right: .1rem;
+  color: #FFF204;
+}
+.week_rules_box p i{
+  color: #FFF204;
+  font-style: normal;
+}
+.week_rules_box p span{
+  line-height: .4rem;
+}
+.week_countdown{
+  margin-top: .2rem;
+  font-size: .24rem;
+  color: #FFD734;
+  justify-content: center;
+}
+.week_list_tab{
+  margin-top: .5rem;
+  padding: 0 .8rem;
+  justify-content: space-between;
+}
+.week_list_tab li {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: white;
+  font-size: .24rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: url(../images/week_list_tab.png) center no-repeat;
+  background-size: cover;
+}
+.week_list_tab li.cur{
+  background: url(../images/week_list_tab_select.png) center no-repeat;
+  background-size: cover;
+}
+.week_list_tab li img{
+  width: .5rem;
+  height: .5rem;
+}
+.week_list_content{
+  margin: .7rem .36rem 0;
+  padding-top: .3rem;
+  flex-direction: column;
+  background: url(../images/week_list_content_bg.png) center no-repeat;
+  background-size: cover;
+}
+.week_list_content li{
+  width: 100%;
+  height: 1.2rem;
+  align-items: center;
+  border-bottom: 1px solid #000;
+}
+.week_list_content li:last-child{
+  border: none;
+}
+.week_list_content li .level{
+  font-size: .24rem;
+  color: #FFFEE8;
+  width: 1rem;
+  text-align: center;
+}
+.week_list_content li .neo{
+  width: 1rem;
+  height: .64rem;
+  background: url(../images/list_neo_icon.png) center no-repeat;
+  background-size:.64rem .64rem;
+}
+.week_list_content li .two{
+  width: 1rem;
+  height: .64rem;
+  background: url(../images/list_two_icon.png) center no-repeat;
+  background-size:.64rem .64rem;
+}
+.week_list_content li .three{
+  width: 1rem;
+  height: .64rem;
+  background: url(../images/list_three_icon.png) center no-repeat;
+  background-size:.64rem .64rem;
+}
+.week_list_content li img{
+  margin-left: .4rem;
+  width: .7rem;
+  height: .7rem;
+  border-radius: .34rem;
+  border: 1px solid #ddd;
+}
+.week_list_content li .name{
+  margin-left: .36rem;
+  width: 2.1rem;
+  margin-right: .12rem;
+  font-size: .28rem;
+  color: #FFFEE8;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap; 
+}
+.week_list_content li span{
+  font-size: .24rem;
+  color: #FFFEE8;
+}
+.week_hint_text{
+  width: 7.5rem;
+  height: 1.54rem;
+  line-height: 1.54rem;
+  font-size: .22rem;
+  color: #FFFEE8;
+  text-align: center;
+}
