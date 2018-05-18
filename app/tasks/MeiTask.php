@@ -16,6 +16,48 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_order->room_id = 1008720;
         $gift_order->room_union_id = 1068;
         $gift_order->save();
+
+        $order = Orders::findFirstById(69669);
+
+        $product = $order->product;
+        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
+
+        if ($product->diamond) {
+            $opts['remark'] = '购买' . $product->full_name;
+            AccountHistories::changeBalance($order->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+        }
+
+        if ($product->gold) {
+            $opts['remark'] = '购买金币';
+            GoldHistories::changeBalance($order->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, $opts);
+        }
+
+        echoLine($order);
+
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange(Rooms::generateExitRoomByServerListKey(), 0, -1);
+        echoLine(count($user_ids));
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+
+            if ($user->last_at <= time() - 15 * 60 && $user->current_room_id) {
+                echoLine($user->id, $user->current_room_id);
+                $current_room = $user->current_room;
+                $current_room->exitRoom($user, true);
+
+                if ($current_room_id == $room->id) {
+                    $room->pushExitRoomMessage($user, $current_room_seat_id);
+                }
+            }
+
+        }
+
+        echoLine($ids);
+
+        $hot_cache->zadd(self::generateExitRoomByServerListKey(), time(), $user_id);
     }
 
     function freshRoomUserIdAction()
