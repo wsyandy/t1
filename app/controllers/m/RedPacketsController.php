@@ -170,6 +170,7 @@ class RedPacketsController extends BaseController
         $this->view->user_nickname = $user_nickname;
         $this->view->user_avatar_url = $user_avatar_url;
         $this->view->distance_start_at = $distance_start_at;
+        $this->view->user_id = $room->user_id;
     }
 
     function redPacketsListAction()
