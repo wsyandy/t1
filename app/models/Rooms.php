@@ -1838,7 +1838,18 @@ class Rooms extends BaseModel
                 $room->pushRoomNoticeMessage($content, ['room_id' => $room_id, 'expire_time' => $expire_time]);
             }
 
-            $rooms = Rooms::searchHotRooms(null, 1, 100);
+            $hot_cache = Users::getHotWriteCache();
+            $hot_room_list_key = Rooms::getHotRoomListKey();
+            $hot_total_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
+
+            $hot_room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, 9);
+            $hot_total_room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, 9);
+
+            $room_ids = array_merge($hot_room_ids, $hot_total_room_ids);
+            $room_ids = array_unique($room_ids);
+
+            $rooms = Rooms::findByIds($room_ids);
+
         } else {
             $cond = ['conditions' => 'user_type = :user_type: and last_at >= :last_at:',
                 'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 3600], 'order' => 'last_at desc', 'limit' => 100];
@@ -2888,6 +2899,11 @@ class Rooms extends BaseModel
     {
         $root_host = fetch($opts, 'root_host');
         $menu_config = [];
+        $is_host = false;
+
+        if ($user->isRoomHost($this)) {
+            $is_host = true;
+        }
 
         if ($user->canReceiveBoomGiftMessage()) {
 
@@ -2898,13 +2914,16 @@ class Rooms extends BaseModel
 
             }
 
-            if ($user->isRoomHost($this)) {
+            if ($is_host) {
                 $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
             }
         }
 
-        $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
-            'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
+        if ($is_host) {
+            
+            $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
+                'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
+        }
 
         return $menu_config;
     }
