@@ -13,7 +13,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
 
         $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
-            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 180]];
+            'bind' => ['status' => STATUS_ON, 'last_at' => time() - 5]];
 
         $rooms = Rooms::findForeach($cond);
         $hot_cache = Rooms::getHotWriteCache();
