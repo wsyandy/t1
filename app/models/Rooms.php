@@ -1254,11 +1254,13 @@ class Rooms extends BaseModel
         $this->push($body);
     }
 
-    function pushRedPacketMessage($num, $url)
+    function pushRedPacketMessage($user, $num, $url, $notify_type = 'ptp')
     {
-        $body = ['action' => 'red_packet', 'red_packet' => ['num' => $num, 'client_url' => $url]];
+        $body = ['action' => 'red_packet', 'notify_type' => $notify_type, 'red_packet' => ['num' => $num, 'client_url' => $url]];
         info('推送红包信息', $body);
-        $this->push($body, true);
+        if ($user->canReceiveBoomGiftMessage()) {
+            $this->pushToUser($user, $body);
+        }
     }
 
     function pushPkMessage($pk_history_datas)
@@ -2003,19 +2005,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }

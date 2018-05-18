@@ -112,8 +112,7 @@ class RedPackets extends BaseModel
             $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
             $cache->zrem($underway_red_packet_list_key, $this->id);
 
-            //红包回收和红包抢完后仍然发一个socket通知
-            self::pushRedPacketMessage($this->room, $this->user);
+            self::pushRedPacketMessageForUser($this->room, $this->user, 'bc');
         }
     }
 
@@ -189,9 +188,10 @@ class RedPackets extends BaseModel
         if ($send_red_packet_history->create()) {
             $opts = [
                 'type' => 'create',
-                'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧'
+                'content' => $user->nickname . '在房间内发红包，手快有，手慢无，赶紧去抢吧',
+                'notify_type' => 'bc'
             ];
-            self::sendSocketForRedpacket($user, $room, $opts);
+            self::sendSocketForRedPacket($user, $room, $opts);
             $time = 24 * 60 * 60;
             if (isDevelopmentEnv()) {
                 $time = 5 * 60;
@@ -266,33 +266,26 @@ class RedPackets extends BaseModel
 
     static function grabRedPacket($user, $room, $red_packet_id)
     {
-        $get_diamond = \RedPackets::getRedPacketDiamond($user->current_room_id, $user->id, $red_packet_id);
-        $red_packet = self::findFirstById($red_packet_id);
+        $get_diamond = \RedPackets::getRedPacketDiamond($user->current_room_id, $user, $red_packet_id);
         if ($get_diamond) {
             $opts = [
                 'type' => 'update',
-                'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石'
+                'content' => '恭喜' . $user->nickname . '抢到了' . $get_diamond . '个钻石',
+                'notify_type' => 'ptp'
             ];
-            self::sendSocketForRedpacket($user, $room, $opts);
+            self::sendSocketForRedPacket($user, $room, $opts);
 
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
 
-        $red_packet->status = STATUS_OFF;
-        $red_packet->update();
-
-
-        //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
-        $content = $red_packet->user->nickname . '发的红包已抢完';
-        self::pushRedPacketTopTopicMessage($room, $content);
         return [ERROR_CODE_SUCCESS, null];
     }
 
-    static function getRedPacketDiamond($current_room_id, $user_id, $red_packet_id)
+    static function getRedPacketDiamond($current_room_id, $user, $red_packet_id)
     {
         $cache = \Users::getUserDb();
         //房间内对应抢到红包的用户的红包ID的集合
-        $key = self::generateRedPacketForRoomKey($current_room_id, $user_id);
+        $key = self::generateRedPacketForRoomKey($current_room_id, $user->id);
 
         //对应的抢到这个红包的用户ID集合
         $user_key = self::generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id);
@@ -301,16 +294,31 @@ class RedPackets extends BaseModel
         $balance_diamond = $red_packet->balance_diamond;
         $balance_num = $red_packet->balance_num;
 
-        if ($balance_diamond && $balance_num) {
+        if ($balance_diamond && $balance_num && $red_packet->status == STATUS_ON) {
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            $get_diamond = mt_rand(1, $usable_balance_diamond);
+            if ($usable_balance_diamond > ceil($red_packet->num * 0.5)) {
+                $get_diamond = mt_rand(1, ceil($red_packet->num * 0.4));
+            } else {
+                $get_diamond = mt_rand(1, $usable_balance_diamond);
+            }
+
+            if ($balance_num == 1) {
+                $get_diamond = $balance_diamond;
+            }
             $red_packet->balance_diamond = $balance_diamond - $get_diamond;
             $red_packet->balance_num = $balance_num - 1;
             $red_packet->update();
+            if ($red_packet->balance_num <= 0) {
+                $red_packet->status = STATUS_OFF;
+                $red_packet->update();
+
+                //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
+                $content = $red_packet->user->nickname . '发的红包已抢完';
+                self::pushRedPacketTopTopicMessage($red_packet->room, $content);
+            }
 
             $cache->zadd($key, $get_diamond, $red_packet_id);
-
-            $cache->zadd($user_key, time(), $user_id);
+            $cache->zadd($user_key, time(), $user->id);
 
             return $get_diamond;
         }
@@ -338,32 +346,21 @@ class RedPackets extends BaseModel
         return $user_get_red_packet_ids;
     }
 
-    static function sendSocketForRedpacket($user, $room, $opts)
+    static function sendSocketForRedPacket($user, $room, $opts)
     {
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
+        $notify_type = fetch($opts, 'notify_type');
+
         //红包socket
-        self::pushRedPacketMessage($room, $user);
+        self::pushRedPacketMessageForUser($room, $user, $notify_type);
 
         //红包公屏socket
         self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
         if (isDevelopmentEnv() && $type == 'create') {
-            //这里还没有做是否符合附近人的条件
-            $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
-                'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
-            ];
-            $client_url = 'app://rooms/detail?id=' . $room->id;
-            $users = \Users::find($cond);
-            foreach ($users as $user) {
-                $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
-                $intranet_ip = $user->getIntranetIp();
-                $receiver_fd = $user->getUserFd();
-
-                $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-                info('推送结果=>', $result, '结构=>', $body);
-            }
+            self:: pushRedPacketSinkMessage($room->id, $content);
         }
     }
 
@@ -389,21 +386,31 @@ class RedPackets extends BaseModel
         $room->pushTopTopicMessage($system_user, $content, $content_type);
     }
 
-    //红包的socket，推给个人
-    static function pushRedPacketMessage($room, $user)
+    //红包socket
+    static function pushRedPacketMessageForUser($room, $user, $notify_type)
     {
-        if ($user->canReceiveBoomGiftMessage()) {
-            $url = self::generateRedPacketUrl($room->id);
-            $underway_red_packet = $room->getNotDrawRedPacket($user);
-//        $room->pushRedPacketMessage(count($underway_red_packet), $url);
-            $body = ['action' => 'red_packet', 'red_packet' => ['num' => count($underway_red_packet), 'client_url' => $url]];
+        $url = self::generateRedPacketUrl($room->id);
+        $underway_red_packet_num = count($room->getNotDrawRedPacket($user));
+        $room->pushRedPacketMessage($user, $underway_red_packet_num, $url, $notify_type);
+    }
+
+    //下沉式
+    static function pushRedPacketSinkMessage($room_id, $content)
+    {
+        //这里还没有做是否符合附近人的条件
+        $cond = ['conditions' => 'user_status!=:user_status: and last_at>:last_at:',
+            'bind' => ['user_status' => USER_TYPE_SILENT, 'last_at' => time() - 2 * 60 * 60]
+        ];
+        $client_url = 'app://rooms/detail?id=' . $room_id;
+        $users = \Users::find($cond);
+        foreach ($users as $user) {
+            $body = ['action' => 'sink_notice', 'title' => '快来抢红包啦！！', 'content' => $content, 'client_url' => $client_url];
             $intranet_ip = $user->getIntranetIp();
             $receiver_fd = $user->getUserFd();
 
             $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
-            info('推送结果=>', $result, '推送内容=>', $body);
+            info('推送结果=>', $result, '结构=>', $body);
         }
-
     }
 
 }
