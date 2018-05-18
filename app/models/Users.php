@@ -3288,7 +3288,7 @@ class Users extends BaseModel
 
         $key = self::generateUserRankListKey($day);
         $user_db = Users::getUserDb();
-        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number, 'withscores'));
+        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number-1, 'withscores'));
 
         $yesterday_rank_list = [];
         $number = count($rank_list);
