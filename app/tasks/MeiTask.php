@@ -8,6 +8,42 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test45Action()
+    {
+        $ids = [972068, 972073, 972074, 972076, 972077];
+
+        $hi_coin_histories = HiCoinHistories::findByIds($ids);
+        $user = Users::findFirstById(1227966);
+
+
+        foreach ($hi_coin_histories as $hi_coin_history) {
+
+            $hi_coins = $hi_coin_history->hi_coins;
+            $diamond = $hi_coin_history->diamond;
+            $gold = $hi_coin_history->gold;
+
+            $remark = "Hi币兑钻石 Hi币: {$hi_coins} 钻石:{$diamond} 金币:{$gold}";
+
+            $opts = ['remark' => $remark, 'hi_coin_history_id' => $hi_coin_history->id, 'target_id' => $hi_coin_history->id];
+
+            if ($hi_coin_history->gold > 0) {
+                \GoldHistories::changeBalance($user, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $hi_coin_history->gold, $opts);
+            }
+
+            if ($hi_coin_history->diamond > 0) {
+                //兑换成功之后,进行分销奖励
+                $opts = [
+                    'mobile' => $hi_coin_history->user->mobile,
+                    'type' => 'exchange',
+                    'amount' => $hi_coin_history->diamond,
+                    'product_channel_id' => $hi_coin_history->product_channel_id
+                ];
+
+                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $hi_coin_history->diamond, $opts);
+            }
+        }
+    }
+
     function test44Action()
     {
         $gift_order = GiftOrders::findFirstById(1957528);
