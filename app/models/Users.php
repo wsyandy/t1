@@ -1425,27 +1425,82 @@ class Users extends BaseModel
     }
 
     //获取拉黑，关注，好友的列表
-    static function findByRelations($relations_key, $page, $per_page)
+    function findByRelations($relations_key, $page, $per_page, $opts = [])
     {
         $user_db = Users::getUserDb();
+        $total_entries = $user_db->zcard($relations_key);
 
         $offset = $per_page * ($page - 1);
-        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
-        $user_ids = [];
-        $times = [];
+        if ($offset >= $total_entries) {
+            $users = [];
+            $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+            $pagination->clazz = 'Users';
+            return $pagination;
+        }
 
-        foreach ($res as $user_id => $time) {
-            $user_ids[] = $user_id;
-            $times[$user_id] = $time;
+        $user_id_scores = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $user_ids = array_values($user_id_scores);
+
+        // 好友备注
+        $friend_note = fetch($opts, 'friend_note');
+        $friend_notes = [];
+        if ($friend_note) {
+            $friend_notes = $this->getFriendNotes($user_ids);
+            info('self_introduce', $this->id, $user_ids, $friend_notes);
+        }
+
+        // 自我简介
+        $self_introduce = fetch($opts, 'self_introduce');
+        $self_introduces = [];
+        if ($self_introduce) {
+            $self_introduces = $this->getSelfIntroducesText($user_ids);
+            info('self_introduce', $this->id, $user_ids, $self_introduces);
+        }
+
+
+        $is_friends = [];
+        $is_add_friends = [];
+        $is_friend = fetch($opts, 'is_friend');
+        $friend_new = fetch($opts, 'friend_new');
+        if ($is_friend && $friend_new) {
+            //是否为好友
+            $friend_list_key = 'friend_list_user_id_' . $this->id;
+            $is_friends = $user_db->multi_zget($friend_list_key, $user_ids);
+            info('is_friend', $this->id, $user_ids, $is_friends);
+
+            //是否为我添加的好友
+            $friend_list_key = 'add_friend_list_user_id_' . $this->id;
+            $is_add_friends = $user_db->multi_zget($friend_list_key, $user_ids);
+            info('is_add_friend', $this->id, $user_ids, $is_add_friends);
         }
 
         $users = Users::findByIds($user_ids);
-
         foreach ($users as $user) {
-            $user->created_at = fetch($times, $user->id);
+            $user->created_at = fetch($user_id_scores, $user->id);
+            if ($friend_notes) {
+                $user->friend_note = fetch($friend_notes, $user->id);
+            }
+            if ($self_introduces) {
+                $user->self_introduce = fetch($self_introduces, $user->id);
+            }
+
+            if($is_friend){
+                if($friend_new){
+                    $user->friend_status = 3;
+                    if ($is_friends && fetch($is_friends, $user->id)) {
+                        $user->friend_status = 1;
+                    }
+                    if ($is_add_friends && fetch($is_add_friends, $user->id)) {
+                        $user->friend_status = 2;
+                    }
+
+                }else{
+                    $user->friend_status = 1;
+                }
+            }
         }
 
-        $total_entries = $user_db->zcard($relations_key);
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 
@@ -1456,7 +1511,7 @@ class Users extends BaseModel
     function blackList($page, $per_page)
     {
         $black_key = "black_list_user_id" . $this->id;
-        $users = self::findByRelations($black_key, $page, $per_page);
+        $users = $this->findByRelations($black_key, $page, $per_page);
         return $users;
     }
 
@@ -1514,10 +1569,7 @@ class Users extends BaseModel
     function followList($page, $per_page)
     {
         $follow_key = 'follow_list_user_id' . $this->id;
-        $users = self::findByRelations($follow_key, $page, $per_page);
-        foreach ($users as $user) {
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
+        $users = $this->findByRelations($follow_key, $page, $per_page, ['friend_note' => 1]);
 
         return $users;
     }
@@ -1535,11 +1587,7 @@ class Users extends BaseModel
     function followedList($page, $per_page)
     {
         $followed_key = 'followed_list_user_id' . $this->id;
-        $users = self::findByRelations($followed_key, $page, $per_page);
-        foreach ($users as $user) {
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
-
+        $users = $this->findByRelations($followed_key, $page, $per_page, ['friend_note' => 1]);
         return $users;
     }
 
@@ -1562,6 +1610,18 @@ class Users extends BaseModel
         }
 
         return $friend_note;
+    }
+
+    function getFriendNotes($user_ids)
+    {
+        $db = Users::getUserDb();
+        $friend_note_key = "friend_note_list_user_id_" . $this->id;
+        $friend_notes = $db->hmget($friend_note_key, $user_ids);
+        if (is_null($friend_notes)) {
+            return [];
+        }
+
+        return $friend_notes;
     }
 
     function addFriendNote($user_id, $friend_note)
@@ -1686,36 +1746,27 @@ class Users extends BaseModel
         return $self_introduce;
     }
 
+    function getSelfIntroducesText($other_user_ids)
+    {
+        $user_db = Users::getUserDb();
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $self_introduces = $user_db->hget($user_introduce_key, $other_user_ids);
+        return $self_introduces;
+    }
+
     //好友列表
     function friendList($page, $per_page, $new)
     {
         if (1 == $new) {
-            //进入列表清空消息
+            //进入列表清空新好友通知个数
             $this->clearNewFriendNum();
             $key = 'friend_total_list_user_id_' . $this->id;
         } else {
             $key = 'friend_list_user_id_' . $this->id;
         }
 
-        $users = self::findByRelations($key, $page, $per_page);
-        foreach ($users as $user) {
-
-            //3接受状态 2等待状态 1已添加
-            if ($new == 1) {
-                $friend_status = 3;
-                if ($this->isFriend($user)) {
-                    $friend_status = 1;
-                } elseif ($this->isAddFriend($user)) {
-                    $friend_status = 2;
-                }
-            } else {
-                $friend_status = 1;
-            }
-
-            $user->self_introduce = $this->getSelfIntroduceText($user);
-            $user->friend_status = $friend_status;
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
+        $users = $this->findByRelations($key, $page, $per_page, ['friend_note' => 1,
+            'self_introduce' => 1, 'friend_new' => $new, 'is_friend' => 1]);
 
         return $users;
     }
