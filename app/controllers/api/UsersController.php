@@ -842,7 +842,7 @@ class UsersController extends BaseController
 
         if (isDevelopmentEnv()) {
 
-            $user_ids = Users::findUserCharmAndWealthRank();
+            $user_ids = \Users::findUserCharmAndWealthRank();
             if (empty($user_ids)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
@@ -853,7 +853,7 @@ class UsersController extends BaseController
                 'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
                 'columns' => 'id'
             );
-            $users = Users::find($conditions);
+            $users = \Users::find($conditions);
 
             $user_online = [];
             foreach ($users as $user) {
@@ -869,7 +869,7 @@ class UsersController extends BaseController
             // 已经排序好
             $user_ids = array_merge(array_values($user_online), $user_offline);
 
-            $users = Users::findByIds($user_ids);
+            $users = \Users::findByIds($user_ids);
 //            $users = $users->toJson('users', 'toSimpleJson');
 
         } else {
