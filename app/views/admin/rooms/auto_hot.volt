@@ -30,7 +30,7 @@
     <input name="user_id" type="text" id="user_id_eq"/>
 
     <label for="user_uid">房主UID</label>
-    <input name="user_uid" type="text" id="user_uid" />
+    <input name="user_uid" type="text" id="user_uid"/>
 
     <button type="submit" class="ui button">搜索</button>
 </form>
@@ -52,7 +52,8 @@
 {% macro room_info(room) %}
     房间名称: {{ room.name }}<br/>
     房间话题: {{ room.topic }}<br/>
-    在线人数: {{ room.user_num }} 主题类型: {{ room.theme_type_text }}<br/>
+    在线人数: {{ room.user_num }} 真实人数: {{ room.real_user_num }} <br/>
+    主题类型: {{ room.theme_type_text }}<br/>
     {% if room.audio_id > 0 %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
