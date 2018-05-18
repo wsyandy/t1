@@ -216,8 +216,9 @@ class Rooms extends BaseModel
     {
         $user = $this->user;
         $data = ['id' => $this->id, 'uid' => $this->uid, 'name' => $this->name, 'topic' => $this->topic, 'chat' => $this->chat,
-            'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url,
-            'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url, 'nickname' => $user->nickname, 'age' => $user->age,
+            'user_id' => $this->user_id, 'sex' => $user->sex, 'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url,
+            'avatar_small_url' => $user->avatar_small_url, 'avatar_100x100_url' => $user->avatar_100x100_url,
+            'avatar_60x60_url' => $user->avatar_60x60_url, 'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'channel_name' => $this->channel_name, 'online_status' => $this->online_status,
             'user_num' => $this->user_num, 'lock' => $this->lock, 'created_at' => $this->created_at, 'last_at' => $this->last_at, 'has_red_packet' => $this->has_red_packet
         ];
@@ -233,7 +234,10 @@ class Rooms extends BaseModel
 
         $user = $this->user;
         return ['channel_name' => $this->channel_name, 'user_num' => $this->user_num, 'sex' => $user->sex,
-            'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname, 'age' => $user->age,
+            'avatar_url' => $user->avatar_url, 'avatar_big_url' => $user->avatar_big_url,
+            'avatar_small_url' => $user->avatar_small_url, 'avatar_100x100_url' => $user->avatar_100x100_url,
+            'avatar_60x60_url' => $user->avatar_60x60_url,
+            'nickname' => $user->nickname, 'age' => $user->age,
             'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
             'theme_image_url' => $this->theme_image_url, 'uid' => $this->uid
         ];
