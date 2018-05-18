@@ -8,7 +8,11 @@ class Stats extends BaseModel
     static function getStatDb()
     {
         $endpoint = self::config('stat_db');
-        $endpoint = 'ssdb://172.16.253.46:8880';
+
+        if (isProduction()) {
+            $endpoint = 'ssdb://172.16.253.46:8880';
+        }
+
         return XRedis::getInstance($endpoint);
     }
 
