@@ -111,6 +111,9 @@ class RedPackets extends BaseModel
             $cache = \Users::getUserDb();
             $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($this->room_id);
             $cache->zrem($underway_red_packet_list_key, $this->id);
+
+            //红包回收和红包抢完后仍然发一个socket通知
+            self::pushRedPacketMessage($this->room, $this->user);
         }
     }
 
@@ -127,7 +130,7 @@ class RedPackets extends BaseModel
             'user_avatar_url' => $this->user->avatar_url,
             'red_packet_type' => $this->red_packet_type,
             'sex' => $this->sex,
-            'distance_start_at'=>$this->distance_start_at
+            'distance_start_at' => $this->distance_start_at
         ];
     }
 
@@ -211,14 +214,13 @@ class RedPackets extends BaseModel
     static function asyncFinishRedPacket($red_packet_id)
     {
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-        $balance_diamond = $red_packet->balance_diamond;
-
-        if ($balance_diamond > 0) {
-            $opts = ['remark' => '红包余额返还钻石' . $balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
-            \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $balance_diamond, $opts);
-        }
 
         if (isPresent($red_packet) && $red_packet->status != STATUS_OFF) {
+            if ($red_packet->balance_diamond > 0) {
+                $opts = ['remark' => '红包余额返还钻石' . $red_packet->balance_diamond, 'mobile' => $red_packet->user->mobile, 'target_id' => $red_packet->id];
+                \AccountHistories::changeBalance($red_packet->user_id, ACCOUNT_TYPE_RED_PACKET_RESTORATION, $red_packet->balance_diamond, $opts);
+            }
+
             info('回收红包', $red_packet->balance_diamond);
             $red_packet->balance_diamond = 0;
             $red_packet->balance_num = 0;
@@ -276,16 +278,13 @@ class RedPackets extends BaseModel
             return [ERROR_CODE_SUCCESS, $get_diamond];
         }
 
-
         $red_packet->status = STATUS_OFF;
         $red_packet->update();
 
 
-        //红包抢完公屏socket
+        //红包抢完公屏socket，红包过时回收的话只发送红包socket，所以两者放在afterUpdate统一处理
         $content = $red_packet->user->nickname . '发的红包已抢完';
-        $content_type = 'red_packet';
-        $system_user = \Users::getSysTemUser();
-        $room->pushTopTopicMessage($system_user, $content, $content_type);
+        self::pushRedPacketTopTopicMessage($room, $content);
         return [ERROR_CODE_SUCCESS, null];
     }
 
@@ -344,14 +343,10 @@ class RedPackets extends BaseModel
         $type = fetch($opts, 'type');
         $content = fetch($opts, 'content');
         //红包socket
-        $url = self::generateRedPacketUrl($room->id);
-        $underway_red_packet = $room->getNotDrawRedPacket($user);
-        $room->pushRedPacketMessage(count($underway_red_packet), $url);
+        self::pushRedPacketMessage($room, $user);
 
         //红包公屏socket
-        $content_type = 'red_packet';
-        $system_user = \Users::getSysTemUser();
-        $room->pushTopTopicMessage($system_user, $content, $content_type);
+        self::pushRedPacketTopTopicMessage($room, $content);
 
         //首页下沉通知
         if (isDevelopmentEnv() && $type == 'create') {
@@ -378,12 +373,37 @@ class RedPackets extends BaseModel
         $time = $room->getTimeForUserInRoom($user_id);
 
         //如果用户进房间的时间小于红包的创建时间，则需要以红包创建时间为节点等待3分钟，否则以用户进房间的时间为节点等待3分钟
-        $distance_start_at = $time + 3 * 60 - time();
+        $distance_start_at = $time + 3 * 60 - time() > 0 ? $time + 3 * 60 - time() : 0;
         if ($time <= $this->created_at) {
-            $distance_start_at = $this->created_at + 3 * 60 - time();
+            $distance_start_at = $this->created_at + 3 * 60 - time() > 0 ? $this->created_at + 3 * 60 - time() : 0;
         }
 
         return $distance_start_at;
+    }
+
+    //红包的公屏socket
+    static function pushRedPacketTopTopicMessage($room, $content)
+    {
+        $content_type = 'red_packet';
+        $system_user = \Users::getSysTemUser();
+        $room->pushTopTopicMessage($system_user, $content, $content_type);
+    }
+
+    //红包的socket，推给个人
+    static function pushRedPacketMessage($room, $user)
+    {
+        if ($user->canReceiveBoomGiftMessage()) {
+            $url = self::generateRedPacketUrl($room->id);
+            $underway_red_packet = $room->getNotDrawRedPacket($user);
+//        $room->pushRedPacketMessage(count($underway_red_packet), $url);
+            $body = ['action' => 'red_packet', 'red_packet' => ['num' => count($underway_red_packet), 'client_url' => $url]];
+            $intranet_ip = $user->getIntranetIp();
+            $receiver_fd = $user->getUserFd();
+
+            $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+            info('推送结果=>', $result, '推送内容=>', $body);
+        }
+
     }
 
 }

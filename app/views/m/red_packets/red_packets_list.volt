@@ -15,7 +15,6 @@
                 </div>
                 <div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">已抢过</div>
 
-                {#<div class="num red_list_style red_list_get_red" v-if="v.is_grabbed">附近的人可抢</div>#}
                 <div class="num red_list_style" v-bind:class="v.class" v-if="v.is_grab"
                      @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
                 </div>
@@ -24,8 +23,8 @@
                      @click="toGrabRedPacket(v.id,v.red_packet_type)"></div>
                 <div class="num red_list_style red_list_qiang daojishiJS" style="display: none;"
                      v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢
-                    {#</div>#}
-                </div>
+                    </div>
+            </div>
         </li>
     </ul>
 </div>
@@ -56,7 +55,7 @@
                 };
 
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
-                    console.log(resp);
+                    //console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
                     $.each(resp.red_packets, function (index, val) {
@@ -69,10 +68,6 @@
                             val.class = "red_list_qiang";
                         }
 
-                        if (val.red_packet_type == 'nearby') {
-                            val.text = "附近人可抢";
-                            val.class = "red_list_fangzhu";
-                        }
                         if (val.red_packet_type == 'attention') {
                             val.text = "关注可抢";
                             val.class = "red_list_fangzhu";
@@ -114,7 +109,7 @@
 
     function distanceStartAt() {
         var t = 180;
-        console.log(t);
+        //console.log(t);
 
         var m = parseInt(t / 60);
         var s = t % 60;

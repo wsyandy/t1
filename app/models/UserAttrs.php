@@ -201,7 +201,7 @@ trait UserAttrs
             'segment_text' => $this->segment_text,
             'medal_image_url' => $this->medal_image_url,
             'followed_num' => $this->followed_num,
-            'has_red_packet'=>$this->has_red_packet
+            'has_red_packet' => $this->has_red_packet
         ];
 
         return $data;
@@ -577,7 +577,7 @@ trait UserAttrs
 
     function getCurrentChannelName()
     {
-        if ($this->current_room) {
+        if ($this->current_room_id) {
             return $this->current_room->channel_name;
         }
 

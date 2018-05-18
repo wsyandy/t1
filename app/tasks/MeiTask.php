@@ -16,6 +16,31 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_order->room_id = 1008720;
         $gift_order->room_union_id = 1068;
         $gift_order->save();
+
+        $hot_cache = Users::getHotWriteCache();
+        $key = 'room_active_last_at_list';
+        $total_num = $hot_cache->zcard($key);
+        $per_page = 100;
+        $all_room_ids = $hot_cache->zrange($key, 0, -1);
+
+        $loop_num = ceil($total_num / $per_page);
+        $offset = 0;
+
+        for ($i = 0; $i < $loop_num; $i++) {
+
+            $slice_ids = array_slice($all_room_ids, $offset, $per_page);
+
+            $rooms = Rooms::findByIds($slice_ids);
+
+            foreach ($rooms as $room) {
+                list($res, $word) = BannedWords::checkWord($room->name);
+                $room->name = $word;
+                list($res, $word) = BannedWords::checkWord($room->topic);
+                $room->topic = $word;
+                $room->update();
+            }
+        }
+
     }
 
     function freshRoomUserIdAction()

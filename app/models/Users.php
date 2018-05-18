@@ -504,6 +504,8 @@ class Users extends BaseModel
             $user->device = $device;
             $user->device_id = $device->id;
             $user->device_no = $device->device_no;
+            $user->speaker = true;
+            $user->microphone = true;
 
             foreach ($fields as $field) {
                 $user->$field = $device->$field;
@@ -1553,6 +1555,7 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
+        info($friend_note_key, $user_id);
         $friend_note = $db->hget($friend_note_key, $user_id);
         if (is_null($friend_note)) {
             return '';
@@ -1605,8 +1608,9 @@ class Users extends BaseModel
         }
 
         //没有在对方总队列里面添加 此时要做通知
-        if (!$user_db->zscore($other_total_key, $this->id)) {
-        }
+//        if (!$user_db->zscore($other_total_key, $this->id)) {
+//
+//        }
 
         $time = time();
         $user_db->zadd($add_key, $time, $other_user->id);
@@ -1677,6 +1681,7 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        info($user_introduce_key, $other_user->id);
         $self_introduce = $user_db->hget($user_introduce_key, $other_user->id);
         return $self_introduce;
     }
@@ -2351,8 +2356,9 @@ class Users extends BaseModel
     }
 
     //启动房间互动
-    function activeRoom($room)
+    function autoActiveRoom($room)
     {
+
         if (!$room) {
             info("Exce", $this->id, $room->id);
             return;
@@ -3538,6 +3544,7 @@ class Users extends BaseModel
     function canSendToUser($receiver_ids, $gift_amount)
     {
         if (!$this->isWhiteListUser()) {
+
             if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
@@ -3546,18 +3553,20 @@ class Users extends BaseModel
 
                 if ($plan_number > 100) {
 
-                    if (count($receiver_ids) > 1) {
-                        return false;
-                    } else {
-                        $user = Users::findFirstById($receiver_ids[0]);
+                    //内部账号使用
 
-                        if (!$user->isCompanyUser()) {
+                    $receivers = Users::findByIds($receiver_ids);
+
+                    foreach ($receivers as $receiver) {
+
+                        if (!$receiver->isCompanyUser()) {
                             return false;
                         }
                     }
                 }
             }
         }
+
         return true;
     }
 

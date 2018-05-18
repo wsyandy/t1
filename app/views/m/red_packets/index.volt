@@ -1,6 +1,6 @@
 {{ block_begin('head') }}
-{{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css') }}
-{{ theme_js('/m/js/address.js','/m/js/font_rem.js') }}
+{{ theme_css('/m/css/red_packet_address.css','/m/css/red_packet_index.css','/m/css/red_packet_sex_select.css','/m/css/picker.css') }}
+{{ theme_js('/m/js/picker.min.js','/m/js/font_rem.js') }}
 {{ block_end() }}
 <div id="app">
     <div class="give_red_bg">
@@ -40,8 +40,7 @@
                     <div class="give_box">
                         <h3>位置／范围</h3>
                         <div class="give_input">
-                             <div class="get_font select-value">5km</div>
-                            {#<input type="text" class="get_address" v-model="nearby_distance" value=""/>#}
+                            <div class="get_font" id="picker2" v-model="nearby_distance">${nearby_distance}</div>
                             <i class="give_right"></i>
                         </div>
                     </div>
@@ -92,6 +91,14 @@
             <a href="/m/users/account?sid={{ sid }}&code={{ code }}" class="less_btn">去充值</a>
         </div>
     </div>
+    <!-- 其他弹框 -->
+    <div v-if="error_input">
+        <div class="zuan_less_box less_show">
+            <i class="less_close" @click="cancel(3)"></i>
+            <p v-text="error_reason"></p>
+            <a href="#" class="less_btn">取消</a>
+        </div>
+    </div>
 
     <!-- 性别弹出层 -->
     <div class="cover" v-if="isSex">
@@ -123,6 +130,8 @@
             isGiveStyle: false,
             less_zuan_input: false,
             isSex: true,
+            error_input: false,
+            error_reason: ''
         },
 
         methods: {
@@ -151,6 +160,9 @@
                     case 2:
                         vm.less_zuan_input = false;
                         break;
+                    case 3:
+                        vm.error_input = false;
+                        break;
                 }
             },
             sendRedPacket: function () {
@@ -161,18 +173,20 @@
                     diamond: this.amount,
                     sex: this.sex,
                     red_packet_type: this.type,
-                    nearby_distance: this.nearby_distance
+                    nearby_distance: parseInt(this.nearby_distance) * 1000,
                 }
                 if (this.sex == "男女皆可") {
                     data.sex = 2;
                 }
-                console.log(data);
+                //console.log(data);
                 if (vm.amount > this.myDiamond) {
                     vm.less_zuan_input = true;
                     return;
                 }
                 $.authPost('/m/red_packets/create', data, function (resp) {
                     console.log(resp);
+                    vm.error_reason = resp.error_reason;
+                    vm.error_input = true;
                     if (!resp.error_code) {
                         location.href = 'app://back';
                     }
@@ -188,9 +202,6 @@
 
     $(function () {
         // 领取方式弹框
-//        $('.get_style').click(function () {
-//            $('.get_style_bg').show();
-//        })
 
         $('.get_style_box ul li').each(function () {
             $(this).click(function () {
@@ -203,48 +214,6 @@
         $('.quxiao').click(function () {
             $('.get_style_bg').hide();
         })
-
-        // 金额不足弹框
-//
-//        $('.less_zuan_input').click(function () {
-//            $('.get_zuan_less_bg').show();
-//        })
-//        $('.less_close').click(function () {
-//            $('.get_zuan_less_bg').hide();
-//        })
-
-        // 距离选择
-        // 弹出层数据
-
-            // 弹出层数据
-            var dataJson=[
-                {  "name":'附近',
-                    "value":'1',
-                    "child":[
-                        { "name":'1km', "value":'1',  },
-                        { "name":'3km', "value":'3',  },
-                        { "name":'5km', "value":'5',  },
-                        { "name":'10km', "value":'10',  },
-                        { "name":'20km', "value":'20',  },
-                        { "name":'50km', "value":'50',  }
-                    ]
-                }
-            ];
-            /**
-             * 联动的picker
-             * 两级
-             */
-            $('.select-value').mPicker({
-                level:2,
-                dataJson:dataJson,
-                Linkage:true,
-                rows:6,
-                idDefault:true,
-                splitStr:'-',
-            })
-
-
-
 
 
         // 性别弹出层
@@ -279,5 +248,67 @@
             })
         })
 
+    });
+
+    //距离弹出层
+    var data1 = [
+        {
+            text: '附近',
+            value: 1
+        }
+    ];
+
+    var data2 = [
+        {
+            text: '5km',
+            value: '5000'
+        }, {
+            text: '10km',
+            value: '10000'
+        },
+        {
+            text: '15km',
+            value: '15000'
+        },
+        {
+            text: '20km',
+            value: '20000'
+        },
+        {
+            text: '25km',
+            value: '25000'
+        },
+        {
+            text: '30km',
+            value: '30000'
+        },
+        {
+            text: '35km',
+            value: '35000'
+        }, {
+            text: '40km',
+            value: '40000'
+        },
+    ];
+
+    var picker2El = document.getElementById('picker2');
+    var picker2 = new Picker({
+        data: [data1, data2]
+    });
+    picker2.on('picker.select', function (selectedVal, selectedIndex) {
+        picker2El.innerText = data2[selectedIndex[1]].text;
+        vm.nearby_distance = data2[selectedIndex[1]].text;
+    });
+
+    picker2.on('picker.change', function (index, selectedIndex) {
+        //console.log(index);
+    });
+
+    picker2.on('picker.valuechange', function (selectedVal, selectedIndex) {
+        //console.log(selectedVal);
+    });
+
+    picker2El.addEventListener('click', function () {
+        picker2.show();
     });
 </script>

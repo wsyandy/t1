@@ -268,7 +268,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(700, 926) / 1000;
+        $pool_rate = mt_rand(700, 932) / 1000;
 
         $hour = intval(date("H"));
 
@@ -675,7 +675,7 @@ class DrawHistories extends BaseModel
     //获取屏蔽用户分页列表
     static function findBlockUsersList($page, $per_page)
     {
-        $user_db = DrawHistories::getHotWriteCache();
+        $user_db = Users::getUserDb();
         $relations_key = 'draw_histories_block_user_ids';
         $offset = $per_page * ($page - 1);
         $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1);
@@ -686,8 +686,8 @@ class DrawHistories extends BaseModel
     static function deleteBlockUser($user_id)
     {
         if ($user_id) {
-            $hot_cache = DrawHistories::getHotWriteCache();
-            $hot_cache->zrem("draw_histories_block_user_ids", $user_id);
+            $user_db = Users::getUserDb();
+            $user_db->zrem("draw_histories_block_user_ids", $user_id);
         }
     }
 

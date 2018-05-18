@@ -282,13 +282,12 @@ class Backpacks extends BaseModel
 
         // 背包减去数量
         $this->number = $this->number - $send_number;
-        $give_result = $this->save();
 
-        $notify_type = fetch($opt, 'notify_type');
+        if ($this->save()) {
 
-        \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
+            $notify_type = fetch($opt, 'notify_type');
 
-        if ($give_result) {
+            \GiftOrders::asyncCreateGiftOrder($user->id, $receiver_ids, $gift->id);
 
             $notify_data = \ImNotify::generateNotifyData(
                 'gifts',
