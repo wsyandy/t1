@@ -805,18 +805,13 @@ trait UserWakeup
         $title = fetch($opts, 'title');
         $body = fetch($opts, 'body');
         $client_url = fetch($opts, 'client_url');
+        $receivers = Users::findByIds($receiver_ids);
 
-
-        foreach ($receiver_ids as $receiver_id) {
-
-            $receiver = Users::findFirstById($receiver_id);
-
-            if (!$receiver) {
-                continue;
-            }
+        foreach ($receivers as $receiver) {
 
             $push_data = ['title' => $title, 'body' => $body, 'client_url' => $client_url];
             Pushers::push($receiver->getPushContext(), $receiver->getPushReceiverContext(), $push_data);
+
         }
     }
 

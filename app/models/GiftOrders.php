@@ -183,8 +183,20 @@ class GiftOrders extends BaseModel
             $receiver_ids = explode(",", $receiver_ids);
         }
 
-        $sender = Users::findFirstById($sender_id);
-        $gift = Gifts::findFirstById($gift_id);
+        if (is_numeric($sender_id)) {
+            $sender = Users::findFirstById($sender_id);
+        } else {
+            $sender = $sender_id;
+            $sender_id = $sender->id;
+        }
+
+        if (is_numeric($gift_id)) {
+            $gift = Gifts::findFirstById($gift_id);
+        } else {
+            $gift = $gift_id;
+            $gift_id = $gift->id;
+        }
+
         $gift_num = fetch($opts, 'gift_num', 1);
         $sender_current_room_id = fetch($opts, 'sender_current_room_id');
         $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
