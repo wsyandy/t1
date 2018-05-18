@@ -43,6 +43,20 @@ class MeiTask extends \Phalcon\Cli\Task
 
     }
 
+    function uploadMoniQiAction()
+    {
+
+        $file = APP_ROOT . "temp/5afec63ea3d9e.apk";
+        $dest_file = APP_NAME . "/soft_version/" . uniqid() . '.apk';
+        $res = StoreFile::upload($file, $dest_file);
+        echoLine(StoreFile::getUrl($res));
+
+        $soft_version = SoftVersions::findFirstById(9);
+        $soft_version->file = $res;
+        $soft_version->save();
+        httpSave('http://mt-development.oss-cn-hangzhou.aliyuncs.com/chance/soft_version/5afec5adb10b7.apk', APP_ROOT . "temp/" . uniqid() . '.apk');
+    }
+
     function freshRoomUserIdAction()
     {
         $cond = [
