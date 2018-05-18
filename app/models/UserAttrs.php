@@ -485,11 +485,7 @@ trait UserAttrs
             return $this->getDefaultAvatar();
         }
 
-        if (isDevelopmentEnv()) {
-            return StoreFile::getUrl($this->avatar) . '@!small';
-        }
-
-        return StoreFile::getUrl($this->avatar) . '@!100x100';
+        return StoreFile::getUrl($this->avatar) . '@!small';
     }
 
     function getAvatarBigUrl()
