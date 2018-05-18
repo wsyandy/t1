@@ -46,10 +46,10 @@
             {% endfor %}
         </ul>
     </div>
-    <span class="week_title_type week_title_charm">贡献榜周榜奖励</span>
+    <span class="week_title_type week_title_charm">本周榜单</span>
     <ul class="week_charm_rewardul week_charm_ranking">
         <li>
-            <span class="type">本周总榜</span>
+            <span class="type">本周贡献榜</span>
             <span class="center">第一名奖励</span>
             <span class="behind">666钻礼物冠名权</span>
         </li>
@@ -75,7 +75,7 @@
         </div>
         <p><span class="point"></span><span>所有冠名权的时限均只有 <i>一周</i></span></p>
         <p><span class="point"></span><span>用户在活动期间送出礼物，<i>每送出1个钻石礼物，用户的贡献值+1</i></span></p>
-        <p><span class="point"></span><span>礼物榜按用户送出对应礼物（纳米战甲，美队之盾，荣誉徽章）的个数进行排名</span></p>
+        <p><span class="point"></span><span>礼物榜按用户收到对应礼物（纳米战甲，美队之盾，荣誉徽章）的个数进行排名</span></p>
         <p><span class="point"></span><span>活动时间为 <i>2018-05-21 17:00—2018-05-28 00:00</i></span></p>
         <p><span class="point"></span><span>新礼物冠名请于每周一上午14:00提交官方QQ：3407150190，逾时按获奖ID昵称作为冠名内容</span></p>
         <p><span class="point"></span><span>活动结果将于<i>每周一12:00公布</i>，请保持关注</span></p>
@@ -103,7 +103,7 @@
         </ul>
         <ul class="week_list_content" v-if="wealth.length">
             <li v-for="val,index in wealth">
-                <span class="level">${index}</span>
+                <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${val.rank>3?val.rank:''}</span>
                 <img :src="val.avatar_small_url" alt="头像" />
                 <span class="name">${val.nickname}</span>
                 <span>贡献值：${val.wealth_value}</span>
