@@ -446,6 +446,7 @@ class Rooms extends BaseModel
         }
 
         $user->current_room_id = $this->id;
+        $user->current_room_channel_name = $this->channel_name;
         $user->user_role = USER_ROLE_AUDIENCE; // 旁听
         $this->last_at = time();
 
@@ -493,6 +494,7 @@ class Rooms extends BaseModel
 
             $user->current_room_id = 0;
             $user->current_room_seat_id = 0;
+            $user->current_room_channel_name = '';
             $user->user_role = USER_ROLE_NO;
             $user->user_role_at = time();
             $user->save();
@@ -2009,17 +2011,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }

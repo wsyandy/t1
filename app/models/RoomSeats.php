@@ -151,7 +151,6 @@ class RoomSeats extends BaseModel
         } else {
             //当前用户已在麦位
             $current_room_seat = $user->current_room_seat;
-
             if ($current_room_seat) {
                 $current_room_seat->down($user);
             }
