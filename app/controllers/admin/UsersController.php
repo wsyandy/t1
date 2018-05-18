@@ -564,11 +564,10 @@ class UsersController extends BaseController
 
             $user = \Users::findFirstByUid($user_uid);
             if ($user) {
-                $user->geo_hash = '';
-                $user->update();
                 $hot_cache = \Users::getHotWriteCache();
                 $key = "blocked_nearby_user_list";
                 $hot_cache->zadd($key, time(), $user->id);
+                $user->delGeoHashRank();
             }
 
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');
@@ -579,7 +578,7 @@ class UsersController extends BaseController
     {
         $user = null;
         $user_uid = $this->params('user_uid');
-        if($user_uid){
+        if ($user_uid) {
             $user = \Users::findFirstByUid($user_uid);
         }
 
