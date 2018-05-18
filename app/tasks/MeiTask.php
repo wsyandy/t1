@@ -1505,11 +1505,9 @@ class MeiTask extends \Phalcon\Cli\Task
             $new_gold_history = new GoldHistories();
             $new_gold_history->user_id = $new_user->id;
             $new_gold_history->product_channel_id = $new_user->product_channel_id;
-            $new_gold_history->gift_order_id = $gold_history->gift_order_id;
             $new_gold_history->remark = $gold_history->remark;
             $new_gold_history->amount = $gold_history->amount;
             $new_gold_history->fee_type = $gold_history->fee_type;
-            $new_gold_history->order_id = $gold_history->order_id;
             $new_gold_history->operator_id = $gold_history->operator_id;
             $new_gold_history->save();
         }
