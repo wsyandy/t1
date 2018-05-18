@@ -3182,6 +3182,66 @@ class Users extends BaseModel
         return $key;
     }
 
+
+    /**
+     * 用户魅力贡献排行榜
+     * @param null $day
+     * @return string
+     */
+    static function generateUserRankListKey($day = null)
+    {
+        if (!$day) $day = date('Ymd');
+
+        $key = 'user_charm_and_wealth_rank_list_day_'.$day;
+        return $key;
+    }
+
+
+    /**
+     * 更新魅力贡献排行榜
+     * @param $receiver
+     * @param $sender
+     * @param $amount
+     * @return bool
+     */
+    static function updateUserCharmAndWealthRank($receiver, $sender, $amount)
+    {
+        $key = self::generateUserRankListKey();
+        $user_db = Users::getUserDb();
+
+        // 赠送礼物的增加贡献值，被赠送的增加魅力值
+        if ($user_db->zincrby($key, $amount, $receiver)) {
+
+            $user_db->zincrby($key, $amount, $sender);
+        }
+        return true;
+    }
+
+
+    /**
+     * 查询魅力贡献排行榜
+     * @param null $time
+     * @param int $max_number
+     * @return array
+     */
+    static function findUserCharmAndWealthRank($time = null, $max_number = 100)
+    {
+        if (!$time) $time = time();
+        $day = date('Ymd', $time);
+
+        $key = self::generateUserRankListKey($day);
+        $user_db = Users::getUserDb();
+        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number, 'withscores'));
+
+        $number = count($rank_list);
+        if (empty($rank_list) || $number < $max_number) {
+            $key = self::generateUserRankListKey(strtotime('-1 day'));
+            $yesterday = $user_db->zrevrange($key, 0, $max_number-$number, 'withscores');
+        }
+        $rank_list = array_merge($rank_list, $yesterday);
+        return $rank_list;
+    }
+
     static function findFieldRankList($list_type, $field, $page, $per_page, $opts = [])
     {
         if ($field != 'wealth' && $field != 'charm') {

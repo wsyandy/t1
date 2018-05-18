@@ -323,6 +323,7 @@ class GiftOrders extends BaseModel
             }
         }
 
+        \Users::delay()->updateUserCharmAndWealthRank($this->user_id, $this->sender_id, $this->amount);
         \Users::delay()->updateExperience($this->id, $params);
         \Users::delay()->updateCharm($this->id, $params);
     }
