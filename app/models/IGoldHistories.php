@@ -76,7 +76,6 @@ class IGoldHistories extends BaseModel
         $i_gold_history->user_id = $user_id;
         $i_gold_history->fee_type = $fee_type;
         $i_gold_history->amount = $amount;
-        $i_gold_history->country_id = $user->country_id;
 
         foreach (['order_id', 'gift_order_id', 'remark', 'operator_id'] as $column) {
             $value = fetch($opts, $column);

@@ -60,7 +60,6 @@ class Payments extends BaseModel
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
         $payment->pay_status = PAYMENT_PAY_STATUS_WAIT;
-        $payment->country_id = $user->country_id;
 
         if ($payment->create()) {
 

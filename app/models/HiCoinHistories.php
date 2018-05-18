@@ -246,7 +246,6 @@ class HiCoinHistories extends BaseModel
         $hi_coin_history->gold = $gold;
         $hi_coin_history->product_id = $product_id;
         $hi_coin_history->product_channel_id = $user->product_channel_id;
-        $hi_coin_history->country_id = $user->country_id;
         $hi_coin_history->union_id = $user->union_id;
         $hi_coin_history->union_type = $user->union_type;
 

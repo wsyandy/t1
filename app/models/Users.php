@@ -56,12 +56,10 @@ class Users extends BaseModel
      * @type RoomSeats
      */
     private $_current_room_seat;
-
     /**
      * @type Unions
      */
     private $_union;
-
     /**
      * @type Countries
      */
@@ -595,8 +593,6 @@ class Users extends BaseModel
         $user->login_name = $login_name;
 
         $password = fetch($context, 'password');
-        $country_id = fetch($context, 'country_id');
-
         if ($password) {
             $user->password = md5($password);
         }
@@ -609,7 +605,6 @@ class Users extends BaseModel
             $user->nickname = $user->login_name;
         }
 
-        $user->country_id = $country_id;
         $user->user_type = USER_TYPE_ACTIVE;
         $user->login_type = USER_LOGIN_TYPE_MOBILE;
         $user->save();
@@ -640,7 +635,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type', 'country_id'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
             if ($val) {
