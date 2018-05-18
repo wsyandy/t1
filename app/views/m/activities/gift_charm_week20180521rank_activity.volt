@@ -147,8 +147,8 @@
                 };
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
-                    this.is_charm_show = true;
-                    this.is_wealth_show = false;
+                    vm.is_charm_show = true;
+                    vm.is_wealth_show = false;
 
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
@@ -173,8 +173,8 @@
                 };
                 $.authGet('/m/activities/wealth_rank_list', data, function (resp) {
                     vm.wealth = [];
-                    this.is_charm_show = false;
-                    this.is_wealth_show = true;
+                    vm.is_charm_show = false;
+                    vm.is_wealth_show = true;
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.wealth.push(item);
