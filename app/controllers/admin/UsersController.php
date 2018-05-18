@@ -577,8 +577,11 @@ class UsersController extends BaseController
 
     function blockedNearbyUserListAction()
     {
+        $user = null;
         $user_uid = $this->params('user_uid');
-        $user = \Users::findFirstByUid($user_uid);
+        if($user_uid){
+            $user = \Users::findFirstByUid($user_uid);
+        }
 
         $hot_cache = \Users::getHotWriteCache();
         $key = "blocked_nearby_user_list";
@@ -590,7 +593,6 @@ class UsersController extends BaseController
         }
 
         $page = $this->params('page');
-
         if (!$user_ids) {
             $cond = ['conditions' => 'id < 1'];
         } else {
