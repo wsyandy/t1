@@ -19,9 +19,9 @@
                      @click="toGrabRedPacket(v.id,v.red_packet_type)">${v.text}
                 </div>
 
-                <div class="num red_list_style red_list_time daojishi" v-if="v.is_stay"
-                     @click="toGrabRedPacket(v.id,v.red_packet_type)"></div>
-                <div class="num red_list_style red_list_qiang daojishiJS" style="display: none;"
+                <div class="num red_list_style red_list_time " v-if="v.is_stay" :class="['daojishi'+i]"
+                     @click="toGrabRedPacket(v.id,v.red_packet_type)" ></div>
+                <div class="num red_list_style red_list_qiang " :class="['daojishiJS'+i]" style="display: none;"
                      v-if="v.red_packet_type == 'stay_at_room'" @click="toGrabRedPacket(v.id,v.red_packet_type)">抢
                     </div>
             </div>
@@ -38,7 +38,11 @@
             total_page: 1,
             red_packets_list: [],
             room_id: "{{ room_id }}",
-            user_get_red_packet_ids: []
+            user_get_red_packet_ids: [],
+        },
+        mounted:function () {
+
+
         },
         methods: {
             RedPacketsList: function () {
@@ -55,10 +59,11 @@
                 };
 
                 $.authGet('/m/red_packets/red_packets_list', data, function (resp) {
-                    //console.log(resp);
+                    console.log(resp);
                     vm.total_page = resp.total_page;
                     vm.user_get_red_packet_ids = resp.user_get_red_packet_ids;
-                    $.each(resp.red_packets, function (index, val) {
+                    $.each(resp.red_packets, function (i, val) {
+
                         var index = $.inArray(val.id, vm.user_get_red_packet_ids);
                         if (index != -1) {
                             val.is_grabbed = true;
@@ -72,12 +77,18 @@
                             val.text = "关注可抢";
                             val.class = "red_list_fangzhu";
                         }
-                        if (val.red_packet_type == 'stay_at_room') {
+                        if (val.red_packet_type == 'stay_at_room' && val.distance_start_at > 0) {
                             val.is_stay = true;
                             val.is_grab = false;
                             val.is_grabbed = false;
                             val.is_stay_show = false;
+
+                            distanceStartAt(val.distance_start_at,i)
                         }
+
+
+//
+
                         vm.red_packets_list.push(val);
                     });
 
@@ -105,22 +116,23 @@
     })
     vm.RedPacketsList();
 
-    distanceStartAt();
 
-    function distanceStartAt() {
-        var t = 180;
-        //console.log(t);
+    function distanceStartAt(t,i) {
 
+        var ss;
         var m = parseInt(t / 60);
         var s = t % 60;
+        var clasName = '.daojishi'+i;
+        var clajsName = '.daojishiJS'+i;
         if (t > 0) {
             //$("#end_time").hide();
             setInterval(function () {
                 if (s < 10) {
                     //如果秒数少于10在前面加上0
-                    $('.daojishi').html(m + ':0' + s);
+
+                    ss= m + ':0' + s;
                 } else {
-                    $('.daojishi').html(m + ':' + s);
+                    ss= m + ':' + s;
                 }
                 s--;
                 if (s < 0) {
@@ -128,14 +140,18 @@
                     s = 59;
                     m--;
                 }
+
                 if (m <= 0 && s <= 0) {
-
-                    $(".daojishiJS").show();
-                    $(".daojishi").hide();
-
-
+                    $(clajsName).show();
+                    $(clasName).hide();
                 }
+
+                $(clasName).html(ss);
+
             }, 1000);
+        }else{
+            $(clajsName).show();
+            $(clasName).hide();
         }
 
     }
