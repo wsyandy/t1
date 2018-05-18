@@ -2128,7 +2128,7 @@ class Rooms extends BaseModel
             $hot_cache->expire($minutes_num_stat_key, 3600 * 3);
 
             // 爆礼物
-            if (in_array($room->id, Rooms::getGameWhiteList())) {
+            if (isDevelopmentEnv() || in_array($room->id, Rooms::getGameWhiteList())) {
                 $room->statBoomIncome($income, $time);
             }
 
