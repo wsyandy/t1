@@ -1440,7 +1440,7 @@ class Users extends BaseModel
 
         $user_id_scores = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
 
-        $user_ids = array_values($user_id_scores);
+        $user_ids = array_keys($user_id_scores);
 
         // 好友备注
         $friend_note = fetch($opts, 'friend_note');
