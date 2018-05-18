@@ -1485,8 +1485,8 @@ class Users extends BaseModel
                 $user->self_introduce = fetch($self_introduces, $user->id);
             }
 
-            if($is_friend){
-                if($friend_new){
+            if ($is_friend) {
+                if ($friend_new) {
                     $user->friend_status = 3;
                     if ($is_friends && fetch($is_friends, $user->id)) {
                         $user->friend_status = 1;
@@ -1495,7 +1495,7 @@ class Users extends BaseModel
                         $user->friend_status = 2;
                     }
 
-                }else{
+                } else {
                     $user->friend_status = 1;
                 }
             }
@@ -3249,7 +3249,7 @@ class Users extends BaseModel
     {
         if (!$day) $day = date('Ymd');
 
-        $key = 'user_charm_and_wealth_rank_list_day_'.$day;
+        $key = 'user_charm_and_wealth_rank_list_day_' . $day;
         return $key;
     }
 
@@ -3261,16 +3261,14 @@ class Users extends BaseModel
      * @param $amount
      * @return bool
      */
-    static function updateUserCharmAndWealthRank($receiver, $sender, $amount)
+    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
     {
         $key = self::generateUserRankListKey();
         $user_db = Users::getUserDb();
 
         // 赠送礼物的增加贡献值，被赠送的增加魅力值
-        if ($user_db->zincrby($key, $amount, $receiver)) {
-
-            $user_db->zincrby($key, $amount, $sender);
-        }
+        $user_db->zincrby($key, $amount, $receiver_id);
+        $user_db->zincrby($key, $amount, $sender_id);
         return true;
     }
 
@@ -3288,13 +3286,13 @@ class Users extends BaseModel
 
         $key = self::generateUserRankListKey($day);
         $user_db = Users::getUserDb();
-        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number-1, 'withscores'));
+        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - 1, 'withscores'));
 
         $yesterday_rank_list = [];
         $number = count($rank_list);
         if (empty($rank_list) || $number < $max_number) {
             $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
-            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number-$number, 'withscores'));
+            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - $number, 'withscores'));
         }
         $rank_list = array_merge($rank_list, $yesterday_rank_list);
         return $rank_list;
