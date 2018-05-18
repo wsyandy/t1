@@ -842,7 +842,7 @@ class UsersController extends BaseController
 
         if (isDevelopmentEnv()) {
 
-            $user_ids = \Users::findUserCharmAndWealthRank();
+            $user_ids = \Users::findUserCharmAndWealthRank(time(), $per_page);
             if (empty($user_ids)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
