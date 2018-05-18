@@ -14,7 +14,7 @@
                         <span>个</span>
                     </div>
                 </div>
-                <p>红包个数不少于10个</p>
+                <p>红包个数不少于5个,不多于100个</p>
             </div>
             <div class="give_list">
                 <div class="give_box">
@@ -24,7 +24,7 @@
                         <i class="zuan"></i>
                     </div>
                 </div>
-                <p>红包金额不低于100钻</p>
+                <p v-model="diamond_num_limit">红包金额不低于${diamond_num_limit}钻</p>
             </div>
             <div class="give_list">
                 <div class="give_box">
@@ -131,13 +131,23 @@
             less_zuan_input: false,
             isSex: true,
             error_input: false,
-            error_reason: ''
+            error_reason: '',
+            diamond_num_limit:'100'
         },
 
         methods: {
             selectType: function (i, v) {
                 this.red_packet_type_cur = v;
                 this.type = i;
+                if(this.type == "all"){
+                    this.diamond_num_limit = "100";
+                }
+                if(this.type == "attention" || this.type == "stay_at_room"){
+                    this.diamond_num_limit = "1000";
+                }
+                if(this.type == "nearby"){
+                    this.diamond_num_limit = "10000";
+                }
                 vm.isGiveStyle = false;
 
             },
@@ -178,7 +188,7 @@
                 if (this.sex == "男女皆可") {
                     data.sex = 2;
                 }
-                //console.log(data);
+
                 if (vm.amount > this.myDiamond) {
                     vm.less_zuan_input = true;
                     return;
