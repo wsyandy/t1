@@ -193,8 +193,7 @@ class Payments extends BaseModel
         }
 
         $product = $order->product;
-        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
-
+        $opts = ['target_id' => $order->id, 'mobile' => $order->mobile];
         if ($product->diamond) {
             $opts['remark'] = '购买' . $product->full_name;
             AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);

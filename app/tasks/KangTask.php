@@ -9,14 +9,15 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
-    function hmAction(){
+    function hmAction()
+    {
         $sd = Users::getUserDb();
         $sd->hset('hsxxx', 10, 11);
         $sd->hset('hsxxx', 20, 22);
         $sd->hset('hsxxx', 30, 33);
         $sd->hset('hsxxx', 40, 44);
 
-        $data = $sd->hmget('hsxxx', [40,20,30]);
+        $data = $sd->hmget('hsxxx', [40, 20, 30]);
         echoLine($data);
     }
 
@@ -862,6 +863,34 @@ EOF;
             $offset += $per_page;
             echoLine($slice_ids);
         }
+    }
+
+    function fixGoldAction()
+    {
+
+        $golds = GoldHistories::find(['conditions' => '(order_id > 0 or gift_order_id > 0 or hi_coin_history_id > 0 or activity_id > 0) and target_id is null and created_at < :created_at:',
+            'bind' => ['created_at' => beginOfDay(strtotime('20180505'))]
+        ]);
+
+        foreach ($golds as $gold) {
+            if($gold->order_id){
+                $gold->target_id = $gold->order_id;
+            }
+            if($gold->gift_order_id){
+                $gold->target_id = $gold->gift_order_id;
+            }
+            if($gold->hi_coin_history_id){
+                $gold->target_id = $gold->hi_coin_history_id;
+            }
+            if($gold->activity_id){
+                $gold->target_id = $gold->activity_id;
+            }
+
+            $gold->save();
+            echoLine($gold->id, $gold->target_id);
+        }
+
+
     }
 
 }
