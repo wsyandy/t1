@@ -2524,9 +2524,11 @@ class Rooms extends BaseModel
             $room_seat->down($user);
         }
 
-        info($user->sid, $room_id, $user->current_room_id);
+//        if ($user->last_at <= time() - 10 * 60) {
+//            info($user->sid, $room_id, $user->current_room_id, date('c', $user->last_at), date('c', time()));
+//            $room->exitRoom($user);
+//        }
 
-        //$room->exitRoom($user);
         //$room->pushExitRoomMessage($user, $current_room_seat_id);
         Rooms::delUserIdInExitRoomByServerList($user_id);
         unlock($exce_exit_room_lock);
@@ -2920,7 +2922,7 @@ class Rooms extends BaseModel
         }
 
         if ($is_host) {
-            
+
             $menu_config[] = ['show' => true, 'title' => '游戏', 'type' => 'game',
                 'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
