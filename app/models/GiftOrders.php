@@ -328,8 +328,8 @@ class GiftOrders extends BaseModel
         }
 
         //\Users::delay()->updateUserCharmAndWealthRank($this->user_id, $this->sender_id, $this->amount);
-        \Users::delay()->updateExperience($this->id, $params);
-        \Users::delay()->updateCharm($this->id, $params);
+        \Users::updateExperience($this, $params);
+        \Users::updateCharm($this, $params);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

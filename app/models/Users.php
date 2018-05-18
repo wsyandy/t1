@@ -2885,7 +2885,11 @@ class Users extends BaseModel
     //更新用户等级/经验/财富值
     static function updateExperience($gift_order_id, $opts = [])
     {
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -2919,7 +2923,7 @@ class Users extends BaseModel
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
-                Unions::delay()->updateFameValue($wealth_value, $union->id, ['time' => $time]);
+                Unions::updateFameValue($wealth_value, $union->id, ['time' => $time]);
             }
 
             $sender->update();
@@ -2931,7 +2935,11 @@ class Users extends BaseModel
     //魅力值
     static function updateCharm($gift_order_id, $opts = [])
     {
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -2965,7 +2973,7 @@ class Users extends BaseModel
 
                 //不在同一个工会才更新声望值
                 if ($gift_order->sender->union_id != $union->id) {
-                    Unions::delay()->updateFameValue($charm_value, $union->id, ['time' => $time]);
+                    Unions::updateFameValue($charm_value, $union->id, ['time' => $time]);
                 }
             }
 
