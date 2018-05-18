@@ -3290,6 +3290,7 @@ class Users extends BaseModel
         $user_db = Users::getUserDb();
         $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number, 'withscores'));
 
+        $yesterday_rank_list = [];
         $number = count($rank_list);
         if (empty($rank_list) || $number < $max_number) {
             $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
