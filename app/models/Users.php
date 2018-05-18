@@ -1750,7 +1750,7 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
-        $self_introduces = $user_db->hget($user_introduce_key, $other_user_ids);
+        $self_introduces = $user_db->hmget($user_introduce_key, $other_user_ids);
         return $self_introduces;
     }
 
