@@ -1121,6 +1121,11 @@ class Users extends BaseModel
             return;
         }
 
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+        if (count($block_near_by_user_ids) > 0 && in_array($this->id, $block_near_by_user_ids)) {
+            return;
+        }
+
         //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
         $geohash = new \geo\GeoHash();
         $prefix = substr($this->geo_hash, 0, 5);
@@ -1179,14 +1184,6 @@ class Users extends BaseModel
             }
 
             debug($user->id, 'geo', $user->geo_province_id, $user->geo_city_id);
-        }
-
-        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-
-        if (count($block_near_by_user_ids) > 0 && in_array($user_id, $block_near_by_user_ids)) {
-            info("屏蔽附近的人", $user_id, $block_near_by_user_ids);
-            $user->update();
-            return;
         }
 
         // 计算geo hash值
