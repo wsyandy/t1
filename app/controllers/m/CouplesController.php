@@ -6,6 +6,10 @@ class CouplesController extends BaseController
 {
     function indexAction()
     {
+        $referer = $this->headers('Referer');
+
+        info($this->remoteIp(), $referer, $this->request->getUserAgent());
+
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $is_show_my_cp = false;
