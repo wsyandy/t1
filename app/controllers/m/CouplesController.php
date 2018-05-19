@@ -56,6 +56,9 @@ class CouplesController extends BaseController
             }
         }
         unlock($lock);
+        if ($user->isRoomHost($user->room)) {
+            $is_show_my_cp = false;
+        }
 
         $this->view->is_show_my_cp = $is_show_my_cp;
         $this->view->room_host_user = json_encode($room_host_user, JSON_UNESCAPED_UNICODE);
