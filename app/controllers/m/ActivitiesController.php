@@ -789,8 +789,8 @@ class ActivitiesController extends BaseController
         $user_id = $this->currentUserId();
         $db = \Users::getUserDb();
         $receive_key = \Couples::generateCpInfoForUserKey($user_id);
-        $res = $db->zrevrange($receive_key, 0, 0, 'withscores');
+        $cp_info = $db->zrevrange($receive_key, 0, 0, 'withscores');
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['current_highest_score' => $res[$user_id]]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['cp_info' => $cp_info]);
     }
 }
