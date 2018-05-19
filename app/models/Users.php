@@ -3680,13 +3680,13 @@ class Users extends BaseModel
         $key = "silent_user_key";
         $silent_user_num = $hot_cache->zcard($key);
         $offset = mt_rand(0, $silent_user_num - 1);
-        $user_id = $hot_cache->zrange($key, $offset, $offset);
+        $user_ids = $hot_cache->zrange($key, $offset, $offset);
 
-        if (!$user_id) {
+        if (count($user_ids) < 1) {
             return null;
         }
 
-        $user = Users::findFirstById($user_id);
+        $user = Users::findFirstById($user_ids[0]);
 
         return $user;
     }
