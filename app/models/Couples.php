@@ -53,7 +53,7 @@ class Couples extends BaseModel
 
         //删除redis中暂存的信息
         $cache->del($key);
-        $body = ['action' => 'cp', 'notify_type' => 'bc', 'type' => 'over', 'content' => 'cp结束',];
+        $body = ['action' => 'game', 'type' => 'over', 'content' => 'cp结束',];
         self::sendCpFinishMessage($user, $body);
     }
 
