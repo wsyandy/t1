@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <meta name="format-detection" content="telephone=no"/>
-    <link rel="stylesheet" href="/m/activities/css/cp_lover_activities.css">
-</head>
-<body>
-<div class="vueBox">
+
+{{ block_begin('head') }}
+{{ theme_css('/m/activities/css/cp_lover_activities.css') }}
+{{ theme_js('/m/js/resize.js') }}
+{{ block_end() }}
+<div id="app">
     <div class="banner_box">
-        <img class="banner" src="images/banner.png" alt="">
-        <img class="arc_line" src="images/arc_line.png" alt="">
+        <img class="banner" src="/m/activities/images/cp_lover_activities/banner.png" alt="">
+        <img class="arc_line" src="/m/activities/images/cp_lover_activities/arc_line.png" alt="">
     </div>
-    <img class="notice" src="images/notice.png" alt="">
+    <img class="notice" src="/m/activities/images/cp_lover_activities/notice.png" alt="">
     <div class="extend_title">  <span>活动奖品</span>  </div>
     <div class="extend_prize">
         <ul class="prize_list">
@@ -62,7 +57,7 @@
         <div class="your_cp_value">
             <span>您的情侣值为</span>
             <div class="cp_value">
-                <img  class="cp_heart" src="images/cp_heart.png" alt="">
+                <img  class="cp_heart" src="/m/activities/images/cp_lover_activities/cp_heart.png" alt="">
                 <span>4368</span>
             </div>
             <span>暂未上榜</span>
@@ -102,8 +97,162 @@
 
 </div>
 
-<script src="js/vue.min.2.5.13.js"></script>
-<script src="js/vue.index.js"></script>
-<script src="js/resize.js"></script>
 </body>
 </html>
+<script>
+    var opts = {
+        el: "#app",
+        data: {
+            cp_heart:'/m/activities/images/cp_lover_activities/cp_heart.png',
+            cp_heart1:'/m/activities/images/cp_lover_activities/cp_heart1.png',
+            cp_heart2:'/m/activities/images/cp_lover_activities/cp_heart2.png',
+            cp_heart3:'/m/activities/images/cp_lover_activities/cp_heart3.png',
+            prizeList:[
+                {
+                    ico:'/m/activities/images/cp_lover_activities/ico_first.png',
+                    txt:'5月21日13点14分全服公告爱的宣言',
+                    txt1:'情侣靓号520XXXX]一对',
+                    txt2:'冠军限定神秘大礼'
+                },
+                {
+                    ico:'/m/activities/images/cp_lover_activities/ico_second.png',
+                    txt:'亚军神秘礼物'
+                },
+                {
+                    ico:'/m/activities/images/cp_lover_activities/ico_third.png',
+                    txt:'季军神秘礼物'
+                },
+            ],
+            prizeImg:['/m/activities/images/cp_lover_activities/rose_gold.png','/m/activities/images/cp_lover_activities/rose_silver.png','/m/activities/images/cp_lover_activities/rose_red.png',],
+            cpList:[
+                {
+                    value:123456,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'王潇肃的猫',
+                        id:'120291',
+                    },
+                },
+                {
+                    value:654321,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'章鱼吉娃娃',
+                        id:'120293',
+                    },
+                },
+                {
+                    value:123456,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'王潇肃的猫',
+                        id:'120291',
+                    },
+                },
+                {
+                    value:654321,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖小胖子乖乖小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'章鱼吉娃娃章鱼吉娃娃章鱼吉娃娃章鱼吉娃娃',
+                        id:'120293',
+                    },
+                },
+                {
+                    value:123456,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'王潇肃的猫',
+                        id:'120291',
+                    },
+                },
+                {
+                    value:654321,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'章鱼吉娃娃',
+                        id:'120293',
+                    },
+                },
+                {
+                    value:123456,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'王潇肃的猫',
+                        id:'120291',
+                    },
+                },
+                {
+                    value:654321,
+                    another:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'小胖子乖乖小胖子乖乖小胖子乖乖',
+                        id:'1314520',
+                    },
+                    other:{
+                        avatar:'/m/activities/images/cp_lover_activities/avatar.png',
+                        name:'章鱼吉娃娃章鱼吉娃娃章鱼吉娃娃章鱼吉娃娃',
+                        id:'120293',
+                    },
+                },
+
+            ],
+            tipsList:[
+                '房主发起“处CP”，房主默认为情侣中的一方',
+                '房主发起“处CP”后，房间内会出现“情侣图标”另一半点击即可进入情侣厅。',
+                '双方在情侣厅内点击“同意”，即可成为情侣，生成情侣证',
+            ],
+            rulesList:[
+                '1. 情侣之间互相赠送礼物，每赠送一个钻石，用户的情侣值+1',
+                '2. 活动时间为5月20日 00:00 — 5月20日 23:59',
+            ]
+
+
+        },
+        created() {
+
+        },
+        methods: {
+            navToDetails:function(){
+                window.location.href='details.html'
+            }
+        }
+
+    }
+
+var vm = XVue(opts);
+</script>
