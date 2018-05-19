@@ -12,7 +12,6 @@ class Couples extends BaseModel
         $body = ['sponsor_id' => $user->id];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
-
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -54,9 +53,8 @@ class Couples extends BaseModel
 
         //删除redis中暂存的信息
         $cache->del($key);
-
-        self::sendCpFinishMessage($user);
-
+        $body = ['action' => 'cp', 'notify_type' => 'bc', 'type' => 'over', 'content' => 'cp结束',];
+        self::sendCpFinishMessage($user, $body);
     }
 
     static function generateSeraglioKey($user_id)
@@ -160,10 +158,9 @@ class Couples extends BaseModel
         $db->zincrby($cp_info_key, $amount, $member);
     }
 
-    static function sendCpFinishMessage($user)
+    static function sendCpFinishMessage($user, $body)
     {
         //在游戏结束回调通知的时候，发送结束通知
-        $body = ['action' => 'game_notice', 'notify_type' => 'bc', 'type' => 'over', 'content' => "cp结束",];
 
         $intranet_ip = $user->getIntranetIp();
         $receiver_fd = $user->getUserFd();
