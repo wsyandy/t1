@@ -185,6 +185,10 @@ class CouplesController extends BaseController
         $pursuer = \Users::findFirstById($pursuer_id);
         $marriage_at = \Couples::getMarriageTime($sponsor_id, $pursuer_id);
 
+        if (isBlank($sponsor) || isBlank($pursuer)) {
+            return $this->response->redirect('app://back');
+        }
+
         $this->view->sponsor = json_encode($sponsor->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->marriage_at_text = date('Y-m-d', $marriage_at);
