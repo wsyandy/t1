@@ -85,7 +85,7 @@ class CouplesController extends BaseController
 
         if ($id == $pursuer_id) {
             $sponsor_status = $cache->hget($key, $sponsor_id);
-            if ($sponsor_status < 1) {
+            if ($sponsor_status < 2) {
                 $cache->hincrby($key, $id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
             } else {
@@ -101,7 +101,7 @@ class CouplesController extends BaseController
             }
         } elseif ($id == $sponsor_id) {
             $pursuer_status = $cache->hget($key, $pursuer_id);
-            if ($pursuer_status < 1) {
+            if ($pursuer_status < 2) {
                 $cache->hincrby($key, $id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
             } else {
