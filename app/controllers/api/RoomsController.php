@@ -232,9 +232,15 @@ class RoomsController extends BaseController
 
             // 发起游戏
             $game_history = $room->getGameHistory();
+            $ready_cp_info = $room->getReadyCpInfo();
 
-            if ($game_history) {
-                $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+            if (isBlank($ready_cp_info)) {
+                if ($game_history) {
+                    $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+                }
+
+            } else {
+                $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
             }
 
             //房间活动列表
