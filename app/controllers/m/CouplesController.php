@@ -87,9 +87,11 @@ class CouplesController extends BaseController
         if (!$pursuer_id) {
             if ($sponsor_id == $user->id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您还没有求婚者哦，等等会有对的人出现');
-            } else {
-                return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
             }
+        }
+
+        if ($sponsor_id != $user->id && $pursuer_id != $user->id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
         }
 
         $score = \Couples::checkCpRelation($pursuer_id, $sponsor_id);

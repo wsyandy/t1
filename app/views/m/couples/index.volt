@@ -47,6 +47,7 @@
 <script>
     var opts = {
         data: {
+            is_host: "{{ is_host }}",
             is_kick_out: false,
             sid: '{{ sid }}',
             code: '{{ code }}',
@@ -60,6 +61,9 @@
         },
         methods: {
             tab: function (index) {
+                if (!vm.is_host) {
+                    return;
+                }
                 switch (index) {
                     case 0:
                         vm.is_kick_out = false;
@@ -103,6 +107,9 @@
                 })
             },
             kickOut: function () {
+                if (!vm.is_host) {
+                    return;
+                }
                 vm.is_kick_out = false;
                 var data = {
                     sid: vm.sid,
