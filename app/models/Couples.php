@@ -12,6 +12,8 @@ class Couples extends BaseModel
         $body = ['sponsor_id' => $user->id, $user->id => 1];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
+
+        $cache->expire($key, 10 * 60);
     }
 
     static function generateReadyCpInfoKey($room_id)
