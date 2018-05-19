@@ -768,9 +768,22 @@ class ActivitiesController extends BaseController
             $sponsor_ids[] = $ids[0];
             $pursuer_ids[] = $ids[1];
         }
-
-        $sponsor_users = \Users::findByIds($sponsor_ids);
-        $pursuer_users = \Users::findByIds($pursuer_ids);
+        info($sponsor_ids);
+        info($pursuer_ids);
+        $sponsor_users = [];
+        foreach ($sponsor_ids as $index => $sponsor_id) {
+            $sponsor_user = \Users::findFirstById($sponsor_id);
+            if ($sponsor_user) {
+                $sponsor_users[] = $sponsor_user->toCpJson();
+            }
+        }
+        $pursuer_users = [];
+        foreach ($pursuer_ids as $index => $pursuer_id) {
+            $pursuer_user = \Users::findFirstById($pursuer_id);
+            if ($pursuer_user) {
+                $pursuer_users[] = $pursuer_user->toCpJson();
+            }
+        }
 
         $is_on_the_list = false;
         if (in_array($current_user_id, $sponsor_ids) || in_array($current_user_id, $pursuer_ids)) {
@@ -779,12 +792,10 @@ class ActivitiesController extends BaseController
 
         if ($sponsor_users && $pursuer_users) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '',
-                array_merge($sponsor_users->toJson('sponsor_users', 'toCpJson'),
-                    $pursuer_users->toJson('pursuer_users', 'toCpJson'), ['is_on_the_list' => $is_on_the_list]
-                ));
+                array_merge(['sponsor_users' => $sponsor_users], ['pursuer_users' => $pursuer_users], ['is_on_the_list' => $is_on_the_list]));
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据', array_merge(['sponsor_users' => []],[ 'pursuer_users' => []],['is_on_the_list' => false]));
+        return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据', array_merge(['sponsor_users' => []], ['pursuer_users' => []], ['is_on_the_list' => false]));
 
     }
 
