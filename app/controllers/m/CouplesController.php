@@ -28,8 +28,9 @@ class CouplesController extends BaseController
 
         $room = \Rooms::findFirstById($room_id);
         $is_host = $user->isRoomHost($room);
+        $sponsor_id = fetch($data, 'sponsor_id');
 
-        if (!$data && !$is_host) {
+        if (!$sponsor_id && !$is_host) {
             unlock($lock);
             return $this->response->redirect('app://back');
         }
@@ -37,7 +38,6 @@ class CouplesController extends BaseController
         $room_host_user = $user->toCpJson();
 
         info('比较数据', $data);
-        $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
 
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
