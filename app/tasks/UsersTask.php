@@ -1178,6 +1178,11 @@ class UsersTask extends \Phalcon\Cli\Task
         $delay = 1;
         $title = '有人赠送给您礼物了，赶紧去看看吧！';
         $push_data = ['title' => $title, 'body' => ''];
+        $per_page = 100;
+
+        if (isDevelopmentEnv()) {
+            $per_page = 2;
+        }
 
         //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
         //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
@@ -1191,7 +1196,7 @@ class UsersTask extends \Phalcon\Cli\Task
 
             $user_ids[] = $user->id;
 
-            if ($num >= 100) {
+            if ($num >= $per_page) {
                 Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
                 $delay += 2;
                 $user_ids = [];
