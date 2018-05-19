@@ -178,4 +178,14 @@ class Couples extends BaseModel
     {
         return 'cp_info_for_user_' . $user_id;
     }
+
+    static function checkCpRelation($pursuer_id, $sponsor_id)
+    {
+        $db = \Users::getUserDb();
+        $key = self::generateSeraglioKey($pursuer_id);
+        $score = $db->zscore($key, $sponsor_id);
+
+        return $score;
+
+    }
 }

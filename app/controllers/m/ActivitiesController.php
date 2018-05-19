@@ -760,7 +760,7 @@ class ActivitiesController extends BaseController
         $current_user_id = $this->currentUserId();
         $db = \Users::getUserDb();
         $key = \Couples::generateCpInfoKey();
-        $res = $db->zrevrange($key, 0, 7);
+        $res = $db->zrevrange($key, 0, 9);
         $sponsor_ids = [];
         $pursuer_ids = [];
         foreach ($res as $re) {

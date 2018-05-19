@@ -6,10 +6,6 @@ class CouplesController extends BaseController
 {
     function indexAction()
     {
-        $referer = $this->headers('Referer');
-
-        info($this->currentUser()->sid, $this->remoteIp(), $referer, $this->request->getUserAgent());
-
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $is_show_alert = false;
@@ -25,6 +21,7 @@ class CouplesController extends BaseController
         $is_host = $user->isRoomHost($room);
 
         if (!$data && !$is_host) {
+            unlock($lock);
             return $this->response->redirect('app://back');
         }
 
@@ -63,11 +60,12 @@ class CouplesController extends BaseController
                 $pursuer = \Users::findFirstById($pursuer_id)->toCpJson();
             }
         }
-        unlock($lock);
 
         if (!$user->current_room_seat_id && !$is_host) {
             $is_show_alert = true;
         }
+
+        unlock($lock);
 
         $this->view->is_host = $is_host;
         $this->view->room_host_user = json_encode($room_host_user, JSON_UNESCAPED_UNICODE);
@@ -95,6 +93,18 @@ class CouplesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
             }
         }
+
+        if ($data) {
+            $score = \Couples::checkCpRelation($pursuer_id, $sponsor_id);
+            if ($score) {
+                $opts = [
+                    'sponsor_id' => $sponsor_id,
+                    'pursuer_id' => $pursuer_id
+                ];
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '看看你们共同的证明！', $opts);
+            }
+        }
+
 
         if ($id == $pursuer_id) {
             $sponsor_status = $cache->hget($key, $sponsor_id);
@@ -211,7 +221,8 @@ class CouplesController extends BaseController
         $pursuer = \Users::findFirstById($pursuer_id);
 
         if (!$pursuer) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+            $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误', ['pursuer' => $pursuer]);
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pursuer' => $pursuer->toCpJson()]);

@@ -55,13 +55,14 @@
                 </div>
             </li>
         </ul>
-        <div class="your_cp_value" v-if="!is_on_the_list">
+        <div class="your_cp_value">
             <span>您的情侣值为</span>
             <div class="cp_value">
                 <img class="cp_heart" src="/m/images/cp_heart.png" alt="">
                 <span v-text="current_highest_score?current_highest_score:0"></span>
             </div>
-            <span>暂未上榜</span>
+            <span v-if="!is_on_the_list">暂未上榜</span>
+            <span v-if="is_on_the_list">已上榜</span>
         </div>
     </div>
     <div class="couple_tips">
@@ -166,9 +167,7 @@
                 }
             })
         },
-        methods: {
-
-        }
+        methods: {}
 
     }
 
