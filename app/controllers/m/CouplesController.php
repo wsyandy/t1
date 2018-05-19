@@ -21,9 +21,11 @@ class CouplesController extends BaseController
         $key = \Couples::generateReadyCpInfoKey($room_id);
         $data = $cache->hgetall($key);
         $room_host_user = $user->toCpJson();
+
         info('比较数据', $data);
         $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
+
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
         if (!$data && $room_id == $user->room_id) {
             \Couples::createReadyCpInfo($user);
@@ -66,7 +68,6 @@ class CouplesController extends BaseController
         $this->view->current_user_id = $user->id;
         $this->view->room_id = $room_id;
         $this->view->is_show_alert = $is_show_alert;
-
     }
 
     function createAction()
@@ -128,6 +129,7 @@ class CouplesController extends BaseController
         $sponsor_id = $this->params('sponsor_id');
         $pursuer_id = $this->params('pursuer_id');
         $other_user_id = $this->params('other_user_id');
+
         if ($other_user_id) {
             $user_db = \Users::getUserDb();
             $user_id = $this->currentUserId();
@@ -146,6 +148,7 @@ class CouplesController extends BaseController
                     break;
             }
         }
+
         info($sponsor_id, $pursuer_id);
         $sponsor = \Users::findFirstById($sponsor_id);
         $pursuer = \Users::findFirstById($pursuer_id);
@@ -174,4 +177,35 @@ class CouplesController extends BaseController
         $this->view->user = json_encode($user->toCpJson());
 
     }
+
+    function getPursuerUserAction()
+    {
+        $room_id = $this->params('room_id');
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $cache = \Users::getHotWriteCache();
+        $key = \Couples::generateReadyCpInfoKey($room_id);
+        $data = $cache->hgetall($key);
+
+        $pursuer_id = fetch($data, 'pursuer_id');
+        $pursuer_id = 117;
+        if (!$pursuer_id) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS);
+        }
+
+        $pursuer = \Users::findFirstById($pursuer_id);
+
+        if (!$pursuer) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pursuer' => $pursuer->toCpJson()]);
+    }
+
+
 }

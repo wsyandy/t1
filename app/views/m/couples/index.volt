@@ -65,10 +65,25 @@
                     if (!resp.error_code) {
                         var url = '/m/couples/marriage?sid=' + vm.sid + '&code=' + vm.code + '&sponsor_id=' + resp.sponsor_id + '&pursuer_id=' + resp.pursuer_id;
                         window.location.href = url;
-                        console.log(url);
                     }
                     alert(resp.error_reason);
                 });
+            },
+            getPursuer: function () {
+
+                $.authGet('/m/couples/get_pursuer_user', {
+                    room_id: vm.room_id,
+                    sid: vm.sid,
+                    code: vm.code
+                }, function (resp) {
+                    if (resp.pursuer) {
+                        vm.pursuer = resp.pursuer;
+                    } else {
+                        setTimeout(function () {
+                            vm.getPursuer();
+                        }, 3000);
+                    }
+                })
             }
         }
     };
@@ -78,6 +93,14 @@
         var is_show_alert = "{{ is_show_alert }}"
         if (is_show_alert) {
             alert('您还不在麦位上，再去争取机会啊！');
+        }
+
+        if (!vm.pursuer.uid) {
+
+            setTimeout(function () {
+                vm.getPursuer();
+            }, 3000);
+
         }
     })
 </script>
