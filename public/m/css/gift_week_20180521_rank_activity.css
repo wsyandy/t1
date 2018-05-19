@@ -20,8 +20,8 @@ html,body{
   overflow: hidden;
   flex-direction: column;
   padding-top: 10.39rem;
-  background: url(../images/week_activity_bg/bg1.png) center top no-repeat,url(../images/week_activity_bg/bg2.png) center 18rem no-repeat,
-  url(../images/week_activity_bg/bg3.png) center 36rem no-repeat,url(../images/week_activity_bg/bg4.png) center 54rem no-repeat;
+  background: url(../images/bg1.png) center top no-repeat,url(../images/bg2.png) center 18rem no-repeat,
+  url(../images/bg3.png) center 36rem no-repeat,url(../images/bg4.png) center 54rem no-repeat;
   background-size: 7.5rem 18rem,7.5rem 18rem,7.5rem 18rem,7.5rem 16rem;
 }
 

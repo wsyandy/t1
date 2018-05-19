@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="/m/activities/css/cp_main.css">
+    <link rel="stylesheet" href="/m/css/cp_main.css">
     <script>
         (function(doc, win) {
             var docEl = doc.documentElement,
