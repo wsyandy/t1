@@ -41,7 +41,7 @@ class CouplesController extends BaseController
         $pursuer_id = fetch($data, 'pursuer_id');
 
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
-        if (!$data && $is_host) {
+        if (!$sponsor_id && $is_host) {
             \Couples::createReadyCpInfo($user);
 
             $root = $this->getRoot();
