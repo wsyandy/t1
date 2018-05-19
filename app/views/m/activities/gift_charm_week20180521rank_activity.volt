@@ -101,7 +101,7 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <ul class="week_list_content" v-if="users.length && is_charm_show">
+        <ul class="week_list_content" v-if="users.length">
             <li v-for="user,index in users">
                 <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
                 <img :src="user.avatar_small_url" alt="头像"/>
