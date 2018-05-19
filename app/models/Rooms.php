@@ -3128,14 +3128,14 @@ class Rooms extends BaseModel
 
             if (count($room_ids) > 1) {
                 $tmp_score = $room_ids[0];
-            }
 
-            foreach ($hot_room_ids as $hot_room_id => $score) {
+                foreach ($hot_room_ids as $hot_room_id => $score) {
 
-                if ($score > $tmp_score) {
-                    $room_ids[$hot_room_id] = $score;
-                } else {
-                    $room_ids[$hot_room_id] = $tmp_score += 10;
+                    if ($score > $tmp_score) {
+                        $room_ids[$hot_room_id] = $score;
+                    } else {
+                        $room_ids[$hot_room_id] = $tmp_score += 10;
+                    }
                 }
             }
         }
