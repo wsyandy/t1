@@ -17,44 +17,41 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_order->room_union_id = 1068;
         $gift_order->save();
 
-        $hot_cache = Users::getHotWriteCache();
-        $key = 'room_active_last_at_list';
-        $total_num = $hot_cache->zcard($key);
-        $per_page = 100;
-        $all_room_ids = $hot_cache->zrange($key, 0, -1);
+        $order = Orders::findFirstById(69669);
 
-        $loop_num = ceil($total_num / $per_page);
-        $offset = 0;
+        $product = $order->product;
+        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
 
-        for ($i = 0; $i < $loop_num; $i++) {
-
-            $slice_ids = array_slice($all_room_ids, $offset, $per_page);
-
-            $rooms = Rooms::findByIds($slice_ids);
-
-            foreach ($rooms as $room) {
-                list($res, $word) = BannedWords::checkWord($room->name);
-                $room->name = $word;
-                list($res, $word) = BannedWords::checkWord($room->topic);
-                $room->topic = $word;
-                $room->update();
-            }
+        if ($product->diamond) {
+            $opts['remark'] = '购买' . $product->full_name;
+            AccountHistories::changeBalance($order->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
         }
 
-    }
+        if ($product->gold) {
+            $opts['remark'] = '购买金币';
+            GoldHistories::changeBalance($order->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, $opts);
+        }
 
-    function uploadMoniQiAction()
-    {
+        echoLine($order);
 
-        $file = APP_ROOT . "temp/5afec63ea3d9e.apk";
-        $dest_file = APP_NAME . "/soft_version/" . uniqid() . '.apk';
-        $res = StoreFile::upload($file, $dest_file);
-        echoLine(StoreFile::getUrl($res));
 
-        $soft_version = SoftVersions::findFirstById(9);
-        $soft_version->file = $res;
-        $soft_version->save();
-        httpSave('http://mt-development.oss-cn-hangzhou.aliyuncs.com/chance/soft_version/5afec5adb10b7.apk', APP_ROOT . "temp/" . uniqid() . '.apk');
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange(Rooms::generateExitRoomByServerListKey(), 0, -1);
+        echoLine(count($user_ids));
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+
+            if ($user->last_at <= time() - 15 * 60 && $user->current_room_id) {
+                echoLine($user->id, $user->current_room_id);
+                $current_room = $user->current_room;
+                $current_room_seat_id = $user->current_room_seat_id;
+                $current_room->exitRoom($user, true);
+                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+            }
+
+        }
     }
 
     function freshRoomUserIdAction()
