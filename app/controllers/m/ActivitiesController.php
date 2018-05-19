@@ -739,6 +739,11 @@ class ActivitiesController extends BaseController
         $this->view->title = '我愿守护你一生一世';
     }
 
+    function cpLoverActivitiesAction()
+    {
+        $this->view->title = '情侣排行榜';
+    }
+
     function wealthRankListAction()
     {
 
