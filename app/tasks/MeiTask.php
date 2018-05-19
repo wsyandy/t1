@@ -10,6 +10,11 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
+        Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+        $hot_cache = Rooms::getHotReadCache();
+
+        echoLine(Rooms::generateAbnormalExitRoomListKey(), $hot_cache->zscore(Rooms::generateAbnormalExitRoomListKey(), 27 . "_" . 1001303));
+
         $union = Unions::findFirstById(1026);
         $key = $union->generateUsersKey();
         $ssdb = Users::getUserDb();

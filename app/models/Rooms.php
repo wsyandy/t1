@@ -2564,7 +2564,7 @@ class Rooms extends BaseModel
     {
         if (self::isInAbnormalExitRoomList($room_id, $user_id)) {
             $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->zrem(self::generateExitRoomByServerListKey(), $room_id . "_" . $user_id);
+            $hot_cache->zrem(self::generateAbnormalExitRoomListKey(), $room_id . "_" . $user_id);
         }
     }
 
