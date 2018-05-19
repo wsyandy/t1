@@ -130,7 +130,7 @@
         methods: {
             getUsers: function (gift_id) {
                 if(gift_id == 0){
-                    this.type = "week";
+                    this.type = "wealth";
                     this.is_charm_show = false;
                     this.is_wealth_show = true;
                 }else{

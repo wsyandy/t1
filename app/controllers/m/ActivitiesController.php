@@ -692,8 +692,6 @@ class ActivitiesController extends BaseController
                 $key = $activity->getStatKey($gift_id);
             }
 
-            //info("类型的:++++",$type);
-
             $users = \Users::findFieldRankListByKey($key, $type, 1, 10);
 
 
