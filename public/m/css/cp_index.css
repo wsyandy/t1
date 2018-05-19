@@ -1,0 +1,142 @@
+html{
+    background-image: url("../images/bg_cp.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+.cp_head,.cp_info,.cp_heart,.cp_id,.cp_btn,.cp_my{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.cp_head{
+    width: 6.25rem;
+    height: 3.39rem;
+    background-image: url("../images/bg_frame.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 1.22rem auto 0 auto;
+}
+.cp_info{
+    width: 1.7rem;
+    height: 100%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+.cp_heart{
+    width: 1.94rem;
+    height: 1.94rem;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -moz-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+}
+.cp_heart img{
+    width: 1.02rem;
+    height: 1.02rem;
+}
+.cp_avatar{
+    position: relative;
+    width: 1.7rem;
+    height: 1.7rem;
+}
+.cp_avatar img{
+    width: 100%;
+    height: 100%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.cp_name{
+    display: block;
+    position: absolute;
+    bottom:-0.2rem;
+    left: 0;
+    width: 1.6rem;
+    padding: 0 0.24rem;
+    height: 0.4rem;
+    font-size: 0.28rem;
+    color: #FFFFFF;
+    background: #FF7296;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
+    border-radius: 1rem;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+.cp_id{
+    width: 100%;
+    height: 0.4rem;
+    margin-top: 0.4rem;
+    font-size: 0.24rem;
+    color: #FF7296;
+
+}
+
+.cp_btn{
+    position: relative;
+    width: 6.3rem;
+    height: 1.04rem;
+    font-size: 0.38rem;
+    color: rgba(255,255,255,0.50);
+    background-image: url("../images/cp_btn_on.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin: 1.45rem auto 0 auto;
+
+}
+.cp_btn_on{
+    background-image: url("../images/cp_btn_on.png");
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    color: rgba(255,255,255,1);
+}
+.cp_my{
+    position: relative;
+    width: 6.3rem;
+    height: 1.04rem;
+    font-size: 0.32rem;
+    color: #FF698F;
+    margin: 2rem auto 0.2rem auto;
+
+}
+.cp_arrow{
+    width:0.24rem;
+    height: 0.24rem;
+    margin-left: 0.08rem;
+}

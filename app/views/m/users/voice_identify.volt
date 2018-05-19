@@ -118,23 +118,23 @@
         <div v-if="isShareToast" class="share_link_toast">
             <div class="share_link_box">
                 <ul class="share_link">
-                    <li @click="share('wx_friend','image','voice')">
+                    <li @click="share('wx_friend','image','generate_image')">
                         <span class="weixin_icon"></span>
                         <span>微信</span>
                     </li>
-                    <li @click="share('wx_moments','image','voice')">
+                    <li @click="share('wx_moments','image','generate_image')">
                         <span class="friends_icon"></span>
                         <span>朋友圈</span>
                     </li>
-                    <li @click="share('qq_friend','image','voice')">
+                    <li @click="share('qq_friend','image','generate_image')">
                         <span class="qq_icon"></span>
                         <span>QQ</span>
                     </li>
-                    <li @click="share('qq_zone','image','voice')">
+                    <li @click="share('qq_zone','image','generate_image')">
                         <span class="kongjian_icon"></span>
                         <span>QQ空间</span>
                     </li>
-                    <li @click="share('sinaweibo','image','voice')">
+                    <li @click="share('sinaweibo','image','generate_image')">
                         <span class="weibo_icon"></span>
                         <span>微博</span>
                     </li>

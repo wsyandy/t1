@@ -2011,19 +2011,17 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day':
-                {
-                    $date = fetch($opts, 'date', date("Ymd"));
-                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                    break;
-                }
-            case 'week':
-                {
-                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                    break;
-                }
+            case 'day': {
+                $date = fetch($opts, 'date', date("Ymd"));
+                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                break;
+            }
+            case 'week': {
+                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                break;
+            }
             default:
                 return '';
         }
@@ -2947,6 +2945,11 @@ class Rooms extends BaseModel
                 'url' => 'url://m/games?room_id=' . $this->id, 'icon' => $root_host . 'images/room_menu_game.png'];
         }
 
+        if (isDevelopmentEnv()) {
+            $menu_config[] = ['show' => true, 'title' => 'cp', 'type' => 'cp',
+                'url' => 'url://m/couples?room_id=' . $this->id, 'icon' => $root_host . 'images/cp.png'];
+        }
+
         return $menu_config;
     }
 
@@ -3224,5 +3227,14 @@ class Rooms extends BaseModel
 
         return $room_red_packets;
     }
+
+    function getReadyCpInfo()
+    {
+        $cache = \Users::getHotWriteCache();
+        $key = \Couples::generateReadyCpInfoKey($this->id);
+        $data = $cache->hgetall($key);
+        return $data;
+    }
+
 
 }

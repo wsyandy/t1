@@ -233,6 +233,21 @@ trait UserAttrs
         );
     }
 
+    function toCpJson()
+    {
+        $datas = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'avatar_url' => $this->avatar_small_url,
+            'uid' => $this->uid
+        ];
+        if (isset($this->cp_value)) {
+            $datas['cp_value'] = $this->cp_value;
+        }
+        return $datas;
+
+    }
+
     function toRoomManagerJson()
     {
         $data = [
