@@ -12,6 +12,9 @@ class CouplesController extends BaseController
         if ($user->room_id == $room_id) {
             $is_show_my_cp = true;
         }
+        $is_show_alert = false;
+        $lock_key = 'ready_cp_lock_room_' . $room_id;
+        $lock = tryLock($lock_key);
 
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         $cache = \Users::getHotWriteCache();
@@ -40,23 +43,26 @@ class CouplesController extends BaseController
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
         } else if (!$user->current_room_seat_id && !$pursuer_id) {
+            $is_show_alert = true;
             $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
             $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         } else {
             info('cp数据', $data);
-            //数据已经完善的情况下，不考虑用户不是房主却进到这个页面的情况
+            $is_show_alert = true;
             $room_host_id = $sponsor_id;
             $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
             if ($pursuer_id) {
                 $pursuer = \Users::findFirstById($pursuer_id)->toCpJson();
             }
         }
+        unlock($lock);
 
         $this->view->is_show_my_cp = $is_show_my_cp;
         $this->view->room_host_user = json_encode($room_host_user, JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer, JSON_UNESCAPED_UNICODE);
         $this->view->current_user_id = $user->id;
         $this->view->room_id = $room_id;
+        $this->view->is_show_alert = $is_show_alert;
 
     }
 
