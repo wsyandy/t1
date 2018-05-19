@@ -193,7 +193,7 @@ class CouplesController extends BaseController
         $data = $cache->hgetall($key);
 
         $pursuer_id = fetch($data, 'pursuer_id');
-        $pursuer_id = 117;
+        
         if (!$pursuer_id) {
             return $this->renderJSON(ERROR_CODE_SUCCESS);
         }
