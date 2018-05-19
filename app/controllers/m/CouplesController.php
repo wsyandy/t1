@@ -9,7 +9,10 @@ class CouplesController extends BaseController
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $is_show_my_cp = false;
-        if ($user->room_id == $room_id) {
+        $room = \Rooms::findFirstById($room_id);
+        $is_host = $user->isRoomHost($room);
+
+        if ($is_host) {
             $is_show_my_cp = true;
         }
         $is_show_alert = false;
@@ -20,6 +23,11 @@ class CouplesController extends BaseController
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
         $data = $cache->hgetall($key);
+
+        if (!$data && !$is_host) {
+            return $this->response->redirect('app://back');
+        }
+
         $room_host_user = $user->toCpJson();
 
         info('比较数据', $data);
@@ -27,7 +35,7 @@ class CouplesController extends BaseController
         $pursuer_id = fetch($data, 'pursuer_id');
 
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
-        if (!$data && $room_id == $user->room_id) {
+        if (!$data && $is_host) {
             \Couples::createReadyCpInfo($user);
 
             $root = $this->getRoot();
@@ -58,7 +66,7 @@ class CouplesController extends BaseController
             }
         }
         unlock($lock);
-        if ($user->isRoomHost($user->room)) {
+        if ($is_host) {
             $is_show_alert = false;
         }
 
@@ -193,7 +201,7 @@ class CouplesController extends BaseController
         $data = $cache->hgetall($key);
 
         $pursuer_id = fetch($data, 'pursuer_id');
-        
+
         if (!$pursuer_id) {
             return $this->renderJSON(ERROR_CODE_SUCCESS);
         }
