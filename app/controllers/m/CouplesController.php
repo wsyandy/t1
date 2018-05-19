@@ -15,7 +15,7 @@ class CouplesController extends BaseController
         if (!$room) {
             return;
         }
-        
+
         $lock_key = 'ready_cp_lock_room_' . $room_id;
 
         $lock = tryLock($lock_key);
@@ -23,6 +23,8 @@ class CouplesController extends BaseController
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
 
         $data = $room->getReadyCpInfo();
+
+        info($this->params(), $data);
 
         $room = \Rooms::findFirstById($room_id);
         $is_host = $user->isRoomHost($room);
