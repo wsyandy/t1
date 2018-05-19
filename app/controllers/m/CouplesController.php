@@ -12,13 +12,6 @@ class CouplesController extends BaseController
 
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
-        $is_show_my_cp = false;
-        $room = \Rooms::findFirstById($room_id);
-        $is_host = $user->isRoomHost($room);
-
-        if ($is_host) {
-            $is_show_my_cp = true;
-        }
         $is_show_alert = false;
         $lock_key = 'ready_cp_lock_room_' . $room_id;
         $lock = tryLock($lock_key);
@@ -27,6 +20,9 @@ class CouplesController extends BaseController
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
         $data = $cache->hgetall($key);
+
+        $room = \Rooms::findFirstById($room_id);
+        $is_host = $user->isRoomHost($room);
 
         if (!$data && !$is_host) {
             return $this->response->redirect('app://back');
@@ -57,12 +53,10 @@ class CouplesController extends BaseController
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
         } else if (!$user->current_room_seat_id && !$pursuer_id) {
-            $is_show_alert = true;
             $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
             $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         } else {
             info('cp数据', $data);
-            $is_show_alert = true;
             $room_host_id = $sponsor_id;
             $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
             if ($pursuer_id) {
@@ -70,11 +64,12 @@ class CouplesController extends BaseController
             }
         }
         unlock($lock);
-        if ($is_host) {
-            $is_show_alert = false;
+
+        if (!$user->current_room_seat_id && !$is_host) {
+            $is_show_alert = true;
         }
 
-        $this->view->is_show_my_cp = $is_show_my_cp;
+        $this->view->is_host = $is_host;
         $this->view->room_host_user = json_encode($room_host_user, JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer, JSON_UNESCAPED_UNICODE);
         $this->view->current_user_id = $user->id;

@@ -20,7 +20,7 @@
         </div>
         <div class="cp_info">
             <div class="cp_avatar">
-                <img :src="pursuer.avatar_url" alt="">
+                <img :src="pursuer.avatar_url" alt="" @click="tab(1)">
                 <span class="cp_name" v-text="pursuer.nickname">  </span>
             </div>
             <div class="cp_id">
@@ -29,10 +29,15 @@
             </div>
         </div>
     </div>
+    <!-- 其他弹框 -->
+    <div class="room_btn" v-show="is_kick_out">
+        <span class="room_out" @click="tab(0)">取消</span>
+        <span class="room_in" @click="kickOut()">确定</span>
+    </div>
     <div class="cp_btn" :class="{'cp_btn_on':pursuer.uid}" @click="YseIDo()">
         <span>我愿意</span>
     </div>
-    {% if is_show_my_cp %}
+    {% if is_host %}
         <a class="cp_my" href="/m/couples/my_couples?sid={{ sid }}&code={{ code }}&room_id={{ room_id }}">
             <span>我的CP</span>
             <img class="cp_arrow" :src="cp_arrow" alt="">
@@ -42,6 +47,7 @@
 <script>
     var opts = {
         data: {
+            is_kick_out: false,
             sid: '{{ sid }}',
             code: '{{ code }}',
             cp_heart: '/m/images/cp_heart.png',
@@ -53,6 +59,16 @@
 
         },
         methods: {
+            tab:function (index) {
+                switch (index) {
+                    case 0:
+                        vm.is_kick_out = false;
+                        break;
+                    case 1:
+                        vm.is_kick_out = true;
+                        break;
+                }
+            },
             YseIDo: function () {
                 var data = {
                     sid: vm.sid,
@@ -83,6 +99,18 @@
                             vm.getPursuer();
                         }, 3000);
                     }
+                })
+            },
+            kickOut:function () {
+                vm.is_kick_out = false;
+                var data = {
+                    sid:vm.sid,
+                    code:vm.code,
+                    room_id: vm.room_id
+                };
+
+                $.authPost('/m/couples/kick_out',data,function (resp) {
+                    console.log(resp);
                 })
             }
         }

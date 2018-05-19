@@ -52,7 +52,7 @@ class Couples extends BaseModel
         $db->zadd($cp_marriage_time_key, time(), $sponsor_id . '_' . $pursuer_id);
 
         //删除redis中暂存的信息
-        $cache->expire($key, 20);
+        $cache->del($key);
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
         self::sendCpFinishMessage($user, $body);
     }
