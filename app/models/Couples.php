@@ -9,7 +9,7 @@ class Couples extends BaseModel
         $cache = \Users::getHotWriteCache();
         $key = self::generateReadyCpInfoKey($user->room_id);
         //初始化
-        $body = ['sponsor_id' => $user->id];
+        $body = ['sponsor_id' => $user->id, $user->id => 1];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
     }
@@ -24,7 +24,7 @@ class Couples extends BaseModel
         $cache = \Users::getHotWriteCache();
         $key = self::generateReadyCpInfoKey($room_id);
 
-        $body = ['pursuer_id' => $pursuer->id];
+        $body = ['pursuer_id' => $pursuer->id, $pursuer->id => 1];
         $cache->hmset($key, $body);
         info('更新', $cache->hgetall($key));
     }

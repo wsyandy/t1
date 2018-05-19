@@ -12,6 +12,10 @@ class CouplesController extends BaseController
         if ($user->room_id == $room_id) {
             $is_show_my_cp = true;
         }
+        $is_show_alert = false;
+        $lock_key = 'ready_cp_lock_room_' . $room_id;
+        $lock = tryLock($lock_key);
+
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
@@ -30,7 +34,7 @@ class CouplesController extends BaseController
                 'image_url' => $image_url, 'client_url' => "url://m/couples?room_id=" . $room_id];
 
             \Couples::sendCpFinishMessage($user, $body);
-        } else if ($user->id != $sponsor_id && !$pursuer_id) {
+        } else if ($user->id != $sponsor_id && !$pursuer_id && $user->current_room_seat_id) {
             //当前用户不是发起者，并且追求者还没有入驻过
             $room_host_id = $sponsor_id;
             $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
@@ -38,21 +42,27 @@ class CouplesController extends BaseController
 
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
+        } else if (!$user->current_room_seat_id && !$pursuer_id) {
+            $is_show_alert = true;
+            $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
+            $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         } else {
             info('cp数据', $data);
-            //数据已经完善的情况下，不考虑用户不是房主却进到这个页面的情况
+            $is_show_alert = true;
             $room_host_id = $sponsor_id;
             $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
             if ($pursuer_id) {
                 $pursuer = \Users::findFirstById($pursuer_id)->toCpJson();
             }
         }
+        unlock($lock);
 
         $this->view->is_show_my_cp = $is_show_my_cp;
         $this->view->room_host_user = json_encode($room_host_user, JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer, JSON_UNESCAPED_UNICODE);
         $this->view->current_user_id = $user->id;
         $this->view->room_id = $room_id;
+        $this->view->is_show_alert = $is_show_alert;
 
     }
 
@@ -63,7 +73,6 @@ class CouplesController extends BaseController
         $room_id = $this->params('room_id');
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
-        $status = $cache->hget($key, 'status');
         $data = $cache->hgetall($key);
         $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
@@ -74,12 +83,29 @@ class CouplesController extends BaseController
             }
         }
 
-        if ($id == $pursuer_id || $id == $sponsor_id) {
-            if ($status < 1) {
-                $cache->hincrby($key, 'status', 1);
+        if ($id == $pursuer_id) {
+            $sponsor_status = $cache->hget($key, $sponsor_id);
+            if ($sponsor_status < 2) {
+                $cache->hincrby($key, $id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
             } else {
-                $cache->hincrby($key, 'status', 1);
+                $cache->hincrby($key, $id, 1);
+                //成功组成cp，去相互保存对方的id
+                \Couples::cpSeraglioInfo($user, $room_id);
+                $opts = [
+                    'sponsor_id' => $sponsor_id,
+                    'pursuer_id' => $pursuer_id
+                ];
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
+            }
+        } elseif ($id == $sponsor_id) {
+            $pursuer_status = $cache->hget($key, $pursuer_id);
+            if ($pursuer_status < 2) {
+                $cache->hincrby($key, $id, 1);
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
+            } else {
+                $cache->hincrby($key, $id, 1);
                 //成功组成cp，去相互保存对方的id
                 \Couples::cpSeraglioInfo($user, $room_id);
                 $opts = [

@@ -75,6 +75,9 @@
 
     vm = XVue(opts);
     $(function () {
-        console.log(vm.pursuer);
+        var is_show_alert = "{{ is_show_alert }}"
+        if (is_show_alert) {
+            alert('您还不在麦位上，再去争取机会啊！');
+        }
     })
 </script>
