@@ -40,6 +40,7 @@ class CouplesController extends BaseController
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
         } else if (!$user->current_room_seat_id && !$pursuer_id) {
+            $room_host_user = \Users::findFirstById($sponsor_id)->toCpJson();
             $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         } else {
             info('cp数据', $data);
