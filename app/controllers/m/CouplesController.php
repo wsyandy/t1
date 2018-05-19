@@ -102,6 +102,8 @@ class CouplesController extends BaseController
             ];
             $key = \Couples::generateReadyCpInfoKey($room_id);
             $cache->del($key);
+            $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
+            \Couples::sendCpFinishMessage($user, $body);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '看看你们共同的证明！', $opts);
         }
 
