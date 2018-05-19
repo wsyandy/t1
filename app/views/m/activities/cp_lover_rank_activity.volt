@@ -59,7 +59,7 @@
             <span>您的情侣值为</span>
             <div class="cp_value">
                 <img class="cp_heart" src="/m/images/cp_heart.png" alt="">
-                <span>4368</span>
+                <span v-text="current_highest_score?current_highest_score:0"></span>
             </div>
             <span>暂未上榜</span>
         </div>
@@ -135,7 +135,8 @@
                 '1. 情侣之间互相赠送礼物，每赠送一个钻石，用户的情侣值+1',
                 '2. 活动时间为5月20日 00:00 — 5月20日 23:59',
             ],
-            is_on_the_list: "{{ is_on_the_list }}"
+            is_on_the_list: '',
+            current_highest_score: ''
 
 
         },
@@ -154,6 +155,14 @@
                         vm.pursuer_users.push(item);
                     });
                     vm.is_on_the_list = resp.is_on_the_list;
+                    if (!vm.is_on_the_list) {
+                        $.authPost('/m/activities/get_current_cp_highest_score', data, function (resp) {
+                            console.log(resp);
+                            if (!resp.error_code) {
+                                vm.current_highest_score = resp.current_highest_score
+                            }
+                        })
+                    }
                 }
             })
         },

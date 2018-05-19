@@ -158,10 +158,10 @@ class Couples extends BaseModel
         $db->zincrby($cp_info_key, $amount, $member);
 
         $sender_key = self::generateCpInfoForUserKey($sender_id);
-        $db->zadd($sender_key, $amount, $receive_id);
+        $db->zincrby($sender_key, $amount, $receive_id);
 
         $receive_key = self::generateCpInfoForUserKey($receive_id);
-        $db->zadd($receive_key, $amount, $sender_id);
+        $db->zincrby($receive_key, $amount, $sender_id);
     }
 
     static function sendCpFinishMessage($user, $body)
