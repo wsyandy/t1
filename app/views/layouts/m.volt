@@ -28,11 +28,9 @@
     var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
 
     $(function () {
-        // if (isIos) {
-        //     pushHistory();
-        // }
-
-        pushHistory();
+        if (isIos) {
+            pushHistory();
+        }
     });
 
     //解决ios后退无法刷新
