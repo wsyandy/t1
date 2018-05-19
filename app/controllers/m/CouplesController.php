@@ -90,7 +90,7 @@ class CouplesController extends BaseController
             $sponsor_status = $cache->hget($key, $sponsor_id);
             if ($sponsor_status < 2) {
                 $cache->hincrby($key, $id, 1);
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '您的另一半还未点击[我愿意]，快通知对方吧');
             } else {
                 $cache->hincrby($key, $id, 1);
                 //成功组成cp，去相互保存对方的id
@@ -106,7 +106,7 @@ class CouplesController extends BaseController
             $pursuer_status = $cache->hget($key, $pursuer_id);
             if ($pursuer_status < 2) {
                 $cache->hincrby($key, $id, 1);
-                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '您的另一半还未点击[我愿意]，快通知对方吧');
             } else {
                 $cache->hincrby($key, $id, 1);
                 //成功组成cp，去相互保存对方的id
@@ -119,7 +119,7 @@ class CouplesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
             }
         } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '躁动了吗？心动不如行动，快去跟人家表白吧');
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的另一半还未进入情侣厅，快通知对方吧');
         }
     }
 
