@@ -275,7 +275,7 @@ class RoomsController extends BaseController
             }
 
         } else {
-            $res['game'] = ['url' => 'url://m/couples?room_id=' . $this->id, 'icon' => $root_host . 'images/go_cp.png'];
+            $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
         }
 
 
