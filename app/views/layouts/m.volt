@@ -36,7 +36,6 @@
     //解决ios后退无法刷新
     function pushHistory() {
         window.addEventListener("popstate", function (e) {
-            alert();
             self.location.reload();
         }, false);
         var state = {
