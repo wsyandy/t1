@@ -59,7 +59,7 @@
             <span>最高情侣值为</span>
             <div class="cp_value" v-for="score in cp_info">
                 <img class="cp_heart" src="/m/images/cp_heart.png" alt="">
-                <span v-text="score?score:0"></span>
+                <span v-text="score?score:'0'"></span>
             </div>
             <span v-if="!is_on_the_list">暂未上榜</span>
             <span v-if="is_on_the_list">已上榜</span>
