@@ -82,7 +82,7 @@
             code: '{{ code }}',
             logo: '/m/images/logo_2.png',
             cer_heart: '/m/images/cer_heart.png',
-            qr_code: '/m/images/cp_qr_ccode.png',
+            qr_code: '/m/images/cp_qr_code.png',
             cer_share: '/m/images/cer_share.png',
             sponsor: {{ sponsor }},
             pursuer:{{ pursuer }},
