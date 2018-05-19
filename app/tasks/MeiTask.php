@@ -10,6 +10,44 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
+        $union = Unions::findFirstById(1026);
+        $key = $union->generateUsersKey();
+        $ssdb = Users::getUserDb();
+        echoLine($ssdb->zscore($key,1001187 ));
+        $user = Users::findFirstById(1001187);
+
+//        if (isBlank($user->union_id) || $user->union_id != $union->id) {
+//            return [ERROR_CODE_FAIL, '此用户已不再此家族'];
+//        }
+
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $union->id],
+            'id desc');
+
+        if ($union_history) {
+            $union_history->status = STATUS_OFF;
+            $union_history->exit_at = time();
+            $union_history->save();
+        }
+
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+
+
+        $db = Users::getUserDb();
+        $db->zrem($union->generateUsersKey(), $user->id);
+        $db->zrem($union->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($union->generateRefusedUsersKey(), $user->id);
+        $db->zrem($union->generateNewUsersKey(), $user->id);
+        $db->zrem($union->generateCheckUsersKey(), $user->id);
+        $db->zrem($union->generateAllApplyExitUsersKey(), $user->id);
+
+        $user->update();
+
+        return [ERROR_CODE_SUCCESS, '操作成功'];
+
+        echoLine(Users::randomSilentUser());
         $gift_order = GiftOrders::findFirstById(1957528);
         $amount = $gift_order->amount;
         echoLine($amount);
@@ -17,30 +55,41 @@ class MeiTask extends \Phalcon\Cli\Task
         $gift_order->room_union_id = 1068;
         $gift_order->save();
 
-        $hot_cache = Users::getHotWriteCache();
-        $key = 'room_active_last_at_list';
-        $total_num = $hot_cache->zcard($key);
-        $per_page = 100;
-        $all_room_ids = $hot_cache->zrange($key, 0, -1);
+        $order = Orders::findFirstById(69669);
 
-        $loop_num = ceil($total_num / $per_page);
-        $offset = 0;
+        $product = $order->product;
+        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
 
-        for ($i = 0; $i < $loop_num; $i++) {
-
-            $slice_ids = array_slice($all_room_ids, $offset, $per_page);
-
-            $rooms = Rooms::findByIds($slice_ids);
-
-            foreach ($rooms as $room) {
-                list($res, $word) = BannedWords::checkWord($room->name);
-                $room->name = $word;
-                list($res, $word) = BannedWords::checkWord($room->topic);
-                $room->topic = $word;
-                $room->update();
-            }
+        if ($product->diamond) {
+            $opts['remark'] = '购买' . $product->full_name;
+            AccountHistories::changeBalance($order->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
         }
 
+        if ($product->gold) {
+            $opts['remark'] = '购买金币';
+            GoldHistories::changeBalance($order->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, $opts);
+        }
+
+        echoLine($order);
+
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange(Rooms::generateExitRoomByServerListKey(), 0, -1);
+        echoLine(count($user_ids));
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+
+            if ($user->last_at <= time() - 15 * 60 && $user->current_room_id) {
+                echoLine($user->id, $user->current_room_id);
+                $current_room = $user->current_room;
+                $current_room_seat_id = $user->current_room_seat_id;
+                $current_room->exitRoom($user, true);
+                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+            }
+
+        }
     }
 
     function freshRoomUserIdAction()

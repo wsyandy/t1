@@ -2009,17 +2009,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -2537,6 +2539,40 @@ class Rooms extends BaseModel
     {
         $hot_cache = Rooms::getHotWriteCache();
         $hot_cache->zrem(self::generateExitRoomByServerListKey(), $user_id);
+    }
+
+    static function generateAbnormalExitRoomListKey()
+    {
+        return "abnormal_exit_room_list";
+    }
+
+    static function isInAbnormalExitRoomList($room_id, $user_id)
+    {
+        $hot_cache = Rooms::getHotReadCache();
+        return $hot_cache->zscore(self::generateAbnormalExitRoomListKey(), $room_id . "_" . $user_id) > 0;
+    }
+
+    static function addAbnormalExitRoomUserId($room_id, $user_id)
+    {
+        if ($room_id && $user_id) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zadd(self::generateAbnormalExitRoomListKey(), time(), $room_id . "_" . $user_id);
+        }
+    }
+
+    static function delAbnormalExitRoomUserId($room_id, $user_id)
+    {
+        if (self::isInAbnormalExitRoomList($room_id, $user_id)) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zrem(self::generateExitRoomByServerListKey(), $room_id . "_" . $user_id);
+        }
+    }
+
+    static function getAbnormalExitRoomList()
+    {
+        $hot_cache = Rooms::getHotReadCache();
+
+        return $hot_cache->zrange(self::generateAbnormalExitRoomListKey(), 0, -1);
     }
 
     static function updateRoomTypes($room_id)
@@ -3147,7 +3183,7 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
-    // ios 审核期间队列
+// ios 审核期间队列
     static function generateIosAuthRoomListKey()
     {
         return "ios_auth_room_list";
