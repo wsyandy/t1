@@ -778,20 +778,6 @@ class ActivitiesController extends BaseController
         }
         info($sponsor_ids);
         info($pursuer_ids);
-//        $sponsor_users = [];
-//        foreach ($sponsor_ids as $index => $sponsor_id) {
-//            $sponsor_user = \Users::findFirstById($sponsor_id);
-//            if ($sponsor_user) {
-//                $sponsor_users[] = $sponsor_user->toCpJson();
-//            }
-//        }
-//        $pursuer_users = [];
-//        foreach ($pursuer_ids as $index => $pursuer_id) {
-//            $pursuer_user = \Users::findFirstById($pursuer_id);
-//            if ($pursuer_user) {
-//                $pursuer_users[] = $pursuer_user->toCpJson();
-//            }
-//        }
 
         $is_on_the_list = false;
         if (in_array($current_user_id, $sponsor_ids) || in_array($current_user_id, $pursuer_ids)) {
