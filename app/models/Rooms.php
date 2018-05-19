@@ -3093,7 +3093,8 @@ class Rooms extends BaseModel
                 }
 
                 $total_score = $room->getTotalScore();
-                if ($total_score < 1) {
+                
+                if ($total_score < 1 && !$room->isHot()) {
                     continue;
                 }
 
