@@ -23,6 +23,13 @@ class CouplesController extends BaseController
         //如果当前房间没有初始化数据，说明为房主开启cp，初始化cp数据
         if (!$data && $room_id == $user->room_id) {
             \Couples::createReadyCpInfo($user);
+
+            $root = $this->getRoot();
+            $image_url = $root . 'images/go_cp.png';
+            $body = ['action' => 'cp', 'type' => 'start', 'content' => 'cp开始',
+                'image_url' => $image_url, 'client_url' => "url://m/couples?room_id=" . $room_id];
+
+            \Couples::sendCpFinishMessage($user, $body);
         } else if ($user->id != $sponsor_id && !$pursuer_id) {
             //当前用户不是发起者，并且追求者还没有入驻过
             $room_host_id = $sponsor_id;
