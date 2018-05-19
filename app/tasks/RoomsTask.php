@@ -98,7 +98,7 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
 
-        info($target_ids);
+        info($total);
 
         foreach ($target_ids as $target_id) {
 
