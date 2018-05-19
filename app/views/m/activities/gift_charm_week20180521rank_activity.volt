@@ -133,7 +133,8 @@
             is_wealth_show:false
         },
         created: function () {
-            this.getUsers('{{ gifts[0].id }}');
+            //this.getUsers('{{ gifts[0].id }}');
+            this.getUsers(0);
         },
         methods: {
             getUsers: function (gift_id) {
