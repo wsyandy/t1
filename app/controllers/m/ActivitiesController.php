@@ -625,7 +625,7 @@ class ActivitiesController extends BaseController
             'last_activity_start' => $last_activity_start,
             'last_activity_end' => $last_activity_end
         ];
-        info("last_activity_rank_list_users",$last_opts);
+
         $last_activity_rank_list_users = \Activities::getLastActivityRankListUsers($last_opts);
 
         $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];

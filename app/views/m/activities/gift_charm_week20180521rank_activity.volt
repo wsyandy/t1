@@ -156,7 +156,7 @@
                     id: '{{ id }}',
                     //type:this.type,
                 };
-                console.log(data);
+
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
                     //console.log(resp);
