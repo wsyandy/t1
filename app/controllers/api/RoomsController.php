@@ -233,8 +233,9 @@ class RoomsController extends BaseController
             // 发起游戏
             $game_history = $room->getGameHistory();
             $ready_cp_info = $room->getReadyCpInfo();
+            $sponsor_id = fetch($ready_cp_info,'sponsor_id');
 
-            if (isBlank($ready_cp_info)) {
+            if (isBlank($sponsor_id)) {
                 if ($game_history) {
                     $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
                 }
@@ -274,8 +275,9 @@ class RoomsController extends BaseController
         // 发起游戏
         $game_history = $room->getGameHistory();
         $ready_cp_info = $room->getReadyCpInfo();
+        $sponsor_id = fetch($ready_cp_info,'sponsor_id');
 
-        if (isBlank($ready_cp_info)) {
+        if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
             }
