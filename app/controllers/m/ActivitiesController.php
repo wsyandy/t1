@@ -666,8 +666,6 @@ class ActivitiesController extends BaseController
     //礼物周榜活动    2018-05-21
     function giftCharmWeek20180521rankActivityAction()
     {
-        $this->view->sid = $this->params('sid', '');
-        $this->view->code = $this->params('code', '');
         $this->giftCharmRankActivity();
     }
 
