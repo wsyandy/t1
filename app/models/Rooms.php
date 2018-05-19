@@ -2946,7 +2946,7 @@ class Rooms extends BaseModel
         }
 
         if (isDevelopmentEnv() && $is_host) {
-            $menu_config[] = ['show' => true, 'title' => 'cp', 'type' => 'cp',
+            $menu_config[] = ['show' => true, 'title' => 'cp', 'type' => 'game',
                 'url' => 'url://m/couples?room_id=' . $this->id, 'icon' => $root_host . 'images/cp.png'];
         }
 
