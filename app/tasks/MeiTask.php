@@ -10,8 +10,15 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
-        Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-        $hot_cache = Rooms::getHotReadCache();
+        $user = Users::findFirstById(1001303);
+        echoLine($user->getOnlineToken(), $user->getUserFd());
+
+        $hot_cache = Users::getHotReadCache();
+        $user_key = 'socket_fd_user_id_6179ffe1a09d94a6c743e67452355f178a401';
+        echoLine($hot_cache->get($user_key));
+        $fd_key = "socket_push_fd_6179ffe1a09d94a6c743e67452355f178a401";
+        $fd = $hot_cache->get($fd_key);
+        echoLine($fd);
 
         echoLine(Rooms::generateAbnormalExitRoomListKey(), $hot_cache->zscore(Rooms::generateAbnormalExitRoomListKey(), 27 . "_" . 1001303));
 
