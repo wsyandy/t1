@@ -12,6 +12,11 @@ class CouplesController extends BaseController
         if ($user->room_id == $room_id) {
             $is_show_my_cp = true;
         }
+
+        if (!$user->current_room_seat_id) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '您还不在麦位上哦，只能眼巴巴的看着');
+        }
+
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
@@ -63,7 +68,6 @@ class CouplesController extends BaseController
         $room_id = $this->params('room_id');
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
-        $status = $cache->hget($key, 'status');
         $data = $cache->hgetall($key);
         $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
@@ -74,12 +78,29 @@ class CouplesController extends BaseController
             }
         }
 
-        if ($id == $pursuer_id || $id == $sponsor_id) {
-            if ($status < 1) {
-                $cache->hincrby($key, 'status', 1);
+        if ($id == $pursuer_id) {
+            $sponsor_status = $cache->hget($key, $sponsor_id);
+            if ($sponsor_status < 1) {
+                $cache->hincrby($key, $id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
             } else {
-                $cache->hincrby($key, 'status', 1);
+                $cache->hincrby($key, $id, 1);
+                //成功组成cp，去相互保存对方的id
+                \Couples::cpSeraglioInfo($user, $room_id);
+                $opts = [
+                    'sponsor_id' => $sponsor_id,
+                    'pursuer_id' => $pursuer_id
+                ];
+
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
+            }
+        } elseif ($id == $sponsor_id) {
+            $pursuer_status = $cache->hget($key, $pursuer_id);
+            if ($pursuer_status < 1) {
+                $cache->hincrby($key, $id, 1);
+                return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '快通知对方吧');
+            } else {
+                $cache->hincrby($key, $id, 1);
                 //成功组成cp，去相互保存对方的id
                 \Couples::cpSeraglioInfo($user, $room_id);
                 $opts = [
