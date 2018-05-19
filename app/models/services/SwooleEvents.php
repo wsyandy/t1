@@ -143,7 +143,7 @@ class SwooleEvents extends \BaseModel
                             $current_room_seat_id = $current_room_seat->id;
                         }
 
-                        if (\Rooms::isInExitRoomByServerList($user_id)) {
+                        if (\Rooms::isInAbnormalExitRoomList($current_room->id, $user_id)) {
                             info("user_id_is_exiting_room", $user_id);
                         } else {
                             debug($user_id, $current_room->id);
