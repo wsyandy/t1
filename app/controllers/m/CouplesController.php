@@ -57,7 +57,7 @@ class CouplesController extends BaseController
         }
         unlock($lock);
         if ($user->isRoomHost($user->room)) {
-            $is_show_my_cp = false;
+            $is_show_alert = false;
         }
 
         $this->view->is_show_my_cp = $is_show_my_cp;
