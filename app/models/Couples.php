@@ -156,6 +156,12 @@ class Couples extends BaseModel
         info('更新情侣值', $amount, $member);
         $cp_info_key = self::generateCpInfoKey();
         $db->zincrby($cp_info_key, $amount, $member);
+
+        $sender_key = self::generateCpInfoForUserKey($sender_id);
+        $db->zadd($sender_key,$amount,$receive_id);
+
+        $receive_key = self::generateCpInfoForUserKey($receive_id);
+        $db->zadd($receive_key,$amount,$sender_id);
     }
 
     static function sendCpFinishMessage($user, $body)
@@ -166,5 +172,10 @@ class Couples extends BaseModel
         $receiver_fd = $user->getUserFd();
 
         \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+    }
+
+    static function generateCpInfoForUserKey($user_id)
+    {
+        return 'cp_info_for_user_' . $user_id;
     }
 }
