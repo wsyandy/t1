@@ -35,23 +35,23 @@
     <div class="extend_title"><span>情侣值排行榜</span></div>
     <div class="lovers_list">
         <ul class="cp_list">
-            <li v-for="(sponsor_user,i) in sponsor_users"
+            <li v-for="(all_user,i) in all_users"
                 :class=" [i==0 && 'cp_first' || i==1 && 'cp_second' || i==2 && 'cp_third' ]">
                 <div class="cp_num" v-text="'NO.'+(i+1)"></div>
                 <div class="cp_avatar_box">
                     <div class="cp_avatar">
-                        <img :src="sponsor_user.avatar_url" alt="">
+                        <img :src="all_user[0].avatar_url" alt="">
                     </div>
                     <img class="cp_heart" v-if=""
                          :src=" i==0 && cp_heart || i==1 && cp_heart1 || i==2 && cp_heart2 || i>2 && cp_heart3 " alt="">
                     <div class="cp_avatar">
-                        <img :src="pursuer_users[i].avatar_url" alt="">
+                        <img :src="all_user[1].avatar_url" alt="">
                     </div>
                 </div>
                 <div class="cp_name">
-                    <p class="cp_name_left" v-text="sponsor_user.nickname"></p>
+                    <p class="cp_name_left" v-text="all_user[0].nickname"></p>
                     <span class="symbol_and" v-text="i?'&':''"></span>
-                    <p class="cp_name_right" v-text="pursuer_users[i].nickname"></p>
+                    <p class="cp_name_right" v-text="all_user[1].nickname"></p>
                 </div>
             </li>
         </ul>
@@ -137,7 +137,8 @@
                 '2. 活动时间为5月20日 00:00 — 5月20日 23:59',
             ],
             is_on_the_list: '',
-            cp_info: []
+            cp_info: [],
+            all_users:[]
 
 
         },
@@ -149,19 +150,20 @@
             $.authPost('/m/activities/get_cp_rank_list', data, function (resp) {
                 console.log(resp);
                 if (!resp.error_code) {
-                    $.each(resp.sponsor_users, function (index, item) {
-                        vm.sponsor_users.push(item);
-                    });
-                    $.each(resp.pursuer_users, function (index, item) {
-                        vm.pursuer_users.push(item);
-                    });
+                    vm.all_users = resp.all_users;
+//                    $.each(resp.sponsor_users, function (index, item) {
+//                        vm.sponsor_users.push(item);
+//                    });
+//                    $.each(resp.pursuer_users, function (index, item) {
+//                        vm.pursuer_users.push(item);
+//                    });
                     vm.is_on_the_list = resp.is_on_the_list;
 
                     $.authPost('/m/activities/get_current_cp_highest_score', data, function (resp) {
                         console.log(resp);
                         if (!resp.error_code) {
-                            vm.cp_info = resp.cp_info
-                            console.log(vm.cp_info);
+                            vm.cp_info = resp.cp_info;
+
                         }
                     })
 
