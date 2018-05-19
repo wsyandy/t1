@@ -51,7 +51,7 @@
         <li>
             <span class="type">本周贡献榜</span>
             <span class="center">第一名奖励</span>
-            <span class="behind">666钻礼物冠名权</span>
+            <span class="behind">1000钻礼物冠名权</span>
         </li>
         <li>
             <span class="type">纳米战甲</span>
