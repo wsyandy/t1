@@ -90,7 +90,7 @@ class CouplesController extends BaseController
             }
         }
 
-        if ($sponsor_id != $user->id && $pursuer_id != $user->id) {
+        if ($pursuer_id && $sponsor_id != $user->id && $pursuer_id != $user->id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
         }
 
