@@ -83,7 +83,7 @@
     <span class="week_title_type">本周实时榜单</span>
     <div class="week_countdown">
         <span id="time_text">  剩余时间：2天 </span>
-        <p>02:22:18</p>
+        <p></p>
     </div>
     {% if time() >= activity.start_at %}
         <ul class="week_list_tab">

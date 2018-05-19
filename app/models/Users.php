@@ -3307,7 +3307,7 @@ class Users extends BaseModel
         }
 
         $key = self::generateFieldRankListKey($list_type, $field, $opts);
-
+        info("generate_field_rank_list_key", $key);
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
 
