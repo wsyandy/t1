@@ -32,7 +32,7 @@
     <!-- 其他弹框 -->
     <div class="room_btn" v-show="is_kick_out">
         <span class="room_out" @click="tab(0)">取消</span>
-        <span class="room_in" @click="kickOut()">确定</span>
+        <span class="room_in" @click="kickOut()">踢除此人</span>
     </div>
     <div class="cp_btn" :class="{'cp_btn_on':pursuer.uid}" @click="YseIDo()">
         <span>我愿意</span>
@@ -110,7 +110,8 @@
                 };
 
                 $.authPost('/m/couples/kick_out',data,function (resp) {
-                    console.log(resp);
+                    alert(resp.error_reason);
+                    location.reload(true);
                 })
             }
         }

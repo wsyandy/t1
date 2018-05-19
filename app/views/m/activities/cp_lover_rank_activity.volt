@@ -128,7 +128,7 @@
             pursuer_users: [],
             tipsList: [
                 '房主发起“处CP”，房主默认为情侣中的一方',
-                '房主发起“处CP”后，房间内会出现“情侣图标”另一半点击即可进入情侣厅。',
+                '房主发起"CP"后，麦位上第一名点击"处CP"的用户即为另一半（旁听用户仅可观看）',
                 '双方在情侣厅内点击“同意”，即可成为情侣，生成情侣证',
             ],
             rulesList: [
@@ -167,9 +167,7 @@
             })
         },
         methods: {
-            navToDetails: function () {
-                window.location.href = 'details.html'
-            }
+
         }
 
     }

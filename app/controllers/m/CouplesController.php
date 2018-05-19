@@ -91,6 +91,8 @@ class CouplesController extends BaseController
         if (!$pursuer_id) {
             if ($sponsor_id == $id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您还没有求婚者哦，等等会有对的人出现');
+            } else {
+                return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
             }
         }
 
@@ -110,7 +112,9 @@ class CouplesController extends BaseController
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
             }
-        } elseif ($id == $sponsor_id) {
+        }
+
+        if ($id == $sponsor_id) {
             $pursuer_status = $cache->hget($key, $pursuer_id);
             if ($pursuer_status < 2) {
                 $cache->hincrby($key, $id, 1);
@@ -126,9 +130,8 @@ class CouplesController extends BaseController
 
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '恭喜有情人终成眷属，是前生造定事，莫错过姻缘！', $opts);
             }
-        } else {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您的另一半还未进入情侣厅，快通知对方吧');
         }
+        return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
     }
 
     function marriageAction()
@@ -212,6 +215,17 @@ class CouplesController extends BaseController
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['pursuer' => $pursuer->toCpJson()]);
+    }
+
+    function kickOutAction()
+    {
+        $room_id = $this->params('room_id');
+        $cache = \Users::getHotWriteCache();
+        $key = \Couples::generateReadyCpInfoKey($room_id);
+        $cache->del($key);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
+
     }
 
 
