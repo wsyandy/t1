@@ -108,8 +108,6 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-
             $user = Users::findFirstById($user_id);
             $room = Rooms::findFirstById($room_id);
 
@@ -118,6 +116,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             $need_push = false;
 
             if ($current_room_id != $room->id || !$user->isNormal()) {
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user, true);
                 $need_push = true;
                 info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
@@ -141,6 +140,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                     info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
 
                     $need_push = true;
+                    Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                     $room->exitRoom($user, true);
                 }
             }
