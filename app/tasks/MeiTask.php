@@ -10,6 +10,7 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
+        echoLine(Users::randomSilentUser());
         $gift_order = GiftOrders::findFirstById(1957528);
         $amount = $gift_order->amount;
         echoLine($amount);
