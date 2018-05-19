@@ -3121,37 +3121,37 @@ class Rooms extends BaseModel
             return 1;
         });
 
-        $hot_room_num = count($hot_room_ids);
-
-        if ($hot_room_num > 0 && $hot_room_num <= 9) {
-
-            $diff_num = 9 - $hot_room_num;
-
-            if (count($room_ids) <= $diff_num) {
-
-                foreach ($hot_room_ids as $hot_room_id => $score) {
-                    $room_ids[$hot_room_id] = $score;
-                }
-
-            } else {
-
-                $room_ids = array_slice($room_ids, $diff_num, 1);
-
-                if (count($room_ids) > 1) {
-                    $tmp_score = $room_ids[0];
-
-                    foreach ($hot_room_ids as $hot_room_id => $score) {
-
-                        if ($score > $tmp_score) {
-                            $room_ids[$hot_room_id] = $score;
-                        } else {
-                            $room_ids[$hot_room_id] = $tmp_score += 10;
-                        }
-                    }
-                }
-
-            }
-        }
+//        $hot_room_num = count($hot_room_ids);
+//
+//        if ($hot_room_num > 0 && $hot_room_num <= 9) {
+//
+//            $diff_num = 9 - $hot_room_num;
+//
+//            if (count($room_ids) <= $diff_num) {
+//
+//                foreach ($hot_room_ids as $hot_room_id => $score) {
+//                    $room_ids[$hot_room_id] = $score;
+//                }
+//
+//            } else {
+//
+//                $room_ids = array_slice($room_ids, $diff_num, 1);
+//
+//                if (count($room_ids) > 1) {
+//                    $tmp_score = $room_ids[0];
+//
+//                    foreach ($hot_room_ids as $hot_room_id => $score) {
+//
+//                        if ($score > $tmp_score) {
+//                            $room_ids[$hot_room_id] = $score;
+//                        } else {
+//                            $room_ids[$hot_room_id] = $tmp_score += 10;
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }
 
 
         $shield_room_num = 30;
