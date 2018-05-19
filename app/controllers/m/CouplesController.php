@@ -8,7 +8,7 @@ class CouplesController extends BaseController
     {
         $referer = $this->headers('Referer');
 
-        info($this->remoteIp(), $referer, $this->request->getUserAgent());
+        info($this->currentUser()->sid, $this->remoteIp(), $referer, $this->request->getUserAgent());
 
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
