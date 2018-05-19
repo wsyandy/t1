@@ -9,13 +9,20 @@ class CouplesController extends BaseController
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
         $is_show_alert = false;
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return;
+        }
+        
         $lock_key = 'ready_cp_lock_room_' . $room_id;
+
         $lock = tryLock($lock_key);
 
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
-        $cache = \Users::getHotWriteCache();
-        $key = \Couples::generateReadyCpInfoKey($room_id);
-        $data = $cache->hgetall($key);
+
+        $data = $room->getReadyCpInfo();
 
         $room = \Rooms::findFirstById($room_id);
         $is_host = $user->isRoomHost($room);
