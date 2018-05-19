@@ -8,6 +8,44 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test45Action()
+    {
+        $union = Unions::findFirstById(1001);
+
+        $cond = [
+            'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct room_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+
+
+        $union = Unions::findFirstById(1001);
+
+        $cond = [
+            'conditions' => 'receiver_union_id = :union_id: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct user_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+
+        $cond = [
+            'conditions' => 'sender_union_id = :union_id: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct sender_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+    }
+
     function test44Action()
     {
         $user = Users::findFirstById(1001303);
@@ -25,7 +63,7 @@ class MeiTask extends \Phalcon\Cli\Task
         $union = Unions::findFirstById(1026);
         $key = $union->generateUsersKey();
         $ssdb = Users::getUserDb();
-        echoLine($ssdb->zscore($key,1001187 ));
+        echoLine($ssdb->zscore($key, 1001187));
         $user = Users::findFirstById(1001187);
 
 //        if (isBlank($user->union_id) || $user->union_id != $union->id) {
