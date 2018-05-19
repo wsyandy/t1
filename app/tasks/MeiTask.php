@@ -10,6 +10,9 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
+
+        $array = [1001 => 123, 1002 => 344, 1003 => 456, 1004 => 345, 1005 => 900];
+        echoLine(array_slice($array, 4, 1));
         $user = Users::findFirstById(1001303);
         echoLine($user->getOnlineToken(), $user->getUserFd());
 
