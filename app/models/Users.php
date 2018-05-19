@@ -3705,6 +3705,10 @@ class Users extends BaseModel
 
         $gift_ids = [66, 76];
 
+        if (isDevelopmentEnv()) {
+            $gift_ids = [163, 167];
+        }
+
         $gift_id = $gift_ids[array_rand($gift_ids)];
         $sender = Users::randomSilentUser();
 

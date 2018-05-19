@@ -10,6 +10,43 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test44Action()
     {
+        $union = Unions::findFirstById(1026);
+        $key = $union->generateUsersKey();
+        $ssdb = Users::getUserDb();
+        echoLine($ssdb->zscore($key,1001187 ));
+        $user = Users::findFirstById(1001187);
+
+//        if (isBlank($user->union_id) || $user->union_id != $union->id) {
+//            return [ERROR_CODE_FAIL, '此用户已不再此家族'];
+//        }
+
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $union->id],
+            'id desc');
+
+        if ($union_history) {
+            $union_history->status = STATUS_OFF;
+            $union_history->exit_at = time();
+            $union_history->save();
+        }
+
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+
+
+        $db = Users::getUserDb();
+        $db->zrem($union->generateUsersKey(), $user->id);
+        $db->zrem($union->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($union->generateRefusedUsersKey(), $user->id);
+        $db->zrem($union->generateNewUsersKey(), $user->id);
+        $db->zrem($union->generateCheckUsersKey(), $user->id);
+        $db->zrem($union->generateAllApplyExitUsersKey(), $user->id);
+
+        $user->update();
+
+        return [ERROR_CODE_SUCCESS, '操作成功'];
+
         echoLine(Users::randomSilentUser());
         $gift_order = GiftOrders::findFirstById(1957528);
         $amount = $gift_order->amount;

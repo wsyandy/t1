@@ -1142,7 +1142,7 @@ class UsersTask extends \Phalcon\Cli\Task
         $last_at = time() - 3600 * 48;
 
         if (isDevelopmentEnv()) {
-            $last_at = time() - 60 * 3;
+            $last_at = time() - 60 * 1;
         }
 
         $product_channel_id = 1;
