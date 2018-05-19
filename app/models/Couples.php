@@ -52,7 +52,7 @@ class Couples extends BaseModel
         $db->zadd($cp_marriage_time_key, time(), $sponsor_id . '_' . $pursuer_id);
 
         //删除redis中暂存的信息
-        $cache->del($key);
+        $cache->expire($key, 20);
         $body = ['action' => 'game_notice', 'type' => 'over', 'content' => 'cp结束',];
         self::sendCpFinishMessage($user, $body);
     }
@@ -158,10 +158,10 @@ class Couples extends BaseModel
         $db->zincrby($cp_info_key, $amount, $member);
 
         $sender_key = self::generateCpInfoForUserKey($sender_id);
-        $db->zadd($sender_key,$amount,$receive_id);
+        $db->zadd($sender_key, $amount, $receive_id);
 
         $receive_key = self::generateCpInfoForUserKey($receive_id);
-        $db->zadd($receive_key,$amount,$sender_id);
+        $db->zadd($receive_key, $amount, $sender_id);
     }
 
     static function sendCpFinishMessage($user, $body)

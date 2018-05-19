@@ -672,7 +672,7 @@ class ActivitiesController extends BaseController
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
-            $type = $this->params('type','charm');
+            $type = $this->params('type', 'charm');
             $gift_id = $this->params('gift_id');
             $id = $this->params('id');
             $activity = \Activities::findFirstById($id);
@@ -753,6 +753,35 @@ class ActivitiesController extends BaseController
         $res = $users->toJson('users', 'toRankListJson');
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    function getCpRankListAction()
+    {
+        $current_user_id = $this->currentUserId();
+        $db = \Users::getUserDb();
+        $key = \Couples::generateCpInfoKey();
+        $res = $db->zrevrange($key, 0, 7);
+        $sponsor_ids = [];
+        $pursuer_ids = [];
+        foreach ($res as $re) {
+            $ids = explode('_', $re);
+            $sponsor_ids[] = $ids[0];
+            $pursuer_ids[] = $ids[1];
+        }
+
+        $sponsor_users = \Users::findByIds($sponsor_ids);
+        $pursuer_users = \Users::findByIds($pursuer_ids);
+
+        $is_on_the_list = false;
+        if (in_array($current_user_id, $sponsor_ids) || in_array($current_user_id, $pursuer_ids)) {
+            $is_on_the_list = true;
+        }
+
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '',
+            array_merge($sponsor_users->toJson('sponsor_users', 'toCpJson'),
+                $pursuer_users->toJson('pursuer_users', 'toCpJson'), ['is_on_the_list' => $is_on_the_list]
+            ));
     }
 
 
