@@ -777,11 +777,15 @@ class ActivitiesController extends BaseController
             $is_on_the_list = true;
         }
 
+        if ($sponsor_users && $pursuer_users) {
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '',
+                array_merge($sponsor_users->toJson('sponsor_users', 'toCpJson'),
+                    $pursuer_users->toJson('pursuer_users', 'toCpJson'), ['is_on_the_list' => $is_on_the_list]
+                ));
+        }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '',
-            array_merge($sponsor_users->toJson('sponsor_users', 'toCpJson'),
-                $pursuer_users->toJson('pursuer_users', 'toCpJson'), ['is_on_the_list' => $is_on_the_list]
-            ));
+        return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据', array_merge(['sponsor_users' => []],[ 'pursuer_users' => []],['is_on_the_list' => false]));
+
     }
 
     function getCurrentCpHighestScoreAction()
