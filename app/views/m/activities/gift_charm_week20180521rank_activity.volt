@@ -101,13 +101,21 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <ul class="week_list_content" v-if="users.length">
+        <ul class="week_list_content" v-if="wealth.length && is_wealth_show">
+            <li v-for="val,index in wealth">
+                <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${val.rank>3?val.rank:''}</span>
+                <img :src="val.avatar_small_url" alt="头像" />
+                <span class="name">${val.nickname}</span>
+                <span>贡献值：${val.wealth_value}</span>
+            </li>
+        </ul>
+
+        <ul class="week_list_content" v-if="users.length && is_charm_show">
             <li v-for="user,index in users">
                 <span :class="index==0?'neo':(index==1?'two':(index==2?'three':'level'))">${user.rank>3?user.rank:''}</span>
                 <img :src="user.avatar_small_url" alt="头像"/>
                 <span class="name">${user.nickname}</span>
-                <span v-if="is_charm_show">魅力值：${user.charm_value}</span>
-                <span v-if="is_wealth_show">贡献值：${user.wealth_value}</span>
+                <span>魅力值：${user.charm_value}</span>
             </li>
         </ul>
     {% endif %}
@@ -120,7 +128,7 @@
             tab_index: 2,
             users: [],
             wealth:[],
-            type:"",
+            //type:"",
             is_charm_show:true,
             is_wealth_show:false
         },
@@ -130,25 +138,30 @@
         methods: {
             getUsers: function (gift_id) {
                 if(gift_id == 0){
-                    this.type = "wealth";
-                    this.is_charm_show = false;
-                    this.is_wealth_show = true;
-                }else{
-                    this.type = "charm";
-                    this.is_charm_show = true;
-                    this.is_wealth_show = false;
+                    this.getWealth();
+                    return;
+//                    this.type = "wealth";
+//                    this.is_charm_show = false;
+//                    this.is_wealth_show = true;
+//                }else{
+//                    this.type = "charm";
+//                    this.is_charm_show = true;
+//                    this.is_wealth_show = false;
                 }
                 var data = {
                     sid: '{{ sid }}',
                     code: '{{ code }}',
                     gift_id: gift_id,
                     id: '{{ id }}',
-                    type:this.type,
+                    //type:this.type,
                 };
                 console.log(data);
                 $.authGet('/m/activities/get_current_activity_rank_list', data, function (resp) {
                     vm.users = [];
-                    console.log(resp);
+                    //console.log(resp);
+                    vm.is_charm_show = true;
+                    vm.is_wealth_show = false;
+
                     if (resp.error_code == 0) {
                         $.each(resp.users, function (index, item) {
                             vm.users.push(item);
@@ -160,6 +173,28 @@
                 this.tab_index = index;
                 this.getUsers(gift_id);
             },
+            getWealth: function () {
+                var data = {
+                    sid: '{{ sid }}',
+                    code: '{{ code }}',
+                    list_type: "week",
+                    per_page:"10",
+                    page:"1",
+                    id: '{{ id }}',
+                    //debug:1
+                };
+                $.authGet('/m/activities/wealth_rank_list', data, function (resp) {
+                    vm.wealth = [];
+                    vm.is_charm_show = false;
+                    vm.is_wealth_show = true;
+                    if (resp.error_code == 0) {
+                        $.each(resp.users, function (index, item) {
+                            vm.wealth.push(item);
+                        });
+                    }
+                });
+            }
+
         }
     };
 

@@ -671,7 +671,7 @@ class ActivitiesController extends BaseController
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
-            $type = $this->params('type');
+            $type = $this->params('type','charm');
             $gift_id = $this->params('gift_id');
             $id = $this->params('id');
             $activity = \Activities::findFirstById($id);
@@ -684,17 +684,18 @@ class ActivitiesController extends BaseController
             $activity_end = date("Ymd", endOfWeek($activity->start_at));
             $opts = ['start' => $activity_start, 'end' => $activity_end];
 
-            if (!$gift_id && !empty($type)) {
+            if (!$gift_id) {
 
-                    $key = \Users::generateFieldRankListKey('week', $type, $opts);
+                $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+
 
             } else {
                 $key = $activity->getStatKey($gift_id);
             }
 
-            $users = \Users::findFieldRankListByKey($key, $type, 1, 10);
+            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
 
-
+            debug($key);
 
             if (count($users)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
@@ -737,7 +738,16 @@ class ActivitiesController extends BaseController
     {
         $this->view->title = '我愿守护你一生一世';
     }
-    
+
+    function wealthRankListAction()
+    {
+
+        $users = \Users::findFieldRankList("week", 'wealth', 1, 10);
+
+        $res = $users->toJson('users', 'toRankListJson');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
 
 
 }
