@@ -558,6 +558,12 @@ class Rooms extends BaseModel
             $room_ids[] = $gift_order->room_id;
         }
 
+        $hot_rooms = Rooms::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
+
+        foreach ($hot_rooms as $hot_room) {
+            $room_ids[] = $hot_room->id;
+        }
+
         $room_ids = array_unique($room_ids);
         return $room_ids;
     }
@@ -2578,7 +2584,7 @@ class Rooms extends BaseModel
     static function updateRoomTypes($room_id)
     {
         $room_category_words = RoomCategoryKeywords::find(['order' => 'id desc']);
-        $room_categories = RoomCategories::find(['order' => 'id desc']);
+        $room_categories = RoomCategories::find(['conditions' => "status = " . STATUS_ON, 'order' => 'id desc']);
 
         $room_category_word_names = [];
         $room_category_names = [];
@@ -3062,6 +3068,7 @@ class Rooms extends BaseModel
 
         $room_ids = [];
         $shield_room_ids = [];
+        $hot_room_ids = [];
 
         $total_num = count($all_room_ids);
         $per_page = 100;
@@ -3090,7 +3097,12 @@ class Rooms extends BaseModel
                     continue;
                 }
 
-                $room_ids[$room->id] = $total_score;
+                if ($room->isHot()) {
+                    $hot_room_ids[$room->id] = $total_score;
+                } else {
+                    $room_ids[$room->id] = $total_score;
+                }
+
                 if ($room->isShieldRoom()) {
                     $shield_room_ids[] = $room->id;
                 }
@@ -3111,6 +3123,27 @@ class Rooms extends BaseModel
 
             return 1;
         });
+
+        $hot_room_num = count($hot_room_ids);
+
+        if ($hot_room_num > 0 && $hot_room_num <= 9) {
+
+            $diff_num = 9 - $hot_room_num;
+            $room_ids = array_slice($room_ids, $diff_num, 1);
+
+            if (count($room_ids) > 1) {
+                $tmp_score = $room_ids[0];
+            }
+
+            foreach ($hot_room_ids as $hot_room_id => $score) {
+
+                if ($score > $tmp_score) {
+                    $room_ids[$hot_room_id] = $score;
+                } else {
+                    $room_ids[$hot_room_id] = $tmp_score += 10;
+                }
+            }
+        }
 
 
         $shield_room_num = 30;
