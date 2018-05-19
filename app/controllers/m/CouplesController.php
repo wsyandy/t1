@@ -78,41 +78,37 @@ class CouplesController extends BaseController
     function createAction()
     {
         $user = $this->currentUser();
-        $id = $this->params('id');
+        $sponsor_id = $this->params('room_host_user_id');
+        $pursuer_id = $this->params('pursuer_id');
         $room_id = $this->params('room_id');
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
-        $data = $cache->hgetall($key);
-        $sponsor_id = fetch($data, 'sponsor_id');
-        $pursuer_id = fetch($data, 'pursuer_id');
         //房主闲的无聊，没事儿对面坑没有就点同意
         if (!$pursuer_id) {
-            if ($sponsor_id == $id) {
+            if ($sponsor_id == $user->id) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '您还没有求婚者哦，等等会有对的人出现');
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '别羡慕了，赶紧找个对象，去自己的房间发起“CP”吧');
             }
         }
 
-        if ($data) {
-            $score = \Couples::checkCpRelation($pursuer_id, $sponsor_id);
-            if ($score) {
-                $opts = [
-                    'sponsor_id' => $sponsor_id,
-                    'pursuer_id' => $pursuer_id
-                ];
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '看看你们共同的证明！', $opts);
-            }
+        $score = \Couples::checkCpRelation($pursuer_id, $sponsor_id);
+        if ($score) {
+            $opts = [
+                'sponsor_id' => $sponsor_id,
+                'pursuer_id' => $pursuer_id
+            ];
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '看看你们共同的证明！', $opts);
         }
 
 
-        if ($id == $pursuer_id) {
+        if ($user->id == $pursuer_id) {
             $sponsor_status = $cache->hget($key, $sponsor_id);
             if ($sponsor_status < 2) {
-                $cache->hincrby($key, $id, 1);
+                $cache->hincrby($key, $user->id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '您的另一半还未点击[我愿意]，快通知对方吧');
             } else {
-                $cache->hincrby($key, $id, 1);
+                $cache->hincrby($key, $user->id, 1);
                 //成功组成cp，去相互保存对方的id
                 \Couples::cpSeraglioInfo($user, $room_id);
                 $opts = [
@@ -124,13 +120,13 @@ class CouplesController extends BaseController
             }
         }
 
-        if ($id == $sponsor_id) {
+        if ($user->id == $sponsor_id) {
             $pursuer_status = $cache->hget($key, $pursuer_id);
             if ($pursuer_status < 2) {
-                $cache->hincrby($key, $id, 1);
+                $cache->hincrby($key, $user->id, 1);
                 return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '您的另一半还未点击[我愿意]，快通知对方吧');
             } else {
-                $cache->hincrby($key, $id, 1);
+                $cache->hincrby($key, $user->id, 1);
                 //成功组成cp，去相互保存对方的id
                 \Couples::cpSeraglioInfo($user, $room_id);
                 $opts = [
