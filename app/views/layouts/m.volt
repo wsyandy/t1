@@ -28,14 +28,17 @@
     var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);//判断是否是苹果手机，是则是true
 
     $(function () {
-        if (isIos) {
-            pushHistory();
-        }
+        // if (isIos) {
+        //     pushHistory();
+        // }
+
+        pushHistory();
     });
 
     //解决ios后退无法刷新
     function pushHistory() {
         window.addEventListener("popstate", function (e) {
+            alert();
             self.location.reload();
         }, false);
         var state = {
