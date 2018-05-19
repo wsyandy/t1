@@ -34,8 +34,7 @@
         {% if isAllowed('users','index') or isAllowed('devices','index') or isAllowed('devices','white_list') or isAllowed('users','avatar')
             or isAllowed('third_auths','index') or  isAllowed('sms_histories','index') or isAllowed('complaints','index') or
             isAllowed('rooms','index') or isAllowed('share_histories','index') or isAllowed('access_tokens','index') or isAllowed('users','blocked_nearby_user_list')
-            or isAllowed('users', 'wish_luck_histories')
-        %}
+            or isAllowed('users', 'wish_luck_histories') %}
             <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户<b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -113,11 +112,11 @@
                     {% if isAllowed('rooms','index') %}
                         <li><a href="/admin/rooms">房间列表</a></li>
                     {% endif %}
+                    {#{% if isAllowed('rooms','auto_hot') %}#}
+                    {#<li><a href="/admin/rooms/auto_hot">热门房间</a></li>#}
+                    {#{% endif %}#}
                     {% if isAllowed('rooms','auto_hot') %}
-                        <li><a href="/admin/rooms/auto_hot">热门房间</a></li>
-                    {% endif %}
-                    {% if isAllowed('rooms','auto_hot') %}
-                        <li><a href="/admin/rooms/auto_hot?new=1">新热门房间</a></li>
+                        <li><a href="/admin/rooms/auto_hot?new=1">热门房间</a></li>
                     {% endif %}
                     {% if isAllowed('rooms','fixed') %}
                         <li><a href="/admin/rooms?hot=1">固定热门房间</a></li>
