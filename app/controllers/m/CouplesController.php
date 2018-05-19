@@ -26,7 +26,7 @@ class CouplesController extends BaseController
 
             $root = $this->getRoot();
             $image_url = $root . 'images/go_cp.png';
-            $body = ['action' => 'game', 'type' => 'start', 'content' => 'cp开始',
+            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => 'cp开始',
                 'image_url' => $image_url, 'client_url' => "url://m/couples?room_id=" . $room_id];
 
             \Couples::sendCpFinishMessage($user, $body);
