@@ -2578,7 +2578,7 @@ class Rooms extends BaseModel
     static function updateRoomTypes($room_id)
     {
         $room_category_words = RoomCategoryKeywords::find(['order' => 'id desc']);
-        $room_categories = RoomCategories::find(['order' => 'id desc']);
+        $room_categories = RoomCategories::find(['conditions' => "status = " . STATUS_ON, 'order' => 'id desc']);
 
         $room_category_word_names = [];
         $room_category_names = [];
