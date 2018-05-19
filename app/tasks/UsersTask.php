@@ -1265,53 +1265,28 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_db = \Users::getUserDb();
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $total = $user_db->zcard($send_user_ids_key);
-        echoLine($total);
-        $hot_cache = Users::getHotWriteCache();
+        $total_user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
+        $total = count($total_user_ids);
 
-        for ($i = 0; $i <= $total; $i += 1000) {
+        $title = '亲，你的账户有可提现的余额，赶紧去提现吧！';
+        $push_data = ['title' => $title, 'body' => ''];
 
-            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 1000 - 1);
-            $users = Users::findByIds($user_ids);
-            echoLine(count($user_ids));
 
-            foreach ($users as $user) {
-                //亲，你现在有*元待提现，赶紧去提现！
+        $per_page = 100;
+        $delay = 1;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
 
-                $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $user->id;
-                $data = $hot_cache->get($wake_up_user_send_gift_key);
-                $hi_conins = 0;
+        echoLine($total, $total_page);
 
-                if ($data) {
-                    $data = json_decode($data, true);
-                    $gift_id = fetch($data, 'gift_id');
+        for ($i = 1; $i <= $total_page; $i++) {
 
-                    $gift = Gifts::findFirstById($gift_id);
+            echoLine($offset, $delay);
 
-                    if ($gift) {
-                        $amount = $gift->amount;
-                        $hi_conins = $amount * 0.045;
-                    }
-
-                } else {
-                    $hi_conins = $user->getWithdrawAmount();
-                }
-
-                if ($hi_conins > 0) {
-                    $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
-
-                    $push_data = ['title' => $content, 'body' => $content];
-
-                    \Pushers::delay(mt_rand(1, 1800))->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
-
-                    //Chats::sendTextSystemMessage($user->id, $content);
-
-                    echoLine($user->id, $content);
-                } else {
-                    echoLine($user->id, "no have hi_coins");
-                }
-            }
-
+            $user_ids = array_slice($total_user_ids, $offset, $per_page);
+            Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+            $offset += $per_page;
+            $delay += 2;
         }
     }
 
