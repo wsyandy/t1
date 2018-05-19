@@ -13,10 +13,6 @@ class CouplesController extends BaseController
             $is_show_my_cp = true;
         }
 
-        if (!$user->current_room_seat_id) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '您还不在麦位上哦，只能眼巴巴的看着');
-        }
-
         $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         $cache = \Users::getHotWriteCache();
         $key = \Couples::generateReadyCpInfoKey($room_id);
@@ -35,7 +31,7 @@ class CouplesController extends BaseController
                 'image_url' => $image_url, 'client_url' => "url://m/couples?room_id=" . $room_id];
 
             \Couples::sendCpFinishMessage($user, $body);
-        } else if ($user->id != $sponsor_id && !$pursuer_id) {
+        } else if ($user->id != $sponsor_id && !$pursuer_id && $user->current_room_seat_id) {
             //当前用户不是发起者，并且追求者还没有入驻过
             $room_host_id = $sponsor_id;
             $room_host_user = \Users::findFirstById($room_host_id)->toCpJson();
@@ -43,6 +39,8 @@ class CouplesController extends BaseController
 
             //更新数据
             \Couples::updateReadyCpInfo($user, $room_id);
+        } else if (!$user->current_room_seat_id && !$pursuer_id) {
+            $pursuer = ['avatar_url' => '/m/images/ico_plus.png', 'uid' => '', 'nickname' => '虚位以待'];
         } else {
             info('cp数据', $data);
             //数据已经完善的情况下，不考虑用户不是房主却进到这个页面的情况
