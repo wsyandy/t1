@@ -125,7 +125,7 @@
 
     var opts = {
         data: {
-            tab_index: 2,
+            tab_index: 1,
             users: [],
             wealth:[],
             //type:"",
