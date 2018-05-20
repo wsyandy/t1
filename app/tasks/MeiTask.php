@@ -8,9 +8,27 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test46Action()
+    {
+        echoLine(Couples::checkCpRelation(1152242, 1115163));
+        echoLine(Couples::getMarriageTime(1115163, 1152242));
+        $union = Unions::findFirstById(1001);
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        //echoLine($db->zcard($key));
+        $datas = $db->zrange($key, 0, -1, 'withscores');
+
+        foreach ($datas as $key => $time) {
+            $date = date("Ymd", $time);
+
+            echoLine($key, $date);
+        }
+
+    }
+
     function test45Action()
     {
-        $union = Unions::findFirstById(1001);
 
         $cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
@@ -48,6 +66,9 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test44Action()
     {
+
+        $array = [1001 => 123, 1002 => 344, 1003 => 456, 1004 => 345, 1005 => 900];
+        echoLine(array_slice($array, 4, 1));
         $user = Users::findFirstById(1001303);
         echoLine($user->getOnlineToken(), $user->getUserFd());
 

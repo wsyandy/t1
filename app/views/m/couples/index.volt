@@ -47,6 +47,7 @@
 <script>
     var opts = {
         data: {
+            is_host: "{{ is_host }}",
             is_kick_out: false,
             sid: '{{ sid }}',
             code: '{{ code }}',
@@ -59,7 +60,10 @@
 
         },
         methods: {
-            tab:function (index) {
+            tab: function (index) {
+                if (!vm.is_host) {
+                    return;
+                }
                 switch (index) {
                     case 0:
                         vm.is_kick_out = false;
@@ -73,7 +77,8 @@
                 var data = {
                     sid: vm.sid,
                     code: vm.code,
-                    id: vm.current_user_id,
+                    room_host_user_id: vm.room_host_user.id,
+                    pursuer_id: vm.pursuer.id,
                     room_id: vm.room_id
                 };
 
@@ -101,15 +106,18 @@
                     }
                 })
             },
-            kickOut:function () {
+            kickOut: function () {
+                if (!vm.is_host) {
+                    return;
+                }
                 vm.is_kick_out = false;
                 var data = {
-                    sid:vm.sid,
-                    code:vm.code,
+                    sid: vm.sid,
+                    code: vm.code,
                     room_id: vm.room_id
                 };
 
-                $.authPost('/m/couples/kick_out',data,function (resp) {
+                $.authPost('/m/couples/kick_out', data, function (resp) {
                     alert(resp.error_reason);
                     location.reload(true);
                 })

@@ -12,6 +12,8 @@ class Couples extends BaseModel
         $body = ['sponsor_id' => $user->id, $user->id => 1];
         $cache->hmset($key, $body);
         info('初始化', $cache->hgetall($key));
+
+        $cache->expire($key, 10 * 60);
     }
 
     static function generateReadyCpInfoKey($room_id)
@@ -79,6 +81,9 @@ class Couples extends BaseModel
         $db = \Users::getUserDb();
         $key = self::generateCpMarriageTimeKey();
         $time = $db->zscore($key, $sponsor_id . '_' . $pursuer_id);
+        if (!$time) {
+            $time = $db->zscore($key, $pursuer_id . '_' . $sponsor_id);
+        }
         return $time;
     }
 
@@ -177,5 +182,15 @@ class Couples extends BaseModel
     static function generateCpInfoForUserKey($user_id)
     {
         return 'cp_info_for_user_' . $user_id;
+    }
+
+    static function checkCpRelation($pursuer_id, $sponsor_id)
+    {
+        $db = \Users::getUserDb();
+        $key = self::generateSeraglioKey($pursuer_id);
+        $score = $db->zscore($key, $sponsor_id);
+
+        return $score;
+
     }
 }
