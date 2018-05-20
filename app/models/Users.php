@@ -1210,6 +1210,9 @@ class Users extends BaseModel
         if ($this->ip_city_id == 33 || $this->geo_city_id == 33) {
 
             $device = $this->device;
+
+            info("user_id", $this->id, "deveice_id", $device->id, "ip_city", $this->ip_city_id, "geo_city", $this->geo_city_id);
+
             $device->status = DEVICE_STATUS_BLOCK;
             $device->update();
         }
