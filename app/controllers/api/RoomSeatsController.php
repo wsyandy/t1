@@ -34,11 +34,6 @@ class RoomSeatsController extends BaseController
             $room_seat_up_user_lock_key = "room_seat_up_user_lock{$other_user_id}";
         }
 
-        $room_seat = \RoomSeats::findFirstById($room_seat_id);
-        if (!$room_seat) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
-        }
-
         $room_seat_lock = tryLock($room_seat_lock_key, 1000, true);
         if(!$room_seat_lock){
             return $this->renderJSON(ERROR_CODE_FAIL, '上麦已有人');
@@ -57,6 +52,11 @@ class RoomSeatsController extends BaseController
             unlock($room_seat_lock);
             unlock($room_seat_user_lock);
             return $this->renderJSON(ERROR_CODE_FAIL, '用户已被抱上麦');
+        }
+
+        $room_seat = \RoomSeats::findFirstById($room_seat_id);
+        if (!$room_seat) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
         }
 
         // 抱用户上麦
