@@ -180,9 +180,14 @@ class CouplesController extends BaseController
             }
         }
 
+        if (!\Couples::checkCpRelation($sponsor_id, $pursuer_id)) {
+            return $this->response->redirect('app://back');
+        }
+
         info($sponsor_id, $pursuer_id);
         $sponsor = \Users::findFirstById($sponsor_id);
         $pursuer = \Users::findFirstById($pursuer_id);
+
         $marriage_at = \Couples::getMarriageTime($sponsor_id, $pursuer_id);
 
         if (isBlank($sponsor) || isBlank($pursuer)) {

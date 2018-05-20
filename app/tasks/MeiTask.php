@@ -15,8 +15,8 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test46Action()
     {
-        echoLine(Couples::checkCpRelation(1152242, 1115163));
-        echoLine(Couples::getMarriageTime(1115163, 1152242));
+        echoLine(Couples::checkCpRelation(1300364, 1028930));
+        echoLine(Couples::getMarriageTime(1028930, 1300364));
 
         $db = \Users::getUserDb();
         $key = Couples::generateCpMarriageTimeKey();
@@ -29,46 +29,54 @@ class MeiTask extends \Phalcon\Cli\Task
             $user_ids = explode("_", $id_key);
             $user_ids = array_filter($user_ids);
 
-            if (in_array(1003380, $user_ids) || in_array(1063163, $user_ids)) {
+            if (in_array(1001303, $user_ids) || in_array(1063163, $user_ids)) {
 
                 echoLine($id_key, $date);
-
-//                if (count($user_ids) < 2) {
-//                    echoLine($id_key, $date);
-//                    $db->zrem($key, $id_key);
-//                }
+                //$db->zadd($key, $time, '1300364_1028930');
+                //$db->zrem($key, $id_key);
+                if (count($user_ids) < 2) {
+                    //echoLine($id_key, $date);
+                    //$db->zrem($key, $id_key);
+                }
             }
 
-            if (count($user_ids) < 2) {
-                echoLine($id_key, $date);
-                //$db->zrem($id_key);
-            }
+//            if (count($user_ids) < 2) {
+//                echoLine($id_key, $date);
+//                $db->zrem($key, $id_key);
+//            }
         }
 
 
         $db = \Users::getUserDb();
-        $amount = 3120 + 3640;
         $cp_info_key = Couples::generateCpInfoKey();
-        echoLine($db->zscore($cp_info_key, '1115163_1152242'));
+        $db->zadd($cp_info_key, 52720, '1300364_1028930');
+        echoLine($db->zscore($cp_info_key, '1300364_1028930'));
 
+        $db = \Users::getUserDb();
         $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
         echoLine($res);
 
         $db = \Users::getUserDb();
-        $sender_key = Couples::generateCpInfoForUserKey(1152242);
-
-
+        $sender_key = Couples::generateCpInfoForUserKey(1084173);
+        //$db->zadd($sender_key, 520 + 52000, 1028930);
         $res = $db->zrange($sender_key, 0, -1, 'withscores');
         echoLine($res);
 
-        $receive_key = Couples::generateCpInfoForUserKey(1115163);
+        $receive_key = Couples::generateCpInfoForUserKey(1028930);
+        $db->zadd($receive_key, 200, 1300364);
 
-
+        $res = $db->zrange($receive_key, 0, -1, 'withscores');
+        echoLine($res);
     }
 
     function test45Action()
     {
 
+        $room = Rooms::findFirstById(21);
+        $data = $room->getReadyCpInfo();
+        echoLine($data);
+
+        info($this->params(), $data);
         $union = Unions::findFirstById(1001);
 
         $cond = [
