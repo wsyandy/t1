@@ -39,6 +39,10 @@ class Couples extends BaseModel
         $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
 
+        if ($sponsor_id || $pursuer_id) {
+            return;
+        }
+
         //相互各自保存在自己的后宫里面
         $db = \Users::getUserDb();
         //发起者的后宫
