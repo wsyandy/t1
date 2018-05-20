@@ -1207,6 +1207,15 @@ class Users extends BaseModel
 
     function blockCity()
     {
+        if (in_array($this->id, [1096845])) {
+            return;
+        }
+
+        if ($this->register_at <= beginOfDay(strtotime('2018-05-15')) && $this->charm_value >= 100 ||
+            $this->wealth_value >= 100) {
+            return;
+        }
+
         if ($this->ip_city_id == 33 || $this->geo_city_id == 33) {
 
             $device = $this->device;
