@@ -118,6 +118,24 @@ class RoomsController extends BaseController
         $users = $room->findUsers($page, $per_page);
 
         $this->view->users = $users;
+        $this->view->room_id = $room_id;
+    }
+
+
+    //真实在线用户
+    function onlineRealUsersAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $users = $room->findTotalRealUsers();
+
+        $this->view->users = $users;
+        $this->view->room_id = $room_id;
     }
 
     //麦位
@@ -774,5 +792,30 @@ class RoomsController extends BaseController
         }
 
         $this->view->scores = $scores;
+    }
+
+    function kickingAction()
+    {
+        $room_id = $this->params('id', 0);
+
+        if (!$room_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
+        }
+
+        $other_user_id = $this->params('user_id');
+        $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+        $other_user = \Users::findFirstById($other_user_id);
+        $room->kickingRoom($other_user, false);
+        $room->pushExitRoomMessage($other_user, $other_user->current_room_seat_id);
+        unlock($room_seat_user_lock);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 }
