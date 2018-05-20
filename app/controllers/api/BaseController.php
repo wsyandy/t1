@@ -222,7 +222,7 @@ class BaseController extends ApplicationController
         // 为啥要限制
         if (in_array($this->remoteIp(), ['112.1.160.168', '61.158.148.7', '61.158.149.145'])) {
             info("ip_illegal", $this->context(), $this->params());
-            return $this->renderJSON(ERROR_CODE_FAIL, '请求非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '请求非法', ['sid' => $this->currentUser()->generateSid('d.')]);
         }
 
         debug($this->params(), $this->headers(), $this->request->getRawBody());
