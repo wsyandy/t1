@@ -8,6 +8,11 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test57Action()
+    {
+
+    }
+
     function test46Action()
     {
         echoLine(Couples::checkCpRelation(1152242, 1115163));
