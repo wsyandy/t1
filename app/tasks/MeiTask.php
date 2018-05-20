@@ -11,12 +11,53 @@ class MeiTask extends \Phalcon\Cli\Task
     function test57Action()
     {
 
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateSeraglioKey(1084173);
+        echoLine($db->zscore($sender_key, 1076267));
+
+        $receive_key = Couples::generateSeraglioKey(1076267);
+        echoLine($db->zscore($receive_key, 1084173));
+
     }
 
     function test46Action()
     {
         echoLine(Couples::checkCpRelation(1300364, 1028930));
         echoLine(Couples::getMarriageTime(1028930, 1300364));
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        $db->zadd($key, time(), '1195090_1103162');
+
+        //发起者的后宫
+        $sponsor_seraglio_key = Couples::generateSeraglioKey(1195090);
+        //追求者的后宫
+        $pursuer_seraglio_key = Couples::generateSeraglioKey(1103162);
+
+        $db->zadd($sponsor_seraglio_key, 2, 1103162);
+        $db->zadd($pursuer_seraglio_key, 1, 1195090);
+
+        //保存时间
+        $cp_marriage_time_key = Couples::generateCpMarriageTimeKey();
+        $db->zadd($cp_marriage_time_key, time(), 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+
+        $cp_info_key = Couples::generateCpInfoKey();
+        $db->zadd($cp_info_key, 2520, 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1195090);
+        $db->zadd($sender_key, 2520, 1103162);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1103162);
+        $db->zadd($receive_key, 2520, 1195090);
+
+
 
         $db = \Users::getUserDb();
         $key = Couples::generateCpMarriageTimeKey();
@@ -29,7 +70,7 @@ class MeiTask extends \Phalcon\Cli\Task
             $user_ids = explode("_", $id_key);
             $user_ids = array_filter($user_ids);
 
-            if (in_array(1001303, $user_ids) || in_array(1063163, $user_ids)) {
+            if (in_array(1159082, $user_ids) || in_array(1199287, $user_ids)) {
 
                 echoLine($id_key, $date);
                 //$db->zadd($key, $time, '1300364_1028930');
@@ -49,21 +90,20 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $db = \Users::getUserDb();
         $cp_info_key = Couples::generateCpInfoKey();
-        $db->zadd($cp_info_key, 52720, '1300364_1028930');
-        echoLine($db->zscore($cp_info_key, '1300364_1028930'));
+        $db->zadd($cp_info_key, 82519 + 220, '1300364_1028930');
 
         $db = \Users::getUserDb();
         $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
         echoLine($res);
 
         $db = \Users::getUserDb();
-        $sender_key = Couples::generateCpInfoForUserKey(1084173);
-        //$db->zadd($sender_key, 520 + 52000, 1028930);
+        $sender_key = Couples::generateCpInfoForUserKey(1001303);
+        //$db->zadd($sender_key, 82519, 1028930);
         $res = $db->zrange($sender_key, 0, -1, 'withscores');
         echoLine($res);
 
         $receive_key = Couples::generateCpInfoForUserKey(1028930);
-        $db->zadd($receive_key, 200, 1300364);
+        $db->zadd($receive_key, 220, 1300364);
 
         $res = $db->zrange($receive_key, 0, -1, 'withscores');
         echoLine($res);

@@ -1387,17 +1387,16 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-【礼物通知】小Hi给各位小主请安啦！
-今晚凌晨24:00将上架一批新礼物哦~
-同一时间，“小黄瓜，要亲亲，歌王，冰淇淋”四个礼物要下架成为绝版啦！如果下架的礼物中有您中意的礼物，赶紧趁现在收割一波哦~~
+520马上就要过了，你处CP了吗？如果没有的话，您可在【我的房间】可发起处CP，让您的对象在麦上点击【处CP】，即可结为情侣。
+520当日结为情侣更有机会获得520靓号、绝版专属礼物、全服爱的宣言！
 EOF;
 
-        $title = "史上最牛X的送送送火热进行中";
-        $body = "50万钻+绝版号666777，点击左上角“活动”了解详情！";
+        $title = "";
+        $body = "";
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 86400],
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 2 * 86400],
             'columns' => 'id'
         ]);
 
