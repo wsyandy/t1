@@ -94,7 +94,7 @@
     </div>
     <div class="btn" @click="karaokeMasterApply()">
         <img class="btn_bg" src="images/btn_bg.png" alt="">
-        <span>点击报名</span>
+        <span>点击进入</span>
     </div>
     <div class="share_box" @click="openShare()">
         <img class="btn_share" src="images/btn_share.png" alt="">
