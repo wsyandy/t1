@@ -10,7 +10,21 @@ class MeiTask extends \Phalcon\Cli\Task
 {
     function test45Action()
     {
+        echoLine(Couples::checkCpRelation(1152242, 1115163));
+        echoLine(Couples::getMarriageTime(1115163, 1152242));
         $union = Unions::findFirstById(1001);
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        //echoLine($db->zcard($key));
+        $datas = $db->zrange($key, 0, -1, 'withscores');
+
+        foreach ($datas as $key => $time) {
+            $date = date("Ymd", $time);
+            
+            echoLine($key, $date);
+        }
+
 
         $cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
