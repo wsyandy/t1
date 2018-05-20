@@ -1211,7 +1211,7 @@ class Users extends BaseModel
             return;
         }
 
-        if ($this->register_at <= beginOfDay(strtotime('2018-05-15')) && $this->charm_value >= 100 ||
+        if ($this->register_at <= beginOfDay(strtotime('2018-05-15')) && $this->charm_value >= 100 &&
             $this->wealth_value >= 100) {
             return;
         }
