@@ -1013,7 +1013,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function kickingAction()
     {
-        $room = Rooms::findFirstById(1019328);
+        $room = Rooms::findFirstById(1010149);
 
         $users = $room->findTotalRealUsers();
 
@@ -1034,7 +1034,9 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function kicking1Action()
     {
-        $room = Rooms::findFirstById(1019328);
+        $users = Users::findByIp('61.158.148.7');
+        echoLine(count($users));
+        $room = Rooms::findFirstById(1010149);
 
         $users = $room->findTotalRealUsers();
 
