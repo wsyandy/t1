@@ -18,16 +18,46 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($db->zcard($key));
         $datas = $db->zrange($key, 0, -1, 'withscores');
 
-        foreach ($datas as $key => $time) {
+        foreach ($datas as $id_key => $time) {
             $date = date("Ymd H:i:s", $time);
 
-            $user_ids = explode("_", $key);
+            $user_ids = explode("_", $id_key);
             $user_ids = array_filter($user_ids);
 
+            if (in_array(1003380, $user_ids) || in_array(1063163, $user_ids)) {
+
+                echoLine($id_key, $date);
+
+//                if (count($user_ids) < 2) {
+//                    echoLine($id_key, $date);
+//                    $db->zrem($key, $id_key);
+//                }
+            }
+
             if (count($user_ids) < 2) {
-                echoLine($key, $date);
+                echoLine($id_key, $date);
+                //$db->zrem($id_key);
             }
         }
+
+
+        $db = \Users::getUserDb();
+        $amount = 3120 + 3640;
+        $cp_info_key = Couples::generateCpInfoKey();
+        echoLine($db->zscore($cp_info_key, '1115163_1152242'));
+
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1152242);
+
+
+        $res = $db->zrange($sender_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1115163);
+
 
     }
 

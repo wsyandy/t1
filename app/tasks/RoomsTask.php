@@ -1010,4 +1010,46 @@ class RoomsTask extends \Phalcon\Cli\Task
             }
         }
     }
+
+    function kickingAction()
+    {
+        $room = Rooms::findFirstById(21);
+
+        $users = $room->findTotalRealUsers();
+
+        foreach ($users as $user) {
+
+            if (!$user->current_room_seat_id && !$user->isRoomHost($room)) {
+
+                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
+
+                $room->kickingRoom($user, false);
+                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+
+                unlock($room_seat_user_lock_key);
+            }
+        }
+
+    }
+
+    function kicking1Action()
+    {
+        $room = Rooms::findFirstById(21);
+
+        $users = $room->findTotalRealUsers();
+
+        foreach ($users as $user) {
+
+            if ($user->current_room_seat_id && !$user->isRoomHost($room)) {
+
+                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
+
+                $room->kickingRoom($user, false);
+                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+
+                unlock($room_seat_user_lock_key);
+            }
+        }
+
+    }
 }
