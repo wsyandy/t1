@@ -36,13 +36,13 @@ class RoomSeatsController extends BaseController
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000, true);
         if(!$room_seat_lock){
-            return $this->renderJSON(ERROR_CODE_FAIL, '上麦已有人');
+            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
         }
 
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000, true);
         if(!$room_seat_user_lock){
             unlock($room_seat_lock);
-            return $this->renderJSON(ERROR_CODE_FAIL, '上麦已有人');
+            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
         }
 
         $current_user = $this->currentUser(true);
