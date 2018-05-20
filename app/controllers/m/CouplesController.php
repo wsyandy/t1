@@ -8,6 +8,7 @@ class CouplesController extends BaseController
     {
         $user = $this->currentUser();
         $room_id = $this->params('room_id');
+        $room_id = intval($room_id);
         $is_show_alert = false;
 
         $room = \Rooms::findFirstById($room_id);
