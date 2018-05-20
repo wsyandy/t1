@@ -34,8 +34,9 @@
 {% endmacro %}
 
 {% macro msg_link(user) %}
-    <a href="/admin/rooms/send_msg?user_id={{ user.id }}" class="modal_action">模拟消息</a><br/>
-    <a href="/admin/rooms/kicking?id={{ user.current_room_id }}&user_id={{ user.id }}" id="kicking">踢出</a><br/>
+    {#<a href="/admin/rooms/send_msg?user_id={{ user.id }}" class="modal_action">模拟消息</a><br/>#}
+    <a href="/admin/rooms/kicking?id={{ user.current_room_id }}&user_id={{ user.id }}" data-user_id="{{ user.id }}"
+       class="kicking">踢出</a><br/>
 {% endmacro %}
 
 {{ simple_table(users,['用户id': 'id','头像': 'avatar_image', '渠道信息:':'product_channel_view', '用户信息':'user_info',
@@ -43,13 +44,25 @@
 ]) }}
 
 <script type="text/javascript">
-    $('body').on('click', '#kicking', function (e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        if (confirm('确认踢出')) {
-            $.post(href, '', function (resp) {
-                alert(resp.error_reason);
-            })
-        }
+
+    $(function () {
+
+        $("#user_list").on('click', '.kicking', function (e) {
+            e.preventDefault();
+            var href = $(this).attr('href');
+            var self = $(this);
+            var user_id = self.data('user_id');
+
+            if (confirm('确认踢出')) {
+                $.post(href, '', function (resp) {
+                    $("#user_" + user_id).remove();
+                    alert(resp.error_reason);
+                    return false;
+                })
+            }
+
+            return false;
+        })
     })
+
 </script>
