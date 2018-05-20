@@ -210,6 +210,21 @@
                 window.location.href = url
             },
             karaokeMasterApply: function () {
+
+                var hour = new Date().getHours();
+                var minute = new Date().getMinutes();
+
+                if (hour < 19) {
+                    alter('比赛还没开始呢，晚上7:30再来点哦');
+                    return;
+                } else if (hour >= 19 && hour < 20 && minute < 30) {
+                    alter('比赛还没开始呢，晚上7:30再来点哦');
+                    return;
+                } else if (hour > 22) {
+                    alter('比赛已结束，明天晚上7:30再来点哦');
+                    return;
+                }
+
                 var data = {room_id: vm.room_id, sid: sid, code: code};
                 $.authPost("/m/unions/is_need_password", data, function (resp) {
                     if (resp.error_code == 0) {
