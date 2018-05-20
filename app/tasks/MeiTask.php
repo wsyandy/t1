@@ -3113,6 +3113,15 @@ EOF;
 
     function fixUserRankAction()
     {
+        $users = Users::findByIp('61.158.149.145');
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+        $room = Rooms::findFirstById(1010149);
+        echoLine($room->getChannelName());
+
         $day_key = "day_charm_rank_list_" . date("Ymd");
         $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
         $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
@@ -4178,5 +4187,17 @@ EOF;
         $hot_cache = Users::getHotWriteCache();
         $res = $hot_cache->setex("key_test_get", 13, 23);
         echoLine($res);
+
+        $user = Users::findFirstById(1247538);
+        echoLine($user->geo_city_id, $user->city_id);
+
+        $users = Users::find([
+            'conditions' => 'city_id = :city_id: or geo_city_id = :city_id1: and ip_city_id = :city_id2:',
+            'bind' => ['city_id' => 33, 'city_id1' => 33, 'city_id2' => 33],
+            'columns' => 'id'
+        ]);
+        echoLine(count($users));
+
+
     }
 }
