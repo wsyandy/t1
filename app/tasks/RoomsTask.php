@@ -1023,7 +1023,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
 
-                $room->kickingRoom($user, false);
+                $room->kickingRoom($user, 30);
                 $room->pushExitRoomMessage($user, $user->current_room_seat_id);
 
                 unlock($room_seat_user_lock_key);
@@ -1044,7 +1044,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                 $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
 
-                $room->kickingRoom($user, false);
+                $room->kickingRoom($user, 30);
                 $room->pushExitRoomMessage($user, $user->current_room_seat_id);
 
                 unlock($room_seat_user_lock_key);
