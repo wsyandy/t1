@@ -215,13 +215,13 @@
                 var minute = new Date().getMinutes();
 
                 if (hour < 19) {
-                    alter('比赛还没开始呢，晚上7:30再来点哦');
+                    alert('比赛还没开始呢，晚上7:30再来点哦');
                     return;
                 } else if (hour >= 19 && hour < 20 && minute < 30) {
-                    alter('比赛还没开始呢，晚上7:30再来点哦');
+                    alert('比赛还没开始呢，晚上7:30再来点哦');
                     return;
                 } else if (hour > 22) {
-                    alter('比赛已结束，明天晚上7:30再来点哦');
+                    alert('比赛已结束，明天晚上7:30再来点哦');
                     return;
                 }
 
