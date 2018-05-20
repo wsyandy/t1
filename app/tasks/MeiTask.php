@@ -8,7 +8,7 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
-    function test45Action()
+    function test46Action()
     {
         echoLine(Couples::checkCpRelation(1152242, 1115163));
         echoLine(Couples::getMarriageTime(1115163, 1152242));
@@ -21,10 +21,14 @@ class MeiTask extends \Phalcon\Cli\Task
 
         foreach ($datas as $key => $time) {
             $date = date("Ymd", $time);
-            
+
             echoLine($key, $date);
         }
 
+    }
+
+    function test45Action()
+    {
 
         $cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
