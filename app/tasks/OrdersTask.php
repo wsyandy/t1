@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: apple
  * Date: 2018/3/31
  * Time: 下午5:54
  */
-
 class OrdersTask extends \Phalcon\Cli\Task
 {
     function incomeStatAction()
@@ -75,15 +75,11 @@ class OrdersTask extends \Phalcon\Cli\Task
 
     function pushRechargeFailedAction()
     {
-        $time = strtotime('-1 hour', time());
-
+        
         $conditions = [
-            'conditions' => 'status = :status: and created_at >= :created_at:',
-            'bind' => [
-                'status' => ORDER_STATUS_WAIT,
-                'created_at' => $time
-            ],
-            'columns' => 'user_id'
+            'conditions' => 'status = :status: and created_at >= :created_at: and created_at < :end_at:',
+            'bind' => ['status' => ORDER_STATUS_WAIT, 'created_at' => beginOfHour() - 3600, 'end_at' => beginOfHour()],
+            'columns' => 'distinct user_id'
         ];
 
         $orders = Orders::find($conditions);
