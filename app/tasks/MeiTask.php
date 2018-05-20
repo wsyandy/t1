@@ -4151,5 +4151,17 @@ EOF;
         $hot_cache = Users::getHotWriteCache();
         $res = $hot_cache->setex("key_test_get", 13, 23);
         echoLine($res);
+
+        $user = Users::findFirstById(1247538);
+        echoLine($user->geo_city_id, $user->city_id);
+
+        $users = Users::find([
+            'conditions' => 'city_id = :city_id: or geo_city_id = :city_id1: and ip_city_id = :city_id2:',
+            'bind' => ['city_id' => 33, 'city_id1' => 33, 'city_id2' => 33],
+            'columns' => 'id'
+        ]);
+        echoLine(count($users));
+
+
     }
 }

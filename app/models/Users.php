@@ -1202,6 +1202,17 @@ class Users extends BaseModel
         }
 
         $user->update();
+        $user->blockCity();
+    }
+
+    function blockCity()
+    {
+        if ($this->ip_city_id == 33 || $this->geo_city_id == 33) {
+
+            $device = $this->device;
+            $device->status = DEVICE_STATUS_BLOCK;
+            $device->update();
+        }
     }
 
     static function asyncUpdateIpLocation($user_id)
@@ -1232,6 +1243,7 @@ class Users extends BaseModel
 
                 debug($user->id, 'ip', $user->ip, $user->province_id, $user->city_id);
                 $user->update();
+                $user->blockCity();
             }
         }
     }
