@@ -39,7 +39,7 @@ class Couples extends BaseModel
         $sponsor_id = fetch($data, 'sponsor_id');
         $pursuer_id = fetch($data, 'pursuer_id');
 
-        if ($sponsor_id || $pursuer_id) {
+        if (!$sponsor_id || !$pursuer_id) {
             return;
         }
 
