@@ -575,10 +575,13 @@ class Rooms extends BaseModel
         return $hot_cache->zscore($key, $this->id);
     }
 
-    function kickingRoom($user)
+    function kickingRoom($user, $forbid = true)
     {
         $this->exitRoom($user);
-        $this->forbidEnter($user);
+
+        if ($forbid) {
+            $this->forbidEnter($user);
+        }
     }
 
     function getUserListKey()
@@ -2017,17 +2020,19 @@ class Rooms extends BaseModel
     function generateRoomWealthRankListKey($list_type, $opts = [])
     {
         switch ($list_type) {
-            case 'day': {
-                $date = fetch($opts, 'date', date("Ymd"));
-                $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
-                break;
-            }
-            case 'week': {
-                $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
-                $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
-                $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
-                break;
-            }
+            case 'day':
+                {
+                    $date = fetch($opts, 'date', date("Ymd"));
+                    $key = "room_wealth_rank_list_day_" . "room_id_{$this->id}_" . $date;
+                    break;
+                }
+            case 'week':
+                {
+                    $start = fetch($opts, 'start', date("Ymd", beginOfWeek()));
+                    $end = fetch($opts, 'end', date("Ymd", endOfWeek()));
+                    $key = "room_wealth_rank_list_week_" . "room_id_{$this->id}_" . $start . '_' . $end;
+                    break;
+                }
             default:
                 return '';
         }
@@ -3089,7 +3094,7 @@ class Rooms extends BaseModel
                 }
 
                 $total_score = $room->getTotalScore();
-                
+
                 if ($total_score < 1 && !$room->isHot()) {
                     continue;
                 }
