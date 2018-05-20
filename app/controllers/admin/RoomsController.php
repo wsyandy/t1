@@ -816,6 +816,6 @@ class RoomsController extends BaseController
         $room->pushExitRoomMessage($other_user, $other_user->current_room_seat_id);
         unlock($room_seat_user_lock);
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '踢出成功');
     }
 }
