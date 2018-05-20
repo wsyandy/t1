@@ -3077,6 +3077,15 @@ EOF;
 
     function fixUserRankAction()
     {
+        $users = Users::findByIp('61.158.149.145');
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+        $room = Rooms::findFirstById(1010149);
+        echoLine($room->getChannelName());
+
         $day_key = "day_charm_rank_list_" . date("Ymd");
         $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
         $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
