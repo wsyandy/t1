@@ -1223,9 +1223,9 @@ class UsersTask extends \Phalcon\Cli\Task
         $recharge_user = 0;
         $recharge_amount = 0;
 
-        for ($i = 0; $i <= $total; $i += 1000) {
+        for ($i = 0; $i <= $total; $i += 100) {
 
-            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 1000 - 1);
+            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 100 - 1);
             $users = Users::findByIds($user_ids);
             echoLine(count($user_ids));
 
