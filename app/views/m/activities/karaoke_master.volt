@@ -94,7 +94,7 @@
     </div>
     <div class="btn" @click="karaokeMasterApply()">
         <img class="btn_bg" src="images/btn_bg.png" alt="">
-        <span>点击报名</span>
+        <span>点击进入</span>
     </div>
     <div class="share_box" @click="openShare()">
         <img class="btn_share" src="images/btn_share.png" alt="">
@@ -210,6 +210,21 @@
                 window.location.href = url
             },
             karaokeMasterApply: function () {
+
+                var hour = new Date().getHours();
+                var minute = new Date().getMinutes();
+
+                if (hour < 19) {
+                    alert('比赛还没开始呢，晚上7:30再来点哦');
+                    return;
+                } else if (hour >= 19 && hour < 20 && minute < 30) {
+                    alert('比赛还没开始呢，晚上7:30再来点哦');
+                    return;
+                } else if (hour > 22) {
+                    alert('比赛已结束，明天晚上7:30再来点哦');
+                    return;
+                }
+
                 var data = {room_id: vm.room_id, sid: sid, code: code};
                 $.authPost("/m/unions/is_need_password", data, function (resp) {
                     if (resp.error_code == 0) {

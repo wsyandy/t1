@@ -1202,6 +1202,29 @@ class Users extends BaseModel
         }
 
         $user->update();
+        $user->blockCity();
+    }
+
+    function blockCity()
+    {
+        if (in_array($this->id, [1096845])) {
+            return;
+        }
+
+        if ($this->register_at <= beginOfDay(strtotime('2018-05-15')) && $this->charm_value >= 100 &&
+            $this->wealth_value >= 100) {
+            return;
+        }
+
+        if ($this->ip_city_id == 33 || $this->geo_city_id == 33) {
+
+            $device = $this->device;
+
+            info("user_id", $this->id, "deveice_id", $device->id, "ip_city", $this->ip_city_id, "geo_city", $this->geo_city_id);
+
+            $device->status = DEVICE_STATUS_BLOCK;
+            $device->update();
+        }
     }
 
     static function asyncUpdateIpLocation($user_id)
@@ -1232,6 +1255,7 @@ class Users extends BaseModel
 
                 debug($user->id, 'ip', $user->ip, $user->province_id, $user->city_id);
                 $user->update();
+                $user->blockCity();
             }
         }
     }
@@ -3258,15 +3282,18 @@ class Users extends BaseModel
 
     /**
      * 更新魅力贡献排行榜
-     * @param $receiver
-     * @param $sender
-     * @param $amount
+     * @param $gift_order
+     * @param $opt
      * @return bool
      */
-    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
+    static function updateUserCharmAndWealthRank($gift_order, $opt = [])
     {
         $key = self::generateUserRankListKey();
         $user_db = Users::getUserDb();
+
+        $receiver_id = $gift_order->user_id;
+        $sender_id = $gift_order->sender_id;
+        $amount = $gift_order->amount;
 
         // 赠送礼物的增加贡献值，被赠送的增加魅力值
         $user_db->zincrby($key, $amount, $receiver_id);

@@ -13,7 +13,7 @@
         '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
         '/js/juicer/0.6.9/juicer-min.js','/js/echarts/3.7.2/echarts.js'
         ,'/js/echarts/3.7.2/chalk.js','/js/echarts/3.7.2/china.js','/js/admin.js',
-        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
+        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js','/js/utils.js') }}
 
     {{ css('/framework/bootstrap/3.3.4/css/bootstrap.min.css','/framework/bootstrap.datepicker/1.4.0/css/bootstrap-datetimepicker.min.css',
         '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
@@ -353,6 +353,9 @@
                                 {% endif %}
                             </ul>
                         </li>
+                    {% endif %}
+                    {% if isAllowed('couples', 'index') %}
+                        <li><a href="/admin/couples">cp统计</a></li>
                     {% endif %}
                 </ul>
             </li>

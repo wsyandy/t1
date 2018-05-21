@@ -713,7 +713,7 @@ class ActivitiesController extends BaseController
 
     function karaokeMasterAction()
     {
-        $room_host_uid = 1162288;
+        $room_host_uid = 1009978;
         $user = \Users::findFirstByUid($room_host_uid);
 
         $this->view->title = 'HI语音歌神争霸';

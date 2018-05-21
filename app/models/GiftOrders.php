@@ -337,7 +337,6 @@ class GiftOrders extends BaseModel
             }
         }
 
-        //\Users::delay()->updateUserCharmAndWealthRank($this->user_id, $this->sender_id, $this->amount);
         \Users::updateExperience($this, $params);
         \Users::updateCharm($this, $params);
         $opts = [
@@ -347,6 +346,7 @@ class GiftOrders extends BaseModel
             'amount' => $this->amount
         ];
         \Couples::updateCpInfo($opts);
+        \Users::updateUserCharmAndWealthRank($this);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)
@@ -444,7 +444,24 @@ class GiftOrders extends BaseModel
         $sender = $this->sender;
         $gift_num = $this->gift_num;
         $name = $this->name;
-        $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: white'>收到</span><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送的</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span><span style='color: white'>,感动全场，求掌声，求祝福</span></p>";
+        $amount = $this->amount;
+        $max_amount = 100000;
+        $min_amount = 50000;
+
+        if (isDevelopmentEnv()) {
+            $max_amount = 1000;
+            $min_amount = 500;
+        }
+        $content = "<p style='font-size: 14px;text-align: left'><span style='color: #F5DF00'>{$sender->nickname}</span><span style='color: white'>送给</span><span style='color: #F5DF00'>{$user->nickname}</span><span style='color: #F5DF00'>{$name}×{$gift_num}</span>";
+        if ($amount >= $min_amount && $amount < $max_amount) {
+            $content .="<span style='color: white'>,豪气冲天！</span>";
+        }
+        if ($amount >= $max_amount) {
+            $content .="<span style='color: white'>,真情感动天地！</span>";
+        }
+
+        $content .="</p>";
+
 
         return $content;
     }

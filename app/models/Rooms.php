@@ -575,13 +575,10 @@ class Rooms extends BaseModel
         return $hot_cache->zscore($key, $this->id);
     }
 
-    function kickingRoom($user, $forbid = true)
+    function kickingRoom($user, $time = 600)
     {
         $this->exitRoom($user);
-
-        if ($forbid) {
-            $this->forbidEnter($user);
-        }
+        $this->forbidEnter($user, $time);
     }
 
     function getUserListKey()
@@ -781,10 +778,9 @@ class Rooms extends BaseModel
     }
 
     //禁止 踢出房间 禁止用户在10分钟内禁入
-    function forbidEnter($user)
+    function forbidEnter($user, $time = 600)
     {
         $hot_cache = Rooms::getHotWriteCache();
-        $time = 600;
 
         if (isDevelopmentEnv()) {
             $time = 60;
@@ -1281,6 +1277,7 @@ class Rooms extends BaseModel
     function pushPkMessage($pk_history_datas)
     {
         $body = ['action' => 'pk', 'pk_history' => [
+            'pk_type' => $pk_history_datas['pk_type'],
             'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
             'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
         ]
@@ -1811,7 +1808,7 @@ class Rooms extends BaseModel
         $room = Rooms::findFirstById($room_id);
 
         //当前房间不带client_url
-        if ($room_id != $this->id && !$room->lock) {
+        if ($room_id && $room && $room_id != $this->id && !$room->lock) {
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
@@ -1874,8 +1871,8 @@ class Rooms extends BaseModel
 
         $opts = ['room_id' => $gift_order->room_id];
 
-        $max_amount = 131400;
-        $min_amount = 52000;
+        $max_amount = 100000;
+        $min_amount = 50000;
 
         if (isDevelopmentEnv()) {
             $max_amount = 1000;

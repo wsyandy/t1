@@ -8,27 +8,120 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test58Action()
+    {
+        Rooms::asyncAllNoticePush('果然to韩笑：陪伴是最长情的告白', ['expire_time' => 10]);
+    }
+
+    function test57Action()
+    {
+        $db = \Users::getUserDb();
+
+        $sender_key = Couples::generateSeraglioKey(1084173);
+        echoLine($db->zscore($sender_key, 1076267));
+
+        $receive_key = Couples::generateSeraglioKey(1076267);
+        echoLine($db->zscore($receive_key, 1084173));
+
+    }
+
     function test46Action()
     {
-        echoLine(Couples::checkCpRelation(1152242, 1115163));
-        echoLine(Couples::getMarriageTime(1115163, 1152242));
-        $union = Unions::findFirstById(1001);
+        echoLine(Couples::checkCpRelation(1300364, 1028930));
+        echoLine(Couples::getMarriageTime(1028930, 1300364));
 
         $db = \Users::getUserDb();
         $key = Couples::generateCpMarriageTimeKey();
-        //echoLine($db->zcard($key));
+        $db->zadd($key, time(), '1195090_1103162');
+
+        //发起者的后宫
+        $sponsor_seraglio_key = Couples::generateSeraglioKey(1195090);
+        //追求者的后宫
+        $pursuer_seraglio_key = Couples::generateSeraglioKey(1103162);
+
+        $db->zadd($sponsor_seraglio_key, 2, 1103162);
+        $db->zadd($pursuer_seraglio_key, 1, 1195090);
+
+        //保存时间
+        $cp_marriage_time_key = Couples::generateCpMarriageTimeKey();
+        $db->zadd($cp_marriage_time_key, time(), 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+
+        $cp_info_key = Couples::generateCpInfoKey();
+        $db->zadd($cp_info_key, 2520, 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1195090);
+        $db->zadd($sender_key, 2520, 1103162);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1103162);
+        $db->zadd($receive_key, 2520, 1195090);
+
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        echoLine($db->zcard($key));
         $datas = $db->zrange($key, 0, -1, 'withscores');
 
-        foreach ($datas as $key => $time) {
-            $date = date("Ymd", $time);
+        foreach ($datas as $id_key => $time) {
+            $date = date("Ymd H:i:s", $time);
 
-            echoLine($key, $date);
+            $user_ids = explode("_", $id_key);
+            $user_ids = array_filter($user_ids);
+
+            if (in_array(1159082, $user_ids) || in_array(1199287, $user_ids)) {
+
+                echoLine($id_key, $date);
+                //$db->zadd($key, $time, '1300364_1028930');
+                //$db->zrem($key, $id_key);
+                if (count($user_ids) < 2) {
+                    //echoLine($id_key, $date);
+                    //$db->zrem($key, $id_key);
+                }
+            }
+
+//            if (count($user_ids) < 2) {
+//                echoLine($id_key, $date);
+//                $db->zrem($key, $id_key);
+//            }
         }
 
+
+        $db = \Users::getUserDb();
+        $cp_info_key = Couples::generateCpInfoKey();
+        $db->zadd($cp_info_key, 82519 + 220, '1300364_1028930');
+
+        $db = \Users::getUserDb();
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1001303);
+        //$db->zadd($sender_key, 82519, 1028930);
+        $res = $db->zrange($sender_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1028930);
+        $db->zadd($receive_key, 220, 1300364);
+
+        $res = $db->zrange($receive_key, 0, -1, 'withscores');
+        echoLine($res);
     }
 
     function test45Action()
     {
+
+        $room = Rooms::findFirstById(21);
+        $data = $room->getReadyCpInfo();
+        echoLine($data);
+
+        info($this->params(), $data);
+        $union = Unions::findFirstById(1001);
 
         $cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
@@ -3077,6 +3170,15 @@ EOF;
 
     function fixUserRankAction()
     {
+        $users = Users::findByIp('61.158.149.145');
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+        $room = Rooms::findFirstById(1010149);
+        echoLine($room->getChannelName());
+
         $day_key = "day_charm_rank_list_" . date("Ymd");
         $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
         $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
@@ -4142,5 +4244,17 @@ EOF;
         $hot_cache = Users::getHotWriteCache();
         $res = $hot_cache->setex("key_test_get", 13, 23);
         echoLine($res);
+
+        $user = Users::findFirstById(1247538);
+        echoLine($user->geo_city_id, $user->city_id);
+
+        $users = Users::find([
+            'conditions' => 'city_id = :city_id: or geo_city_id = :city_id1: and ip_city_id = :city_id2:',
+            'bind' => ['city_id' => 33, 'city_id1' => 33, 'city_id2' => 33],
+            'columns' => 'id'
+        ]);
+        echoLine(count($users));
+
+
     }
 }
