@@ -3318,14 +3318,14 @@ class Rooms extends BaseModel
             $user_ids[] = $room_seat->user_id;
         }
 
-        info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
+        //info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
 
         $hot_cache = Users::getHotWriteCache();
         $user_list_key = $this->getUserListKey();
 
         foreach ($broadcaster_ids as $broadcaster_id) {
 
-            if($this->user_id == $broadcaster_id){
+            if ($this->user_id == $broadcaster_id) {
                 continue;
             }
 
@@ -3333,13 +3333,13 @@ class Rooms extends BaseModel
                 continue;
             }
 
-            $this->checkBroadcaster($broadcaster_id);
-            
             if ($hot_cache->zscore($user_list_key, $broadcaster_id)) {
                 info('异常id 在房间', $this->id, 'broadcaster_id', $broadcaster_id);
             } else {
                 info('异常id 不在房间', $this->id, 'broadcaster_id', $broadcaster_id);
             }
+
+            $this->checkBroadcaster($broadcaster_id);
         }
     }
 
@@ -3373,28 +3373,31 @@ class Rooms extends BaseModel
             return;
         }
 
+        if ($role == 2) {
+            $this->kickingRule($user_id, $app_id, $channel_name, 1);
+        }
 
     }
 
-    function kickingRule($app_id, $channel_name, $user_id)
+    function kickingRule($user_id, $app_id, $channel_name, $time = 5)
     {
 
         $headers = array(
             'Cache-Control' => 'no-cache',
             'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
         );
+
         $url = "https://api.agora.io/dev/v1/kicking-rule/";
         $body = [
             'appid' => $app_id,
             'cname' => $channel_name,
             'uid' => $user_id,
-            'time' => 60
+            'time' => $time // 分钟
         ];
 
-        info($url);
-
         $res = httpPost($url, $body, $headers);
-        info($res);
+        info('踢出房间', $this->id, 'user', $user_id, $res);
+
     }
 
 }
