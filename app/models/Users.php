@@ -3268,13 +3268,15 @@ class Users extends BaseModel
 
     /**
      * 用户魅力贡献排行榜
-     * @param null $day
+     * @param null $time
      * @return string
      */
-    static function generateUserRankListKey($day = null)
+    static function generateUserRankListKey($time = null)
     {
-        if (!$day) $day = date('Ymd');
+        if (empty($time) || strtotime(date('Ymd His'), $time) != $time)
+            $time = time();
 
+        $day = date('Ymd', $time);
         $key = 'user_charm_and_wealth_rank_list_day_' . $day;
         return $key;
     }
@@ -3304,26 +3306,22 @@ class Users extends BaseModel
 
     /**
      * 查询魅力贡献排行榜
-     * @param null $time
-     * @param int $max_number
+     * @param int $page
+     * @param int $per_page
+     * @param int $time
      * @return array
      */
-    static function findUserCharmAndWealthRank($time = null, $max_number = 100)
+    static function findUserCharmAndWealthRank($page = 1, $per_page = 12, $time = null)
     {
-        if (!$time) $time = time();
-        $day = date('Ymd', $time);
+        $key = self::generateUserRankListKey($time);
 
-        $key = self::generateUserRankListKey($day);
+        $offset = ($page - 1) * $per_page;
+        $limit = $offset + $per_page - 1;
+
         $user_db = Users::getUserDb();
-        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - 1, 'withscores'));
+        $rank_list = $user_db->zrevrange($key, $offset, $limit, 'withscores');
+        $rank_list = array_keys($rank_list);
 
-        $yesterday_rank_list = [];
-        $number = count($rank_list);
-        if (empty($rank_list) || $number < $max_number) {
-            $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
-            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - $number, 'withscores'));
-        }
-        $rank_list = array_merge($rank_list, $yesterday_rank_list);
         return $rank_list;
     }
 
