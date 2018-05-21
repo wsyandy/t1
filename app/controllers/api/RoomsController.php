@@ -242,16 +242,6 @@ class RoomsController extends BaseController
             if (isBlank($sponsor_id)) {
                 if ($game_history) {
                     $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                    if (2 == $game_history->game_id && isDevelopmentEnv()) {
-                        $current_user = $this->currentUser();
-                        $site = $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id;
-                        $is_host = $current_user->isRoomHost($room);
-                        $is_host == true ? 0 : 1;
-
-                        $res['game'] = ['url' => $game_history->game->url . '?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
-                        =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
-                            , 'icon' => $root_host . 'images/go_game.png'];
-                    }
                 }
 
             } else {
@@ -294,18 +284,7 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if (2 == $game_history->game_id && isDevelopmentEnv()) {
-                    $current_user = $this->currentUser();
-                    $site = $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id;
-                    $is_host = $current_user->isRoomHost($room);
-                    $is_host == true ? 0 : 1;
-
-                    $res['game'] = ['url' => $game_history->game->url . '?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
-                        =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
-                        , 'icon' => $root_host . 'images/go_game.png'];
-                }
             }
-
         } else {
             $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
         }
