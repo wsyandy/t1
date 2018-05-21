@@ -139,7 +139,7 @@
                     data.per_page = 20;
                 }
                 $.authGet('/m/rooms/find_wealth_rank_list', data, function (resp) {
-                    //console.log(resp);
+                    console.log(resp);
                     if (resp.error_code == 0) {
                         vm.total_page = resp.total_page;
                         vm.current_rank = resp.current_rank;
