@@ -18,10 +18,20 @@
             page: 1,
             per_page:8,
             total_page: 1,
-            game_list: []
+            game_list: [],
+            UserInfo:[],
         },
 
         methods: {
+            getGameUserInfo: function () {
+                $.authGet('/m/games/get_game_user_info', {
+                    sid: vm.sid,
+                    code: vm.code,
+                }, function (resp) {
+                    console.log(resp);
+                    vm.UserInfo = resp.data;
+                })
+            },
             gameList: function () {
 
                 if (vm.page > vm.total_page) {
@@ -47,7 +57,11 @@
                     alert('url无效');
                     return;
                 }
-                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
+                var UserInfo = this.UserInfo;
+
+                var url = game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id + '&name=' + game.name + '&username='+UserInfo.username+'&room_id='+UserInfo.room_id+'&user_id='+UserInfo.user_id+'&avater_url='+UserInfo.avater_url+'&user_num_limit=8&site='+UserInfo.site+'&owner='+UserInfo.owner;
+                console.log(url);
+                //vm.redirectAction(url);
             }
 
         }
@@ -62,4 +76,5 @@
         });
     })
     vm.gameList();
+    vm.getGameUserInfo();
 </script>
