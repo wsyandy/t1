@@ -248,7 +248,7 @@ class RoomsController extends BaseController
                         $is_host = $current_user->isRoomHost($room);
                         $is_host == true ? 0 : 1;
 
-                        $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
+                        $res['game'] = ['url' => $game_history->game->url . '?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
                         =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
                             , 'icon' => $root_host . 'images/go_game.png'];
                     }
@@ -300,7 +300,7 @@ class RoomsController extends BaseController
                     $is_host = $current_user->isRoomHost($room);
                     $is_host == true ? 0 : 1;
 
-                    $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
+                    $res['game'] = ['url' => $game_history->game->url . '?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
                         =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
                         , 'icon' => $root_host . 'images/go_game.png'];
                 }
