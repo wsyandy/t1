@@ -3273,8 +3273,7 @@ class Users extends BaseModel
      */
     static function generateUserRankListKey($time = null)
     {
-        if (empty($time) || strtotime(date('Ymd His'), $time) != $time)
-            $time = time();
+        if (empty($time)) $time = time();
 
         $day = date('Ymd', $time);
         $key = 'user_charm_and_wealth_rank_list_day_' . $day;
