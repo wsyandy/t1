@@ -3379,7 +3379,7 @@ class Rooms extends BaseModel
             $hot_cache = Rooms::getHotWriteCache();
             $cache_key = 'room_kicking_rule_' . $user_id;
             $num = $hot_cache->incr($cache_key);
-            $hot_cache->expire($cache_key, 1800);
+            $hot_cache->expire($cache_key, 3600);
 
             info('踢出房间', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
 
