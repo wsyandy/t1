@@ -233,11 +233,26 @@ class BaseController extends ApplicationController
         }
 
         if (isProduction()) {
-            if ($this->currentProductChannel()->ckey &&
-                $this->currentProductChannel()->ckey != $this->context('ckey') && $this->context('platform') == 'android'
-            ) {
-                info("Exce 客户端异常", $this->context());
-                return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
+
+            //1a8e9fc5bc1a3ba200feacc0de7676e6
+            if ($this->context('platform') == 'android') {
+
+                $ckey = $this->context('ckey');
+
+                if (!$ckey) {
+                    info("ckey_is_null", $this->params());
+                }
+
+                if ($ckey && '1a8e9fc5bc1a3ba200feacc0de7676e6' != $ckey) {
+                    info("ckey_is_error", $this->params());
+                }
+
+                if ($this->currentProductChannel()->ckey &&
+                    $this->currentProductChannel()->ckey != $ckey
+                ) {
+                    info("Exce 客户端异常", $this->context());
+                    return $this->renderJSON(ERROR_CODE_FAIL, 'illegal invoke 客户端异常');
+                }
             }
         }
 
