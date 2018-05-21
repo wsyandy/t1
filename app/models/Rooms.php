@@ -3291,11 +3291,10 @@ class Rooms extends BaseModel
             'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
         );
         $url = "http://api.agora.io/dev/v1/channel/user/{$app_id}/{$channel_name}";
-        info($url);
 
         $res = httpGet($url, [], $headers);
         $res_body = $res->raw_body;
-        info($res_body);
+        info($url, $res_body);
 
         $res_body = json_decode($res_body, true);
         $data = fetch($res_body, 'data');
@@ -3313,14 +3312,14 @@ class Rooms extends BaseModel
             $user_ids[] = $room_seat->user_id;
         }
 
-        info($broadcaster_ids, 'user_ids', $user_ids);
+        info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
 
         foreach ($broadcaster_ids as $broadcaster_id) {
             if (in_array($broadcaster_id, $user_ids)) {
                 continue;
             }
 
-            info('异常id', $broadcaster_id);
+            info('异常id', $this->id, 'broadcaster_id', $broadcaster_id);
         }
     }
 
