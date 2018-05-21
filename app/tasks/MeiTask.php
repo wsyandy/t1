@@ -8,6 +8,22 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test59Action()
+    {
+        $content = file_get_contents(APP_ROOT . "temp/test.txt");
+        $sids = explode(PHP_EOL, $content);
+
+        $user_ids = [];
+
+        foreach ($sids as $sid) {
+            $user_ids[] = intval($sid);
+        }
+
+        $user_ids = array_unique(array_filter($user_ids));
+
+        print_r($user_ids);
+    }
+
     function test58Action()
     {
         Rooms::asyncAllNoticePush('果然to韩笑：陪伴是最长情的告白', ['expire_time' => 10]);
