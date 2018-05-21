@@ -69,7 +69,6 @@ class SwooleEvents extends \BaseModel
         $user->saveFdInfo($fd, $online_token, $ip);
 
         if ($user->current_room) {
-            //\Rooms::delAbnormalExitRoomUserId($user->current_room_id, $user->id);
             $user->current_room->bindOnlineToken($user);
         }
 
@@ -148,8 +147,6 @@ class SwooleEvents extends \BaseModel
                         } else {
                             debug($user_id, $current_room->id);
                             \Rooms::addAbnormalExitRoomUserId($current_room->id, $user_id);
-                            //\Rooms::addUserIdInExitRoomByServerList($user_id);
-                            //\Rooms::delay(30)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
                         }
 
                     } else {

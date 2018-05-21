@@ -338,7 +338,7 @@ class RoomsController extends BaseController
             if ($room->hasBoomGift()) {
 
                 $res['boom_gift'] = [
-                    'expire_at' => (int)\Rooms::getExpireAt($room_id),
+                    'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                     'client_url' => 'url://m/backpacks',
                     'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
                     'total_value' => \BoomHistories::getBoomTotalValue(),
