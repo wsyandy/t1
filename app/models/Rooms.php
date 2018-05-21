@@ -3346,6 +3346,8 @@ class Rooms extends BaseModel
     function checkBroadcaster($user_id)
     {
 
+        $user = Users::findFirstById($user_id);
+
         $product_channel = $this->product_channel;
         $channel_name = $this->channel_name;
         $app_id = $product_channel->getImAppId();
@@ -3380,8 +3382,11 @@ class Rooms extends BaseModel
             $hot_cache->expire($cache_key, 600);
             info($cache_key, $num);
 
-            if ($num >= 2) {
+            if ($num >= 3) {
                 $this->kickingRule($user_id, $app_id, $channel_name, 60);
+                $device = $user->device;
+                $device->status = DEVICE_STATUS_BLOCK;
+                $device->update();
             }
         }
 
