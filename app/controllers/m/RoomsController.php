@@ -91,6 +91,8 @@ class RoomsController extends BaseController
 
         $room = \Rooms::findFirstById($room_id);
 
+        $is_host = $this->currentUser()->isRoomHost($room);
+
         if (isBlank($room)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
@@ -105,6 +107,7 @@ class RoomsController extends BaseController
 
         if ($res) {
             $res['current_rank'] = $current_rank;
+            $res['is_host'] = $is_host;
         }
 
 
