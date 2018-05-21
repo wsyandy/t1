@@ -870,11 +870,9 @@ class UsersController extends BaseController
             $user_ids = array_merge(array_values($user_online), $user_offline);
 
             $users = \Users::findByIds($user_ids);
-//            $users = $users->toJson('users', 'toSimpleJson');
 
         } else {
             $users = $this->currentUser()->nearby($page, $per_page);
-//            $users = $users->toJson('users', 'toSimpleJson');
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
