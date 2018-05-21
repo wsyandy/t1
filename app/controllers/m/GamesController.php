@@ -159,15 +159,15 @@ class GamesController extends BaseController
 
             \GameHistories::delay(900)->asyncCloseGame($game_history->id);
 
-            $root = $this->getRoot();
-            $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
-                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_history->game_id];
-
-            $intranet_ip = $current_user->getIntranetIp();
-            $receiver_fd = $current_user->getUserFd();
-
-            \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+//            $root = $this->getRoot();
+//            $image_url = $root . 'images/go_game.png';
+//            $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
+//                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_history->game_id];
+//
+//            $intranet_ip = $current_user->getIntranetIp();
+//            $receiver_fd = $current_user->getUserFd();
+//
+//            \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
         }
 
         // 用户队列
@@ -560,16 +560,39 @@ class GamesController extends BaseController
             }
         }
 
-        //在游戏结束回调通知的时候，发送结束通知
+//        //在游戏结束回调通知的时候，发送结束通知
+//        $current_user = $this->currentUser();
+//        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
+//
+//        $intranet_ip = $current_user->getIntranetIp();
+//        $receiver_fd = $current_user->getUserFd();
+//
+//        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+//
+//        echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
+    }
+
+    function notifyGameStatusAction()
+    {
         $current_user = $this->currentUser();
-        $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
+        $raw_body = $this->request->getRawBody();
+        info('游戏推过来的数据', $raw_body);
+        $type = fetch($raw_body, 'type');
+        $game_id = fetch($raw_body, 'game_id');
 
-        $intranet_ip = $current_user->getIntranetIp();
-        $receiver_fd = $current_user->getUserFd();
+        if ($type == 'start') {
 
-        \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+            $root = $this->getRoot();
+            $image_url = $root . 'images/go_game.png';
+            $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_id];
 
-        echo 'jsonpcallback({"error_code":0,"error_reason":"ok"})';
+            \Games::sendGameMessage($current_user, $body);
+        } else {
+
+            $body = ['action' => 'game_notice', 'type' => $type, 'content' => "游戏结束",];
+            \Games::sendGameMessage($current_user, $body);
+        }
     }
 
     function getGameUserInfoAction()
