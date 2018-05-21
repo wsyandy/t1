@@ -213,8 +213,6 @@ class ActivitiesController extends BaseController
                     break;
             }
 
-            info($this->currentUser()->sid, $random, $type);
-
             //每天五位号，六位号，兰博基尼座驾，小马驹座驾各限定10份 神秘礼物限定100份,金币不限量
             if (in_array($type, [2, 4, 6, 7, 8])) {
 
@@ -226,7 +224,6 @@ class ActivitiesController extends BaseController
                 $num = $cache->get($key);
 
                 if ($num < 1) {
-                    info('prize', $this->currentUser()->sid, $type);
                     $new_types = [1, 3, 5];
                     $type = $new_types[array_rand($new_types)];
                 } else {
@@ -319,7 +316,7 @@ class ActivitiesController extends BaseController
 
         $key = "room_stats_income_day_" . $stat_at;
 
-        $db = \Rooms::getRoomDb();
+        $db = \Users::getUserDb();
 
         $res = $db->zrevrange($key, 0, $max, 'withscores');
 
@@ -376,7 +373,7 @@ class ActivitiesController extends BaseController
 
         if ($activity_state > 0) {
             $key = "room_stats_income_day_" . date('Ymd', $start_at);
-            $db = \Rooms::getRoomDb();
+            $db = \Users::getUserDb();
             $res = $db->zrevrange($key, 0, $max, 'withscores');
 
             $room_ids = [];
@@ -628,6 +625,7 @@ class ActivitiesController extends BaseController
             'last_activity_start' => $last_activity_start,
             'last_activity_end' => $last_activity_end
         ];
+
         $last_activity_rank_list_users = \Activities::getLastActivityRankListUsers($last_opts);
 
         $opts = ['start' => $last_activity_start, 'end' => $last_activity_end];
@@ -656,9 +654,25 @@ class ActivitiesController extends BaseController
         $this->giftCharmRankActivity();
     }
 
+    // 礼物周榜活动
+    function giftCharmWeek20180514rankActivityAction()
+    {
+        $this->view->title = '玫瑰情人节';
+        $this->view->sid = $this->params('sid', '');
+        $this->view->code = $this->params('code', '');
+        $this->giftCharmRankActivity();
+    }
+
+    //礼物周榜活动    2018-05-21
+    function giftCharmWeek20180521rankActivityAction()
+    {
+        $this->giftCharmRankActivity();
+    }
+
     function getCurrentActivityRankListAction()
     {
         if ($this->request->isAjax()) {
+            $type = $this->params('type', 'charm');
             $gift_id = $this->params('gift_id');
             $id = $this->params('id');
             $activity = \Activities::findFirstById($id);
@@ -672,17 +686,20 @@ class ActivitiesController extends BaseController
             $opts = ['start' => $activity_start, 'end' => $activity_end];
 
             if (!$gift_id) {
+
                 $key = \Users::generateFieldRankListKey('week', 'charm', $opts);
+
+
             } else {
                 $key = $activity->getStatKey($gift_id);
             }
 
+            $users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
+
             debug($key);
 
-            $charm_users = \Users::findFieldRankListByKey($key, 'charm', 1, 10);
-
-            if (count($charm_users)) {
-                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $charm_users->toJson('users', 'toRankListJson'));
+            if (count($users)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toRankListJson'));
             } else {
                 return $this->renderJSON(ERROR_CODE_FAIL, '暂无数据');
             }
@@ -696,17 +713,89 @@ class ActivitiesController extends BaseController
 
     function karaokeMasterAction()
     {
-        $room_host_uid = 1162288;
+        $room_host_uid = 1009978;
         $user = \Users::findFirstByUid($room_host_uid);
-        $room = \Rooms::findFirstByUserId($user->id);
 
-        $this->view->title = '麦霸挑战赛';
-        $this->view->room_id = $room->id;
+        $this->view->title = 'HI语音歌神争霸';
+        $this->view->room_id = $user->room_id;
 
     }
 
     function detailsAction()
     {
         $this->view->title = '比赛规则';
+    }
+
+    function wishHistoriesAction()
+    {
+        $code = $this->params('code');
+        $sid = $this->params('sid');
+        $this->view->title = '许愿墙';
+        $this->response->redirect("/m/wish_histories?code=" . $code . '&sid=' . $sid);
+
+    }
+
+    function cpActivitiesAction()
+    {
+        $this->view->title = '我愿守护你一生一世';
+    }
+
+    function cpLoverRankActivityAction()
+    {
+        $this->view->title = '情侣排行榜';
+    }
+
+    function wealthRankListAction()
+    {
+
+        $users = \Users::findFieldRankList("week", 'wealth', 1, 10);
+
+        $res = $users->toJson('users', 'toRankListJson');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
+    }
+
+    function getCpRankListAction()
+    {
+        $current_user_id = $this->currentUserId();
+        $db = \Users::getUserDb();
+        $key = \Couples::generateCpInfoKey();
+        $res = $db->zrevrange($key, 0, 9);
+        $sponsor_ids = [];
+        $pursuer_ids = [];
+        $all_users = [];
+        foreach ($res as $index => $re) {
+            $ids = explode('_', $re);
+            $users = \Users::findByIds($ids);
+            if (isPresent($users)) {
+                $all_users[$index][] = $users[0]->toCpJson();
+                $all_users[$index][] = $users[1]->toCpJson();
+
+            }
+
+            $sponsor_ids[] = $ids[0];
+            $pursuer_ids[] = $ids[1];
+        }
+        info($sponsor_ids);
+        info($pursuer_ids);
+
+        $is_on_the_list = false;
+        if (in_array($current_user_id, $sponsor_ids) || in_array($current_user_id, $pursuer_ids)) {
+            $is_on_the_list = true;
+        }
+        
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge(['is_on_the_list' => $is_on_the_list], ['all_users' => $all_users]));
+
+
+    }
+
+    function getCurrentCpHighestScoreAction()
+    {
+        $user_id = $this->currentUserId();
+        $db = \Users::getUserDb();
+        $receive_key = \Couples::generateCpInfoForUserKey($user_id);
+        $cp_info = $db->zrevrange($receive_key, 0, 0, 'withscores');
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['cp_info' => $cp_info]);
     }
 }

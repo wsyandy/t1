@@ -296,7 +296,6 @@ class UsersController extends BaseController
         //data:image/octet-stream;base64
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
             $type = $result[2];
-            echoLine($type);
             if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
                 $new_file = $source_filename = APP_ROOT . 'temp/voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
                 if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $image_data)))) {

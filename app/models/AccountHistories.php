@@ -38,8 +38,10 @@ class AccountHistories extends BaseModel
         ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE => '分销兑换',
         ACCOUNT_TYPE_DRAW_INCOME => '转盘抽奖收入',
         ACCOUNT_TYPE_DRAW_EXPENSES => '转盘抽奖支出',
-        ACCOUNT_TYPE_RELEASE_WISH_EXPENSES => '发布愿望支出',
-        ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出'
+        ACCOUNT_TYPE_GUARD_WISH_EXPENSES => '守护愿望支出',
+        ACCOUNT_TYPE_RED_PACKET_EXPENSES => '红包支出',
+        ACCOUNT_TYPE_RED_PACKET_INCOME => '红包收入',
+        ACCOUNT_TYPE_RED_PACKET_RESTORATION => '红包余额返还'
 
     ];
 
@@ -81,22 +83,26 @@ class AccountHistories extends BaseModel
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
-        $user = Users::findFirstById($user_id);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
 
         if (!$user) {
-            info($user_id);
+            info('Exce', $user_id);
             return null;
         }
 
         $account_history = new \AccountHistories();
-        $account_history->user_id = $user_id;
+        $account_history->user_id = $user->id;
         $account_history->fee_type = $fee_type;
         $account_history->amount = $amount;
         $account_history->union_id = $user->union_id;
         $account_history->union_type = $user->union_type;
-        $account_history->country_id = $user->country_id;
 
-        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'mobile', 'target_id'] as $column) {
+        //'order_id', 'gift_order_id', 'hi_coin_history_id',
+        foreach (['remark', 'operator_id', 'mobile', 'target_id'] as $column) {
             $value = fetch($opts, $column);
             if ($value) {
                 $account_history->$column = $value;
@@ -142,8 +148,8 @@ class AccountHistories extends BaseModel
     {
         return $this->fee_type == ACCOUNT_TYPE_BUY_GIFT || $this->fee_type == ACCOUNT_TYPE_CREATE_UNION
             || $this->fee_type == ACCOUNT_TYPE_GAME_EXPENSES || $this->fee_type == ACCOUNT_TYPE_DEDUCT
-            || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES || $this->fee_type == ACCOUNT_TYPE_RELEASE_WISH_EXPENSES
-            || $this->fee_type == ACCOUNT_TYPE_GUARD_WISH_EXPENSES;
+            || $this->fee_type == ACCOUNT_TYPE_DRAW_EXPENSES || $this->fee_type == ACCOUNT_TYPE_GUARD_WISH_EXPENSES
+            || $this->fee_type == ACCOUNT_TYPE_RED_PACKET_EXPENSES;
     }
 
     function getStatActon()
@@ -165,7 +171,7 @@ class AccountHistories extends BaseModel
         $sms_distribute_history = \SmsDistributeHistories::findFirstById($this->target_id);
         $nickname = $sms_distribute_history->user->nickname;
         $avatar_url = $sms_distribute_history->user->avatar_url;
-        
+
         return [$nickname, $avatar_url];
     }
 

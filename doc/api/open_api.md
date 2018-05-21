@@ -46,3 +46,22 @@ total_page|总页数|int|是| 分页查询时返回此参数
 total_entries|总个数|int|是| 分页查询时返回此参数
 apple_stable_version|ios稳定版本号|int|是|版本号
 android_stable_version|android稳定版本号|int|是|版本号
+
+
+### 3.1 头像规格
+名称|字段|规格
+---|---|---
+原图|avatar_url|原图
+大图|avatar_big_url|400x400
+小图|avatar_small_url|200x200
+100图|avatar_100x100_url|100x100
+60图|avatar_60x60_url|60x60
+
+### 3.2 相册规格
+名称|字段|规格
+---|---|---
+原图|image_url|原图
+大图|image_big_url|400x400
+小图|image_small_url|200x200
+100图|image_100x100_url|100x100
+60图|image_60x60_url|60x60

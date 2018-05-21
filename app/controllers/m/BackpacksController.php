@@ -9,125 +9,238 @@ namespace m;
 
 class BackpacksController extends BaseController
 {
+
+    static $boom_type = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
+
+
+    /**
+     * @desc 首页html
+     */
     public function indexAction()
     {
-        $this->view->title = '爆礼物';
-        if (false) {
-            $this->response->redirect('/backpacks/desc');
-        }
-    }
+        $sid = $this->params('sid');
+        $code = $this->params('code');
 
-
-    public function descAction()
-    {
         $this->view->title = '爆礼物';
+        $this->view->sid = $sid;
+        $this->view->code = $code;
     }
 
 
     /**
      * @desc 礼物抽奖（暂定随机礼物，后优化）
+     * @return bool
      */
     public function prizeAction()
     {
-        $arr = [BACKPACK_GIFT_TYPE, BACKPACK_DIAMOND_TYPE, BACKPACK_GOLD_TYPE];
-        $one = array_rand($arr);
-        if ($arr[$one] == BACKPACK_GIFT_TYPE) {
-            $target = \Gifts::randomGift();
-        } elseif ($arr[$one] == BACKPACK_DIAMOND_TYPE) {
-            $target[] = [
-                'id' => 0,
-                'name' => '钻石',
-                'image_url' => \Backpacks::getDiamondImage(),
-                'number' => mt_rand(10, 1000)
-            ];
-        } elseif ($arr[$one] == BACKPACK_GOLD_TYPE) {
-            $target[] = [
-                'id' => 0,
-                'name' => '金币',
-                'image_url' => \Backpacks::getGoldImage(),
-                'number' => mt_rand(500, 2000)
-            ];
+        $user = $this->currentUser();
+        $room_id = $user->current_room_id;
+
+        // 前三排行
+        $boom_histories = \BoomHistories::historiesTopList($user->id,3);
+        $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
+
+        // 没爆礼物不抽奖
+        $expire = \Rooms::getExpireAt($room_id);
+
+        if (empty($expire)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
+
+        // 抽奖物品保存至爆礼物结束时间
+        $expire = $expire - time();
+        $expire = $expire > 180 ? 180 : ($expire < 0 ? 1 : $expire);
+
+        // 爆出的礼物从缓存拿到
+        $cache = \Backpacks::getHotWriteCache();
+        $user_sign_key = \Backpacks::generateBoomUserSignKey($user->id, $room_id);
+        //$user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $user_sign = $cache->get($user_sign_key);
+
+        // 领取后缓存值为1
+        if ($user_sign == 1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已领取！', ['target' => $boom_histories]);
+        }
+
+        // 未领取不抽奖
+        if ($cache->exists($user_sign_key) && $user_sign!=1) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
+        }
+
+        // 1 随机类型
+        $type = array_rand(array_flip(self::$boom_type));
+
+        // 2 爆礼品
+        if ($type == BACKPACK_GIFT_TYPE)
+            $target = \Gifts::getNGift();
+        else
+            $target = \Backpacks::getBoomDiamondOrGold($type);
+
+        // 缓存数据体
+        $json = array(
+            'type' => $type,
+            'target' => $target
+        );
+
+        // 领取时间三分钟
+        $cache->setex($user_sign_key, $expire, json_encode($json));
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['target' => $target]);
     }
 
 
     /**
-     * @desc 领取历史记录
+     * @desc 历史记录
      * @return bool
      */
     public function historyAction()
     {
-        $list = \BoomHistories::topList();
-        $list = $list->toJson('boom', 'toSimpleJson');
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $list);
+        $boom_histories = \BoomHistories::historiesTopList();
+        $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $boom_histories);
     }
 
 
     /**
-     * @desc 礼物写入背包
+     * @desc 爆礼物写入背包
+     * @return bool
      */
     public function createAction()
     {
-        $target = $this->params('target');
+        $user = $this->currentUser();
+        $room_id = $user->current_room_id;
 
-        if (!is_array($target)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败');
+        // 拿缓存
+        $cache = \Backpacks::getHotWriteCache();
+        $user_sign_key = \Backpacks::generateBoomUserSignKey($user->id, $room_id);
+        //$user_sign_key = $this->generateUserSignKey($user->id, $room_id);
+        $expire = $cache->ttl($user_sign_key);
+        $user_sign = $cache->get($user_sign_key);
+
+        // 超三分钟未领取礼物
+        if (empty($user_sign))
+            return $this->renderJSON(ERROR_CODE_FAIL, '爆礼物3分钟内未领取！');
+
+        // 抽奖的奖品
+        $json = json_decode($user_sign, true);
+        $type = $json['type'];
+        $prizes = $json['target'];
+
+        if (empty($prizes)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包错误');
         }
-        foreach ($target as $value) {
-            $this->prepare($value['id'], $value['number']);
+
+        // 执行写入
+        foreach ($prizes as $prize) {
+
+            $res = \Backpacks::doCreate($user->id, $prize['id'], $prize['number'], $type);
+            list($code, $reason, $prize_list) = $res;
+
+            if ($code == ERROR_CODE_FAIL) {
+                return $this->renderJSON($code, $reason);
+            }
         }
-        return $this->renderJSON(ERROR_CODE_SUCCESS);
+
+        $cache->setex($user_sign_key, $expire, 1);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $prize_list]);
     }
 
 
     /**
-     * 执行礼物写入背包
+     * 执行写入背包
      * @param $target_id
      * @param $number
+     * @param $type
      * @return bool
      */
-    protected function prepare($target_id, $number, $type = BACKPACK_GIFT_TYPE)
+    protected function doCreate($target_id, $number, $type)
     {
+        if ($type == BACKPACK_GIFT_TYPE && empty($target_id)) {
 
-        // target id
-        if (empty($target_id) && ($type != BACKPACK_DIAMOND_TYPE || $type != BACKPACK_GOLD_TYPE))
-            $this->renderJSON(ERROR_CODE_FAIL, 'not target');
-        else $target_id = 0;
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-1');
 
-        // 加入背包的数据
-        $joining = array(
+        } elseif ($type != BACKPACK_GIFT_TYPE)
+            $target_id = 0;
+
+        $user = $this->currentUser();
+
+        // 爆出的数据
+        $list = array(
             'target_id' => $target_id,
             'type' => $type,
             'number' => $number
         );
 
-        $user = $this->currentUser();
+        // 记录日志
+        (new \BoomHistories())->createBoomHistories($user->id, $target_id, $type, $number);
 
-        if ($type == BACKPACK_DIAMOND_TYPE) {
+        // 爆礼物类型
+        if ($type == BACKPACK_GIFT_TYPE && (!\Backpacks::createTarget($user->id, $target_id, $number, $type))) {
 
-            $opts['remark'] = '爆礼物抽中'.$number.'钻石';
-            \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
-        } elseif ($type == BACKPACK_GOLD_TYPE) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败-2');
 
-            $opts['remark'] = '爆礼物抽中'.$number.'金币';
-            \GoldHistories::changeBalance($user->id, GOLD_TYPE_IN_BOOM, $number, $opts);
-
-
-        } else {
-            if (!\Backpacks::createTarget($user, $target_id, $number, $type)) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '加入背包失败');
-            }
         }
 
+        if ($type == BACKPACK_DIAMOND_TYPE) {
+            $this->boomGetDiamond($user->id, $number);
+        } elseif ($type == BACKPACK_GOLD_TYPE) {
+            $this->boomGetGold($user->id, $number);
+        }
 
-        // 记录爆礼物日志
-        (new \BoomHistories())->createBoom($user, $joining);
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $joining]);
-
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['backpack' => $list]);
     }
 
 
+    /**
+     * 爆礼物缓存名称
+     * @param $user_id
+     * @param $room_id
+     * @return string
+     */
+    protected function generateUserSignKey($user_id, $room_id)
+    {
+        return 'boom_target_room_' . $room_id . '_user_' . $user_id;
+    }
 
+
+    /**
+     * 爆礼物获得钻石写入账户
+     * @param $user_id
+     * @param $number
+     * @return bool
+     */
+    protected function boomGetDiamond($user_id, $number)
+    {
+        $opts['remark'] = '爆礼物获得' . $number . '钻石';
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
+        return true;
+    }
+
+
+    /**
+     * 爆礼物获得金币写入账户
+     * @param $user_id
+     * @param $number
+     * @return bool
+     */
+    protected function boomGetGold($user_id, $number)
+    {
+        $opts['remark'] = '爆礼物获得' . $number . '金币';
+        \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
+        return true;
+    }
+
+
+    /**
+     * @param $user_id
+     * @return mixed
+     */
+    public function getCurrentRoomId($user_id)
+    {
+        // 获取当前房间ID
+        $user_info = \Users::findFirstById($user_id);
+        $user_info = $user_info->toJson();
+        $room_id = $user_info['current_room_id'];
+        return $room_id;
+    }
 }

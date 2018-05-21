@@ -1142,12 +1142,10 @@ class UsersTask extends \Phalcon\Cli\Task
         $last_at = time() - 3600 * 48;
 
         if (isDevelopmentEnv()) {
-            $last_at = time() - 60 * 3;
+            $last_at = time() - 60 * 1;
         }
 
         $product_channel_id = 1;
-
-        $user_db = Users::getUserDb();
 
         $cond = [
             'conditions' => '(pay_amount < 1 or pay_amount is null) and (hi_coins < 0.045 or hi_coins is null) and 
@@ -1163,23 +1161,6 @@ class UsersTask extends \Phalcon\Cli\Task
 
         echoLine(count($users));
 
-        $num = 0;
-
-        $hot_cache = Users::getHotWriteCache();
-        $key = "silent_user_key";
-        $silent_user_ids = $hot_cache->zrange($key, 0, -1);
-        $silent_users = Users::findByIds($silent_user_ids);
-
-        echoLine(count($silent_users));
-
-        $silent_user_ids = [];
-
-        foreach ($silent_users as $silent_user) {
-            $silent_user_ids[] = $silent_user->id;
-        }
-
-        $gift_ids = [66, 36];
-
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
         $wake_up_user_days_key = "wake_up_user_days_key_product_channel_id$product_channel_id";
@@ -1192,36 +1173,35 @@ class UsersTask extends \Phalcon\Cli\Task
             $user_db->zclear($send_user_ids_key);
         }
 
+        $hot_cache = Users::getHotWriteCache();
+        $num = 0;
+        $delay = 1;
+        $title = '有人赠送给您礼物了，赶紧去看看吧！';
+        $push_data = ['title' => $title, 'body' => ''];
+        $per_page = 100;
+
+        if (isDevelopmentEnv()) {
+            $per_page = 2;
+        }
+
         //***赠送给你***（礼物名字）礼物，赶紧去看看吧！
         //延迟两小时：亲，你现在有*元待提现，赶紧去提现吧！
         foreach ($users as $user) {
 
-            $user = Users::findFirstById($user->id);
-
-            $gift_id = $gift_ids[array_rand($gift_ids)];
-            $gift = Gifts::findFirstById($gift_id);
-            //$send_user_id = $silent_user_ids[array_rand($silent_user_ids)];
-            //$send_user = Users::findFirstById($send_user_id);
-            $send_user = $silent_users[array_rand($silent_user_ids)];
-            $content = $send_user->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
+            $num++;
 
             $user_db->zadd($send_user_ids_key, time(), $user->id);
 
-            $data = ['sender_id' => $send_user->id, 'gift_id' => $gift_id];
-            $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 7 * 86400, json_encode($data, JSON_UNESCAPED_UNICODE));
+            $hot_cache->setex($wake_up_user_send_gift_key . $user->id, 7 * 86400, time());
 
-            $push_data = ['title' => $content, 'body' => ''];
-            $delay = mt_rand(1, 1800);
+            $user_ids[] = $user->id;
 
-            if (isDevelopmentEnv()) {
-                $delay = 1;
+            if ($num >= $per_page) {
+                Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+                $delay += 2;
+                $user_ids = [];
+                $num = 0;
             }
-
-            \Pushers::delay($delay)->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
-
-            $num++;
-
-            echoLine($user->id, $send_user->id, $content, $num);
         }
     }
 
@@ -1285,53 +1265,28 @@ class UsersTask extends \Phalcon\Cli\Task
         $user_db = \Users::getUserDb();
         $stat_at = date("Ymd");
         $send_user_ids_key = "wake_up_user_send_gift_key_product_channel_id$product_channel_id" . $stat_at;
-        $total = $user_db->zcard($send_user_ids_key);
-        echoLine($total);
-        $hot_cache = Users::getHotWriteCache();
+        $total_user_ids = $user_db->zrange($send_user_ids_key, 0, -1);
+        $total = count($total_user_ids);
 
-        for ($i = 0; $i <= $total; $i += 1000) {
+        $title = '亲，你的账户有可提现的余额，赶紧去提现吧！';
+        $push_data = ['title' => $title, 'body' => ''];
 
-            $user_ids = $user_db->zrange($send_user_ids_key, $i, $i + 1000 - 1);
-            $users = Users::findByIds($user_ids);
-            echoLine(count($user_ids));
 
-            foreach ($users as $user) {
-                //亲，你现在有*元待提现，赶紧去提现！
+        $per_page = 100;
+        $delay = 1;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
 
-                $wake_up_user_send_gift_key = "wake_up_user_send_gift_key_user_id_" . $user->id;
-                $data = $hot_cache->get($wake_up_user_send_gift_key);
-                $hi_conins = 0;
+        echoLine($total, $total_page);
 
-                if ($data) {
-                    $data = json_decode($data, true);
-                    $gift_id = fetch($data, 'gift_id');
+        for ($i = 1; $i <= $total_page; $i++) {
 
-                    $gift = Gifts::findFirstById($gift_id);
+            echoLine($offset, $delay);
 
-                    if ($gift) {
-                        $amount = $gift->amount;
-                        $hi_conins = $amount * 0.045;
-                    }
-
-                } else {
-                    $hi_conins = $user->getWithdrawAmount();
-                }
-
-                if ($hi_conins > 0) {
-                    $content = "亲，你现在有{$hi_conins}元待提现，赶紧去提现！";
-
-                    $push_data = ['title' => $content, 'body' => $content];
-
-                    \Pushers::delay(mt_rand(1, 1800))->push($user->getPushContext(), $user->getPushReceiverContext(), $push_data);
-
-                    //Chats::sendTextSystemMessage($user->id, $content);
-
-                    echoLine($user->id, $content);
-                } else {
-                    echoLine($user->id, "no have hi_coins");
-                }
-            }
-
+            $user_ids = array_slice($total_user_ids, $offset, $per_page);
+            Users::delay($delay)->asyncPushActivityMessage($user_ids, $push_data);
+            $offset += $per_page;
+            $delay += 2;
         }
     }
 
@@ -1432,17 +1387,16 @@ EOF;
     function serviceMessageAction()
     {
         $content = <<<EOF
-【礼物通知】小Hi给各位小主请安啦！
-今晚凌晨24:00将上架一批新礼物哦~
-同一时间，“小黄瓜，要亲亲，歌王，冰淇淋”四个礼物要下架成为绝版啦！如果下架的礼物中有您中意的礼物，赶紧趁现在收割一波哦~~
+520马上就要过了，你处CP了吗？如果没有的话，您可在【我的房间】可发起处CP，让您的对象在麦上点击【处CP】，即可结为情侣。
+520当日结为情侣更有机会获得520靓号、绝版专属礼物、全服爱的宣言！
 EOF;
 
-        $title = "史上最牛X的送送送火热进行中";
-        $body = "50万钻+绝版号666777，点击左上角“活动”了解详情！";
+        $title = "";
+        $body = "";
 
         $users = Users::find([
             'conditions' => 'product_channel_id = 1 and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
-            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 10 * 86400],
+            'bind' => ['user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 2 * 86400],
             'columns' => 'id'
         ]);
 

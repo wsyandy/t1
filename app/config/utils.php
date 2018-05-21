@@ -130,7 +130,7 @@ function isInternalIp($ip)
 {
     $res = false;
 
-    if (in_array($ip, ['139.227.252.230'])) {
+    if (in_array($ip, ['139.227.252.185'])) {
         $res = true;
     }
 

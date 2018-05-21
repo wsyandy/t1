@@ -1,0 +1,1 @@
+ALTER TABLE rooms add COLUMN has_red_packet INTEGER ;

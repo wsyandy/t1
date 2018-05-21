@@ -18,10 +18,13 @@ trait UserAttrs
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'mobile' => $this->mobile,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'followed_num' => $this->followed_num,
             'follow_num' => $this->follow_num,
             'friend_num' => $this->friend_num,
@@ -41,10 +44,11 @@ trait UserAttrs
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
             'next_level_experience' => $this->next_level_experience,
             'id_card_auth' => $this->id_card_auth,
-            'diamond' => $this->diamond
+            'diamond' => $this->diamond,
+            'experience' => intval($this->experience),
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isPresent($this->union)) {
@@ -53,19 +57,16 @@ trait UserAttrs
             $data['union_name'] = '';
         }
 
-        if (isPresent($this->experience)) {
-            $data['experience'] = $this->experience;
-        } else {
-            $data['experience'] = 0;
-        }
-
         return $data;
     }
 
     function mergeJson()
     {
         return [
-            'avatar_small_url' => $this->getAvatarSmallUrl(),
+            'avatar_big_url' => $this->avatar_big_url,
+            'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'avatar_url' => $this->getAvatarUrl(),
             'product_channel_name' => $this->product_channel_name,
             'partner_name' => $this->partner_name,
@@ -84,9 +85,7 @@ trait UserAttrs
             'login_type_text' => $this->login_type_text,
             'level' => $this->level,
             'segment' => $this->segment,
-            'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
-            'country_chinese_name' => $this->country->chinese_name
+            'segment_text' => $this->segment_text
         ];
     }
 
@@ -97,25 +96,29 @@ trait UserAttrs
             'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
-            'province_name' => $this->province_name,
-            'city_name' => $this->city_name,
             'mobile' => $this->mobile,
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
+            'current_channel_name' => $this->current_channel_name,
             'user_role' => $this->user_role,
             'speaker' => $this->speaker,
             'im_password' => $this->im_password,
-            'followed_num' => $this->followed_num,
-            'follow_num' => $this->follow_num,
-            'current_channel_name' => $this->current_channel_name,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
             'gold' => $this->gold,
-            'diamond' => $this->diamond
+            'diamond' => $this->diamond,
+            'medal_image_url' => $this->medal_image_url,
+            'province_name' => $this->province_name,
+            'city_name' => $this->city_name,
+            'followed_num' => $this->followed_num,
+            'follow_num' => $this->follow_num
         ];
 
         return $data;
@@ -127,19 +130,23 @@ trait UserAttrs
             'id' => $this->id,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'created_at_text' => $this->created_at_text,
             'room_id' => $this->room_id,
             'current_room_id' => $this->current_room_id,
             'current_room_seat_id' => $this->current_room_seat_id,
             'user_role' => $this->user_role,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'followed' => $this->followed
+            'followed' => $this->followed,
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isset($this->friend_status)) {
@@ -153,11 +160,9 @@ trait UserAttrs
         }
 
         $current_room_lock = false;
-
         if ($this->current_room_id) {
             $current_room_lock = $this->current_room->lock;
         }
-
         $data['current_room_lock'] = $current_room_lock;
 
         return $data;
@@ -170,7 +175,10 @@ trait UserAttrs
             'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'province_name' => $this->province_name,
             'city_name' => $this->city_name,
@@ -181,14 +189,15 @@ trait UserAttrs
             'current_channel_name' => $this->current_channel_name,
             'current_room_lock' => $this->current_room_lock,
             'user_role' => $this->user_role,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'distance' => $this->distance,
             'age' => $this->age,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
-            'i_segment' => $this->i_segment,
-            'followed_num' => $this->followed_num
+            'medal_image_url' => $this->medal_image_url,
+            'followed_num' => $this->followed_num,
+            'has_red_packet' => $this->has_red_packet
         ];
 
         return $data;
@@ -224,6 +233,21 @@ trait UserAttrs
         );
     }
 
+    function toCpJson()
+    {
+        $datas = [
+            'id' => $this->id,
+            'nickname' => $this->nickname,
+            'avatar_url' => $this->avatar_small_url,
+            'uid' => $this->uid
+        ];
+        if (isset($this->cp_value)) {
+            $datas['cp_value'] = $this->cp_value;
+        }
+        return $datas;
+
+    }
+
     function toRoomManagerJson()
     {
         $data = [
@@ -231,7 +255,10 @@ trait UserAttrs
             'uid' => $this->uid,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'nickname' => $this->nickname,
             'is_permanent' => $this->is_permanent, //是否为永久管理员
             'deadline' => $this->deadline //管理员有效期截止时间,
@@ -249,10 +276,13 @@ trait UserAttrs
             'age' => $this->age,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'union_charm_value' => $this->union_charm_value,
             'union_wealth_value' => $this->union_wealth_value,
-            'monologue' => $this->getMonologueText(),
+            'monologue' => $this->monologue_text,
             'current_room_id' => $this->current_room_id,
             'is_exit_union' => $this->is_exit_union,
             'hi_coins' => $this->hi_coins
@@ -286,8 +316,11 @@ trait UserAttrs
             'age' => $this->age,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
-            'monologue' => $this->getMonologueText(),
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
+            'monologue' => $this->monologue_text,
             'current_room_id' => $this->current_room_id,
             'tags' => $this->tags,
             'recommend_tip' => $this->recommend_tip
@@ -316,11 +349,15 @@ trait UserAttrs
             'age' => $this->age,
             'sex' => $this->sex,
             'avatar_url' => $this->avatar_url,
+            'avatar_big_url' => $this->avatar_big_url,
             'avatar_small_url' => $this->avatar_small_url,
+            'avatar_100x100_url' => $this->avatar_100x100_url,
+            'avatar_60x60_url' => $this->avatar_60x60_url,
             'rank' => $this->rank,
             'level' => $this->level,
             'segment' => $this->segment,
             'segment_text' => $this->segment_text,
+            'medal_image_url' => $this->medal_image_url
         ];
 
         if (isset($this->contributing_hi_conins)) {
@@ -329,14 +366,42 @@ trait UserAttrs
 
         if (isset($this->charm)) {
             $data['charm_value'] = valueToStr($this->charm);
+            $data['charm_value_text'] = $this->charm_value_text;
         }
 
         if (isset($this->wealth)) {
             $data['wealth_value'] = valueToStr($this->wealth);
+            $data['wealth_value_text'] = $this->wealth_value_text;
         }
 
         return $data;
     }
+
+    // es json
+//    function toSearchJson()
+//    {
+//        $data = ['id' => $this->id, 'uid' => $this->uid,
+//            'nickname' => $this->nickname, 'province_id' => $this->province_id, 'city_id' => $this->city_id,
+//            'ip_province_id' => $this->ip_province_id, 'ip_city_id' => $this->ip_city_id,
+//            'geo_province_id' => $this->geo_province_id, 'geo_city_id' => $this->geo_city_id,
+//            'user_type' => $this->user_type, 'avatar_status' => $this->avatar_status, 'user_status' => $this->user_status,
+//            'created_at' => $this->created_at, 'register_at' => $this->register_at, 'last_at' => $this->last_at,
+//            'third_name' => $this->third_name, 'login_type' => $this->login_type, 'mobile' => $this->mobile, 'login_name' => $this->login_name,
+//            'platform' => $this->platform, 'product_channel_id' => $this->product_channel_id, 'partner_id' => $this->partner_id,
+//            'sex' => $this->sex, 'ip' => $this->ip, 'device_id' => $this->device_id, 'room_id' => $this->room_id,
+//            'user_role' => $this->user_role, 'current_room_id' => $this->current_room_id, 'geo_hash' => $this->geo_hash, 'level' => $this->level,
+//            'union_id' => $this->union_id, 'id_card_auth' => $this->id_card_auth, 'organisation' => $this->organisation, 'share_parent_id' => $this->share_parent_id,
+//        ];
+//
+//        if ($this->geo_hash) {
+//            $data['geo_hash_7'] = substr($this->geo_hash, 0, 7);
+//            $data['geo_hash_6'] = substr($this->geo_hash, 0, 6);
+//            $data['geo_hash_5'] = substr($this->geo_hash, 0, 5);
+//            $data['geo_hash_4'] = substr($this->geo_hash, 0, 4);
+//        }
+//
+//        return $data;
+//    }
 
     function isSilent()
     {
@@ -407,6 +472,25 @@ trait UserAttrs
 
         return StoreFile::getUrl($this->avatar);
     }
+
+    function getAvatar60x60Url()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!60x60';
+    }
+
+    function getAvatar100x100Url()
+    {
+        if (isBlank($this->avatar)) {
+            return $this->getDefaultAvatar();
+        }
+
+        return StoreFile::getUrl($this->avatar) . '@!100x100';
+    }
+
 
     function getAvatarSmallUrl()
     {
@@ -500,7 +584,7 @@ trait UserAttrs
 
     function getCurrentChannelName()
     {
-        if ($this->current_room) {
+        if ($this->current_room_id) {
             return $this->current_room->channel_name;
         }
 
@@ -980,7 +1064,6 @@ trait UserAttrs
         //data:image/octet-stream;base64
         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $image_data, $result)) {
             $type = $result[2];
-            echoLine($type);
             if (in_array($type, array('pjpeg', 'jpeg', 'jpg', 'gif', 'bmp', 'png'))) {
                 $file_name = 'voice_identify_' . md5(uniqid(mt_rand())) . '.jpg';
                 $new_file = $source_filename = APP_ROOT . 'temp/' . $file_name;
@@ -1065,5 +1148,24 @@ trait UserAttrs
         $key = Users::generateFieldRankListKey('day', 'wealth');
 
         return intval($user_db->zscore($key, $this->id));
+    }
+
+    function getMedalImageUrl()
+    {
+        if (isProduction()) {
+            return '';
+        }
+
+        return "http://test.momoyuedu.cn/m/images/level_1.png";
+    }
+
+    function getCharmValueText()
+    {
+        return "魅力: " . valueToStr($this->charm);
+    }
+
+    function getWealthValueText()
+    {
+        return "财富: " . valueToStr($this->wealth);
     }
 }

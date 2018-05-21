@@ -2,6 +2,12 @@
 
 class Provinces extends BaseModel
 {
+
+    static function getCacheEndpoint($id)
+    {
+        return self::config('hot_cache_endpoints');
+    }
+
     static function findByIp($ip)
     {
         $data = \Provinces::ipLocation($ip);

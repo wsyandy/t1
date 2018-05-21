@@ -28,19 +28,16 @@ class PaymentsController extends BaseController
 
         $payment_channel = \PaymentChannels::findById($this->params('payment_channel_id'));
 
-        if ($payment_channel->isApple()) {
+        if ($payment_channel->isApple() && isProduction()) {
 
-            $apple_pay_total_amount = $this->currentUser()->device->getTodayApplePayAmount();
+            $device = $this->currentUser()->device;
 
-            info("apple_pay_total_amount", $apple_pay_total_amount);
+            $apple_pay_today_amount = $device->getTodayApplePayAmount();
+            $apple_pay_total_amount = $device->getTotalApplePayAmount();
 
-            if ($apple_pay_total_amount >= 500) {
-                info("apple_pay_total_amount_500", $this->currentUser()->sid, $this->currentUser()->device_id, $apple_pay_total_amount);
+            if ($apple_pay_today_amount >= 30 || $apple_pay_total_amount >= 100) {
+                info("apple_pay_total_amount_30", $this->currentUser()->id, $this->currentUser()->device_id, $apple_pay_today_amount, $apple_pay_total_amount);
                 return $this->renderJSON(ERROR_CODE_FAIL, '苹果支付异常');
-            }
-
-            if ($apple_pay_total_amount >= 300) {
-                info("apple_pay_total_amount_300", $this->currentUser()->sid, $this->currentUser()->device_id, $apple_pay_total_amount);
             }
         }
 
@@ -70,7 +67,7 @@ class PaymentsController extends BaseController
 
         $result_url = '/m/payments/result?order_no=' . $order->order_no . '&sid=' . $user->sid . '&code=' . $this->currentProductChannel()->code;
 
-        info($result);
+        info($this->currentUser()->id, $result);
 
         if (is_array($result) && isset($result['url'])) {
             return $this->response->redirect($result['url']);
@@ -96,7 +93,7 @@ class PaymentsController extends BaseController
         $order = \Orders::findFirstByOrderNo($order_no);
 
         if (!$order || $order->user_id != $this->currentUser()->id) {
-            info($this->currentUser()->sid, $order_no);
+            info('订单不存在', $this->currentUser()->id, $order_no);
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '订单不存在!');
             }
@@ -108,9 +105,8 @@ class PaymentsController extends BaseController
         $this->view->product_channel = $this->currentUser()->product_channel;
 
         $payment = \Payments::findFirstByOrderId($order->id);
-
         if (!$payment) {
-            info($this->currentUser()->sid, $order_no, $order->id);
+            info('支付失败', $this->currentUser()->id, $order_no, $order->id);
             if ($this->request->isAjax()) {
                 $this->renderJSON(ERROR_CODE_FAIL, '支付失败');
             }

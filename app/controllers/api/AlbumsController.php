@@ -32,6 +32,12 @@ class AlbumsController extends BaseController
     {
         $user = $this->currentUser();
 
+        $num = \Albums::count(['conditions' => 'user_id=:user_id:',
+            'bind' => ['user_id' => $user->id]]);
+        if ($num >= 30) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '每人最多30张');
+        }
+
         $hot_cache = \Users::getHotWriteCache();
         $cache_key = 'albums_upload_cache_' . $user->id;
 
@@ -51,7 +57,7 @@ class AlbumsController extends BaseController
             $image_files[] = $image_file;
         }
 
-        if(!$image_files){
+        if (!$image_files) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '已成功');
         }
 

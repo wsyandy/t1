@@ -5,6 +5,7 @@
  * Date: 2018/5/8
  * Time: 13:43
  */
+
 namespace api;
 
 class BackpacksController extends BaseController
@@ -16,7 +17,7 @@ class BackpacksController extends BaseController
     public function indexAction()
     {
         $type = $this->params('type', 1);
-        $opt = [ 'type' => $type ];
+        $opt = ['type' => $type];
 
         $list = \Backpacks::findListByUserId($this->currentUser(), $opt);
         $list = $list->toJson('backpacks', 'toSimpleJson');
@@ -26,11 +27,28 @@ class BackpacksController extends BaseController
 
 
     /**
-     * @desc 返回爆礼物活动入口
+     * 背包送礼物
      * @return bool
      */
-    public function BoomAction()
+    public function sendGiftAction()
     {
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['boom_url' => 'url://m/backpacks']);
+        $gift_num = $this->params('gift_num', 1);
+        $backpack_id = $this->params('id');
+        $user_id = $this->params('user_id');
+        $src = $this->params('src', 'room');
+
+        $notify_type = $src == 'room' ? 'bc' : 'ptp';
+
+
+        $backpack = \Backpacks::findFirstById($backpack_id);
+
+        if (!$backpack) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $res = $backpack->sendGift($this->currentUser(), $user_id, $gift_num, ['notify_type' => $notify_type]);
+        list($error_code, $error_reason, $opts) = $res;
+
+        return $this->renderJSON($error_code, $error_reason, $opts);
     }
 }

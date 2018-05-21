@@ -24,12 +24,16 @@ class BaseController extends ApplicationController
         'banners' => ['index'],
         'devices' => '*',
         'users' => ['send_auth', 'logout', 'login', 'new', 'register', 'push_token', 'client_status', 'third_login'],
-        'soft_versions' => '*'
+        'soft_versions' => '*',
+        'product_channels' => ['boot_config'],
+        'product_menus' => ['index']
     ];
 
     static $CHECK_LOGIN_STATUS_ACTIONS = [
         'users' => ['register', 'login', 'client_status', 'third_login', 'update', 'send_auth'],
-        'rooms' => '*'
+        'rooms' => '*',
+        'room_seats' => ['up', 'down'],
+        'gifts' => ['create']
     ];
 
     static $CHECK_OTHER_USER_ACTIONS = [
@@ -82,19 +86,14 @@ class BaseController extends ApplicationController
             return null;
         }
 
-        //强制重新查用户
-        if ($force) {
-            $user = \Users::findFirstById($user_id);
-            return $user;
-        }
-
-
-        if (!isset($this->_current_user) && $user_id) {
+        //$force 强制重新查用户
+        if (!isset($this->_current_user) && $user_id || $force) {
             $user = \Users::findFirstById($user_id);
             $this->_current_user = $user;
-//            if ($user && $this->params('sid') == $user->sid) {
-//                $this->_current_user = $user;
-//            }
+        }
+
+        if ($this->_current_user && $this->_current_product_channel) {
+            $this->_current_user->product_channel = $this->_current_product_channel;
         }
 
         return $this->_current_user;
@@ -103,7 +102,6 @@ class BaseController extends ApplicationController
     function otherUserId()
     {
         $user_id = $this->context('user_id');
-
         if (isBlank($user_id)) {
             return null;
         }
@@ -120,22 +118,17 @@ class BaseController extends ApplicationController
     function otherUser($force = false)
     {
         $other_user_id = $this->otherUserId();
-
         if (isBlank($other_user_id)) {
             return null;
         }
 
-        //强制重新查用户
-        if ($force) {
-            $user = \Users::findFirstById($other_user_id);
-            return $user;
+        if (!isset($this->_other_user) && $other_user_id || $force) {
+            $other_user = \Users::findFirstById($other_user_id);
+            $this->_other_user = $other_user;
         }
 
-        if (!isset($this->_other_user) && $other_user_id) {
-            $other_user = \Users::findFirstById($other_user_id);
-            if ($other_user) {
-                $this->_other_user = $other_user;
-            }
+        if ($this->_other_user && $this->_current_product_channel) {
+            $this->_other_user->product_channel = $this->_current_product_channel;
         }
 
         return $this->_other_user;
@@ -221,13 +214,15 @@ class BaseController extends ApplicationController
 
     function beforeAction($dispatcher)
     {
-        /*if (!$this->isHttps()) {
+
+        if (!$this->isHttps()) {
             info('no_https', $this->getFullUrl());
         }
 
-        if (in_array($this->remoteIp(), ['112.1.160.168'])) {
+        // 为啥要限制
+        if (in_array($this->remoteIp(), ['112.1.160.168', '61.158.148.7', '61.158.149.145'])) {
             info("ip_illegal", $this->context(), $this->params());
-            return $this->renderJSON(ERROR_CODE_FAIL, '请求非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '请求非法', ['sid' => $this->currentUser()->generateSid('d.')]);
         }
 
         debug($this->params(), $this->headers(), $this->request->getRawBody());
@@ -301,7 +296,7 @@ class BaseController extends ApplicationController
 
         if (!$this->skipCheckUserInfo($controller_name, $action_name) && $this->currentUser()->needUpdateInfo()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '需要更新资料', ['error_url' => 'app://users/update_info']);
-        }*/
+        }
     }
 
     function fixOldUser()
@@ -315,7 +310,6 @@ class BaseController extends ApplicationController
         }
 
         $device = $this->currentDevice();
-
         if ($device) {
             return \Users::registerForClientByDevice($device);
         }

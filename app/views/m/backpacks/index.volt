@@ -7,6 +7,36 @@
 {{ theme_js('/js/utils.js') }}
 {{ block_end() }}
 
+
+{% if !true %}
+
+    <!-- 活动未开始 -->
+    <img class="banner" src="/m/images/banner_prize.png" alt="">
+
+    <div class="rules_box">
+        <img  class="rules_bg" src="/m/images/rules_bg.png" alt="">
+        <div class="title">
+            <span class="dot_left"></span>
+            <span class="title_text">活动规则</span>
+            <span class="dot_right"></span>
+        </div>
+        <ul class="rules_list">
+            <li>1. 房间内赠送钻石礼物达到一定数额，会出现爆钻图标。</li>
+            <li>2. 随着钻石礼物增多，爆钻进度会增长，进度达到100%，开启领奖</li>
+            <li>3. 领奖时限三分钟。</li>
+            <li>4. 每晚0点活动重新开始。</li>
+        </ul>
+        <dl class="gift_type">
+            <dt>礼物类型：</dt>
+            <dd>金币，钻石，绝版礼物</dd>
+        </dl>
+    </div>
+    <div class="footer">
+        关注公众号Hi-6888, 充值有惊喜
+    </div>
+
+{% else %}
+
 <img class="banner" src="/m/images/banner_prize.png" alt="">
 <div id="app">
 <!--滚动公告-->
@@ -37,29 +67,7 @@
             </div>
         </li>
 
-        {#<li>
-            <div class="list_img">
-                <img src="/m/images/banner.png" alt="">
-            </div>
-            <div class="list_txt">
-                <span>吃土</span>
-                <span>x2</span>
-            </div>
-        </li>
-        <li>
-            <div class="list_img">
-                <img src="/m/images/rules_bg.png" alt="">
-            </div>
-            <div class="list_txt">
-                <span>黄瓜</span>
-                <span>x2</span>
-            </div>
-        </li>#}
     </ul>
-    {#<a class="btn" href="javascript:;">
-        立即领取
-    </a>#}
-
 </div>
 
 <div class="rules_box">
@@ -143,9 +151,8 @@
         //打开窗口
         $btn.on('click',function (e) {
             e.preventDefault();
-            //$cover.addClass('is-visible');
+            $cover.addClass('is-visible');
         });
-        $cover.addClass('is-visible');
 
         //关闭窗口
         $cover.on('click', function(e){
@@ -156,7 +163,6 @@
             }
         });
 
-        vm.boomHistories();
     });
 
     var opts = {
@@ -176,10 +182,15 @@
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
-                    $.each(resp.target, function (index, item) {
-                        vm.target_list.push(item);
-                        vm.cache_list[index] = {'id':item.id, 'number':item.number};
-                    })
+                    if (resp.error_code != undefined) {
+                        $.each(resp.target, function (index, item) {
+                            vm.target_list.push(item);
+                            vm.cache_list[index] = {'id':item.id, 'number':item.number};
+                        })
+                        if (resp.error_code == 0) $('.cover').addClass('is-visible');
+                    }
+                    return ;
+
                 })
 
             },
@@ -189,7 +200,7 @@
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
-                    $.each(resp.boom, function (index, item) {
+                    $.each(resp.boom_histories, function (index, item) {
                         vm.history_list.push(item);
                     })
                 })
@@ -215,6 +226,7 @@
     };
     vm = XVue(opts);
     vm.targetList();
+    vm.boomHistories();
 
     // 公告滚动 封装函数
     function noticeUp(obj,top,time) {
@@ -225,3 +237,4 @@
         })
     }
 </script>
+{% endif %}

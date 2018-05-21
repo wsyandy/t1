@@ -400,7 +400,6 @@ class Emchat extends BaseModel
         $header = $this->headers;
 
         $result = httpDelete($url, '', $header);
-        info($result);
         return $this->reqSuccess($result->code);
     }
 
@@ -414,7 +413,7 @@ class Emchat extends BaseModel
         $url = $this->url . 'users/' . $username . '/contacts/users';
         $header = $this->headers;
         $result = httpGet($url, null, $header);
-        info($result);
+        debug($result);
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
             return $result_data['data'];
@@ -525,7 +524,7 @@ class Emchat extends BaseModel
         $send_results = [];
         if ($this->reqSuccess($result->code)) {
             $result_data = $this->parseResult($result);
-            info($result_data);
+            debug($result_data);
             $datas = $result_data['data'];
             foreach ($datas as $key => $value) {
                 $send_results[$key] = $value == 'success';
@@ -671,7 +670,7 @@ class Emchat extends BaseModel
 
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        info($result);
+        debug($result);
         return $this->sendResult($result, $target);
     }
 

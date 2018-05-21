@@ -60,7 +60,6 @@ class Products extends BaseModel
             'amount' => $this->amount,
             'diamond' => $this->diamond,
             'gold' => $this->gold,
-            'i_gold' => $this->i_gold,
             'product_group_name' => $this->product_group_name,
             'apple_product_no' => $this->apple_product_no
         ];
@@ -74,7 +73,6 @@ class Products extends BaseModel
             'amount' => $this->amount,
             'diamond' => $this->diamond,
             'gold' => $this->gold,
-            'i_gold' => $this->i_gold,
             'apple_product_no' => $this->apple_product_no
         ];
     }
@@ -185,15 +183,6 @@ class Products extends BaseModel
         }
 
         return $this->diamond;
-    }
-
-    function getShowIGold($user)
-    {
-        if (isPresent($this->full_name)) {
-            return $this->full_name;
-        }
-
-        return $this->i_gold;
     }
 
 }

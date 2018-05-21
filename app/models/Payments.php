@@ -60,7 +60,6 @@ class Payments extends BaseModel
         $payment->payment_type = $payment_channel->payment_type;
         $payment->payment_no = $payment->generatePaymentNo();
         $payment->pay_status = PAYMENT_PAY_STATUS_WAIT;
-        $payment->country_id = $user->country_id;
 
         if ($payment->create()) {
 
@@ -165,8 +164,15 @@ class Payments extends BaseModel
     {
         if ($this->user->device) {
             $hot_cache = Payments::getHotWriteCache();
+            $user_db = Users::getUserDb();
+
+            $user = $this->user;
+
             $key = "stat_apple_day_total_pay_amount_list_" . date("Ymd");
-            $hot_cache->zincrby($key, $this->amount, $this->user->device_id);
+            $total_key = "stat_apple_total_pay_amount_device_id_" . $user->device_id;
+
+            $user_db->incrby($total_key, $this->amount);
+            $hot_cache->zincrby($key, $this->amount, $user->device_id);
             $hot_cache->expire($key, endOfDay() - time());
         }
     }
@@ -187,8 +193,7 @@ class Payments extends BaseModel
         }
 
         $product = $order->product;
-        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
-
+        $opts = ['target_id' => $order->id, 'mobile' => $order->mobile];
         if ($product->diamond) {
             $opts['remark'] = '购买' . $product->full_name;
             AccountHistories::changeBalance($this->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);

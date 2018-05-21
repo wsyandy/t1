@@ -122,7 +122,6 @@ class Unions extends BaseModel
         $union->mobile = $user->mobile;
         $union->type = UNION_TYPE_PRIVATE;
         $union->avatar_status = AUTH_SUCCESS;
-        $union->country_id = $user->country_id;
 
         $dest_filename = APP_NAME . '/unions/avatar/' . uniqid() . '.jpg';
         $res = \StoreFile::upload($avatar_file, $dest_filename);
@@ -135,7 +134,7 @@ class Unions extends BaseModel
         $union->save();
 
         $opts = ['remark' => '创建家族,花费钻石' . $amount . "个", 'mobile' => $user->mobile];
-        $res = AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
+        $res = AccountHistories::changeBalance($user, ACCOUNT_TYPE_CREATE_UNION, $amount, $opts);
 
         if ($res) {
 
@@ -482,7 +481,7 @@ class Unions extends BaseModel
 
             if ($this->type == UNION_TYPE_PRIVATE && $this->need_apply == STATUS_ON) {
                 $content = "恭喜您，" . "$union_host->nickname" . "已同意您的申请，您现在已经是家族中的一员了。";
-                Chats::sendTextSystemMessage($user->id, $content);
+                Chats::sendTextSystemMessage($user, $content);
             }
 
             return [ERROR_CODE_SUCCESS, '成功加入家族'];
@@ -511,7 +510,7 @@ class Unions extends BaseModel
         $db->zrem($this->generateCheckUsersKey(), $user->id);
 
         $content = "$union_host->nickname" . "拒绝了您的申请，别灰心，试试其他的家族吧！";
-        Chats::sendTextSystemMessage($user->id, $content);
+        Chats::sendTextSystemMessage($user, $content);
 
         return [ERROR_CODE_SUCCESS, '拒绝成功'];
     }
@@ -551,7 +550,7 @@ class Unions extends BaseModel
 
 
         $user_system_content = "如果家族会长同意可立即退出家族，如果家族长未审批，7天后自动退出家族";
-        Chats::sendTextSystemMessage($user->id, $user_system_content);
+        Chats::sendTextSystemMessage($user, $user_system_content);
 
         $union_system_content = "{$user->nickname}申请退出家族";
         Chats::sendTextSystemMessage($this->user_id, $union_system_content);
@@ -590,7 +589,7 @@ class Unions extends BaseModel
         $db->zrem($this->generateAllApplyExitUsersKey(), $user->id);
 
         $content = ['agree' => "您的家族会长已同意您的退出家族申请", 'auto' => "您已经退出了{$this->name}家族"];
-        Chats::sendTextSystemMessage($user->id, $content[$from]);
+        Chats::sendTextSystemMessage($user, $content[$from]);
 
         $user->update();
         return [ERROR_CODE_SUCCESS, '操作成功'];
@@ -667,7 +666,7 @@ class Unions extends BaseModel
 
             if ($kicking) {
                 $content = "$union_host->nickname" . "已将您请出了" . "$this->name" . "家族";
-                Chats::sendTextSystemMessage($user->id, $content);
+                Chats::sendTextSystemMessage($user, $content);
             } else {
                 $content = "$user->nickname" . "已经退出了家族";
                 Chats::sendTextSystemMessage($this->user_id, $content);
@@ -731,7 +730,7 @@ class Unions extends BaseModel
 
             if ($union->type == UNION_TYPE_PRIVATE && !$user->isUnionHost($union)) {
                 $content = "您的家族解散了，快去看看其它家族吧！";
-                Chats::sendTextSystemMessage($user->id, $content);
+                Chats::sendTextSystemMessage($user, $content);
             }
 
             $user->union_id = 0;

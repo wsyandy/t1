@@ -13,8 +13,6 @@ trait RoomAttrs
 
         for ($i = 0; $i < 12; $i++) {
 
-            $time -= 600;
-
             $minutes = date("YmdHi", $time);
             $interval = intval(intval($minutes) % 10);
             $minutes_start = $minutes - $interval;
@@ -32,7 +30,9 @@ trait RoomAttrs
                 $total_amount += $amount;
             }
 
-            info($amount, $percent, $total_amount, $minutes_stat_key);
+            $time -= 600;
+
+            info($this->id, $amount, $percent, $total_amount, $minutes_stat_key);
         }
 
         return $total_amount;
@@ -68,7 +68,7 @@ trait RoomAttrs
                 $total_num += $num;
             }
 
-            info($num, $percent, $total_num, $minutes_num_stat_key);
+            info($this->id, $num, $percent, $total_num, $minutes_num_stat_key);
         }
 
         return $total_num;
@@ -79,22 +79,13 @@ trait RoomAttrs
         $hot_cache = self::getHotWriteCache();
         $key = $this->getRealUserListKey();
         $user_ids = $hot_cache->zrange($key, 0, -1);
-
+        $user_num = count($user_ids);
         $score = 0;
 
         //可优化
-        if (count($user_ids) > 0) {
-            $pay_user_num = Users::count([
-                'conditions' => '(pay_amount > 0 or pay_amount is not null) and id in (' . implode(',', $user_ids) . ")",
-                'columns' => 'id']);
-
-            $no_pay_user_num = $this->getRealUserNum() - $pay_user_num;
-
-            $score += $pay_user_num * 10;
-            $score += $no_pay_user_num * 1;
+        if ($user_num > 0) {
+            $score = $user_num * 10;
         }
-
-        info($score);
 
         return $score;
     }
@@ -105,12 +96,12 @@ trait RoomAttrs
         $day_charm_value = $user->getDayCharmValue();
         $day_wealth_value = $user->getDayWealthValue();
 
-        $wealth_score = intval($day_wealth_value / 50);
-        $charm_score = intval($day_charm_value / 100);
+        $wealth_score = $day_wealth_value / 50;
+        $charm_score = $day_charm_value / 100;
 
         $total_score = $wealth_score + $charm_score;
 
-        info($total_score);
+        info($this->id, $total_score);
 
         return $total_score;
     }
@@ -134,12 +125,13 @@ trait RoomAttrs
                 if ($user->isIdCardAuth()) {
                     $day_charm_value = $user->getDayCharmValue();
                     $day_wealth_value = $user->getDayWealthValue();
-                    $score += intval($day_wealth_value / 500);
-                    $score += intval($day_charm_value / 1000);
+                    $score += $day_wealth_value / 500;
+                    $score += $day_charm_value / 1000;
                 }
             }
         }
 
+        info($this->id, $score);
         return $score;
     }
 
@@ -151,28 +143,85 @@ trait RoomAttrs
 
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
 
+        info($this->id, $user_num);
+
         return intval($user_num);
     }
 
     //热门房间总分值
     function getTotalScore()
     {
-        $send_gift_amount_score = $this->getRoomSendGiftAmountScore();
-        $send_gift_num_score = $this->getRoomSendGiftNumScore();
-        $real_user_pay_score = $this->getRealUserPayScore();
-        $real_user_stay_time_score = $this->getRealUserStayTimeScore();
-        $room_host_score = $this->getRoomHostScore();
-        $id_card_auth_users_score = $this->getIdCardAuthUsersScore();
+        $is_shield = 0;
 
         if ($this->isShieldRoom()) {
-            $total_score = $send_gift_amount_score * 0.7 + $send_gift_num_score * 0.05 + $real_user_pay_score * 0.1
-                + $real_user_stay_time_score * 0.05 + $room_host_score * 0.05 + $id_card_auth_users_score * 0.05;
+
+            $is_shield = 1;
+
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
+
         } else {
-            $total_score = $send_gift_amount_score * 0.1 + $send_gift_num_score * 0.05 + $real_user_pay_score * 0.6 +
-                $real_user_stay_time_score * 0.1 + $room_host_score * 0.1 + $id_card_auth_users_score * 0.05;
+
+            $send_gift_amount_score_rate = 0.5;
+            $send_gift_num_score_rate = 0.02;
+            $real_user_pay_score_rate = 0.45;
+            $real_user_stay_time_score_rate = 0.01;
+            $room_host_score_rate = 0.01;
+            $id_card_auth_users_score_rate = 0.01;
         }
 
-        info($total_score);
+        $send_gift_amount_score = $this->getRoomSendGiftAmountScore() * $send_gift_amount_score_rate;
+        $send_gift_num_score = $this->getRoomSendGiftNumScore() * $send_gift_num_score_rate;
+        $real_user_pay_score = $this->getRealUserPayScore() * $real_user_pay_score_rate;
+        $real_user_stay_time_score = $this->getRealUserStayTimeScore() * $real_user_stay_time_score_rate;
+        $room_host_score = $this->getRoomHostScore() * $room_host_score_rate;
+        $id_card_auth_users_score = $this->getIdCardAuthUsersScore() * $id_card_auth_users_score_rate;
+
+
+        $total_score = $send_gift_amount_score + $send_gift_num_score + $real_user_pay_score + $real_user_stay_time_score
+            + $room_host_score + $id_card_auth_users_score;
+
+        $total_score = intval($total_score);
+
+        $ratio = $this->getHotRoomScoreRatio();
+
+        if ($ratio) {
+            $total_score = $total_score * $ratio;
+        }
+
+        $user_db = Users::getUserDb();
+
+        if (!$is_shield) {
+            $total_score = $total_score * 1.5;
+        }
+
+//        if (preg_match("/broadcast/i", $this->types)) {
+//            $total_score = $total_score * 5;
+//        }
+
+        $data = [
+            'send_gift_amount_score' => $send_gift_amount_score, 'send_gift_num_score' => $send_gift_num_score,
+            'real_user_pay_score' => $real_user_pay_score, 'real_user_stay_time_score' => $real_user_stay_time_score,
+            'room_host_score' => $room_host_score, 'id_card_auth_users_score' => $id_card_auth_users_score, 'total_score' => $total_score,
+            'is_shield' => $is_shield, 'time' => time()
+        ];
+
+        $user_db->hmset("hot_room_score_record_room_id_{$this->id}", $data);
+
+        info($this->id, $send_gift_amount_score, $send_gift_num_score, $real_user_pay_score, $real_user_stay_time_score, $room_host_score,
+            $id_card_auth_users_score, $ratio, $total_score);
+
+        return $total_score;
+    }
+
+    function getTotalScoreByCache()
+    {
+        $user_db = Users::getUserDb();
+        $total_score = $user_db->hget("hot_room_score_record_room_id_{$this->id}", 'total_score');
 
         return intval($total_score);
     }
@@ -198,5 +247,13 @@ trait RoomAttrs
     {
         $num = $this->getUserNum() - $this->getRealUserNum();
         return $num;
+    }
+
+    //获取房间扶持分值
+    function getHotRoomScoreRatio()
+    {
+        $user_db = Users::getUserDb();
+        $key = "hot_room_score_ratio_room_id_{$this->id}";
+        return intval($user_db->get($key));
     }
 }

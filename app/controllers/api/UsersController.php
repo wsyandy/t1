@@ -448,6 +448,7 @@ class UsersController extends BaseController
         $device->update();
 
         $user = $this->currentUser();
+
         if ($user) {
             $user->updatePushToken($device);
         }
@@ -477,21 +478,27 @@ class UsersController extends BaseController
     {
         $detail_json = $this->currentUser()->toDetailJson();
 
+        if ($this->currentUser()->isIdCardAuth()) {
+            $detail_json['broadcaster_image_url'] = $this->getRoot() . "images/broadcaster.png";
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
     }
 
     function otherDetailAction()
     {
-        //房间是否加锁
-        $other_current_room = $this->otherUser()->current_room;
-        $current_room_lock = false;
+        $other_user = $this->otherUser();
+        if ($other_user->id == SYSTEM_ID) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '系统小助手');
+        }
 
+        $current_user = $this->currentUser();
+        $current_room_lock = false;
+        //房间是否加锁
+        $other_current_room = $other_user->current_room;
         if ($other_current_room) {
             $current_room_lock = $other_current_room->lock;
         }
-
-        $other_user = $this->otherUser();
-        $current_user = $this->currentUser();
 
         $detail_json = $other_user->toDetailJson();
         $detail_json['is_friend'] = $current_user->isFriend($other_user);
@@ -502,6 +509,10 @@ class UsersController extends BaseController
         if (!$this->otherUser()->isActive()) {
             $detail_json['province_name'] = $current_user->province_name;
             $detail_json['city_name'] = $current_user->city_name;
+        }
+
+        if ($this->otherUser()->isIdCardAuth()) {
+            $detail_json['broadcaster_image_url'] = $this->getRoot() . "images/broadcaster.png";
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $detail_json);
@@ -530,6 +541,7 @@ class UsersController extends BaseController
         $basic_json['signaling_key'] = $signaling_key;
         $basic_json['app_id'] = $app_id;
         $basic_json['im_password'] = $this->currentUser()->im_password;
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $basic_json);
     }
 
@@ -578,37 +590,27 @@ class UsersController extends BaseController
 
         }
 
-        if ($uid) {
+        if ($uid && $uid != SYSTEM_ID) {
             $cond['uid'] = intval($uid);
         }
-
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
         if (count($users)) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
-        info($this->params());
         return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
     }
 
     function searchByUidAction()
     {
         $uid = intval($this->params('uid'));
-
-
-        $user = \Users::findFirst(
-            [
-                'conditions' => 'uid = :uid: and id != :id: and user_type = :user_type: and (user_status = :user_status1: or user_status = :user_status2:)',
-                'bind' => ['uid' => $uid, 'id' => SYSTEM_ID, 'user_type' => USER_TYPE_ACTIVE, 'user_status1' => USER_STATUS_ON, 'user_status2' => USER_STATUS_LOGOUT]
-            ]);
-
-
-        if ($user) {
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
+        $user = \Users::findFirstByUid($uid);
+        if (!$user || $user->id == SYSTEM_ID || $user->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
         }
 
-        return $this->renderJSON(ERROR_CODE_FAIL, '用户不存在');
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', $user->toSimpleJson());
     }
 
     // 附近的人
@@ -738,10 +740,7 @@ class UsersController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
-        $product_channel_id = $this->currentProductChannelId();
-
         $users = \Users::findFieldRankList($list_type, 'charm', $page, $per_page);
-
         $res = $users->toJson('users', 'toRankListJson');
 
         if ($page == 1) {
@@ -841,7 +840,42 @@ class UsersController extends BaseController
             $per_page = 12;
         }
 
-        $users = $this->currentUser()->nearby($page, $per_page);
+        if (isDevelopmentEnv()) {
+
+            $user_ids = \Users::findUserCharmAndWealthRank(time(), $per_page);
+            if (empty($user_ids)) {
+                return $this->renderJSON(ERROR_CODE_SUCCESS, '');
+            }
+
+            $user_flip = array_flip($user_ids);
+
+            $conditions = array(
+                'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
+                'columns' => 'id'
+            );
+            $users = \Users::find($conditions);
+
+            $user_online = [];
+            foreach ($users as $user) {
+                if (in_array($user->id, $user_ids)) {
+                    $user_online[$user_flip[$user->id]] = $user->id;
+                    unset($user_flip[$user->id]);
+                }
+            }
+            ksort($user_online);
+
+            $user_offline = array_values(array_flip($user_flip));
+
+            // 已经排序好
+            $user_ids = array_merge(array_values($user_online), $user_offline);
+
+            $users = \Users::findByIds($user_ids);
+//            $users = $users->toJson('users', 'toSimpleJson');
+
+        } else {
+            $users = $this->currentUser()->nearby($page, $per_page);
+//            $users = $users->toJson('users', 'toSimpleJson');
+        }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
 

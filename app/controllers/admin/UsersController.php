@@ -236,8 +236,24 @@ class UsersController extends BaseController
         $user = \Users::findById($this->params('id'));
         if ($this->request->isPost()) {
             $content = $this->params('content');
-            $content_type = CHAT_CONTENT_TYPE_TEXT;
-            $chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
+            $title = $this->params('title');
+            $image_url = $this->params('image_url');
+            $content_type = $this->params('content_type');
+            $url = $this->params('url');
+
+            $attrs = [
+                'sender_id' => SYSTEM_ID,
+                'receiver_id' => $user->id,
+                'content' => $content,
+                'content_type' => $content_type,
+                'image_url' => $image_url,
+                'title' => $title,
+                'url' => $url
+            ];
+
+            $chat = \Chats::createChat($attrs);
+
+            //$chat = \Chats::sendSystemMessage($user->id, $content_type, $content);
             if ($chat) {
                 return $this->renderJSON(
                     ERROR_CODE_SUCCESS, '发送成功',
@@ -256,9 +272,15 @@ class UsersController extends BaseController
     function getuiAction()
     {
         $receiver = \Users::findById($this->params('receiver_id'));
+        $title = $this->params('title');
+        $body = $this->params('body');
+        $client_url = $this->params('client_url');
+        $show_type = $this->params('show_type', '');
+
+        $opts = ['title' => $title, 'body' => $body, 'client_url' => $client_url, 'show_type' => $show_type];
+
         if ($this->request->isPost()) {
-            $result = \GeTuiMessages::testPush($receiver, $this->params('title'), $this->params('body'),
-                $this->params('client_url'));
+            $result = \GeTuiMessages::testPush($receiver, $opts);
             if ($result) {
                 $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
             } else {
@@ -536,20 +558,16 @@ class UsersController extends BaseController
         if ($this->request->isPost()) {
 
             $user_uid = $this->params('user_uid');
-
             if (!$user_uid) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
             }
 
-
             $user = \Users::findFirstByUid($user_uid);
-
             if ($user) {
-                $user->geo_hash = '';
-                $user->update();
                 $hot_cache = \Users::getHotWriteCache();
                 $key = "blocked_nearby_user_list";
                 $hot_cache->zadd($key, time(), $user->id);
+                $user->delGeoHashRank();
             }
 
             return $this->response->redirect('/admin/users/blocked_nearby_user_list');
@@ -558,19 +576,22 @@ class UsersController extends BaseController
 
     function blockedNearbyUserListAction()
     {
-        $user_id = $this->params('user_id');
-        $hot_cache = \Users::getHotWriteCache();
+        $user = null;
+        $user_uid = $this->params('user_uid');
+        if ($user_uid) {
+            $user = \Users::findFirstByUid($user_uid);
+        }
 
+        $hot_cache = \Users::getHotWriteCache();
         $key = "blocked_nearby_user_list";
 
-        if ($user_id && $hot_cache->zscore($key, $user_id) > 0) {
-            $user_ids = [$user_id];
+        if ($user && $hot_cache->zscore($key, $user->id) > 0) {
+            $user_ids = [$user->id];
         } else {
             $user_ids = $hot_cache->zrange($key, 0, -1);
         }
 
         $page = $this->params('page');
-
         if (!$user_ids) {
             $cond = ['conditions' => 'id < 1'];
         } else {
@@ -582,10 +603,9 @@ class UsersController extends BaseController
 
     function deleteBlockedNearbyUserAction()
     {
+
         $user_uid = $this->params('user_uid');
-
         $user = \Users::findFirstByUid($user_uid);
-
         if ($user) {
 
             $hot_cache = \Users::getHotWriteCache();
@@ -714,4 +734,23 @@ class UsersController extends BaseController
         $user->update();
         return $this->renderJSON(ERROR_CODE_SUCCESS, '清除成功');
     }
+
+    //许愿墙中奖记录
+    function wishLuckHistoriesAction()
+    {
+
+        $product_channel_id = $this->params('product_channel_id', 1);
+        info('产品渠道ID', $product_channel_id);
+        $page = $this->params('page', 1);
+        $wish_luck_histories = \WishHistories::generateLuckyUserList($product_channel_id);
+        $per_page = 20;
+
+        $wish_luck_users = \Users::findByUsersListForWish($wish_luck_histories, $page, $per_page);
+        $this->view->wish_luck_users = $wish_luck_users;
+        $this->view->product_channel_id = $product_channel_id;
+        $this->view->all_product_channels = \ProductChannels::find(['order' => 'id asc', 'columns' => 'id,name']);
+        $this->view->product_channel_id = $product_channel_id;
+
+    }
+
 }

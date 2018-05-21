@@ -82,6 +82,7 @@ class RoomsController extends BaseController
     function editAction()
     {
         $room = \Rooms::findFirstById($this->params('id'));
+        $room->getHotRoomScoreRatio();
         $this->view->room = $room;
     }
 
@@ -89,6 +90,10 @@ class RoomsController extends BaseController
     {
         $room = \Rooms::findFirstById($this->params('id'));
         $this->assign($room, 'room');
+
+        $hot_room_score_ratio = $this->params('room[hot_room_score_ratio]');
+        $room->setHotRoomScoreRatio($hot_room_score_ratio);
+
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $room);
         if ($room->update()) {
             return $this->renderJSON(ERROR_CODE_SUCCESS, '编辑成功', ['room' => $room->toDetailJson()]);
@@ -113,6 +118,24 @@ class RoomsController extends BaseController
         $users = $room->findUsers($page, $per_page);
 
         $this->view->users = $users;
+        $this->view->room_id = $room_id;
+    }
+
+
+    //真实在线用户
+    function onlineRealUsersAction()
+    {
+        $room_id = $this->params('id', 0);
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $users = $room->findTotalRealUsers();
+
+        $this->view->users = $users;
+        $this->view->room_id = $room_id;
     }
 
     //麦位
@@ -142,7 +165,20 @@ class RoomsController extends BaseController
             $sender_id = $this->params('sender_id');
             $gift_id = $this->params('gift_id');
             $content = $this->params('content');
-            debug($action, $sender_id, $gift_id, $content);
+            $red_packet_num = $this->params('num');
+            $url = $this->params('url');
+            $left_pk_user_id = $this->params('left_pk_user_id');
+            $left_pk_user_score = $this->params('left_pk_user_score');
+            $right_pk_user_id = $this->params('right_pk_user_id');
+            $right_pk_user_score = $this->params('right_pk_user_score');
+            $expire_at = $this->params('expire_at', date('Y-m-d H:i:s', strtotime('+3 minutes')));
+            $svga_image_url = $this->params('svga_image_url');
+            $total_value = $this->params('total_value');
+            $current_value = $this->params('current_value');
+            $content_type = $this->params('content_type');
+            $title = $this->params('title');
+
+            debug($action, $sender_id, $gift_id, $red_packet_num, $url, $content, $left_pk_user_id, $left_pk_user_score, $right_pk_user_id, $right_pk_user_score, $expire_at);
 
             $sender = \Users::findById($sender_id);
             if (!$sender) {
@@ -169,10 +205,9 @@ class RoomsController extends BaseController
                 if (!$sender->isInRoom($room)) {
                     return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
                 }
-
                 $body = ['action' => $action, 'user_id' => $sender->id, 'nickname' => $sender->nickname, 'sex' => $sender->sex,
                     'avatar_url' => $sender->avatar_url, 'avatar_small_url' => $sender->avatar_small_url, 'content' => $content,
-                    'channel_name' => $room->channel_name
+                    'channel_name' => $room->channel_name, 'content_type' => $content_type
                 ];
             }
 
@@ -254,6 +289,15 @@ class RoomsController extends BaseController
                 $body = ['action' => $action, 'channel_name' => $room->channel_name, 'content' => $content];
             }
 
+            if ($action == 'sink_notice') {
+
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+
+                $body = ['action' => $action, 'title' => $title, 'content' => $content, 'client_url' => $url];
+            }
+
             if ($action == 'hang_up') {
 
                 if (!$sender->isCalling()) {
@@ -270,17 +314,46 @@ class RoomsController extends BaseController
                 $body = ['action' => $action, 'user_id' => $sender_id, 'receiver_id' => $user_id, 'channel_name' => $voice_call->call_no];
             }
 
+            if ($action == 'red_packet') {
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+                $body = ['action' => $action, 'red_packet' => ['num' => $red_packet_num, 'client_url' => $url]];
+            }
+
+            if ($action == 'pk') {
+                if (!$sender->isInRoom($room)) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '用户不在此房间');
+                }
+                $body = ['action' => $action, 'pk_history' => [
+                    'left_pk_user' => ['id' => $left_pk_user_id, 'score' => $left_pk_user_score],
+                    'right_pk_user' => ['id' => $right_pk_user_id, 'score' => $right_pk_user_score]
+                ]
+                ];
+            }
+
+            if ($action == 'boom_gift') {
+
+                $body = ['action' => $action, 'boom_gift' => ['expire_at' => strtotime($expire_at), 'client_url' => $url, 'svga_image_url' => $svga_image_url,
+                    'total_value' => $total_value, 'current_value' => $current_value, 'show_rank' => 1000000, 'render_type' => 'svga',
+                    'image_color' => 'orange']
+                ];
+            }
+
             $payload = ['body' => $body, 'fd' => $receiver_fd];
 
             info($payload);
-            \services\SwooleUtils::send('push', $intranet_ip, 9508, $payload);
+            $result = \services\SwooleUtils::send('push', $intranet_ip, 9508, $payload);
+            info('推送结果=>', $result);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
 
         }
         $this->view->user_id = $user_id;
         $this->view->actions = ['send_topic_msg' => '发公屏消息', 'enter_room' => '进房间', 'send_gift' => '送礼物', 'up' => '上麦',
-            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知'
+            'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知', 'red_packet' => '红包',
+            'pk' => 'pk', 'boom_gift' => '爆礼物', 'sink_notice' => '下沉通知'
         ];
+        $this->view->content_types = ['personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
         $this->view->room = $room;
     }
 
@@ -366,9 +439,15 @@ class RoomsController extends BaseController
     {
         $page = $this->params('page', 1);
         $per_page = $this->params('per_page', 30);
+        $new = $this->params('new', 0);
         $hot_cache = \Users::getHotWriteCache();
 
         $hot_room_list_key = \Rooms::generateHotRoomListKey();
+
+        if ($new) {
+            $hot_room_list_key = \Rooms::getTotalRoomListKey();
+        }
+
         $room_ids = $hot_cache->zrevrange($hot_room_list_key, 0, -1);
 
         $rooms = \Rooms::findByIds($room_ids);
@@ -653,5 +732,90 @@ class RoomsController extends BaseController
             $hot_cache->zrem("room_hot_search_keywords_list", $keyword);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/rooms/hot_search_keywrods']);
         }
+    }
+
+    function hotRoomScoreAction()
+    {
+        $room_id = $this->params('id');
+        $user_db = \Users::getUserDb();
+        $key = 'hot_room_score_record_room_id_' . $room_id;
+
+        $scores = $user_db->hgetall($key);
+
+        $this->view->scores = $scores;
+    }
+
+    function hotRoomAmountScoreAction()
+    {
+        //统计时间段房间流水 10分钟为单位
+        $hot_cache = \Users::getHotWriteCache();
+        $room_id = $this->params('id');
+        $time = time();
+        $scores = [];
+
+        for ($i = 0; $i < 50; $i++) {
+
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_amount_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
+            $amount = $hot_cache->get($minutes_stat_key);
+            $scores[$minutes_start . "_" . $minutes_end] = $amount;
+
+            $time -= 600;
+        }
+
+        $this->view->scores = $scores;
+    }
+
+    function hotRoomNumScoreAction()
+    {
+        $room_id = $this->params('id');
+        //统计时间段房间流水 10分钟为单位
+        $hot_cache = \Users::getHotWriteCache();
+
+        $time = time();
+        $scores = [];
+
+        for ($i = 0; $i < 50; $i++) {
+
+            $minutes = date("YmdHi", $time);
+            $interval = intval(intval($minutes) % 10);
+            $minutes_start = $minutes - $interval;
+            $minutes_end = $minutes + (10 - $interval);
+            $minutes_stat_key = "room_stats_send_gift_num_minutes_" . $minutes_start . "_" . $minutes_end . "_room_id" . $room_id;
+            $num = $hot_cache->get($minutes_stat_key);
+            $scores[$minutes_start . "_" . $minutes_end] = $num;
+
+            $time -= 600;
+        }
+
+        $this->view->scores = $scores;
+    }
+
+    function kickingAction()
+    {
+        $room_id = $this->params('id', 0);
+
+        if (!$room_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        $room = \Rooms::findFirstById($room_id);
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '房间不存在');
+        }
+
+        $other_user_id = $this->params('user_id');
+        $room_seat_user_lock_key = "room_seat_user_lock{$other_user_id}";
+        $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+        $other_user = \Users::findFirstById($other_user_id);
+        $room->kickingRoom($other_user, 30);
+        $room->pushExitRoomMessage($other_user, $other_user->current_room_seat_id);
+        unlock($room_seat_user_lock);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '踢出成功');
     }
 }

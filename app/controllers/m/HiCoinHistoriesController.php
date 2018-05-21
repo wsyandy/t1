@@ -50,7 +50,6 @@ class HiCoinHistoriesController extends BaseController
                 return $this->renderJSON(ERROR_CODE_FAIL, '至少20' . $coin_type_text . '才能兑换钻石');
             }
 
-            info('product_id', $product_id, 'hi_coins', $hi_coins);
             $product = \Products::findFirstById($product_id);
 
             $gold = 0;
@@ -76,11 +75,8 @@ class HiCoinHistoriesController extends BaseController
             }
 
             $opts = ['product_id' => $product_id, 'hi_coins' => $hi_coins, 'gold' => $gold, 'diamond' => $diamond];
-            info('user_id', $user->id, $opts);
-
             $hi_coin_history = \HiCoinHistories::hiCoinExchangeDiamondHiCoinHistory($user, $opts);
 
-            info('hi_coin_history', $hi_coin_history->id);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '兑换成功！', ['hi_coins' => $user->getHiCoinText()]);
         }
 

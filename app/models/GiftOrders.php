@@ -41,16 +41,16 @@ class GiftOrders extends BaseModel
 
     function afterCreate()
     {
-
-    }
-
-    function afterUpdate()
-    {
         if ($this->hasChanged('status') && $this->status == GIFT_ORDER_STATUS_SUCCESS && $this->pay_type == GIFT_PAY_TYPE_DIAMOND) {
 
             //当礼物订单状态为支付成功，并且礼物订单类型为钻石支付的时候，才进行推送
             \DataCollection::syncData('gift_order', 'give_to_success', ['gift_order' => $this->toPushDataJson()]);
         }
+    }
+
+    function afterUpdate()
+    {
+
     }
 
     function toDetailJson()
@@ -155,14 +155,11 @@ class GiftOrders extends BaseModel
                 $sender->addCompanyUserSendNumber($total_amount);
             }
 
-            $target = \AccountHistories::changeBalance($sender->id, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
-            if ($target) {
-                \PkHistories::updatePkHistories($sender,$total_amount,$receiver_ids);
-            }
+            $target = \AccountHistories::changeBalance($sender, ACCOUNT_TYPE_BUY_GIFT, $total_amount, $opts);
         } else {
             $remark = '送礼物消费' . $total_amount . '金币,礼物总个数' . $total_gift_num . ",礼物id" . $gift->id . ",接收礼物人数" . $receiver_num;
             $opts['remark'] = $remark;
-            $target = \GoldHistories::changeBalance($sender->id, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
+            $target = \GoldHistories::changeBalance($sender, GOLD_TYPE_BUY_GIFT, $total_amount, $opts);
         }
 
         if ($target) {
@@ -186,8 +183,20 @@ class GiftOrders extends BaseModel
             $receiver_ids = explode(",", $receiver_ids);
         }
 
-        $sender = Users::findFirstById($sender_id);
-        $gift = Gifts::findFirstById($gift_id);
+        if (is_numeric($sender_id)) {
+            $sender = Users::findFirstById($sender_id);
+        } else {
+            $sender = $sender_id;
+            $sender_id = $sender->id;
+        }
+
+        if (is_numeric($gift_id)) {
+            $gift = Gifts::findFirstById($gift_id);
+        } else {
+            $gift = $gift_id;
+            $gift_id = $gift->id;
+        }
+
         $gift_num = fetch($opts, 'gift_num', 1);
         $sender_current_room_id = fetch($opts, 'sender_current_room_id');
         $receiver_current_room_id = fetch($opts, 'receiver_current_room_id');
@@ -236,8 +245,6 @@ class GiftOrders extends BaseModel
             $gift_order->sender_union_id = $sender->union_id;
             $gift_order->receiver_union_type = $receiver->union_type;
             $gift_order->sender_union_type = $sender->union_type;
-            $gift_order->sender_country_id = $sender->country_id;
-            $gift_order->receiver_country_id = $receiver->country_id;
             $gift_order->target_id = $target_id;
             $gift_order->product_channel_id = $receiver->product_channel_id;
 
@@ -250,6 +257,19 @@ class GiftOrders extends BaseModel
             } else {
                 $gift_order->type = $type;
             }
+
+            debug('判断前赠送者当前房间ID', $sender_current_room_id);
+            if ($sender_current_room_id) {
+                debug('赠送者当前房间ID', $sender_current_room_id);
+                $result = \PkHistories::checkPkHistoryForUser($sender_current_room_id);
+                if ($result) {
+                    info('当前房间有pk正在进行', $gift_order->amount);
+                    \PkHistories:: updatePkHistories($sender, $gift_order->amount, $receiver_id, $gift_order->pay_type);
+                }
+            }
+
+            info("sender_id:", $sender->id, "receiver_id:", $receiver->id, "sender_room_id:", $sender_current_room_id,
+                "receiver_room_id:", $receiver_current_room_id, "gift_id:", $gift_id);
 
             // 在房间里送里面
             if ($sender_current_room_id && $receiver_current_room_id && $sender_current_room_id == $receiver_current_room_id) {
@@ -274,15 +294,13 @@ class GiftOrders extends BaseModel
         $time = fetch($opts, 'time', time());
 
         if ($gift->isCar()) {
-            \UserGifts::delay()->updateGiftExpireAt($this->id);
+            \UserGifts::updateGiftExpireAt($this->id);
         } else {
-            \UserGifts::delay()->updateGiftNum($this->id);
+            \UserGifts::updateGiftNum($this->id);
 
             if ($gift->isDiamondPayType()) {
                 //座驾不增加hi币
-                \HiCoinHistories::delay()->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
-                //防止异步丢任务
-                \HiCoinHistories::delay(15)->createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time, 'async_verify_data' => 1]);
+                \HiCoinHistories::createHistory($this->user_id, ['gift_order_id' => $this->id, 'time' => $time]);
             }
         }
 
@@ -319,8 +337,16 @@ class GiftOrders extends BaseModel
             }
         }
 
-        \Users::delay()->updateExperience($this->id, $params);
-        \Users::delay()->updateCharm($this->id, $params);
+        //\Users::delay()->updateUserCharmAndWealthRank($this->user_id, $this->sender_id, $this->amount);
+        \Users::updateExperience($this, $params);
+        \Users::updateCharm($this, $params);
+        $opts = [
+            'sender_id' => $this->sender_id,
+            'receive_id' => $this->user_id,
+            'time' => $time,
+            'amount' => $this->amount
+        ];
+        \Couples::updateCpInfo($opts);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

@@ -37,13 +37,13 @@ class SharesController extends BaseController
             $image_url = $image_small_url;
         }
 
-        if ($share_history->share_source == 'voice' || $share_history->share_source == 'distribute') {
+        if ($share_history->share_source == 'generate_image') {
             $image_url = \Users::getImageForShare($image_data);
         }
         $product_channel_name = $this->currentProductChannel()->name;
 
-        $description = $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
-
+        //$description = $product_channel_name . "—很好玩的语音直播软件，连麦聊天，组队开黑哦";
+        $description = $share_history->getShareDescription($product_channel_name);
         $url = $share_history->getShareUrl($this->getRoot(), $code);
         $title = $share_history->getShareTitle($user->nickname, $product_channel_name);
 

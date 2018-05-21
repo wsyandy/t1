@@ -40,9 +40,8 @@ class AccountHistoriesController extends BaseController
             }
 
             $user = \Users::findFirstById($user_id);
-
             if ($content) {
-                \Chats::sendTextSystemMessage($user_id, $content);
+                \Chats::sendTextSystemMessage($user, $content);
             }
 
             $amount = intval($this->params('diamond'));
@@ -58,7 +57,7 @@ class AccountHistoriesController extends BaseController
             }
 
             if ($amount > 0) {
-                \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, $amount, $opts);
             }
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['error_url' => '/admin/account_histories?user_id=' . $user_id]);

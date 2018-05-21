@@ -1,0 +1,94 @@
+/*弹框样式*/
+.cover{
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    -o-transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    transition: opacity 0.3s 0s, visibility 0s 0.3s;
+    z-index:9999;
+    display: -webkit-box;
+    display: -ms-flexbox;
+
+;
+}
+.cover.is-visible {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: opacity 0.3s 0s, visibility 0s 0s;
+    -o-transition: opacity 0.3s 0s, visibility 0s 0s;
+    transition: opacity 0.3s 0s, visibility 0s 0s;
+}
+
+
+.popup_sex{
+    position: absolute;
+    bottom:0;
+    width:100%;
+    height: 3.946667rem;
+    transform: translateY(100%);
+    transition-property: transform;
+    transition-duration: 0.3s;
+    background-color: #F3F3F3;;
+}
+.sec_tabs{
+    position: relative;
+    width: 100%;
+    height: 2.386667rem;
+    background-color: #fff;
+    font-size: 0.373333rem;
+    color: #626262;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.sec_tabs li{
+    width: 33%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    user-select: none;
+}
+.ico_sex {
+    width: 0.853333rem;
+    height: 0.853333rem;
+    background-image: url("../images/sex.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    margin-bottom: 0.133333rem;
+}
+.male {
+    background-image: url("../images/male_2.png");
+}
+.female {
+    background-image: url("../images/female.png");
+}
+.select .ico_sex{
+    background-image: url("../images/sexed.png");
+}
+.select .male{
+    background-image: url("../images/maleed.png");
+}
+.select .female{
+    background-image: url("../images/femaleed.png");
+}
+
+.cancel{
+    margin-top: 0.266667rem;
+    display: block;
+    width: 100%;
+    line-height: 1.333333rem;
+    text-align: center;
+    font-size: 0.426667rem;
+    color: #303030;
+    background-color: #fff;
+}
+.is-visible .popup_sex{
+    transform: translateY(0);
+}

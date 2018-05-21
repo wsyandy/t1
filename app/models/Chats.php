@@ -39,6 +39,21 @@ class Chats extends BaseModel
     /**
      * @type string
      */
+    private $_image_url;
+
+    /**
+     * @type string
+     */
+    private $_url;
+
+    /**
+     * @type string
+     */
+    private $_title;
+
+    /**
+     * @type string
+     */
     private $_content;
 
     /**
@@ -60,7 +75,7 @@ class Chats extends BaseModel
         'receiver_id' => array('null' => '不能为空'),
         'content' => array('null' => '不能为空'),
         'id' => array('null' => '不能为空'),
-        'content_type' => array('null' => '不能为空', 'in' => [CHAT_CONTENT_TYPE_TEXT]),
+        'content_type' => array('null' => '不能为空', 'in' => [CHAT_CONTENT_TYPE_TEXT, CHAT_CONTENT_TYPE_TEXT_NEWS]),
     );
 
     function beforeCreate()
@@ -110,58 +125,80 @@ class Chats extends BaseModel
     {
         $content = \Chats::welcomeMessage();
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        return \Chats::sendSystemMessage($user_id, $content_type, $content);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
+        return \Chats::sendSystemMessage($user, $content_type, $content);
     }
 
     static function sendTextSystemMessage($user_id, $content = '')
     {
         if (!$content) {
-            info("content_error", $user_id, $content);
+            info("Exce content_error", $user_id);
             return false;
         }
 
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+        }
+
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-        return \Chats::sendSystemMessage($user_id, $content_type, $content);
+        return \Chats::sendSystemMessage($user, $content_type, $content);
     }
 
     static function batchSendTextSystemMessage($user_ids, $content = '')
     {
+
         if (!$content) {
-            info("content_error", $content);
+            info("Exce content_error", $user_ids);
             return false;
         }
 
+        $users = Users::findByIds($user_ids);
         $content_type = CHAT_CONTENT_TYPE_TEXT;
-
-        foreach ($user_ids as $user_id) {
-            \Chats::sendSystemMessage($user_id, $content_type, $content);
+        foreach ($users as $user) {
+            debug($user->id, $content);
+            \Chats::sendSystemMessage($user, $content_type, $content);
         }
     }
 
-    static function sendSystemMessage($user_id, $content_type, $content)
+    static function sendSystemMessage($receiver_id, $content_type, $content)
     {
+        if (is_numeric($receiver_id)) {
+            $user = Users::findFirstById($receiver_id);
+        } else {
+            $user = $receiver_id;
+            $receiver_id = $user->id;
+        }
+
+        if (!$user) {
+            info("Exce no user", $receiver_id);
+            return null;
+        }
+
         $attrs = array(
             'sender_id' => SYSTEM_ID,
-            'receiver_id' => $user_id,
+            'receiver_id' => $receiver_id,
             'content' => $content,
             'content_type' => $content_type
         );
 
-        $user = Users::findFirstById($user_id);
+        $user->addUnreadMessagesNum();
 
-        if ($user) {
-            $user->addUnreadMessagesNum();
-        }
+        debug($receiver_id, $attrs);
 
-        debug($user_id, $attrs);
-        
         return \Chats::createChat($attrs);
     }
 
     static function createChat($attrs)
     {
         $chat = new \Chats();
-        foreach (['sender_id', 'receiver_id', 'content', 'content_type'] as $column) {
+        foreach (['sender_id', 'receiver_id', 'content', 'title', 'image_url', 'content_type', 'url'] as $column) {
             $chat->$column = fetch($attrs, $column);
         }
         if ($chat->create()) {
@@ -199,7 +236,10 @@ class Chats extends BaseModel
             'created_at' => $this->created_at,
             'content_type' => $this->content_type,
             'content' => $this->content,
-            'created_at_text' => $this->created_at_text
+            'created_at_text' => $this->created_at_text,
+            'title' => $this->title,
+            'image_url' => $this->image_url,
+            'url' => $this->url
         );
     }
 
@@ -217,7 +257,7 @@ class Chats extends BaseModel
         $offset = ($page - 1) * $per_page;
         $chat_ids = $cache_db->zrevrange($key, $offset, $offset + $per_page - 1);
         $chats = \Chats::findByIds($chat_ids);
-        //$results = \Chats::sortByCreatedAt($chats);
+
         return new \PaginationModel($chats, $total, $page, $per_page);
     }
 

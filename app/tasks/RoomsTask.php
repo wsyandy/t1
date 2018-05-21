@@ -11,13 +11,19 @@ class RoomsTask extends \Phalcon\Cli\Task
     //检查用户是否在房间
     function checkUserRoomAction()
     {
-        $cond = ['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]];
+
+        $cond = ['conditions' => 'status = :status: and last_at<:last_at:',
+            'bind' => ['status' => STATUS_ON, 'last_at' => time()]];
+
         $rooms = Rooms::findForeach($cond);
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
 
-            //$key = $room->getRealUserListKey();
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             $key = $room->getUserListKey();
             $user_ids = $hot_cache->zrange($key, 0, -1);
             if (count($user_ids) < 1) {
@@ -80,6 +86,95 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
+    function checkAbnormalExitRoomAction()
+    {
+        $target_ids = Rooms::getAbnormalExitRoomList();
+
+        $total = count($target_ids);
+
+        if ($total < 1) {
+            info("no users", $target_ids);
+            return;
+        }
+
+
+        info($total);
+
+        foreach ($target_ids as $target_id) {
+
+            list($room_id, $user_id) = explode("_", $target_id);
+
+            if (!$room_id || !$user_id) {
+                continue;
+            }
+
+            $user = Users::findFirstById($user_id);
+            $room = Rooms::findFirstById($room_id);
+
+            $current_room_id = $user->current_room_id;
+            $current_room_seat_id = $user->current_room_seat_id;
+            $need_push = false;
+
+            if ($current_room_id != $room->id || !$user->isNormal()) {
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user, true);
+                $need_push = true;
+                info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+            } else {
+
+                $time = time() - 15 * 30;
+
+                if (isDevelopmentEnv()) {
+                    $time = time() - 60;
+                }
+
+                if ($user->last_at <= $time) {
+
+                    $user_fd = $user->getUserFd();
+
+                    if ($user_fd) {
+                        info($user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
+                        continue;
+                    }
+
+                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+
+                    $need_push = true;
+                    Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                    $room->exitRoom($user, true);
+                }
+            }
+
+            if ($current_room_id == $room->id && $need_push) {
+                $room->pushExitRoomMessage($user, $current_room_seat_id);
+            }
+
+            //检测麦位状态
+            $room_seats = RoomSeats::findByUserId($user->id);
+
+            foreach ($room_seats as $room_seat) {
+                // 房间和麦位匹配
+                if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+                    continue;
+                }
+
+                $room_seat->user_id = 0;
+                $room_seat->save();
+                info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+            }
+
+
+            if ($user->current_room_seat_id) {
+                $current_room_seat = $user->current_room_seat;
+                if ($current_room_seat->user_id != $user->id) {
+                    info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                    $user->current_room_seat_id = 0;
+                    $user->save();
+                }
+            }
+        }
+    }
+
     //释放所有离线沉默房间
     function clearAllOfflineSilentRoomsAction()
     {
@@ -91,6 +186,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
 
         foreach ($online_silent_rooms as $online_silent_room) {
+
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
 
             $users = $online_silent_room->findSilentUsers();
 
@@ -110,6 +209,8 @@ class RoomsTask extends \Phalcon\Cli\Task
                 'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON]
             ]);
 
+        echoLine('room_num', $room_num);
+
         if ($room_num >= 15) {
             info("room_num", $room_num);
             return;
@@ -118,7 +219,6 @@ class RoomsTask extends \Phalcon\Cli\Task
         $online_silent_room_num = Rooms::getOnlineSilentRoomNum();
 
         $num = 5;
-
         if (isDevelopmentEnv()) {
             $num = 30;
         }
@@ -131,6 +231,11 @@ class RoomsTask extends \Phalcon\Cli\Task
         $rooms = Rooms::getOfflineSilentRooms();
 
         foreach ($rooms as $room) {
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
             $user = $room->user;
 
             if (!$user) {
@@ -163,6 +268,10 @@ class RoomsTask extends \Phalcon\Cli\Task
         $hot_cache = Rooms::getHotWriteCache();
 
         foreach ($online_silent_rooms as $online_silent_room) {
+
+            if ($online_silent_room->isIosAuthRoom()) {
+                continue;
+            }
 
             if ($online_silent_room->getUserNum() < 1) {
                 info($online_silent_room->id);
@@ -201,13 +310,18 @@ class RoomsTask extends \Phalcon\Cli\Task
     {
         $cond = ['conditions' => '(online_status = :online_status: and user_type = :user_type:) or
          (status = :status: and user_type = :user_type1:)',
-            'bind' => ['status' => STATUS_ON, 'online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'user_type1' => USER_TYPE_ACTIVE],
+            'bind' => ['online_status' => STATUS_ON, 'user_type' => USER_TYPE_SILENT, 'status' => STATUS_ON, 'user_type1' => USER_TYPE_ACTIVE],
             'order' => 'last_at desc', 'limit' => 60];
 
         $rooms = Rooms::find($cond);
 
         foreach ($rooms as $room) {
-            Rooms::delay()->activeRoom($room->id);
+
+            if ($room->isIosAuthRoom()) {
+                continue;
+            }
+
+            Rooms::autoActiveRoom($room->id);
         }
     }
 
@@ -244,7 +358,7 @@ class RoomsTask extends \Phalcon\Cli\Task
     //刷新管理员
     function freshManagersAction()
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $total_room_key = Rooms::generateTotalManagerKey();
         $keys = $db->zrange($total_room_key, 0, -1);
 
@@ -822,92 +936,122 @@ class RoomsTask extends \Phalcon\Cli\Task
     //新热门逻辑
     function generateHotRoomsAction()
     {
-        $hot_cache = Users::getHotWriteCache();
-        $rooms = Rooms::getActiveRoomsByTime();
-        $hot_room_list_key = Rooms::getHotRoomListKey(); //正常房间
-        $new_user_hot_rooms_list_key = Rooms::getNewUserHotRoomListKey(); //新用户房间
-        $old_user_pay_hot_rooms_list_key = Rooms::getOldUserPayHotRoomListKey(); //充值老用户队列
-        $old_user_no_pay_hot_rooms_list_key = Rooms::getOldUserNoPayHotRoomListKey(); //未充值老用户队列
-
-        $room_ids = [];
-        $shield_room_ids = [];
-
-        foreach ($rooms as $room) {
-
-            if (!$room->canToHot(2)) {
-                continue;
-            }
-
-            $total_score = $room->getTotalScore();
-
-            if ($room->isShieldRoom()) {
-                $shield_room_ids[$room->id] = $total_score;
-            } else {
-                $room_ids[$room->id] = $total_score;
-            }
+        $room_ids = Rooms::getActiveRoomIdsByTime();
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
         }
 
-        uksort($shield_room_ids, function ($a, $b) use ($shield_room_ids) {
-
-            if ($shield_room_ids[$a] > $shield_room_ids[$b]) {
-                return -1;
-            }
-
-            return 1;
-        });
-
-        echoLine($room_ids, $shield_room_ids);
-
-        $lock = tryLock($hot_room_list_key, 1000);
-
-        $hot_cache->zclear($hot_room_list_key);
-        $hot_cache->zclear($new_user_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_pay_hot_rooms_list_key);
-        $hot_cache->zclear($old_user_no_pay_hot_rooms_list_key);
-
-        foreach ($room_ids as $room_id => $score) {
-            $hot_cache->zadd($hot_room_list_key, $score, $room_id);
-            $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $room_id);
-            $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $room_id);
-        }
-
-        $shield_room_ids = array_slice($shield_room_ids, 0, 5, true);
-
-        if (count($shield_room_ids) > 0) {
-
-            $i = 1;
-
-            foreach ($shield_room_ids as $shield_room_id => $score) {
-
-                if ($i <= 3) {
-                    $hot_cache->zadd($new_user_hot_rooms_list_key, $score, $shield_room_id);
-                    $hot_cache->zadd($old_user_no_pay_hot_rooms_list_key, $score, $shield_room_id);
-                }
-
-                $hot_cache->zadd($old_user_pay_hot_rooms_list_key, $score, $shield_room_id);
-
-                $i++;
-            }
-        }
-
-        unlock($lock);
+        Rooms::updateHotRoomList($room_ids);
     }
 
     function generateNewHotRoomRankAction()
     {
+        $total_new_hot_room_list_key = Rooms::getTotalRoomListKey(); //新的用户总的队列
         $hot_cache = Users::getHotWriteCache();
-        $hot_room_list_key = Rooms::getHotRoomListKey();
-        $room_ids = $hot_cache->zrange($hot_room_list_key, 0, -1);
+        $room_ids = $hot_cache->zrange($total_new_hot_room_list_key, 0, -1);
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
+        }
 
-        $rooms = Rooms::findByIds($room_ids);
+        Rooms::updateHotRoomList($room_ids);
+    }
+
+
+    function boomTargetAction()
+    {
+        $line = BoomHistories::getBoomStartLine();
+        $total = BoomHistories::getBoomTotalValue();
+
+        $rooms = Rooms::dayStatRooms();
+        $cache = Rooms::getHotWriteCache();
 
         foreach ($rooms as $room) {
+            $cur_income_cache_name = Rooms::generateBoomCurIncomeKey($room->id);
+            $cur_income = $cache->get($cur_income_cache_name);
 
-            if (!$room->canToHot(2)) {
-                $hot_cache->zrem($hot_room_list_key, $room->id);
+            if ($cur_income >= $line) {
+                $room->pushBoomIncomeMessage($total, $cur_income);
             }
-
         }
+    }
+
+
+    function disappearBoomGiftRocketAction()
+    {
+        $total_income = BoomHistories::getBoomTotalValue();
+        $boom_list_key = 'boom_gifts_list';
+
+        $cache = Rooms::getHotWriteCache();
+        $total_room_ids = $cache->zrange($boom_list_key, 0, -1);
+        $total = count($total_room_ids);
+        $per_page = 100;
+        $offset = 0;
+        $total_page = ceil($total / $per_page);
+
+        for ($page = 1; $page <= $total_page; $page++) {
+
+            $room_ids = array_slice($total_room_ids, $offset, $per_page);
+            $offset += $per_page;
+
+            $rooms = Rooms::findByIds($room_ids);
+
+            foreach ($rooms as $room) {
+
+                $cur_income_key = Rooms::generateBoomCurIncomeKey($room->id);
+                $cur_income = $cache->get($cur_income_key);
+                if (!$cur_income) {
+                    $cache->zrem($boom_list_key, $room->id);
+                    $room->pushBoomIncomeMessage($total_income, $cur_income, STATUS_OFF);
+                }
+            }
+        }
+    }
+
+    function kickingAction()
+    {
+        $room = Rooms::findFirstById(1010149);
+
+        $users = $room->findTotalRealUsers();
+
+        foreach ($users as $user) {
+
+            if (!$user->current_room_seat_id && !$user->isRoomHost($room)) {
+
+                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
+
+                $room->kickingRoom($user, 30);
+                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+
+                unlock($room_seat_user_lock_key);
+            }
+        }
+
+    }
+
+    function kicking1Action()
+    {
+        $users = Users::findByIp('61.158.148.7');
+        echoLine(count($users));
+        $room = Rooms::findFirstById(1010149);
+
+        $users = $room->findTotalRealUsers();
+
+        foreach ($users as $user) {
+
+            if ($user->current_room_seat_id && !$user->isRoomHost($room)) {
+
+                $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
+
+                $room->kickingRoom($user, 30);
+                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+
+                unlock($room_seat_user_lock_key);
+            }
+        }
+
     }
 }

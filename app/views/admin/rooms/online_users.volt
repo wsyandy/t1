@@ -8,7 +8,8 @@
     经纬度定位: {{ user.geo_province_name }}, {{ user.geo_city_name }}<br/>
     IP定位: {{ user.ip_province_name }}, {{ user.ip_city_name }}<br/>
     自述城市信息: {{ user.province_name }}, {{ user.city_name }}<br/>
-    角色: {{ user.user_role_text }}
+    角色: {{ user.user_role_text }}<br>
+    FD: {{ user.user_fd }}<br>
 {% endmacro %}
 
 {% macro user_status_info(user) %}

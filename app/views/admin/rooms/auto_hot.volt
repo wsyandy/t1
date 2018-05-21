@@ -30,7 +30,7 @@
     <input name="user_id" type="text" id="user_id_eq"/>
 
     <label for="user_uid">房主UID</label>
-    <input name="user_uid" type="text" id="user_uid" />
+    <input name="user_uid" type="text" id="user_uid"/>
 
     <button type="submit" class="ui button">搜索</button>
 </form>
@@ -52,7 +52,8 @@
 {% macro room_info(room) %}
     房间名称: {{ room.name }}<br/>
     房间话题: {{ room.topic }}<br/>
-    在线人数: {{ room.user_num }} 主题类型: {{ room.theme_type_text }}<br/>
+    在线人数: {{ room.user_num }} 真实人数: {{ room.real_user_num }} <br/>
+    主题类型: {{ room.theme_type_text }}<br/>
     {% if room.audio_id > 0 %}
         音频ID:<a href="/admin/audios?audio[id_eq]={{ room.audio_id }}">{{ room.audio_id }}</a><br/>
     {% endif %}
@@ -66,6 +67,7 @@
     是否加锁: {{ room.lock_text }}<br/>
     是否热门: {{ room.hot_text }}|是否置顶: {{ room.top_text }}<br/>
     协议: {{ intval(room.user_agreement_num) }}<br/>
+    热门总分值: {{ room.total_score_by_cache }}<br/>
     {% if room.union_id %}
         公会: {{ room.union.name }}<br/>
         公会类型: {{ room.union.type_text }}<br/>
@@ -129,6 +131,7 @@
             是否加锁: ${ room.lock_text }<br/>
             是否热门: ${ room.hot_text }|是否置顶: ${ room.top_text }<br/>
             协议: ${room.user_agreement_num}<br/>
+            热门总分值: ${ room.total_score_by_cache }<br/>
             {@if room.union_id }
             公会: ${ room.union_name }<br/>
             公会类型: ${ room.union_type_text }<br/>

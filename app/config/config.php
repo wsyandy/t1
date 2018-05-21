@@ -7,16 +7,19 @@ return new \Phalcon\Config([
         'access_key' => env('alioss_access_key', 'LTAIEcaQFRJz6qai'),
         'secret_key' => env('alioss_secret_key', 'iFWLfYotm6TWpjkGBY4DICRYjTbVsm'),
         'bucket' => env('alioss_bucket', 'mt-development'),
-        'domain' => env('alioss_domain', 'mt-development.img-cn-hangzhou.aliyuncs.com')
+        'domain' => env('alioss_domain', 'http://mt-development.oss-cn-hangzhou.aliyuncs.com')
     ],
 
     'hot_cache_endpoints' => env('hot_cache_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
     'cache_endpoint' => env('cache_endpoint', 'redis://127.0.0.1:6379/' . APP_NAME),
     'job_queue' => ['endpoint' => env('job_queue_endpoint', 'redis://127.0.0.1:6379/job_queue_' . APP_NAME),
-        'tubes' => ['default' => isProduction() ? 16 : 3]],
+        'tubes' => ['default' => isProduction() ? 10 : 2]],
     'user_db_endpoints' => env('user_db_endpoints', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'stat_db' => env('stat_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
+    'room_db' => env('room_db', 'ssdb://127.0.0.1:8888/' . APP_NAME),
     'redlock_endpoints' => env('redlock_endpoints', 'redis://127.0.0.1:6379/' . APP_NAME),
+
+    'search_endpoints' => env('search_endpoints', 'http://127.0.0.1:9200/'),
 
     'emchat' => [
         'client_id' => env('emchat_client_id', 'YXA60kgNMPEEEeenxnECtCKVLw'),
@@ -30,12 +33,6 @@ return new \Phalcon\Config([
     'request_protocol' => env('request_protocol', isProduction() ? 'https' : 'http'),
 
     'websocket_client_endpoint' => env('websocket_client_endpoint', "ws://wstest.momoyuedu.cn"),
-
-    'websocket_listen_client_ip' => env('websocket_listen_client_ip', "0.0.0.0"), //废弃
-    'websocket_listen_client_port' => env('websocket_listen_client_port', 9509), //废弃
-    'websocket_listen_server_ip' => env('websocket_listen_server_ip', "0.0.0.0"), //废弃
-    'websocket_listen_server_port' => env('websocket_listen_server_port', 9508), //废弃
-
     'websocket_side_server_ip' => env('websocket_side_server_ip', "0.0.0.0"),
     'websocket_side_server_port' => env('websocket_side_server_port', 9509),
     'websocket_local_server_ip' => env('websocket_local_server_ip', "0.0.0.0"),

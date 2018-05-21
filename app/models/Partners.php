@@ -6,7 +6,7 @@ class Partners extends BaseModel
     static $STATUS = [PARTNER_STATUS_NORMAL => '正常', PARTNER_STATUS_BLOCK => '无效'];
 
     static $NOTIFY_CALLBACK = ['' => '不支持', 'notify_gdt' => '广点通回调', 'notify_active' => '头条回调',
-        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调', 'notify_jp' => '巨朋回调', 'notify_xztx' => '行者天下回调','notify_cg'=>'辰告回调'];
+        'notify_momo' => '陌陌回调', 'notify_uc' => 'UC回调', 'notify_baidu' => '百度回调', 'notify_sina' => '新浪回调', 'notify_jp' => '巨朋回调', 'notify_xztx' => '行者天下回调', 'notify_cg' => '辰告回调'];
 
     static $GROUP_TYPE = [PARTNER_GROUP_TYPE_NO => '默认'];
 
@@ -68,9 +68,6 @@ class Partners extends BaseModel
         $fr = null;
         $hot_cache = self::getHotWriteCache();
         $muid = self::generateMuid($attributes);
-
-        // 次日留存
-        Devices::setMarketingStartAppMuid($muid);
 
         info($attributes['code'], $attributes['platform'], $attributes['fr'], $muid);
 
@@ -303,12 +300,68 @@ class Partners extends BaseModel
         }
     }
 
+    //次日留存
+    static function appStart($data)
+    {
+        $advertiser_id = fetch($data, 'advertiser_id');
+        if (!$advertiser_id) {
+            info('false no advertiser_id', $data);
+            return '';
+        }
+
+        $marketing_config = \MarketingConfigs::findFirstByGdtAccountId($advertiser_id);
+        if (!$marketing_config) {
+            info('false no marketing_config', $data);
+            return '';
+        }
+
+        $access_token = $marketing_config->getToken();
+        $timestamp = time();
+        $nonce = randStr(20);
+        $url = "https://api.e.qq.com/v1.0/user_actions/add?access_token={$access_token}&timestamp={$timestamp}&nonce={$nonce}";
+
+        if ($data['app_type'] == 'ios') {
+            $user_action_set_id = $marketing_config->ios_user_action_set_id;
+            $user_data = ['hash_idfa' => $data['muid']];
+        } else {
+            $user_action_set_id = $marketing_config->android_user_action_set_id;
+            $user_data = ['hash_imei' => $data['muid']];
+        }
+
+        $body = [
+            'account_id' => $marketing_config->gdt_account_id,
+            'user_action_set_id' => $user_action_set_id,
+            'actions' => [
+                [
+                    'action_time' => $data['act_time'],
+                    'user_id' => $user_data,
+                    'action_type' => 'START_APP',
+                    'action_param' => ['length_of_stay' => 1],
+                    'trace' => ['click_id' => $data['click_id']]
+                ]
+            ]
+        ];
+
+        $resp = httpPost($url, $body);
+        $result = json_decode($resp->raw_body, true);
+
+        info('url', $url, 'body', $body, 'result', $result);
+    }
+
     // 通知广点通
     static function notifyGdt($data)
     {
 
         $notify_url = self::generateNotifyUrl($data);
         if ($notify_url) {
+
+            // 次日留存
+            $hot_cache = self::getHotWriteCache();
+            $marketing_start_app_key = 'marketing_api_start_app_' . $data['code'] . '_muid_' . $data['muid'];
+            info('marketing_start_app_key', $marketing_start_app_key, 'data', json_encode($data, JSON_UNESCAPED_UNICODE));
+            $hot_cache->setex($marketing_start_app_key, 60 * 60 * 72, json_encode($data, JSON_UNESCAPED_UNICODE));
+
+
             $resp = httpGet($notify_url);
             info("IOS|NOTIFY|{$notify_url}|{$resp->raw_body}", $data);
             $result = json_decode($resp->raw_body, true);

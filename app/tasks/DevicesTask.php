@@ -55,7 +55,7 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
     function mobileTypeActiveAction()
     {
-        $date = ['2018-04-20', '2018-04-21', '2018-04-22'];
+        $date = ['2018-05-01', '2018-05-02', '2018-05-10'];
 
         foreach ($date as $stat_at) {
 
@@ -83,36 +83,59 @@ class DevicesTask extends \Phaclcon\Cli\Task
 
             arsort($res);
 
-            $file = APP_ROOT . "public/" . $stat_at . "mobile_type_device_active.txt";
-            $f = fopen($file, 'w');
+            $users = Users::find(
+                [
+                    'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
+                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                ]);
 
-            fwrite($f, $stat_at . '激活总数量: ' . $total_num . "\r\n");
-            echoLine($total_num);
-            foreach ($res as $type => $num) {
-                $text = "手机型号:" . $type . "激活数量:" . $num;
-                //echoLine($text);
-                fwrite($f, $text . "\r\n");
+            $res1 = [];
+
+            foreach ($users as $user) {
+
+                $device = $user->device;
+                $model = $device->model;
+
+                if (isset($res[$model])) {
+                    $res1[$model] += 1;
+                } else {
+                    $res1[$model] = 1;
+                }
             }
 
-            fclose($f);
 
-            $res = StoreFile::upload($file, APP_NAME . "/devices/stat/" . uniqid() . ".txt");
-            echoLine(StoreFile::getUrl($res));
+            arsort($res1);
 
-            unlink($file);
+            $title = ['日期', '型号', '激活数量', '注册数量', '注册率'];
+            $data = [];
+
+            foreach ($res as $type => $num) {
+
+                $register_num = fetch($res1, $type);
+
+                $rate = sprintf("%0.2f", $register_num / $num);
+
+                $data[] = [$stat_at, $type, $num, $register_num, $rate];
+            }
+
+
+            $temp_name = $stat_at . 'oppole.xls';
+            $uri = writeExcel($title, $data, $temp_name, true);
+
+            echoLine($uri);
         }
     }
 
     function mobileTypeUserRegisterAction()
     {
-        $date = ['2018-04-20', '2018-04-21', '2018-04-22'];
+        $date = ['2018-05-13', '2018-05-14', '2018-05-15'];
 
         foreach ($date as $stat_at) {
 
             $users = Users::find(
                 [
                     'conditions' => 'partner_id = :partner_id: and register_at >= :start: and register_at <= :end:',
-                    'bind' => ['partner_id' => 27, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
+                    'bind' => ['partner_id' => 28, 'start' => beginOfDay(strtotime($stat_at)), 'end' => endOfDay(strtotime($stat_at))]
                 ]);
 
             $total_num = count($users);

@@ -10,7 +10,7 @@ class Gifts extends BaseModel
 {
 
     //礼物支付类型
-    static $PAY_TYPE = [GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_GOLD => '金币', GIFT_PAY_TYPE_I_GOLD => '国际版金币'];
+    static $PAY_TYPE = [GIFT_PAY_TYPE_DIAMOND => '钻石', GIFT_PAY_TYPE_GOLD => '金币'];
 
     //礼物类型 暂定
     static $TYPE = [GIFT_TYPE_COMMON => '普通礼物', GIFT_TYPE_CAR => '座驾'];
@@ -57,11 +57,6 @@ class Gifts extends BaseModel
     function isGoldPayType()
     {
         return GIFT_PAY_TYPE_GOLD == $this->pay_type;
-    }
-
-    function isIGoldPayType()
-    {
-        return GIFT_PAY_TYPE_I_GOLD == $this->pay_type;
     }
 
     function isCar()
@@ -114,7 +109,6 @@ class Gifts extends BaseModel
             try {
 
                 $dest_filename = httpSave($gift->getSvgaImageUrl(), $dir_name . "/" . $gift->getSvgaImageName());
-
                 if (!$dest_filename) {
                     continue;
                 }
@@ -436,37 +430,57 @@ class Gifts extends BaseModel
 
 
     /**
-     * @desc 随机礼物
-     * @return mixed
+     * 随机n个礼物
+     * @param int $max
+     * @return array
      */
-    static public function randomGift()
+    static public function getNGift($max = 3)
     {
-        $list = Gifts::findByConditions([]);
-        $list = $list->toJson('gifts');
+        // 获取伪索引
+        $total = Gifts::count() - 1;
+        if ($max >= $total) $max = 3;
 
-        // 随机三个索引
-        $number = array();
-        $n = mt_rand(1, 3);
-        for ($i=0; $i<$n; $i++) {
-            $number[] = mt_rand(0, count($list['gifts'])-1);
-        }
+        // 随机 $max 个索引
+        $keys = array_rand(range(0, $total), mt_rand(1, $max));
+        $keys = !is_array($keys) ? [$keys] : $keys;
 
-        // 匹配礼物
-        $gifts = array();
-        foreach ($number as $item=>$value) {
-            $gifts[] = $list['gifts'][$value];
-        }
+        // 查询礼物
+        $gifts = Gifts::findByIds($keys);
+        $gifts = $gifts->toJson('gifts')['gifts'];
 
-        // 随机数量
-        $data = array();
+        // 返回的礼物列表
+        $list = array();
         foreach ($gifts as $value) {
-            $data[] = array(
+            $list[] = array(
                 'id' => $value['id'],
                 'name' => $value['name'],
                 'image_url' => StoreFile::getUrl($value['image']),
                 'number' => mt_rand(1, 5)
             );
         }
-        return $data;
+
+        return $list;
+    }
+
+    function isSvga()
+    {
+        return 'svga' == $this->render_type;
+    }
+
+    function getEffectImageUrl($root, $gift_num, $gift_amount)
+    {
+        if ($this->isSvga()) {
+            return '';
+        }
+
+        if ($gift_amount < 500 || $gift_num < 66) {
+            return '';
+        }
+
+        if ($gift_amount < 1000) {
+            return $root . "images/gift_effect_image1.png";
+        }
+
+        return $root . "images/gift_effect_image2.png";
     }
 }

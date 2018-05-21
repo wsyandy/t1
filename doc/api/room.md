@@ -207,42 +207,8 @@
                  icon string 图片地址
              },
              ...
-         ]	   
-     activities: [
-             {
-                 "id": int 活动ID,
-                 "image_small_url": '',
-                 "url": string 跳转地址
-             }
-             ...
-         ],
-     pk_history:[
-        "id": int PK记录ID,
-        'pk_type': string pk类型,
-        'expire_at': int 过期时间,
-        'created_at': int 创建时间戳,
-        'created_at_text': string 创建时间,
-        'left_pk_user':[
-            'id' : 左边pk者的id
-            'nickname':左边pk者的昵称
-            'score':左边pk者的分数
-            'avatar_small_url': 左边pk者的头像
-        ],
-        'right_pk_user':[
-                    'id' : 右边pk者的id
-                    'nickname':右边pk者的昵称
-                    'score':右边pk者的分数
-                    'avatar_small_url': 右边pk者的头像
          ]
-     ],
-     red_packet:[
-          'num': int 红包个数,
-          "url": string  跳转地址, 
-     ],
-     game: {
-             "url": string  跳转地址,
-             "icon": string 图片地址
-         },
+         
      room_tag_ids:[
             1 ,  房间分类的id
             2 ,  房间分类的id
@@ -375,6 +341,7 @@
            segment 段位 starshine星耀 king王者 diamond钻石 platinum铂金 gold黄金 silver白银 bronze青铜
             (例:星耀1 starshine1;星耀王者2 king2)
             segment_text 段位文本 星耀1
+            medal_image_url 勋章图片地址
         },
         ...
     ]
@@ -1023,5 +990,68 @@
        
        .......
     ]
+}
+```
+
+### 34 获取房间活动详情
+
+> http-get ```/api/rooms/activities```
+
+##### 34.1 请求参数说明
+|参数|参数名称|类型|是否可空|备注
+|---|---|---|---|---
+|id|房间id|int|否|||
+
+##### 34.2 回应参数说明
+```
+{
+    error_code,
+    error_reason：,
+   {
+     activities: [
+             {
+                 "id": int 活动ID,
+                 "image_small_url": '',
+                 "url": string 跳转地址
+             }
+             ...
+         ],
+     pk_history:[
+        "id": int PK记录ID,
+        'pk_type': string pk类型,
+        'expire_at': int 过期时间,
+        'created_at': int 创建时间戳,
+        'created_at_text': string 创建时间,
+        'left_pk_user':[
+            'id' : 左边pk者的id
+            'nickname':左边pk者的昵称
+            'score':左边pk者的分数
+            'avatar_small_url': 左边pk者的头像
+        ],
+        'right_pk_user':[
+                    'id' : 右边pk者的id
+                    'nickname':右边pk者的昵称
+                    'score':右边pk者的分数
+                    'avatar_small_url': 右边pk者的头像
+         ]
+     ],
+     red_packet:[
+          'num': int 红包个数,
+          "url": string  跳转地址, 
+     ],
+     game: {
+             "url": string  跳转地址,
+             "icon": string 图片地址
+         },
+     boom_gift:{
+        expire_at int 结束时间
+        client_url string 跳转地址
+        svga_image_url string svga图片
+        render_type string svga
+        show_rank int 1000000 等级排序
+        total_value int 总值
+        current_value int 当前值
+        image_color string 爆礼物图片的值 green orange blue
+     }
 }
 ```

@@ -8,6 +8,250 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test57Action()
+    {
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateSeraglioKey(1084173);
+        echoLine($db->zscore($sender_key, 1076267));
+
+        $receive_key = Couples::generateSeraglioKey(1076267);
+        echoLine($db->zscore($receive_key, 1084173));
+
+    }
+
+    function test46Action()
+    {
+        echoLine(Couples::checkCpRelation(1300364, 1028930));
+        echoLine(Couples::getMarriageTime(1028930, 1300364));
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        $db->zadd($key, time(), '1195090_1103162');
+
+        //发起者的后宫
+        $sponsor_seraglio_key = Couples::generateSeraglioKey(1195090);
+        //追求者的后宫
+        $pursuer_seraglio_key = Couples::generateSeraglioKey(1103162);
+
+        $db->zadd($sponsor_seraglio_key, 2, 1103162);
+        $db->zadd($pursuer_seraglio_key, 1, 1195090);
+
+        //保存时间
+        $cp_marriage_time_key = Couples::generateCpMarriageTimeKey();
+        $db->zadd($cp_marriage_time_key, time(), 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+
+        $cp_info_key = Couples::generateCpInfoKey();
+        $db->zadd($cp_info_key, 2520, 1195090 . '_' . 1103162);
+
+        $db = \Users::getUserDb();
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1195090);
+        $db->zadd($sender_key, 2520, 1103162);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1103162);
+        $db->zadd($receive_key, 2520, 1195090);
+
+
+
+        $db = \Users::getUserDb();
+        $key = Couples::generateCpMarriageTimeKey();
+        echoLine($db->zcard($key));
+        $datas = $db->zrange($key, 0, -1, 'withscores');
+
+        foreach ($datas as $id_key => $time) {
+            $date = date("Ymd H:i:s", $time);
+
+            $user_ids = explode("_", $id_key);
+            $user_ids = array_filter($user_ids);
+
+            if (in_array(1159082, $user_ids) || in_array(1199287, $user_ids)) {
+
+                echoLine($id_key, $date);
+                //$db->zadd($key, $time, '1300364_1028930');
+                //$db->zrem($key, $id_key);
+                if (count($user_ids) < 2) {
+                    //echoLine($id_key, $date);
+                    //$db->zrem($key, $id_key);
+                }
+            }
+
+//            if (count($user_ids) < 2) {
+//                echoLine($id_key, $date);
+//                $db->zrem($key, $id_key);
+//            }
+        }
+
+
+        $db = \Users::getUserDb();
+        $cp_info_key = Couples::generateCpInfoKey();
+        $db->zadd($cp_info_key, 82519 + 220, '1300364_1028930');
+
+        $db = \Users::getUserDb();
+        $res = $db->zrange($cp_info_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $db = \Users::getUserDb();
+        $sender_key = Couples::generateCpInfoForUserKey(1001303);
+        //$db->zadd($sender_key, 82519, 1028930);
+        $res = $db->zrange($sender_key, 0, -1, 'withscores');
+        echoLine($res);
+
+        $receive_key = Couples::generateCpInfoForUserKey(1028930);
+        $db->zadd($receive_key, 220, 1300364);
+
+        $res = $db->zrange($receive_key, 0, -1, 'withscores');
+        echoLine($res);
+    }
+
+    function test45Action()
+    {
+
+        $room = Rooms::findFirstById(21);
+        $data = $room->getReadyCpInfo();
+        echoLine($data);
+
+        info($this->params(), $data);
+        $union = Unions::findFirstById(1001);
+
+        $cond = [
+            'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct room_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+
+
+        $union = Unions::findFirstById(1001);
+
+        $cond = [
+            'conditions' => 'receiver_union_id = :union_id: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct user_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+
+        $cond = [
+            'conditions' => 'sender_union_id = :union_id: and created_at >= :start: and created_at <= :end:',
+            'bind' => ['union_id' => $union->id, 'start' => beginOfMonth(), 'end' => endOfMonth()],
+            'columns' => 'distinct sender_id'
+        ];
+
+        $gift_orders = GiftOrders::find($cond);
+
+        echoLine(count($gift_orders));
+    }
+
+    function test44Action()
+    {
+
+        $array = [1001 => 123, 1002 => 344, 1003 => 456, 1004 => 345, 1005 => 900];
+        echoLine(array_slice($array, 4, 1));
+        $user = Users::findFirstById(1001303);
+        echoLine($user->getOnlineToken(), $user->getUserFd());
+
+        $hot_cache = Users::getHotReadCache();
+        $user_key = 'socket_fd_user_id_6179ffe1a09d94a6c743e67452355f178a401';
+        echoLine($hot_cache->get($user_key));
+        $fd_key = "socket_push_fd_6179ffe1a09d94a6c743e67452355f178a401";
+        $fd = $hot_cache->get($fd_key);
+        echoLine($fd);
+
+        echoLine(Rooms::generateAbnormalExitRoomListKey(), $hot_cache->zscore(Rooms::generateAbnormalExitRoomListKey(), 27 . "_" . 1001303));
+
+        $union = Unions::findFirstById(1026);
+        $key = $union->generateUsersKey();
+        $ssdb = Users::getUserDb();
+        echoLine($ssdb->zscore($key, 1001187));
+        $user = Users::findFirstById(1001187);
+
+//        if (isBlank($user->union_id) || $user->union_id != $union->id) {
+//            return [ERROR_CODE_FAIL, '此用户已不再此家族'];
+//        }
+
+        $union_history = UnionHistories::findFirstBy(['user_id' => $user->id, 'union_id' => $union->id],
+            'id desc');
+
+        if ($union_history) {
+            $union_history->status = STATUS_OFF;
+            $union_history->exit_at = time();
+            $union_history->save();
+        }
+
+        $user->union_id = 0;
+        $user->union_type = 0;
+        $user->union_charm_value = 0;
+        $user->union_wealth_value = 0;
+
+
+        $db = Users::getUserDb();
+        $db->zrem($union->generateUsersKey(), $user->id);
+        $db->zrem($union->generateApplyExitUsersKey(), $user->id);
+        $db->zrem($union->generateRefusedUsersKey(), $user->id);
+        $db->zrem($union->generateNewUsersKey(), $user->id);
+        $db->zrem($union->generateCheckUsersKey(), $user->id);
+        $db->zrem($union->generateAllApplyExitUsersKey(), $user->id);
+
+        $user->update();
+
+        return [ERROR_CODE_SUCCESS, '操作成功'];
+
+        echoLine(Users::randomSilentUser());
+        $gift_order = GiftOrders::findFirstById(1957528);
+        $amount = $gift_order->amount;
+        echoLine($amount);
+        $gift_order->room_id = 1008720;
+        $gift_order->room_union_id = 1068;
+        $gift_order->save();
+
+        $order = Orders::findFirstById(69669);
+
+        $product = $order->product;
+        $opts = ['order_id' => $order->id, 'target_id' => $order->id, 'mobile' => $order->mobile];
+
+        if ($product->diamond) {
+            $opts['remark'] = '购买' . $product->full_name;
+            AccountHistories::changeBalance($order->user_id, ACCOUNT_TYPE_BUY_DIAMOND, $product->diamond, $opts);
+        }
+
+        if ($product->gold) {
+            $opts['remark'] = '购买金币';
+            GoldHistories::changeBalance($order->user_id, GOLD_TYPE_BUY_GOLD, $product->gold, $opts);
+        }
+
+        echoLine($order);
+
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $user_ids = $hot_cache->zrange(Rooms::generateExitRoomByServerListKey(), 0, -1);
+        echoLine(count($user_ids));
+
+        $users = Users::findByIds($user_ids);
+
+        foreach ($users as $user) {
+
+            if ($user->last_at <= time() - 15 * 60 && $user->current_room_id) {
+                echoLine($user->id, $user->current_room_id);
+                $current_room = $user->current_room;
+                $current_room_seat_id = $user->current_room_seat_id;
+                $current_room->exitRoom($user, true);
+                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+            }
+
+        }
+    }
+
     function freshRoomUserIdAction()
     {
         $cond = [
@@ -546,11 +790,11 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function giveDiamondAction()
     {
-        $user_id = 1351483;
+        $user_id = 1103162;
 
         $user = Users::findFirstById($user_id);
-        $opts = ['remark' => '系统赠送' . 20000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
-        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 20000, $opts);
+        $opts = ['remark' => '系统赠送' . 60000 . '钻石', 'operator_id' => 1, 'mobile' => $user->mobile];
+        \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_GIVE, 60000, $opts);
     }
 
     function createUnionAction()
@@ -1470,11 +1714,9 @@ class MeiTask extends \Phalcon\Cli\Task
             $new_gold_history = new GoldHistories();
             $new_gold_history->user_id = $new_user->id;
             $new_gold_history->product_channel_id = $new_user->product_channel_id;
-            $new_gold_history->gift_order_id = $gold_history->gift_order_id;
             $new_gold_history->remark = $gold_history->remark;
             $new_gold_history->amount = $gold_history->amount;
             $new_gold_history->fee_type = $gold_history->fee_type;
-            $new_gold_history->order_id = $gold_history->order_id;
             $new_gold_history->operator_id = $gold_history->operator_id;
             $new_gold_history->save();
         }
@@ -1754,7 +1996,7 @@ class MeiTask extends \Phalcon\Cli\Task
         ];
 
         $gift_orders = GiftOrders::findForeach($cond);
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         foreach ($gift_orders as $gift_order) {
 
@@ -1801,7 +2043,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $gift_orders = GiftOrders::find($cond);
 
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         $room_ids = [];
 
@@ -2924,6 +3166,15 @@ EOF;
 
     function fixUserRankAction()
     {
+        $users = Users::findByIp('61.158.149.145');
+        echoLine(count($users));
+
+        foreach ($users as $user) {
+            echoLine($user->id);
+        }
+        $room = Rooms::findFirstById(1010149);
+        echoLine($room->getChannelName());
+
         $day_key = "day_charm_rank_list_" . date("Ymd");
         $wealth_day_key = "day_wealth_rank_list_" . date("Ymd");
         $gift_orders = GiftOrders::find(['conditions' => "created_at >= :start: and status = :status: and pay_type = :pay_type:",
@@ -3120,7 +3371,7 @@ EOF;
 
         echoLine($data);
 
-        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+        $temp_file = 'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
         echoLine($uri);
     }
@@ -3576,7 +3827,7 @@ EOF;
     function fixRoomIncome1Action()
     {
         $start_at = beginOfDay(strtotime('2018-03-13'));
-        $room_db = Rooms::getRoomDb();
+        $room_db = Users::getUserDb();
 
         for ($day = $start_at; $day < beginOfDay(); $day += 86400) {
 
@@ -3626,7 +3877,7 @@ EOF;
             $data[] = [$user_id, $score];
         }
 
-        $file = APP_ROOT . "temp/hi_coins.xls";
+        $file = "hi_coins.xls";
         $res = writeExcel($titles, $data, $file, true);
 
         echoLine($res, StoreFile::getUrl($res));
@@ -3907,7 +4158,7 @@ EOF;
         $user_num = $hot_cache->zcount($key, '-inf', time() - 15 * 60);
         echoLine($user_num);
 
-        echoLine(array_diff([1,3,4],[1]));
+        echoLine(array_diff([1, 3, 4], [1]));
 
         $hot_room_ids = [1000 => 12, 10001 => 13, 10004 => 14, 1005 => 11];
 
@@ -3923,6 +4174,83 @@ EOF;
         $hot_room_ids = array_slice($hot_room_ids, 0, 5, true);
 
         print_r($hot_room_ids);
+
+    }
+
+    function test41Action()
+    {
+
+        $attrs = [
+            'sender_id' => SYSTEM_ID,
+            'receiver_id' => 196,
+            'content' => 'dddd',
+            'content_type' => CHAT_CONTENT_TYPE_TEXT_NEWS,
+            'image_url' => 'http://mt-development.img-cn-hangzhou.aliyuncs.com/chance/users/avatar/20180404105ac4331fc4652.jpg',
+            'title' => '测试',
+            'url' => 'url://m/activities'
+        ];
+
+        \Chats::createChat($attrs);
+
+        //return \Chats::createChat($attrs);
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $cond = ['conditions' => 'user_type = :user_type: and status = :status: and online_status = :online_status: 
+        and theme_type = :theme_type: and user_id > 0',
+            'bind' => ['user_type' => USER_TYPE_SILENT, 'status' => STATUS_OFF, 'online_status' => STATUS_OFF,
+                'theme_type' => ROOM_THEME_TYPE_NORMAL
+            ],
+            'order' => 'last_at desc', 'limit' => 100];
+
+        $rooms = Rooms::find($cond);
+
+        foreach ($rooms as $room) {
+
+            if (!$room->user) {
+                continue;
+            }
+
+            echoLine($room->id);
+            $room->enterRoom($room->user);
+            $room->status = STATUS_OFF;
+            $room->online_status = STATUS_OFF;
+            $room->update();
+            $hot_cache->zadd('ios_auth_room_list', time(), $room->id);
+        }
+        echoLine(count($rooms));
+
+        $room_ids = [90, 91, 92, 95, 115, 117, 111, 122, 180, 107];
+
+        $hot_cache = Rooms::getHotWriteCache();
+        $room_ids = $hot_cache->zrange('ios_auth_room_list', 0, -1);
+
+        foreach ($room_ids as $room_id) {
+            $room = Rooms::findFirstById($room_id);
+            $room->online_status = STATUS_ON;
+            $room->update();
+        }
+
+        foreach ($room_ids as $id) {
+            $hot_cache->zadd('ios_auth_room_list', time(), $id);
+        }
+    }
+
+    function test42Action()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $res = $hot_cache->setex("key_test_get", 13, 23);
+        echoLine($res);
+
+        $user = Users::findFirstById(1247538);
+        echoLine($user->geo_city_id, $user->city_id);
+
+        $users = Users::find([
+            'conditions' => 'city_id = :city_id: or geo_city_id = :city_id1: and ip_city_id = :city_id2:',
+            'bind' => ['city_id' => 33, 'city_id1' => 33, 'city_id2' => 33],
+            'columns' => 'id'
+        ]);
+        echoLine(count($users));
+
 
     }
 }

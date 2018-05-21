@@ -1,0 +1,786 @@
+html,body,p,div,ul,li{
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    font-family: "PingFangSC-Regular";
+}
+div,ul,li{
+    display: flex;
+    box-sizing: border-box;
+}
+ul,li{
+    list-style: none;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+}
+@font-face {font-family:soundFont; src: url("../mw.ttf")}
+
+.wishing_tree{
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    position: relative;
+    left: 0;
+    top: 0;
+    background: url(../images/wishing_tree_bg1.png) center no-repeat;
+    background-size: cover;
+}
+.wishing_rules{
+    width: 1.99rem;
+    height: .84rem;
+    padding-left: .2rem;
+    position: absolute;
+    left:0;
+    top: .48rem;
+    align-items: center;
+    font-size: .3rem;
+    color: #FFFFFF;
+    background: url(../images/wishing_rules_bg.png) center no-repeat;
+    background-size: cover;
+}
+.wishing_record{
+    top: 1.6rem;
+    background: url(../images/wishing_record_bg.png) center no-repeat;
+    background-size: cover;
+}
+.wishing_back{
+    top: .8rem;
+}
+.wishing_music{
+    width: .66rem;
+    height: .66rem;
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+    background:url(../images/wishing_music.png) center no-repeat;
+    background-size: .66rem;
+    transform-origin: 50% 50%;
+    -webkit-transform-origin: 50% 50%;
+    animation:4s linear 0s myrotate infinite;
+    -webkit-animation:4s linear 0s myrotate infinite;/* Safari and Chrome */
+    animation-fill-mode:forwards;/*动画播放完毕时停止，不回到初始状态*/
+    -webkit-animation-fill-mode:forwards;
+}
+.wishing_music_pause{
+    animation-play-state:paused;
+    -webkit-animation-play-state:paused; /* Safari 和 Chrome */
+}
+@keyframes myrotate{
+    form {transform:rotate(0deg);}
+    to    {transform:rotate(360deg);}
+}
+@-webkit-keyframes myrotate{/* Safari and Chrome */
+    form {transform:rotate(0deg);}
+    to    {transform:rotate(360deg);}
+}
+.wishing_share{
+    width: .66rem;
+    height: .66rem;
+    position: absolute;
+    top: 1.6rem;
+    right: .4rem;
+    background:url(../images/wishing_share.png) center no-repeat;
+    background-size: .66rem;
+}
+.wishing_bouttom_box{
+    position: absolute;
+    bottom: .7rem;
+    left: 0;
+    width: 100%;
+    padding: 0 .42rem;
+    justify-content: space-between;
+}
+.wishing_bouttom_box .refresh{
+    width: 2rem;
+    height: .84rem;
+    background:url(../images/refresh_buttom.png) center no-repeat;
+    background-size: cover;
+}
+.wishing_bouttom_box .makevow{
+    width: 2rem;
+    height: .84rem;
+    background: url(../images/makevow_buttom.png) center no-repeat;
+    background-size: cover;
+
+}
+.wishing_bouttom_box .mywish_buttom{
+    width: 2rem;
+    height: .84rem;
+    background: url(../images/ranking_button.png) center no-repeat;
+    background-size: cover;
+}
+.mask_background{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, .4);
+    z-index: 100;
+}
+.wishing_share_toast{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    z-index: 102;
+}
+.wishing_share_toast_ul{
+    height: 1.8rem;
+    background-color: #fff;
+    border-bottom: .1rem solid #F2F2F2;
+}
+.wishing_share_toast_ul li{
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    font-size: .22rem;
+    color: #717171;
+    flex-direction: column;
+}
+.wishing_share_toast_ul li img{
+    width: .74rem;
+    height: .74rem;
+    margin-bottom: .1rem;
+}
+.wishing_share_toast .cancel{
+    height: .8rem;
+    background-color: #fff;
+    line-height: .8rem;
+    text-align: center;
+    font-size: .28rem;
+    color: #858585;
+}
+.wishing_rules_toast{
+    position: absolute;
+    left: .33rem;
+    top: 1.7rem;
+    z-index: 101;
+    width: 7.13rem;
+    height: 8.55rem;
+    padding: 1.5rem 1rem 1rem;
+    background: url(../images/wishing_rules_toast.png) center no-repeat;
+    background-size:  7.13rem 8.55rem;
+}
+.wishing_rules_scroll{
+    overflow-y: scroll;
+    /* border-bottom: 1px solid #70A320;  */
+}
+.wishing_rules_scroll .wire{
+    position: absolute;
+    left: .6rem;
+    bottom: 1rem;
+    height: 1px;
+    width: 84%;
+    background: linear-gradient(
+            to right,
+            rgba(0,0,0,0) 0%,
+            #70A320 50%,
+            rgba(0,0,0,0) 100%)
+}
+.wishing_rules_toast ul{
+    flex-direction: column;
+    background-size: .3rem .26rem;
+    width: 5.92rem;
+    height: 11rem;
+}
+.wishing_rules_toast ul li{
+    padding-left: .26rem;
+    position: relative;
+    font-size: .2rem;
+    color: #306305;
+    margin-bottom: .4rem;
+}
+.wishing_rules_toast li .dot{
+    position: absolute;
+    left: 0;
+    top: .14rem;
+    width: .14rem;
+    height: .14rem;
+    border-radius: .07rem;
+    background-color: #356201;
+}
+.wishing_rules_toast .cancel_buttom{
+    position: fixed;
+    left: 3.32rem;
+    bottom: .98rem;
+    width: .86rem;
+    height: .86rem;
+    background: url(../images/cancel_buttom.png) center no-repeat;
+    background-size: .86rem;
+}
+.release_wish{
+    position: absolute;
+    top: 1.48rem;
+    left: 0;
+    width: 7.5rem;
+    z-index: 103;
+    overflow-x: scroll;
+}
+.release_wish ul{
+    width: auto;
+    padding: 0 1.22rem;
+}
+.release_wish ul li{
+    flex-direction: column;
+    padding: 1rem .68rem 0;
+    margin: 0 .44rem;
+    width: 4.4rem;
+    height: 7.9rem;
+    background: url(../images/wish_backround.png) center no-repeat;
+    background-size: 4.8rem 7.9rem;
+}
+.release_wish ul li.background{
+    background: url(../images/wish_backround.png) center no-repeat;
+    background-size: 4.8rem 7.9rem;
+}
+.release_wish li p{
+    margin-top: .3rem;
+    font-family:soundFont;
+    font-size: .22rem;
+    color: #67450E;
+}
+.release_wish textarea{
+    height:4.5rem;
+    background-color: transparent;
+    border: none;
+    resize: none;
+    font-size: .22rem;
+    color: #67450E;
+    font-family:soundFont;
+}
+.release_wish .text_length{
+    text-align: right;
+    font-size: .22rem;
+    color: #67450E;
+    opacity: .5;
+    font-family:soundFont;
+}
+.release_wish textarea::-webkit-input-placeholder{
+    color:rgba(0, 0, 0, .4);
+    font-family:soundFont;
+}
+.release_wish textarea:-moz-placeholder{
+    color:rgba(0, 0, 0, .4);
+    font-family:soundFont;
+}
+.release_wish textarea::-moz-placeholder{
+    color:rgba(0, 0, 0, .4);
+    font-family:soundFont;
+}
+.release_wish textarea:-ms-input-placeholder{
+    color:rgba(0, 0, 0, .4);
+    font-family:soundFont;
+}
+.release_wish_buttom{
+    margin: .7rem auto 0;
+    width: 2rem;
+    height: .64rem;
+    background: url(../images/release_wish_buttom.png) center no-repeat;
+    background-size: cover;
+}
+.release_wish_buttom2{
+    width: 2rem;
+    height: .64rem;
+    background: url(../images/release_wish_buttom2.png) center no-repeat;
+    background-size: cover;
+}
+.release_wish_box{
+    margin-top: .2rem;
+    align-items: center;
+    justify-content: center;
+}
+.release_wish_hint{
+    text-align: center;
+    font-size: .18rem;
+    color: #1C92F6;
+}
+.release_wish_user{
+    margin-top: .2rem;
+    justify-content: center;
+    align-items: center;
+}
+.release_wish_user img{
+    width: .88rem;
+    height: .88rem;
+    border-radius: .44rem;
+}
+.release_wish_user_name{
+    margin-left: .2rem;
+    flex-direction: column;
+    font-size: .18rem;
+    color: #666666;
+}
+.release_wish_user_name span{
+    width: 2.1rem;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.release_wish_text{
+    margin: .3rem 2rem 0;
+    height: 3.54rem;
+    font-size: .20rem;
+    color: #67450E;
+    overflow-y: auto;
+}
+.release_wish_heart{
+    justify-content: center;
+    font-size: .24rem;
+    color: #E8002F;
+    align-items: center;
+}
+.release_wish_heart .heart_icon{
+    margin-right: .15rem;
+    width: .37rem;
+    height: .41rem;
+    background: url(../images/heart_icon.png) center no-repeat;
+    background-size: .37rem .41rem;
+}
+.release_wish .cancel{
+    position: absolute;
+    left: 3.3rem;
+    bottom: -2.12rem;
+    width: .86rem;
+    height: .86rem;
+    background: url(../images/cancel_buttom2.png) center no-repeat;
+    background-size: .86rem;
+}
+.cancel_release{
+    position: fixed;
+    left: 3.3rem;
+    bottom: 2.12rem;
+    width: .86rem;
+    height: .86rem;
+    background: url(../images/cancel_buttom2.png) center no-repeat;
+    background-size: .86rem;
+}
+.mywish_list{
+    width: 100%;
+    overflow-x: auto;
+    height: 7.9rem;
+    position: fixed;
+    left: 0;
+    top: 1.5rem;
+    z-index: 104;
+}
+.mywish_list ul{
+    width: auto;
+    position:absolute;
+    left:0;
+    top:0;
+    /* width:2200px; */
+    padding:0 1.24rem;
+}
+.mywish_list ul li{
+    flex-direction: column;
+    padding: .94rem .6rem 0;
+    margin: 0 .5rem;
+    height: 7.9rem;
+    width: 4.4rem;
+    background:url(../images/wish_backround2.png) center no-repeat;
+    background-size: cover;
+}
+.mywish_list li p{
+    margin-top: .31rem;
+    height: 3.68rem;
+    font-family:soundFont;
+    font-size: .22rem;
+    overflow-y: auto;
+    color: #67450E;
+}
+.toast_cancel{
+    position: fixed;
+    z-index:120;
+    left: 3.4rem;
+    bottom: 1.12rem;
+    width: .86rem;
+    height: .86rem;
+    background: url(../images/cancel_buttom2.png) center no-repeat;
+    background-size: .86rem;
+}
+.view_wish{
+    position: absolute;
+    left: 1.2rem;
+    top: 3.7rem;
+    width: 5.2rem;
+    height: 7rem;
+}
+@media screen and (min-height:810px){
+    .view_wish{
+        position: absolute;
+        left: .5rem;
+        top: 4.7rem;
+        width: 6.5rem;
+        height: 8.5rem;
+    }
+}
+
+.view_wish ul{
+    width: 100%;
+    height: 100%;
+    flex-wrap: wrap;
+}
+.view_wish ul li{
+    width: 25%;
+    height: 1.23rem;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #f40; */
+}
+.view_wish li img{
+    width: 1.22rem;
+    height: 1.23rem;
+}
+.not_balance_toast{
+    padding-top: .34rem;
+    position: fixed;
+    top: 4.12rem;
+    left: 1rem;
+    width: 5.5rem;
+    height: 3.02rem;
+    background-color: #fff;
+    z-index: 101;
+    border-radius: .2rem;
+    flex-direction: column;
+    align-items: center;
+}
+.not_balance_box{
+    width: 100%;
+    padding: 0 .5rem;
+    justify-content: space-between;
+}
+.not_balance_toast .hint{
+    margin-top: .25rem;
+    margin-bottom: .52rem;
+    font-size: .28rem;
+    color: #595959;
+}
+.not_balance_toast b{
+    font-size: .34rem;
+    color: #565656;
+}
+.not_balance_box .cancel{
+    width: 2.1rem;
+    height: .76rem;
+    line-height: .76rem;
+    text-align: center;
+    border: 1px solid #DCDCDC;
+    border-radius: .38rem;
+    font-size: .30rem;
+    color: #969696;
+}
+.not_balance_box .topup{
+    width: 2.1rem;
+    height: .76rem;
+    line-height: .76rem;
+    font-size: .30rem;
+    color: #FFFFFF;
+    text-align: center;
+    border-radius: .38rem;
+    background-color: #F45189;
+}
+/* 中奖记录 */
+.winning_record{
+    width: 100%;
+    height: 100%;
+    background: url(../images/winning_record_bg.png) center no-repeat;
+    background-size: 7.5rem 100%;
+}
+.winning_record_ul{
+    flex-direction: column;
+    padding: 4rem 0 0 1.2rem;
+}
+@media screen and (min-height:810px){
+    .winning_record_ul{
+        padding-top: 5rem ;
+    }
+}
+.winning_record_ul li {
+    align-items: center;
+    margin-bottom: .3rem;
+    margin-left: 0.5rem;
+}
+.winning_record_ul li img{
+    width: .88rem;
+    height: .88rem;
+    border-radius: .44rem;
+    margin-right: .2rem;
+}
+.winning_record_box{
+    flex-direction: column;
+    font-size: .24rem;
+    color: #660404;
+}
+.winning_record_box p{
+    display: flex;
+    font-size: .28rem;
+    color: #FFFFFF;
+    align-items: center;
+}
+.winning_record_box p span{
+    margin-left: .1rem;
+    color: #660404;
+    width: 3.5rem;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.record_qq{
+    position: absolute;
+    left:0;
+    bottom: .2rem;
+    width: 100%;
+    text-align: center;
+    font-size: .24rem;
+    color: #FFFFFF;
+}
+
+/* 排行榜 */
+.wishing_tree_list{
+    flex-direction: column;
+}
+.wishing_list_neo{
+    position: relative;
+    width: 7.5rem;
+    height: 4rem;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+}
+.wishing_list_neo .ranking_icon{
+    position: absolute;
+    left: .54rem;
+    top: 1.46rem;
+    width: .22rem;
+    height: .28rem;
+    background: url(../images/ranking_icon_neo.png) center no-repeat;
+    background-size: .22rem .28rem;
+}
+.wishing_list_neo .header{
+    position: relative;
+    padding-top: .36rem;
+    width: 2.18rem;
+    height: 2.22rem;
+    margin-bottom: .18rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.wishing_list_neo .header .header_bg{
+    position: absolute;
+    width: 2.18rem;
+    height: 2.22rem;
+    background: url(../images/week_first_name.png) center no-repeat;
+    background-size: 2.18rem 2.22rem;
+}
+.wishing_list_neo .header img{
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: .7rem;
+}
+.wishing_list_name{
+    font-size: .3rem;
+    color: #535353;
+    align-items: center;
+}
+.wishing_list_name .man{
+    margin-left: .1rem;
+    width: .36rem;
+    color: #FFFFFF;
+    height: .36rem;
+    line-height: .36rem;
+    text-indent: .34rem;
+    background: url(../images/man.png) center no-repeat;
+    background-size: .36rem;
+}
+.wishing_list_name .woman{
+    margin-left: .1rem;
+    width: .36rem;
+    color: #FFFFFF;
+    height: .36rem;
+    line-height: .36rem;
+    text-indent: .34rem;
+    background: url(../images/woman.png) center no-repeat;
+    background-size: .36rem;
+}
+.wishing_tree_list .search_button{
+    position: absolute;
+    right: 0;
+    top: .55rem;
+    width: 1.31rem;
+    height: .72rem;
+    line-height:.76rem;
+    text-indent:.6rem;
+    color: #fff;
+    background: url(../images/search_button.png) center no-repeat;
+    background-size: 1.31rem .72rem;
+}
+.wishing_list_heart{
+    margin-top: .04rem;
+    font-size: .24rem;
+    color: #E8002F;
+}
+.wishing_list_heart .heart{
+    margin-right: .15rem;
+    width: .37rem;
+    height: .41rem;
+    background: url(../images/heart_icon.png) center no-repeat;
+    background-size: .37rem .41rem;
+}
+.wishing_list_two{
+    margin-left: .3rem;
+    border-bottom: 1px solid #EAEAEA;
+    align-items: center;
+    padding-bottom: .1rem;
+}
+.wishing_list_two .ranking_icon{
+    margin-left: .22rem;
+    margin-right: .26rem;
+    width: .22rem;
+    height: .28rem;
+    background: url(../images/ranking_icon_two.png) center no-repeat;
+    background-size: .22rem .28rem;
+}
+.wishing_list_two .ranking_icon_three{
+    margin-left: .22rem;
+    margin-right: .26rem;
+    width: .22rem;
+    height: .28rem;
+    background: url(../images/ranking_icon_three.png) center no-repeat;
+    background-size: .22rem .28rem;
+}
+.wishing_list_two .header{
+    position: relative;
+    width: 1.68rem;
+    height: 1.66rem;
+    justify-content: center;
+    align-items: center;
+}
+.wishing_list_two .header .header_bg{
+    position: absolute;
+    width: 1.68rem;
+    height: 1.66rem;
+    background: url(../images/week_second.png) center no-repeat;
+    background-size: 1.68rem 1.66rem;
+}
+.wishing_list_two .header .header_bg2{
+    position: absolute;
+    width: 1.68rem;
+    height: 1.66rem;
+    background: url(../images/week_third.png) center no-repeat;
+    background-size: 1.68rem 1.66rem;
+}
+.wishing_list_two .header img{
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: .65rem;
+}
+.wishing_list_box{
+    margin-left: .24rem;
+    flex-direction: column;
+}
+.wishing_list_ul{
+    flex-direction: column;
+    padding-left: .3rem;
+    margin-bottom: 1rem;
+    border-top: .2rem solid #F6F6F6;;
+}
+.wishing_list_ul li{
+    height: 1.4rem;
+    border-bottom: 1px solid #EAEAEA;
+    align-items: center;
+}
+.wishing_list_ul li .ranking_icon{
+    margin-left: .22rem;
+    margin-right: .26rem;
+    width: .22rem;
+    font-size: .26rem;
+    color: #595959;
+}
+.wishing_list_ul li .header{
+    width: 1.68rem;
+    height: 1.36rem;
+    justify-content: center;
+    align-items: center;
+}
+.wishing_list_ul .header img{
+    width: .88rem;
+    height: .88rem;
+    border-radius: .44rem;
+    border: 1px solid #E6E6E6;
+}
+.my_ranking_toast{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: .7rem;
+    width: 7.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: .26rem;
+    color: #707070;
+    background-color: rgba(255, 255, 255, 0.9)
+}
+.search_toast{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, .5);
+    justify-content: center;
+    align-items: center;
+}
+.search_toast_box{
+    width: 5.35rem;
+    height: 3.58rem;
+    background-color: #fff;
+    border-radius: .16rem;
+    align-items: center;
+    flex-direction: column;
+}
+.search_toast_box .title{
+    padding: .4rem 0;
+    font-size: .36rem;
+    color: #5E5E5E;
+}
+.search_toast_box .input_text{
+    padding: 0 .11rem;
+    width: 4.8rem;
+    height: .68rem;
+    background-color: #F8F8F8;
+    border: 1px solid #CACACA;
+    border-radius: .06rem;
+}
+.search_toast_box .results{
+    width: 4.6rem;
+    padding-top: .1rem;
+    font-size: .28rem;
+    color: #333333;
+}
+.search_toast_box .results .error{
+    color: #F62F2F;
+}
+.search_toast_action{
+    margin-top: .2rem;
+    border-top: 1px solid #EDEDED;
+    height: .9rem;
+    line-height: .9rem;
+    width: 100%;
+    font-size: .32rem;
+}
+.search_toast_action .confirm{
+    flex: 1;
+    text-align: center;
+    color: #F45189;
+}
+.search_toast_action .cancel{
+    color: #9E9E9E;
+    border-right: 1px solid #EDEDED;
+    flex: 1;
+    text-align: center;
+}

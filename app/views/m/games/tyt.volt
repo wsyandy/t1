@@ -52,8 +52,9 @@
                 game_host_user_id: "{{ game_host_user.id }}",
                 current_user_id: "{{ current_user.id }}",
                 sid: "{{ current_user.sid }}",
-                game_id:"{{ game.id }}",
-                current_user:{{ current_user }}
+                game_id: "{{ game.id }}",
+                current_user:{{ current_user }},
+                code: '{{ code }}'
             },
             watch: {
                 diamond_game_amount: function (val) {
@@ -91,21 +92,22 @@
 
                 go_game: function () {
                     var data = {
-                        'user_id': vm.game_host_user_id,
-                        'pay_type': vm.pay_type,
-                        'amount': vm.amount,
-                        'game_id':vm.game_id,
-                        'sid': vm.sid
+                        user_id: vm.game_host_user_id,
+                        pay_type: vm.pay_type,
+                        amount: vm.amount,
+                        game_id: vm.game_id,
+                        sid: vm.sid,
+                        code: vm.code
                     };
 
-                    if(vm.pay_type == 'free' && vm.amount > 0){
+                    if (vm.pay_type == 'free' && vm.amount > 0) {
                         alert('选择游戏类型');
                         return;
                     }
 
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
-                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid);
+                            vm.redirectAction('/m/games/wait?game_history_id=' + resp.game_history_id + '&sid=' + vm.sid + '&code=' + vm.code);
                         } else {
                             alert(resp.error_reason);
                         }
@@ -158,8 +160,9 @@
                 game_status_text: '',
                 current_user:{{ current_user }},
                 can_create_game: "{{ can_create_game }}",
-                game_history_id:"{{ game_history_id }}",
-                game_id:"{{ game.id }}"
+                game_history_id: "{{ game_history_id }}",
+                game_id: "{{ game.id }}",
+                code: "{{ code }}"
             },
             watch: {},
             methods: {
@@ -169,8 +172,9 @@
                         return;
                     }
                     var data = {
-                        'game_history_id': vm.game_history_id,
-                        'sid': vm.sid
+                        game_history_id: vm.game_history_id,
+                        sid: vm.sid,
+                        code: vm.code
                     };
                     $.authPost('/m/games/fee', data, function (resp) {
                         if (resp.error_code == 0) {
@@ -185,10 +189,10 @@
         };
 
         $(function () {
-            if (!vm.pay_type &&  vm.game_history_id) {
+            if (!vm.pay_type && vm.game_history_id) {
                 if (vm.can_create_game) {
-                    vm.game_status_text =  vm.game_host_nickname + '正在发起游戏中，请稍后！';
-                }else{
+                    vm.game_status_text = vm.game_host_nickname + '正在发起游戏中，请稍后！';
+                } else {
                     vm.game_status_text = '您不是主播,不能发起游戏';
                 }
             } else {

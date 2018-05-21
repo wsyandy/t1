@@ -9,6 +9,18 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
+    function hmAction()
+    {
+        $sd = Users::getUserDb();
+        $sd->hset('hsxxx', 10, 11);
+        $sd->hset('hsxxx', 20, 22);
+        $sd->hset('hsxxx', 30, 33);
+        $sd->hset('hsxxx', 40, 44);
+
+        $data = $sd->hmget('hsxxx', [40, 20, 30]);
+        echoLine($data);
+    }
+
     function commonBody()
     {
         $body = array(
@@ -449,7 +461,7 @@ class KangTask extends \Phalcon\Cli\Task
             $opts = ['remark' => '系统赠送' . $amount . '钻石', 'mobile' => $user->mobile, 'operator_id' => 1];
 
             if ($amount > 0) {
-                \AccountHistories::changeBalance($user->id, ACCOUNT_TYPE_GIVE, $amount, $opts);
+                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_GIVE, $amount, $opts);
             }
         }
     }
@@ -573,7 +585,7 @@ class KangTask extends \Phalcon\Cli\Task
         }
     }
 
-    
+
     function isGoodNum($num)
     {
         // 由3个以内数字组成的号码
@@ -607,7 +619,7 @@ class KangTask extends \Phalcon\Cli\Task
         }
 
         //AABB
-        if(preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)){
+        if (preg_match('/^\\d{0,3}(\\d)\\1(\\d)\\2\\d{0,3}$/', $num)) {
             //echoLine('AABB ',$num);
             return true;
         }
@@ -644,7 +656,7 @@ class KangTask extends \Phalcon\Cli\Task
         $min_max = $params[1];
 
         $user = Users::findLast();
-        if($min_id < $user->id + 10000){
+        if ($min_id < $user->id + 10000) {
             $min_id = $user->id + 10000;
         }
 
@@ -667,7 +679,8 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
-    function testUidAction(){
+    function testUidAction()
+    {
 
         $user = Users::findFirstById(1);
         $user->generateUid2();
@@ -693,7 +706,8 @@ class KangTask extends \Phalcon\Cli\Task
         echoLine('count', $count);
     }
 
-    function fixThirdNameAction(){
+    function fixThirdNameAction()
+    {
 
         $third_name = 'sina';
         $new_third_name = 'sinaweibo';
@@ -704,7 +718,7 @@ class KangTask extends \Phalcon\Cli\Task
 
         $users = Users::findForeach($cond);
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             $user->third_name = $new_third_name;
             $user->save();
             echoLine($user->id, $user->third_name);
@@ -715,11 +729,167 @@ class KangTask extends \Phalcon\Cli\Task
         $cond['order'] = 'id desc';
         $third_auths = ThirdAuths::findForeach($cond);
 
-        foreach ($third_auths as $third_auth){
+        foreach ($third_auths as $third_auth) {
             $third_auth->third_name = $new_third_name;
             $third_auth->save();
             echoLine($third_auth->id, $third_auth->third_name);
         }
+
+    }
+
+    function sendMsgAction()
+    {
+
+        $product_channel = ProductChannels::findFirstById(1);
+
+        $content = <<<EOF
+系统通知：
+2018年5月15日0点将停止荣耀等级特权赠送ID活动；
+5月15日之前升级段位的用户，平台按现有活动赠送标准给予特权ID奖励；
+5月15日0点之后升级段位的用户，平台将不再给予特权ID奖励；
+请把各位用户把握住机会噢！
+EOF;
+
+        $body = '';
+        $platforms = ['ios', 'android'];
+
+        if (isProduction()) {
+            foreach ($platforms as $platform) {
+                GeTuiMessages::globalPush($product_channel, $platform, $content, $body);
+            }
+        }
+
+        $users = Users::find([
+            'conditions' => 'product_channel_id = :product_channel_id: and register_at > 0 and user_type = :user_type: and last_at >= :last_at:',
+            'bind' => ['product_channel_id' => 1, 'user_type' => USER_TYPE_ACTIVE, 'last_at' => time() - 30 * 86400],
+            'columns' => 'id'
+        ]);
+
+        echoLine(count($users));
+
+        $delay = 1;
+        $user_ids = [];
+        $num = 0;
+
+        foreach ($users as $user) {
+
+            $num++;
+            $user_ids[] = $user->id;
+
+            if ($num >= 50) {
+                echoLine($delay, $user_ids);
+                Chats::delay($delay)->batchSendTextSystemMessage($user_ids, $content);
+                $delay = mt_rand(1, 3600);
+                $user_ids = [];
+                $num = 0;
+            }
+        }
+    }
+
+    public function slowSqlAction()
+    {
+
+        $this->db = Users::di('db');
+        $sql = "select pid, query, query_start from pg_stat_activity where state='active'";
+        $result = $this->db->query($sql);
+
+        $max_diff = 2;
+        $results = array();
+        $kill_sql = array();
+        $now = time();
+        while ($body = $result->fetch()) {
+            $results[md5($body['query'])][] = $body['pid'];
+            $diff = $now - strtotime($body['query_start']);
+            echoLine($diff, $body);
+            if ($diff >= $max_diff) {
+                $kill_sql[] = md5($body['query']);
+            }
+        }
+
+        if (count($kill_sql) > 0) {
+            foreach ($kill_sql as $key) {
+                $value = $results[$key];
+                // 进程数大于等于5, 如果有一个sql超出时间
+                if ($value && count($value) >= 2) {
+                    foreach ($value as $k => $v) {
+                        echoLine($k, $v);
+                    }
+                }
+            }
+
+        }
+    }
+
+    function fixGeoAction($params)
+    {
+
+        $cond = ['conditions' => 'id>=:min_id: and id<=:max_id:', 'bind' => ['min_id' => $params[0], 'max_id' => $params[1]]];
+        echoLine($cond);
+        $users = Users::findForeach($cond);
+        foreach ($users as $user) {
+            $user->updateGeoHashRank();
+        }
+    }
+
+    function fixGeo2Action()
+    {
+
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+        $users = Users::findByIds($block_near_by_user_ids);
+
+        foreach ($users as $user) {
+            $user->delGeoHashRank();
+        }
+
+    }
+
+    function sliceAction()
+    {
+
+        $room_ids = [12, 15, 18, 19, 30, 40, 58, 78, 98];
+
+        $total_num = count($room_ids);
+        if ($total_num < 1) {
+            echoLine(date('c'), 'error no room');
+            return;
+        }
+
+        $per_page = 2;
+        $loop_num = ceil($total_num / $per_page);
+        $offset = 0;
+
+        for ($i = 0; $i < $loop_num; $i++) {
+            $slice_ids = array_slice($room_ids, $offset, $per_page);
+            $offset += $per_page;
+            echoLine($slice_ids);
+        }
+    }
+
+    function fixGoldAction()
+    {
+
+        $golds = GoldHistories::find(['conditions' => '(order_id > 0 or gift_order_id > 0 or hi_coin_history_id > 0 or activity_id > 0) and target_id is null and created_at < :created_at:',
+            'bind' => ['created_at' => beginOfDay(strtotime('20180505'))]
+        ]);
+
+        foreach ($golds as $gold) {
+            if($gold->order_id){
+                $gold->target_id = $gold->order_id;
+            }
+            if($gold->gift_order_id){
+                $gold->target_id = $gold->gift_order_id;
+            }
+            if($gold->hi_coin_history_id){
+                $gold->target_id = $gold->hi_coin_history_id;
+            }
+            if($gold->activity_id){
+                $gold->target_id = $gold->activity_id;
+            }
+
+            $gold->save();
+            echoLine($gold->id, $gold->target_id);
+        }
+
 
     }
 

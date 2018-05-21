@@ -69,6 +69,7 @@ class SwooleEvents extends \BaseModel
         $user->saveFdInfo($fd, $online_token, $ip);
 
         if ($user->current_room) {
+            //\Rooms::delAbnormalExitRoomUserId($user->current_room_id, $user->id);
             $user->current_room->bindOnlineToken($user);
         }
 
@@ -125,7 +126,7 @@ class SwooleEvents extends \BaseModel
 
         if ($user) {
 
-            info('user',$user->sid, 'fd', $fd, "connect close, ip", $intranet_ip);
+            info('user', $user->sid, 'fd', $fd, "connect close, ip", $intranet_ip);
 
             //用户有新的连接 老的连接不推送
             if ($user->online_token == $online_token) {
@@ -142,27 +143,15 @@ class SwooleEvents extends \BaseModel
                             $current_room_seat_id = $current_room_seat->id;
                         }
 
-                        if (\Rooms::isInExitRoomByServerList($user_id)) {
+                        if (\Rooms::isInAbnormalExitRoomList($current_room->id, $user_id)) {
                             info("user_id_is_exiting_room", $user_id);
                         } else {
                             debug($user_id, $current_room->id);
-                            \Rooms::addUserIdInExitRoomByServerList($user_id);
-                            \Rooms::delay(30)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
+                            \Rooms::addAbnormalExitRoomUserId($current_room->id, $user_id);
+                            //\Rooms::addUserIdInExitRoomByServerList($user_id);
+                            //\Rooms::delay(30)->exitRoomByServer($user_id, $current_room->id, $current_room_seat_id);
                         }
 
-                        //并发退出房间
-//                        $exce_exit_room_key = "exce_exit_room_id{$current_room->id}";
-//                        $exce_exit_room_lock = tryLock($exce_exit_room_key, 1000);
-//                        $current_room_seat_id = '';
-//
-//                        if ($current_room_seat) {
-//                            $current_room_seat_id = $current_room_seat->id;
-//                            $current_room_seat->down($user);
-//                        }
-//
-//                        $current_room->exitRoom($user);
-//                        $current_room->pushExitRoomMessage($user, $current_room_seat_id);
-//                        unlock($exce_exit_room_lock);
                     } else {
                         info("room not exists", $user->sid, $online_token);
                     }

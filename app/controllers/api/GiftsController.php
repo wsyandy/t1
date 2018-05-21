@@ -13,7 +13,7 @@ class GiftsController extends BaseController
 
     function indexAction()
     {
-        $gift_type = $this->params('gift_type', 1);
+        $gift_type = $this->params('gift_type', GIFT_TYPE_COMMON);
 
         $opts = ['gift_type' => $gift_type];
 
@@ -45,17 +45,16 @@ class GiftsController extends BaseController
         }
 
         $gift_num = $this->params('gift_num', 1);
-        $renew = $this->params('renew', 0);
+        $user_id = $this->params('user_id');
         $src = $this->params('src', 'room');
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $notify_type = $src == 'room' ? 'bc' : 'ptp';
+
+        $renew = $this->params('renew', 0);
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (isBlank($gift) || $gift->isInvalid()) {
             return $this->renderJSON(ERROR_CODE_FAIL, '礼物不存在');
         }
-
-        $notify_type = $src == 'room' ? 'bc' : 'ptp';
-
-        $user_id = $this->params('user_id');
 
         if (!$user_id) {
             if ($gift->isCar()) {
@@ -107,9 +106,14 @@ class GiftsController extends BaseController
 
                 $current_user = $this->currentUser(true);
 
-                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold, 'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
+                $res = array_merge($notify_data, ['diamond' => $current_user->diamond, 'gold' => $current_user->gold,
+                    'total_amount' => $gift_amount, 'pay_type' => $gift->pay_type]);
 
                 $error_reason = "购买成功";
+
+                if ($this->currentUser()->canReceiveBoomGiftMessage() && $gift->isDiamondPayType()) {
+                    $res['gift_effect_image_url'] = $gift->getEffectImageUrl($this->getRoot(), $gift_num, $gift_amount);
+                }
 
                 if (!in_array($this->currentUser()->id, $receiver_ids)) {
                     $error_reason = "赠送成功";
@@ -142,7 +146,7 @@ class GiftsController extends BaseController
     {
         $gift_id = $this->params('gift_id');
 
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (!$gift) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
@@ -173,7 +177,7 @@ class GiftsController extends BaseController
     {
         $gift_id = $this->params('gift_id');
 
-        $gift = \Gifts::findById($this->params('gift_id'));
+        $gift = \Gifts::findFirstById($this->params('gift_id'));
 
         if (!$gift) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');

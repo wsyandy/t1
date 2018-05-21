@@ -128,11 +128,14 @@ EOF;
     {
         if (WITHDRAW_TYPE_USER == $this->type) {
 
-            $attrs = $this->user->getStatAttrs();
+            $user = $this->user;
+            $product_channel_name = $user->product_channel->name;
+            $attrs = $user->getStatAttrs();
             $attrs['add_value'] = $this->amount;
             \Stats::delay()->record("user", "withdraw", $attrs);
 
-            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待Hi语音平台处理，每周二当日到账！');
+            Chats::sendTextSystemMessage($this->user_id, '提现申请已提交，等待' . $product_channel_name
+                . '语音平台处理，每周二当日到账！');
 
             //推送提现数据，目前暂时只做用户提现,只要有提现动作就推送
             \DataCollection::syncData('withdraw_history', 'create', ['withdraw_history' => $this->toPushDataJson()]);
@@ -336,7 +339,8 @@ EOF;
                 " " . $account . " ", $withdraw_history->withdraw_account_type_text,
                 $account_bank_name, $bank_account_location, $area, $withdraw_history->amount];
         }
-        $temp_file = APP_ROOT . '/temp/export_withdraw_history_' . date('Ymd') . '.xls';
+
+        $temp_file = 'export_withdraw_history_' . date('Ymd') . '.xls';
         $uri = writeExcel($titles, $data, $temp_file, true);
 
         if ($uri) {

@@ -56,16 +56,18 @@ class Users extends BaseModel
      * @type RoomSeats
      */
     private $_current_room_seat;
-
     /**
      * @type Unions
      */
     private $_union;
-
     /**
      * @type Countries
      */
     private $_country;
+    /**
+     * @type string
+     */
+    private $_current_room_channel_name;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -82,6 +84,17 @@ class Users extends BaseModel
     // 经纬度距离
     public $distance;
 
+
+    static function getCacheEndpoint($id)
+    {
+        return self::config('user_db_endpoints');
+    }
+
+    static function getUserDb()
+    {
+        $endpoint = self::config('user_db_endpoints');
+        return XRedis::getInstance($endpoint);
+    }
 
     function beforeCreate()
     {
@@ -192,12 +205,6 @@ class Users extends BaseModel
         $user_db->zrem('select_good_no_list', $this->uid);
     }
 
-    static function getUserDb()
-    {
-        $endpoint = self::config('user_db_endpoints');
-        return XRedis::getInstance($endpoint);
-    }
-
     function getPushContext()
     {
         return $this->product_channel->getPushContext($this->platform);
@@ -222,11 +229,11 @@ class Users extends BaseModel
             $lock_key = 'lock_generate_user_uid_' . $uid;
             $hot_cache = self::getHotWriteCache();
             if (!$hot_cache->setnx($lock_key, $uid)) {
-                info('加锁失败', $lock_key);
+                debug('加锁失败', $lock_key);
                 continue;
             }
             $hot_cache->expire($lock_key, 3);
-            info('加锁成功', $lock_key);
+            debug('加锁成功', $lock_key);
 
             return $uid;
         }
@@ -349,6 +356,7 @@ class Users extends BaseModel
                 Rooms::delay()->statDayUserTime($action, $current_room_id, $duration);
             }
         }
+
         info($old_user_role, $user_role, $duration, $action, $old_current_room_seat_id, $this->sid);
     }
 
@@ -498,6 +506,8 @@ class Users extends BaseModel
             $user->device = $device;
             $user->device_id = $device->id;
             $user->device_no = $device->device_no;
+            $user->speaker = true;
+            $user->microphone = true;
 
             foreach ($fields as $field) {
                 $user->$field = $device->$field;
@@ -587,8 +597,6 @@ class Users extends BaseModel
         $user->login_name = $login_name;
 
         $password = fetch($context, 'password');
-        $country_id = fetch($context, 'country_id');
-
         if ($password) {
             $user->password = md5($password);
         }
@@ -601,7 +609,6 @@ class Users extends BaseModel
             $user->nickname = $user->login_name;
         }
 
-        $user->country_id = $country_id;
         $user->user_type = USER_TYPE_ACTIVE;
         $user->login_type = USER_LOGIN_TYPE_MOBILE;
         $user->save();
@@ -632,7 +639,7 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
-        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type', 'country_id'] as $key) {
+        foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
             if ($val) {
@@ -1009,13 +1016,17 @@ class Users extends BaseModel
             $this->addActiveList();
 
             // 线上提醒
-            self::delay()->pushOnlineRemind($this->id);
+            $this->pushOnlineRemindMessage();
+
+            //次日留存
+            $this->appStart();
 
             $send_gift_data = $this->hasOfflineGift();
-
             if ($send_gift_data) {
                 self::delay()->sendOfflineSendGift($this->id, $send_gift_data);
             }
+
+            $this->updateGeoHashRank();
         }
 
         debug($this->id, $fresh_attrs);
@@ -1057,8 +1068,6 @@ class Users extends BaseModel
         $online_key = 'online_user_list_' . date('YmdHi', $interval);
         $stat_db = Stats::getStatDb();
         $stat_db->zadd($online_key, time(), $this->id);
-        $num = $stat_db->zcard($online_key);
-        info($online_key, $num);
 
     }
 
@@ -1080,6 +1089,67 @@ class Users extends BaseModel
 
         debug('do not need update geo', $this->id);
         return false;
+    }
+
+    function delGeoHashRank()
+    {
+        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS) {
+            return;
+        }
+
+        //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
+        $geohash = new \geo\GeoHash();
+        $prefix = substr($this->geo_hash, 0, 5);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zrem($cache_key, $this->id);
+        info($cache_key, $this->id);
+
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db->zrem($cache_key, $this->id);
+        info($cache_key, $this->id);
+    }
+
+    function updateGeoHashRank()
+    {
+        if (!$this->geo_hash || $this->avatar_status != AUTH_SUCCESS || $this->isCompanyUser() && isProduction()) {
+            return;
+        }
+
+        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
+        if (count($block_near_by_user_ids) > 0 && in_array($this->id, $block_near_by_user_ids)) {
+            return;
+        }
+
+        //{"top":"wtw33","bottom":"wtw2c","right":"wtw34","left":"wtw30","topleft":"wtw32","topright":"wtw36","bottomright":"wtw2f","bottomleft":"wtw2b","0":"wtw31"}
+        $geohash = new \geo\GeoHash();
+        $prefix = substr($this->geo_hash, 0, 5);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd($cache_key, time(), $this->id);
+        info($cache_key, $this->id);
+
+        $prefix = substr($this->geo_hash, 0, 6);
+        $neighbors = $geohash->neighbors($prefix);
+        $cache_key = 'user_geo_hash_6' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db->zadd($cache_key, time(), $this->id);
+        info($cache_key, $this->id);
     }
 
     static function asyncUpdateGeoLocation($user_id)
@@ -1120,23 +1190,41 @@ class Users extends BaseModel
             debug($user->id, 'geo', $user->geo_province_id, $user->geo_city_id);
         }
 
-        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-
-        if (count($block_near_by_user_ids) > 0 && in_array($user_id, $block_near_by_user_ids)) {
-            info("屏蔽附近的人", $block_near_by_user_ids, $user_id);
-            $user->update();
-            return;
-        }
-
         // 计算geo hash值
         $geo_hash = new \geo\GeoHash();
         $hash = $geo_hash->encode($latitude, $longitude);
-        info($user->id, $latitude, $longitude, $hash);
         if ($hash) {
+            if ($user->geo_hash && $user->geo_hash != $hash) {
+                $user->delGeoHashRank();
+            }
+
             $user->geo_hash = $hash;
         }
 
         $user->update();
+        $user->blockCity();
+    }
+
+    function blockCity()
+    {
+        if (in_array($this->id, [1096845])) {
+            return;
+        }
+
+        if ($this->register_at <= beginOfDay(strtotime('2018-05-15')) && $this->charm_value >= 100 &&
+            $this->wealth_value >= 100) {
+            return;
+        }
+
+        if ($this->ip_city_id == 33 || $this->geo_city_id == 33) {
+
+            $device = $this->device;
+
+            info("user_id", $this->id, "deveice_id", $device->id, "ip_city", $this->ip_city_id, "geo_city", $this->geo_city_id);
+
+            $device->status = DEVICE_STATUS_BLOCK;
+            $device->update();
+        }
     }
 
     static function asyncUpdateIpLocation($user_id)
@@ -1167,6 +1255,7 @@ class Users extends BaseModel
 
                 debug($user->id, 'ip', $user->ip, $user->province_id, $user->city_id);
                 $user->update();
+                $user->blockCity();
             }
         }
     }
@@ -1244,14 +1333,14 @@ class Users extends BaseModel
             }
 
             if ($this->$k == $v) {
-                info('未修改', $this->id, $k, $this->$k, $v);
+                //info('未修改', $this->id, $k, $this->$k, $v);
                 continue;
             }
 
             if ('nickname' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的昵称名称违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的昵称名称违反规则,请及时修改");
                 }
 
                 $this->nickname = $v;
@@ -1261,7 +1350,7 @@ class Users extends BaseModel
             if ('monologue' == $k) {
                 list($res, $v) = BannedWords::checkWord($v);
                 if ($res) {
-                    Chats::sendTextSystemMessage($this->id, "您设置的个性签名违反规则,请及时修改");
+                    Chats::sendTextSystemMessage($this, "您设置的个性签名违反规则,请及时修改");
                 }
 
                 $this->monologue = $v;
@@ -1335,8 +1424,6 @@ class Users extends BaseModel
 
         if (!$user_db->zscore($black_key, $other_user->id)) {
 
-            info("black success", $black_key, $blacked_key);
-
             $user_db->zadd($black_key, time(), $other_user->id);
             $user_db->zadd($blacked_key, time(), $this->id);
         }
@@ -1350,36 +1437,88 @@ class Users extends BaseModel
         $blacked_key = "blacked_list_user_id" . $other_user->id;
 
         if ($user_db->zscore($black_key, $other_user->id)) {
-
-            info("unblack success", $black_key, $blacked_key);
-
             $user_db->zrem($black_key, $other_user->id);
             $user_db->zrem($blacked_key, $this->id);
         }
     }
 
     //获取拉黑，关注，好友的列表
-    static function findByRelations($relations_key, $page, $per_page)
+    function findByRelations($relations_key, $page, $per_page, $opts = [])
     {
         $user_db = Users::getUserDb();
+        $total_entries = $user_db->zcard($relations_key);
 
         $offset = $per_page * ($page - 1);
-        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
-        $user_ids = [];
-        $times = [];
+        if ($offset >= $total_entries) {
+            $users = [];
+            $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
+            $pagination->clazz = 'Users';
+            return $pagination;
+        }
 
-        foreach ($res as $user_id => $time) {
-            $user_ids[] = $user_id;
-            $times[$user_id] = $time;
+        $user_id_scores = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $user_ids = array_keys($user_id_scores);
+
+        // 好友备注
+        $friend_note = fetch($opts, 'friend_note');
+        $friend_notes = [];
+        if ($friend_note) {
+            $friend_notes = $this->getFriendNotes($user_ids);
+            info('self_introduce', $this->id, $user_ids, $friend_notes);
+        }
+
+        // 自我简介
+        $self_introduce = fetch($opts, 'self_introduce');
+        $self_introduces = [];
+        if ($self_introduce) {
+            $self_introduces = $this->getSelfIntroducesText($user_ids);
+            info('self_introduce', $this->id, $user_ids, $self_introduces);
+        }
+
+
+        $is_friends = [];
+        $is_add_friends = [];
+        $is_friend = fetch($opts, 'is_friend');
+        $friend_new = fetch($opts, 'friend_new');
+        if ($is_friend && $friend_new) {
+            //是否为好友
+            $friend_list_key = 'friend_list_user_id_' . $this->id;
+            $is_friends = $user_db->multi_zget($friend_list_key, $user_ids);
+            info('is_friend', $this->id, $user_ids, $is_friends);
+
+            //是否为我添加的好友
+            $friend_list_key = 'add_friend_list_user_id_' . $this->id;
+            $is_add_friends = $user_db->multi_zget($friend_list_key, $user_ids);
+            info('is_add_friend', $this->id, $user_ids, $is_add_friends);
         }
 
         $users = Users::findByIds($user_ids);
-
         foreach ($users as $user) {
-            $user->created_at = fetch($times, $user->id);
+            $user->created_at = fetch($user_id_scores, $user->id);
+            if ($friend_notes) {
+                $user->friend_note = fetch($friend_notes, $user->id);
+            }
+            if ($self_introduces) {
+                $user->self_introduce = fetch($self_introduces, $user->id);
+            }
+
+            if ($is_friend) {
+                if ($friend_new) {
+                    $user->friend_status = 3;
+                    if ($is_friends && fetch($is_friends, $user->id)) {
+                        $user->friend_status = 1;
+                    }
+                    if ($is_add_friends && fetch($is_add_friends, $user->id)) {
+                        $user->friend_status = 2;
+                    }
+
+                } else {
+                    $user->friend_status = 1;
+                }
+            }
         }
 
-        $total_entries = $user_db->zcard($relations_key);
         $pagination = new PaginationModel($users, $total_entries, $page, $per_page);
         $pagination->clazz = 'Users';
 
@@ -1390,7 +1529,7 @@ class Users extends BaseModel
     function blackList($page, $per_page)
     {
         $black_key = "black_list_user_id" . $this->id;
-        $users = self::findByRelations($black_key, $page, $per_page);
+        $users = $this->findByRelations($black_key, $page, $per_page);
         return $users;
     }
 
@@ -1448,12 +1587,7 @@ class Users extends BaseModel
     function followList($page, $per_page)
     {
         $follow_key = 'follow_list_user_id' . $this->id;
-        $users = self::findByRelations($follow_key, $page, $per_page);
-
-        foreach ($users as $user) {
-
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
+        $users = $this->findByRelations($follow_key, $page, $per_page, ['friend_note' => 1]);
 
         return $users;
     }
@@ -1471,13 +1605,7 @@ class Users extends BaseModel
     function followedList($page, $per_page)
     {
         $followed_key = 'followed_list_user_id' . $this->id;
-        $users = self::findByRelations($followed_key, $page, $per_page);
-
-        foreach ($users as $user) {
-
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
-
+        $users = $this->findByRelations($followed_key, $page, $per_page, ['friend_note' => 1]);
         return $users;
     }
 
@@ -1493,9 +1621,8 @@ class Users extends BaseModel
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
+        info($friend_note_key, $user_id);
         $friend_note = $db->hget($friend_note_key, $user_id);
-
         if (is_null($friend_note)) {
             return '';
         }
@@ -1503,11 +1630,22 @@ class Users extends BaseModel
         return $friend_note;
     }
 
+    function getFriendNotes($user_ids)
+    {
+        $db = Users::getUserDb();
+        $friend_note_key = "friend_note_list_user_id_" . $this->id;
+        $friend_notes = $db->hmget($friend_note_key, $user_ids);
+        if (is_null($friend_notes)) {
+            return [];
+        }
+
+        return $friend_notes;
+    }
+
     function addFriendNote($user_id, $friend_note)
     {
         $db = Users::getUserDb();
         $friend_note_key = "friend_note_list_user_id_" . $this->id;
-
         if ($friend_note) {
             $db->hset($friend_note_key, $user_id, $friend_note);
         }
@@ -1548,8 +1686,9 @@ class Users extends BaseModel
         }
 
         //没有在对方总队列里面添加 此时要做通知
-        if (!$user_db->zscore($other_total_key, $this->id)) {
-        }
+//        if (!$user_db->zscore($other_total_key, $this->id)) {
+//
+//        }
 
         $time = time();
         $user_db->zadd($add_key, $time, $other_user->id);
@@ -1620,40 +1759,32 @@ class Users extends BaseModel
     {
         $user_db = Users::getUserDb();
         $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        info($user_introduce_key, $other_user->id);
         $self_introduce = $user_db->hget($user_introduce_key, $other_user->id);
         return $self_introduce;
+    }
+
+    function getSelfIntroducesText($other_user_ids)
+    {
+        $user_db = Users::getUserDb();
+        $user_introduce_key = "add_friend_introduce_user_id" . $this->id;
+        $self_introduces = $user_db->hmget($user_introduce_key, $other_user_ids);
+        return $self_introduces;
     }
 
     //好友列表
     function friendList($page, $per_page, $new)
     {
         if (1 == $new) {
-            //进入列表清空消息
+            //进入列表清空新好友通知个数
             $this->clearNewFriendNum();
             $key = 'friend_total_list_user_id_' . $this->id;
         } else {
             $key = 'friend_list_user_id_' . $this->id;
         }
 
-        $users = self::findByRelations($key, $page, $per_page);
-        foreach ($users as $user) {
-
-            //3接受状态 2等待状态 1已添加
-            if ($new == 1) {
-                $friend_status = 3;
-                if ($this->isFriend($user)) {
-                    $friend_status = 1;
-                } elseif ($this->isAddFriend($user)) {
-                    $friend_status = 2;
-                }
-            } else {
-                $friend_status = 1;
-            }
-
-            $user->self_introduce = $this->getSelfIntroduceText($user);
-            $user->friend_status = $friend_status;
-            $user->friend_note = $this->getFriendNote($user->id);
-        }
+        $users = $this->findByRelations($key, $page, $per_page, ['friend_note' => 1,
+            'self_introduce' => 1, 'friend_new' => $new, 'is_friend' => 1]);
 
         return $users;
     }
@@ -1830,7 +1961,7 @@ class Users extends BaseModel
             ' or user_status = ' . USER_STATUS_LOGOUT . ')';
         $cond['order'] = 'last_at desc,id desc';
 
-        info($user->id, $cond);
+        debug($user->id, $cond);
 
         $users = Users::findPagination($cond, $page, $per_page);
 
@@ -1890,22 +2021,53 @@ class Users extends BaseModel
         }
     }
 
-    // 附近人
     function nearby($page, $per_page, $opts = [])
     {
-        $cal_start = microtime(true);
 
-//        $filter_ids = fetch($opts, 'filter_ids', []);
-//
-//        if (!is_array($filter_ids)) {
-//            $filter_ids = explode(',', $filter_ids);
-//        }
-//
-//        //屏蔽公司内部账号
-//        $block_near_by_user_ids = Users::getBlockedNearbyUserIds();
-//        if ($block_near_by_user_ids) {
-//            $filter_ids = array_merge($filter_ids, $block_near_by_user_ids);
-//        }
+        if (!$this->geo_hash) {
+            $users = \Users::search($this, $page, $per_page, $opts);
+            $this->calDistance($users);
+            return $users;
+        }
+
+        $geohash = new \geo\GeoHash();
+        //取前缀，前缀约长范围越小
+        $prefix = substr($this->geo_hash, 0, 5);
+        //取出相邻八个区域
+        $neighbors = $geohash->neighbors($prefix);
+
+        $cache_key = 'user_geo_hash_5' . $prefix . '_' . fetch($neighbors, 'top') . '_' . fetch($neighbors, 'bottom')
+            . '_' . fetch($neighbors, 'right') . '_' . fetch($neighbors, 'left') . '_' . fetch($neighbors, 'topleft')
+            . '_' . fetch($neighbors, 'topright') . '_' . fetch($neighbors, 'bottomright') . '_' . fetch($neighbors, 'bottomleft');
+
+        $user_db = Users::getUserDb();
+        $total_entries = $user_db->zcard($cache_key);
+
+        if ($total_entries >= 3) {
+            $offset = $per_page * ($page - 1);
+            $user_ids = $user_db->zrevrange($cache_key, $offset, $offset + $per_page - 1);
+            $index = array_search($this->id, $user_ids);
+            if (false !== $index) {
+                unset($user_ids[$index]);
+            }
+
+            $cache_users = Users::findByIds($user_ids);
+            $users = new PaginationModel($cache_users, $total_entries, $page, $per_page);
+            $users->clazz = 'Users';
+            info($this->id, $cache_key, $total_entries, $page, $per_page);
+        } else {
+            $users = \Users::search($this, $page, $per_page, $opts);
+        }
+
+        // 计算距离
+        $this->calDistance($users);
+
+        return $users;
+    }
+
+    // 附近人
+    function nearby2($page, $per_page, $opts = [])
+    {
 
         if (!$this->geo_hash) {
             $users = \Users::search($this, $page, $per_page, $opts);
@@ -1955,11 +2117,6 @@ class Users extends BaseModel
             }
         }
 
-//        if (count($filter_ids) > 0) {
-//            $filter_ids = implode(',', $filter_ids);
-//            $condition .= " and id not in ({$filter_ids})";
-//        }
-
         $condition .= ' and id <> :user_id: and avatar_status = ' . AUTH_SUCCESS;
         $condition .= ' and user_status = ' . USER_STATUS_ON . ' and user_type = ' . USER_TYPE_ACTIVE;
         $condition .= " and organisation = :organisation:";
@@ -1970,8 +2127,6 @@ class Users extends BaseModel
         $conds['order'] = 'last_at desc,id desc';
 
         $users = Users::findPagination($conds, $page, $per_page);
-        info($this->id, $hash, $conds, 'total_entries', $users->total_entries);
-
         if ($users->total_entries < 3) {
             $users = \Users::search($this, $page, $per_page, $opts);
         }
@@ -1987,10 +2142,6 @@ class Users extends BaseModel
 
         // 计算距离
         $this->calDistance($users);
-
-        $execute_time = sprintf('%0.3f', microtime(true) - $cal_start);
-
-        info("nearby_search_execute_time", $execute_time);
 
         return $users;
     }
@@ -2019,7 +2170,7 @@ class Users extends BaseModel
                     $user->distance = $geo_distance . 'km';
                 }
 
-                info('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
+                debug('true', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             } else {
 
                 $geo_distance = abs($this->id - $user->id) % 1000;
@@ -2030,7 +2181,7 @@ class Users extends BaseModel
 
                 $user->distance = $geo_distance . 'km';
 
-                info('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
+                debug('false', $this->id, $user->id, $user->distance, $this->latitude, $this->longitude, $user->latitude, $user->longitude);
             }
         }
     }
@@ -2143,7 +2294,7 @@ class Users extends BaseModel
     function isManager($room)
     {
         $room->freshManagerNum();
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $room->generateManagerListKey();
         return $db->zscore($manager_list_key, $this->id) > 0;
     }
@@ -2151,7 +2302,7 @@ class Users extends BaseModel
     //是否为房间永久的管理员
     function isPermanentManager($room)
     {
-        $db = Rooms::getRoomDb();
+        $db = Users::getUserDb();
         $manager_list_key = $room->generateManagerListKey();
         return $db->zscore($manager_list_key, $this->id) - time() > 86400 * 300;
     }
@@ -2274,8 +2425,9 @@ class Users extends BaseModel
     }
 
     //启动房间互动
-    function activeRoom($room)
+    function autoActiveRoom($room)
     {
+
         if (!$room) {
             info("Exce", $this->id, $room->id);
             return;
@@ -2293,7 +2445,7 @@ class Users extends BaseModel
 
         $rand_num = mt_rand(1, 100);
 
-        info($rand_num, $this->id, $room->id);
+        info($this->id, $room->id, 'num', $rand_num);
 
         if (isProduction()) {
             if ($room->isSilent()) {
@@ -2607,7 +2759,7 @@ class Users extends BaseModel
         $third_unionid = $third_unionid ? $third_unionid : $third_id;
 
         //其他账户的快捷登陆 重新注册新用户
-        if ($user->third_unionid && $user->third_unionid != $third_unionid || $user->login_type && !$user->isThirdLogin()) {
+        if ($user && $user->third_unionid && $user->third_unionid != $third_unionid || $user->login_type && !$user->isThirdLogin()) {
             $user = Users::registerForClientByDevice($device, true);
             if (!$user) {
                 return [ERROR_CODE_FAIL, '登录失败', $user];
@@ -2753,7 +2905,11 @@ class Users extends BaseModel
     //更新用户等级/经验/财富值
     static function updateExperience($gift_order_id, $opts = [])
     {
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -2787,7 +2943,7 @@ class Users extends BaseModel
 
             if (isPresent($union) && $union->type == UNION_TYPE_PRIVATE) {
                 $sender->union_wealth_value += $wealth_value;
-                Unions::delay()->updateFameValue($wealth_value, $union->id, ['time' => $time]);
+                Unions::updateFameValue($wealth_value, $union->id, ['time' => $time]);
             }
 
             $sender->update();
@@ -2799,7 +2955,11 @@ class Users extends BaseModel
     //魅力值
     static function updateCharm($gift_order_id, $opts = [])
     {
-        $gift_order = \GiftOrders::findById($gift_order_id);
+        if (is_numeric($gift_order_id)) {
+            $gift_order = \GiftOrders::findById($gift_order_id);
+        } else {
+            $gift_order = $gift_order_id;
+        }
 
         if (isBlank($gift_order) || !$gift_order->isSuccess()) {
             return false;
@@ -2833,7 +2993,7 @@ class Users extends BaseModel
 
                 //不在同一个工会才更新声望值
                 if ($gift_order->sender->union_id != $union->id) {
-                    Unions::delay()->updateFameValue($charm_value, $union->id, ['time' => $time]);
+                    Unions::updateFameValue($charm_value, $union->id, ['time' => $time]);
                 }
             }
 
@@ -3105,6 +3265,65 @@ class Users extends BaseModel
         return $key;
     }
 
+
+    /**
+     * 用户魅力贡献排行榜
+     * @param null $day
+     * @return string
+     */
+    static function generateUserRankListKey($day = null)
+    {
+        if (!$day) $day = date('Ymd');
+
+        $key = 'user_charm_and_wealth_rank_list_day_' . $day;
+        return $key;
+    }
+
+
+    /**
+     * 更新魅力贡献排行榜
+     * @param $receiver
+     * @param $sender
+     * @param $amount
+     * @return bool
+     */
+    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
+    {
+        $key = self::generateUserRankListKey();
+        $user_db = Users::getUserDb();
+
+        // 赠送礼物的增加贡献值，被赠送的增加魅力值
+        $user_db->zincrby($key, $amount, $receiver_id);
+        $user_db->zincrby($key, $amount, $sender_id);
+        return true;
+    }
+
+
+    /**
+     * 查询魅力贡献排行榜
+     * @param null $time
+     * @param int $max_number
+     * @return array
+     */
+    static function findUserCharmAndWealthRank($time = null, $max_number = 100)
+    {
+        if (!$time) $time = time();
+        $day = date('Ymd', $time);
+
+        $key = self::generateUserRankListKey($day);
+        $user_db = Users::getUserDb();
+        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - 1, 'withscores'));
+
+        $yesterday_rank_list = [];
+        $number = count($rank_list);
+        if (empty($rank_list) || $number < $max_number) {
+            $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
+            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - $number, 'withscores'));
+        }
+        $rank_list = array_merge($rank_list, $yesterday_rank_list);
+        return $rank_list;
+    }
+
     static function findFieldRankList($list_type, $field, $page, $per_page, $opts = [])
     {
         if ($field != 'wealth' && $field != 'charm') {
@@ -3112,7 +3331,6 @@ class Users extends BaseModel
         }
 
         $key = self::generateFieldRankListKey($list_type, $field, $opts);
-
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
 
@@ -3242,14 +3460,10 @@ class Users extends BaseModel
         }
 
         $opts = ['remark' => '签到,获得金币' . $res . "个"];
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SIGN_IN, $res, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SIGN_IN, $res, $opts);
 
         $time = 3600 * 24;
         $expire = endOfDay() - time() + $time;
-
-        if (isDevelopmentEnv()) {
-            $expire = 1 * 60;
-        }
 
         $db->setex($key, $expire, $times);
         return $res;
@@ -3335,7 +3549,7 @@ class Users extends BaseModel
 
         $opts = ['remark' => '分享到' . $share_des . '获得金币' . $gold . "个"];
 
-        GoldHistories::changeBalance($this->id, GOLD_TYPE_SHARE_WORK, $gold, $opts);
+        GoldHistories::changeBalance($this, GOLD_TYPE_SHARE_WORK, $gold, $opts);
 
         $db->setex($key, endOfDay() - time(), time());
     }
@@ -3356,7 +3570,6 @@ class Users extends BaseModel
             'icon_url' => fetch($opts, 'icon_url', $this->product_channel->avatar_url)
         ];
 
-        info($push_data);
         \Pushers::delay()->push($this->getPushContext(), $this->getPushReceiverContext(), $push_data);
     }
 
@@ -3403,20 +3616,32 @@ class Users extends BaseModel
         $cache->expire($current_day_company_user_send_diamond_to_personage_num, $past_at);
     }
 
-    function canSendToUser($user_id, $gift_amount)
+    function canSendToUser($receiver_ids, $gift_amount)
     {
-        //$user = \Users::findFirstById($user_id);
         if (!$this->isWhiteListUser()) {
+
             if ($this->isCompanyUser()) {
                 $hot_cache = \Users::getHotWriteCache();
                 $key = 'current_day_company_user_' . date('Y-m-d', time());
                 $send_number = $hot_cache->zscore($key, $this->id);
                 $plan_number = $gift_amount + $send_number;
+
                 if ($plan_number > 100) {
-                    return false;
+
+                    //内部账号使用
+
+                    $receivers = Users::findByIds($receiver_ids);
+
+                    foreach ($receivers as $receiver) {
+
+                        if (!$receiver->isCompanyUser()) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
+
         return true;
     }
 
@@ -3472,13 +3697,28 @@ class Users extends BaseModel
         return $res;
     }
 
+    static function randomSilentUser()
+    {
+        $hot_cache = Users::getHotWriteCache();
+        $key = "silent_user_key";
+        $silent_user_num = $hot_cache->zcard($key);
+        $offset = mt_rand(0, $silent_user_num - 1);
+        $user_ids = $hot_cache->zrange($key, $offset, $offset);
+
+        if (count($user_ids) < 1) {
+            return null;
+        }
+
+        $user = Users::findFirstById($user_ids[0]);
+
+        return $user;
+    }
+
     //离线送礼物
     static function sendOfflineSendGift($user_id, $data)
     {
-        info($user_id, $data);
 
         if (!$data) {
-            debug($data);
             return;
         }
 
@@ -3486,27 +3726,30 @@ class Users extends BaseModel
             $data = json_decode($data, true);
         }
 
-        $sender_id = fetch($data, 'sender_id');
-        $gift_id = fetch($data, 'gift_id');
+        $gift_ids = [66, 76];
 
-        if (!$gift_id || !$sender_id) {
-            info($data, $gift_id, $sender_id);
+        if (isDevelopmentEnv()) {
+            $gift_ids = [163, 167];
+        }
+
+        $gift_id = $gift_ids[array_rand($gift_ids)];
+        $sender = Users::randomSilentUser();
+
+        if (!$gift_id || !$sender) {
+            info($data, $gift_id);
             return;
         }
 
         $gift = Gifts::findFirstById($gift_id);
 
         if (!$gift) {
-            info("gift is null");
+            info("gift is null", $user_id, $data);
             return;
         }
 
-        $sender = Users::findFirstById($sender_id);
-
-        $give_result = \GiftOrders::asyncCreateGiftOrder($sender->id, [$user_id], $gift->id, 1);
+        GiftOrders::asyncCreateGiftOrder($sender, [$user_id], $gift, 1);
 
         $content = $sender->nickname . '赠送给你（' . $gift->name . '）礼物，赶紧去看看吧！';
-        info("send_gift_success", $content);
         Chats::sendTextSystemMessage($user_id, $content);
     }
 
@@ -3517,4 +3760,64 @@ class Users extends BaseModel
         $hot_cache = Users::getHotReadCache();
         return $hot_cache->zrange($key, 0, -1);
     }
+
+    //守护愿望只更新用户自身经验，段位和财富值
+    function updateExperienceForWish($amount)
+    {
+        $lock_key = "update_user_level_lock_" . $this->id;
+
+        $lock = tryLock($lock_key);
+
+        $user_experience = 0.02 * $amount;
+        $wealth_value = $amount;
+        $this->experience += $user_experience;
+        $user_level = $this->calculateLevel();
+        $this->level = $user_level;
+        $this->segment = $this->calculateSegment();
+        $this->wealth_value += $wealth_value;
+        $this->update();
+
+        if (!$this->isCompanyUser()) {
+            Users::updateFiledRankList($this->id, 'wealth', $wealth_value, ['time' => time()]);
+        }
+
+        unlock($lock);
+    }
+
+    //获取许愿墙用户分页列表
+    static function findByUsersListForWish($relations_key, $page, $per_page)
+    {
+        $user_db = \Users::getUserDb();
+
+        $offset = $per_page * ($page - 1);
+        $res = $user_db->zrevrange($relations_key, $offset, $offset + $per_page - 1, 'withscores');
+        $wish_history_ids = [];
+        foreach ($res as $wish_history_id => $wish_luck_at) {
+            $wish_history_ids[] = $wish_history_id;
+        }
+        if (!$wish_history_ids) {
+            return null;
+        }
+
+        $wish_luck_users = self::findByIds($wish_history_ids);
+
+        foreach ($wish_luck_users as $wish_luck_user) {
+            $wish_luck_user->winner_at = $res[$wish_luck_user->id];
+        }
+
+        $total_entries = $user_db->zcard($relations_key);
+        $pagination = new PaginationModel($wish_luck_users, $total_entries, $page, $per_page);
+        $pagination->clazz = 'WishLuckUserlist';
+
+        return $pagination;
+    }
+
+    //获取系统用户
+    static function getSysTemUser()
+    {
+        $id = SYSTEM_ID;
+        $system_user = \Users::findFirstById($id);
+        return $system_user;
+    }
+
 }

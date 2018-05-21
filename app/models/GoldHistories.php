@@ -51,22 +51,25 @@ class GoldHistories extends BaseModel
 
     static function changeBalance($user_id, $fee_type, $amount, $opts = [])
     {
-        $user = Users::findFirstById($user_id);
+        if (is_numeric($user_id)) {
+            $user = Users::findFirstById($user_id);
+        } else {
+            $user = $user_id;
+            $user_id = $user->id;
+        }
 
-        if (isBlank($user)) {
-            info($user_id);
+        if (!$user) {
+            info('Exce', $user_id);
             return null;
         }
 
         $gold_history = new GoldHistories();
-        $gold_history->user_id = $user_id;
+        $gold_history->user_id = $user->id;
         $gold_history->product_channel_id = $user->product_channel_id;
         $gold_history->fee_type = $fee_type;
         $gold_history->amount = $amount;
-        $gold_history->country_id = $user->country_id;
 
-        foreach (['order_id', 'gift_order_id', 'hi_coin_history_id', 'remark', 'operator_id', 'activity_id', 'target_id'] as $column) {
-
+        foreach (['remark', 'operator_id', 'target_id'] as $column) {
             $value = fetch($opts, $column);
             if ($value) {
                 $gold_history->$column = $value;

@@ -59,7 +59,8 @@ class SoftVersions extends BaseModel
 
     function findStableVersion()
     {
-        $conds['conditions'] = 'product_channel_id=:product_channel_id: and stable =:stable: and status=:status: and platform=:platform:';
+        $conds['conditions'] = 'product_channel_id=:product_channel_id: and stable =:stable: and status=:status: and platform=:platform:
+         and (permit_ip is null or permit_ip = "")';
         $conds['bind'] = ['product_channel_id' => $this->product_channel_id, 'stable' => SOFT_VERSION_STABLE_ON,
             'status' => SOFT_VERSION_STATUS_ON, 'platform' => $this->platform];
         $conds['order'] = 'version_code desc';
