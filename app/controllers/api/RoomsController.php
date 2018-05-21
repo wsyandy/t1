@@ -105,6 +105,10 @@ class RoomsController extends BaseController
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
+        if ($room_id && $user_id && isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
         if ($room_id) {
 
             $room = \Rooms::findFirstById($room_id);
@@ -233,7 +237,7 @@ class RoomsController extends BaseController
             // 发起游戏
             $game_history = $room->getGameHistory();
             $ready_cp_info = $room->getReadyCpInfo();
-            $sponsor_id = fetch($ready_cp_info,'sponsor_id');
+            $sponsor_id = fetch($ready_cp_info, 'sponsor_id');
 
             if (isBlank($sponsor_id)) {
                 if ($game_history) {
@@ -275,7 +279,7 @@ class RoomsController extends BaseController
         // 发起游戏
         $game_history = $room->getGameHistory();
         $ready_cp_info = $room->getReadyCpInfo();
-        $sponsor_id = fetch($ready_cp_info,'sponsor_id');
+        $sponsor_id = fetch($ready_cp_info, 'sponsor_id');
 
         if (isBlank($sponsor_id)) {
             if ($game_history) {
