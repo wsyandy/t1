@@ -641,7 +641,7 @@ class Users extends BaseModel
 
         //切换账号登录时如果用户在房间就退出房间
         if ($this->isInAnyRoom()) {
-            info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, $this->device_id);
+            info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, 'old_device', $this->device_id);
             if ($device->id != $this->device_id) {
                 return [ERROR_CODE_FAIL, '请退出另一个设备'];
             }
@@ -1209,6 +1209,7 @@ class Users extends BaseModel
 
     function blockCity()
     {
+        return;
         if (in_array($this->id, [1096845])) {
             return;
         }
