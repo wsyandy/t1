@@ -3325,12 +3325,16 @@ class Rooms extends BaseModel
 
         foreach ($broadcaster_ids as $broadcaster_id) {
 
-            $this->checkBroadcaster($broadcaster_id);
+            if($this->user_id == $broadcaster_id){
+                continue;
+            }
 
             if (in_array($broadcaster_id, $user_ids)) {
                 continue;
             }
 
+            $this->checkBroadcaster($broadcaster_id);
+            
             if ($hot_cache->zscore($user_list_key, $broadcaster_id)) {
                 info('异常id 在房间', $this->id, 'broadcaster_id', $broadcaster_id);
             } else {
