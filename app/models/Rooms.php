@@ -3318,7 +3318,7 @@ class Rooms extends BaseModel
             $user_ids[] = $room_seat->user_id;
         }
 
-        //info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
+        info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
 
         $hot_cache = Rooms::getHotWriteCache();
         $user_list_key = $this->getUserListKey();
