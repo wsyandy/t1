@@ -3383,6 +3383,7 @@ class Rooms extends BaseModel
             info($cache_key, $num);
 
             if ($num >= 3) {
+                info('踢出房间', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
                 $this->kickingRule($user_id, $app_id, $channel_name, 60);
                 $device = $user->device;
                 $device->status = DEVICE_STATUS_BLOCK;
