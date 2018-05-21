@@ -639,6 +639,19 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
+        //切换账号登录时如果用户在房间就退出房间
+        if ($this->isInAnyRoom()) {
+            info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, $this->device_id);
+            if ($device->id != $this->device_id) {
+                return [ERROR_CODE_FAIL, '请退出另一个设备'];
+            }
+
+            $current_room = $this->current_room;
+            if ($current_room) {
+                $current_room->exitRoom($this);
+            }
+        }
+
         foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
@@ -652,17 +665,6 @@ class Users extends BaseModel
 
         // 设备不一致，发送强行下线推送
         if ($device->id != $this->device_id && !isBlank($this->push_token)) {
-
-            //切换账号登录时如果用户在房间就退出房间
-            if ($this->isInAnyRoom()) {
-                $current_room = $this->current_room;
-
-                info("change_device_exit_room", $this->current_room->id, $this->id);
-
-                if ($current_room) {
-                    $current_room->exitRoom($this);
-                }
-            }
 
             $old_device = \Devices::findFirstById($this->device_id);
             if ($old_device) {
