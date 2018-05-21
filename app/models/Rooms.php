@@ -3327,4 +3327,24 @@ class Rooms extends BaseModel
         }
     }
 
+    function kickingRule($app_id, $channel_name, $user_id){
+
+        $headers = array(
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
+        );
+        $url = "https://api.agora.io/dev/v1/kicking-rule/";
+        $body = [
+            'appid' => $app_id,
+            'cname' => $channel_name,
+            'uid' => $user_id,
+            'time' => 600
+        ];
+
+        info($url);
+
+        $res = httpGet($url, $body, $headers);
+        info($res);
+    }
+
 }
