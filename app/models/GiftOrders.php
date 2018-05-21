@@ -459,7 +459,7 @@ class GiftOrders extends BaseModel
         if ($amount >= $max_amount) {
             $content .="<span style='color: white'>,真情感动天地！</span>";
         }
-    }}
+
         $content .="</p>";
 
 
