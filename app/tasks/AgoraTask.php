@@ -47,9 +47,8 @@ class AgoraTask extends \Phalcon\Cli\Task
         echoLine($res);
 
     }
-
-    // room_id
-    function checkHotRoomAction($params)
+    
+    function checkHotRoomAction()
     {
         $hot_cache = Users::getHotWriteCache();
         $hot_total_room_list_key = Rooms::getTotalRoomListKey();
