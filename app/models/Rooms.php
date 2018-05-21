@@ -3279,5 +3279,70 @@ class Rooms extends BaseModel
         return $data;
     }
 
+    function checkBroadcasters()
+    {
+
+        $product_channel = $this->product_channel;
+        $channel_name = $this->channel_name;
+        $app_id = $product_channel->getImAppId();
+
+        $headers = array(
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
+        );
+        $url = "http://api.agora.io/dev/v1/channel/user/{$app_id}/{$channel_name}";
+        info($url);
+
+        $res = httpGet($url, [], $headers);
+        $res_body = $res->raw_body;
+        info($res_body);
+
+        $res_body = json_decode($res_body, true);
+        $data = fetch($res_body, 'data');
+        $broadcaster_ids = fetch($data, 'broadcasters');
+
+        $room_seats = RoomSeats::findPagination(['conditions' => 'room_id=:room_id:',
+            'bind' => ['room_id' => $this->id], 'order' => 'rank asc'], 1, 8, 8);
+
+        $user_ids = [];
+        foreach ($room_seats as $room_seat) {
+            if ($room_seat->user_id < 1) {
+                continue;
+            }
+
+            $user_ids[] = $room_seat->user_id;
+        }
+
+        info($broadcaster_ids, 'user_ids', $user_ids);
+
+        foreach ($broadcaster_ids as $broadcaster_id) {
+            if (in_array($broadcaster_id, $user_ids)) {
+                continue;
+            }
+
+            info('异常id', $broadcaster_id);
+        }
+    }
+
+    function kickingRule($app_id, $channel_name, $user_id)
+    {
+
+        $headers = array(
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
+        );
+        $url = "https://api.agora.io/dev/v1/kicking-rule/";
+        $body = [
+            'appid' => $app_id,
+            'cname' => $channel_name,
+            'uid' => $user_id,
+            'time' => 60
+        ];
+
+        info($url);
+
+        $res = httpPost($url, $body, $headers);
+        info($res);
+    }
 
 }
