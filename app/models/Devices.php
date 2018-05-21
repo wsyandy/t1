@@ -62,6 +62,10 @@ class Devices extends BaseModel
     {
         if ($this->hasChanged('status')) {
             if ($this->isBlocked()) {
+                if ($this->imei) {
+                   $this->setBlockImei();
+                }
+
                 $users = Users::findForeach(['conditions' => 'device_id=:device_id:',
                     'bind' => ['device_id' => $this->id]]);
                 foreach ($users as $user) {
@@ -164,6 +168,10 @@ class Devices extends BaseModel
 
         $device->save();
 
+        if($device->isBlockImei()){
+            $device->status = DEVICE_STATUS_BLOCK;
+        }
+
         $device->sid = $device->generateSid();
         $device->update();
 
@@ -227,6 +235,27 @@ class Devices extends BaseModel
     function isBlocked()
     {
         return DEVICE_STATUS_BLOCK === $this->status;
+    }
+
+    function setBlockImei()
+    {
+        if (!$this->imei) {
+            return;
+        }
+
+        $user_db = Users::getUserDb();
+        $user_db->zadd('block_device_imei', time(), strtolower($this->imei));
+    }
+
+    function isBlockImei()
+    {
+
+        if (!$this->imei) {
+            return false;
+        }
+
+        $user_db = Users::getUserDb();
+        return $user_db->zscore('block_device_imei', strtolower($this->imei)) > 0;
     }
 
     function isNormal()
