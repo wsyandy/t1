@@ -1870,8 +1870,8 @@ class Rooms extends BaseModel
 
         $opts = ['room_id' => $gift_order->room_id];
 
-        $max_amount = 131400;
-        $min_amount = 52000;
+        $max_amount = 100000;
+        $min_amount = 50000;
 
         if (isDevelopmentEnv()) {
             $max_amount = 1000;
