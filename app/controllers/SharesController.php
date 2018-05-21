@@ -246,11 +246,11 @@ class SharesController extends ApplicationController
 
         // 跳转应用宝地址
         $down_url = $soft_version->weixin_url;
-//        if ($platform == 'ios') {
-//            $down_url = $soft_version->ios_down_url;
-//        }
+        if ($platform == 'ios') {
+            $down_url = $soft_version->ios_down_url;
+        }
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '验证成功', ['weixin_url' => $down_url]);
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '注册成功', ['down_url' => $down_url]);
     }
 
     function matchSingAction()
