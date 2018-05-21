@@ -24,7 +24,7 @@
 
         methods: {
             getGameUserInfo: function () {
-                $.authGet('/m/games/get_game_user_info', {
+                $.authGet('/m/jumps/get_game_user_info', {
                     sid: vm.sid,
                     code: vm.code,
                 }, function (resp) {
