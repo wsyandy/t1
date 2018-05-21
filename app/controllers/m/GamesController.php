@@ -582,8 +582,8 @@ class GamesController extends BaseController
             'room_id' => $current_user->room_id,
             'user_id' => $current_user->id,
             'avater_url' => $current_user->avatar_small_url,
-            'site' => $current_user->current_room_seat_id,
-            'owner' => $is_host==true ? 1 : 0,
+            'site' => $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id,
+            'owner' => $is_host==true ? 0 : 1,
         ];
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['data'=>$data]);
