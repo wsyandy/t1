@@ -3320,7 +3320,7 @@ class Rooms extends BaseModel
 
         //info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
 
-        $hot_cache = Users::getHotWriteCache();
+        $hot_cache = Rooms::getHotWriteCache();
         $user_list_key = $this->getUserListKey();
 
         foreach ($broadcaster_ids as $broadcaster_id) {
@@ -3374,7 +3374,15 @@ class Rooms extends BaseModel
         }
 
         if ($role == 2) {
-            $this->kickingRule($user_id, $app_id, $channel_name, 1);
+            $hot_cache = Rooms::getHotWriteCache();
+            $cache_key = 'room_kicking_rule_' . $user_id;
+            $num = $hot_cache->incr($cache_key);
+            $hot_cache->expire($cache_key, 600);
+            info($cache_key, $num);
+
+            if ($num >= 2) {
+                $this->kickingRule($user_id, $app_id, $channel_name, 60);
+            }
         }
 
     }
