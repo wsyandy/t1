@@ -36,7 +36,8 @@ class Games extends BaseModel
         return $this->getIconUrl('small');
     }
 
-    function mergeJson(){
+    function mergeJson()
+    {
         return [
             'icon_small_url' => $this->icon_small_url,
         ];
@@ -51,6 +52,16 @@ class Games extends BaseModel
             'icon_small_url' => $this->icon_small_url,
             'url' => $this->url
         ];
+    }
+
+    static function sendGameMessage($current_user, $body)
+    {
+
+        $intranet_ip = $current_user->getIntranetIp();
+        $receiver_fd = $current_user->getUserFd();
+
+        $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+        info('推送结果=>', $result);
     }
 
 }
