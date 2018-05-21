@@ -3294,9 +3294,12 @@ class Rooms extends BaseModel
 
         $res = httpGet($url, [], $headers);
         $res_body = $res->raw_body;
-        info($url, $res_body);
-
         $res_body = json_decode($res_body, true);
+        if(fetch($res_body, 'success') === true){
+            info('Exce', $url, $res_body);
+            return;
+        }
+
         $data = fetch($res_body, 'data');
         $broadcaster_ids = fetch($data, 'broadcasters');
 
@@ -3314,12 +3317,19 @@ class Rooms extends BaseModel
 
         info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
 
+        $hot_cache = Users::getHotWriteCache();
+        $user_list_key = $this->getUserListKey();
+
         foreach ($broadcaster_ids as $broadcaster_id) {
             if (in_array($broadcaster_id, $user_ids)) {
                 continue;
             }
 
-            info('异常id', $this->id, 'broadcaster_id', $broadcaster_id);
+            if ($hot_cache->zscore($user_list_key, $broadcaster_id)) {
+                info('异常id 在房间', $this->id, 'broadcaster_id', $broadcaster_id);
+            } else {
+                info('异常id 不在房间', $this->id, 'broadcaster_id', $broadcaster_id);
+            }
         }
     }
 

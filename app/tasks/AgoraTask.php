@@ -47,7 +47,7 @@ class AgoraTask extends \Phalcon\Cli\Task
         echoLine($res);
 
     }
-    
+
     function checkHotRoomAction()
     {
         $hot_cache = Users::getHotWriteCache();
