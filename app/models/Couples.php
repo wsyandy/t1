@@ -133,10 +133,6 @@ class Couples extends BaseModel
 
     static function updateCpInfo($opts)
     {
-        $time = fetch($opts, 'time');
-//        if (date('Y-m-d', $time) != '2018-05-20' && isProduction()) {
-//            return null;
-//        }
         info('全部参数', $opts);
         $sender_id = fetch($opts, 'sender_id');
         $receive_id = fetch($opts, 'receive_id');
@@ -152,19 +148,19 @@ class Couples extends BaseModel
             return null;
         }
 
-        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
-        $member = '';
-        switch ($status) {
-            case 1:
-                $member = $receive_id . '_' . $sender_id;
-                break;
-            case 2:
-                $member = $sender_id . '_' . $receive_id;
-                break;
-        }
-        info('更新情侣值', $amount, $member);
-        $cp_info_key = self::generateCpInfoKey();
-        $db->zincrby($cp_info_key, $amount, $member);
+//        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
+//        $member = '';
+//        switch ($status) {
+//            case 1:
+//                $member = $receive_id . '_' . $sender_id;
+//                break;
+//            case 2:
+//                $member = $sender_id . '_' . $receive_id;
+//                break;
+//        }
+//        info('更新情侣值', $amount, $member);
+//        $cp_info_key = self::generateCpInfoKey();
+//        $db->zincrby($cp_info_key, $amount, $member);
 
         $sender_key = self::generateCpInfoForUserKey($sender_id);
         $db->zincrby($sender_key, $amount, $receive_id);

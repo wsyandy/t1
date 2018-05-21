@@ -48,22 +48,20 @@ class AgoraTask extends \Phalcon\Cli\Task
 
     }
 
-    // room_id
-    function userListAction($params)
+    function checkHotRoomAction()
     {
-
-        $room_id = $params[0];
-        $room = Rooms::findFirstById($room_id);
-        if (!$room) {
-            echoLine('error room', $params);
-            return;
+        $hot_cache = Users::getHotWriteCache();
+        $hot_total_room_list_key = Rooms::getTotalRoomListKey();
+        $room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, -1);
+        $rooms = Rooms::findByIds($room_ids);
+        foreach ($rooms as $room){
+            $room->checkBroadcasters();
         }
-
-        $room->checkBroadcasters();
     }
 
     // uid
-    function killAction($params){
+    function killAction($params)
+    {
 
         $uid = $params[0];
         $user = Users::findFirstByUid($uid);
@@ -72,7 +70,7 @@ class AgoraTask extends \Phalcon\Cli\Task
             return;
         }
 
-        $user_id  = $user->id;
+        $user_id = $user->id;
         $room = $user->current_room;
         if (!$room) {
             echoLine('error room', $params);
@@ -89,7 +87,7 @@ class AgoraTask extends \Phalcon\Cli\Task
             'Cache-Control' => 'no-cache',
             'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
         );
-        
+
         $url = "https://api.agora.io/dev/v1/kicking-rule";
         $body = [
             'appid' => $app_id,
