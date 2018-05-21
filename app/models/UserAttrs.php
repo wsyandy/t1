@@ -267,6 +267,18 @@ trait UserAttrs
         return $data;
     }
 
+    //待优化 数据存缓存
+    function toRoomManagerSimpleJson()
+    {
+        $data = [
+            'user_id' => $this->id,
+            'is_permanent' => $this->is_permanent, //是否为永久管理员
+            'deadline' => $this->deadline //管理员有效期截止时间,
+        ];
+
+        return $data;
+    }
+
     function toUnionJson()
     {
         $data = [

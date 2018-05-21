@@ -238,7 +238,7 @@ class Rooms extends BaseModel
             'avatar_small_url' => $user->avatar_small_url, 'avatar_100x100_url' => $user->avatar_100x100_url,
             'avatar_60x60_url' => $user->avatar_60x60_url,
             'nickname' => $user->nickname, 'age' => $user->age,
-            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(),
+            'monologue' => $user->monologue, 'room_seats' => $room_seat_datas, 'managers' => $this->findManagers(true),
             'theme_image_url' => $this->theme_image_url, 'uid' => $this->uid
         ];
     }
@@ -920,7 +920,7 @@ class Rooms extends BaseModel
         }
     }
 
-    function findManagers()
+    function findManagers($is_simple = false)
     {
         $this->freshManagerNum();
         $db = Users::getUserDb();
@@ -931,7 +931,12 @@ class Rooms extends BaseModel
         $managers = [];
 
         foreach ($users as $user) {
-            $managers[] = $user->toRoomManagerJson();
+
+            if ($is_simple) {
+                $managers[] = $user->toRoomManagerSimpleJson();
+            } else {
+                $managers[] = $user->toRoomManagerJson();
+            }
         }
 
         return $managers;

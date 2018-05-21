@@ -1017,4 +1017,108 @@ class RoomsController extends BaseController
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $pk_histories->toJson('pk_histories', 'toSimpleJson'));
     }
+
+    //进入房间
+    function entranceAction()
+    {
+        $room_id = $this->params('id', 0); // 进入指定房间
+        $password = $this->params('password', '');
+        $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
+
+        if ($room_id && $user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if ($room_id) {
+
+            $room = \Rooms::findFirstById($room_id);
+
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+
+        } else {
+
+            $user = \Users::findFirstById($user_id);
+
+            if (!$user || $user->current_room_id < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
+            }
+
+            $room = $user->current_room;
+        }
+
+
+        if ($room->isForbidEnter($this->currentUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
+        }
+
+        $current_user_id = $this->currentUser()->id;
+        $current_room_id = $this->currentUser()->current_room_id;
+
+        if (!$current_room_id) {
+
+            if (!$room->checkFilterUser($current_user_id)) {
+
+                if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && $room->password != $password) {
+                    return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                }
+            }
+        }
+
+        //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
+        if ($current_room_id != $room_id) {
+
+            if ($current_room_id) {
+
+                info('Exce exit', $this->currentUser()->id, $current_room_id, $room_id);
+                $current_room = $this->currentUser()->current_room;
+
+                if ($current_room) {
+                    $current_room->exitRoom($this->currentUser());
+                }
+
+            } else {
+
+                // 进入房间推送
+                $this->currentUser()->pushIntoRoomRemindMessage();
+
+            }
+
+            $room->enterRoom($this->currentUser());
+        }
+
+        $res = $room->toJson();
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['app_id'] = $this->currentProductChannel()->getImAppId();
+        $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['system_tips'] = $this->currentProductChannel()->system_news;
+        $res['user_role'] = $this->currentUser()->user_role;
+
+        // 座驾
+        $user_car_gift = $this->currentUser()->getUserCarGift();
+
+        if ($user_car_gift) {
+            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
+
+        //房间分类信息
+        $room_tag_ids = $room->room_tag_ids;
+
+        $res['room_tag_ids'] = [];
+
+        if (isPresent($room_tag_ids)) {
+            $room_tag_ids = explode(',', $room_tag_ids);
+            $res['room_tag_ids'] = $room_tag_ids;
+        }
+
+        //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
+        $root_host = $this->getRoot();
+
+        // 菜单
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
+    }
 }
