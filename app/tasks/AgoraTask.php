@@ -16,9 +16,7 @@ class AgoraTask extends \Phalcon\Cli\Task
     function userAction($params)
     {
 
-        $params = [];
-
-        $uid = 1200587;
+        $uid = $params[0];
         $user = Users::findFirstByUid($uid);
         echoLine($user);
         if (!$user) {
@@ -54,7 +52,6 @@ class AgoraTask extends \Phalcon\Cli\Task
     function userListAction($params)
     {
 
-        $params = [1027722];
         $room_id = $params[0];
         $room = Rooms::findFirstById($room_id);
         if (!$room) {
@@ -65,5 +62,47 @@ class AgoraTask extends \Phalcon\Cli\Task
         $room->checkBroadcasters();
     }
 
+    // uid
+    function killAction($params){
+
+        $uid = $params[0];
+        $user = Users::findFirstByUid($uid);
+        if (!$user) {
+            echoLine('error ', $params);
+            return;
+        }
+
+        $user_id  = $user->id;
+        $room = $user->current_room;
+        if (!$room) {
+            echoLine('error room', $params);
+            return;
+        }
+
+        $product_channel = $user->product_channel;
+        $channel_name = $room->channel_name;
+        $key = $product_channel->getChannelKey($channel_name, $user->id);
+        $app_id = $product_channel->getImAppId();
+
+
+        $headers = array(
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
+        );
+        
+        $url = "https://api.agora.io/dev/v1/kicking-rule";
+        $body = [
+            'appid' => $app_id,
+            'cname' => $channel_name,
+            'uid' => $user_id,
+            'time' => 5
+        ];
+
+        info($url, $body, $headers);
+
+        $res = httpPost($url, $body, $headers);
+        info($res);
+
+    }
 
 }

@@ -3327,7 +3327,8 @@ class Rooms extends BaseModel
         }
     }
 
-    function kickingRule($app_id, $channel_name, $user_id){
+    function kickingRule($app_id, $channel_name, $user_id)
+    {
 
         $headers = array(
             'Cache-Control' => 'no-cache',
@@ -3338,12 +3339,12 @@ class Rooms extends BaseModel
             'appid' => $app_id,
             'cname' => $channel_name,
             'uid' => $user_id,
-            'time' => 600
+            'time' => 60
         ];
 
         info($url);
 
-        $res = httpGet($url, $body, $headers);
+        $res = httpPost($url, $body, $headers);
         info($res);
     }
 
