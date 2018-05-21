@@ -3413,7 +3413,7 @@ class Rooms extends BaseModel
         ];
 
         $res = httpPost($url, $body, $headers);
-        info('踢出房间', $this->id, 'user', $user_id, $res);
+        info('踢出房间', $this->id, 'user', $user_id, $res->raw_body);
 
     }
 
