@@ -8,6 +8,7 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+
     function test59Action()
     {
         $content = file_get_contents(APP_ROOT . "temp/test.txt");
