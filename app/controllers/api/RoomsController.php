@@ -242,6 +242,16 @@ class RoomsController extends BaseController
             if (isBlank($sponsor_id)) {
                 if ($game_history) {
                     $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+                    if (2 == $game_history->game_id && isDevelopmentEnv()) {
+                        $current_user = $this->currentUser();
+                        $site = $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id;
+                        $is_host = $current_user->isRoomHost($room);
+                        $is_host == true ? 0 : 1;
+
+                        $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
+                        =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
+                            , 'icon' => $root_host . 'images/go_game.png'];
+                    }
                 }
 
             } else {
@@ -284,6 +294,16 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+                if (2 == $game_history->game_id && isDevelopmentEnv()) {
+                    $current_user = $this->currentUser();
+                    $site = $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id;
+                    $is_host = $current_user->isRoomHost($room);
+                    $is_host == true ? 0 : 1;
+
+                    $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id . '&name=' . $game_history->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room_id . '&user_id
+                        =' . $current_user->id . '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $is_host
+                        , 'icon' => $root_host . 'images/go_game.png'];
+                }
             }
 
         } else {
@@ -334,7 +354,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 
-    //房间基本信息
+//房间基本信息
     function basicInfoAction()
     {
         $room_id = $this->params('id', 0);
@@ -406,7 +426,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-    // 公屏设置
+// 公屏设置
     function openChatAction()
     {
         $room_id = $this->params('id', 0);
@@ -463,7 +483,7 @@ class RoomsController extends BaseController
     }
 
 
-    // 踢出房间
+// 踢出房间
     function kickingAction()
     {
         $room_id = $this->params('id', 0);
@@ -531,7 +551,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-    //异常离线上报 暂时用不到
+//异常离线上报 暂时用不到
     function offlineAction()
     {
         if (!$this->otherUser()) {
@@ -550,7 +570,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    //添加管理员
+//添加管理员
     function addManagerAction()
     {
         $id = $this->params('id');
@@ -591,7 +611,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
-    //删除管理员
+//删除管理员
     function deleteManagerAction()
     {
         $id = $this->params('id');
@@ -615,7 +635,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-    //更新管理员
+//更新管理员
     function updateManagerAction()
     {
         $id = $this->params('id');
@@ -722,7 +742,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
 
-    //发公屏消息上报
+//发公屏消息上报
     function sendMessageAction()
     {
         $content = $this->params('content');
