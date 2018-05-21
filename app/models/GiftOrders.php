@@ -346,7 +346,7 @@ class GiftOrders extends BaseModel
             'amount' => $this->amount
         ];
         \Couples::updateCpInfo($opts);
-        \Users::updateUserCharmAndWealthRank($this->user_id, $this->sender_id, $this->amount);
+        \Users::updateUserCharmAndWealthRank($this);
     }
 
     static function giveCarBySystem($receiver_id, $operator_id, $gift, $content, $gift_num = 1)

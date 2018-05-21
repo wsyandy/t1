@@ -3282,15 +3282,18 @@ class Users extends BaseModel
 
     /**
      * 更新魅力贡献排行榜
-     * @param $receiver
-     * @param $sender
-     * @param $amount
+     * @param $gift_order
+     * @param $opt
      * @return bool
      */
-    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
+    static function updateUserCharmAndWealthRank($gift_order, $opt = [])
     {
         $key = self::generateUserRankListKey();
         $user_db = Users::getUserDb();
+
+        $receiver_id = $gift_order->user_id;
+        $sender_id = $gift_order->sender_id;
+        $amount = $gift_order->amount;
 
         // 赠送礼物的增加贡献值，被赠送的增加魅力值
         $user_db->zincrby($key, $amount, $receiver_id);
