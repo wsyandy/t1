@@ -1277,6 +1277,7 @@ class Rooms extends BaseModel
     function pushPkMessage($pk_history_datas)
     {
         $body = ['action' => 'pk', 'pk_history' => [
+            'pk_type' => $pk_history_datas['pk_type'],
             'left_pk_user' => ['id' => $pk_history_datas['left_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['left_pk_user_id']]],
             'right_pk_user' => ['id' => $pk_history_datas['right_pk_user_id'], 'score' => $pk_history_datas[$pk_history_datas['right_pk_user_id']]]
         ]
