@@ -3295,7 +3295,7 @@ class Rooms extends BaseModel
         $res = httpGet($url, [], $headers);
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
-        if(fetch($res_body, 'success') === true){
+        if(fetch($res_body, 'success') !== true){
             info('Exce', $url, $res_body);
             return;
         }
