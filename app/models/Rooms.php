@@ -3379,15 +3379,18 @@ class Rooms extends BaseModel
             $hot_cache = Rooms::getHotWriteCache();
             $cache_key = 'room_kicking_rule_' . $user_id;
             $num = $hot_cache->incr($cache_key);
-            $hot_cache->expire($cache_key, 600);
-            info($cache_key, $num);
+            $hot_cache->expire($cache_key, 1800);
+
+            info('踢出房间', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
 
             if ($num >= 3) {
-                info('踢出房间', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
+                info('踢出房间并封号', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
                 $this->kickingRule($user_id, $app_id, $channel_name, 60);
                 $device = $user->device;
                 $device->status = DEVICE_STATUS_BLOCK;
                 $device->update();
+            } else {
+                $this->kickingRule($user_id, $app_id, $channel_name, 1);
             }
         }
 
