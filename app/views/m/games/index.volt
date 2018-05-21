@@ -60,8 +60,8 @@
                 var UserInfo = this.UserInfo;
 
                 var url = game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id + '&name=' + game.name + '&username='+UserInfo.username+'&room_id='+UserInfo.room_id+'&user_id='+UserInfo.user_id+'&avater_url='+UserInfo.avater_url+'&user_num_limit=8&site='+UserInfo.site+'&owner='+UserInfo.owner;
-                console.log(url);
-                //vm.redirectAction(url);
+                
+                vm.redirectAction(url);
             }
 
         }
