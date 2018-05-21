@@ -3295,6 +3295,7 @@ class Rooms extends BaseModel
         $res = httpGet($url, [], $headers);
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
+        info($this->id, $res_body);
         if(fetch($res_body, 'success') !== true){
             info('Exce', $url, $res_body);
             return;
@@ -3321,6 +3322,9 @@ class Rooms extends BaseModel
         $user_list_key = $this->getUserListKey();
 
         foreach ($broadcaster_ids as $broadcaster_id) {
+
+            $this->checkBroadcaster($broadcaster_id);
+            
             if (in_array($broadcaster_id, $user_ids)) {
                 continue;
             }
@@ -3331,6 +3335,39 @@ class Rooms extends BaseModel
                 info('异常id 不在房间', $this->id, 'broadcaster_id', $broadcaster_id);
             }
         }
+    }
+
+    function checkBroadcaster($user_id)
+    {
+
+        $product_channel = $this->product_channel;
+        $channel_name = $this->channel_name;
+        $app_id = $product_channel->getImAppId();
+
+        $headers = array(
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
+        );
+
+        $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user_id}/{$channel_name}";
+        $res = httpGet($url, [], $headers);
+        $res_body = $res->raw_body;
+        $res_body = json_decode($res_body, true);
+        if(fetch($res_body, 'success') !== true){
+            info('Exce', $url, $res_body);
+            return;
+        }
+
+        $data = fetch($res_body, 'data');
+        info('data', $this->id, $data);
+        $in_channel = fetch($data, 'in_channel', false);
+        $role = fetch($data, 'role', 0);
+        if($in_channel === false){
+            info('离开频道', $this->id, $user_id);
+            return;
+        }
+
+
     }
 
     function kickingRule($app_id, $channel_name, $user_id)
