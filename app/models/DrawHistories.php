@@ -131,7 +131,7 @@ class DrawHistories extends BaseModel
         if (date("Ymd") == '20180515') {
             $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 2];
         } else {
-            $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 3];
+            $data[0] = ['id' => 1, 'type' => 'diamond', 'name' => '100000钻石', 'number' => 100000, 'rate' => 0.1, 'day_limit_num' => 1];
         }
         if (isProduction()) {
             $data[1] = ['id' => 2, 'type' => 'gift', 'name' => '梦境奇迹座驾', 'number' => 35000, 'rate' => 0.3, 'gift_id' => 73, 'gift_num' => 1, 'day_limit_num' => 1];
@@ -268,7 +268,7 @@ class DrawHistories extends BaseModel
         $type = fetch($datum, 'type');
         $number = fetch($datum, 'number');
 
-        $pool_rate = mt_rand(700, 932) / 1000;
+        $pool_rate = mt_rand(700, 942) / 1000;
 
         $hour = intval(date("H"));
 
@@ -326,7 +326,7 @@ class DrawHistories extends BaseModel
                 // 爆10w钻
                 if ($number == 100000) {
 
-                    if ($hour < 10) {
+                    if ($hour < 17) {
                         return 0;
                     }
 
@@ -439,7 +439,6 @@ class DrawHistories extends BaseModel
 
     static function isBlockUser($user)
     {
-        return false;
         $user_db = Users::getUserDb();
         $score = $user_db->zscore('draw_histories_block_user_ids', $user->id);
 

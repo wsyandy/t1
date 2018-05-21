@@ -1808,7 +1808,7 @@ class Rooms extends BaseModel
         $room = Rooms::findFirstById($room_id);
 
         //当前房间不带client_url
-        if ($room_id != $this->id && !$room->lock) {
+        if ($room_id && $room && $room_id != $this->id && !$room->lock) {
             $client_url = 'app://m/rooms/detail?id=' . $room_id;
         }
 
