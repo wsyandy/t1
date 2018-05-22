@@ -2935,7 +2935,7 @@ class Rooms extends BaseModel
 
         if ($user->canReceiveBoomGiftMessage()) {
 
-            if (isInternalIp($user->ip)) {
+            if (in_array($this->id, \Rooms::getGameWhiteList()) || isInternalIp($user->ip)) {
 
                 $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
                     'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
