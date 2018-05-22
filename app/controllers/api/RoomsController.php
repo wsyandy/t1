@@ -736,7 +736,7 @@ class RoomsController extends BaseController
         $content = $this->params('content');
         $content_type = $this->params('content_type');
 
-        if (isDevelopmentEnv() && isBlank($content)) {
+        if (isDevelopmentEnv() && $content != 0 && isBlank($content)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
         }
 
