@@ -1408,18 +1408,17 @@ class Rooms extends BaseModel
 
     static function searchGangUpRooms($user, $page, $per_page)
     {
-        $cond['conditions'] = "online_status = :online_status: and status = :status: and room_category_types like 
-        :room_category_types: and lock = :lock:";
+        $cond['conditions'] = "online_status = :online_status: and status = :status: and room_category_types like :room_category_types: and lock = :lock:";
         $cond['bind'] = ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'room_category_types' => "%,gang_up,%", 'lock' => 'false'];
         $cond['order'] = 'last_at desc';
 
         $shield_room_ids = $user->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
 
         $gang_up_rooms = \Rooms::findPagination($cond, $page, $per_page);
+        \Users::findBatch($gang_up_rooms);
 
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 

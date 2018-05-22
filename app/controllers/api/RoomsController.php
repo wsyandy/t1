@@ -43,12 +43,14 @@ class RoomsController extends BaseController
 
         if ($this->currentUser()->isIosAuthVersion()) {
             $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         }
@@ -65,7 +67,7 @@ class RoomsController extends BaseController
         }
 
         $rooms = \Rooms::search($this->currentUser(), $page, $per_page, $this->params());
-
+        \Users::findBatch($rooms);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -751,6 +753,7 @@ class RoomsController extends BaseController
 
         if ($this->currentUser()->isIosAuthVersion()) {
             $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
@@ -758,17 +761,16 @@ class RoomsController extends BaseController
         $type = $this->params('type');
 
         //关键词和类型不能同时为空
-        if (is_null($keyword) && isBlank($type)) {
+        if (!$keyword && isBlank($type)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
         $cond = [];
 
-        if (!is_null($keyword)) {
+        if ($keyword) {
 
             //临时兼容
             $room_category = \RoomCategories::findFirstByName($keyword);
-
             \SearchHistories::delay()->createHistory($keyword, 'room');
 
             if ($room_category && $room_category->type) {
@@ -824,7 +826,6 @@ class RoomsController extends BaseController
         }
 
         $shield_room_ids = $this->currentUser()->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
@@ -832,6 +833,7 @@ class RoomsController extends BaseController
         debug("room_search_cond", $cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
+        \Users::findBatch($rooms);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
@@ -864,6 +866,7 @@ class RoomsController extends BaseController
 
         if (STATUS_ON == $top) {
             $top_rooms = \Rooms::searchTopRoom();
+            \Users::findBatch($top_rooms);
             $top_rooms_json = $top_rooms->toJson('top_rooms', 'toSimpleJson');
         }
 
@@ -877,6 +880,7 @@ class RoomsController extends BaseController
 //                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
 //            }
 
+            \Users::findBatch($hot_rooms);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
@@ -915,6 +919,8 @@ class RoomsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 12);
         $rooms = \Rooms::search($this->currentUser(), $page, $per_page);
+        \Users::findBatch($rooms);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
