@@ -113,9 +113,9 @@ class GameHistories extends BaseModel
         if ($this->status == GAME_STATUS_PLAYING) {
             $site = 0;
         }
-
+        $game_code = strtolower($this->game->clazz);
         $client_url = $this->game->url . '?sid=' . $current_user->sid . '&code=' . $current_user->product_channel->code .
-            '&name=' . $this->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room->id . '&game_code=' . $this->game->clazz .
+            '&name=' . $this->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room->id . '&game_code=' . $game_code .
             '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $owner . '&game_history_id=' . $this->id;
 
         info('拼接跳转到游戏的链接', $client_url);
