@@ -110,10 +110,12 @@ class RedPacketsController extends BaseController
             $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
             $score = $cache->zscore($key, $red_packet_id);
             if ($score) {
+                unlock($lock);
                 return $this->renderJSON(ERROR_CODE_BLOCKED_ACCOUNT, '已抢过');
             }
 
             if ($red_packet->status == STATUS_OFF) {
+                unlock($lock);
                 return $this->renderJSON(ERROR_CODE_FAIL, '已经抢光啦');
             }
 
@@ -121,6 +123,7 @@ class RedPacketsController extends BaseController
             if ($red_packet_type == RED_PACKET_TYPE_STAY_AT_ROOM) {
                 $time = $red_packet->getDistanceStartTime($room, $user->id);
                 if ($time > 0) {
+                    unlock($lock);
                     return $this->renderJSON(ERROR_CODE_FAIL, '不要心急，您还没有待满三分钟哦！');
                 }
             }
@@ -131,6 +134,7 @@ class RedPacketsController extends BaseController
                 if ($sex != USER_SEX_COMMON) {
                     if ($sex != $user->sex) {
                         $sex_content = $sex == USER_SEX_MALE ? '小哥哥' : '小姐姐';
+                        unlock($lock);
                         return $this->renderJSON(ERROR_CODE_FAIL, '这个红包只有' . $sex_content . '才可以抢哦！');
                     }
                 }
@@ -140,12 +144,14 @@ class RedPacketsController extends BaseController
             if ($red_packet_type == RED_PACKET_TYPE_ATTENTION) {
                 info('房主id', $room->user_id);
                 if ($room->user_id == $user->id) {
+                    unlock($lock);
                     return $this->renderJSON(ERROR_CODE_FAIL, '房主好意思抢自己的红包嘛');
                 }
                 $follow_key = 'follow_list_user_id' . $user->id;
                 $follow_ids = $cache->zrange($follow_key, 0, -1);
                 if (!in_array($room->user_id, $follow_ids)) {
                     $client_url = '/m/red_packets/followers';
+                    unlock($lock);
                     return $this->renderJSON(ERROR_CODE_FORM, '需要关注房主才可领取', ['client_url' => $client_url]);
                 }
             }

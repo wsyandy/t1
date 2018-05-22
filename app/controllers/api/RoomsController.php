@@ -320,12 +320,17 @@ class RoomsController extends BaseController
             $res['pk_history'] = $pk_history->toSimpleJson();
         }
 
-        if (isInternalIp($this->remoteIp())) {
+        if (in_array($this->id, \Rooms::getGameWhiteList()) || isInternalIp($this->remoteIp())) {
+
             // 房间红包
             $underway_red_packet = $room->getNotDrawRedPacket($this->currentUser());
             if ($underway_red_packet) {
                 $res['red_packet'] = ['num' => count($underway_red_packet), 'client_url' => 'url://m/red_packets/red_packets_list?room_id=' . $room_id];
             }
+
+        }
+
+        if (isInternalIp($this->remoteIp())) {
 
             if ($room->hasBoomGift()) {
 
