@@ -53,6 +53,8 @@ class AgoraTask extends \Phalcon\Cli\Task
         $hot_cache = Users::getHotWriteCache();
         $hot_total_room_list_key = Rooms::getTotalRoomListKey();
         $room_ids = $hot_cache->zrevrange($hot_total_room_list_key, 0, -1);
+        echoLine('count', count($room_ids));
+        
         $rooms = Rooms::findByIds($room_ids);
         foreach ($rooms as $room){
             $room->checkBroadcasters();

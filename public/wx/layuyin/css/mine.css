@@ -1,0 +1,184 @@
+.mine_list{
+  margin-top:12px;
+  width: 100%;
+}
+.mine_list li{
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  background: url(../images/mine_right_arrows.png) white 96% center no-repeat;
+  background-size: 12px 20px;
+}
+.mine_list li span{
+  margin-right: 12px;
+}
+.mine_list li:first-child{
+  margin-bottom:12px;
+  border-bottom: 1px solid #EEEEEE;
+  border-top: 1px solid #EEEEEE;
+}
+.mine_list li:last-child{
+  margin-top:12px;
+}
+.mine_list li:nth-child(2){
+  border-top: 1px solid #EEEEEE;
+}
+.mine_list li .wire{
+  display: flex;
+  position: absolute;
+  right: -12px;
+  bottom: 0;
+  height: 1px;
+  width:96%;
+  background-color: #eee;
+}
+.mine_list li .create{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_create.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .purchase{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_purchase.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .course{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_course.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .quiz{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_quiz.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .set{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_set.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .mine_share{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_share.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .mine_money{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_icon_money.png) center no-repeat;
+  background-size: cover;
+}
+.mine_list li .mine_gz{
+  width: 20px;
+  height: 19px;
+  background: url(../images/mine_gz.png) center no-repeat;
+  background-size: cover;
+}
+.mine_mar{
+  margin-top: 12px;
+}
+.haeder_nav .haeder_right_but{
+  width: auto;
+  padding: 6px 0;
+}
+.mine_data_message{
+  height: 70px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  margin-top: 12px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.mine_data_message .header{
+  padding-left:24px;
+  font-size: 16px;
+  color: #1D1D1D;
+  background: url(../images/mine_data_icon_header.png) left center no-repeat;
+  background-size: 17px 18px;
+}
+.mine_data_message .label{
+  background: url(../images/mine_data_icon_label.png) left center no-repeat;
+  background-size: 17px 18px;
+}
+.mine_data_message .header_img{
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+}
+.mine_data_input{
+  height: 50px;
+}
+.mine_data_input input{
+  flex: 1;
+  font-size: 15px;
+  color: #999999;
+  height: 48px;
+  text-align: right;
+  padding-right:24px;
+  background:url(../images/mine_icon_name.png) right center no-repeat;
+  background-size: 14px;
+}
+.mine_data_textarea{
+  margin-top: 12px;
+  width: 100%;
+  height: 150px;
+  resize: none;
+  padding: 16px 20px;
+  font-size: 16px;
+  color: #999999;
+  box-sizing: border-box;
+  background-color: white;
+  border-bottom: 1px solid #EEEEEE;
+  border-top: 1px solid #EEEEEE;
+}
+
+/* 设置页 */
+.setting_ul{
+  margin-top: 12px;
+
+}
+.setting_ul li{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  height:55px;
+  background: url(../images/mine_right_arrows.png) white 96% center no-repeat;
+  background-size: 12px 20px;
+  border-bottom: 1px solid #f1f1f1;
+}
+.setting_ul li p{
+  font-size: 16px;
+  color: #1D1D1D;
+}
+.setting_ul li span{
+  font-size: 16px;
+  color: #999;
+  margin-right:18px;
+}
+.setting_ul li i{
+  color: #FF4848;
+}
+.setting_out{
+  margin:70px 16px 0;
+  height: 44px;
+  background-color: #FE747F;
+  border-radius: 4px;
+  line-height: 44px;
+  text-align: center;
+  font-size: 17px;
+  color: #FFFFFF;
+}

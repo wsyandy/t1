@@ -20,6 +20,8 @@
     sex	性别 0:女 1:男 无主播无此字段
     avatar_url 用户头像 无主播无此字段
     avatar_small_url 用户小头像 无主播无此字段
+    avatar_100x100_url 100x100头像
+    avatar_60x60_url 60x60头像
     nickname 昵称 无主播无此字段
     room_id 房间id
     microphone 麦位麦克风状态 false/true 默认为true
@@ -260,6 +262,8 @@
     user_id 麦位主播id，无主播为0
     sex	性别 0:女 1:男
     avatar_small_url 用户小头像
+    avatar_100x100_url 100x100头像
+    avatar_60x60_url 60x60头像
     nickname 昵称
     room_id 房间id
     status: int 麦位状态，0 麦为被封，1 麦位正常

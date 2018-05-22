@@ -16,9 +16,12 @@
             sid: "{{ sid }}",
             code: "{{ code }}",
             page: 1,
-            per_page:8,
+            per_page: 8,
             total_page: 1,
-            game_list: []
+            game_list: [],
+            UserInfo: [],
+            room_id: "{{ room_id }}",
+
         },
 
         methods: {
@@ -43,11 +46,25 @@
                 vm.page++;
             },
             select_game: function (game) {
-                if(!game.url){
+                if (!game.url) {
                     alert('url无效');
                     return;
                 }
-                vm.redirectAction(game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id);
+                var data = {
+                    sid: vm.sid,
+                    code: vm.code,
+                    room_id: vm.room_id,
+                    game_id: game.id
+                };
+                $.authPost('/m/jumps/get_game_client_url', data, function (resp) {
+                    console.log(resp);
+                    if (!resp.error_code) {
+                        vm.redirectAction(resp.client_url);
+                    } else {
+                        alert(resp.error_reason);
+                    }
+                });
+
             }
 
         }
