@@ -23,6 +23,13 @@ class GameHistories extends BaseModel
 
     static $STATUS = [GAME_STATUS_WAIT => '等待', GAME_STATUS_PLAYING => '游戏中', GAME_STATUS_END => '结束'];
 
+    function afterCreate()
+    {
+        if ($this->status == GAME_STATUS_WAIT) {
+            \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
+        }
+    }
+
     function afterUpdate()
     {
 
@@ -34,6 +41,10 @@ class GameHistories extends BaseModel
             $hot_cache->del($room_wait_key);
             $hot_cache->del($room_enter_key);
             $hot_cache->del($room_user_quit_key);
+
+            $user = \Users::findFirstById($this->user_id);
+            $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
+            \Games::sendGameMessage($user, $body);
         }
     }
 

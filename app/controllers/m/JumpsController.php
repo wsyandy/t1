@@ -263,12 +263,10 @@ class JumpsController extends BaseController
                     $game_history->update();
                 }
                 break;
-            case 'stop':
+            case 'over':
                 if ($game_history && $game_history != GAME_STATUS_END) {
                     $game_history->status = GAME_STATUS_END;
                     $game_history->update();
-                    $body = ['action' => 'game_notice', 'type' => $type, 'content' => "游戏结束",];
-                    \Games::sendGameMessage($current_user, $body);
                 }
                 break;
         }
@@ -292,6 +290,8 @@ class JumpsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
 
     }
+
+
 
 
 }
