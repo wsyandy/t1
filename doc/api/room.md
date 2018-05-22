@@ -1080,6 +1080,8 @@
     user_id 房主用户id
     sex	性别 0:女 1:男
     avatar_small_url 用户小头像
+    avatar_100x100_url 100x100头像
+    avatar_60x60_url 60x60头像
     nickname 昵称
     online_status 0离线，1在线
     channel_name: string 房间唯一标识, 频道名称
@@ -1107,6 +1109,8 @@
             user_id 麦位主播id，无主播为0
             sex	性别 0:女 1:男
             avatar_small_url 用户小头像
+            avatar_100x100_url 100x100头像
+            avatar_60x60_url 60x60头像
             nickname 昵称
             room_id 房间id
             status: int 麦位状态，0 麦为被封，1 麦位正常
