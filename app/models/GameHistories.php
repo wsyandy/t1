@@ -25,7 +25,7 @@ class GameHistories extends BaseModel
 
     function afterCreate()
     {
-        if ($this->status == GAME_STATUS_WAIT) {
+        if ($this->status == GAME_STATUS_WAIT && $this->game->url == 'https://gtest.yueyuewo.cn') {
             \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
         }
     }
@@ -42,9 +42,13 @@ class GameHistories extends BaseModel
             $hot_cache->del($room_enter_key);
             $hot_cache->del($room_user_quit_key);
 
-            $user = \Users::findFirstById($this->user_id);
-            $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
-            \Games::sendGameMessage($user, $body);
+            if ($this->game->url == 'https://gtest.yueyuewo.cn') {
+                $user = \Users::findFirstById($this->user_id);
+                $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
+                \Games::sendGameMessage($user, $body);
+            }
+
+
         }
     }
 
