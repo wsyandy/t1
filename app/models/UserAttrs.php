@@ -607,14 +607,14 @@ trait UserAttrs
         return '';
     }
 
-    function getChannelName()
-    {
-        if ($this->room) {
-            return $this->room->channel_name;
-        }
-
-        return '';
-    }
+//    function getChannelName()
+//    {
+//        if ($this->room) {
+//            return $this->room->channel_name;
+//        }
+//
+//        return '';
+//    }
 
     function getMonologueText()
     {
