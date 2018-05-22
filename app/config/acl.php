@@ -4,7 +4,7 @@ return [
 
     'editor' => ['dashboard' => '*', 'weixin_menu_templates' => '*', 'push_messages' => '*', 'weixin_template_messages' => '*'],
 
-    'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar'], 'id_card_auths' => '*',
+    'customer' => ['dashboard' => '*', 'users' => ['index', 'detail', 'basic', 'friend_list', 'followers', 'avatar', 'send_message'], 'id_card_auths' => '*',
         'withdraw_histories' => ['index'], 'rooms' => ['index', 'forbidden_to_hot'], 'complaints' => ['index']
     ],
 
