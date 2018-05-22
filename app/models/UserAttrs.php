@@ -597,6 +597,10 @@ trait UserAttrs
     function getCurrentChannelName()
     {
         if ($this->current_room_id) {
+            if(isDevelopmentEnv()){
+                return $this->current_room_channel_name;
+            }
+
             return $this->current_room->channel_name;
         }
 
