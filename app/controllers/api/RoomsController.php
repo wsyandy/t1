@@ -1066,14 +1066,14 @@ class RoomsController extends BaseController
                     $current_room->exitRoom($this->currentUser());
                 }
 
+                $room->enterRoom($this->currentUser());
+
             } else {
 
+                $room->enterRoom($this->currentUser());
                 // 进入房间推送
                 $this->currentUser()->pushIntoRoomRemindMessage();
-
             }
-
-            $room->enterRoom($this->currentUser());
         }
 
         $res = $room->toJson();
