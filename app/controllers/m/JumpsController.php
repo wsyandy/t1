@@ -240,6 +240,13 @@ class JumpsController extends BaseController
 
         if ($type == 'start') {
 
+            $game_history = new \GameHistories();
+            $game_history->game_id = $game_id;
+            $game_history->user_id = $current_user->id;
+            $game_history->room_id = $current_user->room_id;
+            $game_history->status = GAME_STATUS_WAIT;
+            $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
+
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
             $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",

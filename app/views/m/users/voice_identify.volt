@@ -118,23 +118,23 @@
         <div v-if="isShareToast" class="share_link_toast">
             <div class="share_link_box">
                 <ul class="share_link">
-                    <li @click="share('wx_friend','image','generate_image')">
+                    <li @click="share('wx_friend','image','voice','share_image')">
                         <span class="weixin_icon"></span>
                         <span>微信</span>
                     </li>
-                    <li @click="share('wx_moments','image','generate_image')">
+                    <li @click="share('wx_moments','image','voice','share_image')">
                         <span class="friends_icon"></span>
                         <span>朋友圈</span>
                     </li>
-                    <li @click="share('qq_friend','image','generate_image')">
+                    <li @click="share('qq_friend','image','voice','share_image')">
                         <span class="qq_icon"></span>
                         <span>QQ</span>
                     </li>
-                    <li @click="share('qq_zone','image','generate_image')">
+                    <li @click="share('qq_zone','image','voice','share_image')">
                         <span class="kongjian_icon"></span>
                         <span>QQ空间</span>
                     </li>
-                    <li @click="share('sinaweibo','image','generate_image')">
+                    <li @click="share('sinaweibo','image','voice','share_image')">
                         <span class="weibo_icon"></span>
                         <span>微博</span>
                     </li>
@@ -191,7 +191,7 @@
             },
             //platform => qq_friend：qq好友    qq_zone：qq空间    wx_friend：微信好友  wx_moments：朋友圈  sinaweibo：新浪微博
             //type => image：图片    web_page：网页   text：文本
-            share: function (platform, type, share_source) {
+            share: function (platform, type, share_source, action) {
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
@@ -203,7 +203,8 @@
                         platform: platform,
                         type: type,
                         share_source: share_source,
-                        image_data: image_data
+                        image_data: image_data,
+                        action: action
                     };
 
                     $.authPost('/m/shares/create', data, function (resp) {
@@ -383,7 +384,7 @@
                 // JsCallback.saveMusic
             }
             alert('保存成功');
-        }else{
+        } else {
             $.authPost('/m/users/save_image', data, function (resp) {
                 alert(resp.error_reason);
             });
