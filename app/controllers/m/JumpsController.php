@@ -246,7 +246,7 @@ class JumpsController extends BaseController
 
         switch ($type) {
             case 'wait':
-                if ($game_history && $game_history == GAME_STATUS_WAIT) {
+                if ($game_history && $game_history->status == GAME_STATUS_WAIT) {
                     $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
@@ -257,14 +257,14 @@ class JumpsController extends BaseController
                 }
                 break;
             case 'start':
-                if ($game_history && $game_history == GAME_STATUS_WAIT) {
+                if ($game_history && $game_history->status == GAME_STATUS_WAIT) {
                     $game_history->status = GAME_STATUS_PLAYING;
                     $game_history->enter_at = time();
                     $game_history->update();
                 }
                 break;
             case 'over':
-                if ($game_history && $game_history != GAME_STATUS_END) {
+                if ($game_history && $game_history->status != GAME_STATUS_END) {
                     $game_history->status = GAME_STATUS_END;
                     $game_history->update();
                 }
@@ -290,8 +290,6 @@ class JumpsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
 
     }
-
-
 
 
 }
