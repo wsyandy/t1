@@ -284,17 +284,6 @@ class BaseController extends ApplicationController
         $controller_name = strtolower($controller_name);
         $action_name = strtolower($action_name);
 
-        //对方用户不存在
-        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
-            || $this->otherUserId() && !$this->otherUser()
-        ) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
-        }
-
-        if ($this->currentUser() && $this->currentUser()->isBlocked()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '账号被封!');
-        }
-
         // 更新设备或用户状态
         if (!$this->skipCheckLoginStatus($controller_name, $action_name)) {
             $this->checkLoginStatus();
@@ -305,6 +294,17 @@ class BaseController extends ApplicationController
             return;
         }
 
+        if ($this->currentUser() && $this->currentUser()->isBlocked()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '账号被封!');
+        }
+
+        //对方用户不存在
+        if (!$this->skipCheckOtherUser($controller_name, $action_name) && !$this->otherUser()
+            || $this->otherUserId() && !$this->otherUser()
+        ) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '对方用户不存在');
+        }
+        
         if (!$this->authorize()) {
             info('请登录 authorize', $this->params());
 
