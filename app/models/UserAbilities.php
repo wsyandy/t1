@@ -104,14 +104,6 @@ trait UserAbilities
             return false;
         }
 
-        $partner_id = 14;
-
-        if (time() - $this->register_at <= 86400 && $partner_id == $this->partner_id &&
-            $this->register_at >= strtotime('2018-05-15 23:30:00')) {
-
-            return true;
-        }
-
         $province_ids = [1, 2];
         if (in_array($this->province_id, $province_ids)
             || in_array($this->ip_province_id, $province_ids) && isProduction()
