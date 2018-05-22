@@ -1,7 +1,7 @@
 <form action='/admin/users/send_message?id={{ user.id }}' method="post">
 
 
-    {% if isDevelopment() %}
+    {% if isDevelopmentEnv() %}
         <div class="form-group">
             <label>消息类型</label>
             <select name="content_type" class="form-control">
