@@ -499,12 +499,12 @@ trait RoomAttrs
             if (isInternalIp($user->ip)) {
 
                 $menu_config[] = ['show' => true, 'title' => '红包', 'type' => 'red_packet',
-                    'url' => 'url://m/red_packets', 'icon' => $root_host . 'images/red_packet.png'];
+                    'url' => 'url://m/red_packets?room_id=' . $this->id, 'icon' => $root_host . 'images/red_packet.png'];
 
             }
 
             if ($is_host) {
-                $menu_config[] = ['show' => true, 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
+                $menu_config[] = ['show' => true, 'url' => 'app://users/pk', 'title' => 'PK', 'type' => 'pk', 'icon' => $root_host . 'images/pk.png'];
             }
         }
 
@@ -590,12 +590,14 @@ trait RoomAttrs
     {
         return "abnormal_exit_room_list";
     }
+
     static function getAbnormalExitRoomList()
     {
         $hot_cache = Rooms::getHotReadCache();
 
         return $hot_cache->zrange(self::generateAbnormalExitRoomListKey(), 0, -1);
     }
+
     static function isInAbnormalExitRoomList($room_id, $user_id)
     {
         $hot_cache = Rooms::getHotReadCache();
