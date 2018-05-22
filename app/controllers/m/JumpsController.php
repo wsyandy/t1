@@ -247,7 +247,7 @@ class JumpsController extends BaseController
         switch ($type) {
             case 'wait':
                 if ($game_history && $game_history == GAME_STATUS_WAIT) {
-                    $client_url = $game->generateGameClientUrl($current_user, $room, $game_history->id);
+                    $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
                     $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",
@@ -265,6 +265,8 @@ class JumpsController extends BaseController
                 break;
             case 'stop':
                 if ($game_history && $game_history != GAME_STATUS_END) {
+                    $game_history->status = GAME_STATUS_END;
+                    $game_history->update();
                     $body = ['action' => 'game_notice', 'type' => $type, 'content' => "游戏结束",];
                     \Games::sendGameMessage($current_user, $body);
                 }
@@ -285,7 +287,7 @@ class JumpsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
         $game_history = \GameHistories::createGameHistory($current_user, $game_id);
-        $client_url = $game->generateGameClientUrl($current_user, $room, $game_history->id);
+        $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
 
