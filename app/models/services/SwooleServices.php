@@ -46,7 +46,7 @@ class SwooleServices extends \BaseModel
                 'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
                 'reload_async' => true,
                 'reactor_num' => self::config('websocket_reactor_num'),
-                'heartbeat_check_interval' => 10, //10秒检测一次
+                'heartbeat_check_interval' => 18, //10秒检测一次
                 'task_worker_num' => self::config('websocket_task_worker_num'),
                 'heartbeat_idle_time' => 50, //50秒未向服务器发送任何数据包,此链接强制关闭
                 //'task_worker_num' => 8
