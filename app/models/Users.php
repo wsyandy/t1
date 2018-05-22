@@ -639,6 +639,11 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
+        if ($device->isBlocked()) {
+            info("block_device_active", $device->id, $device->device_no);
+            return [ERROR_CODE_FAIL, '设备被封'];
+        }
+
         //切换账号登录时如果用户在房间就退出房间
         if ($this->isInAnyRoom()) {
             info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, 'old_device', $this->device_id);
