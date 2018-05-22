@@ -71,6 +71,7 @@ class GameHistories extends BaseModel
         $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
         $game_history->save();
 
+        return $game_history;
     }
 
 }
