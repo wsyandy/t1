@@ -718,7 +718,7 @@ class Rooms extends BaseModel
 
         $hot_cache = self::getHotReadCache();
         $key = $this->getRealUserListKey();
-        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_ids = $hot_cache->zrevrange($key, 0, -1);
         $index = array_rand($user_ids);
         $user_id = $user_ids[$index];
         $user = Users::findFirstById($user_id);
@@ -735,7 +735,7 @@ class Rooms extends BaseModel
 
         $hot_cache = self::getHotReadCache();
         $key = $this->getRealUserListKey();
-        $user_ids = $hot_cache->zrange($key, 0, -1);
+        $user_ids = $hot_cache->zrevrange($key, 0, -1);
         $users = Users::findByIds($user_ids);
 
         return $users;
