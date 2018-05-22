@@ -20,6 +20,7 @@ class PkHistories extends BaseModel
 
 
     static $STATUS = [STATUS_ON => '创建成功', STATUS_PROGRESS => 'PK中', STATUS_OFF => 'PK结束'];
+    static $PK_TYPE = ['send_gift_user' => '送礼物人数', 'send_gift_amount' => '送礼物金额'];
 
     function beforeCreate()
     {
