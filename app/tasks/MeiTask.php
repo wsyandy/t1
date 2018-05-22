@@ -9,6 +9,14 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test60Action()
+    {
+        $db = Users::getUserDb();
+        $key = "room_manager_1";
+        $db->hset($key, 2, json_encode(['time' => 12222, 'is_de' => false]));
+        echoLine($db->hgetall($key));
+    }
+
     function test59Action()
     {
         $content = file_get_contents(APP_ROOT . "temp/test.txt");

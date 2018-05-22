@@ -488,10 +488,12 @@ class Rooms extends BaseModel
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = time() + $duration * 3600;
+        $is_permanent = false;
 
         //-1 为永久
         if (-1 == $duration) {
             $time = time() + 86400 * 10000;
+            $is_permanent = true;
         } else {
 
             if (isDevelopmentEnv()) {
@@ -507,6 +509,11 @@ class Rooms extends BaseModel
 
         $db->zadd($manager_list_key, $time, $user_id);
         $db->zadd($user_manager_list_key, $time, $this->id);
+
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+
+        $db->hset($room_manager_cache_key, $user_id, json_encode(['user_id' => $user_id, 'is_permanent' => $is_permanent,
+            'deadline' => $this->calculateUserDeadline($user_id)], JSON_UNESCAPED_UNICODE));
     }
 
     function deleteManager($user_id)
@@ -524,6 +531,10 @@ class Rooms extends BaseModel
         $db->zrem($key, $user_id);
         $db->zrem($user_manager_list_key, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+
+        $db->hdel($room_manager_cache_key, $user_id);
+
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zrem($total_manager_key, $room_manager_key);
         }
@@ -546,15 +557,29 @@ class Rooms extends BaseModel
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+        $room_manager_key = $this->generateRoomManagerKey($user_id);
         $time = $duration * 3600;
+
         if (isDevelopmentEnv()) {
             $time = $duration * 60;
         }
+
         $db->zincrby($manager_list_key, $time, $user_id);
         $db->zincrby($user_manager_list_key, $time, $this->id);
-        $room_manager_key = $this->generateRoomManagerKey($user_id);
+
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zincrby($total_manager_key, $time, $room_manager_key);
+        }
+
+        $cache = $db->hget($room_manager_cache_key, $user_id);
+
+        if ($cache) {
+
+            $cache = json_decode($cache, true);
+            $cache['deadline'] = $this->calculateUserDeadline($user_id);
+
+            $db->hset($room_manager_cache_key, $user_id, json_encode($cache, JSON_UNESCAPED_UNICODE));
         }
     }
 

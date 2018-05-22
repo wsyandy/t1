@@ -447,6 +447,12 @@ trait RoomAttrs
         return "room_manager_list_id" . $this->id;
     }
 
+    function generateManagerCacheKey()
+    {
+        $key = "room_manager_cache_room_id_" . $this->id;
+        return $key;
+    }
+
     static function generateTotalManagerKey()
     {
         return "total_room_manager_list";
