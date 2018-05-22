@@ -101,6 +101,10 @@ class RoomsController extends BaseController
     //进入房间
     function enterAction()
     {
+        if (isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
         $room_id = $this->params('id', 0); // 进入指定房间
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
@@ -180,6 +184,10 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
+        if (isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+        
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
 
