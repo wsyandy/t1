@@ -250,7 +250,7 @@ class JumpsController extends BaseController
                     $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
-                    $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                    $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
                         'image_url' => $image_url, 'client_url' => $client_url];
 
                     \Games::sendGameMessage($current_user, $body);
