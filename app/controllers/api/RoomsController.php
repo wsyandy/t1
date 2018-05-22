@@ -102,7 +102,7 @@ class RoomsController extends BaseController
     function enterAction()
     {
         if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
         }
 
         $room_id = $this->params('id', 0); // 进入指定房间
@@ -185,9 +185,9 @@ class RoomsController extends BaseController
     function detailAction()
     {
         if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
         }
-        
+
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
 
@@ -341,7 +341,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 
-//房间基本信息
+    //房间基本信息
     function basicInfoAction()
     {
         $room_id = $this->params('id', 0);
@@ -356,6 +356,7 @@ class RoomsController extends BaseController
     function exitAction()
     {
         $room_id = $this->params('id', 0);
+
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
@@ -413,7 +414,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-// 公屏设置
+    // 公屏设置
     function openChatAction()
     {
         $room_id = $this->params('id', 0);
@@ -470,7 +471,7 @@ class RoomsController extends BaseController
     }
 
 
-// 踢出房间
+    // 踢出房间
     function kickingAction()
     {
         $room_id = $this->params('id', 0);
@@ -538,7 +539,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功');
     }
 
-//异常离线上报 暂时用不到
+    //异常离线上报 暂时用不到
     function offlineAction()
     {
         if (!$this->otherUser()) {
@@ -557,7 +558,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-//添加管理员
+    //添加管理员
     function addManagerAction()
     {
         $id = $this->params('id');
@@ -598,7 +599,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $res);
     }
 
-//删除管理员
+    //删除管理员
     function deleteManagerAction()
     {
         $id = $this->params('id');
@@ -622,7 +623,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '');
     }
 
-//更新管理员
+    //更新管理员
     function updateManagerAction()
     {
         $id = $this->params('id');
@@ -729,7 +730,7 @@ class RoomsController extends BaseController
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['types' => $types]);
     }
 
-//发公屏消息上报
+    //发公屏消息上报
     function sendMessageAction()
     {
         $content = $this->params('content');
