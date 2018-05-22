@@ -109,7 +109,7 @@
                     txt: '微博'
                 },
             ],
-            marriage_at_text:"{{ marriage_at_text }}"
+            marriage_at_text: "{{ marriage_at_text }}"
 
         },
         methods: {
@@ -123,19 +123,19 @@
 
                 switch (index) {
                     case 0:
-                        vm.share('wx_friend', 'image', 'generate_image');
+                        vm.share('wx_friend', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 1:
-                        vm.share('wx_moments', 'image', 'generate_image');
+                        vm.share('wx_moments', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 2:
-                        vm.share('qq_friend', 'image', 'generate_image');
+                        vm.share('qq_friend', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 3:
-                        vm.share('qq_zone', 'image', 'generate_image');
+                        vm.share('qq_zone', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 4:
-                        vm.share('sinaweibo', 'image', 'generate_image');
+                        vm.share('sinaweibo', 'image', 'cp_marriage', 'share_image');
                         break;
                 }
             },
@@ -149,7 +149,7 @@
             },
             //platform => qq_friend：qq好友    qq_zone：qq空间    wx_friend：微信好友  wx_moments：朋友圈  sinaweibo：新浪微博
             //type => image：图片    web_page：网页   text：文本
-            share: function (platform, type, share_source) {
+            share: function (platform, type, share_source, action) {
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
@@ -161,7 +161,8 @@
                         platform: platform,
                         type: type,
                         share_source: share_source,
-                        image_data: image_data
+                        image_data: image_data,
+                        action: action
                     };
 
                     $.authPost('/m/shares/create', data, function (resp) {

@@ -357,6 +357,10 @@
                     {% if isAllowed('couples', 'index') %}
                         <li><a href="/admin/couples">cp统计</a></li>
                     {% endif %}
+                    {% if isAllowed('distributes', 'index') %}
+                        <li><a href="/admin/distributes">分销统计</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}

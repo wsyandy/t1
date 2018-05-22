@@ -89,6 +89,13 @@ class SharesController extends BaseController
 
         $res['gold'] = $this->currentUser(true)->gold;
 
+        if ($share_history->status == STATUS_ON && $share_history->share_source == 'distribute') {
+            $stat_db = \Stats::getStatDb();
+            $key = \SmsDistributeHistories::generateDistributeNumKey();
+            $stat_db->incr($key);
+
+        }
+
         return $this->renderJSON($error_code, $error_reason, $res);
     }
 }

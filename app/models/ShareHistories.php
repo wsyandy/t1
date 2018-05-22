@@ -127,5 +127,4 @@ class ShareHistories extends BaseModel
     {
         return $this->share_source == 'match_sing';
     }
-
 }

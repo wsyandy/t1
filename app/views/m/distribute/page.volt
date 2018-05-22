@@ -14,23 +14,28 @@
         </div>
         <ul class="extend_share">
             <li>
-                <img src="/m/images/share_weiChat.png" alt="" @click="share('wx_friend','image','generate_image')">
+                <img src="/m/images/share_weiChat.png" alt=""
+                     @click="share('wx_friend','image','distribute','share_image')">
                 <span>微信好友</span>
             </li>
             <li>
-                <img src="/m/images/share_weiChatCircle.png" alt="" @click="share('wx_moments','image','generate_image')">
+                <img src="/m/images/share_weiChatCircle.png" alt=""
+                     @click="share('wx_moments','image','distribute','share_image')">
                 <span>朋友圈</span>
             </li>
             <li>
-                <img src="/m/images/share_qq.png" alt="" @click="share('qq_friend','image','generate_image')">
+                <img src="/m/images/share_qq.png" alt=""
+                     @click="share('qq_friend','image','distribute','share_image')">
                 <span>QQ好友</span>
             </li>
             <li>
-                <img src="/m/images/share_qqzone.png" alt="" @click="share('qq_zone','image','generate_image')">
+                <img src="/m/images/share_qqzone.png" alt=""
+                     @click="share('qq_zone','image','distribute','share_image')">
                 <span>QQ空间</span>
             </li>
             <li>
-                <img src="/m/images/share_sina.png" alt="" @click="share('sinaweibo','image','generate_image')">
+                <img src="/m/images/share_sina.png" alt=""
+                     @click="share('sinaweibo','image','distribute','share_image')">
                 <span>微博</span>
             </li>
             <li @click="screenshotsImg('save')">
@@ -50,7 +55,7 @@
             isShareSuccess: false,
             sid: "{{ sid }}",
             code: "{{ code }}",
-            is_show_share : "{{ is_show_share }}"
+            is_show_share: "{{ is_show_share }}"
         },
 
         methods: {
@@ -62,7 +67,7 @@
                     canvasTurnImg(canvas, type)
                 });
             },
-            share: function (platform, type, share_source) {
+            share: function (platform, type, share_source, action) {
                 vm.isShareSuccess = true;
                 html2canvas(document.querySelector(".extend_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
@@ -75,7 +80,8 @@
                         platform: platform,
                         type: type,
                         share_source: share_source,
-                        image_data: image_data
+                        image_data: image_data,
+                        action: action
                     };
 
                     $.authPost('/m/shares/create', data, function (resp) {

@@ -17,6 +17,7 @@ class SharesController extends BaseController
         $type = $this->params('type');
         $platform = $this->params('platform');
         $image_data = $this->params('image_data', '');
+        $action = $this->params('action', '');
 
         $user = $this->currentUser();
         $code = $this->currentProductChannel()->code;
@@ -37,7 +38,7 @@ class SharesController extends BaseController
             $image_url = $image_small_url;
         }
 
-        if ($share_history->share_source == 'generate_image') {
+        if ($action == 'share_image') {
             $image_url = \Users::getImageForShare($image_data);
         }
         $product_channel_name = $this->currentProductChannel()->name;
