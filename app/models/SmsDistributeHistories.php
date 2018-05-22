@@ -215,4 +215,21 @@ class SmsDistributeHistories extends BaseModel
         }
         return 'share_distribute_user_list' . date('Ymd', beginOfDay($time));
     }
+
+    //统计分销分享次数
+    static function shareDistributeNum()
+    {
+        $stat_db = \Stats::getStatDb();
+        $share_num_key = \SmsDistributeHistories::generateDistributeNumKey();
+        $stat_db->incr($share_num_key);
+    }
+
+
+    //统计分销分享人数
+    static function shareDistributeUserNum($user_id)
+    {
+        $stat_db = \Stats::getStatDb();
+        $share_user_list_key = \SmsDistributeHistories::generateShareDistributeUserListKey();
+        $stat_db->zadd($share_user_list_key, time(), $user_id);
+    }
 }

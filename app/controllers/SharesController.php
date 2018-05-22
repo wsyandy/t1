@@ -174,7 +174,7 @@ class SharesController extends ApplicationController
         $user = \Users::findFirstByMobile($product_channel, $mobile);
         $share_user = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
         if ($user || $share_user) {
-            info('已注册', $share_history_id, $product_channel->code, $mobile, 'user_fr', $user->fr);
+            info('已注册', $share_history_id, $product_channel->code, $mobile);
             return $this->renderJSON(ERROR_CODE_NEED_LOGIN, '你已注册，请登录！');
         }
 
