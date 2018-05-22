@@ -587,8 +587,9 @@ trait UserAttrs
 
     function getCurrentRoomLock()
     {
-        if ($this->current_room) {
-            return $this->current_room->lock;
+        if ($this->current_room_id) {
+            $room_db = Rooms::getRoomDb();
+            return $room_db->hget("room_" . $this->current_room_id, 'lock');
         }
 
         return false;
