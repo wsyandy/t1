@@ -728,6 +728,11 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
         }
 
+        $is_sensitive = \BannedWords::filterWord($content);
+        if ($is_sensitive) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '内容含有敏感词汇');
+        }
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 
