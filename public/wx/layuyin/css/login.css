@@ -1,0 +1,78 @@
+.login_from{
+  margin-top: 12px;
+}
+.login_from_box{
+  background-color: #fff;
+  padding-left: 15px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.login_from_li{
+  display: flex;
+  align-items: center;
+  height: 55px;
+  border-bottom: 1px solid #eee;
+}
+.login_from_box div:nth-child(2){
+  border-bottom: none;
+}
+
+.login_from_li .icon_phone{
+  width: 13px;
+  height: 16px;
+  background: url(../images/login_icon_phone.png) center no-repeat;
+  background-size: cover;
+}
+.login_from_li .icon_clear{
+  padding: 15px;
+  width: 15px;
+  height: 15px;
+  background: url(../images/login_icon_clear.png) center no-repeat;
+  background-size: 15px;
+}
+.login_from_li .icon_code{
+  width: 13px;
+  height: 16px;
+  background: url(../images/login_icon_code.png) center no-repeat;
+  background-size: cover;
+}
+.login_from_li input{
+  height: 55px;
+  padding-left: 15px;
+  min-width: 144px;
+  flex: 1;
+  font-size: 16px;
+  color: #1D1D1D;
+}
+.login_from_li  .get_code_but{
+  padding: 0 15px 0 41px;
+  font-size: 15px;
+  color: #FF818B;
+  border-left: 1px solid #d8d8d8;
+}
+.login_submit{
+  margin: 20px 15px 0;
+  height: 44px;
+  border-radius: 22px;
+  background-color: #FF818B;
+  line-height: 44px;
+  text-align: center;
+  color: #fff;
+}
+.product_logo{
+  margin: 192px auto 0;
+  width: 225px;
+
+}
+.product_logo img{
+  margin: 0 auto 18px;
+  width: 72px;
+  height: 72px;
+  display: block;
+  border: 2px solid #FFFFFF;
+  border-radius: 36px;
+}
+.product_logo p{
+  font-size: 16px;
+  color: #999999;
+}
