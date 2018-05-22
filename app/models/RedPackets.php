@@ -297,8 +297,8 @@ class RedPackets extends BaseModel
 
         if ($balance_diamond && $balance_num && $red_packet->status == STATUS_ON) {
             $usable_balance_diamond = $balance_diamond - ($balance_num - 1);
-            if ($usable_balance_diamond > ceil($red_packet->num * 0.5)) {
-                $get_diamond = mt_rand(1, ceil($red_packet->num * 0.4));
+            if ($usable_balance_diamond > ceil($red_packet->diamount * 0.5)) {
+                $get_diamond = mt_rand(1, ceil($red_packet->diamount * 0.4));
             } else {
                 $get_diamond = mt_rand(1, $usable_balance_diamond);
             }
