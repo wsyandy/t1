@@ -51,6 +51,7 @@ class Products extends BaseModel
 
     function toJson()
     {
+        $data = json_decode($this->data, true);
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -61,7 +62,8 @@ class Products extends BaseModel
             'diamond' => $this->diamond,
             'gold' => $this->gold,
             'product_group_name' => $this->product_group_name,
-            'apple_product_no' => $this->apple_product_no
+            'apple_product_no' => $this->apple_product_no,
+            'tamp_gold_egg' => $data['tamp_gold_egg']
         ];
     }
 
@@ -183,6 +185,24 @@ class Products extends BaseModel
         }
 
         return $this->diamond;
+    }
+
+
+    function getShowSendDiamond($full_name)
+    {
+        if (strpos($full_name,'+') !== false) {
+            $full_name = explode('+', $full_name);
+            return $full_name[count($full_name)-1];
+        }
+        return '';
+    }
+
+
+    function getParseFieldData($data, $value)
+    {
+        $data = json_decode($data, true);
+        if (empty($data[$value])) return '';
+        return $data[$value];
     }
 
 }
