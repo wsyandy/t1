@@ -46,4 +46,16 @@ class BannedWords extends BaseModel
         return [true, $new_word];
     }
 
+    static function filterWord($word)
+    {
+        $sensitive = "/" . implode("|", self::$WORD) . "/i";
+        $res = preg_match($sensitive, $word);
+        if ($res) {
+            return true;
+        }
+
+        return false;
+
+    }
+
 }
