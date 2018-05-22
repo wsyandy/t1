@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telephone=no"/>
 
-    {{ weixin_css('common') }}
+    {{ weixin_css('common','apple.css','index.css') }}
 
     {{ weixin_js('/js/jquery/1.11.2/jquery.min.js', '/js/vue/2.0.5/vue.min.js', '/js/utils.js') }}
 

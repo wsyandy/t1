@@ -1,0 +1,64 @@
+html,body{
+  background: #F6F6F6;
+}
+.teacher_gz_box{
+  background: #ffffff;
+  margin-top: 12px;
+  padding-left: 15px;
+}
+.teacher_gz_box .teacher_list{
+  display: flex;
+  padding:15px 15px 15px 0;
+  border-bottom: 1px solid #eeeeee;
+}
+.teacher_gz_box .teacher_list:last-child{
+  border-bottom: none !important;
+}
+.teacher_gz_box .teacher_list .gz_img{
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #D8D8D8;
+  border: 1px solid #979797;
+}
+.teacher_gz_box .teacher_list .gz_img img{
+  width: 60px;
+}
+.teacher_gz_box .teacher_list .gz_text{
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 15px;
+}
+.teacher_gz_box .teacher_list .title{
+  flex: 1;
+}
+.teacher_gz_box .teacher_list h3{
+  font-size: 17px;
+  color: #1D1D1D;
+}
+.teacher_gz_box .teacher_list p{
+  font-size: 15px;
+  color: #666666;
+  margin-top: 10px;
+}
+.gz_btn{
+  width: 50px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border: 1px solid #FF818B;
+  border-radius: 2px;
+  font-size: 12px;
+  color: #FF818B;
+  margin-left: 20px;
+}
+.gz_btn i{
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background: url(../images/course_add.png) no-repeat;
+  background-size: 100%;
+}

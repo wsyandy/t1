@@ -1,0 +1,76 @@
+@charset "utf-8";
+body,p,input,h1,h2,h3,h4,ul,li,dl,dt,dd,form { margin: 0;padding: 0;list-style: none;vertical-align: middle;
+}
+body{ font-family: 'Arial Normal', 'Arial';font-size: 14px;min-width: 320px;}
+html,body { height: 100%;width: 100%;margin:0 auto;}
+img{border: 0;}
+a{text-decoration: none;color: #000;}
+.fudong{
+    width: 295px;
+    height: 275px;
+    position: fixed;
+    z-index: 999999;
+    border: 1px solid #979797;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+.fudong_bg{
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+.fudong h3{
+    text-align: center;
+    font-size: 18px;
+    color: #1D1D1D;
+    margin-top: 20px;
+}
+.fudong img{
+    width: 90px;
+    height: 90px;
+    display: block;
+    margin:0 auto;
+    margin-top: 15px;
+    background: #F2F2F2;
+    border: 1px solid #D8D8D8;
+    border-radius: 4px;
+}
+.fudong p{
+    text-align: center;
+    font-size: 12px;
+    color: #1D1D1D;
+    margin: 15px 0;
+}
+.fudong span{
+    font-size: 12px;
+    color: #666666;
+    display: block;
+    text-align: center;
+}
+.fudong .copy_weixin{
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    background: #FE747F;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #FFFFFF;
+    margin:0 auto;
+    margin-top: 20px;
+}
+.fudong .close_btn{
+    width: 15.5px;
+    height: 15.5px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: url(../images/pop_close_btn.png) no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}

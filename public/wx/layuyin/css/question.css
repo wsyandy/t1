@@ -1,0 +1,208 @@
+html,body{
+    background: #F6F6F6;
+}
+.question_ask_title{
+    position: relative;
+}
+.question_add{
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url(../images/question_add.png) no-repeat;
+    background-size: 100%;
+    position: absolute;
+    right: 32%;
+    top: 50%;
+    transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+}
+.question_ask{
+    font-size: 16px;
+    color: #1D1D1D;
+    position: absolute;
+    right: 15px;
+}
+.question_ask i{
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    background: url(../images/question_ask.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+}
+.edu_question{
+    margin-top: 12px;
+    background: #ffffff;
+    padding:15px;
+}
+.edu_question .question_top{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.edu_question .question_top .question_img{
+    background: #D8D8D8;
+    width: 22px;
+    height: 22px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+.edu_question .question_top .question_img img{
+    width: 22px;
+}
+.edu_question .question_top h3{
+    flex: 1;
+    font-size: 14px;
+    color: #999999;
+    margin-left: 10px;
+}
+.edu_question .question_title{
+    font-size: 17px;
+    color: #1D1D1D;
+    margin-top: 14px;
+}
+.edu_question .question_text{
+    font-size: 14px;
+    color: #333333;
+    margin-top: 14px;
+}
+.question_zan{
+    text-align: right;
+    margin-top: 15px;
+}
+.question_zan i{
+    display: inline-block;
+    width: 14px;
+    height: 15px;
+    background: url(../images/question_zan.png) no-repeat;
+    background-size: 100%;
+    vertical-align: middle;
+}
+.question_zan span{
+    font-size: 14px;
+    color: #999999;
+}
+.zan_selected i{
+    background: url(../images/zan_selected.png) no-repeat;
+    background-size: 100%;
+}
+.zan_selected span{
+    color: #FE747F !important;
+}
+.home_question{
+    margin-top: 12px;
+    background-color: white;
+}
+.home_question .home_list_title{
+    padding:15px 0 15px 15px;
+    align-items: center;
+    border-bottom: 1px solid #EEEEEE;
+}
+.home_question .home_list_title b{
+    padding-right: 11px;
+    font-size: 12px;
+    color: #999999;
+    background: url(../images/question_more.png) right center no-repeat;
+    background-size: 6px 8px;
+    margin-right: 15px;
+}
+.home_question .edu_question{
+    margin-top: 0;
+    padding:0;
+}
+.home_question ul li{
+    padding: 15px 15px 15px 0;
+    margin-left: 15px;
+    border-top: 1px solid #EEEEEE;
+}
+.home_question ul li:first-child{
+    border-top: none !important; 
+}
+.question_ask_title{
+    padding:18px 15px;
+    background: #ffffff;
+    font-size: 17px;
+    color: #1D1D1D;
+    border-bottom: 1px solid #E7E7E7;
+    text-align: center;
+}
+.question_ask_top{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    background: #ffffff;
+    padding:10px 15px;
+    border-bottom: 1px solid #E7E7E7;
+} 
+.question_ask_top .question_ask_img{
+    width: 32px;
+    height: 32px;
+    background: #D8D8D8;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.question_ask_top .question_ask_img img{
+    width: 32px;
+}
+.question_ask_top h3{
+    flex: 1;
+    font-size: 16px;
+    color: #1D1D1D;
+    margin-left: 10px;
+}
+.question_ask_text{
+    padding:0 15px 20px 15px;
+    background: #ffffff;
+}
+.question_ask_text p{
+    padding-top: 24px;
+    font-size: 14px;
+    color: #1D1D1D;
+}
+.question_groom_title{
+    padding:15px;
+    font-size: 14px;
+    color: #666666;
+}
+.question_groom_list{
+    background: #ffffff;
+    padding-bottom: 0;
+}
+.question_groom_list .boutique_list_img{
+    width: 148px;
+    height: 83px;
+}
+.question_groom_list .boutique_list_img img{
+    width: 148px;
+}
+.question_groom_list li{
+    position: relative;
+}
+.ask_icon{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    width: 37.5px;
+    height: 37.5px;
+    background: url(../images/ask_icon_g.png) no-repeat;
+    background-size: 100%;
+}
+.ask_icon_cur{
+    background: url(../images/ask_icon_h.png) no-repeat !important;
+    background-size: 100% !important;
+}
+.question_groom_list li:last-child{
+    border-bottom:none !important;
+}
+
+
+
+
+
+
+
