@@ -36,18 +36,6 @@ class Rooms extends BaseModel
      */
     private $_country;
 
-    static $STATUS = [STATUS_OFF => '下架', STATUS_ON => '上架', STATUS_BLOCKED => '封闭'];
-    static $USER_TYPE = [USER_TYPE_ACTIVE => '活跃', USER_TYPE_SILENT => '沉默'];
-    static $THEME_TYPE = [ROOM_THEME_TYPE_NORMAL => '正常', ROOM_THEME_TYPE_BROADCAST => '电台', ROOM_THEME_TYPE_USER_BROADCAST => '个人电台'];
-    static $ONLINE_STATUS = [STATUS_OFF => '离线', STATUS_ON => '在线'];
-    static $HOT = [STATUS_OFF => '否', STATUS_ON => '是', STATUS_FORBIDDEN => '禁止上热门'];
-    static $TOP = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $NEW = [STATUS_OFF => '否', STATUS_ON => '是'];
-    static $TYPES = ['gang_up' => '开黑', 'friend' => '交友', 'amuse' => '娱乐', 'sing' => '唱歌', 'broadcast' => '电台',
-        'room_seat_sequence' => '麦序', 'male_gold' => '男女神', 'point_sing' => '点唱'];
-    static $NOVICE = [STATUS_OFF => '否', STATUS_ON => '是']; //新手房间
-    static $GREEN = [STATUS_OFF => '否', STATUS_ON => '是']; //绿色房间
-
 
     static function getCacheEndpoint($id)
     {
