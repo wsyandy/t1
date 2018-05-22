@@ -462,6 +462,8 @@ class RoomsController extends BaseController
         }
 
         $users = $room->findUsers($page, $per_page);
+        \Provinces::findBatch($users);
+        \Cities::findBatch($users);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
     }

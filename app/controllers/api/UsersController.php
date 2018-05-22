@@ -577,7 +577,10 @@ class UsersController extends BaseController
         }
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
-        if (count($users)) {
+        if ($users->count()) {
+            \Provinces::findBatch($users);
+            \Cities::findBatch($users);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
@@ -607,7 +610,10 @@ class UsersController extends BaseController
         }
 
         $users = $this->currentUser()->nearby($page, $per_page);
-        if (count($users)) {
+        if ($users->count()) {
+            \Provinces::findBatch($users);
+            \Cities::findBatch($users);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
@@ -830,10 +836,12 @@ class UsersController extends BaseController
             }
 
             $users = \Users::findByIds($user_ids);
-
         } else {
             $users = $this->currentUser()->nearby($page, $per_page);
         }
+
+        \Provinces::findBatch($users);
+        \Cities::findBatch($users);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
 
