@@ -91,8 +91,13 @@ class SharesController extends BaseController
 
         if ($share_history->status == STATUS_ON && $share_history->share_source == 'distribute') {
             $stat_db = \Stats::getStatDb();
-            $key = \SmsDistributeHistories::generateDistributeNumKey();
-            $stat_db->incr($key);
+            //保存分享成功的次数
+            $share_num_key = \SmsDistributeHistories::generateDistributeNumKey();
+            $stat_db->incr($share_num_key);
+
+            //保存分享成功的用户
+            $share_user_list_key = \SmsDistributeHistories::generateShareDistributeUserListKey();
+            $stat_db->zadd($share_user_list_key, time(), $this->currentUserId());
 
         }
 

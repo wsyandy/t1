@@ -193,11 +193,26 @@ class SmsDistributeHistories extends BaseModel
     //按天统计一、二级钻石奖励统计
     static function generateDistributeBonusKey($time = '')
     {
+        if (!$time) {
+            $time = time();
+        }
+
         return 'distribute_bonus_' . date('Ymd', beginOfDay($time));
     }
 
     static function generateDistributeNumKey($time = '')
     {
+        if (!$time) {
+            $time = time();
+        }
         return 'distribute_share_num_' . date('Ymd', beginOfDay($time));
+    }
+
+    static function generateShareDistributeUserListKey($time = '')
+    {
+        if (!$time) {
+            $time = time();
+        }
+        return 'share_distribute_user_list' . date('Ymd', beginOfDay($time));
     }
 }
