@@ -45,8 +45,8 @@ class DistributesController extends BaseController
             $distribute_bonus_datas = $stat_db->hgetall($distribute_bonus_key);
             $first_distribute_bonus = fetch($distribute_bonus_datas, 'first_distribute_bonus');
             $second_distribute_bonus = fetch($distribute_bonus_datas, 'second_distribute_bonus');
-            $result['first_distribute_bonus'] = $first_distribute_bonus;
-            $result['second_distribute_bonus'] = $second_distribute_bonus;
+            $result['first_distribute_bonus'] = $first_distribute_bonus ? $first_distribute_bonus : 0;
+            $result['second_distribute_bonus'] = $second_distribute_bonus ? $second_distribute_bonus : 0;
 
             //已邀请人数
             $invited_user_num = \SmsDistributeHistories::count(['conditions' => 'status=:status: and user_id is not null and created_at >=:start_at: and created_at <=:end_at:',
