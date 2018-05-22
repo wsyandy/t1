@@ -14,4 +14,4 @@
     <button type="submit" class="ui button">搜索</button>
 </form>
 
-{{ simple_table(pk_histories,['id': 'id','房间ID':'room_id','用户ID':'user_id','左边用户ID':'left_pk_user_id','右边用户ID':'right_pk_user_id','左边用户分数':'left_pk_user_score','右边用户分数':'right_pk_user_score','PK类型':'pk_type','状态':'status','创建时间':'created_at_text']) }}
+{{ simple_table(pk_histories,['id': 'id','房间ID':'room_id','房主ID':'user_id','左边用户ID':'left_pk_user_id','右边用户ID':'right_pk_user_id','左边用户分数':'left_pk_user_score','右边用户分数':'right_pk_user_score','PK类型':'pk_type_text','状态':'status_text','创建时间':'created_at_text']) }}
