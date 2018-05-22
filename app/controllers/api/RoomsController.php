@@ -281,9 +281,7 @@ class RoomsController extends BaseController
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
                 if ($game_history->game->url == 'https://gtest.yueyuewo.cn' && isDevelopmentEnv()) {
-                    $game = \Games::findFirstById($game_history->game_id);
-                    $client_url = $game->generateGameClientUrl($this->currentUser(), $room, $game_history);
-                    $res['game'] = ['url' => $client_url, 'icon' => $root_host . 'images/go_game.png'];
+                    $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
                 }
             }
         } else {

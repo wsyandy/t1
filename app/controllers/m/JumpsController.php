@@ -4,75 +4,6 @@ namespace m;
 
 class JumpsController extends BaseController
 {
-    function indexAction()
-    {
-        if ($this->request->isAJax()) {
-            $room_id = $this->params('room_id');
-            $page = $this->params('page');
-            $per_page = $this->params('per_page', 8);
-
-            $conds = ['conditions' => 'status=:status:', 'bind' => ['status' => STATUS_ON]];
-            $conds['order'] = 'rank desc';
-
-            $games = \Games::findPagination($conds, $page, $per_page);
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
-        }
-    }
-
-    function backAction()
-    {
-
-        $current_user = $this->currentUser();
-
-        $game_history_id = $this->params('game_history_id');
-        $game_history = \GameHistories::findFirstById($game_history_id);
-
-        // 中途退出
-        if ($game_history->status != GAME_STATUS_END) {
-
-            $hot_cache = \GameHistories::getHotWriteCache();
-            $room_enter_key = "game_room_enter_" . $game_history->id;
-            $total_user_num = $hot_cache->zcard($room_enter_key);
-            if ($total_user_num == 1) {
-                $game_history->status = GAME_STATUS_END;
-                $game_history->save();
-            }
-
-            // 主动退出
-            if ($this->params('quit')) {
-                $room_user_quit_key = "game_room_user_quit_" . $game_history->id;
-                info('主动退出', $this->params(), $game_history->id);
-                $hot_cache->zadd($room_user_quit_key, time(), $current_user->id);
-            }
-        }
-
-        $end_data = json_decode($game_history->end_data, true);
-        $rank_data = fetch($end_data, 'rank_data', []);
-        $total_user_num = fetch($end_data, 'enter_user_num');
-
-        $user_datas = [];
-        foreach ($rank_data as $user_id => $settlement_amount) {
-            if ($user_id) {
-                $user = \Users::findFirstById($user_id);
-                $user_datas[] = ['id' => $user_id, 'nickname' => $user->nickname, 'avatar_url' => $user->avatar_url, 'settlement_amount' => $settlement_amount];
-            }
-        }
-
-        $start_data = json_decode($game_history->start_data, true);
-        $amount = fetch($start_data, 'amount');
-        $pay_type = fetch($start_data, 'pay_type');
-
-        info('入场费为=>', $amount, '游戏人数：' . $total_user_num);
-        $this->view->current_user = $this->currentUser();
-        $this->view->pay_type = $pay_type;
-        $this->view->amount = $amount;
-        $this->view->user_num = count($user_datas);
-        $this->view->total_amount = $amount * $total_user_num;
-        $this->view->back_url = 'app://back';
-        $this->view->users = json_encode($user_datas, JSON_UNESCAPED_UNICODE);
-    }
-
     function notifyAction()
     {
 
@@ -236,22 +167,20 @@ class JumpsController extends BaseController
 
         info('游戏推过来的数据', $raw_body);
         $type = fetch($raw_body, 'type');
-        $game_id = fetch($raw_body, 'game_id');
         $room_id = fetch($raw_body, 'room_id');
         $game_history_id = fetch($raw_body, 'game_history_id');
-
         $room = \Rooms::findFirstById($room_id);
-        $game = \Games::findFirstById($game_id);
+
         $game_history = \GameHistories::findFirstById($game_history_id);
+        $is_host = $current_user->isRoomHost($room);
 
         switch ($type) {
             case 'wait':
                 if ($game_history && $game_history->status == GAME_STATUS_WAIT) {
-                    $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
                     $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
-                        'image_url' => $image_url, 'client_url' => $client_url];
+                        'image_url' => $image_url, 'client_url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history_id];
 
                     \Games::sendGameMessage($current_user, $body);
                 }
@@ -265,8 +194,13 @@ class JumpsController extends BaseController
                 break;
             case 'over':
                 if ($game_history && $game_history->status != GAME_STATUS_END) {
-                    $game_history->status = GAME_STATUS_END;
-                    $game_history->update();
+                    //如果为房主，刷游戏记录，在afterUpdate中，将整个保存游戏用户队列删除
+                    if ($is_host) {
+                        $game_history->status = GAME_STATUS_END;
+                        $game_history->update();
+                    }
+
+                    $this->response->redirect('app://back');
                 }
                 break;
         }
@@ -285,9 +219,31 @@ class JumpsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
         $game_history = \GameHistories::createGameHistory($current_user, $game_id);
-        $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
+        $client_url = $game_history->generateGameUrl($current_user, $room);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
+
+    }
+
+    function transferGameUrlAction()
+    {
+        $user = $this->currentUser();
+        $room_id = $this->params('room_id');
+        $game_history_id = $this->params('game_history_id');
+        $game_history = \GameHistories::findFirstById($game_history_id);
+
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room || !$game_history) {
+            info($room->id, $game_history->id);
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+
+        $client_url = $game_history->generateGameUrl($user, $room);
+        info('跳转地址', $client_url);
+        //当通过当前方法中转的用户保存在队列当中
+        $game_history->saveUserList($user->id);
+
+        $this->response->redirect($client_url);
 
     }
 

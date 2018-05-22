@@ -26,8 +26,16 @@ class GameHistories extends BaseModel
     function afterCreate()
     {
         if ($this->status == GAME_STATUS_WAIT && $this->game->url == 'https://gtest.yueyuewo.cn') {
+            //保存一个游戏用户队列
+            $this->saveUserList($this->user_id);
+
             \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
         }
+    }
+
+    static function generateEnterGameUserList($room_id)
+    {
+        return 'enter_game_user_list' . $room_id;
     }
 
     function afterUpdate()
@@ -38,9 +46,11 @@ class GameHistories extends BaseModel
             $room_wait_key = "game_room_wait_" . $this->id;
             $room_enter_key = "game_room_enter_" . $this->id;
             $room_user_quit_key = "game_room_user_quit_" . $this->id;
+            $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
             $hot_cache->del($room_wait_key);
             $hot_cache->del($room_enter_key);
             $hot_cache->del($room_user_quit_key);
+            $hot_cache->del($game_user_list_key);
 
             if ($this->game->url == 'https://gtest.yueyuewo.cn') {
                 $user = \Users::findFirstById($this->user_id);
@@ -89,4 +99,43 @@ class GameHistories extends BaseModel
         return $game_history;
     }
 
+
+    function generateGameUrl($current_user, $room)
+    {
+        $is_host = $current_user->isRoomHost($room);
+        $site = $current_user->current_room_seat_id;
+        $owner = 1;
+        if ($is_host) {
+            $site = 1;
+            $owner = 0;
+        }
+
+        if ($this->status == GAME_STATUS_PLAYING) {
+            $site = 0;
+        }
+
+        $client_url = $this->game->url . '?sid=' . $current_user->sid . '&code=' . $current_user->product_channel->code .
+            '&name=' . $this->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room->id . '&game_code=' . $this->game->clazz .
+            '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $owner . '&game_history_id=' . $this->id;
+
+        info('拼接跳转到游戏的链接', $client_url);
+
+        return $client_url;
+    }
+
+    function saveUserList($user_id)
+    {
+        $cache = \GameHistories::getHotWriteCache();
+        $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
+        $cache->zadd($game_user_list_key, time(), $user_id);
+
+    }
+
+    function delUserList($user_id)
+    {
+        $cache = \GameHistories::getHotWriteCache();
+        $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
+        $cache->zrem($game_user_list_key, $user_id);
+
+    }
 }
