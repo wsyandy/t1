@@ -88,19 +88,9 @@
                     {% if isAllowed('users','reserved') %}
                         <li><a href="/admin/users/reserved">预留靓号</a></li>
                     {% endif %}
-                    {% if isAllowed('game_histories','index') %}
-                        <li><a href="/admin/game_histories">游戏记录</a></li>
-                    {% endif %}
                     {% if isAllowed('rooms','game_white_list') %}
                         <li><a href="/admin/rooms/game_white_list">游戏白名单</a></li>
                     {% endif %}
-                    {% if isAllowed('draw_histories','index') %}
-                        <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
-                    {% endif %}
-                    {% if isAllowed('users','wish_luck_histories') %}
-                        <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
-                    {% endif %}
-
                 </ul>
             </li>
         {% endif %}
@@ -482,6 +472,28 @@
                 <ul class="dropdown-menu">
                     {% if isAllowed('monitor','redis') %}
                         <li><a href="/admin/monitor/redis" target="_blank">异步监控</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+
+        <!--活动列表-->
+        {% if isAllowed('game_histories','index') or isAllowed('draw_histories','index') or isAllowed('users','wish_luck_histories') or isAllowed('pk_histories','index') %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动列表<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('game_histories','index') %}
+                        <li><a href="/admin/game_histories">游戏记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('draw_histories','index') %}
+                        <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('users','wish_luck_histories') %}
+                        <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('pk_histories','index') %}
+                        <li><a href="/admin/pk_histories">PK记录</a></li>
                     {% endif %}
                 </ul>
             </li>
