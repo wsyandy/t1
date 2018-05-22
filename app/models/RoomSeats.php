@@ -60,6 +60,8 @@ class RoomSeats extends BaseModel
                 'sex' => $user->sex,
                 'avatar_url' => $user->avatar_url,
                 'avatar_small_url' => $user->avatar_small_url,
+                'avatar_100x100_url' => $user->avatar_100x100_url,
+                'avatar_60x60_url' => $user->avatar_60x60_url,
                 'nickname' => $user->nickname,
             ];
         }
