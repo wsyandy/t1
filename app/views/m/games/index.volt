@@ -16,22 +16,15 @@
             sid: "{{ sid }}",
             code: "{{ code }}",
             page: 1,
-            per_page:8,
+            per_page: 8,
             total_page: 1,
             game_list: [],
-            UserInfo:[],
+            UserInfo: [],
+            room_id: "{{ room_id }}",
+
         },
 
         methods: {
-            getGameUserInfo: function () {
-                $.authGet('/m/jumps/get_game_user_info', {
-                    sid: vm.sid,
-                    code: vm.code,
-                }, function (resp) {
-                    console.log(resp);
-                    vm.UserInfo = resp.data;
-                })
-            },
             gameList: function () {
 
                 if (vm.page > vm.total_page) {
@@ -53,15 +46,25 @@
                 vm.page++;
             },
             select_game: function (game) {
-                if(!game.url){
+                if (!game.url) {
                     alert('url无效');
                     return;
                 }
-                var UserInfo = this.UserInfo;
+                var data = {
+                    sid: vm.sid,
+                    code: vm.code,
+                    room_id: vm.room_id,
+                    game_id: game.id
+                };
+                $.authPost('/m/jumps/get_game_client_url', data, function (resp) {
+                    console.log(resp);
+                    if (!resp.error_code) {
+                        vm.redirectAction(resp.client_url);
+                    } else {
+                        alert(resp.error_reason);
+                    }
+                });
 
-                var url = game.url + '?sid=' + vm.sid + '&code=' + vm.code + '&game_id=' + game.id + '&name=' + game.name + '&username='+UserInfo.username+'&room_id='+UserInfo.room_id+'&user_id='+UserInfo.user_id+'&avater_url='+UserInfo.avater_url+'&user_num_limit=8&site='+UserInfo.site+'&owner='+UserInfo.owner;
-                info(url);
-                vm.redirectAction(url);
             }
 
         }
@@ -76,5 +79,4 @@
         });
     })
     vm.gameList();
-    vm.getGameUserInfo();
 </script>

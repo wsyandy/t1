@@ -13,8 +13,8 @@ class GamesController extends BaseController
 
     function indexAction()
     {
+        $room_id = $this->params('room_id');
         if ($this->request->isAJax()) {
-            $room_id = $this->params('room_id');
             $page = $this->params('page');
             $per_page = $this->params('per_page', 8);
 
@@ -25,6 +25,7 @@ class GamesController extends BaseController
 
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $games->toJson('games', 'toSimpleJson'));
         }
+        $this->view->room_id = $room_id;
     }
 
     function tytAction()

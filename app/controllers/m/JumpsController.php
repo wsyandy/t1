@@ -237,44 +237,61 @@ class JumpsController extends BaseController
         info('游戏推过来的数据', $raw_body);
         $type = fetch($raw_body, 'type');
         $game_id = fetch($raw_body, 'game_id');
+        $room_id = fetch($raw_body, 'room_id');
+        $game_history_id = fetch($raw_body, 'game_history_id');
 
-        if ($type == 'start') {
+        $room = \Rooms::findFirstById($room_id);
+        $game = \Games::findFirstById($game_id);
+        $game_history = \GameHistories::findFirstById($game_history_id);
 
-            $game_history = new \GameHistories();
-            $game_history->game_id = $game_id;
-            $game_history->user_id = $current_user->id;
-            $game_history->room_id = $current_user->room_id;
-            $game_history->status = GAME_STATUS_WAIT;
-            $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
+        switch ($type) {
+            case 'wait':
+                if ($game_history && $game_history == GAME_STATUS_WAIT) {
+                    $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
+                    $root = $this->getRoot();
+                    $image_url = $root . 'images/go_game.png';
+                    $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",
+                        'image_url' => $image_url, 'client_url' => $client_url];
 
-            $root = $this->getRoot();
-            $image_url = $root . 'images/go_game.png';
-            $body = ['action' => 'game_notice', 'type' => $type, 'content' => $current_user->nickname . "发起了跳一跳游戏",
-                'image_url' => $image_url, 'client_url' => "url://m/games/tyt?game_id=" . $game_id];
-
-            \Games::sendGameMessage($current_user, $body);
-        } else {
-
-            $body = ['action' => 'game_notice', 'type' => $type, 'content' => "游戏结束",];
-            \Games::sendGameMessage($current_user, $body);
+                    \Games::sendGameMessage($current_user, $body);
+                }
+                break;
+            case 'start':
+                if ($game_history && $game_history == GAME_STATUS_WAIT) {
+                    $game_history->status = GAME_STATUS_PLAYING;
+                    $game_history->enter_at = time();
+                    $game_history->update();
+                }
+                break;
+            case 'stop':
+                if ($game_history && $game_history != GAME_STATUS_END) {
+                    $game_history->status = GAME_STATUS_END;
+                    $game_history->update();
+                    $body = ['action' => 'game_notice', 'type' => $type, 'content' => "游戏结束",];
+                    \Games::sendGameMessage($current_user, $body);
+                }
+                break;
         }
     }
 
-    function getGameUserInfoAction()
+    function getGameClientUrlAction()
     {
         $current_user = $this->currentUser();
-        $room = $current_user->room;
-        $is_host = $current_user->isRoomHost($room);
-        $data = [
-            'username' => $current_user->nickname,
-            'room_id' => $current_user->room_id,
-            'user_id' => $current_user->id,
-            'avater_url' => $current_user->avatar_small_url,
-            'site' => $current_user->current_room_seat_id == 0 ? 1 : $current_user->current_room_seat_id,
-            'owner' => $is_host == true ? 0 : 1,
-        ];
 
-        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['data' => $data]);
+        $game_id = $this->params('game_id');
+        $room_id = $this->params('room_id');
+
+        $room = \Rooms::findFirstById($room_id);
+        $game = \Games::findFirstById($game_id);
+        if (!$room || !$game) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
+        }
+        $game_history = \GameHistories::createGameHistory($current_user, $game_id);
+        $client_url = $game->generateGameClientUrl($current_user, $room, $game_history);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
 
     }
+
+
 }

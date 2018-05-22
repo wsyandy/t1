@@ -59,4 +59,19 @@ class GameHistories extends BaseModel
         }
     }
 
+    static function createGameHistory($current_user, $game_id)
+    {
+        //新游戏这边暂时无入场费逻辑，暂时写死为免费游戏
+        $start_data = ['pay_type' => 'free', 'amount' => 0];
+        $game_history = new \GameHistories();
+        $game_history->game_id = $game_id;
+        $game_history->user_id = $current_user->id;
+        $game_history->room_id = $current_user->room_id;
+        $game_history->status = GAME_STATUS_WAIT;
+        $game_history->start_data = json_encode($start_data, JSON_UNESCAPED_UNICODE);
+        $game_history->save();
+
+        return $game_history;
+    }
+
 }

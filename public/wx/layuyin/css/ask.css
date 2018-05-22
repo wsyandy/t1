@@ -1,0 +1,60 @@
+html,body{
+  background: #F6F6F6;
+}
+.question_ask_btn{
+  font-size: 16px;
+  color: #1D1D1D;
+}
+.ask_content{
+  margin-top: 12px;
+}
+.ask_data_textarea{
+  margin-top: 20px;
+  width: 100%;
+  height: 150px;
+  resize: none;
+  padding: 15px;
+  font-size: 14px;
+  color: #999999;
+  box-sizing: border-box;
+  background-color: white;
+}
+.question_ask_answer{
+    background: #ffffff;
+    margin-top: 12px;
+    padding:23px 15px 28px 15px;
+}
+.question_ask_answer h3{
+
+}
+.ask_select{
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+}
+.ask_select::before{
+  position: absolute;
+  content: '';
+  width: 8px;
+  height: 13px;
+  background: url(../images/tip_icon_select.png) no-repeat;
+  background-size: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  right: 10px;
+}
+.question_ask_answer select{
+  width: 100%;
+  height: 35px;
+  background: #ffffff;
+  border: 1px solid #979797;
+  border-radius: 2px;
+  text-indent: 1em;
+  color: #999999;
+  font-size: 16px;
+}
+

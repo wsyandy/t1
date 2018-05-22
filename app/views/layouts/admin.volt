@@ -208,7 +208,7 @@
         <!--活动列表-->
         {% if isAllowed('game_histories','index') or isAllowed('draw_histories','index') or isAllowed('users','wish_luck_histories') or isAllowed('pk_histories','index') %}
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动列表<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动记录列表<b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     {% if isAllowed('game_histories','index') %}
                         <li><a href="/admin/game_histories">游戏记录</a></li>
