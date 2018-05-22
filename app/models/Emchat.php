@@ -145,7 +145,7 @@ class Emchat extends BaseModel
         $body = json_encode($options, JSON_UNESCAPED_UNICODE);
         $header = $this->headers;
         $result = httpPost($url, $body, $header);
-        info($username, $password, $result->code, $result->body);
+        info($username, $password, $result->code, $result->raw_body);
         return $this->reqSuccess($result->code);
     }
 
