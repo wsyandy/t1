@@ -159,11 +159,7 @@ trait UserAttrs
             $data['friend_note'] = $this->friend_note;
         }
 
-        $current_room_lock = false;
-        if ($this->current_room_id) {
-            $current_room_lock = $this->current_room->lock;
-        }
-        $data['current_room_lock'] = $current_room_lock;
+        $data['current_room_lock'] = $this->current_room_lock;
 
         return $data;
     }
