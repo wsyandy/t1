@@ -299,7 +299,8 @@
 ```
     {
         action: pk 房间发起pk通知信息
-        pk_history:{        
+        pk_history:{
+            pk_type : string pk类型,        
             left_pk_user : {
                 id 用户id 
                 score int 分值

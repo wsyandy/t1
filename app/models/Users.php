@@ -639,6 +639,19 @@ class Users extends BaseModel
             return [ERROR_CODE_FAIL, '设备错误!!!'];
         }
 
+        //切换账号登录时如果用户在房间就退出房间
+        if ($this->isInAnyRoom()) {
+            info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, 'old_device', $this->device_id);
+            if ($device->id != $this->device_id) {
+                return [ERROR_CODE_FAIL, '请退出另一个设备'];
+            }
+
+            $current_room = $this->current_room;
+            if ($current_room) {
+                $current_room->exitRoom($this);
+            }
+        }
+
         foreach (['ip', 'password', 'platform', 'version_name', 'version_code', 'login_type'] as $key) {
 
             $val = fetch($context, $key);
@@ -652,17 +665,6 @@ class Users extends BaseModel
 
         // 设备不一致，发送强行下线推送
         if ($device->id != $this->device_id && !isBlank($this->push_token)) {
-
-            //切换账号登录时如果用户在房间就退出房间
-            if ($this->isInAnyRoom()) {
-                $current_room = $this->current_room;
-
-                info("change_device_exit_room", $this->current_room->id, $this->id);
-
-                if ($current_room) {
-                    $current_room->exitRoom($this);
-                }
-            }
 
             $old_device = \Devices::findFirstById($this->device_id);
             if ($old_device) {
@@ -1207,6 +1209,7 @@ class Users extends BaseModel
 
     function blockCity()
     {
+        return;
         if (in_array($this->id, [1096845])) {
             return;
         }
@@ -3268,13 +3271,14 @@ class Users extends BaseModel
 
     /**
      * 用户魅力贡献排行榜
-     * @param null $day
+     * @param null $time
      * @return string
      */
-    static function generateUserRankListKey($day = null)
+    static function generateUserRankListKey($time = null)
     {
-        if (!$day) $day = date('Ymd');
+        if (empty($time)) $time = time();
 
+        $day = date('Ymd', $time);
         $key = 'user_charm_and_wealth_rank_list_day_' . $day;
         return $key;
     }
@@ -3282,15 +3286,18 @@ class Users extends BaseModel
 
     /**
      * 更新魅力贡献排行榜
-     * @param $receiver
-     * @param $sender
-     * @param $amount
+     * @param $gift_order
+     * @param $opt
      * @return bool
      */
-    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
+    static function updateUserCharmAndWealthRank($gift_order, $opt = [])
     {
         $key = self::generateUserRankListKey();
         $user_db = Users::getUserDb();
+
+        $receiver_id = $gift_order->user_id;
+        $sender_id = $gift_order->sender_id;
+        $amount = $gift_order->amount;
 
         // 赠送礼物的增加贡献值，被赠送的增加魅力值
         $user_db->zincrby($key, $amount, $receiver_id);
@@ -3301,26 +3308,22 @@ class Users extends BaseModel
 
     /**
      * 查询魅力贡献排行榜
-     * @param null $time
-     * @param int $max_number
+     * @param int $page
+     * @param int $per_page
+     * @param int $time
      * @return array
      */
-    static function findUserCharmAndWealthRank($time = null, $max_number = 100)
+    static function findUserCharmAndWealthRank($page = 1, $per_page = 12, $time = null)
     {
-        if (!$time) $time = time();
-        $day = date('Ymd', $time);
+        $key = self::generateUserRankListKey($time);
 
-        $key = self::generateUserRankListKey($day);
+        $offset = ($page - 1) * $per_page;
+        $limit = $offset + $per_page - 1;
+
         $user_db = Users::getUserDb();
-        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - 1, 'withscores'));
+        $rank_list = $user_db->zrevrange($key, $offset, $limit, 'withscores');
+        $rank_list = array_keys($rank_list);
 
-        $yesterday_rank_list = [];
-        $number = count($rank_list);
-        if (empty($rank_list) || $number < $max_number) {
-            $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
-            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - $number, 'withscores'));
-        }
-        $rank_list = array_merge($rank_list, $yesterday_rank_list);
         return $rank_list;
     }
 

@@ -52,24 +52,6 @@ class UsersController extends BaseController
         $current_user->product_channel = $product_channel;
         list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
 
-//        $db = \Users::getUserDb();
-//        $good_num_list_key = 'good_num_list';
-//
-//        if ($db->zscore($good_num_list_key, $user->id)) {
-//            info("good_num", $user->id);
-//            $user->user_type = USER_TYPE_SILENT;
-//            $user->user_status = USER_STATUS_OFF;
-//            $user->mobile = '';
-//            $user->device_id = 0;
-//            $user->password = '';
-//            $user->update();
-//
-//            $device->user_id = 0;
-//            $device->update();
-//
-//            list($error_code, $error_reason, $user) = \Users::registerForClientByMobile($current_user, $device, $mobile, $context);
-//        }
-
         if ($error_code !== ERROR_CODE_SUCCESS) {
             return $this->renderJSON($error_code, $error_reason);
         }
@@ -842,39 +824,15 @@ class UsersController extends BaseController
 
         if (isDevelopmentEnv()) {
 
-            $user_ids = \Users::findUserCharmAndWealthRank(time(), $per_page);
+            $user_ids = \Users::findUserCharmAndWealthRank($page, $per_page);
             if (empty($user_ids)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
 
-            $user_flip = array_flip($user_ids);
-
-            $conditions = array(
-                'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
-                'columns' => 'id'
-            );
-            $users = \Users::find($conditions);
-
-            $user_online = [];
-            foreach ($users as $user) {
-                if (in_array($user->id, $user_ids)) {
-                    $user_online[$user_flip[$user->id]] = $user->id;
-                    unset($user_flip[$user->id]);
-                }
-            }
-            ksort($user_online);
-
-            $user_offline = array_values(array_flip($user_flip));
-
-            // 已经排序好
-            $user_ids = array_merge(array_values($user_online), $user_offline);
-
             $users = \Users::findByIds($user_ids);
-//            $users = $users->toJson('users', 'toSimpleJson');
 
         } else {
             $users = $this->currentUser()->nearby($page, $per_page);
-//            $users = $users->toJson('users', 'toSimpleJson');
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));

@@ -8,10 +8,31 @@
 
 class MeiTask extends \Phalcon\Cli\Task
 {
+    function test59Action()
+    {
+        $content = file_get_contents(APP_ROOT . "temp/test.txt");
+        $sids = explode(PHP_EOL, $content);
+
+        $user_ids = [];
+
+        foreach ($sids as $sid) {
+            $user_ids[] = intval($sid);
+        }
+
+        $user_ids = array_unique(array_filter($user_ids));
+
+        print_r($user_ids);
+    }
+
+    function test58Action()
+    {
+        Rooms::asyncAllNoticePush('果然to韩笑：陪伴是最长情的告白', ['expire_time' => 10]);
+    }
+
     function test57Action()
     {
-
         $db = \Users::getUserDb();
+
         $sender_key = Couples::generateSeraglioKey(1084173);
         echoLine($db->zscore($sender_key, 1076267));
 
@@ -56,7 +77,6 @@ class MeiTask extends \Phalcon\Cli\Task
 
         $receive_key = Couples::generateCpInfoForUserKey(1103162);
         $db->zadd($receive_key, 2520, 1195090);
-
 
 
         $db = \Users::getUserDb();

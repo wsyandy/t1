@@ -26,7 +26,7 @@
                 <span :class="users[0].sex ? 'men' :'women'"
                       v-text="users[0].age?users[0].age:''"
                       :style="users[0].age? 'background-position:0.16rem' : 'background-position:center'"></span></h3>
-            <p><span>${ users[0].wealth_value }</span>贡献</p>
+            <p v-show="is_host"><span>${ users[0].wealth_value }</span>贡献</p>
         </div>
         <table class="table">
             <tr v-if="users.length >= 2" @click.stop="userDetail(users[1].id)">
@@ -48,7 +48,7 @@
                            v-text="users[1].age?users[1].age:''"
                            :style="users[1].age? 'background-position:0.16rem' : 'background-position:center'"></i>
                     </h5>
-                    <p>${ users[1].wealth_value }贡献</p>
+                    <p v-show="is_host">${ users[1].wealth_value }贡献</p>
                 </td>
             </tr>
             <tr v-if="users.length >= 3" @click.stop="userDetail(users[2].id)">
@@ -69,7 +69,7 @@
                         <i :class="users[2].sex ? 'men' :'women'"
                            v-text="users[2].age?users[2].age:''"
                            :style="users[2].age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
-                    <p>${ users[2].wealth_value }贡献</p>
+                    <p v-show="is_host">${ users[2].wealth_value }贡献</p>
                 </td>
             </tr>
 
@@ -89,7 +89,7 @@
                         <i :class="user.sex ? 'men' :'women'"
                            v-text="user.age?user.age:''"
                            :style="user.age? 'background-position:0.16rem' : 'background-position:center'"></i></h5>
-                    <p>${user.wealth_value}贡献</p>
+                    <p v-show="is_host">${user.wealth_value}贡献</p>
                 </td>
             </tr>
         </table>
@@ -113,7 +113,8 @@
             page: 1,
             total_page: 1,
             users: [],
-            current_rank: 0
+            current_rank: 0,
+            is_host:false,
         },
         created: function () {
             this.list();
@@ -138,9 +139,11 @@
                     data.per_page = 20;
                 }
                 $.authGet('/m/rooms/find_wealth_rank_list', data, function (resp) {
+                    //console.log(resp);
                     if (resp.error_code == 0) {
                         vm.total_page = resp.total_page;
                         vm.current_rank = resp.current_rank;
+                        vm.is_host = resp.is_host;
                         $.each(resp.users, function (index, item) {
                             item.level_img = "/m/images/level_" + item.level + '.png';
                             vm.users.push(item);

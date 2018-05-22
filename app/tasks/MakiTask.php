@@ -52,7 +52,7 @@ class MakiTask extends Phalcon\Cli\Task
     {
         // 查用户id
         $uid = '100201';
-        $user = Users::findByConditions(['uid'=>$uid]);
+        $user = Users::findByConditions(['uid' => $uid]);
         $user = $user->toJson('users');
         $user_id = $user['users'][0]['id'];
         echoLine($user_id);
@@ -83,7 +83,7 @@ class MakiTask extends Phalcon\Cli\Task
                 'status' => STATUS_OFF,
                 'created_at' => $time
             ],
-            'columns'=>'user_id'
+            'columns' => 'user_id'
         );
         $order = Orders::find($conditions);
 
@@ -95,7 +95,7 @@ class MakiTask extends Phalcon\Cli\Task
                 $count[$value->user_id] = 1;
         }
 
-        if (empty($count)) return ;
+        if (empty($count)) return;
         $count[41792] = 4;
 
         $content = '尊敬用户：你好！请问您是否在支付的时候遇到了问题？如有疑问请联系官方客服中心400-018-7755解决。';
@@ -105,7 +105,7 @@ class MakiTask extends Phalcon\Cli\Task
         ];
 
         // 次数大于2的user_id
-        foreach ($count as $item=>$value) {
+        foreach ($count as $item => $value) {
 
             if ($value >= 2) {
                 // 需要推送消息的
@@ -132,40 +132,26 @@ class MakiTask extends Phalcon\Cli\Task
     function u1Action()
     {
 
-        for ($i=0; $i<=10; $i++) {
-            Users::updateUserCharmAndWealthRank(mt_rand(1, 9), mt_rand(20, 29), mt_rand(10, 500));
+
+        for ($i = 0; $i <= 10; $i++) {
+            $gift_order = (object)array(
+                'user_id' => mt_rand(10, 19),
+                'sender_id' => mt_rand(30, 39),
+                'amount' => mt_rand(10, 500)
+            );
+            Users::updateUserCharmAndWealthRank($gift_order);
         }
 
     }
 
 
-    function u2Action()
+    function u2Action($params)
     {
-        $user_ids = Users::findUserCharmAndWealthRank();
-        $user_flip = array_flip($user_ids);
+        $page = $params[0] ?? 1;
+        $per_page = $params[1] ?? 12;
 
-        $conditions = array(
-            'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
-            'columns' => 'id'
-        );
-        $users = Users::find($conditions);
-
-        $user_online = [];
-        foreach ($users as $user) {
-            if (in_array($user->id, $user_ids)) {
-                $user_online[$user_flip[$user->id]] = $user->id;
-                unset($user_flip[$user->id]);
-            }
-        }
-        ksort($user_online);
-
-        $user_offline = array_values(array_flip($user_flip));
-
-        // 已经排序好
-        $user_ids = array_merge(array_values($user_online), $user_offline);
-
-        $users = Users::findByIds($user_ids);
-        $users = $users->toJson('users', 'toSimpleJson');
-        debug($users['users']);
+        $user_ids = Users::findUserCharmAndWealthRank($page, $per_page);
+        echoLine($user_ids);
     }
+
 }
