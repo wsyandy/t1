@@ -1406,7 +1406,8 @@ class Stats extends BaseModel
     {
         $diamond_cost_total = $this->data_hash['diamond_cost_total'];
         $diamond_recharge_total = $this->data_hash['diamond_recharge_total']; //购买钻石数额
-        $avg = $diamond_recharge_total - $diamond_cost_total;
+        $diamond_recharge_give_total = $this->data_hash['diamond_recharge_give_total']; // 赠送钻石数额
+        $avg = $diamond_recharge_total + $diamond_recharge_give_total - $diamond_cost_total;
 
         $this->data_hash['diamond_recharge_balance'] = $avg;
     }
