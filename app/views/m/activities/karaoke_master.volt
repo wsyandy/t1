@@ -211,17 +211,17 @@
             },
             karaokeMasterApply: function () {
 
-                var hour = new Date().getHours();
-                var minute = new Date().getMinutes();
+                var start_time = new Date("2018-05-25 19:30").getTime();
+                var end_time = new Date("2018-05-25 22:00").getTime();
+                var current_time = Date.parse(new Date());
 
-                if (hour < 19) {
-                    alert('比赛还没开始呢，晚上7:30再来点哦');
+                if (current_time < start_time) {
+                    alert('复活赛将于本周五19：30进行');
                     return;
-                } else if (hour >= 19 && hour < 20 && minute < 30) {
-                    alert('比赛还没开始呢，晚上7:30再来点哦');
-                    return;
-                } else if (hour > 22) {
-                    alert('比赛已结束，明天晚上7:30再来点哦');
+                }
+
+                if (current_time > end_time) {
+                    alert('半决赛、总决赛将于本周六19：30进行');
                     return;
                 }
 
