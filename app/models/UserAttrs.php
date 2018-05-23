@@ -685,7 +685,7 @@ trait UserAttrs
         return preg_match('/^android/i', $this->platform);
     }
 
-    function generateVoiceChannelKey($channel_name)
+    function getChannelKey($channel_name)
     {
         return $this->product_channel->getChannelKey($channel_name, $this->id);
     }
