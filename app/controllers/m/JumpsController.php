@@ -200,6 +200,7 @@ class JumpsController extends BaseController
                         $game_history->update();
                     }
                     $this->response->redirect('app://back');
+                    return;
                 }
                 break;
         }
