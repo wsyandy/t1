@@ -9,6 +9,25 @@
 class KangTask extends \Phalcon\Cli\Task
 {
 
+    function fixDisAction()
+    {
+
+        $account_histories = \AccountHistories::find(['conditions' => '(fee_type=:fee_type1: or fee_type=:fee_type2: or fee_type=:fee_type3:)',
+            'bind' => ['fee_type1' => ACCOUNT_TYPE_DISTRIBUTE_REGISTER, 'fee_type2' => ACCOUNT_TYPE_DISTRIBUTE_PAY,
+                'fee_type3' => ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE],
+            'order' => 'id asc'
+        ]);
+
+        foreach ($account_histories as $account_history) {
+            $sms_dis = SmsDistributeHistories::findFirstById($account_history->target_id);
+            if ($sms_dis) {
+                $account_history->target_id = $sms_dis->user_id;
+                $account_history->save();
+                echoLine($account_history->id, $account_history->target_id);
+            }
+        }
+    }
+
     function hmAction()
     {
         $sd = Users::getUserDb();
@@ -873,16 +892,16 @@ EOF;
         ]);
 
         foreach ($golds as $gold) {
-            if($gold->order_id){
+            if ($gold->order_id) {
                 $gold->target_id = $gold->order_id;
             }
-            if($gold->gift_order_id){
+            if ($gold->gift_order_id) {
                 $gold->target_id = $gold->gift_order_id;
             }
-            if($gold->hi_coin_history_id){
+            if ($gold->hi_coin_history_id) {
                 $gold->target_id = $gold->hi_coin_history_id;
             }
-            if($gold->activity_id){
+            if ($gold->activity_id) {
                 $gold->target_id = $gold->activity_id;
             }
 
