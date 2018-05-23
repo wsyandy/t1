@@ -195,6 +195,11 @@ class CouplesController extends BaseController
             return $this->response->redirect('app://back');
         }
 
+        $couple_file_name = 'couple_' . md5(uniqid(mt_rand())) . '.jpg';
+        $couple_new_file = APP_ROOT . 'temp/' . $couple_file_name;
+        $sponsor->avatar_base64_url = \Couples::base64EncodeImage(httpSave($sponsor->avatar_url, $couple_new_file));
+        $pursuer->avatar_base64_url = \Couples::base64EncodeImage(httpSave($pursuer->avatar_url, $couple_new_file));
+
         $this->view->sponsor = json_encode($sponsor->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->pursuer = json_encode($pursuer->toCpJson(), JSON_UNESCAPED_UNICODE);
         $this->view->marriage_at_text = date('Y-m-d', $marriage_at);

@@ -482,6 +482,9 @@
                     {% if isAllowed('draw_configs','index') %}
                         <li><a href="/admin/draw_configs">砸金蛋配置</a></li>
                     {% endif %}
+                    {% if isAllowed('boom_configs','index') %}
+                        <li><a href="/admin/boom_configs">爆礼物配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
