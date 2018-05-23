@@ -37,10 +37,10 @@ return new \Phalcon\Config([
     'websocket_side_server_port' => env('websocket_side_server_port', 9509),
     'websocket_local_server_ip' => env('websocket_local_server_ip', "0.0.0.0"),
     'websocket_local_server_port' => env('websocket_local_server_port', 9508),
-    'websocket_worker_num' => env('websocket_worker_num', 4),
+    'websocket_worker_num' => env('websocket_worker_num', 2),
     'websocket_max_request' => env('websocket_max_request', 10000),
-    'websocket_task_worker_num' => env('websocket_task_worker_num', 3),
-    'websocket_reactor_num' => env('websocket_reactor_num', 2),
+    'websocket_task_worker_num' => env('websocket_task_worker_num', 1),
+    'websocket_reactor_num' => env('websocket_reactor_num', 1),
 
     'data_collection_endpoints' => env('data_collection_endpoints', 'http://120.55.51.33:7200/hi/rest/data'),
 ]);

@@ -9,6 +9,35 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test60Action()
+    {
+        $room = Rooms::findFirstById(137);
+
+        $body = ['action' => 'send_topic_msg', 'user_id' => 1, 'nickname' => '呵呵', 'sex' => 1,
+            'avatar_url' => '', 'avatar_small_url' => '', 'content' => '晚上好',
+            'channel_name' => $room->channel_name, 'content_type' => 'text'
+        ];
+
+        $user = Users::findFirstById(117);
+
+        $res = $room->pushToUser($user, $body);
+
+        echoLine($res);
+
+        $need_version_control = false;
+        if ($content_type == 'red_packet') {
+            $need_version_control = true;
+        }
+
+        $this->push($body, $need_version_control);
+
+
+        $db = Users::getUserDb();
+        $key = "room_manager_1";
+        $db->hset($key, 2, json_encode(['time' => 12222, 'is_de' => false]));
+        echoLine($db->hgetall($key));
+    }
+
     function test59Action()
     {
         $content = file_get_contents(APP_ROOT . "temp/test.txt");

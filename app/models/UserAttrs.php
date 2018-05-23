@@ -159,11 +159,7 @@ trait UserAttrs
             $data['friend_note'] = $this->friend_note;
         }
 
-        $current_room_lock = false;
-        if ($this->current_room_id) {
-            $current_room_lock = $this->current_room->lock;
-        }
-        $data['current_room_lock'] = $current_room_lock;
+        $data['current_room_lock'] = $this->current_room_lock;
 
         return $data;
     }
@@ -587,8 +583,9 @@ trait UserAttrs
 
     function getCurrentRoomLock()
     {
-        if ($this->current_room) {
-            return $this->current_room->lock;
+        if ($this->current_room_id) {
+            $room_db = Rooms::getRoomDb();
+            return $room_db->hget("room_" . $this->current_room_id, 'lock');
         }
 
         return false;
@@ -597,20 +594,20 @@ trait UserAttrs
     function getCurrentChannelName()
     {
         if ($this->current_room_id) {
-            return $this->current_room->channel_name;
+            return $this->current_room_channel_name;
         }
 
         return '';
     }
 
-    function getChannelName()
-    {
-        if ($this->room) {
-            return $this->room->channel_name;
-        }
-
-        return '';
-    }
+//    function getChannelName()
+//    {
+//        if ($this->room) {
+//            return $this->room->channel_name;
+//        }
+//
+//        return '';
+//    }
 
     function getMonologueText()
     {

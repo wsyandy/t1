@@ -488,10 +488,12 @@ class Rooms extends BaseModel
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
         $time = time() + $duration * 3600;
+        $is_permanent = false;
 
         //-1 为永久
         if (-1 == $duration) {
             $time = time() + 86400 * 10000;
+            $is_permanent = true;
         } else {
 
             if (isDevelopmentEnv()) {
@@ -507,6 +509,11 @@ class Rooms extends BaseModel
 
         $db->zadd($manager_list_key, $time, $user_id);
         $db->zadd($user_manager_list_key, $time, $this->id);
+
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+
+        $db->hset($room_manager_cache_key, $user_id, json_encode(['user_id' => $user_id, 'is_permanent' => $is_permanent,
+            'deadline' => $this->calculateUserDeadline($user_id)], JSON_UNESCAPED_UNICODE));
     }
 
     function deleteManager($user_id)
@@ -524,6 +531,10 @@ class Rooms extends BaseModel
         $db->zrem($key, $user_id);
         $db->zrem($user_manager_list_key, $this->id);
         $room_manager_key = $this->generateRoomManagerKey($user_id);
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+
+        $db->hdel($room_manager_cache_key, $user_id);
+
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zrem($total_manager_key, $room_manager_key);
         }
@@ -546,15 +557,29 @@ class Rooms extends BaseModel
         $manager_list_key = $this->generateManagerListKey();
         $total_manager_key = self::generateTotalManagerKey();
         $user_manager_list_key = self::generateUserManagerListKey($user_id);
+        $room_manager_cache_key = $this->generateManagerCacheKey();
+        $room_manager_key = $this->generateRoomManagerKey($user_id);
         $time = $duration * 3600;
+
         if (isDevelopmentEnv()) {
             $time = $duration * 60;
         }
+
         $db->zincrby($manager_list_key, $time, $user_id);
         $db->zincrby($user_manager_list_key, $time, $this->id);
-        $room_manager_key = $this->generateRoomManagerKey($user_id);
+
         if ($db->zscore($total_manager_key, $room_manager_key)) {
             $db->zincrby($total_manager_key, $time, $room_manager_key);
+        }
+
+        $cache = $db->hget($room_manager_cache_key, $user_id);
+
+        if ($cache) {
+
+            $cache = json_decode($cache, true);
+            $cache['deadline'] = $this->calculateUserDeadline($user_id);
+
+            $db->hset($room_manager_cache_key, $user_id, json_encode($cache, JSON_UNESCAPED_UNICODE));
         }
     }
 
@@ -1383,18 +1408,17 @@ class Rooms extends BaseModel
 
     static function searchGangUpRooms($user, $page, $per_page)
     {
-        $cond['conditions'] = "online_status = :online_status: and status = :status: and room_category_types like 
-        :room_category_types: and lock = :lock:";
+        $cond['conditions'] = "online_status = :online_status: and status = :status: and room_category_types like :room_category_types: and lock = :lock:";
         $cond['bind'] = ['online_status' => STATUS_ON, 'status' => STATUS_ON, 'room_category_types' => "%,gang_up,%", 'lock' => 'false'];
         $cond['order'] = 'last_at desc';
 
         $shield_room_ids = $user->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
 
         $gang_up_rooms = \Rooms::findPagination($cond, $page, $per_page);
+        \Users::findBatch($gang_up_rooms);
 
         $gang_up_rooms_json = $gang_up_rooms->toJson('gang_up_rooms', 'toSimpleJson');
 
@@ -1642,141 +1666,4 @@ class Rooms extends BaseModel
         unlock($lock);
     }
 
-    function checkBroadcasters()
-    {
-
-        $product_channel = $this->product_channel;
-        $channel_name = $this->channel_name;
-        $app_id = $product_channel->getImAppId();
-
-        $headers = array(
-            'Cache-Control' => 'no-cache',
-            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
-        );
-        $url = "http://api.agora.io/dev/v1/channel/user/{$app_id}/{$channel_name}";
-
-        $res = httpGet($url, [], $headers);
-        $res_body = $res->raw_body;
-        $res_body = json_decode($res_body, true);
-        //info($this->id, $res_body);
-        // {"success":true,"data":{"channel_exist":true,"mode":2,"broadcasters":[1124659,1126101,1128598,1179619,1273421,1312458,1485292],
-        //"audience":[1368420],"audience_total":1},"request_id":"6187c03270c5f51ff5d5c619f9413067"}
-        if (fetch($res_body, 'success') !== true) {
-            info('Exce', $url, $res_body);
-            return;
-        }
-
-        $data = fetch($res_body, 'data');
-        $broadcaster_ids = fetch($data, 'broadcasters');
-
-        $room_seats = RoomSeats::findPagination(['conditions' => 'room_id=:room_id:',
-            'bind' => ['room_id' => $this->id], 'order' => 'rank asc'], 1, 8, 8);
-
-        $user_ids = [];
-        foreach ($room_seats as $room_seat) {
-            if ($room_seat->user_id < 1) {
-                continue;
-            }
-
-            $user_ids[] = $room_seat->user_id;
-        }
-
-        //info($this->id, 'broadcaster_ids', $broadcaster_ids, 'user_ids', $user_ids);
-
-        $hot_cache = Rooms::getHotWriteCache();
-        $user_list_key = $this->getUserListKey();
-
-        foreach ($broadcaster_ids as $broadcaster_id) {
-
-            if ($this->user_id == $broadcaster_id) {
-                continue;
-            }
-
-            if (in_array($broadcaster_id, $user_ids)) {
-                continue;
-            }
-
-            if ($hot_cache->zscore($user_list_key, $broadcaster_id)) {
-                info('异常id 在房间', $this->id, 'broadcaster_id', $broadcaster_id);
-            } else {
-                info('异常id 不在房间', $this->id, 'broadcaster_id', $broadcaster_id);
-            }
-
-            $this->checkBroadcaster($broadcaster_id);
-        }
-    }
-
-    function checkBroadcaster($user_id)
-    {
-
-        $user = Users::findFirstById($user_id);
-
-        $product_channel = $this->product_channel;
-        $channel_name = $this->channel_name;
-        $app_id = $product_channel->getImAppId();
-
-        $headers = array(
-            'Cache-Control' => 'no-cache',
-            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
-        );
-
-        $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user_id}/{$channel_name}";
-        $res = httpGet($url, [], $headers);
-        $res_body = $res->raw_body;
-        $res_body = json_decode($res_body, true);
-        if (fetch($res_body, 'success') !== true) {
-            info('Exce', $url, $res_body);
-            return;
-        }
-
-        $data = fetch($res_body, 'data');
-        info('data', $this->id, 'user_id', $user_id, $data);
-        $in_channel = fetch($data, 'in_channel', false);
-        $role = fetch($data, 'role', 0);
-        if ($in_channel === false) {
-            info('离开频道', $this->id, $user_id);
-            return;
-        }
-
-        if ($role == 2) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $cache_key = 'room_kicking_rule_' . $user_id;
-            $num = $hot_cache->incr($cache_key);
-            $hot_cache->expire($cache_key, 3600);
-
-            info('踢出房间', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
-
-            if ($num >= 3) {
-                info('踢出房间并封号', $this->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
-                $this->kickingRule($user_id, $app_id, $channel_name, 60);
-                $device = $user->device;
-                $device->status = DEVICE_STATUS_BLOCK;
-                $device->update();
-            } else {
-                $this->kickingRule($user_id, $app_id, $channel_name, 1);
-            }
-        }
-
-    }
-
-    function kickingRule($user_id, $app_id, $channel_name, $time = 5)
-    {
-
-        $headers = array(
-            'Cache-Control' => 'no-cache',
-            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='
-        );
-
-        $url = "https://api.agora.io/dev/v1/kicking-rule/";
-        $body = [
-            'appid' => $app_id,
-            'cname' => $channel_name,
-            'uid' => $user_id,
-            'time' => $time // 分钟
-        ];
-
-        $res = httpPost($url, $body, $headers);
-        info('踢出房间', $this->id, 'user', $user_id, $res->raw_body);
-
-    }
 }

@@ -238,7 +238,7 @@ class UsersController extends BaseController
             $content = $this->params('content');
             $title = $this->params('title');
             $image_url = $this->params('image_url');
-            $content_type = $this->params('content_type');
+            $content_type = $this->params('content_type', 'text/plain');
             $url = $this->params('url');
 
             $attrs = [
