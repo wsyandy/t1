@@ -20,13 +20,14 @@
 
 
 {{ simple_table(games, [
-"ID": 'id',"名称":"name","状态": 'status_text','图标':"icon_link","url":"url",'编辑': 'edit_link'
+"ID": 'id',"名称":"name","code":"code","状态": 'status_text','图标':"icon_link","url":"url",'编辑': 'edit_link'
 ]) }}
 
 <script type="text/template" id="game_tpl">
     <tr id="game_${ game.id }">
         <td>${game.id}</td>
         <td>${game.name}</td>
+        <td>${game.code}</td>
         <td>${game.status_text}</td>
         <td><img src="${game.icon_small_url}" height="50" width="50"/></td>
         <td>${game.url}</td>
