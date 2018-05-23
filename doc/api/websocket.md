@@ -208,6 +208,30 @@
            sign:xxxxxx  签名
        }
    ```
+   
+  #### 房间频道状态上报
+    ```
+    {
+          action: room_channel_status_report  房间频道状态上报
+          status: int 状态 1连接 2 断开
+          online_token:xxxxx websocket链接时由服务端生成返回给客户端
+          sid 上报的用户sid
+          timestamp:xxxxxx  时间戳
+          sign:xxxxxx  签名
+    }
+    ```
+    
+  #### 信令状态上报
+    ```
+    {
+        action: room_signal_status_report  房间频道状态上报
+        status: int 状态 1连接 2 断开
+        online_token:xxxxx websocket链接时由服务端生成返回给客户端
+        sid   上报的用户sid
+        timestamp:xxxxxx  时间戳
+        sign:xxxxxx  签名
+    }
+    ```    
  
 ### 3.2 服务端通知客户端的消息结构
  #### 退出房间
