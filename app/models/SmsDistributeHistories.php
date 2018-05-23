@@ -120,16 +120,6 @@ class SmsDistributeHistories extends BaseModel
             return [ERROR_CODE_FAIL, '非分销用户'];
         }
 
-        $conds = ['conditions' => 'product_channel_id = :product_channel_id: and mobile=:mobile: and status=:status:',
-            'bind' => ['product_channel_id' => $current_user->product_channel_id, 'mobile' => $current_user->mobile, 'status' => AUTH_SUCCESS],
-            'order' => 'id desc'];
-
-        $sms_distribute_history = self::findFirst($conds);
-        if (!$sms_distribute_history || $current_user->share_parent_id != $sms_distribute_history->share_user_id) {
-            return [ERROR_CODE_FAIL, '无效账户'];
-        }
-
-
         $first_user_id = $current_user->share_parent_id;
         $first_user = \Users::findFirstById($first_user_id);
         if ($first_user) {
