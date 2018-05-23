@@ -142,6 +142,96 @@
       sign:xxxxxx  签名
    }
    ```   
+   
+   #### 房间通知信息上报
+   ```
+       {
+           action: room_notice_report 房间通知信息上报
+           online_token:xxxxx websocket链接时由服务端生成返回给客户端
+           sid   上报的用户sid
+           timestamp:xxxxxx  时间戳
+           sign:xxxxxx  签名
+       }
+   ```   
+   
+   #### 游戏发起通知上报
+   ```
+       {
+            action: game_notice_report 房间通知信息上报
+            online_token:xxxxx websocket链接时由服务端生成返回给客户端
+            sid   上报的用户sid
+            timestamp:xxxxxx  时间戳
+            sign:xxxxxx  签名
+       }
+   ```  
+   
+   #### PK通知上报
+   ```
+       {
+            action: pk_report 房间通知信息上报
+            online_token:xxxxx websocket链接时由服务端生成返回给客户端
+            sid   上报的用户sid
+            timestamp:xxxxxx  时间戳
+            sign:xxxxxx  签名
+       }
+   ```
+   
+   #### 红包通知上报
+   ```
+       {
+           action: red_packet_report 红包通知上报
+           online_token:xxxxx websocket链接时由服务端生成返回给客户端
+           sid   上报的用户sid
+           timestamp:xxxxxx  时间戳
+           sign:xxxxxx  签名
+       }
+   ```
+   
+   #### 爆礼物上报
+   ```
+       {
+            action: boom_gift_report 爆礼物通知上报
+            online_token:xxxxx websocket链接时由服务端生成返回给客户端
+            sid   上报的用户sid
+            timestamp:xxxxxx  时间戳
+            sign:xxxxxx  签名
+       }
+   ```
+   
+   #### 下沉通知上报
+   ```
+       {
+           action: sink_notice_report  下沉通知上报
+           online_token:xxxxx websocket链接时由服务端生成返回给客户端
+           sid   上报的用户sid
+           timestamp:xxxxxx  时间戳
+           sign:xxxxxx  签名
+       }
+   ```
+   
+  #### 房间频道状态上报
+    ```
+    {
+          action: room_channel_status_report  房间频道状态上报
+          status: int 状态 1连接 2 断开
+          online_token:xxxxx websocket链接时由服务端生成返回给客户端
+          sid 上报的用户sid
+          timestamp:xxxxxx  时间戳
+          sign:xxxxxx  签名
+    }
+    ```
+    
+  #### 信令状态上报
+    ```
+    {
+        action: room_signal_status_report  房间频道状态上报
+        status: int 状态 1连接 2 断开
+        online_token:xxxxx websocket链接时由服务端生成返回给客户端
+        sid   上报的用户sid
+        timestamp:xxxxxx  时间戳
+        sign:xxxxxx  签名
+    }
+    ```    
  
 ### 3.2 服务端通知客户端的消息结构
  #### 退出房间

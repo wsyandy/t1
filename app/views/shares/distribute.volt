@@ -11,57 +11,57 @@
 </head>
 <body>
 <div id="app">
-<div class="register_head">
-    <img  class="cdControllerArm" src="/shares/images/cdControllerArm.png" alt="">
-    <div class="audio_box">
-        <!--音乐控制面板-->
-        <div class="audio_btn">
-            <!--旋转碟片-->
-            <div class="audio_cover" id="play">
-                <!--<div class="cdCover"></div>-->
+    <div class="register_head">
+        <img class="cdControllerArm" src="/shares/images/cdControllerArm.png" alt="">
+        <div class="audio_box">
+            <!--音乐控制面板-->
+            <div class="audio_btn">
+                <!--旋转碟片-->
+                <div class="audio_cover" id="play">
+                    <!--<div class="cdCover"></div>-->
+                </div>
+                <!--暂停/播放按钮-->
+                <div class="btn_play btn_pause"></div>
             </div>
-            <!--暂停/播放按钮-->
-            <div class="btn_play btn_pause"></div>
-        </div>
-            <audio  id="music"  autoplay src="/shares/distribute_register.mp3">
-            Your browser does not support HTML5 audio.
-        </audio>
-    </div>
-</div>
-<div class="register_body">
-    <h3>Hi语音</h3>
-    <div class="register_title"> <span>备受年轻人欢迎的语音直播平台</span> </div>
-
-    <div class="register_box">
-        <ul>
-            <li>
-                <input class="input_phone" type="text" placeholder="请输入手机号" value="" name="mobile"
-                       v-model="mobile">
-            </li>
-            <li >
-                <input type="text" placeholder="图形验证码" maxlength="4" class="input_verify"  v-model="captcha_code">
-                <img class="image_token" data-cont="/" id="captcha" @click="getCaptcha()">
-                <input type="hidden" class="get_verify" id="image_token" value="" v-model="image_token"/></input>
-            </li>
-            <li>
-                <input class="input_verify" type="text" placeholder="请输入验证码"  disabled name="auth_code"
-                       v-model="auth_code">
-                <input type="button" class="get_verify"  value="获取验证码" @click="getAuthCode()"/>
-            </li>
-            <li>
-                <input class="input_password" type="password" placeholder="请输入密码"   value="" v-model="password">
-            </li>
-        </ul>
-        <div class="register_btn " @click="register">
-            立即注册
+            <audio id="music" autoplay src="/shares/distribute_register.mp3">
+                Your browser does not support HTML5 audio.
+            </audio>
         </div>
     </div>
-</div>
+    <div class="register_body">
+        <h3>Hi语音</h3>
+        <div class="register_title"><span>备受年轻人欢迎的语音直播平台</span></div>
 
-<div class="pup_cover" id="pup_tips">
-    <div class="pup_code">${error_text}</div>
-</div>
-<!--底部导航-->
+        <div class="register_box">
+            <ul>
+                <li>
+                    <input class="input_phone" type="text" placeholder="请输入手机号" value="" name="mobile"
+                           v-model="mobile">
+                </li>
+                <li>
+                    <input type="text" placeholder="图形验证码" maxlength="4" class="input_verify" v-model="captcha_code">
+                    <img class="image_token" data-cont="/" id="captcha" @click="getCaptcha()">
+                    <input type="hidden" class="get_verify" id="image_token" value="" v-model="image_token"/></input>
+                </li>
+                <li>
+                    <input class="input_verify" type="text" placeholder="请输入验证码" disabled name="auth_code"
+                           v-model="auth_code">
+                    <input type="button" class="get_verify" value="获取验证码" @click="getAuthCode()"/>
+                </li>
+                <li>
+                    <input class="input_password" type="password" placeholder="请输入密码" value="" v-model="password">
+                </li>
+            </ul>
+            <div class="register_btn " @click="register">
+                立即注册
+            </div>
+        </div>
+    </div>
+
+    <div class="pup_cover" id="pup_tips">
+        <div class="pup_code">${error_text}</div>
+    </div>
+    <!--底部导航-->
 </div>
 
 <script src="/shares/js/jquery.min.js"></script>
@@ -79,14 +79,14 @@
             mobile: '',
             auth_code: '',
             password: '',
-            share_history_id:'{{ share_history_id }}',
+            share_history_id: '{{ share_history_id }}',
             sms_token: '',
             register_status: false,
             send_status: false,
-            code:"{{ code }}",
-            image_token:'',
-            captcha_code:'',
-            error_text:''
+            code: "{{ code }}",
+            image_token: '',
+            captcha_code: '',
+            error_text: ''
 
         },
         methods: {
@@ -99,7 +99,7 @@
                     return;
                 }
 
-                if(!vm.mobile){
+                if (!vm.mobile) {
                     $tips.show(10).delay(1000).fadeOut();
                     vm.error_text = "请输入正确的手机号";
                 }
@@ -120,16 +120,15 @@
                     image_token: vm.image_token,
                     captcha_code: vm.captcha_code,
                     auth_type: 'register',
-                    share_history_id:vm.share_history_id,
-                    code:vm.code
+                    share_history_id: vm.share_history_id,
+                    code: vm.code
                 };
                 $.authPost('/shares/mobile_auth', data, function (resp) {
+                    $tips.show(10).delay(1000).fadeOut();
+                    vm.error_text = resp.error_reason;
                     if (resp.error_code == 0) {
-//                        vm.redirectAction(resp.weixin_url);
-                        window.location = resp.weixin_url;
+                        window.location = resp.down_url;
                     } else {
-                        $tips.show(10).delay(1000).fadeOut();
-                        vm.error_text = resp.error_reason;
                         vm.register_status = false;
                     }
                 })
@@ -146,8 +145,8 @@
                     image_token: vm.image_token,
                     captcha_code: vm.captcha_code,
                     auth_type: 'register',
-                    share_history_id:vm.share_history_id,
-                    code:vm.code
+                    share_history_id: vm.share_history_id,
+                    code: vm.code
                 };
 
                 $.authPost('/shares/mobile_auth', data, function (resp) {
@@ -170,41 +169,43 @@
     };
     var vm = XVue(opts);
     $(function () {
+        reurl();
         iplay();
         var $tel = $(".input_phone");
         var $verify = $(".input_verify");
         $tips = $("#pup_tips");
         var $getVerify = $(".get_verify");
-        var countdown=60;
+        var countdown = 60;
         var timer;
 
-        $getVerify.on('click',function () {
+        $getVerify.on('click', function () {
             var mobileNum = $tel.val();
             var isphone = isMobile(mobileNum);
             setTimeout(function () {
                 settime(isphone)
-            },1000);
+            }, 1000);
 
         })
+
         function settime(isphone) {
             clearTimeout(timer);
-            if(isphone && vm.send_status){
+            if (isphone && vm.send_status) {
                 if (countdown === 0) {
                     $getVerify.attr("disabled", false).val("获取验证码");
                     $verify.attr("disabled", true);
                     countdown = 60;
                     return;
                 } else {
-                    $getVerify .addClass('red');
+                    $getVerify.addClass('red');
                     $verify.attr("disabled", false);
                     $getVerify.attr("disabled", true).val(countdown + "s后重发");
                     countdown--;
                 }
-                timer = setTimeout(function() {
+                timer = setTimeout(function () {
                     settime(isphone)
-                } ,1000);
+                }, 1000);
                 $('.register_btn').addClass('btn_submit')
-            }else {
+            } else {
                 $tel.focus().empty()
             }
         }
@@ -217,6 +218,7 @@
         }
 
     })
+
     function getCaptchaImage() {
         $.get('/captcha', function (resp) {
             var captcha = document.getElementById('captcha');
@@ -225,7 +227,18 @@
         });
     }
 
+    function reurl() {
+        url = location.href; //把当前页面的地址赋给变量 url
+        var times = url.split("&"); //分切变量 url 分隔符号为 "?"
+        var length = times.length;
+        if (times[length-1] != 'tt=1') { //如果?后的值不等于1表示没有刷新
+            url += "&tt=1"; //把变量 url 的值加入 ?1
+            self.location.replace(url); //刷新页面
+        }
+    }
+
     getCaptchaImage();
+
     function checkCaptchaParams() {
         if (!vm.image_token || !vm.captcha_code) {
             $tips.show(10).delay(1000).fadeOut();
@@ -235,20 +248,23 @@
 
         return true;
     }
-    var rotatetimer,    /* 旋转定时器 */
+
+    var rotatetimer, /* 旋转定时器 */
         isPlay = true, /* 播放状态 */
-        angle = 0,      /* 旋转角度 */
+        angle = 0, /* 旋转角度 */
         $cdControllerArm = $('.cdControllerArm'),
         $cover = $('.audio_cover'),
-        $btnPlay= $('.btn_play'),
-        $music=$('#music'),
-        music = $music.get(0);          /* jQuery对象 转换为 DOM对象 以便于操作 Audio 对象*/
+        $btnPlay = $('.btn_play'),
+        $music = $('#music'),
+        music = $music.get(0);
+    /* jQuery对象 转换为 DOM对象 以便于操作 Audio 对象*/
 
 
     /*播放*/
-    $btnPlay.on('click', function() {
-        isPlay ? nplay() : iplay() ;
+    $btnPlay.on('click', function () {
+        isPlay ? nplay() : iplay();
     });
+
     /*播放状态*/
     function iplay() {
         clearInterval(rotatetimer);
@@ -258,17 +274,20 @@
         isPlay = true;
         $cdControllerArm.addClass("cd_play");
         /* jquery.rotate 旋转动画插件  */
-        rotatetimer = setInterval(function() {
+        rotatetimer = setInterval(function () {
             angle += 1;
             $cover.rotate(angle);
         }, 20);
     }
+
     /*暂停状态*/
     function nplay() {
-        clearInterval(rotatetimer);     /* 清除选择动画 */
+        clearInterval(rotatetimer);
+        /* 清除选择动画 */
         music.pause();
         isPlay = false;
-        $btnPlay.addClass('btn_pause'); /* 添加暂停按钮 */
+        $btnPlay.addClass('btn_pause');
+        /* 添加暂停按钮 */
         $cdControllerArm.removeClass("cd_play");
     }
 </script>

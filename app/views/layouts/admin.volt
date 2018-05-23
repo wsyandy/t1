@@ -13,7 +13,7 @@
         '/framework/bootstrap.datepicker/1.4.0/locales/bootstrap-datetimepicker.zh-CN.js',
         '/js/juicer/0.6.9/juicer-min.js','/js/echarts/3.7.2/echarts.js'
         ,'/js/echarts/3.7.2/chalk.js','/js/echarts/3.7.2/china.js','/js/admin.js',
-        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js') }}
+        '/framework/bootstrap.select/1.11.2/js/i18n/defaults-zh_CN.min.js','/js/utils.js') }}
 
     {{ css('/framework/bootstrap/3.3.4/css/bootstrap.min.css','/framework/bootstrap.datepicker/1.4.0/css/bootstrap-datetimepicker.min.css',
         '/framework/bootstrap.datepicker/1.5.0/css/bootstrap-datepicker.min.css','/css/admin.css', '/framework/bootstrap.select/1.11.2/css/bootstrap-select.min.css') }}
@@ -88,19 +88,9 @@
                     {% if isAllowed('users','reserved') %}
                         <li><a href="/admin/users/reserved">预留靓号</a></li>
                     {% endif %}
-                    {% if isAllowed('game_histories','index') %}
-                        <li><a href="/admin/game_histories">游戏记录</a></li>
-                    {% endif %}
                     {% if isAllowed('rooms','game_white_list') %}
                         <li><a href="/admin/rooms/game_white_list">游戏白名单</a></li>
                     {% endif %}
-                    {% if isAllowed('draw_histories','index') %}
-                        <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
-                    {% endif %}
-                    {% if isAllowed('users','wish_luck_histories') %}
-                        <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
-                    {% endif %}
-
                 </ul>
             </li>
         {% endif %}
@@ -209,6 +199,28 @@
                     {% endif %}
                     {% if isAllowed('banned_words','index') %}
                         <li><a href="/admin/banned_words">违禁词</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endif %}
+
+
+        <!--活动列表-->
+        {% if isAllowed('game_histories','index') or isAllowed('draw_histories','index') or isAllowed('users','wish_luck_histories') or isAllowed('pk_histories','index') %}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">活动记录列表<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% if isAllowed('game_histories','index') %}
+                        <li><a href="/admin/game_histories">游戏记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('draw_histories','index') %}
+                        <li><a href="/admin/draw_histories">砸金蛋记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('users','wish_luck_histories') %}
+                        <li><a href="/admin/users/wish_luck_histories">许愿墙记录</a></li>
+                    {% endif %}
+                    {% if isAllowed('pk_histories','index') %}
+                        <li><a href="/admin/pk_histories">PK记录</a></li>
                     {% endif %}
                 </ul>
             </li>
@@ -354,6 +366,13 @@
                             </ul>
                         </li>
                     {% endif %}
+                    {% if isAllowed('couples', 'index') %}
+                        <li><a href="/admin/couples">cp统计</a></li>
+                    {% endif %}
+                    {% if isAllowed('distributes', 'index') %}
+                        <li><a href="/admin/distributes">分销统计</a></li>
+                    {% endif %}
+
                 </ul>
             </li>
         {% endif %}
@@ -463,6 +482,9 @@
                     {% if isAllowed('draw_configs','index') %}
                         <li><a href="/admin/draw_configs">砸金蛋配置</a></li>
                     {% endif %}
+                    {% if isAllowed('boom_configs','index') %}
+                        <li><a href="/admin/boom_configs">爆礼物配置</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
@@ -479,7 +501,6 @@
                 </ul>
             </li>
         {% endif %}
-
     </ul>
 
     <ul class="nav navbar-nav navbar-right">

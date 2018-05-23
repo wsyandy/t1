@@ -68,6 +68,14 @@ class Users extends BaseModel
      * @type string
      */
     private $_current_room_channel_name;
+    /**
+     * @type integer
+     */
+    private $_current_room_signal_status;
+    /**
+     * @type integer
+     */
+    private $_current_room_channel_status;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -419,8 +427,7 @@ class Users extends BaseModel
 
         $product_channel = $current_user->product_channel;
         $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
-        $sms_distribute_history = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
-        if ($exist_user || $sms_distribute_history) {
+        if ($exist_user) {
             return [ERROR_CODE_FAIL, '用户已注册', null];
         }
 
@@ -434,8 +441,6 @@ class Users extends BaseModel
         if (!$user) {
             return [ERROR_CODE_FAIL, '注册失败!', null];
         }
-
-        //$user->checkRegisterFr($device, $mobile);
 
         $fr = $device->fr;
         if (!$fr) {
@@ -637,6 +642,11 @@ class Users extends BaseModel
         if (!$device) {
             info('Exce false_device', $this->id, $this->mobile, $context);
             return [ERROR_CODE_FAIL, '设备错误!!!'];
+        }
+
+        if ($device->isBlocked()) {
+            info("block_device_active", $device->id, $device->device_no);
+            return [ERROR_CODE_FAIL, '设备被封'];
         }
 
         //切换账号登录时如果用户在房间就退出房间
@@ -3271,13 +3281,15 @@ class Users extends BaseModel
 
     /**
      * 用户魅力贡献排行榜
-     * @param null $day
+     * @param null $time
      * @return string
      */
-    static function generateUserRankListKey($day = null)
+    static function generateUserRankListKey($time = null)
     {
-        if (!$day) $day = date('Ymd');
+        if (empty($time) || strtotime(date('Ymd His'), $time) != $time)
+            $time = time();
 
+        $day = date('Ymd', $time);
         $key = 'user_charm_and_wealth_rank_list_day_' . $day;
         return $key;
     }
@@ -3285,15 +3297,18 @@ class Users extends BaseModel
 
     /**
      * 更新魅力贡献排行榜
-     * @param $receiver
-     * @param $sender
-     * @param $amount
+     * @param $gift_order
+     * @param $opt
      * @return bool
      */
-    static function updateUserCharmAndWealthRank($receiver_id, $sender_id, $amount)
+    static function updateUserCharmAndWealthRank($gift_order, $opt = [])
     {
         $key = self::generateUserRankListKey();
         $user_db = Users::getUserDb();
+
+        $receiver_id = $gift_order->user_id;
+        $sender_id = $gift_order->sender_id;
+        $amount = $gift_order->amount;
 
         // 赠送礼物的增加贡献值，被赠送的增加魅力值
         $user_db->zincrby($key, $amount, $receiver_id);
@@ -3304,26 +3319,22 @@ class Users extends BaseModel
 
     /**
      * 查询魅力贡献排行榜
-     * @param null $time
-     * @param int $max_number
+     * @param int $page
+     * @param int $per_page
+     * @param int $time
      * @return array
      */
-    static function findUserCharmAndWealthRank($time = null, $max_number = 100)
+    static function findUserCharmAndWealthRank($page = 1, $per_page = 12, $time = null)
     {
-        if (!$time) $time = time();
-        $day = date('Ymd', $time);
+        $key = self::generateUserRankListKey($time);
 
-        $key = self::generateUserRankListKey($day);
+        $offset = ($page - 1) * $per_page;
+        $limit = $offset + $per_page - 1;
+
         $user_db = Users::getUserDb();
-        $rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - 1, 'withscores'));
+        $rank_list = $user_db->zrevrange($key, $offset, $limit, 'withscores');
+        $rank_list = array_keys($rank_list);
 
-        $yesterday_rank_list = [];
-        $number = count($rank_list);
-        if (empty($rank_list) || $number < $max_number) {
-            $key = self::generateUserRankListKey(date('Ymd', strtotime('-1 day', $time)));
-            $yesterday_rank_list = array_keys($user_db->zrevrange($key, 0, $max_number - $number, 'withscores'));
-        }
-        $rank_list = array_merge($rank_list, $yesterday_rank_list);
         return $rank_list;
     }
 
@@ -3823,4 +3834,30 @@ class Users extends BaseModel
         return $system_user;
     }
 
+    function updateRoomProfile($params = [])
+    {
+        debug($params);
+
+        if (count($params) < 1) {
+            return;
+        }
+
+        foreach ($params as $k => $v) {
+
+            if (!in_array($k, ['current_room_channel_status', 'current_room_signal_status'])) {
+                continue;
+            }
+
+            if (isBlank($v)) {
+                continue;
+            }
+
+            if ($this->$k == $v) {
+                continue;
+            }
+
+            $this->$k = $v;
+            $this->update();
+        }
+    }
 }

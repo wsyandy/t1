@@ -69,15 +69,26 @@ class AccountHistories extends BaseModel
         \DataCollection::syncData('account_history', 'change_balance', ['account_history' => $this->toJson()]);
     }
 
-    function toSimpleJson()
+    // 分销
+    function toDistributeJson()
     {
-        list($nickname, $avatar_url) = $this->getUserInfo();
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'created_at' => $this->created_at_text,
-            'user_nickname' => $nickname,
             'amount' => $this->amount,
-            'user_avatar_url' => $avatar_url
+            'user_nickname' => $this->target->nickname,
+            'user_avatar_url' => $this->target->avatar_small_url
+        ];
+    }
+
+    function toSimpleJson()
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'created_at' => $this->created_at_text,
+            'amount' => $this->amount
         ];
     }
 
@@ -87,6 +98,7 @@ class AccountHistories extends BaseModel
             $user = Users::findFirstById($user_id);
         } else {
             $user = $user_id;
+            $user_id = $user->id;
         }
 
         if (!$user) {
@@ -163,16 +175,6 @@ class AccountHistories extends BaseModel
         }
 
         return "diamond_recharge";
-    }
-
-    function getUserInfo()
-    {
-
-        $sms_distribute_history = \SmsDistributeHistories::findFirstById($this->target_id);
-        $nickname = $sms_distribute_history->user->nickname;
-        $avatar_url = $sms_distribute_history->user->avatar_url;
-
-        return [$nickname, $avatar_url];
     }
 
 }

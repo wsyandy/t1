@@ -43,12 +43,14 @@ class RoomsController extends BaseController
 
         if ($this->currentUser()->isIosAuthVersion()) {
             $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
         if ($hot == STATUS_ON) {
             //热门房间从缓存中拉取
             $rooms = \Rooms::searchHotRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
 
         }
@@ -65,7 +67,7 @@ class RoomsController extends BaseController
         }
 
         $rooms = \Rooms::search($this->currentUser(), $page, $per_page, $this->params());
-
+        \Users::findBatch($rooms);
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -101,9 +103,17 @@ class RoomsController extends BaseController
     //进入房间
     function enterAction()
     {
+        if (isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+        }
+
         $room_id = $this->params('id', 0); // 进入指定房间
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
+
+        if ($room_id && $user_id && isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
 
         if ($room_id) {
 
@@ -123,20 +133,6 @@ class RoomsController extends BaseController
 
             $room = $user->current_room;
         }
-
-        //如果不是房主
-//        if (!$this->currentUser()->isRoomHost($room)) {
-
-        //房主不在房间且当前用户不在房间
-//            if (!$room->user->isInRoom($room) && !$this->currentUser()->isInRoom($room)) {
-//                return $this->renderJSON(ERROR_CODE_FAIL, '房主不在房间');
-//            }
-
-        //房间内没有人
-//            if ($room->user_num < 1) {
-//                return $this->renderJSON(ERROR_CODE_FAIL, '房间内没有用户');
-//            }
-//        }
 
         if ($room->isForbidEnter($this->currentUser())) {
             return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
@@ -176,6 +172,10 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
+        if (isDevelopmentEnv()) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+        }
+
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
 
@@ -280,8 +280,10 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
+                if ($game_history->game->url == 'https://gtest.yueyuewo.cn' && isDevelopmentEnv()) {
+                    $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
+                }
             }
-
         } else {
             $res['game'] = ['url' => 'url://m/couples?room_id=' . $room_id, 'icon' => $root_host . 'images/go_cp.png'];
         }
@@ -319,7 +321,7 @@ class RoomsController extends BaseController
             if ($room->hasBoomGift()) {
 
                 $res['boom_gift'] = [
-                    'expire_at' => (int)\Rooms::getExpireAt($room_id),
+                    'expire_at' => \Rooms::getBoomGiftExpireAt($room_id),
                     'client_url' => 'url://m/backpacks',
                     'svga_image_url' => \BoomHistories::getSvgaImageUrl(),
                     'total_value' => \BoomHistories::getBoomTotalValue(),
@@ -350,6 +352,7 @@ class RoomsController extends BaseController
     function exitAction()
     {
         $room_id = $this->params('id', 0);
+
         $room = \Rooms::findFirstById($room_id);
 
         if (!$room) {
@@ -459,6 +462,8 @@ class RoomsController extends BaseController
         }
 
         $users = $room->findUsers($page, $per_page);
+        \Provinces::findBatch($users);
+        \Cities::findBatch($users);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $users->toJson('users', 'toSimpleJson'));
     }
@@ -729,8 +734,13 @@ class RoomsController extends BaseController
         $content = $this->params('content');
         $content_type = $this->params('content_type');
 
-        if (isDevelopmentEnv() && isBlank($content)) {
+        if (isDevelopmentEnv() && $content != 0 && isBlank($content)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '内容不能为空');
+        }
+
+        $is_sensitive = \BannedWords::filterWord($content);
+        if ($is_sensitive) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '内容含有敏感词汇');
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
@@ -743,6 +753,7 @@ class RoomsController extends BaseController
 
         if ($this->currentUser()->isIosAuthVersion()) {
             $rooms = \Rooms::iosAuthVersionRooms($this->currentUser(), $page, $per_page);
+            \Users::findBatch($rooms);
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
         }
 
@@ -750,17 +761,16 @@ class RoomsController extends BaseController
         $type = $this->params('type');
 
         //关键词和类型不能同时为空
-        if (is_null($keyword) && isBlank($type)) {
+        if (!$keyword && isBlank($type)) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
 
         $cond = [];
 
-        if (!is_null($keyword)) {
+        if ($keyword) {
 
             //临时兼容
             $room_category = \RoomCategories::findFirstByName($keyword);
-
             \SearchHistories::delay()->createHistory($keyword, 'room');
 
             if ($room_category && $room_category->type) {
@@ -816,7 +826,6 @@ class RoomsController extends BaseController
         }
 
         $shield_room_ids = $this->currentUser()->getShieldRoomIds();
-
         if ($shield_room_ids) {
             $cond['conditions'] .= " and id not in (" . implode(",", $shield_room_ids) . ")";
         }
@@ -824,6 +833,7 @@ class RoomsController extends BaseController
         debug("room_search_cond", $cond);
 
         $rooms = \Rooms::findPagination($cond, $page, $per_page);
+        \Users::findBatch($rooms);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
@@ -856,6 +866,7 @@ class RoomsController extends BaseController
 
         if (STATUS_ON == $top) {
             $top_rooms = \Rooms::searchTopRoom();
+            \Users::findBatch($top_rooms);
             $top_rooms_json = $top_rooms->toJson('top_rooms', 'toSimpleJson');
         }
 
@@ -869,6 +880,7 @@ class RoomsController extends BaseController
 //                $hot_rooms = \Rooms::searchHotRooms($this->currentUser(), 1, 9);
 //            }
 
+            \Users::findBatch($hot_rooms);
             $hot_rooms_json = $hot_rooms->toJson('hot_rooms', 'toSimpleJson');
         }
 
@@ -907,6 +919,8 @@ class RoomsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page', 12);
         $rooms = \Rooms::search($this->currentUser(), $page, $per_page);
+        \Users::findBatch($rooms);
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $rooms->toJson('rooms', 'toSimpleJson'));
     }
 
@@ -997,5 +1011,109 @@ class RoomsController extends BaseController
         $pk_histories = \PkHistories::findPagination($cond, $page, $per_page);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $pk_histories->toJson('pk_histories', 'toSimpleJson'));
+    }
+
+    //进入房间
+    function entranceAction()
+    {
+        $room_id = $this->params('id', 0); // 进入指定房间
+        $password = $this->params('password', '');
+        $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
+
+        if ($room_id && $user_id) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+        }
+
+        if ($room_id) {
+
+            $room = \Rooms::findFirstById($room_id);
+
+            if (!$room) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+            }
+
+        } else {
+
+            $user = \Users::findFirstById($user_id);
+
+            if (!$user || $user->current_room_id < 1) {
+                return $this->renderJSON(ERROR_CODE_FAIL, '用户已不在房间');
+            }
+
+            $room = $user->current_room;
+        }
+
+
+        if ($room->isForbidEnter($this->currentUser())) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您被禁止禁入房间,请稍后尝试');
+        }
+
+        $current_user_id = $this->currentUser()->id;
+        $current_room_id = $this->currentUser()->current_room_id;
+
+        if (!$current_room_id) {
+
+            if (!$room->checkFilterUser($current_user_id)) {
+
+                if ($room->lock && $room->user_id != $current_user_id && $current_room_id != $room->id && $room->password != $password) {
+                    return $this->renderJSON(ERROR_CODE_FORM, '密码错误');
+                }
+            }
+        }
+
+        //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
+        if ($current_room_id != $room_id) {
+
+            if ($current_room_id) {
+
+                info('Exce exit', $this->currentUser()->id, $current_room_id, $room_id);
+                $current_room = $this->currentUser()->current_room;
+
+                if ($current_room) {
+                    $current_room->exitRoom($this->currentUser());
+                }
+
+                $room->enterRoom($this->currentUser());
+
+            } else {
+
+                $room->enterRoom($this->currentUser());
+                // 进入房间推送
+                $this->currentUser()->pushIntoRoomRemindMessage();
+            }
+        }
+
+        $res = $room->toJson();
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['app_id'] = $this->currentProductChannel()->getImAppId();
+        $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['system_tips'] = $this->currentProductChannel()->system_news;
+        $res['user_role'] = $this->currentUser()->user_role;
+
+        // 座驾
+        $user_car_gift = $this->currentUser()->getUserCarGift();
+
+        if ($user_car_gift) {
+            $res['user_car_gift'] = $user_car_gift->toSimpleJson();
+        }
+
+        //房间分类信息
+        $room_tag_ids = $room->room_tag_ids;
+
+        $res['room_tag_ids'] = [];
+
+        if (isPresent($room_tag_ids)) {
+            $room_tag_ids = explode(',', $room_tag_ids);
+            $res['room_tag_ids'] = $room_tag_ids;
+        }
+
+        //自定义菜单栏，实际是根据对应不同的版本号进行限制，暂时以线上线外为限制标准
+        $root_host = $this->getRoot();
+
+        // 菜单
+        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+
+        return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
 }

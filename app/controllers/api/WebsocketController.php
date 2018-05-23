@@ -15,8 +15,9 @@ class WebsocketController extends BaseController
         $websocket_end_point = \services\SwooleUtils::getWebsocketEndPoint();
 
         $ping_interval = 15;
+
         if (isDevelopmentEnv()) {
-            $ping_interval = 3;
+            $ping_interval = 15;
         }
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['end_point' => $websocket_end_point, 'ping_interval' => $ping_interval]);

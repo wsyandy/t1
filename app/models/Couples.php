@@ -110,18 +110,8 @@ class Couples extends BaseModel
 
         $users = Users::findByIds($user_ids);
         foreach ($users as $user) {
-            $status = $user_db->zscore($relations_key, $user->id);
-            //状态    如果为1，说明该用户为当初的发起者，当前用户为追求者
-            switch ($status) {
-                case 1:
-                    $member = $user->id . '_' . $current_user_id;
-                    break;
-                case 2:
-                    $member = $current_user_id . '_' . $user->id;
-                    break;
-            }
-            $cp_info_key = self::generateCpInfoKey();
-            $score = $user_db->zscore($cp_info_key, $member);
+            $cp_value_key = self::generateCpInfoForUserKey($current_user_id);
+            $score = $user_db->zscore($cp_value_key, $user->id);
             $user->cp_value = $score;
         }
 
@@ -133,10 +123,6 @@ class Couples extends BaseModel
 
     static function updateCpInfo($opts)
     {
-        $time = fetch($opts, 'time');
-        if (date('Y-m-d', $time) != '2018-05-20' && isProduction()) {
-            return null;
-        }
         info('全部参数', $opts);
         $sender_id = fetch($opts, 'sender_id');
         $receive_id = fetch($opts, 'receive_id');
@@ -152,19 +138,19 @@ class Couples extends BaseModel
             return null;
         }
 
-        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
-        $member = '';
-        switch ($status) {
-            case 1:
-                $member = $receive_id . '_' . $sender_id;
-                break;
-            case 2:
-                $member = $sender_id . '_' . $receive_id;
-                break;
-        }
-        info('更新情侣值', $amount, $member);
-        $cp_info_key = self::generateCpInfoKey();
-        $db->zincrby($cp_info_key, $amount, $member);
+//        //状态    如果为1，说明接收者为当初的发起者，赠送者为追求者
+//        $member = '';
+//        switch ($status) {
+//            case 1:
+//                $member = $receive_id . '_' . $sender_id;
+//                break;
+//            case 2:
+//                $member = $sender_id . '_' . $receive_id;
+//                break;
+//        }
+//        info('更新情侣值', $amount, $member);
+//        $cp_info_key = self::generateCpInfoKey();
+//        $db->zincrby($cp_info_key, $amount, $member);
 
         $sender_key = self::generateCpInfoForUserKey($sender_id);
         $db->zincrby($sender_key, $amount, $receive_id);
@@ -196,5 +182,46 @@ class Couples extends BaseModel
 
         return $score;
 
+    }
+
+    //获取cp分页列表
+    static function findByUsersListForCp($page, $per_page)
+    {
+        $db = \Users::getUserDb();
+        //保存组成cp的时间，成员组成和保存分数的一直，可通用
+        $cp_marriage_time_key = \Couples::generateCpMarriageTimeKey();
+        //保存cp情侣值
+        $cp_info_key = \Couples::generateCpInfoKey();
+        $offset = $per_page * ($page - 1);
+        $res = $db->zrevrange($cp_marriage_time_key, $offset, $offset + $per_page - 1, 'withscores');
+
+        $i = 0;
+        $all_data = [];
+        foreach ($res as $ids_str => $re) {
+            $ids = explode('_', $ids_str);
+            $all_data[$i]['cp_at_text'] = date('Y-m-d', $re);
+            $all_data[$i]['sponsor_nickname'] = \Users::findFirstById($ids[0])->nickname;
+            $all_data[$i]['pursuer_nickname'] = \Users::findFirstById($ids[1])->nickname;
+            $all_data[$i]['score'] = $db->zscore($cp_info_key, $ids_str);
+            $i++;
+        }
+        if (!$all_data) {
+            return null;
+        }
+
+        $total_entries = $db->zcard($cp_marriage_time_key);
+        $pagination = new PaginationModel($all_data, $total_entries, $page, $per_page);
+        $pagination->clazz = 'Couples';
+
+        return $pagination;
+    }
+
+    static function base64EncodeImage($image_file)
+    {
+        $image_info = getimagesize($image_file);
+        $image_data = fread(fopen($image_file, 'r'), filesize($image_file));
+        $base64_image = 'data:' . $image_info['mime'] . ';base64,' . chunk_split(base64_encode($image_data));
+        unlink($image_file);
+        return $base64_image;
     }
 }

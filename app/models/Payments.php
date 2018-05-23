@@ -145,14 +145,11 @@ class Payments extends BaseModel
             info('stat', $this->id, $this->payment_type, $this->amount, $this->paid_amount, round($this->paid_amount));
             \Stats::delay()->record("user", "payment_success", $attrs);
 
-            //支付成功后，做分销判断
-            $opts = [
-                'mobile' => $this->order->mobile,
-                'type' => 'pay',
-                'amount' => $this->order->product->diamond,
-                'product_channel_id' => $this->order->product_channel_id
-            ];
-            \SmsDistributeHistories::isUserForShare($opts);
+
+            // 分销奖励
+            if($this->user->share_parent_id){
+                \SmsDistributeHistories::delay()->checkPay($this->user_id, $this->order->product->diamond);
+            }
 
             //当支付成功后，推送消息
             \DataCollection::syncData('payment', 'pay_success', ['payment' => $this->toPushDataJson()]);

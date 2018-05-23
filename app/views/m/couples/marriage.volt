@@ -18,11 +18,11 @@
                 </ul>
                 <div class="cer_imgs">
                     <div class="cer_avatar">
-                        <img :src="sponsor.avatar_url" alt="">
+                        <img :src="sponsor.avatar_base64_url" alt="" crossorigin="anonymous">
                     </div>
                     <img class="cer_heart" :src="cer_heart" alt="">
                     <div class="cer_avatar">
-                        <img :src="pursuer.avatar_url" alt="">
+                        <img :src="pursuer.avatar_base64_url" alt="" crossorigin="anonymous">
                     </div>
                 </div>
             </div>
@@ -55,8 +55,26 @@
     </div>
     <div class="height1rem"></div>
     <div class="cer_foot">
-        <div class="save_image" @click="screenshotsImg('save')"> 存至相册</div>
+        <div class="cer_btn">
+            <div class="save_image" @click="screenshotsImg('save')"> 存至相册</div>
+            <div class="cp_relieve" @click="cpRelieve" v-if="is_show"> 解除 CP</div>
+        </div>
         <img class="cer_share" :src="cer_share" alt="" @click="cerShare">
+    </div>
+    <!--解除CP弹出层-->
+    <div class="mask" :class="{'is_visible':isrelieve}">
+        <div class="relieve_cp" v-if="showrelieve">
+            <div class="relieve_tips">
+                <span>确认解除情侣后情侣值将清空，并移除您与${pursuer.nickname}在情侣值排行榜中的排名</span>
+            </div>
+            <ul class="relieve_btn">
+                <li @click="cancelRelieve(0)"><span>取消</span></li>
+                <li @click="cancelRelieve(1)"><span>确定</span></li>
+            </ul>
+        </div>
+        <div class="toast_tips" v-show="istoast">
+            <span v-text="error_reason"></span>
+        </div>
     </div>
 
     <div class="mask" :class="{'is_visible':is_visible}">
@@ -78,6 +96,7 @@
     var opts = {
         data: {
             isShareSuccess: false,
+            is_show: false,
             sid: '{{ sid }}',
             code: '{{ code }}',
             logo: '/m/images/logo_2.png',
@@ -87,6 +106,10 @@
             sponsor: {{ sponsor }},
             pursuer:{{ pursuer }},
             is_visible: false,
+            isrelieve: false, /*解除CP遮罩层显示隐藏*/
+            showrelieve: false,
+            istoast: false,
+            error_reason: '',
             shareList: [
                 {
                     ico: '/m/images/ico_wechat.png',
@@ -109,10 +132,40 @@
                     txt: '微博'
                 },
             ],
-            marriage_at_text:"{{ marriage_at_text }}"
+            marriage_at_text: "{{ marriage_at_text }}"
 
         },
         methods: {
+            /*解除CP遮罩层显示隐藏*/
+            cpRelieve: function () {
+                this.istoast = false;
+                this.isrelieve = true;
+                this.showrelieve = true;
+            },
+            cancelRelieve: function (i) {
+                if (i) {
+                    this.showrelieve = false;
+                    this.istoast = true;
+                    var data = {
+                        sid: vm.sid,
+                        code: vm.code,
+                        first_user_id: vm.sponsor.id,
+                        second_user_id: vm.pursuer.id
+
+                    };
+                    $.authPost('/m/couples/relieve_couple', data, function (resp) {
+                        vm.error_reason = resp.error_reason;
+                        setTimeout(function () {
+                            vm.isrelieve = false
+                            history.go(-1);
+                        }, 1000);
+                    });
+
+                } else {
+                    this.isrelieve = false
+                }
+
+            },
             cerShare: function () {
                 this.is_visible = true
             },
@@ -123,19 +176,19 @@
 
                 switch (index) {
                     case 0:
-                        vm.share('wx_friend', 'image', 'generate_image');
+                        vm.share('wx_friend', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 1:
-                        vm.share('wx_moments', 'image', 'generate_image');
+                        vm.share('wx_moments', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 2:
-                        vm.share('qq_friend', 'image', 'generate_image');
+                        vm.share('qq_friend', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 3:
-                        vm.share('qq_zone', 'image', 'generate_image');
+                        vm.share('qq_zone', 'image', 'cp_marriage', 'share_image');
                         break;
                     case 4:
-                        vm.share('sinaweibo', 'image', 'generate_image');
+                        vm.share('sinaweibo', 'image', 'cp_marriage', 'share_image');
                         break;
                 }
             },
@@ -149,7 +202,7 @@
             },
             //platform => qq_friend：qq好友    qq_zone：qq空间    wx_friend：微信好友  wx_moments：朋友圈  sinaweibo：新浪微博
             //type => image：图片    web_page：网页   text：文本
-            share: function (platform, type, share_source) {
+            share: function (platform, type, share_source, action) {
                 html2canvas(document.querySelector(".save_picture_box"), {
                     backgroundColor: 'transparent',// 设置背景透明
                     useCORS: true
@@ -161,7 +214,8 @@
                         platform: platform,
                         type: type,
                         share_source: share_source,
-                        image_data: image_data
+                        image_data: image_data,
+                        action: action
                     };
 
                     $.authPost('/m/shares/create', data, function (resp) {

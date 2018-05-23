@@ -88,22 +88,19 @@ class RoomsTask extends \Phalcon\Cli\Task
 
     function checkAbnormalExitRoomAction()
     {
+
         $target_ids = Rooms::getAbnormalExitRoomList();
-
         $total = count($target_ids);
-
         if ($total < 1) {
             info("no users", $target_ids);
             return;
         }
-
 
         info($total);
 
         foreach ($target_ids as $target_id) {
 
             list($room_id, $user_id) = explode("_", $target_id);
-
             if (!$room_id || !$user_id) {
                 continue;
             }
@@ -122,22 +119,17 @@ class RoomsTask extends \Phalcon\Cli\Task
                 info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
             } else {
 
-                $time = time() - 15 * 30;
-
-                if (isDevelopmentEnv()) {
-                    $time = time() - 60;
-                }
+                $time = time() - 15 * 60;
 
                 if ($user->last_at <= $time) {
 
                     $user_fd = $user->getUserFd();
-
                     if ($user_fd) {
                         info($user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
                         continue;
                     }
 
-                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
 
                     $need_push = true;
                     Rooms::delAbnormalExitRoomUserId($room_id, $user_id);

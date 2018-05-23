@@ -144,21 +144,21 @@ class UsersController extends BaseController
             $user = \Users::findFirstByMobile($this->currentProductChannel(), $mobile);
 
             if (!$user) {
+
                 $current_user = $this->currentUser();
-                info('当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
-                if (isPresent($current_user->mobile) || $current_user->isThirdLogin()) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '注册无效');
+
+                info('分销 当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
+
+                if ($current_user->login_type) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, '你已注册，请登陆');
                 }
-                $opts = [
-                    'mobile' => $mobile,
-                    'product_channel_id' => $this->currentProductChannelId(),
-                    'type' => 'register',
-                    'current_user' => $current_user
-                ];
-                $is_have_sms_distribute_history = \SmsDistributeHistories::isUserForShare($opts);
-                if (!$is_have_sms_distribute_history) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '手机号码未注册');
+
+                list($error_code, $error_reason) = \SmsDistributeHistories::checkRegister($current_user, $mobile, ['password' => $password, 'ip' => $this->remoteIp()]);
+                if ($error_code == ERROR_CODE_FAIL) {
+                    return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
                 }
+
+                $user = $current_user;
             }
 
             if ($user->isBlocked()) {
@@ -577,7 +577,10 @@ class UsersController extends BaseController
         }
 
         $users = \Users::search($this->currentUser(), $page, $per_page, $cond);
-        if (count($users)) {
+        if ($users->count()) {
+            \Provinces::findBatch($users);
+            \Cities::findBatch($users);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
@@ -607,7 +610,10 @@ class UsersController extends BaseController
         }
 
         $users = $this->currentUser()->nearby($page, $per_page);
-        if (count($users)) {
+        if ($users->count()) {
+            \Provinces::findBatch($users);
+            \Cities::findBatch($users);
+
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
         }
 
@@ -824,40 +830,18 @@ class UsersController extends BaseController
 
         if (isDevelopmentEnv()) {
 
-            $user_ids = \Users::findUserCharmAndWealthRank(time(), $per_page);
+            $user_ids = \Users::findUserCharmAndWealthRank($page, $per_page);
             if (empty($user_ids)) {
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '');
             }
 
-            $user_flip = array_flip($user_ids);
-
-            $conditions = array(
-                'id in ('.implode(',', $user_ids).') and user_status = '.USER_STATUS_ON,
-                'columns' => 'id'
-            );
-            $users = \Users::find($conditions);
-
-            $user_online = [];
-            foreach ($users as $user) {
-                if (in_array($user->id, $user_ids)) {
-                    $user_online[$user_flip[$user->id]] = $user->id;
-                    unset($user_flip[$user->id]);
-                }
-            }
-            ksort($user_online);
-
-            $user_offline = array_values(array_flip($user_flip));
-
-            // 已经排序好
-            $user_ids = array_merge(array_values($user_online), $user_offline);
-
             $users = \Users::findByIds($user_ids);
-//            $users = $users->toJson('users', 'toSimpleJson');
-
         } else {
             $users = $this->currentUser()->nearby($page, $per_page);
-//            $users = $users->toJson('users', 'toSimpleJson');
         }
+
+        \Provinces::findBatch($users);
+        \Cities::findBatch($users);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $users->toJson('users', 'toSimpleJson'));
 

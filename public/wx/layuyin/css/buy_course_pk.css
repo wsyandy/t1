@@ -1,0 +1,232 @@
+.buy_fight_course_line{
+  background-image: linear-gradient(-180deg, #FE747F 0%, #FF4460 100%);
+  background-image: -webkit-linear-gradient(-180deg, #FE747F 0%, #FF4460 100%);
+  background-image: -moz-linear-gradient(-180deg, #FE747F 0%, #FF4460 100%);
+  height: 10px;
+}
+.buy_fight_course_top{
+  display: flex;
+  padding:10px 15px;
+}
+.buy_fight_course_top .buy_fight_course_img{
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  background: #F6F6F6;
+  box-shadow: 0 6px 6px 3px rgba(0,0,0,0.10);
+  -webkit-box-shadow: 0 6px 6px 3px rgba(0,0,0,0.10);
+  -moz-box-shadow: 0 6px 6px 3px rgba(0,0,0,0.10);
+  border-radius: 8px;
+}
+.buy_fight_course_top .buy_fight_course_text{
+  flex: 1;
+  margin-left: 6px;
+}
+.buy_fight_course_text h3{
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333333;
+}
+.buy_fight_course_text p{
+  margin-top: 20px;
+}
+.buy_fight_course_text p span{
+  font-size: 14px;
+  color: #F94A68;
+}
+.buy_fight_course_text p b{
+  font-size: 14px;
+  color: #999999;
+  text-decoration: line-through;
+}
+.buy_fight_course_box{
+  height: 140px;
+  width: 100%;
+  background-image: linear-gradient(-180deg, #ff505e 0%, #FF4460 100%);
+  background-image: -moz-linear-gradient(-180deg, #ff505e 0%, #FF4460 100%);
+  background-image: -webkit-linear-gradient(-180deg, #ff505e 0%, #FF4460 100%);
+  margin-top: 10px;
+}
+.buy_fight_course_box p{
+  position: relative;
+}
+.buy_fight_course_box p::before{
+  position: absolute;
+  content: '';
+  width: 26px;
+  height: 14px;
+  background: url(../images/buy_course_pk_san.png) no-repeat;
+  background-size: 100%;
+  top:0;
+  left:50%;
+  transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+}
+.buy_fight_course_box h3{
+  font-size: 16px;
+  color: #FFFFFF;
+  padding:25px 50px 10px 50px;
+}
+.buy_fight_course_person{
+  height: 170px;
+  background: #FFFFFF;
+  box-shadow: 0 0 15px 4px rgba(0,0,0,0.16);
+  -webkit-box-shadow: 0 0 15px 4px rgba(0,0,0,0.16);
+  -moz-box-shadow: 0 0 15px 4px rgba(0,0,0,0.16);
+  border-radius: 4px;
+  margin:0 15px;
+  margin-top: -70px;
+}
+.buy_fight_course_img_box{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding:20px;
+}
+.buy_fight_course_img_box .img_list{
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+
+}
+.buy_fight_course_img_box .img_list .img_person{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #D8D8D8;
+
+}
+.buy_fight_course_img_box .img_list .img_person img{
+  width: 40px;
+}
+.tuanzhang_icon{
+  position: absolute;
+  top: 0;
+  right: 5px;
+  width: 24px;
+}
+.buy_course_pk_dot{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+.buy_course_pk_dot .dot_img{
+  width: 26px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.buy_course_pk_dot .dot_img img{
+  width: 26px;
+}
+.buy_course_pk_time{
+  text-align: center;
+  position: relative;
+  margin-top: 20px;
+}
+.buy_course_pk_time h3{
+  width: 160px;
+  margin: 0 auto;
+  font-size: 12px;
+  color: #333333;
+  background: #FFFFFF;
+  position: relative;
+  z-index: 99;
+  top: 10px;
+}
+.buy_course_pk_time h3 span{
+  display: inline-block;
+  width: 21px;
+  height: 21px;
+  line-height: 21px;
+  text-align: center;
+  background: #434043;
+  border: 1px solid #979797;
+  border-radius: 3px;
+  font-size: 14px;
+  color: #FFFFFF;
+}
+.buy_course_pk_time p{
+  position: absolute;
+  border-top: 1px solid #E0E0E0;
+  width: 90%;
+  left: 5%;
+}
+.buy_weixin_code{
+  padding:30px 40px 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.buy_weixin_code .weixin_code_list{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.buy_weixin_code .weixin_code_list i{
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+.weixin_code_list .weixin{
+  background: url(../images/buy_weixin.png) no-repeat;
+  background-size: 100%;
+}
+.weixin_code_list .pengyouquan{
+  background: url(../images/buy_pengyouquan.png) no-repeat;
+  background-size: 100%;
+}
+.weixin_code_list .qrcode{
+  background: url(../images/buy_qrcode.png) no-repeat;
+  background-size: 100%;
+}
+.buy_weixin_code .weixin_code_list p{
+  font-size: 12px;
+  color: #333333;
+  margin-top: 10px;
+}
+.buy_pk_text{
+  margin:0 15px 30px 15px;
+  background: #FFF5F5;
+  border-radius: 2px;
+}
+.buy_pk_text p{
+  padding:15px;
+  font-size: 12px;
+  color: #999999;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

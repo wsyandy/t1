@@ -44,7 +44,8 @@ class RoomSeats extends BaseModel
         $data = [];
         $user = $this->user;
         if ($user) {
-            $data = ['sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname];
+            $data = ['sex' => $user->sex, 'avatar_small_url' => $user->avatar_small_url, 'nickname' => $user->nickname,
+                'avatar_100x100_url' => $user->avatar_100x100_url, 'avatar_60x60_url' => $user->avatar_60x60_url];
         }
 
         return $data;
@@ -60,6 +61,8 @@ class RoomSeats extends BaseModel
                 'sex' => $user->sex,
                 'avatar_url' => $user->avatar_url,
                 'avatar_small_url' => $user->avatar_small_url,
+                'avatar_100x100_url' => $user->avatar_100x100_url,
+                'avatar_60x60_url' => $user->avatar_60x60_url,
                 'nickname' => $user->nickname,
             ];
         }
