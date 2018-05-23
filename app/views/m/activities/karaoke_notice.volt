@@ -96,7 +96,7 @@
 
     <h5>10强名单（前10名）</h5>
     <div class="img">
-        <img src="/m/images/karaoke_notice3.png" alt="">
+        <img src="/m/images/karaoke_notice3.jpg" alt="">
     </div>
     <p><strong>
             Hi语音官方将严肃处理恶意攻击参赛选手、比赛工作人员及蓄意扰乱比赛秩序的个人和集体；Hi语音团队将竭尽全力保障每位参赛选手利益与比赛的公平性，欢迎各位监督指导。
