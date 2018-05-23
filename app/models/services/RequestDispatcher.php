@@ -62,6 +62,8 @@ class RequestDispatcher
             $user = \Users::findFirstById(intval($sid));
             $status = fetch('status', $request->_json_arr);
 
+            debug($field, $request->_json_arr, $status, $sid);
+
             if ($user && $status) {
                 $user->updateRoomProfile([$field => $status]);
             }
