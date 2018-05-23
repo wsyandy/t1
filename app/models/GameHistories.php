@@ -25,12 +25,15 @@ class GameHistories extends BaseModel
 
     function afterCreate()
     {
-        if ($this->status == GAME_STATUS_WAIT && $this->game->url == 'https://gtest.yueyuewo.cn') {
+        if ($this->game->code == 'jump') {
             //保存一个游戏用户队列
             $this->saveUserList($this->user_id);
-
-            \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
         }
+
+        $hot_cache = GameHistories::getHotWriteCache();
+        $hot_cache->setex('game_history_room_'.$this->room_id, 1800, $this->id);
+
+        \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
     }
 
     function afterUpdate()
@@ -38,6 +41,8 @@ class GameHistories extends BaseModel
 
         if ($this->hasChanged('status') && $this->status == GAME_STATUS_END) {
 
+            $hot_cache = GameHistories::getHotWriteCache();
+            $hot_cache->del('game_history_room_'.$this->room_id);
 
             if ($this->game->code == 'jump') {
                 $user = \Users::findFirstById($this->user_id);

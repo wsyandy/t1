@@ -158,8 +158,6 @@ class GamesController extends BaseController
 
             $game_history->create();
 
-            \GameHistories::delay(900)->asyncCloseGame($game_history->id);
-
             $root = $this->getRoot();
             $image_url = $root . 'images/go_game.png';
             $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
