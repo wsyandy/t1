@@ -1028,10 +1028,6 @@ class RoomsController extends BaseController
 
             $room = \Rooms::findFirstById($room_id);
 
-            if (!$room) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-            }
-
         } else {
 
             $user = \Users::findFirstById($user_id);
@@ -1041,6 +1037,10 @@ class RoomsController extends BaseController
             }
 
             $room = $user->current_room;
+        }
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
 
