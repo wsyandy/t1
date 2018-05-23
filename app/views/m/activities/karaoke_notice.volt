@@ -45,7 +45,7 @@
 
     <h5>复活名单（前10名）</h5>
     <div class="img">
-        <img src="/m/images/imgs_1.webp" alt="">
+        <img src="/m/images/karaoke_notice1.jpg" alt="">
     </div>
     <p><strong>二、半决赛、总决赛规则修改</strong>
     </p>
@@ -91,12 +91,12 @@
     <p> 3.3最终得分：专业分+人气分；</p>
     <h5>人气排名换算人气分规则表</h5>
     <div class="img">
-        <img src="/m/images/imgs_2.webp" alt="">
+        <img src="/m/images/karaoke_notice2.jpg" alt="">
     </div>
 
     <h5>10强名单（前10名）</h5>
     <div class="img">
-        <img src="/m/images/imgs_3.webp" alt="">
+        <img src="/m/images/karaoke_notice3.png" alt="">
     </div>
     <p><strong>
             Hi语音官方将严肃处理恶意攻击参赛选手、比赛工作人员及蓄意扰乱比赛秩序的个人和集体；Hi语音团队将竭尽全力保障每位参赛选手利益与比赛的公平性，欢迎各位监督指导。
