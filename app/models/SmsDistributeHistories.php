@@ -70,39 +70,22 @@ class SmsDistributeHistories extends BaseModel
         }
     }
 
-    static function isUserForShare($opts)
+    static function checkRegister($current_user, $mobile, $password)
     {
-        $product_channel_id = fetch($opts, 'product_channel_id');
-        $mobile = fetch($opts, 'mobile');
-        $type = fetch($opts, 'type', 'register');
-        $amount = fetch($opts, 'amount');
-        $current_user = fetch($opts, 'current_user');
-        $status = $type == 'register' ? AUTH_WAIT : AUTH_SUCCESS;
-        $conds = ['conditions' => 'product_channel_id = :product_channel_id: and status=:status: and mobile=:mobile:',
-            'bind' => ['status' => $status, 'mobile' => $mobile, 'product_channel_id' => $product_channel_id],
-            'order' => 'id desc'];
-        $sms_distribute_history = self::findFirst($conds);
-        info($type, '=>', $mobile);
 
-        if ($sms_distribute_history) {
-            switch ($type) {
-                case 'register':
-                    self::distributeRegisterBonus($sms_distribute_history, $current_user);
-                    return true;
-                case 'pay':
-                    self::distributePayBonus($sms_distribute_history, $amount);
-                    return true;
-                case 'exchange':
-                    self::distributeExchangeBonus($sms_distribute_history, $amount);
-                    return true;
-            }
+        $conds = ['conditions' => 'product_channel_id = :product_channel_id: and mobile=:mobile: and status=:status:',
+            'bind' => ['product_channel_id' => $current_user->product_channel_id, 'mobile' => $mobile, 'status' => AUTH_WAIT],
+            'order' => 'id desc'];
+
+        $sms_distribute_history = self::findFirst($conds);
+        if (!$sms_distribute_history) {
+            return [ERROR_CODE_FAIL, '无效账户'];
         }
 
-        return false;
-    }
+        if($sms_distribute_history->password != md5($password)){
+            return [ERROR_CODE_FAIL, '秘密错误'];
+        }
 
-    static function distributeRegisterBonus($sms_distribute_history, $current_user)
-    {
         $sms_distribute_history->user_id = $current_user->id;
         $sms_distribute_history->status = AUTH_SUCCESS;
         $sms_distribute_history->update();
@@ -112,72 +95,82 @@ class SmsDistributeHistories extends BaseModel
         $current_user->password = $sms_distribute_history->password;
         $current_user->update();
 
-        $user_id = $sms_distribute_history->share_user_id;
-        $user = \Users::findFirstById($user_id);
-        if ($user) {
+        $share_user_id = $sms_distribute_history->share_user_id;
+        $share_user = \Users::findFirstById($share_user_id);
+        if ($share_user) {
+
             $amount = 10;
-            $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
+            $opts = ['remark' => '分销注册奖励钻石' . $amount, 'mobile' => $share_user->mobile, 'target_id' => $sms_distribute_history->id];
+            \AccountHistories::changeBalance($share_user, ACCOUNT_TYPE_DISTRIBUTE_REGISTER, $amount, $opts);
         }
+
+        return [ERROR_CODE_SUCCESS, '成功'];
     }
 
-    static function distributePayBonus($sms_distribute_history, $amount)
+
+    // type: pay / exchange
+    static function checkPay($current_user, $amount, $type = 'pay')
     {
-        $user_id = $sms_distribute_history->share_user_id;
-        $user = \Users::findFirstById($user_id);
-        if ($user) {
+
+        if(is_numeric($current_user)){
+            $current_user = Users::findFirstById($current_user);
+        }
+
+        if(!$current_user->share_parent_id){
+            return [ERROR_CODE_FAIL, '非分销用户'];
+        }
+
+        $conds = ['conditions' => 'product_channel_id = :product_channel_id: and mobile=:mobile: and status=:status:',
+            'bind' => ['product_channel_id' => $current_user->product_channel_id, 'mobile' => $current_user->mobile, 'status' => AUTH_SUCCESS],
+            'order' => 'id desc'];
+
+        $sms_distribute_history = self::findFirst($conds);
+        if (!$sms_distribute_history || $current_user->share_parent_id != $sms_distribute_history->share_user_id) {
+            return [ERROR_CODE_FAIL, '无效账户'];
+        }
+
+
+        $first_user_id = $current_user->share_parent_id;
+        $first_user = \Users::findFirstById($first_user_id);
+        if ($first_user) {
+
             $stat_db = \Stats::getStatDb();
             $distribute_bonus_key = self::generateDistributeBonusKey();
 
             $bonus_amount = round($amount * 0.05);
-            $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            $result = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+
+            if($type == 'pay'){
+                $opts = ['remark' => '分销充值奖励钻石' . $bonus_amount, 'mobile' => $first_user->mobile, 'target_id' => $sms_distribute_history->id];
+                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $bonus_amount, $opts);
+            }else{
+                $opts = ['remark' => '分销兑换奖励钻石' . $bonus_amount, 'mobile' => $first_user->mobile, 'target_id' => $sms_distribute_history->id];
+                $result = \AccountHistories::changeBalance($first_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
+            }
+
             if ($result) {
                 $stat_db->hincrby($distribute_bonus_key, 'first_distribute_bonus', $bonus_amount);
             }
 
-            if ($user->share_parent_id) {
-                $top_user = \Users::findFirstById($user->share_parent_id);
-                if (isPresent($top_user)) {
-                    $second_bonus_amount = round($amount * 0.01);
-                    $last_opts = ['remark' => '底层分销充值奖励钻石' . $second_bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
-                    $second_result = \AccountHistories::changeBalance($top_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $second_bonus_amount, $last_opts);
-                    if ($second_result) {
-                        $stat_db->hincrby($distribute_bonus_key, 'second_distribute_bonus', $second_bonus_amount);
-                    }
+            $second_user = Users::findFirstById($first_user->share_parent_id);
+            if ($second_user) {
+
+                $second_bonus_amount = round($amount * 0.01);
+                if($type == 'pay'){
+                    $last_opts = ['remark' => '下级分销充值奖励钻石' . $second_bonus_amount, 'mobile' => $second_user->mobile, 'target_id' => $sms_distribute_history->id];
+                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_PAY, $second_bonus_amount, $last_opts);
+                }else{
+                    $last_opts = ['remark' => '下级分销兑换奖励钻石' . $second_bonus_amount, 'mobile' => $second_user->mobile, 'target_id' => $sms_distribute_history->id];
+                    $second_result = \AccountHistories::changeBalance($second_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $second_bonus_amount, $last_opts);
+                }
+                if ($second_result) {
+                    $stat_db->hincrby($distribute_bonus_key, 'second_distribute_bonus', $second_bonus_amount);
                 }
             }
         }
+
+        return [ERROR_CODE_SUCCESS, '成功'];
     }
 
-    static function distributeExchangeBonus($sms_distribute_history, $amount)
-    {
-        $user_id = $sms_distribute_history->share_user_id;
-        $user = \Users::findFirstById($user_id);
-        if ($user) {
-            $stat_db = \Stats::getStatDb();
-            $distribute_bonus_key = self::generateDistributeBonusKey();
-
-            $bonus_amount = round($amount * 0.05);
-            $opts = ['remark' => '分销兑换奖励钻石' . $bonus_amount, 'mobile' => $user->mobile, 'target_id' => $sms_distribute_history->id];
-            $result = \AccountHistories::changeBalance($user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $bonus_amount, $opts);
-            if ($result) {
-                $stat_db->hincrby($distribute_bonus_key, 'first_distribute_bonus', $bonus_amount);
-            }
-
-            if ($user->share_parent_id) {
-                $top_user = \Users::findFirstById($user->share_parent_id);
-                if (isPresent($top_user)) {
-                    $second_bonus_amount = round($amount * 0.01);
-                    $last_opts = ['remark' => '底层分销兑换奖励钻石' . $second_bonus_amount, 'mobile' => $top_user->mobile, 'target_id' => $sms_distribute_history->id];
-                    $second_result = \AccountHistories::changeBalance($top_user, ACCOUNT_TYPE_DISTRIBUTE_EXCHANGE, $second_bonus_amount, $last_opts);
-                    if ($second_result) {
-                        $stat_db->hincrby($distribute_bonus_key, 'second_distribute_bonus', $second_bonus_amount);
-                    }
-                }
-            }
-        }
-    }
 
     static function findFirstByMobile($product_channel, $mobile)
     {

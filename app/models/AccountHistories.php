@@ -71,13 +71,10 @@ class AccountHistories extends BaseModel
 
     function toSimpleJson()
     {
-        list($nickname, $avatar_url) = $this->getUserInfo();
         return [
             'id' => $this->id,
             'created_at' => $this->created_at_text,
-            'user_nickname' => $nickname,
-            'amount' => $this->amount,
-            'user_avatar_url' => $avatar_url
+            'amount' => $this->amount
         ];
     }
 
@@ -87,6 +84,7 @@ class AccountHistories extends BaseModel
             $user = Users::findFirstById($user_id);
         } else {
             $user = $user_id;
+            $user_id = $user->id;
         }
 
         if (!$user) {
@@ -163,16 +161,6 @@ class AccountHistories extends BaseModel
         }
 
         return "diamond_recharge";
-    }
-
-    function getUserInfo()
-    {
-
-        $sms_distribute_history = \SmsDistributeHistories::findFirstById($this->target_id);
-        $nickname = $sms_distribute_history->user->nickname;
-        $avatar_url = $sms_distribute_history->user->avatar_url;
-
-        return [$nickname, $avatar_url];
     }
 
 }
