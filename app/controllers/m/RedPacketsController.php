@@ -92,12 +92,8 @@ class RedPacketsController extends BaseController
         $sex = $this->params('sex');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
-
         //用户进来的时间
-        if (isBlank($user->current_room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
-        }
-        $room = $user->current_room;
+        $room = $red_packet->room;
         $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
 
         $user_nickname = $red_packet->user->nickname;
@@ -107,7 +103,7 @@ class RedPacketsController extends BaseController
             $lock_key = 'grab_red_packet_' . $red_packet_id;
             $lock = tryLock($lock_key);
             $cache = \Users::getUserDb();
-            $key = \RedPackets::generateRedPacketForRoomKey($user->current_room_id, $user->id);
+            $key = \RedPackets::generateRedPacketForRoomKey($room->id, $user->id);
             $score = $cache->zscore($key, $red_packet_id);
             if ($score) {
                 unlock($lock);
