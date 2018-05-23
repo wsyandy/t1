@@ -9,6 +9,12 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    function test61Action()
+    {
+        $user = Users::findFirstById(6);
+        echoLine($user->current_room_signal_status, $user->current_room_channel_status);
+    }
+
     function test60Action()
     {
         $room = Rooms::findFirstById(137);

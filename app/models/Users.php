@@ -3839,6 +3839,8 @@ class Users extends BaseModel
 
     function updateRoomProfile($params = [])
     {
+        debug($params);
+
         if (count($params) < 1) {
             return;
         }
