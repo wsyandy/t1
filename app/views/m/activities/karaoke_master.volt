@@ -211,8 +211,8 @@
             },
             karaokeMasterApply: function () {
 
-                var start_time = new Date("2018-05-25 19:30").valueOf();
-                var end_time = new Date("2018-05-25 22:00").valueOf();
+                var start_time = new Date("2018/05/25 19:30:00").getTime();
+                var end_time = new Date("2018/05/25 22:00:00").getTime();
                 var current_time = Date.parse(new Date());
 
                 alert(start_time);
