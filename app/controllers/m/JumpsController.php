@@ -193,13 +193,12 @@ class JumpsController extends BaseController
                 }
                 break;
             case 'over':
-                if ($game_history && $game_history->status != GAME_STATUS_END) {
+                if ($game_history) {
                     //如果为房主，刷游戏记录，在afterUpdate中，将整个保存游戏用户队列删除
-                    if ($is_host) {
+                    if ($is_host && $game_history->status != GAME_STATUS_END) {
                         $game_history->status = GAME_STATUS_END;
                         $game_history->update();
                     }
-
                     $this->response->redirect('app://back');
                 }
                 break;
