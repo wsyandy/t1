@@ -11,14 +11,14 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test60Action()
     {
-        $room = Rooms::findFirstById(16);
+        $room = Rooms::findFirstById(137);
 
         $body = ['action' => 'send_topic_msg', 'user_id' => 1, 'nickname' => '呵呵', 'sex' => 1,
             'avatar_url' => '', 'avatar_small_url' => '', 'content' => '晚上好',
             'channel_name' => $room->channel_name, 'content_type' => 'text'
         ];
 
-        $user = Users::findFirstById(1001304);
+        $user = Users::findFirstById(117);
 
         $res = $room->pushToUser($user, $body);
 
