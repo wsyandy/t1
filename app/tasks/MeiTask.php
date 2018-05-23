@@ -161,13 +161,7 @@ class MeiTask extends \Phalcon\Cli\Task
 
     function test45Action()
     {
-
-        $room = Rooms::findFirstById(21);
-        $data = $room->getReadyCpInfo();
-        echoLine($data);
-
-        info($this->params(), $data);
-        $union = Unions::findFirstById(1001);
+        $union = Unions::findFirstById(1346);
 
         $cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: and room_id > 0',
@@ -179,8 +173,6 @@ class MeiTask extends \Phalcon\Cli\Task
 
         echoLine(count($gift_orders));
 
-
-        $union = Unions::findFirstById(1001);
 
         $cond = [
             'conditions' => 'receiver_union_id = :union_id: and created_at >= :start: and created_at <= :end:',
