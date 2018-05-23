@@ -60,7 +60,7 @@ class RequestDispatcher
         if (in_array($action, ['room_signal_status_report', 'room_channel_status_report'])) {
             $field = "current" . "_" . preg_replace('/_report/', "", $action);
             $user = \Users::findFirstById(intval($sid));
-            $status = fetch('status', $request->_json_arr);
+            $status = fetch($request->_json_arr, 'status');
 
             debug($field, $request->_json_arr, $status, $sid);
 
