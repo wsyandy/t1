@@ -47,10 +47,10 @@
             <p>免费专区</p>
         </div>
     </div>
-    <!-- 3.0考拉问答 -->
+    <!-- 3.0问答 -->
     <div class="home_question">
         <div class="home_list_title">
-            <p>考拉问答</p>
+            <p>问答</p>
             <b>查看更多</b>
         </div>
         <ul>
