@@ -6,7 +6,7 @@ class MicroClassController extends BaseController
 {
     public function indexAction()
     {
-        $this->view->title="考拉微课";
+        $this->view->title="辣语音";
 
     }
 
