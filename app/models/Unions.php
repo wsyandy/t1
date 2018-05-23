@@ -1071,11 +1071,9 @@ class Unions extends BaseModel
                 ]);
 
                 if ($amount > 0) {
-
-                    //$room_db->zincrby($total_key, $amount, $sender_id);
-                    //$room_db->zincrby($month_key, $amount, $sender_id);
-                    //$room_db->zincrby($day_key, $amount, $sender_id);
-
+                    $room_db->zincrby($total_key, $amount, $sender_id);
+                    $room_db->zincrby($month_key, $amount, $sender_id);
+                    $room_db->zincrby($day_key, $amount, $sender_id);
                 }
 
                 info('sender_union_id', $this->id, date("Ymd", $stat_at), $total_key, $month_key, $day_key, $amount);
@@ -1120,9 +1118,9 @@ class Unions extends BaseModel
                 ]);
 
                 if ($amount > 0) {
-                    //$room_db->zincrby($total_key, $amount, $user_id);
-                    //$room_db->zincrby($month_key, $amount, $user_id);
-                    //$room_db->zincrby($day_key, $amount, $user_id);
+                    $room_db->zincrby($total_key, $amount, $user_id);
+                    $room_db->zincrby($month_key, $amount, $user_id);
+                    $room_db->zincrby($day_key, $amount, $user_id);
                 }
 
 
@@ -1170,9 +1168,9 @@ class Unions extends BaseModel
                     ]);
 
                     if ($amount > 0) {
-                        //$room_db->zincrby($total_key, $amount, $room_id);
-                        //$room_db->zincrby($month_key, $amount, $room_id);
-                        //$room_db->zincrby($day_key, $amount, $room_id);
+                        $room_db->zincrby($total_key, $amount, $room_id);
+                        $room_db->zincrby($month_key, $amount, $room_id);
+                        $room_db->zincrby($day_key, $amount, $room_id);
                     }
 
                     info("room_union_id", $this->id, $day_date, $total_key, $month_key, $day_key, $room_gift_order->room_id, $this->id, $amount);
@@ -1227,9 +1225,9 @@ class Unions extends BaseModel
                 $hi_coins = intval($hi_coins * 1000);
 
                 if ($hi_coins > 0) {
-                    //$room_db->zincrby($total_key, $hi_coins, $user_id);
-                    //$room_db->zincrby($month_key, $hi_coins, $user_id);
-                    //$room_db->zincrby($day_key, $hi_coins, $user_id);
+                    $room_db->zincrby($total_key, $hi_coins, $user_id);
+                    $room_db->zincrby($month_key, $hi_coins, $user_id);
+                    $room_db->zincrby($day_key, $hi_coins, $user_id);
                 }
 
                 echoLine('hi_coins', $this->id, $day_date, $total_key, $month_key, $day_key, $hi_coins);
