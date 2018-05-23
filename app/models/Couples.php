@@ -226,5 +226,12 @@ class Couples extends BaseModel
         return $pagination;
     }
 
-
+    static function base64EncodeImage($image_file)
+    {
+        $image_info = getimagesize($image_file);
+        $image_data = fread(fopen($image_file, 'r'), filesize($image_file));
+        $base64_image = 'data:' . $image_info['mime'] . ';base64,' . chunk_split(base64_encode($image_data));
+        unlink($image_file);
+        return $base64_image;
+    }
 }

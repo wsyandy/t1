@@ -18,11 +18,11 @@
                 </ul>
                 <div class="cer_imgs">
                     <div class="cer_avatar">
-                        <img :src="sponsor.avatar_url" alt="" crossorigin="anonymous">
+                        <img :src="sponsor.avatar_base64_url" alt="" crossorigin="anonymous">
                     </div>
                     <img class="cer_heart" :src="cer_heart" alt="">
                     <div class="cer_avatar">
-                        <img :src="pursuer.avatar_url" alt="" crossorigin="anonymous">
+                        <img :src="pursuer.avatar_base64_url" alt="" crossorigin="anonymous">
                     </div>
                 </div>
             </div>
