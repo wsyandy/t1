@@ -1062,7 +1062,7 @@ class RoomsController extends BaseController
         }
 
         //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
-        if ($current_room_id != $room_id) {
+        if ($current_room_id != $room->id) {
 
             if ($current_room_id) {
 
