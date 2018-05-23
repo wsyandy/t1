@@ -1133,7 +1133,7 @@ class Unions extends BaseModel
     {
         $room_cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
-                    and status = :status: and pay_type = :pay_type: and and room_id > 0 and gift_type = :gift_ype:',
+                    and status = :status: and pay_type = :pay_type: and room_id > 0 and gift_type = :gift_ype:',
             'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
                 'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON],
             'columns' => 'distinct room_id'
@@ -1161,7 +1161,7 @@ class Unions extends BaseModel
 
                     $amount = GiftOrders::sum([
                         'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
-                    and status = :status: and pay_type = :pay_type: and and room_id > 0 and gift_type = :gift_ype: and room_id = :room_id:',
+                    and status = :status: and pay_type = :pay_type: and gift_type = :gift_ype: and room_id = :room_id:',
                         'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
                             'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON, 'room_id' => $room_id],
                         'column' => 'amount'
