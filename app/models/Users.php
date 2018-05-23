@@ -3844,8 +3844,8 @@ class Users extends BaseModel
 
         foreach ($params as $k => $v) {
 
-            if (!array_key_exists($k, ['current_room_channel_status', 'current_room_signal_status'])) {
-                return;
+            if (!in_array($k, ['current_room_channel_status', 'current_room_signal_status'])) {
+                continue;
             }
 
             if (isBlank($v)) {
