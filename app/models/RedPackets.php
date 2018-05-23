@@ -239,6 +239,7 @@ class RedPackets extends BaseModel
     {
         $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($current_room_id);
         $cache_db = \Users::getUserDb();
+        $room = \Rooms::findFirstById($current_room_id);
 
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
@@ -246,7 +247,7 @@ class RedPackets extends BaseModel
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 //        $screen_red_packets = self::getScreenRedPackets($red_packets, $user);
         foreach ($red_packets as $red_packet) {
-            $distance_start_at = $red_packet->getDistanceStartTime($user->current_room, $user->id);
+            $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
             $red_packet->distance_start_at = $distance_start_at;
         }
 
