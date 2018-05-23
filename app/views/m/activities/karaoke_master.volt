@@ -215,9 +215,6 @@
                 var end_time = new Date("2018/05/25 22:00:00").getTime();
                 var current_time = Date.parse(new Date());
 
-                alert(start_time);
-                alert(end_time);
-                alert(current_time);
                 if (current_time < start_time) {
                     alert('复活赛将于本周五19：30进行');
                     return;
