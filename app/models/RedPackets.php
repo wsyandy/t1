@@ -235,11 +235,10 @@ class RedPackets extends BaseModel
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
-    static function findRedPacketList($current_room_id, $page, $per_page, $user)
+    static function findRedPacketList($room, $page, $per_page, $user)
     {
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($current_room_id);
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($room->id);
         $cache_db = \Users::getUserDb();
-        $room = \Rooms::findFirstById($current_room_id);
 
         $total = $cache_db->zcard($underway_red_packet_list_key);
         $offset = ($page - 1) * $per_page;
