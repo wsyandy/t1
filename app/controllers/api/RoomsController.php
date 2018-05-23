@@ -1083,16 +1083,18 @@ class RoomsController extends BaseController
             }
         }
 
+        $current_user = $this->currentUser(true);
+
         $res = $room->toJson();
-        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
-        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $user->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($user->id);
         $res['app_id'] = $this->currentProductChannel()->getImAppId();
-        $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['user_chat'] = $current_user->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
-        $res['user_role'] = $this->currentUser()->user_role;
+        $res['user_role'] = $current_user->user_role;
 
         // 座驾
-        $user_car_gift = $this->currentUser()->getUserCarGift();
+        $user_car_gift = $current_user->getUserCarGift();
 
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
@@ -1112,7 +1114,7 @@ class RoomsController extends BaseController
         $root_host = $this->getRoot();
 
         // 菜单
-        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+        $res['menu_config'] = $room->getRoomMenuConfig($current_user, ['root_host' => $root_host]);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
