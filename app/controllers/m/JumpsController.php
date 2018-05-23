@@ -170,8 +170,14 @@ class JumpsController extends BaseController
         $room_id = fetch($raw_body, 'room_id');
         $game_history_id = fetch($raw_body, 'game_history_id');
         $room = \Rooms::findFirstById($room_id);
-
         $game_history = \GameHistories::findFirstById($game_history_id);
+
+        if (!$room || !$game_history) {
+            $this->response->redirect('app://back');
+            return;
+        }
+
+
         $is_host = $current_user->isRoomHost($room);
 
         switch ($type) {
@@ -199,6 +205,7 @@ class JumpsController extends BaseController
                         $game_history->status = GAME_STATUS_END;
                         $game_history->update();
                     }
+                    info('游戏结束', $current_user->id, $game_history->status);
                     $this->response->redirect('app://back');
                     return;
                 }
