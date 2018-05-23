@@ -26,20 +26,23 @@ class RequestDispatcher
     // 请求处理
     public function logicHandler(\services\SwooleServices $swoole_service, \services\BaseRequest $request)
     {
-        info("Action:", $request->getAction(), 'fd', $request->getFd(), 'sid', $request->getSid(), 'data', $request->getFrameData());
+        $action = $request->getAction();
+        $fd = $request->getFd();
+        $sid = $request->getSid();
+
+        info("Action:", $action, 'fd', $fd, 'sid', $sid, 'data', $request->_json_arr);
 
         if (!$request->checkSign()) {
             return $this->requestError('sign error1');
         }
 
-        if (!$request->getAction()) {
+        if (!$action) {
             return $this->requestError();
         }
 
-        if ($swoole_service->local_server_port == SwooleUtils::getServerPort($request->_socket, $request->getFd())) {
+        if ($swoole_service->local_server_port == SwooleUtils::getServerPort($request->_socket, $fd)) {
             info("server_to_server", $request->_json_arr);
 
-            $action = fetch($request->_json_arr, 'action');
             $payload = fetch($request->_json_arr, 'payload');
 
             try {
@@ -54,13 +57,25 @@ class RequestDispatcher
             return 'success';
         }
 
+        if (in_array($action, ['room_signal_status_report', 'room_channel_status_report'])) {
+            $field = "current" . "_" . preg_replace('/_report/', "", $action);
+            $user = \Users::findFirstById(intval($sid));
+            $status = fetch($request->_json_arr, 'status');
+
+            debug($field, $request->_json_arr, $status, $sid);
+
+            if ($user && $status) {
+                $user->updateRoomProfile([$field => $status]);
+            }
+        }
+
         // 测试心跳包
-        if (isDevelopmentEnv() && $request->getAction() == 'ping') {
+        if (isDevelopmentEnv() && $action == 'ping') {
             //解析数据
-            $online_token = SwooleUtils::getOnlineTokenByFd($request->getFd());
+            $online_token = SwooleUtils::getOnlineTokenByFd($fd);
             $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
-            debug('fd', $request->getFd(), $intranet_ip, 'token', $online_token);
-            $payload = ['body' => $request->_json_arr, 'fd' => $request->getFd()];
+            debug('fd', $fd, $intranet_ip, 'token', $online_token);
+            $payload = ['body' => $request->_json_arr, 'fd' => $fd];
             SwooleUtils::delay()->send('push', $intranet_ip, $swoole_service->local_server_port, $payload);
         }
 

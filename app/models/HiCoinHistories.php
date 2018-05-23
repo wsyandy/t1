@@ -256,20 +256,16 @@ class HiCoinHistories extends BaseModel
             $opts = ['remark' => $remark, 'target_id' => $hi_coin_history->id];
 
             if ($hi_coin_history->gold > 0) {
-                \GoldHistories::changeBalance($user, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
+                GoldHistories::changeBalance($user, GOLD_TYPE_HI_COIN_EXCHANGE_DIAMOND, $gold, $opts);
             }
 
             if ($hi_coin_history->diamond > 0) {
-                //兑换成功之后,进行分销奖励
-                $opts = [
-                    'mobile' => $hi_coin_history->user->mobile,
-                    'type' => 'exchange',
-                    'amount' => $hi_coin_history->diamond,
-                    'product_channel_id' => $hi_coin_history->product_channel_id
-                ];
-                \SmsDistributeHistories::isUserForShare($opts);
+                AccountHistories::changeBalance($user, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
 
-                \AccountHistories::changeBalance($user, ACCOUNT_TYPE_HI_COIN_EXCHANGE_DIAMOND, $diamond, $opts);
+                // 分销奖励
+                if($user->share_parent_id){
+                    SmsDistributeHistories::delay()->checkPay($user->id, $diamond, 'exchange');
+                }
             }
         }
 

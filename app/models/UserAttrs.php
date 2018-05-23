@@ -240,6 +240,9 @@ trait UserAttrs
         if (isset($this->cp_value)) {
             $datas['cp_value'] = $this->cp_value;
         }
+        if (isset($this->avatar_base64_url)) {
+            $datas['avatar_base64_url'] = $this->avatar_base64_url;
+        }
         return $datas;
 
     }

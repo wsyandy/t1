@@ -120,9 +120,6 @@ class RoomsTask extends \Phalcon\Cli\Task
             } else {
 
                 $time = time() - 15 * 60;
-                if (isDevelopmentEnv()) {
-                    $time = time() - 60;
-                }
 
                 if ($user->last_at <= $time) {
 

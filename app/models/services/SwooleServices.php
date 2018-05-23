@@ -29,12 +29,7 @@ class SwooleServices extends \BaseModel
 
     function initService()
     {
-        $heartbeat_check_interval = 10;
-
-        if (isProduction()) {
-            $heartbeat_check_interval = 2;
-        }
-
+        $heartbeat_check_interval = 15;
         $this->side_server_ip = self::config('websocket_side_server_ip'); //监听客户端
         $this->side_server_port = self::config('websocket_side_server_port'); //监听客户端
         $this->local_server_ip = self::config('websocket_local_server_ip'); //监听服务端

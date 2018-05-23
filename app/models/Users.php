@@ -68,6 +68,14 @@ class Users extends BaseModel
      * @type string
      */
     private $_current_room_channel_name;
+    /**
+     * @type integer
+     */
+    private $_current_room_signal_status;
+    /**
+     * @type integer
+     */
+    private $_current_room_channel_status;
 
     //好友状态 1已添加,2等待验证，3等待接受
     public $friend_status;
@@ -419,8 +427,7 @@ class Users extends BaseModel
 
         $product_channel = $current_user->product_channel;
         $exist_user = \Users::findFirstByMobile($product_channel, $mobile);
-        $sms_distribute_history = \SmsDistributeHistories::findFirstByMobile($product_channel, $mobile);
-        if ($exist_user || $sms_distribute_history) {
+        if ($exist_user) {
             return [ERROR_CODE_FAIL, '用户已注册', null];
         }
 
@@ -434,8 +441,6 @@ class Users extends BaseModel
         if (!$user) {
             return [ERROR_CODE_FAIL, '注册失败!', null];
         }
-
-        //$user->checkRegisterFr($device, $mobile);
 
         $fr = $device->fr;
         if (!$fr) {
@@ -3828,4 +3833,30 @@ class Users extends BaseModel
         return $system_user;
     }
 
+    function updateRoomProfile($params = [])
+    {
+        debug($params);
+
+        if (count($params) < 1) {
+            return;
+        }
+
+        foreach ($params as $k => $v) {
+
+            if (!in_array($k, ['current_room_channel_status', 'current_room_signal_status'])) {
+                continue;
+            }
+
+            if (isBlank($v)) {
+                continue;
+            }
+
+            if ($this->$k == $v) {
+                continue;
+            }
+
+            $this->$k = $v;
+            $this->update();
+        }
+    }
 }

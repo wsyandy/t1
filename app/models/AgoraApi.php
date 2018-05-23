@@ -15,6 +15,26 @@ class AgoraApi extends BaseModel
         'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='];
 
 
+    static function hostIn($user)
+    {
+
+        $room = $user->current_room;
+        if (!$room) {
+            return null;
+        }
+
+        $product_channel = $user->product_channel;
+        $channel_name = $room->channel_name;
+        $app_id = $product_channel->getImAppId();
+
+        $url = "http://api.agora.io/dev/v1/channel/business/hostin/{$app_id}/{$user->id}/{$channel_name}";
+        $res = httpGet($url, [], self::$headers);
+
+        info('user', $user->id, $res->raw_body);
+
+        return json_decode($res->raw_body, true);
+    }
+
     static function userProfile($user)
     {
 

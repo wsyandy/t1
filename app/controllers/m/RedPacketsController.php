@@ -191,7 +191,7 @@ class RedPacketsController extends BaseController
             if (isBlank($room)) {
                 $room = \Rooms::findFirstById($room_id);
             }
-            $red_packets = \RedPackets::findRedPacketList($room->id, $page, $pre_page, $user);
+            $red_packets = \RedPackets::findRedPacketList($room, $page, $pre_page, $user);
             if ($red_packets) {
                 $user_get_red_packet_ids = \RedPackets::UserGetRedPacketIds($room->id, $user->id);
                 return $this->renderJSON(ERROR_CODE_SUCCESS, '红包列表', array_merge(

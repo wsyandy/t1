@@ -235,9 +235,9 @@ class RedPackets extends BaseModel
         return 'url://m/red_packets/red_packets_list?room_id=' . $room_id;
     }
 
-    static function findRedPacketList($current_room_id, $page, $per_page, $user)
+    static function findRedPacketList($room, $page, $per_page, $user)
     {
-        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($current_room_id);
+        $underway_red_packet_list_key = self::generateUnderwayRedPacketListKey($room->id);
         $cache_db = \Users::getUserDb();
 
         $total = $cache_db->zcard($underway_red_packet_list_key);
@@ -246,7 +246,7 @@ class RedPackets extends BaseModel
         $red_packets = \RedPackets::findByIds($red_packet_ids);
 //        $screen_red_packets = self::getScreenRedPackets($red_packets, $user);
         foreach ($red_packets as $red_packet) {
-            $distance_start_at = $red_packet->getDistanceStartTime($user->current_room, $user->id);
+            $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
             $red_packet->distance_start_at = $distance_start_at;
         }
 
