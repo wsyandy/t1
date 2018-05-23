@@ -29,6 +29,12 @@ class SwooleServices extends \BaseModel
 
     function initService()
     {
+        $heartbeat_check_interval = 10;
+
+        if (isProduction()) {
+            $heartbeat_check_interval = 2;
+        }
+
         $this->side_server_ip = self::config('websocket_side_server_ip'); //监听客户端
         $this->side_server_port = self::config('websocket_side_server_port'); //监听客户端
         $this->local_server_ip = self::config('websocket_local_server_ip'); //监听服务端
@@ -46,7 +52,7 @@ class SwooleServices extends \BaseModel
                 'pid_file' => APP_ROOT . 'log/pids/websocket/server.pid',
                 'reload_async' => true,
                 'reactor_num' => self::config('websocket_reactor_num'),
-                'heartbeat_check_interval' => 10, //10秒检测一次
+                'heartbeat_check_interval' => $heartbeat_check_interval, //10秒检测一次
                 'task_worker_num' => self::config('websocket_task_worker_num'),
                 'heartbeat_idle_time' => 50, //50秒未向服务器发送任何数据包,此链接强制关闭
                 //'task_worker_num' => 8

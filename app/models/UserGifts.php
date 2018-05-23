@@ -80,7 +80,7 @@ class UserGifts extends BaseModel
 
     static function updateGiftExpireAt($gift_order_id, $opts = [])
     {
-        $content = fetch($opts,'content');
+        $content = fetch($opts, 'content');
 
         $gift_order = \GiftOrders::findById($gift_order_id);
 
@@ -196,8 +196,8 @@ class UserGifts extends BaseModel
 
         if (isBlank($text_content)) {
             return "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname .
-            "</span><span style = 'color: white' >" . "骑着" . "</span ><b style = 'color: white' >" . $this->gift_name .
-            "</b ><span style = 'color: white' > 进来了</span ></p >";
+                "</span><span style = 'color: white' >" . "骑着" . "</span ><b style = 'color: white' >" . $this->gift_name .
+                "</b ><span style = 'color: white' > 进来了</span ></p >";
         }
 
         $user_name = "<p style='font-size: 14px;text-align: center' ><span style = 'color: yellow' >" . $this->user_nickname . "</span><span style = 'color: white' >";
@@ -283,6 +283,16 @@ class UserGifts extends BaseModel
             'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_CAR, 'expire_at' => time()],
             'order' => 'amount desc'
         ];
+
+        if (isDevelopmentEnv()) {
+
+            $conds = [
+                'conditions' => 'user_id = :user_id: and gift_type = :gift_type:',
+                'bind' => ['user_id' => $user_id, 'gift_type' => GIFT_TYPE_CAR],
+                'order' => 'amount desc'
+            ];
+
+        }
 
         $user_gifts = UserGifts::find($conds);
 

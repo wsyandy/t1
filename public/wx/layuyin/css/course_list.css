@@ -1,0 +1,49 @@
+.course_list{
+  padding: 0 15px;
+  background-color: white;
+}
+.course_list ul li{
+    width: 100%;
+    display: flex;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding:15px 0;
+}
+.course_list .course_list_img{
+    width: 116px;
+    height: 70px;
+    border-radius: 0;
+    border: none;
+    margin-right: 15px;
+    overflow: hidden;
+}
+.course_list .text{
+    flex: 1;
+    margin-right: 15px;
+    margin-top: 14px;
+}
+.course_list .text p{
+  line-height: 22px;
+}
+.course_list .list_icon{
+  position: absolute;
+  width: 20px;
+  right: 0;
+  top: 13px;
+  height: 70px;
+  overflow: hidden;
+}
+.course_list .list_icon p{
+  width: 14px;
+  height: 8px;
+  float: right;
+  margin-top: 20px;
+}
+.course_list .list_icon .up{
+  background: url(../images/course_list_up.png) no-repeat;
+  background-size: 100%;
+}
+.course_list .list_icon .down{
+  background: url(../images/course_list_down.png) no-repeat;
+  background-size: 100%;
+}

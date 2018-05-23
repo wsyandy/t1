@@ -21,6 +21,7 @@
 10. 好友列表：app://friends
 11. 消息列表页面 app://messages
 12. 聊天页面 app://messages/show?user_id=xxx&nickname=xxx&avatar_url=xxxx
+13. 用户pk页面 app://users/pk
 
 ## url协议
 1. 注册登录协议 url://m/product_channels/reg_agreement

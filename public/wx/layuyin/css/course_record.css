@@ -1,0 +1,121 @@
+/* 购课记录 */
+.buy_course_dl{
+  background-color: white;
+}
+.buy_course_dl dt{
+  height: 36px;
+  line-height: 36px;
+  background-color: #f6f6f6;
+  padding-left:15px;
+  font-size: 16px;
+  color: #1D1D1D;
+}
+.buy_course_dl dd{
+  margin-left: 15px;
+  padding-right:15px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
+}
+.buy_course_dl dd:last-child{
+  border-bottom: none;
+}
+.buy_course_dl .buy_course_img{
+  width: 72px;
+  height: 40px;
+  background-color: #000;
+  border-radius: 2px;
+}
+.buy_course_dl dd img{
+  display: block;
+  width: 72px;
+  height: 40px;
+  background-color: #f1f1f1;
+  border-radius: 2px;
+}
+.buy_course_box{
+  flex: 1;
+  margin-left:10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.buy_course_box p{
+  /*width: 210px;*/
+  font-size: 15px;
+  color: #1D1D1D;
+  margin-bottom:14px;
+}
+.buy_course_box_bom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.buy_course_box_bom span{
+  font-size: 12px;
+  color: #999999; 
+}
+.buy_course_box_bom b{
+  font-size: 16px;
+  color: #1D1D1D; 
+  font-weight: normal;
+}
+/* 听课记录 */
+.heard_course_ul{
+  background-color: white;
+}
+.heard_course_ul li{
+  height:98px;
+  display: flex;
+  align-items: center;
+  margin-left:15px;
+  border-bottom: 1px solid #f1f1f1;
+}
+.heard_course_ul li:last-child{
+  border-bottom: none;
+}
+.heard_course_left{
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow:hidden;
+}
+.heard_course_left img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 70px;
+    height: auto;
+}
+.heard_course_left span{
+  z-index: 100;
+  width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  background:url(../images/heard_course_icon_play.png) rgba(0,0,0,0.3) center no-repeat;
+  background-size: 22px;
+}
+.heard_course_left span.pause{
+  background:url(../images/heard_course_icon_pause.png) rgba(0,0,0,0.3) center no-repeat;
+  background-size: 22px;
+}
+.heard_course_right{
+  flex: 1;
+  margin-left: 15px;
+  margin-right:15px;
+}
+.heard_course_right p{
+  font-size: 16px;
+  color: #1D1D1D;
+}
+.heard_course_right span{
+  display: block;
+  text-align: right;
+  font-size: 14px;
+  color: #666666;
+}

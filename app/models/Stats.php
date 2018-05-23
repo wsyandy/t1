@@ -8,11 +8,6 @@ class Stats extends BaseModel
     static function getStatDb()
     {
         $endpoint = self::config('stat_db');
-
-        if (isProduction()) {
-            $endpoint = 'ssdb://172.16.253.46:8880';
-        }
-
         return XRedis::getInstance($endpoint);
     }
 
@@ -1406,7 +1401,8 @@ class Stats extends BaseModel
     {
         $diamond_cost_total = $this->data_hash['diamond_cost_total'];
         $diamond_recharge_total = $this->data_hash['diamond_recharge_total']; //购买钻石数额
-        $avg = $diamond_recharge_total - $diamond_cost_total;
+        $diamond_recharge_give_total = $this->data_hash['diamond_recharge_give_total']; // 赠送钻石数额
+        $avg = $diamond_recharge_total + $diamond_recharge_give_total - $diamond_cost_total;
 
         $this->data_hash['diamond_recharge_balance'] = $avg;
     }
