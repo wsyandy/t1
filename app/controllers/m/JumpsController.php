@@ -170,13 +170,17 @@ class JumpsController extends BaseController
         $room_id = fetch($raw_body, 'room_id');
         $game_history_id = fetch($raw_body, 'game_history_id');
         $room = \Rooms::findFirstById($room_id);
-
         $game_history = \GameHistories::findFirstById($game_history_id);
+
+        if (!$room || !$game_history) {
+            return false;
+        }
+
         $is_host = $current_user->isRoomHost($room);
 
         switch ($type) {
             case 'wait':
-                if ($game_history && $game_history->status == GAME_STATUS_WAIT) {
+                if ($game_history->status == GAME_STATUS_WAIT) {
                     $root = $this->getRoot();
                     $image_url = $root . 'images/go_game.png';
                     $body = ['action' => 'game_notice', 'type' => 'start', 'content' => $current_user->nickname . "发起了跳一跳游戏",
@@ -186,24 +190,21 @@ class JumpsController extends BaseController
                 }
                 break;
             case 'start':
-                if ($game_history && $game_history->status == GAME_STATUS_WAIT) {
+                if ($game_history->status == GAME_STATUS_WAIT) {
                     $game_history->status = GAME_STATUS_PLAYING;
                     $game_history->enter_at = time();
                     $game_history->update();
                 }
                 break;
             case 'over':
-                if ($game_history && $game_history->status != GAME_STATUS_END) {
-                    //如果为房主，刷游戏记录，在afterUpdate中，将整个保存游戏用户队列删除
-                    if ($is_host) {
-                        $game_history->status = GAME_STATUS_END;
-                        $game_history->update();
-                    }
-
-                    $this->response->redirect('app://back');
+                //如果为房主，刷游戏记录，在afterUpdate中，将整个保存游戏用户队列删除
+                info('游戏结束', $current_user->id, $game_history->status);
+                if ($is_host && $game_history->status != GAME_STATUS_END) {
+                    $game_history->status = GAME_STATUS_END;
+                    $game_history->update();
                 }
-                break;
         }
+        return true;
     }
 
     function getGameClientUrlAction()

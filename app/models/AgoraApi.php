@@ -157,6 +157,8 @@ class AgoraApi extends BaseModel
                 $device = $user->device;
                 $device->status = DEVICE_STATUS_BLOCK;
                 $device->update();
+            }else{
+                self::kickingRule($user_id, $app_id, $channel_name, 1);
             }
         }
 
