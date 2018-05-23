@@ -297,6 +297,11 @@ trait RoomAttrs
 
     function getGameHistory()
     {
+        $hot_cache = GameHistories::getHotWriteCache();
+        if(!$hot_cache->get('game_history_room_'.$this->id)){
+            return null;
+        }
+
         $game_history = \GameHistories::findFirst(['conditions' => 'room_id=:room_id: and status!=:status: and created_at>:created_at:',
             'bind' => ['room_id' => $this->id, 'status' => GAME_STATUS_END, 'created_at' => time() - 300], 'order' => 'id desc']);
 
