@@ -153,7 +153,7 @@ class UsersController extends BaseController
                     return $this->renderJSON(ERROR_CODE_FAIL, '你已注册，请登陆');
                 }
 
-                list($error_code, $error_reason) = \SmsDistributeHistories::checkRegister($current_user, $mobile, $password);
+                list($error_code, $error_reason) = \SmsDistributeHistories::checkRegister($current_user, $mobile, ['password' => $password, 'ip' => $this->remoteIp()]);
                 if ($error_code == ERROR_CODE_FAIL) {
                     return $this->renderJSON(ERROR_CODE_FAIL, $error_reason);
                 }
