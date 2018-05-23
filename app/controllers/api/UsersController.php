@@ -150,7 +150,7 @@ class UsersController extends BaseController
                 info('分销 当前用户ID', $current_user->id, '手机号', $current_user->mobile, '登录方式', $current_user->login_type);
 
                 if ($current_user->login_type) {
-                    return $this->renderJSON(ERROR_CODE_FAIL, '你已注册，请登陆');
+                    return $this->renderJSON(ERROR_CODE_FAIL, '该设备已注册，请登陆');
                 }
 
                 list($error_code, $error_reason) = \SmsDistributeHistories::checkRegister($current_user, $mobile, ['password' => $password, 'ip' => $this->remoteIp()]);
