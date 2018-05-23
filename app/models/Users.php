@@ -3837,4 +3837,28 @@ class Users extends BaseModel
         return $system_user;
     }
 
+    function updateRoomProfile($params = [])
+    {
+        if (count($params) < 1) {
+            return;
+        }
+
+        foreach ($params as $k => $v) {
+
+            if (!array_key_exists($k, ['current_room_channel_status', 'current_room_signal_status'])) {
+                return;
+            }
+
+            if (isBlank($v)) {
+                continue;
+            }
+
+            if ($this->$k == $v) {
+                continue;
+            }
+
+            $this->$k = $v;
+            $this->update();
+        }
+    }
 }
