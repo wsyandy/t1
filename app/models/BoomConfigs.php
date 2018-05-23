@@ -11,7 +11,14 @@ class BoomConfigs extends BaseModel
     static $STATUS = [ STATUS_OFF=>"无效", STATUS_ON=>"有效" ];
     static $files = ['svga_image' => APP_NAME . '/boom_configs/svga_image/%s'];
 
-
+    function mergeJson()
+    {
+        return [
+            'status_text'=> $this->status_text,
+            'created_at_text'=>$this->created_at_text,
+            'svga_image_small_url'=>$this->svga_image_small_url,
+        ];
+    }
 
     function getSvgaImageSmallUrl()
     {
