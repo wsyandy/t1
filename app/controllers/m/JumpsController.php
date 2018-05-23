@@ -165,7 +165,7 @@ class JumpsController extends BaseController
         $current_user = $this->currentUser();
         $raw_body = $this->params();
 
-        info('游戏推过来的数据', $raw_body);
+        info('当前用户ID', $current_user->id, '游戏推过来的数据', $raw_body);
         $type = fetch($raw_body, 'type');
         $room_id = fetch($raw_body, 'room_id');
         $game_history_id = fetch($raw_body, 'game_history_id');
