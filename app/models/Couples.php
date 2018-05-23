@@ -110,18 +110,8 @@ class Couples extends BaseModel
 
         $users = Users::findByIds($user_ids);
         foreach ($users as $user) {
-            $status = $user_db->zscore($relations_key, $user->id);
-            //状态    如果为1，说明该用户为当初的发起者，当前用户为追求者
-            switch ($status) {
-                case 1:
-                    $member = $user->id . '_' . $current_user_id;
-                    break;
-                case 2:
-                    $member = $current_user_id . '_' . $user->id;
-                    break;
-            }
-            $cp_info_key = self::generateCpInfoKey();
-            $score = $user_db->zscore($cp_info_key, $member);
+            $cp_value_key = self::generateCpInfoForUserKey($current_user_id);
+            $score = $user_db->zscore($cp_value_key, $user->id);
             $user->cp_value = $score;
         }
 
