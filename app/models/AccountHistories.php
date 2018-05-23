@@ -69,10 +69,24 @@ class AccountHistories extends BaseModel
         \DataCollection::syncData('account_history', 'change_balance', ['account_history' => $this->toJson()]);
     }
 
+    // 分销
+    function toDistributeJson()
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'created_at' => $this->created_at_text,
+            'amount' => $this->amount,
+            'user_nickname' => $this->target->nickname,
+            'user_avatar_url' => $this->target->avatar_small_url
+        ];
+    }
+
     function toSimpleJson()
     {
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'created_at' => $this->created_at_text,
             'amount' => $this->amount
         ];

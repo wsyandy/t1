@@ -85,8 +85,9 @@ class DistributeController extends BaseController
             $cond['order'] = 'id desc';
 
             $account_histories = \AccountHistories::find($cond);
-
-            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $account_histories->toJson('account_histories', 'toSimpleJson'));
+            \Users::findBatch($account_histories, 'target_id');
+            
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', $account_histories->toJson('account_histories', 'toDistributeJson'));
         }
 
     }
