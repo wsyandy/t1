@@ -18,11 +18,6 @@ class AgoraApi extends BaseModel
     static function hostIn($user)
     {
 
-        $headers = [
-            'Cache-Control' => 'no-cache',
-            'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='];
-
-        $user = Users::findFirstByUid(1218783);
         $room = $user->current_room;
         if (!$room) {
             return null;
@@ -33,7 +28,7 @@ class AgoraApi extends BaseModel
         $app_id = $product_channel->getImAppId();
 
         $url = "http://api.agora.io/dev/v1/channel/business/hostin/{$app_id}/{$user->id}/{$channel_name}";
-        $res = httpGet($url, [], $headers);
+        $res = httpGet($url, [], self::$headers);
 
         info('user', $user->id, $res->raw_body);
 
