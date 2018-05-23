@@ -1086,8 +1086,8 @@ class RoomsController extends BaseController
         $current_user = $this->currentUser(true);
 
         $res = $room->toJson();
-        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $user->id);
-        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($user->id);
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $current_user->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($current_user->id);
         $res['app_id'] = $this->currentProductChannel()->getImAppId();
         $res['user_chat'] = $current_user->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
