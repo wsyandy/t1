@@ -1033,4 +1033,205 @@ class Unions extends BaseModel
 
         return false;
     }
+
+    function statSender($stat_at)
+    {
+        $cond = [
+            'conditions' => 'sender_union_id = :union_id: and created_at >= :start: and created_at <= :end: and 
+                    status = :status: and pay_type = :pay_type:',
+            'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at)],
+            'columns' => 'distinct sender_id'
+        ];
+
+        $sender_gift_orders = GiftOrders::find($cond);
+
+        if (count($sender_gift_orders) > 0) {
+
+            $room_db = Rooms::getRoomDb();
+
+            $month_start = date("Ymd", beginOfMonth($stat_at));
+            $month_end = date("Ymd", endOfMonth($stat_at));
+            $day_date = date("Ymd", $stat_at);
+
+            $total_key = 'union_user_total_wealth_rank_list_union_id_' . $this->id;
+            $month_key = 'union_user_month_wealth_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $this->id;
+            $day_key = 'union_user_day_wealth_rank_list_' . $day_date . '_union_id_' . $this->id;
+
+            foreach ($sender_gift_orders as $sender_gift_order) {
+
+                $sender_id = $sender_gift_order->sender_id;
+
+                $amount = GiftOrders::sum([
+                    'conditions' => 'sender_union_id = :union_id: and sender_id = :sender_id: and created_at >= :start: and created_at <= :end: and 
+                    status = :status: and pay_type = :pay_type:',
+                    'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                        'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'sender_id' => $sender_id],
+                    'column' => 'amount'
+                ]);
+
+                if ($amount > 0) {
+                    $room_db->zincrby($total_key, $amount, $sender_id);
+                    $room_db->zincrby($month_key, $amount, $sender_id);
+                    $room_db->zincrby($day_key, $amount, $sender_id);
+                }
+
+                info('sender_union_id', $this->id, date("Ymd", $stat_at), $total_key, $month_key, $day_key, $amount);
+            }
+        }
+    }
+
+    function statUser($stat_at)
+    {
+        $cond = [
+            'conditions' => 'receiver_union_id = :union_id: and created_at >= :start: and created_at <= :end:
+                    and status = :status: and pay_type = :pay_type:',
+            'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at)],
+            'columns' => 'distinct user_id'
+        ];
+
+        $user_gift_orders = GiftOrders::find($cond);
+
+        if (count($user_gift_orders) > 0) {
+
+            $room_db = Rooms::getRoomDb();
+
+            $month_start = date("Ymd", beginOfMonth($stat_at));
+            $month_end = date("Ymd", endOfMonth($stat_at));
+            $day_date = date("Ymd", $stat_at);
+
+            $total_key = 'union_user_total_charm_rank_list_union_id_' . $stat_at->id;
+            $month_key = 'union_user_month_charm_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $this->id;
+            $day_key = 'union_user_day_charm_rank_list_' . $day_date . '_union_id_' . $this->id;
+
+            foreach ($user_gift_orders as $user_gift_order) {
+
+                $user_id = $user_gift_order->user_id;
+
+                $amount = GiftOrders::sum([
+                    'conditions' => 'receiver_union_id = :union_id: and user_id = :user_id: and created_at >= :start: and created_at <= :end: and 
+                    status = :status: and pay_type = :pay_type:',
+                    'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                        'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'user_id' => $user_id],
+                    'column' => 'amount'
+                ]);
+
+                if ($amount > 0) {
+                    $room_db->zincrby($total_key, $amount, $user_id);
+                    $room_db->zincrby($month_key, $amount, $user_id);
+                    $room_db->zincrby($day_key, $amount, $user_id);
+                }
+
+
+                info('receiver_union_id', $this->id, $day_date, $total_key, $month_key, $day_key, $amount);
+            }
+        }
+    }
+
+    function statRoom($stat_at)
+    {
+        $room_cond = [
+            'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
+                    and status = :status: and pay_type = :pay_type: and room_id > 0 and gift_type = :gift_ype:',
+            'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON],
+            'columns' => 'distinct room_id'
+        ];
+
+        $room_gift_orders = GiftOrders::find($room_cond);
+
+        if (count($room_gift_orders) > 0) {
+
+            $room_db = Rooms::getRoomDb();
+
+            $month_start = date("Ymd", beginOfMonth($stat_at));
+            $month_end = date("Ymd", endOfMonth($stat_at));
+            $day_date = date("Ymd", $stat_at);
+
+            $total_key = 'union_room_total_amount_union_id_' . $this->id;
+            $month_key = 'union_room_month_amount_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $this->id;
+            $day_key = 'union_room_day_amount_' . $day_date . '_union_id_' . $this->id;
+
+            foreach ($room_gift_orders as $room_gift_order) {
+
+                $room_id = $room_gift_order->room_id;
+
+                if ($room_id) {
+
+                    $amount = GiftOrders::sum([
+                        'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
+                    and status = :status: and pay_type = :pay_type: and gift_type = :gift_ype: and room_id = :room_id:',
+                        'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
+                            'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON, 'room_id' => $room_id],
+                        'column' => 'amount'
+                    ]);
+
+                    if ($amount > 0) {
+                        $room_db->zincrby($total_key, $amount, $room_id);
+                        $room_db->zincrby($month_key, $amount, $room_id);
+                        $room_db->zincrby($day_key, $amount, $room_id);
+                    }
+
+                    info("room_union_id", $this->id, $day_date, $total_key, $month_key, $day_key, $room_gift_order->room_id, $this->id, $amount);
+                }
+            }
+        }
+    }
+
+    function statUserHiCoins($stat_at)
+    {
+        $hi_conin_histories = HiCoinHistories::find([
+            'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id: and fee_type = :fee_type:',
+            'bind' => [
+                'start' => beginOfDay($stat_at),
+                'end' => endOfDay($stat_at),
+                'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT,
+                'union_id' => $this->id
+            ],
+            'columns' => 'distinct user_id'
+        ]);
+
+        if (count($hi_conin_histories) > 0) {
+
+            $room_db = Rooms::getRoomDb();
+
+            $month_start = date("Ymd", beginOfMonth($stat_at));
+            $month_end = date("Ymd", endOfMonth($stat_at));
+            $day_date = date("Ymd", $stat_at);
+
+
+            $total_key = 'union_user_total_hi_coins_rank_list_union_id_' . $this->id;
+            $month_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $this->id;
+            $day_key = 'union_user_day_hi_coins_rank_list_' . $day_date . '_union_id_' . $this->id;
+
+            foreach ($hi_conin_histories as $hi_conin_history) {
+
+                $user_id = $hi_conin_history->user_id;
+
+                $hi_coins = HiCoinHistories::sum([
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id: and 
+                         fee_type = :fee_type: and user_id = :use_id:',
+                    'bind' => [
+                        'start' => beginOfDay($stat_at),
+                        'end' => endOfDay($stat_at),
+                        'fee_type' => HI_COIN_FEE_TYPE_RECEIVE_GIFT,
+                        'union_id' => $this->id,
+                        'user_id' => $user_id
+                    ],
+                    'column' => 'hi_coins'
+                ]);
+
+                $hi_coins = intval($hi_coins * 1000);
+
+                if ($hi_coins > 0) {
+                    $room_db->zincrby($total_key, $hi_coins, $user_id);
+                    $room_db->zincrby($month_key, $hi_coins, $user_id);
+                    $room_db->zincrby($day_key, $hi_coins, $user_id);
+                }
+
+                echoLine('hi_coins', $this->id, $day_date, $total_key, $month_key, $day_key, $hi_coins);
+            }
+        }
+    }
 }

@@ -8,15 +8,29 @@
 
 class BoomConfigs extends BaseModel
 {
-    static $STATUS = [ STATUS_OFF=>"无效", STATUS_ON=>"有效" ];
+    static $STATUS = [STATUS_OFF => "无效", STATUS_ON => "有效"];
     static $files = ['svga_image' => APP_NAME . '/boom_configs/svga_image/%s'];
+
+    function afterCreate()
+    {
+        $sd = \Rooms::getRoomDb();
+        $sd->hmset('boom_config_cache_id' . $this->id , ['id' => $this->id, 'start_value' => $this->start_value,
+            'total_value' => $this->total_value , 'svga_image_small_url' => $this->svga_image_small_url ]);
+    }
+
+    function afterUpdate()
+    {
+        $sd = \Rooms::getRoomDb();
+        $sd->hmset('boom_config_cache_id' . $this->id , ['id' => $this->id, 'start_value' => $this->start_value,
+            'total_value' => $this->total_value , 'svga_image_small_url' => $this->svga_image_small_url ]);
+    }
 
     function mergeJson()
     {
         return [
-            'status_text'=> $this->status_text,
-            'created_at_text'=>$this->created_at_text,
-            'svga_image_small_url'=>$this->svga_image_small_url,
+            'status_text' => $this->status_text,
+            'created_at_text' => $this->created_at_text,
+            'svga_image_small_url' => $this->svga_image_small_url,
         ];
     }
 

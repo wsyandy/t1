@@ -36,6 +36,11 @@ class Rooms extends BaseModel
      */
     private $_country;
 
+    /**
+     * @type integer
+     */
+    private $_boom_config_id;
+
 
     static function getCacheEndpoint($id)
     {

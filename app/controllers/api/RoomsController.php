@@ -103,17 +103,17 @@ class RoomsController extends BaseController
     //进入房间
     function enterAction()
     {
-        if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
-        }
+//        if (isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+//        }
 
         $room_id = $this->params('id', 0); // 进入指定房间
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
-        if ($room_id && $user_id && isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
+//        if ($room_id && $user_id && isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+//        }
 
         if ($room_id) {
 
@@ -172,9 +172,9 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
-        if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
-        }
+//        if (isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+//        }
 
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
@@ -280,7 +280,7 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if ($game_history->game->url == 'https://gtest.yueyuewo.cn' && isDevelopmentEnv()) {
+                if ($game_history->game->code == 'jump' && isDevelopmentEnv()) {
                     $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
                 }
             }
@@ -1086,8 +1086,8 @@ class RoomsController extends BaseController
         $current_user = $this->currentUser(true);
 
         $res = $room->toJson();
-        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $user->id);
-        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($user->id);
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $current_user->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($current_user->id);
         $res['app_id'] = $this->currentProductChannel()->getImAppId();
         $res['user_chat'] = $current_user->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;

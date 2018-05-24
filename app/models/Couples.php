@@ -188,10 +188,8 @@ class Couples extends BaseModel
     static function findByUsersListForCp($page, $per_page)
     {
         $db = \Users::getUserDb();
-        //保存组成cp的时间，成员组成和保存分数的一直，可通用
+        //保存组成cp的时间
         $cp_marriage_time_key = \Couples::generateCpMarriageTimeKey();
-        //保存cp情侣值
-        $cp_info_key = \Couples::generateCpInfoKey();
         $offset = $per_page * ($page - 1);
         $res = $db->zrevrange($cp_marriage_time_key, $offset, $offset + $per_page - 1, 'withscores');
 
@@ -202,7 +200,9 @@ class Couples extends BaseModel
             $all_data[$i]['cp_at_text'] = date('Y-m-d', $re);
             $all_data[$i]['sponsor_nickname'] = \Users::findFirstById($ids[0])->nickname;
             $all_data[$i]['pursuer_nickname'] = \Users::findFirstById($ids[1])->nickname;
-            $all_data[$i]['score'] = $db->zscore($cp_info_key, $ids_str);
+
+            $cp_score_key = self::generateCpInfoForUserKey($ids[0]);
+            $all_data[$i]['score'] = $db->zscore($cp_score_key, $ids[1]);
             $i++;
         }
         if (!$all_data) {

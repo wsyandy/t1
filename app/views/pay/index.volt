@@ -1,3 +1,9 @@
+
+{#{% if isDevelopmentEnv() %}#}
+
+    {#{{ partial('pay/index_test') }}#}
+
+{#{% else %}#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,3 +186,4 @@
 </script>
 </body>
 </html>
+{#{% endif %}#}

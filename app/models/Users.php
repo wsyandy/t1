@@ -3286,8 +3286,7 @@ class Users extends BaseModel
      */
     static function generateUserRankListKey($time = null)
     {
-        if (empty($time) || strtotime(date('Ymd His'), $time) != $time)
-            $time = time();
+        if (empty($time)) $time = time();
 
         $day = date('Ymd', $time);
         $key = 'user_charm_and_wealth_rank_list_day_' . $day;
@@ -3348,11 +3347,14 @@ class Users extends BaseModel
         return Users::findFieldRankListByKey($key, $field, $page, $per_page);
     }
 
-    static function findFieldRankListByKey($key, $field, $page, $per_page, $max_entries = 100)
+    static function findFieldRankListByKey($key, $field, $page, $per_page, $max_entries = 100, $opts = [])
     {
         if (isBlank($key)) {
             return [];
         }
+
+        $is_internal = fetch($opts, 'is_internal');
+        $is_room_db = fetch($opts, 'is_room_db');
 
         $offset = ($page - 1) * $per_page;
 
@@ -3367,6 +3369,10 @@ class Users extends BaseModel
         }
 
         $db = Users::getUserDb();
+
+        if ($is_internal && $is_room_db) {
+            $db = Rooms::getRoomDb();
+        }
 
         $results = $db->zrevrange($key, $offset, $stop, 'withscores');
         $total_entries = $db->zcard($key);

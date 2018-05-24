@@ -148,9 +148,9 @@ class UnionsTask extends \Phalcon\Cli\Task
                     $remark = "主播奖励:" . $reward . "元";
 
                     //HiCoinHistories::createHistory($user->id, ['fee_type' => HI_COIN_FEE_TYPE_HOST_REWARD, 'remark' => $remark,
-                       // 'hi_coins' => $reward]);
+                    // 'hi_coins' => $reward]);
 
-                   // Chats::sendTextSystemMessage($user->id, "恭喜您获得2018年4月份主持扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
+                    // Chats::sendTextSystemMessage($user->id, "恭喜您获得2018年4月份主持扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
                 }
             }
         }
@@ -212,7 +212,7 @@ class UnionsTask extends \Phalcon\Cli\Task
                     $remark = "家族长奖励:" . $reward . "元";
 
                     //HiCoinHistories::createHistory($union->user_id, ['fee_type' => HI_COIN_FEE_TYPE_UNION_HOST_REWARD, 'remark' => $remark,
-                      //  'hi_coins' => $reward]);
+                    //  'hi_coins' => $reward]);
 
                     //Chats::sendTextSystemMessage($union->user_id, "恭喜您获得2018年4月份家族长扶持奖励{$reward}元，小Hi已帮你存到Hi币收益，请注意查收！");
                     echoLine($union->id, $income, $reward);
@@ -460,5 +460,24 @@ class UnionsTask extends \Phalcon\Cli\Task
 
         }
         echoLine(count($hi_conin_histories));
+    }
+
+    function statAction()
+    {
+        $unions = Unions::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
+
+        foreach ($unions as $union) {
+
+            $start_at = beginOfDay(strtotime('2018-05-01'));
+            $end_at = beginOfDay(strtotime('2018-05-23'));
+
+            for ($stat_at = $start_at; $stat_at <= $end_at; $stat_at += 86400) {
+
+                $union->statSender($stat_at);
+                $union->statUser($stat_at);
+                $union->statRoom($stat_at);
+                $union->statUserHiCoins($stat_at);
+            }
+        }
     }
 }

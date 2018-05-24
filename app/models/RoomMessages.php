@@ -161,7 +161,7 @@ trait RoomMessages
         }
     }
 
-    function pushTopTopicMessage($user, $content = "", $content_type = '')
+    function pushTopTopicMessage($user, $content = "", $content_type = null)
     {
         if (!$content) {
             $messages = Rooms::$TOP_TOPIC_MESSAGES;
@@ -174,6 +174,7 @@ trait RoomMessages
         ];
 
         $need_version_control = false;
+
         if ($content_type == 'red_packet') {
             $need_version_control = true;
         }
