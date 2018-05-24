@@ -196,7 +196,7 @@ class AgoraApi extends BaseModel
 
         $res = httpPost($url, $body, self::getHeaders());
 
-        info('踢出房间', 'user', $user->id, $res->raw_body);
+        info('踢出房间', 'user', $user->id, 'room', $room->id, $res->raw_body);/**/
     }
 
     static function exitChannel($user, $room)
@@ -221,7 +221,7 @@ class AgoraApi extends BaseModel
         $in_channel = fetch($data, 'in_channel', false);
         $role = fetch($data, 'role', 0);
         if ($in_channel === false) {
-            info('离开频道', $room->id, $user_id);
+            info('已离开频道', 'user', $user->id, 'room', $room->id);
             return true;
         }
 
@@ -249,6 +249,7 @@ class AgoraApi extends BaseModel
 
         $data = fetch($res_body, 'data');
         info('res data', $room->id, 'user_id', $user_id, $data);
+        
         $in_channel = fetch($data, 'in_channel', false);
         $role = fetch($data, 'role', 0);
 
@@ -261,7 +262,7 @@ class AgoraApi extends BaseModel
         }
 
         if ($in_channel === false) {
-            info('离开频道', $room->id, $user_id);
+            info('已离开频道', $room->id, $user_id);
             return [false, $user_role];
         }
 

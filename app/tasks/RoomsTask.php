@@ -179,7 +179,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             return;
         }
 
-        info($total);
+        info('count', $total);
 
         foreach ($target_ids as $target_id) {
 
@@ -233,10 +233,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            info('fd未连接', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+            info('fd未连接 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
 
             Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-            $room->exitRoom($user, true);
+            $room->exitRoom($user);
             AgoraApi::kickingRule($user, $room, 1);
         }
     }
