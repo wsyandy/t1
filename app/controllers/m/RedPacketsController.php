@@ -92,6 +92,10 @@ class RedPacketsController extends BaseController
         $sex = $this->params('sex');
 
         $red_packet = \RedPackets::findFirstById($red_packet_id);
+        if (!$red_packet) {
+            return $this->response->redirect('app://back');
+        }
+
         //用户进来的时间
         $room = $red_packet->room;
         $distance_start_at = $red_packet->getDistanceStartTime($room, $user->id);
