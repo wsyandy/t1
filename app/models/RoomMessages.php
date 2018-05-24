@@ -263,7 +263,6 @@ trait RoomMessages
             }
 
             $res = $this->pushToUser($user, $body);
-
             if ($res) {
                 break;
             }

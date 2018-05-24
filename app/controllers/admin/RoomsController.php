@@ -813,7 +813,7 @@ class RoomsController extends BaseController
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
         $other_user = \Users::findFirstById($other_user_id);
         $room->kickingRoom($other_user, 30);
-        $room->pushExitRoomMessage($other_user, $other_user->current_room_seat_id);
+        ////$room->pushExitRoomMessage($other_user, $other_user->current_room_seat_id);
         unlock($room_seat_user_lock);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '踢出成功');

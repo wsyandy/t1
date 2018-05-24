@@ -263,7 +263,7 @@ class MeiTask extends \Phalcon\Cli\Task
                 $current_room = $user->current_room;
                 $current_room_seat_id = $user->current_room_seat_id;
                 $current_room->exitRoom($user, true);
-                $current_room->pushExitRoomMessage($user, $current_room_seat_id);
+                ////$current_room->pushExitRoomMessage($user, $current_room_seat_id);
             }
 
         }
