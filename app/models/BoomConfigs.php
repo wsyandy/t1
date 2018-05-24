@@ -43,9 +43,4 @@ class BoomConfigs extends BaseModel
         return StoreFile::getUrl($this->svga_image) . '@!small';
     }
 
-    static function getBoomConfigByIdKey($id)
-    {
-        return 'boom_config_by_' . $id;
-    }
-
 }
