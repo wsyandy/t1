@@ -58,4 +58,9 @@ class BannedWords extends BaseModel
 
     }
 
+    static function getBannedWordsListSignKey()
+    {
+        return 'banned_words_list';
+    }
+
 }

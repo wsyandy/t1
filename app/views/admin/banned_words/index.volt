@@ -21,6 +21,9 @@
         <td>
             <a href="/admin/banned_words/edit/${banned_word.id}" class="modal_action">编辑</a>
         </td>
+        <td>
+            <a href="admin/banned_words/delete/${banned_word.id}" class="modal_action">删除</a>
+        </td>
     </tr>
 </script>
 
