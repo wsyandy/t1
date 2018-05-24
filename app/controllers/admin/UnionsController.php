@@ -405,6 +405,7 @@ class UnionsController extends BaseController
             $rooms = \Rooms::find($cond);
         }
 
+        info($key, $room_ids);
         $total_amount = 0;
 
         foreach ($rooms as $room) {
@@ -443,8 +444,10 @@ class UnionsController extends BaseController
         $page = $this->params('page');
         $per_page = 10;
         $user_db = \Users::getUserDb();
+        $is_room_db = false;
 
         if ($start_at > 20180431) {
+            $is_room_db = true;
             $user_db = \Rooms::getRoomDb();
         }
         
@@ -464,7 +467,7 @@ class UnionsController extends BaseController
             $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
         }
 
-        $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key));
+        $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key), ['is_internal' => true, 'is_room_db' => $is_room_db]);
 
         info("union_stat", $key, $charm_key, $hi_coin_key);
         foreach ($users as $user) {
