@@ -28,6 +28,12 @@ class RedPacketsController extends BaseController
         $sex = $this->params('sex');
         $red_packet_type = $this->params('red_packet_type');
         $nearby_distance = $this->params('nearby_distance', 0);
+
+        $room = $user->current_room;
+        if (isBlank($room)) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
+        }
+
         if (isDevelopmentEnv()) {
             if ($diamond < 100 || $num < 2) {
                 return $this->renderJSON(ERROR_CODE_FAIL, '红包金额不得小于100钻或者个数不得小于2个');
@@ -50,17 +56,12 @@ class RedPacketsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '您的钻石余额不足，请充值后再发红包', ['to_pay_url' => $to_pay_url]);
         }
 
-        if (isBlank($user->current_room)) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '您不在当前房间哦，请重进！');
-        }
-        $room = $user->current_room;
-
         $opts = [
             'diamond' => $diamond,
             'num' => $num,
             'status' => STATUS_ON,
             'user_id' => $user->id,
-            'room_id' => $user->current_room_id,
+            'room_id' => $room->id,
             'sex' => $sex,
             'red_packet_type' => $red_packet_type,
             'nearby_distance' => $nearby_distance,

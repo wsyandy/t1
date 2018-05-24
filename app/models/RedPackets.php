@@ -267,7 +267,7 @@ class RedPackets extends BaseModel
 
     static function grabRedPacket($user, $room, $red_packet_id)
     {
-        $get_diamond = \RedPackets::getRedPacketDiamond($user->current_room_id, $user, $red_packet_id);
+        $get_diamond = \RedPackets::getRedPacketDiamond($room->id, $user->id, $red_packet_id);
         if ($get_diamond) {
             $opts = [
                 'type' => 'update',
@@ -282,11 +282,11 @@ class RedPackets extends BaseModel
         return [ERROR_CODE_SUCCESS, null];
     }
 
-    static function getRedPacketDiamond($current_room_id, $user, $red_packet_id)
+    static function getRedPacketDiamond($current_room_id, $user_id, $red_packet_id)
     {
         $cache = \Users::getUserDb();
         //房间内对应抢到红包的用户的红包ID的集合
-        $key = self::generateRedPacketForRoomKey($current_room_id, $user->id);
+        $key = self::generateRedPacketForRoomKey($current_room_id, $user_id);
 
         //对应的抢到这个红包的用户ID集合
         $user_key = self::generateRedPacketInRoomForUserKey($current_room_id, $red_packet_id);
@@ -319,7 +319,7 @@ class RedPackets extends BaseModel
             }
 
             $cache->zadd($key, $get_diamond, $red_packet_id);
-            $cache->zadd($user_key, time(), $user->id);
+            $cache->zadd($user_key, time(), $user_id);
 
             return $get_diamond;
         }
