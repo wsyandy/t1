@@ -59,11 +59,7 @@ class AgoraTask extends \Phalcon\Cli\Task
             return;
         }
 
-        $product_channel = $user->product_channel;
-        $channel_name = $room->channel_name;
-        $app_id = $product_channel->getImAppId();
-
-        AgoraApi::kickingRule($user->id, $app_id, $channel_name);
+        AgoraApi::kickingRule($user, $room);
 
     }
 

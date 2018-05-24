@@ -131,7 +131,7 @@ class AgoraApi extends BaseModel
         $res_body = json_decode($res_body, true);
         if (fetch($res_body, 'success') !== true) {
             info('Exce', $url, $res_body);
-            return;
+            return null;
         }
 
         $data = fetch($res_body, 'data');
@@ -140,7 +140,7 @@ class AgoraApi extends BaseModel
         $role = fetch($data, 'role', 0);
         if ($in_channel === false) {
             info('离开频道', $room->id, $user_id);
-            return;
+            return [];
         }
 
         if ($role == 2) {
@@ -153,32 +153,104 @@ class AgoraApi extends BaseModel
 
             if ($num >= 3) {
                 info('异常在房间并封号', $room->id, $user->id, 'device', $user->device_id, "ip_city", $user->ip_city_id, "geo_city", $user->geo_city_id);
-                self::kickingRule($user_id, $app_id, $channel_name, 60);
+                self::kickingRule($user, $room, 60);
                 $device = $user->device;
                 $device->status = DEVICE_STATUS_BLOCK;
                 $device->update();
-            }else{
-                self::kickingRule($user_id, $app_id, $channel_name, 1);
+            } else {
+                self::kickingRule($user, $room, 1);
             }
         }
 
     }
 
-    static function kickingRule($user_id, $app_id, $channel_name, $time = 5)
+    static function kickingRule($user, $room, $time = 5)
     {
+
+        $product_channel = $room->product_channel;
+        $channel_name = $room->channel_name;
+        $app_id = $product_channel->getImAppId();
 
         $url = "https://api.agora.io/dev/v1/kicking-rule/";
         $body = [
             'appid' => $app_id,
             'cname' => $channel_name,
-            'uid' => $user_id,
+            'uid' => $user->id,
             'time' => $time // 分钟
         ];
 
         $res = httpPost($url, $body, self::$headers);
 
-        info('踢出房间', 'user', $user_id, $res->raw_body);
+        info('踢出房间', 'user', $user->id, $res->raw_body);
     }
 
+    static function exitChannel($user, $room)
+    {
+
+        $product_channel = $room->product_channel;
+        $channel_name = $room->channel_name;
+        $app_id = $product_channel->getImAppId();
+        $user_id = $user->id;
+
+        $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
+        $res = httpGet($url, [], self::$headers);
+        $res_body = $res->raw_body;
+        $res_body = json_decode($res_body, true);
+        if (fetch($res_body, 'success') !== true) {
+            info('Exce', $url, $res_body);
+            return false;
+        }
+
+        $data = fetch($res_body, 'data');
+        info('data', $room->id, 'user_id', $user_id, $data);
+        $in_channel = fetch($data, 'in_channel', false);
+        $role = fetch($data, 'role', 0);
+        if ($in_channel === false) {
+            info('离开频道', $room->id, $user_id);
+            return true;
+        }
+
+        self::kickingRule($user, $room, 1);
+
+        return true;
+    }
+
+    static function inChannel($user, $room)
+    {
+
+        $product_channel = $room->product_channel;
+        $channel_name = $room->channel_name;
+        $app_id = $product_channel->getImAppId();
+        $user_id = $user->id;
+
+        $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
+        $res = httpGet($url, [], self::$headers);
+        $res_body = $res->raw_body;
+        $res_body = json_decode($res_body, true);
+        if (fetch($res_body, 'success') !== true) {
+            info('Exce', $url, $res_body);
+            return [true, 0];
+        }
+
+        $data = fetch($res_body, 'data');
+        info('data', $room->id, 'user_id', $user_id, $data);
+        $in_channel = fetch($data, 'in_channel', false);
+        $role = fetch($data, 'role', 0);
+
+        $user_role = USER_ROLE_NO;
+        if($role == 2){
+            $user_role = USER_ROLE_BROADCASTER;
+        }
+        if($role == 3){
+            $user_role = USER_ROLE_AUDIENCE;
+        }
+
+        if ($in_channel === false) {
+            info('离开频道', $room->id, $user_id);
+            return [false, $user_role];
+        }
+
+        return [true, $user_role];
+    }
 
 }
