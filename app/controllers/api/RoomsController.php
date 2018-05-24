@@ -103,9 +103,9 @@ class RoomsController extends BaseController
     //进入房间
     function enterAction()
     {
-        if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
-        }
+//        if (isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+//        }
 
         $room_id = $this->params('id', 0); // 进入指定房间
         $password = $this->params('password', '');
@@ -172,9 +172,9 @@ class RoomsController extends BaseController
     // 进入房间获取信息
     function detailAction()
     {
-        if (isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
-        }
+//        if (isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '拒绝访问');
+//        }
 
         $room_id = $this->params('id', 0);
         $room = \Rooms::findFirstById($room_id);
