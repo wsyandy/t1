@@ -31,7 +31,7 @@ class GameHistories extends BaseModel
         }
 
         $hot_cache = GameHistories::getHotWriteCache();
-        $hot_cache->setex('game_history_room_'.$this->room_id, 1800, $this->id);
+        $hot_cache->setex('game_history_room_' . $this->room_id, 1800, $this->id);
 
         \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
     }
@@ -42,14 +42,14 @@ class GameHistories extends BaseModel
         if ($this->hasChanged('status') && $this->status == GAME_STATUS_END) {
 
             $hot_cache = GameHistories::getHotWriteCache();
-            $hot_cache->del('game_history_room_'.$this->room_id);
+            $hot_cache->del('game_history_room_' . $this->room_id);
 
             if ($this->game->code == 'jump') {
                 $user = \Users::findFirstById($this->user_id);
                 $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
                 $this->sendGameMessage($user, $body);
 
-            }else{
+            } else {
 
                 $hot_cache = \Users::getHotWriteCache();
                 $room_wait_key = "game_room_wait_" . $this->id;
@@ -116,7 +116,7 @@ class GameHistories extends BaseModel
             $site = 0;
         }
         $game_code = strtolower($this->game->clazz);
-        $client_url = $this->game->url . '?sid=' . $current_user->sid . '&code=' . $current_user->product_channel->code .
+        $client_url = $this->game->url . '?sid=' . $current_user->sid . '&code=' . $current_user->product_channel->code . '&game_id=' . $this->game_id .
             '&name=' . $this->game->name . '&username=' . $current_user->nickname . '&room_id=' . $room->id . '&game_code=' . $game_code .
             '&avater_url=' . $current_user->avatar_url . '&user_num_limit=8&site=' . $site . '&owner=' . $owner . '&game_history_id=' . $this->id;
 
