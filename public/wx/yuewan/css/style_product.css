@@ -123,7 +123,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	height: 16px;
 	width: 16px;
-	background: url(/m/images/zuan.png) no-repeat;
+	background: url(/m/images/zuan_new.png) no-repeat;
 	background-size: 100%;
 	position: absolute;
 	left: 10px;
@@ -172,7 +172,7 @@ input::-webkit-input-placeholder{
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	background: url(/m/images/zuan.png) no-repeat;
+	background: url(/m/images/zuan_new.png) no-repeat;
 	background-size: 100%;
 }
 .zuan_top .top span{
