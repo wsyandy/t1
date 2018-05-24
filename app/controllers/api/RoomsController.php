@@ -280,7 +280,7 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if ($game_history->game->url == 'https://gtest.yueyuewo.cn' && isDevelopmentEnv()) {
+                if ($game_history->game->code == 'jump' && isDevelopmentEnv()) {
                     $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
                 }
             }

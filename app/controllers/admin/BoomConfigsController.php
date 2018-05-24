@@ -17,6 +17,7 @@ class BoomConfigsController extends BaseController
         $page = $this->params('page');
         $per_page = $this->params('per_page');
         $boom_configs = \BoomConfigs::findPagination($conds, $page, $per_page);
+
         $this->view->boom_configs = $boom_configs;
     }
 
@@ -51,6 +52,7 @@ class BoomConfigsController extends BaseController
         $this->assign($boom_config, 'boom_config');
 
         if ($boom_config->update()) {
+            info("数据",$boom_config->toJson());
             return $this->renderJSON(ERROR_CODE_SUCCESS, '', array('boom_config' => $boom_config->toJson()));
         } else {
             return $this->renderJSON(ERROR_CODE_FAIL, '更新失败');
