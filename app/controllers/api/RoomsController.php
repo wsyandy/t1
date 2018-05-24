@@ -111,9 +111,9 @@ class RoomsController extends BaseController
         $password = $this->params('password', '');
         $user_id = $this->params('user_id', 0); // 进入指定用户所在的房间
 
-        if ($room_id && $user_id && isDevelopmentEnv()) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-        }
+//        if ($room_id && $user_id && isDevelopmentEnv()) {
+//            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
+//        }
 
         if ($room_id) {
 
