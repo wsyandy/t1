@@ -78,6 +78,10 @@ class AgoraApi extends BaseModel
 
         $data = fetch($res_body, 'data');
         $broadcaster_ids = fetch($data, 'broadcasters');
+        if(!$broadcaster_ids){
+            info('no broadcasters', $res_body);
+            return;
+        }
 
         $room_seats = RoomSeats::findPagination(['conditions' => 'room_id=:room_id:',
             'bind' => ['room_id' => $room->id], 'order' => 'rank asc'], 1, 8, 8);
