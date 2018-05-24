@@ -73,8 +73,11 @@ class RedPackets extends BaseModel
         'num' => ['null' => '不能为空'],
         'diamond' => ['null' => '不能为空'],
         'status' => ['null' => '不能为空'],
-        'current_room_id' => ['null' => '不能为空'],
-        'red_packet_type' => ['null' => '不能为空']
+        'room_id' => ['null' => '不能为空'],
+        'red_packet_type' => ['null' => '不能为空'],
+        'nearby_distance' => ['null' => '不能为空'],
+        'balance_diamond' => ['null' => '不能为空'],
+        'balance_num' => ['null' => '不能为空']
     ];
 
     // RED_PACKET_TYPE_NEARBY => '附近的人才能领取'
