@@ -327,6 +327,7 @@ class Rooms extends BaseModel
 
     function exitRoom($user, $unbind = true)
     {
+
         $this->remUser($user);
 
         // 房间相同才清除用户信息
@@ -357,7 +358,8 @@ class Rooms extends BaseModel
             $this->save();
         }
 
-        $this->updateLastAt();
+        // 不确定是主动退出
+        ////$this->updateLastAt();
 
         //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
         if ($unbind) {

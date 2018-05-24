@@ -651,12 +651,18 @@ class Users extends BaseModel
 
         //切换账号登录时如果用户在房间就退出房间
         if ($this->isInAnyRoom()) {
+
             info("change_device_exit_room", $this->current_room_id, 'user', $this->id, 'device', $device->id, 'old_device', $this->device_id);
-            if ($device->id != $this->device_id) {
-                return [ERROR_CODE_FAIL, '请退出另一个设备'];
-            }
 
             $current_room = $this->current_room;
+            if ($device->id != $this->device_id) {
+                // 加上声网的检测，可以开放切换账户
+                if (!AgoraApi::exitChannel($this, $current_room)) {
+                    info("change_device_exit_room 退出声网失败", $this->current_room_id, 'user', $this->id, 'device', $device->id, 'old_device', $this->device_id);
+                    return [ERROR_CODE_FAIL, '请退出另一个设备'];
+                }
+            }
+
             if ($current_room) {
                 $current_room->exitRoom($this);
             }

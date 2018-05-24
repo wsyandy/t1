@@ -167,10 +167,12 @@ class RoomsTask extends \Phalcon\Cli\Task
         }
     }
 
-    function checkExceUsersAction()
+    function checkExceExitRoomsAction()
     {
 
-        $target_ids = Rooms::getAbnormalExitRoomList();
+        $hot_cache = Rooms::getHotReadCache();
+        $end_at = time() - 60;
+        $target_ids = $hot_cache->zrangebyscore(Rooms::generateAbnormalExitRoomListKey(), $end_at - 36000, $end_at, array('limit' => array(0, 10000)));
         $total = count($target_ids);
         if ($total < 1) {
             info("no users", $target_ids);
@@ -191,60 +193,50 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             $current_room_id = $user->current_room_id;
             $current_room_seat_id = $user->current_room_seat_id;
-            $need_push = false;
 
-            if ($current_room_id != $room->id || !$user->isNormal()) {
-                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                $room->exitRoom($user, true);
-                $need_push = true;
-                info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
-            } else {
-
-                $time = time() - 15 * 60;
-
-                if ($user->last_at <= $time) {
-
-                    $user_fd = $user->getUserFd();
-                    if ($user_fd) {
-                        info($user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
-                        continue;
-                    }
-
-                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
-
-                    $need_push = true;
-                    Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-                    $room->exitRoom($user, true);
-                }
-            }
-
-            if ($current_room_id == $room->id && $need_push) {
-                $room->pushExitRoomMessage($user, $current_room_seat_id);
-            }
-
-            //检测麦位状态
-            $room_seats = RoomSeats::findByUserId($user->id);
-
-            foreach ($room_seats as $room_seat) {
-                // 房间和麦位匹配
-                if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+            // 不在房间 或 在其他房间
+            if (!$current_room_id || $current_room_id != $room->id) {
+                // 声网检测
+                if (!AgoraApi::exitChannel($user, $room)) {
+                    info('在其他房间 退出声网失败 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
                     continue;
                 }
 
-                $room_seat->user_id = 0;
-                $room_seat->save();
-                info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                info('在其他房间 room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                continue;
             }
 
+            list($in_channel, $user_role) = AgoraApi::inChannel($user, $room);
 
-            if ($user->current_room_seat_id) {
-                $current_room_seat = $user->current_room_seat;
-                if ($current_room_seat->user_id != $user->id) {
-                    info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
-                    $user->current_room_seat_id = 0;
-                    $user->save();
-                }
+            // 不在频道
+            if (!$in_channel) {
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user, true);
+                continue;
             }
+
+            // 在频道，角色错误
+            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && $user->current_room_seat_id < 1) {
+                AgoraApi::kickingRule($user, $room, 1);
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user);
+                info('角色错误 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+                continue;
+            }
+
+            $user_fd = $user->getUserFd();
+            if ($user_fd) {
+                info('fd已连接', $user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
+                continue;
+            }
+
+            info('fd未连接', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+
+            Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+            $room->exitRoom($user, true);
+            AgoraApi::kickingRule($user, $room, 1);
         }
     }
 
