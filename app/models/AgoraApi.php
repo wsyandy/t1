@@ -248,7 +248,7 @@ class AgoraApi extends BaseModel
         }
 
         $data = fetch($res_body, 'data');
-        info('data', $room->id, 'user_id', $user_id, $data);
+        info('res data', $room->id, 'user_id', $user_id, $data);
         $in_channel = fetch($data, 'in_channel', false);
         $role = fetch($data, 'role', 0);
 

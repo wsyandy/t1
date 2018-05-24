@@ -212,6 +212,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             // 不在频道
             if (!$in_channel) {
+                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user, true);
                 continue;
