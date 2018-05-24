@@ -64,6 +64,12 @@ class JumpsController extends BaseController
         if (!$room || !$game) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数错误');
         }
+
+        if ($game->code == 'tyt') {
+            $client_url = '/m/games/tyt?game_id=' . $game_id . '&sid=' . $current_user->sid . '&code=' . $current_user->product_channel->code;
+            return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['client_url' => $client_url]);
+        }
+
         $game_history = \GameHistories::createGameHistory($current_user, $game_id);
         $client_url = $game_history->generateGameUrl($current_user, $room);
 
