@@ -83,7 +83,14 @@ class RoomsController extends BaseController
     {
         $room = \Rooms::findFirstById($this->params('id'));
         $room->getHotRoomScoreRatio();
+        $res = \BoomConfigs::findByConditions(['status' => STATUS_ON]);
+        $boom_configs = [];
+        foreach ($res as $item) {
+            $boom_configs[$item->id] = $item->name;
+        }
+
         $this->view->room = $room;
+        $this->view->boom_configs = $boom_configs;
     }
 
     function updateAction()
