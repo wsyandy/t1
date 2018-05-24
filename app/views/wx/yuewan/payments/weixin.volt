@@ -1,9 +1,9 @@
 
-{% if isDevelopmentEnv() %}
+{#{% if isDevelopmentEnv() %}#}
 
-    {{ partial('payments/weixin_test') }}
+    {#{{ partial('payments/weixin_test') }}#}
 
-{% else %}
+{#{% else %}#}
 
 {{ block_begin('head') }}
 {{ weixin_js('pay.js') }}
@@ -141,4 +141,4 @@
     }
 
 </script>
-{% endif %}
+{#{% endif %}#}
