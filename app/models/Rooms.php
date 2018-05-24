@@ -310,6 +310,9 @@ class Rooms extends BaseModel
         if ($this->user_id == $user->id) {
             $user->user_role = USER_ROLE_HOST_BROADCASTER; // 房主
             $this->online_status = STATUS_ON; // 主播是否在线
+            if (!$this->isBlocked()) {
+                $this->status = STATUS_ON;
+            }
         }
 
         $this->bindOnlineToken($user);
@@ -317,8 +320,6 @@ class Rooms extends BaseModel
 
         $this->save();
         $user->save();
-
-        $this->updateLastAt();
 
         if (!$user->isSilent()) {
             Rooms::delay()->statDayEnterRoomUser($this->id, $user->id);
@@ -358,25 +359,35 @@ class Rooms extends BaseModel
             $this->save();
         }
 
-        // 不确定是主动退出
-        ////$this->updateLastAt();
-
         //修复数据时,不需要解绑,防止用户在别的房间已经生成新的token
         if ($unbind) {
             $this->unbindOnlineToken($user);
         }
     }
 
-    function updateLastAt()
+    function updateLastAt($user = null)
     {
+
         $hot_cache = Users::getHotWriteCache();
+
+        // 活跃房间列表
         $key = 'room_active_last_at_list';
         $hot_cache->zadd($key, time(), $this->id);
-
         $total = $hot_cache->zcard($key);
-
         if ($total >= 1000) {
             $hot_cache->zremrangebyrank($key, 0, $total - 1000);
+        }
+
+        // 活跃用户列表
+        $real_user_key = $this->getRealUserListKey();
+        if ($user && !$user->isSilent()) {
+            $hot_cache->zadd($real_user_key, time(), $user->id);
+        }
+
+        // 房间活跃时间
+        if(time() - $this->last_at > 15){
+            $this->last_at = time();
+            $this->update();
         }
     }
 
@@ -405,11 +416,6 @@ class Rooms extends BaseModel
         }
 
         $hot_cache->zadd(Rooms::getTotalRoomUserNumListKey(), $this->user_num, $this->id);
-
-        if ($this->user_num > 0 && $this->status == STATUS_OFF && !$this->isBlocked()) {
-            $this->status = STATUS_ON;
-            $this->update();
-        }
     }
 
     static function getTotalRoomUserNumListKey()

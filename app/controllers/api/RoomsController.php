@@ -743,6 +743,14 @@ class RoomsController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '内容含有敏感词汇');
         }
 
+        $room_id = $this->params('room_id');
+        $room = \Rooms::findFirstById($room_id);
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '无效的房间');
+        }
+
+        $room->updateUserActiveList($this->currentUser());
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '发送成功');
     }
 
