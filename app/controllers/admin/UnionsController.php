@@ -379,7 +379,7 @@ class UnionsController extends BaseController
 
         $user_db = \Users::getUserDb();
 
-        if ($start_at > 210180431) {
+        if ($start_at > 20180431) {
             $user_db = \Rooms::getRoomDb();
         }
 
@@ -444,7 +444,7 @@ class UnionsController extends BaseController
         $per_page = 10;
         $user_db = \Users::getUserDb();
 
-        if ($start_at > 210180431) {
+        if ($start_at > 20180431) {
             $user_db = \Rooms::getRoomDb();
         }
         
