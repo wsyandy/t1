@@ -465,19 +465,14 @@ class UnionsTask extends \Phalcon\Cli\Task
     function statAction()
     {
         $unions = Unions::find(['conditions' => 'status = :status:', 'bind' => ['status' => STATUS_ON]]);
+        $stat_at = strtotime("-1 day");
 
         foreach ($unions as $union) {
 
-            $start_at = beginOfDay(strtotime('2018-05-01'));
-            $end_at = beginOfDay(strtotime('2018-05-23'));
-
-            for ($stat_at = $start_at; $stat_at <= $end_at; $stat_at += 86400) {
-
-                $union->statSender($stat_at);
-                $union->statUser($stat_at);
-                $union->statRoom($stat_at);
-                $union->statUserHiCoins($stat_at);
-            }
+            $union->statSender($stat_at);
+            $union->statUser($stat_at);
+            $union->statRoom($stat_at);
+            $union->statUserHiCoins($stat_at);
         }
     }
 }
