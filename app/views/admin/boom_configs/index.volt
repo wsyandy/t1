@@ -14,7 +14,7 @@
 ]) }}
 
 <script type="text/template" id="boom_config_tpl">
-    <tr id="${ boom_config.id }">
+    <tr id="boom_config_${ boom_config.id }">
         <td>${boom_config.id}</td>
         <td>${boom_config.name}</td>
         <td>${boom_config.start_value}</td>
