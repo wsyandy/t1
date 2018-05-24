@@ -1133,7 +1133,7 @@ class Unions extends BaseModel
     {
         $room_cond = [
             'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
-                    and status = :status: and pay_type = :pay_type: and room_id > 0 and gift_type = :gift_ype:',
+                    and status = :status: and pay_type = :pay_type: and room_id > 0 and gift_type = :gift_type:',
             'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
                 'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON],
             'columns' => 'distinct room_id'
@@ -1161,7 +1161,7 @@ class Unions extends BaseModel
 
                     $amount = GiftOrders::sum([
                         'conditions' => 'room_union_id = :union_id: and created_at >= :start: and created_at <= :end: 
-                    and status = :status: and pay_type = :pay_type: and gift_type = :gift_ype: and room_id = :room_id:',
+                    and status = :status: and pay_type = :pay_type: and gift_type = :gift_type: and room_id = :room_id:',
                         'bind' => ['union_id' => $this->id, 'status' => GIFT_ORDER_STATUS_SUCCESS, 'pay_type' => GIFT_PAY_TYPE_DIAMOND,
                             'start' => beginOfDay($stat_at), 'end' => endOfDay($stat_at), 'gift_type' => GIFT_TYPE_COMMON, 'room_id' => $room_id],
                         'column' => 'amount'
@@ -1181,7 +1181,7 @@ class Unions extends BaseModel
 
     function statUserHiCoins($stat_at)
     {
-        $hi_conin_histories = HiCoinHistories::find([
+        $hi_coin_histories = HiCoinHistories::find([
             'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id: and fee_type = :fee_type:',
             'bind' => [
                 'start' => beginOfDay($stat_at),
@@ -1192,7 +1192,7 @@ class Unions extends BaseModel
             'columns' => 'distinct user_id'
         ]);
 
-        if (count($hi_conin_histories) > 0) {
+        if (count($hi_coin_histories) > 0) {
 
             $room_db = Rooms::getRoomDb();
 
@@ -1205,13 +1205,13 @@ class Unions extends BaseModel
             $month_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $this->id;
             $day_key = 'union_user_day_hi_coins_rank_list_' . $day_date . '_union_id_' . $this->id;
 
-            foreach ($hi_conin_histories as $hi_conin_history) {
+            foreach ($hi_coin_histories as $hi_coin_history) {
 
-                $user_id = $hi_conin_history->user_id;
+                $user_id = $hi_coin_history->user_id;
 
                 $hi_coins = HiCoinHistories::sum([
-                    'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id: and 
-                         fee_type = :fee_type: and user_id = :use_id:',
+                    'conditions' => 'created_at >= :start: and created_at <= :end: and union_id = :union_id:
+                        and fee_type = :fee_type: and user_id = :user_id:',
                     'bind' => [
                         'start' => beginOfDay($stat_at),
                         'end' => endOfDay($stat_at),
