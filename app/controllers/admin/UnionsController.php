@@ -379,6 +379,10 @@ class UnionsController extends BaseController
 
         $user_db = \Users::getUserDb();
 
+        if ($start_at > 210180431) {
+            $user_db = \Rooms::getRoomDb();
+        }
+
         if (!$start_at_time && !$end_at_time) {
             $key = 'union_room_total_amount_union_id_' . $union->id;
         } elseif ($start_at == $end_at) {
@@ -440,6 +444,10 @@ class UnionsController extends BaseController
         $per_page = 10;
         $user_db = \Users::getUserDb();
 
+        if ($start_at > 210180431) {
+            $user_db = \Rooms::getRoomDb();
+        }
+        
         if (!$start_at_time && !$end_at_time) {
             $key = 'union_user_total_wealth_rank_list_union_id_' . $union->id;
             $charm_key = 'union_user_total_charm_rank_list_union_id_' . $union->id;
