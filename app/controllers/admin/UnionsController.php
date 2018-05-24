@@ -405,6 +405,7 @@ class UnionsController extends BaseController
             $rooms = \Rooms::find($cond);
         }
 
+        info($key, $room_ids);
         $total_amount = 0;
 
         foreach ($rooms as $room) {
