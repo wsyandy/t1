@@ -179,7 +179,7 @@ class RoomsTask extends \Phalcon\Cli\Task
             return;
         }
 
-        info($total);
+        info('count', $total);
 
         foreach ($target_ids as $target_id) {
 
@@ -212,13 +212,14 @@ class RoomsTask extends \Phalcon\Cli\Task
 
             // 不在频道
             if (!$in_channel) {
+                info('不在频道 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user, true);
                 continue;
             }
 
             // 在频道，角色错误
-            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && $user->current_room_seat_id < 1) {
+            if ($in_channel && $user_role == USER_ROLE_BROADCASTER && ($user->id != $room->user_id || $user->current_room_seat_id < 1)) {
                 AgoraApi::kickingRule($user, $room, 1);
                 Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
                 $room->exitRoom($user);
@@ -232,10 +233,10 @@ class RoomsTask extends \Phalcon\Cli\Task
                 continue;
             }
 
-            info('fd未连接', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+            info('fd未连接 退出房间', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
 
             Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
-            $room->exitRoom($user, true);
+            $room->exitRoom($user);
             AgoraApi::kickingRule($user, $room, 1);
         }
     }

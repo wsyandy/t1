@@ -8,11 +8,24 @@
 
 class AgoraApi extends BaseModel
 {
+
     static $_only_cache = true;
 
-    static $headers = [
-        'Cache-Control' => 'no-cache',
-        'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='];
+    static function getHeaders()
+    {
+        $headers = [
+            'Cache-Control' => 'no-cache',
+            'Authorization' => 'Basic NWIwMmIxNmRjMzIzNDVlMzhlMGQ2ODdmMDRhMjYyOWI6MTZjZjAwMGUxZjAwNDUyN2IzYTdjNTQwYzM4YmY4NTY='
+        ];
+
+        if (isProduction()) {
+            $headers = [
+                'Cache-Control' => 'no-cache',
+                'Authorization' => 'Basic YjA0NGUzZmIzM2FiNGYxMjlhZDBjZDlkZmQ3ZTlkNjU6OWVlYjhkYzU1NDNiNGRmN2IxYzgzMmQ4NDE5MjlmODE='];
+        }
+
+        return $headers;
+    }
 
 
     static function hostIn($user)
@@ -28,7 +41,7 @@ class AgoraApi extends BaseModel
         $app_id = $product_channel->getImAppId();
 
         $url = "http://api.agora.io/dev/v1/channel/business/hostin/{$app_id}/{$user->id}/{$channel_name}";
-        $res = httpGet($url, [], self::$headers);
+        $res = httpGet($url, [], self::getHeaders());
 
         info('user', $user->id, $res->raw_body);
 
@@ -48,7 +61,9 @@ class AgoraApi extends BaseModel
         $app_id = $product_channel->getImAppId();
 
         $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
-        $res = httpGet($url, [], self::$headers);
+        info($user->id, $url);
+
+        $res = httpGet($url, [], self::getHeaders());
 
         info('user', $user->id, $res->raw_body);
 
@@ -65,7 +80,7 @@ class AgoraApi extends BaseModel
 
         $url = "http://api.agora.io/dev/v1/channel/user/{$app_id}/{$channel_name}";
 
-        $res = httpGet($url, [], self::$headers);
+        $res = httpGet($url, [], self::getHeaders());
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
         //info($room->id, $res_body);
@@ -126,7 +141,7 @@ class AgoraApi extends BaseModel
         $app_id = $product_channel->getImAppId();
 
         $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user_id}/{$channel_name}";
-        $res = httpGet($url, [], self::$headers);
+        $res = httpGet($url, [], self::getHeaders());
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
         if (fetch($res_body, 'success') !== true) {
@@ -179,9 +194,9 @@ class AgoraApi extends BaseModel
             'time' => $time // 分钟
         ];
 
-        $res = httpPost($url, $body, self::$headers);
+        $res = httpPost($url, $body, self::getHeaders());
 
-        info('踢出房间', 'user', $user->id, $res->raw_body);
+        info('踢出房间', 'user', $user->id, 'room', $room->id, $res->raw_body);
     }
 
     static function exitChannel($user, $room)
@@ -193,7 +208,7 @@ class AgoraApi extends BaseModel
         $user_id = $user->id;
 
         $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
-        $res = httpGet($url, [], self::$headers);
+        $res = httpGet($url, [], self::getHeaders());
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
         if (fetch($res_body, 'success') !== true) {
@@ -206,7 +221,7 @@ class AgoraApi extends BaseModel
         $in_channel = fetch($data, 'in_channel', false);
         $role = fetch($data, 'role', 0);
         if ($in_channel === false) {
-            info('离开频道', $room->id, $user_id);
+            info('已离开频道', 'user', $user->id, 'room', $room->id);
             return true;
         }
 
@@ -224,7 +239,7 @@ class AgoraApi extends BaseModel
         $user_id = $user->id;
 
         $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
-        $res = httpGet($url, [], self::$headers);
+        $res = httpGet($url, [], self::getHeaders());
         $res_body = $res->raw_body;
         $res_body = json_decode($res_body, true);
         if (fetch($res_body, 'success') !== true) {
@@ -233,20 +248,21 @@ class AgoraApi extends BaseModel
         }
 
         $data = fetch($res_body, 'data');
-        info('data', $room->id, 'user_id', $user_id, $data);
+        info('res data', $room->id, 'user_id', $user_id, $data);
+
         $in_channel = fetch($data, 'in_channel', false);
         $role = fetch($data, 'role', 0);
 
         $user_role = USER_ROLE_NO;
-        if($role == 2){
+        if ($role == 2) {
             $user_role = USER_ROLE_BROADCASTER;
         }
-        if($role == 3){
+        if ($role == 3) {
             $user_role = USER_ROLE_AUDIENCE;
         }
 
         if ($in_channel === false) {
-            info('离开频道', $room->id, $user_id);
+            info('已离开频道', $room->id, $user_id);
             return [false, $user_role];
         }
 
