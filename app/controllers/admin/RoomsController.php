@@ -360,7 +360,7 @@ class RoomsController extends BaseController
             'down' => '下麦', 'exit_room' => '退出房间', 'hang_up' => '挂断电话', 'room_notice' => '房间信息通知', 'red_packet' => '红包',
             'pk' => 'pk', 'boom_gift' => '爆礼物', 'sink_notice' => '下沉通知'
         ];
-        $this->view->content_types = ['personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
+        $this->view->content_types = ['' => '请选择', 'personage' => '个人', 'red_packet' => '红包', 'pk' => 'pk结果', 'blasting_gift' => '爆礼物'];
         $this->view->room = $room;
     }
 
