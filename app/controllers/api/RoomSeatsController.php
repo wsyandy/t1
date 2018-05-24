@@ -36,13 +36,13 @@ class RoomSeatsController extends BaseController
 
         $room_seat_lock = tryLock($room_seat_lock_key, 1000, true);
         if(!$room_seat_lock){
-            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的手速太慢');
         }
 
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000, true);
         if(!$room_seat_user_lock){
             unlock($room_seat_lock);
-            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
+            return $this->renderJSON(ERROR_CODE_FAIL, '您的手速太慢');
         }
 
         $current_user = $this->currentUser(true);
@@ -56,7 +56,7 @@ class RoomSeatsController extends BaseController
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
         if (!$room_seat) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位参数非法');
         }
 
         // 抱用户上麦
@@ -87,7 +87,7 @@ class RoomSeatsController extends BaseController
 
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
         if (!$room_seat) {
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位参数非法');
         }
 
         $room = $room_seat->room;
@@ -147,15 +147,22 @@ class RoomSeatsController extends BaseController
         }
 
         $room_seat_user_lock = tryLock($room_seat_user_lock_key, 1000);
+        if(!$room_seat_user_lock){
+            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
+        }
+
         $lock = tryLock("room_seat_lock{$room_seat_id}", 1000);
+        if(!$lock){
+            unlock($room_seat_user_lock);
+            return $this->renderJSON(ERROR_CODE_FAIL, '网络慢请重试');
+        }
 
         $current_user = $this->currentUser();
         $room_seat = \RoomSeats::findFirstById($room_seat_id);
-
         if (!$room_seat) {
             unlock($lock);
             unlock($room_seat_user_lock);
-            return $this->renderJSON(ERROR_CODE_FAIL, '麦位不存在');
+            return $this->renderJSON(ERROR_CODE_FAIL, '麦位参数非法');
         }
 
         if (!$current_user->canManagerRoom($room_seat->room)) {
@@ -168,14 +175,15 @@ class RoomSeatsController extends BaseController
 
         unlock($lock);
         unlock($room_seat_user_lock);
+        
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
 
     // 解封
     function openAction()
     {
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
 
+        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -192,8 +200,8 @@ class RoomSeatsController extends BaseController
     // 禁麦
     function closeMicrophoneAction()
     {
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
 
+        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -211,8 +219,8 @@ class RoomSeatsController extends BaseController
     // 取消禁麦
     function openMicrophoneAction()
     {
-        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
 
+        $room_seat = \RoomSeats::findFirstById($this->params('id', 0));
         if (!$room_seat) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
@@ -230,8 +238,8 @@ class RoomSeatsController extends BaseController
     //确认上麦
     function confirmUpAction()
     {
-        $room_seat_id = $this->params('id', 0);
 
+        $room_seat_id = $this->params('id', 0);
         if (!$room_seat_id) {
             return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
