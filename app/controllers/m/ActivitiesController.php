@@ -783,7 +783,7 @@ class ActivitiesController extends BaseController
         if (in_array($current_user_id, $sponsor_ids) || in_array($current_user_id, $pursuer_ids)) {
             $is_on_the_list = true;
         }
-        
+
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', array_merge(['is_on_the_list' => $is_on_the_list], ['all_users' => $all_users]));
 
 
@@ -797,5 +797,10 @@ class ActivitiesController extends BaseController
         $cp_info = $db->zrevrange($receive_key, 0, 0, 'withscores');
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', ['cp_info' => $cp_info]);
+    }
+
+    function karaokeNoticeAction()
+    {
+        $this->view->title = '歌神争霸赛公告';
     }
 }

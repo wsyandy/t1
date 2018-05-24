@@ -1,0 +1,56 @@
+
+/* css reset */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td { margin:0; padding:0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;}
+html,body{  width: 100%; background-color:#fff ;}
+body {color:#666666; font-size:14px; font-family: "微软雅黑"; }
+h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
+
+.rules_box{
+    width: 100%;
+    padding: 20px;
+    font-size: 15px;
+}
+.rules_box h3{
+    font-size: 22px;
+    color: #333;
+    padding-top: 20px;
+    padding-bottom: 12px;
+}
+
+.rules_box h4{
+    font-size: 18px;
+    color: #333;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.rules_box h5{
+    font-size: 15px;
+    color: #333;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+.rules_box p{
+    line-height: 22px;
+    padding-bottom: 12px;
+}
+.high_light{
+    color: #F57527;
+}
+
+.author a{
+    color: #576b95;
+    text-decoration: none;
+}
+.img{
+    text-align: center;
+    padding-bottom: 12px;
+}
+.img img{
+    width: 100%;
+}

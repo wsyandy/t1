@@ -107,7 +107,7 @@ trait UserWakeup
             return 60 * 60;
         }
 
-        $time = 5 * 60;
+        $time = 20 * 60;
 
         return $time;
     }

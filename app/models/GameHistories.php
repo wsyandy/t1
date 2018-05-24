@@ -25,40 +25,43 @@ class GameHistories extends BaseModel
 
     function afterCreate()
     {
-        if ($this->status == GAME_STATUS_WAIT && $this->game->url == 'https://gtest.yueyuewo.cn') {
+        if ($this->game->code == 'jump') {
             //保存一个游戏用户队列
             $this->saveUserList($this->user_id);
-
-            \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
         }
-    }
 
-    static function generateEnterGameUserList($room_id)
-    {
-        return 'enter_game_user_list' . $room_id;
+        $hot_cache = GameHistories::getHotWriteCache();
+        $hot_cache->setex('game_history_room_'.$this->room_id, 1800, $this->id);
+
+        \GameHistories::delay(10 * 60)->asyncCloseGame($this->id);
     }
 
     function afterUpdate()
     {
 
         if ($this->hasChanged('status') && $this->status == GAME_STATUS_END) {
-            $hot_cache = \Users::getHotWriteCache();
-            $room_wait_key = "game_room_wait_" . $this->id;
-            $room_enter_key = "game_room_enter_" . $this->id;
-            $room_user_quit_key = "game_room_user_quit_" . $this->id;
-            $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
-            $hot_cache->del($room_wait_key);
-            $hot_cache->del($room_enter_key);
-            $hot_cache->del($room_user_quit_key);
-            $hot_cache->del($game_user_list_key);
 
-            if ($this->game->url == 'https://gtest.yueyuewo.cn') {
+            $hot_cache = GameHistories::getHotWriteCache();
+            $hot_cache->del('game_history_room_'.$this->room_id);
+
+            if ($this->game->code == 'jump') {
                 $user = \Users::findFirstById($this->user_id);
                 $body = ['action' => 'game_notice', 'type' => 'over', 'content' => "游戏结束",];
-                \Games::sendGameMessage($user, $body);
+                $this->sendGameMessage($user, $body);
+
+            }else{
+
+                $hot_cache = \Users::getHotWriteCache();
+                $room_wait_key = "game_room_wait_" . $this->id;
+                $room_enter_key = "game_room_enter_" . $this->id;
+                $room_user_quit_key = "game_room_user_quit_" . $this->id;
+                $game_user_list_key = $this->generateEnterGameUserList();
+                $hot_cache->del($room_wait_key);
+                $hot_cache->del($room_enter_key);
+                $hot_cache->del($room_user_quit_key);
+                $hot_cache->del($game_user_list_key);
+
             }
-
-
         }
     }
 
@@ -78,7 +81,7 @@ class GameHistories extends BaseModel
     static function asyncCloseGame($id)
     {
         $game_history = self::findFirstById($id);
-        if ($game_history->status != GAME_STATUS_END) {
+        if ($game_history->status == GAME_STATUS_WAIT) {
             $game_history->status = GAME_STATUS_END;
             $game_history->save();
         }
@@ -98,7 +101,6 @@ class GameHistories extends BaseModel
 
         return $game_history;
     }
-
 
     function generateGameUrl($current_user, $room)
     {
@@ -123,10 +125,15 @@ class GameHistories extends BaseModel
         return $client_url;
     }
 
+    function generateEnterGameUserList()
+    {
+        return 'enter_game_user_list' . $this->id;
+    }
+
     function saveUserList($user_id)
     {
         $cache = \GameHistories::getHotWriteCache();
-        $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
+        $game_user_list_key = $this->generateEnterGameUserList();
         $cache->zadd($game_user_list_key, time(), $user_id);
 
     }
@@ -134,8 +141,19 @@ class GameHistories extends BaseModel
     function delUserList($user_id)
     {
         $cache = \GameHistories::getHotWriteCache();
-        $game_user_list_key = \GameHistories::generateEnterGameUserList($this->room_id);
+        $game_user_list_key = $this->generateEnterGameUserList();
         $cache->zrem($game_user_list_key, $user_id);
 
     }
+
+    function sendGameMessage($current_user, $body)
+    {
+
+        $intranet_ip = $current_user->getIntranetIp();
+        $receiver_fd = $current_user->getUserFd();
+
+        $result = \services\SwooleUtils::send('push', $intranet_ip, \Users::config('websocket_local_server_port'), ['body' => $body, 'fd' => $receiver_fd]);
+        info('推送结果=>', $result);
+    }
+
 }

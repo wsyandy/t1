@@ -280,7 +280,7 @@ class RoomsController extends BaseController
         if (isBlank($sponsor_id)) {
             if ($game_history) {
                 $res['game'] = ['url' => 'url://m/games/tyt?game_id=' . $game_history->game_id, 'icon' => $root_host . 'images/go_game.png'];
-                if ($game_history->game->url == 'https://gtest.yueyuewo.cn' && isDevelopmentEnv()) {
+                if ($game_history->game->code == 'jump' && isDevelopmentEnv()) {
                     $res['game'] = ['url' => 'url://m/jumps/transfer_game_url?room_id=' . $room_id . '&game_history_id=' . $game_history->id, 'icon' => $root_host . 'images/go_game.png'];
                 }
             }
@@ -1028,10 +1028,6 @@ class RoomsController extends BaseController
 
             $room = \Rooms::findFirstById($room_id);
 
-            if (!$room) {
-                return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
-            }
-
         } else {
 
             $user = \Users::findFirstById($user_id);
@@ -1041,6 +1037,10 @@ class RoomsController extends BaseController
             }
 
             $room = $user->current_room;
+        }
+
+        if (!$room) {
+            return $this->renderJSON(ERROR_CODE_FAIL, '参数非法');
         }
 
 
@@ -1062,7 +1062,7 @@ class RoomsController extends BaseController
         }
 
         //房间加锁并且不是房主且用户不在这个房间检验密码 从h5进入
-        if ($current_room_id != $room_id) {
+        if ($current_room_id != $room->id) {
 
             if ($current_room_id) {
 
@@ -1083,16 +1083,18 @@ class RoomsController extends BaseController
             }
         }
 
+        $current_user = $this->currentUser(true);
+
         $res = $room->toJson();
-        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $this->currentUser()->id);
-        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($this->currentUser()->id);
+        $res['channel_key'] = $this->currentProductChannel()->getChannelKey($room->channel_name, $current_user->id);
+        $res['signaling_key'] = $this->currentProductChannel()->getSignalingKey($current_user->id);
         $res['app_id'] = $this->currentProductChannel()->getImAppId();
-        $res['user_chat'] = $this->currentUser()->canChat($room);
+        $res['user_chat'] = $current_user->canChat($room);
         $res['system_tips'] = $this->currentProductChannel()->system_news;
-        $res['user_role'] = $this->currentUser()->user_role;
+        $res['user_role'] = $current_user->user_role;
 
         // 座驾
-        $user_car_gift = $this->currentUser()->getUserCarGift();
+        $user_car_gift = $current_user->getUserCarGift();
 
         if ($user_car_gift) {
             $res['user_car_gift'] = $user_car_gift->toSimpleJson();
@@ -1112,7 +1114,7 @@ class RoomsController extends BaseController
         $root_host = $this->getRoot();
 
         // 菜单
-        $res['menu_config'] = $room->getRoomMenuConfig($this->currentUser(), ['root_host' => $root_host]);
+        $res['menu_config'] = $room->getRoomMenuConfig($current_user, ['root_host' => $root_host]);
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '成功', $res);
     }
