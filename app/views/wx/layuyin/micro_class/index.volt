@@ -1,6 +1,7 @@
 {{ block_begin('head') }}
 {{ weixin_css('swiper.min.css','question.css') }}
-{{ weixin_js('index.js','swiper.jquery.min.js') }}
+{{ weixin_js('index.js') }}
+{{ theme_js('/js/swiper.jquery.min.js') }}
 {{ block_end() }}
 <div class="main_content">
     <div class="home_header">
