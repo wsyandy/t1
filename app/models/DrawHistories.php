@@ -513,6 +513,7 @@ class DrawHistories extends BaseModel
 
         $is_block_user = self::isBlockUser($user);
         if ($is_block_user) {
+            info('屏蔽用户', $user->id, 'total_pay_amount', $total_pay_amount);
             $user_rate_multi = 1;
         } else {
             // 计算用户倍率
