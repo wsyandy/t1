@@ -67,7 +67,7 @@ class RoomSeatsController extends BaseController
         }
 
         $room = $room_seat->room;
-        $room->updateUserActiveList($current_user);
+        $room->updateLastAt($current_user);
 
         unlock($room_seat_lock);
         unlock($room_seat_user_lock);
@@ -119,7 +119,7 @@ class RoomSeatsController extends BaseController
         $room_seat->down($current_user, $other_user);
 
         $room = $room_seat->room;
-        $room->updateUserActiveList($current_user);
+        $room->updateLastAt($current_user);
 
         unlock($room_seat_lock);
         unlock($room_seat_user_lock);
@@ -165,7 +165,7 @@ class RoomSeatsController extends BaseController
         $room_seat->close();
 
         $room = $room_seat->room;
-        $room->updateUserActiveList($current_user);
+        $room->updateLastAt($current_user);
 
         unlock($lock);
         unlock($room_seat_user_lock);
@@ -187,7 +187,7 @@ class RoomSeatsController extends BaseController
 
         $room_seat->open();
         $room = $room_seat->room;
-        $room->updateUserActiveList($this->currentUser());
+        $room->updateLastAt($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
@@ -209,7 +209,7 @@ class RoomSeatsController extends BaseController
         $room_seat->save();
 
         $room = $room_seat->room;
-        $room->updateUserActiveList($this->currentUser());
+        $room->updateLastAt($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
@@ -231,7 +231,7 @@ class RoomSeatsController extends BaseController
         $room_seat->save();
 
         $room = $room_seat->room;
-        $room->updateUserActiveList($this->currentUser());
+        $room->updateLastAt($this->currentUser());
 
         return $this->renderJSON(ERROR_CODE_SUCCESS, '', $room_seat->toSimpleJson());
     }
