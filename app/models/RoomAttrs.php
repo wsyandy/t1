@@ -602,6 +602,22 @@ trait RoomAttrs
         return "abnormal_exit_room_list";
     }
 
+    static function addAbnormalExitRoomUserId($room_id, $user_id)
+    {
+        if ($room_id && $user_id) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zadd(self::generateAbnormalExitRoomListKey(), time(), $room_id . "_" . $user_id);
+        }
+    }
+
+    static function delAbnormalExitRoomUserId($room_id, $user_id)
+    {
+        if (self::isInAbnormalExitRoomList($room_id, $user_id)) {
+            $hot_cache = Rooms::getHotWriteCache();
+            $hot_cache->zrem(self::generateAbnormalExitRoomListKey(), $room_id . "_" . $user_id);
+        }
+    }
+
     static function getAbnormalExitRoomList()
     {
         $hot_cache = Rooms::getHotReadCache();

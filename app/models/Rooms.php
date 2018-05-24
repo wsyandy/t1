@@ -1123,22 +1123,6 @@ class Rooms extends BaseModel
         return $rooms;
     }
 
-    static function addAbnormalExitRoomUserId($room_id, $user_id)
-    {
-        if ($room_id && $user_id) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->zadd(self::generateAbnormalExitRoomListKey(), time(), $room_id . "_" . $user_id);
-        }
-    }
-
-    static function delAbnormalExitRoomUserId($room_id, $user_id)
-    {
-        if (self::isInAbnormalExitRoomList($room_id, $user_id)) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->zrem(self::generateAbnormalExitRoomListKey(), $room_id . "_" . $user_id);
-        }
-    }
-
     static function updateRoomTypes($room_id)
     {
         $room_category_words = RoomCategoryKeywords::find(['order' => 'id desc']);

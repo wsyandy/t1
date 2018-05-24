@@ -137,7 +137,6 @@ class SwooleEvents extends \BaseModel
                     if ($current_room) {
 
                         $current_room_seat_id = 0;
-
                         if ($current_room_seat) {
                             $current_room_seat_id = $current_room_seat->id;
                         }
