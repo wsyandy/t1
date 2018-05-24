@@ -102,6 +102,7 @@ class SwooleEvents extends \BaseModel
 
     static function onCloseEvent(\services\SwooleServices $swoole_service, \swoole_websocket_server $server, $fd, $from_id)
     {
+
         $request_start_at = microtime(true);
         $online_token = SwooleUtils::getOnlineTokenByFd($fd);
         $connect_info = $server->connection_info($fd);
@@ -119,17 +120,15 @@ class SwooleEvents extends \BaseModel
         }
 
         $user_id = SwooleUtils::getUserIdByOnlineToken($online_token);
-        $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
         $user = \Users::findFirstById($user_id);
         SwooleUtils::increaseConnectNum(-1, SwooleUtils::getIntranetIp());
 
         if ($user) {
 
-            info('user', $user->sid, 'fd', $fd, "connect close, ip", $intranet_ip);
-
             //用户有新的连接 老的连接不推送
             if ($user->online_token == $online_token) {
 
+                $intranet_ip = SwooleUtils::getIntranetIpdByOnlineToken($online_token);
                 if ($intranet_ip) {
 
                     $current_room = \Rooms::findRoomByOnlineToken($online_token);

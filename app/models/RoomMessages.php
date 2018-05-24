@@ -141,16 +141,14 @@ trait RoomMessages
         $this->push($body);
     }
 
-    function pushExitRoomMessage($user, $current_room_seat_id = '', $to_self = false)
+    function pushExitRoomMessage($user, $current_room_seat_id = 0, $to_self = false)
     {
+
         $body = ['action' => 'exit_room', 'user_id' => $user->id, 'channel_name' => $this->channel_name];
 
-        if ($current_room_seat_id) {
-            $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
-
-            if ($current_room_seat) {
-                $body['room_seat'] = $current_room_seat->toSimpleJson();
-            }
+        $current_room_seat = RoomSeats::findFirstById($current_room_seat_id);
+        if ($current_room_seat) {
+            $body['room_seat'] = $current_room_seat->toSimpleJson();
         }
 
         //指定用户
