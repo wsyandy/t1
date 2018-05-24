@@ -41,7 +41,7 @@ class PayController extends ApplicationController
     function createAction()
     {
 
-        $user_id = $this->params('user_id');
+        $user_id = $this->params('user_id', 0);
         $user = null;
 
         if ($user_id) {
@@ -126,7 +126,7 @@ class PayController extends ApplicationController
 
     function checkUserAction()
     {
-        $user_id = $this->params('user_id');
+        $user_id = $this->params('user_id', 0);
         $user = \Users::findFirstByUid($user_id);
         $nickname = '此ID不存在';
         if ($user && $user->isActive()) {

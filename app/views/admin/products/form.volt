@@ -6,6 +6,7 @@
   {{ f.input('diamond', ['label': '钻石']) }}
   {{ f.input('gold',['label':'金币']) }}
   {{ f.input('hi_coins',['label':'Hi币']) }}
+  {{ f.input('tamp_gold_egg',['label':'赠送砸金蛋次数']) }}
   {{ f.input('apple_product_no', ['label': '苹果支付代码']) }}
   {{ f.input('google_product_no', ['label': '谷歌支付代码']) }}
   {{ f.input('rank', ['label': '排序']) }}
