@@ -154,4 +154,12 @@ class MakiTask extends Phalcon\Cli\Task
         echoLine($user_ids);
     }
 
+
+    function t3Action()
+    {
+        $redis = BannedWords::getHotWriteCache();
+        $key = BannedWords::getBannedWordsListSignKey();
+        $list = $redis->hgetall($key);
+        print_r($list);
+    }
 }
