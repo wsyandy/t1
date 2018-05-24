@@ -48,6 +48,8 @@ class AgoraApi extends BaseModel
         $app_id = $product_channel->getImAppId();
 
         $url = "http://api.agora.io/dev/v1/channel/user/property/{$app_id}/{$user->id}/{$channel_name}";
+        info($user->id, $url);
+        
         $res = httpGet($url, [], self::$headers);
 
         info('user', $user->id, $res->raw_body);
