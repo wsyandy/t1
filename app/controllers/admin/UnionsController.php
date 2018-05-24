@@ -371,8 +371,8 @@ class UnionsController extends BaseController
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
 
-        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
-        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth()));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth()));
 
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
@@ -435,8 +435,8 @@ class UnionsController extends BaseController
     {
         $id = $this->params('id');
         $union = \Unions::findFirstById($id);
-        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
-        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth()));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth()));
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 

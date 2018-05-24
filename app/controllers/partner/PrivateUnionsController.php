@@ -18,8 +18,8 @@ class PrivateUnionsController extends BaseController
     function usersAction()
     {
         $union = $this->currentUser()->union;
-        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
-        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth()));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth()));
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 
@@ -27,7 +27,6 @@ class PrivateUnionsController extends BaseController
 
             $page = $this->params('page');
             $per_page = 10;
-            $user_db = \Users::getUserDb();
 
             if (!$start_at_time && !$end_at_time) {
                 $key = 'union_user_total_wealth_rank_list_union_id_' . $union->id;
@@ -45,7 +44,15 @@ class PrivateUnionsController extends BaseController
                 $hi_coin_key = 'union_user_month_hi_coins_rank_list_start_' . $month_start . '_end_' . $month_end . '_union_id_' . $union->id;
             }
 
-            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key));
+            $user_db = \Users::getUserDb();
+
+            if ($start_at > 20180431) {
+                $is_room_db = true;
+                $user_db = \Rooms::getRoomDb();
+            }
+
+            $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key),
+                ['is_room_db' => $is_room_db, 'is_internal' => false]);
 
             info("union_stat", $key, $charm_key, $hi_coin_key);
 
@@ -85,13 +92,17 @@ class PrivateUnionsController extends BaseController
     {
         $union = $this->currentUser()->union;
 
-        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth(beginOfMonth() - 3600)));
-        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth(beginOfMonth() - 3600)));
+        $start_at_time = $this->params('start_at_time', date("Y-m-d", beginOfMonth()));
+        $end_at_time = $this->params('end_at_time', date("Y-m-d", endOfMonth()));
 
         $start_at = date("Ymd", beginOfDay(strtotime($start_at_time)));
         $end_at = date("Ymd", beginOfDay(strtotime($end_at_time)));
 
         $user_db = \Users::getUserDb();
+
+        if ($start_at > 20180431) {
+            //$user_db = \Rooms::getRoomDb();
+        }
 
         if (!$start_at_time && !$end_at_time) {
             $key = 'union_room_total_amount_union_id_' . $union->id;
