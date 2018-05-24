@@ -9,6 +9,51 @@
 class MeiTask extends \Phalcon\Cli\Task
 {
 
+    //屏蔽用户统计
+    function test62Action()
+    {
+        $group_key = 'client_users_active_group_1';
+        $hot_cache = Users::getHotWriteCache();
+        $total_user_ids = $hot_cache->zrangebyscore($group_key, beginOfDay(), time(), ['limit' => [0, 1000000]]);
+
+        $total = count($total_user_ids);
+        $per_page = 100;
+        $total_page = ceil($total / $per_page);
+        $offset = 0;
+        $new_user_num = 0;
+        $shield_user_num = 0;
+        $shield_new_user_num = 0;
+
+        for ($page = 1; $page <= $total_page; $page++) {
+
+            $user_ids = array_slice($total_user_ids, $offset, $per_page);
+            $offset += $per_page;
+
+            $users = Users::findByIds($user_ids);
+
+            foreach ($users as $user) {
+
+                if ($user->last_at < beginOfDay()) {
+                    echoLine("sddddd");
+                }
+
+                if ($user->register_at > beginOfDay()) {
+                    $new_user_num++;
+                }
+
+                if ($user->isShieldHotRoom()) {
+                    $shield_user_num++;
+
+                    if ($user->register_at > beginOfDay()) {
+                        $shield_new_user_num++;
+                    }
+                }
+            }
+        }
+
+        echoLine($total, $new_user_num, $shield_user_num, $shield_new_user_num);
+    }
+
     function test61Action()
     {
         $user = Users::findFirstById(6);
