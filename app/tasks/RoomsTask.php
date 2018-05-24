@@ -55,7 +55,7 @@ class RoomsTask extends \Phalcon\Cli\Task
 
                     $room->exitRoom($user, true);
                     if ($current_room_id == $room->id) {
-                        $room->pushExitRoomMessage($user, $current_room_seat_id);
+                        ////$room->pushExitRoomMessage($user, $current_room_seat_id);
                     }
                 }
 
@@ -87,6 +87,87 @@ class RoomsTask extends \Phalcon\Cli\Task
     }
 
     function checkAbnormalExitRoomAction()
+    {
+
+        $target_ids = Rooms::getAbnormalExitRoomList();
+        $total = count($target_ids);
+        if ($total < 1) {
+            info("no users", $target_ids);
+            return;
+        }
+
+        info($total);
+
+        foreach ($target_ids as $target_id) {
+
+            list($room_id, $user_id) = explode("_", $target_id);
+            if (!$room_id || !$user_id) {
+                continue;
+            }
+
+            $user = Users::findFirstById($user_id);
+            $room = Rooms::findFirstById($room_id);
+
+            $current_room_id = $user->current_room_id;
+            $current_room_seat_id = $user->current_room_seat_id;
+            $need_push = false;
+
+            if ($current_room_id != $room->id || !$user->isNormal()) {
+                Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                $room->exitRoom($user, true);
+                $need_push = true;
+                info('room_is_change', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdH", $user->last_at));
+            } else {
+
+                $time = time() - 15 * 60;
+
+                if ($user->last_at <= $time) {
+
+                    $user_fd = $user->getUserFd();
+                    if ($user_fd) {
+                        info($user->id, 'user_fd', $user_fd, 'room_id', $room->id, 'current_room_id', $current_room_id, 'last_at', date("YmdH", $user->last_at));
+                        continue;
+                    }
+
+                    info('fix room', $room->id, 'user', $user->id, 'current_room_id', $current_room_id, $current_room_seat_id, 'last_at', date("YmdHis", $user->last_at));
+
+                    $need_push = true;
+                    Rooms::delAbnormalExitRoomUserId($room_id, $user_id);
+                    $room->exitRoom($user, true);
+                }
+            }
+
+            if ($current_room_id == $room->id && $need_push) {
+                ////$room->pushExitRoomMessage($user, $current_room_seat_id);
+            }
+
+            //检测麦位状态
+            $room_seats = RoomSeats::findByUserId($user->id);
+
+            foreach ($room_seats as $room_seat) {
+                // 房间和麦位匹配
+                if ($room_seat->room_id == $user->current_room_id && $room_seat->id == $user->current_room_seat_id) {
+                    continue;
+                }
+
+                $room_seat->user_id = 0;
+                $room_seat->save();
+                info('fix room_seat', $room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+            }
+
+
+            if ($user->current_room_seat_id) {
+                $current_room_seat = $user->current_room_seat;
+                if ($current_room_seat->user_id != $user->id) {
+                    info('fix current_room_seat', $current_room_seat->id, 'user', $user->id, $user->current_room_seat_id);
+                    $user->current_room_seat_id = 0;
+                    $user->save();
+                }
+            }
+        }
+    }
+
+    function checkExceUsersAction()
     {
 
         $target_ids = Rooms::getAbnormalExitRoomList();
@@ -1016,7 +1097,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
 
                 $room->kickingRoom($user, 30);
-                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
 
                 unlock($room_seat_user_lock_key);
             }
@@ -1039,7 +1120,7 @@ class RoomsTask extends \Phalcon\Cli\Task
                 $room_seat_user_lock_key = "room_seat_user_lock{$user->id}";
 
                 $room->kickingRoom($user, 30);
-                $room->pushExitRoomMessage($user, $user->current_room_seat_id);
+                ////$room->pushExitRoomMessage($user, $user->current_room_seat_id);
 
                 unlock($room_seat_user_lock_key);
             }

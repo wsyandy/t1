@@ -95,8 +95,9 @@ class UsersController extends BaseController
             && ($user->user_status == USER_STATUS_BLOCKED_ACCOUNT || $user->user_status == USER_STATUS_BLOCKED_DEVICE) && $current_room
         ) {
 
+            // 加上声网踢出频道
             $current_room->exitRoom($user, true);
-            $current_room->pushExitRoomMessage($user, $current_room_seat_id, true);
+            ////$current_room->pushExitRoomMessage($user, $current_room_seat_id, true);
         }
 
         \OperatingRecords::logBeforeUpdate($this->currentOperator(), $user);

@@ -344,12 +344,16 @@ class Rooms extends BaseModel
                 $room_seat->save();
             }
 
+            $current_room_seat_id = $user->current_room_seat_id;
+
             $user->current_room_id = 0;
             $user->current_room_seat_id = 0;
             $user->current_room_channel_name = '';
             $user->user_role = USER_ROLE_NO;
             $user->user_role_at = time();
             $user->save();
+
+            $this->pushExitRoomMessage($user, $current_room_seat_id);
         }
 
         // 房主
@@ -736,7 +740,7 @@ class Rooms extends BaseModel
             $this->rmOnlineSilentRoom();
         }
 
-        $this->pushExitRoomMessage($user, $current_room_seat_id);
+        ////$this->pushExitRoomMessage($user, $current_room_seat_id);
     }
 
     function findRealUser()
@@ -1126,22 +1130,6 @@ class Rooms extends BaseModel
         $rooms = Rooms::findPagination($cond, $page, $per_page);
 
         return $rooms;
-    }
-
-    static function addAbnormalExitRoomUserId($room_id, $user_id)
-    {
-        if ($room_id && $user_id) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->zadd(self::generateAbnormalExitRoomListKey(), time(), $room_id . "_" . $user_id);
-        }
-    }
-
-    static function delAbnormalExitRoomUserId($room_id, $user_id)
-    {
-        if (self::isInAbnormalExitRoomList($room_id, $user_id)) {
-            $hot_cache = Rooms::getHotWriteCache();
-            $hot_cache->zrem(self::generateAbnormalExitRoomListKey(), $room_id . "_" . $user_id);
-        }
     }
 
     static function updateRoomTypes($room_id)
