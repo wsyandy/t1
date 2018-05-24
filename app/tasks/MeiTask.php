@@ -31,10 +31,6 @@ class MeiTask extends \Phalcon\Cli\Task
         echoLine($res);
 
         $need_version_control = false;
-        if ($content_type == 'red_packet') {
-            $need_version_control = true;
-        }
-
         $this->push($body, $need_version_control);
 
 

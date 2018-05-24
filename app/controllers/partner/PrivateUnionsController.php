@@ -52,7 +52,7 @@ class PrivateUnionsController extends BaseController
             }
 
             $users = \Users::findFieldRankListByKey($charm_key, 'charm', $page, $per_page, $user_db->zcard($charm_key),
-                ['is_room_db' => $is_room_db, 'is_internal' => false]);
+                ['is_room_db' => $is_room_db, 'is_internal' => true]);
 
             info("union_stat", $key, $charm_key, $hi_coin_key);
 
@@ -101,7 +101,7 @@ class PrivateUnionsController extends BaseController
         $user_db = \Users::getUserDb();
 
         if ($start_at > 20180431) {
-            //$user_db = \Rooms::getRoomDb();
+            $user_db = \Rooms::getRoomDb();
         }
 
         if (!$start_at_time && !$end_at_time) {
