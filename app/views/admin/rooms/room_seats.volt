@@ -9,6 +9,6 @@
     {% endif %}
 {%- endmacro %}
 
-{{ simple_table(room_seats,['id': 'id','状态': 'status_text','麦克风状态':'microphone_text','音乐权限':'can_play_music_text',
+{{ simple_table(room_seats,['id': 'id','麦位':'rank','状态': 'status_text','麦克风状态':'microphone_text','音乐权限':'can_play_music_text',
 '用户':'user_info','操作':'operat_link'
 ]) }}
