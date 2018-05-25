@@ -45,7 +45,7 @@ class BoomConfigs extends BaseModel
 
     static function getBoomConfig()
     {
-        $boom_config = BoomConfigs::find(
+        $boom_config = BoomConfigs::findFirst(
             [
                 'conditions' => 'status = :status:',
                 'bind' => ['status' => STATUS_ON],
