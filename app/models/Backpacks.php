@@ -145,30 +145,26 @@ class Backpacks extends BaseModel
      * @param int $type
      * @return array
      */
-    static public function getBoomDiamondOrGold($type)
+    static public function getBoomDiamondOrGold($type, $number)
     {
 
         if ($type == BACKPACK_DIAMOND_TYPE) {
-
             $name = '钻石';
             $image = \Backpacks::getDiamondImage();
-            $number = mt_rand(10, 1000);
         } else {
-
             $name = '金币';
             $image = \Backpacks::getGoldImage();
-            $number = mt_rand(500, 2000);
         }
 
         // 嵌套array 返回接口固定结构数据
-        $target = array(
+        $target = [
             [
                 'id' => 0,
                 'name' => $name,
                 'image_url' => $image,
                 'number' => $number
             ]
-        );
+        ];
         return $target;
     }
 

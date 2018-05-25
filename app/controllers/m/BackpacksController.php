@@ -37,6 +37,7 @@ class BackpacksController extends BaseController
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
 
+
         // 前三排行
         $boom_histories = \BoomHistories::historiesTopList($user->id, 3);
         $boom_histories = $boom_histories->toJson('boom', 'toSimpleJson')['boom'];
@@ -45,7 +46,7 @@ class BackpacksController extends BaseController
         $expire = \Rooms::getBoomGiftExpireAt($room_id);
 
         if (isBlank($expire)) {
-           // return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
+            // return $this->renderJSON(ERROR_CODE_FAIL, '未开始爆礼物', ['target' => $boom_histories]);
         }
 
         // 抽奖物品保存至爆礼物结束时间
@@ -68,14 +69,138 @@ class BackpacksController extends BaseController
             return $this->renderJSON(ERROR_CODE_FAIL, '已抽奖，请先领取！', ['target' => $boom_histories]);
         }
 
+
+        $record_key = \Rooms::generateBoomRecordKey($room_id);
+        $amount = $cache->zscore($record_key, $user->id);
+
+        $rate = mt_rand(1, 100);
+
+        switch ($rate) {
+            case $rate >= 1 && $rate <= 5:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 1;
+                    break;
+                }
+            case $rate > 5 && $rate <= 13:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 3;
+                    break;
+                }
+            case $rate > 13 && $rate <= 23:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 8;
+                    break;
+                }
+            case $rate > 23 && $rate <= 30:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 11;
+                    break;
+                }
+            case $rate > 30 && $rate <= 36:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 18;
+                    break;
+                }
+            case $rate > 36 && $rate <= 41:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 28;
+                    break;
+                }
+
+            case $rate > 42 && $rate <= 45:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 39;
+                    break;
+                }
+
+            case $rate > 45 && $rate <= 48:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 50;
+                    break;
+                }
+
+            case $rate > 48 && $rate <= 50:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 77;
+                    break;
+                }
+            case $rate > 50 && $rate <= 51:
+                {
+                    $type = BACKPACK_DIAMOND_TYPE;
+                    $num = 99;
+                    break;
+                }
+            case $rate > 51 && $rate <= 56:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 9;
+                    break;
+                }
+            case $rate > 56 && $rate <= 64:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 26;
+                    break;
+                }
+            case $rate > 65 && $rate <= 75:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 55;
+                    break;
+                }
+
+            case $rate > 76 && $rate <= 83:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 77;
+                    break;
+                }
+            case $rate > 84 && $rate <= 90:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 128;
+                    break;
+                }
+            case $rate > 90 && $rate <= 95:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 166;
+                    break;
+                }
+            case $rate > 95 && $rate <= 98:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 288;
+                    break;
+                }
+            case $rate > 98 && $rate <= 100:
+                {
+                    $type = BACKPACK_GOLD_TYPE;
+                    $num = 77;
+                    break;
+                }
+
+        }
         // 1 随机类型
-        $type = array_rand(array_flip(self::$boom_type));
+        //$type = array_rand(array_flip(self::$boom_type));
 
         // 2 爆礼品
-        if ($type == BACKPACK_GIFT_TYPE)
-            $target = \Gifts::getNGift();
-        else
-            $target = \Backpacks::getBoomDiamondOrGold($type);
+//        if ($type == BACKPACK_GIFT_TYPE) {
+//            $target = \Gifts::findFirstById(16);
+//        } else {
+//            $target = \Backpacks::getBoomDiamondOrGold($type);
+//        }
+
+        $target = \Backpacks::getBoomDiamondOrGold($type, $num);
 
         // 缓存数据体
         $json = array(
@@ -94,7 +219,8 @@ class BackpacksController extends BaseController
      * @desc 历史记录
      * @return bool
      */
-    public function historyAction()
+    public
+    function historyAction()
     {
         $boom_histories = \BoomHistories::historiesTopList();
         $boom_histories = $boom_histories->toJson('boom_histories', 'toSimpleJson');
@@ -106,7 +232,8 @@ class BackpacksController extends BaseController
      * @desc 爆礼物写入背包
      * @return bool
      */
-    public function createAction()
+    public
+    function createAction()
     {
         $user = $this->currentUser();
         $room_id = $user->current_room_id;
@@ -154,7 +281,8 @@ class BackpacksController extends BaseController
      * @param $type
      * @return bool
      */
-    protected function doCreate($target_id, $number, $type)
+    protected
+    function doCreate($target_id, $number, $type)
     {
         if ($type == BACKPACK_GIFT_TYPE && empty($target_id)) {
 
@@ -198,7 +326,8 @@ class BackpacksController extends BaseController
      * @param $room_id
      * @return string
      */
-    protected function generateUserSignKey($user_id, $room_id)
+    protected
+    function generateUserSignKey($user_id, $room_id)
     {
         return 'boom_target_room_' . $room_id . '_user_' . $user_id;
     }
@@ -210,7 +339,8 @@ class BackpacksController extends BaseController
      * @param $number
      * @return bool
      */
-    protected function boomGetDiamond($user_id, $number)
+    protected
+    function boomGetDiamond($user_id, $number)
     {
         $opts['remark'] = '爆礼物获得' . $number . '钻石';
         \AccountHistories::changeBalance($user_id, ACCOUNT_TYPE_IN_BOOM, $number, $opts);
@@ -224,7 +354,8 @@ class BackpacksController extends BaseController
      * @param $number
      * @return bool
      */
-    protected function boomGetGold($user_id, $number)
+    protected
+    function boomGetGold($user_id, $number)
     {
         $opts['remark'] = '爆礼物获得' . $number . '金币';
         \GoldHistories::changeBalance($user_id, GOLD_TYPE_IN_BOOM, $number, $opts);
@@ -236,7 +367,8 @@ class BackpacksController extends BaseController
      * @param $user_id
      * @return mixed
      */
-    public function getCurrentRoomId($user_id)
+    public
+    function getCurrentRoomId($user_id)
     {
         // 获取当前房间ID
         $user_info = \Users::findFirstById($user_id);
