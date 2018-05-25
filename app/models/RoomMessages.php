@@ -277,17 +277,17 @@ trait RoomMessages
         $payload = ['body' => $body, 'fd' => $receiver_fd];
 
         if (!$intranet_ip) {
-            info("user_already_close", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            info("user_already_close", $user->id, $user->sid, 'room', $this->id, $payload);
             return false;
         }
 
         $res = \services\SwooleUtils::send('push', $intranet_ip, self::config('websocket_local_server_port'), $payload);
         if ($res) {
-            info($user->id, $user->sid, $this->id, $payload, $this->user->sid);
+            info('push ok ', $user->id, $user->sid, 'room', $this->id, $payload);
             return true;
         }
 
-        info("Exce", $user->id, $user->sid, $this->id, $payload, $this->user->sid);
+        info("Exce push", $user->id, $user->sid, 'room', $this->id, $payload);
 
         return false;
     }
